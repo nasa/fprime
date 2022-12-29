@@ -1,11 +1,10 @@
 # Rate Groups and Timeliness
 
 Often embedded software must perform actions at a fixed rate. In a given system there are usually collections of actions
-that must run at similar rates. For example, control algorithms may run at 10Hz while telemetry collection may run at
+that must run at the same rate. For example, control algorithms may run at 10Hz while telemetry collection may run at
 1Hz and background tasks may be updated at 0.1Hz. F´ provides a mechanism to trigger time-based actions called "rate
-groups". The `ActiveRateGroup` component contains multiple output `Sched` ports that it sends a message to at a repeated
-rate. Thus components having an input `Sched` port can run a repeated action at this rate. Rate groups are driven by a
-central rate group driver and achieve their rates by dividing the incoming signal from the rate group driver.
+groups". The `ActiveRateGroup` component implements a single rate group. It contains multiple output `Sched` ports that get invoked in order during each cycle of the rate group. Components having an input `Sched` port can run a repeated action at this rate. Rate groups are driven by a
+central rate group driver that invokes.
 
 ![Rate Groups](./img/rate_group.png)
 
@@ -13,7 +12,7 @@ central rate group driver and achieve their rates by dividing the incoming signa
 
 The `RateGroupDriver` component is the source of the "clock" for the various rate groups. It is usually driven off a
 system timing interrupt or some other reliable clock source. On the incoming cycle call from that source, it sends a
-message to each rate group attached to it thus starting each cycle.
+message to each rate group attached to it based on a divider table provided at initialization. This can be used to drive the attached rate groups (See Active Rate Group below) at different rates. 
 
 ### System Clock Sources
 
@@ -24,30 +23,14 @@ The reference application calls the `CycleIn` port followed by a sleep for the s
 
 ## Active Rate Group
 
-The active rate group receives the input source signal at the system rate and divides that signal to provide a fixed
-rate for the components attached to it. It then calls each of those components at the subdivided rate. For example, if
-the rate group driver is being called at 1000Hz it will provide a repeated 1000Hz call to each active rate group. To
-achieve repeated signals at 10Hz, 1Hz, and 0.1Hz, the project would need to set up 3 rate groups diving by 100, 1000, and
-10000 respectively. These divisors are set up at active rate group instantiation time.
+A `Svc.ActiveRateGroup` component instance receives an incoming `CycleIn` port at a rate determined by a clock source (typically divided down by `Svc.RateGroupDriver`). The `ActiveRateGroup` instance will then call in order any of its connected `Sched` ports. This allows a set of tasks that need to run at a certain rate be executed in a repeatable way. Note that if the system requirement is that higher frequency rate groups must run to completion before lower frequency rate groups (knows as "earliest deadline first"), the priority of the rate group task should be set to ensure it will run first. Note that higher priority rate groups can (and should if OS priorities are set correctly) preempt lower priority rate groups so scheduling should be carefully characterized. 
 
-Active rate groups run on a thread and thus there is some jitter between the system driver and the execution of the rate
-group. However, multiple active rate groups can start up in unison. A passive rate group could be created that is
-synchronous and would remove jitter at the expense of synchronous execution.
+It is typical that components that need to run at a certain rate 
 
-Should the synchronous work done by a rate group take longer than the rate group's cycle time to complete, the rate
-group will be unable to run the next cycle. This is known as a rate group slip and will produce a WARNING_HI event.
-Frequent slips indicate that the system is failing to keep up with the repetitive work and the cycle time may need to
+Should the execution time of a rate group be higher than the rate group's cycle time, the rate
+group will be unable to run the next cycle at the required rate. This is known as cycle slip and will produce a WARNING_HI event.
+Frequent slips indicate that the system is failing to keep up with the required rate and the cycle time may need to
 be increased or child components need to be moved to slower rate groups.
-
-### Active Rate Groups, Ordering, and Priority
-
-Active rate groups are dependent on thread priority. Typically, rate groups are the highest priority components in the
-system. This is because they are fairly low impact but start components that are of high priority and thus should be
-assigned a thread priority higher than that of its children. Faster rate groups tend to be the highest priority of the
-rate groups.
-
-The active rate group sends messages in order to each of the attached components. Thus, higher priority children tend to
-be attached to lower index `Sched` ports than lower priority children.
 
 ### Passive and Active Components
 

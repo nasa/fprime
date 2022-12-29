@@ -54,9 +54,9 @@ The driver is responsible for reading the data from the hardware in either conte
 To send data to a driver, an `Fw::Buffer` is passed to the driver's send input port and the data wrapped by the buffer
 will be pushed out to the hardware. Drivers respond to sends with one of the following statuses:
 
-1. SendStatus.SEND_OK: indicates the send was successful
-2. SendStatus.SEND_RETRY: indicates subsequent retransmission will likely succeed 
-3. SendStatus.SEND_ERROR: send failed, the data was not sent, and future success cannot be predicted
+1. `SendStatus.SEND_OK`: indicates the send was successful
+2. `SendStatus.SEND_RETRY`: indicates subsequent retransmission will likely succeed 
+3. `SendStatus.SEND_ERROR`: send failed, the data was not sent, and future success cannot be predicted
 
 **Polling Data**
 
@@ -65,9 +65,9 @@ need a thread constantly trying to read data. It is used in rate-group-driven ba
 reception of data and remove the need for a task to spin looking for data. To poll data, an `Fw::Buffer` is passed to
 the driver's poll input port where the buffer is filled with available data.  Polling returns the following statuses:
 
-1. PollStatus.POLL_OK: indicates the buffer is filled with valid data
-2. PollStatus.POLL_RETRY: indicates a subsequent retry of the polling call will likely result in valid data
-3. PollStatus.POLL_ERROR: polling failed, the buffer data is invalid, and future success cannot be predicted
+1. `PollStatus.POLL_OK`: indicates the buffer is filled with valid data
+2. `PollStatus.POLL_RETRY`: indicates a subsequent retry of the polling call will likely result in valid data
+3. `PollStatus.POLL_ERROR`: polling failed, the buffer data is invalid, and future success cannot be predicted
 
 **Receiving Data**
 
@@ -77,8 +77,8 @@ has an internal task that calls the receive output port when data has been recei
 nothing to retry.
 
 
-1. RecvStatus.RECV_OK: receive works as expected and the buffer has valid data
-2. RecvStatus.RECV_ERROR: receive failed and the buffer does not have valid data
+1. `RecvStatus.RECV_OK`: receive works as expected and the buffer has valid data
+2. `RecvStatus.RECV_ERROR`: receive failed and the buffer does not have valid data
 
 ### Uplink
 
@@ -89,11 +89,11 @@ it polls for data or it may be driven by a driver's receive output port in which
 incoming port call. Svc.Deframer implements the
 [DeframingProtocolInterface](../api/c++/html/class_deframing_protocol_interface.html).
 
-Svc.Deframer unpacks F´ data from the supplied buffer using a
+`Svc.Deframer` unpacks F´ data from the supplied buffer using a
 [Svc::DeframingProtocol](../api/c++/html/class_svc_1_1_deframing_protocol.html), which calls back through the
 DeframingProtocolInterface to send deframed packets out to F´ components.
 
-Internally, Svc.Deframer uses a circular buffer to store incoming data such that messages are not required to be
+Internally, `Svc.Deframer` uses a circular buffer to store incoming data such that messages are not required to be
 complete. This buffer is updated with the latest data and then processed for messages on each poll or receiving of data.
 
 ### Downlink
@@ -102,7 +102,7 @@ Downlink takes in F´ data and wraps the data with bytes supporting the necessar
 sent to the driver for handling. Downlink is implemented with the [Svc.Framer](../api/c++/html/svc_framer.html)
 component, which implements the [FramingProtocolInterface](../api/c++/html/class_framing_protocol_interface.html).
 
-Svc.Framer packs F´ data using a [Svc::FramingProtocol](../api/c++/html/class_svc_1_1_framing_protocol.html), which
+`Svc.Framer` packs F´ data using a [Svc::FramingProtocol](../api/c++/html/class_svc_1_1_framing_protocol.html), which
 calls back through the FramingProtocolInterface to send framed packets out to the driver.
 
 ## Adding a Custom Wire Protocol
@@ -132,7 +132,7 @@ class MyFrameProtocol : public Svc::FramingProtocol {
 ```
 Here the protocol starts a frame with `0xdeadbeef`, followed by the data size, and then the data.
 
-Svc::DeframingProtocol implementors need to implement one function: deframe, taking in a circular buffer supplying data,
+`Svc::DeframingProtocol` implementors need to implement one function: `deframe`, taking in a circular buffer supplying data,
 filling the needed variable, and returning a status. The base class supplies a
 [DeframingProtocolInterface](../api/c++/html/class_deframing_protocol_interface.html) member variable, `m_interface`,
 that allows implementors to call out for allocating data and routing the deframed data. A minimal implementation is:
@@ -173,7 +173,7 @@ class MyDeframeProtocol : public DeframingProtocol {
 Here the protocol starts a frame with `0xdeadbeef` and uses size to extra the data. Deframing is typically the inverse
 of the framing protocol as seen in this example.
 
-**Note:** implementors should always use `peak` to get data and never rotate it, as Svc.Deframer will rotate the buffer
+**Note:** implementors should always use `peek` to get data and never rotate it, as `Svc.Deframer` will rotate the buffer
 based on the status.
 
 ## Adding a Custom Driver 
@@ -181,7 +181,7 @@ based on the status.
 To be compatible with this ground interface, a driver must implement the
 [byte steam model interface](https://github.com/nasa/fprime/blob/devel/Drv/ByteStreamDriverModel/ByteStreamDriverModel.fpp).
 The driver may add any other ports, events, telemetry, or other F´ constructs as needed but it must define the ports as
-described in the ByteStreamDriverModel.  These ports are called out in the below FPP snippet.
+described in the `ByteStreamDriverModel`.  These ports are called out in the below FPP snippet.
 
 ```fpp
     output port ready: Drv.ByteStreamReady
@@ -193,6 +193,6 @@ described in the ByteStreamDriverModel.  These ports are called out in the below
 
 1. **ready**: (output) drivers call this port without arguments to signal it is ready to receive data via the send port.
 2. **send**: (input) clients call this port passing in an `Fw::Buffer` to send data.
-3. **recv**: (output) drivers operating in asynchronous mode call this port with a RecvStatus and `Fw::Buffer` to
+3. **recv**: (output) drivers operating in asynchronous mode call this port with a `RecvStatus` and `Fw::Buffer` to
    provide data.
-4. **poll**: (input) drivers operating in poll mode fill an `Fw::Buffer` and return a PollStatus to provide data.
+4. **poll**: (input) drivers operating in poll mode fill an `Fw::Buffer` and return a `PollStatus` to provide data.

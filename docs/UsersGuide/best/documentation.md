@@ -69,11 +69,11 @@ change these settings)
 
 ## GitHub Pages Notes
 
-There is a small problem with the Doxygen files being generated and then subsequently hosted on GitHub pages. This is because Doxygen converts the leading / of markdown paths to an _ which then is ignored by Jekyll, a static site generator used by gh-pages.
+There is a small problem with the Doxygen files being generated and then subsequently hosted on GitHub pages. This is because Doxygen converts the leading `/` of markdown paths to an `_` which then is ignored by Jekyll, a static site generator used by gh-pages.
 
 Possible fixes:
 
-1. Projects can set no-jekyll on their GitHub pages.  This will prevent converting MD to web pages, but the HTML output of Doxygen will be hosted as is. This is a good choice for projects that just want to host Doxygen output.
+1. Projects can set `no-jekyll` on their GitHub pages.  This will prevent converting MarkDown to web pages, but the HTML output of Doxygen will be hosted as is. This is a good choice for projects that just want to host Doxygen output.
 
-2. Rename underscore files. This is necessary when Jekyll needs to preprocess MD files. A sample renaming script can
+2. Rename underscore files. This is necessary when Jekyll needs to pre-process MarkDown files. A sample renaming script can
 be found next to the Doxygen sample configuration. Mileage may vary.

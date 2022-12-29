@@ -22,9 +22,9 @@ The software system architecture is designed to break down software into modules
 
 ### Software Layering
 
-Software layering allows the separation of concerns by implementing logic such that a module only interacts with the layer below it. In addition, layering allows for decoupling code dependencies, as upper layers depend down the later stack, but layers do not depend up the stack. Thus preventing circular dependencies.
+Software layering allows the separation of concerns by implementing logic such that a module only interacts with the layer below it. In addition, layering allows for decoupling code dependencies, as upper layers depend down the layer stack, but layers do not depend up the stack. This helps avoid circular dependencies.
 
-Layers can be replaced to support reusability, simulation, and testing. Fault protection can be isolated to a single layer and thus handled at the appropriate level.
+Layers can be replaced to support reusability, simulation, and testing. Fault protection can be isolated to a single layer and handled at the appropriate level.
 
 ## Application Manager Driver Pattern
 

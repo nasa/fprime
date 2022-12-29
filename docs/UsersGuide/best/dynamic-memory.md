@@ -1,11 +1,13 @@
 # Dynamic Memory Allocation Using `Fw::Buffer`
 
-In embedded systems, dynamic memory allocation (a.k.a heap allocation) is typically avoided to reduce the steady-state
-variability in a running system. Avoiding dynamic memory allocation also avoids the problem of what to do in the case of
-a failed allocation. However, sometimes dynamic allocation provides for a simpler or more efficient solution.
+In embedded systems, heap memory allocation after initialization is typically avoided to reduce the steady-state
+variability in a running system. Avoiding memory allocation after initialization also avoids the problem of what to do in the case of
+a failed allocation or memory fragmentation. Sometimes, however, dynamic allocation after initialization provides for a simpler or more efficient solution.
 
 Safe dynamic allocation is available using the buffer manager pattern in F´. In short, this pattern allows components to
-dynamically allocate memory through a port call to a component designed to manage memory for the system. There are three steps in this process:
+dynamically allocate memory through a port call to a component designed to manage memory for the system. This memory is allocated at initialization time to provide a fixed number of fixed-size buffers to users that need memory dynamically. See [Svc::BufferManager](../../../Svc/BufferManager/docs/sdd.md) for a more complete description.
+
+There are three steps in this process:
 
 1. Call allocation port receiving an`Fw::Buffer`
 2. Use allocated in the `Fw::Buffer`
@@ -15,7 +17,7 @@ dynamically allocate memory through a port call to a component designed to manag
 
 This section will describe the work done within a component to allocate, use, and deallocate buffers. 
 
-## Allocating and Deallocating `Fw::Buffer`s
+## Allocating and Deallocating `Fw::Buffer` instances
 
 Allocation and deallocation are done through port calls to a buffer managing component. The component needing dynamic
 memory allocation should include two output ports:
@@ -101,9 +103,9 @@ thus can be used interchangeably subject to the descriptions in this section.
 
 Each section will describe any special setup needed in the topology and how to hook up the manager's ports.
 
-### Svc.StaticMemory
+### `Svc.StaticMemory`
 
-Svc.StaticMemory uses a stack-based pool of memory to support allocation. This pool is composed of fixed-size regions
+`Svc.StaticMemory` uses a stack-based pool of memory to support allocation. This pool is composed of fixed-size regions
 each of which is tied to a specific client. Each client's allocation **must** be deallocated before a subsequent request by
 the same client. Since allocation and deallocation ports are port arrays, each client's allocation and deallocation
 ports must be hooked up in parallel.
@@ -112,11 +114,11 @@ This component is designed for simplicity of implementation. System memory usage
 multiplied by the size of the memory regions. This memory is allocated as a large array on the stack. Valid memory 
 allocations will always be returned or a software error will be tripped.
 
-Svc.StaticMemory is described in more detail [here](../api/c++/html/svc_static_memory.html).
+`Svc.StaticMemory` is described in more detail [here](../api/c++/html/svc_static_memory.html).
 
-**When To Use Svc.StaticMemory**
+**When To Use `Svc.StaticMemory`**
 
-Use Svc.StaticMemory in situations where memory must always be available and sharing or efficient use of memory is a concern. Svc.StaticMemory is typically not suitable for situations where asynchronous memory handling occurs between 
+Use `Svc.StaticMemory` in situations where memory must always be available and sharing or efficient use of memory is a concern. `Svc.StaticMemory` is typically not suitable for situations where asynchronous memory handling occurs between 
 allocation and deallocation.
 
 ***Usage Requirements***
@@ -127,12 +129,12 @@ Since this component is designed to be simple, its usage has several caveats. Th
 2. Allocations above `Svc::StaticMemoryConfig::STATIC_MEMORY_ALLOCATION_SIZE` is considered an error
 3. It is an error for a client to allocate memory before deallocating previously allocated memory
 
-These rules imply that memory allocated from Svc.StaticMemory should never be sent through an asynchronous port as this will risk violating item 3.
+These rules imply that memory allocated from `Svc.StaticMemory` should never be sent through an asynchronous port as this will risk violating item 3.
 
 
 **Connections**
 
-All connections to Svc.StaticMemory are done using parallel port indices per-client. This is shown in the Topology
+All connections to `Svc.StaticMemory` are done using parallel port indices per-client. This is shown in the Topology
 snippet shown below:
 
 ```fpp
@@ -143,7 +145,7 @@ snippet shown below:
       client2.deallocate -> my_static_memory.bufferDeallocate[1]
 ```
 
-Svc.StaticMemory does not use any other ports. Please review the configuration to ensure that sufficient regions are
+`Svc.StaticMemory` does not use any other ports. Please review the configuration to ensure that sufficient regions are
 available for the number of clients used.
 
 ***Configuration and Setup***
@@ -260,7 +262,7 @@ There is no requirement that the allocating component and the deallocating compo
 be chained together for multiple processing steps before deallocation. There are two requirements:
 
 1. `Fw::Buffers` must eventually be returned to the instance that allocated them
-2. `Svc.StaticMemory` cannot be used in chains involving asynchronous calls
+2. ``Svc.StaticMemory`` cannot be used in chains involving asynchronous calls
 
 Inter-component connections typically use the same `Fw.BufferSend` port to pass the buffer along the chain. A sample
 chain is shown here using Svc.BufferManager as the allocation source.
