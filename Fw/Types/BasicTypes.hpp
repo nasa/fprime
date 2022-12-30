@@ -23,6 +23,11 @@ extern "C" {
   #error Unsupported compiler!
 #endif
 
+#define FW_NO_ASSERT                        1   //!< Asserts turned off
+#define FW_FILEID_ASSERT                    2   //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
+#define FW_FILENAME_ASSERT                  3   //!< Uses the file path in the assert - image stores filenames
+#define FW_RELATIVE_PATH_ASSERT             4   //!< Uses a relative file path (within fprime/fprime library) for assert. - requires -DASSERT_RELATIVE_PATH=path to be set on the compile command line
+
 /*----------------------------------------------------------------------------*/
 typedef int8_t          I8; //!< 8-bit signed integer
 typedef uint8_t         U8; //!< 8-bit unsigned integer
@@ -96,20 +101,26 @@ struct BasicLimits : PlatformLimits {
     static const uint8_t U8_MIN = 0;
     static const uint8_t U8_MAX = UINT8_MAX;
 
+#if FW_HAS_16_BIT
     static const I16 I16_MIN = INT16_MIN;
     static const I16 I16_MAX = INT16_MAX;
     static const U16 U16_MIN = 0;
     static const U16 U16_MAX = UINT16_MAX;
+#endif
 
+#if FW_HAS_32_BIT
     static const I32 I32_MIN = INT32_MIN;
     static const I32 I32_MAX = INT32_MAX;
     static const U32 U32_MIN = 0;
     static const U32 U32_MAX = UINT32_MAX;
+#endif
 
+#if FW_HAS_64_BIT
     static const I64 I64_MIN = INT64_MIN;
     static const I64 I64_MAX = INT64_MAX;
     static const U64 U64_MIN = 0;
     static const U64 U64_MAX = UINT64_MAX;
+#endif
 };
 
 #endif

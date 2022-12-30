@@ -121,8 +121,8 @@ $emit_cpp_params([ $param_instance ])
 \#if FW_ENABLE_TEXT_LOGGING == 1
   #end if
     for (
-        NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_from_${instance}();
+        PlatformIntType _port = 0;
+        _port < static_cast<PlatformIntType>(this->getNum_from_${instance}());
         ++_port
     ) {
 
@@ -139,7 +139,7 @@ $emit_cpp_params([ $param_instance ])
       (void) snprintf(
           _portName,
           sizeof(_portName),
-          "%s_${port_name}[%d]",
+          "%s_${port_name}[%" PRI_PlatformIntType "]",
           this->m_objName,
           _port
       );
@@ -157,8 +157,8 @@ $emit_cpp_params([ $param_instance ])
     // Initialize output port $instance
 
     for (
-        NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_to_${instance}();
+        PlatformIntType _port = 0;
+        _port < static_cast<PlatformIntType>(this->getNum_to_${instance}());
         ++_port
     ) {
       this->m_to_${instance}[_port].init();
@@ -168,7 +168,7 @@ $emit_cpp_params([ $param_instance ])
       snprintf(
           _portName,
           sizeof(_portName),
-          "%s_to_${instance}[%d]",
+          "%s_to_${instance}[%" PRI_PlatformIntType "]",
           this->m_objName,
           _port
       );
@@ -1114,11 +1114,11 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
 
     fprintf(
         file,
-        "EVENT: (%d) (%d:%d,%d) %s: %s\n",
+        "EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
         e.id,
-        const_cast<TextLogEntry&>(e).timeTag.getTimeBase(),
-        const_cast<TextLogEntry&>(e).timeTag.getSeconds(),
-        const_cast<TextLogEntry&>(e).timeTag.getUSeconds(),
+        static_cast<FwTimeBaseStoreType>(e.timeTag.getTimeBase()),
+        e.timeTag.getSeconds(),
+        e.timeTag.getUSeconds(),
         severityString,
         e.text.toChar()
     );

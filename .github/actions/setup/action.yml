@@ -9,7 +9,17 @@ runs:
   steps:
   - run: git fetch --tags
     shell: bash
-  - run: pip3 install setuptools_scm urllib3
+  - name: Add Python bin to PATH
+    run: echo "/Library/Frameworks/Python.framework/Versions/Current/bin" >> $GITHUB_PATH
+    shell: bash
+  - run: pip3 install setuptools_scm wheel urllib3
     shell: bash
   - run: pip3 install -r ${{ inputs.location }}/requirements.txt
     shell: bash
+  - run: which fprime-util
+    shell: bash
+  - run: which fprime-gds
+    shell: bash
+  - run: which fpp-check
+    shell: bash
+    

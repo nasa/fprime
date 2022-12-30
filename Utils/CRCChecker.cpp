@@ -26,7 +26,7 @@ namespace Utils {
     NATIVE_INT_TYPE i;
     NATIVE_INT_TYPE blocks;
     NATIVE_INT_TYPE remaining_bytes;
-    U64 filesize;
+    FwSizeType filesize;
     Os::File f;
     Os::FileSystem::Status fs_stat;
     Os::File::Status stat;
@@ -46,7 +46,7 @@ namespace Utils {
     }
 
     int_file_size = static_cast<NATIVE_INT_TYPE>(filesize);
-    if(static_cast<U64>(int_file_size) != filesize)
+    if(static_cast<FwSizeType>(int_file_size) != filesize)
     {
       return FAILED_FILE_SIZE_CAST;
     }
@@ -154,7 +154,7 @@ namespace Utils {
     NATIVE_INT_TYPE i;
     NATIVE_INT_TYPE blocks;
     NATIVE_INT_TYPE remaining_bytes;
-    U64 filesize;
+    FwSizeType filesize;
     Os::File f;
     Os::FileSystem::Status fs_stat;
     Os::File::Status stat;
@@ -172,7 +172,7 @@ namespace Utils {
     }
 
     int_file_size = static_cast<NATIVE_INT_TYPE>(filesize);
-    if(static_cast<U64>(int_file_size) != filesize)
+    if(static_cast<FwSizeType>(int_file_size) != filesize)
     {
       return FAILED_FILE_SIZE_CAST;
     }
