@@ -8,8 +8,6 @@
 
 # Static and configuration FPP files
 set(FPP_CONFIGS
-    "${FPRIME_CONFIG_DIR}/AcConstants.fpp"
-    "${FPRIME_CONFIG_DIR}/FpConfig.fpp"
     "${FPRIME_FRAMEWORK_PATH}/Fpp/ToCpp.fpp"
 )
 set(FPP_LOCATE_DEFS_HELPER "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/fpp-wrapper/fpp-redirect-helper")

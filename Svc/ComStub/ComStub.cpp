@@ -27,7 +27,7 @@ ComStub::~ComStub() {}
 // ----------------------------------------------------------------------
 
 Drv::SendStatus ComStub::comDataIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& sendBuffer) {
-    FW_ASSERT(!this->m_reinitialize);  // A message should never get here if we need to reinitialize is needed
+    FW_ASSERT(!this->m_reinitialize || !this->isConnected_comStatus_OutputPort(0));  // A message should never get here if we need to reinitialize is needed
     Drv::SendStatus driverStatus = Drv::SendStatus::SEND_RETRY;
     for (NATIVE_UINT_TYPE i = 0; driverStatus == Drv::SendStatus::SEND_RETRY && i < RETRY_LIMIT; i++) {
         driverStatus = this->drvDataOut_out(0, sendBuffer);
