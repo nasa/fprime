@@ -20,7 +20,7 @@ Although fprime tries to simplify CMake usage for fprime-specific tasks, an unde
 
 ## Getting Started with CMake and F´
 
-CMake as a system auto-generates OS-specific make files for building F´. Once these file are generated, standard make tools can be run to perform the compiling, assembling, linking, etc. In other words, CMake is a high-level build system that defers low-level build systems to build. It generates the inputs to these low-level systems in a straightforward way.
+CMake as a system auto-generates OS-specific make files for building F´. Once these files are generated, standard make tools can be run to perform the compiling, assembling, linking, etc. In other words, CMake is a high-level build system that defers low-level build systems to build. It generates the inputs to these low-level systems in a straightforward way.
 
 fprime sets up CMake in such a way that adding a module (component, port, deployment) is easy and automatically takes
 advantage of the autocoding capabilities of fprime. To add new modules to the CMake system, users need to perform the following steps:

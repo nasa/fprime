@@ -67,7 +67,7 @@ groups.
 We have yet to see any issues running F´ on multi-core systems. Some users have been successful in scheduling high-priority
 components to designated cores.  In general, these systems behave just fine. **Note:** Some portions of F´ use `U32`
 types so synchronize between threads. In many systems this is a safe atomic operation, however; this is not guaranteed
-in all systems. A project should use care to ensure that its system will behave as expected.  These usages are under
+for all systems. A project should use care to ensure that its system will behave as expected.  These usages are under
 review and will be corrected over time.
 
 When running F´ on multi-platform systems, users typically define a deployment for each platform in the system. These
