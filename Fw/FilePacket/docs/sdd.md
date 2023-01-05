@@ -11,7 +11,7 @@ It represents an ISF file packet.
 The file packet format is similar to the Protocol Data Unit (PDU) format
 defined in the CCSDS File Delivery Protocol (CFDP).
 See &sect; 5 of the
-[CCSDS File Delivery Protocol (CFDP) Recommended Standard](http://public.ccsds.org/publications/archive/727x0b4.pdf).
+[CCSDS File Delivery Protocol (CFDP) Recommended Standard](https://public.ccsds.org/Pubs/727x0b4s.pdf).
 
 Each file packet contains the following data:
 

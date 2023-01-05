@@ -43,9 +43,9 @@ namespace Test {
     void UnitTestAssert::doAssert() {
         this->m_assertFailed = true;
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-        (void)fprintf(stderr,"Assert File: 0x%x, Line: %u\n", this->m_file, this->m_lineNo);
+        (void)fprintf(stderr,"Assert File: 0x%" PRIx32 ", Line: %" PRI_PlatformUIntType "\n", this->m_file, this->m_lineNo);
 #else
-        (void)fprintf(stderr,"Assert File: %s, Line: %u\n", this->m_file.toChar(), this->m_lineNo);
+        (void)fprintf(stderr,"Assert File: %s, Line: %" PRI_PlatformUIntType "\n", this->m_file.toChar(), this->m_lineNo);
 #endif
     }
 
@@ -53,12 +53,12 @@ namespace Test {
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
             NATIVE_UINT_TYPE numArgs,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6
             ) {
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
@@ -82,12 +82,12 @@ namespace Test {
                     File& file,
                     NATIVE_UINT_TYPE& lineNo,
                     NATIVE_UINT_TYPE& numArgs,
-                    AssertArg& arg1,
-                    AssertArg& arg2,
-                    AssertArg& arg3,
-                    AssertArg& arg4,
-                    AssertArg& arg5,
-                    AssertArg& arg6
+                    FwAssertArgType& arg1,
+                    FwAssertArgType& arg2,
+                    FwAssertArgType& arg3,
+                    FwAssertArgType& arg4,
+                    FwAssertArgType& arg5,
+                    FwAssertArgType& arg6
                     ) const {
 
         file = this->m_file;

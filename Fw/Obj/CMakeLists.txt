@@ -1,7 +1,7 @@
 ####
 # F prime CMakeLists.txt:
 #
-# SOURCE_FILES: combined list of source and autocoding diles
+# SOURCE_FILES: combined list of source and autocoding files
 # MOD_DEPS: (optional) module dependencies
 #
 ####
@@ -12,9 +12,7 @@ set(SOURCE_FILES
 set(MOD_DEPS
   Fw/Cfg
   Fw/Types
+  Fw/Logger
 )
-if (BUILD_SHARED_LIBS)
-  list(APPEND MOD_DEPS "Fw/Logger")
-endif()
 
 register_fprime_module()

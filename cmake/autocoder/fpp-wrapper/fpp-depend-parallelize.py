@@ -5,6 +5,14 @@ import sys
 from pathlib import Path
 
 
+class ExceptionWithStandardError(Exception):
+    """Exception plus standard error"""
+
+    def __init__(self, message, stderr):
+        message = f"{message}\n{stderr}"
+        super().__init__(message)
+
+
 def run_process(directory, arguments):
     """Runs the fpp-depend process"""
     working_dir = directory / "fpp-cache"
@@ -16,6 +24,7 @@ def run_process(directory, arguments):
             stdin=subprocess.DEVNULL,
             stdout=capture_file,
             stderr=subprocess.PIPE,
+            text=True,
         )
 
 
@@ -23,7 +32,9 @@ def raise_on_error(process, arguments):
     """Waits for process, raises on error"""
     code = process.wait()
     if code != 0:
-        raise Exception(f"Failed to run '{' '.join(arguments)}'")
+        raise ExceptionWithStandardError(
+            f"Failed to run '{' '.join(arguments)}'", process.stderr.read()
+        )
 
 
 def run_parallel_depend(fpp_depend, fpp_locs, file_input):

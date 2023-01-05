@@ -9,7 +9,7 @@
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/Assert.hpp>
 
@@ -33,11 +33,6 @@ extern "C" {
 #endif
 
 int main(int argc, char* argv[]) {
-    // Construct the topology here.
-    Fw::PortBase::setTrace(true);
-    Fw::SimpleObjRegistry simpleReg_ptr;
-    simpleReg_ptr.dump();
-
     setbuf(stdout, nullptr);
 
     cout << "Initialize Arrays" << endl;

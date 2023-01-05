@@ -103,14 +103,10 @@ class CommentFormatters:
         Returns -1 if everything is a newline
         """
 
-        count = 0
-
-        for item in line_list:
+        for count, item in enumerate(line_list):
             item = item.strip()
             if item != "":
                 return count
-            count += 1
-
         return -1
 
     def _getEndsExcludingNewlines(self, line_list):
@@ -705,7 +701,7 @@ class Formatters:
                 "ERROR: DETECTED AN INVALID CHARACTER IN COMMAND STEM NAME (%s)."
                 % name_string
             )
-            raise Exception(
+            raise ValueError(
                 "Fatal error, detected an invalid character in command stem name."
             )
         # All is ok
@@ -728,7 +724,7 @@ class Formatters:
         for c in cmds:
             if sum([int(x == c) for x in cmds]) > 1:
                 PRINT.info("ERROR: DETECTED %s COMMAND STEM NAME REPEATED." % c)
-                raise Exception("Error detected repeated command stem name.")
+                raise ValueError("Error detected repeated command stem name.")
         return True
 
     def evrNamePrefix(self, name):
@@ -1078,15 +1074,13 @@ class Formatters:
                 cpos = apos + type_max + 1
 
             # place args and comments and put together the string.
-            i = 0
             func_arg_list = []
-            for a in format_func_list[1:]:
+            for i, a in enumerate(format_func_list[1:]):
                 pad = (cpos - (apos + len(a.strip()))) * " "
                 str = (
                     apad + a.strip() + pad + comment_list[i] + "\n"
                 )  #  + pad + comment_list[i]
                 func_arg_list.append(str)
-                i += 1
             #
             # print 'Last arg: ',func_arg_list[-1].replace(') ',');')
             # TODO: add switch so a ; is inserted - end of last arg after ).
@@ -1119,14 +1113,14 @@ class Formatters:
                 "ERROR: No left paren in function name passed to formatFun: %s."
                 % one_line
             )
-            raise Exception("No left paren in function name passed to formatFun.")
+            raise ValueError("No left paren in function name passed to formatFun.")
 
         two_chunks = one_line.split("(")
         if len(two_chunks) != 2:
             PRINT.info(
                 "ERROR: Too many left parens in name passed to formatFun: %s" % one_line
             )
-            raise Exception("Too many left parens in name passed to formatFun.")
+            raise ValueError("Too many left parens in name passed to formatFun.")
 
         type_and_name = two_chunks[0]
         args = two_chunks[1]
@@ -1216,11 +1210,9 @@ class Formatters:
 
             max_type_length = max(list(map(len, type_list)))
 
-            i = 0
-            for type in type_list:
+            for i, type in enumerate(type_list):
                 pad = (max_type_length + pad_spaces) - len(type)
                 str = type + pad * " " + arg_list[i]
-                i += 1
                 str_list.append(str)
 
         return str_list
@@ -1318,10 +1310,7 @@ class Formatters:
         and no '_' in string form.
         """
         mod_id_list = mod_id.strip("_").split("_")
-        if len(mod_id_list) == 1:
-            mod_id_cap = mod_id[0].upper() + mod_id[1:]
-        elif len(mod_id_list) == 2:
-            mod_id_cap = [x[0].upper() + x[1:] for x in mod_id_list]
+        mod_id_cap = [x[0].upper() + x[1:] for x in mod_id_list]
         # size of mod_id list error in subThreadDir method.
         mod_id_cap_str = "".join(mod_id_cap)
         return mod_id_cap_str

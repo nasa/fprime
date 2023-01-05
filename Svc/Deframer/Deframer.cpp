@@ -14,7 +14,7 @@
 
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Logger/Logger.hpp"
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Svc/Deframer/Deframer.hpp"
 
 namespace Svc {

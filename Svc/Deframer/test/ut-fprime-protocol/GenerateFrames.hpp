@@ -7,7 +7,7 @@
 #ifndef SVC_GENERATE_FRAMES_HPP
 #define SVC_GENERATE_FRAMES_HPP
 
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/StringType.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"

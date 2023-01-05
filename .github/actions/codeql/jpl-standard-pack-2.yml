@@ -1,0 +1,20 @@
+name: "CodeQL JPL Coding Standard - Recommendations 1 of 2"
+
+disable-default-queries: true
+
+packs:
+  # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
+  - codeql/cpp-queries:JPL_C
+
+query-filters:
+  - exclude:
+      problem.severity:
+        - error
+        - warning
+  # We are excluding the following query because it overflows the limit of
+  # 5000 results that the SARIF upload can handle
+  # This sole query is ran in jpl-standard-pack-3.yml
+  # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github#uploading-a-code-scanning-analysis-with-github-actions
+  - exclude:
+      id:
+        - cpp/jpl-c/basic-int-types

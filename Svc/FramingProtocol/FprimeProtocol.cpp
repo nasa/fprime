@@ -9,10 +9,8 @@
 // acknowledged.
 //
 // ======================================================================
-
-#include <limits>
-
 #include "FprimeProtocol.hpp"
+#include "FpConfig.hpp"
 #include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
@@ -65,7 +63,8 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
     hash.init();
     for (U32 i = 0; i < size; i++) {
         char byte;
-        ring.peek(byte, i);
+        const Fw::SerializeStatus status = ring.peek(byte, i);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
         hash.update(&byte, 1);
     }
     hash.final(hashBuffer);
@@ -73,7 +72,8 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
     for (U32 i = 0; i < HASH_DIGEST_LENGTH; i++) {
         char calc = static_cast<char>(hashBuffer.getBuffAddr()[i]);
         char sent = 0;
-        ring.peek(sent, size + i);
+        const Fw::SerializeStatus status = ring.peek(sent, size + i);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
         if (calc != sent) {
             return false;
         }
@@ -100,7 +100,7 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     // Read size from header
     status = ring.peek(size, sizeof(FpFrameHeader::TokenType));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    const U32 maxU32 = std::numeric_limits<U32>::max();
+    const U32 maxU32 = FpLimits::U32_MAX;
     if (size > maxU32 - (FpFrameHeader::SIZE + HASH_DIGEST_LENGTH)) {
         // Size is too large to process: needed would overflow
         return DeframingProtocol::DEFRAMING_INVALID_SIZE;
@@ -126,7 +126,8 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     // That causes issues in routing; adjust size.
     FW_ASSERT(buffer.getSize() >= size);
     buffer.setSize(size);
-    ring.peek(buffer.getData(), size, FpFrameHeader::SIZE);
+    status = ring.peek(buffer.getData(), size, FpFrameHeader::SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     m_interface->route(buffer);
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
 }

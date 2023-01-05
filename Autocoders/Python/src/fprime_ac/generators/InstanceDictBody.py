@@ -79,7 +79,7 @@ class InstanceDictBody:
             DEBUG.error(
                 "InstanceDictBodyVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "InstanceDictBodyVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class InstanceDictBody:
             DEBUG.error(
                 "InstanceDictBodyVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "InstanceDictBodyVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

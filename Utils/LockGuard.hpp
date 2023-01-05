@@ -12,7 +12,7 @@
 #ifndef LockGuard_HPP
 #define LockGuard_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/Mutex.hpp>
 
 namespace Utils {

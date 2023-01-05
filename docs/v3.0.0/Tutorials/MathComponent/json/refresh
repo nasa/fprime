@@ -1,0 +1,3 @@
+#!/bin/sh -e
+
+fpl-layout < top.txt > top.json

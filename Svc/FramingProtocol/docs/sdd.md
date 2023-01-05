@@ -26,11 +26,11 @@ defined in the `FramingProtocol` library.
 
 ## 1. Requirements
 
-Requirement | Description | Verification Method
------------ | ----------- | -------------------
-FramingProtocol-001 | `Svc::FramingProtocol` shall provide the interface to a protocol for wrapping data in frames for transmission to the ground|Inspection
-FramingProtocol-002 | `Svc::FramingProtocol` shall provide the interface to a protocol for extracting data from frames received from the ground|Inspection
-FramingProtocol-003 | `Svc::FramingProtocol` shall implement the framing and deframing protocols used by the F Prime GDS|Inspection
+| Requirement             | Description                                                                                                                 | Verification Method |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------|---------------------|
+| Svc-FramingProtocol-001 | `Svc::FramingProtocol` shall provide the interface to a protocol for wrapping data in frames for transmission to the ground | Unit test           |
+| Svc-FramingProtocol-002 | `Svc::FramingProtocol` shall provide the interface to a protocol for extracting data from frames received from the ground   | Unit test           |
+| Svc-FramingProtocol-003 | `Svc::FramingProtocol` shall implement the framing and deframing protocols used by the F Prime GDS                          | Unit test           |
 
 ## 2. Using the Interface
 
@@ -103,8 +103,12 @@ To implement a framing protocol, do the following:
 
 1. Implement the abstract class `FramingProtocolInterface`.
 
-1. Use the implementation in step 1 to implement the abstract class
+2. Use the implementation in step 1 to implement the abstract class
 `FramingProtocol`.
+
+Implementations of the framing protocol are allowed to produce zero or one frame
+for each incoming packet. Producing zero packets is useful when aggregating packets
+into a larger frame. Producing more than one packet is not permitted.
 
 #### 3.1.1. Implementing `FramingProtocolInterface`
 
@@ -161,9 +165,11 @@ Your implementation of `frame` should do the following:
 
 1. Use `m_interface->allocate` to allocate a buffer to hold the framed data.
 
-1. Frame the data into the buffer allocated in step 1.
+2. Frame the data into the buffer allocated in step 1.
 
-1. Use `m_interface->send` to send the buffer.
+3. Use `m_interface->send` to send the buffer. `m_interface->send` should be called at most once in any
+single invocation of `frame`. Aggregating protocols may only call `m_interface->send` for occasional
+invocations of `frame`.
 
 ### 3.2. Deframing
 

@@ -63,7 +63,7 @@ impl_file_template = """
 \#include <${output_header}>
 
 \#include <FpConfig.hpp>
-\#include <Fw/Types/BasicTypes.hpp>
+\#include <FpConfig.hpp>
 \#include <Fw/Time/Time.hpp>
 
 // Verify packets not too large for ComBuffer
@@ -114,6 +114,8 @@ namespace ${packet_list_namespace} {
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 
+PACKET_VIEW_DIR = "./Packet-Views"
+
 
 class TlmPacketParseValueError(ValueError):
     pass
@@ -136,8 +138,8 @@ class TlmPacketParser(object):
     def get_type_size(self, type_name, size):
 
         # switch based on type
-        if type == "string":
-            return size
+        if type_name == "string":
+            return int(size) + 2  # plus 2 to store the string length
         elif type_name == "I8":
             return 1
         elif type_name == "I16":
@@ -162,28 +164,6 @@ class TlmPacketParser(object):
             return 1
         else:
             return None
-
-    #    def search_for_file(self,file_type, file_path):
-    #        '''
-    #        Searches for a given included port or serializable by looking in three places:
-    #        - The specified BUILD_ROOT
-    #        - The F Prime core
-    #        - The exact specified path
-    #        @param file_type: type of file searched for
-    #        @param file_path: path to look for based on offset
-    #        @return: full path of file
-    #        '''
-    #        core = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT)
-    #        for possible in [BUILD_ROOT, core, None]:
-    #            if not possible is None:
-    #                checker = os.path.join(possible, file_path)
-    #            else:
-    #                checker = file_path
-    #            if os.path.exists(checker):
-    #                DEBUG.debug("%s xml type description file: %s" % (file_type,file_path))
-    #                return checker
-    #        else:
-    #            return None
 
     def generate_channel_size_dict(self, the_parsed_topology_xml, xml_filename):
         """
@@ -224,7 +204,7 @@ class TlmPacketParser(object):
 
         for comp in the_parsed_topology_xml.get_instances():
             comp_name = comp.get_name()
-            comp_id = int(comp.get_base_id())
+            comp_id = int(comp.get_base_id(), 0)
             comp_type = comp.get_type()
             if self.verbose:
                 PRINT.debug("Processing %s" % comp_name)
@@ -246,6 +226,9 @@ class TlmPacketParser(object):
                     # if channel is enum
                     if type(chan_type) == type(tuple()):
                         chan_size = 4
+                    # if channel type is string
+                    #                    elif chan_type == "string":
+                    #                        chan_size = int(chan.get_size()) + 2 # FIXME: buffer size storage size magic number - needs to be turned into a constant
                     # if channel is serializable
                     elif chan_type in self.size_dict:
                         chan_size = self.size_dict[chan_type]
@@ -266,7 +249,7 @@ class TlmPacketParser(object):
 
     def gen_packet_file(self, xml_filename):
 
-        view_path = "./Views"
+        view_path = PACKET_VIEW_DIR
 
         if not os.path.exists(view_path):
             os.mkdir(view_path)
@@ -274,11 +257,6 @@ class TlmPacketParser(object):
         # Make sure files
         if not os.path.isfile(xml_filename):
             raise TlmPacketParseIOError("File %s does not exist!" % xml_filename)
-
-        if not "PacketsAi" in xml_filename:
-            raise IOError(
-                "ERROR: Missing PacketsAi at end of file name %s" % xml_filename
-            )
 
         fd = open(xml_filename, "r")
         xml_parser = etree.XMLParser(remove_comments=True)
@@ -315,12 +293,12 @@ class TlmPacketParser(object):
             ht.num_packets = 0
             total_packet_size = 0
             levels = []
-            view_path = "./Views"
+            view_path = PACKET_VIEW_DIR
             # find the topology import
             for entry in element_tree.getroot():
                 # read in topology file
                 if entry.tag == "import_topology":
-                    top_file = search_for_file("Packet", entry.text)
+                    top_file = search_for_file("Topology", entry.text)
                     if top_file is None:
                         raise TlmPacketParseIOError(
                             "import file %s not found" % entry.text
@@ -424,12 +402,9 @@ class TlmPacketParser(object):
                 "Invalid xml type %s" % element_tree.getroot().tag
             )
 
-        output_file_base = os.path.splitext(os.path.basename(xml_filename))[0].replace(
-            "Ai", ""
-        )
-        file_dir = os.path.dirname(xml_filename).replace(
-            get_nearest_build_root(xml_filename) + os.sep, ""
-        )
+        output_file_base = os.path.splitext(os.path.basename(xml_filename))[0]
+        nearest_build_root = get_nearest_build_root(xml_filename)
+        file_dir = os.path.relpath(os.path.dirname(xml_filename), nearest_build_root)
 
         missing_channels = False
 
@@ -499,6 +474,7 @@ class TlmPacketParser(object):
             for (
                 member_name,
                 member_type,
+                member_array_size,
                 member_size,
                 member_format_specifier,
                 member_comment,
@@ -520,6 +496,8 @@ class TlmPacketParser(object):
                     )
                     sys.exit(-1)
                 serializable_size += type_size
+                if member_array_size != None:
+                    serializable_size *= member_array_size
             self.add_type_size(serializable_type, serializable_size)
             if self.verbose:
                 print(
@@ -616,7 +594,7 @@ def main():
         print(f"Usage: {sys.argv[0]} [options] xml_filename")
         return
     elif len(args) == 1:
-        xml_filename = args[0]
+        xml_filename = os.path.abspath(args[0])
     else:
         print("ERROR: Too many filenames, should only have one")
         return
