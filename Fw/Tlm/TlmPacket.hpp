@@ -25,7 +25,7 @@ namespace Fw {
 
             //! Serialize the packet before sending. For use internally in software. To send to the ground, use getBuffer() below.
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialize contents
-            //! Deserialize the packet. For use internally in software. To extract channels, use setBuffer() and extranctValue() below. This is NOT typically used.
+            //! Deserialize the packet. For use internally in software. To extract channels, use setBuffer() and extractValue() below. This is NOT typically used.
             SerializeStatus deserialize(SerializeBufferBase& buffer);
             //! Add telemetry value to buffer. 
             SerializeStatus addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer);
