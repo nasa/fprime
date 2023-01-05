@@ -22,6 +22,9 @@ namespace Fw {
         this->m_tlmBuffer.resetSer();
         // reset packet count
         this->m_numEntries = 0;
+        // make sure packet type is correct before serializing. It should
+        // never be anything but FW_PACKET_TELEM, so assert.
+        FW_ASSERT(FW_PACKET_TELEM == this->m_type,this->m_type);
         // serialize descriptor
         // The function serializeBase inherited from ComPacket converts this->m_type
         // to type FwPacketDescriptorType and serializes the result into this->m_tlmBuffer.
@@ -138,7 +141,7 @@ namespace Fw {
 
     SerializeStatus TlmPacket::deserialize(SerializeBufferBase& buffer) {
 
-        // serialize the number of packets
+        // deserialize the number of packets
         SerializeStatus stat = buffer.deserialize(this->m_numEntries);
         if (stat != SerializeStatus::FW_SERIALIZE_OK) {
             return stat;

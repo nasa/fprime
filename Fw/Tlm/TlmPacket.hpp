@@ -18,32 +18,35 @@ namespace Fw {
     class TlmPacket : public ComPacket {
         public:
 
+            //! Constructor
             TlmPacket();
+            //! Destructor
             virtual ~TlmPacket();
 
+            //! Serialize the packet before sending. For use internally in software. To send to the ground, use getBuffer() below.
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialize contents
-            // Buffer containing value must be remainder of buffer
+            //! Deserialize the packet. For use internally in software. To extract channels, use setBuffer() and extranctValue() below. This is NOT typically used.
             SerializeStatus deserialize(SerializeBufferBase& buffer);
-            // add telemetry value
+            //! Add telemetry value to buffer. 
             SerializeStatus addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer);
-            // extract telemetry value - since there are potentially multiple channel values in the packet, 
-            // the size of the entry must be known
+            //! extract telemetry value - since there are potentially multiple channel values in the packet, 
+            //! the size of the entry must be known
             SerializeStatus extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, NATIVE_UINT_TYPE bufferSize);
 
-            // reset serialization
+            //! Reset serialization of values. This should be done when starting to accumulate a new set of values.
             SerializeStatus resetPktSer(); 
-            // reset serialization
+            //! Reset deserialization. This should be done before extracting values.
             SerializeStatus resetPktDeser(); 
-            // get buffer to send
+            //! get buffer to send to the ground
             Fw::ComBuffer& getBuffer();
-            // set the internal buffer for deserializing
+            //! set the internal buffer for deserializing values
             void setBuffer(Fw::ComBuffer& buffer);
-            // get the number of packets
+            //! get the number of packets added via addValue()
             NATIVE_UINT_TYPE getNumEntries();
 
         PRIVATE:
-            ComBuffer m_tlmBuffer; // !< serialized data
-            NATIVE_UINT_TYPE m_numEntries; // !< number of entries stored
+            ComBuffer m_tlmBuffer; //!< serialized data
+            NATIVE_UINT_TYPE m_numEntries; //!< number of entries stored during addValue()
     };
 
 } /* namespace Fw */
