@@ -3,7 +3,7 @@ title: "F´ Latest Documentation"
 layout: default
 ---
 
-This is the documentation for the latest F´ framework. It is kept consistent with the `devel` branch.
+This is the documentation for the F´ v3.0.0 release series. To view the latest documentation, visit the [documentation home](..).
 
 | F´ Resources | |
 |---|---|
