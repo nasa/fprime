@@ -203,7 +203,7 @@ This defines two events, one at activity hi level to report that lock has been a
 indicate lock lost.
 -->
 <events>
-    <event id="0" name="Gps_LockAquired" severity="ACTIVITY_HI" format_string="GPS lock acquired">
+    <event id="0" name="Gps_LockAcquired" severity="ACTIVITY_HI" format_string="GPS lock acquired">
         <comment>A notification on GPS lock acquired</comment>
     </event>
     <event id="1" name="Gps_LockLost" severity="WARNING_HI" format_string="GPS lock lost">
@@ -238,7 +238,7 @@ This defines four telemetry channels to report basic GPS information.
         <comment>The current altitude</comment>
     </channel>
     <channel id="3" name="Gps_Count" data_type="U32" abbrev="GPS-0003">
-        <comment>The current number of satilites</comment>
+        <comment>The current number of satellites</comment>
     </channel>
 </telemetry>
 ```
@@ -422,7 +422,7 @@ function called *serialRecv_handler* and the second is to implement a command ha
 *Gps_ReportLockStatus_cmdHandler*. The other functions of our code are provided as functions we can use when we
 implement these two pieces. Those available functions are described below:
 
-1. log_ACTIVITY_HI_Gps_LockAquired: used to emit the event *Gps_Lock_aquired* as defined in Events.xml
+1. log_ACTIVITY_HI_Gps_LockAcquired: used to emit the event *Gps_Lock_Acquired* as defined in Events.xml
 2. log_WARNING_HI_Gps_LockLost: used to emit the event *Gps_LockLost* as defined in Events.xml
 3. tlmWrite_Gps_Latitude: used to send down *Latitude* telemetry as defined in Telemetry.xml
 4. tlmWrite_Gps_Longitude: used to send down *Longitude* telemetry as defined in Telemetry.xml
@@ -547,7 +547,7 @@ namespace GpsApp {
           this->serialBufferOut_out(0, serBuffer);
           return;
       }
-      // If not enough data is available for a full messsage, return the buffer and abort.
+      // If not enough data is available for a full message, return the buffer and abort.
       else if (buffsize < 24) {
           // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
           // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
@@ -613,7 +613,7 @@ namespace GpsApp {
           log_WARNING_HI_Gps_LockLost();
       } else if (packet.lock == 1 && !m_locked) {
           m_locked = true;
-          log_ACTIVITY_HI_Gps_LockAquired();
+          log_ACTIVITY_HI_Gps_LockAcquired();
       }
       // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
       // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
@@ -637,7 +637,7 @@ namespace GpsApp {
   {
     //Locked-force print
     if (m_locked) {
-        log_ACTIVITY_HI_Gps_LockAquired();
+        log_ACTIVITY_HI_Gps_LockAcquired();
     } else {
         log_WARNING_HI_Gps_LockLost();
     }
@@ -1003,7 +1003,7 @@ Now the "raspberrypi" build can be created with a call to `fprime-util generate`
 made by explicitly setting the native toolchain: `fprime-util generate native`.
 
 ```
-# Raspberry PI by defaule
+# Raspberry PI by default
 fprime-util generate
 fprime-util install
 

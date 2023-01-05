@@ -67,7 +67,7 @@ need. If desired, the port can be built and compiled to ensure that the design i
 entirely auto-generated, developers usually refrain from unit testing the port and defer unit testing to the Component.
 
 Next, developers design components. Components are designed by specifying the ports that represent the Component's
-interface and the Commands, Events amd Channels that the Component handles. This tutorial focuses on the tool suite, so
+interface and the Commands, Events and Channels that the Component handles. This tutorial focuses on the tool suite, so
 the design is already in-place.  Users can see the design by inspecting Components in the `Ref` directory. Creation of
 new components from design through test is demonstrated in the Math Component Tutorial](../MathComponent/Tutorial.md).
 
@@ -95,7 +95,7 @@ is a setup step and isn't formally part of the F´ development process.
 
 To run this tool, the developer will use the `generate` subcommand.  It take one optional argument: the toolchain file
 used in CMake to compile for a specific platform.  If not supplied, the `native` toolchain will be used and F´ will be
-setup to run on the current platform (typically Mac OS, or Linux depending on the developer's choosen OS).
+setup to run on the current platform (typically Mac OS, or Linux depending on the developer's chosen OS).
 
 **Generate the Ref Application for Native Compilation**
 
@@ -112,7 +112,7 @@ the user to take advantage of all parts of F´ without generating their own CMak
 be developing or improving F´ provided infrastructure components, then the `generate` command should be run in the F´
 root directory. However, most developers do not need this functionality.
 
-**Generate Cross-Compile of the Ref Application for Raspberry PI Platformn**
+**Generate Cross-Compile of the Ref Application for Raspberry PI Platform**
 
 Most developers wish to run F´ on embedded hardware. This is done by generating a cross-compile using a different CMake
 toolchain by providing the toolchain argument. The above invocations assume the default "native" toolchain.
@@ -228,7 +228,7 @@ fprime-util install raspberrypi
 
 ## Building and Running Unit Tests
 
-Unit tests can be build using the the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
+Unit tests can be built using the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
 in preparation to run them.  The user can also just run "check" to build and run the unit tests.  **Note: no unit tests
 are currently supplied with the Ref application, and thus these commands may error.**
 

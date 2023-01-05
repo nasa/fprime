@@ -14,7 +14,7 @@ In this document:
     - [Example `settings.ini`](#example-settingsini)
     - [Example Environment Ini File](#example-environment-ini-file)
 
-**WARNING:** The changes to the `settings.ini` file only take effect during the `fprim-util
+**WARNING:** The changes to the `settings.ini` file only take effect during the `fprime-util
 generate` step, and thus builds **must** be regenerated after a change.
 
 ## `settings.ini` Settings
@@ -29,7 +29,7 @@ This file is expected in the directory of the an F´ deployment and affects only
 defined in. This directory is the same directory that contains the project's base `CMakeLists.txt`
 (has a `project()` call).
 
-**WARNING:** The changes to the `settings.ini` file only take effect during the `fprim-util
+**WARNING:** The changes to the `settings.ini` file only take effect during the `fprime-util
 generate` step, and thus builds **must** be regenerated after a change.
 
 ### `fprime` Section

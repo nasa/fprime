@@ -83,7 +83,7 @@ communication such that the system can function.
 F´ was built for use on platforms running an Operating System (OS) and executing on a single core. Notably these systems
 come with a thread scheduler. That being said it is entirely possible to use F´ on a baremetal system, or a multi-core
 system, however; some care should be take when designing for such systems an understanding of execution context is
-required.  See: [F´ On Baremetal and Muti-Core Systems](../dev/baremetal-multicore.md)
+required.  See: [F´ On Baremetal and Multi-Core Systems](../dev/baremetal-multicore.md)
 
 ## Conclusion
 

@@ -115,6 +115,7 @@ bodytext
 bools
 boolt
 bootlin
+bootup
 brc
 bre
 bsd
@@ -210,6 +211,7 @@ commandline
 commasepitem
 commonpath
 COMPACKET
+COMPARGS
 COMPONENTTESTERIMPL
 COMQUEUE
 COMQUEUEIN
@@ -365,6 +367,7 @@ doxyrules
 doxysearch
 Doxywizard
 dpi
+DPLATFORM
 DPRIVATE
 DPROTECTED
 drv
@@ -613,6 +616,7 @@ handcoded
 hardtoaccess
 hashlib
 hashvalue
+HDR
 Heade
 HEADERSIZE
 headlessly
@@ -814,6 +818,7 @@ LVL
 lxml
 macos
 MACROFILE
+magicdraw
 mailto
 maincpp
 mainpage
@@ -836,6 +841,7 @@ mcomment
 MCT
 mday
 MDFILE
+mdzip
 Mehran
 MEMALLOCATOR
 memb
@@ -921,6 +927,7 @@ NMEA
 nmsgs
 noargport
 NOCOLOR
+nocov
 NOCTTY
 nodemon
 nogen
@@ -1245,6 +1252,7 @@ setop
 setprecision
 setprotocol
 setquaternion
+setresult
 setschedparam
 setschedpolicy
 setsize
@@ -1255,6 +1263,7 @@ settime
 settingsini
 settype
 setuptools
+setval
 setvalue
 setw
 sev
