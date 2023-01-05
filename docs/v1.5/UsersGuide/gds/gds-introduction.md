@@ -68,7 +68,7 @@ this to work properly, the user must build and install the `Ref` application usi
 
 By default, the `fprime-gds` command uses the current deployment to find the dictionary and the flight software to run.
 The dictionary is used for the GDS to understand the events, channels, and commands produced by the embedded system and
-the software is run as a convienence for local testing (`-n` will disable this feature).  
+the software is run as a convenience for local testing (`-n` will disable this feature).  
 
 In the following sections, we will explore various options for using the GDS.
 
@@ -167,7 +167,7 @@ optional arguments:
   -d DEPLOY, --deployment DEPLOY
                         Deployment directory for detecting dict, app, and
                         logging. [default: /Users/mstarch]
-  -l LOGS, --logs LOGS  Logging directory. Created if non-existent. Default:
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. Default:
                         deployment directory.
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
@@ -259,7 +259,7 @@ Each event is color-coded based on its "Event Severity;" there are 7 different k
 Just like the "Command History" table, these items can all be filtered and sorted based on the column headers.
 Additionally, a "Clear" button will clear the table thus making the monitoring of new events easier. There is special
 support for COMMAND event types, which will replace the opcode with the command mnemonic to help the user.  The opcode
-can be found by hovering over themnemonic and a tooltip will appear.
+can be found by hovering over the mnemonic and a tooltip will appear.
 
 ### Channels
 

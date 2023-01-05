@@ -26,7 +26,7 @@ require quasi-asynchronous execution contexts in which to run. i.e. they need th
 [thread virtualization](#thread-virtualization) section of this document an associated technology.
 
 If your system can be entirely defined by **Passive Components** then implicitly every port **invocation** would be
-synchronous and theexecution context would be entirely delegated to every component.  A discussion of the source
+synchronous and the execution context would be entirely delegated to every component.  A discussion of the source
 of that delegated execution context comes next.
 
 ### Choosing an Execution Context

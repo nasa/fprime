@@ -167,7 +167,7 @@ optional arguments:
   -d DEPLOY, --deployment DEPLOY
                         Deployment directory for detecting dict, app, and
                         logging. [default: /Users/mstarch]
-  -l LOGS, --logs LOGS  Logging directory. Created if non-existent. Default:
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. Default:
                         deployment directory.
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
