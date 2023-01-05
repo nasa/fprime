@@ -95,7 +95,7 @@ namespace Svc {
         }
 
         U32 suffix = 0;
-        U64 tmp;
+        FwSizeType tmp;
         char fileNameFinal[Fw::String::STRING_SIZE];
         (void) strncpy(fileNameFinal,fileName,
                        Fw::String::STRING_SIZE);

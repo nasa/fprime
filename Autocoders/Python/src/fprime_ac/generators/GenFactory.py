@@ -71,6 +71,7 @@ from .visitors import (
     SerialHVisitor,
     SerializableVisitor,
     TestImplCppVisitor,
+    TestImplCppHelpersVisitor,
     TestImplHVisitor,
     TestMainVisitor,
     TopologyCppVisitor,
@@ -147,6 +148,8 @@ class GenFactory:
                 inst = ImplHVisitor.ImplHVisitor()
             elif self.__type == "TestImplCppVisitor":
                 inst = TestImplCppVisitor.TestImplCppVisitor()
+            elif self.__type == "TestImplCppHelpersVisitor":
+                inst = TestImplCppHelpersVisitor.TestImplCppHelpersVisitor()
             elif self.__type == "TestImplHVisitor":
                 inst = TestImplHVisitor.TestImplHVisitor()
             elif self.__type == "TestMainVisitor":

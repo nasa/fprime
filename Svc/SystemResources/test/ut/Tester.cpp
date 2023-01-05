@@ -88,19 +88,36 @@ void Tester ::test_tlm(bool enabled) {
                 ASSERT_TLM_CPU_00_SIZE((enabled) ? 1 : 0);
             // Cascade expected 
             default:
+                FwSizeType free = 0;
+                FwSizeType total = 0;
+                Os::SystemResources::MemUtil memory_info;
                 ASSERT_TLM_CPU_SIZE((enabled) ? 1 : 0);
 
-                ASSERT_TLM_MEMORY_USED_SIZE((enabled) ? 1 : 0);
-                ASSERT_TLM_MEMORY_TOTAL_SIZE((enabled) ? 1 : 0);
-                ASSERT_TLM_NON_VOLATILE_FREE_SIZE((enabled) ? 1 : 0);
-                ASSERT_TLM_NON_VOLATILE_TOTAL_SIZE((enabled) ? 1 : 0);
+                // Check that the filesystem reads well before asserting telemetry
+                if (enabled && Os::SystemResources::getMemUtil(memory_info) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
+                    ASSERT_TLM_MEMORY_USED_SIZE(1);
+                    ASSERT_TLM_MEMORY_TOTAL_SIZE(1);
+                    count += 2;
+                } else {
+                    ASSERT_TLM_MEMORY_USED_SIZE(0);
+                    ASSERT_TLM_MEMORY_TOTAL_SIZE(0);
+                }
+                // Check that the filesystem reads well before asserting telemetry
+                if (enabled && Os::FileSystem::getFreeSpace("/", free, total ) == Os::FileSystem::OP_OK) {
+                    ASSERT_TLM_NON_VOLATILE_FREE_SIZE(1);
+                    ASSERT_TLM_NON_VOLATILE_TOTAL_SIZE(1);
+                    count += 2;
+                } else {
+                    ASSERT_TLM_NON_VOLATILE_FREE_SIZE(0);
+                    ASSERT_TLM_NON_VOLATILE_TOTAL_SIZE(0);
+                }
                 ASSERT_TLM_FRAMEWORK_VERSION_SIZE((enabled) ? 1 : 0);
                 ASSERT_TLM_PROJECT_VERSION_SIZE((enabled) ? 1 : 0);
                 if (enabled) {
                     ASSERT_TLM_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
                     ASSERT_TLM_PROJECT_VERSION(0, PROJECT_VERSION);
                 }
-                ASSERT_TLM_SIZE((enabled) ? (count + 7) : 0); // CPU count channels + avg + 2 mem + 2 non-volatile + 2 ver
+                ASSERT_TLM_SIZE((enabled) ? (count + 3) : 0); // CPU count channels + avg + 2 ver
                 break;
         }
     }

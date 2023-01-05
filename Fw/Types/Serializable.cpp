@@ -186,7 +186,7 @@ namespace Fw {
     }
 #endif
 
-#if FW_HAS_F64
+#if FW_HAS_F64 && FW_HAS_64_BIT
 
     SerializeStatus SerializeBufferBase::serialize(F64 val) {
         // floating point values need to be byte-swapped as well, so copy to U64 and use that routine

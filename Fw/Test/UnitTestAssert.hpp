@@ -18,7 +18,7 @@ namespace Test {
     class UnitTestAssert: public Fw::AssertHook {
         public:
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-            typedef NATIVE_UINT_TYPE File;
+            typedef U32 File;
 #else
             typedef String File;
 #endif

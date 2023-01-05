@@ -71,7 +71,7 @@ typedef PlatformIntType PlatformAssertArgType;
     #error "Compiler does not support __SIZEOF_POINTER__, cannot use Linux/Darwin types"
   #endif
 
-  // Pointer sizes are determined by size of compiler
+  // Pointer sizes are determined by compiler
   #if __SIZEOF_POINTER__ == 8
     typedef uint64_t PlatformPointerCastType;
     #define PRI_PlatformPointerCastType PRIx64
@@ -81,9 +81,11 @@ typedef PlatformIntType PlatformAssertArgType;
   #elif __SIZEOF_POINTER__ == 2
     typedef uint16_t PlatformPointerCastType;
     #define PRI_PlatformPointerCastType PRIx16
-  #else
+  #elif __SIZEOF_POINTER__ == 1
     typedef uint8_t PlatformPointerCastType;
     #define PRI_PlatformPointerCastType PRIx8
+  #else
+    #error "Expected __SIZEOF_POINTER__ to be one of 8, 4, 2, or 1"
   #endif
 #endif
 /**
@@ -93,37 +95,15 @@ typedef PlatformIntType PlatformAssertArgType;
  * within this file. These must be defined as `static const` members to
  * ensure that unnecessary storage is not allocated.
  */
+#define FP_PLATFORM_NUMERIC_LIMITS(T) \
+  static const T T##_MIN = std::numeric_limits<T>::min(); \
+  static const T T##_MAX = std::numeric_limits<T>::max();
 struct PlatformLimits {
-    static const PlatformIntType PlatformIntType_MIN = std::numeric_limits<int>::min();
-    static const PlatformIntType PlatformIntType_MAX = std::numeric_limits<int>::max();
-
-    static const PlatformUIntType PlatformUIntType_MIN = std::numeric_limits<unsigned int>::min();
-    static const PlatformUIntType PlatformUIntType_MAX = std::numeric_limits<unsigned int>::max();
-
-    static const PlatformIndexType PlatformIndexType_MIN = PlatformIntType_MIN;
-    static const PlatformIndexType PlatformIndexType_MAX = PlatformIntType_MAX;
-
-    static const PlatformSizeType PlatformSizeType_MIN = PlatformUIntType_MIN;
-    static const PlatformSizeType PlatformSizeType_MAX = PlatformUIntType_MAX;
-
-    static const PlatformAssertArgType PlatformAssertArgType_MIN = PlatformIntType_MIN;
-    static const PlatformAssertArgType PlatformAssertArgType_MAX = PlatformIntType_MAX;
-
-    // Pointer sizes are determined by size of compiler
-    #if __SIZEOF_POINTER__ == 8
-        static const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint64_t>::min();
-        static const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint64_t>::max();
-    #elif __SIZEOF_POINTER__ == 4
-        static const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint32_t>::min();
-        static const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint32_t>::max();
-    #elif __SIZEOF_POINTER__ == 2
-        static const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint16_t>::min();
-        static const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint16_t>::max();
-    #elif __SIZEOF_POINTER__ == 1
-        static const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint8_t>::min();
-        static const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint8_t>::max();
-    #else
-        #error "Unsupported pointer size"
-    #endif
+  FP_PLATFORM_NUMERIC_LIMITS(PlatformAssertArgType)
+  FP_PLATFORM_NUMERIC_LIMITS(PlatformIndexType)
+  FP_PLATFORM_NUMERIC_LIMITS(PlatformIntType)
+  FP_PLATFORM_NUMERIC_LIMITS(PlatformPointerCastType)
+  FP_PLATFORM_NUMERIC_LIMITS(PlatformSizeType)
+  FP_PLATFORM_NUMERIC_LIMITS(PlatformUIntType)
 };
 #endif //PLATFORM_TYPES_HPP_

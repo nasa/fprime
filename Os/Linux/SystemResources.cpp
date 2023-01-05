@@ -84,12 +84,32 @@ namespace Os {
         struct sysinfo memory_info;
         sysinfo(&memory_info);
         
-        if (memory_info.totalram < memory_info.freeram) {
+
+        const FwSizeType total_ram = static_cast<FwSizeType>(memory_info.totalram);
+        const FwSizeType free_ram = static_cast<FwSizeType>(memory_info.freeram);
+        const FwSizeType memory_unit = static_cast<FwSizeType>(memory_info.mem_unit);
+
+        // Check for casting and type errors
+        if (((total_ram <= 0) || (static_cast<unsigned long>(total_ram) != memory_info.totalram)) ||
+            ((free_ram <= 0) || (static_cast<unsigned long>(free_ram) != memory_info.freeram)) ||
+            ((memory_unit <= 0) || (static_cast<unsigned int>(memory_unit) != memory_info.mem_unit))
+        ) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
-        memory_util.total = static_cast<U64>(memory_info.totalram * memory_info.mem_unit); 
-        memory_util.used = static_cast<U64>((memory_info.totalram - memory_info.freeram) * memory_info.mem_unit);
+        // Check for invalid memory calculations
+        if (total_ram < free_ram) {
+            return SYSTEM_RESOURCES_ERROR;
+        }
+
+        // Check for overflow in multiplication
+        if (total_ram > (FpLimits::FwSizeType_MAX / memory_unit))
+        {
+            return SYSTEM_RESOURCES_ERROR;
+        }
+
+        memory_util.total = total_ram * memory_unit;
+        memory_util.used = (total_ram - free_ram) * memory_unit;
 
         return SYSTEM_RESOURCES_OK;
     }

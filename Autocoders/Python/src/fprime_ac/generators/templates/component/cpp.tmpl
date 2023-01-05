@@ -430,8 +430,8 @@ namespace ${namespace} {
 #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
     // Connect input port $instance
     for (
-        NATIVE_INT_TYPE port = 0;
-        port < this->getNum_${instance}_InputPorts();
+        PlatformIntType port = 0;
+        port < static_cast<PlatformIntType>(this->getNum_${instance}_InputPorts());
         port++
     ) {
 
@@ -447,7 +447,7 @@ namespace ${namespace} {
       (void) snprintf(
           portName,
           sizeof(portName),
-          "%s_${instance}_InputPort[%d]",
+          "%s_${instance}_InputPort[%" PRI_PlatformIntType "]",
           this->m_objName,
           port
       );
@@ -463,8 +463,8 @@ namespace ${namespace} {
 \#if FW_ENABLE_TEXT_LOGGING == 1
   #end if
     for (
-        NATIVE_INT_TYPE port = 0;
-        port < this->getNum_${instance}_OutputPorts();
+        PlatformIntType port = 0;
+        port < static_cast<PlatformIntType>(this->getNum_${instance}_OutputPorts());
         port++
     ) {
       this->m_${instance}_OutputPort[port].init();
@@ -474,7 +474,7 @@ namespace ${namespace} {
       (void) snprintf(
           portName,
           sizeof(portName),
-          "%s_${instance}_OutputPort[%d]",
+          "%s_${instance}_OutputPort[%" PRI_PlatformIntType "]",
           this->m_objName,
           port
       );
