@@ -259,7 +259,7 @@ Each event is color-coded based on its "Event Severity;" there are 7 different k
 Just like the "Command History" table, these items can all be filtered and sorted based on the column headers.
 Additionally, a "Clear" button will clear the table thus making the monitoring of new events easier. There is special
 support for COMMAND event types, which will replace the opcode with the command mnemonic to help the user.  The opcode
-can be found by hovering over themnemonic and a tooltip will appear.
+can be found by hovering over the mnemonic and a tooltip will appear.
 
 ### Channels
 
