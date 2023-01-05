@@ -17,7 +17,7 @@ with manually-written tests.
 
 In rule-based testing, **state** refers to the current state of a running test. It usually includes **concrete state** (the state of the system under test) and **test state** or **abstract state** (state that abstracts the state of the system under test or of the rest of the system, to assist with modeling).
 
-In the STest implementation of rule-based testing, `State` is a user-defined type. The Rule and Scenario classes discussed below are templates that are parameterized over this type.
+In the STest implementation of rule-based testing, `State` is a user-defined type. The `Rule` and `Scenario` classes discussed below are templates that are parameterized over this type.
 
 ### Rule
 
