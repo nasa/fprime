@@ -151,7 +151,7 @@ Classes
       :classmethod:
 
 
-      Handle the input arguments for the the parser. This will help setup the adapter with its expected arguments.
+      Handle the input arguments for theparser. This will help setup the adapter with its expected arguments.
 
       :param args: parsed arguments in namespace format
       :return: namespace with "comm_adapter" value added

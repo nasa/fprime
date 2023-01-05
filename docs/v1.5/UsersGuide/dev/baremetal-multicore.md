@@ -1,4 +1,4 @@
-# F´ On Baremetal and Muti-Core Systems
+# F´ On Baremetal and Multi-Core Systems
 
 F´ supports use on baremetal, multi-core, and even multi-device systems. This guide seeks to walk the user though some
 of the caveats and delicacies of such systems. It includes
@@ -26,7 +26,7 @@ require quasi-asynchronous execution contexts in which to run. i.e. they need th
 [thread virtualization](#thread-virtualization) section of this document an associated technology.
 
 If your system can be entirely defined by **Passive Components** then implicitly every port **invocation** would be
-synchronous and the the execution context would be entirely delegated to every component.  A discussion of the source
+synchronous and theexecution context would be entirely delegated to every component.  A discussion of the source
 of that delegated execution context comes next.
 
 ### Choosing an Execution Context
@@ -58,8 +58,8 @@ while (true) {
 Now all that is required is to determine when this interval has elapsed. This can be done spinning on a hardware clock
 signal, calculating elapsed time by reading of clock registers, using timing library functions, the `sleep()` call, or
 by an timer driven interrupt service routine (ISR). **Note:** ISRs are complex items and should be studied in detail
-before going this route.  Notibly, the ISR should not execute the rate group directly, but rather should set a flag or
-queu a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate
+before going this route.  Notably, the ISR should not execute the rate group directly, but rather should set a flag or
+queue a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate
 groups.
 
 ## Multi-Core and Multi-Device Systems

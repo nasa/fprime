@@ -3,7 +3,7 @@
 ## autocoder/ai-xml.cmake
 
 Primary Ai XML autocoder that sets up the C++ file generation. This is a implementation of the singular autocoder
-setup of the the original CMake system.
+setup of theoriginal CMake system.
 
 
 ## `is_supported`:

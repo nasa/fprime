@@ -237,7 +237,7 @@ Classes
 
       :param command: Either the command id (int) or the command mnemonic (str)
 
-      :returns: The comand ID (int)
+      :returns: The command ID (int)
 
 
    .. method:: send_command(self, command, args=None)

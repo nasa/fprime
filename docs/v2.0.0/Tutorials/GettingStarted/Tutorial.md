@@ -228,7 +228,7 @@ fprime-util build raspberrypi
 
 ## Building and Running Unit Tests
 
-Unit tests can be build using the the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
+Unit tests can be build using the`build --ut` command of the `fprime-util`. This will allow us to build the unit tests
 in preparation to run them.  The user can also just run `check` to build and run the unit tests.
 
 Before building unit tests, the unit test build cache must be generated:

@@ -437,7 +437,7 @@ t6 == 6  # evaluates True
 t3 >= t2 # evaluates True
 ~~~~
 
-Accessing TimeStamps from from event and channel data types can be done with the `get_time()` getter. These comparisons can be very useful in testing whether FSW meets timing requirements.
+Accessing TimeStamps from event and channel data types can be done with the `get_time()` getter. These comparisons can be very useful in testing whether FSW meets timing requirements.
 
 ~~~~{.python}
 seq = ["Counter"] * 5

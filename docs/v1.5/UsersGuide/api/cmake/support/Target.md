@@ -19,7 +19,7 @@ CMake's `add_custom_target("${TARGET_NAME}" ...)` at some point in the function.
 
 ### `add_module_target` Specification:
 
-Adds a module-by-module target for this given target. Any subtargets for each module and thier
+Adds a module-by-module target for this given target. Any subtargets for each module and their
 commands should be registered via CMake's `add_custom_target("${TARGET_NAME}" ...)`. This command
 is supplied with all of the modules knowledge. Add a `DEPENDS` call on AC_OUTPUTS to come after
 the autocoding step.
@@ -66,7 +66,7 @@ function must be singular, as scoping rules allow inclusion without collision.
 
 ## Function `setup_all_module_targets`:
 
-Takes all registerd targets and sets up the module specific target from them. The list of targets
+Takes all registered targets and sets up the module specific target from them. The list of targets
 is read from the CACHE variable FPRIME_TARGET_LIST.
 
 - **MODULE_NAME:** name of the module

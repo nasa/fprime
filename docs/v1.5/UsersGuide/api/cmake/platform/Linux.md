@@ -2,6 +2,6 @@
 
 ## Linux.cmake:
 
-Linux platform file for standard linux targets. Meerly defers to [./Linux-common.cmake](Linux-common.cmake).
+Linux platform file for standard linux targets. Merely defers to [./Linux-common.cmake](Linux-common.cmake).
 
 

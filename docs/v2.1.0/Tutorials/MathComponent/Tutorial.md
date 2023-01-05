@@ -1343,7 +1343,7 @@ Send the `MS_DO_MATH` command:
 Verify that the operation port was called as expected:
 
 ```c++
-      // verify that that only one output port was called
+      // verify that only one output port was called
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // verify that the math operation port was only called once
       ASSERT_from_mathOut_SIZE(1);

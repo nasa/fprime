@@ -1275,7 +1275,7 @@ Add a member function to the implementation class in `Tester.cpp` to implement t
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::ADD);
       // retrieve the message from the message queue and dispatch the command to the handler
       this->component.doDispatch();
-      // verify that that only one output port was called
+      // verify that only one output port was called
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // verify that the math operation port was only called once
       ASSERT_from_mathOut_SIZE(1);
@@ -1338,7 +1338,7 @@ Send the `MS_DO_MATH` command:
 Verify that the operation port was called as expected:
 
 ```c++
-      // verify that that only one output port was called
+      // verify that only one output port was called
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // verify that the math operation port was only called once
       ASSERT_from_mathOut_SIZE(1);

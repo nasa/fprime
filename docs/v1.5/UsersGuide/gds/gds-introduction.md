@@ -198,7 +198,7 @@ general, the available tabs are listed across the top and each view can be selec
 ![Launched Browser Window](../media/gds_gui_commanding.png)
 
 Across the top of the screen is a series of tabs: "Commanding", "Events", etc. Each of those tabs represent a piece of
-the GDS's functionality. Each view opens when when you click on it. Next, we'll go through each tab's functions in more
+the GDS's functionality. Each view opens when you click on it. Next, we'll go through each tab's functions in more
 detail in upcoming sections.
 
 To the right of those tabs is a "New Window" button. If you want to open a new GUI window to view multiple tabs at once
@@ -259,7 +259,7 @@ Each event is color-coded based on its "Event Severity;" there are 7 different k
 Just like the "Command History" table, these items can all be filtered and sorted based on the column headers.
 Additionally, a "Clear" button will clear the table thus making the monitoring of new events easier. There is special
 support for COMMAND event types, which will replace the opcode with the command mnemonic to help the user.  The opcode
-can be found by hovering over the the mnemonic and a tooltip will appear.
+can be found by hovering over themnemonic and a tooltip will appear.
 
 ### Channels
 

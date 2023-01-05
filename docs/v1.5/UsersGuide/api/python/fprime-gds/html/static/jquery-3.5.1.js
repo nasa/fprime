@@ -8033,7 +8033,7 @@ jQuery.extend( {
 
 		ret = jQuery.find.attr( elem, name );
 
-		// Non-existent attributes return null, we normalize to undefined
+		// Nonexistent attributes return null, we normalize to undefined
 		return ret == null ? undefined : ret;
 	},
 

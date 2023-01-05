@@ -202,12 +202,12 @@ register_fprime_executable()
 ```
 ### fprime Executable With Autocoding/Dependencies ###
 
-Developers can make executables or other utilites that take advantage of fprime autocoding
+Developers can make executables or other utilities that take advantage of fprime autocoding
 and fprime dependencies. These can be registered using the same executable registrar function
 but should specify a specific executable name.
 
 ```
-set(EXECUTABLE_NAME "MyUtitlity")
+set(EXECUTABLE_NAME "MyUtility")
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR)/ModuleAi.xml"
@@ -267,7 +267,7 @@ set(UT_MOD_DEPS
   **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
             these as positional arguments overrides any specified in the parent scope.
 
-  **Note:** UTs automaitcally depend on the module. In order to prevent this, explicitly pass in args
+  **Note:** UTs automatically depend on the module. In order to prevent this, explicitly pass in args
             to this module, excluding the module.
 
         e.g. register_fprime_ut("MY_SPECIAL_UT" "${SOME_SOURCE_FILE_LIST}" "") #No dependencies.
@@ -336,7 +336,7 @@ function(register_fprime_target TARGET_FILE_PATH)
     set(TMP "${FPRIME_TARGET_LIST}")
     list(APPEND TMP "${TARGET_FILE_PATH}")
     list(REMOVE_DUPLICATES TMP)
-    SET(FPRIME_TARGET_LIST "${TMP}" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targtes" FORCE)
+    SET(FPRIME_TARGET_LIST "${TMP}" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
     #Setup global target. Note: module targets found during module processing
     setup_global_target("${TARGET_FILE_PATH}")
 endfunction(register_fprime_target)

@@ -6,7 +6,7 @@ the key features of the old make system to the features of the new CMake system.
 
 ## `make impl` and `make testcomp` 
 
-The commands `make impl` and `make testcomp` should be runnable outside of tany make system setup.
+The commands `make impl` and `make testcomp` should be runnable outside of the make system setup.
 These commands require an Ai.xml (or a list of them) and run the code generator directly. Thus,
 requiring the user to navigate to the directory, generate the make system, and then run these
 commands is less productive then running just the code generator directly.
@@ -43,7 +43,7 @@ A guide to the API function calls is found here: [API](API.md)
 
 ## Creating Deployments
 
-Deployments in the new F prime system must now specifiy a `CMakeLists.txt` following a specific
+Deployments in the new F prime system must now specify a `CMakeLists.txt` following a specific
 format in order to act as a build entry point. This file includes the F prime make system, acts as
 a target for the CMake command, and sets up basic project information. This file may also add other
 subdirectories to pull in deployment specific modules, and is placed at top-level in the deployment

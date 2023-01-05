@@ -30,7 +30,7 @@ The API documentation section contains the automatically generated documentation
 ## Table of Contents
 
 - Getting Started with F´
-    - [What is F´: a breif introduction](../index.md)
+    - [What is F´: a brief introduction](../index.md)
     - [Installing F´](../INSTALL.md)
     - [Installing F´ Console Autocomplete](./user/autocomplete.md)
     - [Tutorials: A Hands On Guide to F´](../Tutorials/README.md)
@@ -119,7 +119,7 @@ are automatically generated from this design. These dictionaries are read into t
 
 ## F′ Utility Build Helper and CMake System
 
-F´ ships with a buoild system configured to build the F´ code. This build system is implemented using CMake and handles
+F´ ships with a build system configured to build the F´ code. This build system is implemented using CMake and handles
 the dependencies needed to run the Autocoder and assemble it with user written code. In order to support more standard
 development patterns with F´, the `fprime-util` was built. This tool maps simple commands into the make system in order
 to allow developer to follow set patterns easily.

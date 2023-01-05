@@ -11,7 +11,7 @@ tools, and individual components.
 
 ## Function `generic_autocoder`:
 
-This function controls the the generation of the auto-coded files, generically, for serializables, ports,
+This function controls the generation of the auto-coded files, generically, for serializables, ports,
 and components. It then mines the XML file for type and  dependencies and then adds them as dependencies to
 the module being built.
 
@@ -29,7 +29,7 @@ generated into a library.
 - **OBJ_NAME:** object name to add dependencies to.
 - **AUTOCODER_INPUT_FILES:** files to pass to the autocoder
 - **SOURCE_FILES:** source file inputs
-- **LINK_DEPS:** link-time dependecies like -lm or -lpthread
+- **LINK_DEPS:** link-time dependencies like -lm or -lpthread
 - **MOD_DEPS:** CMake module dependencies
 
 

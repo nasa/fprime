@@ -17,7 +17,7 @@ early and system-level issues only appear during integration.
 F′ provides the support for unit testing at the component level. The
 overall framework for unit testing is shown in Figure 1.
 
-![Tesst](../media/test1.png)
+![Test](../media/test1.png)
 
 **Figure 1.** Unit testing framework overview.
 

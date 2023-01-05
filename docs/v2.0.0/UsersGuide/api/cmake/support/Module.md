@@ -11,7 +11,7 @@ tools, and individual components.
 
 ## Function `generic_autocoder`:
 
-This function controls the the generation of the auto-coded files, generically, for serializables, ports,
+This function controls thegeneration of the auto-coded files, generically, for serializables, ports,
 and components. It then mines the XML file for type and  dependencies and then adds them as dependencies to
 the module being built.
 

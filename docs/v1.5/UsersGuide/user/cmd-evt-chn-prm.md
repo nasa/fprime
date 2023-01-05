@@ -119,7 +119,7 @@ the port queue and sends it to the ground.
 
 Channels, also known as Telemetry Channels, or just Telemetry, represent the current reading of some portion of system
 state. This state is either restricted to "send on change" or "send per update" even if the update is already the
-current value. Channels are broken-up per component and are typically sampled at a set rate and dowlinked. Channels are
+current value. Channels are broken-up per component and are typically sampled at a set rate and downlinked. Channels are
 id, time, and value triples and are defined per component with the following properties:
 
 1. id: the unique id of the channel. This is offset by the base id of the component for global uniqueness.

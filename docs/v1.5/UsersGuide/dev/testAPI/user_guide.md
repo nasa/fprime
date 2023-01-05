@@ -437,7 +437,7 @@ t6 == 6  # evaluates True
 t3 >= t2 # evaluates True
 ~~~~
 
-Accessing TimeStamps from from event and channel data types can be done with the `get_time()` getter. These comparisons can be very useful in testing whether FSW meets timing requirements.
+Accessing TimeStamps from event and channel data types can be done with the `get_time()` getter. These comparisons can be very useful in testing whether FSW meets timing requirements.
 
 ~~~~{.python}
 seq = ["Counter"] * 5
@@ -912,7 +912,7 @@ Currently the StandardPipeline (GDS Helper layer) uses a path to a directory to 
 
 ### Better test identifiers using decorators
 
-When a new test case [is started](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L85), the API user can specify a `case_id` that will be used in the logs to identify the current test case without scrolling to the test case header. Future uses of the API should investigate using decorators to specify an ID to put in this column. Present tests just use a counter and assign a numbr to each test case.
+When a new test case [is started](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L85), the API user can specify a `case_id` that will be used in the logs to identify the current test case without scrolling to the test case header. Future uses of the API should investigate using decorators to specify an ID to put in this column. Present tests just use a counter and assign a number to each test case.
 
 ### GDS command arguments should allow non-string types
 
