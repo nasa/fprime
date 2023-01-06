@@ -16,6 +16,9 @@
 #include <Os/SystemResources.hpp>
 #include <Fw/Types/Assert.hpp>
 
+#define PROC_STAT_PATH "/proc/stat"
+#define READ_ONLY "r"
+#define LINE_SIZE 256
 namespace Os {
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuCount(U32 &cpuCount) {
@@ -24,9 +27,9 @@ namespace Os {
     }
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks &cpu_ticks, U32 cpu_index) {
-        std::array<char, 512> line = {0};
+        std::array<char, LINE_SIZE> line = {0};
         FILE *fp = nullptr;
-        std::array<U32, 4> cpu_data = {};
+        std::array<U32, 4> cpu_data = {0};
         U32 cpuCount = 0;
         SystemResources::SystemResourcesStatus status  = SYSTEM_RESOURCES_ERROR;
         U64 cpuUsed = 0;
@@ -38,7 +41,7 @@ namespace Os {
         if (cpu_index >= cpuCount) {
             return SYSTEM_RESOURCES_ERROR;
         }
-        if ((fp = fopen("/proc/stat", "r")) == nullptr) {
+        if ((fp = fopen(PROC_STAT_PATH, READ_ONLY)) == nullptr) {
             return SYSTEM_RESOURCES_ERROR;
         }
         if (fgets(line.data(), line.size(), fp) == nullptr) { //1st line.  Aggregate cpu line.
