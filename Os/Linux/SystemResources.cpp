@@ -82,8 +82,10 @@ namespace Os {
     SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil &memory_util) {
 
         struct sysinfo memory_info;
-        sysinfo(&memory_info);
-        
+
+        if (sysinfo(&memory_info) != 0) {
+            return SYSTEM_RESOURCES_ERROR;
+        }       
 
         const FwSizeType total_ram = static_cast<FwSizeType>(memory_info.totalram);
         const FwSizeType free_ram = static_cast<FwSizeType>(memory_info.freeram);
