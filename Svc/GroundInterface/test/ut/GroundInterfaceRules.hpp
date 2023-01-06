@@ -15,7 +15,7 @@
 #ifndef FPRIME_SVC_GROUND_INTERFACE_HPP
 #define FPRIME_SVC_GROUND_INTERFACE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/String.hpp>
 #include <Svc/GroundInterface/test/ut/Tester.hpp>
 #include <STest/STest/Rule/Rule.hpp>

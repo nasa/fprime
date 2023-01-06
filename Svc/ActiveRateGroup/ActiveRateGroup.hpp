@@ -30,6 +30,7 @@ namespace Svc {
 
     class ActiveRateGroup : public ActiveRateGroupComponentBase {
         public:
+            static constexpr NATIVE_INT_TYPE CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 
             //!  \brief ActiveRateGroup constructor
             //!
@@ -110,7 +111,7 @@ namespace Svc {
             U32 m_cycles; //!< cycles executed
             U32 m_maxTime; //!< maximum execution time in microseconds
             volatile bool m_cycleStarted; //!< indicate that cycle has started. Used to detect overruns.
-            NATIVE_INT_TYPE m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS]; //!< Must match number of output ports
+            NATIVE_INT_TYPE m_contexts[CONNECTION_COUNT_MAX]; //!< Must match number of output ports
             NATIVE_INT_TYPE m_numContexts; //!< Number of contexts passed in by user
             NATIVE_INT_TYPE m_overrunThrottle; //!< throttle value for overrun events
             U32 m_cycleSlips; //!< tracks number of cycle slips

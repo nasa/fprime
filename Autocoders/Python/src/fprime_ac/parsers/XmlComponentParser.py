@@ -72,7 +72,7 @@ class XmlComponentParser:
         )
 
         #
-        if os.path.isfile(xml_file) == False:
+        if not os.path.isfile(xml_file):
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(stri)
 
@@ -1052,7 +1052,7 @@ class XmlComponentParser:
             ## Ports Missing: Aborting
             else:
                 for port, value in cmd_or_param.items():
-                    if value == False:
+                    if not value:
                         PRINT.info("%s port missing" % port)
                 PRINT.info("Aborting")
                 sys.exit(-1)
@@ -1075,7 +1075,7 @@ class XmlComponentParser:
             ## Ports Missing: Abort
             else:
                 for port, value in param.items():
-                    if value == False:
+                    if not value:
                         PRINT.info("%s port missing" % port)
                 PRINT.info("Aborting")
                 sys.exit(-1)
@@ -1383,8 +1383,8 @@ class Port:
         @param name:  Name of port (each instance must be unique).
         @param direction: Direction of data flow (must be input or output)
         @param type:  Type of port (must have supporting include xml)
-        @param sync:  Kind of port (must be one of: asynch, synch, or guarded)
-        @param comment:  A single or multline comment
+        @param sync:  Kind of port (must be one of: async, sync, or guarded)
+        @param comment:  A single or multiline comment
         """
         # TODO: ADD NAMESPACE
         self.__name = name

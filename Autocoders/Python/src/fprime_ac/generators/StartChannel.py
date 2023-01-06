@@ -79,7 +79,7 @@ class StartChannel:
             DEBUG.error(
                 "startChannelVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "startChannelVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class StartChannel:
             DEBUG.error(
                 "startChannelVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "startChannelVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

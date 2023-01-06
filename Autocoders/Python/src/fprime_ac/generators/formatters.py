@@ -65,14 +65,14 @@ class CommentFormatters:
 
         for line in line_list:
 
-            if "@code" in line and code_flag == False:
+            if "@code" in line and not code_flag:
                 leading_spaces = line.find("@code")
                 new_line_list.append(line.strip())
                 code_flag = True
-            elif "@code" in line and code_flag == True:
+            elif "@code" in line and code_flag:
                 new_line_list.append(line.strip())
                 code_flag = False
-            elif (not "@code" in line) and code_flag == True:
+            elif (not "@code" in line) and code_flag:
                 new_line_list.append(line[leading_spaces:])
             else:
                 new_line_list.append(line.strip())
@@ -103,14 +103,10 @@ class CommentFormatters:
         Returns -1 if everything is a newline
         """
 
-        count = 0
-
-        for item in line_list:
+        for count, item in enumerate(line_list):
             item = item.strip()
             if item != "":
                 return count
-            count += 1
-
         return -1
 
     def _getEndsExcludingNewlines(self, line_list):
@@ -206,9 +202,9 @@ class CommentFormatters:
                 trimwhitespace = False
             elif "@endcode" == line.strip() or r"\endcode" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and "@code" == line.strip():
+            elif not trimwhitespace and "@code" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and r"\code" == line.strip():
+            elif not trimwhitespace and r"\code" == line.strip():
                 trimwhitespace = True
 
             if started:
@@ -231,7 +227,7 @@ class CommentFormatters:
             comment_str += "*\n"
             comment_str += "* TYPE: THIS IS A SYNCHRONOUS INTERFACE.\n"
 
-        if check_and_send == True:
+        if check_and_send:
             comment_str += "*\n"
             comment_str += "* Note: This interface uses an IPC check and send call. The return status\n"
             comment_str += "* indicates if the message was sent, or if the message was not sent due to\n"
@@ -300,9 +296,9 @@ class CommentFormatters:
                 trimwhitespace = False
             elif "@endcode" == line.strip() or r"\endcode" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and "@code" == line.strip():
+            elif not trimwhitespace and "@code" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and r"\code" == line.strip():
+            elif not trimwhitespace and r"\code" == line.strip():
                 trimwhitespace = True
 
             if started:
@@ -538,7 +534,7 @@ class Formatters:
             if end_name != "cmd":
                 name_str = name_str + "_cmd"
         # Steve: removed, this is too verbose
-        #                if verbose == True:
+        #                if verbose:
         #                    PRINT.info("WARNING: Interface %s renamed to %s."  % (name2,name_str))
 
         # Steve: removed, this is too verbose
@@ -625,7 +621,7 @@ class Formatters:
             name = msg_type.split("AcMsg")[1]
             new_name = ""
             for c in name:
-                if c.isupper() == True:
+                if c.isupper():
                     new_name += "_" + c.lower()
                 else:
                     new_name += c
@@ -705,7 +701,7 @@ class Formatters:
                 "ERROR: DETECTED AN INVALID CHARACTER IN COMMAND STEM NAME (%s)."
                 % name_string
             )
-            raise Exception(
+            raise ValueError(
                 "Fatal error, detected an invalid character in command stem name."
             )
         # All is ok
@@ -728,7 +724,7 @@ class Formatters:
         for c in cmds:
             if sum([int(x == c) for x in cmds]) > 1:
                 PRINT.info("ERROR: DETECTED %s COMMAND STEM NAME REPEATED." % c)
-                raise Exception("Error detected repeated command stem name.")
+                raise ValueError("Error detected repeated command stem name.")
         return True
 
     def evrNamePrefix(self, name):
@@ -794,7 +790,7 @@ class Formatters:
         @param name: Name of the function.
         @param args: List of argument tuples.
         """
-        if self.commentInArgsPresent(args) == True:
+        if self.commentInArgsPresent(args):
             func_string = "{}{}(".format(name, 80 * " ")
         else:
             func_string = "%s( " % name
@@ -879,7 +875,7 @@ class Formatters:
         # Get the simple case out of the way.
         if len(args) == 0:
 
-            if proto == True:
+            if proto:
                 function_str = name.strip() + "();"
             else:
                 function_str = name.strip() + "() {"
@@ -920,7 +916,7 @@ class Formatters:
 
         if len(args) == 1:
 
-            if proto == True:
+            if proto:
                 function_str = name.strip() + "(" + a[0] + " " + a[1] + ");"
             else:
                 function_str = name.strip() + "(" + a[0] + " " + a[1] + ") {"
@@ -940,7 +936,7 @@ class Formatters:
             function_str += type_list[index].ljust(max_type_len + 2)
             function_str += arg_list[index] + ",\n"
 
-        if proto == True:
+        if proto:
             function_str += (indent + 4) * " "
             function_str += type_list[-1].ljust(max_type_len + 2)
             function_str += arg_list[-1] + ");"
@@ -980,7 +976,7 @@ class Formatters:
 
             format_func = fname + "(void)"
 
-            if proto == True:
+            if proto:
                 format_func += ";"
             else:
                 format_func += " {"
@@ -1004,7 +1000,7 @@ class Formatters:
         new_list = []
         for line in type_args_list[:-1]:
             new_list.append(line + ",")
-        if proto == True:
+        if proto:
             new_list.append(type_args_list[-1] + ");")
         else:
             new_list.append(type_args_list[-1] + ")")
@@ -1031,7 +1027,7 @@ class Formatters:
 
         # Last line if not a prototype then no '\n' at end.
         if len(args) > 1:
-            if proto == True:
+            if proto:
                 format_func += "{}{}\n".format(pad * " ", type_args_list[-1])
             else:
                 format_func += "{}{}".format(pad * " ", type_args_list[-1])
@@ -1050,12 +1046,12 @@ class Formatters:
         @param proto: Prototype flag for non-header file use.
         """
         format_func = self.formatFun(indent, self.oneLineFun(name, args))
-        if proto == True:
+        if proto:
             format_func = format_func.replace(")", ");")
 
         line_length = 80
         # If there are arg comments add them...
-        if self.commentInArgsPresent(args) == True:
+        if self.commentInArgsPresent(args):
             format_func_list = format_func.split("\n")
             # Trim the trailing spaces from the function name.
             format_func_name = format_func_list[0].strip(" (") + "( \n"
@@ -1078,15 +1074,13 @@ class Formatters:
                 cpos = apos + type_max + 1
 
             # place args and comments and put together the string.
-            i = 0
             func_arg_list = []
-            for a in format_func_list[1:]:
+            for i, a in enumerate(format_func_list[1:]):
                 pad = (cpos - (apos + len(a.strip()))) * " "
                 str = (
                     apad + a.strip() + pad + comment_list[i] + "\n"
                 )  #  + pad + comment_list[i]
                 func_arg_list.append(str)
-                i += 1
             #
             # print 'Last arg: ',func_arg_list[-1].replace(') ',');')
             # TODO: add switch so a ; is inserted - end of last arg after ).
@@ -1119,14 +1113,14 @@ class Formatters:
                 "ERROR: No left paren in function name passed to formatFun: %s."
                 % one_line
             )
-            raise Exception("No left paren in function name passed to formatFun.")
+            raise ValueError("No left paren in function name passed to formatFun.")
 
         two_chunks = one_line.split("(")
         if len(two_chunks) != 2:
             PRINT.info(
                 "ERROR: Too many left parens in name passed to formatFun: %s" % one_line
             )
-            raise Exception("Too many left parens in name passed to formatFun.")
+            raise ValueError("Too many left parens in name passed to formatFun.")
 
         type_and_name = two_chunks[0]
         args = two_chunks[1]
@@ -1216,11 +1210,9 @@ class Formatters:
 
             max_type_length = max(list(map(len, type_list)))
 
-            i = 0
-            for type in type_list:
+            for i, type in enumerate(type_list):
                 pad = (max_type_length + pad_spaces) - len(type)
                 str = type + pad * " " + arg_list[i]
-                i += 1
                 str_list.append(str)
 
         return str_list
@@ -1318,10 +1310,7 @@ class Formatters:
         and no '_' in string form.
         """
         mod_id_list = mod_id.strip("_").split("_")
-        if len(mod_id_list) == 1:
-            mod_id_cap = mod_id[0].upper() + mod_id[1:]
-        elif len(mod_id_list) == 2:
-            mod_id_cap = [x[0].upper() + x[1:] for x in mod_id_list]
+        mod_id_cap = [x[0].upper() + x[1:] for x in mod_id_list]
         # size of mod_id list error in subThreadDir method.
         mod_id_cap_str = "".join(mod_id_cap)
         return mod_id_cap_str
@@ -1333,7 +1322,7 @@ class Formatters:
         # if context_list is None:
         #    return args
 
-        if self.subThreadTest(mod_id) == True and len(context_list) > 0:
+        if self.subThreadTest(mod_id) and len(context_list) > 0:
             instance_enum = self.subThreadModuleFirstCap(mod_id) + "AcInstanceId"
             d = self.subThreadDir(mod_id)
             file = os.path.join(d, mod_id + "_ac_pub.h")

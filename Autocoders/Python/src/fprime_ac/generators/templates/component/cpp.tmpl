@@ -131,7 +131,7 @@ namespace ${namespace} {
     #end if
     get_${instance}_InputPort(NATIVE_INT_TYPE portNum)
   {
-    FW_ASSERT(portNum < this->getNum_${instance}_InputPorts(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_${instance}_InputPorts(),static_cast<FwAssertArgType>(portNum));
     return &this->m_${instance}_InputPort[portNum];
   }
 
@@ -157,7 +157,7 @@ namespace ${namespace} {
     #end if
     )
   {
-    FW_ASSERT(portNum < this->getNum_${instance}_OutputPorts(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_${instance}_OutputPorts(),static_cast<FwAssertArgType>(portNum));
     #if $type == "Serial":
     this->m_${instance}_OutputPort[portNum].registerSerialPort(port);
     #else:
@@ -189,7 +189,7 @@ namespace ${namespace} {
     #end if
     )
   {
-    FW_ASSERT(portNum < this->getNum_${instance}_OutputPorts(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_${instance}_OutputPorts(),static_cast<FwAssertArgType>(portNum));
     return this->m_${instance}_OutputPort[portNum].registerSerialPort(port);
   }
     #if $role == "LogTextEvent":
@@ -430,8 +430,8 @@ namespace ${namespace} {
 #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
     // Connect input port $instance
     for (
-        NATIVE_INT_TYPE port = 0;
-        port < this->getNum_${instance}_InputPorts();
+        PlatformIntType port = 0;
+        port < static_cast<PlatformIntType>(this->getNum_${instance}_InputPorts());
         port++
     ) {
 
@@ -447,7 +447,7 @@ namespace ${namespace} {
       (void) snprintf(
           portName,
           sizeof(portName),
-          "%s_${instance}_InputPort[%d]",
+          "%s_${instance}_InputPort[%" PRI_PlatformIntType "]",
           this->m_objName,
           port
       );
@@ -463,8 +463,8 @@ namespace ${namespace} {
 \#if FW_ENABLE_TEXT_LOGGING == 1
   #end if
     for (
-        NATIVE_INT_TYPE port = 0;
-        port < this->getNum_${instance}_OutputPorts();
+        PlatformIntType port = 0;
+        port < static_cast<PlatformIntType>(this->getNum_${instance}_OutputPorts());
         port++
     ) {
       this->m_${instance}_OutputPort[port].init();
@@ -474,7 +474,7 @@ namespace ${namespace} {
       (void) snprintf(
           portName,
           sizeof(portName),
-          "%s_${instance}_OutputPort[%d]",
+          "%s_${instance}_OutputPort[%" PRI_PlatformIntType "]",
           this->m_objName,
           port
       );
@@ -507,7 +507,7 @@ namespace ${namespace} {
   #end if
     FW_ASSERT(
         Os::Queue::QUEUE_OK == qStat,
-        static_cast<AssertArg>(qStat)
+        static_cast<FwAssertArgType>(qStat)
     );
 #end if
 
@@ -538,7 +538,7 @@ namespace ${namespace} {
         Fw::SerializeBufferBase &Buffer
     )
   {
-    FW_ASSERT(portNum < this->getNum_${instance}_OutputPorts(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_${instance}_OutputPorts(),static_cast<FwAssertArgType>(portNum));
     return this->m_${instance}_OutputPort[portNum].invokeSerial(Buffer);
   }
   #else
@@ -552,7 +552,7 @@ namespace ${namespace} {
     )
   {
     #end if
-    FW_ASSERT(portNum < this->getNum_${instance}_OutputPorts(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_${instance}_OutputPorts(),static_cast<FwAssertArgType>(portNum));
     #if $void_return:
     this->m_${instance}_OutputPort[portNum].invoke($args);
     #else:
@@ -596,7 +596,7 @@ namespace ${namespace} {
   {
      FW_ASSERT(
         portNum < this->getNum_${instance}_OutputPorts(),
-        static_cast<AssertArg>(portNum)
+        static_cast<FwAssertArgType>(portNum)
      );
      return this->m_${instance}_OutputPort[portNum].isConnected();
   }
@@ -813,7 +813,7 @@ namespace ${namespace} {
     #end if
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
         );
 
     // Fake port number to make message dequeue work
@@ -821,25 +821,25 @@ namespace ${namespace} {
     _status = msg.serialize(port);
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     _status = msg.serialize(opCode);
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     _status = msg.serialize(cmdSeq);
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     _status = msg.serialize(args);
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     // send message
@@ -859,7 +859,7 @@ namespace ${namespace} {
       #end if
     FW_ASSERT(
         qStatus == Os::Queue::QUEUE_OK,
-        static_cast<AssertArg>(qStatus)
+        static_cast<FwAssertArgType>(qStatus)
     );
 
     #end if
@@ -925,7 +925,7 @@ namespace ${namespace} {
     #end if
       FW_ASSERT(
           _stat == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_stat)
+          static_cast<FwAssertArgType>(_stat)
       );
 
       FwChanIdType _id;
@@ -1206,25 +1206,25 @@ namespace ${namespace} {
       _status = _logBuff.serialize(static_cast<U8>($len($args)+1));
       FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_status)
+          static_cast<FwAssertArgType>(_status)
       );
       // For FATAL, add stack size of 4 and a dummy entry. No support for stacks yet.
       _status = _logBuff.serialize(static_cast<U8>(4));
       FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_status)
+          static_cast<FwAssertArgType>(_status)
       );
       _status = _logBuff.serialize(static_cast<U32>(0));
       FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_status)
+          static_cast<FwAssertArgType>(_status)
       );
 #else
       // Serialize the number of arguments
       _status = _logBuff.serialize(static_cast<U8>($len($args)));
       FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_status)
+          static_cast<FwAssertArgType>(_status)
       );
       #end if
 \#endif
@@ -1235,7 +1235,7 @@ namespace ${namespace} {
       _zero_status = _logBuff.serialize(static_cast<U8>(0));
       FW_ASSERT(
           _zero_status == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_zero_status)
+          static_cast<FwAssertArgType>(_zero_status)
       );
 \#endif
     #end if
@@ -1247,7 +1247,7 @@ namespace ${namespace} {
       _status = _logBuff.serialize(static_cast<U8>(sizeof(FwEnumStoreType)));
       FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_status)
+          static_cast<FwAssertArgType>(_status)
       );
 \#endif
 
@@ -1264,14 +1264,14 @@ namespace ${namespace} {
       );
       FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_status)
+          static_cast<FwAssertArgType>(_status)
       );
 \#endif
       _status = _logBuff.serialize($arg_name);
       #end if
       FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_status)
+          static_cast<FwAssertArgType>(_status)
       );
 
     #end for
@@ -1369,14 +1369,14 @@ namespace ${namespace} {
     _status = msg.serialize(static_cast<NATIVE_INT_TYPE>(INT_IF_${ifname.upper}));
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     // Fake port number to make message dequeue work
     _status = msg.serialize(static_cast<NATIVE_INT_TYPE>(0));
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     #for $argname, $argtype, $comment, $typeinfo in $internal_interface_args[$ifname]:
@@ -1385,7 +1385,7 @@ namespace ${namespace} {
       #else
     _status = msg.serialize($argname);
       #end if
-    FW_ASSERT(_status == Fw::FW_SERIALIZE_OK, static_cast<AssertArg>(_status));
+    FW_ASSERT(_status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(_status));
     #end for
 
     // send message
@@ -1405,7 +1405,7 @@ namespace ${namespace} {
       #end if
     FW_ASSERT(
         qStatus == Os::Queue::QUEUE_OK,
-        static_cast<AssertArg>(qStatus)
+        static_cast<FwAssertArgType>(qStatus)
     );
 
   }
@@ -1481,21 +1481,21 @@ namespace ${namespace} {
     );
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     // serialize port number
     _status = msgSerBuff.serialize(portNum);
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     // serialize buffer
     _status = msgSerBuff.serialize(buffer);
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     // send message
@@ -1515,7 +1515,7 @@ namespace ${namespace} {
       #end if
     FW_ASSERT(
         qStatus == Os::Queue::QUEUE_OK,
-        static_cast<AssertArg>(qStatus)
+        static_cast<FwAssertArgType>(qStatus)
     );
 
     #end if
@@ -1583,7 +1583,7 @@ namespace ${namespace} {
   {
 
     // Make sure port number is valid
-    FW_ASSERT(portNum < this->getNum_${instance}_InputPorts(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_${instance}_InputPorts(),static_cast<FwAssertArgType>(portNum));
     #if not $void_return_type:
     ${return_type} retVal;
     #end if
@@ -1607,13 +1607,13 @@ namespace ${namespace} {
     );
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
     _status = msg.serialize(portNum);
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
       #set $args = $port_args[$instance]
@@ -1628,7 +1628,7 @@ namespace ${namespace} {
         #end if
     FW_ASSERT(
         _status == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(_status)
+        static_cast<FwAssertArgType>(_status)
     );
 
       #end for
@@ -1650,7 +1650,7 @@ namespace ${namespace} {
       #end if
     FW_ASSERT(
         qStatus == Os::Queue::QUEUE_OK,
-        static_cast<AssertArg>(qStatus)
+        static_cast<FwAssertArgType>(qStatus)
     );
 
     #else:
@@ -1732,7 +1732,7 @@ namespace ${namespace} {
     Os::Queue::QueueStatus msgStatus = this->m_queue.receive(msg,priority,Os::Queue::QUEUE_BLOCKING);
     FW_ASSERT(
         msgStatus == Os::Queue::QUEUE_OK,
-        static_cast<AssertArg>(msgStatus)
+        static_cast<FwAssertArgType>(msgStatus)
     );
   #else
     Os::Queue::QueueStatus msgStatus = this->m_queue.receive(msg,priority,Os::Queue::QUEUE_NONBLOCKING);
@@ -1741,7 +1741,7 @@ namespace ${namespace} {
     } else {
       FW_ASSERT(
           msgStatus == Os::Queue::QUEUE_OK,
-          static_cast<AssertArg>(msgStatus)
+          static_cast<FwAssertArgType>(msgStatus)
       );
     }
   #end if
@@ -1753,7 +1753,7 @@ namespace ${namespace} {
     Fw::SerializeStatus deserStatus = msg.deserialize(desMsg);
     FW_ASSERT(
         deserStatus == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(deserStatus)
+        static_cast<FwAssertArgType>(deserStatus)
     );
 
     MsgTypeEnum msgType = static_cast<MsgTypeEnum>(desMsg);
@@ -1766,7 +1766,7 @@ namespace ${namespace} {
     deserStatus = msg.deserialize(portNum);
     FW_ASSERT(
         deserStatus == Fw::FW_SERIALIZE_OK,
-        static_cast<AssertArg>(deserStatus)
+        static_cast<FwAssertArgType>(deserStatus)
     );
 
     switch (msgType) {
@@ -1795,7 +1795,7 @@ namespace ${namespace} {
         #end if
         FW_ASSERT(
             deserStatus == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(deserStatus)
+            static_cast<FwAssertArgType>(deserStatus)
         );
 
       #end for
@@ -1806,7 +1806,7 @@ namespace ${namespace} {
         deserStatus = msg.deserialize(serHandBuff);
         FW_ASSERT(
             deserStatus == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(deserStatus)
+            static_cast<FwAssertArgType>(deserStatus)
         );
         this->${instance}_handler(portNum, serHandBuff);
       #else:
@@ -1846,7 +1846,7 @@ namespace ${namespace} {
         deserStatus = msg.deserialize(opCode);
         FW_ASSERT (
             deserStatus == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(deserStatus)
+            static_cast<FwAssertArgType>(deserStatus)
         );
 
         // Deserialize command sequence
@@ -1854,7 +1854,7 @@ namespace ${namespace} {
         deserStatus = msg.deserialize(cmdSeq);
         FW_ASSERT (
             deserStatus == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(deserStatus)
+            static_cast<FwAssertArgType>(deserStatus)
         );
 
         // Deserialize command argument buffer
@@ -1862,7 +1862,7 @@ namespace ${namespace} {
         deserStatus = msg.deserialize(args);
         FW_ASSERT (
             deserStatus == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(deserStatus)
+            static_cast<FwAssertArgType>(deserStatus)
         );
 
         // Reset buffer
@@ -1939,7 +1939,7 @@ namespace ${namespace} {
         // Internal interfaces should always deserialize
         FW_ASSERT(
             Fw::FW_SERIALIZE_OK == deserStatus,
-            static_cast<AssertArg>(deserStatus)
+            static_cast<FwAssertArgType>(deserStatus)
         );
 
     #end for
@@ -1947,7 +1947,7 @@ namespace ${namespace} {
         // That means the buffer size was incorrect.
         FW_ASSERT(
             msg.getBuffLeft() == 0,
-            static_cast<AssertArg>(msg.getBuffLeft())
+            static_cast<FwAssertArgType>(msg.getBuffLeft())
         );
 
         // Call handler function

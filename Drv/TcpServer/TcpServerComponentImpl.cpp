@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Drv/TcpServer/TcpServerComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
 
 namespace Drv {
@@ -75,13 +75,14 @@ void TcpServerComponentImpl::connected() {
 
 Drv::SendStatus TcpServerComponentImpl::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     Drv::SocketIpStatus status = m_socket.send(fwBuffer.getData(), fwBuffer.getSize());
-    // Always return the buffer
-    deallocate_out(0, fwBuffer);
-    if ((status == SOCK_DISCONNECTED) || (status == SOCK_INTERRUPTED_TRY_AGAIN)) {
+    // Only deallocate buffer when the caller is not asked to retry
+    if (status == SOCK_INTERRUPTED_TRY_AGAIN) {
         return SendStatus::SEND_RETRY;
     } else if (status != SOCK_SUCCESS) {
+        deallocate_out(0, fwBuffer);
         return SendStatus::SEND_ERROR;
     }
+    deallocate_out(0, fwBuffer);
     return SendStatus::SEND_OK;
 }
 

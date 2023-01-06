@@ -41,8 +41,12 @@ namespace Svc {
         };
     }
 
-    PrmDbImpl::PrmDbImpl(const char* name, const char* file) : PrmDbComponentBase(name) {
+    PrmDbImpl::PrmDbImpl(const char* name) : PrmDbComponentBase(name) {
         this->clearDb();
+    }
+
+    void PrmDbImpl::configure(const char* file) {
+        FW_ASSERT(file != nullptr);
         this->m_fileName = file;
     }
 
@@ -125,7 +129,7 @@ namespace Svc {
     }
 
     void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-
+        FW_ASSERT(this->m_fileName.length() > 0);
         Os::File paramFile;
         WorkingBuffer buff;
 
@@ -240,6 +244,7 @@ namespace Svc {
     }
 
     void PrmDbImpl::readParamFile() {
+        FW_ASSERT(this->m_fileName.length() > 0);
         // load file. FIXME: Put more robust file checking, such as a CRC.
         Os::File paramFile;
 

@@ -16,135 +16,121 @@
 
 namespace Svc {
 
-  class Tester :
-    public TlmPacketizerGTestBase
-  {
+class Tester : public TlmPacketizerGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object Tester
+    //!
+    Tester(void);
 
-    public:
+    //! Destroy object Tester
+    //!
+    ~Tester(void);
 
-      //! Construct object Tester
-      //!
-      Tester(void);
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object Tester
-      //!
-      ~Tester(void);
+    //! Initialization test
+    //!
+    void initTest(void);
 
-    public:
+    //! push telemetry test
+    //!
+    void pushTlmTest(void);
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! send packets test
+    //!
+    void sendPacketsTest(void);
 
-      //! Initialization test
-      //!
-      void initTest(void);
+    //! send packets with levels test
+    //!
+    void sendPacketLevelsTest(void);
 
-      //! push telemetry test
-      //!
-      void pushTlmTest(void);
+    //! update packets test
+    //!
+    void updatePacketsTest(void);
 
-      //! send packets test
-      //!
-      void sendPacketsTest(void);
+    //! non-packetized channel test
+    //!
+    void nonPacketizedChannelTest(void);
 
-      //! send packets with levels test
-      //!
-      void sendPacketLevelsTest(void);
+    //! ping test
+    //!
+    void pingTest(void);
 
-      //! update packets test
-      //!
-      void updatePacketsTest(void);
+    //! ignore test
+    //!
+    void ignoreTest(void);
 
-      //! non-packetized channel test
-      //!
-      void nonPacketizedChannelTest(void);
+    //! manually send packet test
+    //!
+    void sendManualPacketTest(void);
 
-      //! ping test
-      //!
-      void pingTest(void);
+    //! set packet level test
+    //!
+    void setPacketLevelTest(void);
 
-      //! ignore test
-      //!
-      void ignoreTest(void);
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-      //! manually send packet test
-      //!
-      void sendManualPacketTest(void);
+    //! Handler for from_Time
+    //!
+    void from_Time_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                           Fw::Time& time                 /*!< The U32 cmd argument*/
+    );
 
-      //! set packet level test
-      //!
-      void setPacketLevelTest(void);
+    //! Handler for from_PktSend
+    //!
+    void from_PktSend_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                              Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
+                              U32 context                    /*!< Call context value; meaning chosen by user*/
+    );
 
-    private:
+    //! Handler for from_pingOut
+    //!
+    void from_pingOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                              U32 key                        /*!< Value to return to pinger*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
+    virtual void textLogIn(const FwEventIdType id,         /*!< The event ID*/
+                           Fw::Time& timeTag,              /*!< The time*/
+                           const Fw::LogSeverity severity, /*!< The severity*/
+                           const Fw::TextLogString& text   /*!< The event string*/
+    );
 
-      //! Handler for from_Time
-      //!
-      void from_Time_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Time &time /*!< The U32 cmd argument*/
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      //! Handler for from_PktSend
-      //!
-      void from_PktSend_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
-          U32 context /*!< Call context value; meaning chosen by user*/
-      );
+    //! Connect ports
+    //!
+    void connectPorts(void);
 
-      //! Handler for from_pingOut
-      //!
-      void from_pingOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 key /*!< Value to return to pinger*/
-      );
+    //! Initialize components
+    //!
+    void initComponents(void);
 
-      virtual void textLogIn(
-          const FwEventIdType id, /*!< The event ID*/
-          Fw::Time& timeTag, /*!< The time*/
-          const Fw::LogSeverity severity, /*!< The severity*/
-          const Fw::TextLogString& text /*!< The event string*/
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
+    //! The component under test
+    //!
+    TlmPacketizer component;
 
-    private:
+    Fw::Time m_testTime;  //!< store test time for packets
+    bool m_timeSent;      //!< flag when time was sent
+};
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
-
-      //! Connect ports
-      //!
-      void connectPorts(void);
-
-      //! Initialize components
-      //!
-      void initComponents(void);
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      TlmPacketizer component;
-
-      Fw::Time m_testTime; //!< store test time for packets
-      bool m_timeSent; //!< flag when time was sent
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

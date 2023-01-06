@@ -12,7 +12,7 @@
 
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/FileSystem.hpp>
 
 namespace Svc {
@@ -33,11 +33,15 @@ namespace Svc {
     this->destName = destLogStringArg;
 
     // Set size
-    U64 size;
+    FwSizeType size;
     const Os::FileSystem::Status status = 
       Os::FileSystem::getFileSize(sourceFileName, size);
     if (status != Os::FileSystem::OP_OK)
       return Os::File::BAD_SIZE;
+    // If the size does not cast cleanly to the desired U32 type, return size error
+    if (static_cast<FwSizeType>(static_cast<U32>(size)) != size) {
+        return Os::File::BAD_SIZE;
+    }
     this->size = static_cast<U32>(size);
 
     // Initialize checksum
@@ -66,8 +70,10 @@ namespace Svc {
     status = this->osFile.read(data, intSize);
     if (status != Os::File::OP_OK)
       return status;
-    FW_ASSERT(static_cast<U32>(intSize) == size);
-
+    // Force a bad size error when the U32 carrying size is bad
+    if (static_cast<U32>(intSize) != size) {
+        return Os::File::BAD_SIZE;
+    }
     this->checksum.update(data, byteOffset, size);
 
     return Os::File::OP_OK;

@@ -39,8 +39,7 @@ namespace Svc {
             //!   the file name for opening later.
             //!
             //!  \param name component instance name
-            //!  \param file file where parameters are stored.
-            PrmDbImpl(const char* name, const char* file);
+            PrmDbImpl(const char* name);
 
             //!  \brief PrmDb initialization function
             //!
@@ -51,6 +50,14 @@ namespace Svc {
             //!  \param instance instance of component, if more than one is needed.
 
             void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance);
+
+            //!  \brief PrmDb configure method
+            //!
+            //!  The configure method stores the file name for opening later.
+            //!
+            //!  \param file file where parameters are stored.
+            void configure(const char* file);
+
 
             //!  \brief PrmDb file read function
             //!

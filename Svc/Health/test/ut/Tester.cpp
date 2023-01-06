@@ -260,7 +260,7 @@ namespace Svc {
 
       for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
-          sprintf(name,"task%d",port);
+          snprintf(name, sizeof(name), "task%d",port);
           ASSERT_EVENTS_HLTH_PING_WARN(port,name);
       }
 
@@ -294,7 +294,7 @@ namespace Svc {
 
       for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
-          sprintf(name,"task%d",port);
+          snprintf(name, sizeof(name), "task%d",port);
           ASSERT_EVENTS_HLTH_PING_WARN(port,name);
       }
 
@@ -316,7 +316,7 @@ namespace Svc {
 
       for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
-          sprintf(name,"task%d",port);
+          snprintf(name, sizeof(name), "task%d",port);
           ASSERT_EVENTS_HLTH_PING_LATE(port,name);
       }
 
@@ -346,7 +346,7 @@ namespace Svc {
       ASSERT_EVENTS_HLTH_PING_WARN_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
       for (NATIVE_INT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
           char name[80];
-          sprintf(name,"task%d",entry);
+          snprintf(name, sizeof(name), "task%d",entry);
           ASSERT_EVENTS_HLTH_PING_WARN(entry, name);
       }
 
@@ -406,7 +406,7 @@ namespace Svc {
       ASSERT_EVENTS_HLTH_PING_LATE_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
       for (NATIVE_INT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
           char name[80];
-          sprintf(name,"task%d",entry);
+          snprintf(name,sizeof(name), "task%d",entry);
           ASSERT_EVENTS_HLTH_PING_LATE(entry,name);
       }
 
@@ -435,7 +435,7 @@ namespace Svc {
           }
           // disable entry
           char name[80];
-          sprintf(name,"task%d",entry);
+          snprintf(name, sizeof(name), "task%d",entry);
           Fw::CmdStringArg task(name);
           this->sendCmd_HLTH_PING_ENABLE(0,10,name,Fw::Enabled::DISABLED);
           this->dispatchAll();
@@ -495,7 +495,7 @@ namespace Svc {
           ASSERT_EQ(this->pingEntries[entry].warnCycles,Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS+entry);
           ASSERT_EQ(this->pingEntries[entry].fatalCycles,Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2+entry+1);
           char name[80];
-          sprintf(name,"task%d",entry);
+          snprintf(name, sizeof(name), "task%d",entry);
           Fw::CmdStringArg task(name);
           this->sendCmd_HLTH_CHNG_PING(0,10,task,
                   Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*4+entry,
@@ -656,7 +656,7 @@ namespace Svc {
       ASSERT_EVENTS_HLTH_PING_WRONG_KEY_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
       for (NATIVE_INT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
-          sprintf(name,"task%d",port);
+          snprintf(name, sizeof(name), "task%d",port);
           ASSERT_EVENTS_HLTH_PING_WRONG_KEY(port,name,FLAG_KEY_VALUE);
       }
 
@@ -675,7 +675,7 @@ namespace Svc {
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::FORMAT_ERROR);
 
       //send command with bad ping entry
       sendCmd_HLTH_PING_ENABLE(0,0,"notask",Fw::Enabled::ENABLED);
@@ -748,7 +748,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_PING_WARN_SIZE(1);
       char name[80];
-      sprintf(name,"task%d",Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS-1);
+      snprintf(name, sizeof(name), "task%d",Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS-1);
       ASSERT_EVENTS_HLTH_PING_WARN(0,name);
       ASSERT_TLM_SIZE(1);
       ASSERT_TLM_PingLateWarnings_SIZE(1);

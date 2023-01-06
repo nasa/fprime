@@ -99,18 +99,12 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         if len(obj.get_ids()) == 1:
             pyfile = "{}/{}.py".format(output_dir, obj.get_name())
             fd = open(pyfile, "w")
-            if fd is None:
-                raise Exception(f"Could not open {pyfile} file.")
             self.__fp.append(fd)
         else:
-            inst = 0
-            for id in obj.get_ids():
+            for inst, id in enumerate(obj.get_ids()):
                 pyfile = "%s/%s_%d.py" % (output_dir, obj.get_name(), inst)
-                inst += 1
                 DEBUG.info(f"Open file: {pyfile}")
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception(f"Could not open {pyfile} file.")
                 DEBUG.info(f"Completed {pyfile} open")
                 self.__fp.append(fd)
 
@@ -118,23 +112,20 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate header for channel python class.
         """
-        inst = 0
-        for id in obj.get_ids():
+        for inst, id in enumerate(obj.get_ids()):
             c = ChannelHeader.ChannelHeader()
             d = datetime.datetime.now()
             c.date = d.strftime("%A, %d %B %Y")
             c.user = getuser()
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[inst], "channelHeaderVisit")
-            inst += 1
 
     def DictBodyVisit(self, obj):
         """
         Defined to generate the body of the Python channel class
         @param obj: the instance of the channel model to operation on.
         """
-        inst = 0
-        for id in obj.get_ids():
+        for inst, id in enumerate(obj.get_ids()):
             c = ChannelBody.ChannelBody()
             if len(obj.get_ids()) > 1:
                 c.name = obj.get_name() + "_%d" % inst
@@ -169,4 +160,3 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
 
             self._writeTmpl(c, self.__fp[inst], "channelBodyVisit")
             self.__fp[inst].close()
-            inst += 1

@@ -79,7 +79,7 @@ class DictStart:
             DEBUG.error(
                 "DictStartVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "DictStartVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class DictStart:
             DEBUG.error(
                 "DictStartVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "DictStartVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

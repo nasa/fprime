@@ -1,8 +1,5 @@
 # F´: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
 
-[![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:cpp)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:python)
-
 **F´ (F Prime)** is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on several space applications. It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
 **Please Visit the F´ Website:** [https://nasa.github.io/fprime/](https://nasa.github.io/fprime/).  This website contains project information, user guides, documentation, tutorials, and more!
@@ -15,25 +12,7 @@ F´ comprises several elements:
 * A growing collection of ready-to-use components
 * Testing tools for testing flight software at the unit and integration levels.
 
-## Quick Installation Guide
-
-The following utilities are prerequisites to installing F´:
-
-* [cmake](https://cmake.org/)
-* [git](https://git-scm.com/)
-* [Python](https://www.python.org/) 3.6+ with pip
-* [Java](https://openjdk.java.net/)
-
-Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required.
-
-To install F´ quickly, enter:
-
-```shell
-git clone https://github.com/nasa/fprime.git
-pip install --upgrade fprime-tools fprime-gds
-```
-
-For full installation instructions, including virtual environment creation and installation verification, see [INSTALL.md](./docs/INSTALL.md).
+For installation instructions, including virtual environment creation and installation verification, see [INSTALL.md](./docs/INSTALL.md).
 
 ## Example Deployments
 

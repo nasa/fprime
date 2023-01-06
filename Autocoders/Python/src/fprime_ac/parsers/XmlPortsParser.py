@@ -62,7 +62,7 @@ class XmlPortsParser:
         self.__enum_list_items = []
         self.__modifier = None
         #
-        if os.path.isfile(xml_file) == False:
+        if not os.path.isfile(xml_file):
             str = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(str)
         fd = open(xml_file)
@@ -304,7 +304,7 @@ class Arg:
         @param type:  Type of arg (must have supporting include xml)
         @param modifier:  Whether argument is passed by value, reference, or pointer
         @param size:  size of array for string and buffer
-        @param comment:  A single or multline comment
+        @param comment:  A single or multiline comment
         """
         self.__name = name
         self.__type = atype

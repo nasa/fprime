@@ -2,22 +2,27 @@
 #define FW_ASSERT_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
-#define FW_ASSERT(...)
+    #define FW_ASSERT(...)
 #else // ASSERT is defined
 
+
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define FILE_NAME_ARG NATIVE_UINT_TYPE
-#define FW_ASSERT(cond, ...) \
-    ((void) ((cond) ? (0) : \
-    (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))
+    #define FILE_NAME_ARG U32
+    #define FW_ASSERT(cond, ...) \
+        ((void) ((cond) ? (0) : \
+        (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))
+#elif FW_ASSERT_LEVEL == FW_RELATIVE_PATH_ASSERT
+    #define FILE_NAME_ARG const CHAR*
+    #define FW_ASSERT(cond, ...) \
+        ((void) ((cond) ? (0) : \
+        (Fw::SwAssert(ASSERT_RELATIVE_PATH, __LINE__, ##__VA_ARGS__))))
 #else
-#define FILE_NAME_ARG const CHAR*
-#define FW_ASSERT(cond, ...) \
-    ((void) ((cond) ? (0) : \
-    (Fw::SwAssert(__FILE__, __LINE__, ##__VA_ARGS__))))
+    #define FILE_NAME_ARG const CHAR*
+    #define FW_ASSERT(cond, ...) \
+        ((void) ((cond) ? (0) : \
+        (Fw::SwAssert(__FILE__, __LINE__, ##__VA_ARGS__))))
 #endif
 
 // F' Assertion functions can technically return even though the intention is for the assertion to terminate the program.
@@ -36,12 +41,12 @@
 
 namespace Fw {
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN; //!< Assert with no arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, AssertArg arg1) CLANG_ANALYZER_NORETURN; //!< Assert with one argument
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, AssertArg arg1, AssertArg arg2) CLANG_ANALYZER_NORETURN; //!< Assert with two arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, AssertArg arg1, AssertArg arg2, AssertArg arg3) CLANG_ANALYZER_NORETURN; //!< Assert with three arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, AssertArg arg1, AssertArg arg2, AssertArg arg3, AssertArg arg4) CLANG_ANALYZER_NORETURN; //!< Assert with four arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, AssertArg arg1, AssertArg arg2, AssertArg arg3, AssertArg arg4, AssertArg arg5) CLANG_ANALYZER_NORETURN; //!< Assert with five arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, AssertArg arg1, AssertArg arg2, AssertArg arg3, AssertArg arg4, AssertArg arg5, AssertArg arg6) CLANG_ANALYZER_NORETURN; //!< Assert with six arguments
+    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1) CLANG_ANALYZER_NORETURN; //!< Assert with one argument
+    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2) CLANG_ANALYZER_NORETURN; //!< Assert with two arguments
+    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3) CLANG_ANALYZER_NORETURN; //!< Assert with three arguments
+    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwAssertArgType arg4) CLANG_ANALYZER_NORETURN; //!< Assert with four arguments
+    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwAssertArgType arg4, FwAssertArgType arg5) CLANG_ANALYZER_NORETURN; //!< Assert with five arguments
+    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwAssertArgType arg4, FwAssertArgType arg5, FwAssertArgType arg6) CLANG_ANALYZER_NORETURN; //!< Assert with six arguments
 }
 
 // Base class for declaring an assert hook
@@ -59,12 +64,12 @@ namespace Fw {
                     FILE_NAME_ARG file,
                     NATIVE_UINT_TYPE lineNo,
                     NATIVE_UINT_TYPE numArgs,
-                    AssertArg arg1,
-                    AssertArg arg2,
-                    AssertArg arg3,
-                    AssertArg arg4,
-                    AssertArg arg5,
-                    AssertArg arg6
+                    FwAssertArgType arg1,
+                    FwAssertArgType arg2,
+                    FwAssertArgType arg3,
+                    FwAssertArgType arg4,
+                    FwAssertArgType arg5,
+                    FwAssertArgType arg6
                     );
             // default reportAssert() will call this when the message is built
             // override it to do another kind of print. printf by default
@@ -82,8 +87,6 @@ namespace Fw {
             // the previous assert hook
             AssertHook *previousHook;
     };
-
-
 }
 #endif // if ASSERT is defined
 

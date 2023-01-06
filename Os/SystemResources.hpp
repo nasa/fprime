@@ -12,7 +12,7 @@
 #ifndef _SystemResources_hpp_
 #define _SystemResources_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Os {
 namespace SystemResources {
@@ -23,13 +23,13 @@ enum SystemResourcesStatus {
 };
 
 struct CpuTicks {
-    U64 used;   //!< Filled with non-idle (system, user) CPU ticks
-    U64 total;  //!< Filled with total CPU ticks
+    FwSizeType used;   //!< Filled with non-idle (system, user) CPU ticks
+    FwSizeType total;  //!< Filled with total CPU ticks
 };
 
 struct MemUtil {
-    U64 used;   //!< Filled with used bytes of volatile memory (permanent, paged-in)
-    U64 total;  //!< Filled with total non-volatile memory
+    FwSizeType used;   //!< Filled with used bytes of volatile memory (permanent, paged-in)
+    FwSizeType total;  //!< Filled with total non-volatile memory
 };
 
 /**

@@ -71,6 +71,7 @@ from .visitors import (
     SerialHVisitor,
     SerializableVisitor,
     TestImplCppVisitor,
+    TestImplCppHelpersVisitor,
     TestImplHVisitor,
     TestMainVisitor,
     TopologyCppVisitor,
@@ -147,6 +148,8 @@ class GenFactory:
                 inst = ImplHVisitor.ImplHVisitor()
             elif self.__type == "TestImplCppVisitor":
                 inst = TestImplCppVisitor.TestImplCppVisitor()
+            elif self.__type == "TestImplCppHelpersVisitor":
+                inst = TestImplCppHelpersVisitor.TestImplCppHelpersVisitor()
             elif self.__type == "TestImplHVisitor":
                 inst = TestImplHVisitor.TestImplHVisitor()
             elif self.__type == "TestMainVisitor":
@@ -361,9 +364,9 @@ class GenFactory:
             for inst in self.__configured_visitors:
                 config = self.__configured_visitors[inst]
                 # If enabled instance it and place in list
-                if config.getEnabled() == True:
+                if config.getEnabled():
                     visitor = config.Instance()
-                    if config.getGenerateCode() == False:
+                    if not config.getGenerateCode():
                         visitor.setGenerateEmptyFile()
                     self.__visitor_list.append(visitor)
         #

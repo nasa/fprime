@@ -19,7 +19,7 @@ class BareTaskHandle {
         bool m_enabled;
         //!< Save the priority
         NATIVE_INT_TYPE m_priority;
-        //!< Function passed in to the task
+        //!< Function passed into the task
         Task::taskRoutine m_routine;
         //!< Argument input pointer
         void* m_argument;

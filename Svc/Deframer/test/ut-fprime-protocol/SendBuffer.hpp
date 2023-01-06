@@ -7,7 +7,7 @@
 #ifndef SVC_SEND_BUFFER_HPP
 #define SVC_SEND_BUFFER_HPP
 
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/StringType.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"

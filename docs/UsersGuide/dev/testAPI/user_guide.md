@@ -719,7 +719,7 @@ I see two options to address this:
 
 ### The openpyxl library has thrown WorkbookAlreadySaved error
 
-While running unit tests on the API, there was an error thrown by openpyxl that caused the log to close early. The behavior wasn't able to be recreated, but the [Test Logger](../../../../Gds/src/fprime_gds/common/logger/test_logger.py) was updated to [catch the exception](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L124) to prevent tests from failing due to the logger.
+While running unit tests on the API, there was an error thrown by openpyxl that caused the log to close early. The behavior wasn't able to be recreated, but the [Test Logger](../../../../Gds/src/fprime_gds/common/logger/test_logger.py) was updated to [catch the exception](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L124) to prevent tests from failing due to the logger.
 
 ~~~~
 ___________________________________ APITestCases.test_find_history_item _________________________________
@@ -790,11 +790,11 @@ To fully resolve this would require being able to reproduce the issue and explai
 
 Recommendation for adding a csv logger to the TestLogger class:
 
-1. Set up the csv log file in the constructor [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L49).
-2. Add a `_log_csv_row()` helper along similar lines to the `_get_ws_row()` helper [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L159)
-3. Log the start time at the top of the file like the excel output does [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L85).
-4. Log the column headers to csv like the excel does [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L88).
-5. Log messages in the lock block [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L119).
+1. Set up the csv log file in the constructor [here](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L49).
+2. Add a `_log_csv_row()` helper along similar lines to the `_get_ws_row()` helper [here](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L159)
+3. Log the start time at the top of the file like the excel output does [here](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L85).
+4. Log the column headers to csv like the excel does [here](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L88).
+5. Log messages in the lock block [here](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L119).
 
 
 ## Idiosyncrasies
@@ -805,7 +805,7 @@ In this document, idiosyncrasies refer to needed-improvements and future feature
 
 ### Timeout implementation
 
-Presently timeouts are using the signal library and throw an exception to end the search. This timeout behavior can be modified very easily by changing the [__search_test_history](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/6cd4c8007a7f562d5b0b616eb494270ac5c7b95d/Gds/src/fprime_gds/common/testing_fw/api.py#L911) method. All searches use this method to accomplish scoping, logging and history substitution. Changing the timeout to something like below  would be better.
+Presently timeouts are using the signal library and throw an exception to end the search. This timeout behavior can be modified very easily by changing the [__search_test_history](https://github.com/nasa/fprime/blob/6cd4c8007a7f562d5b0b616eb494270ac5c7b95d/Gds/src/fprime_gds/common/testing_fw/api.py#L911) method. All searches use this method to accomplish scoping, logging and history substitution. Changing the timeout to something like below  would be better.
 
 ~~~~{.python}
 # in IntegrationTestAPI's __search_test_history method on ~line 912 of api.py
@@ -833,13 +833,13 @@ return searcher.get_return_value()
 
 In order to properly support ERT ordering, I recommend:
 
-1. Add a TimeType field to the [SysData](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/data_types/sys_data.py#L19) class and add an accessor for `get_ert_time()`.
+1. Add a TimeType field to the [SysData](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/data_types/sys_data.py#L19) class and add an accessor for `get_ert_time()`.
 2. Have the GDS record ERT at some point.
-3. Preserve the use of the `fsw_order` argument in the test API's [constructor](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L29) and [sub-history](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L244) functions by passing the fsw_order argument to the chronological [history constructor](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L23).
+3. Preserve the use of the `fsw_order` argument in the test API's [constructor](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L29) and [sub-history](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L244) functions by passing the fsw_order argument to the chronological [history constructor](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L23).
 4. Modify chronological history to choose whether to use `get_time()` or `get_ert_time()` for its ordering/returning operations:
-    - [clearing history](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L111)
-    - `__insert_chrono()` [helper](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L165)
-    - `__get_index()` [helper](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L206)
+    - [clearing history](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L111)
+    - `__insert_chrono()` [helper](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L165)
+    - `__get_index()` [helper](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L206)
 
 #### Better History Markers
 
@@ -847,11 +847,11 @@ As part of the work to add ERT and have chronological histories work for both ER
 
 ### Color-coding interlaced Events in the API Log
 
-One feature that wasn't completed this summer was to color-code interlaced event logs based on severity. Presently, interlacing events are implemented by making the API a consumer of the event decoder in the GDS and then filtering events. Modifying the color of these log messages can be done [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L1258).
+One feature that wasn't completed this summer was to color-code interlaced event logs based on severity. Presently, interlacing events are implemented by making the API a consumer of the event decoder in the GDS and then filtering events. Modifying the color of these log messages can be done [here](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L1258).
 
 ### Moving StandardPipeline to API constructor
 
-Presently, a user of the integration test API needs to instantiate the GDS manually before instantiating the API. This code should really be moved to inside the API. To do this, the IntegrationTestAPI's [constructor](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L27) should be modified to include the pipeline instantiation and the API's [teardown](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L64) method should be modified to disconnect from the F Prime deployment.
+Presently, a user of the integration test API needs to instantiate the GDS manually before instantiating the API. This code should really be moved to inside the API. To do this, the IntegrationTestAPI's [constructor](https://github.com/nasa/fprime/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L27) should be modified to include the pipeline instantiation and the API's [teardown](https://github.com/nasa/fprime/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L64) method should be modified to disconnect from the F Prime deployment.
 
 #### Modification to the Integration Test API
 
@@ -912,7 +912,7 @@ Currently the StandardPipeline (GDS Helper layer) uses a path to a directory to 
 
 ### Better test identifiers using decorators
 
-When a new test case [is started](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L85), the API user can specify a `case_id` that will be used in the logs to identify the current test case without scrolling to the test case header. Future uses of the API should investigate using decorators to specify an ID to put in this column. Present tests just use a counter and assign a number to each test case.
+When a new test case [is started](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L85), the API user can specify a `case_id` that will be used in the logs to identify the current test case without scrolling to the test case header. Future uses of the API should investigate using decorators to specify an ID to put in this column. Present tests just use a counter and assign a number to each test case.
 
 ### GDS command arguments should allow non-string types
 

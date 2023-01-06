@@ -2,7 +2,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 #define __STDC_FORMAT_MACROS
-#include <StandardTypes.hpp>
 
 namespace Fw {
 
@@ -411,7 +410,7 @@ namespace Fw {
                     valIsEqual = false;
                     break;
                 default:
-                    FW_ASSERT(0,static_cast<AssertArg>(this->m_dataType));
+                    FW_ASSERT(0,static_cast<FwAssertArgType>(this->m_dataType));
                     return false; // for compiler
                 }
             return valIsEqual;
@@ -474,7 +473,7 @@ namespace Fw {
                     result = false;
                     break;
                 default:
-                    FW_ASSERT(0,static_cast<AssertArg>(this->m_dataType));
+                    FW_ASSERT(0,static_cast<FwAssertArgType>(this->m_dataType));
                     return false; // for compiler
             }
             return result;
@@ -534,6 +533,8 @@ namespace Fw {
             case TYPE_I64:
                 stat = buffer.serialize(this->m_val.i64Val);
                 break;
+#endif
+#if FW_HAS_F64
             case TYPE_F64:
                 stat = buffer.serialize(this->m_val.f64Val);
                 break;
@@ -587,6 +588,8 @@ namespace Fw {
                     return buffer.deserialize(this->m_val.u64Val);
                 case TYPE_I64:
                     return buffer.deserialize(this->m_val.i64Val);
+#endif
+#if FW_HAS_F64
                 case TYPE_F64:
                     return buffer.deserialize(this->m_val.f64Val);
 #endif

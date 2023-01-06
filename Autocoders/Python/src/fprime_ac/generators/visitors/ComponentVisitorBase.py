@@ -379,12 +379,10 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
                 if len(opcodes) == 1:
                     return f"CMD_{mnemonic.upper()}"
                 else:
-                    mlist = []
-                    inst = 0
-                    for opcode in opcodes:
-                        mlist.append("CMD_" + mnemonic.upper() + "_%d" % inst)
-                        inst += 1
-                    return mlist
+                    return [
+                        f"CMD_{mnemonic.upper()}_{inst}"
+                        for inst, opcode in enumerate(opcodes)
+                    ]
             else:
                 return None
 
@@ -865,8 +863,6 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp is None:
-            raise Exception("Could not open file %s") % filename
         DEBUG.info("Completed")
 
     def initFilesVisit(self, obj):
