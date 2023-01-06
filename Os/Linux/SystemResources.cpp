@@ -57,7 +57,7 @@ namespace Os {
             }
             if (i != cpu_index) { continue; }
 
-            if (!(line[0] == 'c' && line[1] == 'p' && line[2] == 'u')) {
+            if (strncmp(line, "cpu", 3) != 0) {
                 fclose(fp);
                 return SYSTEM_RESOURCES_ERROR;
             }
