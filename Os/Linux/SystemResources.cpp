@@ -10,6 +10,7 @@
 //
 // ======================================================================
 #include <cstdio>
+#include <array>
 #include <sys/sysinfo.h>
 #include <cstring>
 #include <Os/SystemResources.hpp>
@@ -23,9 +24,9 @@ namespace Os {
     }
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks &cpu_ticks, U32 cpu_index) {
-        char line[512] = {0};
+        std::array<char, 512> line = {0};
         FILE *fp = nullptr;
-        U32 cpu_data[4] = {0};
+        std::array<U32, 4> cpu_data = {};
         U32 cpuCount = 0;
         SystemResources::SystemResourcesStatus status  = SYSTEM_RESOURCES_ERROR;
         U64 cpuUsed = 0;
@@ -34,35 +35,30 @@ namespace Os {
         if ((status = getCpuCount(cpuCount)) != SYSTEM_RESOURCES_OK) {
             return status;
         }
-
         if (cpu_index >= cpuCount) {
             return SYSTEM_RESOURCES_ERROR;
         }
-
         if ((fp = fopen("/proc/stat", "r")) == nullptr) {
-
             return SYSTEM_RESOURCES_ERROR;
-
         }
-
-        if (fgets(line, sizeof(line), fp) == nullptr) { //1st line.  Aggregate cpu line.
+        if (fgets(line.data(), line.size(), fp) == nullptr) { //1st line.  Aggregate cpu line.
             fclose(fp);
             return SYSTEM_RESOURCES_ERROR;
         }
 
         for (U32 i = 0; i < cpu_index + 1; i++) {
-            if (fgets(line, sizeof(line), fp) == nullptr) { //cpu# line
+            if (fgets(line.data(), line.size(), fp) == nullptr) { //cpu# line
                 fclose(fp);
                 return SYSTEM_RESOURCES_ERROR;
             }
             if (i != cpu_index) { continue; }
 
-            if (strncmp(line, "cpu", 3) != 0) {
+            if (strncmp(line.data(), "cpu", 3) != 0) {
                 fclose(fp);
                 return SYSTEM_RESOURCES_ERROR;
             }
             // No string concerns, as string is discarded
-            sscanf(line, "%*s %d %d %d %d", &cpu_data[0],
+            sscanf(line.data(), "%*s %d %d %d %d", &cpu_data[0],
                    &cpu_data[1],
                    &cpu_data[2],
                    &cpu_data[3]); //cpu#: 4 numbers: usr, nice, sys, idle
