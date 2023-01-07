@@ -19,6 +19,8 @@
 #define PROC_STAT_PATH "/proc/stat"
 #define READ_ONLY "r"
 #define LINE_SIZE 256
+std::array<char, LINE_SIZE> proc_stat_line;
+
 namespace Os {
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuCount(U32 &cpuCount) {
@@ -27,7 +29,6 @@ namespace Os {
     }
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks &cpu_ticks, U32 cpu_index) {
-        std::array<char, LINE_SIZE> line = {0};
         FILE *fp = nullptr;
         std::array<U32, 4> cpu_data = {0};
         U32 cpuCount = 0;
@@ -44,24 +45,24 @@ namespace Os {
         if ((fp = fopen(PROC_STAT_PATH, READ_ONLY)) == nullptr) {
             return SYSTEM_RESOURCES_ERROR;
         }
-        if (fgets(line.data(), line.size(), fp) == nullptr) { //1st line.  Aggregate cpu line.
+        if (fgets(proc_stat_line.data(), proc_stat_line.size(), fp) == nullptr) { //1st line.  Aggregate cpu line.
             fclose(fp);
             return SYSTEM_RESOURCES_ERROR;
         }
 
         for (U32 i = 0; i < cpu_index + 1; i++) {
-            if (fgets(line.data(), line.size(), fp) == nullptr) { //cpu# line
+            if (fgets(proc_stat_line.data(), proc_stat_line.size(), fp) == nullptr) { //cpu# line
                 fclose(fp);
                 return SYSTEM_RESOURCES_ERROR;
             }
             if (i != cpu_index) { continue; }
 
-            if (strncmp(line.data(), "cpu", 3) != 0) {
+            if (strncmp(proc_stat_line.data(), "cpu", 3) != 0) {
                 fclose(fp);
                 return SYSTEM_RESOURCES_ERROR;
             }
             // No string concerns, as string is discarded
-            sscanf(line.data(), "%*s %d %d %d %d", &cpu_data[0],
+            sscanf(proc_stat_line.data(), "%*s %d %d %d %d", &cpu_data[0],
                    &cpu_data[1],
                    &cpu_data[2],
                    &cpu_data[3]); //cpu#: 4 numbers: usr, nice, sys, idle
