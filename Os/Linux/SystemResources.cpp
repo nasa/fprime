@@ -122,9 +122,10 @@ namespace Os {
         const FwSizeType memory_unit = static_cast<FwSizeType>(memory_info.mem_unit);
 
         // Check for casting and type errors
-        if (((total_ram <= 0) || (static_cast<unsigned long>(total_ram) != memory_info.totalram)) ||
-            ((free_ram <= 0) || (static_cast<unsigned long>(free_ram) != memory_info.freeram)) ||
-            ((memory_unit <= 0) || (static_cast<unsigned int>(memory_unit) != memory_info.mem_unit))) {
+        if ((total_ram <= 0) || (free_ram < 0) || (memory_unit <= 0) ||
+            (static_cast<unsigned long>(total_ram) != memory_info.totalram) ||
+            (static_cast<unsigned long>(free_ram) != memory_info.freeram) ||
+            (static_cast<unsigned int>(memory_unit) != memory_info.mem_unit)) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
