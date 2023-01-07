@@ -110,10 +110,37 @@ namespace Os {
         return SYSTEM_RESOURCES_OK;
     }
 
-    SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil &memory_util) {
-        struct sysinfo memory_info;
 
-        if (sysinfo(&memory_info) != 0) {
+    U64 getMemoryTotal(FwSizeType total_ram, FwSizeType memory_unit) {
+        return total_ram * memory_unit;
+    }
+    U64 getMemoryUsed(FwSizeType total_ram, FwSizeType free_ram, FwSizeType memory_unit) {
+        return (total_ram - free_ram) * memory_unit;
+    }
+
+    bool checkCastingAndTypeErrors(FwSizeType total_ram,
+                                   FwSizeType free_ram,
+                                   FwSizeType memory_unit,
+                                   const struct sysinfo& memory_info) {
+        return ((total_ram <= 0) || (free_ram < 0) || (memory_unit <= 0) ||
+                (static_cast<unsigned long>(total_ram) != memory_info.totalram) ||
+                (static_cast<unsigned long>(free_ram) != memory_info.freeram) ||
+                (static_cast<unsigned int>(memory_unit) != memory_info.mem_unit));
+    }
+
+    bool checkInvalidMemoryCalculation(FwSizeType total_ram, FwSizeType free_ram) {
+        return (total_ram < free_ram);
+    }
+
+    bool checkMultiplicationOverflow(FwSizeType total_ram, FwSizeType memory_unit) {
+        return (total_ram > (FpLimits::FwSizeType_MAX / memory_unit));
+    }
+
+    SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil& memory_util) {
+        struct sysinfo memory_info;
+        int sysinfo_result = 0;
+
+        if (sysinfo_result = sysinfo(&memory_info) != 0) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
@@ -121,26 +148,20 @@ namespace Os {
         const FwSizeType free_ram = static_cast<FwSizeType>(memory_info.freeram);
         const FwSizeType memory_unit = static_cast<FwSizeType>(memory_info.mem_unit);
 
-        // Check for casting and type errors
-        if ((total_ram <= 0) || (free_ram < 0) || (memory_unit <= 0) ||
-            (static_cast<unsigned long>(total_ram) != memory_info.totalram) ||
-            (static_cast<unsigned long>(free_ram) != memory_info.freeram) ||
-            (static_cast<unsigned int>(memory_unit) != memory_info.mem_unit)) {
+        if (checkCastingAndTypeErrors(total_ram, free_ram, memory_unit, memory_info)) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
-        // Check for invalid memory calculations
-        if (total_ram < free_ram) {
+        if (checkInvalidMemoryCalculation(total_ram, free_ram)) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
-        // Check for overflow in multiplication
-        if (total_ram > (FpLimits::FwSizeType_MAX / memory_unit)) {
+        if (checkMultiplicationOverflow(total_ram, memory_unit)) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
-        memory_util.total = total_ram * memory_unit;
-        memory_util.used = (total_ram - free_ram) * memory_unit;
+        memory_util.used = getMemoryUsed(total_ram, free_ram, memory_unit);
+        memory_util.total = getMemoryTotal(total_ram, memory_unit);
 
         return SYSTEM_RESOURCES_OK;
     }
