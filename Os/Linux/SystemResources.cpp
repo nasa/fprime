@@ -28,13 +28,71 @@ namespace Os {
         return SYSTEM_RESOURCES_OK;
     }
 
-    SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks &cpu_ticks, U32 cpu_index) {
-        SystemResources::SystemResourcesStatus status  = SYSTEM_RESOURCES_ERROR;
-        std::array<U32, 4> cpu_data = {0};
+    U64 getCpuUsed(std::array<U32, 4>& cpu_data) {
+        return cpu_data[0] + cpu_data[1] + cpu_data[2];
+    }
+    U64 getCpuTotal(std::array<U32, 4>& cpu_data) {
+        return cpu_data[0] + cpu_data[1] + cpu_data[2] + cpu_data[3];
+    }
+
+    SystemResources::SystemResourcesStatus openProcStatFile(FILE*& fp) {
+        if ((fp = fopen(PROC_STAT_PATH, READ_ONLY)) == nullptr) {
+            return SystemResources::SYSTEM_RESOURCES_ERROR;
+        }
+        return SystemResources::SYSTEM_RESOURCES_OK;
+    }
+
+    SystemResources::SystemResourcesStatus readProcStatLine(FILE* fp, std::array<char, LINE_SIZE>& proc_stat_line) {
+        if (fgets(proc_stat_line.data(), proc_stat_line.size(), fp) == nullptr) {
+            return SystemResources::SYSTEM_RESOURCES_ERROR;
+        }
+        return SystemResources::SYSTEM_RESOURCES_OK;
+    }
+
+    SystemResources::SystemResourcesStatus getCpuDataLine(FILE* fp,
+                                                          U32 cpu_index,
+                                                          std::array<char, LINE_SIZE>& proc_stat_line) {
+        for (U32 i = 0; i < cpu_index + 1; i++) {
+            if (readProcStatLine(fp, proc_stat_line) != SystemResources::SYSTEM_RESOURCES_OK) {
+                return SystemResources::SYSTEM_RESOURCES_ERROR;
+            }
+            if (i != cpu_index) {
+                continue;
+            }
+            if (strncmp(proc_stat_line.data(), "cpu", 3) != 0) {
+                return SystemResources::SYSTEM_RESOURCES_ERROR;
+            }
+            break;
+        }
+        return SystemResources::SYSTEM_RESOURCES_OK;
+    }
+
+    SystemResources::SystemResourcesStatus parseCpuData(std::array<char, LINE_SIZE>& proc_stat_line,
+                                                        std::array<U32, 4>& cpu_data) {
+        if (sscanf(proc_stat_line.data(), "%*s %d %d %d %d", &cpu_data[0], &cpu_data[1], &cpu_data[2], &cpu_data[3]) !=
+            4) {
+            return SystemResources::SYSTEM_RESOURCES_ERROR;
+        }
+        return SystemResources::SYSTEM_RESOURCES_OK;
+    }
+
+    SystemResources::SystemResourcesStatus getCpuData(U32 cpu_index, std::array<U32, 4>& cpu_data) {
         FILE* fp = nullptr;
+        if (openProcStatFile(fp) != SystemResources::SYSTEM_RESOURCES_OK ||
+            readProcStatLine(fp, proc_stat_line) != SystemResources::SYSTEM_RESOURCES_OK ||
+            getCpuDataLine(fp, cpu_index, proc_stat_line) != SystemResources::SYSTEM_RESOURCES_OK ||
+            parseCpuData(proc_stat_line, cpu_data) != SystemResources::SYSTEM_RESOURCES_OK) {
+            fclose(fp);
+            return SystemResources::SYSTEM_RESOURCES_ERROR;
+        }
+        fclose(fp);
+        return SystemResources::SYSTEM_RESOURCES_OK;
+    }
+
+    SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks& cpu_ticks, U32 cpu_index) {
+        SystemResources::SystemResourcesStatus status = SYSTEM_RESOURCES_ERROR;
+        std::array<U32, 4> cpu_data = {0};
         U32 cpuCount = 0;
-        U64 cpuUsed = 0;
-        U64 cpuTotal = 0;
 
         if ((status = getCpuCount(cpuCount)) != SYSTEM_RESOURCES_OK) {
             return status;
@@ -42,40 +100,13 @@ namespace Os {
         if (cpu_index >= cpuCount) {
             return SYSTEM_RESOURCES_ERROR;
         }
-        if ((fp = fopen(PROC_STAT_PATH, READ_ONLY)) == nullptr) {
-            return SYSTEM_RESOURCES_ERROR;
-        }
-        if (fgets(proc_stat_line.data(), proc_stat_line.size(), fp) == nullptr) {  // 1st line.  Aggregate cpu line.
-            fclose(fp);
-            return SYSTEM_RESOURCES_ERROR;
+
+        if ((status = getCpuData(cpu_index, cpu_data)) != SYSTEM_RESOURCES_OK) {
+            return status;
         }
 
-        for (U32 i = 0; i < cpu_index + 1; i++) {
-            if (fgets(proc_stat_line.data(), proc_stat_line.size(), fp) == nullptr) {  // cpu# line
-                fclose(fp);
-                return SYSTEM_RESOURCES_ERROR;
-            }
-            if (i != cpu_index) {
-                continue;
-            }
-
-            if (strncmp(proc_stat_line.data(), "cpu", 3) != 0) {
-                fclose(fp);
-                return SYSTEM_RESOURCES_ERROR;
-            }
-            // No string concerns, as string is discarded
-            sscanf(proc_stat_line.data(), "%*s %d %d %d %d", &cpu_data[0], &cpu_data[1], &cpu_data[2],
-                   &cpu_data[3]);  // cpu#: 4 numbers: usr, nice, sys, idle
-
-            cpuUsed = cpu_data[0] + cpu_data[1] + cpu_data[2];
-            cpuTotal = cpu_data[0] + cpu_data[1] + cpu_data[2] + cpu_data[3];
-
-            break;
-        }
-        fclose(fp);
-
-        cpu_ticks.used = cpuUsed;
-        cpu_ticks.total = cpuTotal;
+        cpu_ticks.used = getCpuUsed(cpu_data);
+        cpu_ticks.total = getCpuTotal(cpu_data);
         return SYSTEM_RESOURCES_OK;
     }
 
