@@ -310,5 +310,5 @@ finalizer prototype for code that runs when the component exits the
 message loop. These two functions are called on the thread of the active
 component. They are declared as virtual functions in C++, so they are
 not required. The preamble function is named preamble(void) and the
-finalizer is named finalizer(void). They can be used to do one-time activities
+finalizer is named `finalizer(void)`. They can be used to do one-time activities
 such as data structure initialization and cleanup.

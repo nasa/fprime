@@ -126,7 +126,7 @@ optional arguments:
 
 ### Supplying F´ Dictionary
 
-As mentioned, these CLI commands let you interact with the GDS through events and commands, and telemetry channels.
+As mentioned, these CLI commands let you interact with the GDS through events, commands, and telemetry channels.
 Through a *project F´ dictionary* the CLI can understand what commands, events and telemetry channels are available.
 Every F´ project deployment will have a `*Dictionary.xml` file that's created when the project's deployment is built
 In the `Ref` example project, it'll be the `Ref/Top/RefTopologyAppDictionary.xml` file.  By reading this file, the CLI

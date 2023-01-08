@@ -382,7 +382,7 @@ the serial buffers from the incoming ports are put in a message queue
 and then sent out to the DataOut ports on the thread of the component. The
 data output ports are in the form of a generic com buffer. The data
 output ports would be connected to a component that manages the
-communication hardware. Likewise, incoming data on the DataIn port is
+communication hardware. Likewise, incoming data on the `DataIn` port is
 queued for the component thread, which sends it out via a serialized
 output port.
 

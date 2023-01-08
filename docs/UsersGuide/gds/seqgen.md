@@ -78,15 +78,4 @@ been polled from a hardware clock or system time source.
 A sequence can be built with an expected time base and said sequence will not run should the flight software report time
 system in a different time base. For example, a sequence using TB_SC_TIME (spacecraft time) could be prevented from
 running if the flight software is currently using raw processor time and has not synchronized time with a known time
-source. The available time sources are listed below:
-
-| Timebase | Value | Explanation |
-|---|---|---|
-| TB_PROC_TIME | 1 | Sequence will run when only raw processor time is reported |
-| TB_WORKSTATION_TIME | 2 | Sequence will run when time is synchronized with test workstation (for testing) |
-| TB_SC_TIME | 3 | Sequence will run when time is synchronized with spacecraft time |
-| TB_FPGA_TIME | 4 | Sequence will run when time is synchronized with FPGA/hardware clock |
-| TB_DONT_CARE | 0xFFFF | Sequence will run regardless of flight software timebase |
-
-**Note:** The above descriptions represent typically usages of these time bases but are project specific i.e.
-TB_SC_TIME might derive time from an internet time source.
+source. The time sources that can be specified are found in the `TimeBase` enumeration in the `FpConfig.hpp` configuration header.

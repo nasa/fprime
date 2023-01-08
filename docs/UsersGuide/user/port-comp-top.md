@@ -152,9 +152,9 @@ guarded port invocations still execute in the execution context of the invoker.
 
 **Queued component:** has no thread but does have a queue. Thus it handles asynchronous commands and port invocations;
 however, the user must implement at least one synchronous port invocation that unloads and handles the messages on the
-queue. For this and any other synchronously invocation execution context is supplied by the invoker.  **Note:** this
-component type is only rarely used.  Ensure it is the correct choice for your design.
-
+queue. For this and any other synchronously invocation execution context is supplied by the invoker. This component type 
+is useful when using rate groups. It allows cyclical execution via a synchronous port connected to the rate group, but can
+be invoked from other components via an asynchronous port.
 #### A Quick Look at Component Types
 
 | Component Type | Has Queue | Has Thread |
@@ -168,8 +168,8 @@ component type is only rarely used.  Ensure it is the correct choice for your de
 Each component is divided into three classes that each represent a piece of the component's implementation. These three
 classes are as follows:
 
-1. Core Framework Class: the base class of components defined as part of the framework.  A component may inherit from:
-active, passive, and queued classes.  These represent the component types defined above.
+1. Core Framework Class: the base class of components defined as part of the framework.  A component may inherit from
+active, passive, or queued classes.  These represent the component types defined above.
 2. Generated Component-Specific Base: this class is the direct descendant of the core framework class and is
 automatically generated to provide all the implementation for framework features.
 3. Component-Specific Developer Implementation Class: this class inherits from the generated component-specific base

@@ -9,7 +9,7 @@ F´v3.0.0 has switched from a baseline using the F´ XML format for modeling F´
 language. Users may continue to use XML to model components but the F´ team recommends converting to the FPP language
 as the XML format will not receive feature enhancements.
 
-There is one caveat that users should be aware of: topology models. If a project wishes to use FPP as a modeling
+There is one limitation that users should be aware of regarding topology models. If a project wishes to use FPP as a modeling
 language for a given topology, it must ensure that all components used by that topology are also modeled with FPP. XML
 topologies can include both components modeled in XML and FPP so that projects can begin to migrate to FPP models
 without needing to convert everything.

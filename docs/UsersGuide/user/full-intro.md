@@ -72,7 +72,7 @@ completion of this action. It emits **Events** to signify when the action is dis
 has **Channels** counting the number of commands dispatched.
 
 From this example, we can see the organization of an F´ project. **Components** are the key to system
-modularization and each component has a set of **Ports** to communicate from. In addition, each **Component** may
+modularization and each component has a set of **Ports** to interact with other components. In addition, each **Component** may
 define a set of **Commands** it may handle (these are the actions seen dispatched above), and each **Component** may
 define a set of **Events** it can report as well as a set of **Channels** that it will send out. When a system is built
 from these modules, the functionality is distributed amongst the **Components** and the **Topology** sets up the

@@ -12,8 +12,8 @@ explanation of projects and deployments and how they differ is explained in this
 - [Topologies](#topologies)
 - [Conclusion](#conclusion)
 
-To illustrate this, the Mars Helicopter project is an excellent example. Mars Helicopter uses one project that defines
-two deployments: one for a base station, and one for the mobile helicopter. This is shown in Figure 1.
+To illustrate this, the Mars Helicopter project is an excellent example. The Mars Ingenuity Helicopter uses one project that defines
+three deployments: one for the base station connected to the Perseverance Rover, and two for the Ingenuity helicopter. This is shown in Figure 1.
 
 ![Mars Helicopter](../media/proj_dep1.png)
 **Figure 1. Mars Helicopter flight software components.**
@@ -26,8 +26,8 @@ multiple deployments. Component designs and source may be shared between these r
 
 There are several reasons a project may contain multiple deployments.
 
-1. A project consists of multiple spacecraft/electronic platforms/CPUs/systems. F´ can be used on multiple nodes in such systems.
-2. A project has test deployments, mocked-deployments, or other deployments that allow for specific testing setups.
+1. A project consists of multiple spacecraft, electronic platforms, processors or systems. F´ can be used on multiple nodes in such systems.
+2. A project has test deployments, simulation deployments, or other deployments that allow for specific testing setups.
 
 Figure 1 shows an example of a project, the Mars Helicopter flight software, which was implemented with F´. The Mars
 Helicopter is the project, but has two deployments: one designated for the helicopter, and one designated for the base

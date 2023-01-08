@@ -44,8 +44,8 @@ The typed port connections provide strong compile-time guarantees of correctness
 
 F´ ships with a good number of flight-proven components ready for use. These include most standard functions of an
 embedded system such as commanding, telemetry capture, system event capture, and ground interaction. Often this
-means that most of an application is completed.  Developers often only need to develop components for their
-specific use-case and standard components are inherited from the framework itself.
+means that much of an application is already completed.  Developers often only need to develop components for their
+specific use-case and standard components are inherited from the core repository itself.
 
 ### Standard Tooling
 
