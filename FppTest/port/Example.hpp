@@ -177,6 +177,10 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
       );
 
+    public:
+
+      //! Enables checking the serialization status of serial port invocations
+      Fw::SerializeStatus serializeStatus;
 
     };
 

@@ -241,9 +241,132 @@
         FppTest::Port::PrimitiveArgsPort& port
     ) 
   {
+    Fw::SerializeStatus status;
+
+    // Check unsuccessful deserialization of first parameter
+    U8 invalidData1[0];
+    Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::PRIMITIVE,
+      invalidBuf1
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of second parameter
+    U8 invalidData2[sizeof(U32)];
+    Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
+
+    status = invalidBuf2.serialize(port.args.u32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::PRIMITIVE,
+      invalidBuf2
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of third parameter
+    U8 invalidData3[sizeof(U32) * 2];
+    Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));
+
+    status = invalidBuf3.serialize(port.args.u32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf3.serialize(port.args.u32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::PRIMITIVE,
+      invalidBuf3
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of fourth parameter
+    U8 invalidData4[
+      (sizeof(U32) * 2) + 
+      sizeof(F32)
+    ];
+    Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));
+
+    status = invalidBuf4.serialize(port.args.u32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf4.serialize(port.args.u32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf4.serialize(port.args.f32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::PRIMITIVE,
+      invalidBuf4
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of fifth parameter
+    U8 invalidData5[
+      (sizeof(U32) * 2) + 
+      (sizeof(F32) * 2)
+    ];
+    Fw::SerialBuffer invalidBuf5(invalidData5, sizeof(invalidData5));
+
+    status = invalidBuf5.serialize(port.args.u32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf5.serialize(port.args.u32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf5.serialize(port.args.f32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf5.serialize(port.args.f32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::PRIMITIVE,
+      invalidBuf5
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of sixth parameter
+    U8 invalidData6[
+      (sizeof(U32) * 2) + 
+      (sizeof(F32) * 2) +
+      sizeof(U8)
+    ];
+    Fw::SerialBuffer invalidBuf6(invalidData6, sizeof(invalidData6));
+
+    status = invalidBuf6.serialize(port.args.u32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf6.serialize(port.args.u32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf6.serialize(port.args.f32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf6.serialize(port.args.f32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf6.serialize(port.args.b);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::PRIMITIVE,
+      invalidBuf6
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check successful serialization
     U8 data[InputPrimitiveArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
-    Fw::SerializeStatus status;
 
     status = buf.serialize(port.args.u32);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
@@ -267,6 +390,8 @@
       SerialPortIndex::PRIMITIVE,
       buf
     );
+
+    this->checkSerializeStatusSuccess();
   }
 
   void Tester ::
@@ -275,9 +400,76 @@
         FppTest::Port::StringArgsPort& port
     ) 
   {
+    Fw::SerializeStatus status;
+
+    // Check unsuccessful deserialization of first parameter
+    U8 invalidData1[0];
+    Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::STRING,
+      invalidBuf1
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of second parameter
+    U8 invalidData2[StringArgsPortStrings::StringSize80::SERIALIZED_SIZE];
+    Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
+
+    status = invalidBuf2.serialize(port.args.str80);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::STRING,
+      invalidBuf2
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of third parameter
+    U8 invalidData3[StringArgsPortStrings::StringSize80::SERIALIZED_SIZE * 2];
+    Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));
+
+    status = invalidBuf3.serialize(port.args.str80);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf3.serialize(port.args.str80Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::STRING,
+      invalidBuf3
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of fourth parameter
+    U8 invalidData4[
+      (StringArgsPortStrings::StringSize80::SERIALIZED_SIZE * 2) +
+      StringArgsPortStrings::StringSize100::SERIALIZED_SIZE
+    ];
+    Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));
+
+    status = invalidBuf4.serialize(port.args.str80);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf4.serialize(port.args.str80Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = invalidBuf4.serialize(port.args.str100);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::STRING,
+      invalidBuf4
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check successful serialization
     U8 data[InputStringArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
-    Fw::SerializeStatus status;
 
     status = buf.serialize(port.args.str80);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
@@ -295,6 +487,8 @@
       SerialPortIndex::STRING,
       buf
     );
+
+    this->checkSerializeStatusSuccess();
   }
 
   void Tester ::
@@ -303,9 +497,36 @@
         FppTest::Port::EnumArgsPort& port
     ) 
   {
+    Fw::SerializeStatus status;
+
+    // Check unsuccessful deserialization of first parameter
+    U8 invalidData1[0];
+    Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::ENUM,
+      invalidBuf1
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of second parameter
+    U8 invalidData2[PortEnum::SERIALIZED_SIZE];
+    Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
+
+    status = invalidBuf2.serialize(port.args.en);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::ENUM,
+      invalidBuf2
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check successful serialization
     U8 data[InputEnumArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
-    Fw::SerializeStatus status;
 
     status = buf.serialize(port.args.en);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
@@ -317,6 +538,8 @@
       SerialPortIndex::ENUM,
       buf
     );
+
+    this->checkSerializeStatusSuccess();
   }
 
   void Tester ::
@@ -325,9 +548,35 @@
         FppTest::Port::ArrayArgsPort& port
     ) 
   {
+    Fw::SerializeStatus status;
+
+    // Check unsuccessful deserialization of first parameter
+    U8 invalidData1[0];
+    Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::ARRAY,
+      invalidBuf1
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of second parameter
+    U8 invalidData2[PortArray::SERIALIZED_SIZE];
+    Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
+
+    status = invalidBuf2.serialize(port.args.a);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::ARRAY,
+      invalidBuf2
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
     U8 data[InputArrayArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
-    Fw::SerializeStatus status;
 
     status = buf.serialize(port.args.a);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
@@ -339,6 +588,8 @@
       SerialPortIndex::ARRAY,
       buf
     );
+
+    this->checkSerializeStatusSuccess();
   }
 
   void Tester ::
@@ -347,9 +598,35 @@
         FppTest::Port::StructArgsPort& port
     ) 
   {
+    Fw::SerializeStatus status;
+
+    // Check unsuccessful deserialization of first parameter
+    U8 invalidData1[0];
+    Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::STRUCT,
+      invalidBuf1
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
+    // Check unsuccessful deserialization of second parameter
+    U8 invalidData2[PortStruct::SERIALIZED_SIZE];
+    Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
+
+    status = invalidBuf2.serialize(port.args.s);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::STRUCT,
+      invalidBuf2
+    );
+
+    this->checkSerializeStatusBufferEmpty();
+
     U8 data[InputStructArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
-    Fw::SerializeStatus status;
 
     status = buf.serialize(port.args.s);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
@@ -361,6 +638,8 @@
       SerialPortIndex::STRUCT,
       buf
     );
+
+    this->checkSerializeStatusSuccess();
   }
 
   void Tester :: 
@@ -372,6 +651,11 @@
     this->invoke_to_serialIn(
       portNum,
       port.args.buf
+    );
+
+    ASSERT_EQ(
+      component.serializeStatus, 
+      Fw::FW_SERIALIZE_OK
     );
   }
 
@@ -1102,6 +1386,24 @@
     this->init();
     this->component.init(
         INSTANCE
+    );
+  }
+
+  void Tester ::
+    checkSerializeStatusSuccess()
+  {
+    ASSERT_EQ(
+      component.serializeStatus, 
+      Fw::FW_SERIALIZE_OK
+    );
+  }
+
+  void Tester ::
+    checkSerializeStatusBufferEmpty()
+  {
+    ASSERT_EQ(
+      component.serializeStatus, 
+      Fw::FW_DESERIALIZE_BUFFER_EMPTY
     );
   }
 

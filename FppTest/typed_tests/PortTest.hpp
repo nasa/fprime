@@ -4,7 +4,7 @@
 // \brief  hpp file for PortTest class
 //
 // \copyright
-// Copyright (C) 2009-2022 California Institute of Technology.
+// Copyright (C) 2009-2023 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //

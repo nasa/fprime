@@ -389,6 +389,12 @@
       //!
       void initComponents();
 
+      //! Check successful status of a serial port invocation
+      void checkSerializeStatusSuccess();
+
+      //! Check unsuccessful status of a serial port invocation
+      void checkSerializeStatusBufferEmpty();
+
     private:
 
       // ----------------------------------------------------------------------

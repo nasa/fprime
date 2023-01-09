@@ -187,6 +187,6 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    this->serialOut_out(portNum, Buffer);
+    this->serializeStatus = this->serialOut_out(portNum, Buffer);
   }
 
