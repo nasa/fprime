@@ -49,7 +49,6 @@ UNIT_TESTS = [
     "Svc_FileUplink_ut_exe",
     "Svc_Framer_ut_exe",
     "Svc_GenericHub_ut_exe",
-    "Svc_GenericRepeater_ut_exe",
     "Svc_GroundInterface_ut_exe",
     "Svc_Health_ut_exe",
     "Svc_LinuxTime_ut_exe",

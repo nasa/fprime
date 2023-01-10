@@ -12,6 +12,9 @@ has completed. To prevent a continuous stream of file downlink traffic from satu
 communication link, a cooldown can be configured to add a delay between the completion of a file
 downlink and starting on the next file in the queue.
 
+**Note:** file downlink is limited to processing files with a maximum file size of 4GiB. Larger files will result in a
+bad size error.
+
 ## 2 Requirements
 
 Requirement | Description | Rationale | Verification Method

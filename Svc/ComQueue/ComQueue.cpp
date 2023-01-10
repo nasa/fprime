@@ -50,7 +50,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                          NATIVE_UINT_TYPE allocationId,
                          Fw::MemAllocator& allocator) {
     FwIndexType currentPriorityIndex = 0;
-    FwSizeType totalAllocation = 0;
+    NATIVE_UINT_TYPE totalAllocation = 0;
 
     // Store/initialize allocator members
     this->m_allocator = &allocator;

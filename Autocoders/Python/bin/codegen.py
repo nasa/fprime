@@ -725,6 +725,7 @@ def generate_component(
         cpp_instance_gtest_name = base + "_GTest_Cpp"
         h_instance_test_impl_name = base + "_TestImpl_H"
         cpp_instance_test_impl_name = base + "_TestImpl_Cpp"
+        cpp_instance_test_impl_helpers_name = base + "_TestImplHelpers_Cpp"
         test_main_name = base + "_TestMain_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
@@ -752,6 +753,9 @@ def generate_component(
         )
         generator.configureVisitor(
             cpp_instance_test_impl_name, "TestImplCppVisitor", True, True
+        )
+        generator.configureVisitor(
+            cpp_instance_test_impl_helpers_name, "TestImplCppHelpersVisitor", True, True
         )
         generator.configureVisitor(test_main_name, "TestMainVisitor", True, True)
     else:
