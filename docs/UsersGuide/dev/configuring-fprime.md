@@ -40,7 +40,7 @@ Where components allow specific configuration, a `<component>Cfg.hpp` is availab
 
 AcConstants.ini is used to set the constants for the autocoded components provided by the framework. This allows
 projects to appropriately size the number of ports provided by many of the command and data handling components defined
-in the `Svc` package. **Note:** internal configurations like table sizes are set in the component specific header as
+in the `Svc` package. **Note:** Internal configurations like table sizes are set in the component-specific header as
 these settings aren't autocoded. See: [Component Configuration](#component-configuration)
 
 These settings may need to be increased for large projects with many components, or minimized for projects with a small
@@ -69,7 +69,7 @@ for different deployment settings. During flight software (FSW) execution, disab
 and CPU cycles.
 
 All of these settings should be set in `FpConfig.hpp` and for most projects, this whole file will be cloned and owned
-for their specific settings. These settings, typically the user will define the setting to be 0 for off and 1 for on.
+for their specific settings. Typically, the user will define the setting to be 0 for off and 1 for on.
 
 e.g.
 ```c
@@ -110,7 +110,7 @@ Example:
 
 #### Configured Type Definitions
 
-**WARNING:** to run the system with the standard F´ GDS, these changes need to be made in the python GDS support code
+**WARNING:** To run the system with the standard F´ GDS, these changes need to be made in the python GDS support code
 as well as here. This is non-trivial and will be fixed in future releases. Unless the project intended to modify the
 GDS code, or use an alternate GDS for all functions, these settings should be left as their defaults.
 
@@ -128,7 +128,7 @@ when the boolean is serialized
 Special named types used by F´ are mapped to some form of a primitive type integer type. This is done for ease of
 reading F´ code and is a standard practice in C/C++. The framework allows projects to change the type they used for
 these types to optimize transmitted bytes. Again, any changes must match the GDS in order to decode the values
-correctly and thus changing these values should be done carefully.
+correctly, and thus changing these values should be done carefully.
 
 **Table 34:** Macros for custom types
 
@@ -154,9 +154,9 @@ have access to a clock correlated to external operations. It can transition thro
 radio, Earth) on the way to becoming fully operational. The TimeBase type defines the set of clocks in the system that
 can produce a time tag. It lets users of the system see which clock was used when time tagging telemetry.
 
-Time contexts are another value associated with the time.
+Time contexts are another value associated with time.
 
-**WARNING:** changes to this value must be done in tandem with the F´ GDS for F´ GDS features to work. Thus most
+**WARNING:** Changes to this value must be done in tandem with the F´ GDS for F´ GDS features to work. Thus most
 projects don't modify these settings just like the types defined above.
 
 ```
@@ -178,7 +178,7 @@ Time base and time context usage may be turned on and off using the macros shown
 ### Object Settings
 
 The architecture allows for various settings to control, monitor, and trace objects in the system. These settings
-typically result in a larger binary size, but make the framework and system easier to debug. This section includes
+typically result in a larger binary size but make the framework and system easier to debug. This section includes
 a discussion of OS objects like Tasks and Queues as well.
 
 #### Object Naming
@@ -209,7 +209,7 @@ out component names from code when building without `FW_OBJECT_NAMES`.
 string will be truncated. FW_OBJECT_NAMES must be turned on for FW_OBJ_NAME_MAX_SIZ to have any effect.
 
 **Note:** FW_QUEUE_NAME_MAX_SIZE and FW_TASK_NAME_MAX_SIZE are only used if FW_OBJECT_NAMES is **turned off**.
-Otherwise the supplied object name is used.
+Otherwise, the supplied object name is used.
 
 #### Object to String
 
@@ -327,16 +327,16 @@ the macros to configure this feature.
 | FW_SERIALIZATION_TYPE_ID       | Enables serializing the type ID  | 0 (off) | 0 (off) 1 (on)    |
 | FW_SERIALIZATION_TYPE_ID_BYTES | Defines size of serialization ID | 4       | 1 - 4             |
 
-**Note:** smaller values for FW_SERIALIZATION_TYPE_ID_BYTES  means that less data storage is needed, but also
+**Note:** Smaller values for FW_SERIALIZATION_TYPE_ID_BYTES  means that less data storage is needed, but also
 limits the number of types that can be defined. FW_SERIALIZATION_TYPE_ID is required to have type IDs in the buffer and
 thus to introspect what type is contained in the buffer.
 
 
 ### Buffer Sizes
 
-Many of the built in F´ data types define buffer sizes that allow them to be passed as a com buffer type, sent out
-through the ground interface, serialized and more. This section will discuss the com buffer configuration,
-command, channel, event, parameter and other buffer size arguments.
+Many of the built-in F´ data types define buffer sizes that allow them to be passed as a com buffer type, sent out
+through the ground interface, serialized, and more. This section will discuss the com buffer configuration,
+command, channel, event, parameter, and other buffer size arguments.
 
 The com buffer must be able to store all the other types such that they can all be passed as generic communication. Thus
 FW_COM_BUFFER_MAX_SIZE must be large enough to hold each buffer size **and** the header data for each type. Thus these
@@ -344,7 +344,7 @@ settings are typically derived and this is done by default. **WARNING:** only mo
 there will be no faults in the system.
 
 In all cases, these definitions are global for each type in the system. Thus the buffer **must** be large enough to
-hold the data for the largest of a given type in the system.  An assert will result if the buffer is set too-small. i.e.
+hold the data for the largest of a given type in the system.  An assert will result if the buffer is set too small. i.e.
 the FW_CMD_ARG_BUFFER_MAX_SIZE cannot be smaller than the serialized size of the command with the largest arguments.
 
 These types also provide optional string sizes for their constituent pieces. However, the MAX_STRING_SIZE settings must
@@ -372,7 +372,7 @@ Table 42 provides the macros to configure these features.
 | FW_PRM_STRING_MAX_SIZE          | Defines the maximum size of a parameter string value  | 40      |                  |
 
 Other Buffers are defined in the system for specific purposes. These do not need to fit inside a comm buffer, and thus
-are less restrictive in sizing.
+are less restrictive in size.
 
 | Macro                      | Definition                                                 | Default | Valid Values     |
 | -------------------------- | -----------------------------------------------------------|---------|------------------|
@@ -405,10 +405,10 @@ string after being populated with arguments.
 ### Misc Configuration Settings
 
 This setting describes some of the other settings available in `FpConfig.hpp` and did not fit in other sections. These
-are described in tables below. Table 47 describes other user settings.  Table 48 describes settings defined by the
+are described in the tables below. Table 47 describes other user settings.  Table 48 describes settings defined by the
 build system that should never be hand-set.
 
-**Table 48.** Misc macros available to user.
+**Table 48.** Misc macros available to the user.
 
 | Macro                       | Definition                                              | Default | Valid Values     |
 | --------------------------- | --------------------------------------------------------|---------|------------------|
@@ -447,7 +447,7 @@ component's C++ implementation. This is typically to set maximum sizes for table
 Some components allow users to turn on and off features. If a component does not have a header, it has no configuration
 for the user to set.
 
-Users are encouraged to look through the header for the component of interest as they should be self descriptive.
+Users are encouraged to look through the header for the component of interest as they should be self-descriptive.
 
 ## Conclusion
 

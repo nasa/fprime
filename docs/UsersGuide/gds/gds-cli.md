@@ -33,7 +33,7 @@ have for situations like the following:
 -  Automating certain tasks through scripts
 -  Pacifying hardcore command-line users in your office
 
-In particular, the CLI tools for the GDS let you do 3 essential operations from the comfort of your own shell:
+In particular, the CLI tools for the GDS let you do 3 essential operations from the comfort of your shell:
 
 - Send commands to the embedded system through the GDS layer
 - View events emitted by the embedded into the F´ GDS
@@ -43,7 +43,7 @@ Let's see how you can use these for yourself!
 
 ## Getting Started
 
-`fprime-cli` is automatically installed when installing F´.  In order to use it, make sure that your virtual environment
+`fprime-cli` is automatically installed when installing F´. In order to use it, make sure that your virtual environment
 has been activated. To ensure the tool is ready, run `fprime-cli -h` and you should see the help usage. If an error is
 received, ensure F´ is properly installed via [the installation guide](../../INSTALL.md) and that your virtual
 environment has been activated.
@@ -69,7 +69,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -V, --version         show program's version number and exit
+  -V, --version         show the program's version number and exit
 ```
 
 We can see there are 3 "positional arguments" we can provide here, corresponding to the 3 commands we can run:
@@ -79,8 +79,8 @@ We can see there are 3 "positional arguments" we can provide here, corresponding
 - `events` lets us receive events the embedded system is recording
 
 You can use each command by running `fprime-cli [COMMAND NAME]`, e.g. `fprime-cli events` or `fprime-cli channels`. To
-learn more about each one, you can include the `-h` or `--help` flag after the command to print out the individualize
- command help messages (e.g. `fprime-cli events --help`) seen below.
+learn more about each one, you can include the `-h` or `--help` flag after the command to print out the individualized
+ command help messages (e.g. `fprime-cli events --help`) described below.
 
 ```bash
 $ fprime-cli events --help
@@ -126,7 +126,7 @@ optional arguments:
 
 ### Supplying F´ Dictionary
 
-As mentioned, these CLI commands let you interact with the GDS through events and commands and telemetry channels.
+As mentioned, these CLI commands let you interact with the GDS through events and commands, and telemetry channels.
 Through a *project F´ dictionary* the CLI can understand what commands, events and telemetry channels are available.
 Every F´ project deployment will have a `*Dictionary.xml` file that's created when the project's deployment is built
 In the `Ref` example project, it'll be the `Ref/Top/RefTopologyAppDictionary.xml` file.  By reading this file, the CLI
@@ -182,7 +182,7 @@ show you all the information available and allow interaction with other tools.
 
 #### Sending Commands
 
-In the second category is the `command-send` command, which can used to send commands through the GDS to the embedded
+In the second category is the `command-send` command, which can be used to send commands through the GDS to the embedded
 system. You can send commands by giving the *full name* of the command. These are typically formed by joining the
 component instance name and command name with a '.' (e.g. `health.HLTH_CHNG_PING`). When the command needs arguments,
 these can be passed in as a space-separated list using the `-args`/`--arguments` option. To send a command that does not
@@ -202,7 +202,7 @@ $ fprime-cli command-send health.HLTH_CHNG_PING --arguments eventLogger 50 20
 
 **Note:** If you need to pass in a string with spaces as an argument, just enclose it in quotes `"like this"`.
 
-Similarly to the other CLI tools, you can run `fprime-cli command-send -l` to get a list of the available commands and
+Similar to the other CLI tools, you can run `fprime-cli command-send -l` to get a list of the available commands and
 the arguments they take. The same filter options are available to search for particular commands. If you have tab
 completion enabled, you can also double-tap tab to view a list of potential commands based on what you've typed so far.
 
@@ -353,4 +353,4 @@ optional arguments:
 ## Conclusion
 
 The user should now be able to successfully use the GDS cli to connect to a running GDS, send commands, receive events
-and telemetry, and filter the results to be manageable.  All this is done through the command line using this tool.
+and telemetry, and filter the results to be manageable. All this is done through the command line using this tool.

@@ -1,14 +1,14 @@
 ## Data Constructs: Commands, Events, Channels, and Parameters
 
-Typically, spacecraft software is controlled through commands, and monitored using a set of events and telemetry
-channels. These are the critical data constructs supported directly by F´ and have built in autocoder support. In
+Typically, spacecraft software is controlled through commands and monitored using a set of events and telemetry
+channels. These are the critical data constructs supported directly by F´ and have built-in autocoder support. In
 addition, the F´ `Svc` components handle these types making it easy to define and control an F´ system through commands,
 events, and telemetry channels.
 
-Parameters allow for controlling stored values that effect the operation of an F´ system. They have framework support
+Parameters allow for controlling stored values that affect the operation of an F´ system. They have framework support
 to automatically, load, store, and set these values using commands.
 
-**Note:** events are sometimes called EVRs and telemetry channels are sometimes called EHAs.
+**Note:** Events are sometimes called EVRs and telemetry channels are sometimes called EHAs.
 
 These types will be elaborated within this guide. It contains:
 - [Commands](#commands)
@@ -41,7 +41,7 @@ commands run on the execution context of the command dispatcher. Async commands 
 can specify a priority. Guarded commands are protected from reentrancy by a mutex. These are similar to
 [port kinds](./port-comp-top.md#a-quick-look-at-port-kinds-defined-in-a-components-usage)
 
-Code in the component-specific generated base class calls a function to invoke the user defined command handler. This is
+Code in the component-specific generated base class calls a function to invoke the user-defined command handler. This is
 hooked up by connecting the command registration, command dispatch, and command response ports.
 
 ### Command Dispatching
@@ -56,7 +56,7 @@ the command dispatcher connecting the registration, dispatch, and response ports
 The command opcode is extracted, and a lookup table is used to find the handling component. The argument buffer is then
 passed to the component, and the command dispatcher waits without blocking for the component to return status..
 
-In many projects, commands need to be sequenced in order. In order to facilitate this the framework provides
+In many projects, commands need to be sequenced in order. In order to facilitate this, the framework provides
 `Svc::CmdSequencer`. The command sequencer reads a defined sequence of commands and sends each in turn to the command
 dispatcher to be dispatched and the command execution status is returned to the sequencer.  This is an alternate path to
 send command buffers to the command dispatcher than the external path from ground.
@@ -72,7 +72,7 @@ while a successful response moves to the next command in the sequence.
 ## Events
 
 Events represent a log of activities taken by the embedded system. Events can be thought of in the same way as a program
-execution log in that they enable the ability to trace the systems execution. Events are sent out of the system via the
+execution log in that they enable the ability to trace the execution of the system. Events are sent out of the system via the
 `Svc::ActiveLogger` component and components defining commands should hook up the log port to it. If console logging is
 desired, the text log port can be hooked up to the `Svc::PassiveConsoleTextLogger` component. Events are defined per
 component and are typically used to capture what the component is doing. Events can be sporadic; however, should all be
@@ -89,7 +89,7 @@ uniqueness.
     5. WARNING_HI: high-severity warning events, although the system can still function
     6. FATAL: fatal events indicating that the system **must** reboot
     7. COMMAND: events tracing the execution of commands
-4. arguments: like command arguments these are primitive and complex types that represent the variable data associated
+4. arguments: like command arguments, these are primitive and complex types that represent the variable data associated
 with the event. These are injected into the format string for a full text representation of the event.
 5. format string: a C-style format string used to reconstruct a text version of the event.
 
@@ -97,7 +97,7 @@ with the event. These are injected into the format string for a full text repres
 
 Code in the component-specific generated base class provides a function to call to emit each event defined by the
 component. This function expects an argument to be supplied for each argument defined by the event. The code generator
-automatically adds ports or retrieving a time tag and sending events. There are two independent ports for sending
+automatically adds ports for retrieving a time tag and sending events. There are two independent ports for sending
 events:
 
 1. binary log output port for sending outside the system
@@ -106,20 +106,20 @@ events:
 ### Event Logging
 
 Events first acquire a time tag to represent when they occurred and then are typically sent to the `Svc::ActiveLogger`
-component on their way to be sent down to the ground. This logger component both process the event and also recognizes
+component on their way to be sent down to the ground. This logger component both processes the event and also recognizes
 and begins responses for FATAL severity events.
 
 ![Active Logger](../media/data_model3.png)
 
-**Figure 6. Event log.** The component implementation calls function to generate the event. The base class retrieves the
+**Figure 6. Event log.** The component implementation calls a function to generate the event. The base class retrieves the
 time tag from the time source component. The component sends the event to the event log component, which reads it from
 the port queue and sends it to the ground.
 
 ## Channels
 
-Channels, also known as Telemetry Channels, or just Telemetry, represent the current reading of some portion of system
+Channels, also known as Telemetry Channels, or just Telemetry, represent the current reading of some portion of the system
 state. This state is either restricted to "send on change" or "send per update" even if the update is already the
-current value. Channels are broken-up per component and are typically sampled at a set rate and downlinked. Channels are
+current value. Channels are broken up per component and are typically sampled at a set rate and downlinked. Channels are
 id, time, and value triples and are defined per component with the following properties:
 
 1. id: the unique id of the channel. This is offset by the base id of the component for global uniqueness.
@@ -127,9 +127,9 @@ id, time, and value triples and are defined per component with the following pro
 3. data_type: type of the value of the channel. Can be primitive and complex types.
 4. update: "on_change" to update only when the written value changes, and omitted to always downlink
 
-Code in the component-specific generated base class provides a function to call for to set the current value for a
+Code in the component-specific generated base class provides a function to call to set the current value for a
 channel id. This function must be supplied with a typed argument for the value. It will request the time tag internally.
-The code generator automatically adds ports for retrieving time tag and sending channelized data.
+The code generator automatically adds ports for retrieving time tags and sending channelized data.
 
 ### Telemetry Database
 
@@ -140,7 +140,7 @@ Components using this service should hook up the telemetry port to the telemetry
 ![Telemetry Database](../media/data_model4.png)
 
 **Figure 7. Telemetry database.** The telemetry database has a double-buffered array of telemetry buffers. The base
-class function retrieves the time tag from the time source component, and then writes the updated value to the telemetry
+class function retrieves the time tag from the time source component and then writes the updated value to the telemetry
 database component. The telemetry database is called periodically to send the current set of telemetry to the ground.
 
 **Note:** the periodic call to the telemetry database is typically made by a [rate group](../best/rate-group.md).
@@ -157,7 +157,7 @@ generation to manage parameters defined by a component. Parameters are defined b
 
 The code generator automatically adds ports for retrieving parameters. During initialization, a public method in the
 class is called which retrieves the parameters and stores copies locally. Calls can reoccur if the parameter is updated.
-The code generated base class provides a function to call for each parameter to retrieve the stored copy; and an
+The code-generated base class provides a function to call for each parameter to retrieve the stored copy; and an
 implementation class can retrieve the value whenever the parameter value is needed.
 
 ### Parameter Database

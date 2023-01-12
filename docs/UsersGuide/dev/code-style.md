@@ -2,14 +2,14 @@
 
 When contributing to F´ it is important to understand the style guidelines that F´ uses across the various products
 provided by the team. The information in this guide may not be complete and will evolve as the project continues. When
-unclear, follow reasonable conventions for the language at-hand.
+unclear, follow reasonable conventions for the language at hand.
 
-**Note:** these guidelines are for submissions to the F´ framework. Projects using F´ should adapt them as needed.
+**Note:** These guidelines are for submissions to the F´ framework. Projects using F´ should adapt them as needed.
 
 ## F´ and Flight Software
 
-F´ is a flight software framework. Flight software is embedded software intended to run on "flight system" like
-satellites, space craft, instruments, and more. Reliability is one of the most important goals of flight software since
+F´ is a flight software framework. Flight software is embedded software intended to run on "flight systems" like
+satellites, spacecraft, instruments, and more. Reliability is one of the most important goals of flight software since
 these systems are often operating for long durations without the option to service failing software.  As such,
 contributions should be easy to read and easy to review. Remember, complexity and optimization sometimes come at the
 cost of readability or maintainability and that can mean simpler solutions are more appropriate.
@@ -37,7 +37,7 @@ and enable modern C++ development. These deviations are:
 1. Use namespaces to reduce naming conflicts.
 2. Use `std::numeric_limits` for mix/max values. Template implementations of `std::numeric_limits` have been approved.
 3. **Use** `static_cast`, `reinterpret_cast`, and `const_cast` instead of dangerous C-style and `dynamic_cast` casting.
-4. Limited use of multiple-inheritance and virtual base classes are permitted. See rules of thumb.
+4. Limited use of multiple inheritance and virtual base classes are permitted. See rules of thumb.
 
 ### JPL Coding Standards
 
@@ -49,7 +49,7 @@ framework itself. The guidelines were adapted from C guidelines and are summariz
 2. Loops must have a fixed-bound
 3. No dynamic memory allocation after initialization
 4. Use `FW_ASSERT` to validate function inputs and computation
-5. Restrict data to smallest necessary scope
+5. Restrict data to the smallest necessary scope
 6. Check function return values or explicit discard with `(void)`
 7. Avoid the preprocessor and especially complex uses of the preprocessor
 8. Prefer `Fw` and `Os` implementations. e.g. use `FW_ASSERT` and `Os::Mutex` over `cassert` and `std::mutex`
@@ -62,15 +62,15 @@ framework itself. The guidelines were adapted from C guidelines and are summariz
 F´ has been updated to support C++11. Some C++11 implementations are incomplete requiring some deviations from C++11.
 Thus, there are some things that developers should be aware of when using C++11 features:
 
-1. Many C++11 features use templates under-the-hood.  Prefer `Fw` and `Os` implementations for these features.
+1. Many C++11 features use templates under the hood.  Prefer `Fw` and `Os` implementations for these features.
 2. Use of `std::atomic` is known to not work in some cases. Use is avoided.
 
 ### Clang Format
 
 F´ uses clang format based on Chromium. Currently, clang-format does not properly handle `PRIVATE`, `PROTECTED`, and
-`STATIC` access modifiers used to enable whitebox unit testing. There are several solutions that are being considered to
+`STATIC` access modifiers used to enable white-box unit testing. Several solutions are being considered to
 fix this and, once complete, the full code base will be formatted. New submissions should attempt to format
-appropriately and edit-around these modifiers as necessary. A `.clang-format` file is supplied at the root of the
+appropriately and edit around these modifiers as necessary. A `.clang-format` file is supplied at the root of the
 repository.
 
 ### Rules of Thumb
@@ -80,7 +80,7 @@ develop code that fits well with the entirety of F´.
 
 #### Documentation
 
-Components need to be documented through an Software Description Documents (SDD) placed in a `docs` sub folder. This SDD
+Components need to be documented through an Software Description Documents (SDD) placed in a `docs` subfolder. This SDD
 should capture:
 
 1. Requirements
@@ -100,8 +100,8 @@ These are used to ensure that arguments passed to functions are within bounds, r
 confidence checks. Runtime assertions should never be used to validate user inputs nor results of hardware interaction
 as these may cause errors outside software control.
 
-In these cases an event should be emitted to report the error, and the software should appropriately continue execution
-even in the case of erroneous input. The severity of the event emitted should be determined from the following rules:
+In these cases, an event should be emitted to report the error, and the software should appropriately continue execution
+even in the case of erroneous input. The severity of the event emitted should be determined by the following rules:
 
 1. `WARNING_LO` events reflect issues localized to this component where recovery is possible.
 2. `WARNING_HI` events reflect issues affecting the larger system where recovery is possible.
@@ -110,9 +110,9 @@ even in the case of erroneous input. The severity of the event emitted should be
 
 #### Use of Multiple-Inheritance and Virtual Base Classes
 
-Many of F´ constructs are required to inherit from a autocoded class that then inherits from framework base classes.
-This can present a problem as this precludes inheritance from other structures. Thus limited multiple-inheritance is
-permitted. Basic guidelines are presented here, however; use of multiple-inheritance will likely be discussed during
+Many of F´ constructs are required to inherit from an autocoded class that then inherits from framework base classes.
+This can present a problem as this precludes inheritance from other structures. Thus limited multiple inheritance is
+permitted. Basic guidelines are presented here, however; the use of multiple-inheritance will likely be discussed during
 the submission review.
 
 1. Only use multiple-inheritance when absolutely required
@@ -122,12 +122,11 @@ the submission review.
 4. Avoid multiple inheritance paths that derive from a common base class a.k.a
    [the diamond problem](https://www.cprogramming.com/tutorial/virtual_inheritance.html)
 
-A normal usage for multiple-inheritance and virtual-inheritance in F´ is to setup
+Normal usage for multiple and virtual types of inheritance in F´ is to set up
 [interfaces](https://en.wikipedia.org/wiki/Interface_(Java)) as is often done in Java. This consists of a virtual C++
 base class defining only functions. An F´ class or component would then use multiple-inheritance to inherit those
 function definitions with the intent of implementing them. This can be used to bridge autocoded F´ functionality and C++
-functionality. For example, a component can supply F´ port call functionality to supporting classes through this style
-interfaces.
+functionality. For example, a component can supply F´ port call functionality to supporting classes through this style of interface.
 
 ## Python
 

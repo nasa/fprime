@@ -38,9 +38,9 @@ An event is composed of a name, format string, and set of arguments that describ
 history of the system. Events are defined per-*component*.
 
 **Channel:** a channel, also known as a telemetry item, is a single value read and downlinked. Channels consist of
-a type, a format specifier, and a value. Channels represent current system state. Channels are defined per-*component*.
+a type, a format specifier, and a value. Channels represent the current system state. Channels are defined per-*component*.
 
-**Command:** a command is uplinked data items that instructs the system to perform an action. *Commands* consist of an
+**Command:** a command is uplinked data items that instruct the system to perform an action. *Commands* consist of an
 opcode, a mnemonic, and a list of arguments to the command. Commands are defined per-*component*.
 
 **Deployment:** a deployment is a single instance of F´. Although a single F´ project can use/define multiple
@@ -72,14 +72,14 @@ the design is already in-place.  Users can see the design by inspecting Componen
 new components from design through test is demonstrated in the [Math Component Tutorial](../MathComponent/Tutorial.md).
 
 The next step for developing a Component is to implement the code. To do this, one can generate template stubs to fill
-with the developer's stubs. To do this, a user runs the F´ tool suite to generate these stubs.  Then implements, builds,
-and tests from there.  Unit tests template stubs are generated in the same way, and should test-driven development be
-preferred, these tests stubs could be generated and implemented before the Component's code.
+with the developer's stubs. To do this, a user runs the F´ tool suite to generate these stubs. Then implements, builds,
+and tests from there. Unit test template stubs are generated in the same way and should test-driven development be
+preferred, these test stubs could be generated and implemented before the Component's code.
 
 Finally, the Component is integrated into the deployment and the entire deployment may be built and installed.
 
 This tutorial will walk developers through generating the templates, building example Components, and
-building/installing the full deployment.  It will use the `Ref` application as an example for this.
+building/installing the full deployment. It will use the `Ref` application as an example for this.
 
 ## Working the F´ Development Process with `fprime-util`
 
@@ -94,8 +94,8 @@ to compile against. It is usually done right after F´ is checked-out and repeat
 is a setup step and isn't formally part of the F´ development process.
 
 To run this tool, the developer will use the `generate` subcommand.  It takes one optional argument: the toolchain file
-used in CMake to compile for a specific platform.  If not supplied, the `native` toolchain will be used and F´ will be
-setup to run on the current platform (typically Mac OS, or Linux depending on the developer's chosen OS).
+used in CMake to compile for a specific platform. If not supplied, the `native` toolchain will be used and F´ will be
+set up to run on the current platform (typically Mac OS, or Linux depending on the developer's chosen OS).
 
 **Generate the Ref Application for Native Compilation**
 
@@ -154,7 +154,7 @@ cd fprime/Ref/SignalGen
 fprime-util impl --ut
 ```
 
-This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are
+This creates the following files, which are typically moved to a subfolder called `test/ut`. The files created are
 placed in the current directory and named:
 ```
 Tester.cpp
@@ -169,7 +169,7 @@ TestMain.cpp
 ### Building Components and Deployments
 
 Once a developer has implemented a component, it is time to build that component and test that component. In order to build
-a component the `build` subcommand needs to be run. This will build the "current directory" that the developer is in.
+a component, the `build` subcommand needs to be run. This will build the "current directory" that the developer is in.
 That means that should the user change into a deployment directory then the build command will build the full deployment.
 Should the user desire to build a component, navigate into the Component's directory and run the build command.
 
