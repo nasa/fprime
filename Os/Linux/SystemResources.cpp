@@ -78,8 +78,11 @@ namespace Os {
 
     SystemResources::SystemResourcesStatus getCpuData(U32 cpu_index, std::array<U32, 4>& cpu_data) {
         FILE* fp = nullptr;
-        if (openProcStatFile(fp) != SystemResources::SYSTEM_RESOURCES_OK ||
-            readProcStatLine(fp, proc_stat_line) != SystemResources::SYSTEM_RESOURCES_OK ||
+        if (openProcStatFile(fp) != SystemResources::SYSTEM_RESOURCES_OK) {
+            return SystemResources::SYSTEM_RESOURCES_ERROR;
+        }
+
+        if (readProcStatLine(fp, proc_stat_line) != SystemResources::SYSTEM_RESOURCES_OK ||
             getCpuDataLine(fp, cpu_index, proc_stat_line) != SystemResources::SYSTEM_RESOURCES_OK ||
             parseCpuData(proc_stat_line, cpu_data) != SystemResources::SYSTEM_RESOURCES_OK) {
             fclose(fp);
