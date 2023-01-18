@@ -150,6 +150,69 @@ source $HOME/fprime-venv/bin/activate
 If installing without a virtual environment, PIP occasionally uses `$HOME/.local/bin` as a place to install user tools.
 Users running without virtual environments should add this directory to the path.
 
+### fprime-util generate: Failed to run fpp-locate-deps
+
+If generating or re-generating F', it is sometimetimes possible that a CMake failure occurs, but prints no such error to STDOUT.
+
+An example of this may look like:
+
+```
+[INFO] Generating build directory at: /path/to/fprime/Ref/build-fprime-automatic-native
+[INFO] Using toolchain file None for platform default
+-- The C compiler identification is GNU 12.2.0
+-- The CXX compiler identification is GNU 12.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Searching for F prime modules in: /path/to/fprime
+-- Autocoder constants file: /path/to/fprime/config/AcConstants.ini
+-- Configuration header directory: /path/to/fprime/config
+-- [python3] python3 found at: /usr/bin/python3
+-- [fpp-tools] fpp-depend found at: /home/user/.local/bin/fpp-depend
+-- [fpp-tools] fpp-to-xml found at: /home/user/.local/bin/fpp-to-xml
+-- [fpp-tools] fpp-to-cpp found at: /home/user/.local/bin/fpp-to-cpp
+-- [fpp-tools] fpp-locate-defs found at: /home/user/.local/bin/fpp-locate-defs
+-- Target build toolchain/platform: Linux/Linux
+-- Including /path/to/fprime/cmake/platform/Linux.cmake
+-- Requiring thread library
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Installation directory: /path/to/fprime/Ref/build-artifacts
+-- Performing CMake source prescan
+-- Performing CMake source prescan - DONE
+-- Generating FPP location index
+CMake Error at /path/to/fprime/cmake/target/fpp_locs.cmake:56 (message):
+-- Configuring incomplete, errors occurred!
+  Failed to run fpp-locate-deps
+See also "/path/to/fprime/Ref/build-fprime-automatic-native/CMakeFiles/CMakeOutput.log".
+Call Stack (most recent call first):
+  /path/to/fprime/cmake/target/fpp_locs.cmake:95 (generate_locations)
+  /path/to/fprime/cmake/target/target.cmake:67 (fpp_locs_add_global_target)
+  /path/to/fprime/cmake/target/target.cmake:67 (cmake_language)
+  /path/to/fprime/cmake/API.cmake:465 (setup_global_target)
+  /path/to/fprime/cmake/API.cmake:426 (register_fprime_target_helper)
+  /path/to/fprime/cmake/FPrime.cmake:72 (register_fprime_target)
+  CMakeLists.txt:32 (include)
+```
+
+This may occur because a helper-script that is called by CMake, *(`fprime/cmake/autocoder/fpp-wrapper/fpp-redirect-helper`)* does not contain the executable permission.
+
+To verify that this is the case, change to the directory containing `fpp-redirect-helper` and verify that it is executable.
+
+* `cd fprime/cmake/autocoder/fpp-wrapper/`
+* `ls -l`
+
+If it is not executable, add the permission back.
+
+* `chmod 755 fpp-redirect-helper`
 
 ### Ubuntu, Debian, Java and Python PIP
 
