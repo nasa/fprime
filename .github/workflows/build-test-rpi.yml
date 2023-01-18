@@ -25,7 +25,7 @@ jobs:
     - name: Setup RPI Sysroot
       uses: fprime-community/setup-rpi-sysroot@main
     - name: F prime CI step
-      run: ./ci/tests/RPI.bash ${GITHUB_WORKSPACE}/rpi-sysroot
+      run: ./ci/tests/RPI.bash /tmp/rpi-sysroot
     - name: Copy Tests
       run: mkdir -p artifact/RPI; cp -rp RPI/test RPI/build-artifacts artifact/RPI; cp -rp ci artifact
     # Build Artifacts
