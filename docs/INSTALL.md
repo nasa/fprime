@@ -150,15 +150,9 @@ source $HOME/fprime-venv/bin/activate
 If installing without a virtual environment, PIP occasionally uses `$HOME/.local/bin` as a place to install user tools.
 Users running without virtual environments should add this directory to the path.
 
-### fprime-util generate: Failed to run fpp-locate-deps
+### Helper script 'fpp-redirect-helper' exited with reason: Permission denied
 
-If generating or re-generating F', it is sometimetimes possible that a CMake failure occurs, but prints no error to STDOUT before the CMake stack-trace is printed.
-
-It may also print the explicit message:
-
-> Helper script 'fpp-redirect-helper' exited with reason: Permission denied
-
-In either case, this can likely occur because the helper-script, *(`fprime/cmake/autocoder/fpp-wrapper/fpp-redirect-helper`)*, which is called by CMake, does not contain the executable permission.
+This error can occur when the helper-script, *(`fprime/cmake/autocoder/fpp-wrapper/fpp-redirect-helper`)* loses its execution permission.
 
 To verify that this is the case, change to the directory containing `fpp-redirect-helper` and verify that it is executable.
 
