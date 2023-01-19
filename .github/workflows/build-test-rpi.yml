@@ -9,7 +9,8 @@ on:
     branches: [ master, devel ]
   pull_request:
     branches: [ master, devel, release/v3.0.0 ]
-
+env:
+  RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   RPI:
@@ -20,12 +21,10 @@ jobs:
       with:
         fetch-depth: 0
     - uses: ./.github/actions/setup
-    - name: Install RPI Toolchain
-      run: sudo apt update && sudo apt install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
-    - name: Setup RPI Sysroot
+    - name: Setup RPI Toolchain
       uses: fprime-community/setup-rpi-sysroot@main
     - name: F prime CI step
-      run: ./ci/tests/RPI.bash /tmp/rpi-sysroot
+      run: ./ci/tests/RPI.bash
     - name: Copy Tests
       run: mkdir -p artifact/RPI; cp -rp RPI/test RPI/build-artifacts artifact/RPI; cp -rp ci artifact
     # Build Artifacts
