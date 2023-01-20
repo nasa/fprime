@@ -41,6 +41,11 @@ jobs:
       - name: Convert cpplint results to Markdown & Integrate them in the workflow summary
         run: xsltproc .github/scripts/cpplint-xml2text.xslt cpplint_cppcheck_result.xml | tee $GITHUB_STEP_SUMMARY cpplint_cppcheck_result.txt
 
+      # See https://github.com/nasa/fprime/pull/1794 for why this is needed
+      - name: Replace tool name in SARIF file
+        run: |
+          sed -i -e 's/\"name\": \"CppCheck\"/\"name\": \"CppLint\"/g' cpplint_cppcheck_result.sarif
+
       - name: Upload SARIF file to GitHub Code Scanning Alerts
         uses: github/codeql-action/upload-sarif@v2
         with:
