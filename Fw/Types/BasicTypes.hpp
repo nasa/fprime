@@ -50,16 +50,18 @@ typedef char CHAR;
 #endif
 
 typedef float F32;  //!< 32-bit floating point
-static_assert(std::numeric_limits<float>::is_iec559,
-              "Type float does not comply with IEEE 754 single precision format");
-static_assert(std::numeric_limits<float>::digits == 24,
-              "Type float does not comply with IEEE 754 single precision format");
+static_assert(   (std::numeric_limits<float>::is_iec559    == true)
+              && (std::numeric_limits<float>::radix        ==    2)
+              && (std::numeric_limits<float>::digits       ==   24)
+              && (std::numeric_limits<float>::max_exponent ==  128),
+              "The 32-bit floating point type does not conform to the IEEE-754 standard.");
 #if FW_HAS_F64
   typedef double F64;  //!< 64-bit floating point
-  static_assert(std::numeric_limits<double>::is_iec559,
-                "type double does not comply with IEEE 754 double precision format");
-  static_assert(std::numeric_limits<double>::digits == 53,
-                "Type double does not comply with IEEE 754 double precision format");
+  static_assert(   (std::numeric_limits<double>::is_iec559    == true)
+                && (std::numeric_limits<double>::radix        ==    2)
+                && (std::numeric_limits<double>::digits       ==   53)
+                && (std::numeric_limits<double>::max_exponent == 1024),
+                "The 64-bit floating point type does not conform to the IEEE-754 standard.");
 #endif
 
 typedef PlatformIntType NATIVE_INT_TYPE;
