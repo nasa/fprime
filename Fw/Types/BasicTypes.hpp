@@ -49,9 +49,17 @@ typedef char CHAR;
   typedef uint64_t       U64; //!< 64-bit unsigned integer
 #endif
 
-typedef float   F32; //!< 32-bit floating point
+typedef float F32;  //!< 32-bit floating point
+static_assert(std::numeric_limits<float>::is_iec559,
+              "Type float does not comply with IEEE 754 single precision format");
+static_assert(std::numeric_limits<float>::digits == 24,
+              "Type float does not comply with IEEE 754 single precision format");
 #if FW_HAS_F64
-  typedef double  F64; //!< 64-bit floating point
+  typedef double F64;  //!< 64-bit floating point
+  static_assert(std::numeric_limits<double>::is_iec559,
+                "type double does not comply with IEEE 754 double precision format");
+  static_assert(std::numeric_limits<double>::digits == 53,
+                "Type double does not comply with IEEE 754 double precision format");
 #endif
 
 typedef PlatformIntType NATIVE_INT_TYPE;
