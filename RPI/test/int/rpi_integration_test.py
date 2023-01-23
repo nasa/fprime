@@ -20,6 +20,7 @@ FilterSeverity = Enum(
     "WARNING_HI WARNING_LO COMMAND ACTIVITY_HI ACTIVITY_LO DIAGNOSTIC",
 )
 
+
 def set_event_filter(fprime_test_api, severity, enabled):
     """
     This helper will send a command that updates the given severity filter on the ActiveLogger
@@ -44,6 +45,7 @@ def set_event_filter(fprime_test_api, severity, enabled):
     except AssertionError:
         return False
 
+
 def set_default_filters(fprime_test_api):
     """
     Sets the default send filters on the ref aps ActiveLogger
@@ -55,12 +57,11 @@ def set_default_filters(fprime_test_api):
     set_event_filter(fprime_test_api, "WARNING_HI", True)
     set_event_filter(fprime_test_api, "DIAGNOSTIC", False)
 
+
 def test_is_streaming(fprime_test_api):
     results = fprime_test_api.assert_telemetry_count(5, timeout=10)
     for result in results:
-        msg = "received channel {} update: {}".format(
-            result.get_id(), result.get_str()
-        )
+        msg = "received channel {} update: {}".format(result.get_id(), result.get_str())
         print(msg)
 
 
@@ -69,6 +70,7 @@ def test_send_command(fprime_test_api):
     assert fprime_test_api.get_command_test_history().size() == 1
     fprime_test_api.send_assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
     assert fprime_test_api.get_command_test_history().size() == 2
+
 
 def test_send_and_assert_no_op(fprime_test_api):
     length = 100
@@ -119,11 +121,14 @@ def test_send_and_assert_no_op(fprime_test_api):
         case
     ), "Expected all checks to pass (reordering, dropped events, all passed). See log."
 
+
 def test_active_logger_filter(fprime_test_api):
     set_default_filters(fprime_test_api)
     try:
         cmd_events = fprime_test_api.get_event_pred(severity=EventSeverity.COMMAND)
-        actHI_events = fprime_test_api.get_event_pred(severity=EventSeverity.ACTIVITY_HI)
+        actHI_events = fprime_test_api.get_event_pred(
+            severity=EventSeverity.ACTIVITY_HI
+        )
         pred = predicates.greater_than(0)
         zero = predicates.equal_to(0)
         # Drain time for dispatch events
@@ -150,6 +155,7 @@ def test_active_logger_filter(fprime_test_api):
         fprime_test_api.assert_event_count(pred, actHI_events)
     finally:
         set_default_filters(fprime_test_api)
+
 
 def test_seqgen(fprime_test_api):
     """Tests the seqgen code"""
