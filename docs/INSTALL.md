@@ -150,6 +150,18 @@ environment not being sourced in a new terminal. Make sure to source the environ
 If installing without a virtual environment, PIP occasionally uses `$HOME/.local/bin` as a place to install user tools.
 Users running without virtual environments should add this directory to the path.
 
+### Helper script 'fpp-redirect-helper' exited with reason: Permission denied
+
+This error can occur when the helper-script, *(`fprime/cmake/autocoder/fpp-wrapper/fpp-redirect-helper`)* loses its execution permission.
+
+To verify that this is the case, change to the directory containing `fpp-redirect-helper` and verify that it is executable.
+
+* `cd fprime/cmake/autocoder/fpp-wrapper/`
+* `ls -l`
+
+If it is not executable, add the permission back.
+
+* `chmod 700 fpp-redirect-helper`
 
 ### Ubuntu, Debian, Java and Python PIP
 
