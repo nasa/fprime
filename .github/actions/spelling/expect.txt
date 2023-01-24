@@ -989,6 +989,7 @@ ortega
 OSAL
 osaves
 osets
+ossf
 ostate
 ostream
 osubgrouping
@@ -1217,12 +1218,14 @@ schematron
 sclk
 scm
 scons
+scorecards
 scp
 scrollbars
 sdd
 SDFLIGHT
 searchdata
 SEARCHENGINE
+securityscorecards
 segfault
 sendfile
 SENDPARTIAL
