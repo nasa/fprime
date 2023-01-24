@@ -66,9 +66,9 @@ def test_is_streaming(fprime_test_api):
 
 
 def test_send_command(fprime_test_api):
-    fprime_test_api.send_assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
+    fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
     assert fprime_test_api.get_command_test_history().size() == 1
-    fprime_test_api.send_assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
+    fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
     assert fprime_test_api.get_command_test_history().size() == 2
 
 
@@ -134,8 +134,8 @@ def test_active_logger_filter(fprime_test_api):
         # Drain time for dispatch events
         time.sleep(10)
 
-        fprime_test_api.send_assert_command("cmdDisp.CMD_NO_OP")
-        fprime_test_api.send_assert_command("cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP")
 
         time.sleep(0.5)
 
@@ -165,13 +165,13 @@ def test_seqgen(fprime_test_api):
             [
                 "fprime-seqgen",
                 "-d",
-                fprime_test_api.dictionary,
+                str(fprime_test_api.pipeline.dictionary_path),
                 sequence,
                 "/tmp/ref_test_int.bin",
             ]
         ).returncode
         == 0
     ), "Failed to run fprime-seqgen"
-    fprime_test_api.send_assert_command(
+    fprime_test_api.send_and_assert_command(
         "cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
     )
