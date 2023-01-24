@@ -32,10 +32,10 @@ def set_event_filter(fprime_test_api, severity, enabled):
         boolean of whether the report filter was set successfully.
     """
     enabled = "ENABLED" if enabled else "DISABLED"
-    if isinstance(severity, fprime_test_api.FilterSeverity):
+    if isinstance(severity, FilterSeverity):
         severity = severity.name
     else:
-        severity = fprime_test_api.FilterSeverity[severity].name
+        severity = FilterSeverity[severity].name
     try:
         fprime_test_api.send_command(
             "eventLogger.SET_EVENT_FILTER",
@@ -142,7 +142,7 @@ def test_active_logger_filter(fprime_test_api):
         fprime_test_api.assert_event_count(pred, cmd_events)
         fprime_test_api.assert_event_count(pred, actHI_events)
 
-        set_event_filter(fprime_test_api, self.FilterSeverity.COMMAND, False)
+        set_event_filter(fprime_test_api, FilterSeverity.COMMAND, False)
         # Drain time for dispatch events
         time.sleep(10)
         fprime_test_api.clear_histories()
