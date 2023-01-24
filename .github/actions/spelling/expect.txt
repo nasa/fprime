@@ -1383,6 +1383,7 @@ synopsys
 SYSCONFDIR
 SYSFS
 sysinfo
+sysroot
 systemd
 tabbedwidths
 tabccitt
