@@ -1,5 +1,7 @@
 # F´: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
 
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/nasa/fprime/badge)](https://api.securityscorecards.dev/projects/github.com/nasa/fprime)
+
 **F´ (F Prime)** is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on several space applications. It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
 **Please Visit the F´ Website:** [https://nasa.github.io/fprime/](https://nasa.github.io/fprime/).  This website contains project information, user guides, documentation, tutorials, and more!
