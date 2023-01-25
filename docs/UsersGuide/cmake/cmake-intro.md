@@ -2,9 +2,8 @@
 
 Historical versions of F´ shipped with a bespoke make system ensure that building is done correctly and in the correct
 order. However, using and maintaining this build system presents a steep learning curve to new
-users of F´. The new CMake system is intended as a replacement to the old make based
-build system that should be easier to learn and use. In addition, the use of cmake puts F´more in
-line with standard C++ development.
+users of F´. The new CMake system is intended as a replacement for the old make-based
+build system that should be easier to learn and use. In addition, the use of cmake puts F´more in line with standard C++ development.
 
 Since this CMake system is designed to follow CMake norms, certain caveats must be
 understood before beginning to use CMake. These are described below:
@@ -17,18 +16,14 @@ between make systems, perform a `git clean -xdf` command or otherwise remove **a
 Installation guides for CMake can be found here: [https://cmake.org/install/](https://cmake.org/install/).
 
 A Basic CMake tutorial can be found here: [https://cmake.org/cmake/help/latest/guide/tutorial/index.html](https://cmake.org/cmake/help/latest/guide/tutorial/index.html).
-Although fprime tries to simplify CMake usage for fprime specific tasks, an understanding of basic CMake is useful.
+Although fprime tries to simplify CMake usage for fprime-specific tasks, an understanding of basic CMake is useful.
 
 ## Getting Started with CMake and F´
 
-CMake as a system auto-generates OS-specific make files for building F´. Once these file are
-generated, standard make tools can be run to perform the compiling, assembling, linking etc. In other words, CMake is a
-high-level build system that defers to low-level build systems to build.  It generates the inputs to these low-level
-systems in a straightforward way.
+CMake as a system auto-generates OS-specific make files for building F´. Once these file are generated, standard make tools can be run to perform the compiling, assembling, linking, etc. In other words, CMake is a high-level build system that defers low-level build systems to build. It generates the inputs to these low-level systems in a straightforward way.
 
 fprime sets up CMake in such a way that adding a module (component, port, deployment) is easy and automatically takes
-advantage of the autocoding capabilities of fprime. To add new modules to the CMake system, users need to perform the
-following steps:
+advantage of the autocoding capabilities of fprime. To add new modules to the CMake system, users need to perform the following steps:
 
 1. Define a `CMakeLists.txt` file to define the module's source files and dependencies
 2. Ensure that `register_fprime_module` or `register_fprime_executable` is called in that `CMakeLists.txt`
@@ -36,16 +31,14 @@ following steps:
    `add_fprime_subdirectory`.
 
 Each of these steps are described in detail below. Further usage documentation on the functions used to perform these
-steps can be found in: [API](./cmake-api.md). This document will explain the usage of core F´ CMake functions.
+steps can be found in [API](./cmake-api.md). This document will explain the usage of core F´ CMake functions.
 
-Further discussion regarding transition from the former make system can be found here:
+Further discussion regarding the transition from the former make system can be found here:
 [Migration.md](Migration.md)
 
 ## Step 1, Step 2, and Step 3: Define A CMakeList.txt File
 
-THe CMakeList.txt file defines the steps needed to build **something** in CMake.  In fprime, we use this file to define
-the source, autocoder, and module dependencies for modules in fprime. A `register_` function is called to tie into the
-fprime autocoder environment. This keeps fprime modules simple, although all of CMake's power can be used when needed.
+The CMakeList.txt file defines the steps needed to build **something** in CMake.  In fprime, we use this file to define the source, autocoder, and module dependencies for modules in fprime. A `register_` function is called to tie into the fprime autocoder environment. This keeps fprime modules simple, although all of CMake's power can be used when needed.
 
 Users need only set the `SOURCE_FILES` variable to a list of autocoder and code sources and then call
 `register_fprime_module` to setup a module for fprime (Port/Component). Deployments are done similarly, but since these

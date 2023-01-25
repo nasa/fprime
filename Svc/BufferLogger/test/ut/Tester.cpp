@@ -265,7 +265,7 @@ namespace Svc {
 
     {
       // Make sure the file size is within bounds
-      U64 actualSize = 0;
+      FwSizeType actualSize = 0;
       const Os::FileSystem::Status status =
         Os::FileSystem::getFileSize(fileName, actualSize);
       ASSERT_EQ(Os::FileSystem::OP_OK, status);

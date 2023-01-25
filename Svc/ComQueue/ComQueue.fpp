@@ -26,13 +26,13 @@ module Svc {
       async input port comStatusIn: Fw.SuccessCondition
 
       @ Port array for receiving Fw::ComBuffers
-      async input port comQueueIn: [ComQueueComPorts] Fw.Com
+      async input port comQueueIn: [ComQueueComPorts] Fw.Com drop
 
       @ Port array for receiving Fw::Buffers
-      async input port buffQueueIn: [ComQueueBufferPorts] Fw.BufferSend
+      async input port buffQueueIn: [ComQueueBufferPorts] Fw.BufferSend drop
 
       @ Port for scheduling telemetry output
-      async input port run: Svc.Sched
+      async input port run: Svc.Sched drop
 
       # ----------------------------------------------------------------------
       # Special ports

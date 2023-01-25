@@ -1,7 +1,7 @@
 # The Discerning User's Guide to F´
 
-F´ is an embedded systems framework developed at NASA's Jet Propulsion Laboratory for use in space based missions. Its
-goal is simple: make development of flight-quality embedded software simple, easy, and fun. F´ reduces the complexity
+F´ is an embedded systems framework developed at NASA's Jet Propulsion Laboratory for use in space-based missions. Its
+goal is simple: make the development of flight-quality embedded software simple, easy, and fun. F´ reduces the complexity
 and overhead to develop such systems.
 
 This guide is intended to expose the features of F´ and seek to allow users and developers to take advantage of all F´
@@ -94,17 +94,17 @@ documentation linked above.
 ## Framework and Service Components
 
 F´ ships with a core framework and service code enabling the construction of F´ applications using standards.
-Specifically, the service (Svc) components provide most of the basic functionality to command, and communicate with
+Specifically, the service (Svc) components provide most of the basic functionality to command and communicate with
 an embedded system such as a spacecraft.
 
 ## Autocoder
 
 Autocoder automatically adds ports for registering commands, receiving
-commands and reporting an execution status. F′ defines an Extensible
+commands, and reporting an execution status. F′ defines an Extensible
 Markup Language (XML) schema that users can use to specify a model of a
 FSW application. The model describes the application at a high level in
 terms of the components, ports, and topologies of the F′ architecture.
-The F′ autocoder translates the model into the C++ classes to greatly reduce the boiler plate code required to build
+The F′ autocoder translates the model into the C++ classes to greatly reduce the boilerplate code required to build
 an embedded system.
 
 ## Operating System Abstraction Layer
@@ -116,28 +116,28 @@ OSAL layer can easily swap to another OS without modification.
 The F′ framework OSAL includes C++  classes that provide abstractions of common operating systems features. These
 features include threads, mutual exclusion locks, message queues, files, timers, and clocks.
 
-The open-source framework provides implementations of the operating systems layer for Linux and Mac OS. The Linux
-implementation works in Windows using WSL. Some other OS are provided in extension libraries.
+The open-source framework provides implementations of the OS layer for Linux and Mac OS. The Linux
+implementation works in Windows using WSL. Some other operating systems are provided in extension libraries.
 
 ## Ground Data System (GDS)
 
 See: [F´ GDS](./gds/gds-introduction.md)
 
-The F′ user experience is intended to be an out-of-box ready to use ground data system (GDS) solution than can easily
-run on Linux, Mac OSX, or Windows platforms without any mission specific tailoring. The GDS provides an end-user
+The F′ user experience is intended to be an out-of-box ready-to-use ground data system (GDS) solution than can easily
+run on Linux, Mac OSX, or Windows platforms without any mission-specific tailoring. The GDS provides an end-user
 graphical user interface (GUI) tool and an integration test application programming interface (API) to enable
 integration testing and quick-look telemetry monitoring.
 
-Initially, the user defines the mission specific components with commands and telemetry, and then the dictionaries
+Initially, the user defines the mission-specific components with commands and telemetry, and then the dictionaries
 are automatically generated from this design. These dictionaries are read into the GDS to provide the user experience.
 
 
 ## F′ Utility Build Helper and CMake System
 
 F´ ships with a build system configured to build the F´ code. This build system is implemented using CMake and handles
-the dependencies needed to run the Autocoder and assemble it with user written code. In order to support more standard
+the dependencies needed to run the Autocoder and assemble it with user-written code. In order to support more standard
 development patterns with F´, the `fprime-util` was built. This tool maps simple commands into the make system in order
-to allow developer to follow set patterns easily.
+to allow a developer to follow set patterns easily.
 
 ## Linux Drivers
 

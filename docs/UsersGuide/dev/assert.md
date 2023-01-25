@@ -64,7 +64,7 @@ registration of a user-defined handler. The handler is
 registerAssertHook and can be found in FwAssert.hpp. The assert hook is
 called with a string representing the text of the assert. The user
 implements a derived class that implements the reportAssert() pure
-virtual method, and does whatever project specific logic is required.
+virtual method, and does whatever project-specific logic is required.
 
 ### reportAssert
 

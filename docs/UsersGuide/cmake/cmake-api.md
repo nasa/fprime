@@ -2,7 +2,7 @@
 
 These links point to documentation needed by average users of the CMake system. The API link
 describes the module-level API for working with CMake. This is where users should look for the full
-descriptions of module-level functions. Options describes the runtime options that the CMake system
+descriptions of module-level functions. Options describe the runtime options that the CMake system
 takes. Users wanting to alter the build should look here.
 
 - [Options](../api/cmake/Options.md): Runtime build options
@@ -18,7 +18,7 @@ own toolchains for F´.
 [Toolchain Template](./toolchain/toolchain-template.md): Toolchain file template documentation
 [raspberrypi](./toolchain/raspberrypi.md): Raspberry PI cross-compile toolchain file
 
-Platform files are used to setup F´ for use on specific hardware platforms. This allows users to
+Platform files are used to set up F´ for use on specific hardware platforms. This allows users to
 define types and headers needed for F´ for any embedded system they desire.
 
 [Platform Template](../api/cmake/platform/platform-template.md): Platform file template documentation

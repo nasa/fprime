@@ -26,7 +26,7 @@ The dashboard is composed of components and properties set on those components. 
 of the properties and the components that use them.  Further explanation of the components is available below.
 
 The following is the list of all properties defined by the XML dashboard specification. These properties have types that
-help the user enter them.  These types are implicit to the property are quickly shown here:
+help the user enter them and these types are implicit to the property:
 
 | Property Type | Description | Example |
 |---|---|---
@@ -69,7 +69,7 @@ two notes to help clarify:
 
 ### dashboard-box
 
-The `dashboard-box` acts like a container that other elements are put inside, helping to visually group items together.
+The `dashboard-box` acts like a container where other elements are put inside, helping to visually group items together.
 This allows the user to specify arbitrary blocks of components that may optionally define a title, background color, and
 border color. An example is shown below.
 
@@ -110,7 +110,7 @@ handling components are currently not supported as they are better suited for a 
 ### command-input
 
 `command-input` is used to build and send commands to the embedded system through the GDS. It consists of a command
-drop down list, argument input boxes, a clear, and a send button.  It is seen on the top of the `Commands` tab. The
+drop-down list, argument input boxes, a clear, and a send button.  It is seen on the top of the `Commands` tab. The
 input box is searchable. An example is shown below:
 
 ```xml
@@ -144,8 +144,7 @@ component with a filter for command severity to display commands as received by 
 
 ### event-list
 
-`event-list` displays a set of events as received by the GDS. This allows the user to monitor for all commands, or
-monitor for specific events. In addition, a filter may be used to look for certain severities. An example of the
+`event-list` displays a set of events as received by the GDS. This allows the user to monitor for either all commands, or for specific events. In addition, a filter may be used to look for certain severities. An example of the
 `event-list` component is shown below:
 
 ```xml
@@ -166,7 +165,7 @@ monitor for specific events. In addition, a filter may be used to look for certa
 
 ### channel-table
 
-`channel-table` displays the most recent reading of a channel's value. It provides a near realtime look at the channels
+`channel-table` displays the most recent reading of a channel's value. It provides a near real-time look at the channels
 in the embedded system as received by the GDS. Often users use the `items-shown` property to view specific channels of
 interest and the `fields` property can be used to remove undesired information like channel id.  An example is shown
 below:
@@ -189,7 +188,7 @@ below:
 
 ## Misc Components
 
-This is a set of other components that are not typically used, but are nonetheless available.
+This is a set of other components that are not typically used but are nonetheless available.
 
 ### logging
 

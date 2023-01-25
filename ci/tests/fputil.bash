@@ -96,13 +96,17 @@ function integration_test_run {
         # Run integration tests
         (
             cd "${WORKDIR}/test"
+            if [[ "${DICTIONARY_PATH}" != "" ]]
+            then
+                DICTIONARY_ARGS="--dictionary ${WORKDIR}/${DICTIONARY_PATH}"
+            fi
             echo "[INFO] Running ${WORKDIR}/test's pytest integration tests"
             TIMEOUT="timeout"
             if ! command -v ${TIMEOUT} &> /dev/null
             then
                 TIMEOUT="gtimeout" # macOS homebrew "coreutils"
             fi
-            ${TIMEOUT} --kill-after=10s 180s pytest
+            ${TIMEOUT} --kill-after=10s 180s pytest ${DICTIONARY_ARGS}
         )
         RET_PYTEST=$?
         pkill -P $GDS_PID

@@ -11,7 +11,7 @@ modular system is constructed to complete the objective of the embedded system. 
 ## Ports: F´ Communication
 
 Although F´ is primarily decomposed into a set of **Components**, it is often the port that a user of F´ must
-understand first.  This is because the set of ports a **Component** defines is the external (or public) interface of
+understand first. This is because the set of ports a **Component** defines is the external (or public) interface of
 that **Component** in an F´ system. Thus it is essential to understand and design these **Ports** correctly.
 
 ### Port Characteristics
@@ -29,14 +29,14 @@ Pointers and references are allowed as arguments to the port as well (for perfor
 taken to ensure correct memory management as the ownership of the underlying memory is effectively shared when the
 port is invoked.  The port's type is synonymous with the port invocations' "data_type" when used on a **Component**.
 
-When using a port, the user specifies directionality. It can represent an input, or an output. This direction
+When using a port, the user specifies directionality. It can represent an input or an output. This direction
 pertains to the direction of invocation from one originating **Component** to another and not necessarily the direction
 of data flow i.e. output ports (invoking out to another **Component**) can in some cases retrieve data. Multiple output
 ports can be connected to a single input port implying that at **Component** responding to a port invocation could be
 responding to one of a set of invoking **Components**. **Caution:** a single output port can be connected to only one
 input port at a time.
 
-Another aspect of port usage is the synchronous/asynchronous nature of the port.  A synchronous port operates like a
+Another aspect of port usage is the synchronous/asynchronous nature of the port. A synchronous port operates like a
 function call running in the execution context of the invoking **Component** (i.e. on the invoker's Thread). The
 synchronous nature of the port along with the directionality is combined in the "kind" when used by the **Component**.
 
@@ -65,12 +65,12 @@ design and is known as the "kind" of port's instantiation.
 | async_input | in | asynchronous | no | no | `func1()` | |
 | guarded_input | in | synchronous | yes | yes | `func3()` | Guarded ports by definition must be synchronous |
 
-**Note:** a ports' type (aka data_type) is dependent on the design and usage in the deployment.
+**Note:** A port's type (aka data_type) is dependent on the design and usage in the deployment.
 
 ![Port Instance Kinds](../media/core2.png)
 
 **Figure 2. Port Kinds Used on a Component.** For the *synchronous port*, the call directly invokes derived functions
-without use of a queue. For a *guarded port*, the call directly invokes derived functions, but only after locking a
+without the use of a queue. For a *guarded port*, the call directly invokes derived functions, but only after locking a
 mutex shared by all guarded ports in the component. For an *asynchronous port*, the call is placed in a queue and
 dispatched on a thread that empties the queue.
 
@@ -85,7 +85,7 @@ use is limited to only return data when the component has defined the input port
 interface, and the port serialization has been disabled since serialization passes a data buffer without returning one.
 
 Serialization takes a specific set of typed values or function arguments and converts them in an
-architecture-independent way translating them to a data buffer. A port calls’ commands and arguments are serialized and
+architecture-independent way translating them to a data buffer. A port call’s commands and arguments are serialized and
 placed on message queues in the receiving component. In addition command arguments and telemetry values are passed as
 serialized buffers so that components that transfer the data can be independent of the definition of the data.
 
@@ -98,7 +98,7 @@ internally, and usable with the F´ supplied ground system.
 
 Serialization ports are special ports that handle serialized buffers without automatically unpacking them. Any output
 port type can connect to a serialization port input type, and any serialization output port can be connected to any
-input port type.  This allows strongly-typed ports to connect to generic "pass-any-data" serialization ports as shown
+input port type. This allows strongly-typed ports to connect to generic "pass-any-data" serialization ports as shown
 in Figure 3. For input ports, the calling port detects a connection and serializes arguments. For the output ports,
 the serialized port calls an interface on the typed port that deserializes arguments. Serialization ports do not support
 ports with return types. These ports allow serialized data to be passed around by generic components that do not know
@@ -111,7 +111,7 @@ across an address-space gap in a generic fashion.
 the serialized buffer.
 
 Serialization ports are useful for generic storage and communication components that do not need to know the type of
-data passing through them. This allows design and implementation of command and data handling (C&DH) components that
+data passing through them. This allows the design and implementation of command and data handling (C&DH) components that
 provide reusability. Tested C&DH components are developed to implement typical non-mission-specific flight functions
 
 See note about usage for [Commands, Events and Telemetry](./cmd-evt-chn-prm.md).
@@ -120,14 +120,14 @@ See note about usage for [Commands, Events and Telemetry](./cmd-evt-chn-prm.md).
 ## Components: F´ Modules
 
 The F′ architecture is based on decomposing the system into modules called components. Each component contains a
-discrete portion of the system's logic (Figure 10); The component architecture implies usage patterns, as well as
+a discrete portion of the system's logic (Figure 10); The component architecture implies usage patterns, as well as
 usage constraints.
 
 ![Component Architecture](../media/core10.png)
 
 **Figure 10. Example of F′ component architecture pattern.**
 
-Components encapsulate behavior, and are not aware of other components. They are localized to one compute context with
+Components encapsulate behavior and are not aware of other components. They are localized to one compute context with
 specific interactions with other components using ports. There should be no non-port communication between components.
 Components are responsible for handling the invocations of ports used in the component. They may also define and handle
 commands as well as emit telemetry and events.
@@ -146,12 +146,12 @@ of component is defined below:
 **Passive component:** has no thread and cannot support asynchronous port invocations nor asynchronous commands. Port
 invocations call into the developer class but execution context is supplied from the invoking component.
 
-**Active component:** has a thread of execution as well as queue. The thread dispatches port calls from the queue
-as on the execution context of the thread. Active components may define use port kinds. **Caution:** synchronous and
+**Active component:** has a thread of execution as well as a queue. The thread dispatches port calls from the queue
+as on the execution context of the thread. Active components may define use port kinds. **Caution:** Synchronous and
 guarded port invocations still execute in the execution context of the invoker.
 
 **Queued component:** has no thread but does have a queue. Thus it handles asynchronous commands and port invocations;
-however, the user must implement at least on synchronous port invocation that unloads and handles the messages on the
+however, the user must implement at least one synchronous port invocation that unloads and handles the messages on the
 queue. For this and any other synchronously invocation execution context is supplied by the invoker.  **Note:** this
 component type is only rarely used.  Ensure it is the correct choice for your design.
 
@@ -168,12 +168,12 @@ component type is only rarely used.  Ensure it is the correct choice for your de
 Each component is divided into three classes that each represent a piece of the component's implementation. These three
 classes are as follows:
 
-1. Core Framework Class: the base-class of components defined as part of the framework.  A component may inherit from:
+1. Core Framework Class: the base class of components defined as part of the framework.  A component may inherit from:
 active, passive, and queued classes.  These represent the component types defined above.
 2. Generated Component-Specific Base: this class is the direct descendant of the core framework class and is
 automatically generated to provide all the implementation for framework features.
 3. Component-Specific Developer Implementation Class: this class inherits from the generated component-specific base
-class and contains only the user specific implementation for the component.
+class and contains only the user-specific implementation for the component.
 
 These are shown in Figure 12.
 
@@ -192,7 +192,7 @@ thread.
 Queued components also support all three port types; however, the queued component needs at least one synchronous or
 guarded port as the code and one asynchronous port. A synchronous or guarded port must be defined to unload the internal
 queue as a queued component does not have a thread to automatically unload the queue. A queued component must define one
-asynchronous port otherwise it too would effectively be passive components with an unused queue attached.
+asynchronous port otherwise it too would effectively be a passive component with an unused queue attached.
 
 Output ports are invoked by calling generated base class functions from the implementation class. The behavior invoked
 is defined input port side of the connection and thus there are no special restrictions to use output ports.
@@ -205,16 +205,16 @@ is defined input port side of the connection and thus there are no special restr
 | Queued  | 0 or more | 1 or more | 1 or more |
 | Active  | 0 or more | 0 or more | 1 or more |
 
-**Note:** The designer should be aware how the different calls interact, for example during reentrant port calls guarded
+**Note:** The designer should be aware of how the different calls interact, for example during reentrant port calls guarded
 ports may deadlock.
 
 ## Topology: F´ Application
 
 Components are instantiated at runtime and then connected through the ports to other components in the system. This
 graph of interconnected components is known as a topology, as shown in Figure 13. The topology graph is still designed
-before runtime, but the actual connections of ports happens during the construction and setup phase of runtime F´
+before runtime, but the actual connection of ports happens during the construction and setup phase of runtime F´
 software. There should be no code dependencies between the components, only dependencies on port interface types. A
-components ability to communicate with other components is enabled through the interconnections specified in the
+component's ability to communicate with other components is enabled through the interconnections specified in the
 topology. Alternate implementations can therefore easily be swapped, for example with simulation versions.
 
 ![Example Topology](../media/core13.png)

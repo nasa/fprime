@@ -5,12 +5,12 @@ The Test API produces a formatted test log using the TestLogger
 test_logger.py:
 
 A wrapper on the openpyxl library that provides the ability to log messages in an excel sheet. Used
-by the test API to log events, asserts, test cases and user messages. The documentation for openpyxl
+by the test API to log events, asserts, test cases, and user messages. The documentation for openpyxl
 can be found here:
 [https://openpyxl.readthedocs.io/en/stable/index.html](https://openpyxl.readthedocs.io/en/stable/index.html)
 
 This class uses a write-only optimization that should allow for creating large log files without
-hogging too much memory. Write-only optimization can be found here:
+hogging too much memory. The write-only optimization can be found here:
 [https://openpyxl.readthedocs.io/en/stable/optimized.html#write-only-mode](https://openpyxl.readthedocs.io/en/stable/optimized.html#write-only-mode)
 
 

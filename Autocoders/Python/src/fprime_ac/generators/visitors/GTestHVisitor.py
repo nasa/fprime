@@ -48,8 +48,7 @@ class GTestHVisitor(GTestVisitorBase.GTestVisitorBase):
         self.initGTest(obj, c)
         c.emit_hpp_params = self.emitHppParams
         c.emit_macro_params = self.emitMacroParams
-        c.file_message = '    << "  File:     " << __FILE__ << "\\n" \\\n'
-        c.line_message = '    << "  Line:     " << __LINE__ << "\\n"'
-        c.failure_message = '<< "\\n" \\\n' + c.file_message + c.line_message
+        c.file_and_line_message = '    << __FILE__ << ":" << __LINE__ << "\\n"'
+        c.failure_message = '<< "\\n" \\\n' + c.file_and_line_message
         c.LTLT = "<<"
         self._writeTmpl(c, "startSourceFilesVisit")
