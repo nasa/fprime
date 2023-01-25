@@ -185,7 +185,7 @@ struct FpLimits : BasicLimits {
 //   4. FW_RELATIVE_PATH_ASSERT: asserts report a relative path within F´ or F´ library and line number
 #define FW_ASSERT_DFL_MSG_LEN               256 //!< Maximum assert message length when using the default assert handler
 #ifndef FW_ASSERT_LEVEL
-#define FW_ASSERT_LEVEL                     FW_FILENAME_ASSERT //!< Defines the type of assert used
+#define FW_ASSERT_LEVEL                     FW_RELATIVE_PATH_ASSERT //!< Defines the type of assert used
 #endif
 
 // Define max length of assert string
