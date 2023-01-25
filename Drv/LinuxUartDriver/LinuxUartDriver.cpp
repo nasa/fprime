@@ -268,7 +268,9 @@ bool LinuxUartDriver::open(const char* const device,
     // All done!
     Fw::LogStringArg _arg = device;
     this->log_ACTIVITY_HI_PortOpened(_arg);
-    this->ready_out(0); // Indicate the driver is connected
+    if (this->isConnected_ready_OutputPort(0)) {
+        this->ready_out(0); // Indicate the driver is connected
+    }
     return true;
 }
 
