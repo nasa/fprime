@@ -236,6 +236,8 @@ Cpkt
 cplusplus
 CPOL
 cpos
+cppcheckxml
+cpplint
 cppcheck
 cppreference
 cprogramming
@@ -779,6 +781,7 @@ libiconv
 LIBLOC
 lic
 lindent
+linelength
 lineno
 lineroo
 lineterm
@@ -931,6 +934,7 @@ nonblock
 noncomma
 NONINFRINGEMENT
 Nop
+noparent
 noreply
 noreturn
 normalwidths
@@ -1125,6 +1129,7 @@ qtest
 qthelpproject
 Qualcomm
 quatchan
+quoteattr
 RAbrack
 radd
 RAII
