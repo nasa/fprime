@@ -103,7 +103,7 @@ types on/off such that smaller architectures can disable them.  These settings a
 | FW_HAS_F64     | The architecture supports 64-bit double-precision floating point values. | 1 (on)  | 0 (off) 1 (on) |
 
 Example:
-```
+```cpp
 // Turn of 64-bit integers (double)
 #define FW_HAS_F64 0
 ```
@@ -169,7 +169,7 @@ Time contexts are another value associated with time.
 **WARNING:** Changes to this value must be done in tandem with the F´ GDS for F´ GDS features to work. Thus most
 projects don't modify these settings just like the types defined above.
 
-```
+```cpp
 enum TimeBase {
     TB_NONE, //!< No time base has been established
     TB_PROC_TIME, //!< Indicates time is processor cycle time. Not tied to external time
