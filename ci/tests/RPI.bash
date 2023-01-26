@@ -33,7 +33,7 @@ export CHECK_TARGET_PLATFORM="native"
 for target in "${FPUTIL_TARGETS[@]}"
 do
     # For RPI deployment to disable FRAMEWORK UTS
-    export CMAKE_EXTRA_SETTINGS="-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF -DCMAKE_BUILD_TYPE=Debug"
+    export CMAKE_EXTRA_SETTINGS="-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
     if [[ "${target}" == "generate" ]]
     then
         rm -rf "${FPUTIL_DEPLOYS}/build-fprime-automatic-"*
