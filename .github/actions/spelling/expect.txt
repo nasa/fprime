@@ -546,7 +546,9 @@ gbl
 gcc
 gcda
 gcgandhi
+gcno
 gcov
+gcovr
 gdb
 gdiplus
 gencode
@@ -961,6 +963,7 @@ objs
 oclc
 odl
 odo
+ofiles
 oflag
 okidocki
 oldeol
@@ -1312,6 +1315,7 @@ srand
 srandom
 srange
 src
+srcs
 SRCS
 sre
 sscanf

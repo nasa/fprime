@@ -49,7 +49,7 @@ Default::T FppTest::Enum::getDefaultValue<Default>() {
 // Specializations for valid value
 template<>
 Explicit::T FppTest::Enum::getValidValue<Explicit>() {
-    U32 val = STest::Pick::startLength(0, Explicit::NUM_CONSTANTS - 1);
+    U32 val = STest::Pick::startLength(0, Explicit::NUM_CONSTANTS);
 
     switch (val) {
         case 0: return Explicit::A;
@@ -60,7 +60,7 @@ Explicit::T FppTest::Enum::getValidValue<Explicit>() {
 
 template<>
 Interval::T FppTest::Enum::getValidValue<Interval>() {
-    U32 val = STest::Pick::startLength(0, Interval::NUM_CONSTANTS - 1);
+    U32 val = STest::Pick::startLength(0, Interval::NUM_CONSTANTS);
 
     switch (val) {
         case 0: return Interval::A;

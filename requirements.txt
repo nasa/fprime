@@ -13,7 +13,7 @@ cookiecutter==1.7.3
 Flask==1.1.4
 Flask-Compress==1.12
 Flask-RESTful==0.3.9
-fprime-fpp==1.1.0
+fprime-fpp==1.2.0
 fprime-gds==3.1.5a1
 fprime-tools==3.1.2a1
 gcovr==5.1
