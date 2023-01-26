@@ -108,6 +108,16 @@ Example:
 #define FW_HAS_F64 0
 ```
 
+### IEEE 754 compliance of the floating point implementation
+
+Some industrial coding rules for safety and critical systems require floating point implementations to conform to a defined floating point standard, such as IEEE 754. The reason for this is that if the implementation does not conform to a standard, it can lead to problems with the accuracy and reliability of calculations.
+
+By default, F´ checks for IEEE754 compliant floating point arithmetic at compile time. However, if a user does not have a C++11 implementation on their platform that supports IEEE754 floating point arithmetic, an option is provided to bypass this check:
+
+| Macro                           | Definition                                                       | Default | Valid Values   |
+| --------------------------------| -----------------------------------------------------------------|---------|----------------|
+| SKIP_FLOAT_IEEE_754_COMPLIANCE  | Skip IEEE 754 compliance check of floating point implementation. | 0 (off) | 0 (off) 1 (on) |
+
 #### Configured Type Definitions
 
 **WARNING:** To run the system with the standard F´ GDS, these changes need to be made in the python GDS support code
