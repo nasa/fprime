@@ -42,7 +42,7 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/MicroFs/MicroFs.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
