@@ -18,8 +18,10 @@
 
 \#include "${name}ArrayAc.hpp"
 
-#if $namespace
+#if $namespace_list != None
+ #for $namespace in $namespace_list
 namespace ${namespace} {
+ #end for
 #end if
 
 #if $type == "string":
@@ -299,6 +301,8 @@ void ${name}::toString(Fw::StringBase& text) const {
     return status;
   }
 
-#if $namespace
-}
+#if $namespace_list != None
+ #for $namespace in $reversed($namespace_list)
+} // end namespace $namespace
+ #end for
 #end if

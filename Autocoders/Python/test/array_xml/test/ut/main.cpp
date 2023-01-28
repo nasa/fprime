@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     cout << "Initialize Arrays" << endl;
 
     Example::InternalType array1 = Example::InternalType(6,7,120,444);
-    Example::ArrayType array2 = Example::ArrayType(array1);
+    Example::SubNameSpace::ArrayType array2 = Example::SubNameSpace::ArrayType(array1);
     // Create string array for serializable
     Fw::String mem1 = "Member 1";
     Fw::String mem2 = "Member 2";
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 
     // Save copy of arrays to test against post-serialization
     Example::InternalType array1Save = array1;
-    Example::ArrayType array2Save = array2;
+    Example::SubNameSpace::ArrayType array2Save = array2;
 
     cout << "Deserializing arrays" << endl;
     if (arraySerial1.deserialize(array1Save) != Fw::FW_SERIALIZE_OK) {
