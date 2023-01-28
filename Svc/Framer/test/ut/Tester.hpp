@@ -36,6 +36,7 @@ class Tester : public FramerGTestBase {
             Fw::ComPacket::ComPacketType packet_type
         );
         Tester& m_parent;
+        bool m_do_not_send;
     };
 
     // ----------------------------------------------------------------------
@@ -62,6 +63,12 @@ class Tester : public FramerGTestBase {
     //! Test incoming Fw::Buffer data to the framer
     void test_buffer(U32 iterations = 1);
 
+    //! Tests statuses pass-through
+    void test_status_pass_through();
+
+    //! Tests statuses on no-send
+    void test_no_send_status();
+
     //! Check that buffer is equal to the last buffer allocated
     void check_last_buffer(Fw::Buffer buffer);
 
@@ -87,6 +94,13 @@ class Tester : public FramerGTestBase {
     Drv::SendStatus from_framedOut_handler(
         const NATIVE_INT_TYPE portNum, //!< The port number
         Fw::Buffer& sendBuffer //!< The buffer containing framed data
+    );
+
+    //! Handler for from_comStatusOut
+    //!
+    void from_comStatusOut_handler(
+        const NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Fw::Success &condition /*!< Condition success/failure */
     );
 
   public:

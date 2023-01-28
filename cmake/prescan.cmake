@@ -12,22 +12,43 @@
 # full build or the information will be wrong.
 ####
 
-# NOTE: **ensure** that list properties are added by hand in the actual call. Otherwise they are expanded and break
-# the call below.
-set(NEEDED_PROPERTIES
-    FPRIME_CONFIG_DIR
-    FPRIME_AC_CONSTANTS_FILE
-    FPRIME_ENVIRONMENT_FILE
-    FPRIME_SETTINGS_FILE
-    FPRIME_PROJECT_ROOT
-    FPRIME_FRAMEWORK_PATH
-    CMAKE_TOOLCHAIN_FILE
-    CMAKE_BUILD_TYPE
-    CMAKE_DEBUG_OUTPUT
-    FPRIME_USE_STUBBED_DRIVERS
-    FPRIME_USE_BAREMETAL_SCHEDULER
-    FPP_TOOLS_PATH
-    BUILD_TESTING
+set(EXCLUDED_CACHE_VARIABLES
+    CMAKE_EDIT_COMMAND
+    CMAKE_HOME_DIRECTORY
+    CMAKE_INSTALL_NAME_TOOL
+    FPRIME_PRESCAN
+    FPRIME_VERSION_SCRIPT
+    CMAKE_C_COMPILER_FORCED
+    CMAKE_CXX_COMPILER_FORCED
+    FPRIME_SKIP_TOOLS_VERSION_CHECK
+    CMAKE_HAVE_LIBC_PTHREAD
+    CMAKE_HAVE_PTHREAD_H
+    CMAKE_SKIP_INSTALL_ALL_DEPENDENCY
+    FIND_PACKAGE_MESSAGE_DETAILS_Threads
+    BUILD_GMOCK
+    CMAKE_INSTALL_BINDIR
+    CMAKE_INSTALL_DATAROOTDIR
+    CMAKE_INSTALL_INCLUDEDIR
+    CMAKE_INSTALL_LIBDIR
+    CMAKE_INSTALL_LIBEXECDIR
+    CMAKE_INSTALL_LOCALSTATEDIR
+    CMAKE_INSTALL_OLDINCLUDEDIR
+    CMAKE_INSTALL_SBINDIR
+    CMAKE_INSTALL_SHAREDSTATEDIR
+    CMAKE_INSTALL_SYSCONFDIR
+    INSTALL_GTEST
+    VALGRIND
+    gmock_build_tests
+    gtest_build_samples
+    gtest_build_tests
+    gtest_disable_pthreads
+    gtest_force_shared_crt
+    gtest_hide_internal_symbols
+)
+set(TYPES_DISALLOWED_LIST
+    INTERNAL
+    STATIC
+    UNINITIALIZED
 )
 # Directory in-which to build the prescan directory
 set(PRESCAN_DIR "${CMAKE_BINARY_DIR}/prescan")
@@ -44,11 +65,27 @@ endif()
 ####
 function(_get_call_properties)
     set(CALL_PROPS)
-    foreach (PROPERTY IN LISTS NEEDED_PROPERTIES)
-        if (NOT "${${PROPERTY}}" STREQUAL "")
-            set(CALL_PROP "-D${PROPERTY}=${${PROPERTY}}")
-            list(APPEND CALL_PROPS "${CALL_PROP}")
+    get_cmake_property(CACHE_VARS CACHE_VARIABLES)
+    foreach (PROPERTY IN LISTS CACHE_VARS)
+        get_property(CACHE_TYPE CACHE "${PROPERTY}" PROPERTY TYPE)
+        # Exclude listed properties and empty properties
+        if ("${PROPERTY}" IN_LIST EXCLUDED_CACHE_VARIABLES)
+            continue()
+        # Exclude empty values
+        elseif("${${PROPERTY}}" STREQUAL "")
+            continue()
+        # Exclude internal cache values
+        elseif("${CACHE_TYPE}" IN_LIST TYPES_DISALLOWED_LIST)
+            continue()
         endif()
+        # Add escaping for list type variables
+        string(REPLACE ";" "\\;" PROP_VALUE "${${PROPERTY}}" )
+        # Check for debugging output
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[prescan] Adding cache variable: '${PROPERTY}=${PROP_VALUE}'")
+        endif()
+        set(CALL_PROP "-D${PROPERTY}=${PROP_VALUE}")
+        list(APPEND CALL_PROPS "${CALL_PROP}")
     endforeach()
     set(CALL_PROPS "${CALL_PROPS}" PARENT_SCOPE)
 endfunction(_get_call_properties)
@@ -80,7 +117,6 @@ function(perform_prescan)
             "-DCMAKE_C_COMPILER_FORCED=TRUE"
             "-DCMAKE_CXX_COMPILER_FORCED=TRUE"
             "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
-            "-DFPRIME_LIBRARY_LOCATIONS=${FPRIME_LIBRARY_LOCATIONS}"
             ${CALL_PROPS}
         RESULT_VARIABLE result
         WORKING_DIRECTORY "${PRESCAN_DIR}"

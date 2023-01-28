@@ -1310,10 +1310,7 @@ class Formatters:
         and no '_' in string form.
         """
         mod_id_list = mod_id.strip("_").split("_")
-        if len(mod_id_list) == 1:
-            mod_id_cap = mod_id[0].upper() + mod_id[1:]
-        elif len(mod_id_list) == 2:
-            mod_id_cap = [x[0].upper() + x[1:] for x in mod_id_list]
+        mod_id_cap = [x[0].upper() + x[1:] for x in mod_id_list]
         # size of mod_id list error in subThreadDir method.
         mod_id_cap_str = "".join(mod_id_cap)
         return mod_id_cap_str

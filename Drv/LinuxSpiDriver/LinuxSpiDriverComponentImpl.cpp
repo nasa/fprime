@@ -46,8 +46,8 @@ namespace Drv {
         spi_ioc_transfer tr;
         // Zero for unused fields:
         memset(&tr, 0, sizeof(tr));
-        tr.tx_buf = reinterpret_cast<U64>(writeBuffer.getData());
-        tr.rx_buf = reinterpret_cast<U64>(readBuffer.getData());
+        tr.tx_buf = reinterpret_cast<__u64>(writeBuffer.getData());
+        tr.rx_buf = reinterpret_cast<__u64>(readBuffer.getData());
         tr.len = writeBuffer.getSize();
 /*
             .speed_hz = 0,
@@ -66,8 +66,6 @@ namespace Drv {
         }
         this->m_bytes += readBuffer.getSize();
         this->tlmWrite_SPI_Bytes(this->m_bytes);
-        return;
-
     }
 
     bool LinuxSpiDriverComponentImpl::open(NATIVE_INT_TYPE device,

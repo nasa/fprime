@@ -385,6 +385,22 @@ function (read_from_lines CONTENT)
     endforeach()
 endfunction()
 
+####
+# Function `full_path_from_build_relative_path`:
+#
+# Creates a full path from the shortened build-relative path.
+# -**SHORT_PATH:** build relative path
+# Return: full path from relative path
+####
+function(full_path_from_build_relative_path SHORT_PATH OUTPUT_VARIABLE)
+    foreach(FPRIME_LOCATION IN LISTS FPRIME_BUILD_LOCATIONS)
+        if (EXISTS "${FPRIME_LOCATION}/${SHORT_PATH}")
+            set("${OUTPUT_VARIABLE}" "${FPRIME_LOCATION}/${SHORT_PATH}" PARENT_SCOPE)
+            return()
+        endif()
+    endforeach()
+    set("${OUTPUT_VARIABLE}" "" PARENT_SCOPE)
+endfunction(full_path_from_build_relative_path)
 
 ####
 # Function `get_nearest_build_root`:
@@ -485,19 +501,23 @@ function(get_expected_tool_version VID FILL_VARIABLE)
 endfunction(get_expected_tool_version)
 
 ####
-# Function `set_hash_flag`:
+# Function `set_assert_flags`:
 #
 # Adds a -DASSERT_FILE_ID=(First 8 digits of MD5) to each source file, and records the output in
-# hashes.txt. This allows for asserts on file ID not string.
+# hashes.txt. This allows for asserts on file ID not string. Also adds the -DASSERT_RELATIVE_PATH
+# flag for handling relative path asserts.
 ####
-function(set_hash_flag SRC)
+function(set_assert_flags SRC)
     get_filename_component(FPRIME_CLOSEST_BUILD_ROOT_ABS "${FPRIME_CLOSEST_BUILD_ROOT}" ABSOLUTE)
+    get_filename_component(FPRIME_PROJECT_ROOT_ABS "${FPRIME_PROJECT_ROOT}" ABSOLUTE)
     string(REPLACE "${FPRIME_CLOSEST_BUILD_ROOT_ABS}/" "" SHORT_SRC "${SRC}")
+    string(REPLACE "${FPRIME_PROJECT_ROOT_ABS}/" "" SHORT_SRC "${SHORT_SRC}")
+
     string(MD5 HASH_VAL "${SHORT_SRC}")
     string(SUBSTRING "${HASH_VAL}" 0 8 HASH_32)
     file(APPEND "${CMAKE_BINARY_DIR}/hashes.txt" "${SHORT_SRC}: 0x${HASH_32}\n")
-    SET_SOURCE_FILES_PROPERTIES(${SRC} PROPERTIES COMPILE_FLAGS -DASSERT_FILE_ID="0x${HASH_32}")
-endfunction(set_hash_flag)
+    SET_SOURCE_FILES_PROPERTIES(${SRC} PROPERTIES COMPILE_FLAGS "-DASSERT_FILE_ID=0x${HASH_32} -DASSERT_RELATIVE_PATH='\"${SHORT_SRC}\"'")
+endfunction(set_assert_flags)
 
 
 ####
