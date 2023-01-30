@@ -38,10 +38,11 @@
 #include <cinttypes>
 #include <limits>
 
-#define FW_HAS_64_BIT    1 //!< Architecture supports 64 bit integers
-#define FW_HAS_32_BIT    1 //!< Architecture supports 32 bit integers
-#define FW_HAS_16_BIT    1 //!< Architecture supports 16 bit integers
-#define FW_HAS_F64    1 //!< Architecture supports 64 bit floating point numbers
+#define FW_HAS_64_BIT 1  //!< Architecture supports 64 bit integers
+#define FW_HAS_32_BIT 1  //!< Architecture supports 32 bit integers
+#define FW_HAS_16_BIT 1  //!< Architecture supports 16 bit integers
+#define FW_HAS_F64 1     //!< Architecture supports 64 bit floating point numbers
+#define SKIP_FLOAT_IEEE_754_COMPLIANCE 0  //!<  Check IEEE 754 compliance of floating point arithmetic
 
 // Section 1: Logical Types
 //    fprime requires platform implementors to define logical types for their
