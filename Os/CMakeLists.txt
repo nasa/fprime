@@ -115,8 +115,15 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut("Os_pthreads")
 
-# Third  UT Pthreads MAX Heap
+# Third UT Pthreads MAX Heap
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/test/ut/MaxHeapTest.cpp"
 )
 register_fprime_ut("Os_pthreads_max_heap")
+
+# Microfs unit test
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MicroFs/test/ut/MicroFsTest.cpp"
+)
+register_fprime_ut("Os_MicroFs")
+

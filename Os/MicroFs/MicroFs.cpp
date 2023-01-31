@@ -1,5 +1,6 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <Os/File.hpp>
 #include <Os/MicroFs/MicroFs.hpp>
 
@@ -91,29 +92,58 @@ void MicroFsInit(const MicroFsConfig& cfg, const PlatformUIntType id, Fw::MemAll
 }
 
 // helper to find file state entry from file name. Will return index if found, -1 if not
-static PlatformIntType getFileStateIndex(const CHAR* fileName) {
+STATIC PlatformIntType getFileStateIndex(const CHAR* fileName) {
     // the directory/filename rule is very strict - it has to be /MICROFS_BIN_STRING<n>/MICROFS_FILE_STRING<m>,
     // where n = number of file bins, and m = number of files in a particular bin
     // any other name will return an error
     PlatformUIntType bin = 0;
     PlatformUIntType file = 0;
     MicroFsFileState* statePtr = 0;
-    PlatformIntType stateIndex = -1;
 
-    // first character must be "/""
-    if (fileName[0] != '/') {
+    const char* filePathSpec = "/" 
+        MICROFS_BIN_STRING 
+        "%d/" 
+        MICROFS_FILE_STRING 
+        "%d";
+
+    PlatformIntType binIndex;
+    PlatformIntType fileIndex;
+
+    PlatformIntType stat = sscanf(fileName,filePathSpec,binIndex,fileIndex);
+    // must match two entries, i.e. the bin and file numbers
+    if (stat != 2) {
         return -1;
     }
 
-    // look for end of bin path
-    const CHAR* currFileChar = &fileName[1];
-    const CHAR* currCompChar = &MICROFS_BIN_STRING[0];
+    // get number of bins
+    MicroFsConfig* cfgPtr = static_cast<MicroFsConfig*>(MicroFsMem);
+    FW_ASSERT(cfgPtr);
+
+    // check to see that indexes don't exceed config
+    if (binIndex >= cfgPtr->numBins) {
+        return -1;
+    }
+
+    if (fileIndex >= cfgPtr->bins[binIndex].numFiles) {
+        return -1;
+    }    
+
+    PlatformIntType stateIndex = 0;
+    // compute file state index
+
+    // add each chunk of file numbers from full bins
+    for (PlatformIntType currBin = 0; currBin < binIndex; binIndex++) {
+        stateIndex += cfgPtr->bins[currBin].numFiles;
+    }
+
+    // get residual file number from last bin
+    stateIndex += fileIndex;
 
     return stateIndex;
 }
 
 // helper to get state pointer from index
-static MicroFsFileState* getFileStateFromIndex(PlatformIntType index) {
+STATIC MicroFsFileState* getFileStateFromIndex(PlatformIntType index) {
     // should be non-zero by the time this is called
     FW_ASSERT(index > 0, index);
     FW_ASSERT(MicroFsMem);
