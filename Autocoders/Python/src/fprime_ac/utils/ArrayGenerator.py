@@ -65,7 +65,7 @@ def write_template(
     """
     c.name = name
     c.namespace = namespace
-    c.namespace_list=namespace_list
+    c.namespace_list = namespace_list
     c.type = arr_type
     c.typeinfo = arr_typeinfo
     c.size = arr_size
