@@ -2,6 +2,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/File.hpp>
+#include <Os/FileSystem.hpp>
 #include <Os/MicroFs/MicroFs.hpp>
 
 #ifdef __cplusplus
@@ -91,8 +92,15 @@ void MicroFsInit(const MicroFsConfig& cfg, const PlatformUIntType id, Fw::MemAll
     }
 }
 
+void MicroFsCleanup(const PlatformUIntType id,
+                 Fw::MemAllocator& allocator) {
+
+    allocator.deallocate(id,MicroFsMem);
+    MicroFsMem = 0;
+}
+
 // helper to find file state entry from file name. Will return index if found, -1 if not
-STATIC PlatformIntType getFileStateIndex(const CHAR* fileName) {
+STATIC PlatformIntType getFileStateIndex(const char* fileName) {
     // the directory/filename rule is very strict - it has to be /MICROFS_BIN_STRING<n>/MICROFS_FILE_STRING<m>,
     // where n = number of file bins, and m = number of files in a particular bin
     // any other name will return an error
@@ -109,7 +117,7 @@ STATIC PlatformIntType getFileStateIndex(const CHAR* fileName) {
     PlatformIntType binIndex;
     PlatformIntType fileIndex;
 
-    PlatformIntType stat = sscanf(fileName,filePathSpec,binIndex,fileIndex);
+    PlatformIntType stat = sscanf(fileName,filePathSpec,&binIndex,&fileIndex);
     // must match two entries, i.e. the bin and file numbers
     if (stat != 2) {
         return -1;
@@ -144,8 +152,8 @@ STATIC PlatformIntType getFileStateIndex(const CHAR* fileName) {
 
 // helper to get state pointer from index
 STATIC MicroFsFileState* getFileStateFromIndex(PlatformIntType index) {
-    // should be non-zero by the time this is called
-    FW_ASSERT(index > 0, index);
+    // should be >=0 by the time this is called
+    FW_ASSERT(index >= 0, index);
     FW_ASSERT(MicroFsMem);
     // Get base of state structures
     MicroFsConfig* cfg = reinterpret_cast<MicroFsConfig*>(MicroFsMem);
@@ -466,4 +474,76 @@ File::Status File::calculateCRC32(U32& crc) {
         return OP_OK;
     }
 }
+
+} // end Os namespace
+
+// FileSystem functions
+
+namespace Os {
+
+namespace FileSystem {
+
+Status createDirectory(const char* path) {
+    Status stat = OP_OK;
+
+
+    return stat;
+}
+
+Status removeDirectory(const char* path) {
+    Status stat = OP_OK;
+
+    return stat;
 }  // namespace Os
+
+Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
+    Status dirStat = OP_OK;
+
+    return dirStat;
+
+}
+
+Status removeFile(const char* path) {
+    Status stat = OP_OK;
+
+    return stat;
+}
+
+Status moveFile(const char* originPath, const char* destPath) {
+    Status stat = OP_OK;
+
+    return stat;
+
+}
+
+Status handleFileError(File::Status fileStatus) {
+    Status fileSystemStatus = OTHER_ERROR;
+
+    return fileSystemStatus;
+}
+
+Status initAndCheckFileStats(const char* filePath, struct stat* fileInfo = nullptr) {
+    FileSystem::Status fs_status;
+
+    return fs_status;
+}
+
+Status copyFileData(File source, File destination, FwSizeType size) {
+
+    return OP_OK;
+}
+
+Status copyFile(const char* originPath, const char* destPath) {
+
+    return OP_OK;
+}
+
+Status appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
+
+    return OP_OK;
+
+}
+
+} // end FileSystem namespace
+
+} // end Os namespace

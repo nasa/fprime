@@ -23,6 +23,9 @@ void MicroFsInit(const MicroFsConfig& cfg,      //!< the configuration of the me
                  const PlatformUIntType id,     //!< The memory id. Value doesn't matter if allocator doesn't need it
                  Fw::MemAllocator& allocator);  //!< Memory allocator to use for memory
 
+void MicroFsCleanup(const PlatformUIntType id,     //!< The memory id. Value doesn't matter if allocator doesn't need it
+                 Fw::MemAllocator& allocator);  //!< Memory allocator to to deallocate. Should match MicroFsInit allocator                 
+
 }  // namespace Os
 
 #endif
