@@ -142,7 +142,7 @@ namespace Os {
         struct sysinfo memory_info;
         int sysinfo_result = 0;
 
-        if (sysinfo_result = sysinfo(&memory_info) != 0) {
+        if ((sysinfo_result = sysinfo(&memory_info)) != 0) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
