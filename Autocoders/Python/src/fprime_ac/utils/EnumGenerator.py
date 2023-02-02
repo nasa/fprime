@@ -90,15 +90,15 @@ def generate_enum(xml_file):
         fp = open_file(name, "hpp")
         c = enum_hpp.enum_hpp()
         write_template(
-            fp, 
-            c, 
-            name, 
-            namespace, 
-            namespace_list, 
-            default, 
-            serialize_type, 
-            items, 
-            max_value, 
+            fp,
+            c,
+            name,
+            namespace,
+            namespace_list,
+            default,
+            serialize_type,
+            items,
+            max_value,
             comment,
         )
         fp.close()
@@ -108,15 +108,15 @@ def generate_enum(xml_file):
         fp = open_file(name, "cpp")
         c = enum_cpp.enum_cpp()
         write_template(
-            fp, 
-            c, 
-            name, 
-            namespace, 
-            namespace_list, 
-            default, 
-            serialize_type, 
-            items, 
-            max_value, 
+            fp,
+            c,
+            name,
+            namespace,
+            namespace_list,
+            default,
+            serialize_type,
+            items,
+            max_value,
             comment,
         )
         fp.close()
