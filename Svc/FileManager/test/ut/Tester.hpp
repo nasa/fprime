@@ -94,6 +94,14 @@ namespace Svc {
       //!
       void appendFileFail();
 
+      //! File size (succeed)
+      //!
+      void fileSizeSucceed();
+
+      //! File size (fail)
+      //!
+      void fileSizeFail();
+
     private:
 
       // ----------------------------------------------------------------------
@@ -130,7 +138,8 @@ namespace Svc {
 
       //! Remove a file
       void removeFile(
-          const char *const fileName
+          const char *const fileName,
+          bool ignoreErrors
       );
 
       //! Perform a shell command
