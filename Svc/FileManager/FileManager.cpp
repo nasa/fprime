@@ -234,15 +234,16 @@ namespace Svc {
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
 
-    U64 size;
+    FwSizeType size_arg;
     const Os::FileSystem::Status status =
-      Os::FileSystem::getFileSize(fileName.toChar(), size);
+      Os::FileSystem::getFileSize(fileName.toChar(), size_arg);
     if (status != Os::FileSystem::OP_OK) {
       this->log_WARNING_HI_FileSizeError(
           logStringFileName,
           status
       );
     } else {
+      U64 size = static_cast<U64>(size_arg);
       this->log_ACTIVITY_HI_FileSizeSucceeded(logStringFileName, size);
     }
     this->emitTelemetry(status);
