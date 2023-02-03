@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<array name="ArrayType" namespace="Example">
+<array name="ArrayType" namespace="Example::SubNameSpace">
     <import_array_type>Autocoders/Python/test/array_xml/InternalTypeArrayAi.xml</import_array_type>
     <comment>Example Array Type XML</comment>
 
