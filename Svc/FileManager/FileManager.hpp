@@ -65,7 +65,7 @@ namespace Svc {
           const FwOpcodeType opCode, //!< The opcode
           const U32 cmdSeq, //!< The command sequence number
           const Fw::CmdStringArg& fileName, //!< The file to remove
-          const bool ignoreErrors //!< Ignore non-existent files
+          const bool ignoreErrors //!< Ignore missing files
       );
 
       //! Implementation for MoveFile command handler
