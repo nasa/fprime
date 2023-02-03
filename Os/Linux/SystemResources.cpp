@@ -124,7 +124,7 @@ namespace Os {
                                    FwSizeType free_ram,
                                    FwSizeType memory_unit,
                                    const struct sysinfo& memory_info) {
-        return ((total_ram <= 0) || (free_ram < 0) || (memory_unit <= 0) ||
+        return ((total_ram <= 0) || (memory_unit <= 0) ||
                 (static_cast<unsigned long>(total_ram) != memory_info.totalram) ||
                 (static_cast<unsigned long>(free_ram) != memory_info.freeram) ||
                 (static_cast<unsigned int>(memory_unit) != memory_info.mem_unit));
