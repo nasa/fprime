@@ -114,10 +114,10 @@ namespace Os {
 
 
     U64 getMemoryTotal(FwSizeType total_ram, FwSizeType memory_unit) {
-        return total_ram * memory_unit;
+        return static_cast<U64>(total_ram)*static_cast<U64>(memory_unit);
     }
     U64 getMemoryUsed(FwSizeType total_ram, FwSizeType free_ram, FwSizeType memory_unit) {
-        return (total_ram - free_ram) * memory_unit;
+        return static_cast<U64>((total_ram - free_ram)) * static_cast<U64>(memory_unit);
     }
 
     bool checkCastingAndTypeErrors(FwSizeType total_ram,
