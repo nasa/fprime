@@ -140,9 +140,8 @@ namespace Os {
 
     SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil& memory_util) {
         struct sysinfo memory_info;
-        int sysinfo_result = 0;
 
-        if ((sysinfo_result = sysinfo(&memory_info)) != 0) {
+        if (sysinfo(&memory_info) != 0) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
