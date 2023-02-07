@@ -65,13 +65,13 @@ Thus, there are some things that developers should be aware of when using C++11 
 1. Many C++11 features use templates under the hood.  Prefer `Fw` and `Os` implementations for these features.
 2. Use of `std::atomic` is known to not work in some cases. Use is avoided.
 
-### Clang Format
+### ClangFormat
 
-F´ uses clang format based on Chromium. Currently, clang-format does not properly handle `PRIVATE`, `PROTECTED`, and
-`STATIC` access modifiers used to enable white-box unit testing. Several solutions are being considered to
-fix this and, once complete, the full code base will be formatted. New submissions should attempt to format
-appropriately and edit around these modifiers as necessary. A `.clang-format` file is supplied at the root of the
-repository.
+F´ uses [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) based on Chromium. A `.clang-format` file is supplied 
+at the root of the repository. The [fprime-tools](https://github.com/fprime-community/fprime-tools) command line utility
+(>v3.1.1) provides a command wrapping around clang-format. This utility is the preferred way to do formatting because it 
+handles the `PRIVATE`, `PROTECTED`, and `STATIC` access modifiers used to enable white-box unit testing in F'. See `
+fprime-util format --help` for instructions. New submissions should attempt to format appropriately.
 
 ### Rules of Thumb
 
