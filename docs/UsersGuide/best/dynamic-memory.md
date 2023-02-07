@@ -1,14 +1,13 @@
 # Dynamic Memory Allocation Using `Fw::Buffer`
 
-In embedded systems, dynamic memory allocation (a.k.a heap allocation) is typically avoided to reduce the steady state
+In embedded systems, dynamic memory allocation (a.k.a heap allocation) is typically avoided to reduce the steady-state
 variability in a running system. Avoiding dynamic memory allocation also avoids the problem of what to do in the case of
 a failed allocation. However, sometimes dynamic allocation provides for a simpler or more efficient solution.
 
 Safe dynamic allocation is available using the buffer manager pattern in F´. In short, this pattern allows components to
-dynamically allocate memory through a port call to a component designed to manage memory for the system. There are three
-steps for this process:
+dynamically allocate memory through a port call to a component designed to manage memory for the system. There are three steps in this process:
 
-1. Call allocation port receiving an `Fw::Buffer`
+1. Call allocation port receiving an`Fw::Buffer`
 2. Use allocated in the `Fw::Buffer`
 3. Call deallocation port providing the `Fw::Buffer`
 
@@ -18,7 +17,7 @@ This section will describe the work done within a component to allocate, use, an
 
 ## Allocating and Deallocating `Fw::Buffer`s
 
-Allocation and deallocation is done through port calls to a buffer managing component. The component needing dynamic
+Allocation and deallocation are done through port calls to a buffer managing component. The component needing dynamic
 memory allocation should include two output ports:
 
 1. Output port of type `Fw::BufferGet` to request a buffer
@@ -27,7 +26,7 @@ memory allocation should include two output ports:
 In the case that allocation fails, the `Fw::Buffer` return from the `Fw::BufferGet` port will have a size of zero.
 Developers must check that the size is not smaller than requested before proceeding to use the memory.
 
-In the below example, the ports are called `allocate` and `deallocate`.  First the port definitions are presented
+In the example below, the ports are called `allocate` and `deallocate`. First the port definitions are presented
 followed by the usage in C++.
 
 **Example Component Definition**
@@ -60,8 +59,7 @@ followed by the usage in C++.
 
 ### Working With F´ Buffers
 
-`Fw::Buffer` objects function as a wrapper for generic memory regions. They consist of a pointer to memory and a size
-of the memory region pointed to by the pointer. An easy way to work with an `Fw::Buffer` is to use the serialization
+`Fw::Buffer` objects function as a wrapper for generic memory regions. They consist of a pointer to memory and the size of the memory region pointed to by the pointer. An easy way to work with an `Fw::Buffer` is to use the serialization
 representation of the buffer. This allows users to serialize and deserialize from the buffer's data using methods. 
 
 To use this method, get a representation using the `Fw::Buffer.getSerializeRepr()` and then call `.serialize()` or
@@ -77,7 +75,7 @@ my_buffer.getSerializeRepr().serialize(mv_value);
 U32 my_value_again = 0;
 my_buffer.getSerializeRepr().deserialize(mv_value_again);
 ```
-**Note:** to use this method types must inherit from `Fw::Serializable` or be basic type.
+**Note:** To use this method types must inherit from `Fw::Serializable` or be basic types.
 
 Users can access the `Fw::Buffer`'s data directly using `Fw::Buffer.getData()`, which will return a `U8*` pointer to the
 buffer's memory. Care should be taken as this is a raw pointer and thus buffer overruns are possible.
@@ -97,19 +95,18 @@ Full `Fw::Buffer` documentation is available [here](../api/c++/html/class_fw_1_1
 
 ## Topology Consideration
 
-There are several components designed to allow for memory allocation and they differ in terms of complexity, and use
+There are several components designed to allow for memory allocation and they differ in terms of complexity and use
 cases. They both support the `Fw::BufferGet` and `Fw::BufferSend` port interface for allocation and deallocation and
 thus can be used interchangeably subject to the descriptions in this section.
 
-Each section will describe any special setup needed in the topology and will describe how to hook-up the manager's
-ports.
+Each section will describe any special setup needed in the topology and how to hook up the manager's ports.
 
 ### Svc.StaticMemory
 
 Svc.StaticMemory uses a stack-based pool of memory to support allocation. This pool is composed of fixed-size regions
-each of which is tied a specific client. Each client's allocation **must** be deallocated before a subsequent request by
+each of which is tied to a specific client. Each client's allocation **must** be deallocated before a subsequent request by
 the same client. Since allocation and deallocation ports are port arrays, each client's allocation and deallocation
-ports must be hooked up in-parallel.
+ports must be hooked up in parallel.
 
 This component is designed for simplicity of implementation. System memory usage is **always** the number of clients
 multiplied by the size of the memory regions. This memory is allocated as a large array on the stack. Valid memory 
@@ -119,21 +116,18 @@ Svc.StaticMemory is described in more detail [here](../api/c++/html/svc_static_m
 
 **When To Use Svc.StaticMemory**
 
-Use Svc.StaticMemory in situations where memory must always be available and sharing nor efficient use of memory is a
-concern. Svc.StaticMemory is typically not suitable for situations where asynchronous memory handling occurs between 
+Use Svc.StaticMemory in situations where memory must always be available and sharing or efficient use of memory is a concern. Svc.StaticMemory is typically not suitable for situations where asynchronous memory handling occurs between 
 allocation and deallocation.
 
 ***Usage Requirements***
 
-Since this component is designed to be simple, its usage has several caveats. These caveats are, for the most part,
-enforced by assertions and thus failure to abide by them will result in software termination.
+Since this component is designed to be simple, its usage has several caveats. These caveats are, for the most part, enforced by assertions, and thus failure to abide by them will result in software termination.
 
-1. Allocations will always return with size of `Svc::StaticMemoryConfig::STATIC_MEMORY_ALLOCATION_SIZE`
+1. Allocations will always return with the size of `Svc::StaticMemoryConfig::STATIC_MEMORY_ALLOCATION_SIZE`
 2. Allocations above `Svc::StaticMemoryConfig::STATIC_MEMORY_ALLOCATION_SIZE` is considered an error
 3. It is an error for a client to allocate memory before deallocating previously allocated memory
 
-These rules imply that memory allocated from Svc.StaticMemory should never be sent through an asynchronous port as this
-will risks violating item 3.
+These rules imply that memory allocated from Svc.StaticMemory should never be sent through an asynchronous port as this will risk violating item 3.
 
 
 **Connections**
@@ -149,7 +143,7 @@ snippet shown below:
       client2.deallocate -> my_static_memory.bufferDeallocate[1]
 ```
 
-Svc.StaticMemory does not use any other ports. Please review configuration to ensure that sufficient regions are
+Svc.StaticMemory does not use any other ports. Please review the configuration to ensure that sufficient regions are
 available for the number of clients used.
 
 ***Configuration and Setup***
@@ -164,15 +158,14 @@ Svc.BufferManager uses multiple bins of memory with fixed-size sub-allocations w
 and deallocate port that may take any size allocation request. Svc.BufferManager searches all bins with sub-allocation
 size larger than the request for an available buffer, which it then marks as used and returns.
 
-There are no restriction on the ordering of calls for allocation and deallocation. Clients may have multiple
-outstanding allocations and thus asynchronous usage of these allocations is supported.
+There is no restriction on the ordering of calls for allocation and deallocation. Clients may have multiple outstanding allocations and thus asynchronous usage of these allocations is supported.
 
 Svc.BufferManager is described in more detail [here](../api/c++/html/svc_buffer_manager_component.html).
 
 **When To Use Svc.BufferManager**
 
 Svc.BufferManager must be used when asynchronous handling of memory is needed or sharing of memory is desired. It can
-be used generically but comes at the cost of complexity of implementation and of setup.
+be used generically but comes at the cost of complexity of implementation and setup.
 
 **Usage Requirements**
 
@@ -182,7 +175,7 @@ buffers must be allocated and returned using the same instance of Svc.BufferMana
 Buffer manager will assert under the following conditions:
 1. A returned buffer has the incorrect manager ID (returned to the wrong instance).
 2. A returned buffer has an incorrect buffer ID (invalid buffer returned).
-3. A returned buffer is returned with a correct buffer ID, but hasn't already been allocated.
+3. A returned buffer is returned with a correct buffer ID but hasn't already been allocated.
 4. A returned buffer has an indicated size larger than originally allocated.
 5. A returned buffer has a pointer outside the region originally allocated.
 
@@ -209,7 +202,7 @@ The number of sub allocations is configured in the `BufferManagerComponentImplCf
 
 When using Svc.BufferManager the `Svc::BufferManagerComponentImpl.setup()` method must be called supplying a U16 manager
 ID, a buffer id, an implementation of [Fw::MemAllocator](../api/c++/html/class_fw_1_1_mem_allocator.html) used to
-allocate memory for the sub allocations, and a
+allocate memory for the sub-allocations, and a
 [Svc::BufferManagerComponentImpl::BufferBins](../api/c++/html/struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html)
 struct configuring the sub allocations.
 
@@ -256,12 +249,10 @@ Svc::BufferManagerComponentImpl my_buffer_manager;
 
 **Rules of Thumb for Bin Sizes**
 
-Buffers bins should be tailored based on expected usage. If many small requests are expected, then setup a large
-number of smaller bins. If larger allocations are expected, set bins of that size.
+Buffers bins should be tailored based on expected usage. If many small requests are expected, then set up a large number of smaller bins. If larger allocations are expected, set bins of that size.
 
-The above trivial example allows for a few small allocations and one large allocation. In this case there is a risk that
-the large allocation is used for the small allocation use case and thus care should be taken to ensure that smaller use
-cases have sufficient number of buffers to prevent stealing of larger allocations.
+The above trivial example allows for a few small allocations and one large allocation. In this case, there is a risk that the large allocation is used for the small allocation use case and thus care should be taken to ensure that the smaller use
+cases have a sufficient number of buffers to prevent stealing of larger allocations.
 
 ## Separation of `Fw::Buffer` Allocation and Deallocation
 

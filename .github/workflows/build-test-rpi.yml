@@ -9,7 +9,9 @@ on:
     branches: [ master, devel ]
   pull_request:
     branches: [ master, devel, release/v3.0.0 ]
-
+env:
+  RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
+  DICTIONARY_PATH: build-artifacts/raspberrypi/dict/RPITopologyAppDictionary.xml
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   RPI:
@@ -20,8 +22,8 @@ jobs:
       with:
         fetch-depth: 0
     - uses: ./.github/actions/setup
-    - name: Install RPI Toolchain
-      run: sudo apt update && sudo apt install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+    - name: Setup RPI Toolchain
+      uses: fprime-community/setup-rpi-sysroot@main
     - name: F prime CI step
       run: ./ci/tests/RPI.bash
     - name: Copy Tests
@@ -60,8 +62,4 @@ jobs:
         name: pi-int-logs
         path: ci-logs.tar.gz
         retention-days: 5
-    - name: Clean-Up
-      if: always()
-      run: |
-          rm -rf $RUNNER_WORKSPACE
-          sudo /sbin/shutdown -r 1 # Force a shutdown for a clean slate
+    # Clean-Up moved to post script to prevent collisions

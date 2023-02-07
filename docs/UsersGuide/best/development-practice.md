@@ -1,6 +1,6 @@
 # Recommended F′ Development Process
 
-The purpose of this guide is to layout the standard F´ development process. This is the process used
+The purpose of this guide is to lay out the standard F´ development process. This is the process used
 by most developers who use F´ and, as such, many of the F´ tools are written to support the stages
 of the process. This guide will walk through each step in this process.
 
@@ -17,14 +17,14 @@ The process:
 4. [Assemble Topology](#assemble-topology): Compose a F´ deployment from individual components
 5. [Integration Testing](#integration-testing): Verify high-level project behaviors
 
-## High Level Design
+## High-Level Design
 
-The first step of the development process is to establish the high-level design for the project.
+The first step of the development process is to establish a high-level design for the project.
 This involves specifying system-level requirements and a block diagram that represents the key
 system functionality. Once complete the project should break this functionality into discrete units
 of functionality that represent the system. In addition, the interface between these units should be
 defined. The units of functionality are Components and the interfaces are further broken down into
-discrete call or actions through that interface. These are F´ ports. The full design of the system
+discrete calls or actions through that interface. These are F´ ports. The full design of the system
 of components and ports is the Topology. See: [Ports Components and
 Topologies](../user/port-comp-top.md)
 
@@ -32,7 +32,7 @@ Next, the project should review the components provided by the F´ framework to 
 functionality can be inherited for free. This usually consists of the basic command and data
 handling components, the Os layer, drivers, and other Svc components. Where possible, these
 components should be used as-is to support a project to minimize extra work, but these may be
-cloned-and-owned if they fall short of project requirements.
+cloned and owned if they fall short of project requirements.
 
 The project now has a list of what components they must provide, and what they will inherit.
 
@@ -50,8 +50,8 @@ can make it harder to update F´ in the future if the project wants to take adva
 bug fixes and features. To create an in-tree deployment, the Ref application can be copied and used
 as a starting point.
 
-Another option is creating a standalone deployment, where the deployment is setup by itself and
-points to a F´ installation. This requires more upfront work to setup, but provides the benefit
+Another option is creating a standalone deployment, where the deployment is set up by itself and
+points to an F´ installation. This requires more upfront work to setup, but provides the benefit
 of separating mission code from F´ framework code.
 
 The layout for a git repository for a standalone repository might look something like:
@@ -64,7 +64,7 @@ mission
 └── library (git submodule to an external library)
 ```
 
-After creating the project layout, an external deployments can also be created by copying the Ref
+After creating the project layout, external deployments can also be created by copying the Ref
 application.
 
 After copying the Ref app, both in-tree and standalone deployments need to create and modify a
@@ -82,7 +82,7 @@ development is described in the following sections.
 
 ### Design and Requirements
 
-Using the high level requirements, the developer should define requirements for an individual
+Using the high-level requirements, the developer should define requirements for an individual
 component. These requirements should define the behaviors of the component, as well as the
 interfaces with other components.
 
@@ -91,14 +91,14 @@ interfaces with other components.
 Once the interfaces between components have been defined, ports should be created to implement those
 interfaces. This can be done by hand or by using `fprime-util new --port`.
 
-It's recommended that ports are kept in their own directories separate from components.
+It's recommended that ports are kept in their own directories, separate from components.
 
 To create a new port:
 
-1. If necessary, create new port directory
+1. If necessary, create a new port directory
 2. Create a new port `*Ai.xml` file, possibly by copying from an existing port.
 3. Add the new port xml file to `SOURCE_FILES` in the `CMakeLists.txt` file in the directory
-4. If necessary, add port directory to the deployment's cmake file with `add_fprime_subdirectory`.
+4. If necessary, add the port directory to the deployment's cmake file with `add_fprime_subdirectory`.
 
 Alternatively, you may use `fprime-util new --port` from the fprime-tools package. This will 
 walk the user through a few prompts about the port they want to create. Then the following
@@ -133,12 +133,9 @@ walk the user through a few prompts about the component they are creating. Then 
 will be done automatically:
 
 1. A new component directory will be created
-2. The `*Ai.xml` file will be generated, filled out with all of the information provided by 
-   the user
-3. Commands, telemetry, events, and parameters will be added to the xml file based on what 
-   the user chooses through the prompts
-4. Ports necessary for commands, telemetry, events, and parameters will be automatically
-   added to the `*Ai.xml` file depending which elements the user chooses to include
+2. The `*Ai.xml` file will be generated and filled out with all of the information provided by the user
+3. Commands, telemetry, events, and parameters will be added to the xml file based on what the user chooses through the prompts
+4. Ports necessary for commands, telemetry, events, and parameters will be automatically added to the `*Ai.xml` file depending which elements the user chooses to include
 5. A component `CMakeLists.txt` file will be generated and the component xml will be added
    to the source files.
 6. The component directory will be added to the deployments cmake file with
@@ -149,7 +146,7 @@ will be done automatically:
 9. An SDD file is generated with documentation about ports, commands, events,  
    telemetry, parameters, and time of creation already filled out
 
-The `fprime-util new --component` uses the builtin cookiecutter template by default, 
+The `fprime-util new --component` uses the built-in cookiecutter template by default, 
 but users can substitute their own component template by using the component_cookiecutter 
 field of the settings.ini file. To learn more, see [Creating and Using a Cookiecutter Template](../dev/cookiecutter.md).
 ### Component Implementation
@@ -198,20 +195,18 @@ To add a component to the topology:
 3. In the topology `Topology.cpp` file:
     - Instantiate the component.
     - Call the component's `init` function.
-    - If additional setup is required, call a user defined setup function.
-    - If using commands, register component's commands.
-    - If using health checking, add component to ping entries.
-    - If using an active component, start component with `start` function and call `exit` when
+    - If additional setup is required, call a user-defined setup function.
+    - If using commands, register the component's commands.
+    - If using health checking, add the component to ping entries.
+    - If using an active component, start the component with `start` function and call `exit` when
       exiting.
 
 ## Integration Testing
 
-As the topology comes together, it is helpful to write system level tests for subsystems of the
+As the topology comes together, it is helpful to write system-level tests for subsystems of the
 overall deployment. This makes sure that as a system, top-level requirements are met.
 
-The fprime-gds has a python API that can be used to write integration test cases, supporting sending
-commands, checking for events, and getting telemetry channel readings. To get started writing
-integration test, check out the [GDS integration test guide](../dev/testAPI/user_guide).
+The fprime-gds has a python API that can be used to write integration test cases that support sending commands, checking for events, and getting telemetry channel readings. To get started with writing integration tests, check out the [GDS integration test guide](../dev/testAPI/user_guide).
 
 ## Conclusion
 

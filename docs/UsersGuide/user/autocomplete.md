@@ -1,12 +1,11 @@
 # Autocomplete: Tab Completion for Command-Line Tools
 
 This guide will walk the user through installing command line tools autocomplete feature. This works when being run on
-many common shells including: bash, fish, and tcsh.  Due to the support library we use, we are unable to support shells
-outside of the shells supported by this library.
+many common shells including bash, fish, and tcsh. Due to the support library we use, we are unable to support shells outside of the shells supported by this library.
 
 While you can start using the GDS command line tools immediately after installing F´, turning on autocomplete will
 require the few additional steps described herein. Using autocomplete is as simple as pressing the `[TAB]` and the
-active command line options will fill-in. If more than one option is available, you can hit `[TAB]` twice to display
+active command line options will fill in. If more than one option is available, you can hit `[TAB]` twice to display
 all possible choices and continue typing until there is only one matching choice left.
 
 This guide will cover:
@@ -21,13 +20,13 @@ This guide will cover:
 
 ## Installing Autocomplete
 
-Once F´ is installed the following commands can be used to setup autocomplete. Autocomplete operates by registering some
+Once F´ is installed the following commands can be used to set up autocomplete. Autocomplete operates by registering some
 variables into the active shell. Thus, the user has two options to work with these tools: manual setup in each shell and
-activating along with the virtual environment. Manually activating per-shell requires a manual step, but does not
-change the Python managed virtual environment file. Activating along with the virtual environment is convenient, but
+activating along with the virtual environment. Manually activating per-shell requires a manual step but does not
+change the Python-managed virtual environment file. Activating along with the virtual environment is convenient, but
 edits a file that is managed by Python and issues may arise across Python versions.
 
-**Note:** it is possible to add these commands to a `.bashrc` or `.cshrc` file but this is outside the scope of this
+**Note:** It is possible to add these commands to a `.bashrc` or `.cshrc` file but this is outside the scope of this
 guide.
 
 ### Manual Activation (Run In Each New Shell)

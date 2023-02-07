@@ -1,7 +1,7 @@
 # Projects and Deployments
 
 F´ is naturally organized into projects and deployments. Projects use F´ to solve some embedded system problem, and may
-consist of one or more deployments.  Deployments are tied to individual builds of code and are typically used to drive
+consist of one or more deployments. Deployments are tied to individual builds of code and are typically used to drive
 a single device.
 
 A topology is a specific set of interconnected components, which represents the design of a deployment. Further
@@ -12,7 +12,7 @@ explanation of projects and deployments and how they differ is explained in this
 - [Topologies](#topologies)
 - [Conclusion](#conclusion)
 
-To illustrate this the Mars Helicopter Project is an excellent example. Mars Helicopter uses one project that defines
+To illustrate this, the Mars Helicopter project is an excellent example. Mars Helicopter uses one project that defines
 two deployments: one for a base station, and one for the mobile helicopter. This is shown in Figure 1.
 
 ![Mars Helicopter](../media/proj_dep1.png)
@@ -26,8 +26,7 @@ multiple deployments. Component designs and source may be shared between these r
 
 There are several reasons a project may contain multiple deployments.
 
-1. A project consists of multiple spacecraft/electronic platforms/CPUs/systems. F´ can be used on multiple nodes such
-systems.
+1. A project consists of multiple spacecraft/electronic platforms/CPUs/systems. F´ can be used on multiple nodes in such systems.
 2. A project has test deployments, mocked-deployments, or other deployments that allow for specific testing setups.
 
 Figure 1 shows an example of a project, the Mars Helicopter flight software, which was implemented with F´. The Mars
@@ -48,7 +47,7 @@ Deployments contain the needed build system artifacts to build the F´ framework
 into an executable that can be deployed onto embedded hardware, or even run on the user’s computer.
 
 
-In our example multiple non-homogeneous systems are defined for the Mars Helicopter. It has multiple deployments as
+In our example, multiple non-homogeneous systems are defined for the Mars Helicopter. It has multiple deployments as
 each system would have a separate unique executable to control it.
 
 

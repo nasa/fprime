@@ -12,6 +12,16 @@
 set(CMAKE_SYSTEM_NAME       Linux)
 set(CMAKE_SYSTEM_PROCESSOR  arm)
 set(CMAKE_SYSTEM_VERSION    1)
+# Configure the find commands for cross-compiling: tools from host, libraries, includes, and packages from cross-compiler/sysroot
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM   NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY   ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE   ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE   ONLY)
+
+# Check CMake sysroot
+if (DEFINED CMAKE_SYSROOT)
+    set(CMAKE_FIND_ROOT_PATH ${CMAKE_SYSROOT} )
+endif()
 
 # Set the GNU ARM toolchain
 find_program(CMAKE_AR NAMES arm-linux-gnueabihf-ar PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
@@ -23,8 +33,3 @@ find_program(CMAKE_ASM_COMPILER NAMES arm-linux-gnueabihf-as PATHS ENV RPI_TOOLC
 find_program(CMAKE_OBJCOPY NAMES arm-linux-gnueabihf-objcopy PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
 find_program(CMAKE_OBJDUMP NAMES arm-linux-gnueabihf-objdump PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
 
-# Configure the find commands for finding the toolchain
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM   NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY   NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE   NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE   NEVER)

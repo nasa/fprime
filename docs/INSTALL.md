@@ -8,7 +8,7 @@ title: "F´ Installation Guide"
 This installation guide is specifically designed to enable individuals and researchers to get up and
 running with F´ quickly. Larger projects with specific requirements may need to extend this process.
 
-**Note:** see the troubleshooting section at the bottom for help resolving common issues found during F´ installs.
+**Note:** See the troubleshooting section at the bottom for help resolving common issues found during F´ installs.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ Requirements:
 4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
 5. [Python 3.7+](https://www.python.org/downloads/), virtual environments, and PIP
 
-**Note:** operating system specific notes are in the [Troubleshooting](#Troubleshooting) section below.
+**Note:** OS-specific notes are in the [Troubleshooting](#Troubleshooting) section below.
 
 ### Setting Up F´ Environment
 
@@ -50,7 +50,7 @@ pip install -U setuptools setuptools_scm wheel pip
 
 ### Cloning the F´ Repository and Installing F´ Tools
 
-Installation of F´ requires cloning of the F´ core repository. This uses Git. This will bring down the core framework and C++ files.
+Installation of F´ requires cloning of the F´ core repository via Git. This will bring down the core framework and C++ files.
 F´ ships with a `requirements.txt` file enumerating the tools F´ uses and their specific tested versions. 
 
 **Clone F´ and Install Tools**
@@ -90,7 +90,7 @@ installation).
 ## Advanced
 
 There are several advanced options users can consider while installing F´. However, users should be warned that some
-knowledge of our tools and versions are often required.
+knowledge of our tools and versions is often required.
 
 
 ### Installing Tab Completion
@@ -140,7 +140,7 @@ install things more effectively.
 
 ### fprime-util: command not found
 
-If the user is using a virtual environment and receives the command not found, the problem is likely caused by the
+If the user is using a virtual environment and receives the 'command not found', the problem is likely caused by the
 environment not being sourced in a new terminal. Make sure to source the environment before running:
 
 ```
@@ -150,11 +150,22 @@ environment not being sourced in a new terminal. Make sure to source the environ
 If installing without a virtual environment, PIP occasionally uses `$HOME/.local/bin` as a place to install user tools.
 Users running without virtual environments should add this directory to the path.
 
+### Helper script 'fpp-redirect-helper' exited with reason: Permission denied
+
+This error can occur when the helper-script, *(`fprime/cmake/autocoder/fpp-wrapper/fpp-redirect-helper`)* loses its execution permission.
+
+To verify that this is the case, change to the directory containing `fpp-redirect-helper` and verify that it is executable.
+
+* `cd fprime/cmake/autocoder/fpp-wrapper/`
+* `ls -l`
+
+If it is not executable, add the permission back.
+
+* `chmod 700 fpp-redirect-helper`
 
 ### Ubuntu, Debian, Java and Python PIP
 
-Ubuntu and possibly other Debian variants don't include the pip packages in the default python 3 installation. To get a
-fully functional, use these commands on Ubuntu and Debian based systems:
+Ubuntu and possibly other Debian variants don't include the pip packages in the default Python 3 installation. To get fully functional, use these commands on Ubuntu and Debian based systems:
 
 ```
 sudo apt install git cmake default-jre python3 python3-pip python3-venv
@@ -176,9 +187,7 @@ More information can be found [here](https://stackoverflow.com/questions/3066860
 ### System Python, Packages, and Python3
 
 Many operating systems offer python PIP packages through their package manager (apt, yum, etc). Most python projects
-recommend avoiding those packages, but rather installing from PIP in a virtual environment. The reason for this is that
-the version of the python package from the OS may not be the required version that the python project depends on. Thus,
-users may choose to install F´ into a virtual environment. This is outside the scope of this document.
+recommend avoiding those packages and instead installing them from PIP in a virtual environment. The reason for this is that the version of the python package from the OS may not be the required version that the python project depends on. Thus, users may choose to install F´ into a virtual environment. This is outside the scope of this document.
 
 ### SSL Error with Python 3.6+ on macOS
 

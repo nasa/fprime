@@ -12,8 +12,8 @@ components and modify them to suit project needs. Currently, there are 7 compone
 -   `channel-table` displays telemetry data from the spacecraft
 -   `logging` displays logged messages stored as the GDS runs
 
-Through an XML specification, users can setup their dashboard and upload it to the F´ GDS to enable it in the system.
-Once uploaded, the Dashboard should load the file and assemble the specified GUI as long as the XML is error free.
+Through an XML specification, users can set up their dashboard and upload it to the F´ GDS to enable it in the system.
+Once uploaded, the Dashboard should load the file and assemble the specified GUI as long as the XML is error-free.
 
 A more complete reference is available here: [GDS Dashboard Reference](../dev/gds-dashboard-reference.md).
 
@@ -38,7 +38,7 @@ At any point, you can upload a new configuration file to change your Dashboard.
 
 ## Setting Up XML Configuration Files
 
-The dashboard is driven by loading an XML file which specifies the layout of this tab.  In this, and the next few
+The dashboard is driven by loading an XML file that specifies the layout of this tab.  In this, and the next few
 sections the XML format will be discussed.  At its most basic, the XML format is HTML with a few extra custom F´ tags
 used to display our components.  HTML may be used to help the user achieve the display they'd like, however; the entire
 display can be configured from our custom components and thus no HTML knowledge is required.
@@ -97,8 +97,8 @@ understand. The title property can be set by specifying the XML attribute as a s
 
 The fields property is used to restrict any of the table-driven components to minimize the number of columns that are
 shown. Thus, users can show just the columns of interest and ignore the others associated with the table owned by the
-component. This property is a list of values that are space-separated, and use single quotes (') to contain values that
-included spaces.  An example of both is shown below:
+component. This property is a list of space-separated values, and uses single quotes (') to contain values that
+included spaces. An example of both is shown below:
 
 ```xml
     <channel-table fields="Description 'Channel Value' 'Channel Name'">

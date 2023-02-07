@@ -45,6 +45,7 @@ def write_template(
     c,
     name,
     namespace,
+    namespace_list,
     arr_type,
     arr_typeinfo,
     arr_size,
@@ -64,6 +65,7 @@ def write_template(
     """
     c.name = name
     c.namespace = namespace
+    c.namespace_list = namespace_list
     c.type = arr_type
     c.typeinfo = arr_typeinfo
     c.size = arr_size
@@ -93,6 +95,9 @@ def generate_array(xml_file):
         array_xml = XmlArrayParser.XmlArrayParser(xml_file)
         name = array_xml.get_name()
         namespace = array_xml.get_namespace()
+        namespace_list = None
+        if namespace is not None:
+            namespace_list = namespace.split("::")
         arr_type = array_xml.get_type()
         arr_typeinfo = array_xml.get_typeinfo()
         arr_size = int(array_xml.get_size())
@@ -136,6 +141,7 @@ def generate_array(xml_file):
             c,
             name,
             namespace,
+            namespace_list,
             arr_type,
             arr_typeinfo,
             arr_size,
@@ -161,6 +167,7 @@ def generate_array(xml_file):
             c,
             name,
             namespace,
+            namespace_list,
             arr_type,
             arr_typeinfo,
             arr_size,

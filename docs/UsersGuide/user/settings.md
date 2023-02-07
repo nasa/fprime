@@ -1,6 +1,6 @@
 # `settings.ini`: Build Settings Configuration
 
-In many circumstances it is useful to set default values for the build as well as configure external
+In many circumstances, it is useful to set default values for the build as well as configure external
 locations for F´ to use external code. The `settings.ini` file allows users to set various settings
 to control the build.
 
@@ -16,12 +16,11 @@ generate` step, and thus builds **must** be regenerated after a change.
 ## `settings.ini` Settings
 
 The `settings.ini` file is written in the INI format as interpreted by the default settings of the
-Python `configparser` module. Should a user with to reference another key, use the `%(other key)s`
-syntax. Full format description is available here:
+Python `configparser` module. Should a user were to reference another key, the `%(other key)s` syntax should be used. The full format description is available here:
 
 https://docs.python.org/3/library/configparser.html#supported-ini-file-structure
 
-This file is expected in the directory of the an F´ deployment and affects only the deployment it is
+This file is expected in the directory of an F´ deployment and affects only the deployment it is
 defined in. This directory is the same directory that contains the project's base `CMakeLists.txt`
 (has a `project()` call).
 
@@ -82,7 +81,7 @@ config_directory: Cfg_gr712
 ### Example Environment Ini File
 
 The format for the environment file option is similar to `settings.ini`
-Each key in the file will be set as environmental variable for the project build.
+Each key in the file will be set as an environmental variable for the project build.
 
 ```ini
 [environment]

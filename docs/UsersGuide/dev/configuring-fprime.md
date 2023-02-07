@@ -40,8 +40,10 @@ Where components allow specific configuration, a `<component>Cfg.hpp` is availab
 
 AcConstants.ini is used to set the constants for the autocoded components provided by the framework. This allows
 projects to appropriately size the number of ports provided by many of the command and data handling components defined
-in the `Svc` package. **Note:** internal configurations like table sizes are set in the component specific header as
-these settings aren't autocoded. See: [Component Configuration](#component-configuration)
+in the `Svc` package.
+
+> **Note**
+> Internal configurations like table sizes are set in the component-specific header as these settings aren't autocoded. See: [Component Configuration](#component-configuration)
 
 These settings may need to be increased for large projects with many components, or minimized for projects with a small
 number of components.
@@ -69,7 +71,7 @@ for different deployment settings. During flight software (FSW) execution, disab
 and CPU cycles.
 
 All of these settings should be set in `FpConfig.hpp` and for most projects, this whole file will be cloned and owned
-for their specific settings. These settings, typically the user will define the setting to be 0 for off and 1 for on.
+for their specific settings. Typically, the user will define the setting to be 0 for off and 1 for on.
 
 e.g.
 ```c
@@ -85,8 +87,8 @@ custom types specified in the framework. This section will describe these settin
 
 The architecture is designed to be portable to different processor architectures. Some architectures such as small
 microcontrollers do not support the full range of types. The architecture supports a non-sized integer type named
-NATIVE_INT_TYPE. The NATIVE_INT_TYPE is recommended for code (e.g., loop variables) where a particular size is
-not needed in order to make it more portable. An additional type NATIVE_UINT_TYPE is available for unsigned variables.
+`NATIVE_INT_TYPE`. The `NATIVE_INT_TYPE` is recommended for code (e.g., loop variables) where a particular size is
+not needed in order to make it more portable. An additional type `NATIVE_UINT_TYPE` is available for unsigned variables.
 These types are defined in `Fw/Types/BasicTypes.hpp` and use compiler macros for sizing. See:
 [Primitive Types](./../user/enum-arr-ser.md)
 
@@ -103,16 +105,27 @@ types on/off such that smaller architectures can disable them.  These settings a
 | FW_HAS_F64     | The architecture supports 64-bit double-precision floating point values. | 1 (on)  | 0 (off) 1 (on) |
 
 Example:
-```
+```cpp
 // Turn of 64-bit integers (double)
 #define FW_HAS_F64 0
 ```
 
+### IEEE 754 compliance of the floating point implementation
+
+Some industrial coding rules for safety and critical systems require floating point implementations to conform to a defined floating point standard, such as IEEE 754. The reason for this is that if the implementation does not conform to a standard, it can lead to problems with the accuracy and reliability of calculations.
+
+By default, F´ checks for IEEE754 compliant floating point arithmetic at compile time. However, if a user does not have a C++11 implementation on their platform that supports IEEE754 floating point arithmetic, an option is provided to bypass this check:
+
+| Macro                           | Definition                                                       | Default | Valid Values   |
+| --------------------------------| -----------------------------------------------------------------|---------|----------------|
+| SKIP_FLOAT_IEEE_754_COMPLIANCE  | Skip IEEE 754 compliance check of floating point implementation. | 0 (off) | 0 (off) 1 (on) |
+
 #### Configured Type Definitions
 
-**WARNING:** to run the system with the standard F´ GDS, these changes need to be made in the python GDS support code
-as well as here. This is non-trivial and will be fixed in future releases. Unless the project intended to modify the
-GDS code, or use an alternate GDS for all functions, these settings should be left as their defaults.
+> **Warning**
+> To run the system with the standard F´ GDS, these changes need to be made in the python GDS support code
+> as well as here. This is non-trivial and will be fixed in future releases. Unless the project intended to modify the
+> GDS code, or use an alternate GDS for all functions, these settings should be left as their defaults.
 
 The value which represents a serialized boolean can be set using these macros. This only affects what value is written
 when the boolean is serialized
@@ -128,7 +141,7 @@ when the boolean is serialized
 Special named types used by F´ are mapped to some form of a primitive type integer type. This is done for ease of
 reading F´ code and is a standard practice in C/C++. The framework allows projects to change the type they used for
 these types to optimize transmitted bytes. Again, any changes must match the GDS in order to decode the values
-correctly and thus changing these values should be done carefully.
+correctly, and thus changing these values should be done carefully.
 
 **Table 34:** Macros for custom types
 
@@ -144,7 +157,8 @@ correctly and thus changing these values should be done carefully.
 | FwTimeBaseStoreType         | Type storing F´ timebase enum          | U16     | U8, U16, U32, U64 |
 | FwTimeContextStoreType      | Type storing F´ time context           | U8      | U8, U16, U32, U64 |
 
-**Note:** for a further understanding of timebase and time context, see the next section.
+> **Note**
+> For a further understanding of timebase and time context, see the next section.
 
 #### Time Base and Time Context
 
@@ -154,12 +168,13 @@ have access to a clock correlated to external operations. It can transition thro
 radio, Earth) on the way to becoming fully operational. The TimeBase type defines the set of clocks in the system that
 can produce a time tag. It lets users of the system see which clock was used when time tagging telemetry.
 
-Time contexts are another value associated with the time.
+Time contexts are another value associated with time.
 
-**WARNING:** changes to this value must be done in tandem with the F´ GDS for F´ GDS features to work. Thus most
-projects don't modify these settings just like the types defined above.
+> **Warning**
+> Changes to this value must be done in tandem with the F´ GDS for F´ GDS features to work. Thus most
+> projects don't modify these settings just like the types defined above.
 
-```
+```cpp
 enum TimeBase {
     TB_NONE, //!< No time base has been established
     TB_PROC_TIME, //!< Indicates time is processor cycle time. Not tied to external time
@@ -178,7 +193,7 @@ Time base and time context usage may be turned on and off using the macros shown
 ### Object Settings
 
 The architecture allows for various settings to control, monitor, and trace objects in the system. These settings
-typically result in a larger binary size, but make the framework and system easier to debug. This section includes
+typically result in a larger binary size but make the framework and system easier to debug. This section includes
 a discussion of OS objects like Tasks and Queues as well.
 
 #### Object Naming
@@ -201,26 +216,29 @@ class stores a task name as private data. Table 35 provides the macro for this f
 | FW_QUEUE_NAME_MAX_SIZE   | Size of the buffer storing the queue names  | 80      | Positive integer  |
 | FW_TASK_NAME_MAX_SIZE    | Size of the buffer storing task names       | 80      | Positive integer  |
 
-**Note:** The macro `FW_OPTIONAL_NAME("string")` can be used to conditionally return the given
-string or an empty string depending on whether `FW_OBJECT_NAMES` is on. This can be used to strip
-out component names from code when building without `FW_OBJECT_NAMES`.
+> **Note**
+> The macro `FW_OPTIONAL_NAME("string")` can be used to conditionally return the given
+> string or an empty string depending on whether `FW_OBJECT_NAMES` is on. This can be used to strip
+> out component names from code when building without `FW_OBJECT_NAMES`.
 
-**Note:** If the size of the string passed to the code-generated component base classes is larger than this size, the
-string will be truncated. FW_OBJECT_NAMES must be turned on for FW_OBJ_NAME_MAX_SIZ to have any effect.
+> **Note**
+> If the size of the string passed to the code-generated component base classes is larger than this size, the
+> string will be truncated. `FW_OBJECT_NAMES` must be turned on for `FW_OBJ_NAME_MAX_SIZ` to have any effect.
 
-**Note:** FW_QUEUE_NAME_MAX_SIZE and FW_TASK_NAME_MAX_SIZE are only used if FW_OBJECT_NAMES is **turned off**.
-Otherwise the supplied object name is used.
+> **Note**
+> `FW_QUEUE_NAME_MAX_SIZE` and `FW_TASK_NAME_MAX_SIZE` are only used if `FW_OBJECT_NAMES` is **turned off**.
+> Otherwise, the supplied object name is used.
 
 #### Object to String
 
-The framework port and object classes have an optional toString() method. This method by default returns the instance
-name of the object, but toString() is defined as a virtual method so a developer class can override this and provide
-custom information. Table 35 provides the macros to configure this feature.
+The framework port and object classes have an optional `toString()` method. This method by default returns the instance
+name of the object, but `toString()` is defined as a virtual method so a developer class can override this and provide
+custom information. Table 36 provides the macros to configure this feature.
 
-**Note:** for these settings to work FW_OBJECT_NAMES must be turned on.
+> **Note**
+> For these settings to work `FW_OBJECT_NAMES` must be turned on.
 
-**Table 36.** Macros for object to
-string.
+**Table 36.** Macros for object to string.
 
 | Macro                                 | Definition                                                  | Default | Valid Values      |
 | ------------------------------------- | ----------------------------------------------------------- |---------|-------------------|
@@ -251,10 +269,10 @@ registry.
 | FW_QUEUE_REGISTRATION         | Enables queue registries.                                                   | 1 (on)  | 0 (off) 1 (on)    |
 | FW_QUEUE_SIMPLE_QUEUE_ENTRIES | The size of the array in the simple object registry used to store queues.   | 100     | Positive integer  |
 
-**Note:** FW_OBJECT_REGISTRATION must be turned on for FW_OBJ_SIMPLE_REG_ENTRIES and
-FW_OBJ_SIMPLE_REG_BUFF_SIZE to have any effect.
+> **Note**
+> `FW_OBJECT_REGISTRATION` must be turned on for `FW_OBJ_SIMPLE_REG_ENTRIES` and `FW_OBJ_SIMPLE_REG_BUFF_SIZE` to have any effect.
 
-**Note:** See table 35 for configuring queue name sizes.
+> **Note** See table 35 for configuring queue name sizes.
 
 
 ### Asserts
@@ -274,11 +292,11 @@ can be configured.
 |                        | FW_FILENAME_ASSERT               | Asserts turned on, __FILE__ macro is used in the assert message    |                    |
 | FW_ASSERT_TEXT_SIZE    | The buffer size used to store the assert message  |                                                   | 120                |
 
-Setting assert level FW_FILEID_ASSERT  saves a lot of code space since no file name is stored. The make system
+Setting assert level `FW_FILEID_ASSERT`  saves a lot of code space since no file name is stored. The make system
 supplies this to the compiler by hashing the file name. The original filename can be recovered by running
 `fprime-util hash-to-file <hash>`.
 
-Setting assert level to FW_ASSERT_TEXT_SIZE can ease debugging asserts, but typically FW_ASSERT_TEXT_SIZE must be
+Setting assert level to `FW_ASSERT_TEXT_SIZE` can ease debugging asserts, but typically `FW_ASSERT_TEXT_SIZE` must be
 increased as most file name paths are longer than 120.
 
 
@@ -327,28 +345,30 @@ the macros to configure this feature.
 | FW_SERIALIZATION_TYPE_ID       | Enables serializing the type ID  | 0 (off) | 0 (off) 1 (on)    |
 | FW_SERIALIZATION_TYPE_ID_BYTES | Defines size of serialization ID | 4       | 1 - 4             |
 
-**Note:** smaller values for FW_SERIALIZATION_TYPE_ID_BYTES  means that less data storage is needed, but also
-limits the number of types that can be defined. FW_SERIALIZATION_TYPE_ID is required to have type IDs in the buffer and
+> **Note**
+> Smaller values for `FW_SERIALIZATION_TYPE_ID_BYTES` means that less data storage is needed, but also
+limits the number of types that can be defined. `FW_SERIALIZATION_TYPE_ID` is required to have type IDs in the buffer and
 thus to introspect what type is contained in the buffer.
 
 
 ### Buffer Sizes
 
-Many of the built in F´ data types define buffer sizes that allow them to be passed as a com buffer type, sent out
-through the ground interface, serialized and more. This section will discuss the com buffer configuration,
-command, channel, event, parameter and other buffer size arguments.
+Many of the built-in F´ data types define buffer sizes that allow them to be passed as a com buffer type, sent out
+through the ground interface, serialized, and more. This section will discuss the com buffer configuration,
+command, channel, event, parameter, and other buffer size arguments.
 
 The com buffer must be able to store all the other types such that they can all be passed as generic communication. Thus
-FW_COM_BUFFER_MAX_SIZE must be large enough to hold each buffer size **and** the header data for each type. Thus these
-settings are typically derived and this is done by default. **WARNING:** only modify the comm buffer size to ensure that
-there will be no faults in the system.
+`FW_COM_BUFFER_MAX_SIZE` must be large enough to hold each buffer size **and** the header data for each type. Thus these
+settings are typically derived and this is done by default.
+
+> **Warning** only modify the comm buffer size to ensure that there will be no faults in the system.
 
 In all cases, these definitions are global for each type in the system. Thus the buffer **must** be large enough to
-hold the data for the largest of a given type in the system.  An assert will result if the buffer is set too-small. i.e.
-the FW_CMD_ARG_BUFFER_MAX_SIZE cannot be smaller than the serialized size of the command with the largest arguments.
+hold the data for the largest of a given type in the system.  An assert will result if the buffer is set too small. i.e.
+the `FW_CMD_ARG_BUFFER_MAX_SIZE` cannot be smaller than the serialized size of the command with the largest arguments.
 
-These types also provide optional string sizes for their constituent pieces. However, the MAX_STRING_SIZE settings must
-**always** be smaller than the BUFFER_MAX_SIZE. i.e. the command string max size cannot be larger than the command
+These types also provide optional string sizes for their constituent pieces. However, the `MAX_STRING_SIZE` settings must
+**always** be smaller than the `BUFFER_MAX_SIZE`. i.e. the command string max size cannot be larger than the command
 buffer max size, as the string is serialized into the buffer.
 
 Commands serialize argument values into these buffers. Events (aka log events) also serialize just the arguments.
@@ -372,7 +392,7 @@ Table 42 provides the macros to configure these features.
 | FW_PRM_STRING_MAX_SIZE          | Defines the maximum size of a parameter string value  | 40      |                  |
 
 Other Buffers are defined in the system for specific purposes. These do not need to fit inside a comm buffer, and thus
-are less restrictive in sizing.
+are less restrictive in size.
 
 | Macro                      | Definition                                                 | Default | Valid Values     |
 | -------------------------- | -----------------------------------------------------------|---------|------------------|
@@ -398,35 +418,41 @@ compiles out the code and format strings for text logging. Table 46 provides the
 | FW_ENABLE_TEXT_LOGGING      | Enables or disables text logging                        | 1 (on)  | 0 (off) 1 (on)   |
 | FW_LOG_TEXT_BUFFER_SIZE     | Maximum size of the textual representation of the event | 256     | Positive integer |
 
-**Note:** the FW_LOG_TEXT_BUFFER_SIZE should be large enough to store the full event including its text format
-string after being populated with arguments.
+> **Note**
+> The `FW_LOG_TEXT_BUFFER_SIZE` should be large enough to store the full event including its text format string after being populated with arguments.
 
 
 ### Misc Configuration Settings
 
 This setting describes some of the other settings available in `FpConfig.hpp` and did not fit in other sections. These
-are described in tables below. Table 47 describes other user settings.  Table 48 describes settings defined by the
-build system that should never be hand-set.
+are described in the tables below.
 
-**Table 48.** Misc macros available to user.
+Table 47 describes other user settings.
+
+**Table 47.** Misc macros available to the user.
 
 | Macro                       | Definition                                              | Default | Valid Values     |
 | --------------------------- | --------------------------------------------------------|---------|------------------|
 | FW_CMD_CHECK_RESIDUAL       | Enables command serialization extra bytes check         | 1 (on)  | 0 (off) 1 (on)   |
 | FW_AMPCS_COMPATIBLE         | Adds argument sizes to event argument serialization     | 0 (off) | 0 (off) 1 (on)   |
 
-**Note:** Normally when a command is deserialized, the handler checks to see if there are any leftover bytes in the
+> **Note**
+> Normally when a command is deserialized, the handler checks to see if there are any leftover bytes in the
 buffer. If there are, it assumes that the command was corrupted somehow since the serialized size should match the
 serialized size of the argument list. In some cases, command buffers are padded so the data can be larger than the
-serialized size of the command. Turning FW_CMD_CHECK_RESIDUAL off can disable this check and allow leftover bytes.
+serialized size of the command. Turning `FW_CMD_CHECK_RESIDUAL` off can disable this check and allow leftover bytes.
 
-**Note:** some ground systems require the size of the event argument to be serialized into the buffer instead of
-predicting the size using the dictionary. Setting FW_AMPCS_COMPATIBLE will serialize these sizes into the event buffers
+> **Note**
+> Some ground systems require the size of the event argument to be serialized into the buffer instead of
+predicting the size using the dictionary. Setting `FW_AMPCS_COMPATIBLE` will serialize these sizes into the event buffers
 **and** break compatibility with the F´ ground system as it does not use this feature.
 
-**WARNING:** the following settings are defined by the build system and are in `FpConfig.hpp` to provide a default off
+> **Warning**
+> The following settings are defined by the build system and are in `FpConfig.hpp` to provide a default off
 value. These must be set by the build system as the setting works in unison with other modules that the build system
 includes when enabling these settings.
+
+Table 48 describes settings defined by the build system that should never be hand-set.
 
 **Table 48.** Macros for use by build system only
 
@@ -447,7 +473,7 @@ component's C++ implementation. This is typically to set maximum sizes for table
 Some components allow users to turn on and off features. If a component does not have a header, it has no configuration
 for the user to set.
 
-Users are encouraged to look through the header for the component of interest as they should be self descriptive.
+Users are encouraged to look through the header for the component of interest as they should be self-descriptive.
 
 ## Conclusion
 

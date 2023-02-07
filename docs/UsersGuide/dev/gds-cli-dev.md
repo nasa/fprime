@@ -62,7 +62,7 @@ Not including imports used only for type hints, or dependencies for modules not 
 
 -   All parsing is handled in `fprime_cli`, which imports the command modules and several external libraries to help with parsing.
 -   Each command is implemented separately, but shares a large portion of its code with other modules via the `Common` module files, as well as importing the appropriate GDS data type for the type of data it's working with (and, in the case of `command_send`, an appropriate exception).
--   The `Common` module is actually made up of several distinct, independent submodules containing related groups of common code . These import a variety of other GDS modules to help provide all necessary functionality; in particular, the `testing_fw.api` Integration Test module is used to access the GDS.
+-   The `Common` module is actually made up of several distinct, independent submodules containing related groups of common code. These import a variety of other GDS modules to help provide all necessary functionality; in particular, the `testing_fw.api` Integration Test module is used to access the GDS.
 
 ### Dataflow
 
@@ -76,7 +76,7 @@ External Dependencies (installed via `setup.py`):
 
 Internal Dependencies (i.e. Other F' modules)
 
--   Integration Test API - Used to get data from and send commands to the GDS, and filter incoming data via the included predicates
+-   Integration Test API - Used to get data from and send commands to the GDS and filter incoming data via the included predicates
 -   `common/pipeline` and `common/utils` - Used to initialize the Test API; `pipeline.dictionaries` also used to get a list of available commands/events/channels
 -   GDS Data Types in `common/data_types` - Used to handle incoming GDS data and for printing output
 -   `fprime_gds/flask/json.py` - Used for the `--json` printing flag implementation
@@ -109,7 +109,7 @@ Common files (in `common/gds_cli`):
 
 The GDS CLI tests can be found at `Gds/test/fprime/common/gds_cli`, and currently includes 2 unit test files:
 
--   `filtering_utils_test.py` tests that filtering lists and GDS data works as expected
+-   `filtering_utils_test.py` tests that filtering lists and GDS data work as expected
 -   `utils_test.py` tests `misc_utils` and `test_api_utils` functions, verifying that commands listening for data exit when interrupted, and that getting lists of items works successfully
 
 Test coverage is fairly low; there are currently no integration tests for the CLI.
@@ -118,12 +118,12 @@ Test coverage is fairly low; there are currently no integration tests for the CL
 
 -   `fprime_cli.py` and `misc_utils.py` use delayed/lazy importing to avoid slow performance from several particularly long imports
     -   In particular, `fprime_gds/flask/json.py` and `common/logger/test_logger.py` each take 100ms+ to import
-    -   The script takes noticeably longer to run if the optional `openpyxl` is installed, since it's a slow import for the Test API
+    -   The script takes noticeably longer to run if the optional `openpyxl` is installed since it's a slow import for the Test API
 -   While technically true for all GDS python code, the [fast_entry_points](https://github.com/ninjaaron/fast-entry_points) script was used to improve startup speed
     -   Low startup times are especially important because tab completion re-runs the script each time tab is hit
 -   Code uses type hints, introduced in Python 3.5
 -   Commands don't bother initializing the Test API when passed the `--list` option for performance reasons
--   The parsing/command classes currently have all their functionality implemented on class methods, and are never instantiated
+-   The parsing/command classes currently have all their functionality implemented on class methods and are never instantiated
 -   Printing uses `SysData` printing methods, which means console output will change if those `SysData` methods change
 -   When used for filtering, the `filtering_util` predicates are called on entire `SysData` objects
 -   New event/channel retrieval methods defined in `test_api_utils` instead of using the Test API's existing `await_telemetry`/etc. methods, since those only accept predicates filtering by time or one of the predefined `telemetry_predicate` or `event_predicate` fields; defining our own methods lets us use any predicate that will accept a `SysData` object
@@ -136,9 +136,9 @@ Test coverage is fairly low; there are currently no integration tests for the CL
 
 ### Fixing Issues
 
--   Getting tab completion to automatically install, rather than be user-activated (headache since user has to source a script from `argcomplete`)
+-   Getting tab completion to automatically install, rather than be user-activated (headache since the user has to source a script from `argcomplete`)
 -   Improve performance
-    -   Fix problem of just having `openpyxl` installed slowing the script down because of import time
+    -   Fix the problem of just having `openpyxl` installed slowing the script down because of import time
     -   Test API is slow to shut down for some reason, due to a slow thread join
 -   Create basic integration tests for each CLI tool to make sure they work successfully end-to-end
 

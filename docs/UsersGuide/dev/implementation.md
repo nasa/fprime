@@ -1,10 +1,10 @@
 # F´ Implementation Classes
 
-**Note:** for a hands-on walk through of build topologies, please see: [Tutorials](../../Tutorials/README.md)
+**Note:** for a hands-on walk-through of build topologies, please see: [Tutorials](../../Tutorials/README.md)
 
 The code generator takes the XML definitions in the previous section and
 generates C++ base classes. The developer writes classes that derive
-from those base classes and implement the project-specific logic. For
+from those base classes and implements the project-specific logic. For
 input ports and commands, the base classes declare pure virtual methods
 for the derived class to implement. If a developer forgets to implement
 these functions, the compilation of the code will fail. For output
@@ -76,8 +76,8 @@ where
 > \<argument\_list\> = The list of arguments specified in the args
 > section of the port definition XML.
 
-The call will invoke the port methods define on whatever component the
-component is interconnected with. If those ports are defined as
+The call will invoke the port methods defined on whatever component the
+component in consideration is interconnected with. If those ports are defined as
 synchronous or guarded, the other component’s logic will execute on the
 thread of the call.
 
@@ -310,5 +310,5 @@ finalizer prototype for code that runs when the component exits the
 message loop. These two functions are called on the thread of the active
 component. They are declared as virtual functions in C++, so they are
 not required. The preamble function is named preamble(void) and the
-finalizer finalizer(void). They can be used to do one-time activities
+finalizer is named finalizer(void). They can be used to do one-time activities
 such as data structure initialization and cleanup.

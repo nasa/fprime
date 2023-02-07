@@ -14,8 +14,8 @@ namespace Example {
 		void init(NATIVE_INT_TYPE queueDepth);
 
     private:
-        void ExArrayIn_handler(NATIVE_INT_TYPE portNum, const Example::ArrayType& array1, const Example::ArrSerial& serial1);
-        void ArrayIn_handler(NATIVE_INT_TYPE portNum, const Example::ArrayType& array1, const Example::ArrSerial& serial1);
+        void ExArrayIn_handler(NATIVE_INT_TYPE portNum, const Example::SubNameSpace::ArrayType& array1, const Example::ArrSerial& serial1);
+        void ArrayIn_handler(NATIVE_INT_TYPE portNum, const Example::SubNameSpace::ArrayType& array1, const Example::ArrSerial& serial1);
 	};
 
 };

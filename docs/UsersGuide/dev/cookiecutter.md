@@ -38,7 +38,7 @@ to contain your generated files. You may want to name this directory something l
 ## Template files
 
 To create the rest of the files in your template (*Ai.xml, CMakeLists.txt, etc.), just write these
-files as your normally would, replacing the variables with `{{ cookiecutter.<value> }}` where you would
+files as you normally would, replacing the variables with `{{ cookiecutter.<value> }}` where you would
 replace `<value>` with the value from the JSON file that you are using. You can name the files in the
 same way, and the filenames will take on the values from the user input when generated
 
@@ -100,7 +100,7 @@ There are many other features that cookiecutter provides, available in the docum
 
 ## Using your own template
 
-Once you have created your template, two ways to use it are: through github or locally.
+Once you have created your template, two ways to use it are: through GitHub or locally.
 
 ### Using a GitHub repository
 

@@ -130,6 +130,12 @@ namespace Svc {
       // and this can conflict with the traditionally smaller stack sizes.
       printf("%s\n", msg);
 
+      // Handle the case where the ports aren't connected yet
+      if (not this->isConnected_Log_OutputPort(0)) {
+          assert(0);
+          return;
+      }
+
       switch (numArgs) {
           case 0:
               this->log_FATAL_AF_ASSERT_0(fileArg,lineNo);

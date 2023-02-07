@@ -21,8 +21,7 @@ overall framework for unit testing is shown in Figure 1.
 
 **Figure 1.** Unit testing framework overview.
 
-The goal of unit testing is to cover all component-level requirements,
-and achieve close to 100% code coverage and a reasonable amount of
+The goal of unit testing is to cover all component-level requirements and achieve close to 100% code coverage with a reasonable amount of
 system state and path coverage. These requirements should drive the
 tests. A record of how the tests cover the requirements should be
 maintained. Mapping the tests to requirements can be recorded on a
@@ -40,8 +39,8 @@ an input port called a “from port,” and for each input port in *C* there
 is an output port called a “to port.” For each “from port” there is a
 history (*H*) of data received through a virtual input handler that
 stores its argument into *H*. The *TesterBase* provides utility methods
-for writing tests to the component. These include sending commands,
-sending invocations on to ports, and getting and setting parameters and
+for writing tests for the component. These include sending commands,
+sending invocations onto ports, and getting and setting parameters and
 time.
 
 ***GTestBase*** is derived from the *TesterBase* and includes headers
@@ -55,7 +54,7 @@ support it.
 
 ***Tester*** is derived from the *GTestBase* and contains the component
 under test as a member. The autocoder provides a template where the user
-then adds tests as a public method, and also write tests in a derived
+then adds tests as a public method, and also writes tests in a derived
 class of the *Tester*.
 
 Once the test class is generated, the user can begin to send commands,

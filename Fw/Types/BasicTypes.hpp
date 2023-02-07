@@ -49,9 +49,23 @@ typedef char CHAR;
   typedef uint64_t       U64; //!< 64-bit unsigned integer
 #endif
 
-typedef float   F32; //!< 32-bit floating point
+typedef float F32;  //!< 32-bit floating point
+#if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE
+  static_assert(   (std::numeric_limits<float>::is_iec559    == true)
+                && (std::numeric_limits<float>::radix        ==    2)
+                && (std::numeric_limits<float>::digits       ==   24)
+                && (std::numeric_limits<float>::max_exponent ==  128),
+                "The 32-bit floating point type does not conform to the IEEE-754 standard.");
+#endif
 #if FW_HAS_F64
-  typedef double  F64; //!< 64-bit floating point
+  typedef double F64;  //!< 64-bit floating point
+# if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE
+    static_assert(   (std::numeric_limits<double>::is_iec559    == true)
+                  && (std::numeric_limits<double>::radix        ==    2)
+                  && (std::numeric_limits<double>::digits       ==   53)
+                  && (std::numeric_limits<double>::max_exponent == 1024),
+                  "The 64-bit floating point type does not conform to the IEEE-754 standard.");
+# endif
 #endif
 
 typedef PlatformIntType NATIVE_INT_TYPE;

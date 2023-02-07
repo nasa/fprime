@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<enum namespace = "Example" name="Enum1" default="Item4">
+<enum namespace = "Example::SubNamespace" name="Enum1" default="Item4">
     <comment>Test enum_xml example enum</comment>
     <item name="Item1" value="-1952875139"/>
     <item name="Item2" value="2"/>
