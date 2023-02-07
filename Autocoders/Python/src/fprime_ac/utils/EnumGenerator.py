@@ -37,13 +37,23 @@ def open_file(name, type):
 
 
 def write_template(
-    fp, c, name, namespace, default, serialize_type, items, max_value, comment
+    fp,
+    c,
+    name,
+    namespace,
+    namespace_list,
+    default,
+    serialize_type,
+    items,
+    max_value,
+    comment,
 ):
     """
     Set up and write out templates here
     """
     c.name = name
     c.namespace = namespace
+    c.namespace_list = namespace_list
     c.default = default
     c.serialize_type = serialize_type
     c.items_list = items
@@ -66,6 +76,9 @@ def generate_enum(xml_file):
         enum_xml = XmlEnumParser.XmlEnumParser(xml_file)
         name = enum_xml.get_name()
         namespace = enum_xml.get_namespace()
+        namespace_list = None
+        if namespace is not None:
+            namespace_list = enum_xml.get_namespace().split("::")
         default = enum_xml.get_default()
         serialize_type = enum_xml.get_serialize_type()
         items = enum_xml.get_items()
@@ -77,7 +90,16 @@ def generate_enum(xml_file):
         fp = open_file(name, "hpp")
         c = enum_hpp.enum_hpp()
         write_template(
-            fp, c, name, namespace, default, serialize_type, items, max_value, comment
+            fp,
+            c,
+            name,
+            namespace,
+            namespace_list,
+            default,
+            serialize_type,
+            items,
+            max_value,
+            comment,
         )
         fp.close()
         #
@@ -86,7 +108,16 @@ def generate_enum(xml_file):
         fp = open_file(name, "cpp")
         c = enum_cpp.enum_cpp()
         write_template(
-            fp, c, name, namespace, default, serialize_type, items, max_value, comment
+            fp,
+            c,
+            name,
+            namespace,
+            namespace_list,
+            default,
+            serialize_type,
+            items,
+            max_value,
+            comment,
         )
         fp.close()
         return True

@@ -190,7 +190,7 @@ function(fpp_setup_autocode AC_INPUT_FILES)
             list(APPEND GENERATED_CPP "${GENERATED}")
         endif()
     endforeach()
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/fpp-input-list" "${FILE_DEPENDENCIES}")
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/fpp-input-list" "${FPP_IMPORTS};${AC_INPUT_FILES}")
     # Add in steps for Ai.xml generation
     if (GENERATED_AI)
         add_custom_command(

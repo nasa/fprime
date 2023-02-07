@@ -1,0 +1,64 @@
+name: "Cpplint Scan"
+
+on:
+  push:
+    branches: [master, devel]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [master, devel]
+
+jobs:
+  cpplint:
+    name: Cpplint
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+
+      - name: Install cpplint
+        run: pip install cpplint
+
+      - name: Install xsltproc
+        run: sudo apt-get install xsltproc -y
+
+      - name: Install sarif tool
+        run: npm install @microsoft/sarif-multitool
+
+      - name: Run cpplint & export output to cppcheck format
+        run: cpplint --counting=detailed --quiet --recursive . 2>&1 | python3 .github/scripts/cpplint_to_cppcheckxml.py &> cpplint_cppcheck_result.xml
+
+      - name: Convert cpplint results to SARIF
+        run: npx "@microsoft/sarif-multitool" convert "cpplint_cppcheck_result.xml" --tool "CppCheck" --output "cpplint_cppcheck_result.sarif" --force
+
+      - name: Convert cpplint results to Markdown & Integrate them in the workflow summary
+        run: xsltproc .github/scripts/cpplint-xml2text.xslt cpplint_cppcheck_result.xml | tee $GITHUB_STEP_SUMMARY cpplint_cppcheck_result.txt
+
+      # See https://github.com/nasa/fprime/pull/1794 for why this is needed
+      - name: Replace tool name in SARIF file
+        run: |
+          sed -i -e 's/\"name\": \"CppCheck\"/\"name\": \"CppLint\"/g' cpplint_cppcheck_result.sarif
+
+      - name: Upload SARIF file to GitHub Code Scanning Alerts
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ${{ github.workspace }}/cpplint_cppcheck_result.sarif
+          category: "cpplint"
+
+      - name: Archive static analysis artifacts to download and view
+        uses: actions/upload-artifact@v3
+        with:
+          name: cpplint-errors
+          path: ./*cpplint_cppcheck_result.*
+
+      # Make the whole step fail if there is an error detected by cpplint. By default, GitHub Actions enables the set -e.
+      # See https://stackoverflow.com/questions/73066461/github-actions-why-an-intermediate-command-failure-in-shell-script-would-cause.
+      # - name: Check for reported errors
+      #   run: tail -n 1 cpplint_cppcheck_result.txt | grep -q '^\*\*0 error(s) reported\*\*$'

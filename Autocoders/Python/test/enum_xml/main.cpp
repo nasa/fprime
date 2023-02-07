@@ -35,25 +35,25 @@ void constructArchitecture() {
 
 }
 
-Example::Enum1::t getEnumConstant() {
-    Example::Enum1::t c = Example::Enum1::Item1;
+Example::SubNamespace::Enum1::t getEnumConstant() {
+    Example::SubNamespace::Enum1::t c = Example::SubNamespace::Enum1::Item1;
     const U32 i = STest::Pick::lowerUpper(0, 4);
 
     switch(i) {
         case 0:
-            c = Example::Enum1::Item1;
+            c = Example::SubNamespace::Enum1::Item1;
             break;
         case 1:
-            c = Example::Enum1::Item2;
+            c = Example::SubNamespace::Enum1::Item2;
             break;
         case 2:
-            c = Example::Enum1::Item3;
+            c = Example::SubNamespace::Enum1::Item3;
             break;
         case 3:
-            c = Example::Enum1::Item4;
+            c = Example::SubNamespace::Enum1::Item4;
             break;
         case 4:
-            c = Example::Enum1::Item5;
+            c = Example::SubNamespace::Enum1::Item5;
             break;
         default:
             FW_ASSERT(0, i);
@@ -63,19 +63,19 @@ Example::Enum1::t getEnumConstant() {
     return c;
 }
 
-Example::Enum1::t getNonnegativeConstant() {
-    Example::Enum1::t c = Example::Enum1::Item1;
+Example::SubNamespace::Enum1::t getNonnegativeConstant() {
+    Example::SubNamespace::Enum1::t c = Example::SubNamespace::Enum1::Item1;
     const U32 i = STest::Pick::lowerUpper(0, 2);
 
     switch(i) {
         case 0:
-            c = Example::Enum1::Item2;
+            c = Example::SubNamespace::Enum1::Item2;
             break;
         case 1:
-            c = Example::Enum1::Item3;
+            c = Example::SubNamespace::Enum1::Item3;
             break;
         case 2:
-            c = Example::Enum1::Item4;
+            c = Example::SubNamespace::Enum1::Item4;
             break;
         default:
             FW_ASSERT(0, i);
@@ -85,16 +85,16 @@ Example::Enum1::t getNonnegativeConstant() {
     return c;
 }
 
-Example::Enum1::t getNegativeConstant() {
-    Example::Enum1::t c = Example::Enum1::Item1;
+Example::SubNamespace::Enum1::t getNegativeConstant() {
+    Example::SubNamespace::Enum1::t c = Example::SubNamespace::Enum1::Item1;
     const U32 i = STest::Pick::lowerUpper(0, 1);
 
     switch(i) {
         case 0:
-            c = Example::Enum1::Item1;
+            c = Example::SubNamespace::Enum1::Item1;
             break;
         case 1:
-            c = Example::Enum1::Item5;
+            c = Example::SubNamespace::Enum1::Item5;
             break;
         default:
             FW_ASSERT(0, i);
@@ -104,19 +104,19 @@ Example::Enum1::t getNegativeConstant() {
     return c;
 }
 
-Example::Enum1 getEnum() {
-    const Example::Enum1 e = getEnumConstant();
+Example::SubNamespace::Enum1 getEnum() {
+    const Example::SubNamespace::Enum1 e = getEnumConstant();
     return e;
 }
 
-Example::Enum1 getEnumFromI32() {
-    Example::Enum1 e = getEnumConstant();
+Example::SubNamespace::Enum1 getEnumFromI32() {
+    Example::SubNamespace::Enum1 e = getEnumConstant();
     e = static_cast<I32>(getEnumConstant());
     return e;
 }
 
-Example::Enum1 getEnumFromU32() {
-    Example::Enum1 e = getNonnegativeConstant();
+Example::SubNamespace::Enum1 getEnumFromU32() {
+    Example::SubNamespace::Enum1 e = getNonnegativeConstant();
     e = static_cast<U32>(getNonnegativeConstant());
     return e;
 }
@@ -144,10 +144,10 @@ void checkAssertionFailure(
 
 TEST(EnumXML, InvalidNegativeConstant) {
   ::Test::UnitTestAssert uta;
-  Example::Enum1 enum1 = getEnum();
+  Example::SubNamespace::Enum1 enum1 = getEnum();
   // Get a valid negative constant
   const I32 negativeConstant = getNegativeConstant();
-  const U32 expectedLineNumber = 61;
+  const U32 expectedLineNumber = 62;
   // Turn it into a U32
   const U32 expectedArg1 = negativeConstant;
   // As a U32, the constant is not valid
@@ -158,12 +158,12 @@ TEST(EnumXML, InvalidNegativeConstant) {
 
 TEST(EnumXML, InvalidConstant) {
   ::Test::UnitTestAssert uta;
-  Example::Enum1 enum1 = getEnum();
+  Example::SubNamespace::Enum1 enum1 = getEnum();
   // Get an invalid constant
   const I32 invalidConstant = 42;
   // This should cause an assertion failure
   enum1 = invalidConstant;
-  const U32 expectedLineNumber = 54;
+  const U32 expectedLineNumber = 55;
   const U32 expectedArg1 = invalidConstant;
   checkAssertionFailure(uta, expectedLineNumber, expectedArg1);
 }
@@ -171,9 +171,9 @@ TEST(EnumXML, InvalidConstant) {
 TEST(EnumXML, OK) {
 
     // Explicitly set enum1 to the default value
-    Example::Enum1 enum1(Example::Enum1::Item4);
-    Example::Enum1 enum2;
-    Example::Enum1 enum3;
+    Example::SubNamespace::Enum1 enum1(Example::SubNamespace::Enum1::Item4);
+    Example::SubNamespace::Enum1 enum2;
+    Example::SubNamespace::Enum1 enum3;
     Example::Enum2 enum4;
     Example::Enum3 enum5;
 
@@ -187,7 +187,7 @@ TEST(EnumXML, OK) {
     ASSERT_EQ(enum4.e, 0);
 
     // Check that the enum serializable types are set correctly
-    ASSERT_EQ(Example::Enum1::SERIALIZED_SIZE, sizeof(FwEnumStoreType));
+    ASSERT_EQ(Example::SubNamespace::Enum1::SERIALIZED_SIZE, sizeof(FwEnumStoreType));
     ASSERT_EQ(Example::Enum2::SERIALIZED_SIZE, sizeof(U64));
     ASSERT_EQ(Example::Enum3::SERIALIZED_SIZE, sizeof(U8));
 
@@ -201,8 +201,8 @@ TEST(EnumXML, OK) {
     cout << "Created third enum: " << enum3 << endl;
 
     // Save copy of enums to test against post-serialization
-    Example::Enum1 enum1Save = enum1;
-    Example::Enum1 enum2Save = enum2;
+    Example::SubNamespace::Enum1 enum1Save = enum1;
+    Example::SubNamespace::Enum1 enum2Save = enum2;
 
     int serial_arg1 = 0;
 

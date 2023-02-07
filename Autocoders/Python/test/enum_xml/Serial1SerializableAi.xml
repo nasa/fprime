@@ -7,7 +7,6 @@
     <members>
         <member name="Member1" type="U32" comment = "Example member 1"/>
         <member name="Member2" type="U32" comment = "Example member 2"/>
-        <member name="Member3" type="Example::Enum1" comment = "Example enum member"/>
+        <member name="Member3" type="Example::SubNamespace::Enum1" comment = "Example enum member"/>
     </members>
 </serializable>
-

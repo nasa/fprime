@@ -11,8 +11,9 @@
 //
 // ======================================================================
 
-\#ifndef ${namespace}_${name}_HPP
-\#define ${namespace}_${name}_HPP
+
+\#ifndef ${namespace.upper().replace("::", "_")}_${name.upper()}_HPP_
+\#define ${namespace.upper().replace("::", "_")}_${name.upper()}_HPP_
 
 \#include "Fw/Types/String.hpp"
 \#include <FpConfig.hpp>
@@ -30,8 +31,10 @@
 \#include <${t}>
 #end for
 
-#if $namespace
+#if $namespace_list != None
+ #for $namespace in $namespace_list
 namespace ${namespace} {
+ #end for
 #end if
 #if $comment
   //! $re.sub("\n *", "\n  //! ", $comment)
@@ -214,8 +217,10 @@ namespace ${namespace} {
 
   };
 
-#if $namespace
-}
+#if $namespace_list != None
+ #for $namespace in $reversed($namespace_list)
+} // end namespace $namespace
+ #end for
 #end if
 
 #endif
