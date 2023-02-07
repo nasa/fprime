@@ -125,7 +125,7 @@ $(document).ready(function(){initNavTree('_enum_test_8hpp_source.html',''); init
 <div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="namespace_fpp_test_1_1_enum.html#a33fcab18c13e29db96ed7e8c466d9a48">   35</a></span>&#160;        <span class="keyword">typename</span> EnumType::T <a class="code" href="namespace_fpp_test_1_1_enum.html#a33fcab18c13e29db96ed7e8c466d9a48">getValidValue</a>() {</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            U32 val = STest::Pick::startLength(</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                0, </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(EnumType::NUM_CONSTANTS - 1)</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                EnumType::NUM_CONSTANTS</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            );</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>typename EnumType::T<span class="keyword">&gt;</span>(val);</div>

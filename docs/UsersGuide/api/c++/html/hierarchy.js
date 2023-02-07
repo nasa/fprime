@@ -9,6 +9,8 @@ var hierarchy =
     [ "ActiveTextLoggerComponentBase", null, [
       [ "Svc::ActiveTextLoggerComponentImpl", "class_svc_1_1_active_text_logger_component_impl.html", null ]
     ] ],
+    [ "FppTest::Port::ArrayArgs", "struct_fpp_test_1_1_port_1_1_array_args.html", null ],
+    [ "FppTest::Port::ArrayReturn", "struct_fpp_test_1_1_port_1_1_array_return.html", null ],
     [ "AssertFatalAdapterComponentBase", null, [
       [ "Svc::AssertFatalAdapterComponentImpl", "class_svc_1_1_assert_fatal_adapter_component_impl.html", null ]
     ] ],
@@ -20,6 +22,7 @@ var hierarchy =
     [ "BlockDriverComponentBase", null, [
       [ "Drv::BlockDriverImpl", "class_drv_1_1_block_driver_impl.html", null ]
     ] ],
+    [ "FppTest::Port::BoolReturn", "struct_fpp_test_1_1_port_1_1_bool_return.html", null ],
     [ "BufferAccumulatorComponentBase", null, [
       [ "Svc::BufferAccumulator", "class_svc_1_1_buffer_accumulator.html", null ]
     ] ],
@@ -78,9 +81,15 @@ var hierarchy =
       [ "Svc::Deframer", "class_svc_1_1_deframer.html", null ]
     ] ],
     [ "Os::Directory", "class_os_1_1_directory.html", null ],
+    [ "FppTest::Port::Empty", "struct_fpp_test_1_1_port_1_1_empty.html", null ],
     [ "Fw::FilePacket::EndPacket", "class_fw_1_1_file_packet_1_1_end_packet.html", null ],
+    [ "FppTest::Port::EnumArgs", "struct_fpp_test_1_1_port_1_1_enum_args.html", null ],
+    [ "FppTest::Port::EnumReturn", "struct_fpp_test_1_1_port_1_1_enum_return.html", null ],
     [ "Os::Event", "class_os_1_1_event.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence::Events", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_events.html", null ],
+    [ "ExampleComponentBase", null, [
+      [ "Example", "class_example.html", null ]
+    ] ],
     [ "FatalHandlerComponentBase", null, [
       [ "Svc::FatalHandlerComponentImpl", "class_svc_1_1_fatal_handler_component_impl.html", null ]
     ] ],
@@ -179,6 +188,9 @@ var hierarchy =
     [ "PolyDbComponentBase", null, [
       [ "Svc::PolyDbImpl", "class_svc_1_1_poly_db_impl.html", null ]
     ] ],
+    [ "FppTest::Port::PortType< ArgType, ReturnType >", "struct_fpp_test_1_1_port_1_1_port_type.html", null ],
+    [ "FppTest::Port::PrimitiveArgs", "struct_fpp_test_1_1_port_1_1_primitive_args.html", null ],
+    [ "FppTest::Port::PrimitiveReturn", "struct_fpp_test_1_1_port_1_1_primitive_return.html", null ],
     [ "Os::PriorityQueue", "struct_os_1_1_priority_queue.html", null ],
     [ "PrmDbComponentBase", null, [
       [ "Svc::PrmDbImpl", "class_svc_1_1_prm_db_impl.html", null ]
@@ -204,6 +216,7 @@ var hierarchy =
     ] ],
     [ "Svc::AMPCSSequence::SequenceHeader", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_sequence_header.html", null ],
     [ "Svc::AMPCSSequence::Record::TimeFlag::Serial", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time_flag_1_1_serial.html", null ],
+    [ "FppTest::Port::SerialArgs", "struct_fpp_test_1_1_port_1_1_serial_args.html", null ],
     [ "Fw::Serializable", "class_fw_1_1_serializable.html", [
       [ "Fw::Buffer", "class_fw_1_1_buffer.html", null ],
       [ "Fw::ComPacket", "class_fw_1_1_com_packet.html", [
@@ -254,6 +267,9 @@ var hierarchy =
     [ "StaticMemoryComponentBase", null, [
       [ "Svc::StaticMemoryComponentImpl", "class_svc_1_1_static_memory_component_impl.html", null ]
     ] ],
+    [ "FppTest::Port::StringArgs", "struct_fpp_test_1_1_port_1_1_string_args.html", null ],
+    [ "FppTest::Port::StructArgs", "struct_fpp_test_1_1_port_1_1_struct_args.html", null ],
+    [ "FppTest::Port::StructReturn", "struct_fpp_test_1_1_port_1_1_struct_return.html", null ],
     [ "SystemResourcesComponentBase", null, [
       [ "Svc::SystemResources", "class_svc_1_1_system_resources.html", null ]
     ] ],
@@ -272,7 +288,9 @@ var hierarchy =
       [ "FormatTest", "class_format_test.html", null ],
       [ "NonPrimitiveStructTest", "class_non_primitive_struct_test.html", null ],
       [ "PrimitiveStructTest", "class_primitive_struct_test.html", null ],
-      [ "StringTest< StringType >", "class_string_test.html", null ]
+      [ "SerialPortTest< PortType >", "class_serial_port_test.html", null ],
+      [ "StringTest< StringType >", "class_string_test.html", null ],
+      [ "TypedPortTest< PortType >", "class_typed_port_test.html", null ]
     ] ],
     [ "Svc::AMPCSSequence::Record::Time", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time.html", null ],
     [ "TimeComponentBase", null, [
@@ -280,7 +298,7 @@ var hierarchy =
     ] ],
     [ "Svc::AMPCSSequence::Record::TimeFlag", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time_flag.html", null ],
     [ "TlmChanComponentBase", null, [
-      [ "Svc::TlmChanImpl", "class_svc_1_1_tlm_chan_impl.html", null ]
+      [ "Svc::TlmChan", "class_svc_1_1_tlm_chan.html", null ]
     ] ],
     [ "Svc::TlmPacketizerChannelEntry", "struct_svc_1_1_tlm_packetizer_channel_entry.html", null ],
     [ "TlmPacketizerComponentBase", null, [

@@ -86,7 +86,6 @@ $(document).ready(function(){initNavTree('class_fw_1_1_tlm_packet.html',''); ini
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_fw_1_1_tlm_packet-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Fw::TlmPacket Class Reference</div>  </div>
@@ -108,44 +107,42 @@ Inheritance diagram for Fw::TlmPacket:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a2793927f14d4ac500abcfc98dc1e8e3b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a2793927f14d4ac500abcfc98dc1e8e3b">TlmPacket</a> ()</td></tr>
+<tr class="memdesc:a2793927f14d4ac500abcfc98dc1e8e3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="class_fw_1_1_tlm_packet.html#a2793927f14d4ac500abcfc98dc1e8e3b">More...</a><br /></td></tr>
 <tr class="separator:a2793927f14d4ac500abcfc98dc1e8e3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2556c9c76d248a35d9805626360387d9"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a2556c9c76d248a35d9805626360387d9">~TlmPacket</a> ()</td></tr>
+<tr class="memdesc:a2556c9c76d248a35d9805626360387d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="class_fw_1_1_tlm_packet.html#a2556c9c76d248a35d9805626360387d9">More...</a><br /></td></tr>
 <tr class="separator:a2556c9c76d248a35d9805626360387d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2b6cb8e1d7edff16f77ace266080804"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#ae2b6cb8e1d7edff16f77ace266080804">serialize</a> (<a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;buffer) const</td></tr>
-<tr class="memdesc:ae2b6cb8e1d7edff16f77ace266080804"><td class="mdescLeft">&#160;</td><td class="mdescRight">serialize contents  <a href="class_fw_1_1_tlm_packet.html#ae2b6cb8e1d7edff16f77ace266080804">More...</a><br /></td></tr>
+<tr class="memdesc:ae2b6cb8e1d7edff16f77ace266080804"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serialize the packet before sending. For use internally in software. To send to the ground, use <a class="el" href="class_fw_1_1_tlm_packet.html#aaf9a50b2d32ea10faeec2da14645d60f" title="get buffer to send to the ground">getBuffer()</a> below.  <a href="class_fw_1_1_tlm_packet.html#ae2b6cb8e1d7edff16f77ace266080804">More...</a><br /></td></tr>
 <tr class="separator:ae2b6cb8e1d7edff16f77ace266080804"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f5ca1518a4f4dbba2cc0e7fd73c491e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a3f5ca1518a4f4dbba2cc0e7fd73c491e">deserialize</a> (<a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;buffer)</td></tr>
-<tr class="memdesc:a3f5ca1518a4f4dbba2cc0e7fd73c491e"><td class="mdescLeft">&#160;</td><td class="mdescRight">deserialize to contents  <a href="class_fw_1_1_tlm_packet.html#a3f5ca1518a4f4dbba2cc0e7fd73c491e">More...</a><br /></td></tr>
+<tr class="memdesc:a3f5ca1518a4f4dbba2cc0e7fd73c491e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize the packet. For use internally in software. To extract channels, use <a class="el" href="class_fw_1_1_tlm_packet.html#a12b16a20021cd306752df1ea352d2643" title="set the internal buffer for deserializing values">setBuffer()</a> and <a class="el" href="class_fw_1_1_tlm_packet.html#a29f8408e27a474ac75fb7c9b7ad786c7">extractValue()</a> below. This is NOT typically used.  <a href="class_fw_1_1_tlm_packet.html#a3f5ca1518a4f4dbba2cc0e7fd73c491e">More...</a><br /></td></tr>
 <tr class="separator:a3f5ca1518a4f4dbba2cc0e7fd73c491e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7efcddf4c68b126933a3eafbf7b8b538"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a7efcddf4c68b126933a3eafbf7b8b538">setId</a> (<a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> id)</td></tr>
-<tr class="separator:a7efcddf4c68b126933a3eafbf7b8b538"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d1f3bd411ef41490b7a62a43192e030"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a9d1f3bd411ef41490b7a62a43192e030">setTlmBuffer</a> (<a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a> &amp;buffer)</td></tr>
-<tr class="separator:a9d1f3bd411ef41490b7a62a43192e030"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83a9b9c6e0fdc3051acd4ff4d63f7c9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a83a9b9c6e0fdc3051acd4ff4d63f7c9f">setTimeTag</a> (<a class="el" href="class_fw_1_1_time.html">Time</a> &amp;timeTag)</td></tr>
-<tr class="separator:a83a9b9c6e0fdc3051acd4ff4d63f7c9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96e2142af8bdbba2a428963a21446b0b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a96e2142af8bdbba2a428963a21446b0b">getId</a> ()</td></tr>
-<tr class="separator:a96e2142af8bdbba2a428963a21446b0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1dd83c7433491090fa9fa81b1831c2a2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_time.html">Time</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a1dd83c7433491090fa9fa81b1831c2a2">getTimeTag</a> ()</td></tr>
-<tr class="separator:a1dd83c7433491090fa9fa81b1831c2a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91ec2b8be97f66ec5a89672eaf7112cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a91ec2b8be97f66ec5a89672eaf7112cc">getTlmBuffer</a> ()</td></tr>
-<tr class="separator:a91ec2b8be97f66ec5a89672eaf7112cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae477b52a8e972587766c06c5a5c9291d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#ae477b52a8e972587766c06c5a5c9291d">addValue</a> (<a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Time</a> &amp;timeTag, <a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a> &amp;buffer)</td></tr>
+<tr class="memdesc:ae477b52a8e972587766c06c5a5c9291d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add telemetry value to buffer.  <a href="class_fw_1_1_tlm_packet.html#ae477b52a8e972587766c06c5a5c9291d">More...</a><br /></td></tr>
+<tr class="separator:ae477b52a8e972587766c06c5a5c9291d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29f8408e27a474ac75fb7c9b7ad786c7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a29f8408e27a474ac75fb7c9b7ad786c7">extractValue</a> (<a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> &amp;id, <a class="el" href="class_fw_1_1_time.html">Time</a> &amp;timeTag, <a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a> &amp;buffer, <a class="el" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> bufferSize)</td></tr>
+<tr class="separator:a29f8408e27a474ac75fb7c9b7ad786c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a724c339949bc2ff1a6baa33ab77a4780"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a724c339949bc2ff1a6baa33ab77a4780">resetPktSer</a> ()</td></tr>
+<tr class="memdesc:a724c339949bc2ff1a6baa33ab77a4780"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset serialization of values. This should be done when starting to accumulate a new set of values.  <a href="class_fw_1_1_tlm_packet.html#a724c339949bc2ff1a6baa33ab77a4780">More...</a><br /></td></tr>
+<tr class="separator:a724c339949bc2ff1a6baa33ab77a4780"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a360cf38a50139b73cccbb20d1603cf3a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a360cf38a50139b73cccbb20d1603cf3a">resetPktDeser</a> ()</td></tr>
+<tr class="memdesc:a360cf38a50139b73cccbb20d1603cf3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset deserialization. This should be done before extracting values.  <a href="class_fw_1_1_tlm_packet.html#a360cf38a50139b73cccbb20d1603cf3a">More...</a><br /></td></tr>
+<tr class="separator:a360cf38a50139b73cccbb20d1603cf3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf9a50b2d32ea10faeec2da14645d60f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#aaf9a50b2d32ea10faeec2da14645d60f">getBuffer</a> ()</td></tr>
+<tr class="memdesc:aaf9a50b2d32ea10faeec2da14645d60f"><td class="mdescLeft">&#160;</td><td class="mdescRight">get buffer to send to the ground  <a href="class_fw_1_1_tlm_packet.html#aaf9a50b2d32ea10faeec2da14645d60f">More...</a><br /></td></tr>
+<tr class="separator:aaf9a50b2d32ea10faeec2da14645d60f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12b16a20021cd306752df1ea352d2643"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a12b16a20021cd306752df1ea352d2643">setBuffer</a> (<a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a> &amp;buffer)</td></tr>
+<tr class="memdesc:a12b16a20021cd306752df1ea352d2643"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the internal buffer for deserializing values  <a href="class_fw_1_1_tlm_packet.html#a12b16a20021cd306752df1ea352d2643">More...</a><br /></td></tr>
+<tr class="separator:a12b16a20021cd306752df1ea352d2643"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cbc5aaa9ea30391c3866af33b3b4e34"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a4cbc5aaa9ea30391c3866af33b3b4e34">getNumEntries</a> ()</td></tr>
+<tr class="memdesc:a4cbc5aaa9ea30391c3866af33b3b4e34"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the number of packets added via <a class="el" href="class_fw_1_1_tlm_packet.html#ae477b52a8e972587766c06c5a5c9291d" title="Add telemetry value to buffer.">addValue()</a>  <a href="class_fw_1_1_tlm_packet.html#a4cbc5aaa9ea30391c3866af33b3b4e34">More...</a><br /></td></tr>
+<tr class="separator:a4cbc5aaa9ea30391c3866af33b3b4e34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_com_packet"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_com_packet')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_com_packet.html">Fw::ComPacket</a></td></tr>
 <tr class="memitem:a91b3ebf6e92a469cf5c6ec1a3572ff7f inherit pub_methods_class_fw_1_1_com_packet"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_com_packet.html#a91b3ebf6e92a469cf5c6ec1a3572ff7f">ComPacket</a> ()</td></tr>
 <tr class="separator:a91b3ebf6e92a469cf5c6ec1a3572ff7f inherit pub_methods_class_fw_1_1_com_packet"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b108a17c8daffc1b81fa409e9ee8a1b inherit pub_methods_class_fw_1_1_com_packet"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_com_packet.html#a8b108a17c8daffc1b81fa409e9ee8a1b">~ComPacket</a> ()</td></tr>
 <tr class="separator:a8b108a17c8daffc1b81fa409e9ee8a1b inherit pub_methods_class_fw_1_1_com_packet"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a68cb23b76f463864720003e74bf5b799"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a68cb23b76f463864720003e74bf5b799">m_id</a></td></tr>
-<tr class="separator:a68cb23b76f463864720003e74bf5b799"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e0cb2d61dfdc6297e1e663ab3c4b13e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_time.html">Fw::Time</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#a4e0cb2d61dfdc6297e1e663ab3c4b13e">m_timeTag</a></td></tr>
-<tr class="separator:a4e0cb2d61dfdc6297e1e663ab3c4b13e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcfccfaa2f074fb5fbb565c4ae4e0f55"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_tlm_packet.html#afcfccfaa2f074fb5fbb565c4ae4e0f55">m_tlmBuffer</a></td></tr>
-<tr class="separator:afcfccfaa2f074fb5fbb565c4ae4e0f55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_attribs_class_fw_1_1_com_packet"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_fw_1_1_com_packet')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_fw_1_1_com_packet.html">Fw::ComPacket</a></td></tr>
-<tr class="memitem:a32fe5d832448462e293b6b7ad2c80264 inherit pro_attribs_class_fw_1_1_com_packet"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425">ComPacketType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_com_packet.html#a32fe5d832448462e293b6b7ad2c80264">m_type</a></td></tr>
-<tr class="separator:a32fe5d832448462e293b6b7ad2c80264 inherit pro_attribs_class_fw_1_1_com_packet"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -174,10 +171,13 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a5c8ef76e98bf9de78ebeebe8c474a27c inherit pro_methods_class_fw_1_1_serializable"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serializable.html#a5c8ef76e98bf9de78ebeebe8c474a27c">~Serializable</a> ()</td></tr>
 <tr class="memdesc:a5c8ef76e98bf9de78ebeebe8c474a27c inherit pro_methods_class_fw_1_1_serializable"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor  <a href="class_fw_1_1_serializable.html#a5c8ef76e98bf9de78ebeebe8c474a27c">More...</a><br /></td></tr>
 <tr class="separator:a5c8ef76e98bf9de78ebeebe8c474a27c inherit pro_methods_class_fw_1_1_serializable"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_class_fw_1_1_com_packet"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_fw_1_1_com_packet')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_fw_1_1_com_packet.html">Fw::ComPacket</a></td></tr>
+<tr class="memitem:a32fe5d832448462e293b6b7ad2c80264 inherit pro_attribs_class_fw_1_1_com_packet"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425">ComPacketType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_com_packet.html#a32fe5d832448462e293b6b7ad2c80264">m_type</a></td></tr>
+<tr class="separator:a32fe5d832448462e293b6b7ad2c80264 inherit pro_attribs_class_fw_1_1_com_packet"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8hpp_source.html#l00017">17</a> of file <a class="el" href="tlm_packet_8hpp_source.html">TlmPacket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8hpp_source.html#l00018">18</a> of file <a class="el" href="tlm_packet_8hpp_source.html">TlmPacket.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2793927f14d4ac500abcfc98dc1e8e3b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2793927f14d4ac500abcfc98dc1e8e3b">&#9670;&nbsp;</a></span>TlmPacket()</h2>
@@ -193,6 +193,8 @@ Additional Inherited Members</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Constructor. </p>
 
 <p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00013">13</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
 
@@ -221,11 +223,51 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00017">17</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+<p>Destructor. </p>
+
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00018">18</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae477b52a8e972587766c06c5a5c9291d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae477b52a8e972587766c06c5a5c9291d">&#9670;&nbsp;</a></span>addValue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> Fw::TlmPacket::addValue </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_time.html">Time</a> &amp;&#160;</td>
+          <td class="paramname"><em>timeTag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add telemetry value to buffer. </p>
+
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00064">64</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a3f5ca1518a4f4dbba2cc0e7fd73c491e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3f5ca1518a4f4dbba2cc0e7fd73c491e">&#9670;&nbsp;</a></span>deserialize()</h2>
 
@@ -250,22 +292,65 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>deserialize to contents </p>
+<p>Deserialize the packet. For use internally in software. To extract channels, use <a class="el" href="class_fw_1_1_tlm_packet.html#a12b16a20021cd306752df1ea352d2643" title="set the internal buffer for deserializing values">setBuffer()</a> and <a class="el" href="class_fw_1_1_tlm_packet.html#a29f8408e27a474ac75fb7c9b7ad786c7">extractValue()</a> below. This is NOT typically used. </p>
 
 <p>Implements <a class="el" href="class_fw_1_1_serializable.html#a8d365b0a0de15e9f41741a1830b49a1f">Fw::Serializable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00044">44</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00142">142</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a96e2142af8bdbba2a428963a21446b0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96e2142af8bdbba2a428963a21446b0b">&#9670;&nbsp;</a></span>getId()</h2>
+<a id="a29f8408e27a474ac75fb7c9b7ad786c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29f8408e27a474ac75fb7c9b7ad786c7">&#9670;&nbsp;</a></span>extractValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> Fw::TlmPacket::getId </td>
+          <td class="memname"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> Fw::TlmPacket::extractValue </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> &amp;&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_time.html">Time</a> &amp;&#160;</td>
+          <td class="paramname"><em>timeTag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
+          <td class="paramname"><em>bufferSize</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>extract telemetry value - since there are potentially multiple channel values in the packet, the size of the entry must be known </p>
+
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00100">100</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aaf9a50b2d32ea10faeec2da14645d60f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf9a50b2d32ea10faeec2da14645d60f">&#9670;&nbsp;</a></span>getBuffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a> &amp; Fw::TlmPacket::getBuffer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -273,18 +358,20 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00088">88</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+<p>get buffer to send to the ground </p>
+
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00056">56</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a1dd83c7433491090fa9fa81b1831c2a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1dd83c7433491090fa9fa81b1831c2a2">&#9670;&nbsp;</a></span>getTimeTag()</h2>
+<a id="a4cbc5aaa9ea30391c3866af33b3b4e34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cbc5aaa9ea30391c3866af33b3b4e34">&#9670;&nbsp;</a></span>getNumEntries()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_time.html">Time</a> &amp; Fw::TlmPacket::getTimeTag </td>
+          <td class="memname"><a class="el" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> Fw::TlmPacket::getNumEntries </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -292,18 +379,20 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00092">92</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+<p>get the number of packets added via <a class="el" href="class_fw_1_1_tlm_packet.html#ae477b52a8e972587766c06c5a5c9291d" title="Add telemetry value to buffer.">addValue()</a> </p>
+
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00052">52</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a91ec2b8be97f66ec5a89672eaf7112cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91ec2b8be97f66ec5a89672eaf7112cc">&#9670;&nbsp;</a></span>getTlmBuffer()</h2>
+<a id="a360cf38a50139b73cccbb20d1603cf3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a360cf38a50139b73cccbb20d1603cf3a">&#9670;&nbsp;</a></span>resetPktDeser()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a> &amp; Fw::TlmPacket::getTlmBuffer </td>
+          <td class="memname"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> Fw::TlmPacket::resetPktDeser </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -311,7 +400,30 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00096">96</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+<p>Reset deserialization. This should be done before extracting values. </p>
+
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00034">34</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a724c339949bc2ff1a6baa33ab77a4780"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a724c339949bc2ff1a6baa33ab77a4780">&#9670;&nbsp;</a></span>resetPktSer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> Fw::TlmPacket::resetPktSer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset serialization of values. This should be done when starting to accumulate a new set of values. </p>
+
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00021">21</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
 
 </div>
 </div>
@@ -339,144 +451,34 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Serialize the packet before sending. For use internally in software. To send to the ground, use <a class="el" href="class_fw_1_1_tlm_packet.html#aaf9a50b2d32ea10faeec2da14645d60f" title="get buffer to send to the ground">getBuffer()</a> below. </p>
 <p>serialize contents </p>
 
 <p>Implements <a class="el" href="class_fw_1_1_serializable.html#af5477c76e509ddfb7a60895d0437ffe5">Fw::Serializable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00020">20</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00132">132</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a7efcddf4c68b126933a3eafbf7b8b538"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7efcddf4c68b126933a3eafbf7b8b538">&#9670;&nbsp;</a></span>setId()</h2>
+<a id="a12b16a20021cd306752df1ea352d2643"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12b16a20021cd306752df1ea352d2643">&#9670;&nbsp;</a></span>setBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Fw::TlmPacket::setId </td>
+          <td class="memname">void Fw::TlmPacket::setBuffer </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a>&#160;</td>
-          <td class="paramname"><em>id</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00076">76</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a83a9b9c6e0fdc3051acd4ff4d63f7c9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83a9b9c6e0fdc3051acd4ff4d63f7c9f">&#9670;&nbsp;</a></span>setTimeTag()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Fw::TlmPacket::setTimeTag </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_fw_1_1_time.html">Time</a> &amp;&#160;</td>
-          <td class="paramname"><em>timeTag</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00084">84</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9d1f3bd411ef41490b7a62a43192e030"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d1f3bd411ef41490b7a62a43192e030">&#9670;&nbsp;</a></span>setTlmBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Fw::TlmPacket::setTlmBuffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a> &amp;&#160;</td>
           <td class="paramname"><em>buffer</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00080">80</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
+<p>set the internal buffer for deserializing values </p>
 
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a68cb23b76f463864720003e74bf5b799"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68cb23b76f463864720003e74bf5b799">&#9670;&nbsp;</a></span>m_id</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> Fw::TlmPacket::m_id</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8hpp_source.html#l00036">36</a> of file <a class="el" href="tlm_packet_8hpp_source.html">TlmPacket.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a4e0cb2d61dfdc6297e1e663ab3c4b13e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e0cb2d61dfdc6297e1e663ab3c4b13e">&#9670;&nbsp;</a></span>m_timeTag</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_time.html">Fw::Time</a> Fw::TlmPacket::m_timeTag</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8hpp_source.html#l00037">37</a> of file <a class="el" href="tlm_packet_8hpp_source.html">TlmPacket.hpp</a>.</p>
-
-</div>
-</div>
-<a id="afcfccfaa2f074fb5fbb565c4ae4e0f55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcfccfaa2f074fb5fbb565c4ae4e0f55">&#9670;&nbsp;</a></span>m_tlmBuffer</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_tlm_buffer.html">TlmBuffer</a> Fw::TlmPacket::m_tlmBuffer</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="tlm_packet_8hpp_source.html#l00038">38</a> of file <a class="el" href="tlm_packet_8hpp_source.html">TlmPacket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tlm_packet_8cpp_source.html#l00060">60</a> of file <a class="el" href="tlm_packet_8cpp_source.html">TlmPacket.cpp</a>.</p>
 
 </div>
 </div>

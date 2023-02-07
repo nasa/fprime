@@ -48,7 +48,7 @@ var namespace_svc =
     [ "RateGroupDriver", "class_svc_1_1_rate_group_driver.html", "class_svc_1_1_rate_group_driver" ],
     [ "StaticMemoryComponentImpl", "class_svc_1_1_static_memory_component_impl.html", "class_svc_1_1_static_memory_component_impl" ],
     [ "SystemResources", "class_svc_1_1_system_resources.html", "class_svc_1_1_system_resources" ],
-    [ "TlmChanImpl", "class_svc_1_1_tlm_chan_impl.html", "class_svc_1_1_tlm_chan_impl" ],
+    [ "TlmChan", "class_svc_1_1_tlm_chan.html", "class_svc_1_1_tlm_chan" ],
     [ "TlmPacketizer", "class_svc_1_1_tlm_packetizer.html", "class_svc_1_1_tlm_packetizer" ],
     [ "TlmPacketizerChannelEntry", "struct_svc_1_1_tlm_packetizer_channel_entry.html", "struct_svc_1_1_tlm_packetizer_channel_entry" ],
     [ "TlmPacketizerPacket", "struct_svc_1_1_tlm_packetizer_packet.html", "struct_svc_1_1_tlm_packetizer_packet" ],
@@ -73,7 +73,6 @@ var namespace_svc =
     [ "PrmReadError", "namespace_svc.html#a5607b42c25cba93543db62ebac53b3a7", null ],
     [ "PrmWriteError", "namespace_svc.html#ae32ed15852da9573a1f1b3fe5580e939", null ],
     [ "StaticMemory", "namespace_svc.html#ae0dd31d08e2d4a55709aff6caa18ace6", null ],
-    [ "TlmChan", "namespace_svc.html#afbbcedb62d0533e2557fdde783b06acf", null ],
     [ "PacketUpdateMode", "namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79e", [
       [ "PACKET_UPDATE_ALWAYS", "namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79eadbc35cb86a4a2cb3ba61924533572c50", null ],
       [ "PACKET_UPDATE_ON_CHANGE", "namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79ea2977cef2992ea14464dc0293b26be1e0", null ],

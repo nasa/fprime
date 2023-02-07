@@ -20,6 +20,23 @@ var annotated_dup =
       [ "TcpServerComponentImpl", "class_drv_1_1_tcp_server_component_impl.html", "class_drv_1_1_tcp_server_component_impl" ],
       [ "UdpComponentImpl", "class_drv_1_1_udp_component_impl.html", "class_drv_1_1_udp_component_impl" ]
     ] ],
+    [ "FppTest", "namespace_fpp_test.html", [
+      [ "Port", "namespace_fpp_test_1_1_port.html", [
+        [ "PortType", "struct_fpp_test_1_1_port_1_1_port_type.html", "struct_fpp_test_1_1_port_1_1_port_type" ],
+        [ "Empty", "struct_fpp_test_1_1_port_1_1_empty.html", null ],
+        [ "PrimitiveArgs", "struct_fpp_test_1_1_port_1_1_primitive_args.html", "struct_fpp_test_1_1_port_1_1_primitive_args" ],
+        [ "StringArgs", "struct_fpp_test_1_1_port_1_1_string_args.html", "struct_fpp_test_1_1_port_1_1_string_args" ],
+        [ "EnumArgs", "struct_fpp_test_1_1_port_1_1_enum_args.html", "struct_fpp_test_1_1_port_1_1_enum_args" ],
+        [ "ArrayArgs", "struct_fpp_test_1_1_port_1_1_array_args.html", "struct_fpp_test_1_1_port_1_1_array_args" ],
+        [ "StructArgs", "struct_fpp_test_1_1_port_1_1_struct_args.html", "struct_fpp_test_1_1_port_1_1_struct_args" ],
+        [ "SerialArgs", "struct_fpp_test_1_1_port_1_1_serial_args.html", "struct_fpp_test_1_1_port_1_1_serial_args" ],
+        [ "BoolReturn", "struct_fpp_test_1_1_port_1_1_bool_return.html", "struct_fpp_test_1_1_port_1_1_bool_return" ],
+        [ "PrimitiveReturn", "struct_fpp_test_1_1_port_1_1_primitive_return.html", "struct_fpp_test_1_1_port_1_1_primitive_return" ],
+        [ "EnumReturn", "struct_fpp_test_1_1_port_1_1_enum_return.html", "struct_fpp_test_1_1_port_1_1_enum_return" ],
+        [ "ArrayReturn", "struct_fpp_test_1_1_port_1_1_array_return.html", "struct_fpp_test_1_1_port_1_1_array_return" ],
+        [ "StructReturn", "struct_fpp_test_1_1_port_1_1_struct_return.html", "struct_fpp_test_1_1_port_1_1_struct_return" ]
+      ] ]
+    ] ],
     [ "Fw", "namespace_fw.html", [
       [ "Buffer", "class_fw_1_1_buffer.html", "class_fw_1_1_buffer" ],
       [ "CmdArgBuffer", "class_fw_1_1_cmd_arg_buffer.html", "class_fw_1_1_cmd_arg_buffer" ],
@@ -141,7 +158,7 @@ var annotated_dup =
       [ "RateGroupDriver", "class_svc_1_1_rate_group_driver.html", "class_svc_1_1_rate_group_driver" ],
       [ "StaticMemoryComponentImpl", "class_svc_1_1_static_memory_component_impl.html", "class_svc_1_1_static_memory_component_impl" ],
       [ "SystemResources", "class_svc_1_1_system_resources.html", "class_svc_1_1_system_resources" ],
-      [ "TlmChanImpl", "class_svc_1_1_tlm_chan_impl.html", "class_svc_1_1_tlm_chan_impl" ],
+      [ "TlmChan", "class_svc_1_1_tlm_chan.html", "class_svc_1_1_tlm_chan" ],
       [ "TlmPacketizer", "class_svc_1_1_tlm_packetizer.html", "class_svc_1_1_tlm_packetizer" ],
       [ "TlmPacketizerChannelEntry", "struct_svc_1_1_tlm_packetizer_channel_entry.html", "struct_svc_1_1_tlm_packetizer_channel_entry" ],
       [ "TlmPacketizerPacket", "struct_svc_1_1_tlm_packetizer_packet.html", "struct_svc_1_1_tlm_packetizer_packet" ],
@@ -165,12 +182,15 @@ var annotated_dup =
     [ "BasicLimits", "struct_basic_limits.html", "struct_basic_limits" ],
     [ "EnumTest", "class_enum_test.html", null ],
     [ "EnumToStringTest", "class_enum_to_string_test.html", "class_enum_to_string_test" ],
+    [ "Example", "class_example.html", "class_example" ],
     [ "FormatTest", "class_format_test.html", "class_format_test" ],
     [ "FpLimits", "struct_fp_limits.html", null ],
     [ "NonPrimitiveStructTest", "class_non_primitive_struct_test.html", "class_non_primitive_struct_test" ],
     [ "PrimitiveStructTest", "class_primitive_struct_test.html", "class_primitive_struct_test" ],
+    [ "SerialPortTest", "class_serial_port_test.html", "class_serial_port_test" ],
     [ "SHA256state_st", "struct_s_h_a256state__st.html", "struct_s_h_a256state__st" ],
     [ "SHA512state_st", "struct_s_h_a512state__st.html", "struct_s_h_a512state__st" ],
     [ "SHAstate_st", "struct_s_h_astate__st.html", "struct_s_h_astate__st" ],
-    [ "StringTest", "class_string_test.html", "class_string_test" ]
+    [ "StringTest", "class_string_test.html", "class_string_test" ],
+    [ "TypedPortTest", "class_typed_port_test.html", "class_typed_port_test" ]
 ];

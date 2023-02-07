@@ -11,6 +11,7 @@ var namespace_fpp_test =
       [ "getInvalidValue", "namespace_fpp_test_1_1_enum.html#ac2f7a6d4fc70d14b612f54879ac075cb", null ],
       [ "getValidValue", "namespace_fpp_test_1_1_enum.html#a33fcab18c13e29db96ed7e8c466d9a48", null ]
     ] ],
+    [ "Port", "namespace_fpp_test_1_1_port.html", "namespace_fpp_test_1_1_port" ],
     [ "String", "namespace_fpp_test_1_1_string.html", [
       [ "getSize", "namespace_fpp_test_1_1_string.html#aad0e415a669aa066ffb482cdc3df4f9f", null ]
     ] ],
