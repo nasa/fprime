@@ -18,7 +18,7 @@
 extern "C" {
 #endif // __cplusplus
 
-#if defined __GNUC__ || __llvm__
+#if defined(__GNUC__) || defined(__llvm__) || defined(PLATFORM_OVERRIDE_GCC_CLANG_CHECK)
 #else
   #error Unsupported compiler!
 #endif
