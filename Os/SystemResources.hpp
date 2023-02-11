@@ -49,18 +49,15 @@ SystemResourcesStatus getCpuCount(U32& cpu_count);
  *
  * \param ticks: (output) filled with the tick information for the given CPU
  * \param cpu_index: index for CPU to read
- * \return: SYSTEM_RESOURCES_OK with valid CPU count, SYSTEM_RESOURCES_ERROR when error occurs
+ * \return:  SYSTEM_RESOURCES_ERROR when error occurs, SYSTEM_RESOURCES_OK otherwise.
  */
 SystemResourcesStatus getCpuTicks(CpuTicks& ticks, U32 cpu_index = 0);
 
 /**
- * \brief Calculate the across-all-cpu average tick information
+ * \brief Get system memory usage
  *
- * See `getCpuTicks`. Operates in a similar capacity, but the aggregation is done across all CPUs not for
- * a specific CPU.
- *
- * \param ticks: (output) filled with the tick information for the given CPU
- * \return: SYSTEM_RESOURCES_OK with valid CPU count, SYSTEM_RESOURCES_ERROR when error occurs
+ * \param memory_util: (output) data structure used to store memory usage
+ * \return:  SYSTEM_RESOURCES_ERROR when error occurs, SYSTEM_RESOURCES_OK otherwise.
  */
 SystemResourcesStatus getMemUtil(MemUtil& memory_util);
 }  // namespace SystemResources
