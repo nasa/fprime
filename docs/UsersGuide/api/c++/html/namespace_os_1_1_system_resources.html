@@ -116,7 +116,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a1d44f29f3dcd5069d256d55a67372e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the CPU tick information for a given CPU.  <a href="namespace_os_1_1_system_resources.html#a1d44f29f3dcd5069d256d55a67372e9e">More...</a><br /></td></tr>
 <tr class="separator:a1d44f29f3dcd5069d256d55a67372e9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92ad97f8e7fccda7ea0334d50478c316"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResourcesStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_system_resources.html#a92ad97f8e7fccda7ea0334d50478c316">getMemUtil</a> (<a class="el" href="struct_os_1_1_system_resources_1_1_mem_util.html">MemUtil</a> &amp;memory_util)</td></tr>
-<tr class="memdesc:a92ad97f8e7fccda7ea0334d50478c316"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the across-all-cpu average tick information.  <a href="namespace_os_1_1_system_resources.html#a92ad97f8e7fccda7ea0334d50478c316">More...</a><br /></td></tr>
+<tr class="memdesc:a92ad97f8e7fccda7ea0334d50478c316"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get system memory usage.  <a href="namespace_os_1_1_system_resources.html#a92ad97f8e7fccda7ea0334d50478c316">More...</a><br /></td></tr>
 <tr class="separator:a92ad97f8e7fccda7ea0334d50478c316"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
@@ -207,7 +207,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>: SYSTEM_RESOURCES_OK with valid CPU count, SYSTEM_RESOURCES_ERROR when error occurs </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>: SYSTEM_RESOURCES_ERROR when error occurs, SYSTEM_RESOURCES_OK otherwise. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_system_resources_8cpp_source.html#l00023">23</a> of file <a class="el" href="os_2_baremetal_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
 
@@ -229,15 +229,14 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate the across-all-cpu average tick information. </p>
-<p>See <code>getCpuTicks</code>. Operates in a similar capacity, but the aggregation is done across all CPUs not for a specific CPU.</p>
+<p>Get system memory usage. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ticks</td><td>(output) filled with the tick information for the given CPU </td></tr>
+    <tr><td class="paramname">memory_util</td><td>(output) data structure used to store memory usage </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>: SYSTEM_RESOURCES_OK with valid CPU count, SYSTEM_RESOURCES_ERROR when error occurs </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>: SYSTEM_RESOURCES_ERROR when error occurs, SYSTEM_RESOURCES_OK otherwise. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_system_resources_8cpp_source.html#l00031">31</a> of file <a class="el" href="os_2_baremetal_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
 

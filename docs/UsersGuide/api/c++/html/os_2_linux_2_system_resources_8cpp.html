@@ -85,14 +85,16 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp.ht
 
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">SystemResources.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;cstdio&gt;</code><br />
-<code>#include &lt;sys/sysinfo.h&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
+<code>#include &lt;sys/sysinfo.h&gt;</code><br />
 <code>#include &lt;<a class="el" href="os_2_system_resources_8hpp_source.html">Os/SystemResources.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="assert_8hpp_source.html">Fw/Types/Assert.hpp</a>&gt;</code><br />
 </div>
@@ -102,7 +104,134 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp.ht
 Namespaces</h2></td></tr>
 <tr class="memitem:namespace_os"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html">Os</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a75dff38615d9ca1b9df9827f004581bb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a75dff38615d9ca1b9df9827f004581bb">Os::getCpuUsed</a> (U32 cpu_data[4])</td></tr>
+<tr class="separator:a75dff38615d9ca1b9df9827f004581bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7526c68901b96898e2ac03f398c72c2b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a7526c68901b96898e2ac03f398c72c2b">Os::getCpuTotal</a> (U32 cpu_data[4])</td></tr>
+<tr class="separator:a7526c68901b96898e2ac03f398c72c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6db174802599ae551d376b53bf331664"><td class="memItemLeft" align="right" valign="top">SystemResources::SystemResourcesStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a6db174802599ae551d376b53bf331664">Os::openProcStatFile</a> (FILE *&amp;fp)</td></tr>
+<tr class="separator:a6db174802599ae551d376b53bf331664"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e82484cd96cc2297e9c4082f0de6295"><td class="memItemLeft" align="right" valign="top">SystemResources::SystemResourcesStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a0e82484cd96cc2297e9c4082f0de6295">Os::readProcStatLine</a> (FILE *fp, char <a class="el" href="os_2_linux_2_system_resources_8cpp.html#aecd90cbcb2e5e44bdf0da4a4cd422706">proc_stat_line</a>[<a class="el" href="os_2_linux_2_system_resources_8cpp.html#af9f510b8c41d5c794f75ff2a59a5fdc5">LINE_SIZE</a>])</td></tr>
+<tr class="separator:a0e82484cd96cc2297e9c4082f0de6295"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f6bed23eeeea5e92ecc76aa74976074"><td class="memItemLeft" align="right" valign="top">SystemResources::SystemResourcesStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a9f6bed23eeeea5e92ecc76aa74976074">Os::getCpuDataLine</a> (FILE *fp, U32 cpu_index, char <a class="el" href="os_2_linux_2_system_resources_8cpp.html#aecd90cbcb2e5e44bdf0da4a4cd422706">proc_stat_line</a>[<a class="el" href="os_2_linux_2_system_resources_8cpp.html#af9f510b8c41d5c794f75ff2a59a5fdc5">LINE_SIZE</a>])</td></tr>
+<tr class="separator:a9f6bed23eeeea5e92ecc76aa74976074"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a85130550e67132b4c6af1c0ccd6338"><td class="memItemLeft" align="right" valign="top">SystemResources::SystemResourcesStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a9a85130550e67132b4c6af1c0ccd6338">Os::parseCpuData</a> (char <a class="el" href="os_2_linux_2_system_resources_8cpp.html#aecd90cbcb2e5e44bdf0da4a4cd422706">proc_stat_line</a>[<a class="el" href="os_2_linux_2_system_resources_8cpp.html#af9f510b8c41d5c794f75ff2a59a5fdc5">LINE_SIZE</a>], U32 cpu_data[4])</td></tr>
+<tr class="separator:a9a85130550e67132b4c6af1c0ccd6338"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c6b273aaa572ea6dde51277efc41153"><td class="memItemLeft" align="right" valign="top">SystemResources::SystemResourcesStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a3c6b273aaa572ea6dde51277efc41153">Os::getCpuData</a> (U32 cpu_index, U32 cpu_data[4])</td></tr>
+<tr class="separator:a3c6b273aaa572ea6dde51277efc41153"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae240171875d5e9643f58c7e1a301d66c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#ae240171875d5e9643f58c7e1a301d66c">Os::getMemoryTotal</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> memory_unit)</td></tr>
+<tr class="separator:ae240171875d5e9643f58c7e1a301d66c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab334df19feffe95fbe96a1e3172948d4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#ab334df19feffe95fbe96a1e3172948d4">Os::getMemoryUsed</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> free_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> memory_unit)</td></tr>
+<tr class="separator:ab334df19feffe95fbe96a1e3172948d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88ce08069113f7dd9663648e065fcf28"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a88ce08069113f7dd9663648e065fcf28">Os::checkCastingAndTypeErrors</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> free_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> memory_unit, const struct sysinfo &amp;memory_info)</td></tr>
+<tr class="separator:a88ce08069113f7dd9663648e065fcf28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e13d1d62dfbc9563d34fa3c51930c80"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a2e13d1d62dfbc9563d34fa3c51930c80">Os::checkInvalidMemoryCalculation</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> free_ram)</td></tr>
+<tr class="separator:a2e13d1d62dfbc9563d34fa3c51930c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0f7f16ffc5a2155d9fae7019bf0eb5f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#af0f7f16ffc5a2155d9fae7019bf0eb5f">Os::checkMultiplicationOverflow</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> memory_unit)</td></tr>
+<tr class="separator:af0f7f16ffc5a2155d9fae7019bf0eb5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a1ddd82aeb2941f6d94600e1a69b0e3d0"><td class="memItemLeft" align="right" valign="top">constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="os_2_linux_2_system_resources_8cpp.html#a1ddd82aeb2941f6d94600e1a69b0e3d0">PROC_STAT_PATH</a> [] = &quot;/proc/stat&quot;</td></tr>
+<tr class="separator:a1ddd82aeb2941f6d94600e1a69b0e3d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7e4ebc50f2c183e84ea543094818527"><td class="memItemLeft" align="right" valign="top">constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="os_2_linux_2_system_resources_8cpp.html#ae7e4ebc50f2c183e84ea543094818527">READ_ONLY</a> [] = &quot;r&quot;</td></tr>
+<tr class="separator:ae7e4ebc50f2c183e84ea543094818527"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9f510b8c41d5c794f75ff2a59a5fdc5"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="os_2_linux_2_system_resources_8cpp.html#af9f510b8c41d5c794f75ff2a59a5fdc5">LINE_SIZE</a> = 256</td></tr>
+<tr class="separator:af9f510b8c41d5c794f75ff2a59a5fdc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecd90cbcb2e5e44bdf0da4a4cd422706"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="os_2_linux_2_system_resources_8cpp.html#aecd90cbcb2e5e44bdf0da4a4cd422706">proc_stat_line</a> [<a class="el" href="os_2_linux_2_system_resources_8cpp.html#af9f510b8c41d5c794f75ff2a59a5fdc5">LINE_SIZE</a>]</td></tr>
+<tr class="separator:aecd90cbcb2e5e44bdf0da4a4cd422706"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="af9f510b8c41d5c794f75ff2a59a5fdc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9f510b8c41d5c794f75ff2a59a5fdc5">&#9670;&nbsp;</a></span>LINE_SIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int LINE_SIZE = 256</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00020">20</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aecd90cbcb2e5e44bdf0da4a4cd422706"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecd90cbcb2e5e44bdf0da4a4cd422706">&#9670;&nbsp;</a></span>proc_stat_line</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char proc_stat_line[<a class="el" href="os_2_linux_2_system_resources_8cpp.html#af9f510b8c41d5c794f75ff2a59a5fdc5">LINE_SIZE</a>]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00021">21</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a1ddd82aeb2941f6d94600e1a69b0e3d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ddd82aeb2941f6d94600e1a69b0e3d0">&#9670;&nbsp;</a></span>PROC_STAT_PATH</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr char PROC_STAT_PATH[] = &quot;/proc/stat&quot;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00018">18</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ae7e4ebc50f2c183e84ea543094818527"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7e4ebc50f2c183e84ea543094818527">&#9670;&nbsp;</a></span>READ_ONLY</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr char READ_ONLY[] = &quot;r&quot;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00019">19</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

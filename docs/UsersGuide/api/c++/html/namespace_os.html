@@ -196,6 +196,30 @@ Functions</h2></td></tr>
 <tr class="separator:a62fe00b9c322af59aa7d26c68eb49a32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c3ae59006fcadfd7539b327f66cb053"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Queue::QueueStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a0c3ae59006fcadfd7539b327f66cb053">bareReceiveBlock</a> (<a class="el" href="class_os_1_1_bare_queue_handle.html">BareQueueHandle</a> &amp;handle, <a class="el" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffer, <a class="el" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> capacity, <a class="el" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;actualSize, <a class="el" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;priority)</td></tr>
 <tr class="separator:a0c3ae59006fcadfd7539b327f66cb053"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75dff38615d9ca1b9df9827f004581bb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a75dff38615d9ca1b9df9827f004581bb">getCpuUsed</a> (U32 cpu_data[4])</td></tr>
+<tr class="separator:a75dff38615d9ca1b9df9827f004581bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7526c68901b96898e2ac03f398c72c2b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a7526c68901b96898e2ac03f398c72c2b">getCpuTotal</a> (U32 cpu_data[4])</td></tr>
+<tr class="separator:a7526c68901b96898e2ac03f398c72c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6db174802599ae551d376b53bf331664"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a6db174802599ae551d376b53bf331664">openProcStatFile</a> (FILE *&amp;fp)</td></tr>
+<tr class="separator:a6db174802599ae551d376b53bf331664"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e82484cd96cc2297e9c4082f0de6295"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a0e82484cd96cc2297e9c4082f0de6295">readProcStatLine</a> (FILE *fp, char <a class="el" href="os_2_linux_2_system_resources_8cpp.html#aecd90cbcb2e5e44bdf0da4a4cd422706">proc_stat_line</a>[<a class="el" href="os_2_linux_2_system_resources_8cpp.html#af9f510b8c41d5c794f75ff2a59a5fdc5">LINE_SIZE</a>])</td></tr>
+<tr class="separator:a0e82484cd96cc2297e9c4082f0de6295"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f6bed23eeeea5e92ecc76aa74976074"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a9f6bed23eeeea5e92ecc76aa74976074">getCpuDataLine</a> (FILE *fp, U32 cpu_index, char <a class="el" href="os_2_linux_2_system_resources_8cpp.html#aecd90cbcb2e5e44bdf0da4a4cd422706">proc_stat_line</a>[<a class="el" href="os_2_linux_2_system_resources_8cpp.html#af9f510b8c41d5c794f75ff2a59a5fdc5">LINE_SIZE</a>])</td></tr>
+<tr class="separator:a9f6bed23eeeea5e92ecc76aa74976074"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a85130550e67132b4c6af1c0ccd6338"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a9a85130550e67132b4c6af1c0ccd6338">parseCpuData</a> (char <a class="el" href="os_2_linux_2_system_resources_8cpp.html#aecd90cbcb2e5e44bdf0da4a4cd422706">proc_stat_line</a>[<a class="el" href="os_2_linux_2_system_resources_8cpp.html#af9f510b8c41d5c794f75ff2a59a5fdc5">LINE_SIZE</a>], U32 cpu_data[4])</td></tr>
+<tr class="separator:a9a85130550e67132b4c6af1c0ccd6338"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c6b273aaa572ea6dde51277efc41153"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a3c6b273aaa572ea6dde51277efc41153">getCpuData</a> (U32 cpu_index, U32 cpu_data[4])</td></tr>
+<tr class="separator:a3c6b273aaa572ea6dde51277efc41153"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae240171875d5e9643f58c7e1a301d66c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#ae240171875d5e9643f58c7e1a301d66c">getMemoryTotal</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> memory_unit)</td></tr>
+<tr class="separator:ae240171875d5e9643f58c7e1a301d66c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab334df19feffe95fbe96a1e3172948d4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#ab334df19feffe95fbe96a1e3172948d4">getMemoryUsed</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> free_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> memory_unit)</td></tr>
+<tr class="separator:ab334df19feffe95fbe96a1e3172948d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88ce08069113f7dd9663648e065fcf28"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a88ce08069113f7dd9663648e065fcf28">checkCastingAndTypeErrors</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> free_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> memory_unit, const struct sysinfo &amp;memory_info)</td></tr>
+<tr class="separator:a88ce08069113f7dd9663648e065fcf28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e13d1d62dfbc9563d34fa3c51930c80"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a2e13d1d62dfbc9563d34fa3c51930c80">checkInvalidMemoryCalculation</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> free_ram)</td></tr>
+<tr class="separator:a2e13d1d62dfbc9563d34fa3c51930c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0f7f16ffc5a2155d9fae7019bf0eb5f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#af0f7f16ffc5a2155d9fae7019bf0eb5f">checkMultiplicationOverflow</a> (<a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> memory_unit)</td></tr>
+<tr class="separator:af0f7f16ffc5a2155d9fae7019bf0eb5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36f040b9ded50da1a045b0a10faf4960"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Queue::QueueStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a36f040b9ded50da1a045b0a10faf4960">sendNonBlockIPCStub</a> (<a class="el" href="class_os_1_1_queue_handle.html">QueueHandle</a> *queueHandle, const <a class="el" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffer, <a class="el" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> size, <a class="el" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> priority)</td></tr>
 <tr class="separator:a36f040b9ded50da1a045b0a10faf4960"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2afb9ad5128a418c707ceedf7c7edf0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Queue::QueueStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#af2afb9ad5128a418c707ceedf7c7edf0">sendBlockIPCStub</a> (<a class="el" href="class_os_1_1_queue_handle.html">QueueHandle</a> *queueHandle, const <a class="el" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffer, <a class="el" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> size, <a class="el" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> priority)</td></tr>
@@ -568,6 +592,108 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a88ce08069113f7dd9663648e065fcf28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88ce08069113f7dd9663648e065fcf28">&#9670;&nbsp;</a></span>checkCastingAndTypeErrors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Os::checkCastingAndTypeErrors </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>total_ram</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>free_ram</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>memory_unit</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct sysinfo &amp;&#160;</td>
+          <td class="paramname"><em>memory_info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00123">123</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a2e13d1d62dfbc9563d34fa3c51930c80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e13d1d62dfbc9563d34fa3c51930c80">&#9670;&nbsp;</a></span>checkInvalidMemoryCalculation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Os::checkInvalidMemoryCalculation </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>total_ram</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>free_ram</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00133">133</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="af0f7f16ffc5a2155d9fae7019bf0eb5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0f7f16ffc5a2155d9fae7019bf0eb5f">&#9670;&nbsp;</a></span>checkMultiplicationOverflow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Os::checkMultiplicationOverflow </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>total_ram</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>memory_unit</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00137">137</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
 <a id="afe4f6765a5b1eda55d911e6f8a407918"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afe4f6765a5b1eda55d911e6f8a407918">&#9670;&nbsp;</a></span>checkoutIndex()</h2>
 
@@ -848,6 +974,228 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a3c6b273aaa572ea6dde51277efc41153"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c6b273aaa572ea6dde51277efc41153">&#9670;&nbsp;</a></span>getCpuData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> Os::getCpuData </td>
+          <td>(</td>
+          <td class="paramtype">U32&#160;</td>
+          <td class="paramname"><em>cpu_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">U32&#160;</td>
+          <td class="paramname"><em>cpu_data</em>[4]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00078">78</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9f6bed23eeeea5e92ecc76aa74976074"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f6bed23eeeea5e92ecc76aa74976074">&#9670;&nbsp;</a></span>getCpuDataLine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> Os::getCpuDataLine </td>
+          <td>(</td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>fp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">U32&#160;</td>
+          <td class="paramname"><em>cpu_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>proc_stat_line</em>[LINE_SIZE]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00051">51</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a7526c68901b96898e2ac03f398c72c2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7526c68901b96898e2ac03f398c72c2b">&#9670;&nbsp;</a></span>getCpuTotal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> Os::getCpuTotal </td>
+          <td>(</td>
+          <td class="paramtype">U32&#160;</td>
+          <td class="paramname"><em>cpu_data</em>[4]</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00033">33</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a75dff38615d9ca1b9df9827f004581bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75dff38615d9ca1b9df9827f004581bb">&#9670;&nbsp;</a></span>getCpuUsed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> Os::getCpuUsed </td>
+          <td>(</td>
+          <td class="paramtype">U32&#160;</td>
+          <td class="paramname"><em>cpu_data</em>[4]</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00030">30</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ae240171875d5e9643f58c7e1a301d66c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae240171875d5e9643f58c7e1a301d66c">&#9670;&nbsp;</a></span>getMemoryTotal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> Os::getMemoryTotal </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>total_ram</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>memory_unit</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00116">116</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab334df19feffe95fbe96a1e3172948d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab334df19feffe95fbe96a1e3172948d4">&#9670;&nbsp;</a></span>getMemoryUsed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> Os::getMemoryUsed </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>total_ram</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>free_ram</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>memory_unit</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00119">119</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a6db174802599ae551d376b53bf331664"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6db174802599ae551d376b53bf331664">&#9670;&nbsp;</a></span>openProcStatFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> Os::openProcStatFile </td>
+          <td>(</td>
+          <td class="paramtype">FILE *&amp;&#160;</td>
+          <td class="paramname"><em>fp</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00037">37</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9a85130550e67132b4c6af1c0ccd6338"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a85130550e67132b4c6af1c0ccd6338">&#9670;&nbsp;</a></span>parseCpuData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> Os::parseCpuData </td>
+          <td>(</td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>proc_stat_line</em>[LINE_SIZE], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">U32&#160;</td>
+          <td class="paramname"><em>cpu_data</em>[4]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00069">69</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
+
+</div>
+</div>
 <a id="ac34db4dbb26ce4dedc2ec9591502a89b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac34db4dbb26ce4dedc2ec9591502a89b">&#9670;&nbsp;</a></span>readHash()</h2>
 
@@ -875,6 +1223,36 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="validate_file_common_8cpp_source.html#l00064">64</a> of file <a class="el" href="validate_file_common_8cpp_source.html">ValidateFileCommon.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a0e82484cd96cc2297e9c4082f0de6295"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e82484cd96cc2297e9c4082f0de6295">&#9670;&nbsp;</a></span>readProcStatLine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> Os::readProcStatLine </td>
+          <td>(</td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>fp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>proc_stat_line</em>[LINE_SIZE]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html#l00044">44</a> of file <a class="el" href="os_2_linux_2_system_resources_8cpp_source.html">SystemResources.cpp</a>.</p>
 
 </div>
 </div>
