@@ -484,22 +484,102 @@ namespace Os {
 namespace FileSystem {
 
 Status createDirectory(const char* path) {
-    Status stat = OP_OK;
 
+    // The directory can only be one of the
+    // bin file names, and it is already "created" if
+    // the bin exists. See if the directory matches
+    // one of the bins, and if it does, return OK, otherwise
+    // return NO_PERMISSION.
 
-    return stat;
+    const char* dirPathSpec = "/" 
+    MICROFS_BIN_STRING 
+    "%d"; 
+
+    // if the directory number can be scanned out following the directory path spec,
+    // the directory name has the correct format
+
+    PlatformUIntType binIndex = 0;
+
+    PlatformUIntType stat = sscanf(path,dirPathSpec,&binIndex);
+    if (stat != 1) {
+        return NO_PERMISSION;
+    }
+
+    // If the path format is correct, check to see if it is in the
+    // range of bins
+    FW_ASSERT(MicroFsMem);
+    MicroFsConfig *cfg = static_cast<MicroFsConfig*>(MicroFsMem);
+
+    if ((binIndex > 0) and (binIndex < cfg->numBins)) {
+        return OP_OK;
+    } else {
+        return NO_PERMISSION;
+    }
 }
 
 Status removeDirectory(const char* path) {
-    Status stat = OP_OK;
-
-    return stat;
-}  // namespace Os
+    // since we can't create or remove directories anyway,
+    // just borrow the createDirectory() logic
+    return createDirectory(path);
+}  
 
 Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
-    Status dirStat = OP_OK;
 
-    return dirStat;
+    // get config
+    FW_ASSERT(MicroFsMem);
+    MicroFsConfig *cfg = static_cast<MicroFsConfig*>(MicroFsMem);
+    // two cases work: the root "/" and one of the bin directories
+    numFiles = 0;
+
+    // first, check for root
+    if (Fw::StringUtils::string_length(path,sizeof(MICROFS_BIN_STRING)) == 1) {
+        // Add directory names based on number of bins
+        for (PlatformUIntType bin = 0; bin < cfg->numBins; bin++) {
+            // make sure we haven't exceeded provided array size
+            if (bin >= maxNum) {
+                return OP_OK;
+            }
+            // add directory name of bin to file list
+            static const char * dirFmt = "/"
+                MICROFS_BIN_STRING
+                "%d"
+                ;
+            fileArray[bin].format(dirFmt,bin);
+            numFiles++;
+        }
+
+        return OP_OK;
+    }
+
+    // second, if not root, directory has to match one of the bin paths
+    const char* dirPathSpec = "/" 
+    MICROFS_BIN_STRING 
+    "%d"; 
+
+    // if the directory number can be scanned out following the directory path spec,
+    // the directory name has the correct format
+
+    PlatformUIntType binIndex = 0;
+
+    // verify in the range of bins
+    PlatformUIntType stat = sscanf(path,dirPathSpec,&binIndex);
+    if ((stat != 1) or (binIndex < cfg->numBins)) {
+        return NO_PERMISSION;
+    }
+
+    // get set of files in the bin directory
+    Fw::String fileStr;
+    for (PlatformUIntType entry = 0; entry < cfg->bins[binIndex].numFiles; entry++) {
+        const char* filePathSpec = "/"
+            MICROFS_BIN_STRING
+            "%d"
+            MICROFS_FILE_STRING
+            "%d";
+        fileStr.format(filePathSpec,binIndex,entry);
+        
+    }
+
+    return OP_OK;
 
 }
 

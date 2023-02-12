@@ -24,8 +24,17 @@ TEST(FileOps, OpenWriteTest) {
     Os::MicroFsInit(testCfg,0,alloc);
 
     Os::File f;
-    f.open("/bin0/file0",Os::File::OPEN_READ);
+    Os::File::Status stat = f.open("/bin0/file0",Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::File::OP_OK,stat);
 
+    BYTE buffIn[testCfg.bins[0].fileSize];
+    memset(buffIn,0,sizeof(buffIn));
+
+    BYTE buffOut[testCfg.bins[0].fileSize];
+    memset(buffOut,0xFF,sizeof(buffOut));
+
+
+    //f.write()
 
     Os::MicroFsCleanup(0,alloc);
 }
