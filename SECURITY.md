@@ -19,4 +19,4 @@ These checks are run on each pull request submitted to F´.
 
 ### General Support
 
-For additional support, please open a [Github Discussion](https://github.com/nasa/fprime/discussions). 
+For additional support, please open a [Discussion](https://github.com/nasa/fprime/discussions). 
