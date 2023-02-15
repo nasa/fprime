@@ -35,8 +35,7 @@ STATIC const PlatformIntType MICROFS_FD_OFFSET = 1;
 void MicroFsInit(const MicroFsConfig& cfg, const PlatformUIntType id, Fw::MemAllocator& allocator) {
     // check things...
     FW_ASSERT(cfg.numBins <= MAX_MICROFS_BINS, cfg.numBins, MAX_MICROFS_BINS);
-    // avoid re-init
-    FW_ASSERT(0 == MicroFsMem);
+    FW_ASSERT((not MICROFS_SKIP_NULL_CHECK) and 0 == MicroFsMem);
 
     // compute the amount of memory needed to hold the file system state
     // and data

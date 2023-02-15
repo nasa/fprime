@@ -22,5 +22,6 @@ namespace Os {
 static const PlatformUIntType MAX_MICROFS_BINS = 10;  //!< Maximum number of bin configurations
 #define MICROFS_BIN_STRING "bin"        //!< path name for bin directory
 #define MICROFS_FILE_STRING "file"     //!< name for file slot prefix
+static const bool MICROFS_SKIP_NULL_CHECK = false; //!< if true, skip memory null check on init. Guards against case where a reset does not clear memory.
 }  // namespace Os
 #endif

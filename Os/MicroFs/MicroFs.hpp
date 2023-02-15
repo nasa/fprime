@@ -65,7 +65,7 @@
 //
 // The files do not appear in the file system until
 // an `Os::Open` with `OPEN_WRITE` or `OPEN_CREATE` flag.
-// Attempts to open a file to read before a write has occured
+// Attempts to open a file to read before a write has occurred
 // will return a `File::Status::DOESNT_EXIST` error.
 //
 // Files can be written up to the max size of the file
@@ -75,7 +75,7 @@
 // Attempts to seek past the end will return a `File::Status::BAD_SIZE`
 // error.
 // 
-// If the program is meant to termiate at the end,
+// If the program is meant to terminate at the end,
 // the user should call `MicrFsCleanup()` with the allocator
 // and ID used to acquire the memory at initialization.
 //
@@ -84,6 +84,7 @@
 //    won't actually create or remove directories, but 
 //    will return OP_OK if the directories match the configuration
 //    This is to help commands pass if the create/remove are there and correct
+//
 
 namespace Os {
 

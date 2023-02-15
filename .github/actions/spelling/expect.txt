@@ -859,6 +859,8 @@ Merewether
 methoddoc
 methodname
 methodstub
+microfs
+MICROFSCFG
 microcontrollers
 microsoft
 mindepth
