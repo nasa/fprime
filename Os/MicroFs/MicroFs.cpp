@@ -363,7 +363,7 @@ File::Status File::write(const void* buffer, NATIVE_INT_TYPE& size, bool waitFor
     // and set size to what was actually written
     if (state->loc + size > state->dataSize) {
         size = state->dataSize - state->loc;
-    }
+    } 
 
     // copy data to file buffer
     memcpy(&state->data[state->loc], buffer, size);
@@ -396,10 +396,16 @@ File::Status File::flush() {
 
 void File::close() {
     if (this->m_fd != -1) {
-        // get state to clear it
-        MicroFsFileState* state = getFileStateFromIndex(this->m_fd - MICROFS_FD_OFFSET);
-        FW_ASSERT(state);
-        state->loc = -1;
+        // only do cleanup of file state
+        // if file system memory is still around
+        // catches case where file objects are still
+        // lingering after cleanup
+        if (MicroFsMem) {
+            // get state to clear it
+            MicroFsFileState* state = getFileStateFromIndex(this->m_fd - MICROFS_FD_OFFSET);
+            FW_ASSERT(state);
+            state->loc = -1;
+        }
     }
     // reset fd
     this->m_fd = -1;
