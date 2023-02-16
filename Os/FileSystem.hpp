@@ -35,7 +35,7 @@ namespace Os {
 		Status getFileSize(const char* path, FwSizeType& size); //!< gets the size of the file (in bytes) at location path
 		Status getFileCount(const char* directory, U32& fileCount); //!< counts the number of files in the given directory
 		Status changeWorkingDirectory(const char* path); //!<  move current directory to path
-                Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes); //!< get FS free and total space in bytes on filesystem containing path
+        Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes); //!< get FS free and total space in bytes on filesystem containing path
 	}
 
 }
