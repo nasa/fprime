@@ -88,16 +88,16 @@ $(document).ready(function(){initNavTree('_svc_com_stub_component.html',''); ini
 <div class="title"><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md360"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md364"></a>
 Svc::ComStub (Passive Component)</h1>
-<h2><a class="anchor" id="autotoc_md361"></a>
+<h2><a class="anchor" id="autotoc_md365"></a>
 1. Introduction</h2>
 <p><code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code> is an example F´ component implementing the <a href="https://nasa.github.io/fprime/Design/communication-adapter-interface.html">communication adapter interface</a> required to work with F´ communication components. Projects and users may choose to replace this with a complete communication implementation (i.e. a component managing a specific radio) once ready. As long as any communication implementation implements the communication adapter interface it can drop in and work with the standard F´ uplink and downlink setup.</p>
 <p><code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code> delegates to a <code>Drv.ByteStreamDriver</code> in order to send and receive data through the driver interface.</p>
-<h2><a class="anchor" id="autotoc_md362"></a>
+<h2><a class="anchor" id="autotoc_md366"></a>
 2. Assumptions</h2>
 <p>Using <code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code> assumes that the driver layer (e.g. <code><a class="el" href="namespace_drv.html#a998506404c5fbafa50a8167b3a4772a7">Drv::TcpClient</a></code>) provides all capability needed to establish communications. For example, a project can communicate over raw tcp rather than requiring additional protocol on top of tcp.</p>
-<h2><a class="anchor" id="autotoc_md363"></a>
+<h2><a class="anchor" id="autotoc_md367"></a>
 3. Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -113,14 +113,14 @@ Svc::ComStub (Passive Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">SVC-COMSTUB-005   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code> shall pass-through <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from a <code>Drv::ByteStreamRead</code> on <code>Drv::ByteStreamSend</code> success   </td><td class="markdownTableBodyNone">A Comm interface must receive <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>s from a driver   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md364"></a>
+<h2><a class="anchor" id="autotoc_md368"></a>
 4. Design</h2>
 <p>The diagram below shows the <code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code> port interface. <code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code> is a basic <em>Communication Adapter</em> and can be used alongside the other F´ communication components (<code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code>, <code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code>, <code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code>).</p>
 <p><b><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a> Uplink and Downlink Interface</b></p>
 <p><img src="./img/com-adapter.png" alt="`Svc::ComStub` as Communication Adapter" class="inline"/></p>
 <p><code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code> implements the <a href="https://nasa.github.io/fprime/Design/communication-adapter-interface.html">communication adapter interface</a> by delegation to a <code>Drv::ByteStreamDriverModel</code> as a way to transmit data and receive data. Other communication adapter implementations may follow-suite.</p>
 <p><img src="./img/byte-stream.png" alt="`Svc::ComStub` to `Drv::ByteStreamDriverModel`" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md365"></a>
+<h3><a class="anchor" id="autotoc_md369"></a>
 4.1. Ports</h3>
 <p><code>ComStub</code> has the following ports. The first three ports are required for the communication adapter interface, the second three are because the implementation delegates to a <code>Drv.ByteStreamDriverModel</code>. Only the communication adapter interfaces ports are required for replacements to <code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code>, however; a <code>Drv.ByteStreamDriverModel</code> ports may still be useful</p>
 <p><b>Communication Adapter Interface Ports</b></p>
@@ -145,18 +145,18 @@ Svc::ComStub (Passive Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>output</code>   </td><td class="markdownTableBodyNone"><code>drvDataOut</code>   </td><td class="markdownTableBodyNone"><code>Drv.ByteStreamSend</code>   </td><td class="markdownTableBodyNone">Port providing received <code>Fw::Buffers</code> to the underlying communications bus driver   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md366"></a>
+<h3><a class="anchor" id="autotoc_md370"></a>
 4.2. State, Configuration, and Runtime Setup</h3>
 <p><code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code> has only stores a boolean <code>m_reinitialize</code> indicating when it should send <code>Fw::Success::SUCCESS</code> in response to a driver reconnection event. This is to implement the Communication Adapter Protocol of a <a href="https://nasa.github.io/fprime/Design/communication-adapter-interface.html#Communication_Adapter_Protocol">communication adapter interface</a>.</p>
-<h3><a class="anchor" id="autotoc_md367"></a>
+<h3><a class="anchor" id="autotoc_md371"></a>
 4.3. Port Handlers</h3>
-<h4><a class="anchor" id="autotoc_md368"></a>
+<h4><a class="anchor" id="autotoc_md372"></a>
 4.3.1 comDataIn</h4>
 <p>The <code>comDataIn</code> port handler receives an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from the F´ system for transmission to the ground. Typically, it is connected to the output of the <code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code> component. In this <code><a class="el" href="class_svc_1_1_com_stub.html">Svc::ComStub</a></code> implementation, it passes this <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> directly to the <code>drvDataOut</code> port. It will retry when that port responds with a <code>RETRY</code> request. Otherwise, the <code>comStatus</code> port will be invoked to indicate success or failure. Retries attempts are limited before the port asserts.</p>
-<h4><a class="anchor" id="autotoc_md369"></a>
+<h4><a class="anchor" id="autotoc_md373"></a>
 4.3.1 drvConnected</h4>
 <p>This port receives the connected signal from the driver and responds with exactly one <code>READY</code> invocation to the <code>comStatus</code> port. This starts downlink. This occurs each time the driver reconnects.</p>
-<h4><a class="anchor" id="autotoc_md370"></a>
+<h4><a class="anchor" id="autotoc_md374"></a>
 4.3.1 drvDataIn</h4>
 <p>The <code>drvDataIn</code> handler receives data read from the driver and supplies it out the <code>comDataOut</code> port. It is usually connected to the <code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code> component </p>
 </div></div><!-- contents -->

@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_file_uplink_component.html',''); 
 <div class="title"><a class="el" href="class_svc_1_1_file_uplink.html">Svc::FileUplink</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md448"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md452"></a>
 Svc::FileUplink Component</h1>
-<h2><a class="anchor" id="autotoc_md449"></a>
+<h2><a class="anchor" id="autotoc_md453"></a>
 1 Introduction</h2>
 <p><code>FileUplink</code> is an active ISF component. It manages uplink of files to the spacecraft.</p>
-<h2><a class="anchor" id="autotoc_md450"></a>
+<h2><a class="anchor" id="autotoc_md454"></a>
 2 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -101,9 +101,9 @@ Svc::FileUplink Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">ISF-FU-001   </td><td class="markdownTableBodyNone"><code>FileUplink</code> shall receive file packets, assemble them into files, and store the files in the on-board non-volatile storage.   </td><td class="markdownTableBodyNone">This requirement provides the capability to uplink files to the spacecraft.   </td><td class="markdownTableBodyNone">Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md451"></a>
+<h2><a class="anchor" id="autotoc_md455"></a>
 3 Design</h2>
-<h3><a class="anchor" id="autotoc_md452"></a>
+<h3><a class="anchor" id="autotoc_md456"></a>
 3.1 Assumptions</h3>
 <p>The design of <code>FileUplink</code> assumes the following:</p>
 <ol type="1">
@@ -112,12 +112,12 @@ Svc::FileUplink Component</h1>
 <p class="startli">a. Files are received one at a time. All packets of one file are received before receiving any packets of the next file. </p><pre class="fragment">b. Within a file, packets are received in order.
 </pre> </li>
 </ol>
-<h3><a class="anchor" id="autotoc_md453"></a>
+<h3><a class="anchor" id="autotoc_md457"></a>
 3.2 Block Description Diagram (BDD)</h3>
 <p><img src="img/FileUplinkBDD.jpg" alt="`FileUplink` BDD" title="FileUplink" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md454"></a>
+<h3><a class="anchor" id="autotoc_md458"></a>
 3.3 Ports</h3>
-<h4><a class="anchor" id="autotoc_md455"></a>
+<h4><a class="anchor" id="autotoc_md459"></a>
 3.3.1 Role Ports</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -129,7 +129,7 @@ Svc::FileUplink Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>eventOut</code>   </td><td class="markdownTableBodyNone"><a href="../../../Fw/Log/docs/sdd.html"><code>Fw::LogEvent</code></a>   </td><td class="markdownTableBodyNone">LogEvent   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md456"></a>
+<h4><a class="anchor" id="autotoc_md460"></a>
 3.3.2 Component-Specific Ports</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -139,7 +139,7 @@ Svc::FileUplink Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a class="anchor" id="bufferSendOut"></a><code>bufferSendOut</code>   </td><td class="markdownTableBodyNone"><a href="../../../Fw/Buffer/docs/sdd.html"><code>Fw::BufferSend</code></a>   </td><td class="markdownTableBodyNone">output   </td><td class="markdownTableBodyNone">Returns buffers for deallocation.   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md457"></a>
+<h3><a class="anchor" id="autotoc_md461"></a>
 3.4 State</h3>
 <p><code>FileUplink</code> maintains the following state:</p>
 <ul>
@@ -147,10 +147,10 @@ Svc::FileUplink Component</h1>
 <li><a class="anchor" id="lastSequenceIndex"></a><em>lastSequenceIndex</em>: An integer recording the sequence index of the last packet received. The initial value is zero.</li>
 <li><a class="anchor" id="writeFileDescriptor"></a><em>writeFileDescriptor</em>: The file descriptor of the file, if any, that is currently open for writing.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md458"></a>
+<h3><a class="anchor" id="autotoc_md462"></a>
 3.5 The bufferSendIn Port</h3>
 <p><code>FileUplink</code> asynchronously receives buffers on <a href="#bufferSendIn"><code>bufferSendIn</code></a>. Each buffer contains a file packet. When <code>FileUplink</code> receives a buffer, it (a) determines the type of the file packet in the buffer; (b) takes action as specified in section below corresponding to the packet type; and (c) invokes <a href="#bufferSendOut"><code>bufferSendOut</code></a> to return the buffer for deallocation.</p>
-<h4><a class="anchor" id="autotoc_md459"></a>
+<h4><a class="anchor" id="autotoc_md463"></a>
 3.5.1 START Packets</h4>
 <p>Upon receipt of a START packet, <code>FileUplink</code> does the following:</p>
 <ol type="1">
@@ -158,7 +158,7 @@ Svc::FileUplink Component</h1>
 <li>Open the file for writing and set <a href="#writeFileDescriptor"><em>writeFileDescriptor</em></a>.</li>
 <li>If step 2 succeeded, then set <a href="#lastSequenceIndex"><em>lastSequenceIndex</em></a> to zero and go to DATA mode; otherwise issue a <em>FileOpenError</em> warning and go to START mode.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md460"></a>
+<h4><a class="anchor" id="autotoc_md464"></a>
 3.5.2 DATA Packets</h4>
 <p>Upon receipt of a DATA packet <em>P</em>, <code>FileUplink</code> does the following, where <em>I</em> is the <a href="../../../Fw/FilePacket/docs/sdd.html">sequence index</a> of <em>P</em>:</p>
 <ol type="1">
@@ -171,7 +171,7 @@ Svc::FileUplink Component</h1>
 </pre><p> <em>FileWriteError</em> warning. </p><pre class="fragment">c. Otherwise issue a *PacketOutOfBounds* warning.
 </pre> </li>
 </ol>
-<h4><a class="anchor" id="autotoc_md461"></a>
+<h4><a class="anchor" id="autotoc_md465"></a>
 3.5.3 END Packets</h4>
 <p>Upon receipt of an END packet <em>P</em>, <code>FileUplink</code> does the following:</p>
 <ol type="1">
@@ -185,7 +185,7 @@ Svc::FileUplink Component</h1>
 <li>Otherwise issue an <em>InvalidReceiveMode</em> warning.</li>
 <li>Set <em>lastSequenceIndex</em> to zero and go to START mode.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md462"></a>
+<h4><a class="anchor" id="autotoc_md466"></a>
 3.5.4 CANCEL Packets</h4>
 <p>Upon receipt of a cancel packet <em>P</em>, <code>FileUplink</code> does the following:</p>
 <ol type="1">
@@ -194,10 +194,10 @@ Svc::FileUplink Component</h1>
 <li>Issue an <em>UplinkCanceled</em> event.</li>
 <li>Go to START mode.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md463"></a>
+<h2><a class="anchor" id="autotoc_md467"></a>
 4 Dictionary</h2>
 <p>TBD</p>
-<h2><a class="anchor" id="autotoc_md464"></a>
+<h2><a class="anchor" id="autotoc_md468"></a>
 5 Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -209,7 +209,7 @@ Svc::FileUplink Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test   </td><td class="markdownTableBodyNone"><a href="Checklist/unit_test.xls">Link</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md465"></a>
+<h2><a class="anchor" id="autotoc_md469"></a>
 6 Unit Testing</h2>
 <p>TODO </p>
 </div></div><!-- contents -->

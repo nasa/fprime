@@ -88,15 +88,15 @@ $(document).ready(function(){initNavTree('_utils_rate_limiter_class.html',''); i
 <div class="title"><a class="el" href="class_utils_1_1_rate_limiter.html">Utils::RateLimiter</a> Class </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md689"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md693"></a>
 Utils::RateLimiter</h1>
-<h2><a class="anchor" id="autotoc_md690"></a>
+<h2><a class="anchor" id="autotoc_md694"></a>
 1 Introduction</h2>
 <p><code>RateLimiter</code> is a pure utility class used for throttling actions, such as components that want to throttle events.</p>
 <p>It is mainly used for managing counter state, and providing a simple interface for both updating and evaluating if the action should be performed. The two criteria it supports is simple iteration counter and time-based throttling.</p>
-<h2><a class="anchor" id="autotoc_md691"></a>
+<h2><a class="anchor" id="autotoc_md695"></a>
 2 Usage</h2>
-<h3><a class="anchor" id="autotoc_md692"></a>
+<h3><a class="anchor" id="autotoc_md696"></a>
 2.1 Basic</h3>
 <p>RateLimiter is a class that can be included and instantiated with the initial thresholds ("cycle"):</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="rate_limiter_8hpp.html">Utils/RateLimiter.hpp</a>&gt;</span></div>
@@ -111,7 +111,7 @@ Utils::RateLimiter</h1>
 <div class="line">  <span class="comment">// perform action, e.g. log EVR</span></div>
 <div class="line">}</div>
 </div><!-- fragment --><p>If you use time-throttling, your component must provide it the current <code><a class="el" href="class_fw_1_1_time.html">Fw::Time</a></code> in the trigger. It will then update its internal state, and return true if the threshold is reached.</p>
-<h3><a class="anchor" id="autotoc_md693"></a>
+<h3><a class="anchor" id="autotoc_md697"></a>
 2.2 Using both criteria</h3>
 <p>The semantics of using both criteria is as follows: once it triggers, it should not trigger again until counterThreshold (from 0) is reached or timeThreshold (from last trigger) is reached, whichever happens first.</p>
 <p>In other words, it is either or, rather than both and. </p>

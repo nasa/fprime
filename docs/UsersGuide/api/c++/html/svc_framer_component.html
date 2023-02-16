@@ -88,19 +88,19 @@ $(document).ready(function(){initNavTree('_svc_framer_component.html',''); initR
 <div class="title"><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md466"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md470"></a>
 Svc::Framer (Passive Component)</h1>
-<h2><a class="anchor" id="autotoc_md467"></a>
+<h2><a class="anchor" id="autotoc_md471"></a>
 1. Introduction</h2>
 <p><code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code> is a passive component. It is part of the standard path for F Prime data downlink. It accepts data packets from service layer components, for example instances of <a class="el" href="svc_2_tlm_chan_2docs_2sdd_8md.html">`Svc::TlmChan`</a>, <a class="el" href="svc_2_active_logger_2docs_2sdd_8md.html">`Svc::ActiveLogger`</a>, or <a class="el" href="svc_2_file_downlink_2docs_2sdd_8md.html">`Svc::FileDownlink`</a>. For each packet <em>P</em> received, it wraps <em>P</em> in a frame <em>F</em> and sends <em>F</em> to a byte stream driver that downlinks frames, for example, <a class="el" href="drv_2_tcp_client_2docs_2sdd_8md.html">`Drv::TcpClient`</a>.</p>
 <p>When instantiating <code>Framer</code>, you must provide an implementation of <a class="el" href="svc_2_framing_protocol_2docs_2sdd_8md.html">`Svc::FramingProtocol`</a>. This implementation specifies exactly what is in each frame; typically it is a frame header, a data packet, and a hash value. You can use the standard F Prime downlink protocol implementation. This implementation works with the F Prime ground data system (GDS).</p>
 <p><code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code> is designed to act alongside instances of the <a href="https://nasa.github.io/fprime/Design/communication-adapter-interface.html">communication adapter interface</a>. In order to work well with communication adapters, <code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code> implements the framer status <a href="https://nasa.github.io/fprime/Design/communication-adapter-interface.html#framer-status-protocol">protocol</a>.</p>
-<h2><a class="anchor" id="autotoc_md468"></a>
+<h2><a class="anchor" id="autotoc_md472"></a>
 2. Assumptions</h2>
 <ol type="1">
 <li>For any deployment <em>D</em> that uses an instance <em>I</em> of <code>Framer</code>, the framing protocol used with <em>I</em> matches the downlink protocol of any ground system that receives frames from <em>I</em>.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md469"></a>
+<h2><a class="anchor" id="autotoc_md473"></a>
 3. Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -116,13 +116,13 @@ Svc::Framer (Passive Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">SVC-FRAMER-005   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code> shall forward <code>Fw::Success</code> status messages received   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code> implements the framer status protocol.   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md470"></a>
+<h2><a class="anchor" id="autotoc_md474"></a>
 4. Design</h2>
-<h3><a class="anchor" id="autotoc_md471"></a>
+<h3><a class="anchor" id="autotoc_md475"></a>
 4.1. Component Diagram</h3>
 <p>The diagram below shows the <code>Framer</code> component.</p>
 <p><img src="./img/Framer.png" alt="Framer Component" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md472"></a>
+<h3><a class="anchor" id="autotoc_md476"></a>
 4.2. Ports</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -143,7 +143,7 @@ Svc::Framer (Passive Component)</h1>
 <td class="markdownTableBodyNone"><code>output</code>   </td><td class="markdownTableBodyNone"><code>comStatusOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.SuccessCondition</code>   </td><td class="markdownTableBodyNone">Port for sending communication adapter interface protocol status messages   </td></tr>
 </table>
 <p><a class="anchor" id="derived-classes"></a> </p>
-<h3><a class="anchor" id="autotoc_md473"></a>
+<h3><a class="anchor" id="autotoc_md477"></a>
 4.3. Derived Classes</h3>
 <p><code>Framer</code> is derived from <code>FramerComponentBase</code> as usual. It is also derived (via C++ multiple inheritance) from <a class="el" href="svc_2_framing_protocol_2docs_2sdd_8md.html">`Svc::FramingProtocolInterface`</a>. The multiple inheritance makes the <code>Framer</code> instance into the instance of <code><a class="el" href="class_svc_1_1_framing_protocol_interface.html" title="interface supplied to the framing protocol">Svc::FramingProtocolInterface</a></code> that is required to use <code><a class="el" href="class_svc_1_1_framing_protocol.html" title="abstract class representing a framing protocol">Svc::FramingProtocol</a></code>. See <a href="#fpi-impl">below</a> for a description of how <code>Framer</code> implements <code>FramingProtocolInterface</code>.</p>
 <p>Here is a class diagram for <code>Framer</code>:</p>
@@ -152,17 +152,17 @@ Svc::Framer (Passive Component)</h1>
 <div class="line">    PassiveComponentBase &lt;|-- FramerComponentBase</div>
 <div class="line">    FramerComponentBase &lt;|-- Framer</div>
 <div class="line">    FramingProtocolInterface &lt;|-- Framer</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md474"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md478"></a>
 4.4. State</h3>
 <p><code>Framer</code> maintains the following state:</p>
 <ol type="1">
 <li><code>m_protocol</code>: A pointer to the implementation of <code>FramingProtocol</code> used for framing.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md475"></a>
+<h3><a class="anchor" id="autotoc_md479"></a>
 4.5. Header File Configuration</h3>
 <p>None.</p>
 <p><a class="anchor" id="runtime-setup"></a> </p>
-<h3><a class="anchor" id="autotoc_md476"></a>
+<h3><a class="anchor" id="autotoc_md480"></a>
 4.6. Runtime Setup</h3>
 <p>To set up an instance of <code>Framer</code>, you do the following:</p>
 <ol type="1">
@@ -178,26 +178,26 @@ Svc::Framer (Passive Component)</h1>
 </li>
 </ol>
 <p>For an example of setting up a <code>Framer</code> instance, see the <code>downlink</code> instance in <a href="../../../Ref/Top/instances.fpp"><code>Ref/Top/instances.fpp</code></a>.</p>
-<h3><a class="anchor" id="autotoc_md477"></a>
+<h3><a class="anchor" id="autotoc_md481"></a>
 4.7. Port Handlers</h3>
-<h4><a class="anchor" id="autotoc_md478"></a>
+<h4><a class="anchor" id="autotoc_md482"></a>
 4.7.1. comIn</h4>
 <p>The <code>comIn</code> port handler receive a reference to an <code>Fw::Com</code> buffer <em>B</em> and an integer context value. It calls the <code>frame</code> method of <code>m_protocol</code>, passing in the address and length of <em>B</em> and the packet type <code><a class="el" href="class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a89bc97f02f96b31614df715ff6e36eb0">Fw::ComPacket::FW_PACKET_UNKNOWN</a></code>.</p>
-<h4><a class="anchor" id="autotoc_md479"></a>
+<h4><a class="anchor" id="autotoc_md483"></a>
 4.7.2. bufferIn</h4>
 <p>The <code>bufferIn</code> port handler receives a reference to an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> object <em>B</em>. It calls the <code>frame</code> method of <code>m_protocol</code>, passing in the data address and size of <em>B</em> and the packet type <code><a class="el" href="class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a2af3697dc87c65b5561ac143e7197189">Fw::ComPacket::FW_PACKET_FILE</a></code>.</p>
-<h4><a class="anchor" id="autotoc_md480"></a>
+<h4><a class="anchor" id="autotoc_md484"></a>
 4.7.2. comStatusIn</h4>
 <p>The <code>comStatusIn</code> port handler receives com status messages and forwards them out <code>comStatusOut</code>.</p>
 <p><a class="anchor" id="fpi-impl"></a> </p>
-<h3><a class="anchor" id="autotoc_md481"></a>
+<h3><a class="anchor" id="autotoc_md485"></a>
 4.8. Implementation of Svc::FramingProtocolInterface</h3>
 <p><a class="anchor" id="allocate"></a> </p>
-<h4><a class="anchor" id="autotoc_md482"></a>
+<h4><a class="anchor" id="autotoc_md486"></a>
 4.8.1. allocate</h4>
 <p>The implementation of <code>allocate</code> invokes <code>framedAllocate</code>.</p>
 <p><a class="anchor" id="send"></a> </p>
-<h4><a class="anchor" id="autotoc_md483"></a>
+<h4><a class="anchor" id="autotoc_md487"></a>
 4.8.2. send</h4>
 <p>The implementation of <code>send</code> takes a reference to an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>B</em> representing framed data and does the following:</p>
 <ol type="1">
@@ -206,14 +206,14 @@ Svc::Framer (Passive Component)</h1>
 <ol type="1">
 <li>Check the return status of the invocation. If the return status is not <code>Drv::SendStatus::SEND_OK</code>, then use <code><a class="el" href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a></code> to log an error message. Don't send an event report in this case, because downlink is apparently not working.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md484"></a>
+<h2><a class="anchor" id="autotoc_md488"></a>
 5. Ground Interface</h2>
 <p>None.</p>
 <p>If an error occurs, <code>Framer</code> writes to the system log. The rationale is that if something is wrong with the framing, then downlink of events is unlikely to work.</p>
-<h2><a class="anchor" id="autotoc_md485"></a>
+<h2><a class="anchor" id="autotoc_md489"></a>
 6. Example Uses</h2>
 <p><a class="anchor" id="top-diagrams"></a> </p>
-<h3><a class="anchor" id="autotoc_md486"></a>
+<h3><a class="anchor" id="autotoc_md490"></a>
 6.1. Topology Diagrams</h3>
 <p>The following topology diagrams show how to connect <code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code> to a telemetry database, an event collector, a file downlink component, and a byte stream driver. The diagrams use the following instances:</p>
 <ul>
@@ -242,11 +242,11 @@ Svc::Framer (Passive Component)</h1>
 <p>Exchanging the buffer controls the rate at which <code>fileDownlink</code> sends file packets. It ensures that the rate does not exceed the rate at which <code>framer</code> can handle the packets.</p>
 <p><b>Topology 4: Framed data:</b></p>
 <div> <img src="img/top/framed.png" alt="" width="1000/" class="inline"/> </div><p><code>framer</code> allocates frame buffers from <code>buffMgr</code>. It sends buffers containing frames to <code>comm</code>. <code>comm</code> processes the buffers and sends them to <code>buffMgr</code> for deallocation.</p>
-<h3><a class="anchor" id="autotoc_md487"></a>
+<h3><a class="anchor" id="autotoc_md491"></a>
 6.2. Sequence Diagrams</h3>
 <p>In the following diagrams, open vertical rectangles represent threads. Vertical dashed lines represent component code. Solid horizontal arrows represent synchronous port invocations, and open horizontal arrows represent asynchronous port invocations.</p>
 <p>These diagrams assume that, in the <a href="#runtime-setup">implementation of <code>Svc::FramingProtocol</code> passed in at initialization</a>, each downlink frame contains a single packet. This is a common use case; for example, the F Prime standard downlink protocol is implemented this way.</p>
-<h4><a class="anchor" id="autotoc_md488"></a>
+<h4><a class="anchor" id="autotoc_md492"></a>
 6.2.1. Sending a Telemetry Packet</h4>
 <p>The following diagram shows what happens when <code>chanTlm</code> sends a telemetry packet to <code>framer</code>.</p>
 <div class="fragment"><div class="line">sequenceDiagram</div>
@@ -262,7 +262,7 @@ Svc::Framer (Passive Component)</h1>
 <div class="line">    comm--&gt;&gt;framer: </div>
 <div class="line">    framer--&gt;&gt;chanTlm: </div>
 <div class="line">    deactivate chanTlm</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md489"></a>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md493"></a>
 6.2.2. Sending an Event Packet</h4>
 <p>The following diagram shows what happens when <code>eventLogger</code> sends an event packet to <code>framer</code>.</p>
 <div class="fragment"><div class="line">sequenceDiagram</div>
@@ -278,7 +278,7 @@ Svc::Framer (Passive Component)</h1>
 <div class="line">    comm--&gt;&gt;framer: </div>
 <div class="line">    framer--&gt;&gt;eventLogger: </div>
 <div class="line">    deactivate eventLogger</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md490"></a>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md494"></a>
 6.2.3. Sending a File Packet</h4>
 <p>The following diagram shows what happens when <code>fileDownlink</code> sends a file packet to <code>framer</code>.</p>
 <div class="fragment"><div class="line">sequenceDiagram</div>

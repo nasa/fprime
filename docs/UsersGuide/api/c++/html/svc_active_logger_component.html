@@ -88,24 +88,24 @@ $(document).ready(function(){initNavTree('_svc_active_logger_component.html','')
 <div class="title"><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md184"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md188"></a>
 Svc::ActiveLogger Component</h1>
-<h2><a class="anchor" id="autotoc_md185"></a>
+<h2><a class="anchor" id="autotoc_md189"></a>
 1. Introduction</h2>
 <p>The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> component processes events from other components. The events are put in packets and sent to an external component like the ground interface. The component provides event filtering capability such that events may be turned off via ID or severity.</p>
-<h2><a class="anchor" id="autotoc_md186"></a>
+<h2><a class="anchor" id="autotoc_md190"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> are as follows:</p>
 <p>Requirement | Description | Verification Method --------&mdash; | --------&mdash; | ----------------&mdash; AL-001 | The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> component shall receive events and compose ter events based on event severity. | Unithem into downlink packets. | Inspection; Unit Test AL-002 | The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> component shall have commands to filt Test AL-003 | The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> component shall have commands to filter events based on the event ID. | Unit Test AL-004 | The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> component shall call fatalOut port when FATAL is received | Inspection; Unit Test</p>
-<h2><a class="anchor" id="autotoc_md187"></a>
+<h2><a class="anchor" id="autotoc_md191"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md188"></a>
+<h3><a class="anchor" id="autotoc_md192"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md189"></a>
+<h4><a class="anchor" id="autotoc_md193"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> component has the following component diagram:</p>
 <p><img src="img/ActiveLoggerBDD.jpg" alt="`Svc::ActiveLogger` Diagram" title="Svc::ActiveLogger" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md190"></a>
+<h4><a class="anchor" id="autotoc_md194"></a>
 3.1.2 Ports</h4>
 <p>The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> component uses the following port types:</p>
 <table class="markdownTable">
@@ -118,34 +118,34 @@ Svc::ActiveLogger Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><a href="../../../Svc/Fatal/docs/sdd.html"><code>Svc::FatalEvent</code></a>   </td><td class="markdownTableBodyNone">FatalAnnounce   </td><td class="markdownTableBodyNone">Output   </td><td class="markdownTableBodyNone">n/a   </td><td class="markdownTableBodyNone">Send FATAL event (to health)   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md191"></a>
+<h3><a class="anchor" id="autotoc_md195"></a>
 3.2 Functional Description</h3>
 <p>The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> component provides an event logging function for the software. The framework autocoder allows developers to specify a set of events in the component XML (see <a href="https://nasa.github.io/fprime/UsersGuide/user/cmd-evt-chn-prm.html#Events">Events</a>). For these components, the autocoder will add an <code>Fw::Log</code> output port to send events in serialized form. The ActiveLogger receives these port calls and provides commands to filter these events. The filtered events are sent to other components such as the ground interface.</p>
 <p><b>Note:</b> the Event ID value 0 is reserved for the logger.</p>
 <p>Should a FATAL severity event arrive, it is announced using a FATAL out port allow the system to respond when a FATAL event is seen.</p>
-<h4><a class="anchor" id="autotoc_md192"></a>
+<h4><a class="anchor" id="autotoc_md196"></a>
 3.2.1 Filtering</h4>
 <p>The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> <code>LogRecv</code> input port handler filters events to lessen the load on the downstream components. The filters can be set by severity and ID. By default, the DIAGNOSTIC events are filtered out since the number of DIAGNOSTIC events can be quite high. All defaults can be globally configured in <code><a class="el" href="active_logger_impl_cfg_8hpp.html">config/ActiveLoggerImplCfg.hpp</a></code>. Filters are modified at runtime by the <code>SET_EVENT_FILTER</code> command.</p>
 <p>The component also allows filtering events by event ID. There is a configuration parameter that sets the number of IDs that can be filtered. This allows operators to mute a particular event that might be flooding the downstream components. These filters are modified at runtime by the <code>SET_ID_FILTER</code> command.</p>
 <p>FATAL events are never filtered, so they can be caught and broadcast to the system. Outgoing events are converted into the F´ ground format and sent out using the <code>PktSend</code> port.</p>
-<h4><a class="anchor" id="autotoc_md193"></a>
+<h4><a class="anchor" id="autotoc_md197"></a>
 3.2.2 Fatal Announce</h4>
 <p>When the <code>ActiveLogger</code> component receives a FATAL event, it calls the FatalAnnounce port. Another component that handles the system response to FATALs (such as resetting the system) can connect to this port to be informed when a FATAL has occurred.</p>
-<h3><a class="anchor" id="autotoc_md194"></a>
+<h3><a class="anchor" id="autotoc_md198"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md195"></a>
+<h4><a class="anchor" id="autotoc_md199"></a>
 3.3.1 Receive Events</h4>
 <p>The <code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> component accepts events from other components.</p>
-<h3><a class="anchor" id="autotoc_md196"></a>
+<h3><a class="anchor" id="autotoc_md200"></a>
 3.4 State</h3>
 <p><code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> has no state machines, but stores the state of the event severity and event ID filters.</p>
-<h3><a class="anchor" id="autotoc_md197"></a>
+<h3><a class="anchor" id="autotoc_md201"></a>
 3.5 Algorithms</h3>
 <p><code><a class="el" href="namespace_svc.html#ac0e00075604e6b204b18163442910ec1">Svc::ActiveLogger</a></code> has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md198"></a>
+<h2><a class="anchor" id="autotoc_md202"></a>
 4. Dictionaries</h2>
 <p>TBD</p>
-<h2><a class="anchor" id="autotoc_md199"></a>
+<h2><a class="anchor" id="autotoc_md203"></a>
 5. Module Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -157,10 +157,10 @@ Svc::ActiveLogger Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test Checklist   </td><td class="markdownTableBodyNone"><a href="Checklist_Unit_test.xlsx">Link</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md200"></a>
+<h2><a class="anchor" id="autotoc_md204"></a>
 6. Unit Testing</h2>
 <p>To see unit test coverage run fprime-util check &ndash;coverage</p>
-<h2><a class="anchor" id="autotoc_md201"></a>
+<h2><a class="anchor" id="autotoc_md205"></a>
 7. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_cmd_sequencer_component.html','')
 <div class="title"><a class="el" href="namespace_svc.html#a3882aff73e9796ed7b550aeb9f360f48">Svc::CmdSequencer</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md302"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md306"></a>
 Svc::CmdSequencer Component</h1>
-<h2><a class="anchor" id="autotoc_md303"></a>
+<h2><a class="anchor" id="autotoc_md307"></a>
 1 Introduction</h2>
 <p>The command sequencer is a component that iterates through a set of commands contained in binary form in a file located in a file system available to the sequencer. A command to the sequencer specifies the file to execute. The file can contain commands that execute immediately, after a delay, or at an absolute time. The sequence will abort if any given command in the sequence returns a failed status.</p>
-<h2><a class="anchor" id="autotoc_md304"></a>
+<h2><a class="anchor" id="autotoc_md308"></a>
 2 Requirements</h2>
 <p>The requirements for <code><a class="el" href="namespace_svc.html#a3882aff73e9796ed7b550aeb9f360f48">Svc::CmdSequencer</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -112,15 +112,15 @@ Svc::CmdSequencer Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">ISF-CMDS-006   </td><td class="markdownTableBodyNone">The <code><a class="el" href="namespace_svc.html#a3882aff73e9796ed7b550aeb9f360f48">Svc::CmdSequencer</a></code> component shall provide an overall sequence timeout.   </td><td class="markdownTableBodyNone">Unit Test   </td><td class="markdownTableBodyNone">Sequencer should quit if a component fails to send a command response   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md305"></a>
+<h2><a class="anchor" id="autotoc_md309"></a>
 3 Design</h2>
-<h3><a class="anchor" id="autotoc_md306"></a>
+<h3><a class="anchor" id="autotoc_md310"></a>
 3.1 Component Context</h3>
 <p><img src="img/CmdSequencerIBD.jpg" alt="Component IBD" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md307"></a>
+<h3><a class="anchor" id="autotoc_md311"></a>
 3.2 Component Interface</h3>
 <p><img src="img/CmdSequencerBDD.jpg" alt="Component BDD" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md308"></a>
+<h4><a class="anchor" id="autotoc_md312"></a>
 3.2.1 Port description table</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -154,23 +154,23 @@ Svc::CmdSequencer Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">seqDone   </td><td class="markdownTableBodyNone">Fw::CmdResponse   </td><td class="markdownTableBodyNone">output   </td><td class="markdownTableBodyNone">outputs status of sequence run; meant to be used with <code>seqRunIn</code>   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md309"></a>
+<h4><a class="anchor" id="autotoc_md313"></a>
 3.2.2 Command Handlers</h4>
-<p><a class="anchor" id="autotoc_md310"></a> </p><h5>3.2.2.1 CS_Validate</h5>
-<p>The <code>CS_Validate</code> command will validate that the format and checksum of a sequence file are correct without executing any commands in the file. This allows operators to validate a file prior to executing it. <a class="anchor" id="autotoc_md311"></a> </p><h5>3.2.2.2 CS_Run</h5>
-<p>The <code>CS_Run</code> command will execute a sequence. If a prior sequence is still running, it will be canceled. If a command returns a failed status, the sequence will be aborted. <a class="anchor" id="autotoc_md312"></a> </p><h5>3.2.2.3 CS_Cancel</h5>
-<p>The <code>CS_Cancel</code> command will cancel an existing sequence. If there is no sequence currently executing, the command will emit a warning event but not fail. <a class="anchor" id="autotoc_md313"></a> </p><h5>3.2.2.4 CS_Manual</h5>
-<p>The <code>CS_Manual</code> command will put the sequencer in a manual stepping mode, where the commands will be advanced by the <code>CS_Step</code> command. After entering this mode, the operator should issue a <code>CS_Run</code> command to load the sequence. In this mode, the sequence will be validated and loaded, but will not execute any commands until receiving the <code>CS_Start</code> command <a class="anchor" id="autotoc_md314"></a> </p><h5>3.2.2.5 CS_Start</h5>
-<p>The <code>CS_Start</code> command will execute the first command in the sequence in manual mode. <a class="anchor" id="autotoc_md315"></a> </p><h5>3.2.2.6 CS_Step</h5>
-<p>The <code>CS_Step</code> command will execute subsequent commands after receiving the <code>CS_Start</code> command. <a class="anchor" id="autotoc_md316"></a> </p><h5>3.2.2.7 CS_Auto</h5>
+<p><a class="anchor" id="autotoc_md314"></a> </p><h5>3.2.2.1 CS_Validate</h5>
+<p>The <code>CS_Validate</code> command will validate that the format and checksum of a sequence file are correct without executing any commands in the file. This allows operators to validate a file prior to executing it. <a class="anchor" id="autotoc_md315"></a> </p><h5>3.2.2.2 CS_Run</h5>
+<p>The <code>CS_Run</code> command will execute a sequence. If a prior sequence is still running, it will be canceled. If a command returns a failed status, the sequence will be aborted. <a class="anchor" id="autotoc_md316"></a> </p><h5>3.2.2.3 CS_Cancel</h5>
+<p>The <code>CS_Cancel</code> command will cancel an existing sequence. If there is no sequence currently executing, the command will emit a warning event but not fail. <a class="anchor" id="autotoc_md317"></a> </p><h5>3.2.2.4 CS_Manual</h5>
+<p>The <code>CS_Manual</code> command will put the sequencer in a manual stepping mode, where the commands will be advanced by the <code>CS_Step</code> command. After entering this mode, the operator should issue a <code>CS_Run</code> command to load the sequence. In this mode, the sequence will be validated and loaded, but will not execute any commands until receiving the <code>CS_Start</code> command <a class="anchor" id="autotoc_md318"></a> </p><h5>3.2.2.5 CS_Start</h5>
+<p>The <code>CS_Start</code> command will execute the first command in the sequence in manual mode. <a class="anchor" id="autotoc_md319"></a> </p><h5>3.2.2.6 CS_Step</h5>
+<p>The <code>CS_Step</code> command will execute subsequent commands after receiving the <code>CS_Start</code> command. <a class="anchor" id="autotoc_md320"></a> </p><h5>3.2.2.7 CS_Auto</h5>
 <p>The <code>CS_Auto</code> command will change the sequencing mode from manual to automatic, which means that the sequencer will automatically execute commands upon loading. This command can only be run when there are no currently executing sequences. If a sequence is executing, a <code>CS_Cancel</code> followed by a <code>CS_Auto</code> will get the sequencer back to executing sequences automatically.</p>
-<h4><a class="anchor" id="autotoc_md317"></a>
+<h4><a class="anchor" id="autotoc_md321"></a>
 3.2.3 Port Handlers</h4>
-<p><a class="anchor" id="autotoc_md318"></a> </p><h5>3.2.3.1 schedIn</h5>
+<p><a class="anchor" id="autotoc_md322"></a> </p><h5>3.2.3.1 schedIn</h5>
 <p>The <code>schedIn</code> port checks to see if there is a timed command pending. If the timer for a pending command has expired, the command is dispatched. If there is a command being executed, the command timeout timer is also checked. If it has expired, a warning event is emitted and the sequence is aborted.</p>
-<p><a class="anchor" id="autotoc_md319"></a> </p><h5>3.2.3.2 cmdResponseIn</h5>
+<p><a class="anchor" id="autotoc_md323"></a> </p><h5>3.2.3.2 cmdResponseIn</h5>
 <p>The <code>cmdResponseIn</code> port is called when a command in a sequence is completed. If the command status is successful, the next command in the sequence is executed.</p>
-<p><a class="anchor" id="seqRunIn"></a> <a class="anchor" id="autotoc_md320"></a> </p><h5>3.2.3.3 seqRunIn</h5>
+<p><a class="anchor" id="seqRunIn"></a> <a class="anchor" id="autotoc_md324"></a> </p><h5>3.2.3.3 seqRunIn</h5>
 <p>This port takes a single argument <code>filename</code> of type <code><a class="el" href="class_fw_1_1_string.html">Fw::String</a></code>. In general, sending <code>filename</code> on this port has the same effect as issuing a <code>CS_Run</code> command with <code>filename</code> as the file name argument.</p>
 <p>If <code>filename</code> is empty, then <code>CmdSequencer</code> runs the sequence stored in the sequence buffer, without loading a sequence first. In order for this to work:</p>
 <ul>
@@ -178,11 +178,11 @@ Svc::CmdSequencer Component</h1>
 <li>There must be a valid sequence in the buffer, i.e., <code>loadSequence</code> must have succeeded.</li>
 <li>You must not have validated or run any sequences since calling <code>loadSequence</code>, since these operations clear the buffer.</li>
 </ul>
-<p><a class="anchor" id="autotoc_md321"></a> </p><h5>3.2.3.4 pingIn</h5>
+<p><a class="anchor" id="autotoc_md325"></a> </p><h5>3.2.3.4 pingIn</h5>
 <p>The <code>pingIn</code> port is called by the <code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> component to verify that the <code>CmdSequencer</code> thread is still functional. The handler simply takes the provided code and calls the <code>pingOut</code> port.</p>
-<h3><a class="anchor" id="autotoc_md322"></a>
+<h3><a class="anchor" id="autotoc_md326"></a>
 3.3 Component Structure</h3>
-<h4><a class="anchor" id="autotoc_md323"></a>
+<h4><a class="anchor" id="autotoc_md327"></a>
 3.3.1 Types</h4>
 <p>The <code>CmdSequencer</code> class defines the following types:</p>
 <ul>
@@ -203,22 +203,22 @@ Svc::CmdSequencer Component</h1>
 * `clear`: Reset *B* for serialization.
 </pre> </li>
 </ul>
-<h4><a class="anchor" id="autotoc_md324"></a>
+<h4><a class="anchor" id="autotoc_md328"></a>
 3.3.2 Configuration</h4>
-<p><a class="anchor" id="autotoc_md325"></a> </p><h5>3.3.2.1 setTimeout (Optional)</h5>
+<p><a class="anchor" id="autotoc_md329"></a> </p><h5>3.3.2.1 setTimeout (Optional)</h5>
 <p>The <code>setTimeout()</code> public method sets the command timeout value. When a command is being executed by a component, this value specifies a timeout in seconds that will abort the sequence if exceeded. The default value of zero means that there will be no timeout.</p>
-<p><a class="anchor" id="autotoc_md326"></a> </p><h5>3.3.2.2 setSequenceFormat (Optional)</h5>
+<p><a class="anchor" id="autotoc_md330"></a> </p><h5>3.3.2.2 setSequenceFormat (Optional)</h5>
 <p>This function has a single argument of type <a href="#Sequence"><code>CmdSequencer::Sequence&amp;</code></a>. By default, <code>CmdSequencer</code> uses an instance of <a href="#F_Prime_Sequence"><code>FPrimeSequence</code></a> to load and run binary sequences conforming to the specification given in <a href="#F_Prime_Sequence_Format"><b>F Prime Sequence Format</b></a>. After you call <code>setSequenceFormat</code>, <code>CmdSequencer</code> uses the object passed in as its argument to load and run sequences. By defining a suitable subclass of <a href="#Sequence"><code>CmdSequencer::Sequence&amp;</code></a> and passing in an instance of this subclass, you can use a project-specific sequence format. You can also change the internal representation for the sequence: for example, you can have the <code>Sequence</code> subclass read the next record from the disk instead of loading the entire sequence into memory (in this case, the <code>loadFile</code> operation would load just the fixed-length header).</p>
-<p><a class="anchor" id="autotoc_md327"></a> </p><h5>3.3.2.3 allocateBuffer</h5>
+<p><a class="anchor" id="autotoc_md331"></a> </p><h5>3.3.2.3 allocateBuffer</h5>
 <p>The <code>allocateBuffer()</code> public method passes a memory allocator to provide memory for the sequence buffer needed by <code>cmdSequencer</code>. The user will provide an instance of a sub-class of <code><a class="el" href="class_fw_1_1_mem_allocator.html">Fw::MemAllocator</a></code> that implements memory allocation. An example of this using the heap can be found in <code><a class="el" href="malloc_allocator_8hpp.html" title="A MemAllocator implementation class that uses malloc.">Fw/Types/MallocAllocator.hpp</a></code>.</p>
-<p><a class="anchor" id="loadSequence"></a> <a class="anchor" id="autotoc_md328"></a> </p><h5>3.3.2.4 loadSequence (Optional)</h5>
+<p><a class="anchor" id="loadSequence"></a> <a class="anchor" id="autotoc_md332"></a> </p><h5>3.3.2.4 loadSequence (Optional)</h5>
 <p>This function takes a single argument <code>fileName</code> of type <code><a class="el" href="class_fw_1_1_string.html">Fw::String</a></code>. When you call this function, <code>CmdSequencer</code> loads the sequence file <code>fileName</code> into its buffer so that you can execute it later by calling <a href="#seqRunIn"><code>seqRunIn</code></a>.</p>
 <p>This function issues events, so you must connect the event topology before calling this function.</p>
-<p><a class="anchor" id="autotoc_md329"></a> </p><h5>3.3.2.5 deallocateBuffer</h5>
+<p><a class="anchor" id="autotoc_md333"></a> </p><h5>3.3.2.5 deallocateBuffer</h5>
 <p>The <code>deallocateBuffer()</code> method is used to deallocate the buffer supplied in <code>allocateBuffer()</code> method. It should be called before the destructor.</p>
-<h4><a class="anchor" id="autotoc_md330"></a>
+<h4><a class="anchor" id="autotoc_md334"></a>
 3.3.3 Data formats</h4>
-<p><a class="anchor" id="F_Prime_Sequence_Format"></a> <a class="anchor" id="autotoc_md331"></a> </p><h5>3.3.3.1 F Prime Sequence Format</h5>
+<p><a class="anchor" id="F_Prime_Sequence_Format"></a> <a class="anchor" id="autotoc_md335"></a> </p><h5>3.3.3.1 F Prime Sequence Format</h5>
 <p>An F Prime sequence file consists of a header followed by a list of records and a CRC value.</p>
 <p><b>Header:</b> The format for the header is as follows. All numbers must be stored in big-endian format.</p>
 <table class="markdownTable">
@@ -247,7 +247,7 @@ Svc::CmdSequencer Component</h1>
 <td class="markdownTableBodyNone">Command Buffer   </td><td class="markdownTableBodyNone">&gt;= 4   </td><td class="markdownTableBodyNone">Buffer containing command packet descriptor, command opcode, and zero or more serialized arguments.   </td></tr>
 </table>
 <p><b>CRC value:</b> The last 4 bytes of the file is a CRC of the entire file as computed by Utils/Hash.hpp</p>
-<p><a class="anchor" id="autotoc_md332"></a> </p><h5>3.3.3.2 Sequence File Generator</h5>
+<p><a class="anchor" id="autotoc_md336"></a> </p><h5>3.3.3.2 Sequence File Generator</h5>
 <p>A utility is provided that will convert a text file listing of commands and their argument to a binary sequence file.</p>
 <p>It can be run by invoking:</p>
 <p><code>Gse/bin/run_tinyseqgen.sh &lt;input text file&gt;</code></p>
@@ -280,24 +280,24 @@ Svc::CmdSequencer Component</h1>
 <p><code>A1,A2...AN</code> - any arguments for the command</p>
 <p>Note that the time is encoded in UTC with an epoch of 1/1/1970.</p>
 <p>An example can be seen in <a href="../../../Gse/bin/simple_sequence.seq">Gse/bin/simple_sequence.seq</a></p>
-<h3><a class="anchor" id="autotoc_md333"></a>
+<h3><a class="anchor" id="autotoc_md337"></a>
 3.4 Component State</h3>
 <p>The <code>CmdSequencer</code> does not have any significant state machines.</p>
-<h3><a class="anchor" id="autotoc_md334"></a>
+<h3><a class="anchor" id="autotoc_md338"></a>
 3.5 Component Dictionary</h3>
 <p>TBD</p>
-<h3><a class="anchor" id="autotoc_md335"></a>
+<h3><a class="anchor" id="autotoc_md339"></a>
 3.6 Component Sequences</h3>
 <p><img src="img/SequenceExecution.jpg" alt="Execute Sequence" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md336"></a>
+<h2><a class="anchor" id="autotoc_md340"></a>
 4 Module Checklists</h2>
 <p><a href="Checklist_Design.xlsx">Design Checklist</a></p>
 <p><a href="Checklist_Code.xlsx">Code Checklist</a></p>
 <p><a href="Checklist_Unit_Test.xls">Unit Test Checklist</a></p>
-<h2><a class="anchor" id="autotoc_md337"></a>
+<h2><a class="anchor" id="autotoc_md341"></a>
 5 Unit Testing</h2>
 <p>To see unit test coverage run fprime-util check &ndash;coverage</p>
-<h2><a class="anchor" id="autotoc_md338"></a>
+<h2><a class="anchor" id="autotoc_md342"></a>
 6 Change log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

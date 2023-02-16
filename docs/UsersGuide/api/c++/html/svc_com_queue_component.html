@@ -88,14 +88,14 @@ $(document).ready(function(){initNavTree('_svc_com_queue_component.html',''); in
 <div class="title"><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md339"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md343"></a>
 Svc::ComQueue (Active Component)</h1>
-<h2><a class="anchor" id="autotoc_md340"></a>
+<h2><a class="anchor" id="autotoc_md344"></a>
 1. Introduction</h2>
 <p><code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> is an F´ active component that functions as a priority queue of buffer types. Messages are dequeued and forwarded when a <code>Fw::Success::SUCCESS</code> signal is received in order of priority. <code>Fw::Success::FAILURE</code> signals result in the queues being paused until a following <code>Fw::Success::SUCCESS</code> signal.</p>
 <p><code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> is configured with a queue depth and queue priority for each incoming <code>Fw::Com</code> and <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> port by passing in a configuration table at initialization. Queued messages from the highest priority source port are serviced first and a round-robin algorithm is used to balance between ports of shared priority.</p>
 <p><code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> is designed to act alongside instances of the <a href="https://nasa.github.io/fprime/Design/communication-adapter-interface.html">communication adapter interface</a> and implements the communication queue <a href="https://nasa.github.io/fprime/Design/communication-adapter-interface.html#communication-queue-protocol">protocol</a>.</p>
-<h2><a class="anchor" id="autotoc_md341"></a>
+<h2><a class="anchor" id="autotoc_md345"></a>
 2. Assumptions</h2>
 <ol type="1">
 <li>Incoming buffers to a given port are in priority order</li>
@@ -103,7 +103,7 @@ Svc::ComQueue (Active Component)</h1>
 <li>The com adapter is responsible for any retransmission of failed data</li>
 <li>The system includes downstream components implementing the <a href="https://nasa.github.io/fprime/Design/communication-adapter-interface.html">communications adapter</a></li>
 </ol>
-<h2><a class="anchor" id="autotoc_md342"></a>
+<h2><a class="anchor" id="autotoc_md346"></a>
 3. Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -127,11 +127,11 @@ Svc::ComQueue (Active Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">SVC-COMQUEUE-009   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> shall keep track and throttle queue overflow events per port.   </td><td class="markdownTableBodyNone">Prevents a flood of queue overflow events.   </td><td class="markdownTableBodyNone">Unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md343"></a>
+<h2><a class="anchor" id="autotoc_md347"></a>
 4. Design</h2>
 <p>The diagram below shows the <code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> component.</p>
 <p><img src="./img/ComQueue.png" alt="Svc::ComQueue" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md344"></a>
+<h3><a class="anchor" id="autotoc_md348"></a>
 4.1. Ports</h3>
 <p><code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> has the following ports:</p>
 <table class="markdownTable">
@@ -158,7 +158,7 @@ Svc::ComQueue (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>telemetry</code>   </td><td class="markdownTableBodyNone"><code>Tlm</code>   </td><td class="markdownTableBodyNone"><code>Fw.Tlm</code>   </td><td class="markdownTableBodyNone">Port for emitting telemetry   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md345"></a>
+<h3><a class="anchor" id="autotoc_md349"></a>
 4.2. State</h3>
 <p><code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> maintains the following state:</p><ol type="1">
 <li><code>m_queues</code>: An array of <code><a class="el" href="class_types_1_1_queue.html">Types::Queue</a></code> used to queue per-port messages.</li>
@@ -166,7 +166,7 @@ Svc::ComQueue (Active Component)</h1>
 <li><code>m_state</code>: Instance of <code>Svc::ComQueue::SendState</code> representing the state of the component. See: 4.3.1 State Machine</li>
 <li><code>m_throttle</code>: An array of flags that throttle the per-port queue overflow messages.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md346"></a>
+<h3><a class="anchor" id="autotoc_md350"></a>
 4.2.1 State Machine</h3>
 <p>The <code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> component runs the following state machine. It has two states:</p>
 <table class="markdownTable">
@@ -179,13 +179,13 @@ Svc::ComQueue (Active Component)</h1>
 </table>
 <p>The state machine will transition between states when a status is received and will transition from <code>READY</code> when a new buffer is received. <code>FAILURE</code> statuses keep the <code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> in <code>WAITING</code> state whereas a <code>SUCCESS</code> status will either send a buffer and transition to <code>WAITING</code> or will have no buffers to send and will transition into <code>READY</code> state. Buffers are queued when in <code>WAITING</code> state.</p>
 <p><img src="./img/state-machine.png" alt="`Svc::ComQueue` Functional State Machine" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md347"></a>
+<h3><a class="anchor" id="autotoc_md351"></a>
 4.3 Model Configuration</h3>
 <p><code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> has the following constants, that are configured in <code>AcConstants.fpp</code>:</p><ol type="1">
 <li><code>ComQueueComPorts</code>: number of ports of <code>Fw.Com</code> type in the <code>comQueueIn</code> port array.</li>
 <li><code>ComQueueBufferPorts</code>: number of ports of <code>Fw.BufferSend</code> type in the <code>buffQueueIn</code> port array.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md348"></a>
+<h3><a class="anchor" id="autotoc_md352"></a>
 4.4 Runtime Setup</h3>
 <p>To set up an instance of <code>ComQueue</code>, the following needs to be done:</p><ol type="1">
 <li>Call the constructor and the init method in the usual way for an F Prime active component.</li>
@@ -197,9 +197,9 @@ Svc::ComQueue (Active Component)</h1>
 </ol>
 </li>
 </ol>
-<h3><a class="anchor" id="autotoc_md349"></a>
+<h3><a class="anchor" id="autotoc_md353"></a>
 4.5 Port Handlers</h3>
-<h4><a class="anchor" id="autotoc_md350"></a>
+<h4><a class="anchor" id="autotoc_md354"></a>
 4.5.1 buffQueueIn</h4>
 <p>The <code>buffQueueIn</code> port handler receives an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> data type and a port number. It does the following:</p><ol type="1">
 <li>Ensures that the port number is between zero and the value of the buffer size</li>
@@ -207,7 +207,7 @@ Svc::ComQueue (Active Component)</h1>
 <li>Returns a warning if <code>m_queues</code> is full</li>
 </ol>
 <p>In the case where the component is already in <code>READY</code> state, this will process the queue immediately after the buffer is added to the queue.</p>
-<h4><a class="anchor" id="autotoc_md351"></a>
+<h4><a class="anchor" id="autotoc_md355"></a>
 4.5.2 comQueueIn</h4>
 <p>The <code>comQueueIn</code> port handler receives an <code><a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></code> data type and a port number. It does the following:</p><ol type="1">
 <li>Ensures that the port number is between zero and the value of the com buffer size</li>
@@ -215,16 +215,16 @@ Svc::ComQueue (Active Component)</h1>
 <li>Returns a warning if <code>m_queues</code> is full</li>
 </ol>
 <p>In the case where the component is already in <code>READY</code> state, this will process the queue immediately after the buffer is added to the queue.</p>
-<h4><a class="anchor" id="autotoc_md352"></a>
+<h4><a class="anchor" id="autotoc_md356"></a>
 4.5.3 comStatusIn</h4>
 <p>The <code>comStatusIn</code> port handler receives a <code>Fw::Success</code> status. This triggers the component's state machine to change state. For a full description see <a href="#4.2.1-State-Machine">4.2.1 State Machine</a>.</p>
-<h4><a class="anchor" id="autotoc_md353"></a>
+<h4><a class="anchor" id="autotoc_md357"></a>
 4.5.4 run</h4>
 <p>The <code>run</code> port handler does the following:</p><ol type="1">
 <li>Report the high-water mark for each queue since last <code>run</code> invocation via telemetry</li>
 <li>Clear each queue's high-water mark</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md354"></a>
+<h3><a class="anchor" id="autotoc_md358"></a>
 4.6 Telemetry</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -234,7 +234,7 @@ Svc::ComQueue (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">buffQueueDepth   </td><td class="markdownTableBodyNone">Svc.BuffQueueDepth   </td><td class="markdownTableBodyNone">High-water mark depths of queues handling <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md355"></a>
+<h3><a class="anchor" id="autotoc_md359"></a>
 4.7 Events</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -242,15 +242,15 @@ Svc::ComQueue (Active Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">QueueOverflow   </td><td class="markdownTableBodyNone">WARNING_HI event triggered when a queue can no longer hold the incoming message   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md356"></a>
+<h3><a class="anchor" id="autotoc_md360"></a>
 4.8 Helper Functions</h3>
-<h4><a class="anchor" id="autotoc_md357"></a>
+<h4><a class="anchor" id="autotoc_md361"></a>
 4.8.1 sendComBuffer</h4>
 <p>Stores the com buffer message, sends the com buffer message on the output port, and then sets the send state to waiting.</p>
-<h4><a class="anchor" id="autotoc_md358"></a>
+<h4><a class="anchor" id="autotoc_md362"></a>
 4.8.2 sendBuffer</h4>
 <p>Stores the buffer message, sends the buffer message on the output port, and then sets the send state to waiting.</p>
-<h4><a class="anchor" id="autotoc_md359"></a>
+<h4><a class="anchor" id="autotoc_md363"></a>
 4.8.3 processQueue</h4>
 <p>In a bounded loop that is constrained by the total size of the queue that contains both buffer and com buffer data, do:</p>
 <ol type="1">

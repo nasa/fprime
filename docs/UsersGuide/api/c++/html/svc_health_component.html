@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_health_component.html',''); initR
 <div class="title"><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md515"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md519"></a>
 Svc::Health Component</h1>
-<h2><a class="anchor" id="autotoc_md516"></a>
+<h2><a class="anchor" id="autotoc_md520"></a>
 1. Introduction</h2>
 <p>The <code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> component monitors the execution health of the software. It does so by pinging active components and checking for a response. It also does optional platform-specific checks.</p>
-<h2><a class="anchor" id="autotoc_md517"></a>
+<h2><a class="anchor" id="autotoc_md521"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -114,15 +114,15 @@ Svc::Health Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">HTH-007   </td><td class="markdownTableBodyNone">The <code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> component shall stroke a watchdog port while all ping replies are within their limit and health checks pass   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md518"></a>
+<h2><a class="anchor" id="autotoc_md522"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md519"></a>
+<h3><a class="anchor" id="autotoc_md523"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md520"></a>
+<h4><a class="anchor" id="autotoc_md524"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> component has the following component diagram:</p>
 <p><img src="img/HealthBDD.jpg" alt="`Svc::Health` Diagram" title="Svc::Health" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md521"></a>
+<h4><a class="anchor" id="autotoc_md525"></a>
 3.1.2 Ports</h4>
 <p>The <a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a> component uses the following port types:</p>
 <table class="markdownTable">
@@ -137,15 +137,15 @@ Svc::Health Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a href="../../../Svc/WatchDog/docs/sdd.html"><code>Svc::WatchDog</code></a>   </td><td class="markdownTableBodyNone">Wdog   </td><td class="markdownTableBodyNone">Output   </td><td class="markdownTableBodyNone">n/a   </td><td class="markdownTableBodyNone">Send ping requests from components   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md522"></a>
+<h3><a class="anchor" id="autotoc_md526"></a>
 3.2 Functional Description</h3>
-<h4><a class="anchor" id="autotoc_md523"></a>
+<h4><a class="anchor" id="autotoc_md527"></a>
 3.2.1 Pings</h4>
 <p>The <code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> component monitors health by iterating through a table of port numbers and their maximum allowed timeout. The timeout is specified as the number of calls to the <code>SchedIn</code> port. The actual timeout value in wall time will be dependent on the rate at which the port is called. During each <code>SchedIn</code> port call, all the <code>PingSend</code> ports are called with a key. The key is simply a counter value maintained as a private data member. An active component with a <code>Svc::Ping</code> port is required to execute the port handler on the thread of the component. When the handler is invoked, it returns the value of the <code>Svc::Ping</code> port key argument as the argument to the output <code>Svc::Ping</code> port. When the health component receives the return port invocation on the <code>PingReturn</code> port, it sets a status in the tracking table indicating the response was received. In addition to dispatching pings to components, the <code>SchedIn</code> port call checks the status of all the dispatched pings to verify that they have not exceeded the specified timeout. If there is a call that is outstanding but has not timed out, a counter is decremented. The port is not pinged while there is an outstanding ping call. If an active component times out responding to a ping, the <code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> component sends a FATAL event. The component has commands to completely turn off monitoring, turn off monitoring for a specific port, or update the timeout values. The updated timeout values or monitoring updates are not stored through a software reset.</p>
-<h4><a class="anchor" id="autotoc_md524"></a>
+<h4><a class="anchor" id="autotoc_md528"></a>
 3.2.2 Platform-specific Checks</h4>
 <p>The <code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> component defines an internal method call <code>doOtherChecks()</code>. It is called at the end of the <code>Run</code> handler, and is meant to be used for platform-specific health checks. Alternate implementations can be added to the mod.mk <code>SRC_</code> variables. An empty stub has been provided for implementations where nothing extra is needed.</p>
-<h4><a class="anchor" id="autotoc_md525"></a>
+<h4><a class="anchor" id="autotoc_md529"></a>
 3.2.2.1 VxWorks</h4>
 <p>The <code>doOtherChecks()</code> method does the following checks for VxWorks:</p>
 <ul>
@@ -153,22 +153,22 @@ Svc::Health Component</h1>
 <li>Check for PCI errors <br  />
 </li>
 </ul>
-<h3><a class="anchor" id="autotoc_md526"></a>
+<h3><a class="anchor" id="autotoc_md530"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md527"></a>
+<h4><a class="anchor" id="autotoc_md531"></a>
 3.3.1 Ping Components</h4>
 <p>The <code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> component pings other components and checks for their response:</p>
 <p><img src="img/PingSequence.jpg" alt="Ping Components" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md528"></a>
+<h3><a class="anchor" id="autotoc_md532"></a>
 3.4 State</h3>
 <p><code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md529"></a>
+<h3><a class="anchor" id="autotoc_md533"></a>
 3.5 Algorithms</h3>
 <p><code><a class="el" href="namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb">Svc::Health</a></code> has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md530"></a>
+<h2><a class="anchor" id="autotoc_md534"></a>
 4. Dictionaries</h2>
 <p>TBD</p>
-<h2><a class="anchor" id="autotoc_md531"></a>
+<h2><a class="anchor" id="autotoc_md535"></a>
 5. Module Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -180,7 +180,7 @@ Svc::Health Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test Checklist   </td><td class="markdownTableBodyNone"><a href="Checklist_Unit_test.xls">Link</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md532"></a>
+<h2><a class="anchor" id="autotoc_md536"></a>
 6. Unit Testing</h2>
 <p>The Health unit tests are designed to test interfaces and functionality with the available ports, command processing, telemetry output, EVR and data product generation.</p>
 <ol>
@@ -192,52 +192,52 @@ Off-nominal testing  </li>
 Miscellaneous remaining testing  </li>
 </ol>
 <p>Off-nominal testing contains cases which deal with ping-related issues such as late responses and invalid entries. Every command is also tested with various inputs for thorough validation and code coverage.</p>
-<h2><a class="anchor" id="autotoc_md533"></a>
+<h2><a class="anchor" id="autotoc_md537"></a>
 6.1 Unit Test Descriptions</h2>
-<h3><a class="anchor" id="autotoc_md534"></a>
+<h3><a class="anchor" id="autotoc_md538"></a>
 6.1.1 Nominal Telemetry Test</h3>
 <p>When the Health component's schedIn handler is called, each ping entry in the user provided table is checked if it's enabled. If the entry is enabled and empty, a ping is sent out through its corresponding port. If the entry is awaiting a ping response, its counter is checked against a warning threshold and the counter is decremented. If the warning threshold is reached, an EVR and telemetry write are generated. If the fault threshold is reached, a fatal EVR is generated.</p>
 <p>This test invokes the schedIn handler for multiple iterations with a provided table of three ping entries. To test nominal conditions, when a ping is received through the test port, a valid ping return is sent back to the component. <br  />
 </p>
 <p>For this nominal condition, no EVRs or telemetry are expected.</p>
 <p>Requirement verified: <code>HTH-001</code> </p>
-<h3><a class="anchor" id="autotoc_md535"></a>
+<h3><a class="anchor" id="autotoc_md539"></a>
 6.1.2 Warning Telemetry Test</h3>
 <p>This test verifies the requirement that component shall track the timeout cycles for each ping entry. This is validated by having the component ping each entry in the table without responding. The counter for entry is checked after every iteration to see if its value is decremented accordingly. This test will also cause each entry to reach its warning threshold, so the corresponding EVRs and telemetry will be verified.</p>
 <p>Requirement verified: <code>HTH-002</code> </p>
-<h3><a class="anchor" id="autotoc_md536"></a>
+<h3><a class="anchor" id="autotoc_md540"></a>
 6.1.3 Fault Telemetry Test</h3>
 <p>This test is similar to 6.1.2, with the difference being that the schedIn handler is ran until the fault threshold for each ping entry is reached. The counters for each entry and expected fault EVRs are both verified.</p>
 <p>Requirement verified: <code>HTH-003</code> </p>
-<h3><a class="anchor" id="autotoc_md537"></a>
+<h3><a class="anchor" id="autotoc_md541"></a>
 6.1.4 Enable/Disable All Monitoring Test</h3>
 <p>In this test, we verify the requirement to enable/disable all monitoring of the ping entries. This is done by running the schedIn handler with monitoring enabled initially with pings sent to each entry with no response from the test. After several iterations and certifying that each entry is being checked, we disable monitoring and invoke the schedIn handler again. During multiple runs of the handler, it is verified that timeouts are not modified and no EVRs are received. Monitoring is then re-enabled and checked if it's working as expected.</p>
 <p>Requirement verified: <code>HTH-004</code> </p>
-<h3><a class="anchor" id="autotoc_md538"></a>
+<h3><a class="anchor" id="autotoc_md542"></a>
 6.1.5 Enable/Disable Single Monitor Test</h3>
 <p>This test is similar to 6.1.4, but instead of enabling/disabling all monitors, each ping entry is enabled then disabled. These actions are verified through the previous methodology of 6.1.4.</p>
 <p>Requirement verified: <code>HTH-005</code> </p>
-<h3><a class="anchor" id="autotoc_md539"></a>
+<h3><a class="anchor" id="autotoc_md543"></a>
 6.1.6 Updating Ping Timeout Test</h3>
 <p>This test verifies the requirement that the component shall have a command to update timeout values for a port entry. This is done by modifying the initial timeout values for each ping entry in the table. These changes are validated by running the schedIn handler and checking for EVRs and telemetry at the updated timeout values.</p>
 <p>Requirement verified: <code>HTH-006</code> </p>
-<h3><a class="anchor" id="autotoc_md540"></a>
+<h3><a class="anchor" id="autotoc_md544"></a>
 6.1.7 Watchdog Test</h3>
 <p>This test verifies the requirement that the component shall stroke a watchdog port while all ping are within their limit. This is done by checking the output of the watchdog port and verifying its content.</p>
 <p>Requirement verified: <code>HTH-007</code></p>
-<h3><a class="anchor" id="autotoc_md541"></a>
+<h3><a class="anchor" id="autotoc_md545"></a>
 6.1.8 Nominal Command Test</h3>
 <p>This test verifies the functionally of all the provided health commands including the enable/disable monitoring of the ping entries as well as updating timeouts. All commands are validated and verified with nominal inputs.</p>
-<h3><a class="anchor" id="autotoc_md542"></a>
+<h3><a class="anchor" id="autotoc_md546"></a>
 6.1.9 Nominal Command and Telemetry Test</h3>
 <p>This test is similar to <code>6.1.8</code>, but it includes a nominal running of the SchedIn handler while handling incoming commands.</p>
-<h3><a class="anchor" id="autotoc_md543"></a>
+<h3><a class="anchor" id="autotoc_md547"></a>
 6.1.10 Miscellaneous</h3>
 <p>This set of test cases verifies the remaining off-nominal error cases. Each test case is simulated and validated individually.</p>
-<h2><a class="anchor" id="autotoc_md544"></a>
+<h2><a class="anchor" id="autotoc_md548"></a>
 6.2 Unit Test Coverage</h2>
 <p>To see unit test coverage run fprime-util check &ndash;coverage</p>
-<h2><a class="anchor" id="autotoc_md545"></a>
+<h2><a class="anchor" id="autotoc_md549"></a>
 7. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

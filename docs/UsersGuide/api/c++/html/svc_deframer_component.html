@@ -88,9 +88,9 @@ $(document).ready(function(){initNavTree('_svc_deframer_component.html',''); ini
 <div class="title"><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md371"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md375"></a>
 Svc::Deframer (Passive Component)</h1>
-<h2><a class="anchor" id="autotoc_md372"></a>
+<h2><a class="anchor" id="autotoc_md376"></a>
 1. Introduction</h2>
 <p><code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code> is a passive component. It accepts as input a sequence of byte buffers, which typically come from a ground data system via a <a class="el" href="drv_2_byte_stream_driver_model_2docs_2sdd_8md.html">byte stream driver</a>. It interprets the concatenated data of the buffers as a sequence of uplink frames. The uplink frames need not be aligned on the buffer boundaries, and each frame may span one or more buffers. <code>Deframer</code> extracts the frames from the sequence of buffers. For each complete frame <em>F</em> received, <code>Deframer</code> validates <em>F</em> and extracts a data packet from <em>F</em>. It sends the data packet to another component in the service layer, e.g., an instance of <a class="el" href="svc_2_cmd_dispatcher_2docs_2sdd_8md.html">`Svc::CommandDispatcher`</a>, <a class="el" href="svc_2_file_uplink_2docs_2sdd_8md.html">`Svc::FileUplink`</a>, or <a class="el" href="svc_2_generic_hub_2docs_2sdd_8md.html">`Svc::GenericHub`</a>.</p>
 <p>When instantiating Deframer, you must provide an implementation of <a class="el" href="svc_2_framing_protocol_2docs_2sdd_8md.html">`Svc::DeframingProtocol`</a>. This implementation specifies exactly what is in each frame; typically it is a frame header, a data packet, and a hash value.</p>
@@ -100,7 +100,7 @@ Svc::Deframer (Passive Component)</h1>
 <li><b>Poll:</b> This configuration works with a passive byte stream driver. In this configuration, <code>Deframer</code> polls the driver for buffers on its <code>schedIn</code> cycle. No buffer allocation occurs when polling. <em>FB</em> is a buffer owned by <code>Deframer</code>.</li>
 <li><b>Push:</b> This configuration works with an active byte stream driver. In this configuration the driver invokes a guarded port of <code>Deframer</code> to send a buffer <em>FB</em> to <code>Deframer</code>. The invocation transfers ownership of <em>FB</em> from the driver to <code>Deframer</code>. Deframing occurs on the thread of the byte stream driver. <code>Deframer</code> deallocates <em>FB</em> before it returns from the guarded port call.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md373"></a>
+<h2><a class="anchor" id="autotoc_md377"></a>
 2. Assumptions</h2>
 <ol type="1">
 <li>For any deployment <em>D</em> that uses an instance <em>I</em> of <code>Deframer</code>, the deframing protocol used with <em>I</em> matches the uplink protocol of any ground system that sends frames to <em>I</em>.</li>
@@ -111,7 +111,7 @@ Svc::Deframer (Passive Component)</h1>
 <ol type="1">
 <li>Each frame received by <code>Deframer</code> contains an F Prime command packet or file packet <em>P</em>. The first <em>n</em> bytes of the packet hold the packet descriptor value <code><a class="el" href="class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425ab20fd5c2a3a03493f0b959db4f1ca0a1">Fw::ComPacket::FW_PACKET_COMMAND</a></code> (for a command packet) or <code><a class="el" href="class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a2af3697dc87c65b5561ac143e7197189">Fw::ComPacket::FW_PACKET_FILE</a></code> (for a file packet), serialized as an unsigned integer in big-endian byte order. The number of bytes <em>n</em> matches the size of the type defined by the C preprocessor symbol <code>FwPacketDescriptorType</code> in the F Prime FSW.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md374"></a>
+<h2><a class="anchor" id="autotoc_md378"></a>
 3. Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -139,12 +139,12 @@ Svc::Deframer (Passive Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">SVC-DEFRAMER-011   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code> shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet.   </td><td class="markdownTableBodyNone">Some applications do not use file uplink. Sending a file uplink packet to <code>Deframer</code> should not crash the application because of an unconnected port.   </td><td class="markdownTableBodyNone">Unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md375"></a>
+<h2><a class="anchor" id="autotoc_md379"></a>
 4. Design</h2>
-<h3><a class="anchor" id="autotoc_md376"></a>
+<h3><a class="anchor" id="autotoc_md380"></a>
 4.1. Component Diagram</h3>
 <p>The diagram below shows the <code>Deframer</code> component.</p>
-<div> <img src="img/Deframer.png" alt="" width="700/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md377"></a>
+<div> <img src="img/Deframer.png" alt="" width="700/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md381"></a>
 4.2. Ports</h3>
 <p><code>Deframer</code> has the following ports:</p>
 <table class="markdownTable">
@@ -170,7 +170,7 @@ Svc::Deframer (Passive Component)</h1>
 <td class="markdownTableBodyNone"><code>sync input</code>   </td><td class="markdownTableBodyNone"><code>cmdResponseIn</code>   </td><td class="markdownTableBodyNone"><code>Fw.CmdResponse</code>   </td><td class="markdownTableBodyNone">Port for receiving command responses from a command dispatcher. Invoking this port does nothing. The port exists to allow the matching connection in the topology.   </td></tr>
 </table>
 <p><a class="anchor" id="derived-classes"></a> </p>
-<h3><a class="anchor" id="autotoc_md378"></a>
+<h3><a class="anchor" id="autotoc_md382"></a>
 4.3. Derived Classes</h3>
 <p><code>Deframer</code> is derived from <code>DeframerComponentBase</code> as usual. It is also derived (via C++ multiple inheritance) from <a class="el" href="svc_2_framing_protocol_2docs_2sdd_8md.html">`Svc::DeframingProtocolInterface`</a>. The multiple inheritance makes the <code>Deframer</code> instance into the instance of <code><a class="el" href="class_svc_1_1_deframing_protocol_interface.html" title="interface supplied to the deframing protocol">Svc::DeframingProtocolInterface</a></code> that is required to use <code><a class="el" href="class_svc_1_1_deframing_protocol.html" title="Abstract base class representing a deframing protocol.">Svc::DeframingProtocol</a></code>. See <a href="#dpi-impl">below</a> for a description of how <code>Deframer</code> implements <code>DeframingProtocolInterface</code>.</p>
 <p>Here is a class diagram for <code>Deframer</code>:</p>
@@ -179,7 +179,7 @@ Svc::Deframer (Passive Component)</h1>
 <div class="line">    PassiveComponentBase &lt;|-- DeframerComponentBase</div>
 <div class="line">    DeframerComponentBase &lt;|-- Deframer</div>
 <div class="line">    DeframingProtocolInterface &lt;|-- Deframer</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md379"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md383"></a>
 4.4. State</h3>
 <p><code>Deframer</code> maintains the following state:</p>
 <ol type="1">
@@ -194,7 +194,7 @@ Svc::Deframer (Passive Component)</h1>
 <ol type="1">
 <li><code>m_pollBuffer</code>: The buffer used for polling input: an array of 1024 <code>POLL_BUFFER_SIZE</code> values.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md380"></a>
+<h3><a class="anchor" id="autotoc_md384"></a>
 4.5. Header File Configuration</h3>
 <p>The <code>Deframer</code> header file provides the following configurable constants:</p>
 <ol type="1">
@@ -203,7 +203,7 @@ Svc::Deframer (Passive Component)</h1>
 <ol type="1">
 <li><code>Svc::Deframer::POLL_BUFFER_SIZE</code>: The size of the buffer used for polling data.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md381"></a>
+<h3><a class="anchor" id="autotoc_md385"></a>
 4.6. Runtime Setup</h3>
 <p>To set up an instance of <code>Deframer</code>, you do the following:</p>
 <ol type="1">
@@ -219,16 +219,16 @@ Svc::Deframer (Passive Component)</h1>
 </li>
 </ol>
 <p>For an example of setting up a <code>Deframer</code> instance, see the <code>uplink</code> instance in <a href="../../../Ref/Top/instances.fpp"><code>Ref/Top/instances.fpp</code></a>.</p>
-<h3><a class="anchor" id="autotoc_md382"></a>
+<h3><a class="anchor" id="autotoc_md386"></a>
 4.7. Port Handlers</h3>
-<h4><a class="anchor" id="autotoc_md383"></a>
+<h4><a class="anchor" id="autotoc_md387"></a>
 4.7.1. framedIn</h4>
 <p>The <code>framedIn</code> port handler receives an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>FB</em> and a receive status <em>S</em>. It does the following:</p>
 <ol type="1">
 <li>If <em>S</em> = <code>RECV_OK</code>, then call <a href="#processBuffer"><code>processBuffer</code></a>, passing in <em>FB</em>.</li>
 <li>Deallocate <em>FB</em> by invoking <code>framedDeallocate</code>.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md384"></a>
+<h4><a class="anchor" id="autotoc_md388"></a>
 4.7.2. schedIn</h4>
 <p>The <code>schedIn</code> port handler does the following:</p>
 <ol type="1">
@@ -243,18 +243,18 @@ Svc::Deframer (Passive Component)</h1>
 </ol>
 </li>
 </ol>
-<h4><a class="anchor" id="autotoc_md385"></a>
+<h4><a class="anchor" id="autotoc_md389"></a>
 4.7.3. cmdResponseIn</h4>
 <p>The <code>cmdResponseIn</code> handler does nothing. It exists to provide the necessary symmetry in the topology (every component that sends a command to the dispatcher should accept a matching response).</p>
 <p><a class="anchor" id="dpi-impl"></a> </p>
-<h3><a class="anchor" id="autotoc_md386"></a>
+<h3><a class="anchor" id="autotoc_md390"></a>
 4.8. Implementation of Svc::DeframingProtocolInterface</h3>
 <p><a class="anchor" id="allocate"></a> </p>
-<h4><a class="anchor" id="autotoc_md387"></a>
+<h4><a class="anchor" id="autotoc_md391"></a>
 4.8.1. allocate</h4>
 <p>The implementation of <code>allocate</code> invokes <code>bufferAllocate</code>.</p>
 <p><a class="anchor" id="route"></a> </p>
-<h4><a class="anchor" id="autotoc_md388"></a>
+<h4><a class="anchor" id="autotoc_md392"></a>
 4.8.2. route</h4>
 <p>The implementation of <code>route</code> takes a reference to an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>PB</em> (a packet buffer) and does the following:</p>
 <ol type="1">
@@ -284,10 +284,10 @@ Svc::Deframer (Passive Component)</h1>
 <ol type="1">
 <li>If <code>deallocate = true</code>, then invoke <code>bufferDeallocate</code> to deallocate <em>PB</em>.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md389"></a>
+<h3><a class="anchor" id="autotoc_md393"></a>
 4.9. Helper Functions</h3>
 <p><a class="anchor" id="processBuffer"></a> </p>
-<h4><a class="anchor" id="autotoc_md390"></a>
+<h4><a class="anchor" id="autotoc_md394"></a>
 4.9.1. processBuffer</h4>
 <p><code>processBuffer</code> accepts a reference to an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>FB</em> (a frame buffer). It does the following:</p>
 <ol type="1">
@@ -324,7 +324,7 @@ Svc::Deframer (Passive Component)</h1>
 </li>
 </ol>
 <p><a class="anchor" id="processRing"></a> </p>
-<h4><a class="anchor" id="autotoc_md391"></a>
+<h4><a class="anchor" id="autotoc_md395"></a>
 4.9.2. processRing</h4>
 <p>In a bounded loop, while there is data remaining in <code>m_inRing</code>, do:</p>
 <ol type="1">
@@ -339,13 +339,13 @@ Svc::Deframer (Passive Component)</h1>
 <ol type="1">
 <li>Otherwise something is wrong. Rotate <code>m_inRing</code> by one byte, to skip byte by byte over bad data until we find a valid frame.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md392"></a>
+<h2><a class="anchor" id="autotoc_md396"></a>
 5. Ground Interface</h2>
 <p>None.</p>
-<h2><a class="anchor" id="autotoc_md393"></a>
+<h2><a class="anchor" id="autotoc_md397"></a>
 6. Example Uses</h2>
 <p><a class="anchor" id="top-diagrams"></a> </p>
-<h3><a class="anchor" id="autotoc_md394"></a>
+<h3><a class="anchor" id="autotoc_md398"></a>
 6.1. Topology Diagrams</h3>
 <p>The following topology diagrams show how to connect <code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code> to a byte stream driver, a command dispatcher, and a file uplink component. The diagrams use the following instances:</p>
 <ul>
@@ -364,9 +364,9 @@ Svc::Deframer (Passive Component)</h1>
 <p><b>Topology 2: Command packets and command responses:</b></p>
 <div> <img src="img/top/cmd.png" alt="" width="800/" class="inline"/> </div><p>Revise the port numbers of <code>cmdDisp.seqCmdBuff</code> and <code>cmdDisp.compCmdStat</code> as appropriate for your application. If you model your topology in FPP, then FPP can automatically assign these numbers.</p>
 <p><b>Topology 3: Buffers containing packet data:</b></p>
-<div> <img src="img/top/deframer-file.png" alt="" width="1000/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md395"></a>
+<div> <img src="img/top/deframer-file.png" alt="" width="1000/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md399"></a>
 6.2. Sequence Diagrams</h3>
-<h4><a class="anchor" id="autotoc_md396"></a>
+<h4><a class="anchor" id="autotoc_md400"></a>
 6.2.1. Active Byte Stream Driver</h4>
 <p><b>Sending a command packet:</b> The following sequence diagram shows what happens when <code>activeComm</code> sends data to <code>deframer</code>, and <code>deframer</code> decodes the data into a command packet. Open vertical rectangles represent threads. Vertical dashed lines represent component code. Solid horizontal arrows represent synchronous port invocations, and open horizontal arrows represent asynchronous port invocations.</p>
 <div class="fragment"><div class="line">sequenceDiagram</div>
@@ -409,7 +409,7 @@ Svc::Deframer (Passive Component)</h1>
 <div class="line">    fileUplink-&gt;&gt;buffMgr: Deallocate PB</div>
 <div class="line">    buffMgr--&gt;&gt;fileUplink: </div>
 <div class="line">    deactivate fileUplink</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md397"></a>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md401"></a>
 6.2.2. Passive Byte Stream Driver</h4>
 <p><b>Sending a command packet:</b> The following sequence diagram shows what happens when <code>passiveComm</code> sends data to <code>deframer</code>, and <code>deframer</code> decodes the data into a command packet.</p>
 <div class="fragment"><div class="line">sequenceDiagram</div>
@@ -446,7 +446,7 @@ Svc::Deframer (Passive Component)</h1>
 <div class="line">    fileUplink-&gt;&gt;buffMgr: Deallocate PB</div>
 <div class="line">    buffMgr--&gt;&gt;fileUplink: </div>
 <div class="line">    deactivate fileUplink</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md398"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md402"></a>
 6.3. Using Svc::GenericHub</h3>
 <p>You can use <code>Deframer</code> with an instance of <a class="el" href="svc_2_generic_hub_2docs_2sdd_8md.html">`Svc::GenericHub`</a> to send deframed command packets and file packets across a network connection, instead of directly to a command dispatcher or file uplink component. To send deframed packets this way, do the following:</p>
 <ol type="1">
@@ -460,7 +460,7 @@ Svc::Deframer (Passive Component)</h1>
 <p><b>Topology 3: Buffers containing packet data</b></p>
 <div> <img src="img/top/hub-file.png" alt="" width="1000/" class="inline"/> </div><p>Revise the port number of <code>hub.buffersIn</code> as appropriate for your application. When <code>hub</code> receives a buffer on <code>buffersIn</code>, it copies the data across the connection to the other hub and deallocates the buffer.</p>
 <p>If you don't need to transmit file packets across the hub, then you can omit the <code>hub</code> connections shown in this topology.</p>
-<h2><a class="anchor" id="autotoc_md399"></a>
+<h2><a class="anchor" id="autotoc_md403"></a>
 7. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

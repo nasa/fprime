@@ -88,28 +88,28 @@ $(document).ready(function(){initNavTree('_svc_ping_port.html',''); initResizabl
 <div class="title">Svc::Ping Port </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md566"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md570"></a>
 Svc::Ping Port</h1>
-<h2><a class="anchor" id="autotoc_md567"></a>
+<h2><a class="anchor" id="autotoc_md571"></a>
 1. Introduction</h2>
 <p>The <code>Svc::Ping</code> port is used to ping active components to verify that they are still responsive and have not hung. <br  />
 </p>
-<h2><a class="anchor" id="autotoc_md568"></a>
+<h2><a class="anchor" id="autotoc_md572"></a>
 2. Design</h2>
 <p>A health component in the system uses a set of ping ports to send a message to an active component. The active component is required to respond with the value in the key argument passed in the port by a certain timeout.</p>
-<h3><a class="anchor" id="autotoc_md569"></a>
+<h3><a class="anchor" id="autotoc_md573"></a>
 2.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md570"></a>
+<h4><a class="anchor" id="autotoc_md574"></a>
 2.1.1 Port Diagram</h4>
 <p>The <code>Svc::Ping</code> port has the following port diagram:</p>
 <p><img src="img/PingBDD.jpg" alt="`Svc::Ping` Diagram" title="Svc::Ping Port" class="inline"/></p>
 <p>The <code>Svc::Ping</code> port has the following arguments:</p>
 <p>Argument | Type | Description --&mdash; | --------&mdash; key | U32 | Key that the active component is required to return <br  />
 </p>
-<h4><a class="anchor" id="autotoc_md571"></a>
+<h4><a class="anchor" id="autotoc_md575"></a>
 2.1.2 Serializables</h4>
 <p>There are no serializables defined in the port</p>
-<h2><a class="anchor" id="autotoc_md572"></a>
+<h2><a class="anchor" id="autotoc_md576"></a>
 3. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

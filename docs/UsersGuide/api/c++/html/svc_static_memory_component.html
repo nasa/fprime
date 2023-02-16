@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('_svc_static_memory_component.html','')
 <div class="title"><a class="el" href="namespace_svc.html#ae0dd31d08e2d4a55709aff6caa18ace6">Svc::StaticMemory</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md636"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md640"></a>
 Svc::StaticMemory Component</h1>
 <p>The StaticMemory component is a drop in replacement for <a class="el" href="namespace_svc.html#a3cd251693b4a0d77eb953f6dd9c049e9">Svc::BufferManager</a> that allocates memory out of a static pool of memory. This allows for allocations of known sizes and usage patterns to avoid extra dynamic memory complexity at the expense of extra allocations.</p>
 <p><b>Note:</b> the static memory component operates under the following caveats.</p>
@@ -98,7 +98,7 @@ Svc::StaticMemory Component</h1>
 <li>Memory must be deallocated before being allocated again.</li>
 </ol>
 <p><b>See:</b> <a class="el" href="namespace_svc.html#a3cd251693b4a0d77eb953f6dd9c049e9">Svc::BufferManager</a> for usage examples.</p>
-<h2><a class="anchor" id="autotoc_md637"></a>
+<h2><a class="anchor" id="autotoc_md641"></a>
 Configuration</h2>
 <p>StaticMemory number of allocations and ports are configured using <code>AcConstants.ini</code> as shown below. This sets the number of allocate and deallocate port indices as well as the memory segments.</p>
 <div class="fragment"><div class="line">StaticMemoryAllocations = 4</div>
@@ -106,7 +106,7 @@ Configuration</h2>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">STATIC_MEMORY_ALLOCATION_SIZE = 2048</div>
 </div><!-- fragment --><p>This means the total memory used is <code>StaticMemoryAllocations</code> * <code>STATIC_MEMORY_ALLOCATION_SIZE</code> bytes.</p>
-<h2><a class="anchor" id="autotoc_md638"></a>
+<h2><a class="anchor" id="autotoc_md642"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -116,7 +116,7 @@ Requirements</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">STAMEM-002   </td><td class="markdownTableBodyNone">The static memory shall define allocate and deallocate ports shadowing <a class="el" href="namespace_svc.html#a3cd251693b4a0d77eb953f6dd9c049e9">Svc::BufferManager</a>   </td><td class="markdownTableBodyNone">unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md639"></a>
+<h2><a class="anchor" id="autotoc_md643"></a>
 Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

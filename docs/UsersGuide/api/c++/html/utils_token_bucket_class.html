@@ -88,15 +88,15 @@ $(document).ready(function(){initNavTree('_utils_token_bucket_class.html',''); i
 <div class="title"><a class="el" href="class_utils_1_1_token_bucket.html">Utils::TokenBucket</a> Class </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md694"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md698"></a>
 Utils::TokenBucket</h1>
-<h2><a class="anchor" id="autotoc_md695"></a>
+<h2><a class="anchor" id="autotoc_md699"></a>
 1 Introduction</h2>
 <p><code>TokenBucket</code> is a pure utility class used for throttling actions, such as components that want to throttle events.</p>
 <p>It is similar to <code>RateLimiter</code>, but supports a different throttling behavior, specifically time-based throughput throttling with burstiness. For instance, <code>TokenBucket</code> allows a burst of 5 triggers, before throttling them to 1 trigger per second after. Unused triggers are collected up to the burst maximum.</p>
-<h2><a class="anchor" id="autotoc_md696"></a>
+<h2><a class="anchor" id="autotoc_md700"></a>
 2 Usage</h2>
-<h3><a class="anchor" id="autotoc_md697"></a>
+<h3><a class="anchor" id="autotoc_md701"></a>
 2.1 Basic</h3>
 <p>TokenBucket is a class that can be included and instantiated with the initial replenish interval and max tokens.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="token_bucket_8hpp.html">Utils/TokenBucket.hpp</a>&gt;</span></div>
@@ -112,7 +112,7 @@ Utils::TokenBucket</h1>
 </div><!-- fragment --><p>Your component must provide it the current <code><a class="el" href="class_fw_1_1_time.html">Fw::Time</a></code> in the trigger. It will then use that time to evaluate how many tokens to replenish between the last trigger and now, and evaluate whether a token can be consumed.</p>
 <p>With 5 initial tokens, the first five triggers are guaranteed to return true, no matter what the time given is. After that, trigger will return true only if time has elapsed enough for a token to be replenished (in this example, once per second).</p>
 <p>Note that the max tokens is capped at 1000, currently defined as <code>MAX_TOKEN_BUCKET_TOKENS</code> in <a class="el" href="token_bucket_8hpp.html">TokenBucket.hpp</a>.</p>
-<h3><a class="anchor" id="autotoc_md698"></a>
+<h3><a class="anchor" id="autotoc_md702"></a>
 2.2 Advanced</h3>
 <p><code>TokenBucket</code> can be constructed with 3 more parameters:</p>
 <div class="fragment"><div class="line">U32 replenishIntervalMicroSecs = 1000000;</div>

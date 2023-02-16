@@ -88,15 +88,15 @@ $(document).ready(function(){initNavTree('_utils_lock_guard_class.html',''); ini
 <div class="title"><a class="el" href="class_utils_1_1_lock_guard.html">Utils::LockGuard</a> Class </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md685"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md689"></a>
 Utils::LockGuard</h1>
-<h2><a class="anchor" id="autotoc_md686"></a>
+<h2><a class="anchor" id="autotoc_md690"></a>
 1 Introduction</h2>
 <p><code>LockGuard</code> is a RAII-wrapper around <a class="el" href="class_os_1_1_mutex.html">Os::Mutex</a>, essentially allowing scoped lock and unlock. It works the same way as C++11 <code>std::lock_guard</code>.</p>
 <p>If a section of code has only basic lock/unlock requirements, <code>LockGuard</code> ensures that early exits from that section will always release the lock.</p>
-<h2><a class="anchor" id="autotoc_md687"></a>
+<h2><a class="anchor" id="autotoc_md691"></a>
 2 Usage</h2>
-<h3><a class="anchor" id="autotoc_md688"></a>
+<h3><a class="anchor" id="autotoc_md692"></a>
 2.1 Basic</h3>
 <p>LockGuard is a class that can be included and instantiated with an associated <a class="el" href="class_os_1_1_mutex.html">Os::Mutex</a> reference.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="lock_guard_8hpp.html">Utils/LockGuard.hpp</a>&gt;</span></div>

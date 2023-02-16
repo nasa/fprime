@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_buffer_manager_component.html',''
 <div class="title"><a class="el" href="namespace_svc.html#a3cd251693b4a0d77eb953f6dd9c049e9">Svc::BufferManager</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md247"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md251"></a>
 Svc::BufferManager</h1>
-<h2><a class="anchor" id="autotoc_md248"></a>
+<h2><a class="anchor" id="autotoc_md252"></a>
 1 Introduction</h2>
 <p><code>BufferManager</code> is a passive ISF component. It allocates a set of fixed-sized buffers as specified by the user. The overall memory for the buffers is allocated by a memory allocator provided to the component at runtime.</p>
-<h2><a class="anchor" id="autotoc_md249"></a>
+<h2><a class="anchor" id="autotoc_md253"></a>
 2 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -111,21 +111,21 @@ Svc::BufferManager</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">FPRIME-BM-006   </td><td class="markdownTableBodyNone"><code>BufferManager</code> shall allow buffers to be returned in any order   </td><td class="markdownTableBodyNone">Do not restrict the lifetime or usage of buffers   </td><td class="markdownTableBodyNone">Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md250"></a>
+<h2><a class="anchor" id="autotoc_md254"></a>
 3 Design</h2>
-<h3><a class="anchor" id="autotoc_md251"></a>
+<h3><a class="anchor" id="autotoc_md255"></a>
 3.1 Assumptions</h3>
 <p>The design of <code>BufferManager</code> assumes the following:</p>
 <ol type="1">
 <li><code>BufferManager</code> has some maximum number of outstanding allocations, set at component initialization, that is never exceeded.</li>
 <li>The store maintained by <code>BufferManager</code> has a fixed size, set at component initialization. This fixed size is never exceeded by the outstanding allocations.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md252"></a>
+<h3><a class="anchor" id="autotoc_md256"></a>
 3.2 Block Description Diagram (BDD)</h3>
 <p><img src="img/BufferManagerBDD.jpg" alt="`BufferManager` BDD" title="BufferManager" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md253"></a>
+<h3><a class="anchor" id="autotoc_md257"></a>
 3.3 Ports</h3>
-<h4><a class="anchor" id="autotoc_md254"></a>
+<h4><a class="anchor" id="autotoc_md258"></a>
 3.3.1 Role Ports</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -137,7 +137,7 @@ Svc::BufferManager</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>eventOut</code>   </td><td class="markdownTableBodyNone"><a href="../../../Fw/Log/docs/sdd.html"><code>Fw::LogEvent</code></a>   </td><td class="markdownTableBodyNone">LogEvent   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md255"></a>
+<h4><a class="anchor" id="autotoc_md259"></a>
 3.3.2 Component-Specific Ports</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -149,22 +149,22 @@ Svc::BufferManager</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>schedIn</code>   </td><td class="markdownTableBodyNone"><a href="../../../Svc/Sched/docs/sdd.html"><code>Svc::Sched</code></a>   </td><td class="markdownTableBodyNone">sync input (callee)   </td><td class="markdownTableBodyNone">writes telemetry values (optional, if the user doesn't need BufferManager telemetry)   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md256"></a>
+<h3><a class="anchor" id="autotoc_md260"></a>
 3.4 Constants</h3>
 <p><code>BufferManager</code> maintains the following constants:</p>
 <ul>
 <li><em>BUFFERMGR_MAX_NUM_BINS</em>: The maximum number of bins (i.e. buffers pool of different sizes)</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md257"></a>
+<h3><a class="anchor" id="autotoc_md261"></a>
 3.5 State</h3>
 <p><code>BufferManager</code> maintains the following state:</p>
 <ul>
 <li><em>m_buffers</em>: A set of buffers to allocate to users.</li>
 <li><em>AllocatedBuffer::allocated</em>: Indicates whether a particular buffer in the pool has been allocated to the user.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md258"></a>
+<h3><a class="anchor" id="autotoc_md262"></a>
 3.6 Port Behavior</h3>
-<h4><a class="anchor" id="autotoc_md259"></a>
+<h4><a class="anchor" id="autotoc_md263"></a>
 3.6.1 bufferGetCallee</h4>
 <p>When <code>BufferManager</code> receives a request for a buffer of size <em>s</em> on <a href="#bufferGetCallee"><em>bufferGetCallee</em></a>, it carries out the following steps:</p>
 <ol type="1">
@@ -173,7 +173,7 @@ Svc::BufferManager</h1>
 <li>Return the <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> instance to the user.</li>
 <li>If a free buffer cannot be found, return an empty buffer to the user.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md260"></a>
+<h4><a class="anchor" id="autotoc_md264"></a>
 3.6.2 bufferSendIn</h4>
 <p>When <code>BufferManager</code> receives notification of a free buffer on <a href="#bufferSendIn"><em>bufferSendIn</em></a>, it carries out the following steps:</p>
 <ol type="1">
@@ -182,10 +182,10 @@ Svc::BufferManager</h1>
 <li>If they are valid, use the buffer ID to find the allocated buffer.</li>
 <li>Clear the "allocated" flag to make the buffer available again.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md261"></a>
+<h4><a class="anchor" id="autotoc_md265"></a>
 3.6.3 schedIn</h4>
 <p>The <code>schedIn</code> port is optional. It doesn't need to be connected for <code>BufferManager</code> to function correctly. When <code>BufferManager</code> receives a call on this port, it will write all the defined telemetry values.</p>
-<h3><a class="anchor" id="autotoc_md262"></a>
+<h3><a class="anchor" id="autotoc_md266"></a>
 3.7 Sequence Diagram</h3>
 <p>The following sequence diagram shows the procedure for sending a buffer from one component to another:</p>
 <ol type="1">
@@ -203,7 +203,7 @@ Svc::BufferManager</h1>
 <div class="line">    Receiving Component-&gt;&gt;BufferManager: Send buffer</div>
 <div class="line">    deactivate BufferManager</div>
 <div class="line">    deactivate Receiving Component</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md263"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md267"></a>
 3.8 Assertions</h3>
 <p><code>BufferManager</code> will assert under the following conditions:</p>
 <ul>
@@ -213,12 +213,12 @@ Svc::BufferManager</h1>
 <li>A returned buffer has an indicated size larger than originally allocated.</li>
 <li>A returned buffer has a pointer different than the one originally allocated.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md264"></a>
+<h2><a class="anchor" id="autotoc_md268"></a>
 4 Dictionary</h2>
 <p>TBD</p>
-<h2><a class="anchor" id="autotoc_md265"></a>
+<h2><a class="anchor" id="autotoc_md269"></a>
 5 Checklists</h2>
-<h2><a class="anchor" id="autotoc_md266"></a>
+<h2><a class="anchor" id="autotoc_md270"></a>
 6 Unit Testing</h2>
 <p>Completed. </p>
 </div></div><!-- contents -->

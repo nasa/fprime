@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_rate_group_driver_component.html'
 <div class="title"><a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md613"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md617"></a>
 Svc::RateGroupDriver Component</h1>
-<h2><a class="anchor" id="autotoc_md614"></a>
+<h2><a class="anchor" id="autotoc_md618"></a>
 1. Introduction</h2>
 <p>The RateGroupDriver Component is used to take a single system tick and distribute it to multiple rate groups in a system. It takes the input <code>Svc::Sched</code> port, then divides down the tick rate based on arguments to the constructor. Typically, the output ports would be connected to the asynchronous inputs of an <code>ActiveRateGroup</code>.</p>
-<h2><a class="anchor" id="autotoc_md615"></a>
+<h2><a class="anchor" id="autotoc_md619"></a>
 2. Requirements</h2>
 <p>The requirements for RateGroupDriver are as follows:</p>
 <table class="markdownTable">
@@ -104,15 +104,15 @@ Svc::RateGroupDriver Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">RCD-002   </td><td class="markdownTableBodyNone">The '<a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a>' component shall be able to run in ISR context   </td><td class="markdownTableBodyNone">Inspection   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md616"></a>
+<h2><a class="anchor" id="autotoc_md620"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md617"></a>
+<h3><a class="anchor" id="autotoc_md621"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md618"></a>
+<h4><a class="anchor" id="autotoc_md622"></a>
 3.1.1 Component Diagram</h4>
 <p>The <a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a> component has the following component diagram:</p>
 <p><img src="img/RateGroupDriverBDD.jpg" alt="RateGroupDriver Diagram" title="RateGroupDriver" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md619"></a>
+<h4><a class="anchor" id="autotoc_md623"></a>
 3.1.2 Ports</h4>
 <p>The <a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a> component uses the following port types:</p>
 <table class="markdownTable">
@@ -123,7 +123,7 @@ Svc::RateGroupDriver Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a href="../Sched/docs/sdd.html"><code>Svc::Cycle</code></a>   </td><td class="markdownTableBodyNone">CycleOut   </td><td class="markdownTableBodyNone">Output   </td><td class="markdownTableBodyNone">n/a   </td><td class="markdownTableBodyNone">Used to drive rate groups   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md620"></a>
+<h4><a class="anchor" id="autotoc_md624"></a>
 3.2 Functional Description</h4>
 <p>The <a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a> component has one input port that receives a system tick.</p>
 <p>The <code>configure()</code> function is passed an array of integer arguments that specifies the divisors for each output port. This should be called after the constructor but before any port calls are made. The contents of the array are copied during the call, so the array can be a temporary variable.</p>
@@ -143,22 +143,22 @@ Svc::RateGroupDriver Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">1Hz   </td><td class="markdownTableBodyNone">1   </td><td class="markdownTableBodyNone">1Hz   </td><td class="markdownTableBodyNone">2   </td><td class="markdownTableBodyNone">0.5Hz   </td><td class="markdownTableBodyNone">4   </td><td class="markdownTableBodyNone">0.25Hz   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md621"></a>
+<h3><a class="anchor" id="autotoc_md625"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md622"></a>
+<h4><a class="anchor" id="autotoc_md626"></a>
 3.3.1 System Tick Port Call</h4>
 <p>As described in the Functional Description section, the RateGroupDriver component accepts calls to the SchedIn and divides them down to the SchedOut ports:</p>
 <p><img src="img/RateGroupDriverPortCallSequence.jpg" alt="System Tick Port Call" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md623"></a>
+<h3><a class="anchor" id="autotoc_md627"></a>
 3.4 State</h3>
 <p>RateGroupDriver has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md624"></a>
+<h3><a class="anchor" id="autotoc_md628"></a>
 3.5 Algorithms</h3>
 <p>RateGroupDriver has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md625"></a>
+<h2><a class="anchor" id="autotoc_md629"></a>
 4. Dictionary</h2>
 <p>No dictionary for this module</p>
-<h2><a class="anchor" id="autotoc_md626"></a>
+<h2><a class="anchor" id="autotoc_md630"></a>
 5. Module Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -170,10 +170,10 @@ Svc::RateGroupDriver Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test Checklist   </td><td class="markdownTableBodyNone"><a href="Checklist_Unit_Test.xlsx">Link</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md627"></a>
+<h2><a class="anchor" id="autotoc_md631"></a>
 6. Unit Testing</h2>
 <p>To see unit test coverage run fprime-util check &ndash;coverage</p>
-<h2><a class="anchor" id="autotoc_md628"></a>
+<h2><a class="anchor" id="autotoc_md632"></a>
 7. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

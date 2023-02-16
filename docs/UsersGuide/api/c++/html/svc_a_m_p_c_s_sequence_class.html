@@ -88,11 +88,11 @@ $(document).ready(function(){initNavTree('_svc_a_m_p_c_s_sequence_class.html',''
 <div class="title"><a class="el" href="class_svc_1_1_a_m_p_c_s_sequence.html" title="A sequence in AMPCS format.">Svc::AMPCSSequence</a> Class </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md294"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md298"></a>
 Svc::AMPCSSequence Class</h1>
 <p><code>AMPCSSequence</code> is a derived class of <code>CmdSequencer::Sequence</code>. It loads, validates, and runs AMPCS-compatible sequence files.</p>
 <p><a class="anchor" id="File_Format"></a> </p>
-<h2><a class="anchor" id="autotoc_md295"></a>
+<h2><a class="anchor" id="autotoc_md299"></a>
 1 File Format</h2>
 <p>A sequence file consists of a 32-bit sequence header followed by up to 32,768 bytes of record data.</p>
 <p>The record data consists of zero or more records. Each record has the following format:</p>
@@ -108,11 +108,11 @@ Svc::AMPCSSequence Class</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Command   </td><td class="markdownTableBodyNone">&lt; 1017   </td><td class="markdownTableBodyNone">A serialized command in F Prime format, with a 16-bit opcode   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md296"></a>
+<h2><a class="anchor" id="autotoc_md300"></a>
 2 Implementation</h2>
 <p>The <code>AMPCSSequence</code> class implements the virtual functions of <code>CmdSequencer::Sequence</code> as follows.</p>
 <p><a class="anchor" id="loadFile"></a> </p>
-<h3><a class="anchor" id="autotoc_md297"></a>
+<h3><a class="anchor" id="autotoc_md301"></a>
 2.1 &lt;tt&gt;loadFile(&lt;/tt&gt;*filename*&lt;tt&gt;)&lt;/tt&gt;</h3>
 <ol type="1">
 <li>Read the stored CRC value from <em>filename</em><code>.CRC32</code>.</li>
@@ -129,10 +129,10 @@ Svc::AMPCSSequence Class</h1>
 </ul>
 </li>
 </ol>
-<h3><a class="anchor" id="autotoc_md298"></a>
+<h3><a class="anchor" id="autotoc_md302"></a>
 2.2 &lt;tt&gt;hasMoreRecords&lt;/tt&gt;</h3>
 <p>Return <code>true</code> if and only if <em>B</em> has more data.</p>
-<h3><a class="anchor" id="autotoc_md299"></a>
+<h3><a class="anchor" id="autotoc_md303"></a>
 2.3 &lt;tt&gt;nextRecord&lt;/tt&gt;</h3>
 <p>Deserialize and return the next record stored in the serial buffer. The deserialized record contains the following binary data in its argument field:</p>
 <table class="markdownTable">
@@ -145,10 +145,10 @@ Svc::AMPCSSequence Class</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Arguments   </td><td class="markdownTableBodyNone">Variable   </td><td class="markdownTableBodyNone">Bytes 2-end of the serial record   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md300"></a>
+<h3><a class="anchor" id="autotoc_md304"></a>
 2.4 &lt;tt&gt;reset&lt;/tt&gt;</h3>
 <p>Reset <em>B</em> for deserialization.</p>
-<h3><a class="anchor" id="autotoc_md301"></a>
+<h3><a class="anchor" id="autotoc_md305"></a>
 2.5 &lt;tt&gt;clear&lt;/tt&gt;</h3>
 <p>Reset <em>B</em> for serialization. </p>
 </div></div><!-- contents -->

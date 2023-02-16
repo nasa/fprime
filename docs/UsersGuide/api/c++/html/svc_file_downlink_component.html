@@ -88,13 +88,13 @@ $(document).ready(function(){initNavTree('_svc_file_downlink_component.html','')
 <div class="title"><a class="el" href="class_svc_1_1_file_downlink.html">Svc::FileDownlink</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md423"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md427"></a>
 Svc::FileDownlink Component</h1>
-<h2><a class="anchor" id="autotoc_md424"></a>
+<h2><a class="anchor" id="autotoc_md428"></a>
 1 Introduction</h2>
 <p><code>FileDownlink</code> is an active F´ component that manages spacecraft file downlink. Both operators and components on the spacecraft can add files to the file queue, which <code>FileDownlink</code> will downlink from. Operators can enqueue files using the <code>SendFile</code> and <code>SendPartial</code> commands, and components can enqueue files using the <code>SendFile</code> port. The <code>FileComplete</code> port broadcasts when a file downlink initiated by a port completes, allowing components to detect when a previous enqueued file downlink has completed. To prevent a continuous stream of file downlink traffic from saturating the communication link, a cooldown can be configured to add a delay between the completion of a file downlink and starting on the next file in the queue.</p>
 <p><b>Note:</b> file downlink is limited to processing files with a maximum file size of 4GiB. Larger files will result in a bad size error.</p>
-<h2><a class="anchor" id="autotoc_md425"></a>
+<h2><a class="anchor" id="autotoc_md429"></a>
 2 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -106,9 +106,9 @@ Svc::FileDownlink Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">FD-003   </td><td class="markdownTableBodyNone"><code>FileDownlink</code> shall wait for a cooldown after completing a file downlink before starting another file downlink   </td><td class="markdownTableBodyNone">Allows a saturated link to process a backlog that may have built up during a file downlink   </td><td class="markdownTableBodyNone">Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md426"></a>
+<h2><a class="anchor" id="autotoc_md430"></a>
 3 Design</h2>
-<h3><a class="anchor" id="autotoc_md427"></a>
+<h3><a class="anchor" id="autotoc_md431"></a>
 3.1 Assumptions</h3>
 <p>The design of <code>FileDownlink</code> assumes the following:</p>
 <ol type="1">
@@ -116,9 +116,9 @@ Svc::FileDownlink Component</h1>
 <li>One file downlink happens at a time.</li>
 <li>Both components and operators must be able to enqueue files, necessitating both a <code>SendFile</code> command and port.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md428"></a>
+<h3><a class="anchor" id="autotoc_md432"></a>
 3.3 Ports</h3>
-<h4><a class="anchor" id="autotoc_md429"></a>
+<h4><a class="anchor" id="autotoc_md433"></a>
 3.3.1 Role Ports</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -136,7 +136,7 @@ Svc::FileDownlink Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>eventOut</code>   </td><td class="markdownTableBodyNone"><a href="../../../Fw/Log/docs/sdd.html"><code>Fw::LogEvent</code></a>   </td><td class="markdownTableBodyNone">LogEvent   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md430"></a>
+<h4><a class="anchor" id="autotoc_md434"></a>
 3.3.2 Component-Specific Ports</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -152,7 +152,7 @@ Svc::FileDownlink Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><a class="anchor" id="bufferSendOut"></a><code>bufferSendOut</code>   </td><td class="markdownTableBodyNone"><a href="../../../Fw/Buffer/docs/sdd.html"><code>Fw::BufferSend</code></a>   </td><td class="markdownTableBodyNone">output   </td><td class="markdownTableBodyNone">Sends buffers containing file packets.   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md431"></a>
+<h3><a class="anchor" id="autotoc_md435"></a>
 3.4 Constants</h3>
 <p><code>FileDownlink</code> has the following constants, initialized at component instantiation time:</p>
 <ul>
@@ -162,7 +162,7 @@ Svc::FileDownlink Component</h1>
 <li><em>cycle time</em>: Frequency in ms of clock pulses sent to <code>Run</code> port, used for timing timeouts and cooldown.</li>
 <li><em>file queue depth</em>: The maximum number of files that can be held in the internal file downlink queue. Attempting to dispatch a SendFile command or port call while the queue is full will result in a busy error response.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md432"></a>
+<h3><a class="anchor" id="autotoc_md436"></a>
 3.5 State</h3>
 <p><code>FileDownlink</code> maintains a <em>mode</em> equal to one of the following values:</p>
 <ul>
@@ -173,10 +173,10 @@ Svc::FileDownlink Component</h1>
 <li>COOLDOWN (4): <code>FileDownlink</code> is waiting in a cooldown period before downlinking the next file.</li>
 </ul>
 <p>The initial value is IDLE.</p>
-<h3><a class="anchor" id="autotoc_md433"></a>
+<h3><a class="anchor" id="autotoc_md437"></a>
 3.6 Commands</h3>
 <p><code>FileDownlink</code> recognizes the commands described in the following sections.</p>
-<h4><a class="anchor" id="autotoc_md434"></a>
+<h4><a class="anchor" id="autotoc_md438"></a>
 3.6.1 SendFile/SendPartial</h4>
 <p>SendFile is an asynchronous command that adds a file to the file downlink queue. It has two arguments:</p>
 <ol type="1">
@@ -189,10 +189,10 @@ Svc::FileDownlink Component</h1>
 <li><em>length</em>: Amount of data to read. A length of 0 reads until the end of file.</li>
 </ol>
 <p>When the downlink completes or fails, a CmdResponse packet will be sent indicating success or failure.</p>
-<h4><a class="anchor" id="autotoc_md435"></a>
+<h4><a class="anchor" id="autotoc_md439"></a>
 3.6.2 Cancel</h4>
 <p>Cancel is a synchronous command. If <em>mode</em> = DOWNLINK, it sets <em>mode</em> to CANCEL. Otherwise it does nothing.</p>
-<h2><a class="anchor" id="autotoc_md436"></a>
+<h2><a class="anchor" id="autotoc_md440"></a>
 4 Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -204,7 +204,7 @@ Svc::FileDownlink Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test   </td><td class="markdownTableBodyNone"><a href="Checklist/unit_test.xls">Link</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md437"></a>
+<h2><a class="anchor" id="autotoc_md441"></a>
 6 Unit Testing</h2>
 <p>TODO </p>
 </div></div><!-- contents -->
