@@ -69,7 +69,7 @@ The state structures fill the memory after the copy of `MicroFsConfig`.
 
 3\) The file buffers. As the file state structures are initialized, the memory after the array of state structures is allocated to the `data` pointers in the file structure.
 
-![MicroFs Memory Layout](MicroFs.png|width = 100)
+<img src="MicroFs.png" width="300">
 
 #### 3.2.2 Initialization
 
