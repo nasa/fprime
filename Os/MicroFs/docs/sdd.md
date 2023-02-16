@@ -4,7 +4,7 @@
 ## 1. Introduction
 
 F Prime has a number of file-based service components like `Svc::CmdSequencer`, `Svc::FileDownLink`, and `Svc::FileUplink`. These components supply widely-used core features,
-but they require a file system to operate. Many deeply embedded microcontrollers don't have file storage or a file system because of highly contrianted resources. This library
+but they require a file system to operate. Many deeply embedded microcontrollers don't have file storage or a file system because of highly constrained resources. This library
 was written to provide a very basic RAM-based file system that implements the F PRime `Os::File`, `Os::FileSystem`, and `Os::Directory` interfaces. Since it is RAM-based, any
 data stored will be lost when the system is rebooted, but it will allow files to be stored, used, and uplinked/downlinked for as long as the system is up. Services that rely on
 non-volatile files (like `Svc/PrmDb`) wouldn't make sense in this context.
@@ -67,7 +67,9 @@ struct MicroFsFileState {
 
 The state structures fill the memory after the copy of `MicroFsConfig`.
 
-3\) The file buffers. As the file state structures are initialized, the memory after the array of state structures is allocated to the `data` pointers in the file structure
+3\) The file buffers. As the file state structures are initialized, the memory after the array of state structures is allocated to the `data` pointers in the file structure.
+
+![MicroFs Memory Layout](MicroFs.png)
 
 #### 3.2.2 Initialization
 
@@ -88,7 +90,7 @@ The initialization call computes the memory needed by the data structures specif
 3\) Allocates a location in the next section of the buffer for a `MicroFsFileState` state structure for each file defined in 
 the configuration. As the file state structure is initialized, a file buffer of the required size is allocated out of the area 
 after the state structures and assigned to the `data` pointer. The allocated size is assigned to the `dataSize` member. 
-The file is initialized to be empty, which is considered by the file system to be non-existent.
+The file is initialized to be empty, which is considered by the file system to be nonexistent.
 
 4\) Optionally clears the file data to zero.
 
@@ -144,7 +146,7 @@ return a list of the files that have been created in that bin. Any other argumen
 ##### 3.2.4.3 Remove File
 
 This call will reinitialize the file state data to the state that indicates it doesn't exist, and subsequent calls
-will follow the rules for non-existent files.
+will follow the rules for nonexistent files.
 
 ##### 3.2.4.4 Move/Copy/Append Files
 

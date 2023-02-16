@@ -859,6 +859,9 @@ Merewether
 methoddoc
 methodname
 methodstub
+Microfs
+MICROFS
+microfs
 microfsexp
 MICROFSCFG
 microcontrollers
