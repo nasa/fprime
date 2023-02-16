@@ -29,13 +29,26 @@ MFS-005 | The `Os::MicroFs` library shall implement the `Os::Directory` class im
 
 The `Os::MicroFs` component has the following class diagram:
 
-![`Svc::ActiveLogger` Diagram](img/ActiveLoggerBDD.jpg "Svc::ActiveLogger")
 
 ### 3.2 Design Description
 
 #### 3.2.1 Overview
 
-The file system creates fixed size buffers to hold the file contents. The files can grow to contain data within the size of the buffer, but no larger. Any attempts to write beyond the end of the buffer will be truncated. The user can specify multiple "bins" of files, where each bin can be configured to hold a specified number of files a specified length. The files have specific names that map the file requested to a particular bin and file buffer. The user cannot open arbitrary files. They must match the naming schemes.
+The file system creates fixed-size buffers to hold the file contents. The data in the files can grow to contain data up to the size of the buffer, but no larger. Any attempts to write beyond the end of the buffer will be truncated. The user can specify multiple "bins" of files at initialization time, where each bin can be configured to hold a specified number of files of a specified length. The files have specific names that map the file requested to a particular bin and file buffer. The user cannot open arbitrary files. They must match the naming schemes.
+
+The naming scheme is as follows:
+
+```
+/<bin prefix><bin number>/<file prefix><file number>
+```
+
+`<bin prefix>` is defined by a macro in the `MicroFs` configuration file, and defaults to `bin`.
+`<bin number>` is a sequential number increasing from 0 to the highest number of bins defined
+`<file prefix>` is defined by a macro in the `MicroFs` configuration file, and defaults to `file`.
+`<file number>` is a sequential number increasing from 0 to the highest number of files defined in a given bin.
+
+#### 3.2.2 Data Structures
+
 
 During initialization, the library will request a block of memory from an allocator. The memory is then popoluted with:
 
