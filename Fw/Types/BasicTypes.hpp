@@ -50,22 +50,8 @@ typedef char CHAR;
 #endif
 
 typedef float F32;  //!< 32-bit floating point
-#if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE
-  static_assert(   (std::numeric_limits<float>::is_iec559    == true)
-                && (std::numeric_limits<float>::radix        ==    2)
-                && (std::numeric_limits<float>::digits       ==   24)
-                && (std::numeric_limits<float>::max_exponent ==  128),
-                "The 32-bit floating point type does not conform to the IEEE-754 standard.");
-#endif
 #if FW_HAS_F64
   typedef double F64;  //!< 64-bit floating point
-# if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE
-    static_assert(   (std::numeric_limits<double>::is_iec559    == true)
-                  && (std::numeric_limits<double>::radix        ==    2)
-                  && (std::numeric_limits<double>::digits       ==   53)
-                  && (std::numeric_limits<double>::max_exponent == 1024),
-                  "The 64-bit floating point type does not conform to the IEEE-754 standard.");
-# endif
 #endif
 
 typedef PlatformIntType NATIVE_INT_TYPE;
@@ -99,42 +85,56 @@ typedef PlatformPointerCastType POINTER_CAST;
 
 #ifdef __cplusplus
 } // extern "C"
+    #include <limits>
+    // IEEE compliance checks must occur in C++ code
+    #if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE
+        static_assert(   (std::numeric_limits<float>::is_iec559    == true)
+                         && (std::numeric_limits<float>::radix        ==    2)
+                         && (std::numeric_limits<float>::digits       ==   24)
+                         && (std::numeric_limits<float>::max_exponent ==  128),
+                         "The 32-bit floating point type does not conform to the IEEE-754 standard.");
+        #if FW_HAS_F64
+            static_assert(   (std::numeric_limits<double>::is_iec559    == true)
+                             && (std::numeric_limits<double>::radix        ==    2)
+                             && (std::numeric_limits<double>::digits       ==   53)
+                             && (std::numeric_limits<double>::max_exponent == 1024),
+                             "The 64-bit floating point type does not conform to the IEEE-754 standard.");
+        #endif
+    #endif
+    /**
+     * BasicLimits:
+     *
+     * Limits for the fprime provided types. Implemented as a class with static
+     * constants to ensure that storage is not allocated although the definitions
+     * exist.
+     */
+    struct BasicLimits : PlatformLimits {
+        static const int8_t I8_MIN = INT8_MIN;
+        static const int8_t I8_MAX = INT8_MAX;
+        static const uint8_t U8_MIN = 0;
+        static const uint8_t U8_MAX = UINT8_MAX;
+
+    #if FW_HAS_16_BIT
+        static const I16 I16_MIN = INT16_MIN;
+        static const I16 I16_MAX = INT16_MAX;
+        static const U16 U16_MIN = 0;
+        static const U16 U16_MAX = UINT16_MAX;
+    #endif
+
+    #if FW_HAS_32_BIT
+        static const I32 I32_MIN = INT32_MIN;
+        static const I32 I32_MAX = INT32_MAX;
+        static const U32 U32_MIN = 0;
+        static const U32 U32_MAX = UINT32_MAX;
+    #endif
+
+    #if FW_HAS_64_BIT
+        static const I64 I64_MIN = INT64_MIN;
+        static const I64 I64_MAX = INT64_MAX;
+        static const U64 U64_MIN = 0;
+        static const U64 U64_MAX = UINT64_MAX;
+    #endif
+    };
 
 #endif // __cplusplus
-
-/**
- * BasicLimits:
- *
- * Limits for the fprime provided types. Implemented as a class with static
- * constants to ensure that storage is not allocated although the definitions
- * exist.
- */
-struct BasicLimits : PlatformLimits {
-    static const int8_t I8_MIN = INT8_MIN;
-    static const int8_t I8_MAX = INT8_MAX;
-    static const uint8_t U8_MIN = 0;
-    static const uint8_t U8_MAX = UINT8_MAX;
-
-#if FW_HAS_16_BIT
-    static const I16 I16_MIN = INT16_MIN;
-    static const I16 I16_MAX = INT16_MAX;
-    static const U16 U16_MIN = 0;
-    static const U16 U16_MAX = UINT16_MAX;
-#endif
-
-#if FW_HAS_32_BIT
-    static const I32 I32_MIN = INT32_MIN;
-    static const I32 I32_MAX = INT32_MAX;
-    static const U32 U32_MIN = 0;
-    static const U32 U32_MAX = UINT32_MAX;
-#endif
-
-#if FW_HAS_64_BIT
-    static const I64 I64_MIN = INT64_MIN;
-    static const I64 I64_MAX = INT64_MAX;
-    static const U64 U64_MIN = 0;
-    static const U64 U64_MAX = UINT64_MAX;
-#endif
-};
-
-#endif
+#endif // End FW_BASIC_TYPES_HPP

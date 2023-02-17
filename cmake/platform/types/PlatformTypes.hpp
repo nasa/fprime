@@ -22,7 +22,6 @@
  */
 #ifndef PLATFORM_TYPES_HPP_
 #define PLATFORM_TYPES_HPP_
-#include <limits>
 
 // Section 0: C Standard Types
 //    fprime depends on the existence of intN_t and uintN_t C standard ints and
@@ -34,9 +33,8 @@
 // switches in this section to control which of the C standard types are
 // available in the system. fprime consumes this information and produces the
 // UN, IN, and FN types we see in fprime code.
-#include <cstdint>
-#include <cinttypes>
-#include <limits>
+#include <stdint.h>
+#include <inttypes.h>
 
 #define FW_HAS_64_BIT 1  //!< Architecture supports 64 bit integers
 #define FW_HAS_32_BIT 1  //!< Architecture supports 32 bit integers
@@ -89,22 +87,26 @@ typedef PlatformIntType PlatformAssertArgType;
     #error "Expected __SIZEOF_POINTER__ to be one of 8, 4, 2, or 1"
   #endif
 #endif
-/**
- * PlatformLimits:
- *
- * PlatformLimits define the min and max values for the constructs defined
- * within this file. These must be defined as `static const` members to
- * ensure that unnecessary storage is not allocated.
- */
-#define FP_PLATFORM_NUMERIC_LIMITS(T) \
-  static const T T##_MIN = std::numeric_limits<T>::min(); \
-  static const T T##_MAX = std::numeric_limits<T>::max();
-struct PlatformLimits {
-  FP_PLATFORM_NUMERIC_LIMITS(PlatformAssertArgType)
-  FP_PLATFORM_NUMERIC_LIMITS(PlatformIndexType)
-  FP_PLATFORM_NUMERIC_LIMITS(PlatformIntType)
-  FP_PLATFORM_NUMERIC_LIMITS(PlatformPointerCastType)
-  FP_PLATFORM_NUMERIC_LIMITS(PlatformSizeType)
-  FP_PLATFORM_NUMERIC_LIMITS(PlatformUIntType)
-};
+
+#ifdef __cplusplus
+    #include <limits>
+    /**
+     * PlatformLimits:
+     *
+     * PlatformLimits define the min and max values for the constructs defined
+     * within this file. These must be defined as `static const` members to
+     * ensure that unnecessary storage is not allocated.
+     */
+    #define FP_PLATFORM_NUMERIC_LIMITS(T) \
+      static const T T##_MIN = std::numeric_limits<T>::min(); \
+      static const T T##_MAX = std::numeric_limits<T>::max();
+    struct PlatformLimits {
+      FP_PLATFORM_NUMERIC_LIMITS(PlatformAssertArgType)
+      FP_PLATFORM_NUMERIC_LIMITS(PlatformIndexType)
+      FP_PLATFORM_NUMERIC_LIMITS(PlatformIntType)
+      FP_PLATFORM_NUMERIC_LIMITS(PlatformPointerCastType)
+      FP_PLATFORM_NUMERIC_LIMITS(PlatformSizeType)
+      FP_PLATFORM_NUMERIC_LIMITS(PlatformUIntType)
+    };
+#endif //_cplusplus
 #endif //PLATFORM_TYPES_HPP_
