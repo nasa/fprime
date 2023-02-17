@@ -12,7 +12,6 @@
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
 #include <Fw/Types/BasicTypes.hpp>
-#include <limits>
 
 typedef PlatformIndexType FwIndexType;
 #define PRI_FwIndexType PRI_PlatformIndexType
@@ -69,6 +68,8 @@ typedef U32 FwPrmIdType;
 typedef U16 FwTlmPacketizeIdType;
 #define PRI_FwTlmPacketizeIdType PRIu16
 
+#ifdef __cplusplus
+#include <limits>
 /**
  * FpLimits:
  *
@@ -98,6 +99,7 @@ struct FpLimits : BasicLimits {
     FP_CONFIG_NUMERIC_LIMITS(FwTimeContextStoreType)
     FP_CONFIG_NUMERIC_LIMITS(FwTlmPacketizeIdType)
 };
+#endif //__cplusplus
 
 // Boolean values for serialization
 #ifndef FW_SERIALIZE_TRUE_VALUE
