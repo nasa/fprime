@@ -698,6 +698,7 @@ intlimits
 ints
 Inttype
 inttype
+inttypes
 invisi
 ioc
 ioctl
