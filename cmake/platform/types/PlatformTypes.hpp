@@ -17,7 +17,7 @@
  *   2. static constants in structs can be inherited via private inheritance
  *      allowing the definitions to be available to descendant functions
  *
- * In C++ fprime code, users may then refer to FpLimits::PlatformIntType_MIN
+ * In C++ fprime code, users may then refer to std::numeric_limits<PlatformIntType>::min()
  * without referring to this header directly.
  */
 #ifndef PLATFORM_TYPES_HPP_
