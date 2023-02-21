@@ -206,7 +206,7 @@ To add a component to the topology:
 As the topology comes together, it is helpful to write system-level tests for subsystems of the
 overall deployment. This makes sure that as a system, top-level requirements are met.
 
-The fprime-gds has a python API that can be used to write integration test cases that support sending commands, checking for events, and getting telemetry channel readings. To get started with writing integration tests, check out the [GDS integration test guide](../dev/testAPI/user_guide).
+The fprime-gds has a python API that can be used to write integration test cases that support sending commands, checking for events, and getting telemetry channel readings. To get started with writing integration tests, check out the [GDS integration test guide](../dev/testAPI/user_guide.md).
 
 ## Conclusion
 
