@@ -4,7 +4,7 @@
  *  Created on: May 24, 2014
  *      Author: Timothy Canham
  */
-
+#include <Fw/Types/Serializable.hpp>
 #include <Fw/Tlm/TlmPacket.hpp>
 #include <Fw/Types/Assert.hpp>
 
@@ -38,15 +38,15 @@ namespace Fw {
         // value of type FwPacketDescriptorType from this->m_tlmBuffer and stores it
         // into this->m_type.
         Fw::SerializeStatus stat = this->deserializeBase(this->m_tlmBuffer);
-        if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
         // make sure that this->m_tlmBuffer stores a telemetry packet
         if (this->m_type != FW_PACKET_TELEM) {
-            return Fw::SerializeStatus::FW_DESERIALIZE_TYPE_MISMATCH;
+            return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
         }
 
-        return Fw::SerializeStatus::FW_SERIALIZE_OK;
+        return Fw::FW_SERIALIZE_OK;
     }
 
     NATIVE_UINT_TYPE TlmPacket::getNumEntries() {
@@ -67,33 +67,33 @@ namespace Fw {
         if (
             (sizeof(FwChanIdType) + Time::SERIALIZED_SIZE + buffer.getBuffLength()) > left
         ) {
-            return SerializeStatus::FW_SERIALIZE_NO_ROOM_LEFT;
+            return Fw::FW_SERIALIZE_NO_ROOM_LEFT;
         }
 
         // serialize items into buffer
 
         // id
         SerializeStatus stat = this->m_tlmBuffer.serialize(id);
-        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
         // time tag
         stat = this->m_tlmBuffer.serialize(timeTag);
-        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
         // telemetry buffer
         stat = this->m_tlmBuffer.serialize(buffer.getBuffAddr(),buffer.getBuffLength(),true);
-        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
         // increment number of packets
         this->m_numEntries++;
 
-        return SerializeStatus::FW_SERIALIZE_OK;
+        return Fw::FW_SERIALIZE_OK;
     }
 
             // extract telemetry value
@@ -103,36 +103,36 @@ namespace Fw {
 
         // id
         SerializeStatus stat = this->m_tlmBuffer.deserialize(id);
-        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
         // time tag
         stat = this->m_tlmBuffer.deserialize(timeTag);
-        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
         // telemetry buffer
         stat = this->m_tlmBuffer.deserialize(buffer.getBuffAddr(),bufferSize,true);
-        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
         // set buffer size
         stat = buffer.setBuffLen(bufferSize);
-        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
-        return SerializeStatus::FW_SERIALIZE_OK;
+        return Fw::FW_SERIALIZE_OK;
 
     }
 
     SerializeStatus TlmPacket::serialize(SerializeBufferBase& buffer) const {
         // serialize the number of packets
         SerializeStatus stat = buffer.serialize(this->m_numEntries);
-        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
         // Serialize the ComBuffer
@@ -143,7 +143,7 @@ namespace Fw {
 
         // deserialize the number of packets
         SerializeStatus stat = buffer.deserialize(this->m_numEntries);
-        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+        if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
         // deserialize the channel value entry buffers

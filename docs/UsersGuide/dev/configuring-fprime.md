@@ -33,7 +33,7 @@ A deployment can clone `AcConstants.ini` or the whole set of `*.hpp` files or bo
 must take ownership of all `*.hpp` due to C++ compiler constraints.
 
 AcConstants.ini follows [python's INI](https://docs.python.org/3/library/configparser.html#supported-ini-file-structure)
-format and the `FpConfig.hpp` file is a C++ header allowing the user to define global settings.
+format and the `FpConfig.h` file is a C header allowing the user to define global settings.
 Where components allow specific configuration, a `<component>Cfg.hpp` is available to be modified as well.
 
 ## AcConstants.ini
@@ -62,15 +62,15 @@ An example INI setting would look like:
 setting = 123; Comment
 ```
 
-## FpConfig.hpp
+## FpConfig.h
 
 Some configurations may be changed during compilation time. The F′ framework has a number of optional features that can
-be enabled or disabled by editing the `config/FpConfig.hpp` file.  These changes affect of the whole of the F´
+be enabled or disabled by editing the `config/FpConfig.h` file.  These changes affect of the whole of the F´
 deployment. Users can change or override defined *C* macro values that activate or disable code by using compiler flags
 for different deployment settings. During flight software (FSW) execution, disabling unnecessary features saves memory
 and CPU cycles.
 
-All of these settings should be set in `FpConfig.hpp` and for most projects, this whole file will be cloned and owned
+All of these settings should be set in `FpConfig.h` and for most projects, this whole file will be cloned and owned
 for their specific settings. Typically, the user will define the setting to be 0 for off and 1 for on.
 
 e.g.
@@ -81,84 +81,30 @@ e.g.
 ### Type Settings
 
 Many architectures support different sizes of types. In addition, projects may wish to change the size of the various
-custom types specified in the framework. This section will describe these settings.
+custom types specified in the framework. This section will describe these settings. These are typically provided by the
+and can be changed in the `FpConfig.h` header.  These types are described in the
+[numerical types design document](../../Design/numerical-types.md#Configurable-Integer-Types).
 
-#### Architecture Supported Primitive Types
-
-The architecture is designed to be portable to different processor architectures. Some architectures such as small
-microcontrollers do not support the full range of types. The architecture supports a non-sized integer type named
-`NATIVE_INT_TYPE`. The `NATIVE_INT_TYPE` is recommended for code (e.g., loop variables) where a particular size is
-not needed in order to make it more portable. An additional type `NATIVE_UINT_TYPE` is available for unsigned variables.
-These types are defined in `Fw/Types/BasicTypes.hpp` and use compiler macros for sizing. See:
-[Primitive Types](./../user/enum-arr-ser.md)
-
-In addition to these types, F´ specifies types of a given size and allows for configuration values to turn the larger
-types on/off such that smaller architectures can disable them.  These settings are described below.
-
-**Table 32.** Macros for supported types.
-
-| Macro          | Definition                                                               | Default | Valid Values   |
-| ---------------| ------------------------------------------------------------------------ |---------|----------------|
-| FW_HAS_64_BIT  | The architecture supports 64-bit integers.                               | 1 (on)  | 0 (off) 1 (on) |
-| FW_HAS_32_BIT  | The architecture supports 32-bit integers.                               | 1 (on)  | 0 (off) 1 (on) |
-| FW_HAS_16_BIT  | The architecture supports 16-bit integers.                               | 1 (on)  | 0 (off) 1 (on) |
-| FW_HAS_F64     | The architecture supports 64-bit double-precision floating point values. | 1 (on)  | 0 (off) 1 (on) |
-
-Example:
-```cpp
-// Turn of 64-bit integers (double)
-#define FW_HAS_F64 0
-```
+The above document also describes the methods for configuring the configurable types used to adjust various fprime
+types.
 
 ### IEEE 754 compliance of the floating point implementation
 
-Some industrial coding rules for safety and critical systems require floating point implementations to conform to a defined floating point standard, such as IEEE 754. The reason for this is that if the implementation does not conform to a standard, it can lead to problems with the accuracy and reliability of calculations.
+> Note: this configuration is performed in the `PlatformTypes.h` header as it is platform dependent and not project
+> dependent.
 
-By default, F´ checks for IEEE754 compliant floating point arithmetic at compile time. However, if a user does not have a C++11 implementation on their platform that supports IEEE754 floating point arithmetic, an option is provided to bypass this check:
+Some industrial coding rules for safety and critical systems require floating point implementations to conform to a
+defined floating point standard, such as IEEE 754. The reason for this is that if the implementation does not conform to
+a standard, it can lead to problems with the accuracy and reliability of calculations.
+
+By default, F´ checks for IEEE754 compliant floating point arithmetic at compile time. However, if a user does not have
+a C++11 implementation on their platform that supports IEEE754 floating point arithmetic, an option is provided to
+bypass this check:
 
 | Macro                           | Definition                                                       | Default | Valid Values   |
 | --------------------------------| -----------------------------------------------------------------|---------|----------------|
 | SKIP_FLOAT_IEEE_754_COMPLIANCE  | Skip IEEE 754 compliance check of floating point implementation. | 0 (off) | 0 (off) 1 (on) |
 
-#### Configured Type Definitions
-
-> **Warning**
-> To run the system with the standard F´ GDS, these changes need to be made in the python GDS support code
-> as well as here. This is non-trivial and will be fixed in future releases. Unless the project intended to modify the
-> GDS code, or use an alternate GDS for all functions, these settings should be left as their defaults.
-
-The value which represents a serialized boolean can be set using these macros. This only affects what value is written
-when the boolean is serialized
-
-**Table 33:** Macros for boolean serialization
-
-| Macro                    | Definition                  | Default | Valid Values |
-|--------------------------|-----------------------------|---------|--------------|
-| FW_SERIALIZE_TRUE_VALUE  | True value when serialized  | 0xFF    | 0 to 0xFF    |
-| FW_SERIALIZE_FALSE_VALUE | False value when serialized | 0x00    | 0 to 0xFF    |
-
-
-Special named types used by F´ are mapped to some form of a primitive type integer type. This is done for ease of
-reading F´ code and is a standard practice in C/C++. The framework allows projects to change the type they used for
-these types to optimize transmitted bytes. Again, any changes must match the GDS in order to decode the values
-correctly, and thus changing these values should be done carefully.
-
-**Table 34:** Macros for custom types
-
-| Macro                       | Definition                             | Default | Valid Values      |
-|-----------------------------|----------------------------------------|---------|-------------------|
-| FwPacketDescriptorType      | Type storing F´ packet type descriptor | U32     | U8, U16, U32, U64 |
-| FwOpcodeType                | Type storing F´ opcodes                | U32     | U8, U16, U32, U64 |
-| FwChanIdType                | Type storing F´ channel ids            | U32     | U8, U16, U32, U64 |
-| FwEventIdType               | Type storing F´ event ids              | U32     | U8, U16, U32, U64 |
-| FwPrmIdType                 | Type storing F´ parameter ids          | U32     | U8, U16, U32, U64 |
-| FwBuffSizeType              | Type storing the size of an F´ buffer  | U16     | U8, U16, U32, U64 |
-| FwEnumStoreType             | Type storing F´ enum values            | I32     | I8, I16, I32, I64 |
-| FwTimeBaseStoreType         | Type storing F´ timebase enum          | U16     | U8, U16, U32, U64 |
-| FwTimeContextStoreType      | Type storing F´ time context           | U8      | U8, U16, U32, U64 |
-
-> **Note**
-> For a further understanding of timebase and time context, see the next section.
 
 #### Time Base and Time Context
 
