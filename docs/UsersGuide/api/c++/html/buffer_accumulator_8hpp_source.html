@@ -127,7 +127,7 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8hpp_source.html',
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            ~ArrayFIFOBuffer();</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_buffer_accumulator.html#ac71af9e662c99c5e311bc26d96ff215a">init</a>(<a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> *<span class="keyword">const</span> elements, </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                      <a class="code" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> capacity </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                      <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> capacity </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            );</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keywordtype">bool</span> enqueue(</div>
@@ -150,13 +150,13 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8hpp_source.html',
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;          <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> * elements;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          <a class="code" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> capacity;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> capacity;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;          <a class="code" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> enqueueIndex;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> enqueueIndex;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          <a class="code" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> dequeueIndex;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> dequeueIndex;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;          <a class="code" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> size;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> size;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      }; <span class="comment">//class ArrayFIFOBuffer</span></div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">public</span>:</div>
@@ -170,8 +170,8 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8hpp_source.html',
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      );</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_buffer_accumulator.html#ac71af9e662c99c5e311bc26d96ff215a">init</a>(</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance = 0 </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance = 0 </div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      );</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      <a class="code" href="class_svc_1_1_buffer_accumulator.html#ae350b00ba65798fe0467accb7577a15e">~BufferAccumulator</a>();</div>
@@ -181,9 +181,9 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8hpp_source.html',
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_buffer_accumulator.html#a16be0726f4574705ce2290e6a1ff4b74">allocateQueue</a>(</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;          <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> identifier, </div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;          <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> identifier, </div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;          <a class="code" href="class_fw_1_1_mem_allocator.html">Fw::MemAllocator</a>&amp; allocator, </div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;          <a class="code" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> maxNumBuffers </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> maxNumBuffers </div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      );</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_buffer_accumulator.html#a2280eba690a664ed3028131f41dffe05">deallocateQueue</a>(<a class="code" href="class_fw_1_1_mem_allocator.html">Fw::MemAllocator</a>&amp; allocator);</div>
@@ -196,23 +196,23 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8hpp_source.html',
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;      <span class="keywordtype">void</span> bufferSendInFill_handler(</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;          <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&amp; buffer</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      );</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;      <span class="keywordtype">void</span> bufferSendInReturn_handler(</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;          <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&amp; buffer</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      );</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      <span class="keywordtype">void</span> pingIn_handler(</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;          U32 key </div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      );</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      <span class="keywordtype">void</span> schedIn_handler(</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;          <a class="code" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> context </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> context </div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      );</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    PRIVATE:</div>
@@ -222,7 +222,7 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8hpp_source.html',
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;      <span class="keywordtype">void</span> BA_SetMode_cmdHandler(</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;          <span class="keyword">const</span> <a class="code" href="fp_config_8hpp.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, </div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;          <span class="keyword">const</span> <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, </div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;          <span class="keyword">const</span> U32 cmdSeq, </div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;          OpState mode </div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      );</div>
@@ -250,16 +250,16 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8hpp_source.html',
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;      U32 numWarnings;</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;      <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> allocatorId;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;      <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> allocatorId;</div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;  };</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; </div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;}</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00071">BasicTypes.hpp:58</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00072">BasicTypes.hpp:72</a></div></div>
-<div class="ttc" id="a_fp_config_8hpp_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8hpp.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00057">FpConfig.hpp:57</a></div></div>
+<div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
+<div class="ttc" id="a_basic_types_8h_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00052">BasicTypes.h:52</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00056">FpConfig.h:56</a></div></div>
 <div class="ttc" id="a_mem_allocator_8hpp_html"><div class="ttname"><a href="mem_allocator_8hpp.html">MemAllocator.hpp</a></div><div class="ttdoc">Defines a base class for a memory allocator for classes.</div></div>
 <div class="ttc" id="a_os_2_queue_8hpp_html"><div class="ttname"><a href="os_2_queue_8hpp.html">Queue.hpp</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_buffer_html"><div class="ttname"><a href="class_fw_1_1_buffer.html">Fw::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8hpp_source.html#l00043">Buffer.hpp:43</a></div></div>

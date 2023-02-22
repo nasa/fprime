@@ -160,7 +160,7 @@ $(document).ready(function(){initNavTree('_checksum_8cpp_source.html',''); initR
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
 <div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="class_c_f_d_p_1_1_checksum.html#af9b17cd8248c102e848356188a513ba3">   71</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_c_f_d_p_1_1_checksum.html#af9b17cd8248c102e848356188a513ba3">Checksum ::</a></div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<a class="code" href="class_c_f_d_p_1_1_checksum.html#af9b17cd8248c102e848356188a513ba3">    update</a>(</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> data,</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> data,</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keyword">const</span> U32 offset,</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keyword">const</span> U32 length</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    )</div>
@@ -170,10 +170,10 @@ $(document).ready(function(){initNavTree('_checksum_8cpp_source.html',''); initR
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="comment">// Add the first word unaligned if necessary</span></div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">const</span> U32 offsetMod4 = offset % 4;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">if</span> (offsetMod4 != 0) {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> wordLength = <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(<a class="code" href="checksum_8cpp.html#a32f984d99c3f2df28c300b5111d2735c">min</a>(length, 4 - offsetMod4));</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> wordLength = <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(<a class="code" href="checksum_8cpp.html#a32f984d99c3f2df28c300b5111d2735c">min</a>(length, 4 - offsetMod4));</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      this-&gt;addWordUnaligned(</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;          &amp;data[index],</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;          <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(offset + index),</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;          <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(offset + index),</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;          wordLength</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      );</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      index += wordLength;</div>
@@ -185,10 +185,10 @@ $(document).ready(function(){initNavTree('_checksum_8cpp_source.html',''); initR
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="comment">// Add the last word unaligned if necessary</span></div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">if</span> (index &lt; length) {</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> wordLength = <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(length - index);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> wordLength = <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(length - index);</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      this-&gt;addWordUnaligned(</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;          &amp;data[index],</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;          <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(offset + index),</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;          <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(offset + index),</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;          wordLength</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      );</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div>
@@ -196,22 +196,22 @@ $(document).ready(function(){initNavTree('_checksum_8cpp_source.html',''); initR
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  }</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keywordtype">void</span> Checksum ::</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    addWordAligned(<span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> word)</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    addWordAligned(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> word)</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> i = 0; i &lt; 4; ++i)</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> i = 0; i &lt; 4; ++i)</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      addByteAtOffset(word[i], i);</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  }</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keywordtype">void</span> Checksum ::</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    addWordUnaligned(</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *word,</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> position,</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> length</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *word,</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> position,</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> length</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    )</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  {</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(length &lt; 4);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> offset = position % 4;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> i = 0; i &lt; length; ++i) {</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> offset = position % 4;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> i = 0; i &lt; length; ++i) {</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      addByteAtOffset(word[i], offset);</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      ++offset;</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      <span class="keywordflow">if</span> (offset == 4)</div>
@@ -221,8 +221,8 @@ $(document).ready(function(){initNavTree('_checksum_8cpp_source.html',''); initR
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  <span class="keywordtype">void</span> Checksum ::</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    addByteAtOffset(</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> <span class="keywordtype">byte</span>,</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> offset</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> <span class="keywordtype">byte</span>,</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> offset</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    )</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  {</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(offset &lt; 4);</div>
@@ -233,7 +233,7 @@ $(document).ready(function(){initNavTree('_checksum_8cpp_source.html',''); initR
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;}</div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00007">Assert.hpp:7</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00033">BasicTypes.hpp:33</a></div></div>
+<div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00026">BasicTypes.h:26</a></div></div>
 <div class="ttc" id="a_checksum_8cpp_html_a32f984d99c3f2df28c300b5111d2735c"><div class="ttname"><a href="checksum_8cpp.html#a32f984d99c3f2df28c300b5111d2735c">min</a></div><div class="ttdeci">static U32 min(const U32 a, const U32 b)</div><div class="ttdef"><b>Definition:</b> <a href="checksum_8cpp_source.html#l00016">Checksum.cpp:16</a></div></div>
 <div class="ttc" id="a_checksum_8hpp_html"><div class="ttname"><a href="checksum_8hpp.html">Checksum.hpp</a></div></div>
 <div class="ttc" id="aclass_c_f_d_p_1_1_checksum_html"><div class="ttname"><a href="class_c_f_d_p_1_1_checksum.html">CFDP::Checksum</a></div><div class="ttdoc">Class representing a CFDP checksum.</div><div class="ttdef"><b>Definition:</b> <a href="checksum_8hpp_source.html#l00023">Checksum.hpp:23</a></div></div>

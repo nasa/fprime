@@ -88,14 +88,14 @@ $(document).ready(function(){initNavTree('md_docs__design_numerical_types.html',
 <div class="title">F´ Numerical <a class="el" href="namespace_types.html">Types</a> </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>On physical hardware, numerical types have a size in bits. The sizes of these integers are either explicitly set by the programmer or implicitly set by the compiler. i.e. <code>uint32_t</code> is explicitly 32-bits whereas <code>int</code> is implicitly set by the compiler. Flight software practice encourages use of explicitly sized types because there are fewer mistake made when the programmer uses an integer of a known size. However, in-practice it is nice to also use logical types that represent concepts in the system (e.g. size) and are set by the platform supporter to a known size.</p>
+<div class="textblock"><p>On physical hardware, numerical types have a size in bits. The sizes of these integers are either explicitly set by the programmer or implicitly set by the compiler. i.e. <code>uint32_t</code> is explicitly 32-bits whereas <code>int</code> is implicitly set by the compiler. Flight software practice encourages use of explicitly sized types because there is less risk of an unintentional overflow when using explicitly sized types. However, in-practice it is nice to also use logical types that represent concepts in the system (e.g. size) and are configured to use a specific size as determined by the platform.</p>
 <p>This document describes: fixed-width types and logical types.</p>
 <h1><a class="anchor" id="autotoc_md34"></a>
 Fixed Width Types</h1>
-<p>In F´, fixed width types map to the standard definitions either in the C standard or in the <code>stdint.h</code> header as seen below. Since compilers are not guaranteed to support all types (e.g. 64bits integers) these types can be turned off by setting a configuration field to <code>0</code> in <code><a class="el" href="fp_config_8hpp.html" title="ISF configuration file.">FpConfig.hpp</a></code>. These types are by default on and users must turn off types their compiler does not support.</p>
+<p>In F´, fixed width types map to the standard definitions either in the C standard or in the <code>stdint.h</code> header as seen below. Since platforms are not guaranteed to support all types (e.g. 64bits integers) these types can be turned off by setting a configuration field to <code>0</code> in the platform-supplied <code>PlatformTypes.h</code> header. These types are on by default and users must turn off types their compiler or platform does not support.</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">F´ Type   </th><th class="markdownTableHeadNone">Equivalent   </th><th class="markdownTableHeadNone"><code><a class="el" href="fp_config_8hpp.html" title="ISF configuration file.">FpConfig.hpp</a></code> Configuration Field    </th></tr>
+<th class="markdownTableHeadNone">F´ Type   </th><th class="markdownTableHeadNone">Equivalent   </th><th class="markdownTableHeadNone"><code>PlatformTypes.h</code> Configuration Field    </th></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">I8   </td><td class="markdownTableBodyNone">int8_t   </td><td class="markdownTableBodyNone">n/a    </td></tr>
 <tr class="markdownTableRowEven">
@@ -117,19 +117,21 @@ Fixed Width Types</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">F64   </td><td class="markdownTableBodyNone">double   </td><td class="markdownTableBodyNone">FW_HAS_F64   </td></tr>
 </table>
-<p>Platform developers should include <code>stdint.h</code> or equivalent in their <code>PlatformTypes.hpp</code> file provided alongside their platform. If for some reason that header does not exist or does not define all types, then developers must define all "Equivalent" definitions above.</p>
+<p>Platform developers should include <code>stdint.h</code> or equivalent in their <code>PlatformTypes.h</code> to ensure F´ can construct a mapping from the C equivalents to the F´ type. If for some reason that header does not exist or does not define all types, then developers must define the missing C equivalent types directly in that header.</p>
 <p>To print these types, users may use the standard C++ PRI macros as shown described: <a href="https://cplusplus.com/reference/cinttypes/">https://cplusplus.com/reference/cinttypes/</a>.</p>
+<p>The limits of these types can be obtained by using <code>std::numeric_limits&lt;T&gt;<a class="el" href="checksum_8cpp.html#a32f984d99c3f2df28c300b5111d2735c">min()</a></code> and <code>std::numeric_limits&lt;T&gt;<a class="el" href="checksum_8cpp.html#a32f984d99c3f2df28c300b5111d2735c">min()</a></code> for the defined type T.</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">U32 value = 10;</div>
-<div class="line">printf(&quot;My value: %&quot; PRId32, value); // Uses string constant concatenation</div>
-</div><!-- fragment --><p>Minimum and maximum limits are provided by <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code> of the form <code><a class="el" href="struct_fp_limits.html">FpLimits</a>::&lt;type&gt;_MIN</code> and <code><a class="el" href="struct_fp_limits.html">FpLimits</a>::&lt;type&gt;_MAX</code>.</p>
-<h1><a class="anchor" id="autotoc_md35"></a>
+<div class="line">U32 my_max = std::numeric_limits&lt;U32&gt;::max();</div>
+<div class="line">printf(&quot;My value: %&quot; PRIu32 &quot; could store a max of: %&quot; PRIu32 &quot;\n&quot;, value, my_max);</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md35"></a>
 F´ Logical Integer Type Design</h1>
 <p>Typically, in flight software we try to use fixed-sized types wherever possible as this produces consistent results across platforms. However, when building components for use on multiple different architectures it is nice to be able to use logical integer types whose exact widths are determined by the platform and project instead of needing to pick a one-size-fits-all fixed with type. For example, representing a size as an unsigned 64-bit integer is logical on some systems that have 64-bit data widths, but will not compile on systems that do not define 64-bit integers at all (8-bit systems often lack this data size).</p>
 <p>Thus, for these logical types the actual data size needs to be configured. This configuration needs to be available from two sources: a given project, and a given platform. Platforms need to set the idea size for these types, and projects need to be able to control these sizes when operating across multiple platforms.</p>
+<p>It is important to check against type limits when using these types to ensure compatibility across systems.</p>
 <h2><a class="anchor" id="autotoc_md36"></a>
 Platform Configured Types</h2>
-<p>Platform developers must define the following logical types in the <code>PlatformTypes.hpp</code> header provided alongside their CMake platform and toolchain files. Each type also defines a format specifier for use with the <code>printf</code> family of functions. Additionally, each defines a pair of static constants of the form <code>&lt;type&gt;_MIN</code> and <code>&lt;type&gt;_MAX</code> as limits to the range of these values. All limits must be defined as public static constants or public static constant expressions within a struct called <code>PlatformLimits</code>. For simplicity, structs are used to ensure all definitions are public.</p>
+<p>Platform developers must define the following logical types in the <code>PlatformTypes.h</code> header provided alongside their CMake platform and toolchain files. Each type also defines a format specifier for use with the <code>printf</code> family of functions.</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Platform Logical Type   </th><th class="markdownTableHeadNone">Format Specifier   </th><th class="markdownTableHeadNone">Notes    </th></tr>
@@ -146,28 +148,21 @@ Platform Configured Types</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">PlatformUIntType   </td><td class="markdownTableBodyNone">PRI_PlatformUIntType   </td><td class="markdownTableBodyNone">Deprecated (see note)   </td></tr>
 </table>
-<p>A complete definition of each type for a given platform must be supplied within <code>PlatformTypes.hpp</code> as shown in the example below. Notice the type is defined along with a format specifier and static constants are set in the <code>PlatformLimits</code> struct.</p>
+<p>A complete definition of each type for a given platform must be supplied within <code>PlatformTypes.h</code> as shown in the example below. Notice the type is defined along with a format specifier.</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">typedef int32_t PlatformIndexType;</div>
 <div class="line">#define PRI_PlatformIndexType PRId32</div>
 <div class="line">...</div>
-<div class="line"> </div>
-<div class="line">struct PlatformLimits {</div>
-<div class="line">    ...</div>
-<div class="line">    static const PlatformIndexType PlatformIndexType_MIN = 0;</div>
-<div class="line">    static const PlatformIndexType PlatformIndexType_MAX = INT32_MAX;</div>
-<div class="line">    ...</div>
-<div class="line">};</div>
-</div><!-- fragment --><p>In order to print these types, developers can use the following example as a basis for using the PRI_* macros. This example also shows the use of the type's minimum limit.</p>
+</div><!-- fragment --><p>Limits for these types are obtained using the <code>std::numeric_limits&lt;T&gt;<a class="el" href="checksum_8cpp.html#a32f984d99c3f2df28c300b5111d2735c">min()</a></code> and <code>std::numeric_limits&lt;T&gt;::max()</code> constants defined in the <code>limits</code> header.</p>
+<p>In order to print these types, developers can use the following example as a basis for using the PRI_* macros. This example also shows the use of the type's minimum limit.</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">PlatformIndexType index = 3;</div>
 <div class="line">// Print the above index type, and the minimum value supported by the same type</div>
-<div class="line">printf(&quot;Index %&quot; PRI_PlatformIndexType &quot; is bound by %&quot; PRI_PlatformIndexType, index, FpLimits::PlatformIndexType_MIN);</div>
-</div><!-- fragment --><p><b>Note:</b> in order for F´ to compile without warnings it is necessary that each of the platform types are elements in the set of integers supplied by the C standard int header. i.e. each type is an <code>int8_t</code>, <code>int16_t</code>, <code>int32_t</code>, <code>int64_t</code> or unsigned equivalents. On some compilers <code>int</code> and <code>unsigned int</code> are not members of that set and on those platforms it is imperative that both <code>PlatformIntType</code> and <code>PlatformUIntType</code> be set to some fixed size type instead.</p>
-<p>Additionally, types are defined as public static const expressions within a struct for two reasons. First, it allows the use of strongly typed constants without allocating storage for the constant nor requiring compiler optimization to remove storage. Second, it allows inheritance such that all constants from <code>PlatformLimits</code>, <code><a class="el" href="struct_basic_limits.html">BasicLimits</a></code>, and <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code> (described below) are available through <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code>. This implementation implies that one should never take the address of one of these constants.</p>
+<div class="line">printf(&quot;Index %&quot; PRI_PlatformIndexType &quot;. Min %&quot; PRI_PlatformIndexType, index, std::numeric_limits&lt;PlatformIndexType&gt;::min());</div>
+</div><!-- fragment --><p><b>Note:</b> in order for F´ to compile without warnings it is necessary that each of the platform types are elements in the set of integers supplied by the C standard integers header (<code>stdint.h</code>). i.e. each type must be an <code>int8_t</code>, <code>int16_t</code>, <code>int32_t</code>, <code>int64_t</code> or unsigned variants. On some compilers <code>int</code> and <code>unsigned int</code> are not members of that set and on those platforms it is imperative that both <code>PlatformIntType</code> and <code>PlatformUIntType</code> be set to some fixed size type instead.</p>
 <h2><a class="anchor" id="autotoc_md37"></a>
 Configurable Integer Types</h2>
-<p>Project may configure the framework types that the framework and components use for implementation through <code><a class="el" href="fp_config_8hpp.html" title="ISF configuration file.">FpConfig.hpp</a></code>. The default configuration as supplied with F´uses the above platform types where applicable. <code>&lt;type&gt;_MIN</code> and <code>&lt;type&gt;_MAX</code> limit constants are to be defined publicly within the <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code> struct. The <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code> struct inherit from <code><a class="el" href="struct_basic_limits.html">BasicLimits</a></code> using private inheritance as shown in the example at the bottom of this section.</p>
+<p>Project may configure the framework types that the framework and components use for implementation through <code><a class="el" href="fp_config_8h.html" title="C-compatible configuration header for fprime configuration.">FpConfig.h</a></code>. The default configuration as supplied with F´ uses the above platform types where applicable.</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Framework Type   </th><th class="markdownTableHeadNone">Logical Usage   </th><th class="markdownTableHeadNone">Default   </th><th class="markdownTableHeadNone">Format Specifier   </th><th class="markdownTableHeadNone">Notes    </th></tr>
@@ -203,18 +198,16 @@ Configurable Integer Types</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">FwTlmPacketizeIdType   </td><td class="markdownTableBodyNone">F´ telemetry packet ids   </td><td class="markdownTableBodyNone">U16   </td><td class="markdownTableBodyNone">PRI_FwTlmPacketizeIdType   </td></tr>
 </table>
-<p>All defaults can be overridden via project specific configuration supplying a custom <code><a class="el" href="fp_config_8hpp.html" title="ISF configuration file.">FpConfig.hpp</a></code>. A complete definition of a framework/GDS type in <code><a class="el" href="fp_config_8hpp.html" title="ISF configuration file.">FpConfig.hpp</a></code> would look like:</p>
+<blockquote class="doxtable">
+<p>Note: the F´ GDS expects the above types to use their default setting. Users intending to use the F´ GDS should not stray from the above definitions. </p>
+</blockquote>
+<p>All defaults can be overridden via project specific configuration supplying a custom <code><a class="el" href="fp_config_8h.html" title="C-compatible configuration header for fprime configuration.">FpConfig.h</a></code>. A complete definition of a framework/GDS type in <code><a class="el" href="fp_config_8h.html" title="C-compatible configuration header for fprime configuration.">FpConfig.h</a></code> would look like:</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">#include &lt;BasicTypes.hpp&gt;</div>
 <div class="line">...</div>
-<div class="line">typedef uint32_t FwSizeType;</div>
+<div class="line">typedef U32 FwSizeType;</div>
 <div class="line">#define PRI_FwSizeType PRIu32</div>
 <div class="line">...</div>
-<div class="line"> </div>
-<div class="line">struct FpLimits : BasicLimits {</div>
-<div class="line">    const FwSizeType PlatformIndexType_MIN = 0;</div>
-<div class="line">    const FwSizeType PlatformIndexType_MAX = UINT32_MAX;</div>
-<div class="line">};</div>
 </div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

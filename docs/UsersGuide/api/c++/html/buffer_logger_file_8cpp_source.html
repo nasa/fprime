@@ -141,7 +141,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> logFilePrefix,</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> logFileSuffix,</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keyword">const</span> U32 maxFileSize,</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> sizeOfSize</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> sizeOfSize</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    )</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  {</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <span class="comment">//NOTE(mereweth) - only call this before opening the file</span></div>
@@ -171,7 +171,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keywordtype">void</span> BufferLogger::File ::</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    logBuffer(</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> data,</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> data,</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keyword">const</span> U32 size</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    )</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  {</div>
@@ -257,7 +257,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  <span class="keywordtype">bool</span> BufferLogger::File ::</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    writeBuffer(</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> data,</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> data,</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <span class="keyword">const</span> U32 size</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    )</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  {</div>
@@ -272,9 +272,9 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    writeSize(<span class="keyword">const</span> U32 size)</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  {</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;sizeOfSize &lt;= <span class="keyword">sizeof</span>(U32));</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> sizeBuffer[<span class="keyword">sizeof</span>(U32)];</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> sizeBuffer[<span class="keyword">sizeof</span>(U32)];</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    U32 sizeRegister = size;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> i = 0; i &lt; this-&gt;sizeOfSize; ++i) {</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> i = 0; i &lt; this-&gt;sizeOfSize; ++i) {</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      sizeBuffer[this-&gt;sizeOfSize - i - 1] = sizeRegister &amp; 0xFF;</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;      sizeRegister &gt;&gt;= 8;</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    }</div>
@@ -292,10 +292,10 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    )</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  {</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(length &gt; 0, length);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> size = length;</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> size = length;</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keyword">const</span> <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">Os::File::Status</a> fileStatus = this-&gt;osFile.write(data, size);</div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="keywordtype">bool</span> status;</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordflow">if</span> (fileStatus == <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7ab195b6300645908a16f113ed9eae7ee3">Os::File::OP_OK</a> &amp;&amp; size == <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a><span class="keyword">&gt;</span>(length)) {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordflow">if</span> (fileStatus == <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7ab195b6300645908a16f113ed9eae7ee3">Os::File::OP_OK</a> &amp;&amp; size == <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a><span class="keyword">&gt;</span>(length)) {</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      this-&gt;bytesWritten += length;</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;      status = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    }</div>
@@ -360,8 +360,8 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;}</div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00007">Assert.hpp:7</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00071">BasicTypes.hpp:58</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00033">BasicTypes.hpp:33</a></div></div>
+<div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
+<div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00026">BasicTypes.h:26</a></div></div>
 <div class="ttc" id="a_buffer_logger_8hpp_html"><div class="ttname"><a href="buffer_logger_8hpp.html">BufferLogger.hpp</a></div></div>
 <div class="ttc" id="a_validate_file_8hpp_html"><div class="ttname"><a href="validate_file_8hpp.html">ValidateFile.hpp</a></div><div class="ttdoc">Defines a file class to validate files or generate a file validator file.</div></div>
 <div class="ttc" id="a_validated_file_8hpp_html"><div class="ttname"><a href="validated_file_8hpp.html">ValidatedFile.hpp</a></div></div>

@@ -143,8 +143,8 @@ $(document).ready(function(){initNavTree('_com_logger_8hpp_source.html',''); ini
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      <a class="code" href="class_svc_1_1_com_logger.html#ac910722c541ab8bef18aec1c215176c0">ComLogger</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* compName, <span class="keyword">const</span> <span class="keywordtype">char</span>* filePrefix, U32 maxFileSize, <span class="keywordtype">bool</span> storeBufferLength=<span class="keyword">true</span>);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_com_logger.html#a7f4323040d655091a60533179ba8aa31">init</a>(</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;          <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;          <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance </div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      );</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      <a class="code" href="class_svc_1_1_com_logger.html#ac20736a1354c2420f8243abdf7dfdc09">~ComLogger</a>();</div>
@@ -156,18 +156,18 @@ $(document).ready(function(){initNavTree('_com_logger_8hpp_source.html',''); ini
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    PRIVATE:</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      <span class="keywordtype">void</span> comIn_handler(</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;          <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;          <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;          <a class="code" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a> &amp;data,</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;          U32 context</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      );</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      <span class="keywordtype">void</span> CloseFile_cmdHandler(</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;          <a class="code" href="fp_config_8hpp.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;          <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          U32 cmdSeq</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      );</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <span class="keywordtype">void</span> pingIn_handler(</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          U32 key </div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      );</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
@@ -181,7 +181,7 @@ $(document).ready(function(){initNavTree('_com_logger_8hpp_source.html',''); ini
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      };</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      <span class="comment">// The filename data:</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      <a class="code" href="basic_types_8hpp.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      <a class="code" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      U32 maxFileSize;</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
@@ -194,8 +194,8 @@ $(document).ready(function(){initNavTree('_com_logger_8hpp_source.html',''); ini
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      FileMode fileMode;</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <a class="code" href="class_os_1_1_file.html">Os::File</a> file;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      <a class="code" href="basic_types_8hpp.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      <a class="code" href="basic_types_8hpp.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      <a class="code" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      <a class="code" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      U32 byteCount;</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      <span class="keywordtype">bool</span> writeErrorOccurred;</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;      <span class="keywordtype">bool</span> openErrorOccurred;</div>
@@ -231,12 +231,12 @@ $(document).ready(function(){initNavTree('_com_logger_8hpp_source.html',''); ini
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00071">BasicTypes.hpp:58</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_aebb9e13210d88d43e32e735ada43a425"><div class="ttname"><a href="basic_types_8hpp.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a></div><div class="ttdeci">char CHAR</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00035">BasicTypes.hpp:35</a></div></div>
+<div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
+<div class="ttc" id="a_basic_types_8h_html_aebb9e13210d88d43e32e735ada43a425"><div class="ttname"><a href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a></div><div class="ttdeci">char CHAR</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00028">BasicTypes.h:28</a></div></div>
 <div class="ttc" id="a_com_logger_8hpp_html_a71731b63a4ef7ecd90e71390460933b5"><div class="ttname"><a href="com_logger_8hpp.html#a71731b63a4ef7ecd90e71390460933b5">COMLOGGER_PATH_MAX</a></div><div class="ttdeci">#define COMLOGGER_PATH_MAX</div><div class="ttdef"><b>Definition:</b> <a href="com_logger_8hpp_source.html#l00024">ComLogger.hpp:24</a></div></div>
 <div class="ttc" id="a_com_logger_8hpp_html_afdec85c2c473bb9d09c91903d4c71c62"><div class="ttname"><a href="com_logger_8hpp.html#afdec85c2c473bb9d09c91903d4c71c62">COMLOGGER_NAME_MAX</a></div><div class="ttdeci">#define COMLOGGER_NAME_MAX</div><div class="ttdef"><b>Definition:</b> <a href="com_logger_8hpp_source.html#l00031">ComLogger.hpp:31</a></div></div>
 <div class="ttc" id="a_file_8hpp_html"><div class="ttname"><a href="file_8hpp.html">File.hpp</a></div></div>
-<div class="ttc" id="a_fp_config_8hpp_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8hpp.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00057">FpConfig.hpp:57</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00056">FpConfig.h:56</a></div></div>
 <div class="ttc" id="a_hash_8hpp_html"><div class="ttname"><a href="hash_8hpp.html">Hash.hpp</a></div></div>
 <div class="ttc" id="a_mutex_8hpp_html"><div class="ttname"><a href="mutex_8hpp.html">Mutex.hpp</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_com_buffer_html"><div class="ttname"><a href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="com_buffer_8hpp_source.html#l00020">ComBuffer.hpp:20</a></div></div>

@@ -89,144 +89,28 @@ $(document).ready(function(){initNavTree('_basic_types_8hpp_source.html',''); in
 </div><!--header-->
 <div class="contents">
 <a href="basic_types_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef FW_BASIC_TYPES_HPP</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define FW_BASIC_TYPES_HPP</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;PlatformTypes.hpp&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// __cplusplus</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#if defined __GNUC__ || __llvm__</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">  #error Unsupported compiler!</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a0f497279a0504f6bfeb21bb1b6a779c5">   26</a></span>&#160;<span class="preprocessor">#define FW_NO_ASSERT                        1   </span></div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a0bbd505e3c8f5690021d764eae94721f">   27</a></span>&#160;<span class="preprocessor">#define FW_FILEID_ASSERT                    2   </span></div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a6089e13ed014522486459da04b26b167">   28</a></span>&#160;<span class="preprocessor">#define FW_FILENAME_ASSERT                  3   </span></div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a756ed09c9a556d76a708174d0d070006">   29</a></span>&#160;<span class="preprocessor">#define FW_RELATIVE_PATH_ASSERT             4   </span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">/*----------------------------------------------------------------------------*/</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a33c92dd47950aa8c1d6df7e1c163e5a6">   32</a></span>&#160;<span class="keyword">typedef</span> int8_t          <a class="code" href="basic_types_8hpp.html#a33c92dd47950aa8c1d6df7e1c163e5a6">I8</a>; </div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">   33</a></span>&#160;<span class="keyword">typedef</span> uint8_t         <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>; </div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a5a6a98ce49e7a4580aad271214c422bc">   34</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>              <a class="code" href="basic_types_8hpp.html#a5a6a98ce49e7a4580aad271214c422bc">BYTE</a>; </div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#aebb9e13210d88d43e32e735ada43a425">   35</a></span>&#160;<span class="keyword">typedef</span> <span class="keywordtype">char</span> <a class="code" href="basic_types_8hpp.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#if FW_HAS_16_BIT</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">typedef</span> int16_t        I16; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">typedef</span> uint16_t       U16; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#if FW_HAS_32_BIT</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">typedef</span> uint32_t       U32; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">typedef</span> int32_t        I32; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#if FW_HAS_64_BIT</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keyword">typedef</span> int64_t        I64; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keyword">typedef</span> uint64_t       <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">   52</a></span>&#160;<span class="keyword">typedef</span> <span class="keywordtype">float</span> <a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a>;  </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  static_assert(   (std::numeric_limits&lt;float&gt;::is_iec559    == <span class="keyword">true</span>)</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                &amp;&amp; (std::numeric_limits&lt;float&gt;::radix        ==    2)</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                &amp;&amp; (std::numeric_limits&lt;float&gt;::digits       ==   24)</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                &amp;&amp; (std::numeric_limits&lt;float&gt;::max_exponent ==  128),</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                <span class="stringliteral">&quot;The 32-bit floating point type does not conform to the IEEE-754 standard.&quot;</span>);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#if FW_HAS_F64</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keyword">typedef</span> <span class="keywordtype">double</span> F64;  </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor"># if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    static_assert(   (std::numeric_limits&lt;double&gt;::is_iec559    == <span class="keyword">true</span>)</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                  &amp;&amp; (std::numeric_limits&lt;double&gt;::radix        ==    2)</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                  &amp;&amp; (std::numeric_limits&lt;double&gt;::digits       ==   53)</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                  &amp;&amp; (std::numeric_limits&lt;double&gt;::max_exponent == 1024),</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                  <span class="stringliteral">&quot;The 64-bit floating point type does not conform to the IEEE-754 standard.&quot;</span>);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor"># endif</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">   71</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>;</div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">   72</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="default_types_8hpp.html#a45ae2bb211d747bffcf4d3071ecdceef">PlatformUIntType</a> <a class="code" href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a035941db31b3adde2c636142bf5cf74a">   73</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="default_types_8hpp.html#a0d5749f9cd7bdca743d9393939e69251">PlatformPointerCastType</a> <a class="code" href="basic_types_8hpp.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a>;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="comment">// compile-time assert</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#affc34a2fa1cd575344eea3ad4aec821e">   76</a></span>&#160;<span class="preprocessor">#define COMPILE_TIME_ASSERT( condition, name )\</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">  do { \</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">   enum { assert_failed_ ## name = 1/(condition) }; \</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">  } while(0)</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#ad9e564dbb201424b4ce880740f6f5aa4">   82</a></span>&#160;<span class="preprocessor">#define FW_NUM_ARRAY_ELEMENTS(a)  (sizeof(a)/sizeof((a)[0])) </span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#aae5698409ce19abe28359c39840e39d0">   84</a></span>&#160;<span class="preprocessor">#define FW_MAX(a,b) (((a) &gt; (b))?(a):(b)) </span></div>
-<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#aa15003c81ae77d50e6806f6c7d7f7cc3">   85</a></span>&#160;<span class="preprocessor">#define FW_MIN(a,b) (((a) &lt; (b))?(a):(b)) </span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">// STATIC for C builds</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">#ifndef STATIC</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="basic_types_8hpp.html#a10b2d890d871e1489bb02b7e70d9bdfb">   89</a></span>&#160;<span class="preprocessor">#define STATIC static </span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#ifndef PROTECTED</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="preprocessor">#define PROTECTED protected </span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#ifndef PRIVATE</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#define PRIVATE private </span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;} <span class="comment">// extern &quot;C&quot;</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// __cplusplus</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="struct_basic_limits.html">  112</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_basic_limits.html">BasicLimits</a> : PlatformLimits {</div>
-<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="struct_basic_limits.html#adc0375fe1d46907e04534ab8d12d2693">  113</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> int8_t <a class="code" href="struct_basic_limits.html#adc0375fe1d46907e04534ab8d12d2693">I8_MIN</a> = INT8_MIN;</div>
-<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="struct_basic_limits.html#aaa0436930aaf61a8bc31ab2eaf08a143">  114</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> int8_t <a class="code" href="struct_basic_limits.html#aaa0436930aaf61a8bc31ab2eaf08a143">I8_MAX</a> = INT8_MAX;</div>
-<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="struct_basic_limits.html#a5743609b13433650382d571ef8b54cbe">  115</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint8_t <a class="code" href="struct_basic_limits.html#a5743609b13433650382d571ef8b54cbe">U8_MIN</a> = 0;</div>
-<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="struct_basic_limits.html#a828aee1751b7a69e2496ca9542b07696">  116</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint8_t <a class="code" href="struct_basic_limits.html#a828aee1751b7a69e2496ca9542b07696">U8_MAX</a> = UINT8_MAX;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor">#if FW_HAS_16_BIT</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> I16 I16_MIN = INT16_MIN;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> I16 I16_MAX = INT16_MAX;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> U16 U16_MIN = 0;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> U16 U16_MAX = UINT16_MAX;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="preprocessor">#if FW_HAS_32_BIT</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> I32 I32_MIN = INT32_MIN;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> I32 I32_MAX = INT32_MAX;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> U32 U32_MIN = 0;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> U32 U32_MAX = UINT32_MAX;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="preprocessor">#if FW_HAS_64_BIT</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> I64 I64_MIN = INT64_MIN;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> I64 I64_MAX = INT64_MAX;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> U64_MIN = 0;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> U64_MAX = UINT64_MAX;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;};</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a035941db31b3adde2c636142bf5cf74a"><div class="ttname"><a href="basic_types_8hpp.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a></div><div class="ttdeci">PlatformPointerCastType POINTER_CAST</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00073">BasicTypes.hpp:73</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a33c92dd47950aa8c1d6df7e1c163e5a6"><div class="ttname"><a href="basic_types_8hpp.html#a33c92dd47950aa8c1d6df7e1c163e5a6">I8</a></div><div class="ttdeci">int8_t I8</div><div class="ttdoc">8-bit signed integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00032">BasicTypes.hpp:32</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00071">BasicTypes.hpp:58</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a5a6a98ce49e7a4580aad271214c422bc"><div class="ttname"><a href="basic_types_8hpp.html#a5a6a98ce49e7a4580aad271214c422bc">BYTE</a></div><div class="ttdeci">U8 BYTE</div><div class="ttdoc">byte type</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00034">BasicTypes.hpp:34</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a841d3674577a1e86afdc2f4845f46c4b"><div class="ttname"><a href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a></div><div class="ttdeci">float F32</div><div class="ttdoc">32-bit floating point</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00052">BasicTypes.hpp:52</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00033">BasicTypes.hpp:33</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_aebb9e13210d88d43e32e735ada43a425"><div class="ttname"><a href="basic_types_8hpp.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a></div><div class="ttdeci">char CHAR</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00035">BasicTypes.hpp:35</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00072">BasicTypes.hpp:72</a></div></div>
-<div class="ttc" id="a_default_types_8hpp_html_a0d5749f9cd7bdca743d9393939e69251"><div class="ttname"><a href="default_types_8hpp.html#a0d5749f9cd7bdca743d9393939e69251">PlatformPointerCastType</a></div><div class="ttdeci">uint8_t PlatformPointerCastType</div><div class="ttdef"><b>Definition:</b> <a href="default_types_8hpp_source.html#l00091">DefaultTypes.hpp:91</a></div></div>
-<div class="ttc" id="a_default_types_8hpp_html_a45ae2bb211d747bffcf4d3071ecdceef"><div class="ttname"><a href="default_types_8hpp.html#a45ae2bb211d747bffcf4d3071ecdceef">PlatformUIntType</a></div><div class="ttdeci">unsigned int PlatformUIntType</div><div class="ttdef"><b>Definition:</b> <a href="default_types_8hpp_source.html#l00025">DefaultTypes.hpp:25</a></div></div>
-<div class="ttc" id="a_default_types_8hpp_html_a91fc2f44a48512d19599964e74e2a0e5"><div class="ttname"><a href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a></div><div class="ttdeci">int PlatformIntType</div><div class="ttdoc">DefaultTypes.hpp provides fallback defaults for the platform types.</div><div class="ttdef"><b>Definition:</b> <a href="default_types_8hpp_source.html#l00013">DefaultTypes.hpp:13</a></div></div>
-<div class="ttc" id="asha_8h_html_ae5a6272795b1b8e0045aa7a4319dceb8"><div class="ttname"><a href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a></div><div class="ttdeci">#define U64(C)</div><div class="ttdef"><b>Definition:</b> <a href="sha_8h_source.html#l00176">sha.h:176</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html"><div class="ttname"><a href="struct_basic_limits.html">BasicLimits</a></div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00112">BasicTypes.hpp:112</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_a5743609b13433650382d571ef8b54cbe"><div class="ttname"><a href="struct_basic_limits.html#a5743609b13433650382d571ef8b54cbe">BasicLimits::U8_MIN</a></div><div class="ttdeci">static const uint8_t U8_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00115">BasicTypes.hpp:115</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_a828aee1751b7a69e2496ca9542b07696"><div class="ttname"><a href="struct_basic_limits.html#a828aee1751b7a69e2496ca9542b07696">BasicLimits::U8_MAX</a></div><div class="ttdeci">static const uint8_t U8_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00116">BasicTypes.hpp:116</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_aaa0436930aaf61a8bc31ab2eaf08a143"><div class="ttname"><a href="struct_basic_limits.html#aaa0436930aaf61a8bc31ab2eaf08a143">BasicLimits::I8_MAX</a></div><div class="ttdeci">static const int8_t I8_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00114">BasicTypes.hpp:114</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_adc0375fe1d46907e04534ab8d12d2693"><div class="ttname"><a href="struct_basic_limits.html#adc0375fe1d46907e04534ab8d12d2693">BasicLimits::I8_MIN</a></div><div class="ttdeci">static const int8_t I8_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00113">BasicTypes.hpp:113</a></div></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;limits&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">// Use C linkage for the basic items</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="basic_types_8h.html">BasicTypes.h</a>&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;};</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef FW_BASIC_TYPES_HPP</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define FW_BASIC_TYPES_HPP</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">// IEEE compliance checks must occur in C++ code</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;static_assert((std::numeric_limits&lt;float&gt;::is_iec559 == <span class="keyword">true</span>) &amp;&amp; (std::numeric_limits&lt;float&gt;::radix == 2) &amp;&amp;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                  (std::numeric_limits&lt;float&gt;::digits == 24) &amp;&amp; (std::numeric_limits&lt;float&gt;::max_exponent == 128),</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;              <span class="stringliteral">&quot;The 32-bit floating point type does not conform to the IEEE-754 standard.&quot;</span>);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#if FW_HAS_F64</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;static_assert((std::numeric_limits&lt;double&gt;::is_iec559 == <span class="keyword">true</span>) &amp;&amp; (std::numeric_limits&lt;double&gt;::radix == 2) &amp;&amp;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                  (std::numeric_limits&lt;double&gt;::digits == 53) &amp;&amp; (std::numeric_limits&lt;double&gt;::max_exponent == 1024),</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;              <span class="stringliteral">&quot;The 64-bit floating point type does not conform to the IEEE-754 standard.&quot;</span>);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// End FW_BASIC_TYPES_HPP</span></div>
+<div class="ttc" id="a_basic_types_8h_html"><div class="ttname"><a href="basic_types_8h.html">BasicTypes.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

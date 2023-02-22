@@ -4,11 +4,12 @@ var dir_1f5253cb5e73e32ad3f32f3f04254099 =
     [ "docs", "dir_3a56362f0e3ae1d30dcb0939fbe4c49b.html", null ],
     [ "Assert.cpp", "assert_8cpp.html", "_assert_8cpp" ],
     [ "Assert.hpp", "assert_8hpp.html", "_assert_8hpp" ],
-    [ "BasicTypes.hpp", "basic_types_8hpp.html", "_basic_types_8hpp" ],
+    [ "BasicTypes.h", "basic_types_8h.html", "_basic_types_8h" ],
+    [ "BasicTypes.hpp", "basic_types_8hpp.html", null ],
     [ "ByteArray.hpp", "byte_array_8hpp.html", [
       [ "ByteArray", "struct_fw_1_1_byte_array.html", "struct_fw_1_1_byte_array" ]
     ] ],
-    [ "CAssert.hpp", "c_assert_8hpp.html", "_c_assert_8hpp" ],
+    [ "CAssert.h", "c_assert_8h.html", "_c_assert_8h" ],
     [ "ConstByteArray.hpp", "const_byte_array_8hpp.html", [
       [ "ConstByteArray", "struct_fw_1_1_const_byte_array.html", "struct_fw_1_1_const_byte_array" ]
     ] ],
