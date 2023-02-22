@@ -135,7 +135,7 @@ namespace Os {
     }
 
     bool checkMultiplicationOverflow(FwSizeType total_ram, FwSizeType memory_unit) {
-        return (total_ram > (FpLimits::FwSizeType_MAX / memory_unit));
+        return (total_ram > (std::numeric_limits<FwSizeType>::max() / memory_unit));
     }
 
     SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil& memory_util) {

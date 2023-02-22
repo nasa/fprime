@@ -10,7 +10,6 @@
 namespace Fw {
 
     class StringBase; //!< forward declaration for string
-
     typedef enum {
         FW_SERIALIZE_OK, //!< Serialization/Deserialization operation was successful
         FW_SERIALIZE_FORMAT_ERROR, //!< Data was the wrong format (e.g. wrong packet type)
@@ -20,7 +19,6 @@ namespace Fw {
         FW_DESERIALIZE_SIZE_MISMATCH, //!< Data was left in the buffer, but not enough to deserialize
         FW_DESERIALIZE_TYPE_MISMATCH //!< Deserialized type ID didn't match
     } SerializeStatus;
-
     class SerializeBufferBase; //!< forward declaration
 
     class Serializable {
