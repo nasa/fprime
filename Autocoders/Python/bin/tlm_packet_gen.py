@@ -70,7 +70,7 @@ impl_file_template = """
 // if this macro gives a compile error, that means the packets are too large
 
 void check_func(void) {
-    COMPILE_TIME_ASSERT((${max_size} <= (FW_COM_BUFFER_MAX_SIZE - Fw::Time::SERIALIZED_SIZE - sizeof(FwTlmPacketizeIdType) - sizeof(FwPacketDescriptorType))),PacketsTooBig);
+    static_assert((${max_size} <= (FW_COM_BUFFER_MAX_SIZE - Fw::Time::SERIALIZED_SIZE - sizeof(FwTlmPacketizeIdType) - sizeof(FwPacketDescriptorType))), "PacketsTooBig");
 }
 
 namespace ${packet_list_namespace} {
