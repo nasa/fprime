@@ -513,6 +513,7 @@ foodoodiehoo
 fopen
 foreach
 formatline
+FPCONFIG
 fpconfighpp
 FPGA
 fpi
@@ -696,7 +697,6 @@ integertypename
 interoperate
 intlimits
 ints
-Inttype
 inttype
 inttypes
 invisi
