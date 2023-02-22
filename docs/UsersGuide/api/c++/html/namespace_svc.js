@@ -69,6 +69,7 @@ var namespace_svc =
     [ "LinuxTimer", "namespace_svc.html#aa2d44f66ecbeb1f2a04d17e1c19ea7fe", null ],
     [ "LogState", "namespace_svc.html#a55d3fa3e9b6fdd43da4a15cb53833fd2", null ],
     [ "PassiveTextLogger", "namespace_svc.html#af02932d7cad7af3dbfb86756975bb318", null ],
+    [ "PolyDb", "namespace_svc.html#ae0c3e8020b515d3ed95be59a5e5df871", null ],
     [ "PrmDb", "namespace_svc.html#ac4fe15c5a44df4ac62d4ceb2fcf6fa3e", null ],
     [ "PrmReadError", "namespace_svc.html#a5607b42c25cba93543db62ebac53b3a7", null ],
     [ "PrmWriteError", "namespace_svc.html#ae32ed15852da9573a1f1b3fe5580e939", null ],

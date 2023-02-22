@@ -1,5 +1,8 @@
 var NAVTREEINDEX14 =
 {
+"dir_9518d90373ba43334c6fc572874d7caf.html":[18,0,7,26],
+"dir_95a9d37f9a71c16a3d684a9937019602.html":[18,0,5,6],
+"dir_973ec8774447a6cb30ac1bef23fd5624.html":[18,0,7,31,0],
 "dir_9a7980a8df4299e72029de3ecf42522a.html":[18,0,5,2,0],
 "dir_9a8a94399ccfa28fa30b97b7cc7ba97a.html":[18,0,5,10],
 "dir_9aa0570542247e6791a3f1cdfc01913a.html":[18,0,7,28,0],
@@ -142,8 +145,8 @@ var NAVTREEINDEX14 =
 "functions_w.html":[17,3,0,21],
 "functions_z.html":[17,3,0,22],
 "functions_~.html":[17,3,0,23],
-"globals.html":[18,1,0],
 "globals.html":[18,1,0,0],
+"globals.html":[18,1,0],
 "globals_a.html":[18,1,0,1],
 "globals_b.html":[18,1,0,2],
 "globals_c.html":[18,1,0,3],
@@ -246,8 +249,5 @@ var NAVTREEINDEX14 =
 "md_docs__design_communication_adapter_interface.html#autotoc_md27":[2,0,2],
 "md_docs__design_communication_adapter_interface.html#autotoc_md28":[2,1],
 "md_docs__design_communication_adapter_interface.html#autotoc_md29":[2,2],
-"md_docs__design_communication_adapter_interface.html#autotoc_md30":[2,3],
-"md_docs__design_general.html":[3],
-"md_docs__design_memory.html":[4],
-"md_docs__design_numerical_types.html":[5]
+"md_docs__design_communication_adapter_interface.html#autotoc_md30":[2,3]
 };

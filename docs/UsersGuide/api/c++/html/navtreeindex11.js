@@ -1,5 +1,8 @@
 var NAVTREEINDEX11 =
 {
+"class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2ba7ad97373c21993cc801ba03a7bde0ea6":[17,0,4,4,0,5],
+"class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2baad039fdee2eeb8fd57da6affc6c6a1d0":[17,0,4,4,0,4],
+"class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2bac6b3c44eab71b964b0afdb0640464dec":[17,0,4,4,0,1],
 "class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2baf3a13aee4c38e56fd25dd3d742fe72de":[17,0,4,4,0,3],
 "class_os_1_1_directory.html#a0d9f525bce4ec1788296b1fa1fb368d8":[17,0,4,4,6],
 "class_os_1_1_directory.html#a3c057514945c8c806b326be8195e333b":[17,0,4,4,3],
@@ -157,8 +160,8 @@ var NAVTREEINDEX11 =
 "class_os_1_1_queue_handle.html#abb956d99934b92d72c7d51f35cabbe6b":[17,0,4,12,2],
 "class_os_1_1_queue_handle.html#abb956d99934b92d72c7d51f35cabbe6b":[17,0,4,12,4],
 "class_os_1_1_queue_handle.html#adfaf1e2bd2ab24254a767db6f79d5dbd":[17,0,4,12,1],
-"class_os_1_1_queue_handle.html#adfaf1e2bd2ab24254a767db6f79d5dbd":[17,0,4,12,3],
 "class_os_1_1_queue_handle.html#adfaf1e2bd2ab24254a767db6f79d5dbd":[17,0,4,12,5],
+"class_os_1_1_queue_handle.html#adfaf1e2bd2ab24254a767db6f79d5dbd":[17,0,4,12,3],
 "class_os_1_1_queue_handle.html#adfaf1e2bd2ab24254a767db6f79d5dbd":[17,0,4,12,7],
 "class_os_1_1_queue_handle.html#ae195753a519fa765ac1176e05e1ba299":[17,0,4,12,15],
 "class_os_1_1_queue_registry.html":[17,0,4,20],
@@ -246,8 +249,5 @@ var NAVTREEINDEX11 =
 "class_os_1_1_validated_file.html#afc9f3ed73a43f4dc41ddd0ed3bc3917e":[17,0,4,27,0],
 "class_os_1_1_watchdog_timer.html":[17,0,4,28],
 "class_os_1_1_watchdog_timer.html#a11ddc580f355a69ea3024938d666dee7":[17,0,4,28,2],
-"class_os_1_1_watchdog_timer.html#a674cfeb3b2a8458dbc1544081f701717":[17,0,4,28,7],
-"class_os_1_1_watchdog_timer.html#a76455a778126e2626bf37d0980e5206e":[17,0,4,28,8],
-"class_os_1_1_watchdog_timer.html#a7c07a80839a4e8158a8b7105af8115e8":[17,0,4,28,0],
-"class_os_1_1_watchdog_timer.html#aa9acb4aeff7e668c1fbf562eb6555938":[17,0,4,28,1]
+"class_os_1_1_watchdog_timer.html#a674cfeb3b2a8458dbc1544081f701717":[17,0,4,28,7]
 };
