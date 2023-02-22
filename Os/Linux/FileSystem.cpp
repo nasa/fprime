@@ -516,8 +516,8 @@ Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBy
         return OTHER_ERROR;
     }
     // Check for overflow in multiplication
-    if (free_blocks > (numeric_limits<FwSizeType>::max() / block_size) ||
-        total_blocks > (numeric_limits<FwSizeType>::max() / block_size)) {
+    if (free_blocks > (std::numeric_limits<FwSizeType>::max() / block_size) ||
+        total_blocks > (std::numeric_limits<FwSizeType>::max() / block_size)) {
         return OTHER_ERROR;
     }
     freeBytes = free_blocks * block_size;
