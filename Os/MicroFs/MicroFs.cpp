@@ -185,6 +185,11 @@ File::Status File::open(const char* fileName, File::Mode mode, bool include_excl
     MicroFsFileState* state = getFileStateFromIndex(entry);
     FW_ASSERT(state);
 
+    // make sure it isn't already open. If so, return an error
+    if (state->loc != -1) {
+        return File::Status::NO_PERMISSION;
+    }
+
     // store mode
     this->m_mode = mode;
 
@@ -280,7 +285,7 @@ File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {
     // compute new operation location
     if (absolute) {
         // make sure not too far
-        if (offset >= state->dataSize) {
+        if ((offset >= state->dataSize) or (offset < 0)) {
             return BAD_SIZE;
         }
         state->loc = offset;
@@ -331,6 +336,9 @@ File::Status File::read(void* buffer, NATIVE_INT_TYPE& size, bool waitForFull) {
     // copy data from location to buffer
     (void)memcpy(buffer, state->data + state->loc, size);
 
+    // move location pointer
+    state->loc += size;
+
     return OP_OK;
 }
 
@@ -366,8 +374,10 @@ File::Status File::write(const void* buffer, NATIVE_INT_TYPE& size, bool waitFor
 
     // copy data to file buffer
     memcpy(&state->data[state->loc], buffer, size);
-    // increment new file size
+    // increment file size
     state->currSize += size;
+    // increment location
+    state->loc += size;
 
     return OP_OK;
 }
