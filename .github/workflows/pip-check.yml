@@ -3,13 +3,13 @@
 
 name: Python Dependency Check
 
-on: [push]
-  # push:
-  #   paths:
-  #     - 'requirements.txt'
-  # pull_request:
-  #   paths:
-  #     - 'requirements.txt'
+on:
+  push:
+    paths:
+      - 'requirements.txt'
+  pull_request:
+    paths:
+      - 'requirements.txt'
 
 jobs:
   pip-install:
