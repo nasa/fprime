@@ -45,7 +45,7 @@ void MicroFsInit(const MicroFsConfig& cfg, const PlatformUIntType id, Fw::MemAll
     PlatformUIntType totalNumFiles = 0;
     // iterate through the bins
     for (PlatformUIntType bin = 0; bin < cfg.numBins; bin++) {
-        // memory needed is struct for file state + file buffer size
+        // memory per file needed is struct for file state + file buffer size
         memSize += cfg.bins[bin].numFiles * (sizeof(MicroFsFileState) + cfg.bins[bin].fileSize);
         totalNumFiles += cfg.bins[bin].numFiles;
     }
@@ -274,8 +274,6 @@ File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {
     if (OPEN_NO_MODE == this->m_mode) {
         return NOT_OPENED;
     }
-
-    NATIVE_INT_TYPE newOffset = 0;
 
     // get file state entry
     FW_ASSERT(this->m_fd != -1);
