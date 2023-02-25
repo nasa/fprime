@@ -32,6 +32,20 @@ STATIC void* MicroFsMem = 0;
 // offset from zero for fds to allow zero checks
 STATIC const FwNativeUIntType MICROFS_FD_OFFSET = 1;
 
+//!< set the number of bins in config
+void MicroFsSetCfgBins(MicroFsConfig& cfg, const FwNativeUIntType numBins) {
+    FW_ASSERT(numBins <= MAX_MICROFS_BINS,numBins);
+    cfg.numBins = numBins;
+}
+
+//!< add a bin to the config
+void MicroFsAddBin(MicroFsConfig& cfg, const FwNativeUIntType binIndex, const FwSizeType fileSize, const FwNativeUIntType numFiles) {
+    FW_ASSERT(binIndex <= MAX_MICROFS_BINS,binIndex);
+    cfg.bins[binIndex].fileSize = fileSize;
+    cfg.bins[binIndex].numFiles = numFiles;
+}
+
+
 void MicroFsInit(const MicroFsConfig& cfg, const FwNativeUIntType id, Fw::MemAllocator& allocator) {
     // check things...
     FW_ASSERT(cfg.numBins <= MAX_MICROFS_BINS, cfg.numBins, MAX_MICROFS_BINS);
@@ -193,65 +207,35 @@ File::Status File::open(const char* fileName, File::Mode mode, bool include_excl
     // store mode
     this->m_mode = mode;
 
+    // return an error if it's already open
+    if (state->loc != -1) {
+        return File::Status::NO_PERMISSION;
+    }
+
+    // initialize operation location to zero
+    state->loc = 0;
+    // set file descriptor to index into state structure
+    this->m_fd = entry + MICROFS_FD_OFFSET;
+
     switch (mode) {
         case OPEN_READ:
             // if not written to yet, doesn't exist for read
             if (-1 == state->currSize) {
                 return File::Status::DOESNT_EXIST;
             }
-            // if file is already open, return an error
-            if (state->loc != -1) {
-                return File::Status::NO_PERMISSION;
-            }
-            // initialize operation location to zero
-            state->loc = 0;
-            // set file descriptor to index into state structure
-            this->m_fd = entry + MICROFS_FD_OFFSET;
-            return OP_OK;
+            break;
         case OPEN_WRITE:
         case OPEN_SYNC_WRITE:         // fall through; same for microfs
         case OPEN_SYNC_DIRECT_WRITE:  // fall through; same for microfs
-            // if the file doesn't exist yet, WRITE shouldn't work. Needs CREATE
-            if (-1 == state->currSize) {
-                return File::Status::DOESNT_EXIST;
-            }
-            // if file is already open, return an error
-            if (state->loc != -1) {
-                return File::Status::NO_PERMISSION;
-            }
-            // initialize write location to zero
-            state->loc = 0;
-            // set file descriptor to index into state structure
-            this->m_fd = entry + MICROFS_FD_OFFSET;
-            return OP_OK;
+            break;
         case OPEN_CREATE:
-            // same as write, but can create, so zero file length is okay
-
-            // if file is already open, return an error
-            if (state->loc != -1) {
-                return File::Status::NO_PERMISSION;
-            }
-            // initialize write location to zero
-            state->loc = 0;
-            // CREATE restarts file, initialize file size to zero
+            // truncate file length to zero
             state->currSize = 0;
-            // set file descriptor to index into state structure
-            this->m_fd = entry + MICROFS_FD_OFFSET;
-            return OP_OK;
+            break;
         case OPEN_APPEND:
-            // if the file doesn't exist yet, WRITE shouldn't work. Needs CREATE
-            if (-1 == state->currSize) {
-                return File::Status::DOESNT_EXIST;
-            }
-            // if file is already open for write, return an error
-            if (state->loc != -1) {
-                return File::Status::NO_PERMISSION;
-            }
             // initialize write location to length of file for append
             state->loc = state->currSize;
-            // set file descriptor to index into state structure
-            this->m_fd = entry + MICROFS_FD_OFFSET;
-            return OP_OK;
+            break;
         default:
             FW_ASSERT(0, mode);
             break;
@@ -648,6 +632,17 @@ Status appendFile(const char* originPath, const char* destPath, bool createMissi
     return OP_OK;
 
 }
+
+Status getFileSize(const char* path, FwSizeType& size) {
+
+    return OP_OK;
+}
+
+Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
+
+    return OP_OK;
+}
+
 
 } // end FileSystem namespace
 

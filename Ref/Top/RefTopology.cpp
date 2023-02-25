@@ -19,6 +19,8 @@
 
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
+// micro file system - optional RAM file system
+#include <Os/MicroFs/MicroFs.hpp>
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
@@ -118,6 +120,16 @@ void configureTopology() {
 
     // Note: Uncomment when using Svc:TlmPacketizer
     //tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
+
+    // Uncomment if using Os::MicroFs
+    Os::MicroFsConfig microFsCfg;
+    Os::MicroFsSetCfgBins(microFsCfg,5);
+    Os::MicroFsAddBin(microFsCfg,0,1*1024,5);
+    Os::MicroFsAddBin(microFsCfg,1,10*1024,5);
+    Os::MicroFsAddBin(microFsCfg,2,100*1024,5);
+    Os::MicroFsAddBin(microFsCfg,3,1000*1024,5);
+    Os::MicroFsAddBin(microFsCfg,4,10000*1024,5);
+    Os::MicroFsInit(microFsCfg,0,mallocator);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -184,5 +196,8 @@ void teardownTopology(const TopologyState& state) {
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);
     fileUplinkBufferManager.cleanup();
+
+    // comment in if using MicroFs
+    Os::MicroFsCleanup(0,mallocator);
 }
 };  // namespace Ref

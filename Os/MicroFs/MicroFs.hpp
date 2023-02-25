@@ -98,6 +98,12 @@ struct MicroFsConfig {
     MicroFsBin bins[MAX_MICROFS_BINS];  //!< The bins containing file sizes and numbers of files
 };
 
+//!< set the number of bins in config
+void MicroFsSetCfgBins(MicroFsConfig& cfg, const FwNativeUIntType numBins);
+
+//!< add a bin to the config
+void MicroFsAddBin(MicroFsConfig& cfg, const FwNativeUIntType binIndex, const FwSizeType fileSize, const FwNativeUIntType numFiles);
+
 //!< initialize MicroFs memory by passing the configuration, a memory id (if needed), and a memory allocator
 
 void MicroFsInit(const MicroFsConfig& cfg,      //!< the configuration of the memory space
