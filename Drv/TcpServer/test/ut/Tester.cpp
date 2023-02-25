@@ -66,8 +66,8 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
         EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
 
         // If all the opens worked, then run this
-        if (Drv::SOCK_SUCCESS == status1 && Drv::SOCK_SUCCESS == status2 &&
-            this->component.getSocketHandler().isOpened()) {
+        if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
+            (this->component.getSocketHandler().isOpened())) {
             // Force the sockets not to hang, if at all possible
             Drv::Test::force_recv_timeout(this->component.getSocketHandler());
             Drv::Test::force_recv_timeout(client);
