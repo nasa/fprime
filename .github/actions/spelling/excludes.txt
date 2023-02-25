@@ -116,3 +116,4 @@ ignore$
 ^\QSvc/LinuxTime/LinuxTime.hpp\E$
 ^\QSvc/PrmDb/PrmDb.hpp\E$
 ^\QSvc/TlmChan/TlmChan.hpp\E$
+^\QOs/MicroFs/test/ut/launch.json\E$
