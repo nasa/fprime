@@ -202,10 +202,10 @@ TEST(FileSystemOps, OneFileReadDirectory) {
 
     ASSERT_EQ(0,strcmp(expectedFile.toChar(),files[0].toChar()));
 
-    // check non-existent bin
+    // check nonexistent bin
 
     listDir.format("/%s1",MICROFS_BIN_STRING);
-    msg.format("Listing non-existent %s",listDir.toChar());
+    msg.format("Listing nonexistent %s",listDir.toChar());
     COMMENT(msg.toChar());
     numFiles = 10;
 

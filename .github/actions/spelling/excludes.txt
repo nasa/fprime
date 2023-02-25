@@ -81,6 +81,7 @@ ignore$
 \.xlsx$
 \.xsd$
 \.zip$
+\.fseq$
 ^Autocoders/Python/test/.*\.xml$
 ^Autocoders/Python/test/param1/test/ut/Tester\.hpp$
 ^config/PolyDbImplCfg\.hpp$
