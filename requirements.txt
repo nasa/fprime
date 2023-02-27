@@ -20,7 +20,7 @@ fprime-gds==3.1.5a3
 fprime-tools==3.1.2a2
 gcovr==5.2
 idna==3.4
-importlib-metadata==6.0.0
+importlib-metadata==4.13.0
 iniconfig==2.0.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
