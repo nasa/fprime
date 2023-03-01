@@ -94,6 +94,8 @@ function(ai_xml_setup_autocode AC_INPUT_FILE)
     # Check type and respond
     if(XML_LOWER_TYPE STREQUAL "topologyapp")
         # Are we excluding the generated files or not
+        set_property(GLOBAL PROPERTY "${PROJECT_NAME}_FPRIME_DICTIONARY_FILE"
+                "${CMAKE_CURRENT_BINARY_DIR}/${OBJ_NAME}${XML_TYPE}Dictionary.xml")
         if (EXCLUDE_TOP_ACS)
             set(REMOVALS "${GENERATED_FILES}")
             set(GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${OBJ_NAME}${XML_TYPE}Dictionary.xml")
