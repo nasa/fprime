@@ -144,7 +144,7 @@ namespace Fw {
         return this->m_timeBase;
     }
 
-    U8 Time::getContext() const {
+    FwTimeContextStoreType Time::getContext() const {
         return this->m_timeContext;
     }
 
