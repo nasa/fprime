@@ -85,7 +85,7 @@ void MicroFsInit(const MicroFsConfig& cfg, const FwNativeUIntType id, Fw::MemAll
     // point to memory after state structs for beginning of file data
     BYTE* currFileBuff = reinterpret_cast<BYTE*>(&statePtr[totalNumFiles]);
     // fill in the file state structs
-    for (FwIndexType bin = 0; bin < cfg.numBins; bin++) {
+    for (FwNativeUIntType bin = 0; bin < cfg.numBins; bin++) {
         for (FwNativeUIntType file = 0; file < cfg.bins[bin].numFiles; file++) {
             // clear state structure memory
             memset(statePtr, 0, sizeof(MicroFsFileState));
@@ -117,9 +117,6 @@ STATIC FwNativeUIntType getFileStateIndex(const char* fileName) {
     // the directory/filename rule is very strict - it has to be /MICROFS_BIN_STRING<n>/MICROFS_FILE_STRING<m>,
     // where n = number of file bins, and m = number of files in a particular bin
     // any other name will return an error
-    FwNativeUIntType bin = 0;
-    FwNativeUIntType file = 0;
-    MicroFsFileState* statePtr = 0;
 
     const char* filePathSpec = "/" 
         MICROFS_BIN_STRING 
@@ -127,8 +124,8 @@ STATIC FwNativeUIntType getFileStateIndex(const char* fileName) {
         MICROFS_FILE_STRING 
         "%d";
 
-    FwNativeIntType binIndex;
-    FwNativeIntType fileIndex;
+    FwNativeUIntType binIndex;
+    FwNativeUIntType fileIndex;
 
     FwNativeIntType stat = sscanf(fileName,filePathSpec,&binIndex,&fileIndex);
     // must match two entries, i.e. the bin and file numbers
@@ -153,7 +150,7 @@ STATIC FwNativeUIntType getFileStateIndex(const char* fileName) {
     // compute file state index
 
     // add each chunk of file numbers from full bins
-    for (FwIndexType currBin = 0; currBin < binIndex; binIndex++) {
+    for (FwNativeUIntType currBin = 0; currBin < binIndex; binIndex++) {
         stateIndex += cfgPtr->bins[currBin].numFiles;
     }
 
@@ -439,7 +436,7 @@ File::Status File::calculateCRC32(U32& crc) {
 
     while (!endOfFile && numIters < maxIters) {
         ++numIters;
-        int chunkSize = maxChunkSize;
+        NATIVE_INT_TYPE chunkSize = maxChunkSize;
 
         status = read(file_buffer, chunkSize, false);
         if (status == OP_OK) {
@@ -531,7 +528,7 @@ Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[],
     // first, check for root
     if (Fw::StringUtils::string_length(path,sizeof(MICROFS_BIN_STRING)) == 1) {
         // Add directory names based on number of bins
-        for (FwIndexType bin = 0; bin < cfg->numBins; bin++) {
+        for (FwNativeUIntType bin = 0; bin < cfg->numBins; bin++) {
             // make sure we haven't exceeded provided array size
             if (bin >= maxNum) {
                 return OP_OK;
@@ -612,7 +609,7 @@ Status handleFileError(File::Status fileStatus) {
 }
 
 Status initAndCheckFileStats(const char* filePath, struct stat* fileInfo = nullptr) {
-    FileSystem::Status fs_status;
+    FileSystem::Status fs_status = OP_OK;
 
     return fs_status;
 }
