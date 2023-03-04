@@ -99,7 +99,7 @@ class IpSocket {
      * \brief send data out the IP socket from the given buffer
      *
      * Sends data out of the IpSocket. This outgoing transmission will be retried several times if the transmission
-     * fails to send all the data. Retries are globally configured in the `SocketIpDriverCfg.hpp` header. Should the
+     * fails to send all the data. Retries are globally configured in the `IpCfg.hpp` header. Should the
      * socket be unavailable, SOCK_DISCONNECTED is returned and the socket should be reopened using the `open` call.
      * This can happen even when the socket has already been opened should a transmission error/closure be detected.
      * Unless an error is received, all data will have been transmitted.
