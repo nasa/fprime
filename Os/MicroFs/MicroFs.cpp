@@ -519,6 +519,9 @@ Status removeDirectory(const char* path) {
 
 Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
 
+    if (not path) {
+        return INVALID_PATH;
+    }
     // get config
     FW_ASSERT(MicroFsMem);
     MicroFsConfig *cfg = static_cast<MicroFsConfig*>(MicroFsMem);
@@ -527,6 +530,9 @@ Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[],
 
     // first, check for root
     if (Fw::StringUtils::string_length(path,sizeof(MICROFS_BIN_STRING)) == 1) {
+        if (path[0] != '/') {
+            return INVALID_PATH;
+        }
         // Add directory names based on number of bins
         for (FwNativeUIntType bin = 0; bin < cfg->numBins; bin++) {
             // make sure we haven't exceeded provided array size
@@ -558,31 +564,37 @@ Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[],
     // verify in the range of bins
     FwNativeUIntType stat = sscanf(path,dirPathSpec,&binIndex);
     if ((stat != 1) or (binIndex >= cfg->numBins)) {
-        return NOT_DIR;
+        return INVALID_PATH;
     }
 
     // get set of files in the bin directory
     Fw::String fileStr;
     for (FwNativeUIntType entry = 0; entry < cfg->bins[binIndex].numFiles; entry++) {
-        const char* filePathSpec = "/"
-            MICROFS_BIN_STRING
-            "%d/"
-            MICROFS_FILE_STRING
-            "%d";
-        fileStr.format(filePathSpec,binIndex,entry);
-        // get file state
-        Os::getFileStateIndex(fileStr.toChar());
-
 
         // make sure we haven't exceeded provided array size
         if (entry >= maxNum) {
             return OP_OK;
         }
-        // see if this file has been written yet
 
+        const char* filePathSpec = "/"
+            MICROFS_BIN_STRING
+            "%d/"
+            MICROFS_FILE_STRING
+            "%d";
 
-        fileArray[entry] = fileStr;
-        
+        fileStr.format(filePathSpec,binIndex,entry);
+        // get file state
+        FwNativeUIntType fileIndex = Os::getFileStateIndex(fileStr.toChar());
+        // should always find it, since it is from a known valid bin
+        FW_ASSERT(fileIndex != -1);
+        MicroFsFileState* fState = getFileStateFromIndex(fileIndex);
+        FW_ASSERT(fState);
+
+        // check to see if it has been written
+        if (fState->currSize != -1) {
+            fileArray[numFiles++] = fileStr;
+        }
+
     }
 
     return OP_OK;
@@ -590,15 +602,70 @@ Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[],
 }
 
 Status removeFile(const char* path) {
-    Status stat = OP_OK;
 
-    return stat;
+    if (not path) {
+        return INVALID_PATH;
+    }
+
+    // get file state
+    FwNativeUIntType index = getFileStateIndex(path);
+    if (index == -1) {
+        return INVALID_PATH;
+    }
+
+    MicroFsFileState* fState = getFileStateFromIndex(index);
+    FW_ASSERT(fState);
+
+    // delete the file by setting current size to be -1
+    fState->currSize = -1;
+
+    return OP_OK;
 }
 
 Status moveFile(const char* originPath, const char* destPath) {
-    Status stat = OP_OK;
 
-    return stat;
+    if ((not originPath) or (not destPath)) {
+        return INVALID_PATH;
+    }
+
+    // get file state
+    FwNativeUIntType origIndex = getFileStateIndex(originPath);
+    if (origIndex == -1) {
+        return INVALID_PATH;
+    }
+
+    MicroFsFileState* origState = getFileStateFromIndex(origIndex);
+    FW_ASSERT(origState);
+
+    // get file state
+    FwNativeUIntType destIndex = getFileStateIndex(destPath);
+    if (-1 == origIndex) {
+        return INVALID_PATH;
+    }
+
+    MicroFsFileState* destState = getFileStateFromIndex(destIndex);
+    FW_ASSERT(destState);
+
+    // make sure source exists
+    if (origState->currSize != -1) {
+        return INVALID_PATH;
+    }
+
+    // make sure neither is open so we don't corrupt operations
+    // in progress
+    if ((destState->loc != -1) or (origState->loc != 1)) {
+        return BUSY;
+    }
+
+    // move consists of copying source data/size to destination,
+    // and then deleting source
+
+    // check sizes!
+
+    memcpy(origState->data,destState->data,origState->currSize);
+    destState->currSize = origState->currSize;
+
+    return OP_OK;
 
 }
 
@@ -632,10 +699,46 @@ Status appendFile(const char* originPath, const char* destPath, bool createMissi
 
 Status getFileSize(const char* path, FwSizeType& size) {
 
+    // get file state
+    FwNativeUIntType index = getFileStateIndex(path);
+    if (index == -1) {
+        return INVALID_PATH;
+    }
+
+    MicroFsFileState* fState = getFileStateFromIndex(index);
+    FW_ASSERT(fState);
+
+    size = fState->currSize;
+
     return OP_OK;
 }
 
+// We can get a "free" space number by adding up all the space left in the flie bins
+
 Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
+
+    FwNativeUIntType currFile = 0;
+    totalBytes = 0;
+    freeBytes = 0;
+
+    // get config
+    FW_ASSERT(MicroFsMem);
+    MicroFsConfig *cfgPtr = static_cast<MicroFsConfig*>(MicroFsMem);
+
+    // File state is after config space
+    MicroFsFileState* statePtr = reinterpret_cast<MicroFsFileState*>(&cfgPtr[1]);
+    FW_ASSERT(statePtr);
+
+    // iterate through bins
+    for (FwNativeUIntType currBin = 0; currBin < cfgPtr->numBins; currBin++) {
+        // iterate through files in each bin
+        for (FwNativeUIntType currFile = 0; currFile < cfgPtr->bins[currBin].numFiles; currFile++) {
+            totalBytes += statePtr->dataSize;
+            freeBytes += (statePtr->dataSize - statePtr->currSize);
+            currFile++;
+        }
+
+    }
 
     return OP_OK;
 }
