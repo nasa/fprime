@@ -19,7 +19,7 @@ Ensures targets are real before installing them. Real targets are executables, l
             RUNTIME DESTINATION ${TOOLCHAIN_NAME}/bin
             LIBRARY DESTINATION ${TOOLCHAIN_NAME}/lib
             ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/lib/static)
-    get_property(DICTIONARY GLOBAL PROPERTY DICTIONARY_FILE)
+    get_property(DICTIONARY GLOBAL PROPERTY "${PROJECT_NAME}_FPRIME_DICTIONARY_FILE")
     install(FILES ${DICTIONARY} DESTINATION ${TOOLCHAIN_NAME}/dict)
     add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target install)
 endfunction()
