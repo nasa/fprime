@@ -183,19 +183,19 @@ var NAVTREEINDEX =
 "file_system_8hpp.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa378e0405d1b2d5d768e7fb42f5b6a60d",
 "health_8hpp_source.html",
 "os_2_linux_2_file_8cpp.html",
-"socket_read_task_8cpp.html#aaa5e6003b9713ce5f6c51c2c8c72bbff",
-"svc_deframer_component.html#autotoc_md396",
-"svc_rate_group_driver_component.html#autotoc_md630",
-"validate_file_common_8cpp.html#ac8ca2101117d8aff1fe5774f94d1a8d7",
-"class_fw_1_1_buffer.html#a25b8b9d6c1c717ce9cfbbadaf3e8f5cd",
-"class_fw_1_1_poly_type.html#a82b457efb9b5450d2d840737819dce2a",
-"class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2ba12063f75af229ebe45e9deee0da81b6b",
-"class_os_1_1_watchdog_timer.html",
-"class_svc_1_1_generic_hub_component_impl.html#a731e57c8e4c3341480cabb23567a38e8",
-"dir_8eb8812a177cc4e83d7d03c3c3297cc3.html",
-"md_docs__design_communication_adapter_interface.html#autotoc_md28",
-"namespace_svc_1_1_deframer_cfg.html",
-"struct_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence_1_1_c_r_c.html#a512cb1614023691c8288abfc12d4e539"
+"static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625",
+"svc_fatal_handler_component.html#autotoc_md416",
+"svc_static_memory_component.html#autotoc_md642",
+"watchdog_timer_8hpp.html",
+"class_fw_1_1_cmd_arg_buffer.html#a1a9277d906bb54cba0d92eed51a19135",
+"class_fw_1_1_poly_type.html#ae2fb07a2da7b934a610144cafaed67d1",
+"class_os_1_1_directory.html#ac2ad860e42e95316af7b5e541c2f0a65",
+"class_primitive_struct_test.html",
+"class_svc_1_1_health_impl.html#ac9373bde103c99aeeec78106e76e69bd",
+"dir_a422961f4ddd4bf4f26b5c870cd6ead9.html",
+"namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da15e3766da7278a2ccfb60fbc77e2fa4c",
+"namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a105d813f21299854d33e22b61281e592",
+"struct_svc_1_1_log_file.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

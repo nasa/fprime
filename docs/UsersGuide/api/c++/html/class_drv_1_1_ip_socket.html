@@ -557,7 +557,7 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>send data out the IP socket from the given buffer </p>
-<p>Sends data out of the <a class="el" href="class_drv_1_1_ip_socket.html" title="Helper base-class for setting up Berkley sockets.">IpSocket</a>. This outgoing transmission will be retried several times if the transmission fails to send all the data. Retries are globally configured in the <code><a class="el" href="socket_ip_driver_cfg_8hpp.html">SocketIpDriverCfg.hpp</a></code> header. Should the socket be unavailable, SOCK_DISCONNECTED is returned and the socket should be reopened using the <code>open</code> call. This can happen even when the socket has already been opened should a transmission error/closure be detected. Unless an error is received, all data will have been transmitted.</p>
+<p>Sends data out of the <a class="el" href="class_drv_1_1_ip_socket.html" title="Helper base-class for setting up Berkley sockets.">IpSocket</a>. This outgoing transmission will be retried several times if the transmission fails to send all the data. Retries are globally configured in the <code><a class="el" href="ip_cfg_8hpp.html">IpCfg.hpp</a></code> header. Should the socket be unavailable, SOCK_DISCONNECTED is returned and the socket should be reopened using the <code>open</code> call. This can happen even when the socket has already been opened should a transmission error/closure be detected. Unless an error is received, all data will have been transmitted.</p>
 <p>Note: delegates to <code>sendProtocol</code> to send the data</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['comsplittercomponentbasefriend_3844',['ComSplitterComponentBaseFriend',['../class_svc_1_1_com_splitter.html#ac08ef9d620857d77da077d00f1496bae',1,'Svc::ComSplitter']]]
+  ['comsplittercomponentbasefriend_3817',['ComSplitterComponentBaseFriend',['../class_svc_1_1_com_splitter.html#ac08ef9d620857d77da077d00f1496bae',1,'Svc::ComSplitter']]]
 ];
