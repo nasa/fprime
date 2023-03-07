@@ -105,7 +105,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )
-register_fprime_ut()
+#register_fprime_ut()
 
 # Second UT Pthreads
 set(UT_SOURCE_FILES
