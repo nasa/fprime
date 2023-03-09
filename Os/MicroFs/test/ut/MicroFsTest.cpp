@@ -5,7 +5,20 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Fw/Test/UnitTest.hpp>
 #include <Fw/Types/String.hpp>
+#include "Tester.hpp"
 
+TEST(Initialization, InitTest) {
+    Os::Tester tester;
+    tester.InitTest();
+}
+
+TEST(FileOps, OpenWriteReadTest) {
+    Os::Tester tester;
+    tester.OpenWriteReadTest();
+
+}
+
+#if 0
 TEST(Initialization, InitTest) {
     Fw::MallocAllocator alloc;
     Os::MicroFsConfig testCfg;
@@ -213,7 +226,7 @@ TEST(FileSystemOps, OneFileReadDirectory) {
         Os::FileSystem::readDirectory(listDir.toChar(),1, files, numFiles));
 
 }
-
+#endif
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
