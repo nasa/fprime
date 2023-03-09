@@ -7,6 +7,13 @@
 #include <Fw/Types/String.hpp>
 #include "Tester.hpp"
 
+#if 0
+TEST(Trial, TempTest) {
+    Os::Tester tester;
+    tester.TempTest();
+}
+#endif
+
 TEST(Initialization, InitTest) {
     Os::Tester tester;
     tester.InitTest();
@@ -15,7 +22,17 @@ TEST(Initialization, InitTest) {
 TEST(FileOps, OpenWriteReadTest) {
     Os::Tester tester;
     tester.OpenWriteReadTest();
+}
 
+
+TEST(FileOps, OpenWriteTwiceReadOnceTest) {
+    Os::Tester tester;
+    tester.OpenWriteTwiceReadOnceTest();
+}
+
+TEST(FileOps, OpenWriteOnceReadTwiceTest) {
+    Os::Tester tester;
+    tester.OpenWriteOnceReadTwiceTest();
 }
 
 #if 0

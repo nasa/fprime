@@ -118,9 +118,10 @@
   //
   // ------------------------------------------------------------------------------------------------------
   
-  Os::Tester::WriteData::WriteData() :
+  Os::Tester::WriteData::WriteData(NATIVE_INT_TYPE size) :
         STest::Rule<Os::Tester>("WriteData")
   {
+    this->size = size;
   }
 
 
@@ -138,10 +139,99 @@
   {
     printf("--> Rule: %s \n", this->name);
 
-    // BYTE buffOut[testCfg.bins[0].fileSize];
-    // memset(buffOut,0xFF,sizeof(buffOut));
-    // NATIVE_INT_TYPE size = sizeof(buffOut);
-    // ASSERT_EQ(Os::File::OP_OK,f.write(buffOut,size));
-    // ASSERT_EQ(sizeof(buffOut),size);
+    ASSERT_LE(state.curPtr + this->size, Tester::BUFFER_SIZE);
+    memset(state.buffOut + state.curPtr, 0xFF, this->size);
+    state.curPtr = state.curPtr + this->size;
+    NATIVE_INT_TYPE retSize = this->size;
+    Os::File::Status stat = state.f.write(state.buffOut, retSize);
+    ASSERT_EQ(stat, Os::File::OP_OK);
+    ASSERT_EQ(retSize, this->size);
+
+    for (U16 i=0; i<Tester::BUFFER_SIZE; i++)
+    {
+        printf("%X ", state.buffOut[i]);
+    }
+    printf("\n");
+
+
+  }
+
+
+    
+
+
+  // ------------------------------------------------------------------------------------------------------
+  // Rule:  ReadData
+  //
+  // ------------------------------------------------------------------------------------------------------
+  
+  Os::Tester::ReadData::ReadData(NATIVE_INT_TYPE size) :
+        STest::Rule<Os::Tester>("ReadData")
+  {
+    this->size = size;
+  }
+
+
+  bool Os::Tester::ReadData::precondition(
+            const Os::Tester& state //!< The test state
+        ) 
+  {
+      return true;
+  }
+
+  
+  void Os::Tester::ReadData::action(
+            Os::Tester& state //!< The test state
+        ) 
+  {
+      printf("--> Rule: %s \n", this->name);
+
+      BYTE buffIn[state.testCfg.bins[0].fileSize];
+      NATIVE_INT_TYPE bufferSize = sizeof(buffIn);
+      memset(buffIn,0xA5,sizeof(buffIn));
+      ASSERT_LE(this->size, sizeof(buffIn));
+      NATIVE_INT_TYPE retSize = this->size;
+      Os::File::Status stat = state.f.read(buffIn, retSize);
+      ASSERT_EQ(stat, Os::File::OP_OK);
+      ASSERT_EQ(retSize, this->size);
+
+      // Check the returned data
+      ASSERT_LE(state.curPtr + this->size, Tester::BUFFER_SIZE);
+      ASSERT_EQ(0,memcmp(buffIn, state.buffOut+state.curPtr, this->size));
+
+  }
+
+
+    
+
+
+  // ------------------------------------------------------------------------------------------------------
+  // Rule:  ResetFile
+  //
+  // ------------------------------------------------------------------------------------------------------
+  
+  Os::Tester::ResetFile::ResetFile() :
+        STest::Rule<Os::Tester>("ResetFile")
+  {
+  }
+
+
+  bool Os::Tester::ResetFile::precondition(
+            const Os::Tester& state //!< The test state
+        ) 
+  {
+      return true;
+  }
+
+  
+  void Os::Tester::ResetFile::action(
+            Os::Tester& state //!< The test state
+        ) 
+  {
+      printf("--> Rule: %s \n", this->name);
+
+      // seek back to beginning
+      ASSERT_EQ(Os::File::OP_OK, state.f.seek(0));
+      state.curPtr = 0;
   }
 

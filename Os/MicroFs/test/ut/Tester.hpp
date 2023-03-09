@@ -21,6 +21,10 @@ namespace Os {
   {
       #include "MyRules.hpp"
 
+      enum {
+        BUFFER_SIZE = 100
+      };
+
       // ----------------------------------------------------------------------
       // Construction and destruction
       // ----------------------------------------------------------------------
@@ -38,6 +42,8 @@ namespace Os {
       Fw::MallocAllocator alloc;
       Os::MicroFsConfig testCfg;
       Os::File f;
+      BYTE buffOut[BUFFER_SIZE];
+      NATIVE_INT_TYPE curPtr;
 
     public:
 
@@ -46,8 +52,14 @@ namespace Os {
       // ----------------------------------------------------------------------
 
       //!
+      void TempTest();
       void InitTest();
       void OpenWriteReadTest();
+      void OpenWriteTwiceReadOnceTest();
+      void OpenWriteOnceReadTwiceTest();
+
+      // Helper functions
+      void clearFileBuffer();
 
     private:
 
