@@ -118,10 +118,11 @@
   //
   // ------------------------------------------------------------------------------------------------------
   
-  Os::Tester::WriteData::WriteData(NATIVE_INT_TYPE size) :
+  Os::Tester::WriteData::WriteData(NATIVE_INT_TYPE size, U8 value) :
         STest::Rule<Os::Tester>("WriteData")
   {
     this->size = size;
+    this->value = value;
   }
 
 
@@ -140,18 +141,20 @@
     printf("--> Rule: %s \n", this->name);
 
     ASSERT_LE(state.curPtr + this->size, Tester::BUFFER_SIZE);
-    memset(state.buffOut + state.curPtr, 0xFF, this->size);
-    state.curPtr = state.curPtr + this->size;
+    memset(state.buffOut + state.curPtr, this->value, this->size);
     NATIVE_INT_TYPE retSize = this->size;
-    Os::File::Status stat = state.f.write(state.buffOut, retSize);
+    Os::File::Status stat = state.f.write(state.buffOut + state.curPtr, retSize);
+    state.curPtr = state.curPtr + this->size;
     ASSERT_EQ(stat, Os::File::OP_OK);
     ASSERT_EQ(retSize, this->size);
 
+    #if 0
     for (U16 i=0; i<Tester::BUFFER_SIZE; i++)
     {
         printf("%X ", state.buffOut[i]);
     }
     printf("\n");
+    #endif
 
 
   }

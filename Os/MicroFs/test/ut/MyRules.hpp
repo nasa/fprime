@@ -116,7 +116,7 @@
             // ----------------------------------------------------------------------
 
             //! Constructor
-            WriteData(NATIVE_INT_TYPE size);
+            WriteData(NATIVE_INT_TYPE size, U8 value);
 
             // ----------------------------------------------------------------------
             // Public member functions
@@ -133,6 +133,7 @@
             );
 
             NATIVE_INT_TYPE size;
+            U8 value;
 
     };
 

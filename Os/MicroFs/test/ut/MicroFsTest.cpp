@@ -24,7 +24,6 @@ TEST(FileOps, OpenWriteReadTest) {
     tester.OpenWriteReadTest();
 }
 
-
 TEST(FileOps, OpenWriteTwiceReadOnceTest) {
     Os::Tester tester;
     tester.OpenWriteTwiceReadOnceTest();

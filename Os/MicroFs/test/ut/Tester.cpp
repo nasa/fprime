@@ -42,7 +42,11 @@ namespace Os {
     InitFileSystem initFileSystem(numBins, fileSize, numFiles);
     OpenFile openFile;
     ResetFile resetFile;
-    WriteData writeData(fileSize/5);
+    WriteData writeData1(fileSize/5, 0x11);
+    WriteData writeData2(fileSize/5, 0x22);
+    WriteData writeData3(fileSize/5, 0x33);
+    WriteData writeData4(fileSize/5, 0x44);
+    WriteData writeData5(fileSize/5, 0x55);
     ReadData readData(fileSize/5);
 
     Cleanup cleanup;
@@ -50,8 +54,11 @@ namespace Os {
     // Run the Rules
     initFileSystem.apply(*this);
     openFile.apply(*this);
-    writeData.apply(*this);
-    writeData.apply(*this);
+    writeData1.apply(*this);
+    writeData2.apply(*this);
+    writeData3.apply(*this);
+    writeData4.apply(*this);
+    writeData5.apply(*this);
     resetFile.apply(*this);
     readData.apply(*this);
     readData.apply(*this);
@@ -97,7 +104,7 @@ namespace Os {
     OpenFile openFile;
     ResetFile resetFile;
     Cleanup cleanup;
-    WriteData writeData(fileSize);
+    WriteData writeData(fileSize, 0xFF);
     ReadData readData(fileSize);
 
     // Run the Rules
@@ -128,14 +135,15 @@ namespace Os {
     OpenFile openFile;
     ResetFile resetFile;
     Cleanup cleanup;
-    WriteData writeData(fileSize/2);
+    WriteData writeData1(fileSize/2, 0x11);
+    WriteData writeData2(fileSize/2, 0x22);
     ReadData readData(fileSize);
 
     // Run the Rules
     initFileSystem.apply(*this);
     openFile.apply(*this);
-    writeData.apply(*this);
-    writeData.apply(*this);
+    writeData1.apply(*this);
+    writeData2.apply(*this);
     resetFile.apply(*this);
     readData.apply(*this);
 
@@ -143,7 +151,7 @@ namespace Os {
     
   }
   // ----------------------------------------------------------------------
-  // OpenWriteTwiceReadTwiceTest
+  // OpenWriteOnceReadTwiceTest
   // ----------------------------------------------------------------------
   void Tester ::
     OpenWriteOnceReadTwiceTest()
@@ -158,13 +166,12 @@ namespace Os {
     OpenFile openFile;
     ResetFile resetFile;
     Cleanup cleanup;
-    WriteData writeData(fileSize/2);
+    WriteData writeData(fileSize, 0xFF);
     ReadData readData(fileSize/2);
 
     // Run the Rules
     initFileSystem.apply(*this);
     openFile.apply(*this);
-    writeData.apply(*this);
     writeData.apply(*this);
     resetFile.apply(*this);
     readData.apply(*this);
