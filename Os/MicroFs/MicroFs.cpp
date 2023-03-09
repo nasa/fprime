@@ -585,8 +585,6 @@ Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[],
         fileStr.format(filePathSpec,binIndex,entry);
         // get file state
         FwNativeUIntType fileIndex = Os::getFileStateIndex(fileStr.toChar());
-        // should always find it, since it is from a known valid bin
-        FW_ASSERT(fileIndex != -1);
         MicroFsFileState* fState = getFileStateFromIndex(fileIndex);
         FW_ASSERT(fState);
 
@@ -609,9 +607,6 @@ Status removeFile(const char* path) {
 
     // get file state
     FwNativeUIntType index = getFileStateIndex(path);
-    if (index == -1) {
-        return INVALID_PATH;
-    }
 
     MicroFsFileState* fState = getFileStateFromIndex(index);
     FW_ASSERT(fState);
@@ -630,18 +625,12 @@ Status moveFile(const char* originPath, const char* destPath) {
 
     // get file state
     FwNativeUIntType origIndex = getFileStateIndex(originPath);
-    if (origIndex == -1) {
-        return INVALID_PATH;
-    }
 
     MicroFsFileState* origState = getFileStateFromIndex(origIndex);
     FW_ASSERT(origState);
 
     // get file state
     FwNativeUIntType destIndex = getFileStateIndex(destPath);
-    if (-1 == origIndex) {
-        return INVALID_PATH;
-    }
 
     MicroFsFileState* destState = getFileStateFromIndex(destIndex);
     FW_ASSERT(destState);
@@ -701,9 +690,6 @@ Status getFileSize(const char* path, FwSizeType& size) {
 
     // get file state
     FwNativeUIntType index = getFileStateIndex(path);
-    if (index == -1) {
-        return INVALID_PATH;
-    }
 
     MicroFsFileState* fState = getFileStateFromIndex(index);
     FW_ASSERT(fState);
@@ -717,7 +703,7 @@ Status getFileSize(const char* path, FwSizeType& size) {
 
 Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
 
-    FwNativeUIntType currFile = 0;
+    //FwNativeUIntType currFile = 0;
     totalBytes = 0;
     freeBytes = 0;
 
@@ -735,7 +721,7 @@ Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBy
         for (FwNativeUIntType currFile = 0; currFile < cfgPtr->bins[currBin].numFiles; currFile++) {
             totalBytes += statePtr->dataSize;
             freeBytes += (statePtr->dataSize - statePtr->currSize);
-            currFile++;
+            //currFile++;
         }
 
     }

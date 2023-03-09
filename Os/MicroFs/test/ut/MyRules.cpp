@@ -340,7 +340,7 @@
     COMMENT(msg.toChar());
     numFiles = 10;
 
-    ASSERT_EQ(Os::FileSystem::NOT_DIR,
+    ASSERT_EQ(Os::FileSystem::INVALID_PATH,
         Os::FileSystem::readDirectory(listDir.toChar(),1, files, numFiles));
   }
 
