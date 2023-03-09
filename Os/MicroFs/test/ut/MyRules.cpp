@@ -5,6 +5,8 @@
 #include <Os/FileSystem.hpp>
 #include <Os/MicroFs/MicroFs.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
+#include <Fw/Test/UnitTest.hpp>
+
 
 
   // ------------------------------------------------------------------------------------------------------
@@ -236,5 +238,109 @@
       // seek back to beginning
       ASSERT_EQ(Os::File::OP_OK, state.f.seek(0));
       state.curPtr = 0;
+  }
+
+
+    
+
+
+  // ------------------------------------------------------------------------------------------------------
+  // Rule:  CloseFile
+  //
+  // ------------------------------------------------------------------------------------------------------
+  
+  Os::Tester::CloseFile::CloseFile() :
+        STest::Rule<Os::Tester>("CloseFile")
+  {
+  }
+
+
+  bool Os::Tester::CloseFile::precondition(
+            const Os::Tester& state //!< The test state
+        ) 
+  {
+      return true;
+  }
+
+  
+  void Os::Tester::CloseFile::action(
+            Os::Tester& state //!< The test state
+        ) 
+  {
+    printf("--> Rule: %s \n", this->name);
+
+    // close file
+    state.f.close();
+  }
+
+
+    
+
+
+  // ------------------------------------------------------------------------------------------------------
+  // Rule:  Listings
+  //
+  // ------------------------------------------------------------------------------------------------------
+  
+  Os::Tester::Listings::Listings() :
+        STest::Rule<Os::Tester>("Listings")
+  {
+  }
+
+
+  bool Os::Tester::Listings::precondition(
+            const Os::Tester& state //!< The test state
+        ) 
+  {
+      return true;
+  }
+
+  
+  void Os::Tester::Listings::action(
+            Os::Tester& state //!< The test state
+        ) 
+  {
+    printf("--> Rule: %s \n", this->name);
+
+    Fw::String listDir;
+    Fw::String expectedFile;
+    Fw::String files[1];
+    U32 numFiles = 10; // oversize to check return
+
+    COMMENT("Listing /");
+    listDir = "/";
+
+    // get root directory listing
+    ASSERT_EQ(Os::FileSystem::OP_OK,
+        Os::FileSystem::readDirectory(listDir.toChar(),1, files, numFiles));
+    ASSERT_EQ(1,numFiles);
+
+    expectedFile.format("/%s0", MICROFS_BIN_STRING);
+    ASSERT_EQ(0,strcmp(expectedFile.toChar(), files[0].toChar()));
+
+    // get file listing
+    listDir.format("/%s0",MICROFS_BIN_STRING);
+    Fw::String msg;
+    msg.format("Listing %s",listDir.toChar());
+    COMMENT(msg.toChar());
+    numFiles = 10;
+
+    ASSERT_EQ(Os::FileSystem::OP_OK,
+        Os::FileSystem::readDirectory(listDir.toChar(),1, files, numFiles));
+
+    expectedFile.format("/%s0/%s0",MICROFS_BIN_STRING,MICROFS_FILE_STRING);
+    printf("%s\n", expectedFile.toChar());
+
+    ASSERT_EQ(0,strcmp(expectedFile.toChar(),files[0].toChar()));
+
+    // check nonexistent bin
+
+    listDir.format("/%s1",MICROFS_BIN_STRING);
+    msg.format("Listing nonexistent %s",listDir.toChar());
+    COMMENT(msg.toChar());
+    numFiles = 10;
+
+    ASSERT_EQ(Os::FileSystem::NOT_DIR,
+        Os::FileSystem::readDirectory(listDir.toChar(),1, files, numFiles));
   }
 

@@ -52,11 +52,11 @@ namespace Os {
       // ----------------------------------------------------------------------
 
       //!
-      void TempTest();
       void InitTest();
       void OpenWriteReadTest();
       void OpenWriteTwiceReadOnceTest();
       void OpenWriteOnceReadTwiceTest();
+      void OneFileReadDirectory();
 
       // Helper functions
       void clearFileBuffer();

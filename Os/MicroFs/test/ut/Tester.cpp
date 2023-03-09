@@ -28,45 +28,6 @@ namespace Os {
   // ----------------------------------------------------------------------
 
   // ----------------------------------------------------------------------
-  // TempTest
-  // ----------------------------------------------------------------------
-  void Tester ::
-    TempTest()
-  {
-    clearFileBuffer();
-
-    // Instantiate the Rules
-    U32 numBins = 1;
-    U32 fileSize = 100;
-    U32 numFiles = 1;
-    InitFileSystem initFileSystem(numBins, fileSize, numFiles);
-    OpenFile openFile;
-    ResetFile resetFile;
-    WriteData writeData1(fileSize/5, 0x11);
-    WriteData writeData2(fileSize/5, 0x22);
-    WriteData writeData3(fileSize/5, 0x33);
-    WriteData writeData4(fileSize/5, 0x44);
-    WriteData writeData5(fileSize/5, 0x55);
-    ReadData readData(fileSize/5);
-
-    Cleanup cleanup;
-
-    // Run the Rules
-    initFileSystem.apply(*this);
-    openFile.apply(*this);
-    writeData1.apply(*this);
-    writeData2.apply(*this);
-    writeData3.apply(*this);
-    writeData4.apply(*this);
-    writeData5.apply(*this);
-    resetFile.apply(*this);
-    readData.apply(*this);
-    readData.apply(*this);
-    cleanup.apply(*this);
-
-
-  }
-  // ----------------------------------------------------------------------
   // InitTest
   // ----------------------------------------------------------------------
   void Tester ::
@@ -176,6 +137,36 @@ namespace Os {
     resetFile.apply(*this);
     readData.apply(*this);
     readData.apply(*this);
+
+    cleanup.apply(*this);
+    
+  }
+
+  // ----------------------------------------------------------------------
+  // OneFileReadDirectory
+  // ----------------------------------------------------------------------
+  void Tester ::
+    OneFileReadDirectory()
+  {
+    clearFileBuffer();
+
+    // Instantiate the Rules
+    U32 numBins = 1;
+    U32 fileSize = 100;
+    U32 numFiles = 1;
+    InitFileSystem initFileSystem(numBins, fileSize, numFiles);
+    OpenFile openFile;
+    Cleanup cleanup;
+    WriteData writeData(fileSize, 0xFF);
+    CloseFile closeFile;
+    Listings listings;
+
+    // Run the Rules
+    initFileSystem.apply(*this);
+    openFile.apply(*this);
+    writeData.apply(*this);
+    closeFile.apply(*this);
+    listings.apply(*this);
 
     cleanup.apply(*this);
     
