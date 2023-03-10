@@ -150,7 +150,7 @@ STATIC FwNativeUIntType getFileStateIndex(const char* fileName) {
     // compute file state index
 
     // add each chunk of file numbers from full bins
-    for (FwNativeUIntType currBin = 0; currBin < binIndex; binIndex++) {
+    for (FwNativeUIntType currBin = 0; currBin < binIndex; currBin++) {
         stateIndex += cfgPtr->bins[currBin].numFiles;
     }
 
