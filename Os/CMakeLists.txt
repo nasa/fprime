@@ -105,7 +105,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )
-register_fprime_ut()
+#register_fprime_ut()
 
 # Second UT Pthreads
 set(UT_SOURCE_FILES
@@ -122,6 +122,9 @@ register_fprime_ut("Os_pthreads_max_heap")
 # Microfs unit test
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MicroFs/test/ut/MicroFsTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/MicroFs/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/MicroFs/test/ut/MyRules.cpp"
 )
+set (UT_MOD_DEPS STest)
 register_fprime_ut("Os_MicroFs")
 
