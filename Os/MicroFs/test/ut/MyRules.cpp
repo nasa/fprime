@@ -37,11 +37,17 @@
   {
     printf("--> Rule: %s \n", this->name);
 
+    ASSERT_LE(this->numBins, Os::MAX_MICROFS_BINS);
+
     state.testCfg.numBins = this->numBins;
-    state.testCfg.bins[0].fileSize = this->fileSize;
-    state.testCfg.bins[0].numFiles = this->numFiles;
+
+    for (U16 i=0; i < this->numBins; i++)
+    {
+        state.testCfg.bins[i].fileSize = this->fileSize;
+        state.testCfg.bins[i].numFiles = this->numFiles;
+    }
     
-    Os::MicroFsInit(state.testCfg,0, state.alloc);
+    Os::MicroFsInit(state.testCfg, 0, state.alloc);
 
   }
 
@@ -54,9 +60,10 @@
   //
   // ------------------------------------------------------------------------------------------------------
   
-  Os::Tester::OpenFile::OpenFile() :
+  Os::Tester::OpenFile::OpenFile(const char *filename) :
         STest::Rule<Os::Tester>("OpenFile")
   {
+    this->filename = filename;
   }
 
 
@@ -72,9 +79,9 @@
             Os::Tester& state //!< The test state
         ) 
   {
-    printf("--> Rule: %s \n", this->name);
+    printf("--> Rule: %s %s\n", this->name, this->filename);
 
-    Os::File::Status stat = state.f.open("/bin0/file0", Os::File::OPEN_CREATE);
+    Os::File::Status stat = state.f.open(this->filename, Os::File::OPEN_CREATE);
     ASSERT_EQ(Os::File::OP_OK, stat);
   }
 
@@ -340,7 +347,7 @@
     COMMENT(msg.toChar());
     numFiles = 10;
 
-    ASSERT_EQ(Os::FileSystem::NOT_DIR,
+    ASSERT_EQ(Os::FileSystem::INVALID_PATH,
         Os::FileSystem::readDirectory(listDir.toChar(),1, files, numFiles));
   }
 

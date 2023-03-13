@@ -717,7 +717,6 @@ Status getFileSize(const char* path, FwSizeType& size) {
 
 Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
 
-    FwNativeUIntType currFile = 0;
     totalBytes = 0;
     freeBytes = 0;
 
@@ -735,7 +734,7 @@ Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBy
         for (FwNativeUIntType currFile = 0; currFile < cfgPtr->bins[currBin].numFiles; currFile++) {
             totalBytes += statePtr->dataSize;
             freeBytes += (statePtr->dataSize - statePtr->currSize);
-            currFile++;
+            statePtr += 1;
         }
 
     }
