@@ -608,6 +608,11 @@ Status removeFile(const char* path) {
     // get file state
     FwNativeUIntType index = getFileStateIndex(path);
 
+    if (index != -1)
+    {
+        return INVALID_PATH;
+    }
+
     MicroFsFileState* fState = getFileStateFromIndex(index);
     FW_ASSERT(fState);
 

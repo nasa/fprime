@@ -49,7 +49,7 @@
             // ----------------------------------------------------------------------
 
             //! Constructor
-            OpenFile();
+            OpenFile(const char *filename);
 
             // ----------------------------------------------------------------------
             // Public member functions
@@ -64,6 +64,8 @@
             void action(
                 Os::Tester& state //!< The test state
             );
+
+            const char *filename;
 
 
     };

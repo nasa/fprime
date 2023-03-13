@@ -32,6 +32,10 @@ TEST(FileSystemOps, OneFileReadDirectory) {
     tester.OneFileReadDirectory();
 }
 
+TEST(FileOps, OpenStressTest) {
+    Os::Tester tester;
+    tester.OpenStressTest();
+}
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
