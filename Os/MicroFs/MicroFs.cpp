@@ -113,7 +113,7 @@ void MicroFsCleanup(const FwNativeUIntType id,
 }
 
 // helper to find file state entry from file name. Will return index if found, -1 if not
-STATIC FwNativeUIntType getFileStateIndex(const char* fileName) {
+STATIC FwNativeIntType getFileStateIndex(const char* fileName) {
     // the directory/filename rule is very strict - it has to be /MICROFS_BIN_STRING<n>/MICROFS_FILE_STRING<m>,
     // where n = number of file bins, and m = number of files in a particular bin
     // any other name will return an error
@@ -150,7 +150,7 @@ STATIC FwNativeUIntType getFileStateIndex(const char* fileName) {
     // compute file state index
 
     // add each chunk of file numbers from full bins
-    for (FwNativeUIntType currBin = 0; currBin < binIndex; binIndex++) {
+    for (FwNativeUIntType currBin = 0; currBin < binIndex; currBin++) {
         stateIndex += cfgPtr->bins[currBin].numFiles;
     }
 
@@ -584,7 +584,7 @@ Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[],
 
         fileStr.format(filePathSpec,binIndex,entry);
         // get file state
-        FwNativeUIntType fileIndex = Os::getFileStateIndex(fileStr.toChar());
+        FwNativeIntType fileIndex = Os::getFileStateIndex(fileStr.toChar());
         // should always find it, since it is from a known valid bin
         FW_ASSERT(fileIndex != -1);
         MicroFsFileState* fState = getFileStateFromIndex(fileIndex);
@@ -608,7 +608,7 @@ Status removeFile(const char* path) {
     }
 
     // get file state
-    FwNativeUIntType index = getFileStateIndex(path);
+    FwNativeIntType index = getFileStateIndex(path);
     if (index == -1) {
         return INVALID_PATH;
     }
@@ -629,7 +629,7 @@ Status moveFile(const char* originPath, const char* destPath) {
     }
 
     // get file state
-    FwNativeUIntType origIndex = getFileStateIndex(originPath);
+    FwNativeIntType origIndex = getFileStateIndex(originPath);
     if (origIndex == -1) {
         return INVALID_PATH;
     }
@@ -638,7 +638,7 @@ Status moveFile(const char* originPath, const char* destPath) {
     FW_ASSERT(origState);
 
     // get file state
-    FwNativeUIntType destIndex = getFileStateIndex(destPath);
+    FwNativeIntType destIndex = getFileStateIndex(destPath);
     if (-1 == origIndex) {
         return INVALID_PATH;
     }
@@ -700,7 +700,7 @@ Status appendFile(const char* originPath, const char* destPath, bool createMissi
 Status getFileSize(const char* path, FwSizeType& size) {
 
     // get file state
-    FwNativeUIntType index = getFileStateIndex(path);
+    FwNativeIntType index = getFileStateIndex(path);
     if (index == -1) {
         return INVALID_PATH;
     }
