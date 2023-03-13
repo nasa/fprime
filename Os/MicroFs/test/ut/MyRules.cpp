@@ -380,8 +380,8 @@
     FwSizeType free;
 
     FileSystem::Status stat = FileSystem::getFreeSpace("", total, free);
-    ASSERT_EQ(100,total);
-    ASSERT_EQ(100,free);
+    ASSERT_EQ(state.m_expFreeBytes,free);
+    ASSERT_EQ(state.m_expTotalBytes,total);
 
   }
 

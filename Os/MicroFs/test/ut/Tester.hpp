@@ -87,6 +87,11 @@ namespace Os {
       // Variables
       // ----------------------------------------------------------------------
 
+      // Free space test values
+      FwSizeType m_expTotalBytes;
+      FwSizeType m_expFreeBytes;
+      FileSystem::Status m_expStat;  //! Expected status for internal filesystem calls
+
   };
 
 } // end namespace Os

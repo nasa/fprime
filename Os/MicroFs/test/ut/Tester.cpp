@@ -230,17 +230,22 @@ namespace Os {
     InitFileSystem initFileSystem(numBins, fileSize, numFiles);
 
     FreeSpace freeSpace;
-    // OpenFile openFile("/bin0/file0");
+    OpenFile openFile("/bin0/file0");
     // ResetFile resetFile;
     Cleanup cleanup;
-    // WriteData writeData(fileSize, 0xFF);
+    WriteData writeData(fileSize, 0xFF);
     // ReadData readData(fileSize);
 
     // Run the Rules
     initFileSystem.apply(*this);
+    this->m_expFreeBytes = 100;
+    this->m_expTotalBytes = 100;
     freeSpace.apply(*this);
-    // openFile.apply(*this);
-    // writeData.apply(*this);
+    openFile.apply(*this);
+    writeData.apply(*this);
+    this->m_expFreeBytes = 0;
+    this->m_expTotalBytes = 100;
+    freeSpace.apply(*this);
     // resetFile.apply(*this);
     // readData.apply(*this);
 
