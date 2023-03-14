@@ -30,13 +30,13 @@ jobs:
         run: sudo apt-get install xsltproc -y
 
       - name: Install sarif tool
-        run: npm install @microsoft/sarif-multitool
+        run: npm i -g @microsoft/sarif-multitool
 
       - name: Run cpplint & export output to cppcheck format
         run: cpplint --counting=detailed --quiet --recursive . 2>&1 | python3 .github/scripts/cpplint_to_cppcheckxml.py &> cpplint_cppcheck_result.xml
 
       - name: Convert cpplint results to SARIF
-        run: npx "@microsoft/sarif-multitool" convert "cpplint_cppcheck_result.xml" --tool "CppCheck" --output "cpplint_cppcheck_result.sarif" --force
+        run: npx "@microsoft/sarif-multitool" convert "cpplint_cppcheck_result.xml" --tool "CppCheck" --output "cpplint_cppcheck_result.sarif"
 
       - name: Convert cpplint results to Markdown & Integrate them in the workflow summary
         run: xsltproc .github/scripts/cpplint-xml2text.xslt cpplint_cppcheck_result.xml | tee $GITHUB_STEP_SUMMARY cpplint_cppcheck_result.txt
