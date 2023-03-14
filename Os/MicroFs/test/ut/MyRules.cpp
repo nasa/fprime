@@ -281,7 +281,7 @@
             Os::Tester& state //!< The test state
         ) 
   {
-    printf("--> Rule: %s \n", this->name);
+    printf("--> Rule: %s %s\n", this->name, this->filename);
 
     // close file
     I32 descIndex = state.getIndex(this->filename);
@@ -346,7 +346,7 @@
     {
         // get file listing
         ASSERT_EQ(Os::FileSystem::OP_OK,
-            Os::FileSystem::readDirectory(bins[binIndex].toChar(), this->numBins, files, totalFiles));
+            Os::FileSystem::readDirectory(bins[binIndex].toChar(), this->numFiles, files, totalFiles));
         ASSERT_EQ(this->numFiles, totalFiles);
         COMMENT(bins[binIndex].toChar());
         for (U16 fileIndex=0; fileIndex < this->numFiles; fileIndex++)

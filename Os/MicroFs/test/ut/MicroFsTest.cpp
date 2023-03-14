@@ -7,6 +7,7 @@
 #include <Fw/Types/String.hpp>
 #include "Tester.hpp"
 
+
 TEST(Initialization, InitTest) {
     Os::Tester tester;
     tester.InitTest();
@@ -36,6 +37,14 @@ TEST(FileOps, OpenStressTest) {
     Os::Tester tester;
     tester.OpenStressTest();
 }
+
+#if 0
+
+TEST(FileOps, OddTest) {
+    Os::Tester tester;
+    tester.OddTest();
+}
+#endif
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

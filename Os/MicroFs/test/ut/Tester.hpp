@@ -61,6 +61,7 @@ namespace Os {
       void OpenWriteOnceReadTwiceTest();
       void OneFileReadDirectory();
       void OpenStressTest();
+      void OddTest();
 
       // Helper functions
       void clearFileBuffer();
