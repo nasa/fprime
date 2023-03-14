@@ -44,12 +44,17 @@ TEST(FileOps, OpenStressTest) {
 }
 
 #if 0
-
 TEST(FileOps, OddTest) {
     Os::Tester tester;
     tester.OddTest();
 }
+
+TEST(OffNominal, BadOpenTest) {
+    Os::Tester tester;
+    tester.BadOpenTest();
+}
 #endif
+
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

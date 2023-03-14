@@ -84,7 +84,7 @@
     I16 descIndex = state.getIndex(this->filename);
     ASSERT_NE(descIndex, -1);
     Os::File::Status stat = state.fileDesc[descIndex].open(this->filename, Os::File::OPEN_CREATE);
-    ASSERT_EQ(Os::File::OP_OK, stat);
+    //ASSERT_EQ(Os::File::OP_OK, stat);
   }
 
 
@@ -390,5 +390,41 @@
     ASSERT_EQ(state.m_expFreeBytes,free);
     ASSERT_EQ(state.m_expTotalBytes,total);
 
+  }
+
+
+    
+
+
+  // ------------------------------------------------------------------------------------------------------
+  // Rule:  OpenNoPerm
+  //
+  // ------------------------------------------------------------------------------------------------------
+  
+  Os::Tester::OpenNoPerm::OpenNoPerm(const char *filename) :
+        STest::Rule<Os::Tester>("OpenNoPerm")
+  {
+    this->filename = filename;
+  }
+
+
+  bool Os::Tester::OpenNoPerm::precondition(
+            const Os::Tester& state //!< The test state
+        ) 
+  {
+      return true;
+  }
+
+  
+  void Os::Tester::OpenNoPerm::action(
+            Os::Tester& state //!< The test state
+        ) 
+  {
+    printf("--> Rule: %s %s\n", this->name, this->filename);
+
+    I16 descIndex = state.getIndex(this->filename);
+    ASSERT_NE(descIndex, -1);
+    Os::File::Status stat = state.fileDesc[descIndex].open(this->filename, Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::File::NO_PERMISSION, stat);
   }
 

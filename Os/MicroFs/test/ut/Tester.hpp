@@ -63,6 +63,7 @@ namespace Os {
       void OpenStressTest();
       void OpenFreeSpaceTest();
       void OddTest();
+      void BadOpenTest();
 
       // Helper functions
       void clearFileBuffer();
