@@ -358,3 +358,37 @@
     }
   }
 
+  // ------------------------------------------------------------------------------------------------------
+  // Rule:  FreeSpace
+  //
+  // ------------------------------------------------------------------------------------------------------
+  
+  Os::Tester::FreeSpace::FreeSpace() :
+        STest::Rule<Os::Tester>("FreeSpace")
+  {
+  }
+
+
+  bool Os::Tester::FreeSpace::precondition(
+            const Os::Tester& state //!< The test state
+        ) 
+  {
+      return true;
+  }
+
+  
+  void Os::Tester::FreeSpace::action(
+            Os::Tester& state //!< The test state
+        ) 
+  {
+    printf("--> Rule: %s \n", this->name);
+
+    FwSizeType total;
+    FwSizeType free;
+
+    FileSystem::Status stat = FileSystem::getFreeSpace("", total, free);
+    ASSERT_EQ(state.m_expFreeBytes,free);
+    ASSERT_EQ(state.m_expTotalBytes,total);
+
+  }
+

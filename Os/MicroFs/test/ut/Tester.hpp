@@ -61,6 +61,7 @@ namespace Os {
       void OpenWriteOnceReadTwiceTest();
       void OneFileReadDirectory();
       void OpenStressTest();
+      void OpenFreeSpaceTest();
       void OddTest();
 
       // Helper functions
@@ -91,6 +92,11 @@ namespace Os {
       // ----------------------------------------------------------------------
       // Variables
       // ----------------------------------------------------------------------
+
+      // Free space test values
+      FwSizeType m_expTotalBytes;
+      FwSizeType m_expFreeBytes;
+      FileSystem::Status m_expStat;  //! Expected status for internal filesystem calls
 
   };
 

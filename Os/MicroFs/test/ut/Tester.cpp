@@ -264,6 +264,42 @@ namespace Os {
     
   }
 
+  // ----------------------------------------------------------------------
+  // OpenWriteReadTest
+  // ----------------------------------------------------------------------
+  void Tester ::
+    OpenFreeSpaceTest()
+  {
+    clearFileBuffer();
+
+    // Instantiate the Rules
+    U32 numBins = 1;
+    U32 numFiles = 1;
+    const char* FileName = "/bin0/file0";
+    InitFileSystem initFileSystem(numBins, FILE_SIZE, numFiles);
+
+    FreeSpace freeSpace;
+    OpenFile openFile(FileName);
+    // ResetFile resetFile;
+    Cleanup cleanup;
+    WriteData writeData(FileName, FILE_SIZE, 0xFF);
+
+    // Run the Rules
+    initFileSystem.apply(*this);
+    this->m_expFreeBytes = 100;
+    this->m_expTotalBytes = 100;
+    freeSpace.apply(*this);
+    openFile.apply(*this);
+    writeData.apply(*this);
+    this->m_expFreeBytes = 0;
+    this->m_expTotalBytes = 100;
+    freeSpace.apply(*this);
+
+    cleanup.apply(*this);
+    
+  }
+
+
   // Helper functions
   void Tester::clearFileBuffer()
   {

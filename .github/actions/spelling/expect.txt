@@ -1614,6 +1614,7 @@ vwong
 vxworks
 VXWORKSLOGASSERT
 WAITALL
+watney
 Watney
 Wconversion
 Wdog

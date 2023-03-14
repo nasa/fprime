@@ -713,7 +713,7 @@ Status getFileSize(const char* path, FwSizeType& size) {
     return OP_OK;
 }
 
-// We can get a "free" space number by adding up all the space left in the flie bins
+// We can get a "free" space number by adding up all the space left in the file bins
 
 Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
 
@@ -733,7 +733,10 @@ Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBy
         // iterate through files in each bin
         for (FwNativeUIntType currFile = 0; currFile < cfgPtr->bins[currBin].numFiles; currFile++) {
             totalBytes += statePtr->dataSize;
-            freeBytes += (statePtr->dataSize - statePtr->currSize);
+            // only add unused file slots to free space
+            if (-1 == statePtr->currSize) {
+                freeBytes += statePtr->dataSize;
+            }
             statePtr += 1;
         }
 

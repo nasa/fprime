@@ -33,6 +33,11 @@ TEST(FileSystemOps, OneFileReadDirectory) {
     tester.OneFileReadDirectory();
 }
 
+TEST(FileSystemOps, OpenFreeSpaceTest) {
+    Os::Tester tester;
+    tester.OpenFreeSpaceTest();
+}
+
 TEST(FileOps, OpenStressTest) {
     Os::Tester tester;
     tester.OpenStressTest();
