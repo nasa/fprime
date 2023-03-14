@@ -29,7 +29,7 @@ jobs:
         run: sudo apt-get install cppcheck xsltproc -y
 
       - name: Install sarif tool
-        run: npm install @microsoft/sarif-multitool
+        run: npm i @microsoft/sarif-multitool@4.0.0
 
       # With a CMake-based project, we get the list of files by setting up a build with CMAKE_EXPORT_COMPILE_COMMANDS=ON and
       # referencing the compile_commands.json file produced by the tool.  This will capture the correct include paths and

@@ -30,7 +30,7 @@ jobs:
         run: sudo apt-get install xsltproc -y
 
       - name: Install sarif tool
-        run: npm install @microsoft/sarif-multitool
+        run: npm i @microsoft/sarif-multitool@4.0.0
 
       - name: Run cpplint & export output to cppcheck format
         run: cpplint --counting=detailed --quiet --recursive . 2>&1 | python3 .github/scripts/cpplint_to_cppcheckxml.py &> cpplint_cppcheck_result.xml
