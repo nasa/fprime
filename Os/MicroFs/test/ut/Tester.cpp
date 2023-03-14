@@ -33,23 +33,23 @@ namespace Os {
   void Tester ::
     OpenStressTest()
   {
-    const U16 NUMBER_BINS = 10;
-    const U16 NUMBER_FILES = 10;
-    const U16 FILE_SIZE = 100;
-    const U16 TOTAL_FILES = NUMBER_BINS * NUMBER_FILES;
+    const U16 NumberBins = MAX_BINS;
+    const U16 NumberFiles = MAX_FILES_PER_BIN;
+
+    const U16 TotalFiles = NumberBins * NumberFiles;
     clearFileBuffer();
 
     // Instantiate the Rules
-    OpenFile* openFile[TOTAL_FILES];
-    InitFileSystem initFileSystem(NUMBER_BINS, FILE_SIZE, NUMBER_FILES);
+    OpenFile* openFile[TotalFiles];
+    InitFileSystem initFileSystem(NumberBins, FILE_SIZE, NumberFiles);
     Cleanup cleanup;
 
-    char fileName[TOTAL_FILES][20];
+    char fileName[TotalFiles][20];
 
     U16 fileIndex =  0;
-    for (U16 bin=0; bin < NUMBER_BINS; bin++)
+    for (U16 bin=0; bin < NumberBins; bin++)
     {
-      for (U16 file=0; file < NUMBER_FILES; file++)
+      for (U16 file=0; file < NumberFiles; file++)
       {
         snprintf(fileName[fileIndex], 20, "/bin%d/file%d", bin, file);
         fileIndex++;
@@ -60,7 +60,7 @@ namespace Os {
     // Run the Rules
     initFileSystem.apply(*this);
 
-    for (U16 i = 0; i < TOTAL_FILES; i++)
+    for (U16 i = 0; i < TotalFiles; i++)
     {
       openFile[i] = new OpenFile(fileName[i]);
       openFile[i]->apply(*this);
@@ -79,10 +79,10 @@ namespace Os {
     clearFileBuffer();
 
     // Instantiate the Rules
-    U32 numBins = 1;
-    U32 fileSize = 100;
-    U32 numFiles = 1;
-    InitFileSystem initFileSystem(numBins, fileSize, numFiles);
+    const U16 NumberBins = MAX_BINS;
+    const U16 NumberFiles = MAX_FILES_PER_BIN;
+
+    InitFileSystem initFileSystem(NumberBins, FILE_SIZE, NumberFiles);
     Cleanup cleanup;
 
     // Run the Rules
@@ -101,15 +101,16 @@ namespace Os {
     clearFileBuffer();
 
     // Instantiate the Rules
-    U32 numBins = 1;
-    U32 fileSize = 100;
-    U32 numFiles = 1;
-    InitFileSystem initFileSystem(numBins, fileSize, numFiles);
-    OpenFile openFile("/bin0/file0");
-    ResetFile resetFile;
+    const U16 NumberBins = MAX_BINS;
+    const U16 NumberFiles = MAX_FILES_PER_BIN;
+    const char* FileName = "/bin9/file9";
+
+    InitFileSystem initFileSystem(NumberBins, FILE_SIZE, NumberFiles);
+    OpenFile openFile(FileName);
+    ResetFile resetFile(FileName);
     Cleanup cleanup;
-    WriteData writeData(fileSize, 0xFF);
-    ReadData readData(fileSize);
+    WriteData writeData(FileName, FILE_SIZE, 0xFF);
+    ReadData readData(FileName, FILE_SIZE);
 
     // Run the Rules
     initFileSystem.apply(*this);
@@ -132,16 +133,17 @@ namespace Os {
     clearFileBuffer();
 
     // Instantiate the Rules
-    U32 numBins = 1;
-    U32 fileSize = 100;
-    U32 numFiles = 1;
-    InitFileSystem initFileSystem(numBins, fileSize, numFiles);
-    OpenFile openFile("/bin0/file0");
-    ResetFile resetFile;
+    const U16 NumberBins = MAX_BINS;
+    const U16 NumberFiles = MAX_FILES_PER_BIN;
+    const char* FileName = "/bin0/file0";
+
+    InitFileSystem initFileSystem(NumberBins, FILE_SIZE, NumberFiles);
+    OpenFile openFile(FileName);
+    ResetFile resetFile(FileName);
     Cleanup cleanup;
-    WriteData writeData1(fileSize/2, 0x11);
-    WriteData writeData2(fileSize/2, 0x22);
-    ReadData readData(fileSize);
+    WriteData writeData1(FileName, FILE_SIZE/2, 0x11);
+    WriteData writeData2(FileName, FILE_SIZE/2, 0x22);
+    ReadData readData(FileName, FILE_SIZE);
 
     // Run the Rules
     initFileSystem.apply(*this);
@@ -163,15 +165,16 @@ namespace Os {
     clearFileBuffer();
 
     // Instantiate the Rules
-    U32 numBins = 1;
-    U32 fileSize = 100;
-    U32 numFiles = 1;
-    InitFileSystem initFileSystem(numBins, fileSize, numFiles);
-    OpenFile openFile("/bin0/file0");
-    ResetFile resetFile;
+    const U16 NumberBins = MAX_BINS;
+    const U16 NumberFiles = MAX_FILES_PER_BIN;
+    const char* FileName = "/bin0/file0";
+    
+    InitFileSystem initFileSystem(NumberBins, FILE_SIZE, NumberFiles);
+    OpenFile openFile(FileName);
+    ResetFile resetFile(FileName);
     Cleanup cleanup;
-    WriteData writeData(fileSize, 0xFF);
-    ReadData readData(fileSize/2);
+    WriteData writeData(FileName, FILE_SIZE, 0xFF);
+    ReadData readData(FileName, FILE_SIZE/2);
 
     // Run the Rules
     initFileSystem.apply(*this);
@@ -194,21 +197,31 @@ namespace Os {
     clearFileBuffer();
 
     // Instantiate the Rules
-    U32 numBins = 1;
-    U32 fileSize = 100;
-    U32 numFiles = 1;
-    InitFileSystem initFileSystem(numBins, fileSize, numFiles);
-    OpenFile openFile("/bin0/file0");
+    const U16 NumberBins = 2;
+    const U16 NumberFiles = 2;
+    const char* File1 = "/bin0/file0";
+    const char* File2 = "/bin0/file1";
+    const char* File3 = "/bin1/file0";
+    const char* File4 = "/bin1/file1";
+
+    InitFileSystem initFileSystem(NumberBins, FILE_SIZE, NumberFiles);
+    OpenFile openFile1(File1);
+    OpenFile openFile2(File2);
+    OpenFile openFile3(File3);
+    OpenFile openFile4(File4);
     Cleanup cleanup;
-    WriteData writeData(fileSize, 0xFF);
-    CloseFile closeFile;
-    Listings listings;
+    WriteData writeData(File1, FILE_SIZE, 0xFF);
+    CloseFile closeFile(File1);
+    Listings listings(NumberBins, NumberFiles);
 
     // Run the Rules
     initFileSystem.apply(*this);
-    openFile.apply(*this);
-    writeData.apply(*this);
-    closeFile.apply(*this);
+    openFile1.apply(*this);
+    openFile2.apply(*this);
+    openFile3.apply(*this);
+    openFile4.apply(*this);
+    //writeData.apply(*this);
+    //closeFile.apply(*this);
     listings.apply(*this);
 
     cleanup.apply(*this);
@@ -219,7 +232,24 @@ namespace Os {
   void Tester::clearFileBuffer()
   {
         this->curPtr = 0;
-        memset(this->buffOut, 0xA5, BUFFER_SIZE);
+        memset(this->buffOut, 0xA5, FILE_SIZE);
+  }
+
+  I16 Tester::getIndex(const char *fileName)
+  {
+    const char* filePathSpec = "/bin%d/file%d";
+
+    FwNativeUIntType binIndex = 0;
+    FwNativeUIntType fileIndex = 0;
+    I16 stat = sscanf(fileName, filePathSpec, &binIndex, &fileIndex);
+    if (stat != 2)
+    {
+      return -1;
+
+    } else {
+      return binIndex * MAX_BINS + fileIndex;
+    }
+
   }
 
 

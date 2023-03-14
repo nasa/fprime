@@ -118,7 +118,7 @@
             // ----------------------------------------------------------------------
 
             //! Constructor
-            WriteData(NATIVE_INT_TYPE size, U8 value);
+            WriteData(const char *filename, NATIVE_INT_TYPE size, U8 value);
 
             // ----------------------------------------------------------------------
             // Public member functions
@@ -136,6 +136,7 @@
 
             NATIVE_INT_TYPE size;
             U8 value;
+            const char* filename;
 
     };
 
@@ -154,7 +155,7 @@
             // ----------------------------------------------------------------------
 
             //! Constructor
-            ReadData(NATIVE_INT_TYPE size);
+            ReadData(const char *filename, NATIVE_INT_TYPE size);
 
             // ----------------------------------------------------------------------
             // Public member functions
@@ -171,6 +172,7 @@
             );
 
             NATIVE_INT_TYPE size;
+            const char *filename;
 
     };
 
@@ -189,7 +191,7 @@
             // ----------------------------------------------------------------------
 
             //! Constructor
-            ResetFile();
+            ResetFile(const char *filename);
 
             // ----------------------------------------------------------------------
             // Public member functions
@@ -204,6 +206,8 @@
             void action(
                 Os::Tester& state //!< The test state
             );
+
+            const char *filename;
 
     };
 
@@ -222,7 +226,7 @@
             // ----------------------------------------------------------------------
 
             //! Constructor
-            CloseFile();
+            CloseFile(const char *filename);
 
             // ----------------------------------------------------------------------
             // Public member functions
@@ -237,6 +241,8 @@
             void action(
                 Os::Tester& state //!< The test state
             );
+
+            const char *filename;
 
     };
 
@@ -255,7 +261,7 @@
             // ----------------------------------------------------------------------
 
             //! Constructor
-            Listings();
+            Listings(U16 numBins, U16 numFiles);
 
             // ----------------------------------------------------------------------
             // Public member functions
@@ -270,6 +276,9 @@
             void action(
                 Os::Tester& state //!< The test state
             );
+
+            U16 numBins;
+            U16 numFiles;
 
     };
 

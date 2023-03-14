@@ -81,7 +81,9 @@
   {
     printf("--> Rule: %s %s\n", this->name, this->filename);
 
-    Os::File::Status stat = state.f.open(this->filename, Os::File::OPEN_CREATE);
+    I16 descIndex = state.getIndex(this->filename);
+    ASSERT_NE(descIndex, -1);
+    Os::File::Status stat = state.fileDesc[descIndex].open(this->filename, Os::File::OPEN_CREATE);
     ASSERT_EQ(Os::File::OP_OK, stat);
   }
 
@@ -127,11 +129,13 @@
   //
   // ------------------------------------------------------------------------------------------------------
   
-  Os::Tester::WriteData::WriteData(NATIVE_INT_TYPE size, U8 value) :
+  Os::Tester::WriteData::WriteData(const char *filename, NATIVE_INT_TYPE size, U8 value) :
         STest::Rule<Os::Tester>("WriteData")
   {
     this->size = size;
     this->value = value;
+    this->filename = filename;
+    
   }
 
 
@@ -149,22 +153,16 @@
   {
     printf("--> Rule: %s \n", this->name);
 
-    ASSERT_LE(state.curPtr + this->size, Tester::BUFFER_SIZE);
+    I32 descIndex = state.getIndex(this->filename);
+    ASSERT_NE(descIndex, -1);
+
+    ASSERT_LE(state.curPtr + this->size, Tester::FILE_SIZE);
     memset(state.buffOut + state.curPtr, this->value, this->size);
     NATIVE_INT_TYPE retSize = this->size;
-    Os::File::Status stat = state.f.write(state.buffOut + state.curPtr, retSize);
+    Os::File::Status stat = state.fileDesc[descIndex].write(state.buffOut + state.curPtr, retSize);
     state.curPtr = state.curPtr + this->size;
     ASSERT_EQ(stat, Os::File::OP_OK);
     ASSERT_EQ(retSize, this->size);
-
-    #if 0
-    for (U16 i=0; i<Tester::BUFFER_SIZE; i++)
-    {
-        printf("%X ", state.buffOut[i]);
-    }
-    printf("\n");
-    #endif
-
 
   }
 
@@ -177,10 +175,11 @@
   //
   // ------------------------------------------------------------------------------------------------------
   
-  Os::Tester::ReadData::ReadData(NATIVE_INT_TYPE size) :
+  Os::Tester::ReadData::ReadData(const char *filename, NATIVE_INT_TYPE size) :
         STest::Rule<Os::Tester>("ReadData")
   {
     this->size = size;
+    this->filename = filename;
   }
 
 
@@ -198,17 +197,20 @@
   {
       printf("--> Rule: %s \n", this->name);
 
+      I32 descIndex = state.getIndex(this->filename);
+      ASSERT_NE(descIndex, -1);
+
       BYTE buffIn[state.testCfg.bins[0].fileSize];
       NATIVE_INT_TYPE bufferSize = sizeof(buffIn);
       memset(buffIn,0xA5,sizeof(buffIn));
       ASSERT_LE(this->size, sizeof(buffIn));
       NATIVE_INT_TYPE retSize = this->size;
-      Os::File::Status stat = state.f.read(buffIn, retSize);
+      Os::File::Status stat = state.fileDesc[descIndex].read(buffIn, retSize);
       ASSERT_EQ(stat, Os::File::OP_OK);
       ASSERT_EQ(retSize, this->size);
 
       // Check the returned data
-      ASSERT_LE(state.curPtr + this->size, Tester::BUFFER_SIZE);
+      ASSERT_LE(state.curPtr + this->size, Tester::FILE_SIZE);
       ASSERT_EQ(0,memcmp(buffIn, state.buffOut+state.curPtr, this->size));
 
   }
@@ -222,9 +224,10 @@
   //
   // ------------------------------------------------------------------------------------------------------
   
-  Os::Tester::ResetFile::ResetFile() :
+  Os::Tester::ResetFile::ResetFile(const char *filename) :
         STest::Rule<Os::Tester>("ResetFile")
   {
+    this->filename = filename;
   }
 
 
@@ -242,8 +245,11 @@
   {
       printf("--> Rule: %s \n", this->name);
 
+      I32 descIndex = state.getIndex(this->filename);
+      ASSERT_NE(descIndex, -1);
+
       // seek back to beginning
-      ASSERT_EQ(Os::File::OP_OK, state.f.seek(0));
+      ASSERT_EQ(Os::File::OP_OK, state.fileDesc[descIndex].seek(0));
       state.curPtr = 0;
   }
 
@@ -256,9 +262,10 @@
   //
   // ------------------------------------------------------------------------------------------------------
   
-  Os::Tester::CloseFile::CloseFile() :
+  Os::Tester::CloseFile::CloseFile(const char *filename) :
         STest::Rule<Os::Tester>("CloseFile")
   {
+    this->filename = filename;
   }
 
 
@@ -277,7 +284,9 @@
     printf("--> Rule: %s \n", this->name);
 
     // close file
-    state.f.close();
+    I32 descIndex = state.getIndex(this->filename);
+    ASSERT_NE(descIndex, -1);
+    state.fileDesc[descIndex].close();
   }
 
 
@@ -289,9 +298,11 @@
   //
   // ------------------------------------------------------------------------------------------------------
   
-  Os::Tester::Listings::Listings() :
+  Os::Tester::Listings::Listings(U16 numBins, U16 numFiles) :
         STest::Rule<Os::Tester>("Listings")
   {
+    this->numBins = numBins;
+    this->numFiles = numFiles;
   }
 
 
@@ -311,43 +322,39 @@
 
     Fw::String listDir;
     Fw::String expectedFile;
-    Fw::String files[1];
-    U32 numFiles = 10; // oversize to check return
+    Fw::String bins[MAX_BINS];
+    Fw::String files[MAX_FILES_PER_BIN];
+    U32 totalBins = MAX_BINS + 1; // oversize to check return
 
     COMMENT("Listing /");
     listDir = "/";
 
     // get root directory listing
     ASSERT_EQ(Os::FileSystem::OP_OK,
-        Os::FileSystem::readDirectory(listDir.toChar(),1, files, numFiles));
-    ASSERT_EQ(1,numFiles);
+        Os::FileSystem::readDirectory(listDir.toChar(), MAX_BINS, bins, totalBins));
+    ASSERT_EQ(this->numBins, totalBins);
 
-    expectedFile.format("/%s0", MICROFS_BIN_STRING);
-    ASSERT_EQ(0,strcmp(expectedFile.toChar(), files[0].toChar()));
+    for (U16 binIndex=0;  binIndex < this->numBins; binIndex++)
+    {
+        printf("%s\n", bins[binIndex].toChar());
+        expectedFile.format("/%s%d", MICROFS_BIN_STRING, binIndex);
+        ASSERT_EQ(0,strcmp(expectedFile.toChar(), bins[binIndex].toChar()));
+    }
 
-    // get file listing
-    listDir.format("/%s0",MICROFS_BIN_STRING);
-    Fw::String msg;
-    msg.format("Listing %s",listDir.toChar());
-    COMMENT(msg.toChar());
-    numFiles = 10;
-
-    ASSERT_EQ(Os::FileSystem::OP_OK,
-        Os::FileSystem::readDirectory(listDir.toChar(),1, files, numFiles));
-
-    expectedFile.format("/%s0/%s0",MICROFS_BIN_STRING,MICROFS_FILE_STRING);
-    printf("%s\n", expectedFile.toChar());
-
-    ASSERT_EQ(0,strcmp(expectedFile.toChar(),files[0].toChar()));
-
-    // check nonexistent bin
-
-    listDir.format("/%s1",MICROFS_BIN_STRING);
-    msg.format("Listing nonexistent %s",listDir.toChar());
-    COMMENT(msg.toChar());
-    numFiles = 10;
-
-    ASSERT_EQ(Os::FileSystem::INVALID_PATH,
-        Os::FileSystem::readDirectory(listDir.toChar(),1, files, numFiles));
+    U32 totalFiles = MAX_FILES_PER_BIN + 1; // oversize to check return
+    for (U16 binIndex=0; binIndex < this->numBins; binIndex++)
+    {
+        // get file listing
+        ASSERT_EQ(Os::FileSystem::OP_OK,
+            Os::FileSystem::readDirectory(bins[binIndex].toChar(), this->numBins, files, totalFiles));
+        ASSERT_EQ(this->numFiles, totalFiles);
+        COMMENT(bins[binIndex].toChar());
+        for (U16 fileIndex=0; fileIndex < this->numFiles; fileIndex++)
+        {
+            printf("%s\n", files[fileIndex].toChar());
+            expectedFile.format("/%s%d/%s%d", MICROFS_BIN_STRING, binIndex, MICROFS_FILE_STRING, fileIndex);
+            ASSERT_EQ(0,strcmp(expectedFile.toChar(), files[fileIndex].toChar()));
+        }
+    }
   }
 

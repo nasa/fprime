@@ -22,7 +22,10 @@ namespace Os {
       #include "MyRules.hpp"
 
       enum {
-        BUFFER_SIZE = 100
+        MAX_BINS = 10,
+        MAX_FILES_PER_BIN = 10,
+        MAX_TOTAL_FILES = MAX_BINS * MAX_FILES_PER_BIN,
+        FILE_SIZE = 100
       };
 
       // ----------------------------------------------------------------------
@@ -41,8 +44,8 @@ namespace Os {
 
       Fw::MallocAllocator alloc;
       Os::MicroFsConfig testCfg;
-      Os::File f;
-      BYTE buffOut[BUFFER_SIZE];
+      Os::File fileDesc[MAX_TOTAL_FILES];
+      BYTE buffOut[FILE_SIZE];
       NATIVE_INT_TYPE curPtr;
 
     public:
@@ -79,6 +82,8 @@ namespace Os {
       //! Initialize components
       //!
       void initComponents();
+
+      I16 getIndex(const char *fileName);
 
     private:
 
