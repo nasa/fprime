@@ -84,7 +84,7 @@
     I16 descIndex = state.getIndex(this->filename);
     ASSERT_NE(descIndex, -1);
     Os::File::Status stat = state.fileDesc[descIndex].open(this->filename, Os::File::OPEN_CREATE);
-    //ASSERT_EQ(Os::File::OP_OK, stat);
+    ASSERT_EQ(Os::File::OP_OK, stat);
   }
 
 

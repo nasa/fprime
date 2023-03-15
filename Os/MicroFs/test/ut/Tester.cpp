@@ -76,8 +76,6 @@ namespace Os {
 
     const char* File1 = "/bin0/file0";
     const char* File2 = "/bin0/file2";
-    // const char* File3 = "/bin1/file0";
-    // const char* File4 = "/bin1/file2";
 
     const U16 TotalFiles = NumberBins * NumberFiles;
     clearFileBuffer();
@@ -86,8 +84,6 @@ namespace Os {
     InitFileSystem initFileSystem(NumberBins, FILE_SIZE, NumberFiles);
     OpenFile openFile1(File1);
     OpenFile openFile2(File2);
-    // OpenFile openFile3(File3);
-    // OpenFile openFile4(File4);
     Listings listings(NumberBins, NumberFiles);
 
     Cleanup cleanup;
@@ -96,9 +92,6 @@ namespace Os {
     initFileSystem.apply(*this);
     openFile1.apply(*this);
     openFile2.apply(*this);
-    // openFile3.apply(*this);
-    // openFile4.apply(*this);
-    //listings.apply(*this);
 
     cleanup.apply(*this);
   }
