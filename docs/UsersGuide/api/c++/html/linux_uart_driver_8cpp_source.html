@@ -296,7 +296,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="comment">      options.c_cflag &amp;= ~CSIZE;</span></div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="comment">      options.c_cflag |= CS7;</span></div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;<span class="comment">     */</span></div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    newtio.c_cflag = CS8 | CLOCAL | CREAD;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    newtio.c_cflag |= CS8 | CLOCAL | CREAD;</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160; </div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <span class="keywordflow">switch</span> (parity) {</div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601afa8ab285c472ed1343bbb1cff080da1660">PARITY_ODD</a>:</div>
