@@ -750,8 +750,10 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.component_base = c.name() + "ComponentBase"
         if obj.get_namespace() is None:
             c.namespace_list = None
+            c.namespace = ""
         else:
             c.namespace_list = obj.get_namespace().split("::")
+            c.namespace = obj.get_namespace()
         c.user = getuser()
         c.args_string = self.argsString
         c.doxygen_pre_comment = self.doxygenPreComment
