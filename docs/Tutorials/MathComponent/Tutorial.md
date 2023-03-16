@@ -2088,7 +2088,7 @@ of the Ref topology.
 
 **Generate the layout:**
 For this step, we will use the F Prime Layout (FPL) tool.
-If FPL is not installed on your system, then install it how:
+If FPL is not installed on your system, then install it now:
 clone [this repository](https://github.com/fprime-community/fprime-layout)
 and follow the instructions.
 
