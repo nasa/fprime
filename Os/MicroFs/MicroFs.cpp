@@ -224,7 +224,6 @@ File::Status File::open(const char* fileName, File::Mode mode, bool include_excl
         case OPEN_WRITE:
         case OPEN_SYNC_WRITE:         // fall through; same for microfs
         case OPEN_SYNC_DIRECT_WRITE:  // fall through; same for microfs
-            break;
         case OPEN_CREATE:
             // truncate file length to zero
             state->currSize = 0;
