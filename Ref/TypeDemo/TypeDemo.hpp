@@ -24,24 +24,24 @@ class TypeDemo : public TypeDemoComponentBase {
 
     //! Initialize object TypeDemo
     //!
-    void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth*/
-              const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
     );
 
     //! Destroy object TypeDemo
     //!
-    ~TypeDemo();
+    ~TypeDemo() = default;
 
-  PRIVATE:
-    // ----------------------------------------------------------------------
-    // Command handler implementations
-    // ----------------------------------------------------------------------
+  PRIVATE :
+        // ----------------------------------------------------------------------
+        // Command handler implementations
+        // ----------------------------------------------------------------------
 
-    //! Implementation for CHOICE command handler
-    //! Single choice command
-    void CHOICE_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
-                           const U32 cmdSeq,          /*!< The command sequence number*/
-                           Ref::Choice choice);
+        //! Implementation for CHOICE command handler
+        //! Single choice command
+        void
+        CHOICE_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                          const U32 cmdSeq,          /*!< The command sequence number*/
+                          Ref::Choice choice);
 
     //! Implementation for CHOICES command handler
     //! Multiple choice command via Array
@@ -49,75 +49,68 @@ class TypeDemo : public TypeDemoComponentBase {
                             const U32 cmdSeq,          /*!< The command sequence number*/
                             Ref::ManyChoices choices);
 
-
     //! Implementation for CHOICES_WITH_FRIENDS command handler
     //! Multiple choice command via Array with a preceding and following argument
-    void CHOICES_WITH_FRIENDS_cmdHandler(
-        const FwOpcodeType opCode, /*!< The opcode*/
-        const U32 cmdSeq, /*!< The command sequence number*/
-        U8 repeat,
-        Ref::ManyChoices choices,
-        U8 repeat_max
-    );
+    void CHOICES_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                         const U32 cmdSeq,          /*!< The command sequence number*/
+                                         U8 repeat,
+                                         Ref::ManyChoices choices,
+                                         U8 repeat_max);
 
     //! Implementation for EXTRA_CHOICES command handler
     //! Multiple choice command via Array
-    void EXTRA_CHOICES_cmdHandler(
-        const FwOpcodeType opCode, /*!< The opcode*/
-        const U32 cmdSeq, /*!< The command sequence number*/
-        Ref::TooManyChoices choices
-    );
+    void EXTRA_CHOICES_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                  const U32 cmdSeq,          /*!< The command sequence number*/
+                                  Ref::TooManyChoices choices);
 
     //! Implementation for EXTRA_CHOICES_WITH_FRIENDS command handler
     //! Too many choices command via Array with a preceding and following argument
-    void EXTRA_CHOICES_WITH_FRIENDS_cmdHandler(
-        const FwOpcodeType opCode, /*!< The opcode*/
-        const U32 cmdSeq, /*!< The command sequence number*/
-        U8 repeat,
-        Ref::TooManyChoices choices,
-        U8 repeat_max
-    );
+    void EXTRA_CHOICES_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                               const U32 cmdSeq,          /*!< The command sequence number*/
+                                               U8 repeat,
+                                               Ref::TooManyChoices choices,
+                                               U8 repeat_max);
     //! Implementation for CHOICE_PAIR command handler
     //! Multiple choice command via Structure
-    void CHOICE_PAIR_cmdHandler(
-        const FwOpcodeType opCode, /*!< The opcode*/
-        const U32 cmdSeq, /*!< The command sequence number*/
-        Ref::ChoicePair choices
-    );
+    void CHOICE_PAIR_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                const U32 cmdSeq,          /*!< The command sequence number*/
+                                Ref::ChoicePair choices);
 
     //! Implementation for CHOICE_PAIR_WITH_FRIENDS command handler
     //! Multiple choices command via Structure with a preceding and following argument
-    void CHOICE_PAIR_WITH_FRIENDS_cmdHandler(
-        const FwOpcodeType opCode, /*!< The opcode*/
-        const U32 cmdSeq, /*!< The command sequence number*/
-        U8 repeat,
-        Ref::ChoicePair choices,
-        U8 repeat_max
-    );
+    void CHOICE_PAIR_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                             const U32 cmdSeq,          /*!< The command sequence number*/
+                                             U8 repeat,
+                                             Ref::ChoicePair choices,
+                                             U8 repeat_max);
     //! Implementation for GLUTTON_OF_CHOICE command handler
     //! Multiple choice command via Complex Structure
-    void GLUTTON_OF_CHOICE_cmdHandler(
-        const FwOpcodeType opCode, /*!< The opcode*/
-        const U32 cmdSeq, /*!< The command sequence number*/
-        Ref::ChoiceSlurry choices /*!<
-         A phenomenal amount of choice
-         */
+    void GLUTTON_OF_CHOICE_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                      const U32 cmdSeq,          /*!< The command sequence number*/
+                                      Ref::ChoiceSlurry choices  /*!<
+                                        A phenomenal amount of choice
+                                        */
     );
 
     //! Implementation for GLUTTON_OF_CHOICE_WITH_FRIENDS command handler
     //! Multiple choices command via Complex Structure with a preceding and following argument
-    void GLUTTON_OF_CHOICE_WITH_FRIENDS_cmdHandler(
-        const FwOpcodeType opCode, /*!< The opcode*/
-        const U32 cmdSeq, /*!< The command sequence number*/
-        U8 repeat, /*!<
-                        Number of times to repeat the choices
-                        */
-        Ref::ChoiceSlurry choices, /*!<
-        A phenomenal amount of choice
-        */
-        U8 repeat_max /*!<
-                     Limit to the number of repetitions
-                     */
+    void GLUTTON_OF_CHOICE_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                                   const U32 cmdSeq,          /*!< The command sequence number*/
+                                                   U8 repeat,                 /*!<
+                                                                                   Number of times to repeat the choices
+                                                                                   */
+                                                   Ref::ChoiceSlurry choices, /*!<
+                                                   A phenomenal amount of choice
+                                                   */
+                                                   U8 repeat_max              /*!<
+                                                                             Limit to the number of repetitions
+                                                                             */
+    );
+
+    //! Implementation for DUMP_TYPED_PARAMETERS command handler
+    //! Dump the typed parameters
+    void DUMP_TYPED_PARAMETERS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                          const U32 cmdSeq           /*!< The command sequence number*/
     );
 };
 

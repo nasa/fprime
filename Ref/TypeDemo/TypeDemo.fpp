@@ -34,12 +34,12 @@ module Ref {
     }
 
     @ Component to demonstrate multiple type configurations
-    active component TypeDemo {
+    passive component TypeDemo {
         #####
         # Variations on a single enumeration input
         #####
         @ Single choice command
-        async command CHOICE(
+        sync command CHOICE(
             @ A single choice
             choice: Choice
         )
@@ -57,13 +57,13 @@ module Ref {
         # Variations on a one-dimensional array of enumeration input
         #####
         @ Multiple choice command via Array
-        async command CHOICES(
+        sync command CHOICES(
             @ A set of choices
             choices: ManyChoices
         )
 
         @ Multiple choice command via Array with a preceding and following argument
-        async command CHOICES_WITH_FRIENDS(
+        sync command CHOICES_WITH_FRIENDS(
             @ Number of times to repeat the choices
             repeat: U8,
             @ A set of choices
@@ -85,13 +85,13 @@ module Ref {
         # Variations on a multi-dimensional array of enumeration input
         #####
         @ Too many choice command via Array
-        async command EXTRA_CHOICES(
+        sync command EXTRA_CHOICES(
             @ Way to many choices to make
             choices: TooManyChoices
         )
 
         @ Too many choices command via Array with a preceding and following argument
-        async command EXTRA_CHOICES_WITH_FRIENDS(
+        sync command EXTRA_CHOICES_WITH_FRIENDS(
             @ Number of times to repeat the choices
             repeat: U8,
             @ Way to many choices to make
@@ -113,13 +113,13 @@ module Ref {
         # Variations on a basic structure
         #####
         @ Multiple choice command via Structure
-        async command CHOICE_PAIR(
+        sync command CHOICE_PAIR(
             @ A pair of choices
             choices: ChoicePair
         )
 
         @ Multiple choices command via Structure with a preceding and following argument
-        async command CHOICE_PAIR_WITH_FRIENDS(
+        sync command CHOICE_PAIR_WITH_FRIENDS(
             @ Number of times to repeat the choices
             repeat: U8,
             @ A pair of choices
@@ -141,13 +141,13 @@ module Ref {
         # Variations on a complex structure
         #####
         @ Multiple choice command via Complex Structure
-        async command GLUTTON_OF_CHOICE(
+        sync command GLUTTON_OF_CHOICE(
             @ A phenomenal amount of choice
             choices: ChoiceSlurry
         )
 
         @ Multiple choices command via Complex Structure with a preceding and following argument
-        async command GLUTTON_OF_CHOICE_WITH_FRIENDS(
+        sync command GLUTTON_OF_CHOICE_WITH_FRIENDS(
             @ Number of times to repeat the choices
             repeat: U8,
             @ A phenomenal amount of choice
@@ -164,6 +164,33 @@ module Ref {
 
         @ Multiple enumeration parameter via Complex Structure
         param GLUTTON_OF_CHOICE_PRM: ChoiceSlurry
+
+        #####
+        # Parameter control: events and a dump command
+        #####
+
+        @ Single choice parameter event
+        event ChoicePrmEv(choice: Choice, validity: Fw.ParamValid) severity activity high \
+            format "CHOICE_PRM: {} with validity: {}"
+
+        @ Multiple choice parameter event via Array
+        event ChoicesPrmEv(choices: ManyChoices, validity: Fw.ParamValid) severity activity high \
+            format "CHOICES_PRM: {} with validity: {}"
+
+        @ Too many choice parameter event via Array
+        event ExtraChoicesPrmEv(choices: TooManyChoices, validity: Fw.ParamValid) severity activity high \
+            format "EXTRA_CHOICES_PRM: {} with validity: {}"
+
+        @ Multiple choice parameter event via Structure
+        event ChoicePairPrmEv(choices: ChoicePair, validity: Fw.ParamValid) severity activity high \
+            format "CHOICE_PAIR_PRM: {} with validity: {}"
+
+        @ Multiple choice parameter event via Complex Structure
+        event ChoiceSlurryPrmEv(choices: ChoiceSlurry, validity: Fw.ParamValid) severity activity high \
+            format "GLUTTON_OF_CHOICE_PRM: {} with validity: {}"
+
+        @ Dump the typed parameters
+        sync command DUMP_TYPED_PARAMETERS()
 
         # ----------------------------------------------------------------------
         # Special ports
