@@ -118,16 +118,20 @@ STATIC FwNativeIntType getFileStateIndex(const char* fileName) {
     // where n = number of file bins, and m = number of files in a particular bin
     // any other name will return an error
 
+    // Scan the string for the bin and file numbers.  
+    // There could also be a '.CRC32' extension, which is not supported by MicroFs, 
+    // so we have to catch that and return a fault indication
     const char* filePathSpec = "/" 
         MICROFS_BIN_STRING 
         "%d/" 
         MICROFS_FILE_STRING 
-        "%d";
+        "%d.%5s";
 
     FwNativeUIntType binIndex;
     FwNativeUIntType fileIndex;
+    char* crcExtension[6];
+    FwNativeIntType stat = sscanf(fileName,filePathSpec,&binIndex,&fileIndex,crcExtension);
 
-    FwNativeIntType stat = sscanf(fileName,filePathSpec,&binIndex,&fileIndex);
     // must match two entries, i.e. the bin and file numbers
     if (stat != 2) {
         return -1;
