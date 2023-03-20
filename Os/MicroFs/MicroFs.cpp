@@ -132,7 +132,6 @@ getFileStateIndex(const char* fileName) {
     FwNativeUIntType fileIndex;
     char crcExtension;
     FwNativeIntType stat = sscanf(fileName,filePathSpec,&binIndex,&fileIndex,&crcExtension);
-    // must match two entries, i.e. the bin and file numbers
     if (stat != 2) {
         return -1;
     }
