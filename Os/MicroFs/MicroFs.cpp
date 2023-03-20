@@ -118,16 +118,19 @@ STATIC FwNativeIntType getFileStateIndex(const char* fileName) {
     // where n = number of file bins, and m = number of files in a particular bin
     // any other name will return an error
 
+    // Scan the string for the bin and file numbers.  
+    // There could also be a '.CRC32' extension, which is not supported by MicroFs, 
+    // so we have to catch that and return a fault indication
     const char* filePathSpec = "/" 
         MICROFS_BIN_STRING 
         "%d/" 
         MICROFS_FILE_STRING 
-        "%d";
+        "%d.%5s";
 
     FwNativeUIntType binIndex;
     FwNativeUIntType fileIndex;
-
-    FwNativeIntType stat = sscanf(fileName,filePathSpec,&binIndex,&fileIndex);
+    char* crcExtension[6] = {"XXXXX"};
+    FwNativeIntType stat = sscanf(fileName,filePathSpec,&binIndex,&fileIndex,crcExtension);
     // must match two entries, i.e. the bin and file numbers
     if (stat != 2) {
         return -1;
@@ -185,6 +188,8 @@ File::Status File::open(const char* fileName, File::Mode mode) {
 File::Status File::open(const char* fileName, File::Mode mode, bool include_excl) {
     Status stat = OP_OK;
 
+    printf("*** Open %s, %d\n", fileName, mode);
+
     // common checks
     // retrieve index to file entry
     FwNativeIntType entry = getFileStateIndex(fileName);
@@ -224,6 +229,12 @@ File::Status File::open(const char* fileName, File::Mode mode, bool include_excl
         case OPEN_WRITE:
         case OPEN_SYNC_WRITE:         // fall through; same for microfs
         case OPEN_SYNC_DIRECT_WRITE:  // fall through; same for microfs
+            // If the file has never previously been opened, then initialize the
+            // size to 0.
+            if (-1 == state->currSize) {
+                state->currSize = 0;
+            }
+            break;
         case OPEN_CREATE:
             // truncate file length to zero
             state->currSize = 0;
@@ -251,6 +262,8 @@ File::Status File::prealloc(NATIVE_INT_TYPE offset, NATIVE_INT_TYPE len) {
 
 File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {
     // make sure it has been opened
+    printf("*** Seek %d %d\n", absolute, offset);
+
     if (OPEN_NO_MODE == this->m_mode) {
         return NOT_OPENED;
     }
@@ -279,11 +292,16 @@ File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {
     if (state->loc > state->currSize) {
         state->currSize = state->loc;
     }
+
+    printf("size = %d\n", state->currSize);
+    
     return OP_OK;
 }
 
 File::Status File::read(void* buffer, NATIVE_INT_TYPE& size, bool waitForFull) {
     FW_ASSERT(buffer);
+
+    printf("*** Read %d\n", size);
 
     // make sure it has been opened
     if (OPEN_NO_MODE == this->m_mode) {
@@ -323,6 +341,8 @@ File::Status File::read(void* buffer, NATIVE_INT_TYPE& size, bool waitForFull) {
 File::Status File::write(const void* buffer, NATIVE_INT_TYPE& size, bool waitForDone) {
     FW_ASSERT(buffer);
 
+    printf("*** Write %d\n", size);
+
     // make sure it has been opened in write mode
     switch (this->m_mode) {
         case OPEN_NO_MODE:
@@ -356,6 +376,8 @@ File::Status File::write(const void* buffer, NATIVE_INT_TYPE& size, bool waitFor
     state->currSize += size;
     // increment location
     state->loc += size;
+
+    printf("size = %d\n", state->currSize);
 
     return OP_OK;
 }
