@@ -41,7 +41,7 @@ void TypeDemo ::CHOICES_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
                                                 U8 repeat,
                                                 Ref::ManyChoices choices,
                                                 U8 repeat_max) {
-    for (U32 i = 0; (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
+    for (U32 i = 0; (i < repeat) && (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
         this->tlmWrite_ChoicesCh(choices);
     }
     this->log_ACTIVITY_HI_ChoicesEv(choices);
@@ -59,7 +59,7 @@ void TypeDemo ::EXTRA_CHOICES_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
                                                       U8 repeat,
                                                       Ref::TooManyChoices choices,
                                                       U8 repeat_max) {
-    for (U32 i = 0; (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
+    for (U32 i = 0; (i < repeat) && (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
         this->tlmWrite_ExtraChoicesCh(choices);
     }
     this->log_ACTIVITY_HI_ExtraChoicesEv(choices);
@@ -77,7 +77,7 @@ void TypeDemo ::CHOICE_PAIR_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
                                                     U8 repeat,
                                                     Ref::ChoicePair choices,
                                                     U8 repeat_max) {
-    for (U32 i = 0; (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
+    for (U32 i = 0; (i < repeat) && (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
         this->tlmWrite_ChoicePairCh(choices);
     }
     this->log_ACTIVITY_HI_ChoicePairEv(choices);
@@ -95,7 +95,7 @@ void TypeDemo ::GLUTTON_OF_CHOICE_WITH_FRIENDS_cmdHandler(const FwOpcodeType opC
                                                           U8 repeat,
                                                           Ref::ChoiceSlurry choices,
                                                           U8 repeat_max) {
-    for (U32 i = 0; (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
+    for (U32 i = 0; (i < repeat) && (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
         this->tlmWrite_ChoiceSlurryCh(choices);
     }
     this->log_ACTIVITY_HI_ChoiceSlurryEv(choices);
