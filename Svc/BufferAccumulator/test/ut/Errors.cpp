@@ -20,8 +20,49 @@ namespace Svc {
     // Tests
     // ----------------------------------------------------------------------
 
+
     void Tester ::
-      QueueFull()
+      PartialDrain(void)
+    {
+        ASSERT_EQ(BufferAccumulator::DRAIN, this->component.mode);
+        this->sendCmd_BA_DrainBuffers(0, 0, 1, BufferAccumulator::BLOCK);
+        this->component.doDispatch(); // will fail - we are still in DRAIN mode
+        ASSERT_EQ(BufferAccumulator::DRAIN, this->component.mode);
+        ASSERT_FROM_PORT_HISTORY_SIZE(0);
+        ASSERT_EVENTS_BA_AlreadyDraining_SIZE(1);
+        ASSERT_EQ(0u, this->component.numDrained);
+        ASSERT_EQ(0u, this->component.numToDrain);
+
+        this->sendCmd_BA_SetMode(0, 0, BufferAccumulator::ACCUMULATE);
+        this->component.doDispatch();
+        ASSERT_EQ(BufferAccumulator::ACCUMULATE, this->component.mode);
+        ASSERT_FROM_PORT_HISTORY_SIZE(0);
+
+        this->sendCmd_BA_DrainBuffers(0, 0, 10, BufferAccumulator::BLOCK);
+        this->component.doDispatch(); // will succeed - now we are in ACCUMULATE
+        ASSERT_EQ(BufferAccumulator::ACCUMULATE, this->component.mode);
+        ASSERT_FROM_PORT_HISTORY_SIZE(0); // would be first buffer out, but we are empty
+        ASSERT_EVENTS_BA_DrainStalled_SIZE(1);
+        ASSERT_EVENTS_BA_DrainStalled(0, 0u, 10u);
+        ASSERT_EVENTS_BA_PartialDrainDone_SIZE(0); // partial drain not done
+        ASSERT_EQ(true, this->component.send);
+        ASSERT_EQ(0u, this->component.numDrained);
+        ASSERT_EQ(10u, this->component.numToDrain);
+
+        this->sendCmd_BA_DrainBuffers(0, 0, 1, BufferAccumulator::BLOCK);
+        this->component.doDispatch(); // will fail - we are still doing a partial drain
+        ASSERT_EVENTS_BA_StillDraining_SIZE(1);
+        ASSERT_EVENTS_BA_StillDraining(0, 0u, 10u);
+        ASSERT_EVENTS_BA_PartialDrainDone_SIZE(0); // partial drain not done
+        ASSERT_EQ(BufferAccumulator::ACCUMULATE, this->component.mode);
+        ASSERT_FROM_PORT_HISTORY_SIZE(0);
+        ASSERT_EQ(true, this->component.send);
+        ASSERT_EQ(0u, this->component.numDrained);
+        ASSERT_EQ(10u, this->component.numToDrain);
+    }
+
+    void Tester ::
+      QueueFull(void)
     {
 
       Fw::Buffer buffer;
@@ -64,10 +105,10 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(2);
       ASSERT_EVENTS_BA_BufferAccepted_SIZE(1);
 
-      // Drain one buffer
-      this->sendCmd_BA_SetMode(0, 0, BufferAccumulator::DRAIN);
+      // Return the original buffer in order to drain one buffer
+      this->invoke_to_bufferSendInReturn(0, buffer);
       this->component.doDispatch();
-      ASSERT_FROM_PORT_HISTORY_SIZE(2);
+      ASSERT_FROM_PORT_HISTORY_SIZE(3);
       ASSERT_from_bufferSendOutDrain_SIZE(2);
       ASSERT_from_bufferSendOutDrain(1, buffer);
 

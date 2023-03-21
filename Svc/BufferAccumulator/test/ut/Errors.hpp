@@ -30,8 +30,10 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! Queue full
-        void QueueFull();
+        void QueueFull(void);
 
+        //! Run PartialDrain command in off-nominal ways
+        void PartialDrain(void);
     };
 
   }

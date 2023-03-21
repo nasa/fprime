@@ -21,7 +21,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     void Tester ::
-      OK()
+      OK(void)
     {
 
       ASSERT_EQ(BufferAccumulator::DRAIN, this->component.mode);

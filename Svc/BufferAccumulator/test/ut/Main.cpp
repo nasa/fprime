@@ -1,6 +1,14 @@
-// ----------------------------------------------------------------------
-// Main.cpp
-// ----------------------------------------------------------------------
+// ======================================================================
+// \title  Main.cpp
+// \author bocchino, mereweth
+// \brief  Test drain mode
+//
+// \copyright
+// Copyright (c) 2017 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 
 #include "Tester.hpp"
 #include "Errors.hpp"
@@ -22,6 +30,11 @@ TEST(TestErrors, QueueFull) {
   tester.QueueFull();
 }
 
+TEST(TestErrors, PartialDrain) {
+  Svc::Errors::Tester tester;
+  tester.PartialDrain();
+}
+
 // ----------------------------------------------------------------------
 // Test Accumulate
 // ----------------------------------------------------------------------
@@ -38,6 +51,11 @@ TEST(TestAccumulate, OK) {
 TEST(TestDrain, OK) {
   Svc::Drain::Tester tester;
   tester.OK();
+}
+
+TEST(TestPartialDrain, OK) {
+  Svc::Drain::Tester tester;
+  tester.PartialDrainOK();
 }
 
 // ----------------------------------------------------------------------

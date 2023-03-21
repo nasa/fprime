@@ -30,7 +30,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! Health ping test
-        void Ping();
+        void Ping(void);
 
     };
 

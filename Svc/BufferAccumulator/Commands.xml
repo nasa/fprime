@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
-<!--====================================================================== 
+<!--======================================================================
 
   BufferAccumulator
   Commands
@@ -21,4 +22,16 @@
     </args>
   </command>
 
+    <command kind="async" opcode="0x01" mnemonic="BA_DrainBuffers">
+        <comment>Drain the commanded number of buffers</comment>
+        <args>
+            <arg name="numToDrain" type="U32"></arg>
+            <arg name="blockMode" type="ENUM">
+              <enum name="BlockMode">
+                <item name="NOBLOCK"/>
+                <item name="BLOCK"/>
+              </enum>
+            </arg>
+        </args>
+    </command>
 </commands>

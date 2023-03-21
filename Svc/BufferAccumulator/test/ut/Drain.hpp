@@ -30,7 +30,10 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! Send some buffers
-        void OK();
+        void OK(void);
+
+        //! Run PartialDrain command in nominal way
+        void PartialDrainOK(void);
 
     };
 

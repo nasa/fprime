@@ -38,7 +38,7 @@ namespace Svc {
 
       //! Destroy object Tester
       //!
-      ~Tester();
+      ~Tester(void);
 
     public:
 
@@ -47,7 +47,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! Try to accumulate without calling allocateQueue
-      void AccumNoAllocate();
+      void AccumNoAllocate(void);
     private:
 
       // ----------------------------------------------------------------------
@@ -83,11 +83,11 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts();
+      void connectPorts(void);
 
       //! Initialize components
       //!
-      void initComponents();
+      void initComponents(void);
 
     protected:
 

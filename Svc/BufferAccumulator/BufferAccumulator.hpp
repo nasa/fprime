@@ -37,7 +37,7 @@ namespace Svc {
             ArrayFIFOBuffer();
 
             //! Destroy an ArrayFIFOBuffer File object
-            ~ArrayFIFOBuffer();
+            ~ArrayFIFOBuffer(void);
 
             void init(Fw::Buffer *const elements, //!< The array elements
                       NATIVE_UINT_TYPE capacity //!< The capacity
@@ -58,11 +58,11 @@ namespace Svc {
 
             //! Get the size of the queue
             //! \return The size
-            U32 getSize() const;
+            U32 getSize(void) const;
 
             //! Get the capacity of the queue
             //! \return The capacity
-            U32 getCapacity() const;
+            U32 getCapacity(void) const;
 
         PRIVATE:
 
@@ -95,7 +95,9 @@ namespace Svc {
       //! Construct BufferAccumulator instance
       //!
       BufferAccumulator(
+#if FW_OBJECT_NAMES == 1
           const char *const compName /*!< The component name*/
+#endif
       );
 
       //! Initialize BufferAccumulator instance
@@ -107,7 +109,7 @@ namespace Svc {
 
       //! Destroy BufferAccumulator instance
       //!
-      ~BufferAccumulator();
+      ~BufferAccumulator(void);
 
       // ----------------------------------------------------------------------
       // Public methods
@@ -116,8 +118,8 @@ namespace Svc {
       //! Give the class a memory buffer. Should be called after constructor
       //! and init, but before task is spawned.
       void allocateQueue(
-          NATIVE_INT_TYPE identifier, //!< Identifier for queue allocation and saved for deallocation
-          Fw::MemAllocator& allocator, //!< Memory allocator used to allocate memory
+          NATIVE_INT_TYPE identifier,
+          Fw::MemAllocator& allocator,
           NATIVE_UINT_TYPE maxNumBuffers //!< The maximum number of buffers
       );
 
@@ -165,13 +167,23 @@ namespace Svc {
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-      //! Implementation for SetMode command handler
-      //! Set the mode
-      void BA_SetMode_cmdHandler(
-          const FwOpcodeType opCode, //!< The opcode
-          const U32 cmdSeq, //!< The command sequence number
-          OpState mode //!< The mode
-      );
+        //! Implementation for SetMode command handler
+        //! Set the mode
+        void BA_SetMode_cmdHandler(
+            const FwOpcodeType opCode, //!< The opcode
+            const U32 cmdSeq, //!< The command sequence number
+            OpState mode //!< The mode
+        );
+
+        //! Implementation for BA_DrainBuffers command handler
+        //! Drain the commanded number of buffers
+        void BA_DrainBuffers_cmdHandler(
+            const FwOpcodeType opCode, /*!< The opcode*/
+            const U32 cmdSeq, /*!< The command sequence number*/
+            U32 numToDrain, 
+            BlockMode blockMode 
+        );
+
     PRIVATE:
 
       // ----------------------------------------------------------------------
@@ -179,7 +191,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! Send a stored buffer
-      void sendStoredBuffer();
+      void sendStoredBuffer(void);
 
     PRIVATE:
 
@@ -199,8 +211,23 @@ namespace Svc {
       //! Whether to send a buffer to the downstream client
       bool send;
 
+      //! If we are switched to ACCUMULATE then back to DRAIN, whether we were waiting on a buffer
+      bool waitForBuffer;
+
       //! The number of QueueFull warnings sent since the last successful enqueue operation
       U32 numWarnings;
+
+      //! The number of buffers drained in a partial drain command
+      U32 numDrained;
+
+      //! The number of buffers TO drain in a partial drain command
+      U32 numToDrain;
+
+      //! The DrainBuffers opcode to respond to
+      FwOpcodeType opCode;
+
+      //! The DrainBuffers cmdSeq to respond to
+      U32 cmdSeq;
 
       //! The allocator ID
       NATIVE_INT_TYPE allocatorId;
