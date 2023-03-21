@@ -31,17 +31,16 @@ class TypeDemo : public TypeDemoComponentBase {
     //!
     ~TypeDemo() = default;
 
-  PRIVATE :
-        // ----------------------------------------------------------------------
-        // Command handler implementations
-        // ----------------------------------------------------------------------
+  PRIVATE:
+    // ----------------------------------------------------------------------
+    // Command handler implementations
+    // ----------------------------------------------------------------------
 
-        //! Implementation for CHOICE command handler
-        //! Single choice command
-        void
-        CHOICE_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
-                          const U32 cmdSeq,          /*!< The command sequence number*/
-                          Ref::Choice choice);
+    //! Implementation for CHOICE command handler
+    //! Single choice command
+    void CHOICE_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                           const U32 cmdSeq,          /*!< The command sequence number*/
+                           Ref::Choice choice);
 
     //! Implementation for CHOICES command handler
     //! Multiple choice command via Array
