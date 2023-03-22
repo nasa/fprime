@@ -21,7 +21,13 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 BufferAccumulator::ArrayFIFOBuffer ::ArrayFIFOBuffer()
-    : elements(NULL), capacity(0), enqueueIndex(0), dequeueIndex(0), size(0) {}
+    : elements(NULL),
+      capacity(0),
+      enqueueIndex(0),
+      dequeueIndex(0),
+      size(0)
+{
+}
 
 BufferAccumulator::ArrayFIFOBuffer ::~ArrayFIFOBuffer() {}
 
@@ -36,9 +42,11 @@ void BufferAccumulator::ArrayFIFOBuffer ::init(Fw::Buffer* const elements,
 }
 
 bool BufferAccumulator::ArrayFIFOBuffer ::enqueue(const Fw::Buffer& e) {
+
   if (this->elements == NULL) {
     return false;
   }
+
   bool status;
   if (this->size < this->capacity) {
     // enqueueIndex is unsigned, no need to compare with 0
@@ -46,29 +54,34 @@ bool BufferAccumulator::ArrayFIFOBuffer ::enqueue(const Fw::Buffer& e) {
     this->elements[this->enqueueIndex] = e;
     this->enqueueIndex = (this->enqueueIndex + 1) % this->capacity;
     status = true;
-    ++this->size;
+    this->size++;
   } else {
     status = false;
   }
+
   return status;
 }
 
 bool BufferAccumulator::ArrayFIFOBuffer ::dequeue(Fw::Buffer& e) {
+
   if (this->elements == NULL) {
     return false;
   }
+
   FW_ASSERT(this->elements);
   bool status;
+
   if (this->size > 0) {
     // dequeueIndex is unsigned, no need to compare with 0
     FW_ASSERT(dequeueIndex < this->capacity, enqueueIndex);
     e = this->elements[this->dequeueIndex];
     this->dequeueIndex = (this->dequeueIndex + 1) % this->capacity;
-    --this->size;
+    this->size--;
     status = true;
   } else {
     status = false;
   }
+
   return status;
 }
 

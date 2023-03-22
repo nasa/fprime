@@ -23,13 +23,8 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 BufferAccumulator ::
-#if FW_OBJECT_NAMES == 1
     BufferAccumulator(const char* const compName)
     : BufferAccumulatorComponentBase(compName),  //!< The component name
-#else
-    BufferAccumulator()
-    : BufferAccumulatorComponentBase(),
-#endif
       mode(BufferAccumulator_OpState::ACCUMULATE),
       bufferMemory(NULL),
       bufferQueue(),
@@ -58,11 +53,13 @@ void BufferAccumulator ::allocateQueue(
     NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator,
     NATIVE_UINT_TYPE maxNumBuffers  //!< The maximum number of buffers
 ) {
+
   this->allocatorId = identifier;
   NATIVE_UINT_TYPE memSize = sizeof(Fw::Buffer) * maxNumBuffers;
   bool recoverable = false;
   this->bufferMemory = static_cast<Fw::Buffer*>(
       allocator.allocate(identifier, memSize, recoverable));
+  //TODO: Fail gracefully here
   bufferQueue.init(this->bufferMemory, maxNumBuffers);
 }
 
@@ -76,6 +73,7 @@ void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {
 
 void BufferAccumulator ::bufferSendInFill_handler(const NATIVE_INT_TYPE portNum,
                                                   Fw::Buffer& buffer) {
+
   const bool status = this->bufferQueue.enqueue(buffer);
   if (status) {
     if (this->numWarnings > 0) {
@@ -86,7 +84,7 @@ void BufferAccumulator ::bufferSendInFill_handler(const NATIVE_INT_TYPE portNum,
     if (this->numWarnings == 0) {
       this->log_WARNING_HI_BA_QueueFull();
     }
-    ++numWarnings;
+    numWarnings++;
   }
   if (this->send) {
     this->sendStoredBuffer();
@@ -97,13 +95,12 @@ void BufferAccumulator ::bufferSendInFill_handler(const NATIVE_INT_TYPE portNum,
 
 void BufferAccumulator ::bufferSendInReturn_handler(
     const NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
+
   this->bufferSendOutReturn_out(0, buffer);
   this->waitForBuffer = false;
-  if ((this->mode ==
-       BufferAccumulator_OpState::DRAIN) ||  // we are draining ALL buffers
-      (this->numDrained <
-       this->numToDrain)) {  // OR we aren't done draining some buffers in a
-                             // partial drain
+  if ((this->mode == BufferAccumulator_OpState::DRAIN) ||  // we are draining ALL buffers
+      (this->numDrained < this->numToDrain)) {  // OR we aren't done draining some buffers
+                                                // in a partial drain
     this->send = true;
     this->sendStoredBuffer();
   }
@@ -121,6 +118,7 @@ void BufferAccumulator ::pingIn_handler(const NATIVE_INT_TYPE portNum,
 void BufferAccumulator ::BA_SetMode_cmdHandler(const FwOpcodeType opCode,
                                                const U32 cmdSeq,
                                                BufferAccumulator_OpState mode) {
+
   // cancel an in-progress partial drain
   if (this->numToDrain > 0) {
     // reset counters for partial buffer drain
@@ -145,6 +143,7 @@ void BufferAccumulator ::BA_SetMode_cmdHandler(const FwOpcodeType opCode,
 void BufferAccumulator ::BA_DrainBuffers_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq, U32 numToDrain,
     BufferAccumulator_BlockMode blockMode) {
+
   if (this->numDrained < this->numToDrain) {
     this->log_WARNING_HI_BA_StillDraining(this->numDrained, this->numToDrain);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
@@ -198,12 +197,12 @@ void BufferAccumulator ::BA_DrainBuffers_cmdHandler(
 // ----------------------------------------------------------------------
 
 void BufferAccumulator ::sendStoredBuffer(void) {
+
   FW_ASSERT(this->send);
   Fw::Buffer buffer;
   if ((this->numToDrain == 0) ||  // we are draining ALL buffers
-      (this->numDrained <
-       this->numToDrain)) {  // OR we aren't done draining some buffers in a
-                             // partial drain
+      (this->numDrained < this->numToDrain)) {  // OR we aren't done draining some buffers in a
+                                                // partial drain
     const bool status = this->bufferQueue.dequeue(buffer);
     if (status) {  // a buffer was dequeued
       this->numDrained++;
@@ -220,8 +219,8 @@ void BufferAccumulator ::sendStoredBuffer(void) {
    * Correct thing is to return OK once they are SENT
    */
   if ((this->numToDrain > 0) &&  // we are doing a partial drain
-      (this->numDrained ==
-       this->numToDrain)) {  // AND we just finished draining
+      (this->numDrained == this->numToDrain)) {  // AND we just finished draining
+                                                 //
     this->log_ACTIVITY_HI_BA_PartialDrainDone(this->numDrained);
     // reset counters for partial buffer drain
     this->numToDrain = 0;
