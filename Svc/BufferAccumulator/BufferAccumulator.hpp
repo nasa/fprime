@@ -172,7 +172,7 @@ namespace Svc {
         void BA_SetMode_cmdHandler(
             const FwOpcodeType opCode, //!< The opcode
             const U32 cmdSeq, //!< The command sequence number
-            OpState mode //!< The mode
+            BufferAccumulator_OpState mode //!< The mode
         );
 
         //! Implementation for BA_DrainBuffers command handler
@@ -181,7 +181,7 @@ namespace Svc {
             const FwOpcodeType opCode, /*!< The opcode*/
             const U32 cmdSeq, /*!< The command sequence number*/
             U32 numToDrain, 
-            BlockMode blockMode 
+            BufferAccumulator_BlockMode blockMode 
         );
 
     PRIVATE:
@@ -200,7 +200,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! The mode
-      OpState mode;
+      BufferAccumulator_OpState mode;
 
       //! Memory for the buffer array
       Fw::Buffer * bufferMemory;

@@ -24,23 +24,23 @@ namespace Svc {
     void Tester ::
       PartialDrain(void)
     {
-        ASSERT_EQ(BufferAccumulator::DRAIN, this->component.mode);
-        this->sendCmd_BA_DrainBuffers(0, 0, 1, BufferAccumulator::BLOCK);
-        this->component.doDispatch(); // will fail - we are still in DRAIN mode
-        ASSERT_EQ(BufferAccumulator::DRAIN, this->component.mode);
+        ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.mode.e);
+        this->sendCmd_BA_DrainBuffers(0, 0, 1, BufferAccumulator_BlockMode::BLOCK);
+        this->component.doDispatch(); // will fail - we are still in BufferAccumulator_OpState::DRAIN mode
+        ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.mode.e);
         ASSERT_FROM_PORT_HISTORY_SIZE(0);
         ASSERT_EVENTS_BA_AlreadyDraining_SIZE(1);
         ASSERT_EQ(0u, this->component.numDrained);
         ASSERT_EQ(0u, this->component.numToDrain);
 
-        this->sendCmd_BA_SetMode(0, 0, BufferAccumulator::ACCUMULATE);
+        this->sendCmd_BA_SetMode(0, 0, BufferAccumulator_OpState::ACCUMULATE);
         this->component.doDispatch();
-        ASSERT_EQ(BufferAccumulator::ACCUMULATE, this->component.mode);
+        ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.mode.e);
         ASSERT_FROM_PORT_HISTORY_SIZE(0);
 
-        this->sendCmd_BA_DrainBuffers(0, 0, 10, BufferAccumulator::BLOCK);
+        this->sendCmd_BA_DrainBuffers(0, 0, 10, BufferAccumulator_BlockMode::BLOCK);
         this->component.doDispatch(); // will succeed - now we are in ACCUMULATE
-        ASSERT_EQ(BufferAccumulator::ACCUMULATE, this->component.mode);
+        ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.mode.e);
         ASSERT_FROM_PORT_HISTORY_SIZE(0); // would be first buffer out, but we are empty
         ASSERT_EVENTS_BA_DrainStalled_SIZE(1);
         ASSERT_EVENTS_BA_DrainStalled(0, 0u, 10u);
@@ -49,12 +49,12 @@ namespace Svc {
         ASSERT_EQ(0u, this->component.numDrained);
         ASSERT_EQ(10u, this->component.numToDrain);
 
-        this->sendCmd_BA_DrainBuffers(0, 0, 1, BufferAccumulator::BLOCK);
+        this->sendCmd_BA_DrainBuffers(0, 0, 1, BufferAccumulator_BlockMode::BLOCK);
         this->component.doDispatch(); // will fail - we are still doing a partial drain
         ASSERT_EVENTS_BA_StillDraining_SIZE(1);
         ASSERT_EVENTS_BA_StillDraining(0, 0u, 10u);
         ASSERT_EVENTS_BA_PartialDrainDone_SIZE(0); // partial drain not done
-        ASSERT_EQ(BufferAccumulator::ACCUMULATE, this->component.mode);
+        ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.mode.e);
         ASSERT_FROM_PORT_HISTORY_SIZE(0);
         ASSERT_EQ(true, this->component.send);
         ASSERT_EQ(0u, this->component.numDrained);
@@ -64,14 +64,15 @@ namespace Svc {
     void Tester ::
       QueueFull(void)
     {
-
-      Fw::Buffer buffer;
+      U8* data = new U8[10];
+      const U32 size = 10;
+      Fw::Buffer buffer(data, size);
 
       // Go to Accumulate mode
-      ASSERT_EQ(BufferAccumulator::DRAIN, this->component.mode);
-      this->sendCmd_BA_SetMode(0, 0, BufferAccumulator::ACCUMULATE);
+      ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.mode.e);
+      this->sendCmd_BA_SetMode(0, 0, BufferAccumulator_OpState::ACCUMULATE);
       this->component.doDispatch();
-      ASSERT_EQ(BufferAccumulator::ACCUMULATE, this->component.mode);
+      ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.mode.e);
       ASSERT_FROM_PORT_HISTORY_SIZE(0);
 
       // Fill up the buffer queue
@@ -93,7 +94,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
 
       // Drain one buffer
-      this->sendCmd_BA_SetMode(0, 0, BufferAccumulator::DRAIN);
+      this->sendCmd_BA_SetMode(0, 0, BufferAccumulator_OpState::DRAIN);
       this->component.doDispatch();
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       ASSERT_from_bufferSendOutDrain_SIZE(1);
@@ -124,6 +125,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(3);
       ASSERT_EVENTS_BA_QueueFull_SIZE(2);
 
+      delete[] data;
     }
 
   }

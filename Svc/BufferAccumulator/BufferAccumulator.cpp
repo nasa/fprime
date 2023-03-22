@@ -32,7 +32,7 @@ namespace Svc {
 #else
       BufferAccumulator() : BufferAccumulatorComponentBase(),
 #endif
-      mode(ACCUMULATE),
+      mode(BufferAccumulator_OpState::ACCUMULATE),
       bufferMemory(NULL),
       bufferQueue(),
       send(false),
@@ -73,8 +73,10 @@ namespace Svc {
     )
   {
       this->allocatorId = identifier;
+      NATIVE_UINT_TYPE memSize = sizeof(Fw::Buffer) * maxNumBuffers;
+      bool recoverable = false;
       this->bufferMemory =  static_cast<Fw::Buffer*>(
-          allocator.allocate(identifier, sizeof(Fw::Buffer) * maxNumBuffers));
+          allocator.allocate(identifier, memSize, recoverable));
       bufferQueue.init(this->bufferMemory, maxNumBuffers);
   }
 
@@ -122,7 +124,7 @@ namespace Svc {
   {
     this->bufferSendOutReturn_out(0, buffer);
     this->waitForBuffer = false;
-    if ((this->mode == DRAIN)                  || // we are draining ALL buffers
+    if ((this->mode == BufferAccumulator_OpState::DRAIN)                  || // we are draining ALL buffers
         (this->numDrained < this->numToDrain))  { // OR we aren't done draining some buffers in a partial drain
         this->send = true;
         this->sendStoredBuffer();
@@ -155,7 +157,7 @@ namespace Svc {
     BA_SetMode_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        OpState mode
+        BufferAccumulator_OpState mode
     )
   {
       // cancel an in-progress partial drain
@@ -164,11 +166,11 @@ namespace Svc {
            this->numToDrain = 0;
            this->numDrained = 0;
            // respond to the original command
-           this->cmdResponse_out(this->opCode, this->cmdSeq, Fw::COMMAND_OK);
+           this->cmdResponse_out(this->opCode, this->cmdSeq, Fw::CmdResponse::OK);
       }
 
       this->mode = mode;
-      if (mode == DRAIN) {
+      if (mode == BufferAccumulator_OpState::DRAIN) {
           if (!this->waitForBuffer) {
               this->send = true;
               this->sendStoredBuffer();
@@ -177,7 +179,7 @@ namespace Svc {
       else {
           this->send = false;
       }
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
 
@@ -186,26 +188,26 @@ namespace Svc {
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         U32 numToDrain,
-        BlockMode blockMode
+        BufferAccumulator_BlockMode blockMode
       )
     {
 
         if (this->numDrained < this->numToDrain) {
             this->log_WARNING_HI_BA_StillDraining(this->numDrained,
                                                   this->numToDrain);
-            this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_BUSY);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
             return;
         }
 
-        if (this->mode == DRAIN) {
+        if (this->mode == BufferAccumulator_OpState::DRAIN) {
             this->log_WARNING_HI_BA_AlreadyDraining();
-            this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_VALIDATION_ERROR);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
 
         if (numToDrain == 0) {
             this->log_ACTIVITY_HI_BA_PartialDrainDone(0);
-            this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             return;
         }
 
@@ -214,7 +216,7 @@ namespace Svc {
         this->numDrained = 0;
         this->numToDrain = numToDrain;
 
-        if (NOBLOCK == blockMode) {
+        if (blockMode == BufferAccumulator_BlockMode::NOBLOCK) {
             U32 numBuffers = this->bufferQueue.getSize();
 
             if (numBuffers < numToDrain) {
@@ -223,12 +225,12 @@ namespace Svc {
                                                       numToDrain);
             }
 
-            /* NOTE(mereweth) - OK if there were 0 buffers queued, and we
+            /* NOTE(mereweth) - CmdResponse::OK if there were 0 buffers queued, and we
              * end up setting numToDrain to 0
              */
             if (0 == this->numToDrain) {
                 this->log_ACTIVITY_HI_BA_PartialDrainDone(0);
-                this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
                 return;
             }
         }
@@ -265,8 +267,8 @@ namespace Svc {
     }
 
     /* NOTE(mereweth) - this used to be "else if", but then you wait for all
-     * drained buffers in a partial drain to be RETURNED before returning OK.
-     * Correct thing is to return OK once they are SENT
+     * drained buffers in a partial drain to be RETURNED before returning CmdResponse::OK.
+     * Correct thing is to return CmdResponse::OK once they are SENT
      */
     if ((this->numToDrain > 0)                  && // we are doing a partial drain
         (this->numDrained == this->numToDrain))  { // AND we just finished draining
@@ -275,7 +277,7 @@ namespace Svc {
          this->numToDrain = 0;
          this->numDrained = 0;
          this->send = false;
-         this->cmdResponse_out(this->opCode, this->cmdSeq, Fw::COMMAND_OK);
+         this->cmdResponse_out(this->opCode, this->cmdSeq, Fw::CmdResponse::OK);
     }
 
     this->tlmWrite_BA_NumQueuedBuffers(this->bufferQueue.getSize());

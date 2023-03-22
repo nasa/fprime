@@ -38,8 +38,8 @@ namespace Svc {
     this->initComponents();
     this->connectPorts();
 
-    // NOTE(mereweth) - switch to DRAIN at start so we don't have to change ut
-    component.mode = BufferAccumulator::DRAIN;
+    // NOTE(mereweth) - switch to BufferAccumulator_OpState::DRAIN at start so we don't have to change ut
+    component.mode = BufferAccumulator_OpState::DRAIN;
     component.send = true;
 
     if (this->doAllocateQueue) {
