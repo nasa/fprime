@@ -20,82 +20,69 @@
 
 namespace Svc {
 
-  class Tester :
-    public BufferAccumulatorGTestBase
-  {
+class Tester : public BufferAccumulatorGTestBase {
+  // ----------------------------------------------------------------------
+  // Construction and destruction
+  // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+ public:
+  //! Construct object Tester
+  //!
+  Tester(bool doAllocateQueue = true);
 
-    public:
+  //! Destroy object Tester
+  //!
+  ~Tester(void);
 
-      //! Construct object Tester
-      //!
-      Tester(
-          bool doAllocateQueue = true
-      );
+ private:
+  // ----------------------------------------------------------------------
+  // Handlers for typed from ports
+  // ----------------------------------------------------------------------
 
-      //! Destroy object Tester
-      //!
-      ~Tester(void);
+  //! Handler for from_bufferSendOutDrain
+  //!
+  void from_bufferSendOutDrain_handler(
+      const NATIVE_INT_TYPE portNum,  //!< The port number
+      Fw::Buffer& fwBuffer);
 
-    private:
+  //! Handler for from_bufferSendOutReturn
+  //!
+  void from_bufferSendOutReturn_handler(
+      const NATIVE_INT_TYPE portNum,  //!< The port number
+      Fw::Buffer& fwBuffer);
 
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
+  //! Handler for from_pingOut
+  //!
+  void from_pingOut_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+                            U32 key  //!< Value to return to pinger
+  );
 
-      //! Handler for from_bufferSendOutDrain
-      //!
-      void from_bufferSendOutDrain_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer& fwBuffer
-      );
+ private:
+  // ----------------------------------------------------------------------
+  // Helper methods
+  // ----------------------------------------------------------------------
 
-      //! Handler for from_bufferSendOutReturn
-      //!
-      void from_bufferSendOutReturn_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer& fwBuffer
-      );
+  //! Connect ports
+  //!
+  void connectPorts(void);
 
-      //! Handler for from_pingOut
-      //!
-      void from_pingOut_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
-          U32 key //!< Value to return to pinger
-      );
+  //! Initialize components
+  //!
+  void initComponents(void);
 
-    private:
+ protected:
+  // ----------------------------------------------------------------------
+  // Variables
+  // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+  //! The component under test
+  //!
+  BufferAccumulator component;
 
-      //! Connect ports
-      //!
-      void connectPorts(void);
+  //! Whether to allocate/deallocate a queue for the user
+  bool doAllocateQueue;
+};
 
-      //! Initialize components
-      //!
-      void initComponents(void);
+}  // end namespace Svc
 
-    protected:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      BufferAccumulator component;
-
-      //! Whether to allocate/deallocate a queue for the user
-      bool doAllocateQueue;
-
-  };
-
-} // end namespace Svc
-
-#endif //#ifndef TESTER_HPP
+#endif  //#ifndef TESTER_HPP

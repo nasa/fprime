@@ -13,17 +13,15 @@
 #ifndef Svc_BufferAccumulator_HPP
 #define Svc_BufferAccumulator_HPP
 
-#include "Svc/BufferAccumulator/BufferAccumulatorComponentAc.hpp"
-#include "Os/Queue.hpp"
 #include <Fw/Types/MemAllocator.hpp>
+
+#include "Os/Queue.hpp"
+#include "Svc/BufferAccumulator/BufferAccumulatorComponentAc.hpp"
 
 namespace Svc {
 
-  class BufferAccumulator :
-    public BufferAccumulatorComponentBase
-  {
-
-    PRIVATE:
+class BufferAccumulator : public BufferAccumulatorComponentBase {
+  PRIVATE :
 
       // ----------------------------------------------------------------------
       // Types
@@ -31,103 +29,96 @@ namespace Svc {
 
       //! A BufferLogger file
       class ArrayFIFOBuffer {
+   public:
+    //! Construct an ArrayFIFOBuffer object
+    ArrayFIFOBuffer();
 
-        public:
-            //! Construct an ArrayFIFOBuffer object
-            ArrayFIFOBuffer();
+    //! Destroy an ArrayFIFOBuffer File object
+    ~ArrayFIFOBuffer(void);
 
-            //! Destroy an ArrayFIFOBuffer File object
-            ~ArrayFIFOBuffer(void);
+    void init(Fw::Buffer* const elements,  //!< The array elements
+              NATIVE_UINT_TYPE capacity    //!< The capacity
+    );
 
-            void init(Fw::Buffer *const elements, //!< The array elements
-                      NATIVE_UINT_TYPE capacity //!< The capacity
-            );
+    //! Enqueue an index.
+    //! Fails if the queue is full.
+    //! \return Whether the operation succeeded
+    bool enqueue(const Fw::Buffer& e  //!< The element to enqueue
+    );
 
-            //! Enqueue an index.
-            //! Fails if the queue is full.
-            //! \return Whether the operation succeeded
-            bool enqueue(
-                const Fw::Buffer& e //!< The element to enqueue
-            );
+    //! Dequeue an index.
+    //! Fails if the queue is empty.
+    bool dequeue(Fw::Buffer& e  //!< The dequeued element
+    );
 
-            //! Dequeue an index.
-            //! Fails if the queue is empty.
-            bool dequeue(
-                Fw::Buffer& e //!< The dequeued element
-            );
+    //! Get the size of the queue
+    //! \return The size
+    U32 getSize(void) const;
 
-            //! Get the size of the queue
-            //! \return The size
-            U32 getSize(void) const;
+    //! Get the capacity of the queue
+    //! \return The capacity
+    U32 getCapacity(void) const;
 
-            //! Get the capacity of the queue
-            //! \return The capacity
-            U32 getCapacity(void) const;
+    PRIVATE :
 
-        PRIVATE:
+        // ----------------------------------------------------------------------
+        // Private member variables
+        // ----------------------------------------------------------------------
 
-          // ----------------------------------------------------------------------
-          // Private member variables
-          // ----------------------------------------------------------------------
+        //! The memory for the elements
+        Fw::Buffer* elements;
 
-          //! The memory for the elements
-          Fw::Buffer * elements;
+    //! The capacity of the queue
+    NATIVE_UINT_TYPE capacity;
 
-          //! The capacity of the queue
-          NATIVE_UINT_TYPE capacity;
+    //! The enqueue index
+    NATIVE_UINT_TYPE enqueueIndex;
 
-          //! The enqueue index
-          NATIVE_UINT_TYPE enqueueIndex;
+    //! The dequeue index
+    NATIVE_UINT_TYPE dequeueIndex;
 
-          //! The dequeue index
-          NATIVE_UINT_TYPE dequeueIndex;
+    //! The size of the queue
+    NATIVE_UINT_TYPE size;
+  };  // class ArrayFIFOBuffer
 
-          //! The size of the queue
-          NATIVE_UINT_TYPE size;
-      }; //class ArrayFIFOBuffer
+ public:
+  // ----------------------------------------------------------------------
+  // Construction, initialization, and destruction
+  // ----------------------------------------------------------------------
 
-    public:
-
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
-
-      //! Construct BufferAccumulator instance
-      //!
-      BufferAccumulator(
+  //! Construct BufferAccumulator instance
+  //!
+  BufferAccumulator(
 #if FW_OBJECT_NAMES == 1
-          const char *const compName /*!< The component name*/
+      const char* const compName /*!< The component name*/
 #endif
-      );
+  );
 
-      //! Initialize BufferAccumulator instance
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          const NATIVE_INT_TYPE instance = 0 //!< The instance number
-      );
+  //! Initialize BufferAccumulator instance
+  //!
+  void init(const NATIVE_INT_TYPE queueDepth,   //!< The queue depth
+            const NATIVE_INT_TYPE instance = 0  //!< The instance number
+  );
 
-      //! Destroy BufferAccumulator instance
-      //!
-      ~BufferAccumulator(void);
+  //! Destroy BufferAccumulator instance
+  //!
+  ~BufferAccumulator(void);
 
-      // ----------------------------------------------------------------------
-      // Public methods
-      // ----------------------------------------------------------------------
+  // ----------------------------------------------------------------------
+  // Public methods
+  // ----------------------------------------------------------------------
 
-      //! Give the class a memory buffer. Should be called after constructor
-      //! and init, but before task is spawned.
-      void allocateQueue(
-          NATIVE_INT_TYPE identifier,
-          Fw::MemAllocator& allocator,
-          NATIVE_UINT_TYPE maxNumBuffers //!< The maximum number of buffers
-      );
+  //! Give the class a memory buffer. Should be called after constructor
+  //! and init, but before task is spawned.
+  void allocateQueue(
+      NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator,
+      NATIVE_UINT_TYPE maxNumBuffers  //!< The maximum number of buffers
+  );
 
-      //! Return allocated queue. Should be done during shutdown
-      void deallocateQueue(Fw::MemAllocator& allocator);
+  //! Return allocated queue. Should be done during shutdown
+  void deallocateQueue(Fw::MemAllocator& allocator);
 
-
-    PRIVATE:
+  PRIVATE :
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -135,58 +126,55 @@ namespace Svc {
 
       //! Handler implementation for bufferSendInFill
       //!
-      void bufferSendInFill_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer& buffer
-      );
+      void
+      bufferSendInFill_handler(
+          const NATIVE_INT_TYPE portNum,  //!< The port number
+          Fw::Buffer& buffer);
 
-      //! Handler implementation for bufferSendInReturn
-      //!
-      void bufferSendInReturn_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer& buffer
-      );
+  //! Handler implementation for bufferSendInReturn
+  //!
+  void bufferSendInReturn_handler(
+      const NATIVE_INT_TYPE portNum,  //!< The port number
+      Fw::Buffer& buffer);
 
-      //! Handler implementation for pingIn
-      //!
-      void pingIn_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
-          U32 key //!< Value to return to pinger
-      );
+  //! Handler implementation for pingIn
+  //!
+  void pingIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+                      U32 key  //!< Value to return to pinger
+  );
 
-    PRIVATE:
+  PRIVATE :
 
       // ----------------------------------------------------------------------
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-        //! Implementation for SetMode command handler
-        //! Set the mode
-        void BA_SetMode_cmdHandler(
-            const FwOpcodeType opCode, //!< The opcode
-            const U32 cmdSeq, //!< The command sequence number
-            BufferAccumulator_OpState mode //!< The mode
-        );
+      //! Implementation for SetMode command handler
+      //! Set the mode
+      void
+      BA_SetMode_cmdHandler(const FwOpcodeType opCode,  //!< The opcode
+                            const U32 cmdSeq,  //!< The command sequence number
+                            BufferAccumulator_OpState mode  //!< The mode
+      );
 
-        //! Implementation for BA_DrainBuffers command handler
-        //! Drain the commanded number of buffers
-        void BA_DrainBuffers_cmdHandler(
-            const FwOpcodeType opCode, /*!< The opcode*/
-            const U32 cmdSeq, /*!< The command sequence number*/
-            U32 numToDrain, 
-            BufferAccumulator_BlockMode blockMode 
-        );
+  //! Implementation for BA_DrainBuffers command handler
+  //! Drain the commanded number of buffers
+  void BA_DrainBuffers_cmdHandler(
+      const FwOpcodeType opCode, /*!< The opcode*/
+      const U32 cmdSeq,          /*!< The command sequence number*/
+      U32 numToDrain, BufferAccumulator_BlockMode blockMode);
 
-    PRIVATE:
+  PRIVATE :
 
       // ----------------------------------------------------------------------
       // Private helper methods
       // ----------------------------------------------------------------------
 
       //! Send a stored buffer
-      void sendStoredBuffer(void);
+      void
+      sendStoredBuffer(void);
 
-    PRIVATE:
+  PRIVATE :
 
       // ----------------------------------------------------------------------
       // Private member variables
@@ -195,38 +183,39 @@ namespace Svc {
       //! The mode
       BufferAccumulator_OpState mode;
 
-      //! Memory for the buffer array
-      Fw::Buffer * bufferMemory;
+  //! Memory for the buffer array
+  Fw::Buffer* bufferMemory;
 
-      //! The FIFO queue of buffers
-      ArrayFIFOBuffer bufferQueue;
+  //! The FIFO queue of buffers
+  ArrayFIFOBuffer bufferQueue;
 
-      //! Whether to send a buffer to the downstream client
-      bool send;
+  //! Whether to send a buffer to the downstream client
+  bool send;
 
-      //! If we are switched to ACCUMULATE then back to DRAIN, whether we were waiting on a buffer
-      bool waitForBuffer;
+  //! If we are switched to ACCUMULATE then back to DRAIN, whether we were
+  //! waiting on a buffer
+  bool waitForBuffer;
 
-      //! The number of QueueFull warnings sent since the last successful enqueue operation
-      U32 numWarnings;
+  //! The number of QueueFull warnings sent since the last successful enqueue
+  //! operation
+  U32 numWarnings;
 
-      //! The number of buffers drained in a partial drain command
-      U32 numDrained;
+  //! The number of buffers drained in a partial drain command
+  U32 numDrained;
 
-      //! The number of buffers TO drain in a partial drain command
-      U32 numToDrain;
+  //! The number of buffers TO drain in a partial drain command
+  U32 numToDrain;
 
-      //! The DrainBuffers opcode to respond to
-      FwOpcodeType opCode;
+  //! The DrainBuffers opcode to respond to
+  FwOpcodeType opCode;
 
-      //! The DrainBuffers cmdSeq to respond to
-      U32 cmdSeq;
+  //! The DrainBuffers cmdSeq to respond to
+  U32 cmdSeq;
 
-      //! The allocator ID
-      NATIVE_INT_TYPE allocatorId;
+  //! The allocator ID
+  NATIVE_INT_TYPE allocatorId;
+};
 
-  };
-
-}
+}  // namespace Svc
 
 #endif
