@@ -38,7 +38,7 @@ namespace Svc {
     this->initComponents();
     this->connectPorts();
 
-    // NOTE(mereweth) - switch to BufferAccumulator_OpState::DRAIN at start so we don't have to change ut
+    // Witch to BufferAccumulator_OpState::DRAIN at start so we don't have to change ut
     component.mode = BufferAccumulator_OpState::DRAIN;
     component.send = true;
 
@@ -55,16 +55,6 @@ namespace Svc {
       Fw::MallocAllocator buffAccumMallocator;
       this->component.deallocateQueue(buffAccumMallocator);
     }
-  }
-
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
-
-  void Tester ::
-    AccumNoAllocate(void)
-  {
-    // TODO (mereweth) - make something sensible happen when no-one sets us up
   }
 
   // ----------------------------------------------------------------------
@@ -130,11 +120,6 @@ namespace Svc {
         this->component.get_pingIn_InputPort(0)
     );
 
-    // schedIn
-    this->connect_to_schedIn(
-        0,
-        this->component.get_schedIn_InputPort(0)
-    );
     // bufferSendOutDrain
     this->component.set_bufferSendOutDrain_OutputPort(
         0,

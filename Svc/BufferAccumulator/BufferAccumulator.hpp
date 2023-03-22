@@ -154,13 +154,6 @@ namespace Svc {
           U32 key //!< Value to return to pinger
       );
 
-      //! Handler implementation for schedIn
-      //!
-      void schedIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          NATIVE_UINT_TYPE context /*!< The call order*/
-      );
-
     PRIVATE:
 
       // ----------------------------------------------------------------------

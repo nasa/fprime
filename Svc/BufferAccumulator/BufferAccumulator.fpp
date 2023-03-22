@@ -35,8 +35,6 @@ module Svc {
 
     time get port timeCaller
 
-    async input port schedIn: [1] Svc.Sched
-
     telemetry port tlmOut
 
   }

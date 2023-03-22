@@ -13,11 +13,7 @@
 #include "Svc/BufferAccumulator/BufferAccumulator.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 
-#include <stdio.h> // TODO(mereweth@jpl.nasa.gov) - remove the debug prints
 #include <sys/time.h>
-
-//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
-#define DEBUG_PRINT(x,...)
 
 namespace Svc {
 
@@ -140,15 +136,6 @@ namespace Svc {
     this->pingOut_out(0, key);
   }
 
-  void BufferAccumulator ::
-    schedIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        NATIVE_UINT_TYPE context
-    )
-  {
-      // TODO(mereweth) - do we need a timeout for anything?
-  }
-
   // ----------------------------------------------------------------------
   // Command handler implementations
   // ----------------------------------------------------------------------
@@ -225,7 +212,7 @@ namespace Svc {
                                                       numToDrain);
             }
 
-            /* NOTE(mereweth) - CmdResponse::OK if there were 0 buffers queued, and we
+            /* OK if there were 0 buffers queued, and we
              * end up setting numToDrain to 0
              */
             if (0 == this->numToDrain) {
@@ -235,7 +222,7 @@ namespace Svc {
             }
         }
 
-        // NOTE(mereweth) - we are still waiting for a buffer from last time
+        // We are still waiting for a buffer from last time
         if (!this->waitForBuffer) {
             this->send = true;
             this->sendStoredBuffer(); // kick off the draining;
@@ -266,9 +253,9 @@ namespace Svc {
         }
     }
 
-    /* NOTE(mereweth) - this used to be "else if", but then you wait for all
-     * drained buffers in a partial drain to be RETURNED before returning CmdResponse::OK.
-     * Correct thing is to return CmdResponse::OK once they are SENT
+    /* This used to be "else if", but then you wait for all
+     * drained buffers in a partial drain to be RETURNED before returning OK.
+     * Correct thing is to return OK once they are SENT
      */
     if ((this->numToDrain > 0)                  && // we are doing a partial drain
         (this->numDrained == this->numToDrain))  { // AND we just finished draining

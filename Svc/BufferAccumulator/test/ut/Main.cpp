@@ -16,11 +16,6 @@
 #include "Drain.hpp"
 #include "Health.hpp"
 
-TEST(Test, AccumNoAllocate) {
-  Svc::Tester tester(false); // don't call allocateQueue for the user
-  tester.AccumNoAllocate();
-}
-
 // ----------------------------------------------------------------------
 // Test Errors
 // ----------------------------------------------------------------------

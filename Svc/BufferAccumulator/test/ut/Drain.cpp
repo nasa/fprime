@@ -14,11 +14,7 @@
 
 #include "Drain.hpp"
 
-#include <stdio.h> // TODO(mereweth@jpl.nasa.gov) - remove the debug prints
 #include <sys/time.h>
-
-//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
-#define DEBUG_PRINT(x,...)
 
 namespace Svc {
 
@@ -74,8 +70,6 @@ namespace Svc {
             this->invoke_to_bufferSendInFill(0, buffers[i]);
             this->component.doDispatch();
 
-            DEBUG_PRINT("PartialDrainOK fill/draining buffer %d, one by one\n", i);
-
             this->sendCmd_BA_DrainBuffers(0, 0, 1, BufferAccumulator_BlockMode::BLOCK);
             this->component.doDispatch();
             ASSERT_EVENTS_BA_PartialDrainDone_SIZE(i + 1);
@@ -93,7 +87,6 @@ namespace Svc {
             this->component.doDispatch();
             ASSERT_from_bufferSendOutReturn(i, buffers[i]);
 
-            DEBUG_PRINT("PartialDrainOK checking that only one buffer fill/drained %d, one by one\n", i);
             ASSERT_EVENTS_BA_PartialDrainDone_SIZE(i + 1);
             ASSERT_EVENTS_BA_PartialDrainDone(i, 1u);
             // + 1 for first BufferAccumulator_OpState::ACCUMULATE command; + 1 for buffer drained immediately
@@ -116,7 +109,6 @@ namespace Svc {
 
         ASSERT_CMD_RESPONSE_SIZE(0);
         for (U32 i = 0; i < MAX_NUM_BUFFERS; ++i) {
-            DEBUG_PRINT("PartialDrainOK draining buffer %d, one by one\n", i);
             ASSERT_from_bufferSendOutDrain_SIZE(i);
 
             this->sendCmd_BA_DrainBuffers(0, 0, 1, BufferAccumulator_BlockMode::BLOCK);
@@ -139,7 +131,6 @@ namespace Svc {
             ASSERT_EVENTS_BA_PartialDrainDone_SIZE(i + 1);
             ASSERT_EVENTS_BA_PartialDrainDone(i, 1u);
 
-            DEBUG_PRINT("PartialDrainOK checking that only one buffer drained %d, one by one\n", i);
             // check that ONLY one buffer drained
             ASSERT_from_bufferSendOutDrain_SIZE(i + 1);
             ASSERT_from_bufferSendOutDrain(i, buffers[i]);
@@ -157,7 +148,6 @@ namespace Svc {
             ASSERT_FROM_PORT_HISTORY_SIZE(0);
         }
 
-        DEBUG_PRINT("PartialDrainOK draining all buffers at once\n");
         ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.mode.e);
         ASSERT_FROM_PORT_HISTORY_SIZE(0);
         ASSERT_EQ(0u, this->component.numDrained);
@@ -169,7 +159,6 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(0);
 
         for (U32 i = 0; i < MAX_NUM_BUFFERS; ++i) {
-            DEBUG_PRINT("PartialDrainOK draining all; returning %d, one by one\n", i);
 
             const U32 bufferID = i;
             Fw::Buffer b(data, size, bufferID);

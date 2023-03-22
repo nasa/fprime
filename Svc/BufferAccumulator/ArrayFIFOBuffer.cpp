@@ -57,7 +57,7 @@ namespace Svc {
     }
     bool status;
     if (this->size < this->capacity) {
-      // NOTE(mereweth) enqueueIndex is unsigned, no need to compare with 0
+      // enqueueIndex is unsigned, no need to compare with 0
       FW_ASSERT(enqueueIndex < this->capacity, enqueueIndex);
       this->elements[this->enqueueIndex] = e;
       this->enqueueIndex = (this->enqueueIndex + 1) % this->capacity;
@@ -79,7 +79,7 @@ namespace Svc {
     FW_ASSERT(this->elements);
     bool status;
     if (this->size > 0) {
-      // NOTE(mereweth) dequeueIndex is unsigned, no need to compare with 0
+      // dequeueIndex is unsigned, no need to compare with 0
       FW_ASSERT(dequeueIndex < this->capacity, enqueueIndex);
       e = this->elements[this->dequeueIndex];
       this->dequeueIndex = (this->dequeueIndex + 1) % this->capacity;
