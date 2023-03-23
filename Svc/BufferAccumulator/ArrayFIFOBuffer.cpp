@@ -21,7 +21,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 BufferAccumulator::ArrayFIFOBuffer ::ArrayFIFOBuffer()
-    : elements(NULL),
+    : elements(nullptr),
       capacity(0),
       enqueueIndex(0),
       dequeueIndex(0),
@@ -43,7 +43,7 @@ void BufferAccumulator::ArrayFIFOBuffer ::init(Fw::Buffer* const elements,
 
 bool BufferAccumulator::ArrayFIFOBuffer ::enqueue(const Fw::Buffer& e) {
 
-  if (this->elements == NULL) {
+  if (this->elements == nullptr) {
     return false;
   }
 
@@ -64,7 +64,7 @@ bool BufferAccumulator::ArrayFIFOBuffer ::enqueue(const Fw::Buffer& e) {
 
 bool BufferAccumulator::ArrayFIFOBuffer ::dequeue(Fw::Buffer& e) {
 
-  if (this->elements == NULL) {
+  if (this->elements == nullptr) {
     return false;
   }
 

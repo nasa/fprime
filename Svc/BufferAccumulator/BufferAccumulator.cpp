@@ -26,7 +26,7 @@ BufferAccumulator ::
     BufferAccumulator(const char* const compName)
     : BufferAccumulatorComponentBase(compName),  //!< The component name
       mode(BufferAccumulator_OpState::ACCUMULATE),
-      bufferMemory(NULL),
+      bufferMemory(nullptr),
       bufferQueue(),
       send(false),
       waitForBuffer(false),
