@@ -1,0 +1,76 @@
+{
+  "columns" : [
+    [
+      {
+        "instanceName" : "fileDownlink",
+        "inputPorts" : [
+          {
+            "name" : "bufferReturn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : [
+          {
+            "name" : "bufferSendOut",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "framer",
+        "inputPorts" : [
+          {
+            "name" : "bufferIn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : [
+          {
+            "name" : "bufferDeallocate",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  ],
+  "connections" : [
+    [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  ]
+}

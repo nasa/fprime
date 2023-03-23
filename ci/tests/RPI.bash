@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash 
+set -x
 ####
 # RPI.bash:
 #
@@ -21,21 +22,26 @@ export FPUTIL_DEPLOYS="${FPRIME_DIR}/RPI"
 echo -e "${BLUE}Starting CI test ${FPUTIL_DEPLOYS} RPI${NOCOLOR}"
 
 export CMAKE_EXTRA_SETTINGS=""
-if [ ! -d "/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf" ]
+if [ ! -d "/usr/arm-linux-gnueabihf" ]
 then
     warn_and_cont "RPI tools not installed, refusing to test."
     continue
 fi
-# For RPI deployment to disable FRAMEWORK UTS
-export CMAKE_EXTRA_SETTINGS="${CMAKE_EXTRA_SETTINGS} -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
  
 echo -e "${BLUE}Testing ${FPUTIL_DEPLOYS} against fprime-util targets: ${FPUTIL_TARGETS[@]}${NOCOLOR}"
 export CHECK_TARGET_PLATFORM="native"
 for target in "${FPUTIL_TARGETS[@]}"
 do
+    # For RPI deployment to disable FRAMEWORK UTS
+    export CMAKE_EXTRA_SETTINGS="-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
     if [[ "${target}" == "generate" ]]
     then
         rm -rf "${FPUTIL_DEPLOYS}/build-fprime-automatic-"*
+    fi
+    # When a sysroot is supplied on the base generate target (cross-compiler) add the SYSROOT to the run
+    if [[ "${target}" == "generate" ]] && [[ "$1" != "" ]]
+    then
+        export CMAKE_EXTRA_SETTINGS="${CMAKE_EXTRA_SETTINGS} -DCMAKE_SYSROOT=${1}"
     fi
     fputil_action "${FPUTIL_DEPLOYS}" "${target}"
 done

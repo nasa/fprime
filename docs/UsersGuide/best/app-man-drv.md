@@ -17,20 +17,14 @@ This guide covers the following:
 
 ## A Brief on Software System Architecture
 
-The software system architecture is designed to break down software into modules. These modules provide separation of
-function, definition of interfaces, behavioral characteristics, testing at the unit level, and ownership. These modules
-are known as **Components** in F´ and all external functions of the component are defined as an interface for
-interacting with the component. In F´ the component’s **Port** list is its external interface. In addition,
-initialization functions and Constructors allow for setup and construction from the main thread.
+The software system architecture is designed to break down software into modules. These modules provide separation of functions, definitions of interfaces, behavioral characteristics, testing at the unit level, and ownership. These modules are known as **Components** in F´ and all external functions of the component are defined as an interface for interacting with the component. In F´ the component’s **Port** list is its external interface. In addition, initialization functions and Constructors allow for setup and construction from the main thread.
+
 
 ### Software Layering
 
-Software layering allows separation of concerns by implementing logic such that a module only interacts with the layer
-below it. In addition layering allows for decoupling code dependencies, as upper layers depend down the later stack, but
-layers do not depend up the stack. Thus preventing circular dependencies.
+Software layering allows the separation of concerns by implementing logic such that a module only interacts with the layer below it. In addition, layering allows for decoupling code dependencies, as upper layers depend down the later stack, but layers do not depend up the stack. Thus preventing circular dependencies.
 
-Layers can be replaced to support reusability, simulation, and test.  Fault protection can be isolated to a single layer
-and thus handled at the appropriate level.
+Layers can be replaced to support reusability, simulation, and testing. Fault protection can be isolated to a single layer and thus handled at the appropriate level.
 
 ## Application Manager Driver Pattern
 
@@ -77,11 +71,11 @@ The driver layer is dedicated to a particular hardware interface. It is written 
 device, and does not need to know the use of hardware connected at the other end of the driver.
 
 In the example, the driver provides an interface to the hardware device (I2C), but not an interface to the servo. It is
-up to the manager to know how to control the servo via the driver. In our example the driver runs an I2C bus but doesn't
+up to the manager to know how to control the servo via the driver. In our example, the driver runs an I2C bus but doesn't
 know what I2C hardware it is talking to.
 
 ## Conclusion
 
 By layering F´ projects using the Application Manager Driver pattern, standard software architecture techniques can be
-adapted to an F´ project. In complex systems there are often more components (multiple drivers, multiple managers) at
+adapted to an F´ project. In complex systems, there are often more components (multiple drivers, multiple managers) at
 each layer, but these components should still fit into a single layer.

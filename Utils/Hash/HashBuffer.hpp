@@ -13,7 +13,7 @@
 #ifndef UTILS_HASH_BUFFER_HPP
 #define UTILS_HASH_BUFFER_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Utils/Hash/HashConfig.hpp>

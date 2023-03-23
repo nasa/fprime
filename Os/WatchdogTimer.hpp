@@ -1,7 +1,7 @@
 #ifndef _WatchdogTimer_hpp_
 #define _WatchdogTimer_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Os {
     class WatchdogTimer {
@@ -31,6 +31,7 @@ namespace Os {
 
             WatchdogStatus cancel(); //!< cancel timer
 
+            void expire(); //!< Invoke the callback function with m_parameter
 
         private:
 

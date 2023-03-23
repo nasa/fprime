@@ -13,7 +13,7 @@
 #ifndef OS_PTHREADS_MAX_HEAP_HPP
 #define OS_PTHREADS_MAX_HEAP_HPP
 
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Os {
 

@@ -70,14 +70,14 @@ namespace Drv {
       //!
       void gpioRead_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          bool &state
+          Fw::Logic &state
       );
 
       //! Handler implementation for gpioWrite
       //!
       void gpioWrite_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          bool state
+          const Fw::Logic& state
       );
 
       //! keep GPIO ID

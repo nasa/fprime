@@ -1,7 +1,7 @@
 ####
 # F prime CMakeLists.txt:
 #
-# SOURCE_FILES: combined list of source and autocoding diles
+# SOURCE_FILES: combined list of source and autocoding files
 # MOD_DEPS: (optional) module dependencies
 #
 ####
@@ -81,9 +81,13 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
             list(REMOVE_ITEM SOURCE_FILES "${ITER_ITEM}")
         endif()
     endforeach()
-    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/File.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/FileSystem.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/IntervalTimer.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Mutex.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Queue.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/SystemResources.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
 endif()
 register_fprime_module()
 

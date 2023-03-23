@@ -176,10 +176,18 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 "F32",
                 "F64",
                 "bool",
-                "FwOpcodeType",
+                "FwBuffSizeType",
                 "FwChanIdType",
+                "FwEnumStoreType",
                 "FwEventIdType",
+                "FwIndexType",
+                "FwOpcodeType",
+                "FwPacketDescriptorType",
                 "FwPrmIdType",
+                "FwSizeType",
+                "FwTimeBaseStoreType",
+                "FwTimeContextStoreType",
+                "FwTlmPacketizeIdType",
                 "NATIVE_INT_TYPE",
                 "NATIVE_UINT_TYPE",
                 "POINTER_CAST",
@@ -255,8 +263,6 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writing here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp is None:
-            raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):

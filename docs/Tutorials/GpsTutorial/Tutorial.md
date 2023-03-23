@@ -1,10 +1,9 @@
 # F´ GPS Tutorial
 
-**WARNING:** this tutorial is under revision for use with F´ 2.0.0.
+**WARNING:** This tutorial is under revision for use with F´ 2.0.0.
 
 In this guide, we will cover the basics of working with F´ by attaching a GPS receiver to a serial driver and running
-the application on a Raspberry PI. In order to fully benefit from this tutorial, the user should acquire any NMEA
-compatible UART GPS receiver and a raspberry pi.  In this tutorial, we use a NMEA GPS receiver with micro-USB such that
+the application on a Raspberry PI. In order to fully benefit from this tutorial, the user should acquire any NMEA-compatible UART GPS receiver and a raspberry pi.  In this tutorial, we use a NMEA GPS receiver with micro-USB such that
 the code may be run on both the laptop and the Raspberry PI.
 
 In the DIY electronics community there is an abundance of cheap GPS receivers based around the NMEA protocol. These
@@ -15,7 +14,7 @@ receivers send are NMEA formatted ASCII text.
 
 This tutorial will show how to integrate one of these GPS receivers with the F´ framework by wrapping it in a Component
 and defining commands, telemetry, and log events. We will create a GpsApp deployment for the Component where it will
-be wired to a standard UART driver in order to receive messages. Then we can cross compile it for the Raspberry PI and
+be wired to a standard UART driver in order to receive messages. Then we can cross-compile it for the Raspberry PI and
 run the application against the F´ ground system.
 
 **Note:** A completed version of this tutorial app is available [here](https://github.com/fprime-community/gps-tutorial)
@@ -35,13 +34,13 @@ understand this tutorial are as follows:
 4. An understanding of the raspberry pi, specifically SSHing into the pi and running applications
 
 Installation can be done by following the installation guide found at: [INSTALL.md](../../INSTALL.md). This guide
-will walk the user through the installation process and verifying the installation.  In addition, users may wish to
+will walk the user through the installation process and verify the installation. In addition, users may wish to
 follow the [Getting Started Tutorial](../GettingStarted/Tutorial.md) in order to get a feel for the F´ environment and
 tools.
 
 ## Creating a Custom F´ Component
 
-In this next section we will create a custom F´ component for reading GPS data off a UART based GPS module. It will
+In this next section, we will create a custom F´ component for reading GPS data off a UART-based GPS module. It will
 receive data from a UART read port, process the data, and report telemetry from that data. We will then finish up by
 adding an event to report GPS lock status when it changes and a command to report lock status on demand.
 
@@ -49,7 +48,7 @@ Our custom component has the following functional block diagram:
 
 ![GPS Component Diagram](img/gps-comp.png)
 
-**Note:** there are a few other ports our component will need to wire to other components in the system, the above
+**Note:** There are a few other ports our component will need to wire to other components in the system, the above
 diagram captures the ports needed for our desired functionality.
 
 ### Designing the GPS Component
@@ -60,8 +59,7 @@ and Telemetry Channel specifications are also written in XML.  Further informati
 [User Guide](../../UsersGuide/FprimeUserGuide.pdf). This application does not need any custom ports, as we are using the
 standard ports to create our GPS handler. Custom ports can be seen in the [Math Component Tutorial](../MathComponent/Tutorial.md).
 
-In this section we will create a directory for our GPS component, and design the component through XML. The first step
-to making the component is to make a project directory to hold our project, and a component subdirectory for our GPS.
+In this section, we will create a directory for our GPS component, and design the component through XML. The first step in making the component is to make a project directory to hold our project, and a component subdirectory for our GPS.
 
 ```shell
 cd fprime
@@ -76,7 +74,7 @@ specify commands, telemetry, and events. As can be seen, we are creating our com
 ports defined above, and 4 additional ports described below:
 
 1. **cmdIn**: an input port of *Fw::Cmd* type used to process commands sent to this component.
-2. **cmdRegOut**: an output port of *Fw::CmdReg* type used to register this component's with the command dispatcher
+2. **cmdRegOut**: an output port of *Fw::CmdReg* type used to register this component with the command dispatcher
 3. **cmdResponseOut**: an output port of *Fw::CmdResponse* type used respond to dispatched commands
 4. **eventOut**: an output port of *Fw::Log* type used to send events out
 5. **textEventOut**: an output port of *Fw::LogText* type used to send events in a text form
@@ -94,9 +92,9 @@ The `GpsComponentAi.xml` file in the `Gps` subdirectory should look like:
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- GPS Tutorial: GpsComponentAi.xml
 
-This is the design of GPS component. The goal is to read GPS messages from a UART port, and produce Events, and
-Telemetry that represent the GPS link. This will also have a command to emit the lock status of the GPS signal. This
-is an active component, meaning it will have it's own thread. It will therefore process messages at its own pace, and
+This is the design of GPS component. The goal is to read GPS messages from a UART port, and produce Events and
+Telemetry that represents the GPS link. This will also have a command to emit the lock status of the GPS signal. This
+is an active component, meaning it will have its own thread. It will therefore process messages at its own pace, and
 will not need an external thread of execution to run on.
 
 It has 3 standard command ports, 2 standard event ports, 1 standard telemetry port, and 2 ports to interact with the
@@ -150,26 +148,26 @@ This file first imports all *Ai.xml files needed for each port type, imports our
 definition XMLs, and then defines all ports as we saw described above. There are several things to note:
 
 1. The GPS component is an *active* component, which has a thread of its own to execute on. This was chosen as the GPS
-component has no realtime deadlines and is expected to run in parallel with other components in the system.
+component has no real-time deadlines and is expected to run in parallel with other components in the system.
 2. *async_input* is used for the input port from the serial driver. The handler should be run on the *active*
-component's thread opposed to the invoking component's thread.
+component's thread, as opposed to the invoking component's thread.
 
 *active* components with *async_input* ports are a fairly common initial design for components. They are typically used
-unless the system has no thread scheduler, there are firm realtime deadlines, or other off-nominal requirements must be
+unless the system has no thread scheduler, there are firm real-time deadlines, or other off-nominal requirements must be
 met. Port and component types are described in more detail in the aforementioned User Guide.
 
 Instantiating the GPS component, and connecting it with other components in the system is done at the system level,
-enabling the individual components to be reused in different applications. We will see this step later, after we design
-our Commands, Events and Telemetry. We will also implement the C++ code as well.
+enabling the individual components to be reused in different applications. We will see this step later after we design
+our Commands, Events, and Telemetry. We will also implement the C++ code as well.
 
-### Creating Commands.xml, Events.xml and Telemetry.xml Dictionaries
+### Creating Commands.xml, Events.xml, and Telemetry.xml Dictionaries
 
 These three XML dictionaries define the structure of commands, events, and telemetry that our component uses. This will
 allow the autocoder to automatically generate the needed code to process commands, and emit events and telemetry. This
 allows the developer to concentrate on the specific code for the component as opposed to hand coding the structure of
 these entities.
 
-First we will create a command dictionary. The purpose of our command is to report the lock status of the GPS unit. This
+First, we will create a command dictionary. The purpose of our command is to report the lock status of the GPS unit. This
 command will trigger code to emit an event, which will report if the GPS has "locked" status or not. `Commands.xml` in
 the `Gps` subdirectory should look like the following:
 ```xml
@@ -189,8 +187,8 @@ when working with GPS to determine if the data should be trusted.
 ```
 There are several notes to consider:
 
-1. We use an *async*s command  for the same reason as we use *async_input* ports above.
-2. Each component defines it's own set of opcodes indexed from 0. The autocoder will prevent collisions between
+1. We use an *async*s command for the same reason as we use *async_input* ports above.
+2. Each component defines its own set of opcodes indexed from 0. The autocoder will prevent collisions between
 components by adding a prefix to the component's final opcode.
 3. Users typically refer to the component's mnemonic and the opcode is typically internal to the F´ system.
 
@@ -219,7 +217,7 @@ Here it should be noted that:
 3. Format strings are not downlinked, but stored for display purposes
 
 Finally, we should create a Telemetry.xml dictionary. It will specify that we will downlink GPS latitude, GPS longitude,
-GPS altitude, GPS time, and current number of satellites visible to the GPS unit. These are all standard fields emitted
+GPS altitude, GPS time, and the current number of satellites visible to the GPS unit. These are all standard fields emitted
 GPS units and are the heart of our application. Our `Telemetry.xml` file in the `Gps` subdirectory should look like:
 
 ```xml
@@ -244,20 +242,20 @@ This defines four telemetry channels to report basic GPS information.
 </telemetry>
 ```
 Some notes:
-1. *id*s are indexed per-component, like opcodes, and event ids
+1. *id*s are indexed per component, like opcodes, and event ids
 2. Typically users refer to names of telemetry channels, but a shorthand for display is the abbrev
 3. Telemetry channels can be primitive types and serializable.  All of the GPS data could be reimplemented as a single
 serializable channel.
 
-At this stage, the design of the Gps component has been completed. Before we can implement code, we need to integrate
+At this stage, the design of the Gps component has been completed. Before we can implement the code, we need to integrate
 the GPS component with the build system. This will be described next.
 
 ## Setting Up the Build System for Gps and GpsApp
 
-Now it is time to create *CMakeList.txt* files for the GPS component, and GpsApp deployment. This will allow us to run
+Now it is time to create *CMakeList.txt* files for the GPS component and GpsApp deployment. This will allow us to run
 our GPS component through the autocoder, and receive implementation templates in order to save time/effort.
 
-First, in the `Gps` directory, create a module specific *CMakeLists.txt* file. Since we have not created any C++ files,
+First, in the `Gps` directory, create a module-specific *CMakeLists.txt* file. Since we have not created any C++ files,
 our *CMakeLists.txt* will only contain the Ai.xml file we created. We'll add C++ files once we have created them.
 
 The `CMakeLists.txt` created in the `Gps` directory should look like this:
@@ -371,7 +369,7 @@ basic implementation of the code by using the `fprime-util` *impl* command, whic
 *GpsComponentImpl.cpp-tmpl* and *GpsComponentImpl.hpp-tmpl* files. We can use these as the basis for our implementation.
 In addition, the framework will also generate * *Ac.?pp* files, which handle the work of connecting ports allowing us
 to write minimal code to support the component interface. First we generate code templates, and move them into place.
-Since we don't already have implementations  we can safely rename the template files without first checking for existing
+Since we don't already have implementations we can safely rename the template files without first checking for existing
 files.
 
 Change back to the `Gps` subdirectory and generate implementations with:
@@ -460,7 +458,7 @@ is not to demonstrate how to write each line of code, the steps above are called
 // ======================================================================
 
 #include <GpsApp/Gps/GpsComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Logger/Logger.hpp"
 
 #include <cstring>
@@ -795,7 +793,7 @@ We are now ready to make a Topology for this application, and test it!
 ## Topology
 
 We are finally ready to build our topology to connect the GPS module up to the standard F´ components. Then we can see
-if this design works by cross compiling and running it on the RPI. We'll be modifying the existing `Ref` topology in
+if this design works by cross-compiling and running it on the RPI. We'll be modifying the existing `Ref` topology in
 order more quickly create one of our own. A more useful system diagram is shown below.
 
 ![GPS App Topology Diagram](img/gps-top.png)
@@ -820,7 +818,7 @@ From the `GpsApp` directory run the following:
 cp -r ../Ref/Top ./Top
 rm ./Top/RefTopologyAppDictionary.xml ./Top/RefTopologyAppAi_IDTableLog.txt ./Top/RefTopologyAppID.csv
 ```
-**Note:** do not worry if the removed files do not exist, the remove is there to clean-up files generated during a build.
+**Note:** Do not worry if the removed files do not exist, the remove is there to clean up files generated during a build.
 
 ### Update the GpsApp CmakeLists.txt
 
@@ -852,8 +850,8 @@ initialization code. All of these files are referenced by the CMake files we inh
 the distribution (fprime/GpsApp) will include the topology (GpsApp/Top) as its entry-point creating a single binary,
 which represents our software.
 
-Sample versions of these files are provided below, and are annotated with comments representing the changes
-made to support the Gps Application. **Note:** these files are available in a working repository at:
+Sample versions of these files are provided below and are annotated with comments representing the changes
+made to support the Gps Application. **Note:** These files are available in a working repository at:
 [https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application)
 in case the user prefers a direct checkout of working code.  The files are linked below:
 
@@ -867,12 +865,12 @@ We will also need to update the `CMakeLists.txt` in the `Top` directory to chang
 "GpsTopologyAppAi.xml".
 
 Once these files have been added to the *GpsApp/Top* folder, we have a complete project. The project can be built
-by changing directory to the deployment directory, issuing our build commands and then running the executable.
+by changing the directory to the deployment directory, issuing our build commands, and then running the executable.
 
 ## Running the Executable On the Native Host with the Ground System
 
 We'll start by removing the old build generation. By adding the top folder, this will remove any issues with the build.
-Then we can build, and run right on the local machine. If the user has a USB based GPS receiver, the code should work.
+Then we can build, and run it right on the local machine. If the user has a USB-based GPS receiver, the code should work.
 
 In the `GpsApp` directory, build the code.
 ```shell
@@ -889,7 +887,7 @@ run the application independently.
 fprime-gds -d . -n
 ```
 
-Run the application binary. **Note:** we are currently compiling for the native OS. Linux is assumed and so is the path
+Run the application binary. **Note:** We are currently compiling for the native OS. Linux is assumed and so is the path
 to the USB GPS device. If the device doesn't exist, the system will run but log an error opening it.
 
 ```shell
@@ -906,13 +904,13 @@ development of our tutorial. We'll discuss how to cross compile for the Raspberr
 Once the ground system loads in the user's browser, the user can start seeing what the software is doing. If it doesn't
 load, then the user should go navigate to: https://localhost:5000.
 
-First click on the "Channels" tab at the top. The user should at least see the "rateGroup1Comp.RgMaxTime" channel. If
+First, click on the "Channels" tab at the top. The user should at least see the "rateGroup1Comp.RgMaxTime" channel. If
 the GPS is working and has lock, then the user should see the GPS channels as well. This is seen below.  Later we will
 discuss what to do if this did not show up.
 
 ![GPS GDS Channels Tab](img/gps-channels.png)
 
-Next, the user should navigate to the "Commanding" tab and select "gpsImpl.Gps_ReportLockStatus" from the drop down.
+Next, the user should navigate to the "Commanding" tab and select "gpsImpl.Gps_ReportLockStatus" from the dropdown.
 The user may start to type in the dropdown to subset the list. Press the green "Send" button and the command should be
 sent as seen below.
 
@@ -968,7 +966,7 @@ fprime-gds -n
 ```
 
 Assuming there is no firewall or other network limits between the PI and the host, the user can run the following from a
-separate terminal run the following:
+separate terminal:
 
 ```shell
 cd fprime/GpsApp
@@ -984,7 +982,7 @@ issue. Again make sure port 50000 is exposed to the PI, and that the pi can ping
 ### Setting the Cross Compile Build as Default
 
 As we saw above, cross compile builds can be done explicitly by setting the toolchain. However, some users may wish to
-make this the default, and not need to specify it.
+make this the default, and need not specify it.
 
 Adding the following line the deployment's [settings.ini file](../../UsersGuide/user/settings.md) will cause F´
 to use the raspberry pi toolchain by default:
@@ -1010,8 +1008,7 @@ fprime-util build native
 
 ## Conclusion
 
-The GPS tutorial has shown us how to do cross compiling, and running on an embedded Linux system. We have seen how to
-add components, and wire them to existing drivers. We've seen how to run the ground system, and collect data!
+The GPS tutorial has shown us how to do cross-compiling, and running on an embedded Linux system. We have seen how to add components and wire them to existing drivers. We've seen how to run the ground system, and collect data!
 
 The user is now directed back to the [Tutorials](../README.md) for future reading. More work with the Raspberry PI can
 be found here: [RPI README.md](../../../RPI/README.md).

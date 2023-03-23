@@ -12,7 +12,7 @@
 
 
 #include <Svc/UdpSender/UdpSenderComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <sys/types.h>
 #include <cstring>
 #include <cerrno>

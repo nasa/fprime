@@ -138,8 +138,6 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 pyfile = "{}/{}.py".format(output_dir, fname)
                 DEBUG.info("Open file: {}".format(pyfile))
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception("Could not open {} file.".format(pyfile))
                 DEBUG.info("Completed {} open".format(pyfile))
                 self.__fp1[fname] = fd
 
@@ -164,16 +162,12 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 pyfile = "{}/{}_PRM_SET.py".format(output_dir, fname)
                 DEBUG.info("Open file: {}".format(pyfile))
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception("Could not open {} file.".format(pyfile))
                 self.__fp1[fname] = fd
                 DEBUG.info("Completed {} open".format(pyfile))
 
                 pyfile = "{}/{}_PRM_SAVE.py".format(output_dir, fname)
                 DEBUG.info("Open file: {}".format(pyfile))
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception("Could not open {} file.".format(pyfile))
                 self.__fp2[fname] = fd
                 DEBUG.info("Completed {} open".format(pyfile))
 

@@ -189,8 +189,6 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writing here...
         DEBUG.info(f"Open file: {pyfile}")
         self.__fp = open(pyfile, "w")
-        if self.__fp is None:
-            raise Exception("Could not open %s file.") % pyfile
         DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):

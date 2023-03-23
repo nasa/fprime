@@ -17,11 +17,6 @@ module RPI {
       PIN_24 = 1
     }
 
-    enum GpioVal {
-      CLEAR = 0
-      SET = 1
-    }
-
     enum LedState {
       BLINKING = 0
       OFF = 1
@@ -35,7 +30,7 @@ module RPI {
     async input port Run: Svc.Sched
 
     @ Input port for receiving UART data
-    async input port UartRead: Drv.SerialRead
+    async input port UartRead: Drv.ByteStreamRecv
 
     @ Output Port for reading GPIO values
     output port GpioRead: [2] Drv.GpioRead
@@ -47,7 +42,7 @@ module RPI {
     output port GpioWrite: [3] Drv.GpioWrite
 
     @ Output Port for writing UART data
-    output port UartWrite: Drv.SerialWrite
+    output port UartWrite: Drv.ByteStreamSend
 
     @ Output port for sending UART buffers to use for reading
     output port UartBuffers: Fw.BufferSend
@@ -108,7 +103,7 @@ module RPI {
     @ Sets a GPIO port value
     async command RD_SetGpio(
                               $output: GpioOutNum @< Output GPIO
-                              value: GpioVal @< GPIO value
+                              value: Fw.Logic @< GPIO value
                             ) \
       opcode 3
 
@@ -147,7 +142,7 @@ module RPI {
     @ GPIO set
     event RD_GpioSetVal(
                          $output: U32 @< The output number
-                         value: GpioVal @< GPIO value
+                         value: Fw.Logic @< GPIO value
                        ) \
       severity activity high \
       id 2 \
@@ -156,7 +151,7 @@ module RPI {
     @ GPIO get
     event RD_GpioGetVal(
                          $output: U32 @< The output number
-                         value: GpioVal @< GPIO value
+                         value: Fw.Logic @< GPIO value
                        ) \
       severity activity high \
       id 3 \

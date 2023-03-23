@@ -35,7 +35,7 @@ Tasks are called threads under Unix variants, and tasks under other OSes. A
 developer may wish to start tasks to wait on an event or a resource that
 is not a port invocation. The Os task class definition can be found in
 **Os/OsTask.hpp**. The OS implementations are found in various
-subdirectories. Active components require use of tasks to implement their
+subdirectories. Active components require the use of tasks to implement their
 features. Table 23 describes the methods of the class.
 
 **Table 23.** Task method descriptions.
@@ -50,7 +50,7 @@ features. Table 23 describes the methods of the class.
 |                        | stackSize                                                                                                                                                                         | The size of the stack, in bytes.                                                                                                               |
 |                        | routine                                                                                                                                                                           | The function that will be called in the new task context.                                                                                      |
 |                        | arg                                                                                                                                                                               | An argument passed to the thread. The arg argument to the routine will be set to this value.                                                   |
-|                        | cpuAffinity                                                                                                                                                                       | In SMP systems, specify a processor core to run task. A value of -1 means no preference.                                                       |
+|                        | cpuAffinity                                                                                                                                                                       | In SMP systems, specify a processor core to run the task. A value of -1 means no preference.                                                       |
 | getIdentifier()        | Returns the task identifier passed in the start() function. Useful when you have a collection of tasks to iterate over.                                                           |                                                                                                                                                |
 | getOsIdentifier()      | Gets the Os Task ID. Useful for passive components.                                                                                                                               |                                                                                                                                                |
 | getRawHandle()         | Returns the task-handle owned by this task                                                                                                                                        |                                                                                                                                                |
@@ -118,7 +118,7 @@ message queues. Table 24 describes the methods.
 ## Interval Timer
 
 The class definition can be found in Os/IntervalTimer.hpp. An interval
-timer is a facility that starts and stops the measurement of passage of
+timer is a facility that starts and stops the measurement of the passage of
 time in the system. It is not an expiration timer that signals when it
 is complete. It is used to measure execution times of, or to timestamp,
 software activities. Table 25 provides the methods and their
@@ -137,7 +137,7 @@ descriptions.
 
 ## Watchdog Timer
 
-**Note:** this file implementation is not required for all OS adaptations.  Only those needing watchdog functionality.
+**Note:** This file implementation is not required for all OS adaptations.  Only those needing watchdog functionality.
 
 The class definition can be found in **Os/WatchdogTimer.hpp** A watchdog
 timer schedules a callback at the specified time in the future. It is a
@@ -166,7 +166,7 @@ the methods and their descriptions.
 The class definition can be found in Os/InterruptLock.hpp*.* An
 interrupt lock prevents interrupts from preempting code execution. It
 can be used as a very lightweight mutex on platforms that support
-interrupt locking, but should be used carefully as it is not subject to
+interrupt locking but should be used carefully as it is not subject to
 priorities like a conventional mutex. In addition, it defers interrupts
 that could be time critical, so the code executed between the locking
 and unlocking should be very short in duration. This is a portable
@@ -213,10 +213,9 @@ the methods and their descriptions.
 
 ## File System
 
-The file system OS classes found in **Os/FileSystem.hpp** contains the file system helper calls to create directories
-remove  directories etc.
+The file system OS classes found in **Os/FileSystem.hpp** contain the file system helper calls to create directories, remove directories, etc.
 
-**Note:** there is also the **Os/Directory.hpp** classes that allows users to stream directories.
+**Note:** There are also the **Os/Directory.hpp** classes that allow users to stream directories.
 
 ## Log
 

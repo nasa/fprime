@@ -12,7 +12,7 @@
 
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <cassert>
@@ -24,12 +24,12 @@ namespace Fw {
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
             NATIVE_UINT_TYPE numArgs,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6,
             CHAR* destBuffer,
             NATIVE_INT_TYPE buffSize
             );
@@ -72,12 +72,12 @@ namespace Svc {
           FILE_NAME_ARG file,
           NATIVE_UINT_TYPE lineNo,
           NATIVE_UINT_TYPE numArgs,
-          AssertArg arg1,
-          AssertArg arg2,
-          AssertArg arg3,
-          AssertArg arg4,
-          AssertArg arg5,
-          AssertArg arg6
+          FwAssertArgType arg1,
+          FwAssertArgType arg2,
+          FwAssertArgType arg3,
+          FwAssertArgType arg4,
+          FwAssertArgType arg5,
+          FwAssertArgType arg6
           ) {
 
       if (m_compPtr) {
@@ -108,18 +108,18 @@ namespace Svc {
           FILE_NAME_ARG file,
           NATIVE_UINT_TYPE lineNo,
           NATIVE_UINT_TYPE numArgs,
-          AssertArg arg1,
-          AssertArg arg2,
-          AssertArg arg3,
-          AssertArg arg4,
-          AssertArg arg5,
-          AssertArg arg6
+          FwAssertArgType arg1,
+          FwAssertArgType arg2,
+          FwAssertArgType arg3,
+          FwAssertArgType arg4,
+          FwAssertArgType arg5,
+          FwAssertArgType arg6
           ) {
 
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
       Fw::LogStringArg fileArg;
-      fileArg.format("0x%08X",file);
+      fileArg.format("0x%08" PRIX32,file);
 #else
       Fw::LogStringArg fileArg(file);
 #endif
@@ -129,6 +129,12 @@ namespace Svc {
       // fprintf(stderr... allocates large buffers on stack as stderr is unbuffered by the OS
       // and this can conflict with the traditionally smaller stack sizes.
       printf("%s\n", msg);
+
+      // Handle the case where the ports aren't connected yet
+      if (not this->isConnected_Log_OutputPort(0)) {
+          assert(0);
+          return;
+      }
 
       switch (numArgs) {
           case 0:

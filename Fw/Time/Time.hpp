@@ -1,10 +1,9 @@
 #ifndef FW_TIME_HPP
 #define FW_TIME_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <FpConfig.hpp>
 
 namespace Fw {
     class Time: public Serializable {

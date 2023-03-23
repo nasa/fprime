@@ -53,7 +53,7 @@ black path/to/folder/
 ### Git Pre-commit hooks
 
 If you followed the Development Install Instructions above you will have automatically set up pre-commit hooks.
-These will run automatically whenever you commit your code. Currently the only pre-commit hook we have is `black`.
+These will run automatically whenever you commit your code. Currently, the only pre-commit hook we have is `black`.
 Black automatically formats your python code so that it is consistent with the rest of the F´ python code.
 
 ```bash
@@ -71,7 +71,7 @@ pre-commit hook by modifying the 'SKIP' environment variable in bash. For exampl
 SKIP=black git commit -m "foo"
 ```
 
-However this should only be used in an emergency. If SKIP is used for all of your commits it will dramatically
+However, this should only be used in an emergency. If SKIP is used for all of your commits it will dramatically
 reduce code quality over time.
 
 ### Why did we choose black
@@ -80,15 +80,15 @@ Black is an opinionated formatter that will format your code without any configu
 Why did we choose an “opinionated” formatter? In short, convention is so much more efficient than configuration.  With
 convention, everyone just does what is dictated (in this case from the tool) and there is no room for choice, which
 causes entropy in the project (e.g. one developer chooses spaces, another chooses tabs, and chaos results). As entropy
-increases, the code is harder to understand automated tooling stifled, and development becomes more difficult. Hence,
+increases, the code is harder to understand with automated tooling stifled, and development becomes more difficult. Hence,
 projects select coding styles, standards, best practices, etc. as a way to reduce entropy. By accepting an established
 opinion, we can gain the advantages of a well-ordered project via a tool.  Assuming the opinions of the tool are not too
 onerous, we’ll have a better project as a result.  Be like the Borg and just assimilate...
 
 ## Static Analysis
 
-While almost all projects require unit tests, not enough them consistently use static analysis to improve code quality.
-With a few simple commands static analysis will drastically reduce time wasted with simple errors or issues and increase
+While almost all projects require unit tests, not enough of them consistently use static analysis to improve code quality.
+With a few simple commands, static analysis will drastically reduce time wasted with simple errors or issues and increase
 the lifecycle of your code.
 
 F uses Pylama to perform static analysis on our python code. Pylama contains pylint, pyflakes, pycodestyle(pep8),
@@ -101,8 +101,8 @@ pylama -o path/to/fprime/pylama/setup.cfg path/to/directory/you/want/to/analyze/
 # the '-o' specifies the configuration file
 ```
 
-Pylama can be configured within the setup.cfg file. This file can also go in the directory you are analyzing if you wan
-a different configuration for the python files in that directory. Inside the configuration file you can configure both
+Pylama can be configured within the setup.cfg file. This file can also go in the directory you are analyzing if you want
+a different configuration for the python files in that directory. Inside the configuration file, you can configure both
 pylama as a whole and each of the tools individually.
 
 The recommended F´ pylama config is at: Fw/Python/pylama.cfg

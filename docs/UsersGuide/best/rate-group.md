@@ -2,8 +2,8 @@
 
 Often embedded software must perform actions at a fixed rate. In a given system there are usually collections of actions
 that must run at similar rates. For example, control algorithms may run at 10Hz while telemetry collection may run at
-1Hz and background tasks may be updated at 0.1Hz. F´ provides a mechanism to trigger time based actions called "rate
-groups". The `ActiveRateGroup` component contains multiple output `Sched` ports that it sends a messages to at a repeated
+1Hz and background tasks may be updated at 0.1Hz. F´ provides a mechanism to trigger time-based actions called "rate
+groups". The `ActiveRateGroup` component contains multiple output `Sched` ports that it sends a message to at a repeated
 rate. Thus components having an input `Sched` port can run a repeated action at this rate. Rate groups are driven by a
 central rate group driver and achieve their rates by dividing the incoming signal from the rate group driver.
 
@@ -12,25 +12,23 @@ central rate group driver and achieve their rates by dividing the incoming signa
 ## Rate Group Driver
 
 The `RateGroupDriver` component is the source of the "clock" for the various rate groups. It is usually driven off a
-system timing interrupt or some other reliable clock source. On the incoming cycle call from that source it sends a
+system timing interrupt or some other reliable clock source. On the incoming cycle call from that source, it sends a
 message to each rate group attached to it thus starting each cycle.
 
 ### System Clock Sources
 
-A system clock source needs to be supplied to the rate group driver. This clock source must run at a multiple of the
-rates of the various rate groups and drives the `CycleIn` port of the rate group driver. Most projects implement a
+A system clock source needs to be supplied to the rate group driver. This clock source must run at a multiple of the rates of the various rate groups and drives the `CycleIn` port of the rate group driver. Most projects implement a
 clock component that translates between the system clock and the port call to rate group driver's `CycleIn` port.
 
-The reference application calls the `CycleIn` port followed by a sleep for the system clock time within a while loop
-to simulate a system driven clock. 
+The reference application calls the `CycleIn` port followed by a sleep for the system clock time within a while loop to simulate a system-driven clock. 
 
 ## Active Rate Group
 
 The active rate group receives the input source signal at the system rate and divides that signal to provide a fixed
 rate for the components attached to it. It then calls each of those components at the subdivided rate. For example, if
 the rate group driver is being called at 1000Hz it will provide a repeated 1000Hz call to each active rate group. To
-achieve repeated signals at 10Hz, 1Hz, and 0.1Hz, the project would need to setup 3 rate groups diving by 100, 1000, and
-10000 respectively. These divisors are setup at active rate group instantiation time.
+achieve repeated signals at 10Hz, 1Hz, and 0.1Hz, the project would need to set up 3 rate groups diving by 100, 1000, and
+10000 respectively. These divisors are set up at active rate group instantiation time.
 
 Active rate groups run on a thread and thus there is some jitter between the system driver and the execution of the rate
 group. However, multiple active rate groups can start up in unison. A passive rate group could be created that is
@@ -71,4 +69,3 @@ The topology connections for rate groups can be seen here:
 
 A sample schedule handler can be found here:
 [Sample Schedule Handler](https://github.com/nasa/fprime/blob/ddcb2ec138645da34cd4c67f250b67ee8bc67b26/Ref/SignalGen/SignalGen.cpp#L98-L140)
-

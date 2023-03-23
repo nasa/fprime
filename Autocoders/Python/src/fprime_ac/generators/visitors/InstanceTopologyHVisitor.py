@@ -128,8 +128,6 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
             # Open file for writing here...
             DEBUG.info("Open file: %s" % filename)
             self.__fp = open(filename, "w")
-            if self.__fp is None:
-                raise Exception("Could not open %s file.") % filename
             DEBUG.info("Completed")
         else:
             PRINT.info("ERROR: NO COMPONENTS FOUND IN TOPOLOGY XML FILE...")

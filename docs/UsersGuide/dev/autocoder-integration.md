@@ -1,15 +1,12 @@
 # Integrating a New Autocoder
 
-This guide will walk the user through integrating a new autocoder into the F´ build system. In the most basic form an
-autocoder consists of several elements: input models, output generated code, steps to generate output from the given
+This guide will walk the user through integrating a new autocoder into the F´ build system. In the most basic form, an autocoder consists of several elements: input models, output generated code, steps to generate output from the given
 input, and a trigger to start the process. As a byproduct, this process also produces "module dependencies" and
 "file dependencies" used to tie the autocoder into the make system itself.
 
 ## Autocoder CMake Structure
 
-An autocoder needs to implement a CMake file that will be used to run the autocoder itself. Within this file the
-developer is required to implement several functions and set several variables to tell the system how to run the
-autocoder and setup the build trigger. Each function needed will be expanded on below, with examples.
+An autocoder needs to implement a CMake file that will be used to run the autocoder itself. Within this file the developer is required to implement several functions and set several variables to tell the system how to run the autocoder and set up the build trigger. Each function needed will be expanded on below, with examples.
 
 All functions are prefixed with the autocoder's name to prevent collisions with other autocoder functions. The name is
 the name of the CMake file without the `.cmake` extension. For example, the FPP autocoder is implemented in a file
@@ -20,7 +17,7 @@ There are three primary parts of an autocoder:
 2. Implement `<autocoder name>_is_supported(AC_POSSIBLE_INPUT_FILE)` returning true the autocoder processes given source 
 3. Implement `<autocoder name>_setup_autocode AC_INPUT_FILE)` to run the autocoder on files filter by item 2.
 
-Once the autocoder file is constructed, the autocoder needs to be registered to modules. This is done through custom
+Once the autocoder file is constructed, the autocoder needs to be registered to modules. This is done through a custom
 target. See: [target-integration](./target-integration.md).
 
 ## Select Individual or Multiple Sources
@@ -61,7 +58,7 @@ another autocoder, see [Autocoding Using Autocoded Inputs](#Autocoding_Using_Aut
 `<autocoder name>_is_supported` takes one argument: a source file path to a possible autocoder input. If the autocoder
 needs to process this file, `<autocoder name>_is_supported` must set `IS_SUPPORTED` to `TRUE` in `PARENT_SCOPE`
 otherwise `<autocoder name>_is_supported` must set `IS_SUPPORTED` to `FALSE` in `PARENT_SCOPE`. Since most autocoders
-determine support via suffix, `autocoder/helpers.cmake` supplies a helper macro to do that easily. **Note:** the
+determine support via suffix, `autocoder/helpers.cmake` supplies a helper macro to do that easily. **Note:** The
 autocoder must include `autocoder/helpers` to access that helper.
 
 For example, the FPP autocoder supports all files ending with the extension `.fpp` and it uses the suffix helper as
@@ -89,6 +86,27 @@ function(<autocoder name>_is_supported AC_INPUT_FILE)
 endfunction(<autocoder name>_is_supported )
 ```
 
+Should an autocoder need to indicate that a given input file will cause inter-target dependency changes (i.e. CMake
+re-generation must be performed) then the function `requires_regeneration(<INPUT_FILE>)` must be called. This can be
+done directly or by providing `TRUE` as an optional third argument to `autocoder_support_by_suffix`.  Both ways are shown below.
+
+```cmake
+...
+include(autocoder/helpers)
+...
+function(<autocoder name>_is_supported AC_INPUT_FILE)
+    requires_regeneration("${AC_INPUT_FILE}")
+endfunction(<autocoder name>_is_supported )
+```
+```cmake
+...
+include(autocoder/helpers)
+...
+function(<autocoder name>_is_supported AC_INPUT_FILE)
+    autocoder_support_by_suffix(".fpp" "${AC_INPUT_FILE}" TRUE)
+endfunction(<autocoder name>_is_supported )
+```
+
 ## Implement `<autocoder name>_setup_autocode AC_INPUT_FILES)`
 
 Implementing `<autocoder name>_setup_autocode AC_INPUT_FILES)` should setup the autocoder for generating files. It will
@@ -102,14 +120,13 @@ Every autocoder must do two things in this function:
 
 These autocoders may optionally set additional variables to help define the system. These are discussed below.
 
-There are two models to generating files. The simple model is to let the autocoder system call `add_custom_command` and
+There are two models for generating files. The simple model is to let the autocoder system call `add_custom_command` and
 simply set variables to control that call, and the general model where the implementor calls `add_custom_command`
 themselves.
 
 ### Cross Platform Utilities and CMake
 
-CMake is designed to run on many different hosts. As such it provides common implementations of many operating system
-provided utilities. These are invoked through `cmake -E`. For example to touch a file use `cmake -E touch`. A full
+CMake is designed to run on many different hosts. As such it provides common implementations of many operating system provided utilities. These are invoked through `cmake -E`. To touch a file for instance, use `cmake -E touch`. A full
 description of available commands are found in CMake's 
 [command line tool](https://cmake.org/cmake/help/latest/manual/cmake.1.html#run-a-command-line-tool) documentation.
 
@@ -122,9 +139,8 @@ add_custom_command(COMMAND ${CMAKE_COMMAND} -E make_directory ...)
 
 ### Simple Model
 
-This model works well when the autocoder fits the basic pattern of passing any and all inputs to a script, and produce
-outputs. Optionally, these autocoders can set inter-module dependencies. Simple-model autocoder are expected to operate
-with a commandline invocation following the pattern: 
+This model works well when the autocoder fits the basic pattern of passing any and all inputs to a script, and produces outputs. Optionally, these autocoders can set inter-module dependencies. Simple-model autocoders are expected to operate
+with a command-line invocation following the pattern: 
 
 ```
 executable [--arg [[--arg]] input1 [input2...]
@@ -134,14 +150,13 @@ That is, the autocoder has a single executable step, the executable and argument
 Anything that breaks this pattern must use the [General Model](#General_Model).
 
 This model can easily be accomplished by simply setting variables in the parent scope and the autocoder system will
-setup the `add_custom_command` CMake call automatically based on those variables. All these variables need to be set in
+set up the `add_custom_command` CMake call automatically based on those variables. All these variables need to be set in
 `PARENT_SCOPE`. These variables are:
 
 1. `AUTOCODER_SCRIPT`: executable command line argument(s) run to generate files. Use `cmake -E` to run cross-platform
-    safe commands, setup the environment, etc.
+    safe commands, set up the environment, etc.
 2. `AUTOCODER_GENERATED`: list of files generated by the autocoder run. Required of all autocoders.
-3. `AUTOCODER_INPUTS`: list of files to supply to the autocoder script as command line arguments. These files are
-    monitored and the autocoder script will rerun when these files changes.
+3. `AUTOCODER_INPUTS`: list of files to supply to the autocoder script as command line arguments. These files are monitored and the autocoder script will rerun when these files change.
 4. (optional) `AUTOCODER_DEPENDENCIES`: set to other modules this autocoder requires to have built first.
 
 The following is an implementation that uses `touch` to generate files using this pattern. This version assumes that
@@ -162,7 +177,7 @@ function(touch_autocode_setup AC_INPUT_FILE)
 endfunction()
 ```
 
-This invokes the following command line to generate files any time the `AC_INPUT_FILE` changed. Note: since inputs are
+This invokes the following command line to generate files any time the `AC_INPUT_FILE` is changed. Note: since inputs are
 supplied to the autocoder, we will touch both the generated file and the input file.
 
 ```cmake
@@ -183,13 +198,13 @@ add_custom_command(
 
 
 
-Although straightforward and avoiding some of the nuances of the `add_custom_command` this model mat be overly
+Although straightforward and avoiding some of the nuances of the `add_custom_command` this model may be overly
 restrictive for some use cases. Users who cannot fit the steps of the autocoder into this paradigm may use the general
 model.
 
 ### General Model
 
-The general model for autocoders is to ensure that `AUTOCODER_GENERATED` is set in parent scope and that files are
+The general model for autocoders is to ensure that `AUTOCODER_GENERATED` is set in the parent scope and that files are
 generated using custom commands. Any implementation of the `<autocoder name>_setup_autocode` function that does this
 should work. This model can be used for things that do not fit in the standard model and may include any of the
 following:
@@ -200,12 +215,12 @@ following:
 
 The general model calls `add_custom_command` directly and thus users should start by consulting the CMake
 [documentation](https://cmake.org/cmake/help/latest/command/add_custom_command.html) of that call. This documentation
-will touch briefly on the key options to this call.
+will touch briefly on the key options for this call.
 
 **Setting Outputs**
 
 An autocoder generates outputs and the autocoder needs to configure this. For the autocoder system, we set the variable
-`AUTOCODER_GENERATED`.  For specifying, to cmake we must use the `OUTPUT` portion of `add_custom_command()` as shown
+`AUTOCODER_GENERATED`.  For specifying to cmake we must use the `OUTPUT` portion of `add_custom_command()` as shown
 below. **Note:** `AUTOCODER_GENERATED` is needed in both local scope for the call into add_custom_command, and set in
 `PARENT_SCOPE` for the larger system hence the appearance of two sets.
 
@@ -221,7 +236,7 @@ set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
 **Running Commands**
 
 An autocoder runs commands to generates files. This is accomplished with one or more in-order `COMMAND` portions of the
-CMake `add_custom_command()` calls. This can be seen below where a directory is created before touching two file.
+CMake `add_custom_command()` calls. This can be seen below where a directory is created before touching two files.
 
 ```cmake
 add_custom_command(...
@@ -234,7 +249,7 @@ add_custom_command(...
 
 **Setting Triggers and Dependencies**
 
-An autocoder should regenerate files under certain conditions. Namely, if a file dependency or module dependency changes
+An autocoder should regenerate files under certain conditions. Namely, if a file or module dependency changes
 the autocoder needs to rerun. Both are specified with the DEPENDS portion of the command. Files should be contained
 within the module, and cross-module dependencies should be as _ delimited names (e.g. Fw_Time).
 
@@ -283,8 +298,7 @@ with the following caveats.
 ### 1. Always Run The Source Autocoder First
 
 This is done in the target definition when it runs autocoders. The source autocoder must be run first. This is easy to
-do as the `run_ac_set()` takes a set of autocoders to run.  **Remember:** this is done in the target definition that
-calls this autocoder.
+do as the `run_ac_set()` takes a set of autocoders to run.  **Remember**, this is done in the target definition that calls this autocoder.
 
 **Example: FPP Sources AI XML in the Build Target**
 ```cmake
@@ -295,12 +309,12 @@ function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
 endfunction(build_add_module_target)
 ```
 
-**Do not worry** autocoders can be run using `run_ac_set` multiple times, the actual invocation will happen once and be
+**Do not worry**, autocoders can be run using `run_ac_set` multiple times, the actual invocation will happen once and be
 shared.
 
 ### 2. Do Not Read the Autocoder Input Outside of `add_custom_command`
 
-Many autocoders read and/or preprocess autocoder input files to setup dependencies, scripts, etc. However, it is
+Many autocoders read and/or preprocess autocoder input files to set up dependencies, scripts, etc. However, it is
 essential to remember that in this case that file only exists during the build of the project, not during the setup of
 the project. Thus, these autocoders should make all decisions on the filename only and not the contents of the file.
 

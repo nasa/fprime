@@ -121,8 +121,8 @@ $emit_cpp_params([ $param_instance ])
 \#if FW_ENABLE_TEXT_LOGGING == 1
   #end if
     for (
-        NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_from_${instance}();
+        PlatformIntType _port = 0;
+        _port < static_cast<PlatformIntType>(this->getNum_from_${instance}());
         ++_port
     ) {
 
@@ -139,7 +139,7 @@ $emit_cpp_params([ $param_instance ])
       (void) snprintf(
           _portName,
           sizeof(_portName),
-          "%s_${port_name}[%d]",
+          "%s_${port_name}[%" PRI_PlatformIntType "]",
           this->m_objName,
           _port
       );
@@ -157,8 +157,8 @@ $emit_cpp_params([ $param_instance ])
     // Initialize output port $instance
 
     for (
-        NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_to_${instance}();
+        PlatformIntType _port = 0;
+        _port < static_cast<PlatformIntType>(this->getNum_to_${instance}());
         ++_port
     ) {
       this->m_to_${instance}[_port].init();
@@ -168,7 +168,7 @@ $emit_cpp_params([ $param_instance ])
       snprintf(
           _portName,
           sizeof(_portName),
-          "%s_to_${instance}[%d]",
+          "%s_to_${instance}[%" PRI_PlatformIntType "]",
           this->m_objName,
           _port
       );
@@ -222,7 +222,7 @@ $emit_cpp_params([ $param_instance ])
 $emit_cpp_params([ $param_portNum, $param_port ])
     )
   {
-    FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<FwAssertArgType>(portNum));
     #if $type == "Serial":
     this->m_to_${instance}[portNum].registerSerialPort($instance);
     #else:
@@ -259,11 +259,11 @@ $emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
     )
     #end if
   {
-    FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<FwAssertArgType>(portNum));
     #if $serial_type:
     this->m_to_${instance}[portNum].invokeSerial(Buffer);
     #else
-    FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<FwAssertArgType>(portNum));
       #if $void_return_type
     this->m_to_${instance}[portNum].invoke(
       #else:
@@ -285,7 +285,7 @@ $emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
   bool ${tester_base} ::
     isConnected_to_${instance}(const NATIVE_INT_TYPE portNum)
   {
-    FW_ASSERT(portNum < this->getNum_to_${instance}(), static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_to_${instance}(), static_cast<FwAssertArgType>(portNum));
     return this->m_to_${instance}[portNum].isConnected();
   }
 
@@ -308,7 +308,7 @@ $emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
     #end if
     get_from_${instance}(const NATIVE_INT_TYPE portNum)
   {
-    FW_ASSERT(portNum < this->getNum_from_${instance}(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_from_${instance}(),static_cast<FwAssertArgType>(portNum));
     return &this->m_from_${instance}[portNum];
   }
     #if $role == "LogTextEvent":
@@ -378,7 +378,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
     )
   {
-    FW_ASSERT(portNum < this->getNum_from_${instance}(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_from_${instance}(),static_cast<FwAssertArgType>(portNum));
     this->from_${instance}_handler(
         portNum,
         Buffer
@@ -514,7 +514,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         _ret = _testerBase->m_param_${prm_name}_valid;
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
+            static_cast<FwAssertArgType>(_status)
         );
       }
         break;
@@ -559,7 +559,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         _status = val.deserialize(${prmname}Val);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
+            static_cast<FwAssertArgType>(_status)
         );
         FW_ASSERT(
             ${prmname}Val ==
@@ -569,7 +569,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         Fw::ParamString ${prmname}Val;
         _status = val.deserialize(${prmname}Val);
         FW_ASSERT(
-            _status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status)
+            _status == Fw::FW_SERIALIZE_OK,static_cast<FwAssertArgType>(_status)
         );
         FW_ASSERT(
             ${prmname}Val ==
@@ -580,7 +580,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         _status = val.deserialize(${prmname}Val);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
+            static_cast<FwAssertArgType>(_status)
         );
         FW_ASSERT(
             ${prmname}Val ==
@@ -664,7 +664,7 @@ $emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
     #end if
     )
   {
-    FW_ASSERT(portNum < this->getNum_from_${instance}(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_from_${instance}(),static_cast<FwAssertArgType>(portNum));
     #if $void_params and $void_return_type:
     this->from_${instance}_handler(portNum);
     #else if $void_params
@@ -725,7 +725,7 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
       #else
     _status = buff.serialize($arg_name);
       #end if
-    FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
+    FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<FwAssertArgType>(_status));
     #end for
 
     // Call output command port
@@ -950,7 +950,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
         _status = args.deserialize(_numArgs);
         FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
-          static_cast<AssertArg>(_status)
+          static_cast<FwAssertArgType>(_status)
         );
         // verify they match expected.
 #if $severity == "FATAL"
@@ -960,14 +960,14 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
         _status = args.deserialize(stackArgLen);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
+            static_cast<FwAssertArgType>(_status)
         );
         FW_ASSERT(4 == stackArgLen,stackArgLen);
 		U32 dummyStackArg;
         _status = args.deserialize(dummyStackArg);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
+            static_cast<FwAssertArgType>(_status)
         );
         FW_ASSERT(0 == dummyStackArg,dummyStackArg);
 #else
@@ -983,7 +983,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
         _zero_status = args.deserialize(_noArgs);
         FW_ASSERT(
             _zero_status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_zero_status)
+            static_cast<FwAssertArgType>(_zero_status)
         );
 \#endif
     #end if
@@ -996,7 +996,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
           _status = args.deserialize(_argSize);
           FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
+            static_cast<FwAssertArgType>(_status)
           );
           FW_ASSERT(_argSize == sizeof(FwEnumStoreType),_argSize,sizeof(FwEnumStoreType));
         }
@@ -1017,7 +1017,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
           _status = args.deserialize(_argSize);
           FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
+            static_cast<FwAssertArgType>(_status)
           );
           FW_ASSERT(_argSize == sizeof(${type}),_argSize,sizeof(${type}));
         }
@@ -1026,7 +1026,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
       #end if
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
+            static_cast<FwAssertArgType>(_status)
         );
 
     #end for
@@ -1114,11 +1114,11 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
 
     fprintf(
         file,
-        "EVENT: (%d) (%d:%d,%d) %s: %s\n",
+        "EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
         e.id,
-        const_cast<TextLogEntry&>(e).timeTag.getTimeBase(),
-        const_cast<TextLogEntry&>(e).timeTag.getSeconds(),
-        const_cast<TextLogEntry&>(e).timeTag.getUSeconds(),
+        static_cast<FwTimeBaseStoreType>(e.timeTag.getTimeBase()),
+        e.timeTag.getSeconds(),
+        e.timeTag.getUSeconds(),
         severityString,
         e.text.toChar()
     );

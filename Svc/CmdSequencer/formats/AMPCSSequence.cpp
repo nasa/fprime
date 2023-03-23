@@ -80,20 +80,23 @@ namespace Svc {
     getFileSize(const Fw::CmdStringArg& seqFileName)
   {
     bool status = true;
-    U64 fileSize;
+    FwSizeType fileSize;
     this->setFileName(seqFileName);
     const Os::FileSystem::Status fileStatus =
       Os::FileSystem::getFileSize(this->m_fileName.toChar(), fileSize);
+    // fileSize will be used to set a U32 member below, thus we check overflow first
+    bool overflow = static_cast<FwSizeType>(static_cast<U32>(fileSize)) != fileSize;
     if (
         fileStatus == Os::FileSystem::OP_OK and
-        fileSize >= sizeof(this->m_sequenceHeader)
+        fileSize >= sizeof(this->m_sequenceHeader) and
+        !overflow
     ) {
       this->m_header.m_fileSize = static_cast<U32>(fileSize - sizeof(this->m_sequenceHeader));
     }
     else {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_HEADER_SIZE,
-          fileStatus
+            overflow ? Os::FileSystem::OTHER_ERROR : fileStatus
       );
       status = false;
     }

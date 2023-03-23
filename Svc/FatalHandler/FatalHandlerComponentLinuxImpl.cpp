@@ -14,7 +14,7 @@
 #include <csignal>
 #include <Fw/Logger/Logger.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Svc {
 
@@ -28,8 +28,8 @@ namespace Svc {
         // for **nix, delay then exit with error code
         Fw::Logger::logMsg("FATAL %d handled.\n",Id,0,0,0,0,0);
         (void)Os::Task::delay(1000);
-        Fw::Logger::logMsg("Exiting with segfault and core dump file.\n",0,0,0,0,0,0);
-        (void)raise( SIGSEGV );
+        Fw::Logger::logMsg("Exiting with abort signal and core dump file.\n",0,0,0,0,0,0);
+        (void)raise( SIGABRT );
         exit(1);
     }
 

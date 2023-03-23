@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - uses: ./.github/actions/setup
     - name: Setup Dependencies
       run: |
            sudo apt-get update
-           sudo apt-get install doxygen
+           sudo apt-get install -y doxygen
     - name: Autodocs
       run: .github/actions/autodoc.bash

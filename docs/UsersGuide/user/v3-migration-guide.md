@@ -9,8 +9,8 @@ F´v3.0.0 has switched from a baseline using the F´ XML format for modeling F´
 language. Users may continue to use XML to model components but the F´ team recommends converting to the FPP language
 as the XML format will not receive feature enhancements.
 
-There is one caveat that users should be aware of: topology models.  If a project wishes to use FPP as a modeling
-language for a given topology, they must ensure that all components used by that topology are also modeled with FPP. XML
+There is one caveat that users should be aware of: topology models. If a project wishes to use FPP as a modeling
+language for a given topology, it must ensure that all components used by that topology are also modeled with FPP. XML
 topologies can include both components modeled in XML and FPP so that projects can begin to migrate to FPP models
 without needing to convert everything.
 
@@ -21,7 +21,7 @@ FPP tool suite and FPP in general can be found at:
 ## Topology Changes
 
 Deployments in older versions of F´ did not treat the Topology as a separate module from the deployment's executable and
-entry point code. This setup is limiting and clear separation of the Topology module and the executable is now required.
+entry point code. This setup is limiting and a clear separation of the Topology module and the executable is now required.
 
 In addition, deployments have been split from general executables and should use `register_fprime_deployment()`.
 
@@ -33,7 +33,7 @@ instead of `register_fprime_executable()`.
 These modifications can be seen in the Ref app: 
 [Ref/Top/CMakeLists.txt](https://github.com/nasa/fprime/blob/034216bc73ac91e78ba03fda25362050a695a960/Ref/Top/CMakeLists.txt#L21)
 
-**Note:** the reference example also show changes necessary to run an FPP topology as discussed above.
+**Note:** The reference example also show changes necessary to run an FPP topology as discussed above.
 
 2. In `<Deployment>/CMakeLists.txt` include entrypoint code in `SOURCE_FILES` list, set `MOD_DEPS` to include your 
 topology module and call `register_fprime_deployment` to setup the executable.
@@ -46,7 +46,7 @@ These modifications to Ref can be seen here:
 Inline enumerations within a Component are no longer supported. F´ supports enumeration models so projects should
 migrate to defining an enumeration model and using that type as arguments to commands, events, etc. As part of this work
 standard enumerations that were previously implemented as inline enumerations have now been converted. This means
-projects must update usage of these enumerations. In some cases these enumeration names have been slightly changes.
+projects must update the usage of these enumerations. In some cases, these enumeration names have been slightly changed.
 
 The best example of this is the command response enumeration.  This change can be seen in the SignalGen component as
 shown below.
@@ -83,7 +83,7 @@ Other enumerations have changed but these are typically wrapped in the autocoded
 
 ## CMake Options
 
-F´ v3.0.0 has reworked the command line options to `fprime-util generate` to ensure that F´ is inline with CMake
+F´ v3.0.0 has reworked the command line options to `fprime-util generate` to ensure that F´ is in line with CMake
 standard usages for CMake variables. In general, F´ no longer depends on certain settings to standard CMake variables.
 There are a few exceptions described below.
 
@@ -108,7 +108,7 @@ Each parameter comes with a default, so none need be specified.  When specified 
 see these values as requested. However, when permissions are not available to set these the system will fallback to the
 default `pthreads` settings.
 
-Calling the older `Os::Task::start` API will result in a compile time error.
+Calling the older `Os::Task::start` API will result in a compile-time error.
 
 An example of reworking a task start call is seen at: 
 [https://github.com/nasa/fprime/blob/ab6b8ade39967843e256841bffabb43129e290d8/Drv/Ip/SocketReadTask.cpp#L35](https://github.com/nasa/fprime/blob/ab6b8ade39967843e256841bffabb43129e290d8/Drv/Ip/SocketReadTask.cpp#L35)

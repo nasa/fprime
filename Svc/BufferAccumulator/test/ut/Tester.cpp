@@ -13,6 +13,7 @@
 #include "Tester.hpp"
 
 #include "Fw/Types/BasicTypes.hpp"
+
 #include "Fw/Types/MallocAllocator.hpp"
 
 #define INSTANCE 0

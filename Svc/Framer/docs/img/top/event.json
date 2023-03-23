@@ -1,0 +1,48 @@
+{
+  "columns" : [
+    [
+      {
+        "instanceName" : "eventLogger",
+        "inputPorts" : [],
+        "outputPorts" : [
+          {
+            "name" : "PktSend",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "framer",
+        "inputPorts" : [
+          {
+            "name" : "comIn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : []
+      }
+    ]
+  ],
+  "connections" : [
+    [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ]
+  ]
+}
