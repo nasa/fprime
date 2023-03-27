@@ -40,6 +40,11 @@ void BufferAccumulator::ArrayFIFOBuffer ::init(Fw::Buffer* const elements,
                                                NATIVE_UINT_TYPE capacity) {
   this->elements = elements;
   this->capacity = capacity;
+
+  // Construct all elements
+  for (NATIVE_UINT_TYPE idx = 0; idx < capacity; idx++) {
+      new (&this->elements[idx]) Fw::Buffer();
+  }
 }
 
 bool BufferAccumulator::ArrayFIFOBuffer ::enqueue(const Fw::Buffer& e) {
