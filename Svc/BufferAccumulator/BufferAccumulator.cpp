@@ -44,7 +44,7 @@ void BufferAccumulator ::init(const NATIVE_INT_TYPE queueDepth,
   BufferAccumulatorComponentBase::init(queueDepth, instance);
 }
 
-BufferAccumulator ::~BufferAccumulator(void) {}
+BufferAccumulator ::~BufferAccumulator() {}
 
 // ----------------------------------------------------------------------
 // Public methods
@@ -65,7 +65,7 @@ void BufferAccumulator ::allocateQueue(
 }
 
 void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {
-  allocator.deallocate(this->allocatorId, (void*)this->bufferMemory);
+  allocator.deallocate(this->allocatorId, this->bufferMemory);
 }
 
 // ----------------------------------------------------------------------
@@ -197,7 +197,7 @@ void BufferAccumulator ::BA_DrainBuffers_cmdHandler(
 // Private helper methods
 // ----------------------------------------------------------------------
 
-void BufferAccumulator ::sendStoredBuffer(void) {
+void BufferAccumulator ::sendStoredBuffer() {
 
   FW_ASSERT(this->send);
   Fw::Buffer buffer;

@@ -86,11 +86,11 @@ bool BufferAccumulator::ArrayFIFOBuffer ::dequeue(Fw::Buffer& e) {
   return status;
 }
 
-U32 BufferAccumulator::ArrayFIFOBuffer ::getSize(void) const {
+U32 BufferAccumulator::ArrayFIFOBuffer ::getSize() const {
   return this->size;
 }
 
-U32 BufferAccumulator::ArrayFIFOBuffer ::getCapacity(void) const {
+U32 BufferAccumulator::ArrayFIFOBuffer ::getCapacity() const {
   return this->capacity;
 }
 
