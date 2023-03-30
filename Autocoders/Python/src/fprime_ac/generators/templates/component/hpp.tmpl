@@ -244,6 +244,7 @@ namespace ${namespace} {
         const char* compName = "" $doxygen_post_comment("Component name")
     );
 
+  public:
     //! Initialize a ${name}ComponentBase object
     //!
     void init(
@@ -259,6 +260,7 @@ namespace ${namespace} {
 #end if
     );
 
+  PROTECTED:
     //! Destroy a ${name}ComponentBase object
     //!
     virtual ~${name}ComponentBase();
