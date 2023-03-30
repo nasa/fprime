@@ -247,7 +247,7 @@ namespace ${namespace} {
   public:
     //! Initialize a ${name}ComponentBase object
     //!
-    void init(
+    virtual void init(
 #if $kind == "passive":
         NATIVE_INT_TYPE instance = 0 $doxygen_post_comment("The instance number")
 #else if $needs_msg_size:
