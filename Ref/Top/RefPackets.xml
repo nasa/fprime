@@ -147,6 +147,14 @@
         <channel name="SG5.PairHistory"/>
     </packet>
 
+    <packet name="TypeDemo" id="20" level="3">
+        <channel name="typeDemo.ChoiceCh"/>
+        <channel name="typeDemo.ChoicesCh"/>
+        <channel name="typeDemo.ExtraChoicesCh"/>
+        <channel name="typeDemo.ChoicePairCh"/>
+        <channel name="typeDemo.ChoiceSlurryCh"/>
+    </packet>
+
     <!-- Ignored packets -->
 
     <ignore>

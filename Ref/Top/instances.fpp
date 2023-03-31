@@ -87,6 +87,8 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 96
 
+  instance typeDemo: Ref.TypeDemo base id 0x0E00
+
   # ----------------------------------------------------------------------
   # Queued component instances
   # ----------------------------------------------------------------------
