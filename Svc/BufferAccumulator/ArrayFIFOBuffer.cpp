@@ -79,7 +79,7 @@ bool BufferAccumulator::ArrayFIFOBuffer ::dequeue(Fw::Buffer& e) {
 
   if (this->size > 0) {
     // dequeueIndex is unsigned, no need to compare with 0
-    FW_ASSERT(dequeueIndex < this->capacity, enqueueIndex);
+    FW_ASSERT(dequeueIndex < this->capacity, dequeueIndex);
     e = this->elements[this->dequeueIndex];
     this->dequeueIndex = (this->dequeueIndex + 1) % this->capacity;
     this->size--;
