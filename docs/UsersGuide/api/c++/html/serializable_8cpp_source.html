@@ -109,7 +109,7 @@ $(document).ready(function(){initNavTree('_serializable_8cpp_source.html',''); i
 <div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="class_fw_1_1_serializable.html#a5c8ef76e98bf9de78ebeebe8c474a27c">   19</a></span>&#160;    <a class="code" href="class_fw_1_1_serializable.html#a5c8ef76e98bf9de78ebeebe8c474a27c">Serializable::~Serializable</a>() {</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    }</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING || BUILD_UT</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING || FW_ENABLE_TEXT_LOGGING || BUILD_UT</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">void</span> Serializable::toString(<a class="code" href="class_fw_1_1_string_base.html">StringBase</a>&amp; text)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        text = <span class="stringliteral">&quot;NOSPEC&quot;</span>; <span class="comment">// set to not specified.</span></div>
