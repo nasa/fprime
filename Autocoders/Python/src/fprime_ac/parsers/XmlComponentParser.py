@@ -164,7 +164,7 @@ class XmlComponentParser:
                 "import_port_type",
                 "import_serializable_type",
                 "import_enum_type",
-                "import_array_type"
+                "import_array_type",
             ):
                 self.__process_import_tag(comp_tag)
             elif comp_tag.tag == "import_dictionary":
