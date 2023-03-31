@@ -502,13 +502,6 @@ def generate_component_instance_dictionary(
         xml_parser_obj = XmlSerializeParser.XmlSerializeParser(
             serializable_file
         )  # Telemetry/Params can only use generated serializable types
-        # check to make sure that the serializables don't have things that channels and parameters can't have
-        # can't have external non-xml members
-        if len(xml_parser_obj.get_include_header_files()):
-            PRINT.info(
-                f"ERROR: Component include serializables cannot use user-defined types. file: {serializable_file}"
-            )
-            sys.exit(-1)
 
         # print xml_parser_obj.get_args()
         parsed_serializable_xml_list.append(xml_parser_obj)
@@ -674,14 +667,6 @@ def generate_component(
         xml_parser_obj = XmlSerializeParser.XmlSerializeParser(
             serializable_file
         )  # Telemetry/Params can only use generated serializable types
-        # check to make sure that the serializables don't have things that channels and parameters can't have
-        # can't have external non-xml members
-        if len(xml_parser_obj.get_include_header_files()):
-            PRINT.info(
-                f"ERROR: Component include serializables cannot use user-defined types. file: {serializable_file}"
-            )
-            sys.exit(-1)
-
         # print xml_parser_obj.get_args()
         parsed_serializable_xml_list.append(xml_parser_obj)
         del xml_parser_obj
