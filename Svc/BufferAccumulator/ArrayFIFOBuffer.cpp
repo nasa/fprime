@@ -10,7 +10,6 @@
 //
 // ======================================================================
 
-
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 #include "Svc/BufferAccumulator/BufferAccumulator.hpp"
@@ -43,7 +42,7 @@ void BufferAccumulator::ArrayFIFOBuffer ::init(Fw::Buffer* const elements,
 
   // Construct all elements
   for (NATIVE_UINT_TYPE idx = 0; idx < capacity; idx++) {
-      new (&this->elements[idx]) Fw::Buffer();
+      new (&this->elements[idx]) Fw::Buffer;
   }
 }
 
