@@ -28,7 +28,7 @@ class Tester : public BufferAccumulatorGTestBase {
  public:
   //! Construct object Tester
   //!
-  Tester(bool doAllocateQueue = true);
+  explicit Tester(bool doAllocateQueue = true);
 
   //! Destroy object Tester
   //!
