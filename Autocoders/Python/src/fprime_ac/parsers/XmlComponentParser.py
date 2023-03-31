@@ -160,11 +160,11 @@ class XmlComponentParser:
             if comp_tag.tag == "comment":
                 self.__component.set_comment(comp_tag.text.strip())
             elif comp_tag.tag in (
-                    "include_header",
-                    "import_port_type",
-                    "import_serializable_type",
-                    "import_enum_type",
-                    "import_array_type"
+                "include_header",
+                "import_port_type",
+                "import_serializable_type",
+                "import_enum_type",
+                "import_array_type"
             ):
                 self.__process_import_tag(comp_tag)
             elif comp_tag.tag == "import_dictionary":
