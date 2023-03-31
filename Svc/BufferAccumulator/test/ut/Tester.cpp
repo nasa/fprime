@@ -50,7 +50,7 @@ Tester ::Tester(bool doAllocateQueue)
   }
 }
 
-Tester ::~Tester(void) {
+Tester ::~Tester() {
   if (this->doAllocateQueue) {
     Fw::MallocAllocator buffAccumMallocator;
     this->component.deallocateQueue(buffAccumMallocator);
@@ -79,7 +79,7 @@ void Tester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
+void Tester ::connectPorts() {
   // bufferSendInFill
   this->connect_to_bufferSendInFill(
       0, this->component.get_bufferSendInFill_InputPort(0));
@@ -125,7 +125,7 @@ void Tester ::connectPorts(void) {
   this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
 }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
   this->init();
   this->component.init(QUEUE_DEPTH, INSTANCE);
 }
