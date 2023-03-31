@@ -13,6 +13,7 @@
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 #include "Svc/BufferAccumulator/BufferAccumulator.hpp"
+#include <new> // For placement new
 
 namespace Svc {
 
