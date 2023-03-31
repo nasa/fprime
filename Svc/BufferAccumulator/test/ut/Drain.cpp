@@ -12,7 +12,7 @@
 
 #include "Drain.hpp"
 
-#include <string.h>
+#include <cstring>
 #include <sys/time.h>
 
 namespace Svc {
