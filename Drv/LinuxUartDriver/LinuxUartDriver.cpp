@@ -206,7 +206,7 @@ bool LinuxUartDriver::open(const char* const device,
       options.c_cflag &= ~CSIZE;
       options.c_cflag |= CS7;
      */
-    newtio.c_cflag = CS8 | CLOCAL | CREAD;
+    newtio.c_cflag |= CS8 | CLOCAL | CREAD;
 
     switch (parity) {
         case PARITY_ODD:

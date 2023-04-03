@@ -190,8 +190,7 @@ static uint32_t *end_ptr = &randtbl[DEG_3 + 1];
 
 static inline uint32_t good_rand(int32_t) __attribute__((always_inline));
 
-static inline uint32_t good_rand (x)
-	int32_t x;
+static inline uint32_t good_rand (int32_t x)
 {
 /*
  * Compute x = (7^5 * x) mod (2^31 - 1)
@@ -227,8 +226,7 @@ static inline uint32_t good_rand (x)
  * for default usage relies on values produced by this routine.
  */
 void
-bsd_srandom(x)
-	unsigned x;
+bsd_srandom(unsigned x)
 {
 	int i, lim;
 
@@ -270,11 +268,11 @@ bsd_srandom(x)
  * complain about mis-alignment, but you should disregard these messages.
  */
 char *
-bsd_initstate(seed, arg_state, n)
-	unsigned seed;		/* seed for R.N.G. */
-	char *arg_state;		/* pointer to state array */
-	size_t n;				/* # bytes of state info */
-{
+bsd_initstate(
+	unsigned seed,		/* seed for R.N.G. */
+	char *arg_state,		/* pointer to state array */
+	size_t n				/* # bytes of state info */
+) {
 	char *ostate = (char *)(&state[-1]);
 	uint32_t *int_arg_state = (uint32_t *)arg_state;
 
@@ -338,9 +336,9 @@ bsd_initstate(seed, arg_state, n)
  * complain about mis-alignment, but you should disregard these messages.
  */
 char *
-bsd_setstate(arg_state)
-	const char *arg_state;		/* pointer to state array */
-{
+bsd_setstate(
+	const char *arg_state		/* pointer to state array */
+) {
 	uint32_t *new_state = (uint32_t *)arg_state;
 	uint32_t type = new_state[0] % MAX_TYPES;
 	uint32_t rear = new_state[0] / MAX_TYPES;
@@ -391,7 +389,7 @@ bsd_setstate(arg_state)
  * Returns a 31-bit random number.
  */
 long
-bsd_random()
+bsd_random(void)
 {
 	uint32_t i;
 	uint32_t *f, *r;

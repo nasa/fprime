@@ -179,23 +179,21 @@ cd fprime/Ref/SignalGen
 fprime-util build
 ```
 
-The user can also build a deployment by navigating to the deployment directory and running the `build` command. This is
-shown below:
+The user can also build a deployment by navigating to the deployment directory and running the `build` command. The build
+command also copies the binary to the deployments "bin" directory, i.e. `fprime/Ref/bin`. This is shown below:
 
 **Build Ref Deployment**
 ```
 cd fprime/Ref
 fprime-util build
 ```
-**Note:** the user almost always wants to run the "install" command on deployments. This builds the binary like "build"
-but also copies the binary to the deployments "bin" directory, i.e. `fprime/Ref/bin`.  Install is described below.
 
 This process also built the Dictionaries for the project and places the dictionary in the "Top" folder of the deployment.
-This happens any time the "install" or "build" command are run on a deployment.
+This happens any time the "build" command is run on a deployment.
 
 The user can also build a component or deployment for a cross-compile by specifying the toolchain.  A previous generate
-for that toolchain should have been run. Again for deployments, the user typically should run "install", see below. These
-steps require the setup described here: [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
+for that toolchain should have been run. These steps require the setup described here:
+[RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
 
 ```
 cd fprime/Ref/SignalGen

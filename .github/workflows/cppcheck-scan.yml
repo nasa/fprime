@@ -29,7 +29,7 @@ jobs:
         run: sudo apt-get install cppcheck xsltproc -y
 
       - name: Install sarif tool
-        run: npm install @microsoft/sarif-multitool
+        run: npm i -g @microsoft/sarif-multitool
 
       # With a CMake-based project, we get the list of files by setting up a build with CMAKE_EXPORT_COMPILE_COMMANDS=ON and
       # referencing the compile_commands.json file produced by the tool.  This will capture the correct include paths and
@@ -44,7 +44,7 @@ jobs:
         run: cppcheck --force --relative-paths=$(pwd) --inline-suppr --std=c++11 -j "$(nproc || printf '%s\n' 1)" --max-ctu-depth=16 --enable=warning,performance,portability --suppress=variableScope --inconclusive --xml $CPPCHECK_OPTS 2> cppcheck_err.xml
 
       - name: Convert cppcheck results to SARIF
-        run: npx "@microsoft/sarif-multitool" convert "cppcheck_err.xml" --tool "CppCheck" --output "cppcheck_err.sarif" --force
+        run: npx "@microsoft/sarif-multitool" convert "cppcheck_err.xml" --tool "CppCheck" --output "cppcheck_err.sarif"
 
       - name: Convert cppcheck results to Markdown & Integrate them in the workflow summary
         run: xsltproc .github/scripts/cppcheck-xml2text.xslt cppcheck_err.xml | tee $GITHUB_STEP_SUMMARY cppcheck_err.txt
