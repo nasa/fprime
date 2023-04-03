@@ -13,6 +13,18 @@ The standard patterns include:
 
 
 
+## Macro `restrict_platforms`:
+
+Restricts a CMakeLists.txt file to a given list of platforms. This prevents usage on platforms for which the module
+is incapable of being used and replaces the historical pattern of an if-tree detecting unsupported platforms.
+
+Usage:
+   restrict_platforms(Linux Darwin) # Restricts to Linux and Darwin platforms
+
+Args:
+  ARGN: list of platforms that are supported
+
+
 ## Function `add_fprime_subdirectory`:
 
 Adds a subdirectory to the build system. This allows the system to find new available modules,
