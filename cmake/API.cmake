@@ -14,6 +14,28 @@
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
+
+####
+# Macro `restrict_platforms`:
+#
+# Restricts a CMakeLists.txt file to a given list of platforms. This prevents usage on platforms for which the module
+# is incapable of being used and replaces the historical pattern of an if-tree detecting unsupported platforms.
+#
+# Usage:
+#    restrict_platforms(Linux Darwin) # Restricts to Linux and Darwin platforms
+#
+# Args:
+#   ARGN: list of platforms that are supported
+#####
+macro(restrict_platforms)
+    set(__CHECKER ${ARGN})
+     if (NOT CMAKE_SYSTEM_NAME IN_LIST __CHECKER)
+         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+         message(STATUS "Platform ${CMAKE_SYSTEM_NAME} not supported for module ${MODULE_NAME}")
+         return()
+     endif()
+endmacro()
+
 ####
 # Function `add_fprime_subdirectory`:
 #
