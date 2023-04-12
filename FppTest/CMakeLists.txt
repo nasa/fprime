@@ -12,6 +12,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 
 if (BUILD_TESTING AND NOT __FPRIME_NO_UT_GEN__)
+    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/types/")
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum/")
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array/")
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
@@ -21,6 +22,7 @@ endif()
 
 set(SOURCE_FILES "source.cpp")
 set(MOD_DEPS
+    ${PROJECT_NAME}/types
     ${PROJECT_NAME}/enum
     ${PROJECT_NAME}/array
     ${PROJECT_NAME}/struct

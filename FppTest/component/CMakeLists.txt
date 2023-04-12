@@ -3,6 +3,14 @@
 # ====================================================================== 
 
 set(SOURCE_FILES
+  #"${CMAKE_CURRENT_LIST_DIR}/empty.fpp"
+  #"${CMAKE_CURRENT_LIST_DIR}/passive.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
+  #"${CMAKE_CURRENT_LIST_DIR}/queued.fpp"
+  #"${CMAKE_CURRENT_LIST_DIR}/Empty.cpp"
+  #"${CMAKE_CURRENT_LIST_DIR}/PassiveTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ActiveTest.cpp"
+  #"${CMAKE_CURRENT_LIST_DIR}/QueuedTest.cpp"
 )
 
 register_fprime_module()
@@ -26,5 +34,13 @@ set(UT_MOD_DEPS
 # Add unit test directory
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
+  #"${CMAKE_CURRENT_LIST_DIR}/empty.fpp"
+  #"${CMAKE_CURRENT_LIST_DIR}/passive.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
+  #"${CMAKE_CURRENT_LIST_DIR}/queued.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../utils/Utils.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TesterHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 register_fprime_ut()

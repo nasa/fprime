@@ -20,17 +20,17 @@ sync command CMD_SYNC_STRING(
 
 @ A sync command with enum params
 sync command CMD_SYNC_ENUM(
-  e: E @< An enum
+  en: FormalParamEnum @< An enum
 )
 
 @ A sync command with array params
 sync command CMD_SYNC_ARRAY(
-  a: A @< An array
+  arr: FormalParamArray @< An array
 )
 
 @ A sync command with struct params
 sync command CMD_SYNC_STRUCT(
-  s: S @< A struct
+  str: FormalParamStruct @< A struct
 )
 
 @ A guarded command with no params
@@ -51,15 +51,15 @@ guarded command CMD_GUARDED_STRING(
 
 @ A guarded command with enum params
 guarded command CMD_GUARDED_ENUM(
-  e: E @< An enum
+  en: FormalParamEnum @< An enum
 )
 
 @ A guarded command with array params
 guarded command CMD_GUARDED_ARRAY(
-  a: A @< An array
+  arr: FormalParamArray @< An array
 )
 
 @ A guarded command with struct params
 guarded command CMD_GUARDED_STRUCT(
-  s: S @< A struct
+  str: FormalParamStruct @< A struct
 )

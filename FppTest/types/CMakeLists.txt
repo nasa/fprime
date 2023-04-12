@@ -4,9 +4,7 @@
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/example_comp.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Example.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
 )
 
 register_fprime_module()
@@ -31,11 +29,6 @@ set(UT_MOD_DEPS
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/example_comp.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../utils/Utils.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/PortTypes.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
 )
 register_fprime_ut()

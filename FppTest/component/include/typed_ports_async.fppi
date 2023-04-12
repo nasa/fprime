@@ -1,14 +1,11 @@
-@ A typed async input port
 async input port noArgsAsync: NoArgs
 
-@ A typed async input port
-async input port typedAsync: Typed
+async input port primitiveArgsAsync: PrimitiveArgs
 
-@ A typed async input port with queue full behavior and priority
-async input port typedAsyncAssert: Typed assert
+async input port stringArgsAsync: StringArgs
 
-@ A typed async input port with queue full behavior and priority
-async input port typedAsyncBlockPriority: Typed priority 10 block
+async input port enumArgsAsyncAssert: EnumArgs assert
 
-@ A typed async input port with queue full behavior and priority
-async input port typedAsyncDropPriority: Typed priority 5 drop
+async input port arrayArgsAsyncBlockPriority: ArrayArgs priority 10 block
+
+async input port structArgsAsyncDropPriority: StructArgs priority 5 drop

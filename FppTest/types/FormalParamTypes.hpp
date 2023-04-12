@@ -13,12 +13,17 @@
 #ifndef FPP_TEST_FORMAL_PARAM_TYPES_HPP
 #define FPP_TEST_FORMAL_PARAM_TYPES_HPP
 
+#include "Fw/Types/InternalInterfaceString.hpp"
+#include "Fw/Cmd/CmdString.hpp"
+#include "Fw/Log/LogString.hpp"
+#include "Fw/Tlm/TlmString.hpp"
+#include "Fw/Prm/PrmString.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
 
 #include "FppTest/types/FormalParamEnumEnumAc.hpp"
 #include "FppTest/types/FormalParamArrayArrayAc.hpp"
 #include "FppTest/types/FormalParamStructSerializableAc.hpp"
-#include "FppTest/port/StringArgsPortAc.hpp"
+#include "FppTest/types/StringArgsPortAc.hpp"
 
 #define SERIAL_ARGS_BUFFER_CAPACITY 256
 
@@ -38,89 +43,168 @@ namespace FppTest {
     using FormalParams = FormalParamsWithReturn<ArgType, Empty>;
 
     // ----------------------------------------------------------------------
-    // Multiple types
-    // ----------------------------------------------------------------------
-
-    struct PrimitiveTypes {
-      PrimitiveTypes();
-
-      U32 u32;
-      U32 u32Ref;
-      F32 f32;
-      F32 f32Ref;
-      bool b;
-      bool bRef;
-    };
-
-    struct StringTypes {
-      StringTypes();
-
-      StringTypesPortStrings::StringSize80 str80;
-      StringTypesPortStrings::StringSize80 str80Ref;
-      StringTypesPortStrings::StringSize100 str100;
-      StringTypesPortStrings::StringSize100 str100Ref;
-    };
-
-    struct EnumTypes {
-      EnumTypes();
-
-      FormalParamEnum en;
-      FormalParamEnum enRef;
-    };
-
-    struct ArrayTypes {
-      ArrayTypes();
-
-      FormalParamArray a;
-      FormalParamArray aRef;
-    };
-
-    struct StructTypes {
-      StructTypes();
-
-      FormalParamStruct s;
-      FormalParamStruct sRef;
-    };
-
-    struct SerialTypes {
-      SerialTypes();
-
-      U8 data[SERIAL_ARGS_BUFFER_CAPACITY];
-      Fw::SerialBuffer buf;
-    };
-
-    // ----------------------------------------------------------------------
-    // Single types
+    // Primitive types
     // ----------------------------------------------------------------------
 
     struct BoolType {
       BoolType();
 
-      bool val;
+      bool b;
     };
 
-    struct PrimitiveType {
+    struct IntegerType {
       PrimitiveType();
 
-      U32 val;
+      U32 u32;
     };
+
+    struct PrimitiveTypes {
+      PrimitiveTypes();
+
+      U32 u32_1;
+      U32 u32_2;
+      F32 f32_1;
+      F32 f32_2;
+      bool b1;
+      bool b2;
+    };
+
+    // ----------------------------------------------------------------------
+    // FPP types
+    // ----------------------------------------------------------------------
 
     struct EnumType {
       EnumType();
 
-      FormalParamEnum val;
+      FormalParamEnum en;
+    };
+
+    struct EnumTypes {
+      EnumTypes();
+
+      FormalParamEnum en1;
+      FormalParamEnum en2;
     };
 
     struct ArrayType {
       ArrayType();
 
-      FormalParamArray val;
+      FormalParamArray arr;
+    };
+
+    struct ArrayTypes {
+      ArrayTypes();
+
+      FormalParamArray arr1;
+      FormalParamArray arr2;
     };
 
     struct StructType {
       StructType();
 
-      FormalParamStruct val;
+      FormalParamStruct str;
+    };
+
+    struct StructTypes {
+      StructTypes();
+
+      FormalParamStruct str1;
+      FormalParamStruct str2;
+    };
+
+    // ----------------------------------------------------------------------
+    // String types
+    // ----------------------------------------------------------------------
+
+    struct PortStringType {
+      PortStringType();
+
+      StringTypesPortStrings::StringSize80 str;
+    };
+
+    struct PortStringTypes {
+      PortStringTypes();
+
+      StringTypesPortStrings::StringSize80 str80_1;
+      StringTypesPortStrings::StringSize80 str80_2;
+      StringTypesPortStrings::StringSize100 str100_1;
+      StringTypesPortStrings::StringSize100 str100_2;
+    };
+
+    struct InternalInterfaceStringType {
+      InternalInterfaceStringType();
+
+      Fw::InternalInterfaceString str;
+    }
+
+    struct InternalInterfaceStringTypes {
+      InternalInterfaceStringTypes();
+
+      Fw::InternalInterfaceString str80;
+      Fw::InternalInterfaceString str100;
+    }
+
+    struct CmdStringType {
+      CmdStringType();
+
+      Fw::CmdStringArg str;
+    }
+
+    struct CmdStringTypes {
+      CmdStringTypes();
+
+      Fw::CmdStringArg str80;
+      Fw::CmdStringArg str100;
+    }
+
+    struct LogStringType {
+      LogStringType();
+
+      Fw::LogStringArg str;
+    }
+
+    struct LogStringTypes {
+      LogStringTypes();
+
+      Fw::LogStringArg str80;
+      Fw::LogStringArg str100;
+    }
+
+    struct TlmStringType {
+      TlmStringType();
+
+      Fw::TlmString str;
+    }
+
+    struct TlmStringTypes {
+      TlmStringTypes();
+
+      Fw::TlmString str80;
+      Fw::TlmString str100;
+    }
+
+    struct PrmStringType {
+      PrmStringType();
+
+      Fw::ParamString str;
+    }
+
+    struct PrmStringTypes {
+      PrmStringTypes();
+
+      Fw::ParamString str80;
+      Fw::ParamString str100;
+    }
+
+    // ----------------------------------------------------------------------
+    // Serial type
+    // ----------------------------------------------------------------------
+
+    struct SerialType {
+      SerialType();
+
+      U8 data[SERIAL_ARGS_BUFFER_CAPACITY];
+      Fw::SerialBuffer buf;
     };
 
     // ----------------------------------------------------------------------
@@ -134,14 +218,6 @@ namespace FppTest {
     // ----------------------------------------------------------------------
     // Typedefs
     // ----------------------------------------------------------------------
-
-    typedef ForamlParams<Empty> NoArgs;
-    typedef ForamlParams<PrimitiveTypes> PrimitiveArgs;
-    typedef ForamlParams<StringTypes> StringArgs;
-    typedef ForamlParams<EnumTypes> EnumArgs;
-    typedef ForamlParams<ArrayTypes> ArrayArgs;
-    typedef ForamlParams<StructTypes> StructArgs;
-    typedef ForamlParams<SerialTypes> SerialArgs;
 
     typedef ForamlParamsWithReturn<Empty, BoolType> NoArgsReturn;
     typedef ForamlParamsWithReturn<PrimitiveTypes, PrimitiveType> PrimitiveReturn;

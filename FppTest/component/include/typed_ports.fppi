@@ -1,33 +1,87 @@
 # ----------------------------------------------------------------------
-# General ports
+# Typed input ports with no return type
 # ----------------------------------------------------------------------
 
-@ A typed sync input port
-sync input port noArgsSync: [3] NoArgs
+sync input port noArgsSync: [2] NoArgs
 
-@ A typed guarded input
-guarded input port noArgsGuarded: NoArgs
+guarded input port noArgsGuarded: [2] NoArgs
 
-@ A typed sync input port
-sync input port noArgsReturnSync: [3] NoArgsReturn
+sync input port primitiveArgsSync: [2] PrimitiveArgs
 
-@ A typed guarded input
+guarded input port primitiveArgsGuarded: [2] PrimitiveArgs
+
+sync input port stringArgsSync: [2] StringArgs
+
+guarded input port stringArgsGuarded: [2] StringArgs
+
+sync input port enumArgsSync: [2] EnumArgs
+
+guarded input port enumArgsGuarded: [2] EnumArgs
+
+sync input port arrayArgsSync: [2] ArrayArgs
+
+guarded input port arrayArgsGuarded: [2] ArrayArgs
+
+sync input port structArgsSync: [2] StructArgs
+
+guarded input port structArgsGuarded: [2] StructArgs
+
+# ----------------------------------------------------------------------
+# Typed output ports with no return type
+# ----------------------------------------------------------------------
+
+output port noArgsOut: [2] NoArgs
+
+output port primitiveArgsOut: [2] PrimitiveArgs
+
+output port stringArgsOut: [2] StringArgs
+
+output port enumArgsOut: [2] EnumArgs
+
+output port arrayArgsOut: [2] ArrayArgs
+
+output port structArgsOut: [2] StructArgs
+
+# ----------------------------------------------------------------------
+# Typed input ports with return type
+# ----------------------------------------------------------------------
+
+sync input port noArgsReturnSync: NoArgsReturn
+
 guarded input port noArgsReturnGuarded: NoArgsReturn
 
-@ A typed sync input port
-sync input port typedSync: [3] Typed
+sync input port primitiveReturnSync: PrimitiveReturn
 
-@ A typed guarded input
-guarded input port typedGuarded: Typed
+guarded input port primitiveReturnGuarded: PrimitiveReturn
 
-@ A typed sync input port with a return type
-sync input port typedReturnSync: [3] TypedReturn
+# sync input port stringReturnSync: StringReturn
+# 
+# guarded input port stringReturnGuarded: StringReturn
 
-@ A typed guarded input with a return type
-guarded input port typedReturnGuarded: TypedReturn
+sync input port enumReturnSync: EnumReturn
 
-@ A typed output port
-output port typedOut: Typed
+guarded input port enumReturnGuarded: EnumReturn
 
-@ A typed output port with a return type
-output port typedReturnOut: TypedReturn
+sync input port arrayReturnSync: ArrayReturn
+
+guarded input port arrayReturnGuarded: ArrayReturn
+
+sync input port structReturnSync: StructReturn
+
+guarded input port structReturnGuarded: StructReturn
+
+# ----------------------------------------------------------------------
+# Typed output ports with return type
+# ----------------------------------------------------------------------
+
+output port noArgsReturnOut: NoArgsReturn
+
+output port primitiveReturnOut: PrimitiveReturn
+
+# output port stringReturnOut: StringReturn
+
+output port enumReturnOut: EnumReturn
+
+output port arrayReturnOut: ArrayReturn
+
+output port structReturnOut: StructReturn

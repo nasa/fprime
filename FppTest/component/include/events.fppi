@@ -28,14 +28,14 @@ event EventCommand (
 
 @ A diagnostic event with enum params
 event EventDiagnostic(
-  e: E @< An enum
+  en: FormalParamEnum @< An enum
 ) \
   severity diagnostic \
   format "Event Diagnostic occurred with argument: {}"
 
 @ A fatal, throttled event with array params
 event EventFatalThrottled (
-  a: A @< An array
+  arr: FormalParamArray @< An array
 ) \
   severity fatal \
   format "Event Fatal occurred with argument: {}" \
@@ -43,7 +43,7 @@ event EventFatalThrottled (
 
 @ A warning high event with struct params
 event EventWarningHigh (
-  s: S @< A struct
+  str: FormalParamStruct @< A struct
 ) \
   severity warning high \
   id 0x20 \

@@ -17,17 +17,17 @@ internal port internalString(
 
 @ An internal port with enum params
 internal port internalEnum(
-  e: E @< An enum
+  en: FormalParamEnum @< An enum
 )
 
 @ An internal port with array params
 internal port internalArray(
-  a: A @< An array
+  arr: FormalParamArray @< An array
 )
 
 @ An internal port with struct params with priority and queue full behavior
 internal port internalStruct(
-  s: S @< A struct
+  str: FormalParamStruct @< A struct
 ) priority 20 drop
 
 @ An internal port with priority and queue full behavior

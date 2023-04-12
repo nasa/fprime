@@ -15,14 +15,14 @@ telemetry ChannelStringFormat: string \
   format "{}"
 
 @ A telemetry channel with enum data
-telemetry ChannelEnum: E \
+telemetry ChannelEnum: FormalParamEnum \
   id 0x10
 
 @ A telemetry channel with array data and update frequency
-telemetry ChannelArrayFreq: A
+telemetry ChannelArrayFreq: FormalParamArray
 
 @ A telemetry channel with struct data
-telemetry ChannelStructFreq: S \
+telemetry ChannelStructFreq: FormalParamStruct \
   update always
 
 @ A telemetry channel with U32 data and limits
@@ -45,6 +45,6 @@ telemetry ChannelU32OnChange: U32 \
   update on change
 
 @ A telemetry channel with enum data and update on change frequency
-telemetry ChannelEnumOnChange: E \
+telemetry ChannelEnumOnChange: FormalParamEnum \
   update on change
 
