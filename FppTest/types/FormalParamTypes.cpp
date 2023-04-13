@@ -139,7 +139,7 @@ namespace FppTest {
       U32 len = STest::Pick::lowerUpper(1, SERIAL_ARGS_BUFFER_CAPACITY);
 
       for (U32 i = 0; i < len; i++) {
-        data[i] = Utils::getU8();
+        data[i] = Utils::getNonzeroU8();
       }
     }
 
