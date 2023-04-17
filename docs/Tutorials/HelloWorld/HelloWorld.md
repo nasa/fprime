@@ -46,12 +46,37 @@ Creating a new component is accomplished with the following command:
 fprime-util new --component
 ```
 This command will ask for some input. You should respond with the following answers:
-1. Component Name: HelloWorld
-2. Component Namespace: MyComponents
-3. Add Commands: yes
-4. Add Events: yes
-5. Add Telemetry: yes
-6. Add to the build system: yes
+
+```
+[INFO] Cookiecutter source: using builtin
+component_name [MyComponent]: HelloWorld 
+component_short_description [Example Component for F Prime FSW framework.]: Hello World Tutorial Component
+component_namespace [HelloWorld]: MyComponents
+Select component_kind:
+1 - active
+2 - passive
+3 - queued
+Choose from 1, 2, 3 [1]: 1
+Select enable_commands:
+1 - yes
+2 - no
+Choose from 1, 2 [1]: 1
+Select enable_telemetry:
+1 - yes
+2 - no
+Choose from 1, 2 [1]: 1
+Select enable_events:
+1 - yes
+2 - no
+Choose from 1, 2 [1]: 1
+Select enable_parameters:
+1 - yes
+2 - no
+Choose from 1, 2 [1]: 2
+[INFO] Found CMake file at 'MyProject/project.cmake'
+Add component MyComponents/HelloWorld to MyProject/project.cmake at end of file (yes/no)? yes
+Generate implementation files (yes/no)? no
+```
 
 > For any other questions, select the default response.
 
@@ -66,8 +91,9 @@ ls
 ```
 This will show the following files:
 1. `HelloWorld.fpp`: design model for the component
-2. `HelloWorld.hpp` and `HelloWorld.cpp`: C++ implementation files for the component
+2. `HelloWorld.hpp` and `HelloWorld.cpp`: C++ implementation files for the component, currently empty.
 3. `CMakeList.txt`: build definitions for the component.
+4. `docs` folder to place component documentation
 
 To build this component run `fprime-util build` in the current folder.
 
@@ -78,7 +104,11 @@ To build this component run `fprime-util build` in the current folder.
 A component model defines the interface of the component with the rest of the F´ system and with the ground system F´
 communicates with. In this case we intend to define a command, an event, and a telemetry channel as specified above.
 
-Open the model file `HelloWorld.fpp` and add the following:
+Open the model file `HelloWorld.fpp` and add replace the line
+
+`async command TODO opcode 0`
+
+with the following:
 
 ```
 @ Command to issue greeting with maximum length of 20 characters
@@ -95,7 +125,7 @@ event Hello(
 telemetry GreetingCount: U32
 ```
 > You should ensure to replace any existing command, event, and channel definitions with those supplied above but leave
-> the other definitions untouched.
+> the 'Standard AC Ports' section untouched.
 
 With this step completed you can generate a basic implementation with the following command:
 
@@ -145,7 +175,7 @@ void HelloWorld:: SAY_HELLO_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw
 > ```c++
 > HelloWorld:: HelloWorld() :
 >   m_greetingCount(0),
->   HelloWorldComponentBase() {
+>   HelloWorldComponentBase(compName) {
 > ```
 
 The component should build without errors by running `fprime-util build`.  Resolve any errors that occur before
