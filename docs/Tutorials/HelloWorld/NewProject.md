@@ -31,13 +31,21 @@ In order to make a new project, run the following command and answer the questio
 ```bash
 fprime-util new --project
 ```
-This command will ask for some input. Respond with the following answers:
-1. Project Name: MyProject
-2. F´ Version: devel
-3. Setup Tools In New Virtual Environment: yes
 
-This will create a new F´ project structure in a folder called `MyProject`, use the `devel` branch of F´ as the basis
-for the project, and set up the matching tools in a new Virtual Environment.
+This command will ask for some input. Respond with the following answers:
+```
+project_name [MyProject]: MyProject
+fprime_branch_or_tag [devel]: devel
+Select install_venv:
+1 - yes
+2 - no
+Choose from 1, 2 [1]: 1
+```
+
+Use the default for anything not specified. This commad will take a moment to run.
+
+The above command creates a new F´ project structure in a folder called `MyProject`, use the `devel` branch of F´ as
+the basis for the project, and set up the matching tools in a new Virtual Environment.
 
 > Experienced F´ users may note that we have not yet created a deployment, but rather just the base project structure.
 
@@ -47,8 +55,9 @@ The next step is to set up and build the newly created project. This will serve 
 created components, and will build the F´ framework supplied components.
 
 ```bash
+cd MyProject
 fprime-util generate
-fprime-util build
+fprime-util build -j4
 ```
 
 > `fprime-util generate` sets up the build environment for a project/deployment. It only needs to be done once. At the
