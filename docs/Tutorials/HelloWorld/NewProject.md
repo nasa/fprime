@@ -13,7 +13,7 @@ This tutorial will walk new users through creating a new F´ project.
 
 ## Bootstrapping F´
 
-An F´ [project](./Tutorial.md#project) ties to a specific versioned set of tools to work with F´.  In order to create
+An F´ [project](./Tutorial.md#project) ties to a specific version of tools to work with F´.  In order to create
 this project and install the correct version of tools, an initial bootstrap version of F´ tools must be installed. This
 is accomplished with the following command:
 
@@ -42,7 +42,7 @@ Select install_venv:
 Choose from 1, 2 [1]: 1
 ```
 
-Use the default for anything not specified. This commad will take a moment to run.
+Use the default for anything not specified. This command will take a moment to run.
 
 The above command creates a new F´ project structure in a folder called `MyProject`, use the `devel` branch of F´ as
 the basis for the project, and set up the matching tools in a new Virtual Environment.

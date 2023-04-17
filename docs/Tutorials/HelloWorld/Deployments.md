@@ -39,7 +39,7 @@ At this point, the `MyDeployment` has been created, but our `HelloWorld` compone
 
 ## Adding The Hello World Component
 
-First, the project's components should be added to this deployment's build. This can be done by addinf the following
+First, the project's components should be added to this deployment's build. This can be done by adding the following
 to `MyDeployment/CMakeLists.txt`.
 
 ```cmake
@@ -109,7 +109,7 @@ define a priority and queue depth options.  This is shown below.
 > `topology.fpp`.
 
 Finally, our new telemetry channel should be added to our telemetry packet specification. For this tutorial the
-channel can be ignored as our deployment will not use the telemetry packitizer. Add the following to the `ignore`
+channel can be ignored as the deployment will not use the telemetry packetizer. Add the following to the `ignore`
 section of `MyDeployment/Top/MyDeploymentPackets.xml`.
 
 ```

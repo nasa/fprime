@@ -22,7 +22,7 @@ used in this tutorial and an explanation of how the terminology is used.
 
 An F´ project is a collection of files and folders used to work with F´. At its core, a project is just a folder that
 can be used to hold F´ code. Projects should specifically exclude the core F´ library to avoid the "clone and own"
-problem. Rather projects should link-to a versioned F´ checkout.
+problem. Rather projects should link-to a version of F´.
 
 This tutorial will create a new `MyProject` project used to contain the other things created by the tutorial.
 
@@ -51,7 +51,7 @@ ground system and will echo the greeting back via the `Hello` event.
 Events represent actions that a component has performed. Events are akin to software log messages. Events are received
 and displayed by the ground system.
 
-This tutorial defines one event `Hello` emitted in response to the `SAY_HELLO` command amd containing the same greeting
+This tutorial defines one event `Hello` emitted in response to the `SAY_HELLO` command and containing the same greeting
 that the command had.
 
 #### Telemetry Channel

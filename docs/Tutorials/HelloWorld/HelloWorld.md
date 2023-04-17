@@ -113,7 +113,7 @@ with the following:
 ```
 @ Command to issue greeting with maximum length of 20 characters
 async command SAY_HELLO(
-    greeting: string size 20 @ Greeting to repeate in the Hello event
+    greeting: string size 20 @ Greeting to repeat in the Hello event
 )
 
 @ Greeting event with maximum greeting length of 20 characters
