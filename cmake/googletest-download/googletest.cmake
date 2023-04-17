@@ -1,5 +1,5 @@
 # Download and unpack googletest at configure time if it doesn't exit already
-if (NOT IS_DIRECTORY "${FPRIME_FRAMEWORK_PATH}/gtest/googletest-build-${TOOLCHAIN_NAME}/googletest")
+if (NOT IS_DIRECTORY "${CMAKE_BINARY_DIR}/gtest/googletest-build/googletest")
     configure_file("${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt.in" googletest-download/CMakeLists.txt)
     execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
       RESULT_VARIABLE result
@@ -20,8 +20,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 # Add googletest directly to our build. This defines
 # the gtest and gtest_main targets.
-add_subdirectory(${FPRIME_FRAMEWORK_PATH}/gtest/googletest-src
-	${FPRIME_FRAMEWORK_PATH}/gtest/googletest-build-${TOOLCHAIN_NAME}
+add_subdirectory(${CMAKE_BINARY_DIR}/gtest/googletest-src
+	${CMAKE_BINARY_DIR}/gtest/googletest-build
                  EXCLUDE_FROM_ALL)
 
 # The gtest/gtest_main targets carry header search path
