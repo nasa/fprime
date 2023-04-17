@@ -32,7 +32,15 @@ These are a simple set of requirements for this component.
 
 ## Creating the Hello World Component
 
-The next step is to create the new component. This is accomplished with the following command:
+The next step is to create the new component. First, create a directory called `MyComponents` to contain this project's
+components and change into that directory.
+
+```bash
+mkdir MyComponents
+cd MyComponents
+```
+
+Creating a new component is accomplished with the following command:
 
 ```bash
 fprime-util new --component
@@ -53,7 +61,7 @@ define commands, events, and telemetry channels.
 We should navigate to the component's directory and look around:
 
 ```bash
-cd MyComponents/HelloWorld
+cd HelloWorld
 ls
 ```
 This will show the following files:
