@@ -51,6 +51,9 @@ fprime-util generate
 fprime-util build
 ```
 
+> `fprime-util generate` sets up the build environment for a project/deployment. It only needs to be done once. At the
+> end of this tutorial, a new deployment will be created and `fprime-util generate` will also be used then.
+
 ## Conclusion
 
 A new project has been created with the name `MyProject` and has been placed in a new folder called in `MyProject` in
