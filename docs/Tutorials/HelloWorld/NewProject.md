@@ -8,6 +8,7 @@ This tutorial will walk new users through creating a new F´ project.
 ### Tutorial Steps:
 - [Bootstrapping F´](#bootstrapping-f)
 - [Creating a New F´ Project](#creating-a-new-f-project)
+- [Building the New F´ Project](#building-the-new-f-project)
 - [Conclusion](#conclusion)
 
 ## Bootstrapping F´
@@ -39,6 +40,16 @@ This will create a new F´ project structure in a folder called `MyProject`, use
 for the project, and set up the matching tools in a new Virtual Environment.
 
 > Experienced F´ users may note that we have not yet created a deployment, but rather just the base project structure.
+
+## Building the New F´ Project
+
+The next step is to set up and build the newly created project. This will serve as a build environment for any newly
+created components, and will build the F´ framework supplied components.
+
+```bash
+fprime-util generate
+fprime-util build
+```
 
 ## Conclusion
 
