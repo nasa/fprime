@@ -1,7 +1,7 @@
 # Getting Started: Creating an F´ Hello World Component
 
 This tutorial will walk new users through creating a basic F´ component. Users should have completed the new project
-tutorial and have the tools sourced as shown in the[conclusion](./NewProject.md#conclusion) portion of that tutorial.
+tutorial and have the tools sourced as shown in the [conclusion](./NewProject.md#conclusion) portion of that tutorial.
 
 F´ components encapsulate the various parts of system behavior. These components can interact with the ground system
 through [commands](Tutorial.md#command), [events](./Tutorial.md#event), and
