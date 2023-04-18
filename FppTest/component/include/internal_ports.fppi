@@ -1,34 +1,27 @@
-# ----------------------------------------------------------------------
-# Internal ports
-# ----------------------------------------------------------------------
+internal port internalNoArgs priority 10 drop
 
-@ An internal port with primitive params and priority
 internal port internalPrimitive(
-  u32: U32, @< A U32
-  f32: F32, @< An F32
-  b: bool @< A boolean
+  u32_1: U32, @< A U32
+  u32_2: U32, @< A U32
+  f32_1: F32, @< An F32
+  f32_2: F32, @< An F32
+  b1: bool @< A boolean
+  b2: bool @< A boolean
 ) priority 5
 
-@ An internal port with string params
 internal port internalString(
   str1: string, @< A string
   str2: string size 100 @< Another string
 )
 
-@ An internal port with enum params
 internal port internalEnum(
   en: FormalParamEnum @< An enum
 )
 
-@ An internal port with array params
 internal port internalArray(
   arr: FormalParamArray @< An array
 )
 
-@ An internal port with struct params with priority and queue full behavior
 internal port internalStruct(
   str: FormalParamStruct @< A struct
 ) priority 20 drop
-
-@ An internal port with priority and queue full behavior
-internal port internalPriorityDrop priority 10 drop

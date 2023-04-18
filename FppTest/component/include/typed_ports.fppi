@@ -55,7 +55,7 @@ sync input port primitiveReturnSync: PrimitiveReturn
 guarded input port primitiveReturnGuarded: PrimitiveReturn
 
 # sync input port stringReturnSync: StringReturn
-# 
+ 
 # guarded input port stringReturnGuarded: StringReturn
 
 sync input port enumReturnSync: EnumReturn

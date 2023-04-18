@@ -24,20 +24,24 @@ namespace FppTest {
     // ----------------------------------------------------------------------
 
     BoolType::BoolType() {
-      b = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
+      val = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     }
 
-    PrimitiveType::PrimitiveType() {
-      u32 = STest::Pick::any();
+    U32Type::U32Type() {
+      val = STest::Pick::any();
+    }
+
+    F32Type::F32Type() {
+      val = static_cast<F32>(STest::Pick::any());
     }
 
     PrimitiveTypes::PrimitiveTypes() {
-      u32_1 = STest::Pick::any();
-      u32_2 = STest::Pick::any();
-      f32_1 = static_cast<F32>(STest::Pick::any());
-      f32_2 = static_cast<F32>(STest::Pick::any());
-      b1 = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-      b2 = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
+      val1 = STest::Pick::any();
+      val2 = STest::Pick::any();
+      val3 = static_cast<F32>(STest::Pick::any());
+      val4 = static_cast<F32>(STest::Pick::any());
+      val5 = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
+      val6 = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     }
 
     // ----------------------------------------------------------------------
@@ -45,30 +49,30 @@ namespace FppTest {
     // ----------------------------------------------------------------------
 
     EnumType::EnumType() {
-      en = getRandomFormalParamEnum();
+      val = getRandomFormalParamEnum();
     }
 
     EnumTypes::EnumTypes() {
-      en1 = getRandomFormalParamEnum();
-      en2 = getRandomFormalParamEnum();
+      val1 = getRandomFormalParamEnum();
+      val2 = getRandomFormalParamEnum();
     }
 
     ArrayType::ArrayType() {
-      arr = getRandomFormalParamArray();
+      val = getRandomFormalParamArray();
     }
 
     ArrayTypes::ArrayTypes() {
-      arr1 = getRandomFormalParamArray();
-      arr2 = getRandomFormalParamArray();
+      val1 = getRandomFormalParamArray();
+      val2 = getRandomFormalParamArray();
     }
 
     StructType::StructType() {
-      str = getRandomFormalParamStruct();
+      val = getRandomFormalParamStruct();
     }
 
     StructTypes::StructTypes() {
-      str1 = getRandomFormalParamStruct();
-      str2 = getRandomFormalParamStruct();
+      val1 = getRandomFormalParamStruct();
+      val2 = getRandomFormalParamStruct();
     }
 
     // ----------------------------------------------------------------------
@@ -78,64 +82,66 @@ namespace FppTest {
     PortStringType::PortStringType() {
       char buf[str.getCapacity()];
       Utils::setString(buf, sizeof(buf));
-      str = buf;
+      val = buf;
     }
     
     PortStringTypes::PortStringTypes() {
-      char buf80[str80.getCapacity()];
-      char buf100[str100.getCapacity()];
-
-      Utils::setString(buf80, sizeof(buf80));
-      Utils::setString(buf100, sizeof(buf100));
-
-      str80_1 = buf80;
-      str100_1 = buf100;
-
-      Utils::setString(buf80, sizeof(buf80));
-      Utils::setString(buf100, sizeof(buf100));
-
-      str80_2 = buf80;
-      str100_2 = buf100;
+      setRandomString(val1);
+      setRandomString(val2);
+      setRandomString(val3);
+      setRandomString(val4);
     }
 
     InternalInterfaceStringType::InternalInterfaceStringType() {
-      char buf[str.getCapacity()];
-      Utils::setString(buf, sizeof(buf));
-      str = buf;
+      setRandomString(val);
     }
 
     InternalInterfaceStringTypes::InternalInterfaceStringTypes() {
+      setRandomString(val1);
+      setRandomString(val2);
     }
 
     CmdStringType::CmdStringType() {
+      setRandomString(val);
     }
 
     CmdStringTypes::CmdStringTypes() {
+      setRandomString(val1);
+      setRandomString(val2);
     }
 
     LogStringType::LogStringType() {
+      setRandomString(val);
     }
 
     LogStringTypes::LogStringTypes() {
+      setRandomString(val1);
+      setRandomString(val2);
     }
 
     TlmStringType::TlmStringType() {
+      setRandomString(val);
     }
 
     TlmStringTypes::TlmStringTypes() {
+      setRandomString(val1);
+      setRandomString(val2);
     }
 
     PrmStringType::PrmStringType() {
+      setRandomString(val);
     }
 
     PrmStringTypes::PrmStringTypes() {
+      setRandomString(val1);
+      setRandomString(val2);
     }
 
     // ----------------------------------------------------------------------
     // Serial types
     // ----------------------------------------------------------------------
 
-    SerialTypes::SerialTypes() : buf(data, sizeof(data)) {
+    SerialTypes::SerialTypes() : val(data, sizeof(data)) {
       U32 len = STest::Pick::lowerUpper(1, SERIAL_ARGS_BUFFER_CAPACITY);
 
       for (U32 i = 0; i < len; i++) {
@@ -146,6 +152,12 @@ namespace FppTest {
     // ----------------------------------------------------------------------
     // Helper functions
     // ----------------------------------------------------------------------
+
+    void setRandomString(Fw::StringBase& str) {
+      char buf[str.getCapacity()];
+      Utils::setString(buf, sizeof(buf));
+      str = buf;
+    }
 
     FormalParamEnum getRandomFormalParamEnum() {
       FormalParamEnum e;

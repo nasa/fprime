@@ -49,24 +49,30 @@ namespace FppTest {
     struct BoolType {
       BoolType();
 
-      bool b;
+      bool val;
     };
 
-    struct IntegerType {
-      PrimitiveType();
+    struct U32Type {
+      U32Type();
 
-      U32 u32;
+      U32 val;
+    };
+
+    struct F32Type {
+      F32Type();
+
+      F32 val;
     };
 
     struct PrimitiveTypes {
       PrimitiveTypes();
 
-      U32 u32_1;
-      U32 u32_2;
-      F32 f32_1;
-      F32 f32_2;
-      bool b1;
-      bool b2;
+      U32 val1;
+      U32 val2;
+      F32 val3;
+      F32 val4;
+      bool val5;
+      bool val6;
     };
 
     // ----------------------------------------------------------------------
@@ -76,40 +82,40 @@ namespace FppTest {
     struct EnumType {
       EnumType();
 
-      FormalParamEnum en;
+      FormalParamEnum val;
     };
 
     struct EnumTypes {
       EnumTypes();
 
-      FormalParamEnum en1;
-      FormalParamEnum en2;
+      FormalParamEnum val1;
+      FormalParamEnum val2;
     };
 
     struct ArrayType {
       ArrayType();
 
-      FormalParamArray arr;
+      FormalParamArray val;
     };
 
     struct ArrayTypes {
       ArrayTypes();
 
-      FormalParamArray arr1;
-      FormalParamArray arr2;
+      FormalParamArray val1;
+      FormalParamArray val2;
     };
 
     struct StructType {
       StructType();
 
-      FormalParamStruct str;
+      FormalParamStruct val;
     };
 
     struct StructTypes {
       StructTypes();
 
-      FormalParamStruct str1;
-      FormalParamStruct str2;
+      FormalParamStruct val1;
+      FormalParamStruct val2;
     };
 
     // ----------------------------------------------------------------------
@@ -119,82 +125,82 @@ namespace FppTest {
     struct PortStringType {
       PortStringType();
 
-      StringTypesPortStrings::StringSize80 str;
+      StringArgsPortStrings::StringSize80 val;
     };
 
     struct PortStringTypes {
       PortStringTypes();
 
-      StringTypesPortStrings::StringSize80 str80_1;
-      StringTypesPortStrings::StringSize80 str80_2;
-      StringTypesPortStrings::StringSize100 str100_1;
-      StringTypesPortStrings::StringSize100 str100_2;
+      StringArgsPortStrings::StringSize80 val1;
+      StringArgsPortStrings::StringSize80 val2;
+      StringArgsPortStrings::StringSize100 val3;
+      StringArgsPortStrings::StringSize100 val4;
     };
 
     struct InternalInterfaceStringType {
       InternalInterfaceStringType();
 
-      Fw::InternalInterfaceString str;
-    }
+      Fw::InternalInterfaceString val;
+    };
 
     struct InternalInterfaceStringTypes {
       InternalInterfaceStringTypes();
 
-      Fw::InternalInterfaceString str80;
-      Fw::InternalInterfaceString str100;
-    }
+      Fw::InternalInterfaceString val1;
+      Fw::InternalInterfaceString val2;
+    };
 
     struct CmdStringType {
       CmdStringType();
 
-      Fw::CmdStringArg str;
-    }
+      Fw::CmdStringArg val;
+    };
 
     struct CmdStringTypes {
       CmdStringTypes();
 
-      Fw::CmdStringArg str80;
-      Fw::CmdStringArg str100;
-    }
+      Fw::CmdStringArg val1;
+      Fw::CmdStringArg val2;
+    };
 
     struct LogStringType {
       LogStringType();
 
-      Fw::LogStringArg str;
-    }
+      Fw::LogStringArg val;
+    };
 
     struct LogStringTypes {
       LogStringTypes();
 
-      Fw::LogStringArg str80;
-      Fw::LogStringArg str100;
-    }
+      Fw::LogStringArg val1;
+      Fw::LogStringArg val2;
+    };
 
     struct TlmStringType {
       TlmStringType();
 
-      Fw::TlmString str;
-    }
+      Fw::TlmString val;
+    };
 
     struct TlmStringTypes {
       TlmStringTypes();
 
-      Fw::TlmString str80;
-      Fw::TlmString str100;
-    }
+      Fw::TlmString val1;
+      Fw::TlmString val2;
+    };
 
     struct PrmStringType {
       PrmStringType();
 
-      Fw::ParamString str;
-    }
+      Fw::ParamString val;
+    };
 
     struct PrmStringTypes {
       PrmStringTypes();
 
-      Fw::ParamString str80;
-      Fw::ParamString str100;
-    }
+      Fw::ParamString val1;
+      Fw::ParamString val2;
+    };
 
     // ----------------------------------------------------------------------
     // Serial type
@@ -204,13 +210,14 @@ namespace FppTest {
       SerialType();
 
       U8 data[SERIAL_ARGS_BUFFER_CAPACITY];
-      Fw::SerialBuffer buf;
+      Fw::SerialBuffer val;
     };
 
     // ----------------------------------------------------------------------
     // Helper functions
     // ----------------------------------------------------------------------
     
+    void setRandomString(Fw::StringBase& str);
     FormalParamEnum getRandomFormalParamEnum();
     FormalParamArray getRandomFormalParamArray();
     FormalParamStruct getRandomFormalParamStruct();
@@ -218,12 +225,36 @@ namespace FppTest {
     // ----------------------------------------------------------------------
     // Typedefs
     // ----------------------------------------------------------------------
+    
+    typedef FormalParams<Empty> NoParams;
+    typedef FormalParams<BoolType> BoolParam;
+    typedef FormalParams<U32Type> U32Param;
+    typedef FormalParams<F32Type> F32Param;
+    typedef FormalParams<PrimitiveTypes> PrimitiveParams;
+    typedef FormalParams<EnumType> EnumParam;
+    typedef FormalParams<EnumTypes> EnumParams;
+    typedef FormalParams<ArrayType> ArrayParam;
+    typedef FormalParams<ArrayTypes> ArrayParams;
+    typedef FormalParams<StructType> StructParam;
+    typedef FormalParams<StructTypes> StructParams;
+    typedef FormalParams<PortStringType> PortStringParam;
+    typedef FormalParams<PortStringTypes> PortStringParams;
+    typedef FormalParams<InternalInterfaceStringType> InternalInterfaceStringParam;
+    typedef FormalParams<InternalInterfaceStringTypes> InternalInterfaceStringParams;
+    typedef FormalParams<CmdStringType> CmdStringParam;
+    typedef FormalParams<CmdStringTypes> CmdStringParams;
+    typedef FormalParams<LogStringType> LogStringParam;
+    typedef FormalParams<LogStringTypes> LogStringParams;
+    typedef FormalParams<TlmStringType> TlmStringParam;
+    typedef FormalParams<TlmStringTypes> TlmStringParams;
+    typedef FormalParams<PrmStringType> PrmStringParam;
+    typedef FormalParams<PrmStringTypes> PrmStringParams;
 
-    typedef ForamlParamsWithReturn<Empty, BoolType> NoArgsReturn;
-    typedef ForamlParamsWithReturn<PrimitiveTypes, PrimitiveType> PrimitiveReturn;
-    typedef ForamlParamsWithReturn<EnumTypes, EnumType> EnumReturn;
-    typedef ForamlParamsWithReturn<ArrayTypes, ArrayType> ArrayReturn;
-    typedef ForamlParamsWithReturn<StructTypes, StructType> StructReturn;
+    typedef FormalParamsWithReturn<Empty, BoolType> NoArgsReturn;
+    typedef FormalParamsWithReturn<PrimitiveTypes, U32Type> PrimitiveReturn;
+    typedef FormalParamsWithReturn<EnumTypes, EnumType> EnumReturn;
+    typedef FormalParamsWithReturn<ArrayTypes, ArrayType> ArrayReturn;
+    typedef FormalParamsWithReturn<StructTypes, StructType> StructReturn;
 
   } // namespace Types
 
