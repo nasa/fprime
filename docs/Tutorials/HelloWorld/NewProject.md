@@ -2,9 +2,6 @@
 
 This tutorial will walk new users through creating a new F´ project.
 
-### Prerequisites:
-- [F´ Installation Requirements](../../INSTALL.md#requirements)
-
 ### Tutorial Steps:
 - [Bootstrapping F´](#bootstrapping-f)
 - [Creating a New F´ Project](#creating-a-new-f-project)
