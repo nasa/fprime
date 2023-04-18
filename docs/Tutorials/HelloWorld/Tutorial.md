@@ -11,8 +11,6 @@ This tutorial walks through the following steps:
 Once finished, users should have a good understanding of the basic development mechanics for working with F´ and then
 could dive deeper into concepts through the [Math Component Tutorial](../MathComponent/Tutorial.md).
 
-**Next:** [Getting Started: Creating an F´ Project](./NewProject.md)
-
 ## F´ Terminology
 
 F´ uses specific terminology to refer to specific parts of the system. This section dives into the basic F´ terminology
@@ -76,3 +74,5 @@ to the topology.
 
 This tutorial will use a standard command and data handling topology. A single `HelloWorld` component instance called
 `helloWorld` will be added to the standard topology.
+
+**Next:** [Getting Started: Creating an F´ Project](./NewProject.md)
