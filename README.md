@@ -6,7 +6,7 @@
 </p>
 <hr>
 
-F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on [several space applications](docs/projects.md). It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
+F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on [several space applications](https://nasa.github.io/fprime/projects.html). It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
 **Please Visit the F´ Website:** [https://nasa.github.io/fprime/](https://nasa.github.io/fprime/).  This website contains project information, user guides, documentation, tutorials, and more!
 
@@ -17,13 +17,12 @@ F´ (F Prime) is a component-driven framework that enables rapid development and
 - A growing collection of ready-to-use components
 - Testing tools for testing flight software at the unit and integration levels.
 
-Learn more about F' key features [here](docs/features.md).
+Learn more about F' key features [here](https://nasa.github.io/fprime/features.html).
 
 
 ## Getting Started
 
-F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system and topology design, tooling, and more.<br>
-New users are encouraged to start with the [Getting Started](https://nasa.github.io/fprime/Tutorials/README.html) tutorial. All tutorials are available [here](https://nasa.github.io/fprime/Tutorials/README.html).
+F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system and topology design, tooling, and more. New users are encouraged to start with the [Getting Started](https://nasa.github.io/fprime/Tutorials/HelloWorld/Tutorial.html) tutorial. All tutorials are available [here](https://nasa.github.io/fprime/Tutorials/README.html).
 
 
 ## Getting Help
@@ -31,7 +30,7 @@ New users are encouraged to start with the [Getting Started](https://nasa.github
 ### Questions
 To ask questions, discuss improvements, ask for help, please use the project's [GitHub Discussions](https://github.com/nasa/fprime/discussions).
 ### Bug reports
-To report bug and issues, you can [open an issue](https://github.com/nasa/fprime/issues) within this repository.
+To report bugs and issues, you can [open an issue](https://github.com/nasa/fprime/issues) within this repository.
 ### Community
 The [F´ Community](https://github.com/fprime-community) GitHub Organization contains third party contributions, more documentation of flight software development, and more!
 
