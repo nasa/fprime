@@ -17,7 +17,7 @@ Flask-Compress==1.13
 Flask-RESTful==0.3.9
 fprime-fpp==1.2.0
 fprime-gds==3.1.5a4
-fprime-tools==3.1.2a2
+fprime-tools==3.1.2a4
 gcovr==5.2
 idna==3.4
 importlib-metadata==4.13.0
