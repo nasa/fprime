@@ -13,7 +13,7 @@ users to learn F´ and walk through the most basic steps in developing an F´ ap
 2. [Cross-Compilation Tutorial](CrossCompilation/Tutorial.md)
 3. [GpsTutorial](GpsTutorial/Tutorial.md)
 
-## [Getting Started](HelloWorld/NewProject.md)
+## [Getting Started](HelloWorld/Tutorial.md)
 
 The getting started tutorial walks a new user through creating a new project, their first F´ component, and testing that
 component through an F´ deployment. This tutorial has the following subsections:
