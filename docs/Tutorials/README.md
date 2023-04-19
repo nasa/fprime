@@ -8,12 +8,11 @@ users to learn F´ and walk through the most basic steps in developing an F´ ap
 
 ## Tutorials Index
 
-0. [GettingStarted](HelloWorld/Tutorial.md)
-1. [MathComponent](MathComponent/Tutorial.md)
-2. [Cross-Compilation Tutorial](CrossCompilation/Tutorial.md)
-3. [GpsTutorial](GpsTutorial/Tutorial.md)
+1. [HelloWorld](HelloWorld/Tutorial.md)
+2. [MathComponent](MathComponent/Tutorial.md)
+3. [Cross-Compilation Tutorial](CrossCompilation/Tutorial.md)
 
-## [Getting Started](HelloWorld/Tutorial.md)
+## [HelloWorld](HelloWorld/Tutorial.md)
 
 The getting started tutorial walks a new user through creating a new project, their first F´ component, and testing that
 component through an F´ deployment. This tutorial has the following subsections:
@@ -42,12 +41,3 @@ should possess a Raspberry Pi. Users should first review the
 [Getting Started Tutorial](HelloWorld/Tutorial.md) for understanding the
 tools and complete the [Math Component Tutorial](MathComponent/Tutorial.md) to
 build familiarity with F´ and to have a complete Ref application.
-
-## [Gps Tutorial](GpsTutorial/Tutorial.md)
-
-A tutorial covering the interaction with a real GPS receiver. This will cover how to design driver components, application components,
-and cross-compiling onto a Raspberry Pi. The purpose of this tutorial is to expand from F´ running on *nix machines into the world
-of embedded hardware. To get the most from this tutorial, the user should possess a Raspberry Pi, have access to a Linux machine or
-a Linux VM, and have a small UART/USB GPS receiver. The ones with a USB mode work best.  Users should first review the
-[Getting Started Tutorial](HelloWorld/Tutorial.md) for understanding the tools and would benefit from running through the
-[Math Component Tutorial](MathComponent/Tutorial.md) to build familiarity with F´.
