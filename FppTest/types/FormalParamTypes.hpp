@@ -20,6 +20,7 @@
 #include "Fw/Prm/PrmString.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
 
+#include "FppTest/utils/Utils.hpp"
 #include "FppTest/types/FormalParamEnumEnumAc.hpp"
 #include "FppTest/types/FormalParamArrayArrayAc.hpp"
 #include "FppTest/types/FormalParamStructSerializableAc.hpp"

@@ -80,9 +80,7 @@ namespace FppTest {
     // ----------------------------------------------------------------------
     
     PortStringType::PortStringType() {
-      char buf[str.getCapacity()];
-      Utils::setString(buf, sizeof(buf));
-      val = buf;
+      setRandomString(val);
     }
     
     PortStringTypes::PortStringTypes() {
@@ -138,10 +136,10 @@ namespace FppTest {
     }
 
     // ----------------------------------------------------------------------
-    // Serial types
+    // Serial type
     // ----------------------------------------------------------------------
 
-    SerialTypes::SerialTypes() : val(data, sizeof(data)) {
+    SerialType::SerialType() : val(data, sizeof(data)) {
       U32 len = STest::Pick::lowerUpper(1, SERIAL_ARGS_BUFFER_CAPACITY);
 
       for (U32 i = 0; i < len; i++) {
