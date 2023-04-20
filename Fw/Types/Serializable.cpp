@@ -3,7 +3,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <cstdio>
-
+#include <FpConfig.hpp>
 #ifdef BUILD_UT
 #include <iomanip>
 #include <Fw/Types/String.hpp>
@@ -19,7 +19,7 @@ namespace Fw {
     Serializable::~Serializable() {
     }
 
-#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
+#if FW_SERIALIZABLE_TO_STRING || FW_ENABLE_TEXT_LOGGING || BUILD_UT
 
     void Serializable::toString(StringBase& text) const {
         text = "NOSPEC"; // set to not specified.
@@ -186,7 +186,7 @@ namespace Fw {
     }
 #endif
 
-#if FW_HAS_F64
+#if FW_HAS_F64 && FW_HAS_64_BIT
 
     SerializeStatus SerializeBufferBase::serialize(F64 val) {
         // floating point values need to be byte-swapped as well, so copy to U64 and use that routine

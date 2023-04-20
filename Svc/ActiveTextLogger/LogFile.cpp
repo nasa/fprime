@@ -95,7 +95,7 @@ namespace Svc {
         }
 
         U32 suffix = 0;
-        U64 tmp;
+        FwSizeType tmp;
         char fileNameFinal[Fw::String::STRING_SIZE];
         (void) strncpy(fileNameFinal,fileName,
                        Fw::String::STRING_SIZE);
@@ -119,7 +119,7 @@ namespace Svc {
             }
 
             NATIVE_INT_TYPE stat = snprintf(fileNameFinal,Fw::String::STRING_SIZE,
-                                            "%s%d",fileName,suffix);
+                                            "%s%" PRIu32,fileName,suffix);
 
             // If there was error, then just fail:
             if (stat <= 0) {

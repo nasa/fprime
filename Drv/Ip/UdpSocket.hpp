@@ -12,7 +12,7 @@
 #ifndef DRV_IP_UDPSOCKET_HPP_
 #define DRV_IP_UDPSOCKET_HPP_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <IpCfg.hpp>
 

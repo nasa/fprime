@@ -20,6 +20,7 @@ async command RemoveDirectory(
 @ Remove a file
 async command RemoveFile(
                           fileName: string size 256 @< The file to remove
+                          ignoreErrors: bool @< Ignore non-existent files
                         ) \
   opcode 0x03
 
@@ -36,3 +37,8 @@ async command AppendFile(
                           target: string size 256 @< The name of the file to append to
                         ) \
   opcode 0x05
+
+async command FileSize(
+                        fileName: string size 256 @< The file to get the size of
+                      ) \
+  opcode 0x06

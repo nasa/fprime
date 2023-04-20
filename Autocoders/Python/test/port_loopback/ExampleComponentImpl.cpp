@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/port_loopback/ExampleComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <cstdio>
 
 namespace ExampleComponents {

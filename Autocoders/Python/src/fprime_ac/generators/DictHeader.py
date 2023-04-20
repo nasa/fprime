@@ -79,7 +79,7 @@ class DictHeader:
             DEBUG.error(
                 "DictHeaderVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "DictHeaderVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class DictHeader:
             DEBUG.error(
                 "DictHeaderVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "DictHeaderVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

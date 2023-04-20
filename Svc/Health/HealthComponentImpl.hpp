@@ -142,7 +142,7 @@ namespace Svc {
                 Fw::Enabled::t enabled; //!< if current ping result is checked
             } m_pingTrackerEntries[NUM_PINGSEND_OUTPUT_PORTS];
 
-            NATIVE_INT_TYPE findEntry(Fw::CmdStringArg entry);
+            NATIVE_INT_TYPE findEntry(const Fw::CmdStringArg& entry);
 
             //!  Private member data
             U32 m_numPingEntries; //!< stores number of entries passed to constructor

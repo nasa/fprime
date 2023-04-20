@@ -472,9 +472,7 @@ class Packet:
             print("")
 
             print("Number of items in packet item list: ", len(self.m_item_list))
-            i = 0
-            for item in self.m_item_list:
-                i += 1
+            for i, item in enumerate(self.m_item_list, start=1):
                 print("Item # ", i)
                 print("\tis_reserve:     ", item.m_is_reserve)
                 print("\tis_constant:    ", item.m_is_constant)

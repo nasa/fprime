@@ -1,12 +1,8 @@
 # `settings.ini`: Build Settings Configuration
 
-In many circumstances it is useful to set default values for the build as well as configure external
+In many circumstances, it is useful to set default values for the build as well as configure external
 locations for F´ to use external code. The `settings.ini` file allows users to set various settings
 to control the build.
-
-**Note:** settings.ini only adjusts the build when running through `fprime-util`. These settings can
-be supplied directly to CMake using -D flags as described here: [CMake
-Settings](../dev/cmake-settings.md), but it is not recommended to use CMake directly.
 
 In this document:
 - [`settings.ini` Settings](#settingsini-settings)
@@ -20,12 +16,11 @@ generate` step, and thus builds **must** be regenerated after a change.
 ## `settings.ini` Settings
 
 The `settings.ini` file is written in the INI format as interpreted by the default settings of the
-Python `configparser` module. Should a user with to reference another key, use the `%(other key)s`
-syntax. Full format description is available here:
+Python `configparser` module. Should a user were to reference another key, the `%(other key)s` syntax should be used. The full format description is available here:
 
 https://docs.python.org/3/library/configparser.html#supported-ini-file-structure
 
-This file is expected in the directory of the an F´ deployment and affects only the deployment it is
+This file is expected in the directory of an F´ deployment and affects only the deployment it is
 defined in. This directory is the same directory that contains the project's base `CMakeLists.txt`
 (has a `project()` call).
 
@@ -51,6 +46,18 @@ These settings include:
 - `ac_constants`: Path to autocode constants ini file.
 - `config_directory`: Path to configuration header directory.
 
+### Platform Sections
+
+Some settings may be overridden for specific platforms using specific platform sections. These sections
+have the same name as the platform and may set the following settings:
+
+1. `config_directory`
+2. `ac_constants`
+3. `install_destination`
+4. `environment_file`
+
+These settings only apply when building for the specified platform.
+
 ### Example `settings.ini`
 
 This `settings.ini` file comes from the [fprime-sphinx](https://github.com/fprime-community/fprime-sphinx)
@@ -66,12 +73,15 @@ default_toolchain: gr712-vxworks6
 environment_file: ../fprime-vxworks/cmake/env/VxWorks-GR712.ini
 ac_constants: ./Cfg/AcConstants.ini
 config_directory: Cfg
+
+[gr712-vxworks6]
+config_directory: Cfg_gr712
 ```
 
 ### Example Environment Ini File
 
 The format for the environment file option is similar to `settings.ini`
-Each key in the file will be set as environmental variable for the project build.
+Each key in the file will be set as an environmental variable for the project build.
 
 ```ini
 [environment]

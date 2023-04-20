@@ -127,8 +127,6 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             pyfile = "{}/{}.py".format(output_dir, fname)
             DEBUG.info("Open file: {}".format(pyfile))
             fd = open(pyfile, "w")
-            if fd is None:
-                raise Exception("Could not open {} file.".format(pyfile))
             DEBUG.info("Completed {} open".format(pyfile))
             self.__fp[fname] = fd
 
@@ -179,7 +177,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             c.name = fname
 
             if len(obj.get_ids()) > 1:
-                raise Exception(
+                raise ValueError(
                     "There is more than one event id when creating dictionaries. Check xml of {} or see if multiple explicit IDs exist in the AcConstants.ini file".format(
                         fname
                     )
@@ -196,9 +194,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
 
             c.arglist = []
             c.ser_import_list = []
-            arg_num = 0
-
-            for arg_obj in obj.get_args():
+            for arg_num, arg_obj in enumerate(obj.get_args()):
                 n = arg_obj.get_name()
                 t = arg_obj.get_type()
                 s = arg_obj.get_size()
@@ -230,6 +226,5 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
                         c.format_string = format_string
 
                 c.arglist.append((n, d, type_string))
-                arg_num += 1
             self._writeTmpl(c, self.__fp[fname], "eventBodyVisit")
             self.__fp[fname].close()

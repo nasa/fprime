@@ -15,8 +15,10 @@
 \#include "Fw/Types/Assert.hpp"
 \#include "${name}EnumAc.hpp"
 
-#if $namespace
+#if $namespace_list != None
+ #for $namespace in $namespace_list
 namespace ${namespace} {
+ #end for
 #end if
 
   // ----------------------------------------------------------------------
@@ -186,6 +188,8 @@ a == $item_value#slurp
   }
   \#endif
 
-#if $namespace
-}
+#if $namespace_list != None
+ #for $namespace in $reversed($namespace_list)
+} // end namespace $namespace
+ #end for
 #end if

@@ -6,7 +6,7 @@
 
 
 \#include <${include_path}/${name}.hpp>
-\#include "Fw/Types/BasicTypes.hpp"
+\#include <FpConfig.hpp>
 
 #if $namespace_list != None
   #for $namespace in $namespace_list
@@ -24,20 +24,6 @@ $emit_non_port_params([ $param_compName ])
     ) : ${component_base}(compName)
   {
 
-  }
-
-  void ${name} ::
-    init(
-$emit_non_port_params($params_init_cpp)
-    )
-  {
-#if $kind == "passive"
-    ${component_base}::init(instance);
-#else if $needs_msg_size:
-    ${component_base}::init(queueDepth, msgSize, instance);
-#else
-    ${component_base}::init(queueDepth, instance);
-#end if
   }
 
   ${name} ::

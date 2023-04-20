@@ -6,7 +6,7 @@ layout: default
 F´ (or F Prime) is a software framework for the rapid development and deployment of embedded systems and spaceflight applications.
 Originally developed at NASA's Jet Propulsion Laboratory, F´ is open-source software that has been successfully deployed
 for several space applications. It has been used for but is not limited to, CubeSats, SmallSats, instruments, and
-deployable.
+deployables.
 
 F´ has the following features:
 

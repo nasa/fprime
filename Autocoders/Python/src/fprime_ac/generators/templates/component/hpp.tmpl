@@ -7,8 +7,8 @@
 //
 // ======================================================================
 
-\#ifndef ${name.upper()}_COMP_HPP_
-\#define ${name.upper()}_COMP_HPP_
+\#ifndef ${namespace.upper().replace("::", "_")}_${name.upper()}_COMP_HPP_
+\#define ${namespace.upper().replace("::", "_")}_${name.upper()}_COMP_HPP_
 
 \#include <FpConfig.hpp>
 \#include <Fw/Port/InputSerializePort.hpp>
@@ -244,6 +244,7 @@ namespace ${namespace} {
         const char* compName = "" $doxygen_post_comment("Component name")
     );
 
+  public:
     //! Initialize a ${name}ComponentBase object
     //!
     void init(
@@ -259,6 +260,7 @@ namespace ${namespace} {
 #end if
     );
 
+  PROTECTED:
     //! Destroy a ${name}ComponentBase object
     //!
     virtual ~${name}ComponentBase();

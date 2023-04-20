@@ -54,16 +54,18 @@ function(build_setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPE
 
     get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
     list(REMOVE_ITEM MODULE_SOURCES "${EMPTY}")
-    set_target_properties(
-            ${MODULE}
-            PROPERTIES
-            SOURCES "${MODULE_SOURCES}"
-    )
-    # Setup the hash file for our sources
-    foreach(SRC_FILE IN LISTS MODULE_SOURCES)
-        set_hash_flag("${SRC_FILE}")
-    endforeach()
-
+    # Only update module sources if the list is not empty. Otherwise we keep empty.c as the only source.
+    if (NOT "${MODULE_SOURCES}" STREQUAL "")
+        set_target_properties(
+                ${MODULE}
+                PROPERTIES
+                SOURCES "${MODULE_SOURCES}"
+        )
+        # Setup the hash file for our sources
+        foreach(SRC_FILE IN LISTS MODULE_SOURCES)
+            set_assert_flags("${SRC_FILE}")
+        endforeach()
+    endif()
     # Includes the source, so that the Ac files can include source headers
     target_include_directories("${MODULE}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -114,7 +116,8 @@ endfunction()
 function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
     message(STATUS "Adding ${MODULE_TYPE}: ${MODULE}")
-    run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai_xml)
+    get_property(CUSTOM_AUTOCODERS GLOBAL PROPERTY FPRIME_AUTOCODER_TARGET_LIST)
+    run_ac_set("${SOURCES}" ${CUSTOM_AUTOCODERS})
     resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES} )
     build_setup_build_module("${MODULE}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
     # Special flags applied to modules when compiling with testing enabled

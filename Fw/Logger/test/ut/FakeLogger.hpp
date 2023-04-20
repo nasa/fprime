@@ -7,7 +7,7 @@
  * @author mstarch
  */
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Logger/Logger.hpp>
 
 #ifndef FPRIME_FAKELOGGER_HPP

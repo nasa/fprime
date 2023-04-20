@@ -5,12 +5,11 @@
 #include <iostream>
 #endif
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Fw {
 
     class StringBase; //!< forward declaration for string
-
     typedef enum {
         FW_SERIALIZE_OK, //!< Serialization/Deserialization operation was successful
         FW_SERIALIZE_FORMAT_ERROR, //!< Data was the wrong format (e.g. wrong packet type)
@@ -20,14 +19,13 @@ namespace Fw {
         FW_DESERIALIZE_SIZE_MISMATCH, //!< Data was left in the buffer, but not enough to deserialize
         FW_DESERIALIZE_TYPE_MISMATCH //!< Deserialized type ID didn't match
     } SerializeStatus;
-
     class SerializeBufferBase; //!< forward declaration
 
     class Serializable {
         public:
             virtual SerializeStatus serialize(SerializeBufferBase& buffer) const = 0; //!< serialize contents
             virtual SerializeStatus deserialize(SerializeBufferBase& buffer) = 0; //!< deserialize to contents
-#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
+#if FW_SERIALIZABLE_TO_STRING || FW_ENABLE_TEXT_LOGGING || BUILD_UT
             virtual void toString(StringBase& text) const; //!< generate text from serializable
 #endif
 

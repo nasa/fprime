@@ -6,6 +6,7 @@
 ####
 include_guard()
 include("utilities")
+set_property(GLOBAL PROPERTY AUTO_RECONFIGURE_LIST)
 ####
 # Macro `autocoder_support_by_suffix`:
 #
@@ -19,12 +20,40 @@ include("utilities")
 #
 # **SUFFIX**: suffix to support
 # **AC_INPUT_FILE**: file to check with suffix
+# **REQUIRE_CMAKE_RESCAN:** (optional) this file should trigger a cmake rescan. Default: false
 ####
 macro(autocoder_support_by_suffix SUFFIX AC_INPUT_FILE)
     ends_with(IS_SUPPORTED "${AC_INPUT_FILE}" "${SUFFIX}")
     # Note: set in PARENT_SCOPE in macro is intended. Caller **wants** to set IS_SUPPORTED in their parent's scope.
     set(IS_SUPPORTED "${IS_SUPPORTED}" PARENT_SCOPE)
+
+    # Files that are supported may also be marked as requiring a rescan. This is done through an optional third argument
+    if (IS_SUPPORTED AND ${ARGC} GREATER 2)
+        # CMake weirdness, if ${ARGC} is <= 2 then ${ARGV2} is inherited not from this macro call, but rather from the
+        # calling function.  Thus we need a 2-tier if statement to prevent an explosion.
+        # See: https://cmake.org/cmake/help/latest/command/macro.html#argument-caveats
+        if (${ARGV2})
+            requires_regeneration("${AC_INPUT_FILE}")
+        endif()
+    endif()
 endmacro()
+
+####
+# Function `requires_regeneration`:
+#
+# Called by the autocoder when a source file needs to setup CMake to reconfigure when the source file changes.
+#
+# `AC_INPUT_FILE`: file to mark as tracked
+####
+function(requires_regeneration AC_INPUT_FILE)
+    get_property(RECONFIGURE_LIST GLOBAL PROPERTY AUTO_RECONFIGURE_LIST)
+    get_filename_component(REAL_FILE "${AC_INPUT_FILE}" REALPATH)
+    if (NOT "${REAL_FILE}" IN_LIST RECONFIGURE_LIST)
+        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${AC_INPUT_FILE}")
+        list(APPEND RECONFIGURE_LIST "${REAL_FILE}")
+        set_property(GLOBAL PROPERTY AUTO_RECONFIGURE_LIST "${RECONFIGURE_LIST}")
+    endif()
+endfunction()
 
 ####
 # Function `_set_autocoder_name`:

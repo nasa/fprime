@@ -106,7 +106,18 @@ component.
 3. The receiving component uses the data in *B*. When done, it sends *B* back
 to the [`bufferSendIn`](#bufferSendIn) port of `BufferManager` for deallocation.
 
-![`BufferManager` Sending a Buffer](img/SendingABuffer.jpg "SequenceDiagram")
+```mermaid
+sequenceDiagram
+    Sending Component->>BufferManager: Request buffer
+    activate Sending Component
+    activate BufferManager
+    Sending Component->>Receiving Component: Send buffer
+    activate Receiving Component
+    deactivate Sending Component
+    Receiving Component->>BufferManager: Send buffer
+    deactivate BufferManager
+    deactivate Receiving Component
+```
 
 ### 3.8 Assertions
 

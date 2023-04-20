@@ -95,8 +95,8 @@ class XmlComponentParser:
         else:
             self.__const_parser = None
 
-        xml_parser = etree.XMLParser(remove_comments=True)
-        element_tree = etree.parse(fd, parser=xml_parser)
+        self.__xml_parser = etree.XMLParser(remove_comments=True)
+        element_tree = etree.parse(fd, parser=self.__xml_parser)
         fd.close()  # Close the file, which is only used for the parsing above
 
         # Validate against current schema. if more are imported later in the process, they will be reevaluated
@@ -159,16 +159,14 @@ class XmlComponentParser:
         for comp_tag in component:
             if comp_tag.tag == "comment":
                 self.__component.set_comment(comp_tag.text.strip())
-            elif comp_tag.tag == "include_header":
-                self.__include_header_files.append(comp_tag.text)
-            elif comp_tag.tag == "import_port_type":
-                self.__import_port_type_files.append(comp_tag.text)
-            elif comp_tag.tag == "import_serializable_type":
-                self.__import_serializable_type_files.append(comp_tag.text)
-            elif comp_tag.tag == "import_enum_type":
-                self.__import_enum_type_files.append(comp_tag.text)
-            elif comp_tag.tag == "import_array_type":
-                self.__import_array_type_files.append(comp_tag.text)
+            elif comp_tag.tag in (
+                "include_header",
+                "import_port_type",
+                "import_serializable_type",
+                "import_enum_type",
+                "import_array_type",
+            ):
+                self.__process_import_tag(comp_tag)
             elif comp_tag.tag == "import_dictionary":
                 try:
                     dict_file = locate_build_root(comp_tag.text)
@@ -180,7 +178,7 @@ class XmlComponentParser:
                 PRINT.info("Reading external dictionary %s" % dict_file)
                 dict_fd = open(dict_file)
                 _ = etree.XMLParser(remove_comments=True)
-                dict_element_tree = etree.parse(dict_fd, parser=xml_parser)
+                dict_element_tree = etree.parse(dict_fd, parser=self.__xml_parser)
 
                 component.append(dict_element_tree.getroot())
 
@@ -848,7 +846,7 @@ class XmlComponentParser:
                         else:
                             PRINT.info(
                                 "%s: Invalid tag %s in parameter %s"
-                                % (xml_file, comment.tag, n)
+                                % (xml_file, parameter_tag.tag, n)
                             )
                             sys.exit(-1)
                     self.__parameters.append(parameter_obj)
@@ -1129,6 +1127,37 @@ class XmlComponentParser:
                 # PRINT.info("WARNING: Found namespace qualifier in port type definition (name=%s, type=%s) using namespace specified in XXXPortAi.xml file." % (n,t))
                 p.set_type(t.split("::")[-1])
 
+    def __recursive_import_process(self, comp_tag):
+        try:
+            f = locate_build_root(comp_tag.text)
+        except (BuildRootMissingException, BuildRootCollisionException) as bre:
+            stri = "ERROR: Could not find specified dictionary XML file. {}. Error: {}".format(
+                comp_tag.text, str(bre)
+            )
+            raise OSError(stri)
+
+        fd = open(f)
+        _ = etree.XMLParser(remove_comments=True)
+        element_tree = etree.parse(fd, parser=self.__xml_parser)
+
+        for child_tag in element_tree.getroot():
+            self.__process_import_tag(child_tag)
+
+    def __process_import_tag(self, comp_tag):
+        if comp_tag.tag == "include_header":
+            self.__include_header_files.append(comp_tag.text)
+        elif comp_tag.tag == "import_port_type":
+            self.__import_port_type_files.append(comp_tag.text)
+            self.__recursive_import_process(comp_tag)
+        elif comp_tag.tag == "import_serializable_type":
+            self.__import_serializable_type_files.append(comp_tag.text)
+            self.__recursive_import_process(comp_tag)
+        elif comp_tag.tag == "import_enum_type":
+            self.__import_enum_type_files.append(comp_tag.text)
+        elif comp_tag.tag == "import_array_type":
+            self.__import_array_type_files.append(comp_tag.text)
+            self.__recursive_import_process(comp_tag)
+
     def __generate_port_from_role(self, role):
 
         special_ports = self.Config._ConfigManager__prop["special_ports"]
@@ -1383,8 +1412,8 @@ class Port:
         @param name:  Name of port (each instance must be unique).
         @param direction: Direction of data flow (must be input or output)
         @param type:  Type of port (must have supporting include xml)
-        @param sync:  Kind of port (must be one of: asynch, synch, or guarded)
-        @param comment:  A single or multline comment
+        @param sync:  Kind of port (must be one of: async, sync, or guarded)
+        @param comment:  A single or multiline comment
         """
         # TODO: ADD NAMESPACE
         self.__name = name
