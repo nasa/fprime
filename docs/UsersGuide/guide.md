@@ -83,6 +83,7 @@ This section is divided into three sub-sections:
 - API Documentation
     - [GDS CLI Design](./dev/gds-cli-dev.md)
     - [C++ Documentation](./api/c++/html/index.html)
+    - [CMake User API](./api/cmake/API.html)
 
 
 
