@@ -95,7 +95,7 @@ function integration_test_run {
         ps -p ${VALGRIND_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to start ${BINARY} with Valgrind"
         # Run integration tests
         (
-            cd "${WORKDIR}/test"
+            cd "${WORKDIR}"
             if [[ "${DICTIONARY_PATH}" != "" ]]
             then
                 DICTIONARY_ARGS="--dictionary ${WORKDIR}/${DICTIONARY_PATH}"
