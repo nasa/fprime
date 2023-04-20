@@ -51,6 +51,7 @@ module Ref {
     instance sendBuffComp
     instance staticMemory
     instance textLogger
+    instance typeDemo
     instance uplink
     instance systemResources
 

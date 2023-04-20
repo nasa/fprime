@@ -1504,6 +1504,7 @@ toklist
 TOLOWER
 toolchain
 toolchains
+toolset
 tooltip
 topologyapp
 Torvalds

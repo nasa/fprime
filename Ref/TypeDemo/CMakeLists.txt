@@ -5,11 +5,9 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-restrict_platforms(Linux Darwin)
-
-set(MOD_DEPS Os)
 set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriver.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriver.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TypeDemo.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TypeDemo.cpp"
 )
+
 register_fprime_module()

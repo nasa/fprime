@@ -22,7 +22,7 @@ for use as a demo or to help debug issues that come up when going through the tu
 
 ## Prerequisites
 
-This tutorial assumes the user has gone through and understood [Getting Started Tutorial](../GettingStarted/Tutorial.md)
+This tutorial assumes the user has gone through and understood [Getting Started Tutorial](../HelloWorld/Tutorial.md)
 and [MathComponent Tutorial](../MathComponent/Tutorial.md)
 
 This tutorial requires the user to have some basic software skills and have installed F´. The prerequisite skills to
@@ -35,7 +35,7 @@ understand this tutorial are as follows:
 
 Installation can be done by following the installation guide found at: [INSTALL.md](../../INSTALL.md). This guide
 will walk the user through the installation process and verify the installation. In addition, users may wish to
-follow the [Getting Started Tutorial](../GettingStarted/Tutorial.md) in order to get a feel for the F´ environment and
+follow the [Getting Started Tutorial](../HelloWorld/Tutorial.md) in order to get a feel for the F´ environment and
 tools.
 
 ## Creating a Custom F´ Component
