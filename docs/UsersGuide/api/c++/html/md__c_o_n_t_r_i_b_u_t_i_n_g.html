@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('md__c_o_n_t_r_i_b_u_t_i_n_g.html','');
 <div class="textblock"><p>F´ is a free and open source project used to build embedded software! Are you ready to contribute?</p>
 <p>In this file you can find basic information on contributing to <a href="https://github.com/nasa/fprime">F´</a>. We will walk through how to contribute and the process contributions follow. Remember, we may ask for changes or adjustments to make your submission the best it can be. Fear not! Your submission is still valued! You may even comment on other submissions to help them improve.</p>
 <p>Make sure to review our style guidelines when developing code to ensure it meets the standards for F´´</p>
-<h1><a class="anchor" id="autotoc_md12"></a>
+<h1><a class="anchor" id="autotoc_md1"></a>
 Ways of Contributing</h1>
 <p>The best way to contribute to F´ is to remain positive and engaged. Just about every contribution needs some improvement before it is ready to be folded in. Stand behind your work, push it forward, and work with us!</p>
 <p>Specific Ways to Contribute:</p><ul>
@@ -106,12 +106,12 @@ Ways of Contributing</h1>
 <p><b>Note:</b> <a href="https://github.com/nasa/fprime/tree/master/Autocoders">F´ Autocoder Python</a> is being actively replaced by <a href="https://github.com/fprime-community/fpp">FPP</a>. Thus we will no longer accept changes to this code except for security and critical bug fixes done in the most minimal fashion.</p>
 <p>We do love Python fixes, please consider contributing to <a href="https://github.com/fprime-community/fprime-tools">fprime-tools</a> or <a href="https://github.com/fprime-community/fprime-gds">fprime-gds</a> </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md13"></a>
+<h1><a class="anchor" id="autotoc_md2"></a>
 Where to Start</h1>
 <p>First, contributors should build some understanding of F´. Read through the documentation, try a tutorial, or run a reference application. Contributors can find information in our <a href="https://nasa.github.io/fprime/">documentation</a>. Keep track of inconsistencies or bugs as these should be reported!</p>
 <p>When you are ready to join discussions and submit bug reports use one of the above links!</p>
 <p>To contribute to the F´ framework directly, consider writing <a href="https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3ADocumentation">needed documentation</a> or starting with an <a href="https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3A%22Easy+First+Issue%22">easy first issue</a>. When starting to modify F´ directly, ask questions, seek help, and be patient. Remember to review the project structure, development process, and helpful tips sections below. Following the style guidelines is a must for contributing code to F´.</p>
-<h1><a class="anchor" id="autotoc_md14"></a>
+<h1><a class="anchor" id="autotoc_md3"></a>
 Project Structure</h1>
 <p>The F´ project is designed as a base software <a href="https://github.com/nasa/fprime">framework</a> with additional <a href="https://github.com/fprime-community">packages</a> designed to extend the framework. This means that occasionally we may move contributions in or out of these packages.</p>
 <p>Key packages include:</p>
@@ -120,7 +120,7 @@ Project Structure</h1>
 <li><a href="https://github.com/fprime-community/fprime-tools">fprime-tools</a>: <code>fprime-util</code> development repository</li>
 <li><a href="https://github.com/fprime-community/fprime-gds">fprime-gds</a>: <code>fprime-gds</code> development repository</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md15"></a>
+<h2><a class="anchor" id="autotoc_md4"></a>
 F´ Repository Structure</h2>
 <p>Contributors to the <a href="https://github.com/nasa/fprime">fprime</a> repository should understand the following key folders:</p>
 <ul>
@@ -128,7 +128,7 @@ F´ Repository Structure</h2>
 <li><a href="https://github.com/nasa/fprime/tree/devel/Fw">Fw</a>: changes here will be reviewed carefully because this code is critical across F</li>
 <li><a href="https://github.com/nasa/fprime/tree/devel/Ref">Ref</a>: update and maintain the Reference application here</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md16"></a>
+<h1><a class="anchor" id="autotoc_md5"></a>
 Development Process</h1>
 <p>F´ follows a standard git flow development model. Developers should start with a <a href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">fork</a> of one of the F´ repositories and then develop according to <a href="https://docs.github.com/en/get-started/quickstart/github-flow">git flow</a>. Remember to add an <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-for-a-fork">upstream remote</a> to your fork such that you may fetch the latest changes.</p>
 <p>For each contribution, developers should first fetch the latest changes from upstream. Then create a new branch off <code>devel</code> and submit back to F´ using a pull request as described above.</p>
@@ -136,27 +136,27 @@ Development Process</h1>
 <div class="line">git checkout upstream/devel</div>
 <div class="line">git checkout -b &lt;desired branch name&gt;</div>
 </div><!-- fragment --><p>Once a pull request has been submitted the following process will begin.</p>
-<h2><a class="anchor" id="autotoc_md17"></a>
+<h2><a class="anchor" id="autotoc_md6"></a>
 Submission Review</h2>
 <p>The pull request changes will be reviewed by the team and community supporting F´. Often this means that a discussion on how to improve the submission will arise. Engage in the conversation and work with reviewers to improve the code. Remember, F´ is flight software running in remote environments. This means we hold submissions to very high standards. Do not fear, we are happy to work with contributors to help meet these standards!</p>
 <p>Submission reviews can take some time for the team to complete. These reviews may take additional time for pull requests that are very large, touch sensitive code, or have not been <a href="https://github.com/nasa/fprime/discussions">discussed</a> beforehand. Sometimes changes are determined to best fit in another repository or package. Please be patient with us and remember we are all one team.</p>
 <p>Anyone can review code on F´ but an approved review from a maintainer will be required to complete the submission.</p>
-<h2><a class="anchor" id="autotoc_md18"></a>
+<h2><a class="anchor" id="autotoc_md7"></a>
 Automated Checking</h2>
 <p>Once the submission has been reviewed by a maintainer, automated checking will begin. There are many checks that must pass on submitted code to ensure that it is not going to introduce a bug or regression to F´. These checks ensure unit tests pass, development environments remain supported, code runs without crashing, software and documentation quality is upheld, and more!</p>
 <p>These checks can be a bit pedantic and this often is the point. Do your best to correct errors or ask for help. Don't be surprised if an F´ maintainer pushes some commits to your branch to help correct minor issues (e.g. spelling errors). In the end, these checks must pass for the submission to continue.</p>
 <p>If something seems amiss with one of these checks ask for help on your PR and a maintainer will do their best to help get the submission moving forward.</p>
-<h1><a class="anchor" id="autotoc_md19"></a>
+<h1><a class="anchor" id="autotoc_md8"></a>
 Final Approval and Submission</h1>
 <p>Once all corrections have been made, automated checks are passing, and a maintainer has given final approval, it is time to contribute the submission. A maintainer will handle this final step and once complete changes should appear in the <code>devel</code> branch. You can help this process by submitting any deferred or future work items as issues using the links above.</p>
-<h1><a class="anchor" id="autotoc_md20"></a>
+<h1><a class="anchor" id="autotoc_md9"></a>
 Helpful Tips</h1>
 <p>This section will describe some helpful tips for contributing to F´.</p>
-<h2><a class="anchor" id="autotoc_md21"></a>
+<h2><a class="anchor" id="autotoc_md10"></a>
 Keep Submissions Small</h2>
 <p>Large submissions are difficult to review. Incredibly large pull requests can be very difficult to review and often need to be broken up. Try to keep submissions small, focus on one issue or change in a pull request, and avoid lots of minor changes across many files.</p>
 <p>Keep in mind that editors that fix whitespace automatically can cause many small changes. Even with advanced GitHub tools this can increase the effort required to review a submission. Be careful with the changes you are submitting.</p>
-<h1><a class="anchor" id="autotoc_md22"></a>
+<h1><a class="anchor" id="autotoc_md11"></a>
 Run Tests</h1>
 <p>The automatic checking system will run all our unit tests and integration tests across several systems. However, this process will take time. Try to run the unit tests locally during development before submitting a PR and use the automatic checks as a safety net. </p>
 </div></div><!-- contents -->

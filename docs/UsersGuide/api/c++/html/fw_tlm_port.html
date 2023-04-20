@@ -88,24 +88,24 @@ $(document).ready(function(){initNavTree('_fw_tlm_port.html',''); initResizable(
 <div class="title">Fw::Tlm Port </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md154"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md143"></a>
 Fw::Tlm Port</h1>
-<h2><a class="anchor" id="autotoc_md155"></a>
+<h2><a class="anchor" id="autotoc_md144"></a>
 1. Introduction</h2>
 <p>The <code>Fw::Tlm</code> port is used to pass a serialized telemetry value. It also passes the telemetry channel IS as well a time tag representing the time the channel was written.</p>
-<h2><a class="anchor" id="autotoc_md156"></a>
+<h2><a class="anchor" id="autotoc_md145"></a>
 2. Design</h2>
-<h3><a class="anchor" id="autotoc_md157"></a>
+<h3><a class="anchor" id="autotoc_md146"></a>
 2.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md158"></a>
+<h4><a class="anchor" id="autotoc_md147"></a>
 2.1.1 Port Diagram</h4>
 <p>The <code>Fw::Tlm</code> port has the following port diagram:</p>
 <p><img src="img/FwTlmBDD.jpg" alt="Fw::Com Diagram" title="Fw::Com Port" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md159"></a>
+<h4><a class="anchor" id="autotoc_md148"></a>
 2.1.2 Serializables</h4>
-<p><a class="anchor" id="autotoc_md160"></a> </p><h5>2.1.2.1 <a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></h5>
+<p><a class="anchor" id="autotoc_md149"></a> </p><h5>2.1.2.1 <a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></h5>
 <p>The <code><a class="el" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a></code> class contains a buffer that holds the serialized value of a telemetry channel. This buffer is passed as an argument to the <code>Fw::Tlm</code> port.</p>
-<p><a class="anchor" id="autotoc_md161"></a> </p><h5>2.1.2.2 <a class="el" href="class_fw_1_1_com_packet.html">Fw::ComPacket</a></h5>
+<p><a class="anchor" id="autotoc_md150"></a> </p><h5>2.1.2.2 <a class="el" href="class_fw_1_1_com_packet.html">Fw::ComPacket</a></h5>
 <p>The <code><a class="el" href="class_fw_1_1_tlm_packet.html">Fw::TlmPacket</a></code> class is a packet class derived from <a class="el" href="fw_2_com_2docs_2sdd_8md.html">`Fw::ComPacket`</a> that provides methods for encoding a telemetry packet. It contains an internal <code><a class="el" href="namespace_fw.html">Fw</a>:ComBuffer</code> that holds serialized channel values.</p>
 <p>To fill a packet with telemetry values, do the following:</p>
 <p>1. Instantiate an instance of the <code>TlmPacket</code> class.</p>
@@ -121,7 +121,7 @@ Fw::Tlm Port</h1>
 <p>3. Call the <code>resetPktDeser()</code> method to start extracting data from the buffer. This will extract the packet descriptor and verify that it matches the one for telemetry.</p>
 <p>4. For each telemetry entry in the packet, invoke the <code>extractValue()</code> method. Note that the users must know the size of the telemetry value (hence the <code>bufferSize</code> argument) since the buffer does not contain information on the boundaries of values.</p>
 <p>5. Repeat steps 2-4 for any additional channels. The <code>extractValue()</code> method will return <code><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a269bdee8bf9686602ce5ef408bff6b84" title="Deserialization buffer was empty when trying to read more data.">Fw::FW_DESERIALIZE_BUFFER_EMPTY</a></code> when there is no more channel data in the buffer.</p>
-<h2><a class="anchor" id="autotoc_md162"></a>
+<h2><a class="anchor" id="autotoc_md151"></a>
 3. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

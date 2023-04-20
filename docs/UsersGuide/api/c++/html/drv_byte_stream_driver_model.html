@@ -88,10 +88,10 @@ $(document).ready(function(){initNavTree('_drv_byte_stream_driver_model.html',''
 <div class="title">Drv::ByteStreamDriverModel Byte Stream Driver Model </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md50"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md39"></a>
 Drv::ByteStreamDriverModel Byte Stream Driver Model</h1>
 <p>The byte stream driver is a generic model for drivers implementing a "stream of bytes" interface. Typically these drivers operate with an outgoing stream and an incoming stream. The outgoing stream is represented by the "send" port and the incoming stream is either polled using the "poll" port or return asynchronously via the "readCallback" port.</p>
-<h2><a class="anchor" id="autotoc_md51"></a>
+<h2><a class="anchor" id="autotoc_md40"></a>
 Design</h2>
 <p>The manager component (typically the ground interface) initiates the transfer of send data by calling the "send" port. The caller will provide a <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> containing the data to send and the port call will return a status of that send. These responses are an enumeration whose values are described in the following table:</p>
 <table class="markdownTable">
@@ -105,7 +105,7 @@ Design</h2>
 <td class="markdownTableBodyNone">Drv::SEND_ERROR   </td><td class="markdownTableBodyNone">Send produced an error, future sends likely to fail.   </td></tr>
 </table>
 <p><b>Note:</b> in either formation described below, send will operate as described here.</p>
-<h3><a class="anchor" id="autotoc_md52"></a>
+<h3><a class="anchor" id="autotoc_md41"></a>
 Callback Formation</h3>
 <p><img src="./img/canvas-callback.png" alt="Callback" class="inline"/></p>
 <p>In the callback formation, the byte stream driver component initiates the transfer of received data by calling the "readCallback" output port. This port transfers any read data in a <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> along with a status for the receive. This status is an enumeration whose values are described in the following table:</p>
@@ -122,7 +122,7 @@ Callback Formation</h3>
 <li><code>DrvTcpServer</code>: a F´ component wrapper of the tcp server</li>
 <li><code>DrvUdp</code>: a F´ component wrapper of the udp</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md53"></a>
+<h3><a class="anchor" id="autotoc_md42"></a>
 Polling Formation</h3>
 <p><img src="./img/canvas-poll.png" alt="Poll" class="inline"/></p>
 <p>In the polling formation, the manager component (typically the ground interface) initiates the transfer of received data by calling the "poll" input port. This port fills in the provided <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> along with a status for the poll. This status is an enumeration whose values are described in the following table:</p>
@@ -137,10 +137,10 @@ Polling Formation</h3>
 <td class="markdownTableBodyNone">Drv::POLL_ERROR   </td><td class="markdownTableBodyNone">Poll produced an error and buffer contains no valid data.   </td></tr>
 </table>
 <p><b>Note:</b> there are no known implementers of the polling formation, although this formation is best suited for implementations running on baremetal machines.</p>
-<h2><a class="anchor" id="autotoc_md54"></a>
+<h2><a class="anchor" id="autotoc_md43"></a>
 Class Diagram</h2>
 <p><img src="./img/class_diagram.png" alt="classdiagram" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md55"></a>
+<h2><a class="anchor" id="autotoc_md44"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

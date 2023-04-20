@@ -88,9 +88,9 @@ $(document).ready(function(){initNavTree('_fw_buffer_serializable_buffer_get_buf
 <div class="title"><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> Serializable / Fw::BufferGet Port / Fw::BufferSend Port </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md84"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md73"></a>
 Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port</h1>
-<h2><a class="anchor" id="autotoc_md85"></a>
+<h2><a class="anchor" id="autotoc_md74"></a>
 1 Introduction</h2>
 <p>This module provides the following elements:</p>
 <ul>
@@ -98,10 +98,10 @@ Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port</h1>
 <li>A port <code>Fw::BufferGet</code> for requesting a buffer of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from a <a class="el" href="svc_2_buffer_manager_2docs_2sdd_8md.html">`BufferManager`</a> and similar components.</li>
 <li>A port <code>Fw::BufferSend</code> for sending a buffer of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from one component to another.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md86"></a>
+<h2><a class="anchor" id="autotoc_md75"></a>
 2 Design</h2>
 <p>The <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> type wraps a pointer to memory and the size of that memory region. Thus, allowing users to pass the pointer and size around as a pair without incurring a copy of the data at each step. <b>Note:</b> <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is not safe to pass outside a given address space.</p>
-<h3><a class="anchor" id="autotoc_md87"></a>
+<h3><a class="anchor" id="autotoc_md76"></a>
 2.1 The Type Fw::Buffer</h3>
 <p><code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is a serializable class defining the following (private) fields. These fields are accessed through accessor functions.</p>
 <table class="markdownTable">
@@ -118,19 +118,19 @@ Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port</h1>
 </table>
 <p>If the size of the data is set to 0, the pointer returned by <code>getData()</code> and the serialization interface returned by <code>getSerializeRepr()</code> are considered invalid and should not be used.</p>
 <p>The <code>getSerializeRepr()</code> function may be used to interact with the wrapped data buffer by serializing types to and from the data region.</p>
-<h3><a class="anchor" id="autotoc_md88"></a>
+<h3><a class="anchor" id="autotoc_md77"></a>
 2.2 The Port Fw::BufferGet</h3>
 <p>As shown in the following diagram, <code>Fw::BufferGet</code> has one argument <code>size</code> of type <code>U32</code>. It returns a value of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>. The returned <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>'s size must be checked for validity before using.</p>
 <p><img src="img/BufferGetBDD.jpg" alt="`Fw::BufferGet` Diagram" title="Fw::BufferGet Port" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md89"></a>
+<h3><a class="anchor" id="autotoc_md78"></a>
 2.3 The Port Fw::BufferSend</h3>
 <p>As shown in the following diagram, <code>Fw::BufferSend</code> has one argument <code>fwBuffer</code> of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>.</p>
 <p><img src="img/BufferSendBDD.jpg" alt="`Fw::BufferSend` Diagram" title="Fw::BufferSend Port" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md90"></a>
+<h2><a class="anchor" id="autotoc_md79"></a>
 3 Usage Notes</h2>
 <p>Components allocating <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> objects may use the <code>m_context</code> field at their discretion. This field is typically used to track the origin of the buffer for eventual allocation. When a component fails to allocate memory, it must set the <code>m_size</code> field to zero to indicate that the buffer is invalid.</p>
 <p>Receivers of <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> objects are expected to check the <code>m_size</code> field before using the buffer.</p>
-<h3><a class="anchor" id="autotoc_md91"></a>
+<h3><a class="anchor" id="autotoc_md80"></a>
 Serializing and Deserializing with &lt;tt&gt;Fw::Buffer&lt;/tt&gt;</h3>
 <p>Users can obtain a SerializeBuffer, <code>sb</code>, by calling <code>getSerializeRepr()</code>. This serialize buffer is backed by the memory of the <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> and is initially empty. Users can serialize and deserialize through <code>sb</code> to copy to/from the backed memory.</p>
 <p>The state of <code>sb</code> persists as long as the current <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> object exists as it is stored as a member. However, all <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> constructors initialize <code>sb</code> to an empty state including the <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> copy constructor. Thus, if an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is sent through a port call, passed by-value to a function call, or otherwise copied, the state of the new buffer's <code>sb</code> member is empty.</p>

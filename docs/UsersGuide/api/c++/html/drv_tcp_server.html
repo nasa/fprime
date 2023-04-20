@@ -88,11 +88,11 @@ $(document).ready(function(){initNavTree('_drv_tcp_server.html',''); initResizab
 <div class="title">Drv::TcpServer Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md72"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md61"></a>
 Drv::TcpServer Tcp Server Component</h1>
 <p>The TCP server component bridges the byte stream driver model interface to a remote TCP client to which this tcp server connects and sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data and producing the callback port call. Since it is a server, it must startup and listen for client connections. Designed for single client communication, it does not permit a queue of connecting clients.</p>
 <p>For more information on the supporting TCP implementation see: <a class="el" href="class_drv_1_1_tcp_server_socket.html" title="Helper for setting up Tcp using Berkley sockets as a server.">Drv::TcpServerSocket</a>. For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverModel.</p>
-<h2><a class="anchor" id="autotoc_md73"></a>
+<h2><a class="anchor" id="autotoc_md62"></a>
 Design</h2>
 <p>The manager component (typically the ground interface) initiates the transfer of send data by calling the "send" port. The caller will provide a <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> containing the data to send and the port call will return a status of that send. These responses are an enumeration whose values are described in the following table:</p>
 <table class="markdownTable">
@@ -117,7 +117,7 @@ Design</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Drv::RECV_ERROR   </td><td class="markdownTableBodyNone">Receive produced an error and buffer contains no valid data.   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md74"></a>
+<h2><a class="anchor" id="autotoc_md63"></a>
 Usage</h2>
 <p>The <a class="el" href="class_drv_1_1_tcp_server_component_impl.html">Drv::TcpServerComponentImpl</a> must be configured with the address of the remote connection, and the socket must be open to begin. Usually, the user runs the <a class="el" href="class_drv_1_1_tcp_server_component_impl.html">Drv::TcpServerComponentImpl</a> engaging its read thread, which will automatically open the connection. The component is passive and has no commands meaning users should <code>init</code>, <code>configure</code>, and <code>startSocketTask</code>. In addition to these methods shared with the <a class="el" href="class_drv_1_1_tcp_client_component_impl.html">Drv::TcpClientComponentImpl</a>, the server provides <code>startup</code> and <code>shutdown</code> methods to start and stop the listening socket. It <code>startup</code> must be run before the read task is started and <code>shutdown</code> should be called before the task is stopped.</p>
 <p>Upon shutdown, the <code>stopSocketThread</code> and <code>joinSocketThread</code> methods should be called to ensure proper resource deallocation. This typical usage is shown in the C++ snippet below.</p>
@@ -142,10 +142,10 @@ Usage</h2>
 <div class="line">    comm.stopSocketTask();</div>
 <div class="line">    (void) comm.joinSocketTask(nullptr);</div>
 <div class="line">}</div>
-</div><!-- fragment --> <h2><a class="anchor" id="autotoc_md75"></a>
+</div><!-- fragment --> <h2><a class="anchor" id="autotoc_md64"></a>
 Class Diagram</h2>
 <p><img src="./img/class_diagram_tcpserver.png" alt="class diagram" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md76"></a>
+<h2><a class="anchor" id="autotoc_md65"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -157,7 +157,7 @@ Requirements</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">TCP-SERVER-COMP-003   </td><td class="markdownTableBodyNone">The tcp server component shall provide bidirectional communication with a tcp client   </td><td class="markdownTableBodyNone">unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md77"></a>
+<h2><a class="anchor" id="autotoc_md66"></a>
 Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

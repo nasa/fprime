@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_active_rate_group_component.html'
 <div class="title"><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md206"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md195"></a>
 Svc::ActiveRateGroup Component</h1>
-<h2><a class="anchor" id="autotoc_md207"></a>
+<h2><a class="anchor" id="autotoc_md196"></a>
 1. Introduction</h2>
 <p><code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> is an active component that drives a set of components connected to <code>Svc::Sched</code> output ports. It contains an asynchronous input <code>Svc::Cycle</code> port. This port sends a message which wakes the component task. It contains an asynchronous input <code>Svc::Cycle</code> port. This port sends a message which wakes the component task. The task invokes each output port in order, passing an argument indicating the order. It tracks execution time and detects overruns.</p>
-<h2><a class="anchor" id="autotoc_md208"></a>
+<h2><a class="anchor" id="autotoc_md197"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -108,15 +108,15 @@ Svc::ActiveRateGroup Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">ARG-004   </td><td class="markdownTableBodyNone">The <code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> component shall report a warning event when a rate group cycle is started before previous is completed   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md209"></a>
+<h2><a class="anchor" id="autotoc_md198"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md210"></a>
+<h3><a class="anchor" id="autotoc_md199"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md211"></a>
+<h4><a class="anchor" id="autotoc_md200"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> component has the following component diagram:</p>
 <p><img src="img/ActiveRateGroupBDD.jpg" alt="ActiveRateGroup Diagram" title="ActiveRateGroup" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md212"></a>
+<h4><a class="anchor" id="autotoc_md201"></a>
 3.1.2 Ports</h4>
 <p>The <code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> component uses the following port types:</p>
 <table class="markdownTable">
@@ -127,7 +127,7 @@ Svc::ActiveRateGroup Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a href="../../Sched/docs/sdd.html"><code>Svc::Sched</code></a>   </td><td class="markdownTableBodyNone">RateGroupMemberOut   </td><td class="markdownTableBodyNone">Output   </td><td class="markdownTableBodyNone">n/a   </td><td class="markdownTableBodyNone">Rate group ports   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md213"></a>
+<h4><a class="anchor" id="autotoc_md202"></a>
 3.2 Functional Description</h4>
 <p>The <code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> component has one input port that is called to wake up the task to execute one cycle. <br  />
 </p>
@@ -136,9 +136,9 @@ Svc::ActiveRateGroup Component</h1>
 </div><!-- fragment --><p>A context value can be used by a component to discriminate between more than one call in the rate group.</p>
 <p>The task of the component calls the output ports in order, passing the context from the context list as the port argument.</p>
 <p>The component sets a flag when the cycle port is invoked. At the beginning of the rate group execution, the component clears the flag. If it detects that it has been set again at the end of the rate group cycle, it will declare a cycle slip, send an event, and increase the cycle slip counters.</p>
-<h3><a class="anchor" id="autotoc_md214"></a>
+<h3><a class="anchor" id="autotoc_md203"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md215"></a>
+<h4><a class="anchor" id="autotoc_md204"></a>
 3.3.1 Rate Group Port Call</h4>
 <p>As described in the Functional Description section, the <code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> component accepts calls to the CycleIn and invokes the RateGroupMemberOut ports:</p>
 <div class="fragment"><div class="line">sequenceDiagram</div>
@@ -154,16 +154,16 @@ Svc::ActiveRateGroup Component</h1>
 <div class="line">        deactivate  ActiveRateGroup </div>
 <div class="line">    end</div>
 <div class="line">    deactivate  Caller </div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md216"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md205"></a>
 3.4 State</h3>
 <p><code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md217"></a>
+<h3><a class="anchor" id="autotoc_md206"></a>
 3.5 Algorithms</h3>
 <p><code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md218"></a>
+<h2><a class="anchor" id="autotoc_md207"></a>
 4. Dictionaries</h2>
 <p>TBD</p>
-<h2><a class="anchor" id="autotoc_md219"></a>
+<h2><a class="anchor" id="autotoc_md208"></a>
 5. Module Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -175,10 +175,10 @@ Svc::ActiveRateGroup Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test Checklist   </td><td class="markdownTableBodyNone"><a href="Checklist_Unit_Test.xlsx">Link</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md220"></a>
+<h2><a class="anchor" id="autotoc_md209"></a>
 6. Unit Testing</h2>
 <p>To see unit test coverage run fprime-util check &ndash;coverage</p>
-<h2><a class="anchor" id="autotoc_md221"></a>
+<h2><a class="anchor" id="autotoc_md210"></a>
 7. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

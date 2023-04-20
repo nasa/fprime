@@ -88,26 +88,26 @@ $(document).ready(function(){initNavTree('_fw_com_port.html',''); initResizable(
 <div class="title">Fw::Com Port </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md100"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md89"></a>
 Fw::Com Port</h1>
-<h2><a class="anchor" id="autotoc_md101"></a>
+<h2><a class="anchor" id="autotoc_md90"></a>
 1. Introduction</h2>
 <p>The <code>Fw::Com</code> port is used to pass binary data to a service for transporting data out of the system. Incoming and outgoing packets are serialized into these buffers.</p>
-<h2><a class="anchor" id="autotoc_md102"></a>
+<h2><a class="anchor" id="autotoc_md91"></a>
 2. Design</h2>
-<h3><a class="anchor" id="autotoc_md103"></a>
+<h3><a class="anchor" id="autotoc_md92"></a>
 2.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md104"></a>
+<h4><a class="anchor" id="autotoc_md93"></a>
 2.1.1 Port Diagram</h4>
 <p>The <code>Fw::Com</code> port has the following port diagram:</p>
 <p><img src="img/FwComBDD.jpg" alt="Fw::Com Diagram" title="Fw::Com Port" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md105"></a>
+<h4><a class="anchor" id="autotoc_md94"></a>
 2.1.2 Serializables</h4>
-<p><a class="anchor" id="autotoc_md106"></a> </p><h5>2.1.2.1 <a class="el" href="class_fw_1_1_com_packet.html">Fw::ComPacket</a></h5>
+<p><a class="anchor" id="autotoc_md95"></a> </p><h5>2.1.2.1 <a class="el" href="class_fw_1_1_com_packet.html">Fw::ComPacket</a></h5>
 <p>The <code><a class="el" href="class_fw_1_1_com_packet.html">Fw::ComPacket</a></code> class is a base class for other packet classes. It provides type identification for packet subtypes.</p>
-<p><a class="anchor" id="autotoc_md107"></a> </p><h5>2.1.2.2 <a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></h5>
+<p><a class="anchor" id="autotoc_md96"></a> </p><h5>2.1.2.2 <a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></h5>
 <p>The <code><a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></code> class represents a buffer to store data for transmission. It is used as a destination buffer for serialization of <code><a class="el" href="class_fw_1_1_com_packet.html">Fw::ComPacket</a></code> subtypes.</p>
-<h2><a class="anchor" id="autotoc_md108"></a>
+<h2><a class="anchor" id="autotoc_md97"></a>
 3. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

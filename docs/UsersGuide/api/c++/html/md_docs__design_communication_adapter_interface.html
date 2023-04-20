@@ -92,7 +92,7 @@ $(document).ready(function(){initNavTree('md_docs__design_communication_adapter_
 <p>Implementors of this interface are referred to as <em>Communication Adapters</em>.</p>
 <p><img src="./img/com-adapter.png" alt="Communication Adapter Interface" class="inline"/></p>
 <p>The communication adapter interface protocol is designed to work alongside the framer status protocol and the com queue protocol to ensure that data messages do not overload a communication interface. These protocols are discussed below.</p>
-<h1><a class="anchor" id="autotoc_md24"></a>
+<h1><a class="anchor" id="autotoc_md13"></a>
 Ports</h1>
 <p>The communication adapter interface is composed of three ports. These ports are used to transmit outgoing data through some communication hardware and receive incoming data from that same hardware. These ports share types with the byte stream driver model for backwards compatibility.</p>
 <table class="markdownTable">
@@ -108,19 +108,19 @@ Ports</h1>
 <blockquote class="doxtable">
 <p>Note: components implementing the <em>Communication Adapter Interface</em> must deallocate any <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> received on the <code>comDataIn</code> port or must delegate the deallocation to another component (e.g. a driver). See <a class="el" href="md_docs__design_memory.html">Memory Management in F´</a> </p>
 </blockquote>
-<h2><a class="anchor" id="autotoc_md25"></a>
+<h2><a class="anchor" id="autotoc_md14"></a>
 comDataIn Description</h2>
 <p>This port receives data from an F´ application in the form of an argument of <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> type. This data is intended to be sent out the communications interface managed by this component. From the perspective of the application this is the outgoing data port.</p>
-<h2><a class="anchor" id="autotoc_md26"></a>
+<h2><a class="anchor" id="autotoc_md15"></a>
 comDataOut Description</h2>
 <p>This port receives data from the communication interface managed by this component and provides it to the F´ application in the form of an argument of <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> type. From the perspective of the application this is the incoming data port.</p>
-<h2><a class="anchor" id="autotoc_md27"></a>
+<h2><a class="anchor" id="autotoc_md16"></a>
 comStatus Description</h2>
 <p>This port carries a status of <code>Fw::Success::SUCCESS</code> or <code>Fw::Success::FAILURE</code> typically in response to a call to the <code>comDataIn</code> port described above.</p>
 <blockquote class="doxtable">
 <p>Note: it is critical to obey the protocol as described in the protocol section below. </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md28"></a>
+<h1><a class="anchor" id="autotoc_md17"></a>
 Communication Queue Protocol</h1>
 <p><code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> queues messages until the communication adapter is ready to receive these messages. For each Fw::Success::SUCCESS message received, <code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> will emit one message. <code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> will not emit messages at any other time. This implies several things:</p>
 <ol type="1">
@@ -128,7 +128,7 @@ Communication Queue Protocol</h1>
 <li>A <code>Fw::Success::SUCCESS</code> must be eventually received in response to each message for data to continue to flow</li>
 </ol>
 <p>These implications are discussed in more depth in the appropriate protocol sections.</p>
-<h1><a class="anchor" id="autotoc_md29"></a>
+<h1><a class="anchor" id="autotoc_md18"></a>
 Framer Status Protocol</h1>
 <p>Framing typically happens between <code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code> and a communications adapter. The <code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code> component implements this protocol in order to interoperate with these other components. The action taken by this protocol is dependent on the number of framed messages (frames) sent to the communication adapter in response to each message received from <code><a class="el" href="class_svc_1_1_com_queue.html">Svc::ComQueue</a></code>.</p>
 <table class="markdownTable">
@@ -143,7 +143,7 @@ Framer Status Protocol</h1>
 <blockquote class="doxtable">
 <p>Note: <code><a class="el" href="class_svc_1_1_framer.html" title="Generic framing component using FramingProtocol implementation for actual framing.">Svc::Framer</a></code> must also pass through the initiation message from the communication adapter to start data flow. </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md30"></a>
+<h1><a class="anchor" id="autotoc_md19"></a>
 Communication Adapter Protocol</h1>
 <p>The communication adapter must obey a specific protocol to indicate to F´ application components the status of outgoing transmissions. This is done with the <code>comStatus</code> port. A communication status is one of two possibilities:</p>
 <table class="markdownTable">

@@ -25,50 +25,39 @@
 var NAVTREE =
 [
   [ "F´ Flight Software - C/C++ Documentation", "index.html", [
-    [ "Release 3.0: Release and Migration Notes", "md__c_h_a_n_g_e_l_o_g.html", null ],
     [ "Contributing Guidelines", "md__c_o_n_t_r_i_b_u_t_i_n_g.html", [
-      [ "Ways of Contributing", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md12", null ],
-      [ "Where to Start", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md13", null ],
-      [ "Project Structure", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md14", [
-        [ "Release 2.1.0: Release Notes", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md1", null ],
-        [ "Release 2.0.1: Release Notes", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md2", null ],
-        [ "Release 2.0: Release and Migration Notes", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md3", null ],
-        [ "Release 1.5", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md4", null ],
-        [ "Release 1.4", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md5", null ],
-        [ "Release 1.3", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md6", null ],
-        [ "Release 1.2", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md7", null ],
-        [ "Release 1.1", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md8", null ],
-        [ "Release 1.0.1", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md9", null ],
-        [ "Release 1.0", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md10", null ],
-        [ "F´ Repository Structure", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md15", null ]
+      [ "Ways of Contributing", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md1", null ],
+      [ "Where to Start", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md2", null ],
+      [ "Project Structure", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md3", [
+        [ "F´ Repository Structure", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md4", null ]
       ] ],
-      [ "Development Process", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md16", [
-        [ "Submission Review", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md17", null ],
-        [ "Automated Checking", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md18", null ]
+      [ "Development Process", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md5", [
+        [ "Submission Review", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md6", null ],
+        [ "Automated Checking", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md7", null ]
       ] ],
-      [ "Final Approval and Submission", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md19", null ],
-      [ "Helpful Tips", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md20", [
-        [ "Keep Submissions Small", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md21", null ]
+      [ "Final Approval and Submission", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md8", null ],
+      [ "Helpful Tips", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md9", [
+        [ "Keep Submissions Small", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md10", null ]
       ] ],
-      [ "Run Tests", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md22", null ]
+      [ "Run Tests", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md11", null ]
     ] ],
     [ "Communication Adapter Interface", "md_docs__design_communication_adapter_interface.html", [
-      [ "Ports", "md_docs__design_communication_adapter_interface.html#autotoc_md24", [
-        [ "comDataIn Description", "md_docs__design_communication_adapter_interface.html#autotoc_md25", null ],
-        [ "comDataOut Description", "md_docs__design_communication_adapter_interface.html#autotoc_md26", null ],
-        [ "comStatus Description", "md_docs__design_communication_adapter_interface.html#autotoc_md27", null ]
+      [ "Ports", "md_docs__design_communication_adapter_interface.html#autotoc_md13", [
+        [ "comDataIn Description", "md_docs__design_communication_adapter_interface.html#autotoc_md14", null ],
+        [ "comDataOut Description", "md_docs__design_communication_adapter_interface.html#autotoc_md15", null ],
+        [ "comStatus Description", "md_docs__design_communication_adapter_interface.html#autotoc_md16", null ]
       ] ],
-      [ "Communication Queue Protocol", "md_docs__design_communication_adapter_interface.html#autotoc_md28", null ],
-      [ "Framer Status Protocol", "md_docs__design_communication_adapter_interface.html#autotoc_md29", null ],
-      [ "Communication Adapter Protocol", "md_docs__design_communication_adapter_interface.html#autotoc_md30", null ]
+      [ "Communication Queue Protocol", "md_docs__design_communication_adapter_interface.html#autotoc_md17", null ],
+      [ "Framer Status Protocol", "md_docs__design_communication_adapter_interface.html#autotoc_md18", null ],
+      [ "Communication Adapter Protocol", "md_docs__design_communication_adapter_interface.html#autotoc_md19", null ]
     ] ],
     [ "Design and Philosophy of F´", "md_docs__design_general.html", null ],
     [ "F´ Memory Management", "md_docs__design_memory.html", null ],
     [ "F´ Numerical Types", "md_docs__design_numerical_types.html", [
-      [ "Fixed Width Types", "md_docs__design_numerical_types.html#autotoc_md34", null ],
-      [ "F´ Logical Integer Type Design", "md_docs__design_numerical_types.html#autotoc_md35", [
-        [ "Platform Configured Types", "md_docs__design_numerical_types.html#autotoc_md36", null ],
-        [ "Configurable Integer Types", "md_docs__design_numerical_types.html#autotoc_md37", null ]
+      [ "Fixed Width Types", "md_docs__design_numerical_types.html#autotoc_md23", null ],
+      [ "F´ Logical Integer Type Design", "md_docs__design_numerical_types.html#autotoc_md24", [
+        [ "Platform Configured Types", "md_docs__design_numerical_types.html#autotoc_md25", null ],
+        [ "Configurable Integer Types", "md_docs__design_numerical_types.html#autotoc_md26", null ]
       ] ]
     ] ],
     [ "Fw Components, Ports, and Classes", "fw.html", "_fw" ],
@@ -78,59 +67,59 @@ var NAVTREE =
     [ "Utils Classes", "utils.html", "_utils" ],
     [ "Security Policy", "md__s_e_c_u_r_i_t_y.html", null ],
     [ "Svc::BufferRepeater Component", "svc_buffer_repeater_component.html", [
-      [ "Svc::BufferRepeater: Buffer Repeater (Passive Component)", "svc_buffer_repeater_component.html#autotoc_md271", [
-        [ "Reporting a Vulnerability", "md__s_e_c_u_r_i_t_y.html#autotoc_md185", null ],
-        [ "Static Analysis Checks", "md__s_e_c_u_r_i_t_y.html#autotoc_md186", null ],
-        [ "General Support", "md__s_e_c_u_r_i_t_y.html#autotoc_md187", null ],
-        [ "1. Introduction", "svc_buffer_repeater_component.html#autotoc_md272", null ],
-        [ "2. Requirements", "svc_buffer_repeater_component.html#autotoc_md273", null ],
-        [ "3. Design", "svc_buffer_repeater_component.html#autotoc_md274", null ],
-        [ "3.1 Ports", "svc_buffer_repeater_component.html#autotoc_md275", [
-          [ "3.2 Events", "svc_buffer_repeater_component.html#autotoc_md277", null ]
+      [ "Svc::BufferRepeater: Buffer Repeater (Passive Component)", "svc_buffer_repeater_component.html#autotoc_md260", [
+        [ "Reporting a Vulnerability", "md__s_e_c_u_r_i_t_y.html#autotoc_md174", null ],
+        [ "Static Analysis Checks", "md__s_e_c_u_r_i_t_y.html#autotoc_md175", null ],
+        [ "General Support", "md__s_e_c_u_r_i_t_y.html#autotoc_md176", null ],
+        [ "1. Introduction", "svc_buffer_repeater_component.html#autotoc_md261", null ],
+        [ "2. Requirements", "svc_buffer_repeater_component.html#autotoc_md262", null ],
+        [ "3. Design", "svc_buffer_repeater_component.html#autotoc_md263", null ],
+        [ "3.1 Ports", "svc_buffer_repeater_component.html#autotoc_md264", [
+          [ "3.2 Events", "svc_buffer_repeater_component.html#autotoc_md266", null ]
         ] ],
-        [ "4. Configuration", "svc_buffer_repeater_component.html#autotoc_md278", null ]
+        [ "4. Configuration", "svc_buffer_repeater_component.html#autotoc_md267", null ]
       ] ]
     ] ],
     [ "Svc::ComQueue Component", "svc_com_queue_component.html", [
-      [ "Svc::ComQueue (Active Component)", "svc_com_queue_component.html#autotoc_md343", [
-        [ "1. Introduction", "svc_com_queue_component.html#autotoc_md344", null ],
-        [ "2. Assumptions", "svc_com_queue_component.html#autotoc_md345", null ],
-        [ "3. Requirements", "svc_com_queue_component.html#autotoc_md346", null ],
-        [ "4. Design", "svc_com_queue_component.html#autotoc_md347", [
-          [ "4.1. Ports", "svc_com_queue_component.html#autotoc_md348", null ],
-          [ "4.2. State", "svc_com_queue_component.html#autotoc_md349", null ],
-          [ "4.2.1 State Machine", "svc_com_queue_component.html#autotoc_md350", null ],
-          [ "4.3 Model Configuration", "svc_com_queue_component.html#autotoc_md351", null ],
-          [ "4.4 Runtime Setup", "svc_com_queue_component.html#autotoc_md352", null ],
-          [ "4.5 Port Handlers", "svc_com_queue_component.html#autotoc_md353", [
-            [ "3.1.1 portIn handler", "svc_buffer_repeater_component.html#autotoc_md276", null ],
-            [ "4.5.1 buffQueueIn", "svc_com_queue_component.html#autotoc_md354", null ],
-            [ "4.5.2 comQueueIn", "svc_com_queue_component.html#autotoc_md355", null ],
-            [ "4.5.3 comStatusIn", "svc_com_queue_component.html#autotoc_md356", null ],
-            [ "4.5.4 run", "svc_com_queue_component.html#autotoc_md357", null ]
+      [ "Svc::ComQueue (Active Component)", "svc_com_queue_component.html#autotoc_md332", [
+        [ "1. Introduction", "svc_com_queue_component.html#autotoc_md333", null ],
+        [ "2. Assumptions", "svc_com_queue_component.html#autotoc_md334", null ],
+        [ "3. Requirements", "svc_com_queue_component.html#autotoc_md335", null ],
+        [ "4. Design", "svc_com_queue_component.html#autotoc_md336", [
+          [ "4.1. Ports", "svc_com_queue_component.html#autotoc_md337", null ],
+          [ "4.2. State", "svc_com_queue_component.html#autotoc_md338", null ],
+          [ "4.2.1 State Machine", "svc_com_queue_component.html#autotoc_md339", null ],
+          [ "4.3 Model Configuration", "svc_com_queue_component.html#autotoc_md340", null ],
+          [ "4.4 Runtime Setup", "svc_com_queue_component.html#autotoc_md341", null ],
+          [ "4.5 Port Handlers", "svc_com_queue_component.html#autotoc_md342", [
+            [ "3.1.1 portIn handler", "svc_buffer_repeater_component.html#autotoc_md265", null ],
+            [ "4.5.1 buffQueueIn", "svc_com_queue_component.html#autotoc_md343", null ],
+            [ "4.5.2 comQueueIn", "svc_com_queue_component.html#autotoc_md344", null ],
+            [ "4.5.3 comStatusIn", "svc_com_queue_component.html#autotoc_md345", null ],
+            [ "4.5.4 run", "svc_com_queue_component.html#autotoc_md346", null ]
           ] ],
-          [ "4.6 Telemetry", "svc_com_queue_component.html#autotoc_md358", null ],
-          [ "4.7 Events", "svc_com_queue_component.html#autotoc_md359", null ],
-          [ "4.8 Helper Functions", "svc_com_queue_component.html#autotoc_md360", [
-            [ "4.8.1 sendComBuffer", "svc_com_queue_component.html#autotoc_md361", null ],
-            [ "4.8.2 sendBuffer", "svc_com_queue_component.html#autotoc_md362", null ],
-            [ "4.8.3 processQueue", "svc_com_queue_component.html#autotoc_md363", null ]
+          [ "4.6 Telemetry", "svc_com_queue_component.html#autotoc_md347", null ],
+          [ "4.7 Events", "svc_com_queue_component.html#autotoc_md348", null ],
+          [ "4.8 Helper Functions", "svc_com_queue_component.html#autotoc_md349", [
+            [ "4.8.1 sendComBuffer", "svc_com_queue_component.html#autotoc_md350", null ],
+            [ "4.8.2 sendBuffer", "svc_com_queue_component.html#autotoc_md351", null ],
+            [ "4.8.3 processQueue", "svc_com_queue_component.html#autotoc_md352", null ]
           ] ]
         ] ]
       ] ]
     ] ],
     [ "Svc::ComStub Component", "svc_com_stub_component.html", [
-      [ "Svc::ComStub (Passive Component)", "svc_com_stub_component.html#autotoc_md364", [
-        [ "1. Introduction", "svc_com_stub_component.html#autotoc_md365", null ],
-        [ "2. Assumptions", "svc_com_stub_component.html#autotoc_md366", null ],
-        [ "3. Requirements", "svc_com_stub_component.html#autotoc_md367", null ],
-        [ "4. Design", "svc_com_stub_component.html#autotoc_md368", [
-          [ "4.1. Ports", "svc_com_stub_component.html#autotoc_md369", null ],
-          [ "4.2. State, Configuration, and Runtime Setup", "svc_com_stub_component.html#autotoc_md370", null ],
-          [ "4.3. Port Handlers", "svc_com_stub_component.html#autotoc_md371", [
-            [ "4.3.1 comDataIn", "svc_com_stub_component.html#autotoc_md372", null ],
-            [ "4.3.1 drvConnected", "svc_com_stub_component.html#autotoc_md373", null ],
-            [ "4.3.1 drvDataIn", "svc_com_stub_component.html#autotoc_md374", null ]
+      [ "Svc::ComStub (Passive Component)", "svc_com_stub_component.html#autotoc_md353", [
+        [ "1. Introduction", "svc_com_stub_component.html#autotoc_md354", null ],
+        [ "2. Assumptions", "svc_com_stub_component.html#autotoc_md355", null ],
+        [ "3. Requirements", "svc_com_stub_component.html#autotoc_md356", null ],
+        [ "4. Design", "svc_com_stub_component.html#autotoc_md357", [
+          [ "4.1. Ports", "svc_com_stub_component.html#autotoc_md358", null ],
+          [ "4.2. State, Configuration, and Runtime Setup", "svc_com_stub_component.html#autotoc_md359", null ],
+          [ "4.3. Port Handlers", "svc_com_stub_component.html#autotoc_md360", [
+            [ "4.3.1 comDataIn", "svc_com_stub_component.html#autotoc_md361", null ],
+            [ "4.3.1 drvConnected", "svc_com_stub_component.html#autotoc_md362", null ],
+            [ "4.3.1 drvDataIn", "svc_com_stub_component.html#autotoc_md363", null ]
           ] ]
         ] ]
       ] ]
@@ -184,8 +173,8 @@ var NAVTREEINDEX =
 "health_8hpp_source.html",
 "os_2_linux_2_file_8cpp.html",
 "static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625",
-"svc_fatal_handler_component.html#autotoc_md416",
-"svc_static_memory_component.html#autotoc_md642",
+"svc_fatal_handler_component.html#autotoc_md405",
+"svc_static_memory_component.html#autotoc_md631",
 "watchdog_timer_8hpp.html",
 "class_fw_1_1_cmd_arg_buffer.html#a1a9277d906bb54cba0d92eed51a19135",
 "class_fw_1_1_poly_type.html#ae2fb07a2da7b934a610144cafaed67d1",
@@ -193,9 +182,9 @@ var NAVTREEINDEX =
 "class_primitive_struct_test.html",
 "class_svc_1_1_health_impl.html#ac9373bde103c99aeeec78106e76e69bd",
 "dir_a422961f4ddd4bf4f26b5c870cd6ead9.html",
-"namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da15e3766da7278a2ccfb60fbc77e2fa4c",
-"namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a105d813f21299854d33e22b61281e592",
-"struct_svc_1_1_log_file.html"
+"namespace_drv.html#a3412eaa90cec470b295edd3778d39307",
+"namespacemembers_b.html",
+"struct_svc_1_1_tlm_packetizer_channel_entry.html#a4d00d3440f0bd808d50e388ec8092bfb"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
