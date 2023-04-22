@@ -9,6 +9,7 @@
 
 #include "GTestBase.hpp"
 #include "FppTest/component/active/ActiveTest.hpp"
+#include "FppTest/component/macros.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
 
   class Tester :
@@ -38,38 +39,10 @@
     public:
 
       // ----------------------------------------------------------------------
-      // Telemetry tests
+      // Tests
       // ----------------------------------------------------------------------
 
-      void testTelemetry(
-          NATIVE_INT_TYPE portNum,
-          FppTest::Types::U32Param& data
-      );
-
-      void testTelemetry(
-          NATIVE_INT_TYPE portNum,
-          FppTest::Types::F32Param& data
-      );
-
-      void testTelemetry(
-          NATIVE_INT_TYPE portNum,
-          FppTest::Types::TlmStringParam& data
-      );
-
-      void testTelemetry(
-          NATIVE_INT_TYPE portNum,
-          FppTest::Types::EnumParam& data
-      );
-
-      void testTelemetry(
-          NATIVE_INT_TYPE portNum,
-          FppTest::Types::ArrayParam& data
-      );
-
-      void testTelemetry(
-          NATIVE_INT_TYPE portNum,
-          FppTest::Types::StructParam& data
-      );
+      TEST_TLM_DECLS
 
     private:
 

@@ -27,7 +27,7 @@ set(MOD_DEPS
     ${PROJECT_NAME}/array
     ${PROJECT_NAME}/struct
     ${PROJECT_NAME}/port
-    ${PROJECT_NAME}/component
+    ${PROJECT_NAME}/component/active
 )
 
 register_fprime_deployment()

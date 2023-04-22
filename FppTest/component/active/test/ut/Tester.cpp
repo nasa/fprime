@@ -27,86 +27,10 @@
   }
 
   // ----------------------------------------------------------------------
-  // Telemetry tests
+  // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
-    testTelemetry(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Types::U32Param& data
-  )
-  {
-    component.tlmWrite_ChannelU32(data.args.val);
-
-    ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_ChannelU32_SIZE(1);
-    ASSERT_TLM_ChannelU32(portNum, data.args.val);
-  }
-
-  void Tester ::
-    testTelemetry(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Types::F32Param& data
-  )
-  {
-    component.tlmWrite_ChannelF32(data.args.val);
-
-    ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_ChannelF32_SIZE(1);
-    ASSERT_TLM_ChannelF32(portNum, data.args.val);
-  }
-
-  void Tester ::
-    testTelemetry(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Types::TlmStringParam& data
-  )
-  {
-    component.tlmWrite_ChannelString(data.args.val);
-
-    ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_ChannelString_SIZE(1);
-//    ASSERT_TLM_ChannelString(portNum, data.args.val);
-  }
-
-  void Tester ::
-    testTelemetry(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Types::EnumParam& data
-  )
-  {
-    component.tlmWrite_ChannelEnum(data.args.val);
-
-    ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_ChannelEnum_SIZE(1);
-    ASSERT_TLM_ChannelEnum(portNum, data.args.val);
-  }
-
-  void Tester ::
-    testTelemetry(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Types::ArrayParam& data
-  )
-  {
-    component.tlmWrite_ChannelArray(data.args.val);
-
-    ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_ChannelArray_SIZE(1);
-    ASSERT_TLM_ChannelArray(portNum, data.args.val);
-  }
-
-  void Tester ::
-    testTelemetry(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Types::StructParam& data
-  )
-  {
-    component.tlmWrite_ChannelStruct(data.args.val);
-
-    ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_ChannelStruct_SIZE(1);
-    ASSERT_TLM_ChannelStruct(portNum, data.args.val);
-  }
+  TEST_TLM_DEFS
 
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
