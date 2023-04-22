@@ -59,7 +59,7 @@ def test_feature_library(FEATURE_BUILD):
 def test_feature_deployment(FEATURE_BUILD):
     """Feature build check deployment properly detected"""
     cmake.assert_process_success(FEATURE_BUILD)
-    library_name = f"TestDeployment"
+    library_name = "TestDeployment"
     output_path = FEATURE_BUILD["build"] / "bin" / platform.system() / library_name
     assert output_path.exists(), f"Failed to locate {library_name} in build output"
 
@@ -104,4 +104,4 @@ def test_feature_installation(FEATURE_BUILD):
     output_path = (
         FEATURE_BUILD["install"] / platform.system() / "bin" / "TestDeployment"
     )
-    assert output_path.exists(), f"Failed to locate TestDeployment in build output"
+    assert output_path.exists(), "Failed to locate TestDeployment in build output"

@@ -3,7 +3,7 @@ import difflib
 import os
 import sys
 
-from fprime_ac.utils.buildroot import build_root_relative_path, set_build_roots
+from fprime_ac.utils.buildroot import set_build_roots
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
         sys.exit(1)
     # Previous files not generated
     if not os.path.exists(args_ns.prev_locs):
-        print(f"No pervious locations")
+        print("No pervious locations")
         sys.exit(1)
 
     with open(args_ns.prev_locs, "r") as prev_locs_fh:
