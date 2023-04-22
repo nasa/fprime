@@ -66,8 +66,6 @@ namespace Drv {
         }
         this->m_bytes += readBuffer.getSize();
         this->tlmWrite_SPI_Bytes(this->m_bytes);
-        return;
-
     }
 
     bool LinuxSpiDriverComponentImpl::open(NATIVE_INT_TYPE device,

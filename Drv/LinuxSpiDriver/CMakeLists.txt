@@ -5,6 +5,9 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+if (NOT FPRIME_USE_STUBBED_DRIVERS)
+    restrict_platforms(Linux)
+endif()
 if(FPRIME_USE_STUBBED_DRIVERS)
     set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver.fpp"
@@ -19,7 +22,5 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImpl.cpp"
     )
     register_fprime_module()
-else()
-    message(STATUS "Cannot use ${CMAKE_CURRENT_LIST_DIR} with platform ${CMAKE_SYSTEM_NAME}. Skipping.")
 endif()
 

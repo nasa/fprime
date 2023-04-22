@@ -26,20 +26,6 @@ $emit_non_port_params([ $param_compName ])
 
   }
 
-  void ${name} ::
-    init(
-$emit_non_port_params($params_init_cpp)
-    )
-  {
-#if $kind == "passive"
-    ${component_base}::init(instance);
-#else if $needs_msg_size:
-    ${component_base}::init(queueDepth, msgSize, instance);
-#else
-    ${component_base}::init(queueDepth, instance);
-#end if
-  }
-
   ${name} ::
     ~${name}()
   {

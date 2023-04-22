@@ -206,7 +206,7 @@ bool LinuxUartDriver::open(const char* const device,
       options.c_cflag &= ~CSIZE;
       options.c_cflag |= CS7;
      */
-    newtio.c_cflag = CS8 | CLOCAL | CREAD;
+    newtio.c_cflag |= CS8 | CLOCAL | CREAD;
 
     switch (parity) {
         case PARITY_ODD:
@@ -268,7 +268,9 @@ bool LinuxUartDriver::open(const char* const device,
     // All done!
     Fw::LogStringArg _arg = device;
     this->log_ACTIVITY_HI_PortOpened(_arg);
-    this->ready_out(0); // Indicate the driver is connected
+    if (this->isConnected_ready_OutputPort(0)) {
+        this->ready_out(0); // Indicate the driver is connected
+    }
     return true;
 }
 

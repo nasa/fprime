@@ -38,11 +38,6 @@ class TopDictGenerator:
                 serializable_model = XmlSerializeParser.XmlSerializeParser(
                     serializable_file
                 )
-                if len(serializable_model.get_includes()) != 0:
-                    raise Exception(
-                        "%s: Can only include one level of serializable for dictionaries"
-                        % serializable_file
-                    )
 
                 # check for included enum XML in included serializable XML
                 if len(serializable_model.get_include_enums()) != 0:
@@ -382,8 +377,8 @@ class TopDictGenerator:
             for array_file in array_file_list:
                 array_file = search_for_file("Array", array_file)
                 array_model = XmlArrayParser.XmlArrayParser(array_file)
-                array_elem = etree.Element("array")
 
+                array_elem = etree.Element("array")
                 array_name = array_model.get_namespace() + "::" + array_model.get_name()
                 array_elem.attrib["name"] = array_name
 

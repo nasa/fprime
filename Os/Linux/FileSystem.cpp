@@ -516,8 +516,8 @@ Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBy
         return OTHER_ERROR;
     }
     // Check for overflow in multiplication
-    if (free_blocks > (FpLimits::FwSizeType_MAX / block_size) ||
-        total_blocks > (FpLimits::FwSizeType_MAX / block_size)) {
+    if (free_blocks > (std::numeric_limits<FwSizeType>::max() / block_size) ||
+        total_blocks > (std::numeric_limits<FwSizeType>::max() / block_size)) {
         return OTHER_ERROR;
     }
     freeBytes = free_blocks * block_size;
@@ -531,7 +531,7 @@ Status getFileCount(const char* directory, U32& fileCount) {
     DIR* dirPtr = nullptr;
     struct dirent* direntData = nullptr;
     U32 limitCount;
-    const U32 loopLimit = FpLimits::U32_MAX;
+    const U32 loopLimit = std::numeric_limits<U32>::max();
 
     fileCount = 0;
     if ((dirPtr = ::opendir(directory)) == nullptr) {

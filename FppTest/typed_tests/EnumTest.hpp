@@ -35,7 +35,7 @@ namespace FppTest {
         typename EnumType::T getValidValue() {
             U32 val = STest::Pick::startLength(
                 0, 
-                static_cast<U32>(EnumType::NUM_CONSTANTS - 1)
+                EnumType::NUM_CONSTANTS
             );
 
             return static_cast<typename EnumType::T>(val);
