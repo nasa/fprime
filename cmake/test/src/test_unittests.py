@@ -78,7 +78,7 @@ def test_unittest_targets(UT_BUILD):
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
     for executable in ["Ref"] + UNIT_TESTS:
         output_path = UT_BUILD["build"] / "bin" / platform.system() / executable
-        assert output_path.exists(), f"Failed to locate Ref in build output"
+        assert output_path.exists(), "Failed to locate Ref in build output"
 
 
 def test_unittest_installation(UT_BUILD):
@@ -91,7 +91,7 @@ def test_unittest_installation(UT_BUILD):
         )
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
     output_path = UT_BUILD["install"] / platform.system() / "bin" / "Ref"
-    assert output_path.exists(), f"Failed to locate Ref in build output"
+    assert output_path.exists(), "Failed to locate Ref in build output"
 
 
 def test_unittest_dictionary(UT_BUILD):
@@ -103,4 +103,4 @@ def test_unittest_dictionary(UT_BUILD):
         / "dict"
         / "RefTopologyAppDictionary.xml"
     )
-    assert output_path.exists(), f"Failed to locate Ref in build output"
+    assert output_path.exists(), "Failed to locate Ref in build output"
