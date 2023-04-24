@@ -35,3 +35,8 @@ event FileClosed(
   severity diagnostic \
   id 0x03 \
   format "File {} closed successfully."
+
+event FileNotInitialized \
+  severity warning low \
+  id 0x04 \
+  format "Could not open ComLogger file. File not initialized"
