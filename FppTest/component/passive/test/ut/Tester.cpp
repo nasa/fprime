@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  ActiveTest.hpp
+// \title  PassiveTest.hpp
 // \author tiffany
-// \brief  cpp file for ActiveTest test harness implementation class
+// \brief  cpp file for PassiveTest test harness implementation class
 // ======================================================================
 
 #include "Tester.hpp"
@@ -13,8 +13,8 @@
 
   Tester ::
     Tester() :
-      ActiveTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
-      component("ActiveTest")
+      PassiveTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
+      component("PassiveTest")
   {
     this->initComponents();
     this->connectPorts();
@@ -32,40 +32,40 @@
 
   TLM_TEST_DEFS
 
-// ----------------------------------------------------------------------
-// Handlers for typed from ports
-// ----------------------------------------------------------------------
+  // ----------------------------------------------------------------------
+  // Handlers for typed from ports
+  // ----------------------------------------------------------------------
 
-void Tester ::
-  from_arrayArgsOut_handler(
-      const NATIVE_INT_TYPE portNum,
-      const FormalParamArray &a,
-      FormalParamArray &aRef
-  )
-{
-  this->pushFromPortEntry_arrayArgsOut(a, aRef);
-}
+  void Tester ::
+    from_arrayArgsOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamArray &a,
+        FormalParamArray &aRef
+    )
+  {
+    this->pushFromPortEntry_arrayArgsOut(a, aRef);
+  }
 
-FormalParamArray Tester ::
-  from_arrayReturnOut_handler(
-      const NATIVE_INT_TYPE portNum,
-      const FormalParamArray &a,
-      FormalParamArray &aRef
-  )
-{
-  this->pushFromPortEntry_arrayReturnOut(a, aRef);
-  // TODO: Return a value
-}
+  FormalParamArray Tester ::
+    from_arrayReturnOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamArray &a,
+        FormalParamArray &aRef
+    )
+  {
+    this->pushFromPortEntry_arrayReturnOut(a, aRef);
+    // TODO: Return a value
+  }
 
-void Tester ::
-  from_enumArgsOut_handler(
-      const NATIVE_INT_TYPE portNum,
-      const FormalParamEnum &en,
-      FormalParamEnum &enRef
-  )
-{
-  this->pushFromPortEntry_enumArgsOut(en, enRef);
-}
+  void Tester ::
+    from_enumArgsOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamEnum &en,
+        FormalParamEnum &enRef
+    )
+  {
+    this->pushFromPortEntry_enumArgsOut(en, enRef);
+  }
 
   FormalParamEnum Tester ::
     from_enumReturnOut_handler(

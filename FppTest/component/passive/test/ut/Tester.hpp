@@ -1,19 +1,19 @@
 // ======================================================================
-// \title  ActiveTest/test/ut/Tester.hpp
+// \title  PassiveTest/test/ut/Tester.hpp
 // \author tiffany
-// \brief  hpp file for ActiveTest test harness implementation class
+// \brief  hpp file for PassiveTest test harness implementation class
 // ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "FppTest/component/active/ActiveTest.hpp"
+#include "FppTest/component/passive/PassiveTest.hpp"
 #include "FppTest/component/macros.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
 
   class Tester :
-    public ActiveTestGTestBase
+    public PassiveTestGTestBase
   {
 
       // ----------------------------------------------------------------------
@@ -25,8 +25,6 @@
       static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
       // Instance ID supplied to the component instance under test
       static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
-      // Queue depth supplied to component instance under test
-      static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
 
       //! Construct object Tester
       //!
@@ -207,7 +205,7 @@
 
       //! The component under test
       //!
-      ActiveTest component;
+      PassiveTest component;
 
   };
 

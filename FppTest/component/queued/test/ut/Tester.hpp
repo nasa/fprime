@@ -1,19 +1,19 @@
 // ======================================================================
-// \title  ActiveTest/test/ut/Tester.hpp
+// \title  QueuedTest/test/ut/Tester.hpp
 // \author tiffany
-// \brief  hpp file for ActiveTest test harness implementation class
+// \brief  hpp file for QueuedTest test harness implementation class
 // ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "FppTest/component/active/ActiveTest.hpp"
+#include "FppTest/component/queued/QueuedTest.hpp"
 #include "FppTest/component/macros.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
 
   class Tester :
-    public ActiveTestGTestBase
+    public QueuedTestGTestBase
   {
 
       // ----------------------------------------------------------------------
@@ -207,7 +207,7 @@
 
       //! The component under test
       //!
-      ActiveTest component;
+      QueuedTest component;
 
   };
 

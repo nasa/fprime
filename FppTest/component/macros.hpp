@@ -2,21 +2,21 @@
 // Telemetry tests
 // ----------------------------------------------------------------------
 
-#define TEST_TLM_DECL(type) \
+#define TLM_TEST_DECL(type) \
   void testTelemetry( \
       NATIVE_INT_TYPE portNum, \
       FppTest::Types::type##Param& data \
   );
 
-#define TEST_TLM_DECLS \
-  TEST_TLM_DECL(U32) \
-  TEST_TLM_DECL(F32) \
-  TEST_TLM_DECL(TlmString) \
-  TEST_TLM_DECL(Enum) \
-  TEST_TLM_DECL(Array) \
-  TEST_TLM_DECL(Struct)
+#define TLM_TEST_DECLS \
+  TLM_TEST_DECL(U32) \
+  TLM_TEST_DECL(F32) \
+  TLM_TEST_DECL(TlmString) \
+  TLM_TEST_DECL(Enum) \
+  TLM_TEST_DECL(Array) \
+  TLM_TEST_DECL(Struct)
 
-#define TEST_TLM_DEF(type1, type2, type3, type4) \
+#define TLM_TEST_DEF(type1, type2, type3, type4) \
   void Tester :: \
     testTelemetry( \
         NATIVE_INT_TYPE portNum, \
@@ -30,9 +30,9 @@
     ASSERT_TLM_Channel##type4(portNum, data.args.val); \
   }
 
-#define TEST_TLM_DEFS \
-  TEST_TLM_DEF(U32, U32, U32, U32) \
-  TEST_TLM_DEF(F32, F32, F32, F32) \
+#define TLM_TEST_DEFS \
+  TLM_TEST_DEF(U32, U32, U32, U32) \
+  TLM_TEST_DEF(F32, F32, F32, F32) \
 \
   void Tester :: \
     testTelemetry( \
@@ -47,6 +47,20 @@
     ASSERT_TLM_ChannelString(portNum, data.args.val.toChar()); \
   } \
 \
-  TEST_TLM_DEF(Enum, Enum, Enum, Enum) \
-  TEST_TLM_DEF(Array, Array, Array, Array) \
-  TEST_TLM_DEF(Struct, Struct, Struct, Struct)
+  TLM_TEST_DEF(Enum, Enum, Enum, Enum) \
+  TLM_TEST_DEF(Array, Array, Array, Array) \
+  TLM_TEST_DEF(Struct, Struct, Struct, Struct)
+
+#define TLM_TEST_INST \
+  using TelemetryTestImplementations = ::testing::Types< \
+      FppTest::Types::U32Param, \
+      FppTest::Types::F32Param, \
+      FppTest::Types::TlmStringParam, \
+      FppTest::Types::EnumParam, \
+      FppTest::Types::ArrayParam, \
+      FppTest::Types::StructParam \
+  >; \
+\
+  INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, \
+                                 ComponentTelemetryTest, \
+                                 TelemetryTestImplementations);
