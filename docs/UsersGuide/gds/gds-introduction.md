@@ -5,16 +5,17 @@ systems. It was designed for projects that have not already chosen a GDS, for de
 project's GDS is fully online, and for integration testers who wish to automate tests against F´ software. This guide
 will give you a quick introduction to what the F´ GDS is and how you can use it.
 
-- [What is the GDS?](#what-is-the-gds)
-- [Getting Started](#getting-started)
+- [A Brief Guide to the F´ Ground Data System](#a-brief-guide-to-the-f-ground-data-system)
+  - [What is the GDS?](#what-is-the-gds)
+  - [Getting Started](#getting-started)
     - [Running the GDS](#running-the-gds)
-- [GDS Options](#gds-options)
+  - [GDS Options](#gds-options)
     - [Specify the Deployment or Dictionary](#specify-the-deployment-or-dictionary)
     - [Disable Automatic Flight Software Execution](#disable-automatic-flight-software-execution)
     - [Specify GDS Addresses and Ports](#specify-gds-addresses-and-ports)
     - [Run the GDS Without a UI](#run-the-gds-without-a-ui)
     - [Help and Other Options](#help-and-other-options)
-- [Navigating the GDS GUI](#navigating-the-gds-gui)
+  - [Navigating the GDS GUI](#navigating-the-gds-gui)
     - [Commanding](#commanding)
     - [Events](#events)
     - [Channels](#channels)
@@ -22,7 +23,7 @@ will give you a quick introduction to what the F´ GDS is and how you can use it
     - [Downlink](#downlink)
     - [Logs](#logs)
     - [Dashboard](#dashboard)
-- [Conclusion](#conclusion)
+  - [Conclusion](#conclusion)
 
 ![GDS Image](../media/gds_gui_events.png)
 
@@ -208,8 +209,7 @@ disconnected and not sending/receiving any data. This is reset to an X via timeo
 timeout in the `config.js` file.  This widget is fondly referred to as "the orb" as it quickly shows if there is data
 flow from the embedded F´ system.
 
-There's also a NASA logo on the far left. It doesn't do anything right now, but hopefully, the meatball continues to
-inspire our users. This logo is also configurable in `config.js`.
+There's also an F´ logo on the far left, which is configurable in `config.js`.
 
 The tabs across the top perform most of the functionality of the GDS. What do the tabs contain? Do they contain things?
 Let's find out!
