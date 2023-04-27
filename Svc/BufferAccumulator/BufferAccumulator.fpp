@@ -8,7 +8,7 @@ module Svc {
 
     include "Telemetry.fppi"
 
-    @ Receive a Buffer from and upstream component to enqueue
+    @ Receive a Buffer from an upstream component to enqueue
     async input port bufferSendInFill: [1] Fw.BufferSend
 
     @ Receive a Buffer back from a downstream component
