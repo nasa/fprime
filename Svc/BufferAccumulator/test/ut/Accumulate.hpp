@@ -17,25 +17,20 @@
 
 namespace Svc {
 
-  namespace Accumulate {
+namespace Accumulate {
 
-    class Tester :
-      public Svc::Tester
-    {
+class Tester : public Svc::Tester {
+ public:
+  // ----------------------------------------------------------------------
+  // Tests
+  // ----------------------------------------------------------------------
 
-      public:
+  //! Send some buffers
+  void OK(void);
+};
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+}  // namespace Accumulate
 
-        //! Send some buffers
-        void OK();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

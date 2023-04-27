@@ -371,6 +371,7 @@ Doxywizard
 dpi
 DPRIVATE
 DPROTECTED
+DRAINBUFFERS
 drv
 drvipsocket
 drvsocketreadtask
@@ -928,6 +929,7 @@ ninjaaron
 NMEA
 nmsgs
 noargport
+NOBLOCK
 NOCOLOR
 NOCTTY
 nodemon
