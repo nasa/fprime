@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['communication_20adapter_20interface_3956',['Communication Adapter Interface',['../md_docs__design_communication_adapter_interface.html',1,'']]],
-  ['contributing_20guidelines_3957',['Contributing Guidelines',['../md__c_o_n_t_r_i_b_u_t_i_n_g.html',1,'']]]
+  ['bufferaccumulator_3960',['BufferAccumulator',['../md__svc__buffer_accumulator_docs__buffer_accumulator.html',1,'']]]
 ];

@@ -1,17 +1,11 @@
 var searchData=
 [
-  ['fw_20components_2c_20ports_2c_20and_20classes_3966',['Fw Components, Ports, and Classes',['../fw.html',1,'']]],
-  ['fw_3a_3abuffer_20serializable_20_2f_20fw_3a_3abufferget_20port_20_2f_20fw_3a_3abuffersend_20port_3967',['Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port',['../fw_buffer_serializable_buffer_get_buffer_send.html',1,'Fw']]],
-  ['fw_3a_3acmd_20_2f_20fw_3a_3acmdresponse_20_2f_20fw_3a_3acmdreg_20ports_3968',['Fw::Cmd / Fw::CmdResponse / Fw::CmdReg Ports',['../fw_cmd_fw_cmd_response_fw_cmd_reg.html',1,'Fw']]],
-  ['fw_3a_3acom_20port_3969',['Fw::Com Port',['../fw_com_port.html',1,'Fw']]],
-  ['fw_3a_3afilepacket_20classes_3970',['Fw::FilePacket Classes',['../fw_file_packet_classes.html',1,'Fw']]],
-  ['fw_3a_3alog_2c_20fw_3a_3alogtext_20ports_3971',['Fw::Log, Fw::LogText Ports',['../fw_log_log_text.html',1,'Fw']]],
-  ['fw_3a_3aobj_20classes_3972',['Fw::Obj Classes',['../fw_obj_classes.html',1,'Fw']]],
-  ['fw_3a_3aport_20classes_3973',['Fw::Port Classes',['../fw_port_classes.html',1,'Fw']]],
-  ['fw_3a_3aprmget_20_2f_20prmset_20ports_3974',['Fw::PrmGet / PrmSet Ports',['../fw_prm_get_prm_set.html',1,'Fw']]],
-  ['fw_3a_3atime_20port_3975',['Fw::Time Port',['../fw_time_port.html',1,'Fw']]],
-  ['fw_3a_3atlm_20port_3976',['Fw::Tlm Port',['../fw_tlm_port.html',1,'Fw']]],
-  ['fw_3a_3atype_20classes_20and_20types_3977',['Fw::Type Classes and Types',['../fw_type_classes.html',1,'Fw']]],
-  ['f´_20memory_20management_3978',['F´ Memory Management',['../md_docs__design_memory.html',1,'']]],
-  ['f´_20numerical_20types_3979',['F´ Numerical Types',['../md_docs__design_numerical_types.html',1,'']]]
+  ['design_20and_20philosophy_20of_20f´_3963',['Design and Philosophy of F´',['../md_docs__design_general.html',1,'']]],
+  ['drv_20components_20and_20classes_3964',['Drv Components and Classes',['../drv.html',1,'']]],
+  ['drv_3a_3ablockdriver_20component_3965',['Drv::BlockDriver Component',['../drv_block_driver_component.html',1,'Drv']]],
+  ['drv_3a_3abytestreamdrivermodel_20byte_20stream_20driver_20model_3966',['Drv::ByteStreamDriverModel Byte Stream Driver Model',['../drv_byte_stream_driver_model.html',1,'Drv']]],
+  ['drv_3a_3aip_20ipv4_20socket_20implementations_3967',['Drv::Ip IPv4 Socket Implementations',['../drv_ip.html',1,'Drv']]],
+  ['drv_3a_3atcpclient_20component_3968',['Drv::TcpClient Component',['../drv_tcp_client.html',1,'Drv']]],
+  ['drv_3a_3atcpserver_20component_3969',['Drv::TcpServer Component',['../drv_tcp_server.html',1,'Drv']]],
+  ['drv_3a_3audp_20component_3970',['Drv::Udp Component',['../drv_udp.html',1,'Drv']]]
 ];
