@@ -38,12 +38,13 @@ namespace Svc {
       Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)), sizeof(this->filePrefix)); // ensure that file prefix is not too big
 
     // Set the file prefix:
-    Fw::StringUtils::string_copy(this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
+    (void)Fw::StringUtils::string_copy(this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
   }
 
   ComLogger ::
     ComLogger(const char* compName) :
       ComLoggerComponentBase(compName),
+      filePrefix(),
       maxFileSize(0),
       fileMode(CLOSED),
       byteCount(0),
@@ -76,7 +77,7 @@ namespace Svc {
     FW_ASSERT(Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix),
       Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)), sizeof(this->filePrefix)); // ensure that file prefix is not too big
 
-    Fw::StringUtils::string_copy(this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
+    (void)Fw::StringUtils::string_copy(this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
 
     this->initialized = true;
   }
