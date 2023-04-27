@@ -17,25 +17,20 @@
 
 namespace Svc {
 
-  namespace Health {
+namespace Health {
 
-    class Tester :
-      public Svc::Tester
-    {
+class Tester : public Svc::Tester {
+ public:
+  // ----------------------------------------------------------------------
+  // Tests
+  // ----------------------------------------------------------------------
 
-      public:
+  //! Health ping test
+  void Ping(void);
+};
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+}  // namespace Health
 
-        //! Health ping test
-        void Ping();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

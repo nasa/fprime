@@ -1,17 +1,20 @@
-// ----------------------------------------------------------------------
-// Main.cpp
-// ----------------------------------------------------------------------
+// ======================================================================
+// \title  Main.cpp
+// \author bocchino, mereweth
+// \brief  Test drain mode
+//
+// \copyright
+// Copyright (c) 2017 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 
-#include "Tester.hpp"
-#include "Errors.hpp"
 #include "Accumulate.hpp"
 #include "Drain.hpp"
+#include "Errors.hpp"
 #include "Health.hpp"
-
-TEST(Test, AccumNoAllocate) {
-  Svc::Tester tester(false); // don't call allocateQueue for the user
-  tester.AccumNoAllocate();
-}
+#include "Tester.hpp"
 
 // ----------------------------------------------------------------------
 // Test Errors
@@ -20,6 +23,11 @@ TEST(Test, AccumNoAllocate) {
 TEST(TestErrors, QueueFull) {
   Svc::Errors::Tester tester;
   tester.QueueFull();
+}
+
+TEST(TestErrors, PartialDrain) {
+  Svc::Errors::Tester tester;
+  tester.PartialDrain();
 }
 
 // ----------------------------------------------------------------------
@@ -38,6 +46,11 @@ TEST(TestAccumulate, OK) {
 TEST(TestDrain, OK) {
   Svc::Drain::Tester tester;
   tester.OK();
+}
+
+TEST(TestPartialDrain, OK) {
+  Svc::Drain::Tester tester;
+  tester.PartialDrainOK();
 }
 
 // ----------------------------------------------------------------------
