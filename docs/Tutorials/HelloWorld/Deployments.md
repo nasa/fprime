@@ -22,7 +22,7 @@ ground control and data collection of the deployment.
 
 To create a deployment, run the following commands:
 ```bash
-cd MyProject
+# In: MyProject
 fprime-util new --deployment
 ```
 This command will ask for some input. Respond with the following answers:
@@ -30,7 +30,6 @@ This command will ask for some input. Respond with the following answers:
 ```
 deployment_name [MyDeployment]: MyDeployment
 path_to_fprime [./fprime]: 
-author_name []: LeStarch
 ```
 
 > For any other questions, select the default response.
@@ -50,6 +49,13 @@ to `MyDeployment/CMakeLists.txt`.
 include("${FPRIME_PROJECT_ROOT}/project.cmake")
 ...
 ```
+> To build this new deployment generate a build cache and then build.
+> ```bash
+> # In: MyProject/MyDeployment
+> fprime-util generate
+> fprime-util build
+> ```
+> > Notice `fprime-util generate` was used again. This is because this new deployment builds in a separate environment.
 
 In this section the `HelloWorld` component will be added to the `MyDeployment` deployment. This can be done by adding
 the component to the topology defined in `MyDeployment/Top`. 
@@ -62,12 +68,13 @@ specific configuration.
 In order to add a component to the topology, it must be added to the topology model. An instance definition and an
 instance initializer must both be added.
 
-To add an instance definition, add `instance helloWorld` to the instance definition list in the `topology Ref` section
+To add an instance definition, add `instance helloWorld` to the instance definition list in the `topology MyDeployment` section
 of `MyDeployment/Top/topology.fpp`. This is shown below.
 
+Edit `MyDeployment/Top/topology.fpp`:
 ```
 ...
-    topology Ref {
+    topology MyDeployment {
         # ----------------------------------------------------------------------
         # Instances used in the topology
         # ----------------------------------------------------------------------
@@ -85,6 +92,7 @@ Next, an instance initializer must be added to topology instances defined in `My
 Since the `HelloWorld` component is an `active` component it should be added to the active components section and should
 define a priority and queue depth options.  This is shown below.
 
+Add to `MyDeploymment/Top/instances.fpp`:
 ```
 ...
   # ----------------------------------------------------------------------
@@ -112,6 +120,7 @@ Finally, our new telemetry channel should be added to our telemetry packet speci
 channel can be ignored as the deployment will not use the telemetry packetizer. Add the following to the `ignore`
 section of `MyDeployment/Top/MyDeploymentPackets.xml`.
 
+Update `MyDeployment/Top/MyDeploymentPackets.xml`:
 ```
     <ignore>
         ...
@@ -123,15 +132,12 @@ Since this component has no custom ports nor does it require special configurati
 completed. The deployment can now be set up and built using the following commands:
 
 ```
-cd MyDeployment
-fprime-util generate
+# In: MyProject/MyDeployment
 fprime-util build -j4
 ```
-Resolve any errors that occur before continuing to the testing section.
+> Resolve any errors that occur before continuing to the running section.
 
-> Notice `fprime-util generate` was used again. This is because this new deployment builds in a separate environment.
-
-## Testing With `fprime-gds`
+## Runninf With `fprime-gds`
 
 It is now time to test the `HelloWorld` component by running the deployment created in this section. This can be
 accomplished by running the `fprime-gds` command in the deployment, verifying connection, sending the new SEND_HELLO
