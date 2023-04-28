@@ -250,8 +250,9 @@ namespace FppTest {
     typedef FormalParams<TlmStringTypes> TlmStringParams;
     typedef FormalParams<PrmStringType> PrmStringParam;
     typedef FormalParams<PrmStringTypes> PrmStringParams;
+    typedef FormalParams<SerialType> SerialParam;
 
-    typedef FormalParamsWithReturn<Empty, BoolType> NoArgsReturn;
+    typedef FormalParamsWithReturn<Empty, BoolType> NoParamReturn;
     typedef FormalParamsWithReturn<PrimitiveTypes, U32Type> PrimitiveReturn;
     typedef FormalParamsWithReturn<EnumTypes, EnumType> EnumReturn;
     typedef FormalParamsWithReturn<ArrayTypes, ArrayType> ArrayReturn;

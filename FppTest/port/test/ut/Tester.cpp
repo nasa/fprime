@@ -52,7 +52,7 @@
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::NoArgsPort& port
+        FppTest::Types::NoParams& port
     ) 
   {
     this->invoke_to_noArgsIn(portNum);
@@ -61,111 +61,111 @@
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::PrimitiveArgsPort& port
+        FppTest::Types::PrimitiveParams& port
     ) 
   {
     this->invoke_to_primitiveArgsIn(
       portNum, 
-      port.args.u32, 
-      port.args.u32Ref, 
-      port.args.f32,
-      port.args.f32Ref,
-      port.args.b,
-      port.args.bRef
+      port.args.val1, 
+      port.args.val2, 
+      port.args.val3,
+      port.args.val4,
+      port.args.val5,
+      port.args.val6
     );
   }
 
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::StringArgsPort& port
+        FppTest::Types::PortStringParams& port
     ) 
   {
     this->invoke_to_stringArgsIn(
       portNum,
-      port.args.str80,
-      port.args.str80Ref,
-      port.args.str100,
-      port.args.str100Ref
+      port.args.val1,
+      port.args.val2,
+      port.args.val3,
+      port.args.val4
     );
   }
 
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::EnumArgsPort& port
+        FppTest::Types::EnumParams& port
     ) 
   {
     this->invoke_to_enumArgsIn(
       portNum, 
-      port.args.en, 
-      port.args.enRef
+      port.args.val1, 
+      port.args.val2
     );
   }
 
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::ArrayArgsPort& port
+        FppTest::Types::ArrayParams& port
     ) 
   {
     this->invoke_to_arrayArgsIn(
       portNum, 
-      port.args.a, 
-      port.args.aRef
+      port.args.val2, 
+      port.args.val2
     );
   }
 
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::StructArgsPort& port
+        FppTest::Types::StructParams& port
     ) 
   {
     this->invoke_to_structArgsIn(
       portNum, 
-      port.args.s, 
-      port.args.sRef
+      port.args.val1, 
+      port.args.val2
     );
   }
 
   void Tester :: 
     invoke(
       NATIVE_INT_TYPE portNum,
-      FppTest::Port::SerialArgsPort& port
+      FppTest::Types::SerialParam& port
     )
   {
     this->invoke_to_serialIn(
       portNum,
-      port.args.buf
+      port.args.val
     );
   }
 
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::NoArgsReturnPort& port
+        FppTest::Types::NoParamReturn& port
     ) 
   {
     bool returnVal = this->invoke_to_noArgsReturnIn(portNum);
 
-    ASSERT_EQ(returnVal, this->noArgsReturnVal.val);
+    ASSERT_EQ(returnVal, this->noParamReturnVal.val);
   }
 
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::PrimitiveReturnPort& port
+        FppTest::Types::PrimitiveReturn& port
     ) 
   {
     U32 returnVal = this->invoke_to_primitiveReturnIn(
       portNum, 
-      port.args.u32, 
-      port.args.u32Ref, 
-      port.args.f32,
-      port.args.f32Ref,
-      port.args.b,
-      port.args.bRef
+      port.args.val1, 
+      port.args.val2, 
+      port.args.val3,
+      port.args.val4,
+      port.args.val5,
+      port.args.val6
     );
 
     ASSERT_EQ(returnVal, this->primitiveReturnVal.val);
@@ -174,13 +174,13 @@
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::EnumReturnPort& port
+        FppTest::Types::EnumReturn& port
     ) 
   {
-    PortEnum returnVal = this->invoke_to_enumReturnIn(
+    FormalParamEnum returnVal = this->invoke_to_enumReturnIn(
       portNum,
-      port.args.en,
-      port.args.enRef
+      port.args.val1,
+      port.args.val2
     );
 
     ASSERT_EQ(returnVal, this->enumReturnVal.val);
@@ -189,13 +189,13 @@
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::ArrayReturnPort& port
+        FppTest::Types::ArrayReturn& port
     ) 
   {
-    PortArray returnVal = this->invoke_to_arrayReturnIn(
+    FormalParamArray returnVal = this->invoke_to_arrayReturnIn(
       portNum,
-      port.args.a,
-      port.args.aRef
+      port.args.val1,
+      port.args.val2
     );
 
     ASSERT_EQ(returnVal, this->arrayReturnVal.val);
@@ -204,13 +204,13 @@
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::StructReturnPort& port
+        FppTest::Types::StructReturn& port
     ) 
   {
-    PortStruct returnVal = this->invoke_to_structReturnIn(
+    FormalParamStruct returnVal = this->invoke_to_structReturnIn(
       portNum,
-      port.args.s,
-      port.args.sRef
+      port.args.val1,
+      port.args.val2
     );
 
     ASSERT_EQ(returnVal, this->structReturnVal.val);
@@ -223,7 +223,7 @@
   void Tester ::
     invoke_serial(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::NoArgsPort& port
+        FppTest::Types::NoParams& port
     ) 
   {
     U8 data[0];
@@ -238,7 +238,7 @@
   void Tester ::
     invoke_serial(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::PrimitiveArgsPort& port
+        FppTest::Types::PrimitiveParams& port
     ) 
   {
     Fw::SerializeStatus status;
@@ -258,7 +258,7 @@
     U8 invalidData2[sizeof(U32)];
     Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
 
-    status = invalidBuf2.serialize(port.args.u32);
+    status = invalidBuf2.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -272,10 +272,10 @@
     U8 invalidData3[sizeof(U32) * 2];
     Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));
 
-    status = invalidBuf3.serialize(port.args.u32);
+    status = invalidBuf3.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf3.serialize(port.args.u32Ref);
+    status = invalidBuf3.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -292,13 +292,13 @@
     ];
     Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));
 
-    status = invalidBuf4.serialize(port.args.u32);
+    status = invalidBuf4.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf4.serialize(port.args.u32Ref);
+    status = invalidBuf4.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf4.serialize(port.args.f32);
+    status = invalidBuf4.serialize(port.args.val3);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -315,16 +315,16 @@
     ];
     Fw::SerialBuffer invalidBuf5(invalidData5, sizeof(invalidData5));
 
-    status = invalidBuf5.serialize(port.args.u32);
+    status = invalidBuf5.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf5.serialize(port.args.u32Ref);
+    status = invalidBuf5.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf5.serialize(port.args.f32);
+    status = invalidBuf5.serialize(port.args.val3);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf5.serialize(port.args.f32Ref);
+    status = invalidBuf5.serialize(port.args.val4);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -342,19 +342,19 @@
     ];
     Fw::SerialBuffer invalidBuf6(invalidData6, sizeof(invalidData6));
 
-    status = invalidBuf6.serialize(port.args.u32);
+    status = invalidBuf6.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf6.serialize(port.args.u32Ref);
+    status = invalidBuf6.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf6.serialize(port.args.f32);
+    status = invalidBuf6.serialize(port.args.val3);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf6.serialize(port.args.f32Ref);
+    status = invalidBuf6.serialize(port.args.val4);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf6.serialize(port.args.b);
+    status = invalidBuf6.serialize(port.args.val5);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -368,22 +368,22 @@
     U8 data[InputPrimitiveArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
 
-    status = buf.serialize(port.args.u32);
+    status = buf.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.u32Ref);
+    status = buf.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.f32);
+    status = buf.serialize(port.args.val3);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.f32Ref);
+    status = buf.serialize(port.args.val4);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.b);
+    status = buf.serialize(port.args.val5);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.bRef);
+    status = buf.serialize(port.args.val6);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -397,7 +397,7 @@
   void Tester ::
     invoke_serial(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::StringArgsPort& port
+        FppTest::Types::PortStringParams& port
     ) 
   {
     Fw::SerializeStatus status;
@@ -417,7 +417,7 @@
     U8 invalidData2[StringArgsPortStrings::StringSize80::SERIALIZED_SIZE];
     Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
 
-    status = invalidBuf2.serialize(port.args.str80);
+    status = invalidBuf2.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -431,10 +431,10 @@
     U8 invalidData3[StringArgsPortStrings::StringSize80::SERIALIZED_SIZE * 2];
     Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));
 
-    status = invalidBuf3.serialize(port.args.str80);
+    status = invalidBuf3.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf3.serialize(port.args.str80Ref);
+    status = invalidBuf3.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -451,13 +451,13 @@
     ];
     Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));
 
-    status = invalidBuf4.serialize(port.args.str80);
+    status = invalidBuf4.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf4.serialize(port.args.str80Ref);
+    status = invalidBuf4.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = invalidBuf4.serialize(port.args.str100);
+    status = invalidBuf4.serialize(port.args.val3);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -471,16 +471,16 @@
     U8 data[InputStringArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
 
-    status = buf.serialize(port.args.str80);
+    status = buf.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.str80Ref);
+    status = buf.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.str100);
+    status = buf.serialize(port.args.val3);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.str100Ref);
+    status = buf.serialize(port.args.val4);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -494,7 +494,7 @@
   void Tester ::
     invoke_serial(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::EnumArgsPort& port
+        FppTest::Types::EnumParams& port
     ) 
   {
     Fw::SerializeStatus status;
@@ -511,10 +511,10 @@
     this->checkSerializeStatusBufferEmpty();
 
     // Check unsuccessful deserialization of second parameter
-    U8 invalidData2[PortEnum::SERIALIZED_SIZE];
+    U8 invalidData2[FormalParamEnum::SERIALIZED_SIZE];
     Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
 
-    status = invalidBuf2.serialize(port.args.en);
+    status = invalidBuf2.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -528,10 +528,10 @@
     U8 data[InputEnumArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
 
-    status = buf.serialize(port.args.en);
+    status = buf.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.enRef);
+    status = buf.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -545,7 +545,7 @@
   void Tester ::
     invoke_serial(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::ArrayArgsPort& port
+        FppTest::Types::ArrayParams& port
     ) 
   {
     Fw::SerializeStatus status;
@@ -562,10 +562,10 @@
     this->checkSerializeStatusBufferEmpty();
 
     // Check unsuccessful deserialization of second parameter
-    U8 invalidData2[PortArray::SERIALIZED_SIZE];
+    U8 invalidData2[FormalParamArray::SERIALIZED_SIZE];
     Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
 
-    status = invalidBuf2.serialize(port.args.a);
+    status = invalidBuf2.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -578,10 +578,10 @@
     U8 data[InputArrayArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
 
-    status = buf.serialize(port.args.a);
+    status = buf.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.aRef);
+    status = buf.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -595,7 +595,7 @@
   void Tester ::
     invoke_serial(
         NATIVE_INT_TYPE portNum,
-        FppTest::Port::StructArgsPort& port
+        FppTest::Types::StructParams& port
     ) 
   {
     Fw::SerializeStatus status;
@@ -612,10 +612,10 @@
     this->checkSerializeStatusBufferEmpty();
 
     // Check unsuccessful deserialization of second parameter
-    U8 invalidData2[PortStruct::SERIALIZED_SIZE];
+    U8 invalidData2[FormalParamStruct::SERIALIZED_SIZE];
     Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));
 
-    status = invalidBuf2.serialize(port.args.s);
+    status = invalidBuf2.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -628,10 +628,10 @@
     U8 data[InputStructArgsPort::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
 
-    status = buf.serialize(port.args.s);
+    status = buf.serialize(port.args.val1);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = buf.serialize(port.args.sRef);
+    status = buf.serialize(port.args.val2);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
     this->invoke_to_serialIn(
@@ -645,12 +645,12 @@
   void Tester :: 
     invoke_serial(
       NATIVE_INT_TYPE portNum,
-      FppTest::Port::SerialArgsPort& port
+      FppTest::Types::SerialParam& port
     )
   {
     this->invoke_to_serialIn(
       portNum,
-      port.args.buf
+      port.args.val
     );
 
     ASSERT_EQ(
@@ -665,7 +665,7 @@
 
   void Tester ::
     check_history(
-        FppTest::Port::NoArgsPort& port
+        FppTest::Types::NoParams& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -674,83 +674,83 @@
 
   void Tester ::
     check_history(
-        FppTest::Port::PrimitiveArgsPort& port
+        FppTest::Types::PrimitiveParams& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_primitiveArgsOut_SIZE(1);
     ASSERT_from_primitiveArgsOut(
       0, 
-      port.args.u32, 
-      port.args.u32Ref, 
-      port.args.f32,
-      port.args.f32Ref,
-      port.args.b,
-      port.args.bRef
+      port.args.val1, 
+      port.args.val2, 
+      port.args.val3,
+      port.args.val4,
+      port.args.val5,
+      port.args.val6
     );
   }
 
   void Tester ::
     check_history(
-        FppTest::Port::StringArgsPort& port
+        FppTest::Types::PortStringParams& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_stringArgsOut_SIZE(1);
     ASSERT_from_stringArgsOut(
       0, 
-      port.args.str80,
-      port.args.str80Ref,
-      port.args.str100,
-      port.args.str100Ref
+      port.args.val1,
+      port.args.val2,
+      port.args.val3,
+      port.args.val4
     );
   }
 
   void Tester ::
     check_history(
-        FppTest::Port::EnumArgsPort& port
+        FppTest::Types::EnumParams& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_enumArgsOut_SIZE(1);
     ASSERT_from_enumArgsOut(
       0, 
-      port.args.en,
-      port.args.enRef
+      port.args.val1,
+      port.args.val2
     );
   }
 
   void Tester ::
     check_history(
-        FppTest::Port::ArrayArgsPort& port
+        FppTest::Types::ArrayParams& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_arrayArgsOut_SIZE(1);
     ASSERT_from_arrayArgsOut(
       0, 
-      port.args.a,
-      port.args.aRef
+      port.args.val1,
+      port.args.val2
     );
   }
 
   void Tester ::
     check_history(
-        FppTest::Port::StructArgsPort& port
+        FppTest::Types::StructParams& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_structArgsOut_SIZE(1);
     ASSERT_from_structArgsOut(
       0, 
-      port.args.s,
-      port.args.sRef
+      port.args.val1,
+      port.args.val2
     );
   }
 
   void Tester ::
     check_history(
-        FppTest::Port::NoArgsReturnPort& port
+        FppTest::Types::NoParamReturn& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -759,61 +759,61 @@
 
   void Tester ::
     check_history(
-        FppTest::Port::PrimitiveReturnPort& port
+        FppTest::Types::PrimitiveReturn& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_primitiveReturnOut_SIZE(1);
     ASSERT_from_primitiveReturnOut(
       0, 
-      port.args.u32, 
-      port.args.u32Ref, 
-      port.args.f32,
-      port.args.f32Ref,
-      port.args.b,
-      port.args.bRef
+      port.args.val1, 
+      port.args.val2, 
+      port.args.val3,
+      port.args.val4,
+      port.args.val5,
+      port.args.val6
     );
   }
 
   void Tester ::
     check_history(
-        FppTest::Port::EnumReturnPort& port
+        FppTest::Types::EnumReturn& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_enumReturnOut_SIZE(1);
     ASSERT_from_enumReturnOut(
       0, 
-      port.args.en,
-      port.args.enRef
+      port.args.val1,
+      port.args.val2
     );
   }
 
   void Tester ::
     check_history(
-        FppTest::Port::ArrayReturnPort& port
+        FppTest::Types::ArrayReturn& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_arrayReturnOut_SIZE(1);
     ASSERT_from_arrayReturnOut(
       0, 
-      port.args.a,
-      port.args.aRef
+      port.args.val1,
+      port.args.val2
     );
   }
 
   void Tester ::
     check_history(
-        FppTest::Port::StructReturnPort& port
+        FppTest::Types::StructReturn& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_structReturnOut_SIZE(1);
     ASSERT_from_structReturnOut(
       0, 
-      port.args.s,
-      port.args.sRef
+      port.args.val1,
+      port.args.val2
     );
   }
 
@@ -823,14 +823,14 @@
 
   void Tester ::
     check_serial(
-      FppTest::Port::NoArgsPort& port
+      FppTest::Types::NoParams& port
     )
   {
   }
 
   void Tester ::
     check_serial(
-      FppTest::Port::PrimitiveArgsPort& port
+      FppTest::Types::PrimitiveParams& port
     )
   {
     Fw::SerializeStatus status;
@@ -856,17 +856,17 @@
     status = this->primitiveBuf.deserialize(bRef);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    ASSERT_EQ(u32, port.args.u32);
-    ASSERT_EQ(u32Ref, port.args.u32Ref);
-    ASSERT_EQ(f32, port.args.f32);
-    ASSERT_EQ(f32Ref, port.args.f32Ref);
-    ASSERT_EQ(b, port.args.b);
-    ASSERT_EQ(bRef, port.args.bRef);
+    ASSERT_EQ(u32, port.args.val1);
+    ASSERT_EQ(u32Ref, port.args.val2);
+    ASSERT_EQ(f32, port.args.val3);
+    ASSERT_EQ(f32Ref, port.args.val4);
+    ASSERT_EQ(b, port.args.val5);
+    ASSERT_EQ(bRef, port.args.val6);
   }
 
   void Tester ::
     check_serial(
-      FppTest::Port::StringArgsPort& port
+      FppTest::Types::PortStringParams& port
     )
   {
     Fw::SerializeStatus status;
@@ -885,19 +885,19 @@
     status = this->stringBuf.deserialize(str100Ref);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    ASSERT_EQ(str80, port.args.str80);
-    ASSERT_EQ(str80Ref, port.args.str80Ref);
-    ASSERT_EQ(str100, port.args.str100);
-    ASSERT_EQ(str100Ref, port.args.str100Ref);
+    ASSERT_EQ(str80, port.args.val1);
+    ASSERT_EQ(str80Ref, port.args.val2);
+    ASSERT_EQ(str100, port.args.val3);
+    ASSERT_EQ(str100Ref, port.args.val4);
   }
 
   void Tester ::
     check_serial(
-      FppTest::Port::EnumArgsPort& port
+      FppTest::Types::EnumParams& port
     )
   {
     Fw::SerializeStatus status;
-    PortEnum en, enRef;
+    FormalParamEnum en, enRef;
 
     status = this->enumBuf.deserialize(en);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
@@ -905,17 +905,17 @@
     status = this->enumBuf.deserialize(enRef);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    ASSERT_EQ(en, port.args.en);
-    ASSERT_EQ(enRef, port.args.enRef);
+    ASSERT_EQ(en, port.args.val1);
+    ASSERT_EQ(enRef, port.args.val2);
   }
 
   void Tester ::
     check_serial(
-      FppTest::Port::ArrayArgsPort& port
+      FppTest::Types::ArrayParams& port
     )
   {
     Fw::SerializeStatus status;
-    PortArray a, aRef;
+    FormalParamArray a, aRef;
 
     status = this->arrayBuf.deserialize(a);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
@@ -923,17 +923,17 @@
     status = this->arrayBuf.deserialize(aRef);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    ASSERT_EQ(a, port.args.a);
-    ASSERT_EQ(aRef, port.args.aRef);
+    ASSERT_EQ(a, port.args.val1);
+    ASSERT_EQ(aRef, port.args.val2);
   }
 
   void Tester ::
     check_serial(
-      FppTest::Port::StructArgsPort& port
+      FppTest::Types::StructParams& port
     )
   {
     Fw::SerializeStatus status;
-    PortStruct s, sRef;
+    FormalParamStruct s, sRef;
 
     status = this->structBuf.deserialize(s);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
@@ -941,16 +941,16 @@
     status = this->structBuf.deserialize(sRef);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    ASSERT_EQ(s, port.args.s);
-    ASSERT_EQ(sRef, port.args.sRef);
+    ASSERT_EQ(s, port.args.val1);
+    ASSERT_EQ(sRef, port.args.val2);
   }
 
   void Tester ::
     check_serial(
-      FppTest::Port::SerialArgsPort& port
+      FppTest::Types::SerialParam& port
     )
   {
-    ASSERT_EQ(this->serialBuf, port.args.buf);
+    ASSERT_EQ(this->serialBuf, port.args.val);
   }
 
   // ----------------------------------------------------------------------
@@ -960,18 +960,18 @@
   void Tester ::
     from_arrayArgsOut_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortArray &a,
-        PortArray &aRef
+        const FormalParamArray &a,
+        FormalParamArray &aRef
     )
   {
     this->pushFromPortEntry_arrayArgsOut(a, aRef);
   }
 
-  PortArray Tester ::
+  FormalParamArray Tester ::
     from_arrayReturnOut_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortArray &a,
-        PortArray &aRef
+        const FormalParamArray &a,
+        FormalParamArray &aRef
     )
   {
     this->pushFromPortEntry_arrayReturnOut(a, aRef);
@@ -982,18 +982,18 @@
   void Tester ::
     from_enumArgsOut_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortEnum &en,
-        PortEnum &enRef
+        const FormalParamEnum &en,
+        FormalParamEnum &enRef
     )
   {
     this->pushFromPortEntry_enumArgsOut(en, enRef);
   }
 
-  PortEnum Tester ::
+  FormalParamEnum Tester ::
     from_enumReturnOut_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortEnum &en,
-        PortEnum &enRef
+        const FormalParamEnum &en,
+        FormalParamEnum &enRef
     )
   {
     this->pushFromPortEntry_enumReturnOut(en, enRef);
@@ -1016,7 +1016,7 @@
   {
     this->pushFromPortEntry_noArgsReturnOut();
 
-    return this->noArgsReturnVal.val;
+    return this->noParamReturnVal.val;
   }
 
   void Tester ::
@@ -1064,18 +1064,18 @@
   void Tester ::
     from_structArgsOut_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortStruct &s,
-        PortStruct &sRef
+        const FormalParamStruct &s,
+        FormalParamStruct &sRef
     )
   {
     this->pushFromPortEntry_structArgsOut(s, sRef);
   }
 
-  PortStruct Tester ::
+  FormalParamStruct Tester ::
     from_structReturnOut_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortStruct &s,
-        PortStruct &sRef
+        const FormalParamStruct &s,
+        FormalParamStruct &sRef
     )
   {
     this->pushFromPortEntry_structReturnOut(s, sRef);

@@ -42,18 +42,18 @@
   void Example ::
     arrayArgsIn_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortArray &a,
-        PortArray &aRef
+        const FormalParamArray &a,
+        FormalParamArray &aRef
     )
   {
     this->arrayArgsOut_out(portNum, a, aRef);
   }
 
-  PortArray Example ::
+  FormalParamArray Example ::
     arrayReturnIn_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortArray &a,
-        PortArray &aRef
+        const FormalParamArray &a,
+        FormalParamArray &aRef
     )
   {
     return this->arrayReturnOut_out(portNum, a, aRef);
@@ -62,18 +62,18 @@
   void Example ::
     enumArgsIn_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortEnum &e,
-        PortEnum &eRef
+        const FormalParamEnum &e,
+        FormalParamEnum &eRef
     )
   {
     this->enumArgsOut_out(portNum, e, eRef);
   }
 
-  PortEnum Example ::
+  FormalParamEnum Example ::
     enumReturnIn_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortEnum &e,
-        PortEnum &eRef
+        const FormalParamEnum &e,
+        FormalParamEnum &eRef
     )
   {
     return this->enumReturnOut_out(portNum, e, eRef);
@@ -160,18 +160,18 @@
   void Example ::
     structArgsIn_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortStruct &s,
-        PortStruct &sRef
+        const FormalParamStruct &s,
+        FormalParamStruct &sRef
     )
   {
     this->structArgsOut_out(portNum, s, sRef);
   }
 
-  PortStruct Example ::
+  FormalParamStruct Example ::
     structReturnIn_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortStruct &s,
-        PortStruct &sRef
+        const FormalParamStruct &s,
+        FormalParamStruct &sRef
     )
   {
     return this->structReturnOut_out(portNum, s, sRef);

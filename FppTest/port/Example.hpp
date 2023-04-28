@@ -46,22 +46,22 @@
       //!
       void arrayArgsIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortArray &a, /*!< 
+          const FormalParamArray &a, /*!< 
       An array
       */
-          PortArray &aRef /*!< 
+          FormalParamArray &aRef /*!< 
       An array ref
       */
       );
 
       //! Handler implementation for arrayReturnIn
       //!
-      PortArray arrayReturnIn_handler(
+      FormalParamArray arrayReturnIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortArray &a, /*!< 
+          const FormalParamArray &a, /*!< 
       An array
       */
-          PortArray &aRef /*!< 
+          FormalParamArray &aRef /*!< 
       An array ref
       */
       );
@@ -70,22 +70,22 @@
       //!
       void enumArgsIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortEnum &e, /*!< 
+          const FormalParamEnum &e, /*!< 
       An enum
       */
-          PortEnum &eRef /*!< 
+          FormalParamEnum &eRef /*!< 
       An enum ref
       */
       );
 
       //! Handler implementation for enumReturnIn
       //!
-      PortEnum enumReturnIn_handler(
+      FormalParamEnum enumReturnIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortEnum &e, /*!< 
+          const FormalParamEnum &e, /*!< 
       An enum
       */
-          PortEnum &eRef /*!< 
+          FormalParamEnum &eRef /*!< 
       An enum ref
       */
       );
@@ -144,22 +144,22 @@
       //!
       void structArgsIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortStruct &s, /*!< 
+          const FormalParamStruct &s, /*!< 
       A struct
       */
-          PortStruct &sRef /*!< 
+          FormalParamStruct &sRef /*!< 
       A struct ref
       */
       );
 
       //! Handler implementation for structReturnIn
       //!
-      PortStruct structReturnIn_handler(
+      FormalParamStruct structReturnIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortStruct &s, /*!< 
+          const FormalParamStruct &s, /*!< 
       A struct
       */
-          PortStruct &sRef /*!< 
+          FormalParamStruct &sRef /*!< 
       A struct ref
       */
       );

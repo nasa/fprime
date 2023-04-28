@@ -12,26 +12,26 @@
 
 
 #include "Tester.hpp"
-#include "FppTest/port/PortTypes.hpp"
+#include "FppTest/types/FormalParamTypes.hpp"
 #include "FppTest/typed_tests/PortTest.hpp"
 #include "FppTest/typed_tests/StringTest.hpp"
-#include "FppTest/port/StringArgsPortAc.hpp"
+#include "FppTest/types/StringArgsPortAc.hpp"
 
 #include "gtest/gtest.h"
 
 // Typed port tests
 using TypedPortTestImplementations = ::testing::Types<
-    FppTest::Port::NoArgsPort,
-    FppTest::Port::PrimitiveArgsPort,
-    FppTest::Port::StringArgsPort,
-    FppTest::Port::EnumArgsPort,
-    FppTest::Port::ArrayArgsPort,
-    FppTest::Port::StructArgsPort,
-    FppTest::Port::NoArgsReturnPort,
-    FppTest::Port::PrimitiveReturnPort,
-    FppTest::Port::EnumReturnPort,
-    FppTest::Port::ArrayReturnPort,
-    FppTest::Port::StructReturnPort
+    FppTest::Types::NoParams,
+    FppTest::Types::PrimitiveParams,
+    FppTest::Types::PortStringParams,
+    FppTest::Types::EnumParams,
+    FppTest::Types::ArrayParams,
+    FppTest::Types::StructParams,
+    FppTest::Types::NoParamReturn,
+    FppTest::Types::PrimitiveReturn,
+    FppTest::Types::EnumReturn,
+    FppTest::Types::ArrayReturn,
+    FppTest::Types::StructReturn
 >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
@@ -40,13 +40,13 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
 
 // Serial port tests
 using SerialPortTestImplementations = ::testing::Types<
-    FppTest::Port::NoArgsPort,
-    FppTest::Port::PrimitiveArgsPort,
-    FppTest::Port::StringArgsPort,
-    FppTest::Port::EnumArgsPort,
-    FppTest::Port::ArrayArgsPort,
-    FppTest::Port::StructArgsPort
-//    FppTest::Port::SerialArgsPort
+    FppTest::Types::NoParams,
+    FppTest::Types::PrimitiveParams,
+    FppTest::Types::PortStringParams,
+    FppTest::Types::EnumParams,
+    FppTest::Types::ArrayParams,
+    FppTest::Types::StructParams
+//    FppTest::Types::SerialParams
 >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,

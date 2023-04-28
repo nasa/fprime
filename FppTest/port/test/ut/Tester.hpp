@@ -11,13 +11,13 @@
 
 #include "GTestBase.hpp"
 #include "FppTest/port/Example.hpp"
-#include "PortTypes.hpp"
+#include "FppTest/types/FormalParamTypes.hpp"
 
-#include "FppTest/port/PrimitiveArgsPortAc.hpp"
-#include "FppTest/port/StringArgsPortAc.hpp"
-#include "FppTest/port/EnumArgsPortAc.hpp"
-#include "FppTest/port/ArrayArgsPortAc.hpp"
-#include "FppTest/port/StructArgsPortAc.hpp"
+#include "FppTest/types/PrimitiveArgsPortAc.hpp"
+#include "FppTest/types/StringArgsPortAc.hpp"
+#include "FppTest/types/EnumArgsPortAc.hpp"
+#include "FppTest/types/ArrayArgsPortAc.hpp"
+#include "FppTest/types/StructArgsPortAc.hpp"
 #include "FppTest/port/TypedPortIndexEnumAc.hpp"
 #include "FppTest/port/SerialPortIndexEnumAc.hpp"
 
@@ -57,62 +57,62 @@
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::NoArgsPort& port
+          FppTest::Types::NoParams& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::PrimitiveArgsPort& port
+          FppTest::Types::PrimitiveParams& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::StringArgsPort& port
+          FppTest::Types::PortStringParams& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::EnumArgsPort& port
+          FppTest::Types::EnumParams& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::ArrayArgsPort& port
+          FppTest::Types::ArrayParams& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::StructArgsPort& port
+          FppTest::Types::StructParams& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::SerialArgsPort& port
+          FppTest::Types::SerialParam& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::NoArgsReturnPort& port
+          FppTest::Types::NoParamReturn& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::PrimitiveReturnPort& port
+          FppTest::Types::PrimitiveReturn& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::EnumReturnPort& port
+          FppTest::Types::EnumReturn& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::ArrayReturnPort& port
+          FppTest::Types::ArrayReturn& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::StructReturnPort& port
+          FppTest::Types::StructReturn& port
       );
 
       // ----------------------------------------------------------------------
@@ -121,37 +121,37 @@
 
       void invoke_serial(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::NoArgsPort& port
+          FppTest::Types::NoParams& port
       );
 
       void invoke_serial(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::PrimitiveArgsPort& port
+          FppTest::Types::PrimitiveParams& port
       );
 
       void invoke_serial(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::StringArgsPort& port
+          FppTest::Types::PortStringParams& port
       );
 
       void invoke_serial(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::EnumArgsPort& port
+          FppTest::Types::EnumParams& port
       );
 
       void invoke_serial(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::ArrayArgsPort& port
+          FppTest::Types::ArrayParams& port
       );
 
       void invoke_serial(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::StructArgsPort& port
+          FppTest::Types::StructParams& port
       );
 
       void invoke_serial(
           NATIVE_INT_TYPE portNum,
-          FppTest::Port::SerialArgsPort& port
+          FppTest::Types::SerialParam& port
       );
 
       // ----------------------------------------------------------------------
@@ -159,47 +159,47 @@
       // ----------------------------------------------------------------------
 
       void check_history(
-          FppTest::Port::NoArgsPort& port
+          FppTest::Types::NoParams& port
       );
 
       void check_history(
-          FppTest::Port::PrimitiveArgsPort& port
+          FppTest::Types::PrimitiveParams& port
       );
 
       void check_history(
-          FppTest::Port::StringArgsPort& port
+          FppTest::Types::PortStringParams& port
       );
 
       void check_history(
-          FppTest::Port::EnumArgsPort& port
+          FppTest::Types::EnumParams& port
       );
 
       void check_history(
-          FppTest::Port::ArrayArgsPort& port
+          FppTest::Types::ArrayParams& port
       );
 
       void check_history(
-          FppTest::Port::StructArgsPort& port
+          FppTest::Types::StructParams& port
       );
 
       void check_history(
-          FppTest::Port::NoArgsReturnPort& port
+          FppTest::Types::NoParamReturn& port
       );
       
       void check_history(
-          FppTest::Port::PrimitiveReturnPort& port
+          FppTest::Types::PrimitiveReturn& port
       );
 
       void check_history(
-          FppTest::Port::EnumReturnPort& port
+          FppTest::Types::EnumReturn& port
       );
 
       void check_history(
-          FppTest::Port::ArrayReturnPort& port
+          FppTest::Types::ArrayReturn& port
       );
 
       void check_history(
-          FppTest::Port::StructReturnPort& port
+          FppTest::Types::StructReturn& port
       );
 
       // ----------------------------------------------------------------------
@@ -207,31 +207,31 @@
       // ----------------------------------------------------------------------
 
       void check_serial(
-          FppTest::Port::NoArgsPort& port
+          FppTest::Types::NoParams& port
       );
 
       void check_serial(
-          FppTest::Port::PrimitiveArgsPort& port
+          FppTest::Types::PrimitiveParams& port
       );
 
       void check_serial(
-          FppTest::Port::StringArgsPort& port
+          FppTest::Types::PortStringParams& port
       );
 
       void check_serial(
-          FppTest::Port::EnumArgsPort& port
+          FppTest::Types::EnumParams& port
       );
 
       void check_serial(
-          FppTest::Port::ArrayArgsPort& port
+          FppTest::Types::ArrayParams& port
       );
 
       void check_serial(
-          FppTest::Port::StructArgsPort& port
+          FppTest::Types::StructParams& port
       );
 
       void check_serial(
-          FppTest::Port::SerialArgsPort& port
+          FppTest::Types::SerialParam& port
       );
 
     private:
@@ -244,22 +244,22 @@
       //!
       void from_arrayArgsOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortArray &a, /*!< 
+          const FormalParamArray &a, /*!< 
       An array
       */
-          PortArray &aRef /*!< 
+          FormalParamArray &aRef /*!< 
       An array ref
       */
       );
 
       //! Handler for from_arrayReturnOut
       //!
-      PortArray from_arrayReturnOut_handler(
+      FormalParamArray from_arrayReturnOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortArray &a, /*!< 
+          const FormalParamArray &a, /*!< 
       An array
       */
-          PortArray &aRef /*!< 
+          FormalParamArray &aRef /*!< 
       An array ref
       */
       );
@@ -268,22 +268,22 @@
       //!
       void from_enumArgsOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortEnum &en, /*!< 
+          const FormalParamEnum &en, /*!< 
       An enum
       */
-          PortEnum &enRef /*!< 
+          FormalParamEnum &enRef /*!< 
       An enum ref
       */
       );
 
       //! Handler for from_enumReturnOut
       //!
-      PortEnum from_enumReturnOut_handler(
+      FormalParamEnum from_enumReturnOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortEnum &en, /*!< 
+          const FormalParamEnum &en, /*!< 
       An enum
       */
-          PortEnum &enRef /*!< 
+          FormalParamEnum &enRef /*!< 
       An enum ref
       */
       );
@@ -342,22 +342,22 @@
       //!
       void from_structArgsOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortStruct &s, /*!< 
+          const FormalParamStruct &s, /*!< 
       A struct
       */
-          PortStruct &sRef /*!< 
+          FormalParamStruct &sRef /*!< 
       A struct ref
       */
       );
 
       //! Handler for from_structReturnOut
       //!
-      PortStruct from_structReturnOut_handler(
+      FormalParamStruct from_structReturnOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortStruct &s, /*!< 
+          const FormalParamStruct &s, /*!< 
       A struct
       */
-          PortStruct &sRef /*!< 
+          FormalParamStruct &sRef /*!< 
       A struct ref
       */
       );
@@ -406,11 +406,11 @@
       Example component;
 
       // Values returned by typed output ports
-      FppTest::Port::BoolReturn noArgsReturnVal;
-      FppTest::Port::PrimitiveReturn primitiveReturnVal;
-      FppTest::Port::EnumReturn enumReturnVal;
-      FppTest::Port::ArrayReturn arrayReturnVal;
-      FppTest::Port::StructReturn structReturnVal;
+      FppTest::Types::BoolType noParamReturnVal;
+      FppTest::Types::U32Type primitiveReturnVal;
+      FppTest::Types::EnumType enumReturnVal;
+      FppTest::Types::ArrayType arrayReturnVal;
+      FppTest::Types::StructType structReturnVal;
 
       // Buffers from serial output ports;
       U8 primitiveData[InputPrimitiveArgsPort::SERIALIZED_SIZE];
