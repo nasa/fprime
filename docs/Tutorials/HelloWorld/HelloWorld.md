@@ -50,7 +50,7 @@ This command will ask for some input. You should respond with the following answ
 ```
 [INFO] Cookiecutter source: using builtin
 component_name [MyComponent]: HelloWorld
-component_short_description [Example Component for F Prime FSW framework.]: 
+component_short_description [Example Component for F Prime FSW framework.]: Hello World Tutorial Component
 component_namespace [HelloWorld]: MyComponents
 Select component_kind:
 1 - active
@@ -73,8 +73,8 @@ Select enable_parameters:
 1 - yes
 2 - no
 Choose from 1, 2 [1]: 1
-[INFO] Found CMake file at 'fprime-tutorial-hello-world/project.cmake'
-Add component MyComponents/HelloWorld to fprime-tutorial-hello-world/project.cmake at end of file (yes/no)? yes
+[INFO] Found CMake file at 'MyProject/project.cmake'
+Add component MyComponents/HelloWorld to MyProject/project.cmake at end of file (yes/no)? yes
 Generate implementation files (yes/no)? yes
 ```
 
