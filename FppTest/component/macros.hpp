@@ -50,17 +50,3 @@
   TLM_TEST_DEF(Enum, Enum, Enum, Enum) \
   TLM_TEST_DEF(Array, Array, Array, Array) \
   TLM_TEST_DEF(Struct, Struct, Struct, Struct)
-
-#define TLM_TEST_INST \
-  using TelemetryTestImplementations = ::testing::Types< \
-      FppTest::Types::U32Param, \
-      FppTest::Types::F32Param, \
-      FppTest::Types::TlmStringParam, \
-      FppTest::Types::EnumParam, \
-      FppTest::Types::ArrayParam, \
-      FppTest::Types::StructParam \
-  >; \
-\
-  INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, \
-                                 ComponentTelemetryTest, \
-                                 TelemetryTestImplementations);
