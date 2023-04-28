@@ -49,8 +49,8 @@ This command will ask for some input. You should respond with the following answ
 
 ```
 [INFO] Cookiecutter source: using builtin
-component_name [MyComponent]: HelloWorld 
-component_short_description [Example Component for F Prime FSW framework.]: Hello World Tutorial Component
+component_name [MyComponent]: HelloWorld
+component_short_description [Example Component for F Prime FSW framework.]: 
 component_namespace [HelloWorld]: MyComponents
 Select component_kind:
 1 - active
@@ -72,16 +72,16 @@ Choose from 1, 2 [1]: 1
 Select enable_parameters:
 1 - yes
 2 - no
-Choose from 1, 2 [1]: 2
-[INFO] Found CMake file at 'MyProject/project.cmake'
-Add component MyComponents/HelloWorld to MyProject/project.cmake at end of file (yes/no)? yes
-Generate implementation files (yes/no)? no
+Choose from 1, 2 [1]: 1
+[INFO] Found CMake file at 'fprime-tutorial-hello-world/project.cmake'
+Add component MyComponents/HelloWorld to fprime-tutorial-hello-world/project.cmake at end of file (yes/no)? yes
+Generate implementation files (yes/no)? yes
 ```
 
 > For any other questions, select the default response.
 
 This will create a new component called "HelloWorld" in the "MyProject" namespace. This new component will be able to
-define commands, events, and telemetry channels.
+define commands, events, telemetry channels, and parameters.
 
 We should navigate to the component's directory and look around:
 
@@ -113,12 +113,12 @@ with the following:
 ```
 @ Command to issue greeting with maximum length of 20 characters
 async command SAY_HELLO(
-    greeting: string size 20 @ Greeting to repeat in the Hello event
+    greeting: string size 20 @< Greeting to repeat in the Hello event
 )
 
 @ Greeting event with maximum greeting length of 20 characters
 event Hello(
-    greeting: string size 20 @ Greeting supplied from the SAY_HELLO command
+    greeting: string size 20 @< Greeting supplied from the SAY_HELLO command
 ) severity activity high format "I say: {}"
 
 @ A count of the number of greetings issued
@@ -171,12 +171,15 @@ void HelloWorld:: SAY_HELLO_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw
 > private:
 >     U32 m_greetingCount;
 > ```
+> Should be added inside the `class` definition in `HelloWorld.hpp`.
+>
 > **HelloWorld.cpp: Updating Constructor**
 > ```c++
-> HelloWorld:: HelloWorld() :
->   m_greetingCount(0),
->   HelloWorldComponentBase(compName) {
+> HelloWorld:: HelloWorld(const char *const compName) : HelloWorldComponentBase(compName),
+>     m_greetingCount(0)
+> {
 > ```
+> Should be added to the `HelloWorld` constructor at the top of the file.
 
 The component should build without errors by running `fprime-util build`.  Resolve any errors that occur before
 proceeding to the next section.
