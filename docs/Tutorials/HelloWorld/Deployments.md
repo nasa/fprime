@@ -137,7 +137,7 @@ fprime-util build -j4
 ```
 > Resolve any errors that occur before continuing to the running section.
 
-## Runninf With `fprime-gds`
+## Running With `fprime-gds`
 
 It is now time to test the `HelloWorld` component by running the deployment created in this section. This can be
 accomplished by running the `fprime-gds` command in the deployment, verifying connection, sending the new SEND_HELLO
