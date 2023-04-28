@@ -42,9 +42,16 @@ Choose from 1, 2 [1]: 1
 Use the default for anything not specified. This command will take a moment to run.
 
 The above command creates a new F´ project structure in a folder called `MyProject`, use the `devel` branch of F´ as
-the basis for the project, and set up the matching tools in a new Virtual Environment.
+the basis for the project, and sets up the matching tools in a new Virtual Environment.
 
-> Experienced F´ users may note that we have not yet created a deployment, but rather just the base project structure.
+> Load the tools for this project via the virtual environment.
+> 
+> ```bash
+> cd MyProject
+> . venv/bin/activate
+>```
+>
+> Make sure to load these tools any time you are working with the this project.
 
 ## Building the New F´ Project
 
