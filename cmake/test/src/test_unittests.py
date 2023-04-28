@@ -87,10 +87,10 @@ def test_unittest_installation(UT_BUILD):
     for module in MODULES:
         library_name = f"lib{module}.a"
         output_path = (
-            UT_BUILD["install"] / platform.system() / "lib" / "static" / library_name
+            UT_BUILD["install"] / "Ref" / platform.system() / "lib" / "static" / library_name
         )
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
-    output_path = UT_BUILD["install"] / platform.system() / "bin" / "Ref"
+    output_path = UT_BUILD["install"] / "Ref" / platform.system() / "bin" / "Ref"
     assert output_path.exists(), "Failed to locate Ref in build output"
 
 
@@ -99,6 +99,7 @@ def test_unittest_dictionary(UT_BUILD):
     cmake.assert_process_success(UT_BUILD, errors_ok=True)
     output_path = (
         UT_BUILD["install"]
+        / "Ref"
         / platform.system()
         / "dict"
         / "RefTopologyAppDictionary.xml"
