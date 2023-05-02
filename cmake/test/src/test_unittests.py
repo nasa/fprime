@@ -87,7 +87,12 @@ def test_unittest_installation(UT_BUILD):
     for module in MODULES:
         library_name = f"lib{module}.a"
         output_path = (
-            UT_BUILD["install"] / platform.system() / "Ref" / "lib" / "static" / library_name
+            UT_BUILD["install"]
+            / platform.system()
+            / "Ref"
+            / "lib"
+            / "static"
+            / library_name
         )
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
     output_path = UT_BUILD["install"] / platform.system() / "Ref" / "bin" / "Ref"

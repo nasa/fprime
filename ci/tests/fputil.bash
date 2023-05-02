@@ -82,9 +82,9 @@ function integration_test_run {
                 --show-leak-kinds=all \
                 --track-origins=yes \
                 --log-file=${LOG_DIR}/gds-logs/valgrind.log \
-            ${ROOTDIR}/*/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
+            ${ROOTDIR}/*/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
         else
-            ${ROOTDIR}/*/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
+            ${ROOTDIR}/*/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
         fi
         VALGRIND_PID=$!
 
@@ -96,17 +96,13 @@ function integration_test_run {
         # Run integration tests
         (
             cd "${WORKDIR}"
-            if [[ "${DICTIONARY_PATH}" != "" ]]
-            then
-                DICTIONARY_ARGS="--dictionary ${WORKDIR}/${DICTIONARY_PATH}"
-            fi
             echo "[INFO] Running ${WORKDIR}/test's pytest integration tests"
             TIMEOUT="timeout"
             if ! command -v ${TIMEOUT} &> /dev/null
             then
                 TIMEOUT="gtimeout" # macOS homebrew "coreutils"
             fi
-            ${TIMEOUT} --kill-after=10s 180s pytest ${DICTIONARY_ARGS}
+            ${TIMEOUT} --kill-after=10s 180s pytest
         )
         RET_PYTEST=$?
         pkill -P $GDS_PID

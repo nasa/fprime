@@ -104,6 +104,10 @@ def test_feature_installation(FEATURE_BUILD):
         )
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
     output_path = (
-        FEATURE_BUILD["install"] / platform.system() / deployment_name / "bin" / deployment_name
+        FEATURE_BUILD["install"]
+        / platform.system()
+        / deployment_name
+        / "bin"
+        / deployment_name
     )
     assert output_path.exists(), "Failed to locate TestDeployment in build output"
