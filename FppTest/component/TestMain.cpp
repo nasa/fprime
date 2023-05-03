@@ -7,6 +7,20 @@
 #include "FppTest/types/FormalParamTypes.hpp"
 #include "FppTest/typed_tests/ComponentTest.hpp"
 
+using EventTestImplementations = ::testing::Types<
+  FppTest::Types::NoParams,
+  FppTest::Types::PrimitiveParams,
+  FppTest::Types::LogStringParams,
+  FppTest::Types::EnumParam,
+  FppTest::Types::ArrayParam,
+  FppTest::Types::StructParam,
+  FppTest::Types::BoolParam
+>;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
+                             ComponentEventTest,
+                             EventTestImplementations);
+
 using TelemetryTestImplementations = ::testing::Types<
   FppTest::Types::U32Param,
   FppTest::Types::F32Param,

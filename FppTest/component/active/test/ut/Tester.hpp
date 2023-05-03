@@ -22,7 +22,7 @@
 
     public:
       // Maximum size of histories storing events, telemetry, and port outputs
-      static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
+      static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 100;
       // Instance ID supplied to the component instance under test
       static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
       // Queue depth supplied to component instance under test
@@ -43,6 +43,8 @@
       // ----------------------------------------------------------------------
 
       TLM_TEST_DECLS
+
+      EVENT_TEST_DECLS
 
     private:
 

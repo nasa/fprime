@@ -18,6 +18,23 @@
 #include "gtest/gtest.h"
 
 template <typename FormalParamType>
+class ComponentEventTest : public ::testing::Test {
+protected:
+    Tester tester;
+    FormalParamType data;
+};
+
+TYPED_TEST_SUITE_P(ComponentEventTest);
+
+TYPED_TEST_P(ComponentEventTest, EventTest) {
+    this->tester.testEvent(0, this->data);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(ComponentEventTest,
+    EventTest
+);
+
+template <typename FormalParamType>
 class ComponentTelemetryTest : public ::testing::Test {
 protected:
     Tester tester;
