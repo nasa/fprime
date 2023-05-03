@@ -27,6 +27,7 @@ set(MOD_DEPS
     ${PROJECT_NAME}/array
     ${PROJECT_NAME}/struct
     ${PROJECT_NAME}/port
+    ${PROJECT_NAME}/component/empty
     ${PROJECT_NAME}/component/active
     ${PROJECT_NAME}/component/queued
     ${PROJECT_NAME}/component/passive
