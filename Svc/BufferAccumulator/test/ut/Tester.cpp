@@ -11,184 +11,123 @@
 // ======================================================================
 
 #include "Tester.hpp"
-#include <FpConfig.hpp>
+
+#include "Fw/Types/BasicTypes.hpp"
+
 #include "Fw/Types/MallocAllocator.hpp"
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 10
-#define QUEUE_DEPTH 10
+#define MAX_HISTORY_SIZE 30
+#define QUEUE_DEPTH 30
 
 namespace Svc {
 
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction and destruction
+// ----------------------------------------------------------------------
 
-  Tester ::
-    Tester(bool doAllocateQueue) :
+Tester ::Tester(bool doAllocateQueue)
+    :
+#if FW_OBJECT_NAMES == 1
       BufferAccumulatorGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferAccumulator"),
-      doAllocateQueue(doAllocateQueue)
-  {
-    this->initComponents();
-    this->connectPorts();
+#else
+      BufferAccumulatorGTestBase(MAX_HISTORY_SIZE),
+      component(),
+#endif
+      doAllocateQueue(doAllocateQueue) {
+  this->initComponents();
+  this->connectPorts();
 
-    if (this->doAllocateQueue) {
-      Fw::MallocAllocator buffAccumMallocator;
-      this->component.allocateQueue(0,buffAccumMallocator,MAX_NUM_BUFFERS);
-    }
+  // Witch to BufferAccumulator_OpState::DRAIN at start so we don't have to
+  // change ut
+  component.mode = BufferAccumulator_OpState::DRAIN;
+  component.send = true;
+
+  if (this->doAllocateQueue) {
+    Fw::MallocAllocator buffAccumMallocator;
+    this->component.allocateQueue(0, buffAccumMallocator, MAX_NUM_BUFFERS);
   }
+}
 
-  Tester ::
-    ~Tester()
-  {
-    if (this->doAllocateQueue) {
-      Fw::MallocAllocator buffAccumMallocator;
-      this->component.deallocateQueue(buffAccumMallocator);
-    }
+Tester ::~Tester() {
+  if (this->doAllocateQueue) {
+    Fw::MallocAllocator buffAccumMallocator;
+    this->component.deallocateQueue(buffAccumMallocator);
   }
+}
 
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Handlers for typed from ports
+// ----------------------------------------------------------------------
 
-  void Tester ::
-    AccumNoAllocate()
-  {
-    // TODO (mereweth) - make something sensible happen when no-one sets us up
-  }
+void Tester ::from_bufferSendOutDrain_handler(const NATIVE_INT_TYPE portNum,
+                                              Fw::Buffer& fwBuffer) {
+  this->pushFromPortEntry_bufferSendOutDrain(fwBuffer);
+}
 
-  // ----------------------------------------------------------------------
-  // Handlers for typed from ports
-  // ----------------------------------------------------------------------
+void Tester ::from_bufferSendOutReturn_handler(const NATIVE_INT_TYPE portNum,
+                                               Fw::Buffer& fwBuffer) {
+  this->pushFromPortEntry_bufferSendOutReturn(fwBuffer);
+}
 
-  void Tester ::
-    from_bufferSendOutDrain_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Buffer& fwBuffer
-    )
-  {
-    this->pushFromPortEntry_bufferSendOutDrain(fwBuffer);
-  }
+void Tester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+  this->pushFromPortEntry_pingOut(key);
+}
 
-  void Tester ::
-    from_bufferSendOutReturn_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Buffer& fwBuffer
-    )
-  {
-    this->pushFromPortEntry_bufferSendOutReturn(fwBuffer);
-  }
+// ----------------------------------------------------------------------
+// Helper methods
+// ----------------------------------------------------------------------
 
-  void Tester ::
-    from_pingOut_handler(
-        const NATIVE_INT_TYPE portNum,
-        U32 key
-    )
-  {
-    this->pushFromPortEntry_pingOut(key);
-  }
+void Tester ::connectPorts() {
+  // bufferSendInFill
+  this->connect_to_bufferSendInFill(
+      0, this->component.get_bufferSendInFill_InputPort(0));
 
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
+  // bufferSendInReturn
+  this->connect_to_bufferSendInReturn(
+      0, this->component.get_bufferSendInReturn_InputPort(0));
 
-  void Tester ::
-    connectPorts()
-  {
+  // cmdIn
+  this->connect_to_cmdIn(0, this->component.get_cmdIn_InputPort(0));
 
-    // bufferSendInFill
-    this->connect_to_bufferSendInFill(
-        0,
-        this->component.get_bufferSendInFill_InputPort(0)
-    );
+  // pingIn
+  this->connect_to_pingIn(0, this->component.get_pingIn_InputPort(0));
 
-    // bufferSendInReturn
-    this->connect_to_bufferSendInReturn(
-        0,
-        this->component.get_bufferSendInReturn_InputPort(0)
-    );
+  // bufferSendOutDrain
+  this->component.set_bufferSendOutDrain_OutputPort(
+      0, this->get_from_bufferSendOutDrain(0));
 
-    // cmdIn
-    this->connect_to_cmdIn(
-        0,
-        this->component.get_cmdIn_InputPort(0)
-    );
+  // bufferSendOutReturn
+  this->component.set_bufferSendOutReturn_OutputPort(
+      0, this->get_from_bufferSendOutReturn(0));
 
-    // pingIn
-    this->connect_to_pingIn(
-        0,
-        this->component.get_pingIn_InputPort(0)
-    );
+  // cmdRegOut
+  this->component.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
 
-    // schedIn
-    this->connect_to_schedIn(
-        0,
-        this->component.get_schedIn_InputPort(0)
-    );
-    // bufferSendOutDrain
-    this->component.set_bufferSendOutDrain_OutputPort(
-        0,
-        this->get_from_bufferSendOutDrain(0)
-    );
+  // cmdResponseOut
+  this->component.set_cmdResponseOut_OutputPort(
+      0, this->get_from_cmdResponseOut(0));
 
-    // bufferSendOutReturn
-    this->component.set_bufferSendOutReturn_OutputPort(
-        0,
-        this->get_from_bufferSendOutReturn(0)
-    );
+  // eventOut
+  this->component.set_eventOut_OutputPort(0, this->get_from_eventOut(0));
 
-    // cmdRegOut
-    this->component.set_cmdRegOut_OutputPort(
-        0,
-        this->get_from_cmdRegOut(0)
-    );
+  // eventOutText
+  this->component.set_eventOutText_OutputPort(0,
+                                              this->get_from_eventOutText(0));
+  // pingOut
+  this->component.set_pingOut_OutputPort(0, this->get_from_pingOut(0));
 
-    // cmdResponseOut
-    this->component.set_cmdResponseOut_OutputPort(
-        0,
-        this->get_from_cmdResponseOut(0)
-    );
+  // timeCaller
+  this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
 
-    // eventOut
-    this->component.set_eventOut_OutputPort(
-        0,
-        this->get_from_eventOut(0)
-    );
+  // tlmOut
+  this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
+}
 
-    // eventOutText
-    this->component.set_eventOutText_OutputPort(
-        0,
-        this->get_from_eventOutText(0)
-    );
-    // pingOut
-    this->component.set_pingOut_OutputPort(
-        0,
-        this->get_from_pingOut(0)
-    );
+void Tester ::initComponents() {
+  this->init();
+  this->component.init(QUEUE_DEPTH, INSTANCE);
+}
 
-    // timeCaller
-    this->component.set_timeCaller_OutputPort(
-        0,
-        this->get_from_timeCaller(0)
-    );
-
-    // tlmOut
-    this->component.set_tlmOut_OutputPort(
-        0,
-        this->get_from_tlmOut(0)
-    );
-
-
-  }
-
-  void Tester ::
-    initComponents()
-  {
-    this->init();
-    this->component.init(
-        QUEUE_DEPTH, INSTANCE
-    );
-  }
-
-} // end namespace Svc
+}  // end namespace Svc
