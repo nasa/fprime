@@ -47,16 +47,16 @@ void Tester ::
       FppTest::Types::PrimitiveParams& data
 )
 {
-  for (U32 i = 0; i < ActiveTestComponentBase::EVENTID_EVENTPRIMITIVE_THROTTLE; i++) {
+  for (U32 i = 0; i < component.EVENTID_EVENTPRIMITIVE_THROTTLE; i++) {
     testEventHelper(portNum, data, i + 1);
   }
 
   // Test that throttling works
-  testEventHelper(portNum, data, ActiveTestComponentBase::EVENTID_EVENTPRIMITIVE_THROTTLE);
+  testEventHelper(portNum, data, component.EVENTID_EVENTPRIMITIVE_THROTTLE);
 
   // Test throttle reset
   component.log_ACTIVITY_LO_EventPrimitive_ThrottleClear();
-  testEventHelper(portNum, data, ActiveTestComponentBase::EVENTID_EVENTPRIMITIVE_THROTTLE + 1);
+  testEventHelper(portNum, data, component.EVENTID_EVENTPRIMITIVE_THROTTLE + 1);
 }
 
 void Tester ::
@@ -122,16 +122,16 @@ void Tester ::
       FppTest::Types::ArrayParam& data
 )
 {
-  for (U32 i = 0; i < ActiveTestComponentBase::EVENTID_EVENTARRAY_THROTTLE; i++) {
+  for (U32 i = 0; i < component.EVENTID_EVENTARRAY_THROTTLE; i++) {
     testEventHelper(portNum, data, i + 1);
   }
 
   // Test that throttling works
-  testEventHelper(portNum, data, ActiveTestComponentBase::EVENTID_EVENTARRAY_THROTTLE);
+  testEventHelper(portNum, data, component.EVENTID_EVENTARRAY_THROTTLE);
 
   // Test throttle reset
   component.log_FATAL_EventArray_ThrottleClear();
-  testEventHelper(portNum, data, ActiveTestComponentBase::EVENTID_EVENTARRAY_THROTTLE + 1);
+  testEventHelper(portNum, data, component.EVENTID_EVENTARRAY_THROTTLE + 1);
 }
 
 void Tester ::
@@ -177,14 +177,14 @@ void Tester ::
       FppTest::Types::BoolParam& data
 )
 {
-  for (U32 i = 0; i < ActiveTestComponentBase::EVENTID_EVENTBOOL_THROTTLE; i++) {
+  for (U32 i = 0; i < component.EVENTID_EVENTBOOL_THROTTLE; i++) {
     testEventHelper(portNum, data, i + 1);
   }
 
   // Test that throttling works
-  testEventHelper(portNum, data, ActiveTestComponentBase::EVENTID_EVENTBOOL_THROTTLE);
+  testEventHelper(portNum, data, component.EVENTID_EVENTBOOL_THROTTLE);
 
   // Test throttle reset
   component.log_WARNING_LO_EventBool_ThrottleClear();
-  testEventHelper(portNum, data, ActiveTestComponentBase::EVENTID_EVENTBOOL_THROTTLE + 1);
+  testEventHelper(portNum, data, component.EVENTID_EVENTBOOL_THROTTLE + 1);
 }

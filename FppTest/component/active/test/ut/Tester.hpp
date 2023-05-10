@@ -42,9 +42,9 @@
       // Tests
       // ----------------------------------------------------------------------
 
-      TLM_TEST_DECLS
-
       EVENT_TEST_DECLS
+
+      TLM_TEST_DECLS
 
     private:
 
