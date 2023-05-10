@@ -46,6 +46,8 @@
 
       TLM_TEST_DECLS
 
+      void testParam();
+
     private:
 
       // ----------------------------------------------------------------------
@@ -134,6 +136,30 @@
           F32 &f32Ref, 
           bool b, 
           bool &bRef 
+      );
+
+      //! Handler for from_prmGetIn
+      //!
+      Fw::ParamValid from_prmGetIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwPrmIdType id, /*!< 
+      Parameter ID
+      */
+          Fw::ParamBuffer &val /*!< 
+      Buffer containing serialized parameter value
+      */
+      );
+
+      //! Handler for from_prmSetIn
+      //!
+      void from_prmSetIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwPrmIdType id, /*!< 
+      Parameter ID
+      */
+          Fw::ParamBuffer &val /*!< 
+      Buffer containing serialized parameter value
+      */
       );
 
       //! Handler for from_stringArgsOut

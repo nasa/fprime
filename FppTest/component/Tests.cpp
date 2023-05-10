@@ -1,5 +1,9 @@
 #include "test/ut/Tester.hpp"
 
+// ----------------------------------------------------------------------
+// Event tests
+// ----------------------------------------------------------------------
+
 void Tester ::
   testEvent(
       NATIVE_INT_TYPE portNum,
@@ -187,4 +191,80 @@ void Tester ::
   // Test throttle reset
   component.log_WARNING_LO_EventBool_ThrottleClear();
   testEventHelper(portNum, data, component.EVENTID_EVENTBOOL_THROTTLE + 1);
+}
+
+// ----------------------------------------------------------------------
+// Telemetry tests
+// ----------------------------------------------------------------------
+
+TLM_TEST_DEFS
+
+// ----------------------------------------------------------------------
+// Parameter tests
+// ----------------------------------------------------------------------
+
+Fw::ParamValid Tester ::
+  from_prmGetIn_handler(
+      const NATIVE_INT_TYPE portNum,
+      FwPrmIdType id,
+      Fw::ParamBuffer &val
+  )
+{
+  this->pushFromPortEntry_prmGetIn(id, val);
+
+  val.resetSer();
+
+  FppTest::Types::BoolParam boolVal;
+  FppTest::Types::U32Param u32Val;
+  FppTest::Types::PrmStringParam stringVal;
+  FppTest::Types::EnumParam enumVal;
+  FppTest::Types::ArrayParam arrayVal;
+  FppTest::Types::StructParam structVal;
+  Fw::SerializeStatus status;
+
+  status = val.serialize(boolVal.args.val);
+  FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+
+  status = val.serialize(u32Val.args.val);
+  FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+
+  status = val.serialize(stringVal.args.val);
+  FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+
+  status = val.serialize(enumVal.args.val);
+  FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+
+  status = val.serialize(arrayVal.args.val);
+  FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+
+  status = val.serialize(structVal.args.val);
+  FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+
+  return Fw::ParamValid::VALID;
+}
+
+void Tester ::
+  testParam()
+{
+  component.loadParameters();
+
+  Fw::ParamValid valid;
+
+  bool boolVal = component.paramGet_ParamBool(valid);
+  ASSERT_EQ(valid, Fw::ParamValid::VALID);
+
+  U32 u32Val = component.paramGet_ParamU32(valid);
+  ASSERT_EQ(valid, Fw::ParamValid::VALID);
+
+  Fw::ParamString stringVal = component.paramGet_ParamString(valid);
+  ASSERT_EQ(valid, Fw::ParamValid::VALID);
+
+  FormalParamEnum enumVal = component.paramGet_ParamEnum(valid);
+  ASSERT_EQ(valid, Fw::ParamValid::VALID);
+
+  FormalParamArray arrayVal = component.paramGet_ParamArray(valid);
+  ASSERT_EQ(valid, Fw::ParamValid::VALID);
+
+  FormalParamStruct structVal = component.paramGet_ParamStruct(valid);
+  ASSERT_EQ(valid, Fw::ParamValid::VALID);
 }

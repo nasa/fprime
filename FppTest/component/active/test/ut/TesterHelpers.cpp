@@ -291,13 +291,13 @@
     // prmGetOut
     this->component.set_prmGetOut_OutputPort(
         0,
-        this->get_from_prmGetOut(0)
+        this->get_from_prmGetIn(0)
     );
 
     // prmSetOut
     this->component.set_prmSetOut_OutputPort(
         0,
-        this->get_from_prmSetOut(0)
+        this->get_from_prmSetIn(0)
     );
 
     // stringArgsOut

@@ -34,6 +34,11 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
                              ComponentTelemetryTest,
                              TelemetryTestImplementations);
 
+TEST(ComponentParameterTest, ParameterTest) {
+  Tester tester;
+  tester.testParam();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

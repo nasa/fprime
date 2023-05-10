@@ -27,45 +27,39 @@
   }
 
   // ----------------------------------------------------------------------
-  // Tests
+  // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  TLM_TEST_DEFS
+  void Tester ::
+    from_arrayArgsOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamArray &a,
+        FormalParamArray &aRef
+    )
+  {
+    this->pushFromPortEntry_arrayArgsOut(a, aRef);
+  }
 
-// ----------------------------------------------------------------------
-// Handlers for typed from ports
-// ----------------------------------------------------------------------
+  FormalParamArray Tester ::
+    from_arrayReturnOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamArray &a,
+        FormalParamArray &aRef
+    )
+  {
+    this->pushFromPortEntry_arrayReturnOut(a, aRef);
+    // TODO: Return a value
+  }
 
-void Tester ::
-  from_arrayArgsOut_handler(
-      const NATIVE_INT_TYPE portNum,
-      const FormalParamArray &a,
-      FormalParamArray &aRef
-  )
-{
-  this->pushFromPortEntry_arrayArgsOut(a, aRef);
-}
-
-FormalParamArray Tester ::
-  from_arrayReturnOut_handler(
-      const NATIVE_INT_TYPE portNum,
-      const FormalParamArray &a,
-      FormalParamArray &aRef
-  )
-{
-  this->pushFromPortEntry_arrayReturnOut(a, aRef);
-  // TODO: Return a value
-}
-
-void Tester ::
-  from_enumArgsOut_handler(
-      const NATIVE_INT_TYPE portNum,
-      const FormalParamEnum &en,
-      FormalParamEnum &enRef
-  )
-{
-  this->pushFromPortEntry_enumArgsOut(en, enRef);
-}
+  void Tester ::
+    from_enumArgsOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamEnum &en,
+        FormalParamEnum &enRef
+    )
+  {
+    this->pushFromPortEntry_enumArgsOut(en, enRef);
+  }
 
   FormalParamEnum Tester ::
     from_enumReturnOut_handler(
@@ -122,6 +116,16 @@ void Tester ::
   {
     this->pushFromPortEntry_primitiveReturnOut(u32, u32Ref, f32, f32Ref, b, bRef);
     // TODO: Return a value
+  }
+
+  void Tester ::
+    from_prmSetIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        FwPrmIdType id,
+        Fw::ParamBuffer &val
+    )
+  {
+    this->pushFromPortEntry_prmSetIn(id, val);
   }
 
   void Tester ::

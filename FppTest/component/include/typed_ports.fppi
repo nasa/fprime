@@ -85,3 +85,11 @@ output port enumReturnOut: EnumReturn
 output port arrayReturnOut: ArrayReturn
 
 output port structReturnOut: StructReturn
+
+# ----------------------------------------------------------------------
+# Ports for testing special ports
+# ----------------------------------------------------------------------
+
+output port prmSetIn: Fw.PrmSet
+
+output port prmGetIn: Fw.PrmGet
