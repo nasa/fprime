@@ -11,9 +11,7 @@
 # - **TARGET_NAME:** target name to be generated
 ####
 function(check_add_global_target TARGET_NAME)
-    add_custom_target(${TARGET_NAME}
-            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
-            COMMAND ${CMAKE_CTEST_COMMAND})
+    add_custom_target(${TARGET_NAME} COMMAND ${CMAKE_CTEST_COMMAND})
 endfunction(check_add_global_target)
 
 ####
@@ -33,12 +31,18 @@ function(check_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEP
         get_property(DEPENDENCY_UTS TARGET "${DEPENDENCY}" PROPERTY FPRIME_UTS)
         list(APPEND ALL_UTS ${DEPENDENCY_UTS})
     endforeach()
-    string(REPLACE ";" "\\|" JOINED_UTS "${ALL_UTS}")
-    add_custom_target(${MODULE}_${TARGET_NAME}
-        COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
-        COMMAND ${CMAKE_CTEST_COMMAND} -R "${JOINED_UTS}"
-        DEPENDS ${ALL_UTS}
-    )
+    # Only run deployment UTs when some are defined
+    if (ALL_UTS)
+        string(REPLACE ";" "\\|" JOINED_UTS "${ALL_UTS}")
+        add_custom_target(${MODULE}_${TARGET_NAME}
+            COMMAND ${CMAKE_CTEST_COMMAND} -R "${JOINED_UTS}"
+            DEPENDS ${ALL_UTS}
+        )
+    else()
+        add_custom_target(${MODULE}_${TARGET_NAME}
+            COMMAND ${CMAKE_COMMAND} -E echo "No unit tests defined for ${MODULE}"
+        )
+    endif()
 endfunction()
 
 ####
@@ -58,7 +62,6 @@ function(check_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCI
     elseif (NOT TARGET ${MODULE_NAME}_${TARGET_NAME})
         add_custom_target(
             "${MODULE_NAME}_${TARGET_NAME}"
-            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
             COMMAND ${CMAKE_CTEST_COMMAND} --verbose
         )
     endif()
