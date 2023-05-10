@@ -47,6 +47,8 @@ namespace Svc {
       filePrefix(),
       maxFileSize(0),
       fileMode(CLOSED),
+      fileName(),
+      hashFileName(),
       byteCount(0),
       writeErrorOccurred(false),
       openErrorOccurred(false),
@@ -68,6 +70,7 @@ namespace Svc {
   void ComLogger ::
     init_log_file(const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength)
   {
+    FW_ASSERT(incomingFilePrefix != NULL);
     this->maxFileSize = maxFileSize;
     this->storeBufferLength = storeBufferLength;
     if( this->storeBufferLength ) {
