@@ -28,7 +28,7 @@ namespace Svc {
       storeBufferLength(storeBufferLength),
       initialized(true)
   {
-    this->init_log_file(incomingFilePredix, maxFileSize, storeBufferLength);
+    this->init_log_file(incomingFilePrefix, maxFileSize, storeBufferLength);
   }
 
   ComLogger ::
