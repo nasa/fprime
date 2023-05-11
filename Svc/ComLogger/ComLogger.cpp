@@ -60,7 +60,7 @@ namespace Svc {
   void ComLogger ::
     init_log_file(const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength)
   {
-    FW_ASSERT(incomingFilePrefix != NULL);
+    FW_ASSERT(incomingFilePrefix != nullptr);
     this->maxFileSize = maxFileSize;
     this->storeBufferLength = storeBufferLength;
     if( this->storeBufferLength ) {
