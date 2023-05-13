@@ -12,7 +12,7 @@
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define fileIdFs "Assert file ID 0x%08" PRIx32 ": Line: %" PRI_PlatformUIntType
 #else
-#define fileIdFs "Assert file \"%s\": Line: %" PRI_PlatformUIntType
+#define fileIdFs "Assert: \"%s:%" PRI_PlatformUIntType "\""
 #endif
 
 namespace Fw {
