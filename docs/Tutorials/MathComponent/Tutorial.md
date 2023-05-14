@@ -2015,6 +2015,24 @@ instance mathReceiver
 These lines add the `mathSender` and `mathReceiver`
 instances to the topology.
 
+**Packetize the telemetry channels:**
+Open the file `RefPackets.xml`. At the bottom, right before `<!—Ignored packets -->`, add the following lines:
+```
+<packet name="MathSender" id="21" level="3">
+	<channel name = "mathSender.VAL1"/>
+	<channel name = "mathSender.OP"/>
+	<channel name = "mathSender.VAL2"/>
+	<channel name = "mathSender.RESULT"/>
+<packet/>
+
+<packet name="MathReceiver" id="22" level="3">
+	<channel name = "mathReceiver.OPERATION"/>
+	<channel name = "mathReceiver.FACTOR"/>
+<packet/>
+```
+
+These lines describe the packet definitions for the `mathSender` and `mathReceiver` telemetry channels.
+
 **Check for unconnected ports:**
 Run the following commands in the `Ref/Top` directory:
 
