@@ -31,6 +31,16 @@ TEST(Test, closeFileCommand) {
   tester.closeFileCommand();
 }
 
+TEST(Test, testLoggingWithInit) {
+  Svc::Tester tester("Tester", true);
+  tester.testLoggingWithInit();
+}
+
+TEST(Test, noInitError) {
+  Svc::Tester tester("Tester", true);
+  tester.noInitError();
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
