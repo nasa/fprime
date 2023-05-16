@@ -104,8 +104,12 @@ Inheritance diagram for Svc::ComLogger:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac910722c541ab8bef18aec1c215176c0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_logger.html#ac910722c541ab8bef18aec1c215176c0">ComLogger</a> (const char *compName, const char *filePrefix, U32 maxFileSize, bool storeBufferLength=true)</td></tr>
 <tr class="separator:ac910722c541ab8bef18aec1c215176c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a142ee2a8c1b928fb45637eb7e8db4290"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_logger.html#a142ee2a8c1b928fb45637eb7e8db4290">ComLogger</a> (const char *compName)</td></tr>
+<tr class="separator:a142ee2a8c1b928fb45637eb7e8db4290"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f4323040d655091a60533179ba8aa31"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_logger.html#a7f4323040d655091a60533179ba8aa31">init</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance)</td></tr>
 <tr class="separator:a7f4323040d655091a60533179ba8aa31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52e0b61eaf4d2c722881bf52e279d5ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_logger.html#a52e0b61eaf4d2c722881bf52e279d5ea">init_log_file</a> (const char *filePrefix, U32 maxFileSize, bool storeBufferLength=true)</td></tr>
+<tr class="separator:a52e0b61eaf4d2c722881bf52e279d5ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac20736a1354c2420f8243abdf7dfdc09"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_logger.html#ac20736a1354c2420f8243abdf7dfdc09">~ComLogger</a> ()</td></tr>
 <tr class="separator:ac20736a1354c2420f8243abdf7dfdc09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -114,7 +118,7 @@ Public Member Functions</h2></td></tr>
 <p class="definition">Definition at line <a class="el" href="com_logger_8hpp_source.html#l00036">36</a> of file <a class="el" href="com_logger_8hpp_source.html">ComLogger.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ac910722c541ab8bef18aec1c215176c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac910722c541ab8bef18aec1c215176c0">&#9670;&nbsp;</a></span>ComLogger()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac910722c541ab8bef18aec1c215176c0">&#9670;&nbsp;</a></span>ComLogger() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -155,6 +159,26 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a142ee2a8c1b928fb45637eb7e8db4290"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a142ee2a8c1b928fb45637eb7e8db4290">&#9670;&nbsp;</a></span>ComLogger() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Svc::ComLogger::ComLogger </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>compName</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="com_logger_8cpp_source.html#l00034">34</a> of file <a class="el" href="com_logger_8cpp_source.html">ComLogger.cpp</a>.</p>
+
+</div>
+</div>
 <a id="ac20736a1354c2420f8243abdf7dfdc09"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac20736a1354c2420f8243abdf7dfdc09">&#9670;&nbsp;</a></span>~ComLogger()</h2>
 
@@ -170,7 +194,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="com_logger_8cpp_source.html#l00052">52</a> of file <a class="el" href="com_logger_8cpp_source.html">ComLogger.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_logger_8cpp_source.html#l00079">79</a> of file <a class="el" href="com_logger_8cpp_source.html">ComLogger.cpp</a>.</p>
 
 </div>
 </div>
@@ -208,7 +232,43 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_logger_8cpp_source.html#l00043">43</a> of file <a class="el" href="com_logger_8cpp_source.html">ComLogger.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_logger_8cpp_source.html#l00051">51</a> of file <a class="el" href="com_logger_8cpp_source.html">ComLogger.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a52e0b61eaf4d2c722881bf52e279d5ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52e0b61eaf4d2c722881bf52e279d5ea">&#9670;&nbsp;</a></span>init_log_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Svc::ComLogger::init_log_file </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>filePrefix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">U32&#160;</td>
+          <td class="paramname"><em>maxFileSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>storeBufferLength</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="com_logger_8cpp_source.html#l00060">60</a> of file <a class="el" href="com_logger_8cpp_source.html">ComLogger.cpp</a>.</p>
 
 </div>
 </div>
