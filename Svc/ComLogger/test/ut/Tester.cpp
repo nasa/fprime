@@ -26,6 +26,20 @@ namespace Svc {
   }
 
   Tester ::
+    Tester(
+        const char *const compName,
+        bool standardCLInit
+    ) :
+      ComLoggerGTestBase(compName, 30),
+      comLogger("ComLogger")
+  {
+      this->connectPorts();
+      this->initComponents();
+
+      (void)standardCLInit;
+  }
+
+  Tester ::
     ~Tester()
   {
 
@@ -551,6 +565,147 @@ namespace Svc {
     ret = file.open(hashFileName, Os::File::OPEN_READ);
     ASSERT_EQ(Os::File::OP_OK,ret);
     file.close();
+  }
+
+  void Tester ::
+    testLoggingWithInit()
+  {
+    CHAR fileName[2048];
+    CHAR prevFileName[2048];
+    CHAR hashFileName[2048];
+    CHAR prevHashFileName[2048];
+    U8 buf[1024];
+    NATIVE_INT_TYPE length;
+    U16 bufferSize = 0;
+    Os::File::Status ret;
+    Os::File file;
+
+    this->comLogger.init_log_file(FILE_STR, MAX_BYTES_PER_FILE);
+
+    ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+    ASSERT_EVENTS_SIZE(0);
+
+    U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
+    Fw::ComBuffer buffer(&data[0], sizeof(data));
+
+    Fw::SerializeStatus stat;
+
+    for(int j = 0; j < 3; j++)
+    {
+      // Test times for the different iterations:
+      Fw::Time testTime(TB_NONE, j, 9876543);
+      Fw::Time testTimePrev(TB_NONE, j-1, 9876543);
+      Fw::Time testTimeNext(TB_NONE, j+1, 9876543);
+
+      // File names for the different iterations:
+      memset(fileName, 0, sizeof(fileName));
+      snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds());
+      memset(hashFileName, 0, sizeof(hashFileName));
+      snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
+      memset(prevFileName, 0, sizeof(prevFileName));
+      snprintf(prevFileName, sizeof(prevFileName), "%s_%d_%d_%06d.com", FILE_STR, testTime.getTimeBase(), testTimePrev.getSeconds(), testTimePrev.getUSeconds());
+      memset(prevHashFileName, 0, sizeof(prevHashFileName));
+      snprintf(prevHashFileName, sizeof(prevHashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTimePrev.getSeconds(), testTimePrev.getUSeconds(), Utils::Hash::getFileExtensionString());
+
+      // Set the test time to the current time:
+      setTestTime(testTime);
+
+      // Write to file:
+      for(int i = 0; i < MAX_ENTRIES_PER_FILE-1; i++)
+      {
+        invoke_to_comIn(0, buffer, 0);
+        dispatchAll();
+        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+      }
+
+      // OK a new file should be opened after this final invoke, set a new test time so that a file
+      // with a new name gets opened:
+      setTestTime(testTimeNext);
+      invoke_to_comIn(0, buffer, 0);
+      dispatchAll();
+      ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+
+      // A new file should have been opened from the previous loop iteration:
+      if( j > 0 ) {
+        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.fileName), fileName) == 0 );
+      }
+
+      // Make sure we got a closed file event:
+      ASSERT_EVENTS_SIZE(j);
+      ASSERT_EVENTS_FileClosed_SIZE(j);
+      if( j > 0 ) {
+        ASSERT_EVENTS_FileClosed(j-1, prevFileName);
+      }
+
+      // Make sure the file size is smaller or equal to the limit:
+      Os::FileSystem::Status fsStat;
+      FwSizeType fileSize = 0;
+      fsStat = Os::FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
+      ASSERT_EQ(fsStat, Os::FileSystem::OP_OK);
+      ASSERT_LE(fileSize, MAX_BYTES_PER_FILE);
+
+      // Open file:
+      ret = file.open(fileName, Os::File::OPEN_READ);
+      ASSERT_EQ(Os::File::OP_OK,ret);
+
+      // Check data:
+      for(int i = 0; i < 5; i++)
+      {
+        // Get length of buffer to read
+        NATIVE_INT_TYPE length = sizeof(U16);
+        ret = file.read(&buf, length);
+        ASSERT_EQ(Os::File::OP_OK, ret);
+        ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(sizeof(U16)));
+        Fw::SerialBuffer comBuffLength(buf, length);
+        comBuffLength.fill();
+        stat = comBuffLength.deserialize(bufferSize);
+        ASSERT_EQ(stat, Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(COM_BUFFER_LENGTH, bufferSize);
+
+        // Read and check buffer:
+        length = bufferSize;
+        ret = file.read(&buf, length);
+        ASSERT_EQ(Os::File::OP_OK,ret);
+        ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(bufferSize));
+        ASSERT_EQ(memcmp(buf, data, COM_BUFFER_LENGTH), 0);
+      }
+
+      // Make sure we reached the end of the file:
+      length = sizeof(NATIVE_INT_TYPE);
+      ret = file.read(&buf, length);
+      ASSERT_EQ(Os::File::OP_OK,ret);
+      ASSERT_EQ(length, 0);
+      file.close();
+
+      // Assert that the hashes match:
+      if( j > 0 ) {
+        Os::ValidateFile::Status status;
+        status = Os::ValidateFile::validate(prevFileName, prevHashFileName);
+        ASSERT_EQ(Os::ValidateFile::VALIDATION_OK, status);
+      }
+   }
+  }
+
+  void Tester ::
+    noInitError()
+  {
+    U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
+    Fw::ComBuffer buffer(&data[0], sizeof(data));
+
+    this->invoke_to_comIn(0, buffer, 0);
+    dispatchAll();
+    ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+    ASSERT_EVENTS_FileNotInitialized_SIZE(1);
+
+    this->comLogger.init_log_file(FILE_STR, MAX_BYTES_PER_FILE);
+
+    this->clearHistory();
+    this->invoke_to_comIn(0, buffer, 0);
+    dispatchAll();
+    ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+    ASSERT_EVENTS_FileNotInitialized_SIZE(0);
+
   }
 
   void Tester ::
