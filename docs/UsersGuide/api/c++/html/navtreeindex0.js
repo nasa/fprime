@@ -26,8 +26,6 @@ var NAVTREEINDEX0 =
 "active_rate_group_8hpp_source.html":[18,0,7,1,2],
 "active_rate_group_cfg_8hpp.html":[18,0,1,1],
 "active_rate_group_cfg_8hpp_source.html":[18,0,1,1],
-"active_rate_group_impl_8cpp.html":[18,0,7,1,3],
-"active_rate_group_impl_8cpp_source.html":[18,0,7,1,3],
 "active_text_logger_impl_8cpp.html":[18,0,7,2,1],
 "active_text_logger_impl_8cpp_source.html":[18,0,7,2,1],
 "active_text_logger_impl_8hpp.html":[18,0,7,2,2],
@@ -249,5 +247,7 @@ var NAVTREEINDEX0 =
 "command_dispatcher_8hpp.html#a37fd952fb3d9eb282aa3e879f7571726":[18,0,7,8,1,0],
 "command_dispatcher_8hpp_source.html":[18,0,7,8,1],
 "command_dispatcher_impl_8cpp.html":[18,0,7,8,2],
-"command_dispatcher_impl_8cpp_source.html":[18,0,7,8,2]
+"command_dispatcher_impl_8cpp_source.html":[18,0,7,8,2],
+"command_dispatcher_impl_8hpp.html":[18,0,7,8,3],
+"command_dispatcher_impl_8hpp_source.html":[18,0,7,8,3]
 };

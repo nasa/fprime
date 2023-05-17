@@ -1,7 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"svc_static_memory_component.html#autotoc_md635":[7,26,0,1],
-"svc_static_memory_component.html#autotoc_md636":[7,26,0,2],
 "svc_tlm_chan_component.html":[7,27],
 "svc_tlm_chan_component.html#autotoc_md638":[7,27,0],
 "svc_tlm_chan_component.html#autotoc_md639":[7,27,0,0],
@@ -249,5 +247,7 @@ var NAVTREEINDEX7 =
 "vx_works_time_impl_8cpp.html":[18,0,7,26,5],
 "vx_works_time_impl_8cpp_source.html":[18,0,7,26,5],
 "watchdog_timer_8cpp.html":[18,0,6,1,5],
-"watchdog_timer_8cpp_source.html":[18,0,6,1,5]
+"watchdog_timer_8cpp_source.html":[18,0,6,1,5],
+"watchdog_timer_8hpp.html":[18,0,6,42],
+"watchdog_timer_8hpp_source.html":[18,0,6,42]
 };

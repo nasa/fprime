@@ -1,7 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625":[18,0,1,12,0],
-"static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625a9e9672fa96e8a1d300d3756c6d5c1e24":[18,0,1,12,0,0],
 "static_memory_config_8hpp_source.html":[18,0,1,12],
 "string_8cpp.html":[18,0,5,15,25],
 "string_8cpp_source.html":[18,0,5,15,25],
@@ -249,5 +247,7 @@ var NAVTREEINDEX5 =
 "svc_fatal_handler_component.html#autotoc_md405":[7,9,0,0],
 "svc_fatal_handler_component.html#autotoc_md406":[7,9,0,1],
 "svc_fatal_handler_component.html#autotoc_md407":[7,9,0,2],
-"svc_fatal_handler_component.html#autotoc_md408":[7,9,0,2,0]
+"svc_fatal_handler_component.html#autotoc_md408":[7,9,0,2,0],
+"svc_fatal_handler_component.html#autotoc_md409":[7,9,0,2,0,0],
+"svc_fatal_handler_component.html#autotoc_md410":[7,9,0,2,0,1]
 };

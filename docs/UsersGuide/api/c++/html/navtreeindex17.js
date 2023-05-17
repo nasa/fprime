@@ -1,7 +1,5 @@
 var NAVTREEINDEX17 =
 {
-"struct_svc_1_1_log_file.html#a4fdbd453b9f74ac754936bf9ad671327":[17,0,5,3,4],
-"struct_svc_1_1_log_file.html#a6a3bf4025aa6e3bc94884725506c97dd":[17,0,5,3,0],
 "struct_svc_1_1_log_file.html#a741da0e2dc05cdba528db3f0e2d0e96e":[17,0,5,3,2],
 "struct_svc_1_1_log_file.html#a97b580912dc7d4c1392d4cb3e5872c21":[17,0,5,3,3],
 "struct_svc_1_1_log_file.html#a9d0ba5d025c5fad0c3ac05cd0d1e4b8a":[17,0,5,3,8],

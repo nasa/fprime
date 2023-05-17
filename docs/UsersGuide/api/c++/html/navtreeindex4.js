@@ -1,7 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"os_2_linux_2_file_8cpp.html":[18,0,6,1,1],
-"os_2_linux_2_file_8cpp.html#a9e21a2a88f554186e2b2380b00eab944":[18,0,6,1,1,0],
 "os_2_linux_2_file_8cpp_source.html":[18,0,6,1,1],
 "os_2_linux_2_system_resources_8cpp.html":[18,0,6,1,4],
 "os_2_linux_2_system_resources_8cpp.html#a0e82484cd96cc2297e9c4082f0de6295":[18,0,6,1,4,11],
@@ -249,5 +247,7 @@ var NAVTREEINDEX4 =
 "static_memory_component_impl_8cpp_source.html":[18,0,7,35,2],
 "static_memory_component_impl_8hpp.html":[18,0,7,35,3],
 "static_memory_component_impl_8hpp_source.html":[18,0,7,35,3],
-"static_memory_config_8hpp.html":[18,0,1,12]
+"static_memory_config_8hpp.html":[18,0,1,12],
+"static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625":[18,0,1,12,0],
+"static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625a9e9672fa96e8a1d300d3756c6d5c1e24":[18,0,1,12,0,0]
 };

@@ -1,7 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"svc_fatal_handler_component.html#autotoc_md409":[7,9,0,2,0,0],
-"svc_fatal_handler_component.html#autotoc_md410":[7,9,0,2,0,1],
 "svc_fatal_handler_component.html#autotoc_md411":[7,9,0,2,1],
 "svc_fatal_handler_component.html#autotoc_md412":[7,9,0,2,2],
 "svc_fatal_handler_component.html#autotoc_md413":[7,9,0,2,2,0],
@@ -249,5 +247,7 @@ var NAVTREEINDEX6 =
 "svc_sched_port.html#autotoc_md632":[7,25,0,2],
 "svc_static_memory_component.html":[7,26],
 "svc_static_memory_component.html#autotoc_md633":[7,26,0],
-"svc_static_memory_component.html#autotoc_md634":[7,26,0,0]
+"svc_static_memory_component.html#autotoc_md634":[7,26,0,0],
+"svc_static_memory_component.html#autotoc_md635":[7,26,0,1],
+"svc_static_memory_component.html#autotoc_md636":[7,26,0,2]
 };

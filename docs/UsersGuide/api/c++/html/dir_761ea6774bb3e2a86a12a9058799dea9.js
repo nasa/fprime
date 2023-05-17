@@ -4,6 +4,5 @@ var dir_761ea6774bb3e2a86a12a9058799dea9 =
     [ "ActiveRateGroup.cpp", "active_rate_group_8cpp.html", null ],
     [ "ActiveRateGroup.hpp", "active_rate_group_8hpp.html", [
       [ "ActiveRateGroup", "class_svc_1_1_active_rate_group.html", "class_svc_1_1_active_rate_group" ]
-    ] ],
-    [ "ActiveRateGroupImpl.cpp", "active_rate_group_impl_8cpp.html", null ]
+    ] ]
 ];
