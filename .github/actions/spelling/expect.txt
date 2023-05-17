@@ -1675,3 +1675,4 @@ XYZZY
 yacc
 yacgen
 yyyymmdd
+zmq
