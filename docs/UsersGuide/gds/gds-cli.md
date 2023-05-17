@@ -117,7 +117,7 @@ GDS Options:
                         detection.
   --packet-spec PACKET_SPEC
                         Path to packet specification.
-  -l LOGS, --logs LOGS  Logging directory. Created if non-existent. 
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
                         [default: /workspaces/macos/DefaultMission/logs]
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
@@ -273,7 +273,7 @@ GDS Options:
                         detection.
   --packet-spec PACKET_SPEC
                         Path to packet specification.
-  -l LOGS, --logs LOGS  Logging directory. Created if non-existent. 
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
                         [default: /workspaces/macos/DefaultMission/logs]
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
@@ -339,7 +339,7 @@ GDS Options:
                         detection.
   --packet-spec PACKET_SPEC
                         Path to packet specification.
-  -l LOGS, --logs LOGS  Logging directory. Created if non-existent. 
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
                         [default: /workspaces/macos/DefaultMission/logs]
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
@@ -414,7 +414,7 @@ GDS Options:
                         detection.
   --packet-spec PACKET_SPEC
                         Path to packet specification.
-  -l LOGS, --logs LOGS  Logging directory. Created if non-existent. 
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
                         [default: /workspaces/macos/DefaultMission/logs]
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
