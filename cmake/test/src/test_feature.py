@@ -87,6 +87,7 @@ def test_feature_targets(FEATURE_BUILD):
 def test_feature_installation(FEATURE_BUILD):
     """Run reference and assert reference targets exit"""
     cmake.assert_process_success(FEATURE_BUILD)
+    deployment_name = "TestDeployment"
     for module in settings.FRAMEWORK_MODULES + [
         "Svc_CmdDispatcher",
         "TestLibrary_TestComponent",
@@ -96,12 +97,17 @@ def test_feature_installation(FEATURE_BUILD):
         output_path = (
             FEATURE_BUILD["install"]
             / platform.system()
+            / deployment_name
             / "lib"
             / "static"
             / library_name
         )
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
     output_path = (
-        FEATURE_BUILD["install"] / platform.system() / "bin" / "TestDeployment"
+        FEATURE_BUILD["install"]
+        / platform.system()
+        / deployment_name
+        / "bin"
+        / deployment_name
     )
     assert output_path.exists(), "Failed to locate TestDeployment in build output"
