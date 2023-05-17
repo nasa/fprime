@@ -29,11 +29,36 @@ set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST
 #####
 macro(restrict_platforms)
     set(__CHECKER ${ARGN})
-     if (NOT CMAKE_SYSTEM_NAME IN_LIST __CHECKER)
-         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-         message(STATUS "Platform ${CMAKE_SYSTEM_NAME} not supported for module ${MODULE_NAME}")
-         return()
-     endif()
+    if (NOT CMAKE_SYSTEM_NAME IN_LIST __CHECKER)
+        get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+        message(STATUS "Platform ${CMAKE_SYSTEM_NAME} not supported for module ${MODULE_NAME}")
+        return()
+    endif()
+endmacro()
+
+####
+# Macro `prevent_prescan`:
+#
+# Prevents a CMakeLists.txt file from being processed in the prescan phase of the project. Will generate fake targets
+# for all those targets specified to ensure that dependencies may be attached to these targets in the larger system.
+#
+# Usage:
+#    prevent_prescan(target1 target2 ...) # Generate fake targets and skip prescan
+#
+# Args:
+#   ARGN: list of targets to synthesize
+#####
+macro(prevent_prescan)
+    set(__CHECKER_TARGETS ${ARGN})
+    if (DEFINED FPRIME_PRESCAN)
+        foreach (__TARGET IN LISTS __CHECKER_TARGETS)
+            add_custom_target(${__TARGET})
+        endforeach()
+        string(REPLACE ";" " " __SPACE_LIST_TARGETS "${__CHECKER_TARGETS}")
+        get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+        message(STATUS "Skipping ${MODULE_NAME} during prescan, adding faux libraries: ${__SPACE_LIST_TARGETS}")
+        return()
+    endif()
 endmacro()
 
 ####
