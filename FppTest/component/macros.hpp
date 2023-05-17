@@ -79,21 +79,3 @@
   TLM_TEST_DEF(Enum) \
   TLM_TEST_DEF(Array) \
   TLM_TEST_DEF(Struct)
-
-// ----------------------------------------------------------------------
-// Parameter tests
-// ----------------------------------------------------------------------
-
-#define PARAM_TEST_DECL(TYPE) \
-  void testParam( \
-      NATIVE_INT_TYPE portNum, \
-      FppTest::Types::TYPE##Param& data \
-  );
-
-#define PARAM_TEST_DECLS \
-  PARAM_TEST_DECL(Bool) \
-  PARAM_TEST_DECL(U32) \
-  PARAM_TEST_DECL(PrmString) \
-  PARAM_TEST_DECL(Enum) \
-  PARAM_TEST_DECL(Array) \
-  PARAM_TEST_DECL(Struct)

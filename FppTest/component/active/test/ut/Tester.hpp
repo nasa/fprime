@@ -150,18 +150,6 @@
       */
       );
 
-      //! Handler for from_prmSetIn
-      //!
-      void from_prmSetIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwPrmIdType id, /*!< 
-      Parameter ID
-      */
-          Fw::ParamBuffer &val /*!< 
-      Buffer containing serialized parameter value
-      */
-      );
-
       //! Handler for from_stringArgsOut
       //!
       void from_stringArgsOut_handler(
@@ -236,6 +224,14 @@
       //! The component under test
       //!
       ActiveTest component;
+
+      // Parameter test values
+      FppTest::Types::BoolParam boolPrm;
+      FppTest::Types::U32Param u32Prm;
+      FppTest::Types::PrmStringParam stringPrm;
+      FppTest::Types::EnumParam enumPrm;
+      FppTest::Types::ArrayParam arrayPrm;
+      FppTest::Types::StructParam structPrm;
 
   };
 

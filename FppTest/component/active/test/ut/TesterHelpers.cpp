@@ -294,12 +294,6 @@
         this->get_from_prmGetIn(0)
     );
 
-    // prmSetOut
-    this->component.set_prmSetOut_OutputPort(
-        0,
-        this->get_from_prmSetIn(0)
-    );
-
     // stringArgsOut
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
       this->component.set_stringArgsOut_OutputPort(

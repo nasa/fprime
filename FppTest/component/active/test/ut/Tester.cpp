@@ -119,16 +119,6 @@
   }
 
   void Tester ::
-    from_prmSetIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        FwPrmIdType id,
-        Fw::ParamBuffer &val
-    )
-  {
-    this->pushFromPortEntry_prmSetIn(id, val);
-  }
-
-  void Tester ::
     from_stringArgsOut_handler(
         const NATIVE_INT_TYPE portNum,
         const str80String &str80,
