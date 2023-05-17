@@ -935,6 +935,7 @@ NOCTTY
 nodemon
 nogen
 nolog
+non-existent
 nonblock
 noncomma
 NONINFRINGEMENT
