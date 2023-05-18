@@ -15,7 +15,7 @@ users to learn F´ and walk through the most basic steps in developing an F´ ap
 
 ## [HelloWorld](HelloWorld/Tutorial.md): An Introduction to F´
 
-The hello world tutorial walks a new user through creating a new project, their first F´ component, and testing that
+The HelloWorld tutorial walks a new user through creating a new project, their first F´ component, and testing that
 component through an F´ deployment. This tutorial has the following subsections:
 
 1. [Introduction and F´ Terminology](./HelloWorld/Tutorial.md)
@@ -29,14 +29,14 @@ LedBlinker walks users through developing an F´ project intended for running on
 
 > This tutorial can be run without hardware with the exception of section 6 "Running on Hardware".
 
-1. [Project Setup](docs/project-setup.md)
-2. [Component Design and Initial Implementation](docs/component-implementation-1.md)
-3. [Initial Component Integration](docs/initial-integration.md)
-4. [Continuing Component Implementation](docs/component-implementation-2.md)
-5. [Full System Integration](docs/full-integration.md)
-6. [Running on Hardware](docs/running-on-hardware.md)
-7. [Unit-Testing](docs/unit-testing.md)
-8. [System Testing](docs/system-testing.md)
+1. [Project Setup](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/project-setup.md)
+2. [Component Design and Initial Implementation](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/component-implementation-1.md)
+3. [Initial Component Integration](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/initial-integration.md)
+4. [Continuing Component Implementation](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/component-implementation-2.md)
+5. [Full System Integration](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/full-integration.md)
+6. [Running on Hardware](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/running-on-hardware.md)
+7. [Unit-Testing](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/unit-testing.md)
+8. [System Testing](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/system-testing.md)
 
 ## [MathComponent](MathComponent/Tutorial.md): Custom Ports and Types
 
