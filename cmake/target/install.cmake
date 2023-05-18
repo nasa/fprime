@@ -52,7 +52,7 @@ function(install_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_D
     )
     install(FILES ${FPRIME_CURRENT_DICTIONARY_FILE} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT ${MODULE})
     add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
-            -DCMAKE_INSTALL_COMPONENT=${MODULE} -P${CMAKE_BINARY_DIR}/cmake_install.cmake)
+            -DCMAKE_INSTALL_COMPONENT=${MODULE} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake)
 endfunction()
 
 # Install is per-deployment, a module-by-module variant does not make sense
