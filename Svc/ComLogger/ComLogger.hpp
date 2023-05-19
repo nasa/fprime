@@ -52,10 +52,22 @@ namespace Svc {
       //                    match to an expected size on the ground during post processing.
       ComLogger(const char* compName, const char* filePrefix, U32 maxFileSize, bool storeBufferLength=true);
 
+      // CONSTRUCTOR:
+      ComLogger(const char* compName);
+
       void init(
           NATIVE_INT_TYPE queueDepth, //!< The queue depth
           NATIVE_INT_TYPE instance //!< The instance number
       );
+
+      // filePrefix: string to prepend the file name with, ie. "thermal_telemetry"
+      // maxFileSize: the maximum size a file should reach before being closed and a new one opened
+      // storeBufferLength: if true, store the length of each com buffer before storing the buffer itself,
+      //                    otherwise just store the com buffer. false might be advantageous in a system
+      //                    where you can ensure that all buffers given to the ComLogger are the same size
+      //                    in which case you do not need the overhead. Or you store an id which you can
+      //                    match to an expected size on the ground during post processing.
+      void init_log_file(const char* filePrefix, U32 maxFileSize, bool storeBufferLength=true);
 
       ~ComLogger();
 
@@ -112,6 +124,7 @@ namespace Svc {
       bool writeErrorOccurred;
       bool openErrorOccurred;
       bool storeBufferLength;
+      bool initialized;
 
       // ----------------------------------------------------------------------
       // File functions:

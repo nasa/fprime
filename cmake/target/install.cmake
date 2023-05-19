@@ -43,12 +43,16 @@ function(install_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_D
     set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
     _install_real_helper(INSTALL_DEPENDENCIES "${FULL_DEPENDENCIES}")
     install(TARGETS ${MODULE} ${INSTALL_DEPENDENCIES}
-            RUNTIME DESTINATION ${TOOLCHAIN_NAME}/bin
-            LIBRARY DESTINATION ${TOOLCHAIN_NAME}/lib
-            ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/lib/static)
-    get_property(DICTIONARY GLOBAL PROPERTY "${PROJECT_NAME}_FPRIME_DICTIONARY_FILE")
-    install(FILES ${DICTIONARY} DESTINATION ${TOOLCHAIN_NAME}/dict)
-    add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target install)
+            RUNTIME DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/bin
+            COMPONENT ${MODULE}
+            LIBRARY DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/lib
+            COMPONENT ${MODULE}
+            ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/lib/static
+            COMPONENT ${MODULE}
+    )
+    install(FILES ${FPRIME_CURRENT_DICTIONARY_FILE} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT ${MODULE})
+    add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
+            -DCMAKE_INSTALL_COMPONENT=${MODULE} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake)
 endfunction()
 
 # Install is per-deployment, a module-by-module variant does not make sense
