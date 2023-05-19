@@ -1074,7 +1074,7 @@ component sends a result back to `MathSender`.
    The main difference is that it invokes a port directly
    (the `mathResultIn` port) instead of sending a command.
 
-1. Add the following test macro to `main.cpp`:
+1. Add the following test macro to `TestMain.cpp`:
 
    ```c++
    TEST(Nominal, Result) {
@@ -1735,7 +1735,7 @@ Instead we invoke `schedIn`.
 
 For each of the tests described below, you must add the
 corresponding function prototype to `Tester.hpp`
-and the corresponding test macro to `main.cpp`.
+and the corresponding test macro to `TestMain.cpp`.
 If you can't remember how to do it, look back at the
 `MathSender` examples.
 After writing each test, run all the tests and make sure
