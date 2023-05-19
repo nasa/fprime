@@ -15,7 +15,7 @@
 #else
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define fileIdFs "Assert file ID %d: Line: %d "
+#define fileIdFs "Assert: %d:%d"
 #define ASSERT_CAST static_cast<POINTER_CAST>
 #else
 #define fileIdFs "Assert: \"%s:%d\""
