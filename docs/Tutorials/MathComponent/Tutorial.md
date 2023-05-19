@@ -976,7 +976,7 @@ void Tester ::
 This function calls `testDoMath` to test an `ADD` command.
 
 **Write a test macro:**
-Add the following code to the file `main.cpp`,
+Add the following code to the file `TestMain.cpp`,
 before the definition of the `main` function:
 
 ```c++
@@ -1113,9 +1113,9 @@ and 10.
    This line tells the build system to make the unit test build
    depend on the `STest` build module.
 
-1. Add `#include "STest/Random/Random.hpp"` to `main.cpp`.
+1. Add `#include "STest/Random/Random.hpp"` to `TestMain.cpp`.
 
-1. Add the following line to the `main` function of `main.cpp`,
+1. Add the following line to the `main` function of `TestMain.cpp`,
    just before the return statement:
 
    ```c++
