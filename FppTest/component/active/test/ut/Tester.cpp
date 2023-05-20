@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Tester.hpp"
+#include "STest/Pick/Pick.hpp"
 
 
   // ----------------------------------------------------------------------
@@ -18,6 +19,10 @@
   {
     this->initComponents();
     this->connectPorts();
+
+    prmValid = static_cast<Fw::ParamValid::T>(
+      STest::Pick::lowerUpper(1, Fw::ParamValid::NUM_CONSTANTS - 1)
+    );
   }
 
   Tester ::

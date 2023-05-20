@@ -232,6 +232,7 @@
       FppTest::Types::EnumParam enumPrm;
       FppTest::Types::ArrayParam arrayPrm;
       FppTest::Types::StructParam structPrm;
+      Fw::ParamValid prmValid;
 
   };
 
