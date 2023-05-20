@@ -36,7 +36,7 @@ def test_ref_targets(REF_BUILD):
         output_path = REF_BUILD["build"] / "lib" / platform.system() / library_name
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
     output_path = REF_BUILD["build"] / "bin" / platform.system() / "Ref"
-    assert output_path.exists(), f"Failed to locate Ref in build output"
+    assert output_path.exists(), "Failed to locate Ref in build output"
 
 
 def test_ref_installation(REF_BUILD):
@@ -46,10 +46,12 @@ def test_ref_installation(REF_BUILD):
         library_name = (
             f"lib{module}{'.so' if platform.system() != 'Darwin' else '.dylib'}"
         )
-        output_path = REF_BUILD["install"] / platform.system() / "lib" / library_name
+        output_path = (
+            REF_BUILD["install"] / platform.system() / "Ref" / "lib" / library_name
+        )
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
-    output_path = REF_BUILD["install"] / platform.system() / "bin" / "Ref"
-    assert output_path.exists(), f"Failed to locate Ref in build output"
+    output_path = REF_BUILD["install"] / platform.system() / "Ref" / "bin" / "Ref"
+    assert output_path.exists(), "Failed to locate Ref in build output"
 
 
 def test_ref_dictionary(REF_BUILD):
@@ -58,7 +60,8 @@ def test_ref_dictionary(REF_BUILD):
     output_path = (
         REF_BUILD["install"]
         / platform.system()
+        / "Ref"
         / "dict"
         / "RefTopologyAppDictionary.xml"
     )
-    assert output_path.exists(), f"Failed to locate Ref in build output"
+    assert output_path.exists(), "Failed to locate Ref in build output"

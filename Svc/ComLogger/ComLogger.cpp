@@ -25,20 +25,28 @@ namespace Svc {
       byteCount(0),
       writeErrorOccurred(false),
       openErrorOccurred(false),
-      storeBufferLength(storeBufferLength)
+      storeBufferLength(storeBufferLength),
+      initialized(true)
   {
-    if( this->storeBufferLength ) {
-      FW_ASSERT(maxFileSize > sizeof(U16), maxFileSize); // must be a positive integer greater than buffer length size
-    }
-    else {
-      FW_ASSERT(maxFileSize > 0, maxFileSize); // must be a positive integer
-    }
-    FW_ASSERT(Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix),
-      Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)), sizeof(this->filePrefix)); // ensure that file prefix is not too big
-
-    // Set the file prefix:
-    Fw::StringUtils::string_copy(this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
+    this->init_log_file(incomingFilePrefix, maxFileSize, storeBufferLength);
   }
+
+  ComLogger ::
+    ComLogger(const char* compName) :
+      ComLoggerComponentBase(compName),
+      filePrefix(),
+      maxFileSize(0),
+      fileMode(CLOSED),
+      fileName(),
+      hashFileName(),
+      byteCount(0),
+      writeErrorOccurred(false),
+      openErrorOccurred(false),
+      storeBufferLength(),
+      initialized(false)
+  {
+  }
+
 
   void ComLogger ::
     init(
@@ -48,6 +56,25 @@ namespace Svc {
   {
     ComLoggerComponentBase::init(queueDepth, instance);
   }
+
+  void ComLogger ::
+    init_log_file(const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength)
+  {
+    FW_ASSERT(incomingFilePrefix != nullptr);
+    this->maxFileSize = maxFileSize;
+    this->storeBufferLength = storeBufferLength;
+    if( this->storeBufferLength ) {
+      FW_ASSERT(maxFileSize > sizeof(U16), maxFileSize);
+    }
+
+    FW_ASSERT(Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix),
+      Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)), sizeof(this->filePrefix)); // ensure that file prefix is not too big
+
+    (void)Fw::StringUtils::string_copy(this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
+
+    this->initialized = true;
+  }
+
 
   ComLogger ::
     ~ComLogger()
@@ -141,6 +168,11 @@ namespace Svc {
     )
   {
     FW_ASSERT( CLOSED == this->fileMode );
+
+    if( !this->initialized ){
+        this->log_WARNING_LO_FileNotInitialized();
+        return;
+    }
 
     U32 bytesCopied;
 

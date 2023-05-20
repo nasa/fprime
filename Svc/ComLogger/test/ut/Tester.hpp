@@ -24,6 +24,10 @@ namespace Svc {
 
     public:
       Tester(const char *const compName);
+
+      // This constructor will construct comLogger with its
+      // standard constructor
+      Tester(const char *const compName, bool standardCLInit);
       ~Tester();
 
       void testLogging();
@@ -31,6 +35,8 @@ namespace Svc {
       void openError();
       void writeError();
       void closeFileCommand();
+      void testLoggingWithInit();
+      void noInitError();
     private:
       void connectPorts();
       void initComponents();
