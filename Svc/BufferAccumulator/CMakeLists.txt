@@ -6,6 +6,8 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
+restrict_platforms(Linux Darwin) # Uses sys/time
+
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/BufferAccumulator.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/BufferAccumulator.cpp"
