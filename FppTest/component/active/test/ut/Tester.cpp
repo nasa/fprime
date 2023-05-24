@@ -15,7 +15,13 @@
   Tester ::
     Tester() :
       ActiveTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
-      component("ActiveTest")
+      component("ActiveTest"),
+      primitiveBuf(primitiveData, sizeof(primitiveData)),
+      stringBuf(stringData, sizeof(stringData)),
+      enumBuf(enumData, sizeof(enumData)),
+      arrayBuf(arrayData, sizeof(arrayData)),
+      structBuf(structData, sizeof(structData)),
+      serialBuf(serialData, sizeof(serialData))
   {
     this->initComponents();
     this->connectPorts();
@@ -23,6 +29,10 @@
     prmValid = static_cast<Fw::ParamValid::T>(
       STest::Pick::lowerUpper(1, Fw::ParamValid::NUM_CONSTANTS - 1)
     );
+
+    //std::cout << "bool: " << boolPrm << std::endl;
+    //std::cout << "u32: " << u32Prm << std::endl;
+    //std::cout << "string: " << stringPrm << std::endl;
   }
 
   Tester ::
@@ -53,7 +63,7 @@
     )
   {
     this->pushFromPortEntry_arrayReturnOut(a, aRef);
-    // TODO: Return a value
+    return arrayReturnVal.val;
   }
 
   void Tester ::
@@ -74,7 +84,7 @@
     )
   {
     this->pushFromPortEntry_enumReturnOut(en, enRef);
-    // TODO: Return a value
+    return enumReturnVal.val;
   }
 
   void Tester ::
@@ -91,7 +101,7 @@
     )
   {
     this->pushFromPortEntry_noArgsReturnOut();
-    // TODO: Return a value
+    return noParamReturnVal.val;
   }
 
   void Tester ::
@@ -120,7 +130,17 @@
     )
   {
     this->pushFromPortEntry_primitiveReturnOut(u32, u32Ref, f32, f32Ref, b, bRef);
-    // TODO: Return a value
+    return primitiveReturnVal.val;
+  }
+
+  void Tester ::
+    from_prmSetIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        FwPrmIdType id,
+        Fw::ParamBuffer &val
+    )
+  {
+    this->pushFromPortEntry_prmSetIn(id, val);
   }
 
   void Tester ::
@@ -153,7 +173,7 @@
     )
   {
     this->pushFromPortEntry_structReturnOut(s, sRef);
-    // TODO: Return a value
+    return structReturnVal.val;
   }
 
   // ----------------------------------------------------------------------
@@ -166,7 +186,57 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    Fw::SerializeStatus status;
+
+    switch (portNum) {
+      case SerialPortIndex::NO_ARGS:
+        status = Fw::FW_SERIALIZE_OK;
+        break;
+
+      case SerialPortIndex::PRIMITIVE:
+        status = Buffer.copyRaw(
+          this->primitiveBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::STRING:
+        status = Buffer.copyRaw(
+          this->stringBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::ENUM:
+        status = Buffer.copyRaw(
+          this->enumBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::ARRAY:
+        status = Buffer.copyRaw(
+          this->arrayBuf, 
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::STRUCT:
+        status = Buffer.copyRaw(
+          this->structBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::SERIAL:
+        status = Buffer.copyRaw(
+          this->serialBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+    }
+
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
   }
 
 

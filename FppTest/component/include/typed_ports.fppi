@@ -91,3 +91,5 @@ output port structReturnOut: StructReturn
 # ----------------------------------------------------------------------
 
 output port prmGetIn: Fw.PrmGet
+
+output port prmSetIn: Fw.PrmSet

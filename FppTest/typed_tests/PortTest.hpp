@@ -14,7 +14,7 @@
 #define FPP_TEST_PORT_TEST_HPP
 
 #include "test/ut/Tester.hpp"
-#include "FppTest/port/TypedPortIndexEnumAc.hpp"
+#include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
 
 #include "gtest/gtest.h"
 
@@ -29,8 +29,8 @@ protected:
 TYPED_TEST_SUITE_P(TypedPortTest);
 
 TYPED_TEST_P(TypedPortTest, TypedPort) {
-    this->tester.invoke(TypedPortIndex::TYPED, this->port);
-    this->tester.check_history(this->port);
+    this->tester.testSyncPortInvoke(TypedPortIndex::TYPED, this->port);
+    this->tester.testSyncPortCheck(this->port);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(TypedPortTest,
@@ -48,13 +48,13 @@ protected:
 TYPED_TEST_SUITE_P(SerialPortTest);
 
 TYPED_TEST_P(SerialPortTest, ToSerialTest) {
-    this->tester.invoke(TypedPortIndex::SERIAL, this->port);
-    this->tester.check_serial(this->port);
+    this->tester.testSyncPortInvoke(TypedPortIndex::SERIAL, this->port);
+    this->tester.testSyncPortCheckSerial(this->port);
 }
 
 TYPED_TEST_P(SerialPortTest, FromSerialTest) {
-    this->tester.invoke_serial(TypedPortIndex::SERIAL, this->port);
-    this->tester.check_history(this->port);
+    this->tester.testSyncPortInvokeSerial(TypedPortIndex::SERIAL, this->port);
+    this->tester.testSyncPortCheck(this->port);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(SerialPortTest,

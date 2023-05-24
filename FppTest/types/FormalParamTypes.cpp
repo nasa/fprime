@@ -58,12 +58,12 @@ namespace FppTest {
     }
 
     ArrayType::ArrayType() {
-      val = getRandomFormalParamArray();
+      getRandomFormalParamArray(val);
     }
 
     ArrayTypes::ArrayTypes() {
-      val1 = getRandomFormalParamArray();
-      val2 = getRandomFormalParamArray();
+      getRandomFormalParamArray(val1);
+      getRandomFormalParamArray(val2);
     }
 
     StructType::StructType() {
@@ -168,14 +168,10 @@ namespace FppTest {
       return e;
     }
 
-    FormalParamArray getRandomFormalParamArray() {
-      FormalParamArray a;
-
+    void getRandomFormalParamArray(FormalParamArray& a) {
       for (U32 i = 0; i < FormalParamArray::SIZE; i++) {
         a[i] = STest::Pick::any();
       }
-
-      return a;
     }
 
     FormalParamStruct getRandomFormalParamStruct() {

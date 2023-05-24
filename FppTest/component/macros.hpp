@@ -1,4 +1,89 @@
 // ----------------------------------------------------------------------
+// Port tests
+// ----------------------------------------------------------------------
+
+#define PORT_TEST_INVOKE_DECL(PORT_KIND, TYPE) \
+  void test##PORT_KIND##PortInvoke( \
+      NATIVE_INT_TYPE portNum, \
+      FppTest::Types::TYPE& port \
+  );
+
+#define PORT_TEST_INVOKE_DECLS(PORT_KIND) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, NoParams) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, PrimitiveParams) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, PortStringParams) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, EnumParams) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayParams) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, StructParams) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, SerialParam) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, NoParamReturn) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, PrimitiveReturn) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, EnumReturn) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayReturn) \
+  PORT_TEST_INVOKE_DECL(PORT_KIND, StructReturn)
+
+#define PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, TYPE) \
+  void test##PORT_KIND##PortInvokeSerial( \
+      NATIVE_INT_TYPE portNum, \
+      FppTest::Types::TYPE& port \
+ ); 
+
+#define PORT_TEST_INVOKE_SERIAL_DECLS(PORT_KIND) \
+  PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, NoParams) \
+  PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, PrimitiveParams) \
+  PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, PortStringParams) \
+  PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, EnumParams) \
+  PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, ArrayParams) \
+  PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, StructParams) \
+  PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, SerialParam)
+
+#define PORT_TEST_CHECK_DECL(PORT_KIND, TYPE) \
+  void test##PORT_KIND##PortCheck( \
+      FppTest::Types::TYPE& port \
+  );
+
+#define PORT_TEST_CHECK_DECLS(PORT_KIND) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, NoParams) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, PrimitiveParams) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, PortStringParams) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, EnumParams) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, ArrayParams) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, StructParams) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, SerialParam) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, NoParamReturn) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, PrimitiveReturn) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, EnumReturn) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, ArrayReturn) \
+  PORT_TEST_CHECK_DECL(PORT_KIND, StructReturn)
+
+#define PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, TYPE) \
+  void test##PORT_KIND##PortCheckSerial( \
+      FppTest::Types::TYPE& port \
+  );
+
+#define PORT_TEST_CHECK_SERIAL_DECLS(PORT_KIND) \
+  PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, NoParams) \
+  PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, PrimitiveParams) \
+  PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, PortStringParams) \
+  PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, EnumParams) \
+  PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, ArrayParams) \
+  PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, StructParams) \
+  PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, SerialParam)
+
+#define PORT_TEST_DECLS_KIND(PORT_KIND) \
+  PORT_TEST_INVOKE_DECLS(PORT_KIND) \
+  PORT_TEST_INVOKE_SERIAL_DECLS(PORT_KIND) \
+  PORT_TEST_CHECK_DECLS(PORT_KIND) \
+  PORT_TEST_CHECK_SERIAL_DECLS(PORT_KIND)
+
+#define PORT_TEST_DECLS \
+  PORT_TEST_DECLS_KIND(Sync) \
+  PORT_TEST_DECLS_KIND(Guarded)
+
+#define ASYNC_PORT_TEST_DECLS \
+  PORT_TEST_DECLS_KIND(Async)
+
+// ----------------------------------------------------------------------
 // Event tests
 // ----------------------------------------------------------------------
 

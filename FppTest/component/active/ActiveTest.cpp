@@ -42,13 +42,13 @@
   // ----------------------------------------------------------------------
 
   void ActiveTest ::
-    arrayArgsAsyncBlockPriority_handler(
+    arrayArgsAsync_handler(
         const NATIVE_INT_TYPE portNum,
         const FormalParamArray &a,
         FormalParamArray &aRef
     )
   {
-    // TODO
+    this->arrayArgsOut_out(portNum, a, aRef);
   }
 
   void ActiveTest ::
@@ -58,7 +58,7 @@
         FormalParamArray &aRef
     )
   {
-    // TODO
+    this->arrayArgsOut_out(portNum, a, aRef);
   }
 
   void ActiveTest ::
@@ -68,7 +68,7 @@
         FormalParamArray &aRef
     )
   {
-    // TODO
+    this->arrayArgsOut_out(portNum, a, aRef);
   }
 
   FormalParamArray ActiveTest ::
@@ -78,7 +78,7 @@
         FormalParamArray &aRef
     )
   {
-    // TODO return
+    return this->arrayReturnOut_out(portNum, a, aRef);
   }
 
   FormalParamArray ActiveTest ::
@@ -88,17 +88,17 @@
         FormalParamArray &aRef
     )
   {
-    // TODO return
+    return this->arrayReturnOut_out(portNum, a, aRef);
   }
 
   void ActiveTest ::
-    enumArgsAsyncAssert_handler(
+    enumArgsAsync_handler(
         const NATIVE_INT_TYPE portNum,
         const FormalParamEnum &en,
         FormalParamEnum &enRef
     )
   {
-    // TODO
+    this->enumArgsOut_out(portNum, en, enRef);
   }
 
   void ActiveTest ::
@@ -108,7 +108,7 @@
         FormalParamEnum &enRef
     )
   {
-    // TODO
+    this->enumArgsOut_out(portNum, en, enRef);
   }
 
   void ActiveTest ::
@@ -118,7 +118,7 @@
         FormalParamEnum &enRef
     )
   {
-    // TODO
+    this->enumArgsOut_out(portNum, en, enRef);
   }
 
   FormalParamEnum ActiveTest ::
@@ -128,7 +128,7 @@
         FormalParamEnum &enRef
     )
   {
-    // TODO return
+    return this->enumReturnOut_out(portNum, en, enRef);
   }
 
   FormalParamEnum ActiveTest ::
@@ -138,7 +138,7 @@
         FormalParamEnum &enRef
     )
   {
-    // TODO return
+    return this->enumReturnOut_out(portNum, en, enRef);
   }
 
   void ActiveTest ::
@@ -146,7 +146,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO
+    this->noArgsOut_out(portNum);
   }
 
   void ActiveTest ::
@@ -154,7 +154,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO
+    this->noArgsOut_out(portNum);
   }
 
   bool ActiveTest ::
@@ -162,7 +162,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO return
+    return this->noArgsReturnOut_out(portNum);
   }
 
   bool ActiveTest ::
@@ -170,7 +170,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO return
+    return this->noArgsReturnOut_out(portNum);
   }
 
   void ActiveTest ::
@@ -178,7 +178,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO
+    this->noArgsOut_out(portNum);
   }
 
   void ActiveTest ::
@@ -192,7 +192,15 @@
         bool &bRef
     )
   {
-    // TODO
+    this->primitiveArgsOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   void ActiveTest ::
@@ -206,7 +214,15 @@
         bool &bRef
     )
   {
-    // TODO
+    this->primitiveArgsOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   void ActiveTest ::
@@ -220,7 +236,15 @@
         bool &bRef
     )
   {
-    // TODO
+    this->primitiveArgsOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   U32 ActiveTest ::
@@ -234,7 +258,15 @@
         bool &bRef
     )
   {
-    // TODO return
+    return this->primitiveReturnOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   U32 ActiveTest ::
@@ -248,7 +280,15 @@
         bool &bRef
     )
   {
-    // TODO return
+    return this->primitiveReturnOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   void ActiveTest ::
@@ -260,7 +300,13 @@
         str100RefString &str100Ref
     )
   {
-    // TODO
+    this->stringArgsOut_out(
+      portNum,
+      str80,
+      str80Ref,
+      str100,
+      str100Ref
+    );
   }
 
   void ActiveTest ::
@@ -272,7 +318,13 @@
         str100RefString &str100Ref
     )
   {
-    // TODO
+    this->stringArgsOut_out(
+      portNum,
+      str80,
+      str80Ref,
+      str100,
+      str100Ref
+    );
   }
 
   void ActiveTest ::
@@ -284,17 +336,23 @@
         str100RefString &str100Ref
     )
   {
-    // TODO
+    this->stringArgsOut_out(
+      portNum,
+      str80,
+      str80Ref,
+      str100,
+      str100Ref
+    );
   }
 
   void ActiveTest ::
-    structArgsAsyncDropPriority_handler(
+    structArgsAsync_handler(
         const NATIVE_INT_TYPE portNum,
         const FormalParamStruct &s,
         FormalParamStruct &sRef
     )
   {
-    // TODO
+    this->structArgsOut_out(portNum, s, sRef);
   }
 
   void ActiveTest ::
@@ -304,7 +362,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO
+    this->structArgsOut_out(portNum, s, sRef);
   }
 
   void ActiveTest ::
@@ -314,7 +372,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO
+    this->structArgsOut_out(portNum, s, sRef);
   }
 
   FormalParamStruct ActiveTest ::
@@ -324,7 +382,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO return
+    return this->structReturnOut_out(portNum, s, sRef);
   }
 
   FormalParamStruct ActiveTest ::
@@ -334,7 +392,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO return
+    return this->structReturnOut_out(portNum, s, sRef);
   }
 
   // ----------------------------------------------------------------------
@@ -347,7 +405,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(portNum, Buffer);
   }
 
   void ActiveTest ::
@@ -383,7 +441,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(portNum, Buffer);
   }
 
   void ActiveTest ::
@@ -392,7 +450,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(portNum, Buffer);
   }
 
   // ----------------------------------------------------------------------

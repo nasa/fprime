@@ -17,9 +17,9 @@
   {
 
     // arrayArgsAsyncBlockPriority
-    this->connect_to_arrayArgsAsyncBlockPriority(
+    this->connect_to_arrayArgsAsync(
         0,
-        this->component.get_arrayArgsAsyncBlockPriority_InputPort(0)
+        this->component.get_arrayArgsAsync_InputPort(0)
     );
 
     // arrayArgsGuarded
@@ -57,9 +57,9 @@
     );
 
     // enumArgsAsyncAssert
-    this->connect_to_enumArgsAsyncAssert(
+    this->connect_to_enumArgsAsync(
         0,
-        this->component.get_enumArgsAsyncAssert_InputPort(0)
+        this->component.get_enumArgsAsync_InputPort(0)
     );
 
     // enumArgsGuarded
@@ -181,9 +181,9 @@
     }
 
     // structArgsAsyncDropPriority
-    this->connect_to_structArgsAsyncDropPriority(
+    this->connect_to_structArgsAsync(
         0,
-        this->component.get_structArgsAsyncDropPriority_InputPort(0)
+        this->component.get_structArgsAsync_InputPort(0)
     );
 
     // structArgsGuarded
@@ -215,12 +215,10 @@
     );
 
     // arrayArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_arrayArgsOut_OutputPort(
-          i,
-          this->get_from_arrayArgsOut(i)
-      );
-    }
+    this->component.set_arrayArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_arrayArgsOut(TypedPortIndex::TYPED)
+    );
 
     // arrayReturnOut
     this->component.set_arrayReturnOut_OutputPort(
@@ -241,12 +239,10 @@
     );
 
     // enumArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_enumArgsOut_OutputPort(
-          i,
-          this->get_from_enumArgsOut(i)
-      );
-    }
+    this->component.set_enumArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_enumArgsOut(TypedPortIndex::TYPED)
+    );
 
     // enumReturnOut
     this->component.set_enumReturnOut_OutputPort(
@@ -261,12 +257,10 @@
     );
 
     // noArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_noArgsOut_OutputPort(
-          i,
-          this->get_from_noArgsOut(i)
-      );
-    }
+    this->component.set_noArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_noArgsOut(TypedPortIndex::TYPED)
+    );
 
     // noArgsReturnOut
     this->component.set_noArgsReturnOut_OutputPort(
@@ -275,12 +269,10 @@
     );
 
     // primitiveArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_primitiveArgsOut_OutputPort(
-          i,
-          this->get_from_primitiveArgsOut(i)
-      );
-    }
+    this->component.set_primitiveArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_primitiveArgsOut(TypedPortIndex::TYPED)
+    );
 
     // primitiveReturnOut
     this->component.set_primitiveReturnOut_OutputPort(
@@ -288,6 +280,8 @@
         this->get_from_primitiveReturnOut(0)
     );
 
+
+    // Modified from generated output
     // prmGetOut
     this->component.set_prmGetOut_OutputPort(
         0,
@@ -295,20 +289,16 @@
     );
 
     // stringArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_stringArgsOut_OutputPort(
-          i,
-          this->get_from_stringArgsOut(i)
-      );
-    }
+    this->component.set_stringArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_stringArgsOut(TypedPortIndex::TYPED)
+    );
 
     // structArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_structArgsOut_OutputPort(
-          i,
-          this->get_from_structArgsOut(i)
-      );
-    }
+    this->component.set_structArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_structArgsOut(TypedPortIndex::TYPED)
+    );
 
     // structReturnOut
     this->component.set_structReturnOut_OutputPort(
@@ -338,12 +328,71 @@
   // ----------------------------------------------------------------------
   // Connect serial output ports
   // ----------------------------------------------------------------------
-    for (NATIVE_INT_TYPE i = 0; i < 5; ++i) {
-      this->component.set_serialOut_OutputPort(
-          i,
-          this->get_from_serialOut(i)
-      );
-    }
+    
+    this->component.set_noArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::NO_ARGS)
+    );
+
+    this->component.set_primitiveArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::PRIMITIVE)
+    );
+
+    this->component.set_stringArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::STRING)
+    );
+
+    this->component.set_enumArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::ENUM)
+    );
+
+    this->component.set_arrayArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::ARRAY)
+    );
+
+    this->component.set_structArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::STRUCT)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::NO_ARGS,
+      this->get_from_noArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::PRIMITIVE,
+      this->get_from_primitiveArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::STRING,
+      this->get_from_stringArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::ENUM,
+      this->get_from_enumArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::ARRAY,
+      this->get_from_arrayArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::STRUCT,
+      this->get_from_structArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::SERIAL)
+    );
 
 
   // ----------------------------------------------------------------------
@@ -380,10 +429,12 @@
     );
 
     // serialSync
-    this->connect_to_serialSync(
-        0,
-        this->component.get_serialSync_InputPort(0)
-    );
+    for (NATIVE_INT_TYPE i = 0; i < 7; ++i) {
+      this->connect_to_serialSync(
+          i,
+          this->component.get_serialSync_InputPort(i)
+      );
+    }
 
 
   }

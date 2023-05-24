@@ -9,6 +9,8 @@
 
 #include "GTestBase.hpp"
 #include "FppTest/component/active/ActiveTest.hpp"
+#include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
+#include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
 #include "FppTest/component/macros.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
 
@@ -41,6 +43,8 @@
       // ----------------------------------------------------------------------
       // Tests
       // ----------------------------------------------------------------------
+
+      PORT_TEST_DECLS
 
       EVENT_TEST_DECLS
 
@@ -150,6 +154,18 @@
       */
       );
 
+      //! Handler for from_prmGetIn
+      //!
+      void from_prmSetIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwPrmIdType id, /*!< 
+      Parameter ID
+      */
+          Fw::ParamBuffer &val /*!< 
+      Buffer containing serialized parameter value
+      */
+      );
+
       //! Handler for from_stringArgsOut
       //!
       void from_stringArgsOut_handler(
@@ -215,6 +231,12 @@
       //!
       void initComponents();
 
+      //! Check successful status of a serial port invocation
+      void checkSerializeStatusSuccess();
+
+      //! Check unsuccessful status of a serial port invocation
+      void checkSerializeStatusBufferEmpty();
+
     private:
 
       // ----------------------------------------------------------------------
@@ -224,6 +246,28 @@
       //! The component under test
       //!
       ActiveTest component;
+
+      // Values returned by typed output ports
+      FppTest::Types::BoolType noParamReturnVal;
+      FppTest::Types::U32Type primitiveReturnVal;
+      FppTest::Types::EnumType enumReturnVal;
+      FppTest::Types::ArrayType arrayReturnVal;
+      FppTest::Types::StructType structReturnVal;
+
+      // Buffers from serial output ports;
+      U8 primitiveData[InputPrimitiveArgsPort::SERIALIZED_SIZE];
+      U8 stringData[InputStringArgsPort::SERIALIZED_SIZE]; 
+      U8 enumData[InputEnumArgsPort::SERIALIZED_SIZE]; 
+      U8 arrayData[InputArrayArgsPort::SERIALIZED_SIZE];
+      U8 structData[InputStructArgsPort::SERIALIZED_SIZE];
+      U8 serialData[SERIAL_ARGS_BUFFER_CAPACITY];
+
+      Fw::SerialBuffer primitiveBuf;
+      Fw::SerialBuffer stringBuf;
+      Fw::SerialBuffer enumBuf;
+      Fw::SerialBuffer arrayBuf;
+      Fw::SerialBuffer structBuf;
+      Fw::SerialBuffer serialBuf;
 
       // Parameter test values
       FppTest::Types::BoolParam boolPrm;

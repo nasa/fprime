@@ -220,7 +220,7 @@ namespace FppTest {
     
     void setRandomString(Fw::StringBase& str);
     FormalParamEnum getRandomFormalParamEnum();
-    FormalParamArray getRandomFormalParamArray();
+    void getRandomFormalParamArray(FormalParamArray& a);
     FormalParamStruct getRandomFormalParamStruct();
 
     // ----------------------------------------------------------------------

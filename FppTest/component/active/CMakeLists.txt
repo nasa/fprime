@@ -4,6 +4,7 @@
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/port_index_enums.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/ActiveTest.cpp"
 )
 
@@ -29,10 +30,14 @@ set(UT_MOD_DEPS
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/port_index_enums.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TesterHelpers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../Tests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/Tests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/PortTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/EventTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/ParamTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../../types/FormalParamTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
 )

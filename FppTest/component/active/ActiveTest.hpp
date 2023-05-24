@@ -46,7 +46,7 @@
 
       //! Handler implementation for arrayArgsAsyncBlockPriority
       //!
-      void arrayArgsAsyncBlockPriority_handler(
+      void arrayArgsAsync_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const FormalParamArray &a, /*!< 
       An array
@@ -106,7 +106,7 @@
 
       //! Handler implementation for enumArgsAsyncAssert
       //!
-      void enumArgsAsyncAssert_handler(
+      void enumArgsAsync_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const FormalParamEnum &en, /*!< 
       An enum
@@ -298,7 +298,7 @@
 
       //! Handler implementation for structArgsAsyncDropPriority
       //!
-      void structArgsAsyncDropPriority_handler(
+      void structArgsAsync_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const FormalParamStruct &s, /*!< 
       A struct
@@ -597,6 +597,11 @@
       void internalStruct_internalInterfaceHandler(
           const FormalParamStruct& str //!< A struct
       );
+
+    public:
+
+      //! Enables checking the serialization status of serial port invocations
+      Fw::SerializeStatus serializeStatus;
 
     };
 
