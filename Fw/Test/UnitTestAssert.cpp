@@ -43,9 +43,9 @@ namespace Test {
     void UnitTestAssert::doAssert() {
         this->m_assertFailed = true;
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-        (void)fprintf(stderr,"Assert File: 0x%" PRIx32 ", Line: %" PRI_PlatformUIntType "\n", this->m_file, this->m_lineNo);
+        (void)fprintf(stderr,"Assert: 0x%" PRIx32 ":%" PRI_PlatformUIntType "\n", this->m_file, this->m_lineNo);
 #else
-        (void)fprintf(stderr,"Assert File: %s, Line: %" PRI_PlatformUIntType "\n", this->m_file.toChar(), this->m_lineNo);
+        (void)fprintf(stderr,"Assert: %s:%" PRI_PlatformUIntType "\n", this->m_file.toChar(), this->m_lineNo);
 #endif
     }
 
