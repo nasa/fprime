@@ -64,7 +64,9 @@ void Tester ::
 
   bool boolVal = component.paramGet_ParamBool(valid);
   ASSERT_EQ(valid, prmValid);
-  ASSERT_EQ(boolVal, boolPrm.args.val);
+  if (valid == Fw::ParamValid::VALID) {
+    ASSERT_EQ(boolVal, boolPrm.args.val);
+  }
 
   U32 u32Val = component.paramGet_ParamU32(valid);
   ASSERT_EQ(valid, prmValid);

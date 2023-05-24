@@ -71,6 +71,8 @@ void Tester ::
 {
   std::cout << data.args.val1.toChar() << std::endl;
   std::cout << data.args.val2.toChar() << std::endl;
+  std::cout << data.args.val1.length() << std::endl;
+  std::cout << data.args.val2.length() << std::endl;
   component.log_COMMAND_EventString(
     data.args.val1,
     data.args.val2

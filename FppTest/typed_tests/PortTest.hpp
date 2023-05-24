@@ -28,13 +28,19 @@ protected:
 
 TYPED_TEST_SUITE_P(TypedPortTest);
 
-TYPED_TEST_P(TypedPortTest, TypedPort) {
+TYPED_TEST_P(TypedPortTest, SyncPort) {
     this->tester.testSyncPortInvoke(TypedPortIndex::TYPED, this->port);
     this->tester.testSyncPortCheck(this->port);
 }
 
+TYPED_TEST_P(TypedPortTest, GuardedPort) {
+    this->tester.testGuardedPortInvoke(TypedPortIndex::TYPED, this->port);
+    this->tester.testGuardedPortCheck(this->port);
+}
+
 REGISTER_TYPED_TEST_SUITE_P(TypedPortTest,
-    TypedPort
+    SyncPort,
+    GuardedPort
 );
 
 // Serial port tests
@@ -47,19 +53,31 @@ protected:
 
 TYPED_TEST_SUITE_P(SerialPortTest);
 
-TYPED_TEST_P(SerialPortTest, ToSerialTest) {
+TYPED_TEST_P(SerialPortTest, ToSerialSync) {
     this->tester.testSyncPortInvoke(TypedPortIndex::SERIAL, this->port);
     this->tester.testSyncPortCheckSerial(this->port);
 }
 
-TYPED_TEST_P(SerialPortTest, FromSerialTest) {
+TYPED_TEST_P(SerialPortTest, FromSerialSync) {
     this->tester.testSyncPortInvokeSerial(TypedPortIndex::SERIAL, this->port);
     this->tester.testSyncPortCheck(this->port);
 }
 
+TYPED_TEST_P(SerialPortTest, ToSerialGuarded) {
+    this->tester.testGuardedPortInvoke(TypedPortIndex::SERIAL, this->port);
+    this->tester.testGuardedPortCheckSerial(this->port);
+}
+
+TYPED_TEST_P(SerialPortTest, FromSerialGuarded) {
+    this->tester.testGuardedPortInvokeSerial(TypedPortIndex::SERIAL, this->port);
+    this->tester.testGuardedPortCheck(this->port);
+}
+
 REGISTER_TYPED_TEST_SUITE_P(SerialPortTest,
-    ToSerialTest,
-    FromSerialTest
+    ToSerialSync,
+    FromSerialSync,
+    ToSerialGuarded,
+    FromSerialGuarded
 );
 
 #endif

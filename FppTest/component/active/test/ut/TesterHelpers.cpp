@@ -423,10 +423,12 @@
     );
 
     // serialGuarded
-    this->connect_to_serialGuarded(
-        0,
-        this->component.get_serialGuarded_InputPort(0)
-    );
+    for (NATIVE_INT_TYPE i = 0; i < 7; ++i) {
+      this->connect_to_serialGuarded(
+          i,
+          this->component.get_serialGuarded_InputPort(i)
+      );
+    }
 
     // serialSync
     for (NATIVE_INT_TYPE i = 0; i < 7; ++i) {
