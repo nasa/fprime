@@ -108,7 +108,7 @@ function(ai_xml_setup_autocode AC_INPUT_FILE)
             OUTPUT ${GENERATED_FILES}
             COMMAND ${AI_BASE_SCRIPT} --connect_only --xml_topology_dict "${AC_INPUT_FILE}"
             COMMAND ${CMAKE_COMMAND} -E remove ${REMOVALS}
-            DEPENDS "${AC_INPUT_FILE}" "${MODULE_DEPENDENCIES}" "${AC_INPUT_FILE}" "${FILE_DEPENDENCIES}"
+            DEPENDS "${AC_INPUT_FILE}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${CODEGEN_TARGET}"
         )
     else()
         add_custom_command(
