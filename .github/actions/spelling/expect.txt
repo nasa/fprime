@@ -732,7 +732,6 @@ ISREG
 iss
 isspace
 isupper
-ITAR
 itimerspec
 itle
 itr
