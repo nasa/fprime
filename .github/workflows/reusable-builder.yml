@@ -60,13 +60,13 @@ jobs:
           fprime-util generate
           fprime-util build
         shell: bash
-      - if: ${{ inputs.run_integration_tests }} != ""
+      - if: ${{ inputs.run_integration_tests }}
         working-directory: ${{ inputs.build_location }}
         run: pytest 
         shell: bash
 
   runUT:
-    if: ${{ inputs.run_unit_tests }} == "true"
+    if: ${{ inputs.run_unit_tests }}
     runs-on: ${{ inputs.runs_on }}
     name: "Run Unit Tests"
     steps:
