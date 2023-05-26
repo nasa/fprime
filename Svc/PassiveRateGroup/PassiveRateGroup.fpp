@@ -7,7 +7,7 @@ module Svc {
     sync input port CycleIn: [1] Cycle
 
     @ Scheduler output port to rate group members
-    output port RateGroupMemberOut: [$PassiveRateGroupOutputPorts] Sched
+    output port RateGroupMemberOut: [PassiveRateGroupOutputPorts] Sched
 
   }
 
