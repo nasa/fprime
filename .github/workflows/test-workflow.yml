@@ -1,0 +1,20 @@
+name: 'F´ Project Builder - Reusable Workflow'
+
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: "Build F´ Project"
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: "Checkout F´ revision"
+        run: |
+          echo $GITHUB_SHA
+          echo $GITHUB_REF
+      - name: "Checkout F´ revision"
+        run: env
+  
