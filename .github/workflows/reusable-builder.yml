@@ -27,7 +27,7 @@ on:
       fprime_location:
         required: false
         type: string
-        description: "Relative path from the extenal project root to its F´ submodule"
+        description: "Relative path from the external project root to its F´ submodule"
         default: "./fprime"
       runs_on:
         required: false
@@ -89,7 +89,7 @@ jobs:
         run: |
           pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
         shell: bash
-      - name: "Buld and Run Unit Tests"
+      - name: "Build and Run Unit Tests"
         working-directory: ${{ inputs.build_location }}
         run: |
           fprime-util generate --ut ${{ inputs.target_platform }}
