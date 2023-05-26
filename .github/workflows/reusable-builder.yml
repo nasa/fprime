@@ -1,49 +1,49 @@
 # This workflow is intended for reuse by other workflows and will not run directly (no triggers).
 # The behavior is to build an external F´ project (e.g. fprime-community/system-reference) using
 # the current F´ version.
-name: 'F´ Project Builder - Reusable Workflow'
+name: "F´ Project Builder - Reusable Workflow"
 
 on:
   workflow_call:
     inputs:
       build_location:
         description: "Path to F´ module to build. E.g. MyDeployment/"
-        type: string
         required: true
+        type: string
       target_repository:
+        description: "Additional external repository to checkout (<owner>/<repo>)"
         required: true
         type: string
-        description: "Additional external repository to checkout (<owner>/<repo>)"
       run_unit_tests:
         description: "Run an additional job in parallel to run unit tests."
-        type: boolean
         required: false
+        type: boolean
         default: true
       run_integration_tests:
         description: "Run an additional job in parallel to run unit tests."
-        type: boolean
         required: false
+        type: boolean
         default: false
       fprime_location:
+        description: "Relative path from the external project root to its F´ submodule"
         required: false
         type: string
-        description: "Relative path from the external project root to its F´ submodule"
         default: "./fprime"
       runs_on:
+        description: "Platform to run on. Defaults to ubuntu-latest"
         required: false
         type: string
-        description: "Platform to run on. Defaults to ubuntu-latest"
         default: "ubuntu-latest"
       target_platform:
+        description: "Target platform to pass to fprime-util"
         required: false
         type: string
-        description: "Target platform to pass to fprime-util"
         default: ""
 
 jobs:
   build:
     runs-on: ${{ inputs.runs_on }}
-    name: "Build F´ Project"
+    name: "Build"
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v3
@@ -66,6 +66,7 @@ jobs:
           fprime-util build ${{ inputs.target_platform }}
         shell: bash
       - if: ${{ inputs.run_integration_tests }}
+        name: "Run Integration Tests (Pytest)"
         working-directory: ${{ inputs.build_location }}
         run: pytest 
         shell: bash
@@ -73,7 +74,7 @@ jobs:
   runUT:
     if: ${{ inputs.run_unit_tests }}
     runs-on: ${{ inputs.runs_on }}
-    name: "Run Unit Tests"
+    name: "Unit Tests"
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v3

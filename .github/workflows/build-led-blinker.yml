@@ -1,6 +1,6 @@
 # Builds and runs UTs on https://github.com/fprime-community/fprime-workshop-led-blinker
 
-name: LedBlinker Tests
+name: "LedBlinker Tests"
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
     branches: [ master, devel ]
 
 jobs:
-  build:
+  run:
     name: ""
     uses: ./.github/workflows/reusable-builder.yml
     with: 
