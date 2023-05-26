@@ -34,6 +34,11 @@ on:
         type: string
         description: "Platform to run on. Defaults to ubuntu-latest"
         default: "ubuntu-latest"
+      target_platform:
+        required: false
+        type: string
+        description: "Target platform to pass to fprime-util"
+        default: ""
 
 jobs:
   build:
@@ -57,8 +62,8 @@ jobs:
       - name: "Build Project"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util generate
-          fprime-util build
+          fprime-util generate ${{ inputs.target_platform }}
+          fprime-util build ${{ inputs.target_platform }}
         shell: bash
       - if: ${{ inputs.run_integration_tests }}
         working-directory: ${{ inputs.build_location }}
@@ -87,8 +92,8 @@ jobs:
       - name: "Buld and Run Unit Tests"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util generate --ut
-          fprime-util build --ut
-          fprime-util check
+          fprime-util generate --ut ${{ inputs.target_platform }}
+          fprime-util build --ut ${{ inputs.target_platform }}
+          fprime-util check ${{ inputs.target_platform }}
         shell: bash
 
