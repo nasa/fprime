@@ -1,8 +1,12 @@
-# See https://github.com/fprime-community/fprime-workshop-led-blinker
+# Builds and runs UTs on https://github.com/fprime-community/fprime-workshop-led-blinker
 
 name: LedBlinker Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ master, devel ]
+  pull_request:
+    branches: [ master, devel ]
 
 jobs:
   build:
