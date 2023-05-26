@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="PassiveRateGroup" kind="passive" namespace="Svc">
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>Svc/Cycle/CyclePortAi.xml</import_port_type>
+    <comment>A rate group passive component with input and output scheduler ports</comment>
+    <ports>
+        <!-- Input time cycle port -->
+        <port name="CycleIn" data_type="Cycle" kind="sync_input" max_number="1">
+            <comment>
+            The rate group cycle input
+            </comment>
+        </port>
+        
+        <!-- Output Scheduler Ports -->
+        <port name="RateGroupMemberOut" data_type="Sched" kind="output" max_number="$PassiveRateGroupOutputPorts">
+            <comment>Scheduler output port to rate group members</comment>
+        </port>
+
+
+        
+    </ports>
+</component>
+
