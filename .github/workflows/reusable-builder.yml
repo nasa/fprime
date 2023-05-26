@@ -19,11 +19,6 @@ on:
         required: false
         type: boolean
         default: true
-      run_integration_tests:
-        description: "Run an additional job in parallel to run unit tests."
-        required: false
-        type: boolean
-        default: false
       fprime_location:
         description: "Relative path from the external project root to its F´ submodule"
         required: false
@@ -59,16 +54,15 @@ jobs:
         run: |
           pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
         shell: bash
-      - name: "Build Project"
+      - name: "Generate build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util generate ${{ inputs.target_platform }}
-          fprime-util build ${{ inputs.target_platform }}
+          fprime-util generate ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
         shell: bash
-      - if: ${{ inputs.run_integration_tests }}
-        name: "Run Integration Tests (Pytest)"
+      - name: "Build"
         working-directory: ${{ inputs.build_location }}
-        run: pytest 
+        run: |
+          fprime-util build ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
         shell: bash
 
   runUT:
@@ -90,11 +84,19 @@ jobs:
         run: |
           pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
         shell: bash
-      - name: "Build and Run Unit Tests"
+      - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util generate --ut ${{ inputs.target_platform }}
-          fprime-util build --ut ${{ inputs.target_platform }}
-          fprime-util check ${{ inputs.target_platform }}
+          fprime-util generate --ut ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+        shell: bash
+      - name: "Build UTs"
+        working-directory: ${{ inputs.build_location }}
+        run: |
+          fprime-util build --ut ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+        shell: bash
+      - name: "Run Unit Tests"
+        working-directory: ${{ inputs.build_location }}
+        run: |
+          fprime-util check ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
         shell: bash
 
