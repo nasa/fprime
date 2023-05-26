@@ -28,7 +28,7 @@ namespace Svc {
 //! time of the rate group and detects overruns.
 //!
 
-class PassiveRateGroupImpl : public PassiveRateGroupComponentBase {
+class PassiveRateGroup : public PassiveRateGroupComponentBase {
   public:
     //!  \brief PassiveRateGroupImpl constructor
     //!
@@ -36,26 +36,25 @@ class PassiveRateGroupImpl : public PassiveRateGroupComponentBase {
     //!  contents of the context array to private storage.
     //!
     //!  \param compName Name of the component
+    PassiveRateGroup(const char* compName);  //!  \brief PassiveRateGroupImpl initialization function
+
+    //!  \brief PassiveRateGroup configuration function
+    //!
+    //!  The configuration function takes an array of context values to pass to
+    //!  members of the rate group.
+    //!
     //!  \param contexts Array of integers that contain the context values that will be sent
     //!         to each member component. The index of the array corresponds to the
     //!         output port number.
     //!  \param numContexts The number of elements in the context array.
-    PassiveRateGroupImpl(const char* compName,
-                         NATIVE_UINT_TYPE contexts[],
-                         NATIVE_UINT_TYPE numContexts);  //!  \brief PassiveRateGroupImpl initialization function
-    //!
-    //!  The initialization function of the class initializes the member
-    //!  ports and the component base class
-    //!
-    //!  \param instance Identifies the instance of the rate group component
 
-    void init(NATIVE_INT_TYPE instance);
+    void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts);
 
     //!  \brief PassiveRateGroupImpl destructor
     //!
     //!  The destructor of the class is empty
 
-    ~PassiveRateGroupImpl(void);
+    ~PassiveRateGroup(void);
 
   PRIVATE:
     //!  \brief Input cycle port handler
@@ -70,11 +69,8 @@ class PassiveRateGroupImpl : public PassiveRateGroupComponentBase {
 
     U32 m_cycles;                                                      //!< cycles executed
     U32 m_maxTime;                                                     //!< maximum execution time in microseconds
+    U32 m_numContexts;                                                 //!< number of contexts
     NATIVE_UINT_TYPE m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];  //!< Must match number of output ports
-
-  public:
-    // put this constant here for sizing the context table
-    static const NATIVE_UINT_TYPE CONTEXT_SIZE = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 };
 
 }  // namespace Svc

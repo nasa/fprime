@@ -15,34 +15,33 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Log.hpp>
-#include <Svc/PassiveRateGroup/PassiveRateGroupImpl.hpp>
+#include <Svc/PassiveRateGroup/PassiveRateGroup.hpp>
 
 namespace Svc {
-PassiveRateGroupImpl::PassiveRateGroupImpl(const char* compName,
-                                           NATIVE_UINT_TYPE contexts[],
-                                           NATIVE_UINT_TYPE numContexts)
-    : PassiveRateGroupComponentBase(compName), m_cycles(0), m_maxTime(0) {
+PassiveRateGroup::PassiveRateGroup(const char* compName)
+    : PassiveRateGroupComponentBase(compName), m_cycles(0), m_maxTime(0), m_numContexts(0) {
+}
+
+PassiveRateGroup::~PassiveRateGroup(void) {}
+
+void PassiveRateGroup::configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts) {
     FW_ASSERT(contexts);
-    FW_ASSERT(numContexts == static_cast<NATIVE_UINT_TYPE>(this->getNum_RateGroupMemberOut_OutputPorts()), numContexts,
-              this->getNum_RateGroupMemberOut_OutputPorts());
+    FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
     FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
-              static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
+              FW_NUM_ARRAY_ELEMENTS(this->m_contexts),
               this->getNum_RateGroupMemberOut_OutputPorts());
 
+    this->m_numContexts = numContexts;
     // copy context values
-    for (NATIVE_INT_TYPE entry = 0; entry < this->getNum_RateGroupMemberOut_OutputPorts(); entry++) {
+    for (NATIVE_INT_TYPE entry = 0; entry < this->m_numContexts; entry++) {
         this->m_contexts[entry] = contexts[entry];
     }
 }
 
-void PassiveRateGroupImpl::init(NATIVE_INT_TYPE instance) {
-    PassiveRateGroupComponentBase::init(instance);
-}
 
-PassiveRateGroupImpl::~PassiveRateGroupImpl(void) {}
-
-void PassiveRateGroupImpl::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
     TimerVal end;
+    FW_ASSERT(this->m_numContexts);
 
     // invoke any members of the rate group
     for (NATIVE_INT_TYPE port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
@@ -61,6 +60,9 @@ void PassiveRateGroupImpl::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVa
     if (cycle_time > this->m_maxTime) {
         this->m_maxTime = cycle_time;
     }
+    this->tlmWrite_MaxCycleTime(this->m_maxTime);
+    this->tlmWrite_CycleTime(cycle_time);
+    this->tlmWrite_CycleCount(this->m_cycles++);
 }
 
 }  // namespace Svc
