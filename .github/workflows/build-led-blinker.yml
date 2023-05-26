@@ -16,3 +16,4 @@ jobs:
       target_repository: fprime-community/fprime-workshop-led-blinker
       build_location: LedBlinker
       run_unit_tests: true
+      run_integration_tests: false
