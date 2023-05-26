@@ -13,19 +13,13 @@
 */
 
 #include <Svc/PassiveRateGroup/PassiveRateGroupImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Log.hpp>
 
 namespace Svc {
-
-#if FW_OBJECT_NAMES == 1
     PassiveRateGroupImpl::PassiveRateGroupImpl(const char* compName, NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts) :
-        PassiveRateGroupComponentBase(compName),
-#else
-    PassiveRateGroupImpl::PassiveRateGroupImpl(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts) :
-#endif
-        m_cycles(0), m_maxTime(0) {
+        PassiveRateGroupComponentBase(compName),        m_cycles(0), m_maxTime(0) {
 
         FW_ASSERT(contexts);
         FW_ASSERT(numContexts == static_cast<NATIVE_UINT_TYPE>(this->getNum_RateGroupMemberOut_OutputPorts()),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
