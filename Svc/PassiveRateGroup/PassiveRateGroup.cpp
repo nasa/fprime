@@ -21,7 +21,7 @@ PassiveRateGroup::PassiveRateGroup(const char* compName)
     : PassiveRateGroupComponentBase(compName), m_cycles(0), m_maxTime(0), m_numContexts(0) {
 }
 
-PassiveRateGroup::~PassiveRateGroup(void) {}
+PassiveRateGroup::~PassiveRateGroup() {}
 
 void PassiveRateGroup::configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts) {
     FW_ASSERT(contexts);

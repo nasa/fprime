@@ -51,7 +51,7 @@ class PassiveRateGroup : public PassiveRateGroupComponentBase {
     //!  \brief PassiveRateGroupImpl destructor
     //!
     //!  The destructor of the class is empty
-    ~PassiveRateGroup(void);
+    ~PassiveRateGroup();
 
   PRIVATE:
     //!  \brief Input cycle port handler
