@@ -16,8 +16,6 @@
 
 #if $kind == "passive":
 \#include <Fw/Comp/PassiveComponentBase.hpp>
-#else if $kind == "queued":
-\#include <Fw/Comp/QueuedComponentBase.hpp>
 #else:
 \#include <Fw/Comp/ActiveComponentBase.hpp>
 #end if
