@@ -8,8 +8,7 @@
  *
  *   Copyright 2014-2015, by the California Institute of Technology.
  *   ALL RIGHTS RESERVED. United States Government Sponsorship
- *   acknowledged. Any commercial use must be negotiated with the Office
- *   of Technology Transfer at the California Institute of Technology.
+ *   acknowledged.
  */
 
 #include <FpConfig.hpp>
@@ -62,7 +61,7 @@ void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& c
     }
     this->tlmWrite_MaxCycleTime(this->m_maxTime);
     this->tlmWrite_CycleTime(cycle_time);
-    this->tlmWrite_CycleCount(this->m_cycles++);
+    this->tlmWrite_CycleCount(++this->m_cycles);
 }
 
 }  // namespace Svc

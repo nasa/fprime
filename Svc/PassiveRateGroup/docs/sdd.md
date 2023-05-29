@@ -3,7 +3,7 @@
 
 ## 1. Introduction
 
-`Svc::PassiveRateGroup` is an passive component that drives a set of components connected to `Svc::Sched` output ports. It contains an synchronous input `Svc::Cycle` port that drives all the operations.  The component invokes each output port in order, passing an argument indicating the order. It tracks execution time of the cycle.
+`Svc::PassiveRateGroup` is an passive component that drives a set of components connected to `Svc::Sched` output ports. It contains an synchronous input `Svc::Cycle` port that drives all the operations.  The component invokes each output port in order, passing an argument specified in the supplied context list. It tracks execution time of the cycle.
 
 ## 2. Requirements
 
@@ -11,9 +11,9 @@ The requirements for `Svc::PassiveRateGroup` are as follows:
 
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
-ISF-PRG-001 | The `Svc::PassiveRateGroup` component shall be passive and will be driven by an input synchronous port call | Inspection, Unit test
-ISF-PRG-002 | The `Svc::PassiveRateGroup` component shall invoke its output ports in order, passing the value contained in a table based on port number | Unit Test
-ISF-PRG-003 | The `Svc::PassiveRateGroup` component shall track the time required to execute the rate group and report it as telemetry | Unit Test
+FPRIME-PRG-001 | The `Svc::PassiveRateGroup` component shall be passive and will be driven by an input synchronous port call | Inspection, Unit test
+FPRIME-PRG-002 | The `Svc::PassiveRateGroup` component shall invoke its output ports in order, passing the value contained in a table based on port number | Unit Test
+FPRIME-PRG-003 | The `Svc::PassiveRateGroup` component shall track the time required to execute the rate group and report it as telemetry | Unit Test
 
 
 ## 3. Design
@@ -45,7 +45,19 @@ The `Svc::PassiveRateGroup` component has one input port that is used to drive a
 
 As described in the Functional Description section, the `Svc::PassiveRateGroup` component accepts calls to the CycleIn and invokes the RateGroupMemberOut ports:
 
-![System Tick Port Call](img/RateGroupCall.jpg) 
+**Sequence Diagram**
+```mermaid
+sequenceDiagram
+    participant RateGroupDriver
+    participant PassiveRateGroup
+    participant Callee
+    RateGroupDriver ->> PassiveRateGroup: CycleIn
+    loop for each callee
+        PassiveRateGroup ->> Callee: RateGroupMemberOut[N]
+        Callee -->> PassiveRateGroup: 
+    end
+    PassiveRateGroup -->> RateGroupDriver: 
+```
 
 ### 3.4 State
 

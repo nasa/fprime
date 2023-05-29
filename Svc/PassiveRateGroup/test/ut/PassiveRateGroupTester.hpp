@@ -27,7 +27,7 @@ namespace Svc {
 
             void init(NATIVE_INT_TYPE instance = 0);
 
-            void runNominal(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance);
+            void runNominal(NATIVE_INT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance);
 
         private:
 
@@ -43,7 +43,6 @@ namespace Svc {
                 NATIVE_UINT_TYPE order;
             } m_callLog[Svc::PassiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
 
-            bool m_causeOverrun; //!< flag to cause an overrun during a rate group member port call
             NATIVE_UINT_TYPE m_callOrder; //!< tracks order of port call.
 
     };

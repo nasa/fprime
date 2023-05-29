@@ -8,8 +8,7 @@
  *
  *   Copyright 2014-2015, by the California Institute of Technology.
  *   ALL RIGHTS RESERVED. United States Government Sponsorship
- *   acknowledged. Any commercial use must be negotiated with the Office
- *   of Technology Transfer at the California Institute of Technology.
+ *   acknowledged.
  */
 
 #ifndef SVC_PASSIVERATEGROUP_IMPL_HPP
@@ -36,7 +35,7 @@ class PassiveRateGroup : public PassiveRateGroupComponentBase {
     //!  contents of the context array to private storage.
     //!
     //!  \param compName Name of the component
-    PassiveRateGroup(const char* compName);  //!  \brief PassiveRateGroupImpl initialization function
+    explicit PassiveRateGroup(const char* compName);  //!  \brief PassiveRateGroupImpl initialization function
 
     //!  \brief PassiveRateGroup configuration function
     //!
@@ -47,13 +46,11 @@ class PassiveRateGroup : public PassiveRateGroupComponentBase {
     //!         to each member component. The index of the array corresponds to the
     //!         output port number.
     //!  \param numContexts The number of elements in the context array.
-
     void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts);
 
     //!  \brief PassiveRateGroupImpl destructor
     //!
     //!  The destructor of the class is empty
-
     ~PassiveRateGroup(void);
 
   PRIVATE:
@@ -67,10 +64,10 @@ class PassiveRateGroup : public PassiveRateGroupComponentBase {
     //!  \param cycleStart value stored by the cycle driver, used to compute execution time.
     void CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart);
 
-    U32 m_cycles;                                                      //!< cycles executed
-    U32 m_maxTime;                                                     //!< maximum execution time in microseconds
-    U32 m_numContexts;                                                 //!< number of contexts
-    NATIVE_UINT_TYPE m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];  //!< Must match number of output ports
+    U32 m_cycles;                                                     //!< cycles executed
+    U32 m_maxTime;                                                    //!< maximum execution time in microseconds
+    NATIVE_INT_TYPE m_numContexts;                                    //!< number of contexts
+    NATIVE_INT_TYPE m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];  //!< Must match number of output ports
 };
 
 }  // namespace Svc
