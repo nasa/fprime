@@ -104,31 +104,33 @@ $(document).ready(function(){initNavTree('_fatal_handler_component_linux_impl_8c
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;csignal&gt;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="logger_8hpp.html">Fw/Logger/Logger.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fatal_handler_component_impl_8hpp.html">Svc/FatalHandler/FatalHandlerComponentImpl.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fp_config_8hpp.html">FpConfig.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">void</span> FatalHandlerComponentImpl::FatalReceive_handler(</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            <a class="code" href="fp_config_8h.html#a3cf649086b37430f3aa561942a64f431">FwEventIdType</a> Id) {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="comment">// for **nix, delay then exit with error code</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <a class="code" href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a>(<span class="stringliteral">&quot;FATAL %d handled.\n&quot;</span>,Id,0,0,0,0,0);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        (void)<a class="code" href="class_os_1_1_task.html#a215cf7a77e5b2d62b393456852943a31">Os::Task::delay</a>(1000);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <a class="code" href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a>(<span class="stringliteral">&quot;Exiting with abort signal and core dump file.\n&quot;</span>,0,0,0,0,0,0);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        (void)<span class="keyword">raise</span>( SIGABRT );</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        exit(1);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    }</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;} <span class="comment">// end namespace Svc</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="task_8hpp.html">Os/Task.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fp_config_8hpp.html">FpConfig.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">void</span> FatalHandlerComponentImpl::FatalReceive_handler(</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <a class="code" href="fp_config_8h.html#a3cf649086b37430f3aa561942a64f431">FwEventIdType</a> Id) {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="comment">// for **nix, delay then exit with error code</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <a class="code" href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a>(<span class="stringliteral">&quot;FATAL %d handled.\n&quot;</span>,Id,0,0,0,0,0);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        (void)<a class="code" href="class_os_1_1_task.html#a215cf7a77e5b2d62b393456852943a31">Os::Task::delay</a>(1000);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <a class="code" href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a>(<span class="stringliteral">&quot;Exiting with abort signal and core dump file.\n&quot;</span>,0,0,0,0,0,0);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        (void)<span class="keyword">raise</span>( SIGABRT );</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        exit(1);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;} <span class="comment">// end namespace Svc</span></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_fatal_handler_component_impl_8hpp_html"><div class="ttname"><a href="fatal_handler_component_impl_8hpp.html">FatalHandlerComponentImpl.hpp</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a3cf649086b37430f3aa561942a64f431"><div class="ttname"><a href="fp_config_8h.html#a3cf649086b37430f3aa561942a64f431">FwEventIdType</a></div><div class="ttdeci">U32 FwEventIdType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00062">FpConfig.h:62</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
 <div class="ttc" id="a_logger_8hpp_html"><div class="ttname"><a href="logger_8hpp.html">Logger.hpp</a></div></div>
+<div class="ttc" id="a_task_8hpp_html"><div class="ttname"><a href="task_8hpp.html">Task.hpp</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_logger_html_a0a68fd1aef48f608252dd3e84013035a"><div class="ttname"><a href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a></div><div class="ttdeci">static void logMsg(const char *fmt, POINTER_CAST a0=0, POINTER_CAST a1=0, POINTER_CAST a2=0, POINTER_CAST a3=0, POINTER_CAST a4=0, POINTER_CAST a5=0, POINTER_CAST a6=0, POINTER_CAST a7=0, POINTER_CAST a8=0, POINTER_CAST a9=0)</div><div class="ttdef"><b>Definition:</b> <a href="logger_8cpp_source.html#l00018">Logger.cpp:18</a></div></div>
 <div class="ttc" id="aclass_os_1_1_task_html_a215cf7a77e5b2d62b393456852943a31"><div class="ttname"><a href="class_os_1_1_task.html#a215cf7a77e5b2d62b393456852943a31">Os::Task::delay</a></div><div class="ttdeci">static TaskStatus delay(NATIVE_UINT_TYPE msecs)</div><div class="ttdoc">delay the task</div><div class="ttdef"><b>Definition:</b> <a href="baremetal_2_task_8cpp_source.html#l00043">Task.cpp:43</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
