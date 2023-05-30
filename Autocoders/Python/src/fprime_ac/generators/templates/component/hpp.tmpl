@@ -13,7 +13,14 @@
 \#include <FpConfig.hpp>
 \#include <Fw/Port/InputSerializePort.hpp>
 \#include <Fw/Port/OutputSerializePort.hpp>
+
+#if $kind == "passive":
+\#include <Fw/Comp/PassiveComponentBase.hpp>
+#else:
 \#include <Fw/Comp/ActiveComponentBase.hpp>
+#end if
+
+
 #if $has_guarded_ports or $has_parameters
 \#include <Os/Mutex.hpp>
 #end if
