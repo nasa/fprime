@@ -35,7 +35,7 @@ namespace Svc {
 
             Svc::PassiveRateGroup& m_impl;
 
-            void clearPortCalls(void);
+            void clearPortCalls();
 
             struct {
                 bool portCalled;

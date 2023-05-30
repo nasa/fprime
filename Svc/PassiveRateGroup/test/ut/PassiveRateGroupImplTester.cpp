@@ -30,7 +30,7 @@ PassiveRateGroupTester::PassiveRateGroupTester(Svc::PassiveRateGroup& inst)
     this->clearPortCalls();
 }
 
-void PassiveRateGroupTester::clearPortCalls(void) {
+void PassiveRateGroupTester::clearPortCalls() {
     memset(this->m_callLog, 0, sizeof(this->m_callLog));
     this->m_callOrder = 0;
 }
@@ -79,16 +79,6 @@ void PassiveRateGroupTester::runNominal(NATIVE_INT_TYPE contexts[],
     ASSERT_GT(this->tlmHistory_MaxCycleTime->at(0).arg, 0);
     ASSERT_GT(this->tlmHistory_CycleTime->at(0).arg, 0);
     ASSERT_GT(this->tlmHistory_CycleCount->at(0).arg, 0);
-
-
-/*    @ Max execution time of rate group cycle
-    telemetry MaxCycleTime: U32 update on change format "{} us"
-
-    @ Execution time of current cycle
-    telemetry CycleTime: U32 format "{} us"
-
-    @ Count of number of cycles
-    telemetry CycleCount: U32*/
 }
 
 }  // namespace Svc

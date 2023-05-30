@@ -32,8 +32,8 @@ The `Svc::PassiveRateGroup` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Cycle`](../../Cycle/docs/sdd.html) | CycleIn | Input | synchronous | Receive a call to run one cycle of the rate group
-[`Svc::Sched`](../../Sched/docs/sdd.html) | RateGroupMemberOut | Output | n/a | Rate group ports
+Svc::Cycle | CycleIn | Input | synchronous | Receive a call to run one cycle of the rate group
+[`Svc::Sched`](../../Sched/docs/sdd.md) | RateGroupMemberOut | Output | n/a | Rate group ports
 
 #### 3.2 Functional Description
 
@@ -67,24 +67,7 @@ sequenceDiagram
 
 `Svc::PassiveRateGroup` has no significant algorithms.
 
-## 4. Module Checklists
-
-Document | Link
--------- | ----
-Design Checklist | [Link](Checklist_Design.xlsx)
-Code Checklist | [Link](Checklist_Code.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xlsx)
-
-## 5. Unit Testing
-
-The unit test results are as follows:
-
-Log|Link
----|----
-Test Output|[Link](../test/ut/output/test_out.txt)
-Coverage Output|[Link](../test/ut/output/SvcPassiveRateGroup_gcov.txt)
-
-## 6. Change Log
+## 4. Change Log
 
 Date | Description
 ---- | -----------
