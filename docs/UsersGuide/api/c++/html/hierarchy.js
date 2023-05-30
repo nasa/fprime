@@ -175,6 +175,10 @@ var hierarchy =
       ] ]
     ] ],
     [ "Svc::AMPCSSequence::Record::Opcode", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_opcode.html", null ],
+    [ "PassiveRateGroupComponentBase", null, [
+      [ "Svc::PassiveRateGroup", "class_svc_1_1_passive_rate_group.html", null ]
+    ] ],
+    [ "PassiveRateGroupImpl", "class_passive_rate_group_impl.html", null ],
     [ "PassiveTextLoggerComponentBase", null, [
       [ "Svc::ConsoleTextLoggerImpl", "class_svc_1_1_console_text_logger_impl.html", null ]
     ] ],

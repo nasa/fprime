@@ -43,6 +43,7 @@ var namespace_svc =
     [ "LinuxTimeImpl", "class_svc_1_1_linux_time_impl.html", "class_svc_1_1_linux_time_impl" ],
     [ "LinuxTimerComponentImpl", "class_svc_1_1_linux_timer_component_impl.html", "class_svc_1_1_linux_timer_component_impl" ],
     [ "ConsoleTextLoggerImpl", "class_svc_1_1_console_text_logger_impl.html", "class_svc_1_1_console_text_logger_impl" ],
+    [ "PassiveRateGroup", "class_svc_1_1_passive_rate_group.html", "class_svc_1_1_passive_rate_group" ],
     [ "PolyDbImpl", "class_svc_1_1_poly_db_impl.html", "class_svc_1_1_poly_db_impl" ],
     [ "PrmDbImpl", "class_svc_1_1_prm_db_impl.html", "class_svc_1_1_prm_db_impl" ],
     [ "RateGroupDriver", "class_svc_1_1_rate_group_driver.html", "class_svc_1_1_rate_group_driver" ],

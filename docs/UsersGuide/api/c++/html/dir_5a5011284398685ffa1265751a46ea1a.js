@@ -29,6 +29,7 @@ var dir_5a5011284398685ffa1265751a46ea1a =
     [ "LinuxTime", "dir_9518d90373ba43334c6fc572874d7caf.html", "dir_9518d90373ba43334c6fc572874d7caf" ],
     [ "LinuxTimer", "dir_22529899fa552d2c34a479ffd678dd75.html", "dir_22529899fa552d2c34a479ffd678dd75" ],
     [ "PassiveConsoleTextLogger", "dir_8d7b0511efd3d9e8959fb2f284d79bbc.html", "dir_8d7b0511efd3d9e8959fb2f284d79bbc" ],
+    [ "PassiveRateGroup", "dir_2b288f4692714cb0895563514b224d9e.html", "dir_2b288f4692714cb0895563514b224d9e" ],
     [ "Ping", "dir_eba9530c7f756ce8b684f514ee6bd0e7.html", "dir_eba9530c7f756ce8b684f514ee6bd0e7" ],
     [ "PolyDb", "dir_8803d91acb40de685e703cc1faf970c2.html", "dir_8803d91acb40de685e703cc1faf970c2" ],
     [ "PolyIf", "dir_b7cc349557ee7eade4a333d151894d38.html", "dir_b7cc349557ee7eade4a333d151894d38" ],

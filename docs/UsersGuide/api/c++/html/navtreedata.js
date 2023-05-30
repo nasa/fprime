@@ -131,6 +131,25 @@ var NAVTREE =
         ] ]
       ] ]
     ] ],
+    [ "sdd", "md__svc__passive_rate_group_docs_sdd.html", [
+      [ "RateGroupDriver Component", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md563", [
+        [ "1. Introduction", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md564", null ],
+        [ "2. Requirements", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md565", null ],
+        [ "3. Design", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md566", [
+          [ "3.1 Context", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md567", [
+            [ "3.1.1 Component Diagram", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md568", null ],
+            [ "3.1.2 Ports", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md569", null ],
+            [ "3.2 Functional Description", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md570", null ]
+          ] ],
+          [ "3.3 Scenarios", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md571", [
+            [ "3.3.1 Rate Group Port Call", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md572", null ]
+          ] ],
+          [ "3.4 State", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md573", null ],
+          [ "3.5 Algorithms", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md574", null ]
+        ] ],
+        [ "4. Change Log", "md__svc__passive_rate_group_docs_sdd.html#autotoc_md575", null ]
+      ] ]
+    ] ],
     [ "System Resources Component", "md__svc__system_resources_docs_sdd.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -179,19 +198,19 @@ var NAVTREEINDEX =
 "file_system_8hpp.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa85227fe14c5fafd1a62eb7362609b1b9",
 "health_component_impl_8cpp_source.html",
 "os_2_linux_2_file_8cpp_source.html",
-"static_memory_config_8hpp_source.html",
-"svc_fatal_handler_component.html#autotoc_md411",
-"svc_tlm_chan_component.html",
-"x86_2_interval_timer_8cpp.html",
-"class_fw_1_1_cmd_arg_buffer.html#a94e3a43259a12c5ac3351a004b3fefd7",
-"class_fw_1_1_poly_type.html#ae7f314708bfd3b495d9ecb69eb45e919",
-"class_os_1_1_directory.html#af46b54619d4ee448a257065f3fced537",
-"class_primitive_struct_test.html#a1ac5a257ce031bb4d111242cfe5af61f",
-"class_svc_1_1_health_impl.html#ac9373bde103c99aeeec78106e76e69bd",
-"dir_a1f7361c94a8ea0a042cabc98d083f6c.html",
-"namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da60b5b0e0e252c201ef285a94ca03ffb4",
-"namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a74bf4e62345a85bd297ee1cde989dab2",
-"struct_svc_1_1_log_file.html#a741da0e2dc05cdba528db3f0e2d0e96e"
+"static_memory_component_impl_8hpp_source.html",
+"svc_fatal_handler_component.html#autotoc_md407",
+"svc_static_memory_component.html#autotoc_md646",
+"watchdog_timer_8cpp.html",
+"class_fw_1_1_buffer.html#af881c86bc7c3a7855009d0eb537f60d0",
+"class_fw_1_1_poly_type.html#ad546834f2e0d0d5b18ca462c4b245975",
+"class_os_1_1_directory.html#a9ad66477c3128adf4fb1b6275f63a947",
+"class_os_1_1_watchdog_timer.html#aeea58bde696926e5f2be326bcf112b6a",
+"class_svc_1_1_health_impl.html",
+"dir_9518d90373ba43334c6fc572874d7caf.html",
+"md_docs__design_communication_adapter_interface.html",
+"namespace_svc.html#ae0dd31d08e2d4a55709aff6caa18ace6",
+"struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html#a8a68343765704783d1b46a0706933e6d"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

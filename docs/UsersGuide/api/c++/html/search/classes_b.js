@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nonprimitivestructtest_2052',['NonPrimitiveStructTest',['../class_non_primitive_struct_test.html',1,'']]]
+  ['nonprimitivestructtest_2060',['NonPrimitiveStructTest',['../class_non_primitive_struct_test.html',1,'']]]
 ];
