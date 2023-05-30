@@ -1028,6 +1028,8 @@ params
 PARENB
 PARODD
 parseable
+PASSIVERATEGROUP
+PASSIVERATEGROUPIMPLTESTER
 pathlib
 pathmaker
 pbuild
