@@ -4,6 +4,7 @@ This section of the documentation captures the design and philosophy of F´, the
 viewed through F´. 
 
 
-| Table of Contents                              |
-|------------------------------------------------|
-| [Numerical Types Design](./numerical-types.md) |
+| Table of Contents                                                       |
+|-------------------------------------------------------------------------|
+| [Numerical Types Design](./numerical-types.md)                          |
+| [Communication Adapter Interface](./communication-adapter-interface.md) |
