@@ -1,0 +1,102 @@
+# This workflow is intended for reuse by other workflows and will not run directly (no triggers).
+# The behavior is to build an external F´ project (e.g. fprime-community/system-reference) using
+# the current F´ version.
+name: "F´ Project Builder - Reusable Workflow"
+
+on:
+  workflow_call:
+    inputs:
+      build_location:
+        description: "Path to F´ module to build. E.g. MyDeployment/"
+        required: true
+        type: string
+      target_repository:
+        description: "Additional external repository to checkout (<owner>/<repo>)"
+        required: true
+        type: string
+      run_unit_tests:
+        description: "Run an additional job in parallel to run unit tests."
+        required: false
+        type: boolean
+        default: true
+      fprime_location:
+        description: "Relative path from the external project root to its F´ submodule"
+        required: false
+        type: string
+        default: "./fprime"
+      runs_on:
+        description: "Platform to run on. Defaults to ubuntu-latest"
+        required: false
+        type: string
+        default: "ubuntu-latest"
+      target_platform:
+        description: "Target platform to pass to fprime-util"
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  build:
+    runs-on: ${{ inputs.runs_on }}
+    name: "Build"
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          repository: ${{ inputs.target_repository }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          path: ${{ inputs.fprime_location }}
+      - name: "Install requirements.txt"
+        run: |
+          pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+        shell: bash
+      - name: "Generate build cache"
+        working-directory: ${{ inputs.build_location }}
+        run: |
+          fprime-util generate ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+        shell: bash
+      - name: "Build"
+        working-directory: ${{ inputs.build_location }}
+        run: |
+          fprime-util build ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+        shell: bash
+
+  runUT:
+    if: ${{ inputs.run_unit_tests }}
+    runs-on: ${{ inputs.runs_on }}
+    name: "Unit Tests"
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          repository: ${{ inputs.target_repository }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          path: ${{ inputs.fprime_location }}
+      - name: "Install requirements.txt"
+        run: |
+          pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+        shell: bash
+      - name: "Generate UT build cache"
+        working-directory: ${{ inputs.build_location }}
+        run: |
+          fprime-util generate --ut ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+        shell: bash
+      - name: "Build UTs"
+        working-directory: ${{ inputs.build_location }}
+        run: |
+          fprime-util build --ut ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+        shell: bash
+      - name: "Run Unit Tests"
+        working-directory: ${{ inputs.build_location }}
+        run: |
+          fprime-util check ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+        shell: bash
+
