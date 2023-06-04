@@ -6,6 +6,9 @@
 @ Number of rate group member output ports for ActiveRateGroup
 constant ActiveRateGroupOutputPorts = 10
 
+@ Number of rate group member output ports for PassiveRateGroup
+constant PassiveRateGroupOutputPorts = 10
+
 @ Used to drive rate groups
 constant RateGroupDriverRateGroupPorts = 3
 

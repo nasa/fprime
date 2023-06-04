@@ -20,7 +20,7 @@
 #define FILE_NAME_ARG NATIVE_UINT_TYPE
 #define FW_CASSERT(cond) ((void)((cond) ? (0) : (CAssert0(ASSERT_FILE_ID, __LINE__))))
 #else
-#define FILE_NAME_ARG const U8*
+#define FILE_NAME_ARG const CHAR*
 #define FW_CASSERT(cond) ((void)((cond) ? (0) : (CAssert0((FILE_NAME_ARG)(__FILE__), __LINE__))))
 #endif
 
