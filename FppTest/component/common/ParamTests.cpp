@@ -19,32 +19,32 @@ Fw::ParamValid Tester ::
   FW_ASSERT(id >= id_base);
 
   switch (id - id_base) {
-    case ActiveTestComponentBase::PARAMID_PARAMBOOL: 
+    case TestComponentComponentBase::PARAMID_PARAMBOOL: 
       status = val.serialize(boolPrm.args.val);
       FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
       break;
 
-    case ActiveTestComponentBase::PARAMID_PARAMU32:
+    case TestComponentComponentBase::PARAMID_PARAMU32:
       status = val.serialize(u32Prm.args.val);
       FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
       break;
 
-    case ActiveTestComponentBase::PARAMID_PARAMSTRING:
+    case TestComponentComponentBase::PARAMID_PARAMSTRING:
       status = val.serialize(stringPrm.args.val);
       FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
       break;
 
-    case ActiveTestComponentBase::PARAMID_PARAMENUM:
+    case TestComponentComponentBase::PARAMID_PARAMENUM:
       status = val.serialize(enumPrm.args.val);
       FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
       break;
 
-    case ActiveTestComponentBase::PARAMID_PARAMARRAY:
+    case TestComponentComponentBase::PARAMID_PARAMARRAY:
       status = val.serialize(arrayPrm.args.val);
       FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
       break;
 
-    case ActiveTestComponentBase::PARAMID_PARAMSTRUCT:
+    case TestComponentComponentBase::PARAMID_PARAMSTRUCT:
       status = val.serialize(structPrm.args.val);
       FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
       break;

@@ -6,7 +6,7 @@
 // NOTE: this file was automatically generated
 //
 // ======================================================================
-#include "Tester.hpp"
+#include "test/ut/Tester.hpp"
 
   // ----------------------------------------------------------------------
   // Helper methods
@@ -16,11 +16,13 @@
     connectPorts()
   {
 
-    // arrayArgsAsyncBlockPriority
-    this->connect_to_arrayArgsAsync(
-        0,
-        this->component.get_arrayArgsAsync_InputPort(0)
-    );
+    // arrayArgsAsync
+    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+      this->connect_to_arrayArgsAsync(
+          i,
+          this->component.get_arrayArgsAsync_InputPort(i)
+      );
+    }
 
     // arrayArgsGuarded
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
@@ -56,11 +58,13 @@
         this->component.get_cmdIn_InputPort(0)
     );
 
-    // enumArgsAsyncAssert
-    this->connect_to_enumArgsAsync(
-        0,
-        this->component.get_enumArgsAsync_InputPort(0)
-    );
+    // enumArgsAsync
+    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+      this->connect_to_enumArgsAsync(
+          i,
+          this->component.get_enumArgsAsync_InputPort(i)
+      );
+    }
 
     // enumArgsGuarded
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
@@ -91,10 +95,12 @@
     );
 
     // noArgsAsync
-    this->connect_to_noArgsAsync(
-        0,
-        this->component.get_noArgsAsync_InputPort(0)
-    );
+    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+      this->connect_to_noArgsAsync(
+          i,
+          this->component.get_noArgsAsync_InputPort(i)
+      );
+    }
 
     // noArgsGuarded
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
@@ -125,10 +131,12 @@
     }
 
     // primitiveArgsAsync
-    this->connect_to_primitiveArgsAsync(
-        0,
-        this->component.get_primitiveArgsAsync_InputPort(0)
-    );
+    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+      this->connect_to_primitiveArgsAsync(
+          i,
+          this->component.get_primitiveArgsAsync_InputPort(i)
+      );
+    }
 
     // primitiveArgsGuarded
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
@@ -159,10 +167,12 @@
     );
 
     // stringArgsAsync
-    this->connect_to_stringArgsAsync(
-        0,
-        this->component.get_stringArgsAsync_InputPort(0)
-    );
+    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+      this->connect_to_stringArgsAsync(
+          i,
+          this->component.get_stringArgsAsync_InputPort(i)
+      );
+    }
 
     // stringArgsGuarded
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
@@ -180,11 +190,13 @@
       );
     }
 
-    // structArgsAsyncDropPriority
-    this->connect_to_structArgsAsync(
-        0,
-        this->component.get_structArgsAsync_InputPort(0)
-    );
+    // structArgsAsync
+    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+      this->connect_to_structArgsAsync(
+          i,
+          this->component.get_structArgsAsync_InputPort(i)
+      );
+    }
 
     // structArgsGuarded
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
@@ -399,10 +411,12 @@
   // Connect serial input ports
   // ----------------------------------------------------------------------
     // serialAsync
-    this->connect_to_serialAsync(
-        0,
-        this->component.get_serialAsync_InputPort(0)
-    );
+    for (NATIVE_INT_TYPE i = 0; i < 4; ++i) {
+      this->connect_to_serialAsync(
+          i,
+          this->component.get_serialAsync_InputPort(i)
+      );
+    }
 
     // serialAsyncAssert
     this->connect_to_serialAsyncAssert(
@@ -447,6 +461,24 @@
     this->init();
     this->component.init(
         Tester::TEST_INSTANCE_QUEUE_DEPTH, Tester::TEST_INSTANCE_ID
+    );
+  }
+
+  void Tester ::
+    checkSerializeStatusSuccess()
+  {
+    ASSERT_EQ(
+      component.serializeStatus, 
+      Fw::FW_SERIALIZE_OK
+    );
+  }
+
+  void Tester ::
+    checkSerializeStatusBufferEmpty()
+  {
+    ASSERT_EQ(
+      component.serializeStatus, 
+      Fw::FW_DESERIALIZE_BUFFER_EMPTY
     );
   }
 

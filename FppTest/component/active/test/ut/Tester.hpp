@@ -1,21 +1,23 @@
 // ======================================================================
-// \title  ActiveTest/test/ut/Tester.hpp
+// \title  TestComponent/test/ut/Tester.hpp
 // \author tiffany
-// \brief  hpp file for ActiveTest test harness implementation class
+// \brief  hpp file for TestComponent test harness implementation class
 // ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "FppTest/component/active/ActiveTest.hpp"
+#include "FppTest/component/active/TestComponent.hpp"
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 #include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
-#include "FppTest/component/macros.hpp"
+#include "FppTest/component/common/PortTests.hpp"
+#include "FppTest/component/common/EventTests.hpp"
+#include "FppTest/component/common/TlmTests.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
 
   class Tester :
-    public ActiveTestGTestBase
+    public TestComponentGTestBase
   {
 
       // ----------------------------------------------------------------------
@@ -245,7 +247,7 @@
 
       //! The component under test
       //!
-      ActiveTest component;
+      TestComponent component;
 
       // Values returned by typed output ports
       FppTest::Types::BoolType noParamReturnVal;

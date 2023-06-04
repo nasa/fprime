@@ -18,7 +18,7 @@
 
 #include "gtest/gtest.h"
 
-// Typed port tests
+// Typed port tests (sync and guarded)
 template <typename PortType>
 class TypedPortTest : public ::testing::Test {
 protected:
@@ -43,7 +43,26 @@ REGISTER_TYPED_TEST_SUITE_P(TypedPortTest,
     GuardedPort
 );
 
-// Serial port tests
+// Typed async port tests
+template <typename PortType>
+class TypedAsyncPortTest : public ::testing::Test {
+protected:
+    Tester tester;
+    PortType port;
+};
+
+TYPED_TEST_SUITE_P(TypedAsyncPortTest);
+
+TYPED_TEST_P(TypedAsyncPortTest, AsyncPort) {
+    this->tester.testAsyncPortInvoke(TypedPortIndex::TYPED, this->port);
+    this->tester.testAsyncPortCheck(this->port);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(TypedAsyncPortTest,
+    AsyncPort
+);
+
+// Serial port tests (sync and guarded)
 template <typename PortType>
 class SerialPortTest : public ::testing::Test {
 protected:
@@ -78,6 +97,31 @@ REGISTER_TYPED_TEST_SUITE_P(SerialPortTest,
     FromSerialSync,
     ToSerialGuarded,
     FromSerialGuarded
+);
+
+// Serial async port tests
+template <typename PortType>
+class SerialAsyncPortTest : public ::testing::Test {
+protected:
+    Tester tester;
+    PortType port;
+};
+
+TYPED_TEST_SUITE_P(SerialAsyncPortTest);
+
+TYPED_TEST_P(SerialAsyncPortTest, ToSerialSync) {
+    this->tester.testAsyncPortInvoke(TypedPortIndex::SERIAL, this->port);
+    this->tester.testAsyncPortCheckSerial(this->port);
+}
+
+TYPED_TEST_P(SerialAsyncPortTest, FromSerialSync) {
+    this->tester.testAsyncPortInvokeSerial(TypedPortIndex::SERIAL, this->port);
+    this->tester.testAsyncPortCheck(this->port);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(SerialAsyncPortTest,
+    ToSerialSync,
+    FromSerialSync
 );
 
 #endif

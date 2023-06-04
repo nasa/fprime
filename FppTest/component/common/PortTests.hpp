@@ -3,6 +3,79 @@
 #include "test/ut/Tester.hpp"
 
 // ----------------------------------------------------------------------
+// Port test declarations
+// ----------------------------------------------------------------------
+
+#define PORT_TEST_INVOKE_DECL(PORT_KIND, TYPE) \
+    void test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::TYPE& port);
+
+#define PORT_TEST_INVOKE_DECLS(PORT_KIND)              \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, NoParams)         \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, PrimitiveParams)  \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, PortStringParams) \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, EnumParams)       \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayParams)      \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, StructParams)     \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, SerialParam)      \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, NoParamReturn)    \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, PrimitiveReturn)  \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, EnumReturn)       \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayReturn)      \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, StructReturn)
+
+#define PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, TYPE) \
+    void test##PORT_KIND##PortInvokeSerial(NATIVE_INT_TYPE portNum, FppTest::Types::TYPE& port);
+
+#define PORT_TEST_INVOKE_SERIAL_DECLS(PORT_KIND)              \
+    PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, NoParams)         \
+    PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, PrimitiveParams)  \
+    PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, PortStringParams) \
+    PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, EnumParams)       \
+    PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, ArrayParams)      \
+    PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, StructParams)     \
+    PORT_TEST_INVOKE_SERIAL_DECL(PORT_KIND, SerialParam)
+
+#define PORT_TEST_CHECK_DECL(PORT_KIND, TYPE) void test##PORT_KIND##PortCheck(FppTest::Types::TYPE& port);
+
+#define PORT_TEST_CHECK_DECLS(PORT_KIND)              \
+    PORT_TEST_CHECK_DECL(PORT_KIND, NoParams)         \
+    PORT_TEST_CHECK_DECL(PORT_KIND, PrimitiveParams)  \
+    PORT_TEST_CHECK_DECL(PORT_KIND, PortStringParams) \
+    PORT_TEST_CHECK_DECL(PORT_KIND, EnumParams)       \
+    PORT_TEST_CHECK_DECL(PORT_KIND, ArrayParams)      \
+    PORT_TEST_CHECK_DECL(PORT_KIND, StructParams)     \
+    PORT_TEST_CHECK_DECL(PORT_KIND, SerialParam)      \
+    PORT_TEST_CHECK_DECL(PORT_KIND, NoParamReturn)    \
+    PORT_TEST_CHECK_DECL(PORT_KIND, PrimitiveReturn)  \
+    PORT_TEST_CHECK_DECL(PORT_KIND, EnumReturn)       \
+    PORT_TEST_CHECK_DECL(PORT_KIND, ArrayReturn)      \
+    PORT_TEST_CHECK_DECL(PORT_KIND, StructReturn)
+
+#define PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, TYPE) void test##PORT_KIND##PortCheckSerial(FppTest::Types::TYPE& port);
+
+#define PORT_TEST_CHECK_SERIAL_DECLS(PORT_KIND)              \
+    PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, NoParams)         \
+    PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, PrimitiveParams)  \
+    PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, PortStringParams) \
+    PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, EnumParams)       \
+    PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, ArrayParams)      \
+    PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, StructParams)     \
+    PORT_TEST_CHECK_SERIAL_DECL(PORT_KIND, SerialParam)
+
+#define PORT_TEST_DECLS_KIND(PORT_KIND)      \
+    PORT_TEST_INVOKE_DECLS(PORT_KIND)        \
+    PORT_TEST_INVOKE_SERIAL_DECLS(PORT_KIND) \
+    PORT_TEST_CHECK_DECLS(PORT_KIND)         \
+    PORT_TEST_CHECK_SERIAL_DECLS(PORT_KIND)
+
+#define PORT_TEST_DECLS        \
+    PORT_TEST_DECLS_KIND(Sync) \
+    PORT_TEST_DECLS_KIND(Guarded) \
+    PORT_TEST_DECLS_KIND(Async)
+
+#define ASYNC_PORT_TEST_DECLS PORT_TEST_DECLS_KIND(Async)
+
+// ----------------------------------------------------------------------
 // Invoke typed input ports
 // ----------------------------------------------------------------------
 
@@ -43,8 +116,9 @@
         ASSERT_TRUE(component.isConnected_structArgsOut_OutputPort(portNum));                                         \
                                                                                                                       \
         this->invoke_to_structArgs##PORT_KIND(portNum, port.args.val1, port.args.val2);                               \
-    }                                                                                                                 \
-                                                                                                                      \
+    }                                                                                                                 
+
+#define PORT_TEST_INVOKE_RETURN_DEFS(PORT_KIND)                                                                              \
     void Tester ::test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::NoParamReturn& port) {         \
         ASSERT_TRUE(component.isConnected_noArgsReturnOut_OutputPort(portNum));                                       \
                                                                                                                       \
@@ -465,8 +539,9 @@
         ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                 \
         ASSERT_from_structArgsOut_SIZE(1);                                                                \
         ASSERT_from_structArgsOut(0, port.args.val1, port.args.val2);                                     \
-    }                                                                                                     \
-                                                                                                          \
+    }                                                                                                     
+
+#define PORT_TEST_CHECK_RETURN_DEFS(PORT_KIND)                                                                   \
     void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::NoParamReturn& port) {                       \
         ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                 \
         ASSERT_from_noArgsReturnOut_SIZE(1);                                                              \
@@ -607,6 +682,14 @@
 
 #define PORT_TEST_DEFS(PORT_KIND)           \
     PORT_TEST_INVOKE_DEFS(PORT_KIND)        \
+    PORT_TEST_INVOKE_RETURN_DEFS(PORT_KIND)        \
     PORT_TEST_INVOKE_SERIAL_DEFS(PORT_KIND) \
     PORT_TEST_CHECK_DEFS(PORT_KIND)         \
+    PORT_TEST_CHECK_RETURN_DEFS(PORT_KIND)         \
     PORT_TEST_CHECK_SERIAL_DEFS(PORT_KIND)
+
+#define PORT_TEST_DEFS_ASYNC \
+    PORT_TEST_INVOKE_DEFS(Async)        \
+    PORT_TEST_INVOKE_SERIAL_DEFS(Async) \
+    PORT_TEST_CHECK_DEFS(Async)         \
+    PORT_TEST_CHECK_SERIAL_DEFS(Async)

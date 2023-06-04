@@ -1,5 +1,4 @@
 #include "test/ut/Tester.hpp"
 #include "PortTests.hpp"
 
-PORT_TEST_DEFS(Sync)
-PORT_TEST_DEFS(Guarded)
+PORT_TEST_DEFS_ASYNC

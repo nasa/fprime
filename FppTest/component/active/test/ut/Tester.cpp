@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  ActiveTest.hpp
+// \title  TestComponent.hpp
 // \author tiffany
-// \brief  cpp file for ActiveTest test harness implementation class
+// \brief  cpp file for TestComponent test harness implementation class
 // ======================================================================
 
 #include "Tester.hpp"
@@ -14,8 +14,8 @@
 
   Tester ::
     Tester() :
-      ActiveTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
-      component("ActiveTest"),
+      TestComponentGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
+      component("TestComponent"),
       primitiveBuf(primitiveData, sizeof(primitiveData)),
       stringBuf(stringData, sizeof(stringData)),
       enumBuf(enumData, sizeof(enumData)),
@@ -29,10 +29,6 @@
     prmValid = static_cast<Fw::ParamValid::T>(
       STest::Pick::lowerUpper(1, Fw::ParamValid::NUM_CONSTANTS - 1)
     );
-
-    //std::cout << "bool: " << boolPrm << std::endl;
-    //std::cout << "u32: " << u32Prm << std::endl;
-    //std::cout << "string: " << stringPrm << std::endl;
   }
 
   Tester ::
