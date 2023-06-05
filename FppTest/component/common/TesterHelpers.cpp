@@ -302,12 +302,23 @@
         this->get_from_cmdRegIn(0)
     );
 
-    // prmSetOut
-    this->component.set_prmSetOut_OutputPort(
-        0,
-        this->get_from_prmSetIn(0)
-    );
+    //// eventIn
+    //this->component.set_eventOut_OutputPort(
+    //    0,
+    //    this->get_from_eventIn(0)
+    //);
 
+    //// textEventIn
+    //this->component.set_textEventOut_OutputPort(
+    //    0,
+    //    this->get_from_textEventIn(0)
+    //);
+
+    //// tlmIn
+    //this->component.set_tlmOut_OutputPort(
+    //    0,
+    //    this->get_from_tlmIn(0)
+    //);
 
     // prmGetOut
     this->component.set_prmGetOut_OutputPort(
@@ -406,6 +417,78 @@
       );
     }
 
+
+  }
+
+  void Tester ::
+    connectPrmSetIn()
+  {
+
+    // prmSetOut
+    this->component.set_prmSetOut_OutputPort(
+        0,
+        this->get_from_prmSetIn(0)
+    );
+
+  }
+
+  void Tester ::
+    connectTimeGetIn()
+  {
+
+    // timeGetOut
+    this->component.set_timeGetOut_OutputPort(
+        0,
+        this->get_from_timeGetIn(0)
+    );
+
+  }
+
+  void Tester ::
+    connectSpecialPortsSerial()
+  {
+
+    // cmdResponseOut
+    this->component.set_cmdResponseOut_OutputPort(
+        0,
+        this->get_from_serialOut(0)
+    );
+
+    // cmdRegOut
+    this->component.set_cmdRegOut_OutputPort(
+        0,
+        this->get_from_serialOut(0)
+    );
+
+    // eventOut
+    this->component.set_eventOut_OutputPort(
+        0,
+        this->get_from_serialOut(0)
+    );
+
+    // textEventOut
+    this->component.set_textEventOut_OutputPort(
+        0,
+        this->get_from_serialOut(0)
+    );
+
+    // tlmOut
+    this->component.set_tlmOut_OutputPort(
+        0,
+        this->get_from_serialOut(0)
+    );
+
+    // prmSetOut
+    this->component.set_prmSetOut_OutputPort(
+        0,
+        this->get_from_serialOut(0)
+    );
+
+    // timeGetOut
+    this->component.set_timeGetOut_OutputPort(
+        0,
+        this->get_from_serialOut(0)
+    );
 
   }
 

@@ -40,6 +40,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/../common/EventTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/TlmTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/ParamTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/TimeTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../../types/FormalParamTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
 )

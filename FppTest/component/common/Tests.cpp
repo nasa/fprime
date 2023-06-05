@@ -53,14 +53,6 @@ U32 FppTest::String::getSize<StringArgsPortStrings::StringSize100>() {
     return 100;
 }
 
-using SpecialPortTestImplementations = ::testing::Types<
-  FppTest::Types::NoParams
->;
-
-INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
-                             ComponentSpecialPortTest,
-                             SpecialPortTestImplementations);
-
 // Command tests
 using CommandTestImplementations = ::testing::Types<
   FppTest::Types::NoParams,
@@ -107,4 +99,24 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
 TEST(ComponentParameterTest, ParameterTest) {
   Tester tester;
   tester.testParam();
+}
+
+// Parameter tests
+using ParamTestImplementations = ::testing::Types<
+  FppTest::Types::BoolParam,
+  FppTest::Types::U32Param,
+  FppTest::Types::PrmStringParam,
+  FppTest::Types::EnumParam,
+  FppTest::Types::ArrayParam,
+  FppTest::Types::StructParam
+>;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
+                             ComponentParamTest,
+                             ParamTestImplementations);
+
+// Time tests
+TEST(ComponentTimeTest, TimeTest) {
+  Tester tester;
+  tester.testTime();
 }

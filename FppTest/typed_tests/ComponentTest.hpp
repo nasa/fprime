@@ -18,23 +18,6 @@
 #include "gtest/gtest.h"
 
 template <typename FormalParamType>
-class ComponentSpecialPortTest : public ::testing::Test {
-protected:
-    Tester tester;
-    FormalParamType data;
-};
-
-TYPED_TEST_SUITE_P(ComponentSpecialPortTest);
-
-TYPED_TEST_P(ComponentSpecialPortTest, SpecialPortTest) {
-//    this->tester.testSpecialPort(0, this->data);
-}
-
-REGISTER_TYPED_TEST_SUITE_P(ComponentSpecialPortTest,
-    SpecialPortTest
-);
-
-template <typename FormalParamType>
 class ComponentCommandTest : public ::testing::Test {
 protected:
     Tester tester;
@@ -83,6 +66,23 @@ TYPED_TEST_P(ComponentTelemetryTest, TelemetryTest) {
 
 REGISTER_TYPED_TEST_SUITE_P(ComponentTelemetryTest,
     TelemetryTest
+);
+
+template <typename FormalParamType>
+class ComponentParamTest : public ::testing::Test {
+protected:
+    Tester tester;
+    FormalParamType data;
+};
+
+TYPED_TEST_SUITE_P(ComponentParamTest);
+
+TYPED_TEST_P(ComponentParamTest, ParamTest) {
+    this->tester.testParamCommand(0, this->data);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(ComponentParamTest,
+    ParamTest
 );
 
 #endif

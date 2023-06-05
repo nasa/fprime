@@ -20,6 +20,16 @@ void Tester ::
 
   Fw::CmdArgBuffer buf;
 
+  // Test success
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_NO_ARGS,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
+
   // Test too many arguments
   buf.serialize(0);
 
@@ -31,19 +41,6 @@ void Tester ::
   );
 
   ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
-
-  // Test success
-  buf.resetSer();
-
-  this->invoke_to_cmdOut(
-      portNum,
-      component.OPCODE_CMD_NO_ARGS,
-      1,
-      buf
-  );
-
-  ASSERT_from_cmdResponseIn_SIZE(2);
-  ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
 }
 
 void Tester ::
@@ -59,7 +56,7 @@ void Tester ::
 
   Fw::CmdArgBuffer buf;
 
-  // Test too few arguments
+  // Test incorrect deserialization of first argument
   this->invoke_to_cmdOut(
       portNum,
       component.OPCODE_CMD_PRIMITIVE,
@@ -69,14 +66,56 @@ void Tester ::
 
   ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 
-  // Test too many arguments
+  // Test incorrect deserialization of second argument
   buf.serialize(data.args.val1);
+
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_PRIMITIVE,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
+
+  // Test incorrect deserialization of third argument
   buf.serialize(data.args.val2);
+
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_PRIMITIVE,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
+
+  // Test incorrect deserialization of fourth argument
   buf.serialize(data.args.val3);
+
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_PRIMITIVE,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
+
+  // Test incorrect deserialization of fifth argument
   buf.serialize(data.args.val4);
+
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_PRIMITIVE,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
+
+  // Test incorrect deserialization of sixth argument
   buf.serialize(data.args.val5);
-  buf.serialize(data.args.val6);
-  buf.serialize(data.args.val6);
 
   this->invoke_to_cmdOut(
       portNum,
@@ -88,12 +127,6 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 
   // Test success
-  buf.resetSer();
-  buf.serialize(data.args.val1);
-  buf.serialize(data.args.val2);
-  buf.serialize(data.args.val3);
-  buf.serialize(data.args.val4);
-  buf.serialize(data.args.val5);
   buf.serialize(data.args.val6);
 
   this->invoke_to_cmdOut(
@@ -103,7 +136,6 @@ void Tester ::
       buf
   );
 
-  ASSERT_from_cmdResponseIn_SIZE(3);
   ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
   ASSERT_EQ(component.primitiveCmd.args.val1, data.args.val1);
   ASSERT_EQ(component.primitiveCmd.args.val2, data.args.val2);
@@ -111,6 +143,18 @@ void Tester ::
   ASSERT_EQ(component.primitiveCmd.args.val4, data.args.val4);
   ASSERT_EQ(component.primitiveCmd.args.val5, data.args.val5);
   ASSERT_EQ(component.primitiveCmd.args.val6, data.args.val6);
+
+  // Test too many arguments
+  buf.serialize(data.args.val5);
+
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_PRIMITIVE,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 }
 
 void Tester ::
@@ -126,7 +170,7 @@ void Tester ::
 
   Fw::CmdArgBuffer buf;
 
-  // Test too few arguments
+  // Test incorrect serialization of first argument
   this->invoke_to_cmdOut(
       portNum,
       component.OPCODE_CMD_STRINGS,
@@ -136,10 +180,8 @@ void Tester ::
 
   ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 
-  // Test too many arguments
+  // Test incorrect serialization of second argument
   buf.serialize(data.args.val1);
-  buf.serialize(data.args.val2);
-  buf.serialize(data.args.val2);
 
   this->invoke_to_cmdOut(
       portNum,
@@ -151,8 +193,6 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 
   // Test success
-  buf.resetSer();
-  buf.serialize(data.args.val1);
   buf.serialize(data.args.val2);
 
   this->invoke_to_cmdOut(
@@ -162,10 +202,21 @@ void Tester ::
       buf
   );
 
-  ASSERT_from_cmdResponseIn_SIZE(3);
   ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
   ASSERT_EQ(component.stringCmd.args.val1, data.args.val1);
   ASSERT_EQ(component.stringCmd.args.val2, data.args.val2);
+
+  // Test too many arguments
+  buf.serialize(data.args.val1);
+
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_STRINGS,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 }
 
 void Tester ::
@@ -181,20 +232,7 @@ void Tester ::
 
   Fw::CmdArgBuffer buf;
 
-  // Test too few arguments
-  this->invoke_to_cmdOut(
-      portNum,
-      component.OPCODE_CMD_ENUM,
-      1,
-      buf
-  );
-
-  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
-
-  // Test too many arguments
-  buf.serialize(data.args.val);
-  buf.serialize(data.args.val);
-
+  // Test incorrect serialization of first argument
   this->invoke_to_cmdOut(
       portNum,
       component.OPCODE_CMD_ENUM,
@@ -205,7 +243,6 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 
   // Test success
-  buf.resetSer();
   buf.serialize(data.args.val);
 
   this->invoke_to_cmdOut(
@@ -215,9 +252,20 @@ void Tester ::
       buf
   );
 
-  ASSERT_from_cmdResponseIn_SIZE(3);
   ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
   ASSERT_EQ(component.enumCmd.args.val, data.args.val);
+
+  // Test too many arguments
+  buf.serialize(data.args.val);
+
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_ENUM,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 }
 
 void Tester ::
@@ -233,20 +281,7 @@ void Tester ::
 
   Fw::CmdArgBuffer buf;
 
-  // Test too few arguments
-  this->invoke_to_cmdOut(
-      portNum,
-      component.OPCODE_CMD_ARRAY,
-      1,
-      buf
-  );
-
-  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
-
-  // Test too many arguments
-  buf.serialize(data.args.val);
-  buf.serialize(data.args.val);
-
+  // Test incorrect serialization of first argument
   this->invoke_to_cmdOut(
       portNum,
       component.OPCODE_CMD_ARRAY,
@@ -257,7 +292,6 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 
   // Test success
-  buf.resetSer();
   buf.serialize(data.args.val);
 
   this->invoke_to_cmdOut(
@@ -267,9 +301,20 @@ void Tester ::
       buf
   );
 
-  ASSERT_from_cmdResponseIn_SIZE(3);
   ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
   ASSERT_EQ(component.arrayCmd.args.val, data.args.val);
+
+  // Test too many arguments
+  buf.serialize(data.args.val);
+
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_ARRAY,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 }
 
 void Tester ::
@@ -285,20 +330,7 @@ void Tester ::
 
   Fw::CmdArgBuffer buf;
 
-  // Test too few arguments
-  this->invoke_to_cmdOut(
-      portNum,
-      component.OPCODE_CMD_STRUCT,
-      1,
-      buf
-  );
-
-  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
-
-  // Test too many arguments
-  buf.serialize(data.args.val);
-  buf.serialize(data.args.val);
-
+  // Test incorrect serialization of first argument
   this->invoke_to_cmdOut(
       portNum,
       component.OPCODE_CMD_STRUCT,
@@ -309,7 +341,6 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 
   // Test success
-  buf.resetSer();
   buf.serialize(data.args.val);
 
   this->invoke_to_cmdOut(
@@ -319,7 +350,18 @@ void Tester ::
       buf
   );
 
-  ASSERT_from_cmdResponseIn_SIZE(3);
   ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
   ASSERT_EQ(component.structCmd.args.val, data.args.val);
+
+  // Test too many arguments
+  buf.serialize(data.args.val);
+
+  this->invoke_to_cmdOut(
+      portNum,
+      component.OPCODE_CMD_STRUCT,
+      1,
+      buf
+  );
+
+  ASSERT_EQ(cmdResp, Fw::CmdResponse::FORMAT_ERROR);
 }
