@@ -8,8 +8,6 @@
 #include <Drv/StreamCrossover/StreamCrossover.hpp>
 #include <FpConfig.hpp>
 
-#include <FprimeArduino.hpp>
-
 namespace Drv {
 
   // ----------------------------------------------------------------------
