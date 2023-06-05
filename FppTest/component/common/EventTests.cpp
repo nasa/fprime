@@ -10,6 +10,9 @@ void Tester ::
       FppTest::Types::NoParams& data
 )
 {
+  ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
+  ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
+
   component.log_ACTIVITY_HI_EventNoArgs();
 
   ASSERT_EVENTS_SIZE(1);
@@ -51,6 +54,9 @@ void Tester ::
       FppTest::Types::PrimitiveParams& data
 )
 {
+  ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
+  ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
+
   for (U32 i = 0; i < component.EVENTID_EVENTPRIMITIVE_THROTTLE; i++) {
     testEventHelper(portNum, data, i + 1);
   }
@@ -93,6 +99,9 @@ void Tester ::
       FppTest::Types::EnumParam& data
 )
 {
+  ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
+  ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
+
   component.log_DIAGNOSTIC_EventEnum(
     data.args.val
   );
@@ -112,6 +121,9 @@ void Tester ::
       NATIVE_UINT_TYPE size
 )
 {
+  ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
+  ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
+
   component.log_FATAL_EventArray(
     data.args.val
   );
@@ -130,6 +142,9 @@ void Tester ::
       FppTest::Types::ArrayParam& data
 )
 {
+  ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
+  ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
+
   for (U32 i = 0; i < component.EVENTID_EVENTARRAY_THROTTLE; i++) {
     testEventHelper(portNum, data, i + 1);
   }
@@ -148,6 +163,9 @@ void Tester ::
       FppTest::Types::StructParam& data
 )
 {
+  ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
+  ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
+
   component.log_WARNING_HI_EventStruct(
     data.args.val
   );
@@ -167,6 +185,9 @@ void Tester ::
       NATIVE_UINT_TYPE size
 )
 {
+  ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
+  ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
+
   component.log_WARNING_LO_EventBool(
     data.args.val
   );
@@ -185,6 +206,9 @@ void Tester ::
       FppTest::Types::BoolParam& data
 )
 {
+  ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
+  ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
+
   for (U32 i = 0; i < component.EVENTID_EVENTBOOL_THROTTLE; i++) {
     testEventHelper(portNum, data, i + 1);
   }

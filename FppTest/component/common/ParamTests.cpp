@@ -7,6 +7,7 @@
 void Tester ::
   testParam()
 {
+  ASSERT_TRUE(component.isConnected_prmGetOut_OutputPort(0));
   component.loadParameters();
 
   Fw::ParamValid valid;
@@ -69,6 +70,7 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
   this->connectPrmSetIn();
+  ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
   // Test incorrect deserialization when setting param
   this->invoke_to_cmdOut(
@@ -123,6 +125,7 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
   this->connectPrmSetIn();
+  ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
   // Test incorrect deserialization when setting param
   this->invoke_to_cmdOut(
@@ -177,6 +180,7 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
   this->connectPrmSetIn();
+  ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
   // Test incorrect deserialization when setting param
   this->invoke_to_cmdOut(
@@ -231,6 +235,7 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
   this->connectPrmSetIn();
+  ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
   // Test incorrect deserialization when setting param
   this->invoke_to_cmdOut(
@@ -285,6 +290,7 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
   this->connectPrmSetIn();
+  ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
   // Test incorrect deserialization when setting param
   this->invoke_to_cmdOut(
@@ -339,6 +345,7 @@ void Tester ::
   ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
   this->connectPrmSetIn();
+  ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
   // Test incorrect deserialization when setting param
   this->invoke_to_cmdOut(

@@ -268,12 +268,6 @@
         this->get_from_textEventOut(0)
     );
 
-    // timeGetOut
-    this->component.set_timeGetOut_OutputPort(
-        0,
-        this->get_from_timeGetOut(0)
-    );
-
     // tlmOut
     this->component.set_tlmOut_OutputPort(
         0,
@@ -301,24 +295,6 @@
         0,
         this->get_from_cmdRegIn(0)
     );
-
-    //// eventIn
-    //this->component.set_eventOut_OutputPort(
-    //    0,
-    //    this->get_from_eventIn(0)
-    //);
-
-    //// textEventIn
-    //this->component.set_textEventOut_OutputPort(
-    //    0,
-    //    this->get_from_textEventIn(0)
-    //);
-
-    //// tlmIn
-    //this->component.set_tlmOut_OutputPort(
-    //    0,
-    //    this->get_from_tlmIn(0)
-    //);
 
     // prmGetOut
     this->component.set_prmGetOut_OutputPort(
@@ -433,13 +409,13 @@
   }
 
   void Tester ::
-    connectTimeGetIn()
+    connectTimeGetOut()
   {
 
     // timeGetOut
     this->component.set_timeGetOut_OutputPort(
         0,
-        this->get_from_timeGetIn(0)
+        this->get_from_timeGetOut(0)
     );
 
   }

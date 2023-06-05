@@ -93,18 +93,6 @@
   }
 
   void Tester ::
-    from_eventIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        FwEventIdType id,
-        Fw::Time &timeTag,
-        const Fw::LogSeverity &severity,
-        Fw::LogBuffer &args
-    )
-  {
-    this->pushFromPortEntry_eventIn(id, timeTag, severity, args);
-  }
-
-  void Tester ::
     from_noArgsOut_handler(
         const NATIVE_INT_TYPE portNum
     )
@@ -181,38 +169,6 @@
   {
     this->pushFromPortEntry_structReturnOut(s, sRef);
     return structReturnVal.val;
-  }
-
-  void Tester ::
-    from_textEventIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        FwEventIdType id,
-        Fw::Time &timeTag,
-        const Fw::LogSeverity &severity,
-        Fw::TextLogString &text
-    )
-  {
-    this->pushFromPortEntry_textEventIn(id, timeTag, severity, text);
-  }
-
-  void Tester ::
-    from_timeGetIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Time &time
-    )
-  {
-    this->pushFromPortEntry_timeGetIn(time);
-  }
-
-  void Tester ::
-    from_tlmIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        FwChanIdType id,
-        Fw::Time &timeTag,
-        Fw::TlmBuffer &val
-    )
-  {
-    this->pushFromPortEntry_tlmIn(id, timeTag, val);
   }
 
   // ----------------------------------------------------------------------

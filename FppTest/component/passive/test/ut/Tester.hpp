@@ -140,24 +140,6 @@
       */
       );
 
-      //! Handler for from_eventIn
-      //!
-      void from_eventIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwEventIdType id, /*!< 
-      Log ID
-      */
-          Fw::Time &timeTag, /*!< 
-      Time Tag
-      */
-          const Fw::LogSeverity &severity, /*!< 
-      The severity argument
-      */
-          Fw::LogBuffer &args /*!< 
-      Buffer containing serialized log entry
-      */
-      );
-
       //! Handler for from_noArgsOut
       //!
       void from_noArgsOut_handler(
@@ -256,48 +238,6 @@
       */
       );
 
-      //! Handler for from_textEventIn
-      //!
-      void from_textEventIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwEventIdType id, /*!< 
-      Log ID
-      */
-          Fw::Time &timeTag, /*!< 
-      Time Tag
-      */
-          const Fw::LogSeverity &severity, /*!< 
-      The severity argument
-      */
-          Fw::TextLogString &text /*!< 
-      Text of log message
-      */
-      );
-
-      //! Handler for from_timeGetIn
-      //!
-      void from_timeGetIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Time &time /*!< 
-      The U32 cmd argument
-      */
-      );
-
-      //! Handler for from_tlmIn
-      //!
-      void from_tlmIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwChanIdType id, /*!< 
-      Telemetry Channel ID
-      */
-          Fw::Time &timeTag, /*!< 
-      Time Tag
-      */
-          Fw::TlmBuffer &val /*!< 
-      Buffer containing serialized telemetry value
-      */
-      );
-
     private:
 
       // ----------------------------------------------------------------------
@@ -311,7 +251,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
       );
 
-    private:
+    public:
 
       // ----------------------------------------------------------------------
       // Helper methods
@@ -324,8 +264,8 @@
       //! Connect prmSetIn port
       void connectPrmSetIn();
 
-      //! Connect timeGetIn port
-      void connectTimeGetIn();
+      //! Connect timeGetOut port
+      void connectTimeGetOut();
 
       //! Connect serial ports to special ports
       void connectSpecialPortsSerial();

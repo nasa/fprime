@@ -44,6 +44,7 @@ protected:
 TYPED_TEST_SUITE_P(ComponentEventTest);
 
 TYPED_TEST_P(ComponentEventTest, EventTest) {
+    this->tester.connectTimeGetOut();
     this->tester.testEvent(0, this->data);
 }
 
@@ -61,6 +62,7 @@ protected:
 TYPED_TEST_SUITE_P(ComponentTelemetryTest);
 
 TYPED_TEST_P(ComponentTelemetryTest, TelemetryTest) {
+    this->tester.connectTimeGetOut();
     this->tester.testTelemetry(0, this->data);
 }
 
