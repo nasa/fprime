@@ -35,6 +35,23 @@ REGISTER_TYPED_TEST_SUITE_P(ComponentSpecialPortTest,
 );
 
 template <typename FormalParamType>
+class ComponentCommandTest : public ::testing::Test {
+protected:
+    Tester tester;
+    FormalParamType data;
+};
+
+TYPED_TEST_SUITE_P(ComponentCommandTest);
+
+TYPED_TEST_P(ComponentCommandTest, CommandTest) {
+    this->tester.testCommand(0, this->data);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(ComponentCommandTest,
+    CommandTest
+);
+
+template <typename FormalParamType>
 class ComponentEventTest : public ::testing::Test {
 protected:
     Tester tester;

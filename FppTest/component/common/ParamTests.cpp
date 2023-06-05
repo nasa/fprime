@@ -4,57 +4,6 @@
 // Parameter tests
 // ----------------------------------------------------------------------
 
-Fw::ParamValid Tester ::
-  from_prmGetIn_handler(
-      const NATIVE_INT_TYPE portNum,
-      FwPrmIdType id,
-      Fw::ParamBuffer &val
-  )
-{
-  val.resetSer();
-
-  Fw::SerializeStatus status;
-  U32 id_base = component.getIdBase();
-
-  FW_ASSERT(id >= id_base);
-
-  switch (id - id_base) {
-    case TestComponentComponentBase::PARAMID_PARAMBOOL: 
-      status = val.serialize(boolPrm.args.val);
-      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-      break;
-
-    case TestComponentComponentBase::PARAMID_PARAMU32:
-      status = val.serialize(u32Prm.args.val);
-      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-      break;
-
-    case TestComponentComponentBase::PARAMID_PARAMSTRING:
-      status = val.serialize(stringPrm.args.val);
-      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-      break;
-
-    case TestComponentComponentBase::PARAMID_PARAMENUM:
-      status = val.serialize(enumPrm.args.val);
-      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-      break;
-
-    case TestComponentComponentBase::PARAMID_PARAMARRAY:
-      status = val.serialize(arrayPrm.args.val);
-      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-      break;
-
-    case TestComponentComponentBase::PARAMID_PARAMSTRUCT:
-      status = val.serialize(structPrm.args.val);
-      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-      break;
-  }
-
-  this->pushFromPortEntry_prmGetIn(id, val);
-
-  return prmValid;
-}
-
 void Tester ::
   testParam()
 {

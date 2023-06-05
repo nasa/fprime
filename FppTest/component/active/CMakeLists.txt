@@ -5,7 +5,7 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/port_index_enums.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TestComponent.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/TestComponent.cpp"
 )
 
 register_fprime_module()
@@ -31,13 +31,14 @@ set(UT_MOD_DEPS
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/port_index_enums.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/TestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/Tests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/AsyncTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/TesterHelpers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/PortTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/AsyncPortTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/CmdTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/EventTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/TlmTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/ParamTests.cpp"

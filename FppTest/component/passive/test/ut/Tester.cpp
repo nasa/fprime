@@ -4,7 +4,8 @@
 // \brief  cpp file for PassiveTest test harness implementation class
 // ======================================================================
 
-#include "Tester.hpp"
+#include "test/ut/Tester.hpp"
+#include "STest/Pick/Pick.hpp"
 
 
   // ----------------------------------------------------------------------
@@ -14,10 +15,20 @@
   Tester ::
     Tester() :
       PassiveTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
-      component("PassiveTest")
+      component("PassiveTest"),
+      primitiveBuf(primitiveData, sizeof(primitiveData)),
+      stringBuf(stringData, sizeof(stringData)),
+      enumBuf(enumData, sizeof(enumData)),
+      arrayBuf(arrayData, sizeof(arrayData)),
+      structBuf(structData, sizeof(structData)),
+      serialBuf(serialData, sizeof(serialData))
   {
     this->initComponents();
     this->connectPorts();
+
+    prmValid = static_cast<Fw::ParamValid::T>(
+      STest::Pick::lowerUpper(1, Fw::ParamValid::NUM_CONSTANTS - 1)
+    );
   }
 
   Tester ::
@@ -26,11 +37,14 @@
 
   }
 
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
-
-  TLM_TEST_DEFS
+  void Tester ::
+    initComponents()
+  {
+    this->init();
+    this->component.init(
+        Tester::TEST_INSTANCE_ID
+    );
+  }
 
   // ----------------------------------------------------------------------
   // Handlers for typed from ports
@@ -54,7 +68,7 @@
     )
   {
     this->pushFromPortEntry_arrayReturnOut(a, aRef);
-    // TODO: Return a value
+    return arrayReturnVal.val;
   }
 
   void Tester ::
@@ -75,7 +89,7 @@
     )
   {
     this->pushFromPortEntry_enumReturnOut(en, enRef);
-    // TODO: Return a value
+    return enumReturnVal.val;
   }
 
   void Tester ::
@@ -92,7 +106,7 @@
     )
   {
     this->pushFromPortEntry_noArgsReturnOut();
-    // TODO: Return a value
+    return noParamReturnVal.val;
   }
 
   void Tester ::
@@ -121,7 +135,7 @@
     )
   {
     this->pushFromPortEntry_primitiveReturnOut(u32, u32Ref, f32, f32Ref, b, bRef);
-    // TODO: Return a value
+    return primitiveReturnVal.val;
   }
 
   void Tester ::
@@ -154,7 +168,7 @@
     )
   {
     this->pushFromPortEntry_structReturnOut(s, sRef);
-    // TODO: Return a value
+    return structReturnVal.val;
   }
 
   // ----------------------------------------------------------------------
@@ -167,7 +181,141 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    Fw::SerializeStatus status;
+
+    switch (portNum) {
+      case SerialPortIndex::NO_ARGS:
+        status = Fw::FW_SERIALIZE_OK;
+        break;
+
+      case SerialPortIndex::PRIMITIVE:
+        status = Buffer.copyRaw(
+          this->primitiveBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::STRING:
+        status = Buffer.copyRaw(
+          this->stringBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::ENUM:
+        status = Buffer.copyRaw(
+          this->enumBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::ARRAY:
+        status = Buffer.copyRaw(
+          this->arrayBuf, 
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::STRUCT:
+        status = Buffer.copyRaw(
+          this->structBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::SERIAL:
+        status = Buffer.copyRaw(
+          this->serialBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+    }
+
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
   }
 
+  // ----------------------------------------------------------------------
+  // Handlers for serial from ports
+  // ----------------------------------------------------------------------
 
+  void Tester ::
+    from_cmdRegIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        FwOpcodeType opCode
+    )
+  {
+    this->pushFromPortEntry_cmdRegIn(opCode);
+  }
+
+  void Tester ::
+    from_cmdResponseIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        FwOpcodeType opCode,
+        U32 cmdSeq,
+        const Fw::CmdResponse &response
+    )
+  {
+    this->cmdResp = response;
+    this->pushFromPortEntry_cmdResponseIn(opCode, cmdSeq, response);
+  }
+
+  Fw::ParamValid Tester ::
+    from_prmGetIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        FwPrmIdType id,
+        Fw::ParamBuffer &val
+    )
+  {
+    val.resetSer();
+
+    Fw::SerializeStatus status;
+    U32 id_base = component.getIdBase();
+
+    FW_ASSERT(id >= id_base);
+
+    switch (id - id_base) {
+      case PassiveTestComponentBase::PARAMID_PARAMBOOL: 
+        status = val.serialize(boolPrm.args.val);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+        break;
+
+      case PassiveTestComponentBase::PARAMID_PARAMU32:
+        status = val.serialize(u32Prm.args.val);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+        break;
+
+      case PassiveTestComponentBase::PARAMID_PARAMSTRING:
+        status = val.serialize(stringPrm.args.val);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+        break;
+
+      case PassiveTestComponentBase::PARAMID_PARAMENUM:
+        status = val.serialize(enumPrm.args.val);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+        break;
+
+      case PassiveTestComponentBase::PARAMID_PARAMARRAY:
+        status = val.serialize(arrayPrm.args.val);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+        break;
+
+      case PassiveTestComponentBase::PARAMID_PARAMSTRUCT:
+        status = val.serialize(structPrm.args.val);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+        break;
+    }
+
+    this->pushFromPortEntry_prmGetIn(id, val);
+
+    return prmValid;
+  }
+
+  void Tester ::
+    from_prmSetIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        FwPrmIdType id,
+        Fw::ParamBuffer &val
+    )
+  {
+    this->pushFromPortEntry_prmSetIn(id, val);
+  }

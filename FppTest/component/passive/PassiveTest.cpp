@@ -46,7 +46,7 @@
         FormalParamArray &aRef
     )
   {
-    // TODO
+    this->arrayArgsOut_out(portNum, a, aRef);
   }
 
   void PassiveTest ::
@@ -56,7 +56,7 @@
         FormalParamArray &aRef
     )
   {
-    // TODO
+    this->arrayArgsOut_out(portNum, a, aRef);
   }
 
   FormalParamArray PassiveTest ::
@@ -66,7 +66,7 @@
         FormalParamArray &aRef
     )
   {
-    // TODO return
+    return this->arrayReturnOut_out(portNum, a, aRef);
   }
 
   FormalParamArray PassiveTest ::
@@ -76,7 +76,17 @@
         FormalParamArray &aRef
     )
   {
-    // TODO return
+    return this->arrayReturnOut_out(portNum, a, aRef);
+  }
+
+  void PassiveTest :: 
+    cmdOut_handler(
+        NATIVE_INT_TYPE portNum,
+        FwOpcodeType opCode,
+        U32 cmdSeq,
+        Fw::CmdArgBuffer& args
+    )
+  {
   }
 
   void PassiveTest ::
@@ -86,7 +96,7 @@
         FormalParamEnum &enRef
     )
   {
-    // TODO
+    this->enumArgsOut_out(portNum, en, enRef);
   }
 
   void PassiveTest ::
@@ -96,7 +106,7 @@
         FormalParamEnum &enRef
     )
   {
-    // TODO
+    this->enumArgsOut_out(portNum, en, enRef);
   }
 
   FormalParamEnum PassiveTest ::
@@ -106,7 +116,7 @@
         FormalParamEnum &enRef
     )
   {
-    // TODO return
+    return this->enumReturnOut_out(portNum, en, enRef);
   }
 
   FormalParamEnum PassiveTest ::
@@ -116,7 +126,7 @@
         FormalParamEnum &enRef
     )
   {
-    // TODO return
+    return this->enumReturnOut_out(portNum, en, enRef);
   }
 
   void PassiveTest ::
@@ -124,7 +134,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO
+    this->noArgsOut_out(portNum);
   }
 
   bool PassiveTest ::
@@ -132,7 +142,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO return
+    return this->noArgsReturnOut_out(portNum);
   }
 
   bool PassiveTest ::
@@ -140,7 +150,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO return
+    return this->noArgsReturnOut_out(portNum);
   }
 
   void PassiveTest ::
@@ -148,7 +158,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO
+    this->noArgsOut_out(portNum);
   }
 
   void PassiveTest ::
@@ -162,7 +172,15 @@
         bool &bRef
     )
   {
-    // TODO
+    this->primitiveArgsOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   void PassiveTest ::
@@ -176,7 +194,15 @@
         bool &bRef
     )
   {
-    // TODO
+    this->primitiveArgsOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   U32 PassiveTest ::
@@ -190,7 +216,15 @@
         bool &bRef
     )
   {
-    // TODO return
+    return this->primitiveReturnOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   U32 PassiveTest ::
@@ -204,7 +238,15 @@
         bool &bRef
     )
   {
-    // TODO return
+    return this->primitiveReturnOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   void PassiveTest ::
@@ -216,7 +258,13 @@
         str100RefString &str100Ref
     )
   {
-    // TODO
+    this->stringArgsOut_out(
+      portNum,
+      str80,
+      str80Ref,
+      str100,
+      str100Ref
+    );
   }
 
   void PassiveTest ::
@@ -228,7 +276,13 @@
         str100RefString &str100Ref
     )
   {
-    // TODO
+    this->stringArgsOut_out(
+      portNum,
+      str80,
+      str80Ref,
+      str100,
+      str100Ref
+    );
   }
 
   void PassiveTest ::
@@ -238,7 +292,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO
+    this->structArgsOut_out(portNum, s, sRef);
   }
 
   void PassiveTest ::
@@ -248,7 +302,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO
+    this->structArgsOut_out(portNum, s, sRef);
   }
 
   FormalParamStruct PassiveTest ::
@@ -258,7 +312,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO return
+    return this->structReturnOut_out(portNum, s, sRef);
   }
 
   FormalParamStruct PassiveTest ::
@@ -268,7 +322,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO return
+    return this->structReturnOut_out(portNum, s, sRef);
   }
 
   // ----------------------------------------------------------------------
@@ -281,7 +335,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(portNum, Buffer);
   }
 
   void PassiveTest ::
@@ -290,7 +344,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(portNum, Buffer);
   }
 
   // ----------------------------------------------------------------------
@@ -303,7 +357,6 @@
         const U32 cmdSeq
     )
   {
-    // TODO
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -319,7 +372,13 @@
         bool b2
     )
   {
-    // TODO
+    this->primitiveCmd.args.val1 = u32_1;
+    this->primitiveCmd.args.val2 = u32_2;
+    this->primitiveCmd.args.val3 = f32_1;
+    this->primitiveCmd.args.val4 = f32_2;
+    this->primitiveCmd.args.val5 = b1;
+    this->primitiveCmd.args.val6 = b2;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -331,7 +390,9 @@
         const Fw::CmdStringArg& str2
     )
   {
-    // TODO
+    this->stringCmd.args.val1 = str1;
+    this->stringCmd.args.val2 = str2;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -342,7 +403,8 @@
         FormalParamEnum en
     )
   {
-    // TODO
+    this->enumCmd.args.val = en;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -353,7 +415,8 @@
         FormalParamArray arr
     )
   {
-    // TODO
+    this->arrayCmd.args.val = arr;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -364,7 +427,8 @@
         FormalParamStruct str
     )
   {
-    // TODO
+    this->structCmd.args.val = str;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 

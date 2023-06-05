@@ -9,7 +9,12 @@
 
 #include "GTestBase.hpp"
 #include "FppTest/component/passive/PassiveTest.hpp"
-#include "FppTest/component/macros.hpp"
+#include "FppTest/component/passive/SerialPortIndexEnumAc.hpp"
+#include "FppTest/component/passive/TypedPortIndexEnumAc.hpp"
+#include "FppTest/component/common/PortTests.hpp"
+#include "FppTest/component/common/CmdTests.hpp"
+#include "FppTest/component/common/EventTests.hpp"
+#include "FppTest/component/common/TlmTests.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
 
   class Tester :
@@ -25,6 +30,8 @@
       static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 100;
       // Instance ID supplied to the component instance under test
       static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+      // Queue depth supplied to component instance under test
+      static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
 
       //! Construct object Tester
       //!
@@ -40,9 +47,15 @@
       // Tests
       // ----------------------------------------------------------------------
 
+      PORT_TEST_DECLS
+
+      CMD_TEST_DECLS
+
       EVENT_TEST_DECLS
 
       TLM_TEST_DECLS
+
+      void testParam();
 
     private:
 
@@ -71,6 +84,30 @@
       */
           FormalParamArray &aRef /*!< 
       An array ref
+      */
+      );
+
+      //! Handler for from_cmdRegIn
+      //!
+      void from_cmdRegIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwOpcodeType opCode /*!< 
+      Command Op Code
+      */
+      );
+
+      //! Handler for from_cmdResponseIn
+      //!
+      void from_cmdResponseIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwOpcodeType opCode, /*!< 
+      Command Op Code
+      */
+          U32 cmdSeq, /*!< 
+      Command Sequence
+      */
+          const Fw::CmdResponse &response /*!< 
+      The command response argument
       */
       );
 
@@ -132,6 +169,30 @@
           F32 &f32Ref, 
           bool b, 
           bool &bRef 
+      );
+
+      //! Handler for from_prmGetIn
+      //!
+      Fw::ParamValid from_prmGetIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwPrmIdType id, /*!< 
+      Parameter ID
+      */
+          Fw::ParamBuffer &val /*!< 
+      Buffer containing serialized parameter value
+      */
+      );
+
+      //! Handler for from_prmGetIn
+      //!
+      void from_prmSetIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwPrmIdType id, /*!< 
+      Parameter ID
+      */
+          Fw::ParamBuffer &val /*!< 
+      Buffer containing serialized parameter value
+      */
       );
 
       //! Handler for from_stringArgsOut
@@ -199,6 +260,12 @@
       //!
       void initComponents();
 
+      //! Check successful status of a serial port invocation
+      void checkSerializeStatusSuccess();
+
+      //! Check unsuccessful status of a serial port invocation
+      void checkSerializeStatusBufferEmpty();
+
     private:
 
       // ----------------------------------------------------------------------
@@ -208,6 +275,40 @@
       //! The component under test
       //!
       PassiveTest component;
+
+      // Values returned by typed output ports
+      FppTest::Types::BoolType noParamReturnVal;
+      FppTest::Types::U32Type primitiveReturnVal;
+      FppTest::Types::EnumType enumReturnVal;
+      FppTest::Types::ArrayType arrayReturnVal;
+      FppTest::Types::StructType structReturnVal;
+
+      // Buffers from serial output ports;
+      U8 primitiveData[InputPrimitiveArgsPort::SERIALIZED_SIZE];
+      U8 stringData[InputStringArgsPort::SERIALIZED_SIZE]; 
+      U8 enumData[InputEnumArgsPort::SERIALIZED_SIZE]; 
+      U8 arrayData[InputArrayArgsPort::SERIALIZED_SIZE];
+      U8 structData[InputStructArgsPort::SERIALIZED_SIZE];
+      U8 serialData[SERIAL_ARGS_BUFFER_CAPACITY];
+
+      Fw::SerialBuffer primitiveBuf;
+      Fw::SerialBuffer stringBuf;
+      Fw::SerialBuffer enumBuf;
+      Fw::SerialBuffer arrayBuf;
+      Fw::SerialBuffer structBuf;
+      Fw::SerialBuffer serialBuf;
+
+      // Command test values
+      Fw::CmdResponse cmdResp;
+
+      // Parameter test values
+      FppTest::Types::BoolParam boolPrm;
+      FppTest::Types::U32Param u32Prm;
+      FppTest::Types::PrmStringParam stringPrm;
+      FppTest::Types::EnumParam enumPrm;
+      FppTest::Types::ArrayParam arrayPrm;
+      FppTest::Types::StructParam structPrm;
+      Fw::ParamValid prmValid;
 
   };
 

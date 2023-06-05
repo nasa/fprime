@@ -4,6 +4,9 @@
 #include "FppTest/types/FormalParamTypes.hpp"
 #include "FppTest/types/StringArgsPortAc.hpp"
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TypedAsyncPortTest);
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SerialAsyncPortTest);
+
 // Typed port tests
 using TypedPortTestImplementations = ::testing::Types<
     FppTest::Types::NoParams,
@@ -58,6 +61,20 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
                              ComponentSpecialPortTest,
                              SpecialPortTestImplementations);
 
+// Command tests
+using CommandTestImplementations = ::testing::Types<
+  FppTest::Types::NoParams,
+  FppTest::Types::PrimitiveParams,
+  FppTest::Types::CmdStringParams,
+  FppTest::Types::EnumParam,
+  FppTest::Types::ArrayParam,
+  FppTest::Types::StructParam
+>;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
+                             ComponentCommandTest,
+                             CommandTestImplementations);
+// Event tests
 using EventTestImplementations = ::testing::Types<
   FppTest::Types::NoParams,
   FppTest::Types::PrimitiveParams,
@@ -72,6 +89,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
                              ComponentEventTest,
                              EventTestImplementations);
 
+// Telemetry tests
 using TelemetryTestImplementations = ::testing::Types<
   FppTest::Types::U32Param,
   FppTest::Types::F32Param,
@@ -85,6 +103,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
                              ComponentTelemetryTest,
                              TelemetryTestImplementations);
 
+// Parameter tests
 TEST(ComponentParameterTest, ParameterTest) {
   Tester tester;
   tester.testParam();

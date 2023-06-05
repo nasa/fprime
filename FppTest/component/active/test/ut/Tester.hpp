@@ -12,6 +12,7 @@
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 #include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
 #include "FppTest/component/common/PortTests.hpp"
+#include "FppTest/component/common/CmdTests.hpp"
 #include "FppTest/component/common/EventTests.hpp"
 #include "FppTest/component/common/TlmTests.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
@@ -48,6 +49,8 @@
 
       PORT_TEST_DECLS
 
+      CMD_TEST_DECLS
+
       EVENT_TEST_DECLS
 
       TLM_TEST_DECLS
@@ -81,6 +84,30 @@
       */
           FormalParamArray &aRef /*!< 
       An array ref
+      */
+      );
+
+      //! Handler for from_cmdRegIn
+      //!
+      void from_cmdRegIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwOpcodeType opCode /*!< 
+      Command Op Code
+      */
+      );
+
+      //! Handler for from_cmdResponseIn
+      //!
+      void from_cmdResponseIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwOpcodeType opCode, /*!< 
+      Command Op Code
+      */
+          U32 cmdSeq, /*!< 
+      Command Sequence
+      */
+          const Fw::CmdResponse &response /*!< 
+      The command response argument
       */
       );
 
@@ -270,6 +297,9 @@
       Fw::SerialBuffer arrayBuf;
       Fw::SerialBuffer structBuf;
       Fw::SerialBuffer serialBuf;
+
+      // Command test values
+      Fw::CmdResponse cmdResp;
 
       // Parameter test values
       FppTest::Types::BoolParam boolPrm;

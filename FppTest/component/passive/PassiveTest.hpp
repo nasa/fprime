@@ -8,6 +8,7 @@
 #define PassiveTest_HPP
 
 #include "FppTest/component/passive/PassiveTestComponentAc.hpp"
+#include "FppTest/types/FormalParamTypes.hpp"
 
 
   class PassiveTest :
@@ -88,6 +89,15 @@
           FormalParamArray &aRef /*!< 
       An array ref
       */
+      );
+
+      //! Handler implementation for cmdOut
+      //!
+      void cmdOut_handler(
+          NATIVE_INT_TYPE portNum, //!< The port number
+          FwOpcodeType opCode, //!< Command Op Code
+          U32 cmdSeq, //!< Command Sequence
+          Fw::CmdArgBuffer& args //!< Buffer containing arguments
       );
 
       //! Handler implementation for enumArgsGuarded
@@ -387,6 +397,17 @@
           */
       );
 
+    public:
+
+      //! Enables checking the serialization status of serial port invocations
+      Fw::SerializeStatus serializeStatus;
+
+      // Command test values
+      FppTest::Types::PrimitiveParams primitiveCmd;
+      FppTest::Types::CmdStringParams stringCmd;
+      FppTest::Types::EnumParam enumCmd;
+      FppTest::Types::ArrayParam arrayCmd;
+      FppTest::Types::StructParam structCmd;
 
     };
 
