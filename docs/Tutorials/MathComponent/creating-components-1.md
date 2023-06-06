@@ -163,13 +163,11 @@ module MathModule {
 ```
 
 **About this Component:** 
-> This code defines a component `Ref.MathSender`.
-The component is **active**, which means it has its
+This code defines component `MathSender`. The component is **active**, which means it has its
 own thread.
 
-> Inside the definition of the `MathSender` component are
-several specifiers.
-We have divided the specifiers into five groups:
+Inside the definition of the `MathSender` component are
+several specifiers. We have divided the specifiers into five groups:
 
 1. **General ports:** These are user-defined ports for
 application-specific functions.
