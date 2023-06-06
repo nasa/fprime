@@ -43,7 +43,7 @@ Add component Components/MathSender to MathProject/project.cmake at end of file 
 Generate implementation files (yes/no)? yes
 ```
 
-Before doing anything to the files you have just generated, try building. 
+Before doing anything to the files you have just generated, try building:
 
 ```shell 
 # In: MathReceiver
@@ -161,7 +161,76 @@ module MathModule {
 }
 ```
 
-Implement the behavior you just wrote in the fpp model using:
+**Explanation:** 
+This code defines a component `Ref.MathReceiver`.
+The component is **queued**, which means it has a queue
+but no thread.
+Work occurs when the thread of another component invokes
+the `schedIn` port of this component.
+
+We have divided the specifiers of this component into six groups:
+
+1. **General ports:** There are three ports:
+an input port `mathOpIn` for receiving a math operation,
+an output port `mathResultOut` for sending a math result, and
+an input port `schedIn` for receiving invocations from the scheduler.
+`mathOpIn` is asynchronous.
+That means invocations of `mathOpIn` put messages on a queue.
+`schedIn` is synchronous.
+That means invocations of `schedIn` immediately call the
+handler function to do work.
+
+1. **Special ports:**
+As before, there are special ports for commands, events, telemetry,
+and time.
+There are also special ports for getting and setting parameters.
+We will explain the function of these ports below.
+
+1. **Parameters:** There is one **parameter**.
+A parameter is a constant that is configurable by command.
+In this case there is one parameter `FACTOR`.
+It has the default value 1.0 until its value is changed by command.
+When doing math, the `MathReceiver` component performs the requested
+operation and then multiplies by this factor.
+For example, if the arguments of the `mathOpIn` port
+are _v1_, `ADD`, and _v2_, and the factor is _f_,
+then the result sent on `mathResultOut` is
+_(v1 + v2) f_.
+
+1. **Events:** There are three event reports:
+
+   1. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
+      is updated by command.
+      This event is **throttled** to a limit of three.
+      That means that after the event is emitted three times
+      it will not be emitted any more, until the throttling
+      is cleared by command (see below).
+
+   1. `OPERATION_PERFORMED`: Emitted when this component
+      performs a math operation.
+
+   1. `THROTTLE_CLEARED`: Emitted when the event throttling
+      is cleared.
+
+1. **Commands:** There is one command for clearing
+the event throttle.
+
+1. **Telemetry:**
+There two telemetry channels: one for reporting
+the last operation received and one for reporting
+the factor parameter.
+
+For the parameters, events, commands, and telemetry, we chose
+to put in all the opcodes and identifiers explicitly.
+These can also be left implicit, as in the `MathSender`
+component example.
+For more information, see
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components).
+
+
+
+
+Generate cpp and hpp files based off your `MathReceiver` by using: 
 
 ```shell
 # In: MathReceiver 
@@ -185,4 +254,6 @@ fprime-util build
 
 ## Summary 
 
-You just created a queued component stub, filled in the fpp file, and wrote specified component charactaristics in the fpp file. 
+You just created a queued component stub, filled in the fpp file, and wrote component charactaristics in the fpp file. 
+
+**Next:** [Creating Components 4](./creating-components-4.md)
