@@ -16,7 +16,9 @@ mkdir Components
 cd Components 
 ```
 
-**Component Description:** The `MathSender` is going to be an active component which will receive parameters, send parameters, log events, and send telemetry. With this is mind, use the following command to create the `MathSender` component:
+**Component Description:** The `MathSender` is an active component which receives parameters, sends parameters, logs events, and sends telemetry. 
+
+With the component description in mind, use the following command to create the `MathSender` component:
 
 ```shell
 # In: Components
