@@ -1,8 +1,13 @@
-# Develop Deployment
+# Develop Deployments
 
-## Creating a Deployment
+## Background 
+The deployment is the portion of F' that will actually run on the spacecraft. Think of the deployment as an executable. 
 
-The deployment is the portion of F' that will actual run on the spacecraft. In this part of the tutorial, you will createa deployment and begin to integrate the deployment with the other work you have completed. 
+## In this Section
+
+In this part of the tutorial, you will create a deployment and integrate the deployment with the other work you have completed. At the end of this section, you will run the F' ground data system and test your components by actually running them! 
+
+
 
 Use the following command to create the deployment: 
 
@@ -13,7 +18,7 @@ fprime-util new --deployment
 
 When creating the deplyoment you will be asked two questions, answer them as follows: 
 
-```shell 
+```shell
 [INFO] Cookiecutter: using builtin template for new deployment
 deployment_name [MyDeployment]: Deployment
 path_to_fprime [./fprime]: ./fprime
@@ -35,22 +40,31 @@ fprime-util generate
 fprime-util build
 ```
 
-
 Create instances of the components you have created. Think of this step like creating an instance of a class. 
-
-
 
 ```fpp 
 # In: Deployment/Top/topology.fpp 
 # Under: Instances used in the topology
 instance mathSender
 instance mathReceiver 
-
 ```
 
-    Remember that instances start with lower case. This will help you distinguish between an instance and a definition. 
+> This step highlights the importants of capitalization. The easiest way to differentiate between the component definition and instance is the capitalization.
 
-Add the fresh defined instances to instances.fpp 
+**Explanation:** 
+This code defines an instance `mathSender` of component
+`MathSender`.
+It has **base identifier** 0xE00.
+FPP adds the base identifier to each the relative identifier
+defined in the component to compute the corresponding
+identifier for the instance.
+For example, component `MathSender` has a telemetry channel
+`MathOp` with identifier 1, so instance `mathSender`
+has a command `MathOp` with identifier 0xE01.
+
+
+
+Add the instances to instances.fpp 
 
 ```fpp 
 # In: Deployment/Top/instances.fpp 
@@ -64,6 +78,14 @@ instance mathSender: MathModule.MathSender base id 0xE00 \
 instance mathReceiver: MathModule.MathReceiver base id 0x2700 \
   queue size Default.QUEUE_SIZE
 ```
+
+**Explanation: 
+
+For the `MathSender` you defined the queue size, stack size,
+and thread priority. The default queue and stack sizes were used above.
+
+The `MathReceiver was implemented with base identifier 0x2700 and the default queue size.
+
 
 Add packets for MathSender and MathReceiver in DeploymentPackets.xml
 
@@ -82,6 +104,10 @@ Add packets for MathSender and MathReceiver in DeploymentPackets.xml
   </packet>
 ```
 
+**Explanation:**
+hese lines describe the packet definitions for the `mathSender` and `mathReceiver` telemetry channels.
+
+
 Check to make sure all of the ports have been connected: 
 
 ```shell 
@@ -90,28 +116,33 @@ fprime-util fpp-check -u unconnected.txt
 cat unconnected.txt 
 ```
 
-At this point in time, several mathSender and mathReceiver functions (such as mathOpIn or schedIn)should still be not connected. Hence, they should appear on this list. 
+At this point in time, several `mathSender` and `mathReceiver` functions (such as `mathOpIn` or `schedIn)` should still be not connected. Hence, they should appear on this list. 
 
-Now, go into topology.fpp, connect mathReceiver.schedIn to rate group one using the code below: 
+Go into `topology.fpp`, connect `mathReceiver.schedIn` to rate group one using the code below. You can either add this code in the rate groupo section or the user code section, do what makes the most sense to you:  
 
 ```fpp 
 # In: Top/topology.fpp 
-# Under: connections Deplyoment {
+# Under: connections Deplyoment
 rateGroup1.RateGroupMemberOut[3] -> mathReceiver.schedIn
 ```
 
-    Note: [3] is the next available index in rate group one
+> Note: `[3]` is the next available index in rate group one.
 
-Verify that you succesfully took a port of the unconnected. 
+**Explanation:** 
+This line adds the connection that drives the `schedIn`
+port of the `mathReceiver` component instance.
+
+Verify that you succesfully took a port off the list of unconnected ports. 
 
 Add the connections between the mathSender and mathReceiver
 
 ```fpp 
 # In: Top/topology.fpp 
-# Under: connections Deplyoment {
+# Under: connections Deplyoment 
 mathSender.mathOpOut -> mathReceiver.mathOpIn
 mathReceiver.mathResultOut -> mathSender.mathResultIn
 ```
+**Explanation: @TODO**
 
 Verify that none of the math ports are unconnected 
 
@@ -126,19 +157,26 @@ fprime-util build -j4
 
 @TODO: Michael, what's the difference between building in MathProject verus Deployment? Why doesn't building in MathProject build Deployment at the same time? 
 
-    Additionally, you need to build in the Deployment directory. 
+Additionally, you need to build in the Deployment directory. 
 
-    ```shell 
-    # In: /MathProject/Deployment
-    fprime-util build -j4 
-    ```
+```shell 
+# In: /MathProject/Deployment
+fprime-util build -j4 
+```
 
-Run the math components 
+Run the MathComponent Tutorial
 
 ```shell 
 # In: Deployment
 fprime-gds 
 ```
 
-
+##Send Some Commands
 Under Commanding there is a dropdown menu called "mnemonic". Click Mnemonic and find mathSender.DO_MATH. When you select DO_MATH, three new option should appear. In put 7 into val1, put 6 into val2, and put MUL into op. Press send command. Nothing exciting will happen, navivate to events (top left) and find the results of your command. You should see The Ultimate Answer to Life, the Universe, and Everything. 
+
+
+## Summary
+
+In this section of the tutorial, you created a deployment. While at it, you filled out the projects instance and topology. These steps are what turn a bunch hard worked code into flightsoftware. Further more, you ran the software! 
+
+**Next:** 
