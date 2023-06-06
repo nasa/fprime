@@ -39,6 +39,12 @@ namespace Drv {
     U8 testStr[6] = "test\n";
     Fw::Buffer sendBuffer(testStr, sizeof(testStr));
     this->invoke_to_streamIn(0, sendBuffer, Drv::RecvStatus::RECV_OK);
+
+    // Ensure only one buffer was sent to streamOut
+    ASSERT_from_streamOut_SIZE(1);
+
+    // Ensure the sendBuffer was sent
+    ASSERT_from_streamOut(0, sendBuffer);
   }
 
   // ----------------------------------------------------------------------
@@ -53,11 +59,13 @@ namespace Drv {
   {
     this->pushFromPortEntry_streamOut(sendBuffer);
 
-    // Ensure only one buffer was sent to streamOut
-    ASSERT_from_streamOut_SIZE(1);
+    U8 testStr[6] = "test\n";
+    Fw::Buffer cmpBuffer(testStr, sizeof(testStr));
 
-    // Ensure there were no errors when invoking streamOut_out
-    ASSERT_EVENTS_StreamOutError_SIZE(0);
+    if(!(cmpBuffer == sendBuffer))
+    {
+      return Drv::SendStatus::SEND_ERROR;
+    }
 
     return Drv::SendStatus::SEND_OK;
   }
