@@ -162,52 +162,53 @@ module MathModule {
 }
 ```
 
-**About this Component:** This code defines a component `Ref.MathSender`.
-    The component is **active**, which means it has its
-    own thread.
+**About this Component:** 
+This code defines a component `Ref.MathSender`.
+The component is **active**, which means it has its
+own thread.
 
-    Inside the definition of the `MathSender` component are
-    several specifiers.
-    We have divided the specifiers into five groups:
+Inside the definition of the `MathSender` component are
+several specifiers.
+We have divided the specifiers into five groups:
 
-    1. **General ports:** These are user-defined ports for
-    application-specific functions.
-    There are two general ports: an output port `mathOpOut`
-    of type `MathOp` and an input port `mathResultIn` of
-    type `MathResult`.
-    Notice that these port specifiers use the ports that
-    we defined <a href="#ports">above</a>.
-    The input port is **asynchronous**.
-    This means that invoking the port (i.e., sending
-    data on the port) puts a message on a queue.
-    The handler runs later, on the thread of this component.
+1. **General ports:** These are user-defined ports for
+application-specific functions.
+There are two general ports: an output port `mathOpOut`
+of type `MathOp` and an input port `mathResultIn` of
+type `MathResult`.
+Notice that these port specifiers use the ports that
+we defined <a href="#ports">above</a>.
+The input port is **asynchronous**.
+This means that invoking the port (i.e., sending
+data on the port) puts a message on a queue.
+The handler runs later, on the thread of this component.
 
-    1. **Special ports:** These are ports that have a special
-    meaning in F Prime.
-    There are ports for registering commands with the dispatcher,
-    receiving commands, sending command responses, emitting
-    event reports, emitting telemetry, and getting the time.
+2. **Special ports:** These are ports that have a special
+meaning in F Prime.
+There are ports for registering commands with the dispatcher,
+receiving commands, sending command responses, emitting
+event reports, emitting telemetry, and getting the time.
 
-    1. **Commands:** These are commands sent from the ground
-    or from a sequencer and dispatched to this component.
-    There is one command `DO_MATH` for doing a math operation.
-    The command is asynchronous.
-    This means that when the command arrives, it goes on a queue
-    and its handler is later run on the thread of this component.
+3. **Commands:** These are commands sent from the ground
+or from a sequencer and dispatched to this component.
+There is one command `DO_MATH` for doing a math operation.
+The command is asynchronous.
+This means that when the command arrives, it goes on a queue
+and its handler is later run on the thread of this component.
 
-    1. **Events:** These are event reports that this component
-    can emit.
-    There are two event reports, one for receiving a command
-    and one for receiving a result.
+4. **Events:** These are event reports that this component
+can emit.
+There are two event reports, one for receiving a command
+and one for receiving a result.
 
-    1. **Telemetry:** These are **channels** that define telemetry
-    points that the this component can emit.
-    There are four telemetry channels: three for the arguments
-    to the last command received and one for the last
-    result received.
+5. **Telemetry:** These are **channels** that define telemetry
+points that the this component can emit.
+There are four telemetry channels: three for the arguments
+to the last command received and one for the last
+result received.
 
-    For more information on defining components, see
-    [_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components).
+For more information on defining components, see
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components).
 
 Now you have written the F' code for the component, but the cpp and hpp files do not yet reflect the changes you have made to the fpp file. To get the cpp and hpp to reflect the specs you have set fourth in the fpp, you need to use F' implement as shown below: 
 
