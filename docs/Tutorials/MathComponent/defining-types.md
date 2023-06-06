@@ -72,14 +72,14 @@ register_fprime_module()
 
 ### Second Modification 
 
-Edit "project.cmake", located in /MathProject, and make sure to add the following lines. 
+Edit "project.cmake", located in the `MathProject` directory, and  add the following line. 
 
 ```cmake 
 # In: MathProject/project.cmake
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
 ```
 
-Types directory should now build without any issues. Test the build with the following commmand before moving forward.
+The `Types` directory should now build without any issues. Test the build with the following commmands before moving forward.
 
 ```shell 
 # In: Types 
@@ -88,6 +88,6 @@ fprime-util build
 ```
 
 ## Summary 
-In the section of the tutorial you have created the Types directory, Types.fpp, defined four types, created a module, and added Types to the build. 
+In the section of the tutorial you have created the `Types` directory, `MathTypes.fpp`, defined one type, created a module, and added `Types` to the build. 
 
 ## Up Next: Constructing Ports 
