@@ -64,4 +64,4 @@ cd MathProject
 . venv/bin/activate
 ```
 
-**Next:** 
+**Next:** [Defining Types](./defining-types.md)
