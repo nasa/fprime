@@ -50,7 +50,7 @@ fprime-util build -j4
 > `fprime-util generate` sets up the build environment for a project/deployment. It only needs to be done once. At the
 > end of this tutorial, a new deployment will be created and `fprime-util generate` will also be used then.
 
-## Conclusion
+## Summary
 
 A new project has been created with the name `MathProject` and has been placed in a new folder called in `MathProject` in
 the current directory. It includes the initial build system setup, and F´ version. It is still empty in that the user

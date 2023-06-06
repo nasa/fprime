@@ -6,6 +6,8 @@ In F Prime, a **type definition** defines a kind of data that you can pass betwe
 
 For this tutorial, you need one type definition. The type will define an enumeration called `MathOp`, which represents a mathematical operation.
 
+## In this section 
+
 ## Setup 
 
 To start, create a directory where your type(s) will live:

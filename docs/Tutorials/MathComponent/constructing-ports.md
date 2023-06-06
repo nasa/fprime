@@ -15,8 +15,9 @@ For this tutorial, you will need two port definitions:
 * `MathResult` for sending the result of an arithmetic
 operation from `MathReceiver` to `MathSender`.
 
-## Setup 
+## In this section 
 
+## Setup 
 
 Start by making a directory where the ports will be defined. Create a directory called `Ports` in the `MathProject` directory:
 

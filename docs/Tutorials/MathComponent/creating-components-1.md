@@ -4,6 +4,8 @@
 
 Components are the lifeblood of an F' deployment. In this tutorial the components are strickly virtual, however in many deployments components will represent different piece of hardware, such as sensors and microcontrollers! 
 
+## In this section 
+
 ## Setup
 
 Start by creating and navigating to the directory where the components will live: 
@@ -244,4 +246,4 @@ If you've been paying attention to the tutorial thus far, you might be getting s
 
 In this section you have created a new, active component stub and filled in the component's fpp file. You also generated the cpp and hpp files for the fpp file you edited. You are now ready to edit the cpp file to implement the `MathSender`'s behavior. 
 
-## Up Next: Creating Components 2
+**Next:** [Creating Components 2](./creating-components-2.md)
