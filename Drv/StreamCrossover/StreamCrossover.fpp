@@ -6,6 +6,20 @@ module Drv {
 
         sync input port streamIn: Drv.ByteStreamRecv
 
+        @ Indicates buffer failed to send to streamOut.
+        event StreamOutError(sendStatus: Drv.SendStatus) \
+            severity warning high \
+            format "StreamCrossover StreamOut Error: {}"
+
+        @ Port for requesting the current time
+        time get port timeCaller
+
+        @ Port for sending textual representation of events
+        text event port logTextOut
+
+        @ Port for sending events to downlink
+        event port logOut
+
     }
 
 }

@@ -39,7 +39,12 @@ namespace Drv {
         const Drv::RecvStatus &recvStatus
     )
   {
-    this->streamOut_out(0, recvBuffer);
+    Drv::SendStatus sendStatus = this->streamOut_out(0, recvBuffer);
+
+    if(sendStatus != Drv::SendStatus::SEND_OK)
+    {
+      this->log_WARNING_HI_StreamOutError(sendStatus);
+    }
   }
 
 } // end namespace Drv

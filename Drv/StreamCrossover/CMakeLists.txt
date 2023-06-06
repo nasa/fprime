@@ -11,3 +11,12 @@ set(SOURCE_FILES
 )
 
 register_fprime_module()
+
+# Register the unit test build
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/StreamCrossover.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+)
+set(UT_AUTO_HELPERS ON)
+register_fprime_ut()
