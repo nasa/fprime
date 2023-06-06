@@ -163,11 +163,11 @@ module MathModule {
 ```
 
 **About this Component:** 
-This code defines a component `Ref.MathSender`.
+> This code defines a component `Ref.MathSender`.
 The component is **active**, which means it has its
 own thread.
 
-Inside the definition of the `MathSender` component are
+> Inside the definition of the `MathSender` component are
 several specifiers.
 We have divided the specifiers into five groups:
 
@@ -207,8 +207,10 @@ There are four telemetry channels: three for the arguments
 to the last command received and one for the last
 result received.
 
-For more information on defining components, see
+> For more information on defining components, see
 [_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components).
+
+
 
 Now you have written the F' code for the component, but the cpp and hpp files do not yet reflect the changes you have made to the fpp file. To get the cpp and hpp to reflect the specs you have set fourth in the fpp, you need to use F' implement as shown below: 
 
