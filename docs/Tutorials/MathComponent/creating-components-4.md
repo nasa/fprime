@@ -157,4 +157,4 @@ This code implements an optional function that, if present, is called when a par
 
 In this section you implemented the component behavior of MathReceiver. 
 
-**Next:** [Developing Deployments](./developin-deployments.md)
+**Next:** [Developing Deployments](./developing-deployments.md)
