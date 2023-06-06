@@ -415,7 +415,7 @@
     // timeGetOut
     this->component.set_timeGetOut_OutputPort(
         0,
-        this->get_from_timeGetOut(0)
+        this->get_from_timeGetIn(0)
     );
 
   }
@@ -466,6 +466,12 @@
         this->get_from_serialOut(0)
     );
 
+  }
+
+  void Tester ::
+    setPrmValid(Fw::ParamValid valid)
+  {
+    this->prmValid = valid;
   }
 
   void Tester ::

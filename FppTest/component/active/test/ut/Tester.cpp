@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  PassiveTest.hpp
+// \title  ActiveTest.hpp
 // \author tiffany
-// \brief  cpp file for PassiveTest test harness implementation class
+// \brief  cpp file for ActiveTest test harness implementation class
 // ======================================================================
 
 #include "test/ut/Tester.hpp"
@@ -14,8 +14,8 @@
 
   Tester ::
     Tester() :
-      PassiveTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
-      component("PassiveTest"),
+      ActiveTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
+      component("ActiveTest"),
       primitiveBuf(primitiveData, sizeof(primitiveData)),
       stringBuf(stringData, sizeof(stringData)),
       enumBuf(enumData, sizeof(enumData)),
@@ -26,6 +26,7 @@
   {
     this->initComponents();
     this->connectPorts();
+    this->connectAsyncPorts();
   }
 
   Tester ::
@@ -39,7 +40,7 @@
   {
     this->init();
     this->component.init(
-        Tester::TEST_INSTANCE_ID
+        Tester::TEST_INSTANCE_QUEUE_DEPTH, Tester::TEST_INSTANCE_ID
     );
   }
 
@@ -58,32 +59,32 @@
     FW_ASSERT(id >= id_base);
 
     switch (id - id_base) {
-      case PassiveTestComponentBase::PARAMID_PARAMBOOL: 
+      case ActiveTestComponentBase::PARAMID_PARAMBOOL: 
         status = val.serialize(boolPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMU32:
+      case ActiveTestComponentBase::PARAMID_PARAMU32:
         status = val.serialize(u32Prm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMSTRING:
+      case ActiveTestComponentBase::PARAMID_PARAMSTRING:
         status = val.serialize(stringPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMENUM:
+      case ActiveTestComponentBase::PARAMID_PARAMENUM:
         status = val.serialize(enumPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMARRAY:
+      case ActiveTestComponentBase::PARAMID_PARAMARRAY:
         status = val.serialize(arrayPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMSTRUCT:
+      case ActiveTestComponentBase::PARAMID_PARAMSTRUCT:
         status = val.serialize(structPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
@@ -107,32 +108,32 @@
     FW_ASSERT(id >= id_base);
 
     switch (id - id_base) {
-      case PassiveTestComponentBase::PARAMID_PARAMBOOL: 
+      case ActiveTestComponentBase::PARAMID_PARAMBOOL: 
         status = val.deserialize(boolPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMU32:
+      case ActiveTestComponentBase::PARAMID_PARAMU32:
         status = val.deserialize(u32Prm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMSTRING:
+      case ActiveTestComponentBase::PARAMID_PARAMSTRING:
         status = val.deserialize(stringPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMENUM:
+      case ActiveTestComponentBase::PARAMID_PARAMENUM:
         status = val.deserialize(enumPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMARRAY:
+      case ActiveTestComponentBase::PARAMID_PARAMARRAY:
         status = val.deserialize(arrayPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;
 
-      case PassiveTestComponentBase::PARAMID_PARAMSTRUCT:
+      case ActiveTestComponentBase::PARAMID_PARAMSTRUCT:
         status = val.deserialize(structPrm.args.val);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         break;

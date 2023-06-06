@@ -238,6 +238,15 @@
       */
       );
 
+      //! Handler for from_timeGetIn
+      //!
+      void from_timeGetIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Time &time /*!< 
+      The U32 cmd argument
+      */
+      );
+
     private:
 
       // ----------------------------------------------------------------------
@@ -269,6 +278,9 @@
 
       //! Connect serial ports to special ports
       void connectSpecialPortsSerial();
+      
+      //! Set prmValid
+      void setPrmValid(Fw::ParamValid valid);
 
       //! Initialize components
       //!
@@ -323,6 +335,9 @@
       FppTest::Types::ArrayParam arrayPrm;
       FppTest::Types::StructParam structPrm;
       Fw::ParamValid prmValid;
+
+      // Time test values
+      Fw::Time time;
 
   };
 

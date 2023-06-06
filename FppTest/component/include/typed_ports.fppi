@@ -99,3 +99,5 @@ output port cmdRegIn: Fw.CmdReg
 output port prmGetIn: Fw.PrmGet
 
 output port prmSetIn: Fw.PrmSet
+
+output port timeGetIn: Fw.Time

@@ -100,39 +100,39 @@ namespace FppTest {
     }
 
     CmdStringType::CmdStringType() {
-      setRandomString(val);
+      setRandomString(val, FW_CMD_STRING_MAX_SIZE);
     }
 
     CmdStringTypes::CmdStringTypes() {
-      setRandomString(val1);
-      setRandomString(val2);
+      setRandomString(val1, FW_CMD_STRING_MAX_SIZE / 2);
+      setRandomString(val2, FW_CMD_STRING_MAX_SIZE / 2);
     }
 
     LogStringType::LogStringType() {
-      setRandomString(val);
+      setRandomString(val, FW_LOG_STRING_MAX_SIZE);
     }
 
     LogStringTypes::LogStringTypes() {
-      setRandomString(val1);
-      setRandomString(val2);
+      setRandomString(val1, FW_LOG_STRING_MAX_SIZE / 2);
+      setRandomString(val2, FW_LOG_STRING_MAX_SIZE / 2);
     }
 
     TlmStringType::TlmStringType() {
-      setRandomString(val);
+      setRandomString(val, FW_TLM_STRING_MAX_SIZE);
     }
 
     TlmStringTypes::TlmStringTypes() {
-      setRandomString(val1);
-      setRandomString(val2);
+      setRandomString(val1, FW_TLM_STRING_MAX_SIZE / 2);
+      setRandomString(val2, FW_TLM_STRING_MAX_SIZE / 2);
     }
 
     PrmStringType::PrmStringType() {
-      setRandomString(val);
+      setRandomString(val, FW_PARAM_STRING_MAX_SIZE);
     }
 
     PrmStringTypes::PrmStringTypes() {
-      setRandomString(val1);
-      setRandomString(val2);
+      setRandomString(val1, FW_PARAM_STRING_MAX_SIZE / 2);
+      setRandomString(val2, FW_PARAM_STRING_MAX_SIZE / 2);
     }
 
     // ----------------------------------------------------------------------
@@ -154,6 +154,12 @@ namespace FppTest {
     void setRandomString(Fw::StringBase& str) {
       char buf[str.getCapacity()];
       Utils::setString(buf, sizeof(buf));
+      str = buf;
+    }
+
+    void setRandomString(Fw::StringBase& str, U32 size) {
+      char buf[size];
+      Utils::setString(buf, size);
       str = buf;
     }
 

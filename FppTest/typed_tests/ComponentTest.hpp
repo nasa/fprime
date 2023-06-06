@@ -71,19 +71,19 @@ REGISTER_TYPED_TEST_SUITE_P(ComponentTelemetryTest,
 );
 
 template <typename FormalParamType>
-class ComponentParamTest : public ::testing::Test {
+class ComponentParamCommandTest : public ::testing::Test {
 protected:
     Tester tester;
     FormalParamType data;
 };
 
-TYPED_TEST_SUITE_P(ComponentParamTest);
+TYPED_TEST_SUITE_P(ComponentParamCommandTest);
 
-TYPED_TEST_P(ComponentParamTest, ParamTest) {
+TYPED_TEST_P(ComponentParamCommandTest, ParamTest) {
     this->tester.testParamCommand(0, this->data);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ComponentParamTest,
+REGISTER_TYPED_TEST_SUITE_P(ComponentParamCommandTest,
     ParamTest
 );
 

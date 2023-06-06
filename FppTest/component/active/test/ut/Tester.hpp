@@ -1,24 +1,25 @@
 // ======================================================================
-// \title  TestComponent/test/ut/Tester.hpp
+// \title  ActiveTest/test/ut/Tester.hpp
 // \author tiffany
-// \brief  hpp file for TestComponent test harness implementation class
+// \brief  hpp file for ActiveTest test harness implementation class
 // ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "FppTest/component/active/TestComponent.hpp"
+#include "FppTest/component/active/ActiveTest.hpp"
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 #include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
 #include "FppTest/component/common/PortTests.hpp"
 #include "FppTest/component/common/CmdTests.hpp"
 #include "FppTest/component/common/EventTests.hpp"
 #include "FppTest/component/common/TlmTests.hpp"
+#include "FppTest/component/common/ParamTests.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
 
   class Tester :
-    public TestComponentGTestBase
+    public ActiveTestGTestBase
   {
 
       // ----------------------------------------------------------------------
@@ -56,6 +57,10 @@
       TLM_TEST_DECLS
 
       void testParam();
+
+      PARAM_CMD_TEST_DECLS
+
+      void testTime();
 
     private:
 
@@ -233,6 +238,15 @@
       */
       );
 
+      //! Handler for from_timeGetIn
+      //!
+      void from_timeGetIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Time &time /*!< 
+      The U32 cmd argument
+      */
+      );
+
     private:
 
       // ----------------------------------------------------------------------
@@ -246,7 +260,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
       );
 
-    private:
+    public:
 
       // ----------------------------------------------------------------------
       // Helper methods
@@ -255,6 +269,21 @@
       //! Connect ports
       //!
       void connectPorts();
+
+      //! Connect async ports
+      void connectAsyncPorts();
+
+      //! Connect prmSetIn port
+      void connectPrmSetIn();
+
+      //! Connect timeGetOut port
+      void connectTimeGetOut();
+
+      //! Connect serial ports to special ports
+      void connectSpecialPortsSerial();
+      
+      //! Set prmValid
+      void setPrmValid(Fw::ParamValid valid);
 
       //! Initialize components
       //!
@@ -274,7 +303,7 @@
 
       //! The component under test
       //!
-      TestComponent component;
+      ActiveTest component;
 
       // Values returned by typed output ports
       FppTest::Types::BoolType noParamReturnVal;
@@ -309,6 +338,9 @@
       FppTest::Types::ArrayParam arrayPrm;
       FppTest::Types::StructParam structPrm;
       Fw::ParamValid prmValid;
+
+      // Time test values
+      Fw::Time time;
 
   };
 

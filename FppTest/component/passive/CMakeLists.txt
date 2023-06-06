@@ -34,6 +34,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/TestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/Tests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/TesterHandlers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/TesterHelpers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/PortTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/CmdTests.cpp"

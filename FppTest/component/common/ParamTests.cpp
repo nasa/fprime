@@ -25,9 +25,11 @@ void Tester ::
   }
 
   Fw::ParamString stringVal = component.paramGet_ParamString(valid);
-  ASSERT_EQ(valid, prmValid);
   if (valid == Fw::ParamValid::VALID) {
     ASSERT_EQ(stringVal, stringPrm.args.val);
+  }
+  else {
+    ASSERT_EQ(valid, Fw::ParamValid::DEFAULT);
   }
 
   FormalParamEnum enumVal = component.paramGet_ParamEnum(valid);
@@ -37,9 +39,11 @@ void Tester ::
   }
 
   FormalParamArray arrayVal = component.paramGet_ParamArray(valid);
-  ASSERT_EQ(valid, prmValid);
   if (valid == Fw::ParamValid::VALID) {
     ASSERT_EQ(arrayVal, arrayPrm.args.val);
+  }
+  else {
+    ASSERT_EQ(valid, Fw::ParamValid::DEFAULT);
   }
 
   FormalParamStruct structVal = component.paramGet_ParamStruct(valid);
@@ -47,8 +51,6 @@ void Tester ::
   if (valid == Fw::ParamValid::VALID) {
     ASSERT_EQ(structVal, structPrm.args.val);
   }
-
-  ASSERT_from_prmGetIn_SIZE(6);
 }
 
 void Tester ::

@@ -219,6 +219,7 @@ namespace FppTest {
     // ----------------------------------------------------------------------
     
     void setRandomString(Fw::StringBase& str);
+    void setRandomString(Fw::StringBase& str, U32 size);
     FormalParamEnum getRandomFormalParamEnum();
     void getRandomFormalParamArray(FormalParamArray& a);
     FormalParamStruct getRandomFormalParamStruct();

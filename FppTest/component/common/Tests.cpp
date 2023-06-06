@@ -98,11 +98,18 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
 // Parameter tests
 TEST(ComponentParameterTest, ParameterTest) {
   Tester tester;
+
+  std::cout << "VALID" << std::endl;
+  tester.setPrmValid(Fw::ParamValid::VALID);
+  tester.testParam();
+
+  std::cout << "INVALID" << std::endl;
+  tester.setPrmValid(Fw::ParamValid::INVALID);
   tester.testParam();
 }
 
 // Parameter tests
-using ParamTestImplementations = ::testing::Types<
+using ParamCommandTestImplementations = ::testing::Types<
   FppTest::Types::BoolParam,
   FppTest::Types::U32Param,
   FppTest::Types::PrmStringParam,
@@ -112,8 +119,8 @@ using ParamTestImplementations = ::testing::Types<
 >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
-                             ComponentParamTest,
-                             ParamTestImplementations);
+                             ComponentParamCommandTest,
+                             ParamCommandTestImplementations);
 
 // Time tests
 TEST(ComponentTimeTest, TimeTest) {

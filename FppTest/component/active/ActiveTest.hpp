@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  TestComponent.hpp
+// \title  ActiveTest.hpp
 // \author tiffany
-// \brief  hpp file for TestComponent component implementation class
+// \brief  hpp file for ActiveTest component implementation class
 // ======================================================================
 
-#ifndef TestComponent_HPP
-#define TestComponent_HPP
+#ifndef ActiveTest_HPP
+#define ActiveTest_HPP
 
-#include "FppTest/component/active/TestComponentComponentAc.hpp"
+#include "FppTest/component/active/ActiveTestComponentAc.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
 
 
-  class TestComponent :
-    public TestComponentComponentBase
+  class ActiveTest :
+    public ActiveTestComponentBase
   {
 
     public:
@@ -21,13 +21,13 @@
       // Construction, initialization, and destruction
       // ----------------------------------------------------------------------
 
-      //! Construct object TestComponent
+      //! Construct object ActiveTest
       //!
-      TestComponent(
+      ActiveTest(
           const char *const compName /*!< The component name*/
       );
 
-      //! Initialize object TestComponent
+      //! Initialize object ActiveTest
       //!
       void init(
           const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
@@ -35,9 +35,9 @@
           const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
       );
 
-      //! Destroy object TestComponent
+      //! Destroy object ActiveTest
       //!
-      ~TestComponent();
+      ~ActiveTest();
 
     PRIVATE:
 

@@ -1,5 +1,5 @@
 @ An active component
-active component TestComponent {
+active component ActiveTest {
 
   include "../include/typed_ports.fppi"
   include "../include/typed_ports_async.fppi"
