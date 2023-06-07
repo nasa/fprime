@@ -1,3 +1,8 @@
+# Writing Unit Tests Part 1: Completing the Stub & Running the Test
+
+## In this Section 
+
+In this section of the tutorial, you will fill in the stub implementation you created in the last section and run the unit test. 
 
 Add a generic helper function so you can reuse code while writing unit tests. In Tester.cpp add the following:
 
@@ -57,7 +62,40 @@ void Tester ::
 void testDoMath(MathOp, op); 
 ```
 
-Write the acutal tester function using the helper funtion you just wrote:
+**Explanation:** 
+This function is parameterized over different
+operations.
+It is divided into five sections: sending the command,
+checking the command response, checking the output on
+`mathOpOut`, checking telemetry, and checking events.
+The comments explain what is happening in each section.
+For further information about the F Prime unit test
+interface, see the F Prime User's Guide.
+
+Notice that after sending the command to the component, we call
+the function `doDispatch` on the component.
+We do this in order to simulate the behavior of the active
+component in a unit test environment.
+In a flight configuration, the component has its own thread,
+and the thread blocks on the `doDispatch` call until another
+thread puts a message on the queue.
+In a unit test context, there is only one thread, so the pattern
+is to place work on the queue and then call `doDispatch` on
+the same thread.
+
+There are a couple of pitfalls to watch out for with this pattern:
+
+1. If you put work on the queue and forget to call `doDispatch`,
+the work won't get dispatched.
+Likely this will cause a unit test failure.
+
+1. If you call `doDispatch` without putting work on the queue,
+the unit test will block until you kill the process (e.g.,
+with control-C).
+
+
+
+Write the actual tester function using the helper funtion you just wrote:
 
 ```cpp 
 // In: Tester.cpp 
@@ -83,6 +121,20 @@ TEST(Nominal, AddCommand) {
     tester.testAddCommand();
 }
 ```
+**Explanation:**
+The `TEST` macro is an instruction to Google Test to run a test.
+`Nominal` is the name of a test suite.
+We put this test in the `Nominal` suite because it addresses
+nominal (expected) behavior.
+`AddCommand` is the name of the test.
+Inside the body of the macro, the first line declares a new
+object `tester` of type `Tester`.
+We typically declare a new object for each unit test, so that
+each test starts in a fresh state.
+The second line invokes the function `testAddCommand`
+that we wrote in the previous section.
+
+
 
 Run the test you have written. Make sure to execute the following in ```MathSender```. 
 
@@ -91,8 +143,31 @@ Run the test you have written. Make sure to execute the following in ```MathSend
 fprime-util check 
 ``` 
 
-Try to follow the pattern given in the previous section to add three more tests, one each for operations SUB, MUL, and DIV. Most of the work should be done in the helper that we already wrote. Each new test requires just a short test function and a short test macro.
+As an exercise, try the following:
+
+1. Change the behavior of the component
+so that it does something incorrect.
+For example, try adding one to a telemetry
+value before emitting it.
+
+1. Rerun the test and observe what happens.
+
+
+
+**Add more command tests:**
+Try to follow the pattern given in the previous
+section to add three more tests, one each
+for operations `SUB`, `MUL`, and `DIV`.
+Most of the work should be done in the helper
+that we already wrote.
+Each new test requires just a short test function
+and a short test macro.
+
+Run the tests to make sure everything compiles and
+the tests pass.
 
 ## Summary 
 
-In this section you have created a unit test by writing and calling on a helper function. 
+In this section you filled out your unit test implemenation stub and ran your unit test. 
+
+**Next:** [Writing Unit Tests 3](./writing-unit-tests-3.md)
