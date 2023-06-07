@@ -66,3 +66,9 @@ fprime-util check
 
 Again you can try altering something in the component code
 to see what effect it has on the test output.
+
+## Summary 
+
+In this section, you created another helper function used to look test the received results as seen by the `MathSender`. You ran the test that you should wrote to ensure that it worked. 
+
+**Next:** [Writing Unit Tests 4](./writing-unit-tests-4.md)
