@@ -1,4 +1,4 @@
-# Writing Unit Tests Part 1: Completing the Stub & Running the Test
+# Writing Unit Tests Part 2: Completing the Stub & Running the Test
 
 ## In this Section 
 
