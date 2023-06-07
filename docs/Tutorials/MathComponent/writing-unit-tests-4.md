@@ -43,7 +43,15 @@ Fourth, add the following line to the main function of `TestMain.cpp`, just befo
 STest::Random::seed();
 ```
 **Run the Test:**
-Recompile and rerun the tests. Now go to MathProject/build-fprime-automatic-native-ut/Components/MathSender and inspect the file `seed-history`. This file is a log of random seed values. Each line represents the seed used in the corresponding run.
+Recompile and rerun the tests:
+
+```shell
+# In: MathSender  
+fprime-util build --ut 
+fprime-util check 
+```
+
+ Now go to MathProject/build-fprime-automatic-native-ut/Components/MathSender and inspect the file `seed-history`. This file is a log of random seed values. Each line represents the seed used in the corresponding run.
 
 **Fixing the Random Seed:**
 Sometimes you may want to run a test with a particular seed value, e.g., for replay debugging. To do this, put the seed value into a file `seed` in the same directory as `seed-history`. If the file seed exists, then STest will use the seed it contains instead of generating a new seed.
@@ -56,3 +64,6 @@ Try the following:
 
    3. Inspect ```MathProject/build-fprime-automatic-native-ut/Components/MathSender/seed-history```. You should see that the value S was used in the runs you just did (corresponding to the last few entries in seed-history).
 
+## Summary 
+
+In this section you incorprated random testing into your existing tests. You used random
