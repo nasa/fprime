@@ -67,3 +67,5 @@ Try the following:
 ## Summary 
 
 In this section you incorprated random testing into your existing tests. You used random
+
+**Next:** [Writing Unit Tests 5](./writing-unit-tests-5.md)
