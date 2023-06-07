@@ -4,7 +4,16 @@
 
 In this section of the tutorial, you will fill in the stub implementation you created in the last section and run the unit test. 
 
-Add a generic helper function so you can reuse code while writing unit tests. In Tester.cpp add the following:
+Write a generic helper function so you can reuse code while writing unit tests. In Tester.cpp add the following:
+
+Start by writing a function signature in `Tester.hpp`:
+
+```cpp 
+// In: Tester.hpp
+void testDoMath(MathOp, op); 
+```
+
+Fill out the corrosponding function body in `Tester.cpp`:
 
 ```cpp
 // In: Tester.cpp
@@ -54,13 +63,6 @@ void Tester ::
     ASSERT_EVENTS_COMMAND_RECV(0, val1, op, val2);
   }
   ```
-  
-  Additionally, you should add the function signature in Tester.hpp:
-
-  ```cpp 
-// In: Tester.hpp
-void testDoMath(MathOp, op); 
-```
 
 **Explanation:** 
 This function is parameterized over different
@@ -94,8 +96,14 @@ the unit test will block until you kill the process (e.g.,
 with control-C).
 
 
+You will now create a function to test the `ADD` command. Add a function signature to Tester.hpp:
 
-Write the actual tester function using the helper funtion you just wrote:
+```cpp
+// In: Tester.hpp
+void TestAddCommand(); 
+``` 
+
+Write the corrosponding tester function using the helper funtion you just wrote:
 
 ```cpp 
 // In: Tester.cpp 
@@ -105,13 +113,6 @@ void Tester ::
       this->testDoMath(MathOp::ADD);
   }
 ```
-
-Add the function signature to Tester.hpp
-
-```cpp
-// In: Tester.hpp
-void TestAddCommand(); 
-``` 
 
 Write a Google test macro in TestMain.cpp and make sure the test macro goes before main:
 
