@@ -1,4 +1,4 @@
-# Error Handling 
+# Error Handling 1: Critical Thinking 
 
 ## Background 
 On a flight mission, even a short timeout, let alone a system crash, can be mission critical. It is imparitive that programmer account for as many possible error or faults as possible so avoidable errors are prevented. 
@@ -26,9 +26,9 @@ Note that `val2 = 0.0` is not the only case in which a division
 by zero error can occur.
 It can also occur for very small values of `val2`.
 
-1. Should the error be caught in `MathSender` or `MathReceiver`?
+2. Should the error be caught in `MathSender` or `MathReceiver`?
 
-1. Suppose the design says that `MathSender` catches the error,
+3. Suppose the design says that `MathSender` catches the error,
 and so never sends requests to `MathReceiver` to divide by zero.
 What if anything should `MathReceiver` do if it receives
 a divide by zero request?
@@ -36,12 +36,17 @@ Carry out the operation normally?
 Emit a warning?
 Fail a FSW assertion?
 
-1. If the error is caught by `MathReceiver`, does the
+4. If the error is caught by `MathReceiver`, does the
 interface between the components have to change?
 If so, how?
 What should `MathSender` do if `MathReceiver`
 reports an error instead of a valid result?
 
-Revise the MathSender and MathReceiver components to implement your
+Try to revise the MathSender and MathReceiver components to implement your
 ideas.
-Add unit tests covering the new behavior.
+Challenge yourself to add unit tests covering the new behavior.
+
+The next section gives one idea of how to do some error handling for the divide by zero case. Before looking at it, try to solve the problem on your own and compare against the method shown in this tutorial. 
+
+
+**Next:** [Error Handling 2](./error-handling-2.md)
