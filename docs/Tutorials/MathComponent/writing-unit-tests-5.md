@@ -79,10 +79,6 @@ to prepare for random testing.
 #include "STest/Pick/Pick.hpp"
 ```
 
-```cmake 
-# In: /MathReceiver/CMakeLists.txt
-set(UT_MOD_DEPS STest)
-```
 
 ```cpp
 // In: TestMain.cpp
@@ -94,6 +90,12 @@ set(UT_MOD_DEPS STest)
 // In: TestMain.cpp
 // Within: int main(){
 STest::Random::seed();
+```
+
+```cmake 
+# In: /MathReceiver/CMakeLists.txt
+# Above: register_fprime_ut()
+set(UT_MOD_DEPS STest)
 ```
 
 **Next:** [Writing Unit Tests 6](./writing-unit-tests-6.md)

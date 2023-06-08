@@ -20,14 +20,8 @@ First, edit `MathSender/UnitTests/Tester.cpp` by adding a `Pick.hpp` to the incl
 #include "STest/Pick/Pick.hpp"
 ```
 
-Second, modify `MathSender/CMakeLists.txt` to include STest as a build dependancy:
 
-```cmake 
-# In: /MathSender/CMakeLists.txt
-set(UT_MOD_DEPS STest)
-```
-
-Third, modify `TestMain.cpp` to include `Random.hpp`:
+Second, modify `TestMain.cpp` to include `Random.hpp`:
 
 ```cpp
 // In: TestMain.cpp
@@ -36,7 +30,7 @@ Third, modify `TestMain.cpp` to include `Random.hpp`:
 ```
 
 
-Fourth, add the following line to the main function of `TestMain.cpp`, just before the return statement:
+Third, add the following line to the main function of `TestMain.cpp`, just before the return statement:
 
 ```cpp
 // In: TestMain.cpp
@@ -45,6 +39,14 @@ STest::Random::seed();
 ```
 **Run the Test:**
 Recompile and rerun the tests:
+
+Fourth, modify `MathSender/CMakeLists.txt` to include STest as a build dependancy:
+
+```cmake 
+# In: /MathSender/CMakeLists.txt
+# Above: register_fprime_ut()
+set(UT_MOD_DEPS STest)
+```
 
 ```shell
 # In: MathSender  
