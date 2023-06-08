@@ -4,7 +4,7 @@
 
 #include "Tester.hpp"
 
-TEST(Nominal, ToDo) {
+TEST(Nominal, TestBuffer) {
     Drv::Tester tester;
     tester.sendTestBuffer();
 }
