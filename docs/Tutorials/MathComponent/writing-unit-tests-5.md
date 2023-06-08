@@ -70,9 +70,7 @@ fprime-util build --ut
 ## Summary
 
 Here you setup a directory and build to start writing unit tests for 
-`MathReceiver`. It is up to you to implement the ADD, SUB, MUL, and DIV
-tests. The next section will work on building other types of tests.
-Before moving onto the next section, do the following setup 
+`MathReceiver`. The next section will work on building new types of tests. Before moving onto the next section, do the following setup 
 to prepare for random testing. 
 
 ```cpp
