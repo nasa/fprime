@@ -9,6 +9,7 @@ Add the following code to the beginning of the
 `Tester` class in `Tester.hpp`:
 
 ```c++
+// In: Tester.hpp
 private:
 
   // ----------------------------------------------------------------------
@@ -36,6 +37,7 @@ Fix any errors that occur.
 Add a `pickF32Value` function.
 
 ```c++
+// In: Tester.cpp
 F32 Tester ::
   pickF32Value()
 {
@@ -43,13 +45,24 @@ F32 Tester ::
   return m * (1.0 - 2 * STest::Pick::inUnitInterval());
 }
 ```
+> Remember to add a function signature in `Tester.hpp`. 
 
 This function picks a random `F32` value in the range
 _[ -10^6, 10^6 ]_.
 
+
+At this point, it is a good to check the build. Use 
+the following to check the build:
+
+```shell
+# In: MathReceiver
+fprime-util build --ut -j4
+```
+
 Add a `setFactor` function.
 
 ```c++
+// In Tester.cpp  
 void Tester ::
   setFactor(
       F32 factor,
@@ -74,6 +87,7 @@ void Tester ::
     }
 }
 ```
+> Make sure that set factor is below where you defined `ThrottleSate` and remember to add a function signature in `Tester.hpp`.
 
 This function does the following:
 
@@ -86,9 +100,12 @@ to the value `factor`.
 that the event was emitted.
 Otherwise check that the event was throttled (not emitted).
 
+Build to make sure everything is working. 
+
 Add a function `computeResult` to `Tester.cpp`.
 
 ```c++
+// In: Tester.cpp
 F32 Tester ::
   computeResult(
       F32 val1,
@@ -119,15 +136,19 @@ F32 Tester ::
     return result;
 }
 ```
+> Don't forget to add a function signature in `Tester.hpp`.
 
 This function carries out the math computation of the
 math component.
 By running this function and comparing, we can
 check the output of the component.
 
+Build to make sure everything is working. 
+
 Add a `doMathOp` function to `Tester.cpp`.
 
 ```c++
+// In: Tester.cpp
 void Tester ::
   doMathOp(
       MathOp op,
@@ -178,6 +199,7 @@ void Tester ::
 
 }
 ```
+> Don't forget to add a function signature in `Tester.hpp`.
 
 This function is similar to the `doMath` helper function that
 we wrote for the `MathSender` component.
@@ -185,6 +207,8 @@ Notice that the method for invoking a port is different.
 Since the component is queued, we don't call `doDispatch`
 directly.
 Instead we invoke `schedIn`.
+
+Build before moving onto the next section.
 
 
 **Next:** [Writing Unit Tests 7](./writing-unit-tests-7.md)
