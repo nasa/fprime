@@ -182,6 +182,7 @@ void Tester ::
     // verify events
 
     // check that there was one event
+    // if you're dviding by zero, there may be two events ;) 
     ASSERT_EVENTS_SIZE(1);
     // check that it was the op event
     ASSERT_EVENTS_OPERATION_PERFORMED_SIZE(1);
@@ -191,7 +192,7 @@ void Tester ::
     // verify telemetry
 
     // check that one channel was written
-    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_SIZE(2);
     // check that it was the op channel
     ASSERT_TLM_OPERATION_SIZE(1);
     // check for the correct value of the channel
