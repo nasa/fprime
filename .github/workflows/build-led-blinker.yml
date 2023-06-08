@@ -7,6 +7,9 @@ on:
     branches: [ master, devel ]
   pull_request:
     branches: [ master, devel ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
 
 jobs:
   run:
