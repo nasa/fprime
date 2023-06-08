@@ -40,6 +40,7 @@ Fourth, add the following line to the main function of `TestMain.cpp`, just befo
 
 ```cpp
 // In: TestMain.cpp
+// Within: int main(){
 STest::Random::seed();
 ```
 **Run the Test:**

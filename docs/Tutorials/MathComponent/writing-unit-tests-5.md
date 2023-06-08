@@ -80,7 +80,7 @@ to prepare for random testing.
 ```
 
 ```cmake 
-# In: /MathSender/CMakeLists.txt
+# In: /MathReceiver/CMakeLists.txt
 set(UT_MOD_DEPS STest)
 ```
 
@@ -92,6 +92,7 @@ set(UT_MOD_DEPS STest)
 
 ```cpp
 // In: TestMain.cpp
+// Within: int main(){
 STest::Random::seed();
 ```
 
