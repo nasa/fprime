@@ -1,7 +1,7 @@
 # Writing Unit Tests Part 3: Testing the Results
 
 ## In this Section 
-In this section of the tutorial, you will add another test into `MathSender/UnitTests` and run the new test.
+In this section of the tutorial, you will add another test into `MathSender/test/ut` and run the new test.
 **Add a result test:**
 Add a test for exercising the scenario in which the `MathReceiver`
 component sends a result back to `MathSender`.
