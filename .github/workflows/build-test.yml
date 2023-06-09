@@ -9,6 +9,9 @@ on:
     branches: [ master, devel ]
   pull_request:
     branches: [ master, devel, release/v3.0.0 ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
