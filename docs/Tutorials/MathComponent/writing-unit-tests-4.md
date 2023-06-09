@@ -12,7 +12,7 @@ In this section of the tutorial, you will create test that uses random numbers i
 
 To incorporate random numbers into the existing tests you have written for `MathSender`, you only need to make a couple small modifications. 
 
-First, edit `MathSender/UnitTests/Tester.cpp` by adding a `Pick.hpp` to the includes: 
+First, edit `MathSender/test/ut/Tester.cpp` by adding a `Pick.hpp` to the includes: 
 
 ```cpp
 // In: Tester.cpp
