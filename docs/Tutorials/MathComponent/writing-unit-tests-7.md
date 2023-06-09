@@ -18,6 +18,7 @@ that they pass.
 Add the following function to the "Tests" section of `Tester.cpp`:
 
 ```c++
+// In: Tester.cpp
 void Tester ::
   testAdd()
 {
@@ -28,6 +29,7 @@ void Tester ::
     this->doMathOp(MathOp::ADD, factor);
 }
 ```
+> Don't forget to add a function signature in `Tester.hpp`.
 
 This function calls the `setFactor` helper function
 to set the factor parameter.
@@ -38,6 +40,7 @@ do a math operation.
 Add the following function to the "Tests" section of `Tester.cpp`:
 
 ```c++
+// In: Tester.cpp
 void Tester ::
   testSub()
 {
@@ -67,7 +70,7 @@ here it loads the parameters from the test harness.
 There is no command to update a parameter, so `parameterUpdated`
 is not called, and no event is emitted.
 
-As before, after setting the parameter we call `doMathOp`
+As before, after setting the parameter you call `doMathOp`
 to do the operation.
 
 **Write a MUL test:**
@@ -124,6 +127,7 @@ void Tester ::
 }
 ```
 
+**Explanation:**
 This test first loops over the throttle count, which is stored
 for us in the constant `EVENTID_FACTOR_UPDATED_THROTTLE`
 of the `MathReceiver` component base class.
@@ -138,3 +142,17 @@ This code checks that the event is throttled.
 Next the test sends the command `CLEAR_EVENT_THROTTLE`,
 checks for the corresponding notification event,
 and checks that the throttling is cleared.
+
+Add your tests to `TestMain.cpp` so that the tests run when
+`fprime-util check' is called. 
+
+Here is how to include `testAdd` to `TestMain.cpp`. Follow this patttern to 
+inlcude any other unit tests you wrote: 
+
+```cpp
+// In: TestMain.cpp
+TEST(Nominal, AddCommand) {
+    MathModule::Tester tester;
+    tester.testAdd();
+}
+```
