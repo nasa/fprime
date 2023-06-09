@@ -10,7 +10,7 @@ Start by writing a function signature in `Tester.hpp`:
 
 ```cpp 
 // In: Tester.hpp
-void testDoMath(MathOp, op); 
+void testDoMath(MathOp op); 
 ```
 
 Fill out the corrosponding function body in `Tester.cpp`:
