@@ -40,31 +40,8 @@ fprime-util generate
 fprime-util build
 ```
 
-Create instances of the components you have created. Think of this step like creating an instance of a class. 
 
-```fpp 
-# In: Deployment/Top/topology.fpp 
-# Under: Instances used in the topology
-instance mathSender
-instance mathReceiver 
-```
-
-> This step highlights the importants of capitalization. The easiest way to differentiate between the component definition and instance is the capitalization.
-
-**Explanation:** 
-This code defines an instance `mathSender` of component
-`MathSender`.
-It has **base identifier** 0xE00.
-FPP adds the base identifier to each the relative identifier
-defined in the component to compute the corresponding
-identifier for the instance.
-For example, component `MathSender` has a telemetry channel
-`MathOp` with identifier 1, so instance `mathSender`
-has a command `MathOp` with identifier 0xE01.
-
-
-
-Add the instances to instances.fpp 
+Create an instance for `MathSender` in `instances.fpp`. 
 
 ```fpp 
 # In: Deployment/Top/instances.fpp 
@@ -85,6 +62,28 @@ For the `MathSender` you defined the queue size, stack size,
 and thread priority. The default queue and stack sizes were used above.
 
 The `MathReceiver was implemented with base identifier 0x2700 and the default queue size.
+
+Add the instances you created in `instances.fpp` to the project topology. 
+
+```fpp 
+# In: Deployment/Top/topology.fpp 
+# Under: Instances used in the topology
+instance mathSender
+instance mathReceiver 
+```
+
+> This step highlights the importants of capitalization. The easiest way to differentiate between the component definition and instance is the capitalization.
+
+**Explanation:** 
+This code defines an instance `mathSender` of component
+`MathSender`.
+It has **base identifier** 0xE00.
+FPP adds the base identifier to each the relative identifier
+defined in the component to compute the corresponding
+identifier for the instance.
+For example, component `MathSender` has a telemetry channel
+`MathOp` with identifier 1, so instance `mathSender`
+has a command `MathOp` with identifier 0xE01.
 
 
 Add packets for MathSender and MathReceiver in DeploymentPackets.xml
