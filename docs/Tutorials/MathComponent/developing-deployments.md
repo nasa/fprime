@@ -146,7 +146,14 @@ mathReceiver.mathResultOut -> mathSender.mathResultIn
 
 Verify that none of the math ports are unconnected 
 
-Go into DeploymentTopology.cpp and uncomment <loadParameters();> near line 130. Doing so will prevent an error in operation of F' GDS.  
+Go into DeploymentTopology.cpp and uncomment `loadParameters();` near line 130. Doing so will prevent an error in operation of F' GDS.  
+
+```cpp
+// In: DeploymentTopology.cpp
+// Near: line 130
+loadParameters();
+```
+
 
 Now it is time to build the entire project. Navigate to /MathProject and build. 
 

@@ -82,12 +82,14 @@ uses DIV instead of SUB.
 Add the following constant definition to the top of the `Tester.cpp` file:
 
 ```C++
+// In: Tester.cpp
 #define CMD_SEQ 42
 ```
 
 Then add the following function to the "Tests" section of `Tester.cpp`:
 
 ```c++
+// In: Tester.cpp
 void Tester ::
   testThrottle()
 {

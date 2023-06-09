@@ -52,7 +52,7 @@ Add the following test macro to `main.cpp`:
 
 ```c++
 TEST(Nominal, Result) {
-    Ref::Tester tester; @TODO
+    Ref::Tester tester; ///@TODO
     tester.testResult();
 }
 ```
