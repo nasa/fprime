@@ -44,6 +44,10 @@ namespace Drv {
       //!
       void sendTestBuffer();
 
+      //! Send a fail RECV_STATUS to test error
+      //!
+      void testFail();
+
     private:
 
       // ----------------------------------------------------------------------
@@ -55,6 +59,13 @@ namespace Drv {
       Drv::SendStatus from_streamOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &sendBuffer 
+      );
+
+      //! Handler for from_deallocate
+      //!
+      void from_deallocate_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Buffer &fwBuffer 
       );
 
     private:

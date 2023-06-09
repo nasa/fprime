@@ -11,6 +11,9 @@ module Drv {
             severity warning high \
             format "StreamCrossover StreamOut Error: {}"
 
+        @ Allows for deallocation after bad receive status
+        output port deallocate: Fw.BufferSend
+
         @ Port for requesting the current time
         time get port timeCaller
 
