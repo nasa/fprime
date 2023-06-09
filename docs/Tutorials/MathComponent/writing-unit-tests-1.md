@@ -9,11 +9,11 @@
 
 In this section of the tutorial, you will create a stub implementation of a unit test that will test `MathSender`. 
 
-In Components/MathSender, create a directory called UnitTests 
+In Components/MathSender, create a directory called test/ut
 
 ```shell 
 # In: MathSender
-mkdir -p UnitTests
+mkdir -p test/ut
 ```
 
 Add the unit test to the build. Absolutely make sure that this is BELOW the existing stuff in the CMakeLists.txt:
@@ -41,11 +41,11 @@ fprime-util impl --ut
 ```
 > These commands may take a while to run.
 
-You haved just generate three new files ```Tester.cpp Tester.hpp TestMain.cpp```. Move these files to the UnitTests directory in MathSender using:
+You haved just generate three new files ```Tester.cpp Tester.hpp TestMain.cpp```. Move these files to the `test/ut` in MathSender using:
 
 ```shell 
 # In: MathSender
-mv Tester.* TestMain.cpp UnitTests
+mv Tester.* TestMain.cpp test/ut
 ```
 
 Add ```Tester.cpp and TestMain.cpp``` to the build. Do so by editing the CMakeLists.txt in MathSender: 
@@ -54,8 +54,8 @@ Add ```Tester.cpp and TestMain.cpp``` to the build. Do so by editing the CMakeLi
 # In: MathSender/CMakeLists.txt 
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/UnitTests/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/UnitTests/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 set(UT_AUTO_HELPERS ON)
 register_fprime_ut()
