@@ -29,7 +29,22 @@ carries a 32 bit unsigned integer.
 U32 numMathOps; 
 ```
 
-3. Increment numMathOps: 
+3. Update the constructor so that it initializes `numMathOps` to zero:
+
+```cpp
+// In: MathReceiver.cpp 
+// Under: Construction, Initialization, and Destruction 
+MathReceiver ::
+    MathReceiver(
+        const char *const compName
+    ) : MathReceiverComponentBase(compName),
+        numMathOps(0) 
+  {
+
+  }
+```
+
+4. Increment numMathOps: 
 
 ```cpp
 // In: MathReceiver.cpp 
@@ -37,9 +52,9 @@ U32 numMathOps;
 numMathOps++;  
 ```
 
-4. Build using `fprime-util build` in `MathReceiver`. 
+5. Build using `fprime-util build` in `MathReceiver`. 
 
-5. Emit telemtry: 
+6. Emit telemtry: 
 ```cpp
 // In: MathReceiver.cpp 
 // Within: mathOpIn_handler
@@ -50,7 +65,7 @@ this->tlmWrite_NUMBER_OF_OPS(numMathOps);
 because this->tlmWrite_NUMBER_OF_OPS is a function 
 that is auto generated during the build. @TODO (Is this fact?)
 
-6. Add the packets to `DeploymentPackets.xml` in `Deployment/Top`: 
+7. Add the packets to `DeploymentPackets.xml` in `Deployment/Top`: 
 
 ```xml
  <packet name="MathReceiver" id="22" level="3">
@@ -61,7 +76,7 @@ that is auto generated during the build. @TODO (Is this fact?)
     </packet>
 ```
 
-7. Build and test:
+8. Build and test:
 
 ```shell 
 fprime-util build -j4 

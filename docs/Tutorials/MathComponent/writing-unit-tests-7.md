@@ -156,3 +156,12 @@ TEST(Nominal, AddCommand) {
     tester.testAdd();
 }
 ```
+
+See if your tests are working and trouble shoot any errors: 
+
+```shell
+# In: MathReceiver
+fprime-util check 
+```
+
+
