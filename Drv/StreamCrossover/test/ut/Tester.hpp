@@ -63,7 +63,7 @@ namespace Drv {
 
       //! Handler for from_deallocate
       //!
-      void from_deallocate_handler(
+      void from_errorDeallocate_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &fwBuffer 
       );

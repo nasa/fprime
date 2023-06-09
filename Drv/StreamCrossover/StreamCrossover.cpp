@@ -39,10 +39,10 @@ namespace Drv {
         const Drv::RecvStatus &recvStatus
     )
   {
-    if(recvStatus == Drv::RecvStatus::RECV_ERROR)
+    if(recvStatus == Drv::RecvStatus::RECV_ERROR || recvBuffer.getSize() == 0)
     {
       this->log_WARNING_HI_StreamOutError(Drv::SendStatus::SEND_ERROR);
-      this->deallocate_out(0, recvBuffer);
+      this->errorDeallocate_out(0, recvBuffer);
       return;
     }
 

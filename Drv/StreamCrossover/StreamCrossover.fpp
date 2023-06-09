@@ -12,7 +12,7 @@ module Drv {
             format "StreamCrossover StreamOut Error: {}"
 
         @ Allows for deallocation after bad receive status
-        output port deallocate: Fw.BufferSend
+        output port errorDeallocate: Fw.BufferSend
 
         @ Port for requesting the current time
         time get port timeCaller

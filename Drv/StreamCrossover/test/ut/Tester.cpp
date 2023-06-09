@@ -52,11 +52,11 @@ namespace Drv {
     Fw::Buffer sendBuffer(testStr, sizeof(testStr));
     this->invoke_to_streamIn(0, sendBuffer, Drv::RecvStatus::RECV_ERROR);
 
-    // Ensure only one buffer was sent to deallocate port on RECV_ERROR
-    ASSERT_from_deallocate_SIZE(1);
+    // Ensure only one buffer was sent to errorDeallocate port on RECV_ERROR
+    ASSERT_from_errorDeallocate_SIZE(1);
 
     // Ensure the sendBuffer was sent
-    ASSERT_from_deallocate(0, sendBuffer);
+    ASSERT_from_errorDeallocate(0, sendBuffer);
 
     // Ensure the error event was sent
     ASSERT_EVENTS_StreamOutError_SIZE(1);
@@ -89,12 +89,12 @@ namespace Drv {
   }
 
   void Tester ::
-    from_deallocate_handler(
+    from_errorDeallocate_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer
     )
   {
-    this->pushFromPortEntry_deallocate(fwBuffer);
+    this->pushFromPortEntry_errorDeallocate(fwBuffer);
   }
 
 
