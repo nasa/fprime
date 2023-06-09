@@ -9,7 +9,7 @@ component sends a result back to `MathSender`.
 Add the following function signature in the "Tests" section of `Tester.hpp`:
 
 ```c++
-// In: MathSender/UnitTests/Tester.hpp
+// In: MathSender/test/ut/Tester.hpp
 //! Test receipt of a result
 void testResult();
 ```
@@ -52,7 +52,7 @@ Add the following test macro to `main.cpp`:
 
 ```c++
 TEST(Nominal, Result) {
-    Ref::Tester tester; ///@TODO
+    MathModule::Tester tester; ///@TODO
     tester.testResult();
 }
 ```
