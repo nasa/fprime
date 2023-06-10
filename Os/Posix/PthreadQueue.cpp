@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Queue.cpp
+// \title  PthreadQueue.cpp
 // \author dinkel
 // \brief  Queue implementation using the pthread library. This is NOT
 //         an IPC queue. It is meant to be used between threads within
@@ -12,7 +12,7 @@
 //
 // ======================================================================
 
-#include <Os/Pthreads/BufferQueue.hpp>
+#include <Utils/Types/BufferQueue/BufferQueue.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Queue.hpp>
 
@@ -45,7 +45,7 @@ namespace Os {
     bool create(NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
       return queue.create(depth, msgSize);
     }
-    BufferQueue queue;
+    Types::BufferQueue queue;
     pthread_cond_t queueNotEmpty;
     pthread_cond_t queueNotFull;
     pthread_mutex_t queueLock;
@@ -94,7 +94,7 @@ namespace Os {
 
   Queue::QueueStatus sendNonBlock(QueueHandle* queueHandle, const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority) {
 
-    BufferQueue* queue = &queueHandle->queue;
+    Types::BufferQueue* queue = &queueHandle->queue;
     pthread_cond_t* queueNotEmpty = &queueHandle->queueNotEmpty;
     pthread_mutex_t* queueLock = &queueHandle->queueLock;
     NATIVE_INT_TYPE ret;
@@ -132,7 +132,7 @@ namespace Os {
 
   Queue::QueueStatus sendBlock(QueueHandle* queueHandle, const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority) {
 
-    BufferQueue* queue = &queueHandle->queue;
+    Types::BufferQueue* queue = &queueHandle->queue;
     pthread_cond_t* queueNotEmpty = &queueHandle->queueNotEmpty;
     pthread_cond_t* queueNotFull = &queueHandle->queueNotFull;
     pthread_mutex_t* queueLock = &queueHandle->queueLock;
@@ -178,7 +178,7 @@ namespace Os {
   Queue::QueueStatus Queue::send(const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority, QueueBlocking block) {
     (void) block; // Always non-blocking for now
     QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
-    BufferQueue* queue = &queueHandle->queue;
+    Types::BufferQueue* queue = &queueHandle->queue;
 
     if (nullptr == queueHandle) {
         return QUEUE_UNINITIALIZED;
@@ -201,7 +201,7 @@ namespace Os {
 
   Queue::QueueStatus receiveNonBlock(QueueHandle* queueHandle, U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority) {
 
-      BufferQueue* queue = &queueHandle->queue;
+      Types::BufferQueue* queue = &queueHandle->queue;
       pthread_mutex_t* queueLock = &queueHandle->queueLock;
       pthread_cond_t* queueNotFull = &queueHandle->queueNotFull;
       NATIVE_INT_TYPE ret;
@@ -257,7 +257,7 @@ namespace Os {
 
   Queue::QueueStatus receiveBlock(QueueHandle* queueHandle, U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority) {
 
-      BufferQueue* queue = &queueHandle->queue;
+      Types::BufferQueue* queue = &queueHandle->queue;
       pthread_cond_t* queueNotEmpty = &queueHandle->queueNotEmpty;
       pthread_cond_t* queueNotFull = &queueHandle->queueNotFull;
       pthread_mutex_t* queueLock = &queueHandle->queueLock;
@@ -346,7 +346,7 @@ namespace Os {
       if (nullptr == queueHandle) {
           return 0;
       }
-      BufferQueue* queue = &queueHandle->queue;
+      Types::BufferQueue* queue = &queueHandle->queue;
       return queue->getCount();
   }
 
@@ -355,7 +355,7 @@ namespace Os {
       if (nullptr == queueHandle) {
           return 0;
       }
-      BufferQueue* queue = &queueHandle->queue;
+      Types::BufferQueue* queue = &queueHandle->queue;
       return queue->getMaxCount();
   }
 
@@ -364,7 +364,7 @@ namespace Os {
       if (nullptr == queueHandle) {
           return 0;
       }
-      BufferQueue* queue = &queueHandle->queue;
+      Types::BufferQueue* queue = &queueHandle->queue;
       return queue->getDepth();
   }
 
@@ -373,7 +373,7 @@ namespace Os {
       if (nullptr == queueHandle) {
           return 0;
       }
-      BufferQueue* queue = &queueHandle->queue;
+      Types::BufferQueue* queue = &queueHandle->queue;
       return queue->getMsgSize();
   }
 

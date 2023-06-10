@@ -12,11 +12,11 @@
 //
 // ======================================================================
 
-#include "Os/Pthreads/BufferQueue.hpp"
+#include "Utils/Types/BufferQueue/BufferQueue.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <cstring>
 
-namespace Os {
+namespace Types {
 
   /////////////////////////////////////////////////////
   // Class functions:

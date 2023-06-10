@@ -10,13 +10,13 @@
 //
 // ======================================================================
 
-#ifndef OS_PTHREADS_BUFFER_QUEUE_HPP
-#define OS_PTHREADS_BUFFER_QUEUE_HPP
+#ifndef UTIL_TYPES_BUFFER_QUEUE_HPP
+#define UTIL_TYPES_BUFFER_QUEUE_HPP
 
 #include <FpConfig.hpp>
 
 // This is a generic buffer queue interface. 
-namespace Os {
+namespace Types {
 
   //! \class BufferQueue
   //! \brief A generic buffer queue data structure
@@ -103,7 +103,7 @@ namespace Os {
     NATIVE_UINT_TYPE getDepth();
 
     // Internal member functions:
-    private:
+  private:
     // Initialize data structures necessary for the queue:
     bool initialize(NATIVE_UINT_TYPE depth, NATIVE_UINT_TYPE msgSize);
     // Destroy queue data structures:

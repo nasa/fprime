@@ -33,4 +33,3 @@ namespace Os {
         (void) fflush(stdout);
     }
 }
-

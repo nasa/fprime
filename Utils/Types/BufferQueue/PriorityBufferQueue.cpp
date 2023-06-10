@@ -13,8 +13,8 @@
 //
 // ======================================================================
 
-#include "Os/Pthreads/BufferQueue.hpp"
-#include "Os/Pthreads/MaxHeap/MaxHeap.hpp"
+#include "Utils/Types/BufferQueue/BufferQueue.hpp"
+#include "Utils/Types/MaxHeap/MaxHeap.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <cstring>
 #include <cstdio>
@@ -23,7 +23,7 @@
 // This is a priority queue implementation implemented using a stable max heap.
 // Elements pushed onto the queue will be popped off in priority order.
 // Elements of the same priority will be popped off in FIFO order.
-namespace Os {
+namespace Types {
 
   /////////////////////////////////////////////////////
   // Queue handler:

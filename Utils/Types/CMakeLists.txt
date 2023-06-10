@@ -26,3 +26,5 @@ set(UT_SOURCE_FILES
 )
 # STest Includes for this UT
 register_fprime_ut("Types_Circular_Buffer_ut_exe")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferQueue")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MaxHeap")

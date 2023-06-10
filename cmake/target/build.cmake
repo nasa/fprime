@@ -69,6 +69,18 @@ function(build_setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPE
     # Includes the source, so that the Ac files can include source headers
     target_include_directories("${MODULE}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+
+    # Handle executable items' need for determined package implementation choices
+    is_target_library(IS_LIB "${MODULE}")
+    if (NOT IS_LIB)
+        get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
+        list(APPEND RECURSIVE_DEPENDENCIES ${DEPENDENCIES})
+        list(REMOVE_DUPLICATES RECURSIVE_DEPENDENCIES)
+        if (RECURSIVE_DEPENDENCIES)
+            setup_executable_implementations("${MODULE}" "${RECURSIVE_DEPENDENCIES}")
+        endif()
+    endif ()
+
     # For every detected dependency, add them to the supplied module. This enforces build order.
     # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
     # this prevents the need for manually specifying link orders.
@@ -96,6 +108,43 @@ function(build_setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPE
         target_compile_options("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_COMPILE_FLAGS})
         target_link_libraries("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_LINK_FLAGS})
     endif()
+endfunction()
+
+
+function(setup_executable_implementations MODULE FULL_DEPENDENCY_LIST)
+    # Check and setup implementors
+    foreach (DEPENDENCY IN LISTS FULL_DEPENDENCY_LIST)
+        get_property(LOCAL_REQUIRED GLOBAL PROPERTY "${DEPENDENCY}_REQUIRED_IMPLEMENTATIONS")
+        if (LOCAL_REQUIRED)
+            foreach (IMPLEMENTATION IN LISTS LOCAL_REQUIRED)
+                setup_executable_implementation("${DEPENDENCY}" "${IMPLEMENTATION}" "${MODULE}")
+            endforeach ()
+        endif ()
+    endforeach()
+endfunction()
+
+function(setup_executable_implementation REQUESTER IMPLEMENTATION MODULE)
+    get_property(IMPLEMENTOR GLOBAL PROPERTY "${IMPLEMENTATION}_${MODULE}")
+    if (NOT IMPLEMENTOR)
+        get_property(IMPLEMENTOR GLOBAL PROPERTY "${IMPLEMENTATION}_${FPRIME_PLATFORM}")
+    endif()
+    if (NOT IMPLEMENTOR)
+        get_property(LOCAL_IMPLEMENTATIONS GLOBAL PROPERTY "${REQUESTER}_IMPLEMENTORS")
+        if (NOT LOCAL_IMPLEMENTATIONS)
+            set(LOCAL_IMPLEMENTATIONS "")
+        endif ()
+        string(REPLACE ";" ", " POSSIBLE "${LOCAL_IMPLEMENTATIONS}")
+        message(FATAL_ERROR "${REQUESTER} requires an implementation of ${IMPLEMENTATION}.  Choose from: ${POSSIBLE}")
+    endif ()
+    if (NOT TARGET ${IMPLEMENTOR})
+        message(FATAL_ERROR "${IMPLEMENTOR} not available for platform ${FPRIME_PLATFORM}")
+    endif()
+    message(STATUS "Using Implementation: ${IMPLEMENTOR} for ${IMPLEMENTATION}")
+
+    target_link_libraries("${IMPLEMENTOR}" PRIVATE "${REQUESTER}") # Could be done elsewhere
+    # Note: order and redundancy is critical
+    target_link_libraries("${MODULE}" PUBLIC "${REQUESTOR}" "${IMPLEMENTOR}")
+    add_dependencies("${MODULE}" "${IMPLEMENTOR}")
 endfunction()
 
 ####

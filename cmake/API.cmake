@@ -11,6 +11,7 @@
 # - Register an fprime build target/build stage to allow custom build steps. (Experimental)
 #
 ####
+include(utilities)
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
@@ -541,7 +542,7 @@ endmacro(register_fprime_list_helper)
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form.
 #
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
-###
+####
 macro(register_fprime_build_autocoder TARGET_FILE_PATH)
     # Normal registered targets don't run in prescan
     message(STATUS "Registering custom autocoder: ${TARGET_FILE_PATH}")
@@ -549,6 +550,37 @@ macro(register_fprime_build_autocoder TARGET_FILE_PATH)
         register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
     endif()
 endmacro(register_fprime_build_autocoder)
+
+
+####
+# Function `require_fprime_implementation`:
+#
+# Designates that the current module requires a separate implementation in order for it to function properly. As an
+# example, Os requires an implementation of `Os/Task` and other modules.
+####
+function(require_fprime_implementation IMPLEMENTATION)
+    #TODO: convert implementation to _ safe implementation
+    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "${FPRIME_CURRENT_MODULE}_REQUIRED_IMPLEMENTATIONS")
+endfunction()
+
+function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
+    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
+endfunction()
+
+function(choose_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
+    # Check for passed in module name
+    if (ARGC EQUAL 3)
+        set(ACTIVE_MODULE "${ARGV2}")
+    elseif (FPRIME_CURRENT_MODULE)
+        set(ACTIVE_MODULE "${FPRIME_CURRENT_MODULE}")
+    elseif(FPRIME_PLATFORM)
+        set(ACTIVE_MODULE "${FPRIME_PLATFORM}")
+    else()
+        message(FATAL_ERROR "Cannot call 'choose_fprime_implementation' outside an fprime module or platform CMake file")
+    endif()
+    #TODO: convert implementation to _ safe implementation
+    set_property(GLOBAL PROPERTY "${IMPLEMENTATION}_${ACTIVE_MODULE}" "${IMPLEMENTOR}")
+endfunction()
 
 #### Documentation links
 # Next Topics:

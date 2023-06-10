@@ -1,35 +1,48 @@
-####
-# F prime CMakeLists.txt:
-#
-# SOURCE_FILES: combined list of source and autocoding files
-# MOD_DEPS: (optional) module dependencies
-#
-####
+# File implementation
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Linux/FileStub.cpp"
-)
-set(MOD_DEPS
-  Fw/Cfg
-  Fw/Types
+    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FileSystem.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Directory.cpp"
 )
 
-register_fprime_module()
+register_fprime_module(Os_File_Stub)
+register_fprime_implementation(Os_File Os_File_Stub)
 
-# Sets MODULE_NAME to unique name based on path
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
-
-# Exclude test module from all build
-set_target_properties(
-  ${MODULE_NAME}
-  PROPERTIES
-  EXCLUDE_FROM_ALL TRUE
+# Timer implementation
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
 )
-# Sets MODULE_NAME to unique name based on path
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
+register_fprime_module(Os_Timer_Stub)
+register_fprime_implementation(Os_Timer Os_Time_Stub)
 
-# Exclude test module from all build
-set_target_properties(
-  ${MODULE_NAME}
-  PROPERTIES
-  EXCLUDE_FROM_ALL TRUE
+
+# Mutex implementation
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
 )
+register_fprime_module(Os_Mutex_Stub)
+register_fprime_implementation(Os_Mutex Os_Mutex_Stub)
+
+# SystemResources implementation
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/SystemResources.cpp"
+)
+
+register_fprime_module(Os_Resource_Stub)
+register_fprime_implementation(Os_Resource Os_Resource_Stub)
+
+# Watchdog implementation
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/WatchdogTimer.cpp"
+)
+
+register_fprime_module(Os_Watchdog_Stub)
+register_fprime_implementation(Os_Watchdog Os_Watchdog_Stub)
+
+# InterruptLock implementation
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/InterruptLock.cpp"
+)
+
+register_fprime_module(Os_InterruptLock_Stub)
+register_fprime_implementation(Os_InterruptLock Os_InterruptLock_Stub)
