@@ -449,6 +449,7 @@ ERRORCHECK
 errorlevel
 errornum
 ert
+ethanchee
 etime
 ETIMEDOUT
 eturn
