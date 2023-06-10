@@ -4,6 +4,22 @@ module Svc {
   passive component GenericHub {
 
     # ----------------------------------------------------------------------
+    # Mimic Ports
+    # ----------------------------------------------------------------------
+
+    @ Telemetry input port for mimicking an event processor
+    guarded input port TlmRecv: Fw.Tlm
+
+    @ Event input port for mimicking an event processor
+    guarded input port LogRecv: Fw.Log
+
+    @ Cross-hub event output port
+    output port LogSend:  Fw.Log
+
+    @ Cross-hub telemetry output port
+    output port TlmSend: Fw.Tlm
+
+    # ----------------------------------------------------------------------
     # General Ports
     # ----------------------------------------------------------------------
 
