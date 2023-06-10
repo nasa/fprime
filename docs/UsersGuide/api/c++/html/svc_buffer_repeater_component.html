@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_buffer_repeater_component.html','
 <div class="title"><a class="el" href="class_svc_1_1_buffer_repeater.html">Svc::BufferRepeater</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md264"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md269"></a>
 Svc::BufferRepeater: Buffer Repeater (Passive Component)</h1>
-<h2><a class="anchor" id="autotoc_md265"></a>
+<h2><a class="anchor" id="autotoc_md270"></a>
 1. Introduction</h2>
 <p>The BufferRepeater component is designed to take in an <code>Fw::buffer</code> port call and repeat it to multiple output ports. New memory is allocated from a <code><a class="el" href="namespace_svc.html#a3cd251693b4a0d77eb953f6dd9c049e9">Svc::BufferManager</a></code> and the data is copied to ensure that each downstream component has full ownership of its data. The original buffer is deallocated. Users call <code>configure</code> to set the response of the component when allocation requests fail.</p>
-<h2><a class="anchor" id="autotoc_md266"></a>
+<h2><a class="anchor" id="autotoc_md271"></a>
 2. Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -107,10 +107,10 @@ Svc::BufferRepeater: Buffer Repeater (Passive Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">BUFFER_REPEATER_04   </td><td class="markdownTableBodyNone">The buffer repeater shall have a configurable response to allocation failures   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md267"></a>
+<h2><a class="anchor" id="autotoc_md272"></a>
 3. Design</h2>
 <p>The buffer repeater has a single <code>portIn</code> port of type <code>Fw.BufferSend</code> and an array of <code>portOut</code> ports of the same type. Each port call received on <code>portIn</code> is repeated to each connected <code>portOut</code> port. These repetitions emit a copy of the <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> data.</p>
-<h2><a class="anchor" id="autotoc_md268"></a>
+<h2><a class="anchor" id="autotoc_md273"></a>
 3.1 Ports</h2>
 <p><code><a class="el" href="class_svc_1_1_buffer_repeater.html">Svc::BufferRepeater</a></code> has the following ports:</p>
 <table class="markdownTable">
@@ -131,11 +131,11 @@ Svc::BufferRepeater: Buffer Repeater (Passive Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>time get</code>   </td><td class="markdownTableBodyNone"><code>Time</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_fw_1_1_time.html">Fw.Time</a></code>   </td><td class="markdownTableBodyNone">Port for getting the time   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md269"></a>
+<h4><a class="anchor" id="autotoc_md274"></a>
 3.1.1 portIn handler</h4>
 <p>The <code>portIn</code> port handler receives an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> data type and a port number. For each connected <code>portOut</code> port it allocates new memory large enough to hold a copy of the <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> data via the <code>allocate</code> port, copies the data to the new invocation, and sends it to the active <code>portOut</code> port. This continues until each <code>portOut</code> port has been tried and at the end it returns the original buffer via <code>deallocate</code>.</p>
 <p>Should an allocation fail, <code>portOut</code> is not called and an event may be emitted (see below).</p>
-<h3><a class="anchor" id="autotoc_md270"></a>
+<h3><a class="anchor" id="autotoc_md275"></a>
 3.2 Events</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -145,7 +145,7 @@ Svc::BufferRepeater: Buffer Repeater (Passive Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">AllocationHardFailure   </td><td class="markdownTableBodyNone">FATAL indicating allocation failure when configured to FATAL_ON_OUT_OF_MEMORY   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md271"></a>
+<h2><a class="anchor" id="autotoc_md276"></a>
 4. Configuration</h2>
 <p>Buffer repeater maximum output ports are configured using <code>AcConstants.fpp</code> as shown below:</p>
 <div class="fragment"><div class="line">constant BufferRepeaterOutputPorts = 10</div>

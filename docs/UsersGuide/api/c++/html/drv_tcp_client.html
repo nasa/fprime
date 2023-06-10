@@ -88,11 +88,11 @@ $(document).ready(function(){initNavTree('_drv_tcp_client.html',''); initResizab
 <div class="title"><a class="el" href="namespace_drv.html#a998506404c5fbafa50a8167b3a4772a7">Drv::TcpClient</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md55"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md60"></a>
 Drv::TcpClient TCP Client Component</h1>
 <p>The TCP client component bridges the byte stream driver model interface to a remote TCP server to which this tcp client connects and sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data and producing the callback port call.</p>
 <p>For more information on the supporting TCP implementation see: <a class="el" href="class_drv_1_1_tcp_client_socket.html" title="Helper for setting up Tcp using Berkley sockets as a client.">Drv::TcpClientSocket</a>. For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverModel.</p>
-<h2><a class="anchor" id="autotoc_md56"></a>
+<h2><a class="anchor" id="autotoc_md61"></a>
 Design</h2>
 <p>The manager component (typically the ground interface) initiates the transfer of send data by calling the "send" port. The caller will provide a <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> containing the data to send and the port call will return a status of that send. These responses are an enumeration whose values are described in the following table:</p>
 <table class="markdownTable">
@@ -117,7 +117,7 @@ Design</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Drv::RECV_ERROR   </td><td class="markdownTableBodyNone">Receive produced an error and buffer contains no valid data.   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md57"></a>
+<h2><a class="anchor" id="autotoc_md62"></a>
 Usage</h2>
 <p>The <a class="el" href="class_drv_1_1_tcp_client_component_impl.html">Drv::TcpClientComponentImpl</a> must be configured with the address of the remote connection, and the socket must be open to begin. Usually, the user runs the <a class="el" href="class_drv_1_1_tcp_client_component_impl.html">Drv::TcpClientComponentImpl</a> engaging its read thread, which will automatically open the connection. The component is passive and has no commands meaning users should <code>init</code>, <code>configure</code>, and <code>startSocketTask</code>. Upon shutdown, the <code>stopSocketThread</code> and <code>joinSocketThread</code> methods should be called to ensure proper resource deallocation. This typical usage is shown in the C++ snippet below.</p>
 <div class="fragment"><div class="line"> {c++}</div>
@@ -139,10 +139,10 @@ Usage</h2>
 <div class="line">    comm.stopSocketTask();</div>
 <div class="line">    (void) comm.joinSocketTask(nullptr);</div>
 <div class="line">}</div>
-</div><!-- fragment --> <h2><a class="anchor" id="autotoc_md58"></a>
+</div><!-- fragment --> <h2><a class="anchor" id="autotoc_md63"></a>
 Class Diagram</h2>
 <p><img src="./img/class_diagram_tcp_client.png" alt="tcp client" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md59"></a>
+<h2><a class="anchor" id="autotoc_md64"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -154,7 +154,7 @@ Requirements</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">TCP-CLIENT-COMP-003   </td><td class="markdownTableBodyNone">The tcp client component shall provide bidirectional communication with a tcp server   </td><td class="markdownTableBodyNone">unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md60"></a>
+<h2><a class="anchor" id="autotoc_md65"></a>
 Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

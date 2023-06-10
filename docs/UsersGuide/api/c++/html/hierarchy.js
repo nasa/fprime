@@ -266,6 +266,9 @@ var hierarchy =
     [ "StaticMemoryComponentBase", null, [
       [ "Svc::StaticMemoryComponentImpl", "class_svc_1_1_static_memory_component_impl.html", null ]
     ] ],
+    [ "StreamCrossoverComponentBase", null, [
+      [ "Drv::StreamCrossover", "class_drv_1_1_stream_crossover.html", null ]
+    ] ],
     [ "FppTest::Port::StringArgs", "struct_fpp_test_1_1_port_1_1_string_args.html", null ],
     [ "FppTest::Port::StructArgs", "struct_fpp_test_1_1_port_1_1_struct_args.html", null ],
     [ "FppTest::Port::StructReturn", "struct_fpp_test_1_1_port_1_1_struct_return.html", null ],

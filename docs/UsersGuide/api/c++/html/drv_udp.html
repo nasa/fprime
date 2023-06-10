@@ -88,11 +88,11 @@ $(document).ready(function(){initNavTree('_drv_udp.html',''); initResizable(); }
 <div class="title">Drv::Udp Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md67"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md72"></a>
 Drv::Udp UDP Component</h1>
 <p>The UDP client component bridges the byte stream driver model interface to a remote UDP port to which this udp component sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data and producing the callback port call. Udp does not require bidirectional operation and can be used in a single direction.</p>
 <p>For more information on the supporting UDP implementation see: <a class="el" href="class_drv_1_1_udp_socket.html" title="Helper for setting up Udp using Berkley sockets as a client.">Drv::UdpSocket</a>. For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverModel.</p>
-<h2><a class="anchor" id="autotoc_md68"></a>
+<h2><a class="anchor" id="autotoc_md73"></a>
 Design</h2>
 <p>The manager component (typically the ground interface) initiates the transfer of send data by calling the "send" port. The caller will provide a <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> containing the data to send and the port call will return a status of that send. These responses are an enumeration whose values are described in the following table:</p>
 <table class="markdownTable">
@@ -117,7 +117,7 @@ Design</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Drv::RECV_ERROR   </td><td class="markdownTableBodyNone">Receive produced an error and buffer contains no valid data.   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md69"></a>
+<h2><a class="anchor" id="autotoc_md74"></a>
 Usage</h2>
 <p>The <a class="el" href="class_drv_1_1_tcp_client_component_impl.html">Drv::TcpClientComponentImpl</a> must be configured with the address of the remote connection, and the socket must be open to begin. Usually, the user runs the <a class="el" href="class_drv_1_1_tcp_client_component_impl.html">Drv::TcpClientComponentImpl</a> engaging its read thread, which will automatically open the connection. The component is passive and has no commands meaning users should <code>init</code>, <code>configureSend</code>/<code>configureRecv</code>, and <code>startSocketTask</code>. Upon shutdown, the <code>stopSocketThread</code> and <code>joinSocketThread</code> methods should be called to ensure proper resource deallocation. This typical usage is shown in the C++ snippet below.</p>
 <p>Since UDP support single or bidirectional communication, configuring each direction is cone separately using the two methods <code>configureSend</code> and <code>configureRecv</code>. The user is not required to call both.</p>
@@ -142,10 +142,10 @@ Usage</h2>
 <div class="line">    comm.stopSocketTask();</div>
 <div class="line">    (void) comm.joinSocketTask(nullptr);</div>
 <div class="line">}</div>
-</div><!-- fragment --> <h2><a class="anchor" id="autotoc_md70"></a>
+</div><!-- fragment --> <h2><a class="anchor" id="autotoc_md75"></a>
 Class Diagram</h2>
 <p><img src="./img/class_diagram_udp.png" alt="classdiagram" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md71"></a>
+<h2><a class="anchor" id="autotoc_md76"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -157,7 +157,7 @@ Requirements</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">UDP-COMP-003   </td><td class="markdownTableBodyNone">The udp component shall provide single and bidirectional communication across udp   </td><td class="markdownTableBodyNone">unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md72"></a>
+<h2><a class="anchor" id="autotoc_md77"></a>
 Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

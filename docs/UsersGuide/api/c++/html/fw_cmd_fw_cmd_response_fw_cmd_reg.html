@@ -88,28 +88,28 @@ $(document).ready(function(){initNavTree('_fw_cmd_fw_cmd_response_fw_cmd_reg.htm
 <div class="title">Fw::Cmd / Fw::CmdResponse / Fw::CmdReg Ports </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md81"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md86"></a>
 Fw::Cmd / Fw::CmdResponse / Fw::CmdReg Ports</h1>
-<h2><a class="anchor" id="autotoc_md82"></a>
+<h2><a class="anchor" id="autotoc_md87"></a>
 1. Introduction</h2>
 <p>The <code>Fw::Cmd</code> port is used to send a command with encoded arguments to a component.</p>
 <p>The <code>Fw::CmdResponse</code> port is used by components to report the completion status of a command.</p>
 <p>The <code>Fw::CmdReg</code> port is used by components to register their set of command opcodes.</p>
-<h2><a class="anchor" id="autotoc_md83"></a>
+<h2><a class="anchor" id="autotoc_md88"></a>
 2. Design</h2>
-<h3><a class="anchor" id="autotoc_md84"></a>
+<h3><a class="anchor" id="autotoc_md89"></a>
 2.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md85"></a>
+<h4><a class="anchor" id="autotoc_md90"></a>
 2.1.1 Port Diagram</h4>
 <p>The <code>Fw::Cmd</code> ports and types have the following diagram:</p>
 <p><img src="img/CmdBDD.jpg" alt="`Fw::Cmd` Diagram" title="Fw::Cmd" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md86"></a>
+<h4><a class="anchor" id="autotoc_md91"></a>
 2.1.2 Serializables</h4>
-<p><a class="anchor" id="autotoc_md87"></a> </p><h5>2.1.2.1 Fw::PrmBuffer</h5>
+<p><a class="anchor" id="autotoc_md92"></a> </p><h5>2.1.2.1 Fw::PrmBuffer</h5>
 <p>The <code><a class="el" href="class_fw_1_1_cmd_arg_buffer.html">Fw::CmdArgBuffer</a></code> class represents a buffer to store a serialized command argument list.</p>
 <p>The <code>Fw::CmdString</code> class represents a string class used for string command arguments.</p>
 <p>The <code><a class="el" href="class_fw_1_1_cmd_packet.html">Fw::CmdPacket</a></code> class represents a packet containing a serialized command.</p>
-<h2><a class="anchor" id="autotoc_md88"></a>
+<h2><a class="anchor" id="autotoc_md93"></a>
 3. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

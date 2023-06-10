@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_assert_fatal_adapter_component.ht
 <div class="title"><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md227"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md232"></a>
 Svc::AssertFatalAdapter Component</h1>
-<h2><a class="anchor" id="autotoc_md228"></a>
+<h2><a class="anchor" id="autotoc_md233"></a>
 1. Introduction</h2>
 <p><code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> is a passive component that intercepts calls to FW_ASSERT and issues FATAL events for each.</p>
-<h2><a class="anchor" id="autotoc_md229"></a>
+<h2><a class="anchor" id="autotoc_md234"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -102,33 +102,33 @@ Svc::AssertFatalAdapter Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">AF-001   </td><td class="markdownTableBodyNone">The <code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> component shall convert all calls to FW_ASSERT to FATAL events   </td><td class="markdownTableBodyNone">Unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md230"></a>
+<h2><a class="anchor" id="autotoc_md235"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md231"></a>
+<h3><a class="anchor" id="autotoc_md236"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md232"></a>
+<h4><a class="anchor" id="autotoc_md237"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> component has the following component diagram:</p>
 <p><img src="img/AssertFatalAdapterBDD.jpg" alt="AssertFatalAdapter Diagram" title="AssertFatalAdapter" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md233"></a>
+<h4><a class="anchor" id="autotoc_md238"></a>
 3.1.2 Ports</h4>
 <p>The <code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> component uses only the log infrastructure ports.</p>
 <p>Port Data Type | Name | Direction | Kind | Usage -----------&mdash; | -&mdash; | ------&mdash; | -&mdash; | --&mdash;</p>
-<h4><a class="anchor" id="autotoc_md234"></a>
+<h4><a class="anchor" id="autotoc_md239"></a>
 3.2 Functional Description</h4>
 <p>The <code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> component contains a private implementation of the <code>Fw::AssertHook</code> base class (<code>AssertFatalAdapter</code>). Upon instantiation, the derived class registers itself to receive calls the FW_ASSERT. When it receives any one of them, it issues a FATAL event corresponding to the number of arguments to FW_ASSERT. Whatever mechanism in the system that deals with FATAL events will handle the asserts via that mechanism. <br  />
 </p>
-<h3><a class="anchor" id="autotoc_md235"></a>
+<h3><a class="anchor" id="autotoc_md240"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md236"></a>
+<h4><a class="anchor" id="autotoc_md241"></a>
 3.3.1 FW_ASSERT calls</h4>
-<h3><a class="anchor" id="autotoc_md237"></a>
+<h3><a class="anchor" id="autotoc_md242"></a>
 3.4 State</h3>
 <p><code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md238"></a>
+<h3><a class="anchor" id="autotoc_md243"></a>
 3.5 Algorithms</h3>
 <p><code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md239"></a>
+<h2><a class="anchor" id="autotoc_md244"></a>
 4. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

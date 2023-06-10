@@ -88,18 +88,18 @@ $(document).ready(function(){initNavTree('_fw_log_log_text.html',''); initResiza
 <div class="title">Fw::Log, Fw::LogText Ports </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md105"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md110"></a>
 Fw::Log / Fw::LogText Ports</h1>
-<h2><a class="anchor" id="autotoc_md106"></a>
+<h2><a class="anchor" id="autotoc_md111"></a>
 1. Introduction</h2>
 <p>The <code>Fw::Log</code> port is used to pass a serialized form of an ISF Event. It passes the ID, a time tag, the severity, and a buffer containing the serialized arguments of the event.</p>
 <p>The <code>Fw::LogText</code> port is used to pass a printable text representation of an ISF Event. It passes the ID, a time tag, the severity, and a string containing a description of the event. <br  />
 </p>
-<h2><a class="anchor" id="autotoc_md107"></a>
+<h2><a class="anchor" id="autotoc_md112"></a>
 2. Design</h2>
-<h3><a class="anchor" id="autotoc_md108"></a>
+<h3><a class="anchor" id="autotoc_md113"></a>
 2.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md109"></a>
+<h4><a class="anchor" id="autotoc_md114"></a>
 2.1.1 Port Diagram</h4>
 <p>The <code>Fw::Log</code> and <code>Fw::LogText</code> ports have the following port diagram:</p>
 <p><img src="img/LogBDD.jpg" alt="`Fw::Log/LogText` Diagram" title="Fw::Log/LogText Port" class="inline"/></p>
@@ -127,11 +127,11 @@ Fw::Log / Fw::LogText Ports</h1>
 <td class="markdownTableBodyNone">severity   </td><td class="markdownTableBodyNone">The severity of the event.   </td></tr>
 </table>
 <p>| TEXT_LOG_FATAL - A condition has been encountered that makes the software unable to continue | TEXT_LOG_WARNING_HI - A condition has been encountered that is a serious failure, but the software can continue | TEXT_LOG_WARNING_LO - A condition has been encountered that is a failure, but the software is largely unaffected | TEXT_LOG_COMMAND - An activity related to processing commands has happened | TEXT_LOG_ACTIVITY_HI - An important nominal event has happened | TEXT_LOG_ACTIVITY_LO - An unimportant nominal event has happened that is a subset of an important event | TEXT_LOG_DIAGNOSTIC - A detailed list of events in an activity that normally do not need to be seen; used for debugging text | Text version of event</p>
-<h4><a class="anchor" id="autotoc_md110"></a>
+<h4><a class="anchor" id="autotoc_md115"></a>
 2.1.2 Serializables</h4>
-<p><a class="anchor" id="autotoc_md111"></a> </p><h5>2.1.2.1 <a class="el" href="class_fw_1_1_log_buffer.html">Fw::LogBuffer</a></h5>
+<p><a class="anchor" id="autotoc_md116"></a> </p><h5>2.1.2.1 <a class="el" href="class_fw_1_1_log_buffer.html">Fw::LogBuffer</a></h5>
 <p>The <code><a class="el" href="class_fw_1_1_log_buffer.html">Fw::LogBuffer</a></code> class represents a buffer to store a serialized parameter value.</p>
-<h2><a class="anchor" id="autotoc_md112"></a>
+<h2><a class="anchor" id="autotoc_md117"></a>
 3. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -139,9 +139,9 @@ Fw::Log / Fw::LogText Ports</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">9/3/2015   </td><td class="markdownTableBodyNone">Initial Version   </td></tr>
 </table>
-<p><a class="anchor" id="autotoc_md113"></a> </p><h5>2.1.2.1 <a class="el" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a></h5>
+<p><a class="anchor" id="autotoc_md118"></a> </p><h5>2.1.2.1 <a class="el" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a></h5>
 <p>The <code><a class="el" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a></code> class is used by the logging autocoder when string arguments are declared.</p>
-<h2><a class="anchor" id="autotoc_md114"></a>
+<h2><a class="anchor" id="autotoc_md119"></a>
 3. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

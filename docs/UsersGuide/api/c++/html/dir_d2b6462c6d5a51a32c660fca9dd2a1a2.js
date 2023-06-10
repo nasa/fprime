@@ -8,6 +8,7 @@ var dir_d2b6462c6d5a51a32c660fca9dd2a1a2 =
     [ "LinuxI2cDriver", "dir_3f839fc6fe510b79095da990397c1766.html", "dir_3f839fc6fe510b79095da990397c1766" ],
     [ "LinuxSpiDriver", "dir_93231718ab2a22a30f13b81bd9bbb817.html", "dir_93231718ab2a22a30f13b81bd9bbb817" ],
     [ "LinuxUartDriver", "dir_dd4388887f5f3ffb3203364134bd5e0b.html", "dir_dd4388887f5f3ffb3203364134bd5e0b" ],
+    [ "StreamCrossover", "dir_c78a2c7c3e3646ebab6b87e215c03340.html", "dir_c78a2c7c3e3646ebab6b87e215c03340" ],
     [ "TcpClient", "dir_618d7795118739559b27356cd2668752.html", "dir_618d7795118739559b27356cd2668752" ],
     [ "TcpServer", "dir_4553222075ba3e6c376a07a0c9dd009c.html", "dir_4553222075ba3e6c376a07a0c9dd009c" ],
     [ "Udp", "dir_2386f4046990e351b81f49d54a1ff984.html", "dir_2386f4046990e351b81f49d54a1ff984" ]

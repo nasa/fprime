@@ -12,6 +12,7 @@ var namespace_drv =
     [ "LinuxI2cDriver", "class_drv_1_1_linux_i2c_driver.html", "class_drv_1_1_linux_i2c_driver" ],
     [ "LinuxSpiDriverComponentImpl", "class_drv_1_1_linux_spi_driver_component_impl.html", "class_drv_1_1_linux_spi_driver_component_impl" ],
     [ "LinuxUartDriver", "class_drv_1_1_linux_uart_driver.html", "class_drv_1_1_linux_uart_driver" ],
+    [ "StreamCrossover", "class_drv_1_1_stream_crossover.html", "class_drv_1_1_stream_crossover" ],
     [ "TcpClientComponentImpl", "class_drv_1_1_tcp_client_component_impl.html", "class_drv_1_1_tcp_client_component_impl" ],
     [ "TcpServerComponentImpl", "class_drv_1_1_tcp_server_component_impl.html", "class_drv_1_1_tcp_server_component_impl" ],
     [ "UdpComponentImpl", "class_drv_1_1_udp_component_impl.html", "class_drv_1_1_udp_component_impl" ],
