@@ -52,10 +52,38 @@ class Tester : public GenericHubGTestBase {
     //!
     void test_random_io();
 
+    //! Test of telemetry in-out
+    //!
+    void test_telemetry();
+
+    //! Test of event in-out
+    //!
+    void test_events();
+
+
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
+
+    //! Handler for from_LogSend
+    //!
+    void from_LogSend_handler(const NATIVE_INT_TYPE portNum,   /*!< The port number*/
+                              FwEventIdType id,                /*!< Log ID */
+                              Fw::Time& timeTag,               /*!< Time Tag  */
+                              const Fw::LogSeverity& severity, /*!< The severity argument */
+                              Fw::LogBuffer& args              /*!< Buffer containing serialized log entry */
+    );
+
+    //! Handler for from_TlmSend
+    //!
+    void from_TlmSend_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwChanIdType id, /*!< Telemetry Channel ID */
+          Fw::Time &timeTag, /*!< Time Tag */
+          Fw::TlmBuffer &val /*!< Buffer containing serialized telemetry value */
+    );
 
     //! Handler for from_buffersOut
     //!
@@ -97,6 +125,8 @@ class Tester : public GenericHubGTestBase {
     void send_random_comm(U32 port);
 
     void send_random_buffer(U32 port);
+
+    void random_fill(Fw::SerializeBufferBase& buffer, U32 max_size);
 
     // ----------------------------------------------------------------------
     // Helper methods
