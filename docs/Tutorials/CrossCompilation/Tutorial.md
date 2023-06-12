@@ -35,88 +35,13 @@ To run through this tutorial, you must have a computer that meets the following 
 <a name="Installing Dependencies"></a>
 ## 1.2. Installing Dependencies
 
-Ensure the basic packages/dependencies are installed.
+Choose the operating system you are using to install F Prime:
 
-## Microsoft Windows 10
+![Windows 10/11 WSL](./Windows.md)
 
-Windows 10 ships with a technology known as WSL. WSL allows users to run Linux virtual machines transparently within the Windows 10 operating system.
+![Mac OS X](./Mac.md)
 
-**Powershell: Install WSL with Default Ubuntu**
-```powershell
-wsl --install
-```
-
-To start Ubuntu under WSL, search for Ubuntu in the start menu adn select the "Ubuntu on Windows" app. All class commands should be run on these Ubuntu terminals.
-
-> Full instructions and troubleshooting help is available in the 
-> [Microsoft documentation](https://learn.microsoft.com/en-us/windows/wsl/install).
-
-Lastly, Windows users must open up a firewall port and forward that port to WSL to 
-ensure the hardware can call back into F' ground data system running in WSL. First we'll 
-need to note the IP address of the WSL machine. THis is done with the following 
-comamnd *in an administrator PowerShell*.
-
-```powershell
-wsl hostname -I
-```
-
-> Record the output of this comand for the next step. For this guide, we will use 
-> the value `127.0.0.1`.
-
-Next, we will add a firewall rule and forward it to the WSL instance. This is done with the following commands:
-
-> Warning: these commands work with the Windows firewall. Security and antivirus tools 
-> can run extra firewall rules. Users must allow the port `50000` (Or whichever port that 
-> is going to be used) or disable these extra firewalls
-
-**PowerShell: Add and Forward External Firewall Rule**
-```PowerShell
-New-NetFirewallRule -DisplayName "fprime" -Direction inbound -Profile Any -Action Allow -LocalPort 50000 -Protocol TCP
-```
-
-> Remember to change `127.0.0.1` to your recorded ip address as discovered with 
-> `wsl hostname -I`. Users are advised to remove this rule after the class has been completed.
-
-**IMPORTANT:**
-
-**Go to the Ubuntu 20.04 / 22.04 / Generic Linux subsection to finish setting up your WSL environment**
-
-## Mac OS X
-
-MacOS like Linux is a unix system and thus may be used directly for most of this 
-class. However, Mac users must install the following utilities 
-*and ensure they are available on the command line path*.
-
-1. [Python 3](https://www.python.org/downloads/release/python-3913/)
-2. [CMake](https://cmake.org/download/)
-3. GCC/CLang typically installed with xcode-select
-
-**Installing GCC/CLang on macOS**
-```bash
-xcode-select --install
-```
-
-Installing Python and running the above command to install gcc/CLang should ensure 
-that those tools are on the path.
-
-CMake requires one additional step to ensure it is on the path:
-
-```bash
-sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
-```
-
-In order to cross-compile, a Linux box is essential. You may choose to use a virtual 
-machine or may choose to follow the instructions in [Appendix I](./appendix-1.md) to 
-install a docker container including the necessary tools. 
-
-## Ubuntu 20.04 / 22.04 / Generice Linux
-
-Ensure that your distro is up to date.
-
-```sh
-sudo apt update
-sudo apt install build-essential git g++ gdb cmake python3 python3-venv python3-pip
-```
+![Ubuntu 20.04 / 22.04 / Generice Linux](./Linux.md)
 
 <a name="Installing the Toolchain"></a>
 ## 1.3. Installing the Toolchain
@@ -165,7 +90,7 @@ library_locations: ../fprime-arm-linux
 > Now is a good time to ensure that the ARM toolchains were installed properly. 
 >To test run the following command:
 > ```shell
-> # For in-person workhops and 64-bit ARM hardware
+> # For  64-bit ARM hardware
 > /opt/toolchains/bin/aarch64-none-linux-gnu-gcc -v
 > 
 > # For 32-bit ARM hardware
