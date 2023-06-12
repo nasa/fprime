@@ -1,5 +1,7 @@
 var NAVTREEINDEX15 =
 {
+"md__svc__buffer_accumulator_docs__buffer_accumulator.html#autotoc_md247":[12,0,4],
+"md__svc__buffer_accumulator_docs__buffer_accumulator.html#autotoc_md248":[12,0,5],
 "md__svc__passive_rate_group_docs_sdd.html":[16],
 "md__svc__passive_rate_group_docs_sdd.html#autotoc_md568":[16,0],
 "md__svc__passive_rate_group_docs_sdd.html#autotoc_md569":[16,0,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX15 =
 "namespace_svc.html#a3882aff73e9796ed7b550aeb9f360f48":[18,0,5,53],
 "namespace_svc.html#a3cd251693b4a0d77eb953f6dd9c049e9":[18,0,5,52],
 "namespace_svc.html#a3ce064afd89ebeec2cf1d076b2b2611c":[18,0,5,57],
-"namespace_svc.html#a3fc0b5fd329d5e81c8098d1102b196ad":[18,0,5,82],
-"namespace_svc.html#a46a3917d818e7450e4a57099c17c5ef7":[18,0,5,60],
-"namespace_svc.html#a55d3fa3e9b6fdd43da4a15cb53833fd2":[18,0,5,62]
+"namespace_svc.html#a3fc0b5fd329d5e81c8098d1102b196ad":[18,0,5,82]
 };

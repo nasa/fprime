@@ -1,5 +1,7 @@
 var NAVTREEINDEX14 =
 {
+"dir_761ea6774bb3e2a86a12a9058799dea9.html":[20,0,7,1],
+"dir_78ec0c7ddf9f2e3d7785f46750d11516.html":[20,0,5,8,0],
 "dir_7901eb67e357c506ff4c2b5535520f02.html":[20,0,5,5,0],
 "dir_79e541ad72f0cc261459d3b2a6bb0a70.html":[20,0,7,41],
 "dir_7c0ce2d26ea6d8204d599b176dd7f2f4.html":[20,0,7,6],
@@ -86,8 +88,8 @@ var NAVTREEINDEX14 =
 "enum_2main_8cpp.html#a46fb74e171db0e221bad91658f732d91":[20,0,4,1,2,1],
 "enum_2main_8cpp_source.html":[20,0,4,1,2],
 "files.html":[20,0],
-"functions.html":[19,3,0],
 "functions.html":[19,3,0,0],
+"functions.html":[19,3,0],
 "functions_b.html":[19,3,0,1],
 "functions_c.html":[19,3,0,2],
 "functions_d.html":[19,3,0,3],
@@ -137,8 +139,8 @@ var NAVTREEINDEX14 =
 "functions_type.html":[19,3,3],
 "functions_u.html":[19,3,0,19],
 "functions_v.html":[19,3,0,20],
-"functions_vars.html":[19,3,2,0],
 "functions_vars.html":[19,3,2],
+"functions_vars.html":[19,3,2,0],
 "functions_vars_b.html":[19,3,2,1],
 "functions_vars_c.html":[19,3,2,2],
 "functions_vars_d.html":[19,3,2,3],
@@ -247,7 +249,5 @@ var NAVTREEINDEX14 =
 "md__s_e_c_u_r_i_t_y.html#autotoc_md181":[2],
 "md__svc__buffer_accumulator_docs__buffer_accumulator.html":[12],
 "md__svc__buffer_accumulator_docs__buffer_accumulator.html#autotoc_md245":[12,0],
-"md__svc__buffer_accumulator_docs__buffer_accumulator.html#autotoc_md246":[12,0,3],
-"md__svc__buffer_accumulator_docs__buffer_accumulator.html#autotoc_md247":[12,0,4],
-"md__svc__buffer_accumulator_docs__buffer_accumulator.html#autotoc_md248":[12,0,5]
+"md__svc__buffer_accumulator_docs__buffer_accumulator.html#autotoc_md246":[12,0,3]
 };

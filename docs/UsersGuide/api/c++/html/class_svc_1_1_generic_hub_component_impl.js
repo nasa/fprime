@@ -3,6 +3,8 @@ var class_svc_1_1_generic_hub_component_impl =
     [ "HubType", "class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6", [
       [ "HUB_TYPE_PORT", "class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6ae26d257c8233e55d8972a0c1f4136475", null ],
       [ "HUB_TYPE_BUFFER", "class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6a97b59156779d7bf4dde88a573b284792", null ],
+      [ "HUB_TYPE_EVENT", "class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6a25a72f27aa100e5df9e3b009235c62d2", null ],
+      [ "HUB_TYPE_CHANNEL", "class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6aa2b910eb0d9512545a2fd7acf514ba19", null ],
       [ "HUB_TYPE_MAX", "class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6a7641a3a7a264deb9da7b55c3dec32d7f", null ]
     ] ],
     [ "GenericHubComponentImpl", "class_svc_1_1_generic_hub_component_impl.html#a337d44d3b58139de9388823c92d5ba5e", null ],
