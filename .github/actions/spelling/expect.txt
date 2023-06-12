@@ -1616,7 +1616,7 @@ vwong
 vxworks
 VXWORKSLOGASSERT
 WAITALL
-Watney
+watney
 Wconversion
 Wdog
 weakref
