@@ -49,3 +49,4 @@ set(SOURCE_FILES
 )
 register_fprime_module(Os_Mutex_Posix)
 register_fprime_implementation(Os_Mutex Os_Mutex_Posix)
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Interceptors")

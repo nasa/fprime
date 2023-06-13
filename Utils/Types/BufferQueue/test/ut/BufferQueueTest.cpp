@@ -1,9 +1,9 @@
-#include "Os/Pthreads/BufferQueue.hpp"
+#include "Utils/Types/BufferQueue/BufferQueue.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 #include <cstring>
 
-using namespace Os;
+using namespace Types;
 
 // Set this to 1 if testing a priority queue
 // Set this to 0 if testing a fifo queue

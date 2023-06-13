@@ -559,8 +559,8 @@ endmacro(register_fprime_build_autocoder)
 # example, Os requires an implementation of `Os/Task` and other modules.
 ####
 function(require_fprime_implementation IMPLEMENTATION)
-    #TODO: convert implementation to _ safe implementation
-    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "${FPRIME_CURRENT_MODULE}_REQUIRED_IMPLEMENTATIONS")
+    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
+    append_list_property("${FPRIME_CURRENT_MODULE}" GLOBAL PROPERTY "${IMPLEMENTATION}_REQUESTERS")
 endfunction()
 
 function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
@@ -580,6 +580,8 @@ function(choose_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     endif()
     #TODO: convert implementation to _ safe implementation
     set_property(GLOBAL PROPERTY "${IMPLEMENTATION}_${ACTIVE_MODULE}" "${IMPLEMENTOR}")
+    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
+    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
 endfunction()
 
 #### Documentation links

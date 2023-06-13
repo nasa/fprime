@@ -11,7 +11,7 @@
 
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/NoFiles.hpp"
-#include "Os/Stubs/FileStubs.hpp"
+#include "FileStubs.hpp"
 
 namespace Svc {
 

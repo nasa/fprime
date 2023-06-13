@@ -30,6 +30,9 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Common/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Common/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Common/FileCommon.cpp"
+
+    # Common for interval timer
+    "${CMAKE_CURRENT_LIST_DIR}/Common/IntervalTimerCommon.cpp"
 )
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Common/LogDefault.cpp")
@@ -47,6 +50,11 @@ require_fprime_implementation(Os_Watchdog)
 
 register_fprime_module()
 
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Linux")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Darwin")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs")
+
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
@@ -60,7 +68,4 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Linux")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Darwin")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs")
+

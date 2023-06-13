@@ -13,10 +13,9 @@ set(SOURCE_FILES
 
 register_fprime_module()
 
+
 ### UTs ###
-set(UT_MOD_DEPS
-    Os_Stubs
-)
+choose_fprime_implementation(Os_File Os_File_PosixWithInterceptors)
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/PrmDb/PrmDb.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbTester.cpp"

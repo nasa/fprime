@@ -1,9 +1,9 @@
-#include "Os/Pthreads/MaxHeap/MaxHeap.hpp"
+#include "Utils/Types/MaxHeap/MaxHeap.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 #include <cstring>
 
-using namespace Os;
+using namespace Types;
 
 #define DEPTH 5
 #define DATA_SIZE 3

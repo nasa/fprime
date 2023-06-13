@@ -8,7 +8,7 @@
 #include <Svc/PrmDb/test/ut/PrmDbImplTester.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Com/ComPacket.hpp>
-#include <Os/Stubs/FileStubs.hpp>
+#include <FileStubs.hpp>
 
 #include <cstdio>
 #include <gtest/gtest.h>

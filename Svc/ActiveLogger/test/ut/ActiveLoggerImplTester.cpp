@@ -11,7 +11,7 @@
 #include <Os/IntervalTimer.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
-#include <Os/Stubs/FileStubs.hpp>
+#include <FileStubs.hpp>
 
 #include <cstdio>
 

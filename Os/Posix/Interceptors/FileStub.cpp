@@ -1,7 +1,7 @@
 #include <FpConfig.hpp>
 #include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/Stubs/FileStubs.hpp>
+#include <FileStubs.hpp>
 
 #include <cerrno>
 #include <sys/types.h>

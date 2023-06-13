@@ -68,20 +68,6 @@ function(setup_global_target TARGET_FILE)
 endfunction(setup_global_target)
 
 ####
-#
-#
-####
-function (recurse_for_dependencies MODULE DEPENDENCIES)
-    get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
-    if (NOT RECURSIVE_DEPENDENCIES AND NOT DEFINED FPRIME_PRESCAN)
-        resolve_dependencies(RESOLVED ${DEPENDENCIES})
-        recurse_targets("${MODULE}" RECURSIVE_DEPENDENCIES "" ${RESOLVED})
-        set_target_properties("${MODULE}" PROPERTIES FP_RECURSIVE_DEPS "${RECURSIVE_DEPENDENCIES}")
-    endif()
-    set(RECURSIVE_DEPENDENCIES "${RECURSIVE_DEPENDENCIES}" PARENT_SCOPE)
-endfunction()
-
-####
 # Function `setup_single_target`:
 #
 # Setup a given target file's module-specific targets. There are two module-specific target options. The first is a
@@ -103,11 +89,15 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
     endif()
     get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
 
-    recurse_for_dependencies("${MODULE}" "${DEPENDENCIES}")
-
     if (NOT MODULE_TYPE STREQUAL "Deployment")
         cmake_language(CALL "${TARGET_NAME}_add_module_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
     else()
+        get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
+        if (NOT RECURSIVE_DEPENDENCIES AND NOT DEFINED FPRIME_PRESCAN)
+            resolve_dependencies(RESOLVED ${DEPENDENCIES})
+            recurse_targets("${MODULE}" RECURSIVE_DEPENDENCIES "" ${RESOLVED})
+            set_target_properties("${MODULE}" PROPERTIES FP_RECURSIVE_DEPS "${RECURSIVE_DEPENDENCIES}")
+        endif()
         cmake_language(CALL "${TARGET_NAME}_add_deployment_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${RECURSIVE_DEPENDENCIES}")
     endif()
 endfunction(setup_single_target)
@@ -139,7 +129,6 @@ function(setup_module_targets MODULE SOURCES DEPENDENCIES)
 
     # Now run through each of the determined targets
     foreach(TARGET IN LISTS TARGETS)
-        message(STATUS "^^^^^^^^^^^^^^^: ${DEPENDENCIES}")
         setup_single_target("${TARGET}" "${MODULE}" "${SOURCES}" "${DEPENDENCIES}")
     endforeach()
 endfunction(setup_module_targets)

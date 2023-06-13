@@ -59,5 +59,5 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
 )
-set(UT_MOD_DEPS "Os_Stubs")
+choose_fprime_implementation(Os_File Os_File_PosixWithInterceptors)
 register_fprime_ut()

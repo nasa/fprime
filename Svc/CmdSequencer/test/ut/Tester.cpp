@@ -9,7 +9,7 @@
 // acknowledged.
 
 #include "Fw/Com/ComPacket.hpp"
-#include "Os/Stubs/FileStubs.hpp"
+#include "FileStubs.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
 #include "Svc/CmdSequencer/test/ut/Tester.hpp"

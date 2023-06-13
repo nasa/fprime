@@ -9,7 +9,7 @@
 // acknowledged.
 // ======================================================================
 
-#include "Os/Stubs/FileStubs.hpp"
+#include "FileStubs.hpp"
 #include "Svc/CmdSequencer/test/ut/Tester.hpp"
 #include "gtest/gtest.h"
 
