@@ -13,11 +13,11 @@ To install [Rancher Desktop](https://rancherdesktop.io/), follow the instruction
 2. Select `dockerd`
 3. Configure PATH Automatic
 
-![Rancher Config](./img/rancher-config.png)
+[Rancher Config](./img/rancher-config.png)
 
 Ensure that Rancher Desktop is running and that the VM it uses has been started. You can confirm this by ensuring no pop-ups nor progress bars are visible in Rancher Desktop's main window as shown below.
 
-![Rancher Main Window](./img/rancher-running.png)
+[Rancher Main Window](./img/rancher-running.png)
 
 Once this is done, users can install the container by running the following command in their host terminal. It should  complete without errors.
 
@@ -39,4 +39,4 @@ docker run --platform=linux/amd64 --net host -e USER=$USER -u "`id -u`:`id -g`" 
 
 > Anytime Macintosh users run cross-compilation commands, they **must** do so in a terminal inside the docker container.
 
-![Return to Macintosh tutorial.](./Mac.md)
+[Return to Macintosh tutorial.](./Mac.md)

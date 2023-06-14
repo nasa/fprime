@@ -41,4 +41,4 @@ New-NetFirewallRule -DisplayName "fprime" -Direction inbound -Profile Any -Actio
 
 **IMPORTANT:**
 
-Go to the ![Ubuntu 20.04 / 22.04 / Generic](./Linux.md) Linux to finish setting up your WSL environment.
+Go to the [Ubuntu 20.04 / 22.04 / Generic](./Linux.md) Linux to finish setting up your WSL environment.

@@ -1,7 +1,7 @@
 # Mac OS X
 
 MacOS like Linux is a unix system and thus may be used directly for most of this 
-class. However, Mac users must install the following utilities 
+tutorial. However, Mac users must install the following utilities 
 *and ensure they are available on the command line path*.
 
 1. [Python 3](https://www.python.org/downloads/release/python-3913/)
@@ -26,4 +26,4 @@ In order to cross-compile, a Linux box is essential. You may choose to use a vir
 machine or may choose to follow the instructions in [Appendix I](./appendix-1.md) to 
 install a docker container including the necessary tools. 
 
-After the steps above are completed, ![return to the tutorial.](./Tutorial.md#13-installing-the-toolchain)
+After the steps above are completed, [return to the tutorial.](./Tutorial.md#13-installing-the-toolchain)
