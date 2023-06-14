@@ -37,11 +37,11 @@ To run through this tutorial, you must have a computer that meets the following 
 
 Choose the operating system you are using to install F Prime:
 
-![Windows 10/11 WSL](./Windows.md)
+[Windows 10/11 WSL](./Windows.md)
 
-![Mac OS X](./Mac.md)
+[Mac OS X](./Mac.md)
 
-![Ubuntu 20.04 / 22.04 / Generice Linux](./Linux.md)
+[Ubuntu 20.04 / 22.04 / Generice Linux](./Linux.md)
 
 <a name="Installing the Toolchain"></a>
 ## 1.3. Installing the Toolchain
@@ -75,6 +75,7 @@ as binary downloads from ARM).
 To install the F' ARM package, add it as a submodule via `git`:
 
 ```sh
+# In Project Directory
 git submodule add https://github.com/fprime-community/fprime-arm-linux.git
 git submodule update --init --recursive
 ```
@@ -124,10 +125,12 @@ echo $ARM_TOOLS_PATH
 #This should return the path /opt/toolchains
 
 # For in-person workshops and ARM 64-bit hardware
+# In Deployment Folder
 fprime-util generate aarch64-linux
 fprime-util build aarch64-linux
 
 # For ARM 32-bit hardware
+# In Deployment Folder
 fprime-util generate arm-hf-linux
 fprime-util build arm-hf-linux
 ```
@@ -144,9 +147,11 @@ First, in a terminal upload the software to hardware platform. This is done with
 
 ```sh
 # For ARM 64-bit hardware
+# In Deployment Folder
 scp -r build-artifacts/aarch64-linux <username>@<device-address>:[NamyOfBinary]
 
 # For ARM 32-bit hardware
+# In Deployment Folder
 scp -r build-artifacts/arm-hf-linux <username>@<device-address>:[NameOfBinary]
 ```
 > Users must fill in the username and device address above.
@@ -156,9 +161,11 @@ dictionary from the build above (`--dictionary ./build-artifacts/<platform name>
 
 ```sh
 # For in-person workshops and ARM 64-bit hardware
+# In Deployment Folder
 fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.xml
 
 # For ARM 32-bit hardware
+# In Deployment Folder
 fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.xml
 ```
 
