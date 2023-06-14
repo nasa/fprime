@@ -285,6 +285,9 @@
       //! Set prmValid
       void setPrmValid(Fw::ParamValid valid);
 
+      //! Call doDispatch() on component under test
+      void doDispatch();
+
       //! Initialize components
       //!
       void initComponents();

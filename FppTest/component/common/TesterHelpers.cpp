@@ -484,6 +484,12 @@
   }
 
   void Tester ::
+    doDispatch()
+  {
+    component.doDispatch();
+  }
+
+  void Tester ::
     checkSerializeStatusBufferEmpty()
   {
     ASSERT_EQ(

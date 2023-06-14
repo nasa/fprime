@@ -42,6 +42,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/../common/TlmTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/ParamTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/TimeTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/InternalInterfaceTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/AsyncTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/AsyncTesterHandlers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/AsyncTesterHelpers.cpp"

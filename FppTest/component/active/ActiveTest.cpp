@@ -628,6 +628,7 @@
         const FormalParamArray& arr //!< An array
   )
   {
+    this->arrayInterface.args.val = arr;
   }
 
   //! Internal interface handler for internalEnum
@@ -636,6 +637,7 @@
         const FormalParamEnum& en //!< An enum
   )
   {
+    this->enumInterface.args.val = en;
   }
 
   //! Internal interface handler for internalNoArgs
@@ -655,6 +657,12 @@
         bool b2 //!< A boolean
   )
   {
+    this->primitiveInterface.args.val1 = u32_1;
+    this->primitiveInterface.args.val2 = u32_2;
+    this->primitiveInterface.args.val3 = f32_1;
+    this->primitiveInterface.args.val4 = f32_2;
+    this->primitiveInterface.args.val5 = b1;
+    this->primitiveInterface.args.val6 = b2;
   }
 
   //! Internal interface handler for internalString
@@ -664,6 +672,8 @@
         const Fw::InternalInterfaceString& str2 //!< Another string
   )
   {
+    this->stringInterface.args.val1 = str1;
+    this->stringInterface.args.val2 = str2;
   }
 
   //! Internal interface handler for internalStruct
@@ -672,5 +682,6 @@
         const FormalParamStruct& str //!< A struct
   )
   {
+    this->structInterface.args.val = str;
   }
 

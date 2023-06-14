@@ -1,5 +1,5 @@
 @ A serial async input port
-async input port serialAsync: [4] serial
+async input port serialAsync: [7] serial
 
 @ A serial async input port with queue full behavior and priority
 async input port serialAsyncAssert: serial assert

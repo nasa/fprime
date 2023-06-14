@@ -5,4 +5,4 @@ sync input port serialSync: [7] serial
 guarded input port serialGuarded: [7] serial
 
 @ A serial output port
-output port serialOut: [14] serial
+output port serialOut: [7] serial

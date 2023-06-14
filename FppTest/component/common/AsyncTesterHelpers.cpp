@@ -53,7 +53,7 @@
     }
 
     // serialAsync
-    for (NATIVE_INT_TYPE i = 0; i < 4; ++i) {
+    for (NATIVE_INT_TYPE i = 0; i < 7; ++i) {
       this->connect_to_serialAsync(
           i,
           this->component.get_serialAsync_InputPort(i)

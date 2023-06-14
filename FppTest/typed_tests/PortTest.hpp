@@ -55,6 +55,7 @@ TYPED_TEST_SUITE_P(TypedAsyncPortTest);
 
 TYPED_TEST_P(TypedAsyncPortTest, AsyncPort) {
     this->tester.testAsyncPortInvoke(TypedPortIndex::TYPED, this->port);
+    this->tester.doDispatch();
     this->tester.testAsyncPortCheck(this->port);
 }
 
@@ -109,19 +110,21 @@ protected:
 
 TYPED_TEST_SUITE_P(SerialAsyncPortTest);
 
-TYPED_TEST_P(SerialAsyncPortTest, ToSerialSync) {
+TYPED_TEST_P(SerialAsyncPortTest, ToSerialAsync) {
     this->tester.testAsyncPortInvoke(TypedPortIndex::SERIAL, this->port);
+    this->tester.doDispatch();
     this->tester.testAsyncPortCheckSerial(this->port);
 }
 
-TYPED_TEST_P(SerialAsyncPortTest, FromSerialSync) {
+TYPED_TEST_P(SerialAsyncPortTest, FromSerialAsync) {
     this->tester.testAsyncPortInvokeSerial(TypedPortIndex::SERIAL, this->port);
+    this->tester.doDispatch();
     this->tester.testAsyncPortCheck(this->port);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(SerialAsyncPortTest,
-    ToSerialSync,
-    FromSerialSync
+    ToSerialAsync,
+    FromSerialAsync
 );
 
 #endif

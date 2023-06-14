@@ -620,6 +620,13 @@
       FppTest::Types::ArrayParam arrayCmd;
       FppTest::Types::StructParam structCmd;
 
+      // Internal interface test values
+      FppTest::Types::PrimitiveParams primitiveInterface;
+      FppTest::Types::InternalInterfaceStringParams stringInterface;
+      FppTest::Types::EnumParam enumInterface;
+      FppTest::Types::ArrayParam arrayInterface;
+      FppTest::Types::StructParam structInterface;
+
     };
 
 

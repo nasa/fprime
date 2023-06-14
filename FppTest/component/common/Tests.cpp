@@ -99,11 +99,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
 TEST(ComponentParameterTest, ParameterTest) {
   Tester tester;
 
-  std::cout << "VALID" << std::endl;
   tester.setPrmValid(Fw::ParamValid::VALID);
   tester.testParam();
 
-  std::cout << "INVALID" << std::endl;
   tester.setPrmValid(Fw::ParamValid::INVALID);
   tester.testParam();
 }
