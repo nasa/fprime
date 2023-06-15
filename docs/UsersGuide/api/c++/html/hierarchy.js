@@ -51,6 +51,9 @@ var hierarchy =
     [ "CmdSequencerComponentBase", null, [
       [ "Svc::CmdSequencerComponentImpl", "class_svc_1_1_cmd_sequencer_component_impl.html", null ]
     ] ],
+    [ "CmdSplitterComponentBase", null, [
+      [ "Svc::CmdSplitter", "class_svc_1_1_cmd_splitter.html", null ]
+    ] ],
     [ "ComLoggerComponentBase", null, [
       [ "Svc::ComLogger", "class_svc_1_1_com_logger.html", null ]
     ] ],

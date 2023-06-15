@@ -20,6 +20,7 @@ var namespace_svc =
     [ "CommandDispatcherImpl", "class_svc_1_1_command_dispatcher_impl.html", "class_svc_1_1_command_dispatcher_impl" ],
     [ "CmdSequencerComponentImpl", "class_svc_1_1_cmd_sequencer_component_impl.html", "class_svc_1_1_cmd_sequencer_component_impl" ],
     [ "AMPCSSequence", "class_svc_1_1_a_m_p_c_s_sequence.html", "class_svc_1_1_a_m_p_c_s_sequence" ],
+    [ "CmdSplitter", "class_svc_1_1_cmd_splitter.html", "class_svc_1_1_cmd_splitter" ],
     [ "ComLogger", "class_svc_1_1_com_logger.html", "class_svc_1_1_com_logger" ],
     [ "ComQueue", "class_svc_1_1_com_queue.html", "class_svc_1_1_com_queue" ],
     [ "ComSplitter", "class_svc_1_1_com_splitter.html", "class_svc_1_1_com_splitter" ],
@@ -84,6 +85,7 @@ var namespace_svc =
       [ "STATIC_MEMORY_ALLOCATION_SIZE", "namespace_svc.html#ad27f471a5a849fa12cbd97a3cecfa625a9e9672fa96e8a1d300d3756c6d5c1e24", null ]
     ] ],
     [ "BUFFERMGR_MAX_NUM_BINS", "namespace_svc.html#afbd22b21b6f0c9373aad31ab270cae5e", null ],
+    [ "CMD_SPLITTER_REMOTE_OPCODE_BASE", "namespace_svc.html#ac34c96cf26f06be4ea54e5596f22abe2", null ],
     [ "FILEDOWNLINK_COMMAND_FAILURES_DISABLED", "namespace_svc.html#aac9c99b8ae513d57096132247533b0b9", null ],
     [ "FILEDOWNLINK_INTERNAL_BUFFER_SIZE", "namespace_svc.html#adcd0191f1387ee73cc7934ae9625af94", null ],
     [ "FILEDOWNLINK_PACKETS_BY_RUN", "namespace_svc.html#ae760b94a8a87c062c2d6604603d6886d", null ],

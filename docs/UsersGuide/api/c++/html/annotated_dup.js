@@ -131,6 +131,7 @@ var annotated_dup =
       [ "CommandDispatcherImpl", "class_svc_1_1_command_dispatcher_impl.html", "class_svc_1_1_command_dispatcher_impl" ],
       [ "CmdSequencerComponentImpl", "class_svc_1_1_cmd_sequencer_component_impl.html", "class_svc_1_1_cmd_sequencer_component_impl" ],
       [ "AMPCSSequence", "class_svc_1_1_a_m_p_c_s_sequence.html", "class_svc_1_1_a_m_p_c_s_sequence" ],
+      [ "CmdSplitter", "class_svc_1_1_cmd_splitter.html", "class_svc_1_1_cmd_splitter" ],
       [ "ComLogger", "class_svc_1_1_com_logger.html", "class_svc_1_1_com_logger" ],
       [ "ComQueue", "class_svc_1_1_com_queue.html", "class_svc_1_1_com_queue" ],
       [ "ComSplitter", "class_svc_1_1_com_splitter.html", "class_svc_1_1_com_splitter" ],
