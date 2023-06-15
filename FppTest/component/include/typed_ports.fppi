@@ -92,12 +92,6 @@ output port structReturnOut: StructReturn
 
 sync input port cmdOut: Fw.Cmd
 
-output port cmdResponseIn: Fw.CmdResponse
-
-output port cmdRegIn: Fw.CmdReg
-
 output port prmGetIn: Fw.PrmGet
 
 output port prmSetIn: Fw.PrmSet
-
-output port timeGetIn: Fw.Time

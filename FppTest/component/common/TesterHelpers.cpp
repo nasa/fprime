@@ -190,6 +190,12 @@
         this->get_from_arrayReturnOut(0)
     );
 
+    // cmdIn
+    this->connect_to_cmdOut(
+        0,
+        this->component.get_cmdIn_InputPort(0)
+    );
+
     // cmdRegOut
     this->component.set_cmdRegOut_OutputPort(
         0,
@@ -277,24 +283,6 @@
   // ----------------------------------------------------------------------
   // Connect special ports
   // ----------------------------------------------------------------------
-
-    // cmdOut
-    this->connect_to_cmdOut(
-        0,
-        this->component.get_cmdIn_InputPort(0)
-    );
-
-    // cmdResponseIn
-    this->component.set_cmdResponseOut_OutputPort(
-        0,
-        this->get_from_cmdResponseIn(0)
-    );
-
-    // cmdRegIn
-    this->component.set_cmdRegOut_OutputPort(
-        0,
-        this->get_from_cmdRegIn(0)
-    );
 
     // prmGetOut
     this->component.set_prmGetOut_OutputPort(
@@ -415,7 +403,7 @@
     // timeGetOut
     this->component.set_timeGetOut_OutputPort(
         0,
-        this->get_from_timeGetIn(0)
+        this->get_from_timeGetOut(0)
     );
 
   }

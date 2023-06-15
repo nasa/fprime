@@ -92,30 +92,6 @@
       */
       );
 
-      //! Handler for from_cmdRegIn
-      //!
-      void from_cmdRegIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwOpcodeType opCode /*!< 
-      Command Op Code
-      */
-      );
-
-      //! Handler for from_cmdResponseIn
-      //!
-      void from_cmdResponseIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwOpcodeType opCode, /*!< 
-      Command Op Code
-      */
-          U32 cmdSeq, /*!< 
-      Command Sequence
-      */
-          const Fw::CmdResponse &response /*!< 
-      The command response argument
-      */
-      );
-
       //! Handler for from_enumArgsOut
       //!
       void from_enumArgsOut_handler(
@@ -238,13 +214,10 @@
       */
       );
 
-      //! Handler for from_timeGetIn
-      //!
-      void from_timeGetIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Time &time /*!< 
-      The U32 cmd argument
-      */
+      void cmdResponseIn(
+          const FwOpcodeType opCode,
+          const U32 cmdSeq,
+          const Fw::CmdResponse response
       );
 
     private:

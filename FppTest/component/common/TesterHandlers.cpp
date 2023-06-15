@@ -193,33 +193,11 @@
   // ----------------------------------------------------------------------
 
   void Tester ::
-    from_cmdRegIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        FwOpcodeType opCode
-    )
-  {
-    this->pushFromPortEntry_cmdRegIn(opCode);
-  }
-
-  void Tester ::
-    from_cmdResponseIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        FwOpcodeType opCode,
-        U32 cmdSeq,
-        const Fw::CmdResponse &response
+    cmdResponseIn(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        const Fw::CmdResponse response
     )
   {
     this->cmdResp = response;
-    this->pushFromPortEntry_cmdResponseIn(opCode, cmdSeq, response);
-  }
-
-  void Tester ::
-    from_timeGetIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Time &time
-    )
-  {
-    time = this->time;
-
-    this->pushFromPortEntry_timeGetIn(time);
   }
