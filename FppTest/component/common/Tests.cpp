@@ -6,6 +6,8 @@
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TypedAsyncPortTest);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SerialAsyncPortTest);
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ComponentAsyncCommandTest);
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ComponentInternalInterfaceTest);
 
 // Typed port tests
 using TypedPortTestImplementations = ::testing::Types<

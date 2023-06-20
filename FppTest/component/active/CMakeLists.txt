@@ -47,6 +47,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/../common/AsyncTesterHandlers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/AsyncTesterHelpers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../common/AsyncPortTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../common/AsyncCmdTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../../types/FormalParamTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
 )

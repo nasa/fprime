@@ -472,7 +472,6 @@
         const U32 cmdSeq
     )
   {
-    // TODO
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -488,7 +487,13 @@
         bool b2
     )
   {
-    // TODO
+    this->primitiveCmd.args.val1 = u32_1;
+    this->primitiveCmd.args.val2 = u32_2;
+    this->primitiveCmd.args.val3 = f32_1;
+    this->primitiveCmd.args.val4 = f32_2;
+    this->primitiveCmd.args.val5 = b1;
+    this->primitiveCmd.args.val6 = b2;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -500,7 +505,9 @@
         const Fw::CmdStringArg& str2
     )
   {
-    // TODO
+    this->stringCmd.args.val1 = str1;
+    this->stringCmd.args.val2 = str2;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -511,7 +518,8 @@
         FormalParamEnum en
     )
   {
-    // TODO
+    this->enumCmd.args.val = en;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -522,7 +530,8 @@
         FormalParamArray arr
     )
   {
-    // TODO
+    this->arrayCmd.args.val = arr;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -533,7 +542,8 @@
         FormalParamStruct str
     )
   {
-    // TODO
+    this->structCmd.args.val = str;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 

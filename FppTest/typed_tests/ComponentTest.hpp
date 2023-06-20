@@ -35,6 +35,23 @@ REGISTER_TYPED_TEST_SUITE_P(ComponentCommandTest,
 );
 
 template <typename FormalParamType>
+class ComponentAsyncCommandTest : public ::testing::Test {
+protected:
+    Tester tester;
+    FormalParamType data;
+};
+
+TYPED_TEST_SUITE_P(ComponentAsyncCommandTest);
+
+TYPED_TEST_P(ComponentAsyncCommandTest, AsyncCommandTest) {
+    this->tester.testAsyncCommand(0, this->data);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(ComponentAsyncCommandTest,
+    AsyncCommandTest
+);
+
+template <typename FormalParamType>
 class ComponentEventTest : public ::testing::Test {
 protected:
     Tester tester;
@@ -86,5 +103,21 @@ TYPED_TEST_P(ComponentParamCommandTest, ParamTest) {
 REGISTER_TYPED_TEST_SUITE_P(ComponentParamCommandTest,
     ParamTest
 );
+
+template <typename FormalParamType>
+class ComponentInternalInterfaceTest : public ::testing::Test {
+protected:
+    Tester tester;
+    FormalParamType data;
+};
+
+TYPED_TEST_SUITE_P(ComponentInternalInterfaceTest);
+
+TYPED_TEST_P(ComponentInternalInterfaceTest, InternalInterfaceTest) {
+    this->tester.testInternalInterface(this->data);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(ComponentInternalInterfaceTest,
+    InternalInterfaceTest);
 
 #endif

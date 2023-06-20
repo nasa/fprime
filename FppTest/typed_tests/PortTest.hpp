@@ -118,7 +118,6 @@ TYPED_TEST_P(SerialAsyncPortTest, ToSerialAsync) {
 
 TYPED_TEST_P(SerialAsyncPortTest, FromSerialAsync) {
     this->tester.testAsyncPortInvokeSerial(TypedPortIndex::SERIAL, this->port);
-    this->tester.doDispatch();
     this->tester.testAsyncPortCheck(this->port);
 }
 

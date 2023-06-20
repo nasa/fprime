@@ -471,10 +471,10 @@
     );
   }
 
-  void Tester ::
+  Fw::QueuedComponentBase::MsgDispatchStatus Tester ::
     doDispatch()
   {
-    component.doDispatch();
+    return component.doDispatch();
   }
 
   void Tester ::

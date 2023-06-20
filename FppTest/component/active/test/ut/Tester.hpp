@@ -16,6 +16,7 @@
 #include "FppTest/component/common/EventTests.hpp"
 #include "FppTest/component/common/TlmTests.hpp"
 #include "FppTest/component/common/ParamTests.hpp"
+#include "FppTest/component/common/InternalInterfaceTests.hpp"
 #include "FppTest/types/FormalParamTypes.hpp"
 
   class Tester :
@@ -52,6 +53,8 @@
 
       CMD_TEST_DECLS
 
+      CMD_TEST_DECLS_ASYNC
+
       EVENT_TEST_DECLS
 
       TLM_TEST_DECLS
@@ -59,6 +62,8 @@
       void testParam();
 
       PARAM_CMD_TEST_DECLS
+
+      INTERNAL_INT_TEST_DECLS
 
       void testTime();
 
@@ -259,7 +264,7 @@
       void setPrmValid(Fw::ParamValid valid);
 
       //! Call doDispatch() on component under test
-      void doDispatch();
+      Fw::QueuedComponentBase::MsgDispatchStatus doDispatch();
 
       //! Initialize components
       //!
