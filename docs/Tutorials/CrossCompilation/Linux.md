@@ -1,6 +1,6 @@
-# Ubuntu 20.04 / 22.04 / Generice Linux
+# Ubuntu 20.04 / 22.04 / Generic Linux
 
-Ensure that your distro is up to date.
+Ensure that your distribution is up to date.
 
 ```sh
 sudo apt update

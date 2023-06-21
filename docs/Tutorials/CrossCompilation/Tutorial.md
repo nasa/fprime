@@ -42,7 +42,7 @@ Choose the operating system you are using to install F Prime:
 
 [Mac OS X](./Mac.md)
 
-[Ubuntu 20.04 / 22.04 / Generice Linux](./Linux.md)
+[Ubuntu 20.04 / 22.04 / Generic Linux](./Linux.md)
 
 <a name="Installing the Toolchain"></a>
 ## 1.3. Installing the Toolchain
@@ -149,7 +149,7 @@ First, in a terminal upload the software to hardware platform. This is done with
 ```sh
 # For ARM 64-bit hardware
 # In: Deployment Folder
-scp -r build-artifacts/aarch64-linux <username>@<device-address>:[NamyOfBinary]
+scp -r build-artifacts/aarch64-linux <username>@<device-address>:[NameOfBinary]
 
 # For ARM 32-bit hardware
 # In: Deployment Folder
@@ -173,7 +173,7 @@ fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.x
 <a name="Conclusion"></a>
 ## 5. Conclusion
 
-The Cross-Compilation tutorial has shown us how to cross-compile our our project 
+The Cross-Compilation tutorial has shown us how to cross-compile our project 
 application to the Raspberry Pi. We have seen how to copy our deployment to the 
 Raspberry Pi and run the ground system on our host computer to interact with our 
 deployment on the Raspberry Pi.

@@ -1,4 +1,5 @@
 Aadil
+aarch
 abcd
 ABCDE
 ABCDEF
@@ -102,6 +103,7 @@ bfree
 bibtex
 Bies
 bindir
+binrel
 Bitfields
 bitmaps
 bitset
@@ -597,6 +599,7 @@ Gnc
 Gnd
 gnd
 GNUC
+gnueabi
 gnueabihf
 google
 googletest
@@ -762,6 +765,7 @@ kislyuk
 kitware
 Kooi
 kthxbye
+Kubernetes
 Lammert
 lammertbies
 LASTLOG
@@ -910,6 +914,7 @@ namespaced
 nano
 nanosleep
 nargs
+nasafprime
 nathan
 nbits
 ncsl
@@ -1639,6 +1644,7 @@ WRONLY
 wrs
 Wshadow
 Wsign
+wsl
 WSL
 Wundef
 www

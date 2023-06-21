@@ -7,15 +7,15 @@ Windows 10 ships with a technology known as WSL. WSL allows users to run Linux v
 wsl --install
 ```
 
-To start Ubuntu under WSL, search for Ubuntu in the start menu adn select the "Ubuntu on Windows" app. All class commands should be run on these Ubuntu terminals.
+To start Ubuntu under WSL, search for Ubuntu in the start menu and select the "Ubuntu on Windows" app. All class commands should be run on these Ubuntu terminals.
 
 > Full instructions and troubleshooting help is available in the 
 > [Microsoft documentation](https://learn.microsoft.com/en-us/windows/wsl/install).
 
 Lastly, Windows users must open up a firewall port and forward that port to WSL to 
 ensure the hardware can call back into F' ground data system running in WSL. First we'll 
-need to note the IP address of the WSL machine. THis is done with the following 
-comamnd *in an administrator PowerShell*.
+need to note the IP address of the WSL machine. This is done with the following 
+command *in an administrator PowerShell*.
 
 ```powershell
 wsl hostname -I
@@ -28,7 +28,7 @@ Next, we will add a firewall rule and forward it to the WSL instance. This is do
 
 > Warning: these commands work with the Windows firewall. Security and antivirus tools 
 > can run extra firewall rules. Users must allow the port `50000` (Or whichever port that 
-> is going to be used) or disable these extra firewalls
+> is going to be used) or disable these extra firewall settings.
 
 **PowerShell: Add and Forward External Firewall Rule**
 ```PowerShell
