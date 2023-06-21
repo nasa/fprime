@@ -355,18 +355,13 @@
       this->get_from_structArgsOut(TypedPortIndex::SERIAL)
     );
 
-    this->component.set_serialOut_OutputPort(
-      SerialPortIndex::SERIAL,
-      this->get_from_serialOut(SerialPortIndex::SERIAL)
-    );
-
 
   // ----------------------------------------------------------------------
   // Connect serial input ports
   // ----------------------------------------------------------------------
 
     // serialGuarded
-    for (NATIVE_INT_TYPE i = 0; i < 7; ++i) {
+    for (NATIVE_INT_TYPE i = 0; i < 6; ++i) {
       this->connect_to_serialGuarded(
           i,
           this->component.get_serialGuarded_InputPort(i)
@@ -374,7 +369,7 @@
     }
 
     // serialSync
-    for (NATIVE_INT_TYPE i = 0; i < 7; ++i) {
+    for (NATIVE_INT_TYPE i = 0; i < 6; ++i) {
       this->connect_to_serialSync(
           i,
           this->component.get_serialSync_InputPort(i)

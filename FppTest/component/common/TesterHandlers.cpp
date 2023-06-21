@@ -176,13 +176,6 @@
           Buffer.getBuffCapacity()
         );
         break;
-
-      case SerialPortIndex::SERIAL:
-        status = Buffer.copyRaw(
-          this->serialBuf,
-          Buffer.getBuffCapacity()
-        );
-        break;
     }
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);

@@ -8,6 +8,7 @@
 #include "ActiveTest.hpp"
 #include <FpConfig.hpp>
 
+#include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
@@ -423,7 +424,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(SerialPortIndex::ENUM, Buffer);
   }
 
   void ActiveTest ::
@@ -432,7 +433,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(SerialPortIndex::ARRAY, Buffer);
   }
 
   void ActiveTest ::
@@ -441,7 +442,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(SerialPortIndex::STRUCT, Buffer);
   }
 
   void ActiveTest ::

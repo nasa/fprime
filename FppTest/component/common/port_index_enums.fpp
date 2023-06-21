@@ -10,5 +10,4 @@ enum SerialPortIndex {
   ENUM
   ARRAY
   STRUCT
-  SERIAL
 }

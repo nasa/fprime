@@ -1,8 +1,8 @@
 @ A serial sync input port
-sync input port serialSync: [7] serial
+sync input port serialSync: [6] serial
 
 @ A serial guarded input
-guarded input port serialGuarded: [7] serial
+guarded input port serialGuarded: [6] serial
 
 @ A serial output port
-output port serialOut: [7] serial
+output port serialOut: [6] serial
