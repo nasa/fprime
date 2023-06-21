@@ -1,8 +1,8 @@
 #include "FppTest/typed_tests/ComponentTest.hpp"
 #include "FppTest/typed_tests/PortTest.hpp"
 #include "FppTest/typed_tests/StringTest.hpp"
-#include "FppTest/types/FormalParamTypes.hpp"
-#include "FppTest/types/StringArgsPortAc.hpp"
+#include "FppTest/component/types/FormalParamTypes.hpp"
+#include "FppTest/component/active/StringArgsPortAc.hpp"
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TypedAsyncPortTest);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SerialAsyncPortTest);

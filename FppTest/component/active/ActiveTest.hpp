@@ -8,7 +8,7 @@
 #define ActiveTest_HPP
 
 #include "FppTest/component/active/ActiveTestComponentAc.hpp"
-#include "FppTest/types/FormalParamTypes.hpp"
+#include "FppTest/component/types/FormalParamTypes.hpp"
 
 
   class ActiveTest :

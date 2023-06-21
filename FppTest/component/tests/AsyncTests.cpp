@@ -1,6 +1,6 @@
 #include "FppTest/typed_tests/PortTest.hpp"
 #include "FppTest/typed_tests/ComponentTest.hpp"
-#include "FppTest/types/FormalParamTypes.hpp"
+#include "FppTest/component/types/FormalParamTypes.hpp"
 
 // Typed async port tests
 using TypedAsyncPortTestImplementations = ::testing::Types<

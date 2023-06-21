@@ -4,7 +4,6 @@
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/passive.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/port_index_enums.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/PassiveTest.cpp"
 )
 
@@ -30,19 +29,18 @@ set(UT_MOD_DEPS
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/passive.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/port_index_enums.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/TestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/Tests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/TesterHandlers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/TesterHelpers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/PortTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/CmdTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/EventTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/TlmTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/ParamTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../common/TimeTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../../types/FormalParamTypes.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/Tests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHandlers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/PortTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/CmdTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/EventTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TlmTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/ParamTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TimeTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../types/FormalParamTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
 )
 register_fprime_ut()

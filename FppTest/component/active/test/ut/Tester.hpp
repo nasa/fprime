@@ -11,13 +11,13 @@
 #include "FppTest/component/active/ActiveTest.hpp"
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 #include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
-#include "FppTest/component/common/PortTests.hpp"
-#include "FppTest/component/common/CmdTests.hpp"
-#include "FppTest/component/common/EventTests.hpp"
-#include "FppTest/component/common/TlmTests.hpp"
-#include "FppTest/component/common/ParamTests.hpp"
-#include "FppTest/component/common/InternalInterfaceTests.hpp"
-#include "FppTest/types/FormalParamTypes.hpp"
+#include "FppTest/component/tests/PortTests.hpp"
+#include "FppTest/component/tests/CmdTests.hpp"
+#include "FppTest/component/tests/EventTests.hpp"
+#include "FppTest/component/tests/TlmTests.hpp"
+#include "FppTest/component/tests/ParamTests.hpp"
+#include "FppTest/component/tests/InternalInterfaceTests.hpp"
+#include "FppTest/component/types/FormalParamTypes.hpp"
 
   class Tester :
     public ActiveTestGTestBase
