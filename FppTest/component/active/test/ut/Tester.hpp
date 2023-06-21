@@ -50,11 +50,9 @@
       // ----------------------------------------------------------------------
 
       PORT_TEST_DECLS
-
       PORT_TEST_DECLS_ASYNC
 
       CMD_TEST_DECLS
-
       CMD_TEST_DECLS_ASYNC
 
       EVENT_TEST_DECLS
@@ -62,7 +60,6 @@
       TLM_TEST_DECLS
 
       void testParam();
-
       PARAM_CMD_TEST_DECLS
 
       INTERNAL_INT_TEST_DECLS
