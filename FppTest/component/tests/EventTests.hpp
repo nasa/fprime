@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  EventTests.hpp
+// \author T. Chieu
+// \brief  hpp file for event tests
+//
+// \copyright
+// Copyright (C) 2009-2023 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 // ----------------------------------------------------------------------
 // Event test declarations
 // ----------------------------------------------------------------------

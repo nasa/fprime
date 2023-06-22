@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  ActiveTest.hpp
+// \title  ActiveTest/test/ut/Tester.cpp
 // \author tiffany
 // \brief  cpp file for ActiveTest test harness implementation class
 // ======================================================================

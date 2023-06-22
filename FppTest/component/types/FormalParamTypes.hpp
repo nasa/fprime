@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  FormalParamTypes.hpp
 // \author T. Chieu
-// \brief  hpp file for port types
+// \brief  hpp file for formal param types
 //
 // \copyright
 // Copyright (C) 2009-2023 California Institute of Technology.

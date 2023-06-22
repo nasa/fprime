@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  PortTests.hpp
+// \author T. Chieu
+// \brief  hpp file for port tests
+//
+// \copyright
+// Copyright (C) 2009-2023 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 #include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
 #include "test/ut/Tester.hpp"

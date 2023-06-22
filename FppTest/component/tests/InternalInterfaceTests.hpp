@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  InternalInterfaceTests.hpp
+// \author T. Chieu
+// \brief  hpp file for internal interface tests
+//
+// \copyright
+// Copyright (C) 2009-2023 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "test/ut/Tester.hpp"
 
 // ----------------------------------------------------------------------

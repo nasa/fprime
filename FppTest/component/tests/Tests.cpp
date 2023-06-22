@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  Tests.cpp
+// \author T. Chieu
+// \brief  cpp file for component tests
+//
+// \copyright
+// Copyright (C) 2009-2023 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "FppTest/typed_tests/ComponentTest.hpp"
 #include "FppTest/typed_tests/PortTest.hpp"
 #include "FppTest/typed_tests/StringTest.hpp"

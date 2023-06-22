@@ -1,11 +1,15 @@
 // ======================================================================
-// \title  ActiveTest/test/ut/TesterHelpers.cpp
-// \author Auto-generated
-// \brief  cpp file for ActiveTest component test harness base class
+// \title  TesterHelpers.cpp
+// \author T. Chieu
+// \brief  cpp file for tester helper functions
 //
-// NOTE: this file was automatically generated
+// \copyright
+// Copyright (C) 2009-2023 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
 //
 // ======================================================================
+
 #include "test/ut/Tester.hpp"
 
   // ----------------------------------------------------------------------

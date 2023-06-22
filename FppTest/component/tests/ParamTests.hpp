@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  ParamTests.hpp
+// \author T. Chieu
+// \brief  hpp file for parameter tests
+//
+// \copyright
+// Copyright (C) 2009-2023 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 // ----------------------------------------------------------------------
 // Parameter test declarations
 // ----------------------------------------------------------------------

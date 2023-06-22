@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  PassiveTest.hpp
+// \title  PassiveTest/test/ut/Tester.cpp
 // \author tiffany
 // \brief  cpp file for PassiveTest test harness implementation class
 // ======================================================================

@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  FormalParamTypes.cpp
 // \author T. Chieu
-// \brief  cpp file for port types
+// \brief  cpp file for formal param types
 //
 // \copyright
 // Copyright (C) 2009-2023 California Institute of Technology.
