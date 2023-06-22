@@ -1569,6 +1569,7 @@ UNEXP
 unexport
 unicode
 UNINIT
+UNINSTANTIATED
 uniq
 unistd
 Unithem
