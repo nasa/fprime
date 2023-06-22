@@ -31,7 +31,7 @@ Next, we will add a firewall rule and forward it to the WSL instance. This is do
 > is going to be used) or disable these extra firewall settings.
 
 **PowerShell: Add and Forward External Firewall Rule**
-```powershell
+```PowerShell
 New-NetFirewallRule -DisplayName "fprime" -Direction inbound -Profile Any -Action Allow -LocalPort 50000 -Protocol TCP
 ```
 
