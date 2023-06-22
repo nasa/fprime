@@ -21,7 +21,7 @@ command *in an administrator PowerShell*.
 wsl hostname -I
 ```
 
-> Record the output of this comand for the next step. For this guide, we will use 
+> Record the output of this command for the next step. For this guide, we will use 
 > the value `127.0.0.1`.
 
 Next, we will add a firewall rule and forward it to the WSL instance. This is done with the following commands:

@@ -512,7 +512,7 @@ customObjectInstantitationMethod
 # Compiler flags (Scala)
 (?:^|[\t ,>"'`=(])-J-[DPWXY](?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,})
 # Compiler flags
-(?:^|[\t ,"'`=(])-[DPWXYLlf](?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,})
+#(?:^|[\t ,"'`=(])-[DPWXYLlf](?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,})
 # Compiler flags (linker)
 ,-B
 # curl arguments

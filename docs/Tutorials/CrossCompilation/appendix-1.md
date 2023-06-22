@@ -27,12 +27,12 @@ docker pull nasafprime/fprime-arm:latest
 
 ## Running The Container
 
-In order to run the commands provided by the docker container (i.e. the cross-compilers), users must start the container  and attach to a terminal inside. This should be done **after** the user has created a project to work within.
+In order to run the commands provided by the docker container (i.e. the cross-compilers), users must start the container and attach to a terminal inside. This should be done **after** the user has created a project to work within.
 
 To run this container, users may wish to download [this script](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/bin/macos-docker) to a `bin` directory in the root of their project. This will start the docker container with appropriate settings. 
 
 Alternatively, the user may run the following command to start the terminal
-```bash
+```bash 
 docker run --platform=linux/amd64 --net host -e USER=$USER -u "`id -u`:`id -g`" -v "/path/to/project:/project" -it \
     docker pull nasafprime/fprime-arm:latest
 ```
