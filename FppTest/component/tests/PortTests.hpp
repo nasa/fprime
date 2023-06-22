@@ -401,7 +401,7 @@
                                                                                                                        \
         this->checkSerializeStatusBufferEmpty();                                                                       \
                                                                                                                        \
-        /* Check successful seriatlization */                                                                          \
+        /* Check successful serialization */                                                                          \
         U8 data[InputStringArgsPort::SERIALIZED_SIZE];                                                                 \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                      \
                                                                                                                        \
