@@ -2,7 +2,8 @@
 
 # hit-count: 106 file-count: 28
 # Compiler flags
-(?:^|[\t ,"'`=(])-[DPWXYLlf](?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,})
+# (?:^|[\t ,"'`=(])-[DPWXYLlf](?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,})
+(?:^|[\t ,"'`=(])-(?:[DP](?=[A-Z]{2,})|[WXYLlf](?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,}))
 
 # hit-count: 48 file-count: 18
 # GitHub SHAs (markdown)
