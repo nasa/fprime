@@ -8,7 +8,7 @@
 #define PassiveTest_HPP
 
 #include "FppTest/component/passive/PassiveTestComponentAc.hpp"
-#include "FppTest/types/FormalParamTypes.hpp"
+#include "FppTest/component/types/FormalParamTypes.hpp"
 
 
   class PassiveTest :

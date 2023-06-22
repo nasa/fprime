@@ -466,12 +466,6 @@
     );
   }
 
-  Fw::QueuedComponentBase::MsgDispatchStatus Tester ::
-    doDispatch()
-  {
-    return component.doDispatch();
-  }
-
   void Tester ::
     checkSerializeStatusBufferEmpty()
   {

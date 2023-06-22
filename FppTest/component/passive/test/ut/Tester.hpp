@@ -9,14 +9,14 @@
 
 #include "GTestBase.hpp"
 #include "FppTest/component/passive/PassiveTest.hpp"
-#include "FppTest/component/passive/SerialPortIndexEnumAc.hpp"
-#include "FppTest/component/passive/TypedPortIndexEnumAc.hpp"
-#include "FppTest/component/common/PortTests.hpp"
-#include "FppTest/component/common/CmdTests.hpp"
-#include "FppTest/component/common/EventTests.hpp"
-#include "FppTest/component/common/TlmTests.hpp"
-#include "FppTest/component/common/ParamTests.hpp"
-#include "FppTest/types/FormalParamTypes.hpp"
+#include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
+#include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
+#include "FppTest/component/tests/PortTests.hpp"
+#include "FppTest/component/tests/CmdTests.hpp"
+#include "FppTest/component/tests/EventTests.hpp"
+#include "FppTest/component/tests/TlmTests.hpp"
+#include "FppTest/component/tests/ParamTests.hpp"
+#include "FppTest/component/types/FormalParamTypes.hpp"
 
   class Tester :
     public PassiveTestGTestBase
@@ -89,30 +89,6 @@
       */
           FormalParamArray &aRef /*!< 
       An array ref
-      */
-      );
-
-      //! Handler for from_cmdRegIn
-      //!
-      void from_cmdRegIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwOpcodeType opCode /*!< 
-      Command Op Code
-      */
-      );
-
-      //! Handler for from_cmdResponseIn
-      //!
-      void from_cmdResponseIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwOpcodeType opCode, /*!< 
-      Command Op Code
-      */
-          U32 cmdSeq, /*!< 
-      Command Sequence
-      */
-          const Fw::CmdResponse &response /*!< 
-      The command response argument
       */
       );
 
@@ -238,13 +214,10 @@
       */
       );
 
-      //! Handler for from_timeGetIn
-      //!
-      void from_timeGetIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Time &time /*!< 
-      The U32 cmd argument
-      */
+      void cmdResponseIn(
+          const FwOpcodeType opCode,
+          const U32 cmdSeq,
+          const Fw::CmdResponse response
       );
 
     private:

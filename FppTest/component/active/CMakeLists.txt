@@ -4,6 +4,9 @@
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/ActiveTest.cpp"
 )
 
@@ -29,6 +32,9 @@ set(UT_MOD_DEPS
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/Tests.cpp"
@@ -42,7 +48,6 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TimeTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/InternalInterfaceTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncTesterHandlers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncTesterHelpers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncPortTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncCmdTests.cpp"

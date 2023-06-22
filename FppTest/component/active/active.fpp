@@ -1,7 +1,3 @@
-include "../include/fpp_types.fppi"
-include "../include/port_types.fppi"
-include "../include/port_index_enums.fppi"
-
 @ An active component
 active component ActiveTest {
 

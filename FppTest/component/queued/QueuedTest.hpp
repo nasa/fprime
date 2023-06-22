@@ -8,6 +8,7 @@
 #define QueuedTest_HPP
 
 #include "FppTest/component/queued/QueuedTestComponentAc.hpp"
+#include "FppTest/component/types/FormalParamTypes.hpp"
 
 
   class QueuedTest :
@@ -46,7 +47,7 @@
 
       //! Handler implementation for arrayArgsAsyncBlockPriority
       //!
-      void arrayArgsAsyncBlockPriority_handler(
+      void arrayArgsAsync_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const FormalParamArray &a, /*!< 
       An array
@@ -104,9 +105,18 @@
       */
       );
 
+      //! Handler implementation for cmdOut
+      //!
+      void cmdOut_handler(
+          NATIVE_INT_TYPE portNum, //!< The port number
+          FwOpcodeType opCode, //!< Command Op Code
+          U32 cmdSeq, //!< Command Sequence
+          Fw::CmdArgBuffer& args //!< Buffer containing arguments
+      );
+
       //! Handler implementation for enumArgsAsyncAssert
       //!
-      void enumArgsAsyncAssert_handler(
+      void enumArgsAsync_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const FormalParamEnum &en, /*!< 
       An enum
@@ -298,7 +308,7 @@
 
       //! Handler implementation for structArgsAsyncDropPriority
       //!
-      void structArgsAsyncDropPriority_handler(
+      void structArgsAsync_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const FormalParamStruct &s, /*!< 
       A struct
@@ -598,6 +608,24 @@
           const FormalParamStruct& str //!< A struct
       );
 
+    public:
+
+      //! Enables checking the serialization status of serial port invocations
+      Fw::SerializeStatus serializeStatus;
+
+      // Command test values
+      FppTest::Types::PrimitiveParams primitiveCmd;
+      FppTest::Types::CmdStringParams stringCmd;
+      FppTest::Types::EnumParam enumCmd;
+      FppTest::Types::ArrayParam arrayCmd;
+      FppTest::Types::StructParam structCmd;
+
+      // Internal interface test values
+      FppTest::Types::PrimitiveParams primitiveInterface;
+      FppTest::Types::InternalInterfaceStringParams stringInterface;
+      FppTest::Types::EnumParam enumInterface;
+      FppTest::Types::ArrayParam arrayInterface;
+      FppTest::Types::StructParam structInterface;
 
     };
 

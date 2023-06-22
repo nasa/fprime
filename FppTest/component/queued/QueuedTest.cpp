@@ -8,6 +8,7 @@
 #include "QueuedTest.hpp"
 #include <FpConfig.hpp>
 
+#include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
@@ -42,103 +43,23 @@
   // ----------------------------------------------------------------------
 
   void QueuedTest ::
-    arrayArgsAsyncBlockPriority_handler(
+    arrayArgsAsync_handler(
         const NATIVE_INT_TYPE portNum,
         const FormalParamArray &a,
         FormalParamArray &aRef
     )
   {
-    // TODO
+    this->arrayArgsOut_out(portNum, a, aRef);
   }
 
   void QueuedTest ::
-    arrayArgsGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
-        const FormalParamArray &a,
-        FormalParamArray &aRef
-    )
-  {
-    // TODO
-  }
-
-  void QueuedTest ::
-    arrayArgsSync_handler(
-        const NATIVE_INT_TYPE portNum,
-        const FormalParamArray &a,
-        FormalParamArray &aRef
-    )
-  {
-    // TODO
-  }
-
-  FormalParamArray QueuedTest ::
-    arrayReturnGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
-        const FormalParamArray &a,
-        FormalParamArray &aRef
-    )
-  {
-    // TODO return
-  }
-
-  FormalParamArray QueuedTest ::
-    arrayReturnSync_handler(
-        const NATIVE_INT_TYPE portNum,
-        const FormalParamArray &a,
-        FormalParamArray &aRef
-    )
-  {
-    // TODO return
-  }
-
-  void QueuedTest ::
-    enumArgsAsyncAssert_handler(
+    enumArgsAsync_handler(
         const NATIVE_INT_TYPE portNum,
         const FormalParamEnum &en,
         FormalParamEnum &enRef
     )
   {
-    // TODO
-  }
-
-  void QueuedTest ::
-    enumArgsGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
-        const FormalParamEnum &en,
-        FormalParamEnum &enRef
-    )
-  {
-    // TODO
-  }
-
-  void QueuedTest ::
-    enumArgsSync_handler(
-        const NATIVE_INT_TYPE portNum,
-        const FormalParamEnum &en,
-        FormalParamEnum &enRef
-    )
-  {
-    // TODO
-  }
-
-  FormalParamEnum QueuedTest ::
-    enumReturnGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
-        const FormalParamEnum &en,
-        FormalParamEnum &enRef
-    )
-  {
-    // TODO return
-  }
-
-  FormalParamEnum QueuedTest ::
-    enumReturnSync_handler(
-        const NATIVE_INT_TYPE portNum,
-        const FormalParamEnum &en,
-        FormalParamEnum &enRef
-    )
-  {
-    // TODO return
+    this->enumArgsOut_out(portNum, en, enRef);
   }
 
   void QueuedTest ::
@@ -146,39 +67,7 @@
         const NATIVE_INT_TYPE portNum
     )
   {
-    // TODO
-  }
-
-  void QueuedTest ::
-    noArgsGuarded_handler(
-        const NATIVE_INT_TYPE portNum
-    )
-  {
-    // TODO
-  }
-
-  bool QueuedTest ::
-    noArgsReturnGuarded_handler(
-        const NATIVE_INT_TYPE portNum
-    )
-  {
-    // TODO return
-  }
-
-  bool QueuedTest ::
-    noArgsReturnSync_handler(
-        const NATIVE_INT_TYPE portNum
-    )
-  {
-    // TODO return
-  }
-
-  void QueuedTest ::
-    noArgsSync_handler(
-        const NATIVE_INT_TYPE portNum
-    )
-  {
-    // TODO
+    this->noArgsOut_out(portNum);
   }
 
   void QueuedTest ::
@@ -192,7 +81,164 @@
         bool &bRef
     )
   {
-    // TODO
+    this->primitiveArgsOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
+  }
+
+  void QueuedTest ::
+    structArgsAsync_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamStruct &s,
+        FormalParamStruct &sRef
+    )
+  {
+    this->structArgsOut_out(portNum, s, sRef);
+  }
+  void QueuedTest ::
+    stringArgsAsync_handler(
+        const NATIVE_INT_TYPE portNum,
+        const str80String &str80,
+        str80RefString &str80Ref,
+        const str100String &str100,
+        str100RefString &str100Ref
+    )
+  {
+    this->stringArgsOut_out(
+      portNum,
+      str80,
+      str80Ref,
+      str100,
+      str100Ref
+    );
+  }
+
+  void QueuedTest ::
+    arrayArgsGuarded_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamArray &a,
+        FormalParamArray &aRef
+    )
+  {
+    this->arrayArgsOut_out(portNum, a, aRef);
+  }
+
+  void QueuedTest ::
+    arrayArgsSync_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamArray &a,
+        FormalParamArray &aRef
+    )
+  {
+    this->arrayArgsOut_out(portNum, a, aRef);
+  }
+
+  FormalParamArray QueuedTest ::
+    arrayReturnGuarded_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamArray &a,
+        FormalParamArray &aRef
+    )
+  {
+    return this->arrayReturnOut_out(portNum, a, aRef);
+  }
+
+  FormalParamArray QueuedTest ::
+    arrayReturnSync_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamArray &a,
+        FormalParamArray &aRef
+    )
+  {
+    return this->arrayReturnOut_out(portNum, a, aRef);
+  }
+
+  void QueuedTest :: 
+    cmdOut_handler(
+        NATIVE_INT_TYPE portNum,
+        FwOpcodeType opCode,
+        U32 cmdSeq,
+        Fw::CmdArgBuffer& args
+    )
+  {
+  }
+
+  void QueuedTest ::
+    enumArgsGuarded_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamEnum &en,
+        FormalParamEnum &enRef
+    )
+  {
+    this->enumArgsOut_out(portNum, en, enRef);
+  }
+
+  void QueuedTest ::
+    enumArgsSync_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamEnum &en,
+        FormalParamEnum &enRef
+    )
+  {
+    this->enumArgsOut_out(portNum, en, enRef);
+  }
+
+  FormalParamEnum QueuedTest ::
+    enumReturnGuarded_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamEnum &en,
+        FormalParamEnum &enRef
+    )
+  {
+    return this->enumReturnOut_out(portNum, en, enRef);
+  }
+
+  FormalParamEnum QueuedTest ::
+    enumReturnSync_handler(
+        const NATIVE_INT_TYPE portNum,
+        const FormalParamEnum &en,
+        FormalParamEnum &enRef
+    )
+  {
+    return this->enumReturnOut_out(portNum, en, enRef);
+  }
+
+  void QueuedTest ::
+    noArgsGuarded_handler(
+        const NATIVE_INT_TYPE portNum
+    )
+  {
+    this->noArgsOut_out(portNum);
+  }
+
+  bool QueuedTest ::
+    noArgsReturnGuarded_handler(
+        const NATIVE_INT_TYPE portNum
+    )
+  {
+    return this->noArgsReturnOut_out(portNum);
+  }
+
+  bool QueuedTest ::
+    noArgsReturnSync_handler(
+        const NATIVE_INT_TYPE portNum
+    )
+  {
+    return this->noArgsReturnOut_out(portNum);
+  }
+
+  void QueuedTest ::
+    noArgsSync_handler(
+        const NATIVE_INT_TYPE portNum
+    )
+  {
+    this->noArgsOut_out(portNum);
   }
 
   void QueuedTest ::
@@ -206,7 +252,15 @@
         bool &bRef
     )
   {
-    // TODO
+    this->primitiveArgsOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   void QueuedTest ::
@@ -220,7 +274,15 @@
         bool &bRef
     )
   {
-    // TODO
+    this->primitiveArgsOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   U32 QueuedTest ::
@@ -234,7 +296,15 @@
         bool &bRef
     )
   {
-    // TODO return
+    return this->primitiveReturnOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   U32 QueuedTest ::
@@ -248,19 +318,15 @@
         bool &bRef
     )
   {
-    // TODO return
-  }
-
-  void QueuedTest ::
-    stringArgsAsync_handler(
-        const NATIVE_INT_TYPE portNum,
-        const str80String &str80,
-        str80RefString &str80Ref,
-        const str100String &str100,
-        str100RefString &str100Ref
-    )
-  {
-    // TODO
+    return this->primitiveReturnOut_out(
+      portNum, 
+      u32, 
+      u32Ref, 
+      f32, 
+      f32Ref, 
+      b, 
+      bRef
+    );
   }
 
   void QueuedTest ::
@@ -272,7 +338,13 @@
         str100RefString &str100Ref
     )
   {
-    // TODO
+    this->stringArgsOut_out(
+      portNum,
+      str80,
+      str80Ref,
+      str100,
+      str100Ref
+    );
   }
 
   void QueuedTest ::
@@ -284,17 +356,13 @@
         str100RefString &str100Ref
     )
   {
-    // TODO
-  }
-
-  void QueuedTest ::
-    structArgsAsyncDropPriority_handler(
-        const NATIVE_INT_TYPE portNum,
-        const FormalParamStruct &s,
-        FormalParamStruct &sRef
-    )
-  {
-    // TODO
+    this->stringArgsOut_out(
+      portNum,
+      str80,
+      str80Ref,
+      str100,
+      str100Ref
+    );
   }
 
   void QueuedTest ::
@@ -304,7 +372,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO
+    this->structArgsOut_out(portNum, s, sRef);
   }
 
   void QueuedTest ::
@@ -314,7 +382,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO
+    this->structArgsOut_out(portNum, s, sRef);
   }
 
   FormalParamStruct QueuedTest ::
@@ -324,7 +392,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO return
+    return this->structReturnOut_out(portNum, s, sRef);
   }
 
   FormalParamStruct QueuedTest ::
@@ -334,7 +402,7 @@
         FormalParamStruct &sRef
     )
   {
-    // TODO return
+    return this->structReturnOut_out(portNum, s, sRef);
   }
 
   // ----------------------------------------------------------------------
@@ -347,7 +415,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(portNum, Buffer);
   }
 
   void QueuedTest ::
@@ -356,7 +424,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(SerialPortIndex::ENUM, Buffer);
   }
 
   void QueuedTest ::
@@ -365,7 +433,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(SerialPortIndex::ARRAY, Buffer);
   }
 
   void QueuedTest ::
@@ -374,7 +442,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(SerialPortIndex::STRUCT, Buffer);
   }
 
   void QueuedTest ::
@@ -383,7 +451,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(portNum, Buffer);
   }
 
   void QueuedTest ::
@@ -392,7 +460,7 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serializeStatus = this->serialOut_out(portNum, Buffer);
   }
 
   // ----------------------------------------------------------------------
@@ -400,83 +468,11 @@
   // ----------------------------------------------------------------------
 
   void QueuedTest ::
-    CMD_NO_ARGS_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq
-    )
-  {
-    // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
-  }
-
-  void QueuedTest ::
-    CMD_PRIMITIVE_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        U32 u32_1,
-        U32 u32_2,
-        F32 f32_1,
-        F32 f32_2,
-        bool b1,
-        bool b2
-    )
-  {
-    // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
-  }
-
-  void QueuedTest ::
-    CMD_STRINGS_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        const Fw::CmdStringArg& str1,
-        const Fw::CmdStringArg& str2
-    )
-  {
-    // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
-  }
-
-  void QueuedTest ::
-    CMD_ENUM_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        FormalParamEnum en
-    )
-  {
-    // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
-  }
-
-  void QueuedTest ::
-    CMD_ARRAY_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        FormalParamArray arr
-    )
-  {
-    // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
-  }
-
-  void QueuedTest ::
-    CMD_STRUCT_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        FormalParamStruct str
-    )
-  {
-    // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
-  }
-
-  void QueuedTest ::
     CMD_ASYNC_NO_ARGS_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq
     )
   {
-    // TODO
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -492,7 +488,13 @@
         bool b2
     )
   {
-    // TODO
+    this->primitiveCmd.args.val1 = u32_1;
+    this->primitiveCmd.args.val2 = u32_2;
+    this->primitiveCmd.args.val3 = f32_1;
+    this->primitiveCmd.args.val4 = f32_2;
+    this->primitiveCmd.args.val5 = b1;
+    this->primitiveCmd.args.val6 = b2;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -504,7 +506,9 @@
         const Fw::CmdStringArg& str2
     )
   {
-    // TODO
+    this->stringCmd.args.val1 = str1;
+    this->stringCmd.args.val2 = str2;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -515,7 +519,8 @@
         FormalParamEnum en
     )
   {
-    // TODO
+    this->enumCmd.args.val = en;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -526,7 +531,8 @@
         FormalParamArray arr
     )
   {
-    // TODO
+    this->arrayCmd.args.val = arr;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -537,7 +543,89 @@
         FormalParamStruct str
     )
   {
-    // TODO
+    this->structCmd.args.val = str;
+
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
+
+  void QueuedTest ::
+    CMD_NO_ARGS_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq
+    )
+  {
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
+
+  void QueuedTest ::
+    CMD_PRIMITIVE_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        U32 u32_1,
+        U32 u32_2,
+        F32 f32_1,
+        F32 f32_2,
+        bool b1,
+        bool b2
+    )
+  {
+    this->primitiveCmd.args.val1 = u32_1;
+    this->primitiveCmd.args.val2 = u32_2;
+    this->primitiveCmd.args.val3 = f32_1;
+    this->primitiveCmd.args.val4 = f32_2;
+    this->primitiveCmd.args.val5 = b1;
+    this->primitiveCmd.args.val6 = b2;
+
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
+
+  void QueuedTest ::
+    CMD_STRINGS_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        const Fw::CmdStringArg& str1,
+        const Fw::CmdStringArg& str2
+    )
+  {
+    this->stringCmd.args.val1 = str1;
+    this->stringCmd.args.val2 = str2;
+
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
+
+  void QueuedTest ::
+    CMD_ENUM_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        FormalParamEnum en
+    )
+  {
+    this->enumCmd.args.val = en;
+
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
+
+  void QueuedTest ::
+    CMD_ARRAY_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        FormalParamArray arr
+    )
+  {
+    this->arrayCmd.args.val = arr;
+
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
+
+  void QueuedTest ::
+    CMD_STRUCT_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        FormalParamStruct str
+    )
+  {
+    this->structCmd.args.val = str;
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -551,6 +639,7 @@
         const FormalParamArray& arr //!< An array
   )
   {
+    this->arrayInterface.args.val = arr;
   }
 
   //! Internal interface handler for internalEnum
@@ -559,6 +648,7 @@
         const FormalParamEnum& en //!< An enum
   )
   {
+    this->enumInterface.args.val = en;
   }
 
   //! Internal interface handler for internalNoArgs
@@ -578,6 +668,12 @@
         bool b2 //!< A boolean
   )
   {
+    this->primitiveInterface.args.val1 = u32_1;
+    this->primitiveInterface.args.val2 = u32_2;
+    this->primitiveInterface.args.val3 = f32_1;
+    this->primitiveInterface.args.val4 = f32_2;
+    this->primitiveInterface.args.val5 = b1;
+    this->primitiveInterface.args.val6 = b2;
   }
 
   //! Internal interface handler for internalString
@@ -587,6 +683,8 @@
         const Fw::InternalInterfaceString& str2 //!< Another string
   )
   {
+    this->stringInterface.args.val1 = str1;
+    this->stringInterface.args.val2 = str2;
   }
 
   //! Internal interface handler for internalStruct
@@ -595,5 +693,6 @@
         const FormalParamStruct& str //!< A struct
   )
   {
+    this->structInterface.args.val = str;
   }
 

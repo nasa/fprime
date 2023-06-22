@@ -79,3 +79,9 @@
     );
 
   }
+
+  Fw::QueuedComponentBase::MsgDispatchStatus Tester ::
+    doDispatch()
+  {
+    return component.doDispatch();
+  }
