@@ -1146,6 +1146,7 @@ RAbrack
 radd
 RAII
 Ramanan
+rancherdesktop
 randtbl
 rapidscat
 raspberrypi
