@@ -33,6 +33,24 @@ namespace Drv {
        SPI_FREQUENCY_20MHZ = 20000000UL,
     };
 
+    /**
+     * SPI Mode Select
+     *
+     * Defines the Clock Polarity and Phase for each SPI Transaction.
+     * Mode 0: (CPOL = 0, CPHA = 0) 
+     * Mode 1: (CPOL = 0, CPHA = 1)
+     * Mode 2: (CPOL = 1, CPHA = 0)
+     * Mode 3: (CPOL = 1, CPHA = 1) 
+     * 
+     */
+    enum SpiMode
+    {
+        SPI_MODE_0 = 0,
+        SPI_MODE_1 = 1,
+        SPI_MODE_2 = 2,
+        SPI_MODE_3 = 3,
+    };
+
     class LinuxSpiDriverComponentImpl: public LinuxSpiDriverComponentBase {
 
         public:
@@ -59,7 +77,8 @@ namespace Drv {
             //! Open device
             bool open(NATIVE_INT_TYPE device,
                       NATIVE_INT_TYPE select,
-                      SpiFrequency clock);
+                      SpiFrequency clock,
+                      SpiMode spiMode);
 
         PRIVATE:
 

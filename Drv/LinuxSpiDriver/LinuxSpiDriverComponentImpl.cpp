@@ -70,7 +70,8 @@ namespace Drv {
 
     bool LinuxSpiDriverComponentImpl::open(NATIVE_INT_TYPE device,
                                            NATIVE_INT_TYPE select,
-                                           SpiFrequency clock) {
+                                           SpiFrequency clock,
+                                           SpiMode spiMode) {
 
         this->m_device = device;
         this->m_select = select;
@@ -97,9 +98,9 @@ namespace Drv {
 
         // Configure:
         /*
-         * SPI Mode 0
+         * SPI Mode 0, 1, 2, 3
          */
-        U8 mode = SPI_MODE_0; // Mode 0 (CPOL = 0, CPHA = 0)
+        U8 mode = spiMode; // Mode Select (CPOL = 0/1, CPHA = 0/1)
         ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
         if (ret == -1) {
             DEBUG_PRINT("ioctl SPI_IOC_WR_MODE fd %d failed. %d\n",fd,errno);
