@@ -78,7 +78,7 @@ namespace Drv {
             bool open(NATIVE_INT_TYPE device,
                       NATIVE_INT_TYPE select,
                       SpiFrequency clock,
-                      SpiMode spiMode);
+                      SpiMode spiMode = SpiMode::SPI_MODE_0);
 
         PRIVATE:
 
