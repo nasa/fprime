@@ -1,7 +1,7 @@
 ####
 # ARM 32-bit Toolchain with Software Floating Point
 #
-# This ARM toolchain will compile for 32-bit ARM linux systems supporting sodtware floating point operations. It uses
+# This ARM toolchain will compile for 32-bit ARM linux systems supporting software floating point operations. It uses
 # the arm packages installed on the system path for cross-compilation. To override the location of the tools use
 # -DARM_TOOLS_PATH=... to specify the root directory of the tools installation. That directory should contain folders
 # bin, lib, etc where the tools are located.

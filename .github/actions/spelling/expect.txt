@@ -1,4 +1,5 @@
 Aadil
+aarch
 abcd
 ABCDE
 ABCDEF
@@ -391,6 +392,8 @@ dumpobj
 DVI
 DWN
 dylib
+eabi
+eabihf
 EACCES
 EAGAIN
 eay
