@@ -2,7 +2,7 @@
 
 ## Raspberry PI Toolchain
 
-This is a toolchain for the Raspberry Pi. This toolchain can be used ot build
+This is a toolchain for the Raspberry Pi. This toolchain can be used to build
 against the Raspberry Pi embedded Linux target. In order to use this toolchain,
 the Raspberry Pi cross-compiler should be installed on a Linux host. These
 tools are installable as follows:
