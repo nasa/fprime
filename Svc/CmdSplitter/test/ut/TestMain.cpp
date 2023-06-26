@@ -4,31 +4,28 @@
 
 #include "Tester.hpp"
 
-TEST(Nominal, TestIo) {
+TEST(Nominal, Local) {
     Svc::Tester tester;
-    tester.test_in_out();
+    tester.test_local_routing();
+}
+
+TEST(Nominal, Remote) {
+    Svc::Tester tester;
+    tester.test_remote_routing();
+}
+
+TEST(Nominal, Forwarding) {
+    Svc::Tester tester;
+    tester.test_response_forwarding();
+}
+
+TEST(Error, BadCommands) {
+    Svc::Tester tester;
+    tester.test_error_routing();
 }
 
 
-TEST(Nominal, TestBufferIo) {
-    Svc::Tester tester;
-    tester.test_buffer_io();
-}
 
-TEST(Nominal, TestRandomIo) {
-    Svc::Tester tester;
-    tester.test_random_io();
-}
-
-TEST(Nominal, TestEvents) {
-    Svc::Tester tester;
-    tester.test_events();
-}
-
-TEST(Nominal, TestTelemetry) {
-    Svc::Tester tester;
-    tester.test_telemetry();
-}
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

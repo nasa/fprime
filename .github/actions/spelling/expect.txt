@@ -449,6 +449,7 @@ ERRORCHECK
 errorlevel
 errornum
 ert
+ethanchee
 etime
 ETIMEDOUT
 eturn
@@ -1625,7 +1626,7 @@ vwong
 vxworks
 VXWORKSLOGASSERT
 WAITALL
-Watney
+watney
 Wconversion
 Wdog
 weakref

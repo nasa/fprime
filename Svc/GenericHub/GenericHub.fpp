@@ -4,17 +4,33 @@ module Svc {
   passive component GenericHub {
 
     # ----------------------------------------------------------------------
+    # Mimic Ports
+    # ----------------------------------------------------------------------
+
+    @ Telemetry input port for mimicking an event processor
+    sync input port TlmRecv: Fw.Tlm
+
+    @ Event input port for mimicking an event processor
+    sync input port LogRecv: Fw.Log
+
+    @ Cross-hub event output port
+    output port LogSend:  Fw.Log
+
+    @ Cross-hub telemetry output port
+    output port TlmSend: Fw.Tlm
+
+    # ----------------------------------------------------------------------
     # General Ports
     # ----------------------------------------------------------------------
 
     @ Input array of generic ports to shuttle to the other side of the hub connection
-    guarded input port portIn: [GenericHubInputPorts] serial
+    sync input port portIn: [GenericHubInputPorts] serial
 
     @ Output array of generic ports shuttled from the other side of the hub connection
     output port portOut: [GenericHubOutputPorts] serial
 
     @ Input array of generic ports shuttling in copy-free buffers form external sources
-    guarded input port buffersIn: [GenericHubInputBuffers] Fw.BufferSend
+    sync input port buffersIn: [GenericHubInputBuffers] Fw.BufferSend
 
     @ Output array of generic ports shuttling in copy-free buffers form external sources
     output port buffersOut: [GenericHubOutputBuffers] Fw.BufferSend

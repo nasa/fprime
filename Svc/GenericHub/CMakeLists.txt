@@ -21,4 +21,5 @@ set(UT_MOD_DEPS
     Fw/Com
     STest
 )
+
 register_fprime_ut()
