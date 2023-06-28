@@ -9,18 +9,18 @@ users to learn F´ and walk through the most basic steps in developing an F´ ap
 ## Tutorials Index
 
 1. [HelloWorld](https://fprime-community.github.io/fprime-tutorial-hello-world/): An Introduction to F´
-2. [LedBlinker](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/README.md): F´ and Embedded Hardware 
-3. [MathComponent](MathComponent/Tutorial.md)
+2. [LedBlinker](https://fprime-community.github.io/fprime-workshop-led-blinker/): F´ and Embedded Hardware 
+3. [MathComponent](https://fprime-community.github.io/fprime-tutorial-math-component/): Custom Ports and Types
 4. [Cross-Compilation Tutorial](CrossCompilation/Tutorial.md)
+
 
 ## [HelloWorld](https://fprime-community.github.io/fprime-tutorial-hello-world/): An Introduction to F´
 
-The HelloWorld tutorial walks a new users through creating a new project, designing their first F´ component, and testing that
+The HelloWorld tutorial walks new users through creating a new project, designing their first F´ component, and testing that
 component through an F´ deployment. 
 
 
-
-## [LedBlinker](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/README.md): F´ and Embedded Hardware 
+## [LedBlinker](https://fprime-community.github.io/fprime-workshop-led-blinker/): F´ and Embedded Hardware 
 
 LedBlinker walks users through developing an F´ project intended for running on embedded hardware. It covers manager components, hardware drivers, and cross-compilation with the goal of blinking an LED on ARM hardware. Events, Telemetry, Commands, and Parameters are covered as well.
 
@@ -35,6 +35,7 @@ LedBlinker walks users through developing an F´ project intended for running on
 7. [Unit-Testing](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/unit-testing.md)
 8. [System Testing](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/docs/system-testing.md)
 
-## [MathComponent](MathComponent/Tutorial.md): Custom Ports and Types
 
-MathComponent tutorial walks users through constructing a full F´ application including custom Ports, and Enumeration data types. Events, Telemetry, Commands, and Parameters are covered as well. Unit-Testing is also covered.
+## [MathComponent](https://fprime-community.github.io/fprime-tutorial-math-component/): Custom Ports and Types
+
+The MathComponent tutorial walks users through constructing a full F´ application including custom Ports, and Enumeration data types. Events, Telemetry, Commands, and Parameters are covered as well. Unit-Testing is also covered.
