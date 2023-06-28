@@ -103,16 +103,18 @@ namespace Drv {
 
         U8 mode; // Mode Select (CPOL = 0/1, CPHA = 0/1)
         switch(spiMode) {
-            case SpiMode::SPI_MODE_0:
+            case SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW:
                 mode = SPI_MODE_0;
                 break;
-            case SpiMode::SPI_MODE_1:
+            case SpiMode::SPI_MODE_CPOL_LOW_CPHA_HIGH:
                 mode = SPI_MODE_1;
                 break;
-            case SpiMode::SPI_MODE_2:
+            case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_LOW:
                 mode = SPI_MODE_2;
-            case SpiMode::SPI_MODE_3:
+                break;
+            case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_HIGH:
                 mode = SPI_MODE_3;
+                break;
             default:
                 //Assert if the device SPI Mode is not in the correct range
                 FW_ASSERT(0, spiMode);                

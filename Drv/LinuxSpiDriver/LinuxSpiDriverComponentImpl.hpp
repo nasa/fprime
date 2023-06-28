@@ -36,19 +36,25 @@ namespace Drv {
     /**
      * SPI Mode Select
      *
-     * Defines the Clock Polarity and Phase for each SPI Transaction.
-     * Mode 0: (CPOL = 0, CPHA = 0) 
-     * Mode 1: (CPOL = 0, CPHA = 1)
-     * Mode 2: (CPOL = 1, CPHA = 0)
-     * Mode 3: (CPOL = 1, CPHA = 1) 
+     * Defines the SPI Clock Polarity and Phase for each SPI Transaction.
+     * 
+     * SPI Clock Polarity(CPOL): Defines clock polarity as idle low (CPOL = 0) or idle high(CPOL = 1)
+     * SPI Clock Phase(CPHA): Defines if data is shifted out on the rising clock edge and sampled 
+     *                        on the falling clock edge(CPHA = 0) or if data is shifted out on the 
+     *                        falling clock edge and sampled on the rising clock edge(CPHA=1)
+     * 
+     * SPI Mode 0: (CPOL = 0, CPHA = 0) 
+     * SPI Mode 1: (CPOL = 0, CPHA = 1)
+     * SPI Mode 2: (CPOL = 1, CPHA = 0)
+     * SPI Mode 3: (CPOL = 1, CPHA = 1) 
      * 
      */
     enum SpiMode
     {
-        SPI_MODE_0 = 0,
-        SPI_MODE_1 = 1,
-        SPI_MODE_2 = 2,
-        SPI_MODE_3 = 3,
+        SPI_MODE_CPOL_LOW_CPHA_LOW,
+        SPI_MODE_CPOL_LOW_CPHA_HIGH,
+        SPI_MODE_CPOL_HIGH_CPHA_LOW,
+        SPI_MODE_CPOL_HIGH_CPHA_HIGH,
     };
 
     class LinuxSpiDriverComponentImpl: public LinuxSpiDriverComponentBase {
@@ -78,7 +84,7 @@ namespace Drv {
             bool open(NATIVE_INT_TYPE device,
                       NATIVE_INT_TYPE select,
                       SpiFrequency clock,
-                      SpiMode spiMode = SpiMode::SPI_MODE_0);
+                      SpiMode spiMode = SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW);
 
         PRIVATE:
 
