@@ -101,10 +101,24 @@ namespace Drv {
          * SPI Mode 0, 1, 2, 3
          */
 
-        //Assert that the device SPI Mode is in the correct range
-        FW_ASSERT(spiMode >= SpiMode::SPI_MODE_0 || spiMode <= SpiMode::SPI_MODE_3);
+        U8 mode; // Mode Select (CPOL = 0/1, CPHA = 0/1)
+        switch(spiMode) {
+            case SpiMode::SPI_MODE_0:
+                mode = SPI_MODE_0;
+                break;
+            case SpiMode::SPI_MODE_1:
+                mode = SPI_MODE_1;
+                break;
+            case SpiMode::SPI_MODE_2:
+                mode = SPI_MODE_2;
+            case SpiMode::SPI_MODE_3:
+                mode = SPI_MODE_3;
+            default:
+                //Assert if the device SPI Mode is not in the correct range
+                FW_ASSERT(spiMode >= SpiMode::SPI_MODE_0 || spiMode <= SpiMode::SPI_MODE_3);                
+                break;
+        }
 
-        U8 mode = spiMode; // Mode Select (CPOL = 0/1, CPHA = 0/1)
         ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
         if (ret == -1) {
             DEBUG_PRINT("ioctl SPI_IOC_WR_MODE fd %d failed. %d\n",fd,errno);
