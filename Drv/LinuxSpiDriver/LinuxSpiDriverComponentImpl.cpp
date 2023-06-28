@@ -115,7 +115,7 @@ namespace Drv {
                 mode = SPI_MODE_3;
             default:
                 //Assert if the device SPI Mode is not in the correct range
-                FW_ASSERT(spiMode >= SpiMode::SPI_MODE_0 || spiMode <= SpiMode::SPI_MODE_3);                
+                FW_ASSERT(0, spiMode);                
                 break;
         }
 
