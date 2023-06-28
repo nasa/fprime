@@ -43,18 +43,13 @@ namespace Drv {
      *                        on the falling clock edge(CPHA = 0) or if data is shifted out on the 
      *                        falling clock edge and sampled on the rising clock edge(CPHA=1)
      * 
-     * SPI Mode 0: (CPOL = 0, CPHA = 0) 
-     * SPI Mode 1: (CPOL = 0, CPHA = 1)
-     * SPI Mode 2: (CPOL = 1, CPHA = 0)
-     * SPI Mode 3: (CPOL = 1, CPHA = 1) 
-     * 
      */
     enum SpiMode
     {
-        SPI_MODE_CPOL_LOW_CPHA_LOW,
-        SPI_MODE_CPOL_LOW_CPHA_HIGH,
-        SPI_MODE_CPOL_HIGH_CPHA_LOW,
-        SPI_MODE_CPOL_HIGH_CPHA_HIGH,
+        SPI_MODE_CPOL_LOW_CPHA_LOW, ///< (CPOL = 0, CPHA = 0) 
+        SPI_MODE_CPOL_LOW_CPHA_HIGH,///< (CPOL = 0, CPHA = 1)
+        SPI_MODE_CPOL_HIGH_CPHA_LOW,///< (CPOL = 1, CPHA = 0)
+        SPI_MODE_CPOL_HIGH_CPHA_HIGH,///< (CPOL = 1, CPHA = 1)
     };
 
     class LinuxSpiDriverComponentImpl: public LinuxSpiDriverComponentBase {
