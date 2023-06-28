@@ -8,15 +8,16 @@ users to learn F´ and walk through the most basic steps in developing an F´ ap
 
 ## Tutorials Index
 
-1. [HelloWorld](https://github.com/fprime-community/fprime-tutorial-hello-world.git): An Introduction to F´
+1. [HelloWorld](https://fprime-community.github.io/fprime-tutorial-hello-world/): An Introduction to F´
 2. [LedBlinker](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/README.md): F´ and Embedded Hardware 
 3. [MathComponent](MathComponent/Tutorial.md)
 4. [Cross-Compilation Tutorial](CrossCompilation/Tutorial.md)
 
-## [HelloWorld](https://github.com/fprime-community/fprime-tutorial-hello-world.git): An Introduction to F´
+## [HelloWorld](https://fprime-community.github.io/fprime-tutorial-hello-world/): An Introduction to F´
 
-The HelloWorld tutorial walks a new user through creating a new project, their first F´ component, and testing that
-component through an F´ deployment. This tutorial has the following subsections:
+The HelloWorld tutorial walks a new users through creating a new project, designing their first F´ component, and testing that
+component through an F´ deployment. 
+
 
 
 ## [LedBlinker](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/main/README.md): F´ and Embedded Hardware 
