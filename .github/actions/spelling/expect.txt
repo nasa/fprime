@@ -686,6 +686,7 @@ ORhex
 origfile
 origstatinfo
 ortega
+osal
 OSAL
 osaves
 osets
