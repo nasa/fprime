@@ -6,7 +6,7 @@ on:
   push:
     branches: [ master, devel ]
   pull_request:
-    branches: [ master, devel ]
+    branches: [ master, devel, refactor/osal ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
