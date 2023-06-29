@@ -69,13 +69,13 @@ endfunction()
 # Function `setup_executable_implementation`:
 #
 # Sets up the given implementation for the given module. Ensures that choices have been made and linking is setup
-# without causing global link depdencies.
+# without causing global link dependencies.
 #
 # Args:
 #    MODULE: module to setup implementation choices for
 #####
 function(setup_executable_implementation IMPLEMENTATION MODULE)
-    # Get thr chosen implementor and fallback to the platform choice
+    # Get the chosen implementor and fallback to the platform choice
     get_property(IMPLEMENTOR GLOBAL PROPERTY "${IMPLEMENTATION}_${MODULE}")
     if (NOT IMPLEMENTOR)
         get_property(IMPLEMENTOR GLOBAL PROPERTY "${IMPLEMENTATION}_${FPRIME_PLATFORM}")
