@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include <ComPacket.hpp>
+#include <Fw/Com/ComPacket.hpp>
 #include "GTestBase.hpp"
 #include "Svc/GroundInterface/GroundInterface.hpp"
 
