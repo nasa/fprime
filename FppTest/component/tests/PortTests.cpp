@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#include "test/ut/Tester.hpp"
 #include "PortTests.hpp"
+#include "test/ut/Tester.hpp"
 
 PORT_TEST_DEFS(Sync)
 PORT_TEST_DEFS(Guarded)

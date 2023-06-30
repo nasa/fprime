@@ -9,35 +9,29 @@
 
 #include "FppTest/component/empty/EmptyComponentAc.hpp"
 
+class Empty :
+  public EmptyComponentBase
+{
 
-  class Empty :
-    public EmptyComponentBase
-  {
+  public:
 
-    public:
+    // ----------------------------------------------------------------------
+    // Component construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Construct Empty object
+    Empty(
+        const char* const compName //!< The component name
+    );
 
-      //! Construct object Empty
-      //!
-      Empty(
-          const char *const compName /*!< The component name*/
-      );
+    //! Initialize Empty object
+    void init(
+        NATIVE_INT_TYPE instance = 0 //!< The instance number
+    );
 
-      //! Initialize object Empty
-      //!
-      void init(
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
+    //! Destroy Empty object
+    ~Empty();
 
-      //! Destroy object Empty
-      //!
-      ~Empty();
-
-
-    };
-
+};
 
 #endif

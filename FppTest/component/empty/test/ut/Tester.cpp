@@ -6,34 +6,21 @@
 
 #include "Tester.hpp"
 
+// ----------------------------------------------------------------------
+// Construction and destruction
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
-
-  Tester ::
-    Tester() :
-      EmptyGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
-      component("Empty")
-  {
+Tester ::Tester() : EmptyGTestBase("Tester", Tester::MAX_HISTORY_SIZE), component("Empty") {
     this->initComponents();
     this->connectPorts();
-  }
+}
 
-  Tester ::
-    ~Tester()
-  {
+Tester ::~Tester() {}
 
-  }
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
-
-  void Tester ::
-    test()
-  {
+void Tester ::test() {
     // Nothing else to test in an empty component
-  }
-
-
+}

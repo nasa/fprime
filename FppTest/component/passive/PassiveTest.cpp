@@ -23,7 +23,7 @@
 
   void PassiveTest ::
     init(
-        const NATIVE_INT_TYPE instance
+        NATIVE_INT_TYPE instance
     )
   {
     PassiveTestComponentBase::init(instance);

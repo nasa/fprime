@@ -7,63 +7,56 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
 #include "FppTest/component/empty/Empty.hpp"
+#include "GTestBase.hpp"
 
-  class Tester :
-    public EmptyGTestBase
-  {
+class Tester : public EmptyGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
+    // Instance ID supplied to the component instance under test
+    static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
 
-    public:
-      // Maximum size of histories storing events, telemetry, and port outputs
-      static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
-      // Instance ID supplied to the component instance under test
-      static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+    //! Construct object Tester
+    //!
+    Tester();
 
-      //! Construct object Tester
-      //!
-      Tester();
+    //! Destroy object Tester
+    //!
+    ~Tester();
 
-      //! Destroy object Tester
-      //!
-      ~Tester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-    public:
+    void test();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+  PRIVATE:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      void test();
+    //! Connect ports
+    //!
+    void connectPorts();
 
-    private:
+    //! Initialize components
+    //!
+    void initComponents();
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+  PRIVATE:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      //! Connect ports
-      //!
-      void connectPorts();
-
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      Empty component;
-
-  };
+    //! The component under test
+    //!
+    Empty component;
+};
 
 #endif

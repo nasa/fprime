@@ -24,9 +24,9 @@
 
   void ActiveTest ::
     init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE msgSize,
-        const NATIVE_INT_TYPE instance
+        NATIVE_INT_TYPE queueDepth,
+        NATIVE_INT_TYPE msgSize,
+        NATIVE_INT_TYPE instance
     )
   {
     ActiveTestComponentBase::init(queueDepth, msgSize, instance);

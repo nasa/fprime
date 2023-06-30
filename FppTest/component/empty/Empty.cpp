@@ -9,29 +9,29 @@
 #include <FpConfig.hpp>
 
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  Empty ::
-    Empty(
-        const char *const compName
-    ) : EmptyComponentBase(compName)
-  {
+Empty ::
+  Empty(
+      const char *const compName
+  ) : EmptyComponentBase(compName)
+{
 
-  }
+}
 
-  void Empty ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    EmptyComponentBase::init(instance);
-  }
+void Empty ::
+  init(
+      NATIVE_INT_TYPE instance
+  )
+{
+  EmptyComponentBase::init(instance);
+}
 
-  Empty ::
-    ~Empty()
-  {
+Empty ::
+  ~Empty()
+{
 
-  }
+}
 

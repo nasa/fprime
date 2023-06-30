@@ -8,25 +8,13 @@
 // ======================================================================
 #include "Tester.hpp"
 
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Helper methods
+// ----------------------------------------------------------------------
 
-  void Tester ::
-    connectPorts()
-  {
+void Tester ::connectPorts() {}
 
-
-
-
-  }
-
-  void Tester ::
-    initComponents()
-  {
+void Tester ::initComponents() {
     this->init();
-    this->component.init(
-        Tester::TEST_INSTANCE_ID
-    );
-  }
-
+    this->component.init(Tester::TEST_INSTANCE_ID);
+}
