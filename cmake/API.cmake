@@ -621,9 +621,10 @@ endfunction()
 #### Documentation links
 # Next Topics:
 #  - Setting Options: [Options](Options.md) are used to vary a CMake build.
-#  - Adding Deployment: [Deployments](deployment.md) create fprime builds.
-#  - Adding Module: [Modules](module.md) register fprime Ports, Components, etc.
+#  - Adding Deployments: [Deployments](deployment.md) create fprime builds.
+#  - Adding Modules: [Modules](module.md) register fprime Ports, Components, etc.
 #  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
 #  - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
 #  - Adding Targets: [Targets](targets.md) for help defining custom build targets
+#  - Implementation Packages Design: [Implementation Packages](/Design/package-implementor.md)
 ####
