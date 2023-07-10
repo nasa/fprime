@@ -8,7 +8,7 @@ on:
     branches: [ master, devel ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ master, devel, refactor/osal ]
+    branches: [ master, devel ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
