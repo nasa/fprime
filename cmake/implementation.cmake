@@ -23,7 +23,7 @@
 include_guard()
 
 ####
-# Function `adjust_implementation_choices`:
+# Function `remap_implementation_choices`:
 #
 # When a target is declared with a different name than the module name, we need to pull the implementation choices into
 # a property for the declared target instead of the inferred target. This is done by reading each implementation choice
