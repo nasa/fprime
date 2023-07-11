@@ -31,7 +31,7 @@ function(generate_base_module_properties TARGET_TYPE TARGET_NAME SOURCE_FILES DE
     elseif(TARGET_TYPE STREQUAL "Library")
         add_library("${TARGET_NAME}" "${EMPTY}")
     else()
-        message(FATAL_ERROR "Module ${TARGET_NAME} cannot register object of type ${TARGET_TYPE}")
+        message(FATAL_ERROR "Module ${FPRIME_CURRENT_MODULE} cannot register object of type ${TARGET_TYPE}")
     endif()
 
     # Handle updates when the types have diverged
