@@ -23,7 +23,7 @@ These types will be elaborated within this guide. It contains:
 
 ## Commands
 
-Each **Component** defines a set of commands for operations. Unlike pipes, which are intended for component to component communication, commands are designed for user interaction with a component. Commands are defined through a series of
+Each **Component** defines a set of commands for operations. Unlike ports, which are intended for component to component communication, commands are designed for user interaction with a component. Commands are defined through a series of
 properties. Users can send commands to the F´ system and via `Svc::CmdDispatcher` these commands are dispatched to a
 handling component to invoke some behavior. The handling component handles a command by defining a command handler function
 to run when the command arrives.
