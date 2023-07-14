@@ -123,4 +123,16 @@ void TypeDemo ::DUMP_TYPED_PARAMETERS_cmdHandler(const FwOpcodeType opCode, cons
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+void TypeDemo ::DUMP_FLOATS_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
+    Ref::FloatSet invalid;
+    invalid[0] = std::numeric_limits<float>::infinity();
+    invalid[1] = -1 * std::numeric_limits<float>::infinity();
+    invalid[2] = (std::numeric_limits<float>::has_quiet_NaN) ? std::numeric_limits<float>::quiet_NaN() : 0.0f;
+    this->log_ACTIVITY_HI_FloatEv(invalid[0], invalid[1], invalid[2], invalid);
+    this->tlmWrite_Float1Ch(invalid[0]);
+    this->tlmWrite_Float2Ch(invalid[1]);
+    this->tlmWrite_Float3Ch(invalid[2]);
+    this->tlmWrite_FloatSet(invalid);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
 }  // end namespace Ref
