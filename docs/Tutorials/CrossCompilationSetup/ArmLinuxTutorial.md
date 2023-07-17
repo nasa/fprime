@@ -42,4 +42,4 @@ sudo deployment/bin/<name-of-deployment> -a <host-address> -p 50000
 If you are getting errors for missing Libc.c files, make sure when you generate 
 that the logs show that it is using the `/opt/toolchains` path and not `/bin`. 
 You can additionally verify that the correct toolchain is being used by watching
-the logs scroll by when you initially `fprime-util generate [toolchain]`.
+the logs scroll by when you initially `fprime-util generate <toolchain>`.
