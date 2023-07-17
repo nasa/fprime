@@ -707,7 +707,7 @@ namespace Fw {
     }
 
     void ExternalSerializeBuffer::setExtBuffer(U8* buffPtr, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buffPtr);
+        FW_ASSERT(buffPtr != nullptr);
         this->m_buff = buffPtr;
         this->m_buffSize = size;
     }
