@@ -7,11 +7,11 @@ First, in a terminal upload the software to hardware platform. This is done with
 ```sh
 # For ARM 64-bit hardware
 # In: Deployment Folder
-scp -r build-artifacts/aarch64-linux <username>@<device-address>:[NameOfBinary]
+scp -r build-artifacts/aarch64-linux <username>@<device-address>:deployment
 
 # For ARM 32-bit hardware
 # In: Deployment Folder
-scp -r build-artifacts/arm-hf-linux <username>@<device-address>:[NameOfBinary]
+scp -r build-artifacts/arm-hf-linux <username>@<device-address>:deployment
 ```
 > Users must fill in the username and device address above.
 
@@ -31,7 +31,7 @@ fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.x
 In another terminal SSH into the device and run the uploaded software:
 ```sh
 ssh <username>@<device-address>
-sudo [NameOfBinary] -a <host-address> -p 50000
+sudo deployment/bin/<name-of-deployment> -a <host-address> -p 50000
 ```
 > User should fill in the username and device address above and ensure the executable is supplied the address of the host computer (that ran the GDS).
 
