@@ -111,6 +111,12 @@ class TypeDemo : public TypeDemoComponentBase {
     void DUMP_TYPED_PARAMETERS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                           const U32 cmdSeq           /*!< The command sequence number*/
     );
+
+    //! Implementation for DUMP_FLOATS command handler
+    //!
+    void DUMP_FLOATS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                const U32 cmdSeq           /*!< The command sequence number*/
+    );
 };
 
 }  // end namespace Ref

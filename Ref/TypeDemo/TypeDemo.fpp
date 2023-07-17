@@ -33,6 +33,9 @@ module Ref {
         choicePair: ChoicePair
     }
 
+    @ Set of floating points to emit
+    array FloatSet = [3] F32;
+
     @ Component to demonstrate multiple type configurations
     passive component TypeDemo {
         #####
@@ -191,6 +194,28 @@ module Ref {
 
         @ Dump the typed parameters
         sync command DUMP_TYPED_PARAMETERS()
+
+        #####
+        # FloatSet outputs
+        #####
+        @ A set of floats in an event
+        event FloatEv(float1: F32, float2: F32, float3: F32, floats: FloatSet) severity activity high \
+            format "Floats: {} {} {} as a set: {}"
+
+        @ Float output channel 1
+        telemetry Float1Ch: F32
+
+        @ Float output channel 2
+        telemetry Float2Ch: F32
+
+        @ Float output channel 3
+        telemetry Float3Ch: F32
+
+        @ Float set output channel
+        telemetry FloatSet: FloatSet
+
+        @ Dump the float values
+        sync command DUMP_FLOATS()
 
         # ----------------------------------------------------------------------
         # Special ports
