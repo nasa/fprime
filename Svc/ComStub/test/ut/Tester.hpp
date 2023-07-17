@@ -57,7 +57,7 @@ class Tester : public ComStubGTestBase {
 
     //! Handler for from_comDataOut
     //!
-    void from_comDataOut_handler(const NATIVE_INT_TYPE portNum, //!< The port number*/
+    void from_comDataOut_handler(const NATIVE_INT_TYPE portNum, //!< The port number
                                  Fw::Buffer& recvBuffer,
                                  const Drv::RecvStatus& recvStatus);
 

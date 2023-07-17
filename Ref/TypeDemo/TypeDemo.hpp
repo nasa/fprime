@@ -91,8 +91,8 @@ class TypeDemo : public TypeDemoComponentBase {
 
     //! Implementation for GLUTTON_OF_CHOICE_WITH_FRIENDS command handler
     //! Multiple choices command via Complex Structure with a preceding and following argument
-    void GLUTTON_OF_CHOICE_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode, //!< The opcode*/
-                                                   const U32 cmdSeq,          //!< The command sequence number*/
+    void GLUTTON_OF_CHOICE_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode, //!< The opcode
+                                                   const U32 cmdSeq,          //!< The command sequence number
                                                    U8 repeat,                 //!< Number of times to repeat the choices
                                                    Ref::ChoiceSlurry choices, //!< A phenomenal amount of choice
                                                    U8 repeat_max              //!< Limit to the number of repetitions
