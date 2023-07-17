@@ -28,6 +28,15 @@ fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.x
 fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.xml
 ```
 
+In another terminal SSH into the device and run the uploaded software:
+```sh
+ssh <username>@<device-address>
+sudo [NameOfBinary] -a <host-address> -p 50000
+```
+> User should fill in the username and device address above and ensure the executable is supplied the address of the host computer (that ran the GDS).
+
+> If the device does not connect, ensure that the firewall port 50000 is open on the host computer.
+
 ## Troubleshooting
 
 If you are getting errors for missing Libc.c files, make sure when you generate 
