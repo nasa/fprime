@@ -52,7 +52,8 @@ void Tester ::test_in_out() {
 }
 
 void Tester ::test_buffer_io() {
-    U32 max = std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
+    U32 max =
+        std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
     for (U32 i = 0; i < max; i++) {
         send_random_buffer(i);
         ASSERT_from_dataInDeallocate_SIZE(1);
@@ -64,24 +65,61 @@ void Tester ::test_random_io() {
     for (U32 i = 0; i < 10000; i++) {
         U32 choice = STest::Pick::lowerUpper(0, 1);
         if (choice) {
-            U32 port = STest::Pick::lowerUpper(0, std::min(this->componentIn.getNum_portIn_InputPorts(), this->componentOut.getNum_portOut_OutputPorts()) - 1);
+            U32 port = STest::Pick::lowerUpper(0, std::min(this->componentIn.getNum_portIn_InputPorts(),
+                                                           this->componentOut.getNum_portOut_OutputPorts()) -
+                                                      1);
             send_random_comm(port);
         } else {
-            U32 port = STest::Pick::lowerUpper(0, std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts()) - 1);
+            U32 port = STest::Pick::lowerUpper(0, std::min(this->componentIn.getNum_buffersIn_InputPorts(),
+                                                           this->componentOut.getNum_buffersOut_OutputPorts()) -
+                                                      1);
             send_random_buffer(port);
         }
         ASSERT_from_dataInDeallocate_SIZE(1);
         fromPortHistory_dataInDeallocate->clear();
     }
 }
+
+void Tester ::random_fill(Fw::SerializeBufferBase& buffer, U32 max_size) {
+    U32 random_size = STest::Pick::lowerUpper(0, max_size);
+    buffer.resetSer();
+    for (U32 i = 0; i < random_size; i++) {
+        buffer.serialize(static_cast<U8>(STest::Pick::any()));
+    }
+}
+
+void Tester ::test_telemetry() {
+    Fw::TlmBuffer buffer;
+    random_fill(buffer, FW_TLM_BUFFER_MAX_SIZE);
+
+    Fw::Time time(100, 200);
+    invoke_to_TlmRecv(0, 123, time, buffer);
+
+    // **must** deallocate buffer
+    ASSERT_from_dataInDeallocate_SIZE(1);
+    ASSERT_from_TlmSend_SIZE(1);
+    ASSERT_from_TlmSend(0, 123, time, buffer);
+    clearFromPortHistory();
+}
+
+void Tester ::test_events() {
+    Fw::LogSeverity severity = Fw::LogSeverity::WARNING_HI;
+    Fw::LogBuffer buffer;
+    random_fill(buffer, FW_LOG_BUFFER_MAX_SIZE);
+
+    Fw::Time time(100, 200);
+    invoke_to_LogRecv(0, 123, time, severity, buffer);
+
+    // **must** deallocate buffer
+    ASSERT_from_dataInDeallocate_SIZE(1);
+    ASSERT_from_LogSend_SIZE(1);
+    ASSERT_from_LogSend(0, 123, time, severity, buffer);
+    clearFromPortHistory();
+}
 // Helpers
 
 void Tester ::send_random_comm(U32 port) {
-    U32 random_size = STest::Pick::lowerUpper(0, FW_COM_BUFFER_MAX_SIZE);
-    m_comm.resetSer();
-    for (U32 i = 0; i < random_size; i++) {
-        m_comm.serialize(static_cast<U8>(STest::Pick::any()));
-    }
+    random_fill(m_comm, FW_COM_BUFFER_MAX_SIZE);
     m_current_port = port;
     invoke_to_portIn(m_current_port, m_comm);
     // Ensure that the data out was called, and that the portOut unwrapped properly
@@ -91,14 +129,11 @@ void Tester ::send_random_comm(U32 port) {
 }
 
 void Tester ::send_random_buffer(U32 port) {
-
-    U32 random_size = STest::Pick::lowerUpper(0, DATA_SIZE -  (sizeof(U32)  + sizeof(U32) + sizeof(FwBuffSizeType)));
-    m_buffer.set(m_data_store, sizeof(m_data_store)) ;
-    ASSERT_GE(m_buffer.getSize(), random_size);
-    for (U32 i = 0; i < random_size; i++) {
-        reinterpret_cast<U8*>(m_buffer.getData())[i] = static_cast<U8>(STest::Pick::any());
-    }
-    m_buffer.setSize(random_size);
+    U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
+    m_buffer.set(m_data_store, sizeof(m_data_store));
+    ASSERT_GE(m_buffer.getSize(), max_random_size);
+    random_fill(m_buffer.getSerializeRepr(), max_random_size);
+    m_buffer.setSize(max_random_size);
     m_current_port = port;
     invoke_to_buffersIn(m_current_port, m_buffer);
     ASSERT_from_bufferDeallocate_SIZE(1);
@@ -114,14 +149,29 @@ void Tester ::send_random_buffer(U32 port) {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
+void Tester ::from_LogSend_handler(const NATIVE_INT_TYPE portNum,
+                                   FwEventIdType id,
+                                   Fw::Time& timeTag,
+                                   const Fw::LogSeverity& severity,
+                                   Fw::LogBuffer& args) {
+    this->pushFromPortEntry_LogSend(id, timeTag, severity, args);
+}
+
+void Tester ::from_TlmSend_handler(const NATIVE_INT_TYPE portNum,
+                                   FwChanIdType id,
+                                   Fw::Time& timeTag,
+                                   Fw::TlmBuffer& val) {
+    this->pushFromPortEntry_TlmSend(id, timeTag, val);
+}
+
 void Tester ::from_dataOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     ASSERT_NE(fwBuffer.getData(), nullptr) << "Empty buffer to deallocate";
     ASSERT_GE(fwBuffer.getData(), m_data_for_allocation) << "Incorrect data pointer deallocated";
-    ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation)) << "Incorrect data pointer deallocated";
+    ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation))
+        << "Incorrect data pointer deallocated";
     // Reuse m_allocate to pass into the otherside of the hub
     this->pushFromPortEntry_dataOut(fwBuffer);
     invoke_to_dataIn(0, fwBuffer);
-
 }
 
 // ----------------------------------------------------------------------
@@ -172,7 +222,8 @@ void Tester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::B
 void Tester ::from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     ASSERT_NE(fwBuffer.getData(), nullptr) << "Empty buffer to deallocate";
     ASSERT_GE(fwBuffer.getData(), m_data_for_allocation) << "Incorrect data pointer deallocated";
-    ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation)) << "Incorrect data pointer deallocated";
+    ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation))
+        << "Incorrect data pointer deallocated";
 
     m_allocate.set(nullptr, 0);
     this->pushFromPortEntry_dataInDeallocate(fwBuffer);
@@ -184,10 +235,17 @@ void Tester ::from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::B
 
 void Tester ::connectPorts() {
     // buffersIn
-    U32 max = std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
+    U32 max =
+        std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
     for (U32 i = 0; i < max; ++i) {
         this->connect_to_buffersIn(i, this->componentIn.get_buffersIn_InputPort(i));
     }
+
+    // LogRecv
+    this->connect_to_LogRecv(0, this->componentIn.get_LogRecv_InputPort(0));
+
+    // TlmRecv
+    this->connect_to_TlmRecv(0, this->componentIn.get_TlmRecv_InputPort(0));
 
     // dataIn
     this->connect_to_dataIn(0, this->componentOut.get_dataIn_InputPort(0));
@@ -196,6 +254,12 @@ void Tester ::connectPorts() {
     for (U32 i = 0; i < max; ++i) {
         this->componentOut.set_buffersOut_OutputPort(i, this->get_from_buffersOut(i));
     }
+
+    // LogSend
+    this->componentOut.set_LogSend_OutputPort(0, this->get_from_LogSend(0));
+
+    // TlmSend
+    this->componentOut.set_TlmSend_OutputPort(0, this->get_from_TlmSend(0));
 
     // dataOut
     this->componentIn.set_dataOut_OutputPort(0, this->get_from_dataOut(0));

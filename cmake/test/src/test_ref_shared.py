@@ -46,9 +46,11 @@ def test_ref_installation(REF_BUILD):
         library_name = (
             f"lib{module}{'.so' if platform.system() != 'Darwin' else '.dylib'}"
         )
-        output_path = REF_BUILD["install"] / platform.system() / "lib" / library_name
+        output_path = (
+            REF_BUILD["install"] / platform.system() / "Ref" / "lib" / library_name
+        )
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
-    output_path = REF_BUILD["install"] / platform.system() / "bin" / "Ref"
+    output_path = REF_BUILD["install"] / platform.system() / "Ref" / "bin" / "Ref"
     assert output_path.exists(), "Failed to locate Ref in build output"
 
 
@@ -58,6 +60,7 @@ def test_ref_dictionary(REF_BUILD):
     output_path = (
         REF_BUILD["install"]
         / platform.system()
+        / "Ref"
         / "dict"
         / "RefTopologyAppDictionary.xml"
     )

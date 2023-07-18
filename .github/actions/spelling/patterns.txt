@@ -2,7 +2,10 @@
 
 # hit-count: 106 file-count: 28
 # Compiler flags
-(?:^|[\t ,"'`=(])-[DPWXYLlf](?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,})
+(?:^|[\t ,"'`=(])-(?:[DLP](?=[A-Z]{2,})|[WXYlf](?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,}))
+
+# http|ftp|file URLs
+#(?:\b(?:https?|ftp|file)://)[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]
 
 # hit-count: 48 file-count: 18
 # GitHub SHAs (markdown)
@@ -123,3 +126,6 @@ GithubProjectProperty
 
 # ignore long runs of a single character:
 \b([A-Za-z])\g{-1}{3,}\b
+
+# ignore docker platform paths
+--platform=(linux|darwin)/(amd64|arm|arm32v5|arm32v6|arm32v7|arm64v8|i386|ppc64le|s390x|x86_64)

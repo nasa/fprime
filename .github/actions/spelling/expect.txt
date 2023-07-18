@@ -1,4 +1,5 @@
 Aadil
+aarch
 abcd
 ABCDE
 ABCDEF
@@ -102,6 +103,7 @@ bfree
 bibtex
 Bies
 bindir
+binrel
 Bitfields
 bitmaps
 bitset
@@ -392,6 +394,8 @@ dumpobj
 DVI
 DWN
 dylib
+eabi
+eabihf
 EACCES
 EAGAIN
 eay
@@ -449,6 +453,7 @@ ERRORCHECK
 errorlevel
 errornum
 ert
+ethanchee
 etime
 ETIMEDOUT
 eturn
@@ -598,6 +603,7 @@ Gnc
 Gnd
 gnd
 GNUC
+gnueabi
 gnueabihf
 google
 googletest
@@ -729,7 +735,6 @@ ISREG
 iss
 isspace
 isupper
-ITAR
 itimerspec
 itle
 itr
@@ -763,6 +768,7 @@ kislyuk
 kitware
 Kooi
 kthxbye
+Kubernetes
 Lammert
 lammertbies
 LASTLOG
@@ -911,6 +917,7 @@ namespaced
 nano
 nanosleep
 nargs
+nasafprime
 nathan
 nbits
 ncsl
@@ -1024,6 +1031,8 @@ params
 PARENB
 PARODD
 parseable
+PASSIVERATEGROUP
+PASSIVERATEGROUPIMPLTESTER
 pathlib
 pathmaker
 pbuild
@@ -1139,6 +1148,7 @@ RAbrack
 radd
 RAII
 Ramanan
+rancherdesktop
 randtbl
 rapidscat
 raspberrypi
@@ -1614,7 +1624,7 @@ vwong
 vxworks
 VXWORKSLOGASSERT
 WAITALL
-Watney
+watney
 Wconversion
 Wdog
 weakref
@@ -1641,6 +1651,7 @@ WRONLY
 wrs
 Wshadow
 Wsign
+wsl
 WSL
 Wundef
 www
@@ -1669,3 +1680,4 @@ XYZZY
 yacc
 yacgen
 yyyymmdd
+zmq

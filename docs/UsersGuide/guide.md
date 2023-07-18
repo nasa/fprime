@@ -66,14 +66,15 @@ This section is divided into three sub-sections:
     - [Sequencing in F´](./gds/seqgen.md)
 - Full Development Guides: technical details for full F´ implementations
     - [Configuring F´](./dev/configuring-fprime.md)
-    - [v3 Migration Guide](./user/v3-migration-guide.md)
+    - [F´ Modeling with FPP](./user/fpp-user-guide.md)
     - [A Tour of the Source Tree](./dev/source-tree.md)
-    - [F´ XML Specifications](./dev/xml-specification.md):
+    - [F´ XML Specifications](./dev/xml-specification.md)
     - [F´ Implementation Classes](./dev/implementation.md)
     - [Constructing the F´ Topology](./dev/building-topology.md)
     - [Asserts in F´](./dev/assert.md)
     - [GDS Dashboard Reference](./dev/gds-dashboard-reference.md)
     - [Integration Test API](./dev/testAPI/user_guide.md)
+    - [v3 Migration Guide](./user/v3-migration-guide.md)
 - Advanced F´ Topics:
     - [F´ Python Guidelines](./dev/py-dev.md)
     - [Porting F´ To a New Platform](./dev/porting-guide.md)

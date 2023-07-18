@@ -796,7 +796,7 @@ Open `MathSender/CMakeLists.txt` and update the definition of
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 set(UT_AUTO_HELPERS ON)
 register_fprime_ut()
@@ -976,7 +976,7 @@ void Tester ::
 This function calls `testDoMath` to test an `ADD` command.
 
 **Write a test macro:**
-Add the following code to the file `main.cpp`,
+Add the following code to the file `TestMain.cpp`,
 before the definition of the `main` function:
 
 ```c++
@@ -1074,7 +1074,7 @@ component sends a result back to `MathSender`.
    The main difference is that it invokes a port directly
    (the `mathResultIn` port) instead of sending a command.
 
-1. Add the following test macro to `main.cpp`:
+1. Add the following test macro to `TestMain.cpp`:
 
    ```c++
    TEST(Nominal, Result) {
@@ -1113,9 +1113,9 @@ and 10.
    This line tells the build system to make the unit test build
    depend on the `STest` build module.
 
-1. Add `#include "STest/Random/Random.hpp"` to `main.cpp`.
+1. Add `#include "STest/Random/Random.hpp"` to `TestMain.cpp`.
 
-1. Add the following line to the `main` function of `main.cpp`,
+1. Add the following line to the `main` function of `TestMain.cpp`,
    just before the return statement:
 
    ```c++
@@ -1735,7 +1735,7 @@ Instead we invoke `schedIn`.
 
 For each of the tests described below, you must add the
 corresponding function prototype to `Tester.hpp`
-and the corresponding test macro to `main.cpp`.
+and the corresponding test macro to `TestMain.cpp`.
 If you can't remember how to do it, look back at the
 `MathSender` examples.
 After writing each test, run all the tests and make sure
@@ -2014,6 +2014,24 @@ instance mathReceiver
 
 These lines add the `mathSender` and `mathReceiver`
 instances to the topology.
+
+**Packetize the telemetry channels:**
+Open the file `RefPackets.xml`. At the bottom, right before `<!—Ignored packets -->`, add the following lines:
+```
+<packet name="MathSender" id="21" level="3">
+	<channel name = "mathSender.VAL1"/>
+	<channel name = "mathSender.OP"/>
+	<channel name = "mathSender.VAL2"/>
+	<channel name = "mathSender.RESULT"/>
+<packet/>
+
+<packet name="MathReceiver" id="22" level="3">
+	<channel name = "mathReceiver.OPERATION"/>
+	<channel name = "mathReceiver.FACTOR"/>
+<packet/>
+```
+
+These lines describe the packet definitions for the `mathSender` and `mathReceiver` telemetry channels.
 
 **Check for unconnected ports:**
 Run the following commands in the `Ref/Top` directory:

@@ -94,8 +94,9 @@ function(ai_xml_setup_autocode AC_INPUT_FILE)
     # Check type and respond
     if(XML_LOWER_TYPE STREQUAL "topologyapp")
         # Are we excluding the generated files or not
-        set_property(GLOBAL PROPERTY "${PROJECT_NAME}_FPRIME_DICTIONARY_FILE"
-                "${CMAKE_CURRENT_BINARY_DIR}/${OBJ_NAME}${XML_TYPE}Dictionary.xml")
+        set(FPRIME_CURRENT_DICTIONARY_FILE "${CMAKE_CURRENT_BINARY_DIR}/${OBJ_NAME}${XML_TYPE}Dictionary.xml"
+            CACHE INTERNAL "" FORCE
+        )
         if (EXCLUDE_TOP_ACS)
             set(REMOVALS "${GENERATED_FILES}")
             set(GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${OBJ_NAME}${XML_TYPE}Dictionary.xml")
@@ -107,7 +108,7 @@ function(ai_xml_setup_autocode AC_INPUT_FILE)
             OUTPUT ${GENERATED_FILES}
             COMMAND ${AI_BASE_SCRIPT} --connect_only --xml_topology_dict "${AC_INPUT_FILE}"
             COMMAND ${CMAKE_COMMAND} -E remove ${REMOVALS}
-            DEPENDS "${AC_INPUT_FILE}" "${MODULE_DEPENDENCIES}" "${AC_INPUT_FILE}" "${FILE_DEPENDENCIES}"
+            DEPENDS "${AC_INPUT_FILE}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${CODEGEN_TARGET}"
         )
     else()
         add_custom_command(
