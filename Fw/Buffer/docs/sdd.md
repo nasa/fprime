@@ -6,7 +6,7 @@
 This module provides the following elements:
 
 * A type `Fw::Buffer` representing a wrapper around a variable-size buffer. This allows for passing a reference to the
-allocated memory around without a copy. Typically the memory is allocated in a buffer manager or similar component but 
+allocated memory around without a copy. Typically the memory is allocated in a buffer manager or similar component but
 this is not required.
 * A port `Fw::BufferGet` for requesting a buffer of type `Fw::Buffer` from
 a [`BufferManager`](../../../Svc/BufferManager/docs/sdd.md) and similar components.
@@ -30,8 +30,11 @@ Name | Type | Accessors | Purpose
 `m_context`    | `U32` | `getContext()`/`setContext()` | Context of buffer's origin. Used to track buffers created by [`BufferManager`](../../../Svc/BufferManager/docs/sdd.md)
 `m_serialize_repr` | `Fw::ExternalSerializeBuffer` | `getSerializeRepr()` | Interface for serialization to internal buffer
 
-If the size of the data is set to 0, the pointer returned by `getData()` and the serialization interface returned by
-`getSerializeRepr()` are considered invalid and should not be used.
+A value _B_ of type `Fw::Buffer` is **valid** if `m_bufferData != nullptr` and
+`m_size > 0`; otherwise it is **invalid**.
+If _B_ is invalid, then the pointer returned by _B_ `.getData()` and the
+serialization interface returned by
+_B_ `.getSerializeRepr()` are considered invalid and should not be used.
 
 The `getSerializeRepr()` function may be used to interact with the wrapped data buffer by serializing types to and from
 the data region.
@@ -62,7 +65,7 @@ Receivers of `Fw::Buffer` objects are expected to check the `m_size` field befor
 
 Users can obtain a SerializeBuffer, `sb`, by calling `getSerializeRepr()`. This serialize buffer is backed by the memory
 of the `Fw::Buffer` and is initially empty.  Users can serialize and deserialize through `sb` to copy to/from the backed
-memory. 
+memory.
 
 The state of `sb` persists as long as the current `Fw::Buffer` object exists as it is stored as a member. However, all
 `Fw::Buffer` constructors initialize `sb` to an empty state including the `Fw::Buffer` copy constructor. Thus, if an
