@@ -523,7 +523,7 @@ FPCONFIG
 fpconfighpp
 FPGA
 fpi
-fpl
+FPL
 fpp
 fppi
 FPport
