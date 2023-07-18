@@ -35,14 +35,11 @@ namespace STest {
           const char *const fileName,
           U32& value
       ) {
-        bool result = true;
+        bool result = false;
         FILE *fp = fopen(fileName, "r");
         if (fp != nullptr) {
           result = (fscanf(fp, "%" PRIu32, &value) == 1);
           (void) fclose(fp);
-        }
-        else {
-          result = false;
         }
         return result;
       }
@@ -55,7 +52,7 @@ namespace STest {
           const char *const fileName,
           const U32 seedValue
       ) {
-        bool result = true;
+        bool result = false;
         FILE *fp = fopen(fileName, "a");
         if (fp != nullptr) {
           int status = fprintf(
@@ -65,9 +62,6 @@ namespace STest {
           );
           result = (status > 0);
           (void) fclose(fp);
-        }
-        else {
-          result = false;
         }
         return result;
       }
@@ -79,11 +73,11 @@ namespace STest {
       const bool seedValueOK =
         SeedValue::getFromFile("seed", seedValue);
       if (seedValueOK) {
-        printf("[STest::Random] Read seed %" PRIu32 " from file\n", seedValue);
+        (void) printf("[STest::Random] Read seed %" PRIu32 " from file\n", seedValue);
       }
       else {
         seedValue = SeedValue::getFromTime();
-        printf("[STest::Random] Generated seed %" PRIu32 " from system time\n", seedValue);
+        (void) printf("[STest::Random] Generated seed %" PRIu32 " from system time\n", seedValue);
       }
       (void) SeedValue::appendToFile("seed-history", seedValue);
       SeedValue::set(seedValue);
@@ -94,9 +88,7 @@ namespace STest {
         const U32 length
     ) {
       assert(length > 0);
-      const F64 randFloat = inUnitInterval() * length;
-      const U32 offset = static_cast<U32>(randFloat);
-      return start + offset;
+      return lowerUpper(start, start + length - 1);
     }
 
     U32 lowerUpper(
@@ -107,7 +99,9 @@ namespace STest {
       const F64 length = static_cast<F64>(upper) - lower + 1;
       const F64 randFloat = inUnitInterval() * length;
       const U32 offset = static_cast<U32>(randFloat);
-      return lower + offset;
+      const U32 result = lower + offset;
+      // Handle boundary case where inUnitInterval returns 1.0
+      return (result <= upper) ? result : result - 1;
     }
 
     double inUnitInterval() {

@@ -51,7 +51,7 @@ namespace STest {
       // ----------------------------------------------------------------------
 
       //! Return the next scenario to run
-      //! \return The next scenario, assuming isDone() is false, or NULL if none
+      //! \return The next scenario, assuming isDone() is false, or nullptr if none
       Scenario<State>* nextScenario(
           State& state //!< The system state
       ) {
@@ -78,7 +78,7 @@ namespace STest {
       }
 
       //! The virtual implementation of nextRule required by Scenario
-      //! \return The next rule, assuming isDone() is false, or NULL if none
+      //! \return The next rule, assuming isDone() is false, or nullptr if none
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
@@ -118,7 +118,7 @@ namespace STest {
       virtual void reset_IteratedScenario() = 0;
 
       //! The virtual implementation of nextScenario required by IteratedScenario
-      //! \return The next scenario, assuming isDone() is false, or NULL if none
+      //! \return The next scenario, assuming isDone() is false, or nullptr if none
       virtual Scenario<State>* nextScenario_IteratedScenario(
           State& state //!< The system state
       ) = 0;
