@@ -28,11 +28,15 @@ Buffer::Buffer(): Serializable(),
 {}
 
 Buffer::Buffer(const Buffer& src) : Serializable(),
-    m_serialize_repr(src.m_bufferData, src.m_size),
+    m_serialize_repr(),
     m_bufferData(src.m_bufferData),
     m_size(src.m_size),
     m_context(src.m_context)
-{}
+{
+    if(src.m_bufferData != nullptr){
+        this->m_serialize_repr.setExtBuffer(src.m_bufferData, src.m_size);
+    }
+}
 
 Buffer::Buffer(U8* data, U32 size, U32 context) : Serializable(),
     m_serialize_repr(),
