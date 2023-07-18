@@ -61,7 +61,7 @@ namespace STest {
       Scenario<State>* nextScenario_IteratedScenario(
           State& state //!< The system state
       ) {
-        Scenario<State>* scenario = nullptr;
+        Scenario<State>* scenario = NULL;
         if (!this->condition_ConditionalIteratedScenario(state)) {
           this->done = true;
         }

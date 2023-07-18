@@ -55,7 +55,7 @@ namespace STest {
           State& state //!< The system state
       ) {
         Rule<State> *rule = nullptr;
-        if (this->rule.precondition(state)) {
+        if (!this->isDone() && this->rule.precondition(state)) {
           rule = &this->rule;
           this->done = true;
         }
