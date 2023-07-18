@@ -56,7 +56,7 @@ namespace STest {
       }
 
       //! The virtual implementation of nextRule required by Scenario
-      //! \return The next rule, assuming isDone() is false, or NULL if none
+      //! \return The next rule, assuming isDone() is false, or nullptr if none
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {

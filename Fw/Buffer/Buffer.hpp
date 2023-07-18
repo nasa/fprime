@@ -118,6 +118,10 @@ public:
     // Accessor functions
     // ----------------------------------------------------------------------
 
+    //! Returns true if the buffer is valid (data pointer != nullptr and size > 0)
+    //!
+    bool isValid() const;
+
     //! Returns wrapped data pointer
     //!
     U8* getData() const;

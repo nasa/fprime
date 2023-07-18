@@ -1,10 +1,10 @@
 // ======================================================================
 // \title  Pick.hpp
-// \author AUTO-GENERATED: DO NOT EDIT
+// \author bocchino
 // \brief  Pick interface
 //
 // \copyright
-// Copyright (C) 2019 California Institute of Technology.
+// Copyright (C) 2022 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 // ======================================================================
@@ -12,12 +12,10 @@
 #ifndef STEST_PICK_HPP
 #define STEST_PICK_HPP
 
-#include <cassert>
-#include <cstddef>
-#include <limits.h>
-
 #include "STest/types/basic_types.h"
-
+#ifdef STEST_MODE_spin
+#include "STest/Pick/Pick_spin.hpp"
+#endif
 
 namespace STest {
 
