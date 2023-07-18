@@ -61,6 +61,10 @@ bool Buffer::operator==(const Buffer& src) const {
     return (this->m_bufferData == src.m_bufferData) && (this->m_size == src.m_size) && (this->m_context == src.m_context);
 }
 
+bool Buffer::isValid() const {
+    return (this->m_bufferData != nullptr) && (this->m_size > 0);
+}
+
 U8* Buffer::getData() const {
     return this->m_bufferData;
 }
