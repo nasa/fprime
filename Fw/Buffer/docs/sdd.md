@@ -32,7 +32,10 @@ Name | Type | Accessors | Purpose
 
 A value _B_ of type `Fw::Buffer` is **valid** if `m_bufferData != nullptr` and
 `m_size > 0`; otherwise it is **invalid**.
-If _B_ is invalid, then the pointer returned by _B_ `.getData()` and the
+The interface function `isValid` reports whether a buffer is valid.
+Calling this function on a buffer _B_ returns `true` if _B_ is valid, otherwise `false`.
+
+If a buffer _B_ is invalid, then the pointer returned by _B_ `.getData()` and the
 serialization interface returned by
 _B_ `.getSerializeRepr()` are considered invalid and should not be used.
 
@@ -43,7 +46,7 @@ the data region.
 ### 2.2 The Port Fw::BufferGet
 
 As shown in the following diagram, `Fw::BufferGet` has one argument `size` of type `U32`. It returns a value of type
-`Fw::Buffer`. The returned `Fw::Buffer`'s size must be checked for validity before using.
+`Fw::Buffer`. The returned `Fw::Buffer` must be checked for validity before using.
 
 ![`Fw::BufferGet` Diagram](img/BufferGetBDD.jpg "Fw::BufferGet Port")
 
@@ -56,10 +59,14 @@ As shown in the following diagram, `Fw::BufferSend` has one argument `fwBuffer` 
 ## 3 Usage Notes
 
 Components allocating `Fw::Buffer` objects may use the `m_context` field at their discretion. This field is typically
-used to track the origin of the buffer for eventual allocation. When a component fails to allocate memory, it must set
-the `m_size` field to zero to indicate that the buffer is invalid.
+used to track the origin of the buffer for eventual allocation.
 
-Receivers of `Fw::Buffer` objects are expected to check the `m_size` field before using the buffer.
+When a component fails to allocate memory, it must set
+the `m_bufferData` field to `nullptr` and/or set the `m_size` field to zero to indicate that the buffer is invalid.
+
+A receiver of an `Fw::Buffer` object _B_ must check that _B_ is valid before accessing the
+data stored in _B_.
+To check validity, you can call the interface function `isValid()`.
 
 ### Serializing and Deserializing with `Fw::Buffer`
 
