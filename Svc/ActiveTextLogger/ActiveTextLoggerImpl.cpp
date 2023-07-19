@@ -94,7 +94,7 @@ namespace Svc {
 
             (void) snprintf(textStr,
                             FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
-                            "EVENT: (%" PRI_FwEventIdType ") (%04d-%02d-%02dT%02d:%02d:%02d.%03" PRIu32 ") %s: %s\n",
+                            "EVENT: (%" PRI_FwEventIdType ") (%04d-%02d-%02dT%02d:%02d:%02d.%06" PRIu32 ") %s: %s\n",
                             id, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
                             tm.tm_min,tm.tm_sec,timeTag.getUSeconds(),
                             severityString,text.toChar());
