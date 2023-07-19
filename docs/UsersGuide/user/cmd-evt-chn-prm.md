@@ -56,10 +56,10 @@ the command dispatcher connecting the registration, dispatch, and response ports
 The command opcode is extracted, and a lookup table is used to find the handling component. The argument buffer is then
 passed to the component, and the command dispatcher waits without blocking for the component to return status..
 
-In many projects, commands need to be sequenced in order. In order to facilitate this, the framework provides
-`Svc::CmdSequencer`. The command sequencer reads a defined sequence of commands and sends each in turn to the command
-dispatcher to be dispatched and the command execution status is returned to the sequencer.  This is an alternate path to
-send command buffers to the command dispatcher than the external path from ground.
+In many projects, commands need to be sequenced in order. In order to facilitate this, the framework provides 
+`Svc::CmdSequencer`. The command sequencer reads a defined sequence of commands and sends each in turn to the command 
+dispatcher; after each command is dispatched, the status of its execution is returned to the sequencer. Sending command buffers 
+to the command dispatcher through the command sequencer is an alternate path to sending them externally from the ground.
 
 ### Command Sequencing
 
