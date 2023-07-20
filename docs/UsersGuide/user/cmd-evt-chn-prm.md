@@ -170,7 +170,9 @@ provides ports to get and set parameters, which are stored in a file to persist 
 **Figure 8. Parameter manager.** The parameter manager or database loads the file containing parameters from the file
 system during initialization. The initialization subsequently calls *loadParameters()* on components with parameters.
 Components can set and retrieve parameters. The parameter manager saves the updated values to the file system via the
-command.
+set and save commands auto-generated for every parameter; the set command updates the value of the parameter locally
+within the component that owns it, and the save command pushing the current value of the parameter to non-volatile storage,
+meaning it will persist within the files of the system across system resets.
 
 
 ## A Note On Serialized Ports
