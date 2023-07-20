@@ -123,7 +123,7 @@ current value. Channels are broken up per component and are typically sampled at
 id, time, and value triples and are defined per component with the following properties:
 
 1. id: the unique id of the channel. This is offset by the base id of the component for global uniqueness.
-2. name: the unique text name of the channel. This is prepended with the component name for global uniqueness.
+2. name: the unique text name of the channel. This is prepended with the component instance name for global uniqueness.
 3. data_type: type of the value of the channel. Can be primitive and complex types.
 4. update: "on_change" to update only when the written value changes, and omitted to always downlink
 
