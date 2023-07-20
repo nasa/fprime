@@ -134,7 +134,7 @@ The code generator automatically adds ports for retrieving time tags and sending
 ### Telemetry Database
 
 The telemetry database acts as a double-buffered store for telemetry values. Components are free to update channels at
-any time, however; at a set rate the current value will be read from the telemetry database and sent to the ground.
+any time; however, the current value will be read from the telemetry database and sent to the ground at a set rate.
 Components using this service should hook up the telemetry port to the telemetry database (`Svc::TlmChan`).
 
 ![Telemetry Database](../media/data_model4.png)
