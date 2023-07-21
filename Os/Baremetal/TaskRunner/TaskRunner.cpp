@@ -23,7 +23,21 @@ TaskRunner::~TaskRunner() {}
 
 void TaskRunner::addTask(Task* task) {
     FW_ASSERT(m_index < TASK_REGISTRY_CAP);
-    this->m_task_table[m_index] = task;
+
+    BareTaskHandle* new_handle = reinterpret_cast<BareTaskHandle*>(task->getRawHandle());
+    
+    NATIVE_INT_TYPE index;
+    for(index = m_index; index > 0; index--)
+    {
+        BareTaskHandle* curr_handle = reinterpret_cast<BareTaskHandle*>(this->m_task_table[index - 1]->getRawHandle());
+        if(curr_handle->m_priority > new_handle->m_priority)
+        {
+            break;
+        }
+        this->m_task_table[index] = this->m_task_table[index - 1];
+    }
+
+    this->m_task_table[index] = task;
     m_index++;
 }
 
