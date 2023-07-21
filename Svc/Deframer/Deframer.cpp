@@ -24,10 +24,6 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 static_assert(
-    DeframerCfg::POLL_BUFFER_SIZE > 0,
-    "poll buffer size must be greater than zero"
-);
-static_assert(
     DeframerCfg::RING_BUFFER_SIZE > 0,
     "ring buffer size must be greater than zero"
 );
@@ -41,9 +37,7 @@ Deframer ::Deframer(const char* const compName) :
     DeframingProtocolInterface(),
     m_protocol(nullptr),
     m_inRing(m_ringBuffer, sizeof m_ringBuffer)
-{
-    (void) memset(m_pollBuffer, 0, sizeof m_pollBuffer);
-}
+{}
 
 void Deframer ::init(const NATIVE_INT_TYPE instance) {
     DeframerComponentBase::init(instance);
@@ -65,15 +59,6 @@ void Deframer ::setup(DeframingProtocol& protocol) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void Deframer ::cmdResponseIn_handler(
-    NATIVE_INT_TYPE portNum,
-    FwOpcodeType opcode,
-    U32 cmdSeq,
-    const Fw::CmdResponse& response
-) {
-    // Nothing to do
-}
-
 void Deframer ::framedIn_handler(
     const NATIVE_INT_TYPE portNum,
     Fw::Buffer& recvBuffer,
@@ -88,19 +73,6 @@ void Deframer ::framedIn_handler(
     framedDeallocate_out(0, recvBuffer);
 }
 
-void Deframer ::schedIn_handler(
-    const NATIVE_INT_TYPE portNum,
-    NATIVE_UINT_TYPE context
-) {
-    // Check for data
-    Fw::Buffer buffer(m_pollBuffer, sizeof(m_pollBuffer));
-    const Drv::PollStatus status = framedPoll_out(0, buffer);
-    if (status.e == Drv::PollStatus::POLL_OK) {
-        // Data exists: process it
-        processBuffer(buffer);
-    }
-}
-
 // ----------------------------------------------------------------------
 // Implementation of DeframingProtocolInterface
 // ----------------------------------------------------------------------
@@ -109,78 +81,8 @@ Fw::Buffer Deframer ::allocate(const U32 size)  {
     return bufferAllocate_out(0, size);
 }
 
-void Deframer ::route(Fw::Buffer& packetBuffer) {
-
-    // Read the packet type from the packet buffer
-    FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
-    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
-    {
-        Fw::SerializeBufferBase& serial = packetBuffer.getSerializeRepr();
-        status = serial.setBuffLen(packetBuffer.getSize());
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-        status = serial.deserialize(packetType);
-    }
-
-    // Whether to deallocate the packet buffer
-    bool deallocate = true;
-
-    // Process the packet
-    if (status == Fw::FW_SERIALIZE_OK) {
-        U8 *const packetData = packetBuffer.getData();
-        const U32 packetSize = packetBuffer.getSize();
-        switch (packetType) {
-            // Handle a command packet
-            case Fw::ComPacket::FW_PACKET_COMMAND: {
-                // Allocate a com buffer on the stack
-                Fw::ComBuffer com;
-                // Copy the contents of the packet buffer into the com buffer
-                status = com.setBuff(packetData, packetSize);
-                if (status == Fw::FW_SERIALIZE_OK) {
-                    // Send the com buffer
-                    comOut_out(0, com, 0);
-                }
-                else {
-                    Fw::Logger::logMsg(
-                        "[ERROR] Serializing com buffer failed with status %d\n",
-                        status
-                    );
-                }
-                break;
-            }
-            // Handle a file packet
-            case Fw::ComPacket::FW_PACKET_FILE: {
-                // If the file uplink output port is connected,
-                // send the file packet. Otherwise take no action.
-                if (isConnected_bufferOut_OutputPort(0)) {
-                    // Shift the packet buffer to skip the packet type
-                    // The FileUplink component does not expect the packet
-                    // type to be there.
-                    packetBuffer.setData(packetData + sizeof(packetType));
-                    packetBuffer.setSize(packetSize - sizeof(packetType));
-                    // Send the packet buffer
-                    bufferOut_out(0, packetBuffer);
-                    // Transfer ownership of the buffer to the receiver
-                    deallocate = false;
-                }
-                break;
-            }
-            // Take no action for other packet types
-            default:
-                break;
-        }
-    }
-    else {
-        Fw::Logger::logMsg(
-            "[ERROR] Deserializing packet type failed with status %d\n",
-            status
-        );
-    }
-
-    if (deallocate) {
-        // Deallocate the packet buffer
-        bufferDeallocate_out(0, packetBuffer);
-    }
-
+void Deframer ::route(Fw::Buffer& packetBuffer, Fw::Buffer& context) {
+    this->deframedOut_out(0, packetBuffer, context);
 }
 
 // ----------------------------------------------------------------------

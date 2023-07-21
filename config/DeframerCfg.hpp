@@ -13,8 +13,6 @@ namespace Svc {
     namespace DeframerCfg {
         //! The size of the circular buffer in bytes
         static const U32 RING_BUFFER_SIZE = 1024;
-        //! The size of the polling buffer in bytes
-        static const U32 POLL_BUFFER_SIZE = 1024;
     }
 }
 

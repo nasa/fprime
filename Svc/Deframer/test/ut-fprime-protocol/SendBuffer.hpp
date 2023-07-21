@@ -67,11 +67,8 @@ namespace Svc {
         // Private member variables
         // ----------------------------------------------------------------------
 
-        //! The expected number of com buffers emitted
-        U32 expectedComCount;
-
-        //! The expected number of file packet buffers emitted
-        U32 expectedBuffCount;
+        //! The expected number of sent buffers emitted
+        U32 expectedSendCount;
 
     };
 
