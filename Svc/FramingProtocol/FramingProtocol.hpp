@@ -40,10 +40,10 @@ class FramingProtocol {
     void setup(FramingProtocolInterface& interface);
 
     //! \brief frame a given set of bytes
-    //! \param data: pointer to a set of bytes to be framed
-    //! \param size: size of data pointed to by `data`
+    //! \param data: Fw::Buffer containing bytes to be framed
+    //! \param context: Fw::Context containing metadata
     //! \param packet_type: type of data supplied for File downlink packets
-    virtual void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) = 0;
+    virtual void frame(const Fw::Buffer& data, const Fw::Buffer& context, Fw::ComPacket::ComPacketType packet_type) = 0;
 
   PROTECTED:
     FramingProtocolInterface* m_interface;

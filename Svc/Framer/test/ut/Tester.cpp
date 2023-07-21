@@ -19,12 +19,14 @@ namespace Svc {
 
 Tester::MockFramer::MockFramer(Tester& parent) : m_parent(parent), m_do_not_send(false) {}
 
-void Tester::MockFramer::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
+void Tester::MockFramer::frame(const Fw::Buffer& data,
+                               const Fw::Buffer& context,
+                               Fw::ComPacket::ComPacketType packet_type) {
+    m_parent.check_last_context(context);
     // When testing without the send case, disable all mock functions
     if (!m_do_not_send) {
-        Fw::Buffer buffer(const_cast<U8*>(data), size);
-        m_parent.check_last_buffer(buffer);
-        Fw::Buffer allocated = m_interface->allocate(size);
+        m_parent.check_last_buffer(data);
+        Fw::Buffer allocated = m_interface->allocate(data.getSize());
         m_interface->send(allocated);
     }
 }
@@ -40,6 +42,8 @@ Tester ::Tester()
       m_framed(false),
       m_sent(false),
       m_returned(false),
+      m_contextReturned(false),
+      m_contextValid(false),
       m_sendStatus(Drv::SendStatus::SEND_OK)
 
 {
@@ -61,6 +65,10 @@ void Tester ::test_com(U32 iterations) {
         m_framed = false;
         m_sent = false;
         m_returned = false;
+        m_contextReturned = false;
+        m_contextValid = false;
+        m_buffer = Fw::Buffer(com.getBuffAddr(), com.getBuffLength());
+        m_context = Fw::Buffer();
         invoke_to_comIn(0, com, 0);
         ASSERT_TRUE(m_framed);
         if (m_sendStatus == Drv::SendStatus::SEND_OK) {
@@ -69,6 +77,7 @@ void Tester ::test_com(U32 iterations) {
             ASSERT_FALSE(m_sent);
         }
         ASSERT_FALSE(m_returned);
+        ASSERT_EQ(m_contextReturned, m_contextValid);
     }
 }
 
@@ -78,7 +87,10 @@ void Tester ::test_buffer(U32 iterations) {
         m_framed = false;
         m_sent = false;
         m_returned = false;
+        m_contextReturned = false;
+        m_contextValid = false;
         m_buffer = buffer;
+        m_context = Fw::Buffer();
         invoke_to_bufferIn(0, buffer);
         ASSERT_TRUE(m_framed);
         if (m_sendStatus == Drv::SendStatus::SEND_OK) {
@@ -87,8 +99,33 @@ void Tester ::test_buffer(U32 iterations) {
             ASSERT_FALSE(m_sent);
         }
         ASSERT_TRUE(m_returned);
+        ASSERT_EQ(m_contextReturned, m_contextValid);
     }
 }
+
+void Tester ::test_buffer_and_context(U32 iterations) {
+    for (U32 i = 0; i < iterations; i++) {
+        Fw::Buffer buffer(new U8[3412], 3412);
+        Fw::Buffer context(new U8[3412], 3412);
+        m_framed = false;
+        m_sent = false;
+        m_returned = false;
+        m_contextReturned = false;
+        m_contextValid = true;
+        m_buffer = buffer;
+        m_context = context;
+        invoke_to_bufferAndContextIn(0, buffer, context);
+        ASSERT_TRUE(m_framed);
+        if (m_sendStatus == Drv::SendStatus::SEND_OK) {
+            ASSERT_TRUE(m_sent);
+        } else {
+            ASSERT_FALSE(m_sent);
+        }
+        ASSERT_TRUE(m_returned);
+        ASSERT_EQ(m_contextReturned, m_contextValid);
+    }
+}
+
 
 void Tester ::test_status_pass_through() {
     // Check not always success
@@ -125,6 +162,15 @@ void Tester ::check_last_buffer(Fw::Buffer buffer) {
     ASSERT_EQ(buffer, m_buffer);
 }
 
+void Tester ::check_last_context(Fw::Buffer context) {
+    if (m_contextValid) {
+        ASSERT_TRUE(context.isValid());
+        ASSERT_EQ(context, m_context);
+    } else {
+        ASSERT_FALSE(context.isValid());
+    }
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
@@ -157,37 +203,15 @@ void Tester ::from_comStatusOut_handler(const NATIVE_INT_TYPE portNum, Fw::Succe
     this->pushFromPortEntry_comStatusOut(condition);
 }
 
+void Tester ::from_contextDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+    this->pushFromPortEntry_contextDeallocate(fwBuffer);
+    m_contextReturned = true;
+    delete[] fwBuffer.getData();
+}
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
-
-void Tester ::connectPorts() {
-    // comIn
-    this->connect_to_comIn(0, this->component.get_comIn_InputPort(0));
-
-    // bufferIn
-    this->connect_to_bufferIn(0, this->component.get_bufferIn_InputPort(0));
-
-    // bufferDeallocate
-    this->component.set_bufferDeallocate_OutputPort(0, this->get_from_bufferDeallocate(0));
-
-    // framedAllocate
-    this->component.set_framedAllocate_OutputPort(0, this->get_from_framedAllocate(0));
-
-    // framedOut
-    this->component.set_framedOut_OutputPort(0, this->get_from_framedOut(0));
-
-    // comStatusIn
-    this->connect_to_comStatusIn(0, this->component.get_comStatusIn_InputPort(0));
-
-    // comStatusOut
-    this->component.set_comStatusOut_OutputPort(0, this->get_from_comStatusOut(0));
-}
-
-void Tester ::initComponents() {
-    this->init();
-    this->component.init(INSTANCE);
-}
 
 void Tester ::setSendStatus(Drv::SendStatus sendStatus) {
     m_sendStatus = sendStatus;

@@ -19,11 +19,11 @@ FprimeFraming::FprimeFraming(): FramingProtocol() {}
 
 FprimeDeframing::FprimeDeframing(): DeframingProtocol() {}
 
-void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
-    FW_ASSERT(data != nullptr);
+void FprimeFraming::frame(const Fw::Buffer& data, const Fw::Buffer& context, Fw::ComPacket::ComPacketType packet_type) {
+    FW_ASSERT(data.getData() != nullptr);
     FW_ASSERT(m_interface != nullptr);
     // Use of I32 size is explicit as ComPacketType will be specifically serialized as an I32
-    FpFrameHeader::TokenType real_data_size = size + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
+    FpFrameHeader::TokenType real_data_size = data.getSize() + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
     FpFrameHeader::TokenType total = real_data_size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
     Fw::Buffer buffer = m_interface->allocate(total);
     Fw::SerializeBufferBase& serializer = buffer.getSerializeRepr();
@@ -43,7 +43,7 @@ void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::C
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     }
     
-    status = serializer.serialize(data, size, true);  // Serialize without length
+    status = serializer.serialize(data.getData(), data.getSize(), true); // Serialize without length
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Calculate and add transmission hash
@@ -128,7 +128,8 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     buffer.setSize(size);
     status = ring.peek(buffer.getData(), size, FpFrameHeader::SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    m_interface->route(buffer);
+    Fw::Buffer no_context = Fw::Buffer();
+    m_interface->route(buffer, no_context); // No context
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
 }
 };

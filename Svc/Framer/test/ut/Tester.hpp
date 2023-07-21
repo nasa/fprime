@@ -21,6 +21,12 @@ namespace Svc {
 
 class Tester : public FramerGTestBase {
   public:
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
+    // Instance ID supplied to the component instance under test
+    static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+    // Queue depth supplied to component instance under test
+    static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
 
     // ----------------------------------------------------------------------
     // Types
@@ -31,8 +37,8 @@ class Tester : public FramerGTestBase {
       public:
         MockFramer(Tester& parent);
         void frame(
-            const U8* const data,
-            const U32 size,
+            const Fw::Buffer& data,
+            const Fw::Buffer& context,
             Fw::ComPacket::ComPacketType packet_type
         );
         Tester& m_parent;
@@ -63,6 +69,9 @@ class Tester : public FramerGTestBase {
     //! Test incoming Fw::Buffer data to the framer
     void test_buffer(U32 iterations = 1);
 
+    //! Test incoming Fw::Buffer data to the framer alongside a context
+    void test_buffer_and_context(U32 iterations = 1);
+
     //! Tests statuses pass-through
     void test_status_pass_through();
 
@@ -71,6 +80,9 @@ class Tester : public FramerGTestBase {
 
     //! Check that buffer is equal to the last buffer allocated
     void check_last_buffer(Fw::Buffer buffer);
+
+    //! Check that context buffer is equal to the last context allocated
+    void check_last_context(Fw::Buffer context);
 
   private:
 
@@ -101,6 +113,13 @@ class Tester : public FramerGTestBase {
     void from_comStatusOut_handler(
         const NATIVE_INT_TYPE portNum, /*!< The port number*/
         Fw::Success &condition /*!< Condition success/failure */
+    );
+
+    //! Handler for from_contextDeallocate
+    //!
+    void from_contextDeallocate_handler(
+        const NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Fw::Buffer &fwBuffer
     );
 
   public:
@@ -136,6 +155,9 @@ class Tester : public FramerGTestBase {
     //! Buffer for sending unframed data
     Fw::Buffer m_buffer;
 
+    //! Buffer for sending context data
+    Fw::Buffer m_context;
+
     //! Mock framing protocol
     MockFramer m_mock;
 
@@ -147,6 +169,12 @@ class Tester : public FramerGTestBase {
 
     //! Whether the frame buffer was deallocated
     bool m_returned;
+
+    //! Whether the context buffer was deallocated
+    bool m_contextReturned;
+
+    //! Whether the context should be valid
+    bool m_contextValid;
 
     //! Send status for error injection
     Drv::SendStatus m_sendStatus;

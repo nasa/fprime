@@ -39,8 +39,9 @@ class DeframingProtocolInterface {
     /**
      * \brief send deframed data into the system
      * \param data: deframed buffer
+     * \param context: optional context information
      */
-    virtual void route(Fw::Buffer& data) = 0;
+    virtual void route(Fw::Buffer& data, Fw::Buffer& context) = 0;
 
 };
 

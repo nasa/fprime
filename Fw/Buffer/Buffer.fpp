@@ -10,4 +10,9 @@ module Fw {
                   $size: U32
                 ) -> Fw.Buffer
 
+  port BufferContextSend(
+      ref data: Fw.Buffer,
+      ref context: Fw.Buffer
+  )
+
 }

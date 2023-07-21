@@ -57,6 +57,13 @@ class Framer : public FramerComponentBase, public FramingProtocolInterface {
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
+    //! Handler implementation for bufferAndContextIn
+    //!
+    void bufferAndContextIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number */
+                                    Fw::Buffer &data,              /*!< data buffer */
+                                    Fw::Buffer &context            /*!< contextual metadata */
+    );
+
     //! Handler implementation for comIn
     //!
     void comIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
@@ -100,7 +107,7 @@ class Framer : public FramerComponentBase, public FramingProtocolInterface {
 
     //! \brief helper function to handle framing of the raw data
     //!
-    void handle_framing(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type);
+    void handle_framing(const Fw::Buffer& data, const Fw::Buffer& context, Fw::ComPacket::ComPacketType packet_type);
 
     // ----------------------------------------------------------------------
     // Member variables

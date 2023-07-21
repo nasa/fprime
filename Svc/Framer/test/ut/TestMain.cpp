@@ -25,6 +25,14 @@ TEST(Nominal, Buffer) {
     tester.test_buffer();
 }
 
+TEST(Nominal, BufferAndContext) {
+    COMMENT("Send one Fw::Buffer to the framer alongside context (nominal behavior)");
+    REQUIREMENT("SVC-FRAMER-002");
+    REQUIREMENT("SVC-FRAMER-003");
+    Svc::Tester tester;
+    tester.test_buffer_and_context();
+}
+
 TEST(Nominal, ManySends) {
     COMMENT("Send several buffers");
     REQUIREMENT("SVC-FRAMER-001");
@@ -33,8 +41,10 @@ TEST(Nominal, ManySends) {
     Svc::Tester tester;
     tester.test_com(27);
     tester.test_buffer(27);
+    tester.test_buffer_and_context(27);
     tester.test_com(31);
     tester.test_buffer(31);
+    tester.test_buffer_and_context(31);
 }
 
 TEST(Nominal, StatusPassThrough) {

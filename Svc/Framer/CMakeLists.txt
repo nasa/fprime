@@ -18,6 +18,7 @@ set(MOD_DEPS
 register_fprime_module()
 
 #### UTS ###
+set(UT_AUTO_HELPERS ON)
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Framer.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
