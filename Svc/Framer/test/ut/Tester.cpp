@@ -20,8 +20,7 @@ namespace Svc {
 Tester::MockFramer::MockFramer(Tester& parent) : m_parent(parent), m_do_not_send(false) {}
 
 void Tester::MockFramer::frame(const Fw::Buffer& data,
-                               const Fw::Buffer& context,
-                               Fw::ComPacket::ComPacketType packet_type) {
+                               const Fw::Buffer& context) {
     m_parent.check_last_context(context);
     // When testing without the send case, disable all mock functions
     if (!m_do_not_send) {
@@ -77,20 +76,23 @@ void Tester ::test_com(U32 iterations) {
             ASSERT_FALSE(m_sent);
         }
         ASSERT_FALSE(m_returned);
-        ASSERT_EQ(m_contextReturned, m_contextValid);
+        ASSERT_EQ(m_contextReturned, false);
     }
 }
 
 void Tester ::test_buffer(U32 iterations) {
+    U8 contextData[sizeof(FwPacketDescriptorType)];
     for (U32 i = 0; i < iterations; i++) {
+        Fw::Buffer context(contextData, sizeof contextData);
+        context.getSerializeRepr().serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_FILE));
         Fw::Buffer buffer(new U8[3412], 3412);
         m_framed = false;
         m_sent = false;
         m_returned = false;
         m_contextReturned = false;
-        m_contextValid = false;
+        m_contextValid = true;
         m_buffer = buffer;
-        m_context = Fw::Buffer();
+        m_context = context;
         invoke_to_bufferIn(0, buffer);
         ASSERT_TRUE(m_framed);
         if (m_sendStatus == Drv::SendStatus::SEND_OK) {
@@ -99,7 +101,7 @@ void Tester ::test_buffer(U32 iterations) {
             ASSERT_FALSE(m_sent);
         }
         ASSERT_TRUE(m_returned);
-        ASSERT_EQ(m_contextReturned, m_contextValid);
+        ASSERT_EQ(m_contextReturned, false);
     }
 }
 
@@ -122,7 +124,7 @@ void Tester ::test_buffer_and_context(U32 iterations) {
             ASSERT_FALSE(m_sent);
         }
         ASSERT_TRUE(m_returned);
-        ASSERT_EQ(m_contextReturned, m_contextValid);
+        ASSERT_EQ(m_contextReturned, true);
     }
 }
 
@@ -140,6 +142,8 @@ void Tester ::test_status_pass_through() {
 }
 
 void Tester ::test_no_send_status() {
+    m_contextValid = false;
+    m_context = Fw::Buffer();
     Fw::Success status = Fw::Success::SUCCESS;
     m_mock.m_do_not_send = true;
     // Send com buffer and check no send and a status
@@ -148,6 +152,11 @@ void Tester ::test_no_send_status() {
     ASSERT_from_framedOut_SIZE(0);
     ASSERT_from_comStatusOut(0, status);
 
+    m_contextValid = true;
+    U8 contextData[sizeof(FwPacketDescriptorType)];
+    Fw::Buffer context(contextData, sizeof contextData);
+    context.getSerializeRepr().serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_FILE));
+    m_context = context;
     Fw::Buffer buffer(new U8[3412], 3412);
     invoke_to_bufferIn(0, buffer);
     ASSERT_from_framedOut_SIZE(0);
@@ -165,7 +174,10 @@ void Tester ::check_last_buffer(Fw::Buffer buffer) {
 void Tester ::check_last_context(Fw::Buffer context) {
     if (m_contextValid) {
         ASSERT_TRUE(context.isValid());
-        ASSERT_EQ(context, m_context);
+        ASSERT_EQ(context.getSize(), m_context.getSize());
+        for (U32 i = 0; i < context.getSize(); i++) {
+            ASSERT_EQ(context.getData()[i], m_context.getData()[i]);
+        }
     } else {
         ASSERT_FALSE(context.isValid());
     }

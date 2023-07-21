@@ -24,10 +24,6 @@ namespace Svc {
 Framer ::Framer(const char* const compName)
     : FramerComponentBase(compName), FramingProtocolInterface(), m_protocol(nullptr), m_frame_sent(false) {}
 
-void Framer ::init(const NATIVE_INT_TYPE instance) {
-    FramerComponentBase::init(instance);
-}
-
 Framer ::~Framer() {}
 
 void Framer ::setup(FramingProtocol& protocol) {
@@ -36,10 +32,10 @@ void Framer ::setup(FramingProtocol& protocol) {
     protocol.setup(*this);
 }
 
-void Framer ::handle_framing(const Fw::Buffer& data, const Fw::Buffer& context, Fw::ComPacket::ComPacketType packet_type) {
+void Framer ::handle_framing(const Fw::Buffer& data, const Fw::Buffer& context) {
     FW_ASSERT(this->m_protocol != nullptr);
     this->m_frame_sent = false;  // Clear the flag to detect if frame was sent
-    this->m_protocol->frame(data, context, packet_type);
+    this->m_protocol->frame(data, context);
     // If no frame was sent, Framer has the obligation to report success
     if (this->isConnected_comStatusOut_OutputPort(0) && (!this->m_frame_sent)) {
         Fw::Success status = Fw::Success::SUCCESS;
@@ -53,22 +49,23 @@ void Framer ::handle_framing(const Fw::Buffer& data, const Fw::Buffer& context, 
 
 void Framer ::comIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     Fw::Buffer buffer(data.getBuffAddr(), data.getBuffLength());
-    this->handle_framing(buffer, Fw::Buffer(), Fw::ComPacket::FW_PACKET_UNKNOWN);
+    this->handle_framing(buffer, Fw::Buffer());
 }
 
 void Framer ::bufferAndContextIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& data, Fw::Buffer& context) {
-    this->handle_framing(data, context, Fw::ComPacket::FW_PACKET_FILE);
+    this->handle_framing(data, context);
     // Deallocate the buffer after it was processed by the framing protocol
     this->bufferDeallocate_out(0, data);
 
-    // If the buffer is valid, deallocate it
-    if (context.getData() != nullptr) {
-        this->contextDeallocate_out(0, context);
-    }
+    // When context is passed-in then always deallocate
+    this->contextDeallocate_out(0, context);
 }
 
 void Framer ::bufferIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    this->handle_framing(fwBuffer, Fw::Buffer(), Fw::ComPacket::FW_PACKET_FILE);
+    U8 data[sizeof(FwPacketDescriptorType)];
+    Fw::Buffer context = Fw::Buffer(data, sizeof data);
+    context.getSerializeRepr().serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_FILE));
+    this->handle_framing(fwBuffer, context);
     // Deallocate the buffer after it was processed by the framing protocol
     this->bufferDeallocate_out(0, fwBuffer);
 }

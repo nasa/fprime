@@ -39,11 +39,6 @@ class Framer : public FramerComponentBase, public FramingProtocolInterface {
     Framer(const char* const compName /*!< The component name*/
     );
 
-    //! Initialize object Framer
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-    );
-
     //! \brief Setup this component with a supplied framing protocol
     //!
     void setup(FramingProtocol& protocol /*!< Protocol used in framing */);
@@ -107,7 +102,7 @@ class Framer : public FramerComponentBase, public FramingProtocolInterface {
 
     //! \brief helper function to handle framing of the raw data
     //!
-    void handle_framing(const Fw::Buffer& data, const Fw::Buffer& context, Fw::ComPacket::ComPacketType packet_type);
+    void handle_framing(const Fw::Buffer& data, const Fw::Buffer& context);
 
     // ----------------------------------------------------------------------
     // Member variables

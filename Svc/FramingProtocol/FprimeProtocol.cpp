@@ -19,11 +19,11 @@ FprimeFraming::FprimeFraming(): FramingProtocol() {}
 
 FprimeDeframing::FprimeDeframing(): DeframingProtocol() {}
 
-void FprimeFraming::frame(const Fw::Buffer& data, const Fw::Buffer& context, Fw::ComPacket::ComPacketType packet_type) {
+void FprimeFraming::frame(const Fw::Buffer& data, const Fw::Buffer& context) {
     FW_ASSERT(data.getData() != nullptr);
     FW_ASSERT(m_interface != nullptr);
     // Use of I32 size is explicit as ComPacketType will be specifically serialized as an I32
-    FpFrameHeader::TokenType real_data_size = data.getSize() + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
+    FpFrameHeader::TokenType real_data_size = context.getSize() + data.getSize();
     FpFrameHeader::TokenType total = real_data_size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
     Fw::Buffer buffer = m_interface->allocate(total);
     Fw::SerializeBufferBase& serializer = buffer.getSerializeRepr();
@@ -37,9 +37,9 @@ void FprimeFraming::frame(const Fw::Buffer& data, const Fw::Buffer& context, Fw:
     status = serializer.serialize(real_data_size);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // Serialize packet type if supplied, otherwise it *must* be present in the data
-    if (packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-        status = serializer.serialize(static_cast<I32>(packet_type)); // I32 used for enum storage
+    // Serialize context when it is valid
+    if (context.isValid()) {
+        status = serializer.serialize(context.getData(), context.getSize(), true);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     }
     

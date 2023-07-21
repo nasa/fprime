@@ -44,8 +44,7 @@ namespace Svc {
       //! Implements the frame method
       void frame(
           const Fw::Buffer& data, //!< The data
-          const Fw::Buffer& context, //!< The contextual metadata
-          Fw::ComPacket::ComPacketType packet_type //!< The packet type
+          const Fw::Buffer& context //!< The contextual metadata, added before Fw::Buffer in the packet
       ) override;
 
   };

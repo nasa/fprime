@@ -38,8 +38,7 @@ class Tester : public FramerGTestBase {
         MockFramer(Tester& parent);
         void frame(
             const Fw::Buffer& data,
-            const Fw::Buffer& context,
-            Fw::ComPacket::ComPacketType packet_type
+            const Fw::Buffer& context
         );
         Tester& m_parent;
         bool m_do_not_send;
