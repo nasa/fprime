@@ -50,3 +50,5 @@ fprime-util generate arm-hf-linux
 fprime-util build arm-hf-linux
 ```
 > Note: macOS users must run these commands from within the Docker container described in [Appendix I](./appendix-1.md).
+
+**Next:** [Running on ARM Linux](./ArmLinuxTutorial.md)
