@@ -56,7 +56,7 @@ def set_default_filters(fprime_test_api):
 def test_is_streaming(fprime_test_api):
     results = fprime_test_api.assert_telemetry_count(5, timeout=10)
     for result in results:
-        msg = "received channel {} update: {}".format(result.get_id(), result.get_str())
+        msg = f"received channel {result.get_id()} update: {result.get_str()}"
         print(msg)
 
 
@@ -73,11 +73,12 @@ def test_send_and_assert_no_op(fprime_test_api):
     evr_seq = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
     any_reordered = False
     dropped = False
-    for i in range(0, length):
+    
+    for i in range(length):
         results = fprime_test_api.send_and_await_event(
             "cmdDisp.CMD_NO_OP", events=evr_seq, timeout=25
         )
-        msg = "Send and assert NO_OP Trial #{}".format(i)
+        msg = f"Send and assert NO_OP Trial #{i}"
         if not fprime_test_api.test_assert(len(results) == 3, msg, True):
             items = fprime_test_api.get_event_test_history().retrieve()
             last = None
@@ -86,9 +87,7 @@ def test_send_and_assert_no_op(fprime_test_api):
                 if last is not None:
                     if item.get_time() < last.get_time():
                         fprime_test_api.log(
-                            "during iteration #{}, a reordered event was detected: {}".format(
-                                i, item
-                            )
+                            f"during iteration #{i}, a reordered event was detected: {item}"
                         )
                         any_reordered = True
                         reordered = True
@@ -96,7 +95,7 @@ def test_send_and_assert_no_op(fprime_test_api):
                 last = item
             if not reordered:
                 fprime_test_api.log(
-                    "during iteration #{}, a dropped event was detected".format(i)
+                    f"during iteration #{i}, a dropped event was detected"
                 )
                 dropped = True
             failed += 1
@@ -109,7 +108,7 @@ def test_send_and_assert_no_op(fprime_test_api):
     case &= fprime_test_api.test_assert(
         not dropped, "Expected no events to be dropped.", True
     )
-    msg = "{} sequences failed out of {}".format(failed, length)
+    msg = f"{failed} sequences failed out of {length}"
     case &= fprime_test_api.test_assert(failed == 0, msg, True)
 
     assert (

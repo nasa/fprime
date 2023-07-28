@@ -469,6 +469,67 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
     return topology_model
 
 
+def generate_default_cmd(
+    insatance_name, default_dict_generator, model, topo_model=None
+) -> None:
+    """
+        ### Creates the default cmd based on model and dict_generator
+
+        Args: 
+            * insatance_name         -> Name of the instance to create
+            * default_dict_generator -> GenFactory object
+            * model                  -> CompFactory object
+            * topo_model             -> topology_model
+        #### Nothing is returned
+    """
+    defaultStartCmd = default_dict_generator.create(f"{insatance_name}Start")
+    defaultCmdHeader = default_dict_generator.create(f"{insatance_name}Header")
+    defaultCmdBody = default_dict_generator.create(f"{insatance_name}Body")
+
+    if topo_model:
+        defaultStartCmd(model, topo_model)
+        defaultCmdHeader(model, topo_model)
+        defaultCmdBody(model, topo_model)
+    
+    else:
+        defaultStartCmd(model)
+        defaultCmdHeader(model)
+        defaultCmdBody(model)
+    
+
+def write_report(
+    id_title, parsed_component_xml_cmd, report_file
+):
+    """
+        #### Write a report line on `Report.txt`
+
+        Args: 
+            * id_title                 -> line id i.e. `Commands` `Channels`
+            * parsed_component_xml_cmd -> getters from parsed component i.e. `get_ports()` `get_commands()`
+            * report_file              -> TextIOWrapper
+
+        ### Nothing is returned
+    """
+    if len(parsed_component_xml_cmd):
+        idList = ""
+        counter = 0
+        for component in parsed_component_xml_cmd:
+            counter += len(component.get_ids())
+            for id in component.get_ids():
+                idList += f"{id},"
+        
+        id_param = ""
+        match id_title:
+            case "Channels":
+                id_param = "Chan" 
+            case "Events":
+                id_param = "Event" 
+            case "Parameters":
+                id_param = "Param"
+
+        report_file.write(f"{id_title}: {counter}\n {id_param+'Ids'}: {idList[:-1]}\n")
+
+
 def generate_component_instance_dictionary(
     the_parsed_component_xml, opt, topology_model
 ):
@@ -520,23 +581,21 @@ def generate_component_instance_dictionary(
         )
         for command_model in component_model.get_commands():
             DEBUG.info(f"Processing command {command_model.get_mnemonic()}")
-            defaultStartCmd = default_dict_generator.create("InstanceDictStart")
-            defaultCmdHeader = default_dict_generator.create("InstanceDictHeader")
-            defaultCmdBody = default_dict_generator.create("InstanceDictBody")
-
-            defaultStartCmd(command_model, topology_model)
-            defaultCmdHeader(command_model, topology_model)
-            defaultCmdBody(command_model, topology_model)
+            generate_default_cmd(
+                "DictInstance",
+                default_dict_generator,
+                command_model,
+                topology_model
+            )
 
         for parameter_model in component_model.get_parameters():
             DEBUG.info(f"Processing parameter {parameter_model.get_name()}")
-            defaultStartCmd = default_dict_generator.create("InstanceDictStart")
-            defaultCmdHeader = default_dict_generator.create("InstanceDictHeader")
-            defaultCmdBody = default_dict_generator.create("InstanceDictBody")
-
-            defaultStartCmd(parameter_model, topology_model)
-            defaultCmdHeader(parameter_model, topology_model)
-            defaultCmdBody(parameter_model, topology_model)
+            generate_default_cmd(
+                "DictInstance",
+                default_dict_generator,
+                parameter_model,
+                topology_model
+            )
 
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
@@ -545,13 +604,12 @@ def generate_component_instance_dictionary(
         )
         for event_model in component_model.get_events():
             DEBUG.info(f"Processing event {event_model.get_name()}")
-            defaultStartEvent = default_dict_generator.create("InstanceDictStart")
-            defaultEventHeader = default_dict_generator.create("InstanceDictHeader")
-            defaultEventBody = default_dict_generator.create("InstanceDictBody")
-
-            defaultStartEvent(event_model, topology_model)
-            defaultEventHeader(event_model, topology_model)
-            defaultEventBody(event_model, topology_model)
+            generate_default_cmd(
+                "DictInstance",
+                default_dict_generator,
+                event_model,
+                topology_model
+            )
 
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
@@ -560,13 +618,12 @@ def generate_component_instance_dictionary(
         )
         for channel_model in component_model.get_channels():
             DEBUG.info(f"Processing channel {channel_model.get_name()}")
-            defaultStartChannel = default_dict_generator.create("InstanceDictStart")
-            defaultChannelHeader = default_dict_generator.create("InstanceDictHeader")
-            defaultChannelBody = default_dict_generator.create("InstanceDictBody")
-
-            defaultStartChannel(channel_model, topology_model)
-            defaultChannelHeader(channel_model, topology_model)
-            defaultChannelBody(channel_model, topology_model)
+            generate_default_cmd(
+                "DictInstance",
+                default_dict_generator,
+                channel_model,
+                topology_model
+            )
 
 
 def generate_component(
@@ -602,47 +659,37 @@ def generate_component(
             for command in the_parsed_component_xml.get_commands():
                 commands += len(command.get_opcodes())
                 for opcode in command.get_opcodes():
-                    idList += opcode + ","
+                    idList += f"{opcode},"
 
         # Count parameter commands
         if len(the_parsed_component_xml.get_parameters()):
             for parameter in the_parsed_component_xml.get_parameters():
                 commands += len(parameter.get_set_opcodes())
                 for opcode in parameter.get_set_opcodes():
-                    idList += opcode + ","
+                    idList += f"{opcode},"
                 commands += len(parameter.get_save_opcodes())
                 for opcode in parameter.get_save_opcodes():
-                    idList += opcode + ","
+                    idList += f"{opcode},"
 
         if commands > 0:
             report_file.write(f"Commands: {commands}\n OpCodes: {idList[:-1]}\n")
 
-        if len(the_parsed_component_xml.get_channels()):
-            idList = ""
-            channels = 0
-            for channel in the_parsed_component_xml.get_channels():
-                channels += len(channel.get_ids())
-                for id in channel.get_ids():
-                    idList += id + ","
-            report_file.write(f"Channels: {channels}\n ChanIds: {idList[:-1]}\n")
+        write_report(
+            "Channels",
+            the_parsed_component_xml.get_channels(),
+            report_file 
+        )
+        write_report(
+            "Events",
+            the_parsed_component_xml.get_events(),
+            report_file
+        )
+        write_report(
+            "Parameters",
+            the_parsed_component_xml.get_parameters(),
+            report_file
+        )
 
-        if len(the_parsed_component_xml.get_events()):
-            idList = ""
-            events = 0
-            for event in the_parsed_component_xml.get_events():
-                events += len(event.get_ids())
-                for id in event.get_ids():
-                    idList += id + ","
-            report_file.write(f"Events: {events}\n EventIds: {idList[:-1]}\n")
-
-        if len(the_parsed_component_xml.get_parameters()):
-            idList = ""
-            parameters = 0
-            for parameter in the_parsed_component_xml.get_parameters():
-                parameters += len(parameter.get_ids())
-                for id in parameter.get_ids():
-                    idList += id + ","
-            report_file.write(f"Parameters: {parameters}\n ParamIds: {idList[:-1]}\n")
     #
     # Configure the meta-model for the component
     #
@@ -700,18 +747,18 @@ def generate_component(
     #
     if "Ai" in xml_filename:
         base = xml_filename.split("Ai")[0]
-        h_instance_name = base + "_H"
-        cpp_instance_name = base + "_Cpp"
-        h_instance_name_tmpl = base + "_Impl_H"
-        cpp_instance_name_tmpl = base + "_Impl_Cpp"
-        h_instance_test_name = base + "_Test_H"
-        cpp_instance_test_name = base + "_Test_Cpp"
-        h_instance_gtest_name = base + "_GTest_H"
-        cpp_instance_gtest_name = base + "_GTest_Cpp"
-        h_instance_test_impl_name = base + "_TestImpl_H"
-        cpp_instance_test_impl_name = base + "_TestImpl_Cpp"
-        cpp_instance_test_impl_helpers_name = base + "_TestImplHelpers_Cpp"
-        test_main_name = base + "_TestMain_Cpp"
+        h_instance_name = f"{base}_H"
+        cpp_instance_name = f"{base}_Cpp"
+        h_instance_name_tmpl = f"{base}_Impl_H"
+        cpp_instance_name_tmpl = f"{base}_Impl_Cpp"
+        h_instance_test_name = f"{base}_Test_H"
+        cpp_instance_test_name = f"{base}_Test_Cpp"
+        h_instance_gtest_name = f"{base}_GTest_H"
+        cpp_instance_gtest_name = f"{base}_GTest_Cpp"
+        h_instance_test_impl_name = f"{base}_TestImpl_H"
+        cpp_instance_test_impl_name = f"{base}_TestImpl_Cpp"
+        cpp_instance_test_impl_helpers_name = f"{base}_TestImplHelpers_Cpp"
+        test_main_name = f"{base}_TestMain_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -815,36 +862,29 @@ def generate_component(
         )
         for command_model in component_model.get_commands():
             DEBUG.info(f"Processing command {command_model.get_mnemonic()}")
-            defaultStartCmd = default_dict_generator.create("DictStart")
-            defaultCmdHeader = default_dict_generator.create("DictHeader")
-            defaultCmdBody = default_dict_generator.create("DictBody")
-
-            defaultStartCmd(command_model)
-            defaultCmdHeader(command_model)
-            defaultCmdBody(command_model)
-
+            generate_default_cmd(
+                "Dict",
+                default_dict_generator,
+                command_model
+            )
         for parameter_model in component_model.get_parameters():
             DEBUG.info(f"Processing parameter {parameter_model.get_name()}")
-            defaultStartCmd = default_dict_generator.create("DictStart")
-            defaultCmdHeader = default_dict_generator.create("DictHeader")
-            defaultCmdBody = default_dict_generator.create("DictBody")
-
-            defaultStartCmd(parameter_model)
-            defaultCmdHeader(parameter_model)
-            defaultCmdBody(parameter_model)
+            generate_default_cmd(
+                "Dict",
+                default_dict_generator,
+                parameter_model
+            )
 
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
         default_dict_generator.configureVisitor("Events", "EventVisitor", True, True)
         for event_model in component_model.get_events():
             DEBUG.info(f"Processing event {event_model.get_name()}")
-            defaultStartEvent = default_dict_generator.create("DictStart")
-            defaultEventHeader = default_dict_generator.create("DictHeader")
-            defaultEventBody = default_dict_generator.create("DictBody")
-
-            defaultStartEvent(event_model)
-            defaultEventHeader(event_model)
-            defaultEventBody(event_model)
+            generate_default_cmd(
+                "Dict",
+                default_dict_generator,
+                event_model
+            )
 
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
@@ -853,13 +893,11 @@ def generate_component(
         )
         for channel_model in component_model.get_channels():
             DEBUG.info(f"Processing channel {channel_model.get_name()}")
-            defaultStartChannel = default_dict_generator.create("DictStart")
-            defaultChannelHeader = default_dict_generator.create("DictHeader")
-            defaultChannelBody = default_dict_generator.create("DictBody")
-
-            defaultStartChannel(channel_model)
-            defaultChannelHeader(channel_model)
-            defaultChannelBody(channel_model)
+            generate_default_cmd(
+                "Dict",
+                default_dict_generator,
+                channel_model
+            )
 
     if opt.html_docs:
         if opt.html_doc_dir is None:
@@ -869,7 +907,7 @@ def generate_component(
         os.environ["HTML_DOC_SUBDIR"] = opt.html_doc_dir
         html_doc_generator = GenFactory.GenFactory.getInstance()
         html_doc_generator.configureVisitor(
-            base + "_Html", "HtmlDocVisitor", True, True
+            f"{base}_Html", "HtmlDocVisitor", True, True
         )
         htmlStart = html_doc_generator.create("HtmlStart")
         htmlDoc = html_doc_generator.create("HtmlDoc")
@@ -885,7 +923,7 @@ def generate_component(
 
         os.environ["MD_DOC_SUBDIR"] = opt.md_doc_dir
         md_doc_generator = GenFactory.GenFactory.getInstance()
-        md_doc_generator.configureVisitor(base + "_Md", "MdDocVisitor", True, True)
+        md_doc_generator.configureVisitor(f"{base}_Md", "MdDocVisitor", True, True)
         mdStart = md_doc_generator.create("MdStart")
         mdDoc = md_doc_generator.create("MdDoc")
         finisher = md_doc_generator.create("finishSource")
@@ -918,8 +956,8 @@ def generate_port(the_parsed_port_xml, port_file):
     #
     if "Ai" in port_file:
         base = the_type
-        h_instance_name = base + "_H"
-        cpp_instance_name = base + "_Cpp"
+        h_instance_name = f"{base}_H"
+        cpp_instance_name = f"{base}_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -998,8 +1036,8 @@ def generate_serializable(the_serial_xml, opt):
     t = f.split(".")[0][-2:]
     if ("Ai" in f) & (t == "Ai"):
         base = n
-        h_instance_name = base + "_H"
-        cpp_instance_name = base + "_Cpp"
+        h_instance_name = f"{base}_H"
+        cpp_instance_name = f"{base}_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -1108,40 +1146,41 @@ def generate_dependency_file(filename, target_file, subst_path, parser, the_type
     dep_file.write(f"{full_path}:")
 
     # assemble list of files
-
-    if the_type == "interface":
-        file_list = (
-            parser.get_include_header_files()
-            + parser.get_includes_serial_files()
-            + parser.get_include_enum_files()
-            + parser.get_include_array_files()
-        )
-    elif the_type == "component":
-        file_list = (
-            parser.get_port_type_files()
-            + parser.get_header_files()
-            + parser.get_serializable_type_files()
-            + parser.get_imported_dictionary_files()
-            + parser.get_enum_type_files()
-            + parser.get_array_type_files()
-        )
-    elif the_type == "serializable":
-        file_list = (
-            parser.get_include_header_files()
-            + parser.get_includes()
-            + parser.get_include_enums()
-            + parser.get_include_arrays()
-        )
-    elif the_type in ("assembly", "deployment"):
-        # get list of dependency files from XML/header file list
-        file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
-        file_list = file_list_tmp
-        # file_list = []
-        # for f in file_list_tmp:
-        #    file_list.append(f.replace("Ai.xml","Ac.hpp"))
-    else:
-        PRINT.info(f"ERROR: Unrecognized dependency type {the_type}!")
-        sys.exit(-1)
+    
+    match the_type:
+        case "interface":
+            file_list = (
+                parser.get_include_header_files()
+                + parser.get_includes_serial_files()
+                + parser.get_include_enum_files()
+                + parser.get_include_array_files()
+            )
+        case "component":
+            file_list = (
+                parser.get_port_type_files()
+                + parser.get_header_files()
+                + parser.get_serializable_type_files()
+                + parser.get_imported_dictionary_files()
+                + parser.get_enum_type_files()
+                + parser.get_array_type_files()
+            )
+        case "serializable":
+            file_list = (
+                parser.get_include_header_files()
+                + parser.get_includes()
+                + parser.get_include_enums()
+                + parser.get_include_arrays()
+            )
+        case ("assembly", "deployment"):
+            # get list of dependency files from XML/header file list
+            file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
+            file_list = file_list_tmp
+            # file_list = []
+            # for f in file_list_tmp:
+            #    file_list.append(f.replace("Ai.xml","Ac.hpp"))
+        case _:
+            PRINT.info(f"ERROR: Unrecognized dependency type {the_type}!")
+            sys.exit(-1)
 
     # write dependencies
     for include in file_list:
@@ -1243,61 +1282,68 @@ def main():
 
         xml_type = XmlParser.XmlParser(xml_filename)()
 
-        if xml_type == "component":
-            DEBUG.info("Detected Component XML so Generating Component C++ Files...")
-            the_parsed_component_xml = XmlComponentParser.XmlComponentParser(
-                xml_filename
-            )
-            generate_component(
-                the_parsed_component_xml, os.path.basename(xml_filename), opt
-            )
-            dependency_parser = the_parsed_component_xml
-        elif xml_type == "interface":
-            DEBUG.info("Detected Port type XML so Generating Port type C++ Files...")
-            the_parsed_port_xml = XmlPortsParser.XmlPortsParser(xml_filename)
-            generate_port(the_parsed_port_xml, os.path.basename(xml_filename))
-            dependency_parser = the_parsed_port_xml
-        elif xml_type == "serializable":
-            DEBUG.info(
-                "Detected Serializable XML so Generating Serializable C++ Files..."
-            )
-            the_serial_xml = XmlSerializeParser.XmlSerializeParser(xml_filename)
-            generate_serializable(the_serial_xml, opt)
-            dependency_parser = the_serial_xml
-        elif xml_type in ("assembly", "deployment"):
-            DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
-            the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
-            DEPLOYMENT = the_parsed_topology_xml.get_deployment()
-            print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
-            generate_topology(
-                the_parsed_topology_xml, os.path.basename(xml_filename), opt
-            )
-            dependency_parser = the_parsed_topology_xml
-        elif xml_type == "enum":
-            DEBUG.info("Detected Enum XML so Generating hpp, cpp, and py files...")
-            curdir = os.getcwd()
-            if EnumGenerator.generate_enum(xml_filename):
-                ERROR = False
-                PRINT.info(
-                    f"Completed generating files for {xml_filename} Enum XML...."
+        match xml_type:
+            case "component":
+                DEBUG.info("Detected Component XML so Generating Component C++ Files...")
+                the_parsed_component_xml = XmlComponentParser.XmlComponentParser(
+                    xml_filename
                 )
-            else:
-                ERROR = True
-            os.chdir(curdir)
-        elif xml_type == "array":
-            DEBUG.info("Detected Array XML so Generating hpp, cpp, and py files...")
-            curdir = os.getcwd()
-            if ArrayGenerator.generate_array(xml_filename):
-                ERROR = False
-                PRINT.info(
-                    f"Completed generating files for {xml_filename} Array XML..."
+                generate_component(
+                    the_parsed_component_xml, os.path.basename(xml_filename), opt
                 )
-            else:
+                dependency_parser = the_parsed_component_xml
+
+            case "interface":
+                DEBUG.info("Detected Port type XML so Generating Port type C++ Files...")
+                the_parsed_port_xml = XmlPortsParser.XmlPortsParser(xml_filename)
+                generate_port(the_parsed_port_xml, os.path.basename(xml_filename))
+                dependency_parser = the_parsed_port_xml
+
+            case "serializable":
+                DEBUG.info(
+                    "Detected Serializable XML so Generating Serializable C++ Files..."
+                )
+                the_serial_xml = XmlSerializeParser.XmlSerializeParser(xml_filename)
+                generate_serializable(the_serial_xml, opt)
+                dependency_parser = the_serial_xml
+
+            case "assembly" | "deployment":
+                DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
+                the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
+                DEPLOYMENT = the_parsed_topology_xml.get_deployment()
+                print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
+                generate_topology(
+                    the_parsed_topology_xml, os.path.basename(xml_filename), opt
+                )
+                dependency_parser = the_parsed_topology_xml
+
+            case "enum":
+                DEBUG.info("Detected Enum XML so Generating hpp, cpp, and py files...")
+                curdir = os.getcwd()
+                if EnumGenerator.generate_enum(xml_filename):
+                    ERROR = False
+                    PRINT.info(
+                        f"Completed generating files for {xml_filename} Enum XML...."
+                    )
+                else:
+                    ERROR = True
+                os.chdir(curdir)
+
+            case "array":
+                DEBUG.info("Detected Array XML so Generating hpp, cpp, and py files...")
+                curdir = os.getcwd()
+                if ArrayGenerator.generate_array(xml_filename):
+                    ERROR = False
+                    PRINT.info(
+                        f"Completed generating files for {xml_filename} Array XML..."
+                    )
+                else:
+                    ERROR = True
+                os.chdir(curdir)
+
+            case _:
+                PRINT.info("Invalid XML found...this format not supported")
                 ERROR = True
-            os.chdir(curdir)
-        else:
-            PRINT.info("Invalid XML found...this format not supported")
-            ERROR = True
 
         if opt.dependency_file is not None:
             if opt.build_root_flag:

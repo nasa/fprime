@@ -47,7 +47,7 @@ def validate_xml(xml_list):
             out_list.append(xml_path)
         else:
             print(
-                "WARNING: XML {} is not a valid file. Rejecting file.".format(xml_path)
+                f"WARNING: XML {xml_path} is not a valid file. Rejecting file."
             )
 
     return out_list
@@ -58,10 +58,11 @@ def recursive_xml_parse(tree_obj):
     returns a list of items
     [tagName , [(argKey:argVal)] , [" " or [tagName , [] , []] ] ]
     """
-    out_obj = [tree_obj.tag, [], []]
-
-    for att in tree_obj.attrib:
-        out_obj[1].append((att, tree_obj.attrib[att]))
+    out_obj = [
+        tree_obj.tag, 
+        [(att, tree_obj.attrib[att]) for att in tree_obj.attrib], 
+        []
+    ]
 
     internal_text = tree_obj.text
     if internal_text is not None:
@@ -76,9 +77,7 @@ def recursive_xml_parse(tree_obj):
 
 
 def tag_object_to_string(tag_obj):
-    out = "<{}{}>".format(
-        tag_obj[0], "".join(" " + x[0] + "=" + '"' + x[1] + '"' for x in tag_obj[1])
-    )
+    out = f"<{tag_obj[0]}{''.join(' ' + x[0] + '=' + '"' + x[1] + '"' for x in tag_obj[1])}>"
 
     final_line_break = ""
     for internal_item in tag_obj[2]:
@@ -88,7 +87,7 @@ def tag_object_to_string(tag_obj):
             out += "\n\t" + tag_object_to_string(internal_item).replace("\n", "\n\t")
             final_line_break = "\n"
 
-    out += final_line_break + "</" + tag_obj[0] + ">"
+    out += f'{final_line_break}</"{tag_obj[0]}>'
     return out
 
 
@@ -106,10 +105,9 @@ def diff_files(xml_list):
     master_tag_dict = {}
     for xml_path in xml_list:
         # Create etree object
-        fd = open(xml_path, "r")
-        xml_parser = etree.XMLParser(remove_comments=True)
-        element_tree = etree.parse(fd, parser=xml_parser)
-        fd.close()
+        with open(xml_path) as fd:
+            xml_parser = etree.XMLParser(remove_comments=True)
+            element_tree = etree.parse(fd, parser=xml_parser)
 
         # Internal Parsing
         xml_dict = recursive_xml_parse(element_tree.getroot())
@@ -148,10 +146,9 @@ def diff_files(xml_list):
 def command_index_print(xml_list):
     for xml_path in xml_list:
         # Create etree object
-        fd = open(xml_path, "r")
-        xml_parser = etree.XMLParser(remove_comments=True)
-        element_tree = etree.parse(fd, parser=xml_parser)
-        fd.close()
+        with open(xml_path) as fd:
+            xml_parser = etree.XMLParser(remove_comments=True)
+            element_tree = etree.parse(fd, parser=xml_parser)
 
         # Internal Parsing
         xml_dict = recursive_xml_parse(element_tree.getroot())
@@ -197,16 +194,10 @@ def command_index_print(xml_list):
                 component_to_cmd_info[target_comp_name]["cmdIndex"] = source_dict["NUM"]
 
             if target_dict["TYPE"] == "CMDREG":
-                component_to_cmd_info[source_comp_name]["cmdRegIndex"] = target_dict[
-                    "NUM"
-                ]
+                component_to_cmd_info[source_comp_name]["cmdRegIndex"] = target_dict["NUM"]
 
         # sort by num
-        sorted_list = []
-        for comp_info in component_to_cmd_info:
-            sorted_list.append([comp_info, component_to_cmd_info[comp_info]])
-
-        sorted_list.sort(
+        sorted_list = [ [comp_info, component_to_cmd_info[comp_info]] for comp_info in component_to_cmd_info ].sort(
             key=lambda x: int(float(x[1]["cmdIndex"]))
             if x[1]["cmdIndex"] is not None
             else -1
