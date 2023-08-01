@@ -266,7 +266,7 @@ TEST_F(FormatTest, String) {
 
 TEST_F(FormatTest, Char) {
     U8 testVals[FormatChar::SIZE] = 
-        {FppTest::Utils::getU8(), FppTest::Utils::getU8(), FppTest::Utils::getU8()};
+        {FppTest::Utils::getNonzeroU8(), FppTest::Utils::getNonzeroU8(), FppTest::Utils::getNonzeroU8()};
     FormatChar a(testVals);
 
     buf1 << a;

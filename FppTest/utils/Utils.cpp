@@ -20,22 +20,22 @@ namespace FppTest {
         
     namespace Utils {
     
-        U8 getU8() {
+        U8 getNonzeroU8() {
             return static_cast<U8>(STest::Pick::lowerUpper(
                 1,
                 std::numeric_limits<U8>::max()
             ));
         }
 
-        U32 getU32() {
+        U32 getNonzeroU32() {
             return STest::Pick::lowerUpper(
                 1,
-                std::numeric_limits<U8>::max()
+                std::numeric_limits<U32>::max()
             );
         }
 
         char getChar() {
-            return static_cast<char>(STest::Pick::lowerUpper(1, 127));
+            return static_cast<char>(STest::Pick::lowerUpper(32, 127));
         }
 
         void setString(char* buf, U32 size) {
