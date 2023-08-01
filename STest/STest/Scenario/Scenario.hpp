@@ -67,7 +67,7 @@ namespace STest {
       }
 
       //! Return the next rule to apply
-      //! \return The next rule, or NULL if none
+      //! \return The next rule, or nullptr if none
       Rule<State>* nextRule(
           State& state //!< The system state
       ) {
@@ -94,7 +94,7 @@ namespace STest {
       virtual void reset_Scenario() = 0;
 
       //! The virtual implementation of nextRule required by Scenario
-      //! \return The next rule, assuming isDone() is false, or NULL if none
+      //! \return The next rule, assuming isDone() is false, or nullptr if none
       virtual Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) = 0;
