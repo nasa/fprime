@@ -35,26 +35,26 @@ protected:
         ));
 
         for (U32 i = 0; i < StructArray::SIZE; i++) {
-            testArray[i] = FppTest::Utils::getU32();
+            testArray[i] = FppTest::Utils::getNonzeroU32();
         }
 
         testStruct.set(
             true,
-            FppTest::Utils::getU32(),
-            static_cast<I16>(FppTest::Utils::getU32()),
-            static_cast<F64>(FppTest::Utils::getU32())
+            FppTest::Utils::getNonzeroU32(),
+            static_cast<I16>(FppTest::Utils::getNonzeroU32()),
+            static_cast<F64>(FppTest::Utils::getNonzeroU32())
         );
 
         for (U32 i = 0; i < 3; i++) {
-            testU32Arr[0] = FppTest::Utils::getU32();
+            testU32Arr[0] = FppTest::Utils::getNonzeroU32();
         }
 
         for (U32 i = 0; i < 3; i++) {
             testStructArr[i].set(
                 true,
-                FppTest::Utils::getU32(),
-                static_cast<I16>(FppTest::Utils::getU32()),
-                static_cast<F64>(FppTest::Utils::getU32())
+                FppTest::Utils::getNonzeroU32(),
+                static_cast<I16>(FppTest::Utils::getNonzeroU32()),
+                static_cast<F64>(FppTest::Utils::getNonzeroU32())
             );
         }
     }

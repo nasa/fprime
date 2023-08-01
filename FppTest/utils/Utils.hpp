@@ -18,10 +18,10 @@ namespace FppTest {
     namespace Utils {
     
         // Returns a random nonzero U8
-        U8 getU8();
+        U8 getNonzeroU8();
 
         // Returns a random nonzero U32
-        U32 getU32();
+        U32 getNonzeroU32();
 
         // Returns a random non-null char
         char getChar();
