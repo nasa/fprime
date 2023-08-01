@@ -12,7 +12,7 @@ namespace Svc {
 
     }
 
-    void RateGroupDriver::configure(NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers)
+    void RateGroupDriver::configure(Divider dividers[], NATIVE_INT_TYPE numDividers)
     {
 
         // check arguments
@@ -30,11 +30,15 @@ namespace Svc {
         ::memset(this->m_dividers,0,sizeof(this->m_dividers));
         // copy provided array of dividers
         for (NATIVE_INT_TYPE entry = 0; entry < numDividers; entry++) {
+            // A port with an offset equal or bigger than the divisor is not accepted because it would never be called
+            FW_ASSERT((this->m_dividers[entry].offset==0)||(this->m_dividers[entry].offset < this->m_dividers[entry].divisor),
+                this->m_dividers[entry].offset,
+                this->m_dividers[entry].divisor);
             this->m_dividers[entry] = dividers[entry];
             // rollover value should be product of all dividers to make sure integer rollover doesn't jump cycles
             // only use non-zero dividers
-            if (dividers[entry] != 0) {
-                this->m_rollover *= dividers[entry];
+            if (dividers[entry].divisor != 0) {
+                this->m_rollover *= dividers[entry].divisor;
             }
         }
 
@@ -58,9 +62,9 @@ namespace Svc {
         // divides evenly into the number of ticks. For example, if the divider value for a port is 4,
         // it would be called every fourth invocation of the CycleIn port.
         for (NATIVE_INT_TYPE entry = 0; entry < this->m_numDividers; entry++) {
-            if (this->m_dividers[entry] != 0) {
+            if (this->m_dividers[entry].divisor != 0) {
                 if (this->isConnected_CycleOut_OutputPort(entry)) {
-                    if ((this->m_ticks % this->m_dividers[entry]) == 0) {
+                    if ((this->m_ticks % this->m_dividers[entry].divisor) == this->m_dividers[entry].offset) {
                         this->CycleOut_out(entry,cycleStart);
                     }
                 }

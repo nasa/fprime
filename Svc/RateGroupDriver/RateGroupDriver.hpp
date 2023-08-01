@@ -23,6 +23,15 @@
 
 namespace Svc {
 
+    //! \class Divider
+    //! \brief Struct describind a divider
+    struct Divider{
+        //! Divisor
+        NATIVE_INT_TYPE divisor;
+        //! Offset
+        NATIVE_INT_TYPE offset;
+    };
+
     //! \class RateGroupDriver
     //! \brief Implementation class for RateGroupDriver
     //!
@@ -53,7 +62,7 @@ namespace Svc {
             //!  \param dividers array of integers used to divide down input tick
             //!  \param numDividers size of dividers array
 
-            void configure(NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
+            void configure(Divider dividers[], NATIVE_INT_TYPE numDividers);
 
             //!  \brief RateGroupDriverImpl destructor
 
@@ -66,13 +75,14 @@ namespace Svc {
             void CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart);
 
             //! divider array
-            NATIVE_INT_TYPE m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
+            Divider m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
 
             //! size of divider array
             NATIVE_INT_TYPE m_numDividers;
 
             //! tick counter
             NATIVE_INT_TYPE m_ticks;
+
             //! rollover counter
             NATIVE_INT_TYPE m_rollover;
         public:
