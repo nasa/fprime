@@ -59,7 +59,7 @@ namespace Svc {
             void init(NATIVE_INT_TYPE instanceId = 0);
 
             //!  \brief RateGroupDriver configuration function
-            //!  \param dividers array of integers used to divide down input tick
+            //!  \param dividers array of Divider used to divide down input tick
             //!  \param numDividers size of dividers array
 
             void configure(Divider dividers[], NATIVE_INT_TYPE numDividers);
