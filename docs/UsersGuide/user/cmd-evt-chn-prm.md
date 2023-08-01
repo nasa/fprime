@@ -100,8 +100,8 @@ component. This function expects an argument to be supplied for each argument de
 automatically adds ports for retrieving a time tag and sending events. There are two independent ports for sending
 events:
 
-1. binary log output port for on-board consoles
-2. a text log output port for sending outside the system
+1. binary log output port for sending outside the system
+2. a text log output port for on-board consoles
 
 ### Event Logging
 
