@@ -24,7 +24,7 @@
 namespace Svc {
 
     //! \class Divider
-    //! \brief Struct describind a divider
+    //! \brief Struct describing a divider
     struct Divider{
         //! Divisor
         NATIVE_INT_TYPE divisor;
