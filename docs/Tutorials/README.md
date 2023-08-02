@@ -11,7 +11,8 @@ users to learn F´ and walk through the most basic steps in developing an F´ ap
 1. [HelloWorld](https://fprime-community.github.io/fprime-tutorial-hello-world/): An Introduction to F´
 2. [LedBlinker](https://fprime-community.github.io/fprime-workshop-led-blinker/): F´ and Embedded Hardware 
 3. [MathComponent](https://fprime-community.github.io/fprime-tutorial-math-component/): Custom Ports and Types
-4. [Cross-Compilation Tutorial](CrossCompilationSetup/README.md)
+4. [Cross-Compilation Setup Tutorial](CrossCompilationSetup/README.md): Set up a cross-compilation environment
+5. [Arduino LedBlinker](https://fprime-community.github.io/fprime-tutorial-arduino-blinker/): Cross-Compile LedBlinker for Arduinos
 
 
 ## [HelloWorld](https://fprime-community.github.io/fprime-tutorial-hello-world/): An Introduction to F´
