@@ -65,7 +65,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::BoolPara
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMBOOL_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMBOOL_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
@@ -73,19 +73,19 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::BoolPara
     ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
     // Test incorrect deserialization when setting param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMBOOL_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMBOOL_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Test successful setting of param
     buf.serialize(data.args.val);
 
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMBOOL_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMBOOL_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
 
     // Test successful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMBOOL_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMBOOL_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
     ASSERT_EQ(boolPrm.args.val, data.args.val);
@@ -95,7 +95,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::U32Param
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMU32_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMU32_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
@@ -103,19 +103,19 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::U32Param
     ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
     // Test incorrect deserialization when setting param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMU32_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMU32_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Test successful setting of param
     buf.serialize(data.args.val);
 
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMU32_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMU32_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
 
     // Test successful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMU32_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMU32_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
     ASSERT_EQ(u32Prm.args.val, data.args.val);
@@ -125,7 +125,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::PrmStrin
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMSTRING_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMSTRING_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
@@ -133,19 +133,19 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::PrmStrin
     ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
     // Test incorrect deserialization when setting param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMSTRING_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMSTRING_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Test successful setting of param
     buf.serialize(data.args.val);
 
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMSTRING_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMSTRING_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
 
     // Test successful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMSTRING_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMSTRING_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
     ASSERT_EQ(stringPrm.args.val, data.args.val);
@@ -155,7 +155,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::EnumPara
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMENUM_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMENUM_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
@@ -163,19 +163,19 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::EnumPara
     ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
     // Test incorrect deserialization when setting param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMENUM_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMENUM_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Test successful setting of param
     buf.serialize(data.args.val);
 
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMENUM_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMENUM_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
 
     // Test successful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMENUM_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMENUM_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
     ASSERT_EQ(enumPrm.args.val, data.args.val);
@@ -185,7 +185,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayPar
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMARRAY_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMARRAY_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
@@ -193,19 +193,19 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayPar
     ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
     // Test incorrect deserialization when setting param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMARRAY_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMARRAY_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Test successful setting of param
     buf.serialize(data.args.val);
 
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMARRAY_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMARRAY_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
 
     // Test successful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMARRAY_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMARRAY_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
     ASSERT_EQ(arrayPrm.args.val, data.args.val);
@@ -215,7 +215,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::StructPa
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMSTRUCT_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMSTRUCT_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::EXECUTION_ERROR);
 
@@ -223,19 +223,19 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::StructPa
     ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
     // Test incorrect deserialization when setting param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMSTRUCT_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMSTRUCT_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Test successful setting of param
     buf.serialize(data.args.val);
 
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMSTRUCT_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMSTRUCT_SET, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
 
     // Test successful saving of param
-    this->invoke_to_cmdOut(portNum, component.OPCODE_PARAMSTRUCT_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMSTRUCT_SAVE, 1, buf);
 
     ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);
     ASSERT_EQ(structPrm.args.val, data.args.val);
