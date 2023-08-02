@@ -16,10 +16,30 @@
 // Command test declarations
 // ----------------------------------------------------------------------
 
+#define CMD_TEST_INVOKE_DECL(TYPE, ASYNC) void invoke##ASYNC##Command(FppTest::Types::TYPE& data);
+
+#define CMD_TEST_INVOKE_DECLS       \
+    void invokeCommand(FwOpcodeType opcode, Fw::CmdArgBuffer& buf); \
+    CMD_TEST_INVOKE_DECL(NoParams, )    \
+    CMD_TEST_INVOKE_DECL(PrimitiveParams, ) \
+    CMD_TEST_INVOKE_DECL(CmdStringParams, )    \
+    CMD_TEST_INVOKE_DECL(EnumParam, )      \
+    CMD_TEST_INVOKE_DECL(ArrayParam, )     \
+    CMD_TEST_INVOKE_DECL(StructParam, )
+
+#define CMD_TEST_INVOKE_DECLS_ASYNC      \
+    void invokeAsyncCommand(FwOpcodeType opcode, Fw::CmdArgBuffer& buf); \
+    CMD_TEST_INVOKE_DECL(NoParams, Async)    \
+    CMD_TEST_INVOKE_DECL(PrimitiveParams, Async) \
+    CMD_TEST_INVOKE_DECL(CmdStringParams, Async)    \
+    CMD_TEST_INVOKE_DECL(EnumParam, Async)      \
+    CMD_TEST_INVOKE_DECL(ArrayParam, Async)     \
+    CMD_TEST_INVOKE_DECL(StructParam, Async)
+
 #define CMD_TEST_DECL(TYPE, ASYNC) void test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::TYPE& data);
 
 #define CMD_TEST_DECLS               \
-    void invokeCommand(FwOpcodeType opcode, Fw::CmdArgBuffer& buf); \
+    CMD_TEST_INVOKE_DECLS \
     CMD_TEST_DECL(NoParams, )        \
     CMD_TEST_DECL(PrimitiveParams, ) \
     CMD_TEST_DECL(CmdStringParams, ) \
@@ -28,7 +48,7 @@
     CMD_TEST_DECL(StructParam, )
 
 #define CMD_TEST_DECLS_ASYNC              \
-    void invokeAsyncCommand(FwOpcodeType opcode, Fw::CmdArgBuffer& buf); \
+    CMD_TEST_INVOKE_DECLS_ASYNC \
     CMD_TEST_DECL(NoParams, Async)        \
     CMD_TEST_DECL(PrimitiveParams, Async) \
     CMD_TEST_DECL(CmdStringParams, Async) \
@@ -43,7 +63,40 @@
 #define CMD_TEST_INVOKE_DEFS                                                               \
     void Tester ::invokeCommand(FwOpcodeType opcode, Fw::CmdArgBuffer& buf) {    \
         this->sendRawCmd(opcode, 1, buf);             \
-    }                                                                                      
+    } \
+\
+    void Tester ::invokeCommand(FppTest::Types::NoParams& data) {    \
+        this->sendCmd_CMD_NO_ARGS(0, 1);             \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeCommand(FppTest::Types::PrimitiveParams& data) { \
+        this->sendCmd_CMD_PRIMITIVE( \
+            0, \
+            1,  \
+            data.args.val1, \
+            data.args.val2, \
+            data.args.val3, \
+            data.args.val4, \
+            data.args.val5, \
+            data.args.val6 \
+        );           \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeCommand(FppTest::Types::CmdStringParams& data) {    \
+        this->sendCmd_CMD_STRINGS(0, 1, data.args.val1, data.args.val2);             \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeCommand(FppTest::Types::EnumParam& data) {      \
+        this->sendCmd_CMD_ENUM(0, 1, data.args.val);                \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeCommand(FppTest::Types::ArrayParam& data) {     \
+        this->sendCmd_CMD_ARRAY(0, 1, data.args.val);               \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeCommand(FppTest::Types::StructParam& data) {    \
+        this->sendCmd_CMD_STRUCT(0, 1, data.args.val);              \
+    }
 
 #define CMD_TEST_INVOKE_DEFS_ASYNC                                                              \
     void Tester ::invokeAsyncCommand(FwOpcodeType opcode, Fw::CmdArgBuffer& buf) {    \
@@ -54,6 +107,69 @@
                                                                                                 \
         ASSERT_EQ(status, Fw::QueuedComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);         \
     }                                                                                           \
+\
+    void Tester ::invokeAsyncCommand(FppTest::Types::NoParams& data) {    \
+        Fw::QueuedComponentBase::MsgDispatchStatus status;                                      \
+                                                                                                \
+        this->sendCmd_CMD_ASYNC_NO_ARGS(0, 1);             \
+        status = this->doDispatch();                                                            \
+                                                                                                \
+        ASSERT_EQ(status, Fw::QueuedComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);         \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeAsyncCommand(FppTest::Types::PrimitiveParams& data) { \
+        Fw::QueuedComponentBase::MsgDispatchStatus status;                                      \
+                                                                                                \
+        this->sendCmd_CMD_ASYNC_PRIMITIVE( \
+            0, \
+            1,  \
+            data.args.val1, \
+            data.args.val2, \
+            data.args.val3, \
+            data.args.val4, \
+            data.args.val5, \
+            data.args.val6 \
+        );           \
+        status = this->doDispatch();                                                            \
+                                                                                                \
+        ASSERT_EQ(status, Fw::QueuedComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);         \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeAsyncCommand(FppTest::Types::CmdStringParams& data) {    \
+        Fw::QueuedComponentBase::MsgDispatchStatus status;                                      \
+                                                                                                \
+        this->sendCmd_CMD_ASYNC_STRINGS(0, 1, data.args.val1, data.args.val2);             \
+        status = this->doDispatch();                                                            \
+                                                                                                \
+        ASSERT_EQ(status, Fw::QueuedComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);         \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeAsyncCommand(FppTest::Types::EnumParam& data) {      \
+        Fw::QueuedComponentBase::MsgDispatchStatus status;                                      \
+                                                                                                \
+        this->sendCmd_CMD_ASYNC_ENUM(0, 1, data.args.val);                \
+        status = this->doDispatch();                                                            \
+                                                                                                \
+        ASSERT_EQ(status, Fw::QueuedComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);         \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeAsyncCommand(FppTest::Types::ArrayParam& data) {     \
+        Fw::QueuedComponentBase::MsgDispatchStatus status;                                      \
+                                                                                                \
+        this->sendCmd_CMD_ASYNC_ARRAY(0, 1, data.args.val);               \
+        status = this->doDispatch();                                                            \
+                                                                                                \
+        ASSERT_EQ(status, Fw::QueuedComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);         \
+    }                                                                                      \
+                                                                                           \
+    void Tester ::invokeAsyncCommand(FppTest::Types::StructParam& data) {    \
+        Fw::QueuedComponentBase::MsgDispatchStatus status;                                      \
+                                                                                                \
+        this->sendCmd_CMD_ASYNC_STRUCT(0, 1, data.args.val);              \
+        status = this->doDispatch();                                                            \
+                                                                                                \
+        ASSERT_EQ(status, Fw::QueuedComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);         \
+    }
 
 #define CMD_TEST_DEFS(ASYNC, _ASYNC)                                                                             \
     void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::NoParams& data) {        \
@@ -65,7 +181,7 @@
         Fw::CmdArgBuffer buf;                                                                            \
                                                                                                          \
         /* Test success */                                                                               \
-        this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_NO_ARGS, buf);                                                \
+        this->invoke##ASYNC##Command(data); \
         ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);                                                         \
                                                                                                          \
         /* Test too many arguments */                                                                    \
@@ -113,7 +229,7 @@
                                                                                                          \
         /* Test success */                                                                               \
         buf.serialize(data.args.val6);                                                                   \
-        this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_PRIMITIVE, buf);                                             \
+        this->invoke##ASYNC##Command(data); \
                                                                                                          \
         ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);                                                         \
         ASSERT_EQ(component.primitiveCmd.args.val1, data.args.val1);                                     \
@@ -148,7 +264,7 @@
                                                                                                          \
         /* Test success */                                                                               \
         buf.serialize(data.args.val2);                                                                   \
-        this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_STRINGS, buf);                                                \
+        this->invoke##ASYNC##Command(data); \
                                                                                                          \
         ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);                                                         \
         ASSERT_EQ(component.stringCmd.args.val1, data.args.val1);                                        \
@@ -174,7 +290,7 @@
                                                                                                          \
         /* Test success */                                                                               \
         buf.serialize(data.args.val);                                                                    \
-        this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_ENUM, buf);                                                  \
+        this->invoke##ASYNC##Command(data); \
                                                                                                          \
         ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);                                                         \
         ASSERT_EQ(component.enumCmd.args.val, data.args.val);                                            \
@@ -199,7 +315,7 @@
                                                                                                          \
         /* Test success */                                                                               \
         buf.serialize(data.args.val);                                                                    \
-        this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_ARRAY, buf);                                                 \
+        this->invoke##ASYNC##Command(data); \
                                                                                                          \
         ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);                                                         \
         ASSERT_EQ(component.arrayCmd.args.val, data.args.val);                                           \
@@ -224,7 +340,7 @@
                                                                                                          \
         /* Test success */                                                                               \
         buf.serialize(data.args.val);                                                                    \
-        this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_STRUCT, buf);                                                \
+        this->invoke##ASYNC##Command(data); \
                                                                                                          \
         ASSERT_EQ(cmdResp, Fw::CmdResponse::OK);                                                         \
         ASSERT_EQ(component.structCmd.args.val, data.args.val);                                          \
