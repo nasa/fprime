@@ -1,0 +1,26 @@
+:mod:`fprime_gds`
+=================
+
+.. py:module:: fprime_gds
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   common/index.rst
+   executables/index.rst
+   flask/index.rst
+   wxgui/index.rst
+
+
+Package Contents
+----------------
+
+.. data:: __path__
+   
+
+   
+

@@ -1,0 +1,21 @@
+<interface name="MathOp" namespace="Ref">
+    <comment>
+    Port to perform an operation on two numbers
+    </comment>
+    <args>
+        <arg name="val1" type="F32">
+		</arg>
+        <arg name="val2" type="F32">
+		</arg>
+        <arg name="operation" type="ENUM">
+            <enum name="MathOperation">
+                <item name="MATH_ADD"/>
+                <item name="MATH_SUB"/>
+                <item name="MATH_MULTIPLY"/>
+                <item name="MATH_DIVIDE"/>
+            </enum>
+            <comment>operation argument</comment>
+        </arg>
+    </args>
+</interface>
+

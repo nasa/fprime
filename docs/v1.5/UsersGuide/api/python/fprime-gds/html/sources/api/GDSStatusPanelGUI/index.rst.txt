@@ -1,0 +1,27 @@
+:mod:`GDSStatusPanelGUI`
+========================
+
+.. py:module:: GDSStatusPanelGUI
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   GDSStatusPanelGUI.Status
+
+
+
+.. py:class:: Status(parent)
+
+   Bases: :class:`wx.Panel`
+
+   .. method:: __del__(self)
+
+
+
+

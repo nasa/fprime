@@ -1,0 +1,27 @@
+:mod:`GDSStatusPanelImpl`
+=========================
+
+.. py:module:: GDSStatusPanelImpl
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   GDSStatusPanelImpl.StatusImpl
+
+
+
+.. py:class:: StatusImpl(parent)
+
+   Bases: :class:`GDSStatusPanelGUI.Status`
+
+   .. method:: __del__(self)
+
+
+
+

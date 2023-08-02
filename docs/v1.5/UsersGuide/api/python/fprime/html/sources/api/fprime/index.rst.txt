@@ -1,0 +1,26 @@
+:mod:`fprime`
+=============
+
+.. py:module:: fprime
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   common/index.rst
+   fbuild/index.rst
+   util/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   constants/index.rst
+
+
