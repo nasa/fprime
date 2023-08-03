@@ -35,6 +35,8 @@ Choose the operating system you are using to install F Prime:
 <a name="Installing the Toolchain"></a>
 ## 3. Installing the Toolchain
 
+> Note: macOS users must run these commands from within the Docker container described in [Appendix I](./appendix-1.md) or setup a Linux virtual machine.
+
 Installing the cross-compiler will use the pre-built packages provided by ARM. Follow these 
 instructions to install these tools for the target hardware into the `/opt/toolchains` directory.
 
@@ -55,7 +57,5 @@ Next, ensure that the ARM toolchains were installed properly. To test, run the f
 /opt/toolchains/bin/arm-linux-gnueabi-gcc -v
 ```
  Any output other than "file/command not found" is good.
-
-> Note: macOS users must run these commands from within the Docker container described in [Appendix I](./appendix-1.md).
 
 **Next:** [Compiling for ARM](./CrossCompilationTutorial.md)
