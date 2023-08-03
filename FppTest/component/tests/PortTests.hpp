@@ -93,14 +93,14 @@
 #define PORT_TEST_INVOKE_DEFS(PORT_KIND)                                                                         \
     void Tester ::test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::NoParams& port) {         \
         ASSERT_TRUE(component.isConnected_noArgsOut_OutputPort(portNum));                                        \
-        ASSERT_TRUE(this->isConnected_to_noArgs##PORT_KIND(portNum));                                        \
+        ASSERT_TRUE(this->isConnected_to_noArgs##PORT_KIND(portNum));                                            \
                                                                                                                  \
         this->invoke_to_noArgs##PORT_KIND(portNum);                                                              \
     }                                                                                                            \
                                                                                                                  \
     void Tester ::test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::PrimitiveParams& port) {  \
         ASSERT_TRUE(component.isConnected_primitiveArgsOut_OutputPort(portNum));                                 \
-        ASSERT_TRUE(this->isConnected_to_primitiveArgs##PORT_KIND(portNum));                                        \
+        ASSERT_TRUE(this->isConnected_to_primitiveArgs##PORT_KIND(portNum));                                     \
                                                                                                                  \
         this->invoke_to_primitiveArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,        \
                                                  port.args.val4, port.args.val5, port.args.val6);                \
@@ -116,14 +116,14 @@
                                                                                                                  \
     void Tester ::test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::EnumParams& port) {       \
         ASSERT_TRUE(component.isConnected_enumArgsOut_OutputPort(portNum));                                      \
-        ASSERT_TRUE(this->isConnected_to_enumArgs##PORT_KIND(portNum));                                        \
+        ASSERT_TRUE(this->isConnected_to_enumArgs##PORT_KIND(portNum));                                          \
                                                                                                                  \
         this->invoke_to_enumArgs##PORT_KIND(portNum, port.args.val1, port.args.val2);                            \
     }                                                                                                            \
                                                                                                                  \
     void Tester ::test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayParams& port) {      \
         ASSERT_TRUE(component.isConnected_arrayArgsOut_OutputPort(portNum));                                     \
-        ASSERT_TRUE(this->isConnected_to_arrayArgs##PORT_KIND(portNum));                                        \
+        ASSERT_TRUE(this->isConnected_to_arrayArgs##PORT_KIND(portNum));                                         \
                                                                                                                  \
         this->invoke_to_arrayArgs##PORT_KIND(portNum, port.args.val1, port.args.val2);                           \
     }                                                                                                            \
@@ -138,7 +138,7 @@
 #define PORT_TEST_INVOKE_RETURN_DEFS(PORT_KIND)                                                                       \
     void Tester ::test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::NoParamReturn& port) {         \
         ASSERT_TRUE(component.isConnected_noArgsReturnOut_OutputPort(portNum));                                       \
-        ASSERT_TRUE(this->isConnected_to_noArgsReturn##PORT_KIND(portNum));                                        \
+        ASSERT_TRUE(this->isConnected_to_noArgsReturn##PORT_KIND(portNum));                                           \
                                                                                                                       \
         bool returnVal = this->invoke_to_noArgsReturn##PORT_KIND(portNum);                                            \
                                                                                                                       \
@@ -157,7 +157,7 @@
                                                                                                                       \
     void Tester ::test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::EnumReturn& port) {            \
         ASSERT_TRUE(component.isConnected_enumReturnOut_OutputPort(portNum));                                         \
-        ASSERT_TRUE(this->isConnected_to_enumReturn##PORT_KIND(portNum));                                        \
+        ASSERT_TRUE(this->isConnected_to_enumReturn##PORT_KIND(portNum));                                             \
                                                                                                                       \
         FormalParamEnum returnVal = this->invoke_to_enumReturn##PORT_KIND(portNum, port.args.val1, port.args.val2);   \
                                                                                                                       \
@@ -166,7 +166,7 @@
                                                                                                                       \
     void Tester ::test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayReturn& port) {           \
         ASSERT_TRUE(component.isConnected_arrayReturnOut_OutputPort(portNum));                                        \
-        ASSERT_TRUE(this->isConnected_to_arrayReturn##PORT_KIND(portNum));                                        \
+        ASSERT_TRUE(this->isConnected_to_arrayReturn##PORT_KIND(portNum));                                            \
                                                                                                                       \
         FormalParamArray returnVal = this->invoke_to_arrayReturn##PORT_KIND(portNum, port.args.val1, port.args.val2); \
                                                                                                                       \
@@ -175,7 +175,7 @@
                                                                                                                       \
     void Tester ::test##PORT_KIND##PortInvoke(NATIVE_INT_TYPE portNum, FppTest::Types::StructReturn& port) {          \
         ASSERT_TRUE(component.isConnected_structReturnOut_OutputPort(portNum));                                       \
-        ASSERT_TRUE(this->isConnected_to_structReturn##PORT_KIND(portNum));                                        \
+        ASSERT_TRUE(this->isConnected_to_structReturn##PORT_KIND(portNum));                                           \
                                                                                                                       \
         FormalParamStruct returnVal =                                                                                 \
             this->invoke_to_structReturn##PORT_KIND(portNum, port.args.val1, port.args.val2);                         \
@@ -189,7 +189,7 @@
 
 #define PORT_TEST_INVOKE_SERIAL_HELPER_DEF(PORT_KIND)                                             \
     void Tester ::invoke##PORT_KIND##SerialPort(NATIVE_INT_TYPE portNum, Fw::SerialBuffer& buf) { \
-        ASSERT_TRUE(this->isConnected_to_serial##PORT_KIND(portNum));                                        \
+        ASSERT_TRUE(this->isConnected_to_serial##PORT_KIND(portNum));                             \
         this->invoke_to_serial##PORT_KIND(portNum, buf);                                          \
     }
 
@@ -201,22 +201,22 @@
             case SerialPortIndex::NO_ARGS:                                                \
             case SerialPortIndex::PRIMITIVE:                                              \
             case SerialPortIndex::STRING:                                                 \
-                ASSERT_TRUE(this->isConnected_to_serialAsync(portNum));                                        \
+                ASSERT_TRUE(this->isConnected_to_serialAsync(portNum));                   \
                 this->invoke_to_serialAsync(portNum, buf);                                \
                 break;                                                                    \
                                                                                           \
             case SerialPortIndex::ENUM:                                                   \
-                ASSERT_TRUE(this->isConnected_to_serialAsyncAssert(0));                                        \
+                ASSERT_TRUE(this->isConnected_to_serialAsyncAssert(0));                   \
                 this->invoke_to_serialAsyncAssert(0, buf);                                \
                 break;                                                                    \
                                                                                           \
             case SerialPortIndex::ARRAY:                                                  \
-                ASSERT_TRUE(this->isConnected_to_serialAsyncBlockPriority(0));                                        \
+                ASSERT_TRUE(this->isConnected_to_serialAsyncBlockPriority(0));            \
                 this->invoke_to_serialAsyncBlockPriority(0, buf);                         \
                 break;                                                                    \
                                                                                           \
             case SerialPortIndex::STRUCT:                                                 \
-                ASSERT_TRUE(this->isConnected_to_serialAsyncDropPriority(0));                                        \
+                ASSERT_TRUE(this->isConnected_to_serialAsyncDropPriority(0));             \
                 this->invoke_to_serialAsyncDropPriority(0, buf);                          \
                 break;                                                                    \
         }                                                                                 \
