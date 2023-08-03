@@ -49,7 +49,7 @@ Select install_venv:
 Choose from 1, 2 [1]: 1
 ```
 
-Next steps: [HelloWorld Tutorial](Tutorials/HelloWorld/Tutorial.md)
+Next steps: [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/)
 
 ## Advanced
 
