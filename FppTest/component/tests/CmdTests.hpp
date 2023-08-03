@@ -157,7 +157,7 @@
 
 #define CMD_TEST_DEFS(ASYNC, _ASYNC)                                                                        \
     void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::NoParams& data) {           \
-        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum)); \
+        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
                                                                                                             \
@@ -178,7 +178,7 @@
     }                                                                                                       \
                                                                                                             \
     void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::PrimitiveParams& data) {    \
-        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum)); \
+        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
                                                                                                             \
@@ -242,7 +242,7 @@
     }                                                                                                       \
                                                                                                             \
     void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::CmdStringParams& data) {    \
-        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum)); \
+        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
                                                                                                             \
@@ -278,7 +278,7 @@
     }                                                                                                       \
                                                                                                             \
     void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::EnumParam& data) {          \
-        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum)); \
+        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
                                                                                                             \
@@ -307,7 +307,7 @@
     }                                                                                                       \
                                                                                                             \
     void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayParam& data) {         \
-        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum)); \
+        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
                                                                                                             \
@@ -336,7 +336,7 @@
     }                                                                                                       \
                                                                                                             \
     void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::StructParam& data) {        \
-        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum)); \
+        ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
                                                                                                             \
