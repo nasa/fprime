@@ -31,8 +31,7 @@ The ecosystem of tools supporting F´ is installed as python packages available 
 pip install fprime-tools
 ```
 
-> Python is used by many operating systems. To prevent problems users are encouraged to run F´ python from within a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/). This is set up when creating a new F´ project.
-
+> You may need to install with `sudo` or install into a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/).
 
 ### Creating a New F´ Project
 
@@ -50,7 +49,7 @@ Select install_venv:
 Choose from 1, 2 [1]: 1
 ```
 
-Next steps: [HelloWorld Tutorial](Tutorials/HelloWorld/Tutorial.md)
+Next steps: [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/)
 
 ## Advanced
 
