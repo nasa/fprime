@@ -1,3 +1,0 @@
-#!/bin/sh
-
-rm -f *.o *.gcno *.gcda *.html *.gcov exe

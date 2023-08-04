@@ -153,6 +153,10 @@
         <channel name="typeDemo.ExtraChoicesCh"/>
         <channel name="typeDemo.ChoicePairCh"/>
         <channel name="typeDemo.ChoiceSlurryCh"/>
+        <channel name="typeDemo.Float1Ch"/>
+        <channel name="typeDemo.Float2Ch"/>
+        <channel name="typeDemo.Float3Ch"/>
+        <channel name="typeDemo.FloatSet"/>
     </packet>
 
     <!-- Ignored packets -->

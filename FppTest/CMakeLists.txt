@@ -15,7 +15,7 @@ if (BUILD_TESTING AND NOT __FPRIME_NO_UT_GEN__)
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum/")
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array/")
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/port/")
+    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/component/")
 endif()
 
 set(SOURCE_FILES "source.cpp")
@@ -23,7 +23,10 @@ set(MOD_DEPS
     ${PROJECT_NAME}/enum
     ${PROJECT_NAME}/array
     ${PROJECT_NAME}/struct
-    ${PROJECT_NAME}/port
+    ${PROJECT_NAME}/component/empty
+    ${PROJECT_NAME}/component/active
+    ${PROJECT_NAME}/component/queued
+    ${PROJECT_NAME}/component/passive
 )
 
 register_fprime_deployment()

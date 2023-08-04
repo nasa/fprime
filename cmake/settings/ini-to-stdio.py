@@ -75,7 +75,7 @@ def main():
 
             assert (
                 setting_value == ut_setting_value
-            ), f"CMake can only parse unittest independent settings"
+            ), "CMake can only parse unittest independent settings"
             output = loaded_settings[setting]
             handler(output)
         except KeyError as key_error:

@@ -17,25 +17,23 @@
 
 namespace Svc {
 
-  namespace Drain {
+namespace Drain {
 
-    class Tester :
-      public Svc::Tester
-    {
+class Tester : public Svc::Tester {
+ public:
+  // ----------------------------------------------------------------------
+  // Tests
+  // ----------------------------------------------------------------------
 
-      public:
+  //! Send some buffers
+  void OK(void);
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+  //! Run PartialDrain command in nominal way
+  void PartialDrainOK(void);
+};
 
-        //! Send some buffers
-        void OK();
+}  // namespace Drain
 
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

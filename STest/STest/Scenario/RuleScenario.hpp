@@ -50,12 +50,12 @@ namespace STest {
       }
 
       //! the virtual implementation of nextRule required by Scenario
-      //! \return The next rule, assuming isDone() is false, or NULL if none
+      //! \return The next rule, assuming isDone() is false, or nullptr if none
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
         Rule<State> *rule = nullptr;
-        if (this->rule.precondition(state)) {
+        if (!this->isDone() && this->rule.precondition(state)) {
           rule = &this->rule;
           this->done = true;
         }

@@ -2,10 +2,6 @@
 #include <Fw/Types/Assert.hpp>
 
 namespace Os {
-    IntervalTimer::IntervalTimer() {}
-
-    IntervalTimer::~IntervalTimer() {}
-
     void IntervalTimer::getRawTime(RawTime& time) {
         time.lower = 0;
         time.upper = 0;

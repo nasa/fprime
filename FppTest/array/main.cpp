@@ -71,9 +71,9 @@ void FppTest::Array::setTestVals<Struct>(S (&a)[Struct::SIZE]) {
     U32 b[3];
     for (U32 i = 0; i < Struct::SIZE; i++) {
         for (U32 j = 0; j < 3; j++) {
-            b[j] = FppTest::Utils::getU32();
+            b[j] = FppTest::Utils::getNonzeroU32();
         }
-        a[i].set(FppTest::Utils::getU32(), b);
+        a[i].set(FppTest::Utils::getNonzeroU32(), b);
     }
 }
 
@@ -82,7 +82,7 @@ void FppTest::Array::setTestVals<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
     Uint32 b;
     for (U32 i = 0; i < Uint32Array::SIZE; i++) {
         for (U32 j = 0; j < Uint32::SIZE; j++) {
-            b[j] = FppTest::Utils::getU32();
+            b[j] = FppTest::Utils::getNonzeroU32();
         }
         a[i] = b;
     }

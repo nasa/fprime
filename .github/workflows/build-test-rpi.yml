@@ -9,9 +9,12 @@ on:
     branches: [ master, devel ]
   pull_request:
     branches: [ master, devel, release/v3.0.0 ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
 env:
   RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
-  DICTIONARY_PATH: build-artifacts/raspberrypi/dict/RPITopologyAppDictionary.xml
+  DICTIONARY_PATH: build-artifacts/raspberrypi/RPI/dict/RPITopologyAppDictionary.xml
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   RPI:
@@ -53,7 +56,7 @@ jobs:
       with:
         name: rpi-build
     - name: RPI Integration Tests
-      run: chmod +x RPI/build-artifacts/raspberrypi/bin/RPI; /bin/bash ci/tests/RPI-Ints.bash
+      run: chmod +x RPI/build-artifacts/raspberrypi/RPI/bin/RPI; /bin/bash ci/tests/RPI-Ints.bash
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v3

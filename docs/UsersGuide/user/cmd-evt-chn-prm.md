@@ -23,7 +23,7 @@ These types will be elaborated within this guide. It contains:
 
 ## Commands
 
-Each **Component** defines a set of commands for operations. Unlike pipes, which are intended for component to component communication, commands are designed for user interaction with a component. Commands are defined through a series of
+Each **Component** defines a set of commands for operations. Unlike ports, which are intended for component to component communication, commands are designed for user interaction with a component. Commands are defined through a series of
 properties. Users can send commands to the F´ system and via `Svc::CmdDispatcher` these commands are dispatched to a
 handling component to invoke some behavior. The handling component handles a command by defining a command handler function
 to run when the command arrives.
@@ -56,10 +56,10 @@ the command dispatcher connecting the registration, dispatch, and response ports
 The command opcode is extracted, and a lookup table is used to find the handling component. The argument buffer is then
 passed to the component, and the command dispatcher waits without blocking for the component to return status..
 
-In many projects, commands need to be sequenced in order. In order to facilitate this, the framework provides
-`Svc::CmdSequencer`. The command sequencer reads a defined sequence of commands and sends each in turn to the command
-dispatcher to be dispatched and the command execution status is returned to the sequencer.  This is an alternate path to
-send command buffers to the command dispatcher than the external path from ground.
+In many projects, commands need to be sequenced in order. In order to facilitate this, the framework provides 
+`Svc::CmdSequencer`. The command sequencer reads a defined sequence of commands and sends each in turn to the command 
+dispatcher; after each command is dispatched, the status of its execution is returned to the sequencer. Sending command buffers 
+to the command dispatcher through the command sequencer is an alternate path to sending them externally from the ground.
 
 ### Command Sequencing
 
@@ -72,11 +72,11 @@ while a successful response moves to the next command in the sequence.
 ## Events
 
 Events represent a log of activities taken by the embedded system. Events can be thought of in the same way as a program
-execution log in that they enable the ability to trace the execution of the system. Events are sent out of the system via the
-`Svc::ActiveLogger` component and components defining commands should hook up the log port to it. If console logging is
+execution log in that they enable the ability to trace the execution of the system. Events are sent out of the system via 
+the `Svc::ActiveLogger` component and components defining events should hook up the log port to it. If console logging is
 desired, the text log port can be hooked up to the `Svc::PassiveConsoleTextLogger` component. Events are defined per
-component and are typically used to capture what the component is doing. Events can be sporadic; however, should all be
-captured for downlink. Events are defined by the following properties:
+component and are typically used to capture what the component is doing. Events can occur sporadically; however, they 
+should all be captured for downlink. Events are defined by the following properties:
 
 1. id: a numeric id uniquely define this event. It is automatically offset by the component's base id to ensure global
 uniqueness.
@@ -123,7 +123,7 @@ current value. Channels are broken up per component and are typically sampled at
 id, time, and value triples and are defined per component with the following properties:
 
 1. id: the unique id of the channel. This is offset by the base id of the component for global uniqueness.
-2. name: the unique text name of the channel. This is prepended with the component name for global uniqueness.
+2. name: the unique text name of the channel. This is prepended with the component instance name for global uniqueness.
 3. data_type: type of the value of the channel. Can be primitive and complex types.
 4. update: "on_change" to update only when the written value changes, and omitted to always downlink
 
@@ -134,7 +134,7 @@ The code generator automatically adds ports for retrieving time tags and sending
 ### Telemetry Database
 
 The telemetry database acts as a double-buffered store for telemetry values. Components are free to update channels at
-any time, however; at a set rate the current value will be read from the telemetry database and sent to the ground.
+any time; however, the current value will be read from the telemetry database and sent to the ground at a set rate.
 Components using this service should hook up the telemetry port to the telemetry database (`Svc::TlmChan`).
 
 ![Telemetry Database](../media/data_model4.png)
@@ -170,7 +170,9 @@ provides ports to get and set parameters, which are stored in a file to persist 
 **Figure 8. Parameter manager.** The parameter manager or database loads the file containing parameters from the file
 system during initialization. The initialization subsequently calls *loadParameters()* on components with parameters.
 Components can set and retrieve parameters. The parameter manager saves the updated values to the file system via the
-command.
+set and save commands auto-generated for every parameter; the set command updates the value of the parameter locally
+within the component that owns it, and the save command pushing the current value of the parameter to non-volatile storage,
+meaning it will persist within the files of the system across system resets.
 
 
 ## A Note On Serialized Ports
