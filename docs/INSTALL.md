@@ -9,36 +9,60 @@ This installation guide is specifically designed to enable individuals and resea
 
 **Note:** See the troubleshooting section at the bottom for help resolving common issues found during F´ installs.
 
-## Requirements
+**Sections:**
+- [System Requirements](#system-requirements)
+- [Setting Up the Development Environment](#setting-up-the-development-environment)
+- [Creating a New Project](#creating-a-new-project)
+- [Working With An Existing Project](#working-with-an-existing-project)
+- [Advanced Installations](#advanced-installations)
+- [Troubleshooting](#troubleshooting)
+
+  
+## System Requirements
 
 F´ depends on several items before the user should attempt to install it. These requirements are listed below and the user should ensure they are installed before proceeding with this guide.
 
 Requirements:
 
-1. Linux or macOS operating system
+1. Linux, macOS, or WSL on Windows
 2. git
 3. [CMake 3.16](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
 4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
-5. [Python 3.7+](https://www.python.org/downloads/), virtual environments, and PIP
+5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
 
 **Note:** OS-specific notes are in the [Troubleshooting](#Troubleshooting) section below.
 
-### Bootstrapping the F´ Development Environment
+## Setting Up the Development Environment
 
-The ecosystem of tools supporting F´ is installed as python packages available via PIP.
+The ecosystem of tools supporting F´ is installed as python packages available via PIP. To setup F´ tools, you should create a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/), activate it, and install the latest version of fprime-tools.
 
+1. Create the virtual environment:
+
+```bash
+python3 -m venv fprime-venv
 ```
-pip install fprime-tools
+> You should create a new virtual environment for each new F´ project. The name `fprime-venv` may be changed.
+
+2. Activate the virtual environment
+
+```bash
+. fprime-venv/bin/activate
 ```
+> Remember to activate the virtual environment whenever you work with this F´  project.
 
-> You may need to install with `sudo` or install into a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/).
+2. Install F´  tools
+```
+pip install -U fprime-tools
+```
+>
 
-### Creating a New F´ Project
+## Creating a New Project
 
 The entrypoint to developing with F´ is creating a new project. This will clone the F´ repository and install the necessary tool versions for working with the specified version of F´.
 ```
 fprime-util new --project
 ```
+
 This command will ask for some input. Sample responses are below:
 ```
 project_name [MyProject]: MyProject
@@ -51,7 +75,21 @@ Choose from 1, 2 [1]: 1
 
 Next steps: [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/)
 
-## Advanced
+## Working With An Existing Project
+
+Sometimes users wish to work with existing F´ projects. Once the project has been acquired, users should install the tools associated with that project. This is done with:
+
+1. Ensure a virtual environment for this project has been created and [activated](#setting-up-the-development-environment)
+
+2. Download the project
+> When using `git` and submodules, remember to run `git submodule update --init --recursive`
+
+4. Install the required F´ tools version
+`pip install -r <project>/fprime/requirements.txt`
+
+> Some projects ship their own `requirements.txt`.  Install using that file if it exists.
+
+## Advanced Installations
 
 There are several advanced options users can consider while installing F´. However, users should be warned that some knowledge of our tools and versions is often required.
 
