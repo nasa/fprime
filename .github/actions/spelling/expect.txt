@@ -530,6 +530,7 @@ FPL
 fpp
 fppi
 FPport
+fpptest
 fprime
 fprintf
 fprofile
