@@ -58,7 +58,7 @@ pip install -U fprime-tools
 
 ## Creating a New Project
 
-The entrypoint to developing with F´ is creating a new project. This will clone the F´ repository and install the necessary tool versions for working with the specified version of F´.
+The entrypoint to developing with F´ is creating a new project. This will clone the F´ repository and install the full tool suite of the specified version for working with the selected version of F´.
 ```
 fprime-util new --project
 ```
