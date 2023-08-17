@@ -14,7 +14,6 @@ This installation guide is specifically designed to enable individuals and resea
 - [Setting Up the Development Environment](#setting-up-the-development-environment)
 - [Creating a New Project](#creating-a-new-project)
 - [Working With An Existing Project](#working-with-an-existing-project)
-- [Advanced Installations](#advanced-installations)
 - [Troubleshooting](#troubleshooting)
 
   
@@ -88,35 +87,6 @@ Sometimes users wish to work with existing F´ projects. Once the project has be
 `pip install -r <project>/fprime/requirements.txt`
 
 > Some projects ship their own `requirements.txt`.  Install using that file if it exists.
-
-## Advanced Installations
-
-There are several advanced options users can consider while installing F´. However, users should be warned that some knowledge of our tools and versions is often required.
-
-
-### Installing Tab Completion
-
-Several of F´s command-line utilities support tab completion. To enable these tools to use it, see the [instructions here](UsersGuide/user/autocomplete.md).
-
-
-### Installing Optional Components
-
-Some F´ packages contain optional components. These components can be installed including the option in square brackets.
-
-| Package                  | Description |
-|--------------------------|-------------|
-| fprime-tools[dev]        | Installs the Python development tools for working with F´ Python code |
-| fprime-gds[uart-adapter] | Installs the UART communication adapter for the F´ GDS |
-| fprime-gds[test-api-xls] | Installs excel logging for use within the integration test framework |
-
-
-> These packages are optional as they pull in many additional packages and libraries. These may not be supported on all systems.
-
-**Example:**
-```
-pip install fprime-gds[uart-adapter]
-```
-
 
 ## Troubleshooting
 
