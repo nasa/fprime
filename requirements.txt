@@ -19,8 +19,8 @@ fprime-fpl-extract-xml==1.0.0
 fprime-fpl-layout==1.0.0
 fprime-fpl-write-pic==1.0.0
 fprime-fpp==1.3.0
-fprime-gds==3.3.0
-fprime-tools==3.3.1
+fprime-gds==3.3.2
+fprime-tools==3.3.2
 fprime-visual==1.0.0
 gcovr==6.0
 idna==3.4
@@ -37,6 +37,7 @@ pexpect==4.8.0
 pluggy==1.2.0
 ptyprocess==0.7.0
 Pygments==2.15.1
+pyserial==3.5
 pytest==7.4.0
 python-dateutil==2.8.2
 python-slugify==8.0.1
