@@ -21,21 +21,22 @@ dictionary from the build above (`--dictionary ./build-artifacts/<platform name>
 ```sh
 # For in-person workshops and ARM 64-bit hardware
 # In: Deployment Folder
-fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.xml
+fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.xml --ip-client --ip-address <device-address>
 
 # For ARM 32-bit hardware
 # In: Deployment Folder
-fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.xml
+fprime-gds -n --dictionary build-artifacts/aarch64-linux/dict/<App Dictionary>.xml --ip-client --ip-address <device-address>
 ```
+> This depends on a flight software deployment that uses TcpServer as the communications driver implementation.
 
 In another terminal SSH into the device and run the uploaded software:
 ```sh
 ssh <username>@<device-address>
-sudo deployment/bin/<name-of-deployment> -a <host-address> -p 50000
+sudo deployment/bin/<name-of-deployment> -a 0.0.0.0 -p 50000
 ```
-> User should fill in the username and device address above and ensure the executable is supplied the address of the host computer (that ran the GDS).
+> User should fill in the username and device address above and ensure the correct executable is supplied.
 
-> If the device does not connect, ensure that the firewall port 50000 is open on the host computer.
+> If the device does not connect, ensure that the firewall port 50000 is open on the flight computer.
 
 ## Troubleshooting
 
