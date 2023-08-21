@@ -17,5 +17,5 @@ jobs:
     uses: ./.github/workflows/reusable-builder.yml
     with: 
       target_repository: fprime-community/fprime-tutorial-hello-world
-      build_location: LedBlinker
+      build_location: HelloWorldDeployment
       run_unit_tests: false

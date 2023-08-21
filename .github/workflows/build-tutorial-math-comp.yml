@@ -17,5 +17,5 @@ jobs:
     uses: ./.github/workflows/reusable-builder.yml
     with: 
       target_repository: fprime-community/fprime-tutorial-math-component
-      build_location: LedBlinker
+      build_location: MathDeployment
       run_unit_tests: true
