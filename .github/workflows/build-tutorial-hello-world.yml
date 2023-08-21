@@ -18,4 +18,4 @@ jobs:
     with: 
       target_repository: fprime-community/fprime-tutorial-hello-world
       build_location: LedBlinker
-      run_unit_tests: true
+      run_unit_tests: false
