@@ -1,6 +1,6 @@
 # F´  Documentation
 
-Follow the links below to find versioned F´ documentation.
+Follow the links below to find F´ documentation.
 
 ### F´ Release
 - [Latest Documentation](./latest.md)
