@@ -16,11 +16,11 @@
 #include <Drv/Ip/IpSocket.hpp>
 #include <Drv/Ip/SocketReadTask.hpp>
 #include <Drv/Ip/UdpSocket.hpp>
-#include "Drv/ByteStreamDriverModel/ByteStreamDriverModelComponentAc.hpp"
+#include "Drv/Udp/UdpComponentAc.hpp"
 
 namespace Drv {
 
-class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public SocketReadTask {
+class UdpComponentImpl : public UdpComponentBase, public SocketReadTask {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -31,13 +31,6 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
      * \param compName: name of this component
      */
     UdpComponentImpl(const char* const compName);
-
-
-    /**
-     * \brief Initialize this component
-     * \param instance: instance number of this component
-     */
-    void init(const NATIVE_INT_TYPE instance = 0);
 
     /**
      * \brief Destroy the component
@@ -80,13 +73,6 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
      *  \return status of the configure
      */
     SocketIpStatus configureRecv(const char* hostname, const U16 port);
-
-    /**
-     * \brief **not supported**
-     *
-     * IP based ByteStreamDrivers don't support polling.
-     */
-    Drv::PollStatus poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
 
   PROTECTED:
     // ----------------------------------------------------------------------

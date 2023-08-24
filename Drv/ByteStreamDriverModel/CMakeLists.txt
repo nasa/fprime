@@ -6,7 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverModel.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverPorts.fpp"
 )
 
 register_fprime_module()
