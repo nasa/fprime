@@ -29,4 +29,5 @@ set(UT_MOD_DEPS
 	STest
 	PortSelector
 )
+set(UT_AUTO_HELPERS ON)
 register_fprime_ut()

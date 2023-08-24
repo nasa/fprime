@@ -22,8 +22,14 @@
 namespace Drv {
 
   class Tester :
-    public ByteStreamDriverModelGTestBase
+    public TcpClientGTestBase
   {
+      // Maximum size of histories storing events, telemetry, and port outputs
+      static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 1000;
+      // Instance ID supplied to the component instance under test
+      static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+      // Queue depth supplied to component instance under test
+      static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 100;
 
       // ----------------------------------------------------------------------
       // Construction and destruction
