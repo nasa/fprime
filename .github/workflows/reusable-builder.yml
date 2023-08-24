@@ -38,7 +38,7 @@ on:
         description: "Branch on target to checkout"
         required: false
         type: string
-        default: "pr-check"
+        default: "devel"
 
 jobs:
   build:
