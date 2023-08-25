@@ -161,4 +161,4 @@ cd /Applications/Python\ 3.X/
 ./Install\ Certificates.command
 ```
 
-After running above command, re-try installing `fprime-tool`.
+After running above command, re-try installing `fprime-tools`.

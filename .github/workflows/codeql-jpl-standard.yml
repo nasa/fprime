@@ -12,6 +12,8 @@ on:
     paths-ignore:
       - 'docs/**'
       - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
 
 jobs:
   analyze:

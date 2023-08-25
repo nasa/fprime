@@ -12,6 +12,8 @@ on:
     paths-ignore:
       - 'docs/**'
       - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
 env:
   RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
   DICTIONARY_PATH: build-artifacts/raspberrypi/RPI/dict/RPITopologyAppDictionary.xml
