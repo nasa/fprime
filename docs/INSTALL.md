@@ -29,7 +29,9 @@ Requirements:
 4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
 5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
 
-**Note:** OS-specific notes are in the [Troubleshooting](#Troubleshooting) section below.
+> OS-specific notes are in the [Troubleshooting](#Troubleshooting) section below.
+
+> Ubuntu and Debian users should see notes on [Python installation](#ubuntu-debian-java-and-python-pip)
 
 ## Setting Up the Development Environment
 
