@@ -29,9 +29,13 @@ Requirements:
 4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
 5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
 
-> OS-specific notes are in the [Troubleshooting](#Troubleshooting) section below.
-
 > Ubuntu and Debian users should see notes on [Python installation](#ubuntu-debian-java-and-python-pip)
+
+> macOS users must ensure the [CMake command line utility is on their path](#mac-os-x-and-cmake-command-not-found)
+
+> Other OS-specific notes are in the [Troubleshooting](#Troubleshooting) section below.
+
+
 
 ## Setting Up the Development Environment
 
