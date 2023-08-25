@@ -59,7 +59,7 @@ python3 -m venv fprime-venv
 ```
 pip install -U fprime-tools
 ```
->
+> Some macOS users see an SSL error. [Correct the SSL error](#ssl-error-with-python-37-on-macos) and rerun the above command.
 
 ## Creating a New Project
 
@@ -103,6 +103,8 @@ This section will add some known hints to trouble-shooting with the installation
 If the user is using a virtual environment and receives the 'command not found', the problem is likely caused by the environment not being sourced in a new terminal. Make sure to source the environment before running:
 
 ```
+. /path/to/venv/bin/activate
+e.g.
 . $HOME/fprime-venv/bin/activate
 ```
 
@@ -141,11 +143,10 @@ sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
 
 More information can be found [here](https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac)
 
-### System Python, Packages, and Python3
-
-Many operating systems offer python PIP packages through their package manager (apt, yum, etc). Most python projects recommend avoiding those packages and instead installing them from PIP in a virtual environment. The reason for this is that the version of the python package from the OS may not be the required version that the python project depends on. Thus, users may choose to install F´ into a virtual environment. This is outside the scope of this document.
 
 ### SSL Error with Python 3.7+ on macOS
+
+> This fix will not work for Python installed via Homebrew.  Try installing Python published at python.org. 
 
 The version of openSSL bundled with Python 3.7+ requires access to macOS's root certificates. If the following error is  encountered while installing fprime: 
 
@@ -160,4 +161,4 @@ cd /Applications/Python\ 3.X/
 ./Install\ Certificates.command
 ```
 
-After running above command, re-try installing fprime.  
+After running above command, re-try installing `fprime-tool`.
