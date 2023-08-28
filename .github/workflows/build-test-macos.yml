@@ -12,6 +12,8 @@ on:
     paths-ignore:
       - 'docs/**'
       - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
