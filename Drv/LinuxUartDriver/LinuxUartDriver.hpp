@@ -17,6 +17,8 @@
 #include <Os/Mutex.hpp>
 #include <Os/Task.hpp>
 
+#include <termios.h>
+
 namespace Drv {
 
 class LinuxUartDriver : public LinuxUartDriverComponentBase {
@@ -50,16 +52,16 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
       BAUD_1152K=1152000000,
       BAUD_1500K=1500000000,
       BAUD_2000K=2000000000,
-#ifdef B2500000:
+#ifdef B2500000
       BAUD_2500K=2500000000,
 #endif
-#ifdef B3000000:
+#ifdef B3000000
       BAUD_3000K=3000000000,
 #endif
-#ifdef B3500000:
+#ifdef B3500000
       BAUD_3500K=3500000000,
 #endif
-#ifdef B4000000:
+#ifdef B4000000
       BAUD_4000K=4000000000
 #endif
 #endif
