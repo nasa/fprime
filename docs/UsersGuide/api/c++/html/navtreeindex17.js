@@ -1,7 +1,5 @@
 var NAVTREEINDEX17 =
 {
-"namespace_os_1_1_file_system.html#a57ef865fb8cb2693f8df7241914403e1":[21,0,4,0,2],
-"namespace_os_1_1_file_system.html#a7dc1cda7708fe268195a1bb34579af12":[21,0,4,0,1],
 "namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f":[21,0,4,0,0],
 "namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d":[21,0,4,0,0,0],
 "namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa330f5944d797ade8fd0ae76c18b1385b":[21,0,4,0,0,4],
@@ -249,5 +247,7 @@ var NAVTREEINDEX17 =
 "struct_fpp_test_1_1_types_1_1_port_string_types.html#ad224c0b1748b13adab601589b8fa4668":[22,0,2,0,13,0],
 "struct_fpp_test_1_1_types_1_1_port_string_types.html#ada88406bf5deb4443ac686d7324dae37":[22,0,2,0,13,2],
 "struct_fpp_test_1_1_types_1_1_primitive_types.html":[22,0,2,0,5],
-"struct_fpp_test_1_1_types_1_1_primitive_types.html#a03d63a3391e135294b2ebe99c2720392":[22,0,2,0,5,5]
+"struct_fpp_test_1_1_types_1_1_primitive_types.html#a03d63a3391e135294b2ebe99c2720392":[22,0,2,0,5,5],
+"struct_fpp_test_1_1_types_1_1_primitive_types.html#a2eee92ff0bd8c5557a56f2fefd35b375":[22,0,2,0,5,4],
+"struct_fpp_test_1_1_types_1_1_primitive_types.html#a4574eee76a39a5018f9aed037732fc2c":[22,0,2,0,5,2]
 };

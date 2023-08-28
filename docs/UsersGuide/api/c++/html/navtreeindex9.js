@@ -99,14 +99,12 @@ var NAVTREEINDEX9 =
 "class_drv_1_1_linux_uart_driver.html#a823e807b3ec996fd56037a2f0a32e814":[22,0,1,11,4],
 "class_drv_1_1_linux_uart_driver.html#aa0b23ab08df1356b4815598b036a596f":[22,0,1,11,6],
 "class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5a":[22,0,1,11,0],
-"class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa0395a60d0413a4830ac0654456700c9e":[22,0,1,11,0,7],
 "class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa12acd915afc961de160a2ab85f8ade0b":[22,0,1,11,0,4],
 "class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa2c9f8fd9d2ed67e4131a6de0fec10f20":[22,0,1,11,0,2],
 "class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa6553a63fd691828ffcca03153f08bf68":[22,0,1,11,0,1],
 "class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa694042e865f15fd3ff1c459956dd6af9":[22,0,1,11,0,3],
 "class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa83816dddeb17888c6f6ea8f84a4d1fa3":[22,0,1,11,0,0],
 "class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aae79b753a35d2d014689e80561a7b39fe":[22,0,1,11,0,5],
-"class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aaee3589fcbea763cef268aa14b6b7e9a3":[22,0,1,11,0,6],
 "class_drv_1_1_linux_uart_driver.html#af0309c295728c8c37562bd3112706b18":[22,0,1,11,9],
 "class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601af":[22,0,1,11,2],
 "class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601afa6df518c93f02783b30dbb31172aaf554":[22,0,1,11,2,0],
@@ -249,5 +247,7 @@ var NAVTREEINDEX9 =
 "class_fw_1_1_buffer.html#a92fc3c99cfbdd01d827512a7b32c9d46":[22,0,3,0,11],
 "class_fw_1_1_buffer.html#a930468c179a636be62d5e61e52e9ca2d":[22,0,3,0,9],
 "class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53":[22,0,3,0,15],
-"class_fw_1_1_buffer.html#ac083d4042c1fbb954f390ea121585791":[22,0,3,0,4]
+"class_fw_1_1_buffer.html#ac083d4042c1fbb954f390ea121585791":[22,0,3,0,4],
+"class_fw_1_1_buffer.html#af881c86bc7c3a7855009d0eb537f60d0":[22,0,3,0,6],
+"class_fw_1_1_cmd_arg_buffer.html":[22,0,3,1]
 };
