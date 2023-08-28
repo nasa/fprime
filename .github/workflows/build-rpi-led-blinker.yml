@@ -48,6 +48,7 @@ jobs:
         run: |
           mkdir -p rpi-artifacts
           cp -r ./build-artifacts rpi-artifacts
+          cp -r Components/Led/test/int rpi-artifacts
       # Build Artifacts
       - name: 'RPI Build Output'
         uses: actions/upload-artifact@v3
@@ -63,3 +64,29 @@ jobs:
           name: rpi-logs
           path: ci-logs.tar.gz
           retention-days: 5
+
+  RPI-Integration:
+    runs-on: self-hosted
+    needs: cross-compilation
+    steps:
+    - name: "Artifacts Download"
+      uses: actions/download-artifact@v3
+      with:
+        name: rpi-artifacts
+    - name: RPI Integration Tests
+      run: |
+        ls -l
+        chmod +x build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker
+        fprime-gds -d build-artifacts/raspberrypi/LedBlinker & 2>&1 > ./ci-logs/gds.log
+        sleep 10
+        pytest build-artifacts/int/led_integration_tests.py & 2>&1 > ./ci-logs/led_integration_tests.log
+    - name: 'Collect Logs'
+      run: |
+        tar -czvf ci-logs.tar.gz ci-logs
+    - name: 'Archive logs'
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: rpi-logs
+        path: ci-logs.tar.gz
+        retention-days: 5
