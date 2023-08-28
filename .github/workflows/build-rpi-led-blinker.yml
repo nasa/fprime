@@ -11,14 +11,50 @@ on:
     paths-ignore:
       - 'docs/**'
       - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
 
 jobs:
-  run:
-    name: ""
-    uses: ./.github/workflows/reusable-builder.yml
-    with: 
-      target_repository: fprime-community/fprime-workshop-led-blinker
-      build_location: LedBlinker
-      run_unit_tests: true
-      runs_on: raspberrypi
-      target_platform: raspberrypi
+  cross-compilation:
+    name: "Cross Compilation"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          repository: fprime-community/fprime-workshop-led-blinker
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          path: ./fprime
+          fetch-depth: 0
+      # - uses: ./.github/actions/setup
+      - name: "Setup RPI Toolchain"
+        uses: fprime-community/setup-rpi-sysroot@main
+      - name: "Generate RPI Build Cache"
+        run: |
+          fprime-util generate raspberrypi
+      - name: "Build RPI"
+        run: |
+          fprime-util build raspberrypi
+      - name: "Prepare artifacts"
+        run: |
+          mkdir -p rpi-artifacts
+          cp -r ./build-artifacts rpi-artifacts
+      # Build Artifacts
+      - name: 'RPI Build Output'
+        uses: actions/upload-artifact@v3
+        with:
+          name: rpi-artifacts
+          path: rpi-artifacts
+          retention-days: 5
+      # Archive the outputs
+      - name: 'Archive Logs'
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: rpi-logs
+          path: ci-logs.tar.gz
+          retention-days: 5
