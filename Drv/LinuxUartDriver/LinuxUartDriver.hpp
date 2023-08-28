@@ -17,6 +17,8 @@
 #include <Os/Mutex.hpp>
 #include <Os/Task.hpp>
 
+#include <termios.h>
+
 namespace Drv {
 
 class LinuxUartDriver : public LinuxUartDriverComponentBase {
@@ -36,7 +38,34 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
     );
 
     //! Configure UART parameters
-    enum UartBaudRate { BAUD_9600=9600, BAUD_19200=19200, BAUD_38400=38400, BAUD_57600=57600, BAUD_115K=115200, BAUD_230K=230400, BAUD_460K=460800, BAUD_921K=921600};
+    enum UartBaudRate {
+      BAUD_9600=9600,
+      BAUD_19200=19200,
+      BAUD_38400=38400,
+      BAUD_57600=57600,
+      BAUD_115K=115200,
+      BAUD_230K=230400,
+#ifdef TGT_OS_TYPE_LINUX
+      BAUD_460K=460800,
+      BAUD_921K=921600,
+      BAUD_1000K=1000000000,
+      BAUD_1152K=1152000000,
+      BAUD_1500K=1500000000,
+      BAUD_2000K=2000000000,
+#ifdef B2500000
+      BAUD_2500K=2500000000,
+#endif
+#ifdef B3000000
+      BAUD_3000K=3000000000,
+#endif
+#ifdef B3500000
+      BAUD_3500K=3500000000,
+#endif
+#ifdef B4000000
+      BAUD_4000K=4000000000
+#endif
+#endif
+    };
 
     enum UartFlowControl { NO_FLOW, HW_FLOW };
 
