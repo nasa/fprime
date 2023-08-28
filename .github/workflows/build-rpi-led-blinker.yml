@@ -33,7 +33,9 @@ jobs:
           submodules: recursive
           path: ./fprime
           fetch-depth: 0
-      # - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup
+        with:
+          location: ./fprime
       - name: "Setup RPI Toolchain"
         uses: fprime-community/setup-rpi-sysroot@main
       - name: "Generate RPI Build Cache"
