@@ -33,7 +33,7 @@ jobs:
           submodules: recursive
           path: ./fprime
           fetch-depth: 0
-      - uses: ./.github/actions/setup
+      - uses: ./fprime/.github/actions/setup
         with:
           location: ./fprime
       - name: "Setup RPI Toolchain"
