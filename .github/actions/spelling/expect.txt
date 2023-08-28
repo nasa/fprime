@@ -181,6 +181,7 @@ classname
 classtype
 climits
 clion
+CLion
 CLOCAL
 closedir
 CLOSEFILE
@@ -298,6 +299,7 @@ DDDTHH
 ddl
 ddmm
 debian
+Debian
 deconstructor
 deepcopy
 Deerin
