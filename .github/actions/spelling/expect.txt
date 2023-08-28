@@ -180,7 +180,7 @@ classmethod
 classname
 classtype
 climits
-clion
+CLion
 CLOCAL
 closedir
 CLOSEFILE
@@ -297,7 +297,7 @@ DCMAKE
 DDDTHH
 ddl
 ddmm
-debian
+Debian
 deconstructor
 deepcopy
 Deerin
