@@ -14,6 +14,9 @@ on:
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
 
+env:
+  RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
+
 jobs:
   cross-compilation:
     name: "Cross Compilation"
