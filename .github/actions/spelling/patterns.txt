@@ -35,6 +35,9 @@
 # mailto urls
 \[([-a-zA-Z=;:/?%&0-9+@.]{3,})]\(mailto:\g{-1}\)
 
+# Ignore links in MD
+\[[^\]]+\]\(([#/:a-z0-9-]+)\)
+
 # hit-count: 2 file-count: 1
 # apple
 \bdeveloper\.apple\.com/[-\w?=/]+
