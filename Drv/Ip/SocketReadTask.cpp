@@ -63,7 +63,7 @@ Os::Task::TaskStatus SocketReadTask::joinSocketTask(void** value_ptr) {
 
 void SocketReadTask::stopSocketTask() {
     this->m_stop = true;
-    this->shutdown();  // Break out of any receives and fully shutdown
+    this->getSocketHandler().shutdown();  // Break out of any receives and fully shutdown
 }
 
 void SocketReadTask::readTask(void* pointer) {
@@ -88,7 +88,7 @@ void SocketReadTask::readTask(void* pointer) {
         }
 
         // If the network connection is open, read from it
-        if (self->getSocketHandler().isOpened() and (not self->m_stop)) {
+        if (self->getSocketHandler().isStarted() and self->getSocketHandler().isOpened() and (not self->m_stop)) {
             Fw::Buffer buffer = self->getBuffer();
             U8* data = buffer.getData();
             FW_ASSERT(data);

@@ -94,6 +94,7 @@ void TcpServerSocket::shutdown() {
 SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     NATIVE_INT_TYPE clientFd = -1;
     NATIVE_INT_TYPE serverFd = -1;
+
     // Check started before allowing open
     if (not this->isStarted()) {
         return SOCK_NOT_STARTED;

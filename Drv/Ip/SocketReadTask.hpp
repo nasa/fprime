@@ -58,7 +58,7 @@ class SocketReadTask {
     /**
      * \brief startup the socket for communications
      *
-     * Startus up the socket handler.
+     * Status of the socket handler.
      *
      * Note: this just delegates to the handler
      *
