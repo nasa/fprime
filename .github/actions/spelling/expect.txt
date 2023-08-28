@@ -297,7 +297,7 @@ DCMAKE
 DDDTHH
 ddl
 ddmm
-Debian
+debian
 deconstructor
 deepcopy
 Deerin
