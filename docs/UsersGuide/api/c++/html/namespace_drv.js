@@ -21,6 +21,7 @@ var namespace_drv =
     [ "LinuxSpiDriver", "namespace_drv.html#aa86eb5da99f6dc3f78c88e4af49b1ce2", null ],
     [ "TcpClient", "namespace_drv.html#a998506404c5fbafa50a8167b3a4772a7", null ],
     [ "TcpServer", "namespace_drv.html#a132e401ebdab0445f0fbcfe35613d48a", null ],
+    [ "Udp", "namespace_drv.html#ae83b9190a2be5aab32812527d0bd3643", null ],
     [ "SocketIpStatus", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d", [
       [ "SOCK_SUCCESS", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da19b1ee3b3f4f005197fa9940333f97d1", null ],
       [ "SOCK_FAILED_TO_GET_SOCKET", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da630dca3d3ce3f728b0ebe16f398db395", null ],

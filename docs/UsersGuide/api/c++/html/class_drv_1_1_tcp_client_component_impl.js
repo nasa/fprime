@@ -6,6 +6,5 @@ var class_drv_1_1_tcp_client_component_impl =
     [ "connected", "class_drv_1_1_tcp_client_component_impl.html#a22bef66f9f2b5ce75cd108bc8a631035", null ],
     [ "getBuffer", "class_drv_1_1_tcp_client_component_impl.html#ab9809030322dc53d1a3bc49fa0a4488e", null ],
     [ "getSocketHandler", "class_drv_1_1_tcp_client_component_impl.html#aa41dcf69ab7417f93855385ca4f8d818", null ],
-    [ "init", "class_drv_1_1_tcp_client_component_impl.html#ae49aae45e6352cd6cee21ce2b40bd262", null ],
     [ "sendBuffer", "class_drv_1_1_tcp_client_component_impl.html#aa070da44451d0f562f4d18b2bb85d7a6", null ]
 ];

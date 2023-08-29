@@ -42,11 +42,6 @@ var hierarchy =
       [ "Svc::BufferRepeater", "class_svc_1_1_buffer_repeater.html", null ]
     ] ],
     [ "Fw::ByteArray", "struct_fw_1_1_byte_array.html", null ],
-    [ "ByteStreamDriverModelComponentBase", null, [
-      [ "Drv::TcpClientComponentImpl", "class_drv_1_1_tcp_client_component_impl.html", null ],
-      [ "Drv::TcpServerComponentImpl", "class_drv_1_1_tcp_server_component_impl.html", null ],
-      [ "Drv::UdpComponentImpl", "class_drv_1_1_udp_component_impl.html", null ]
-    ] ],
     [ "Fw::FilePacket::CancelPacket", "class_fw_1_1_file_packet_1_1_cancel_packet.html", null ],
     [ "CFDP::Checksum", "class_c_f_d_p_1_1_checksum.html", null ],
     [ "Types::CircularBuffer", "class_types_1_1_circular_buffer.html", null ],
@@ -303,6 +298,12 @@ var hierarchy =
       [ "Os::TaskRunner", "class_os_1_1_task_runner.html", null ]
     ] ],
     [ "Os::Task::TaskRoutineWrapper", "struct_os_1_1_task_1_1_task_routine_wrapper.html", null ],
+    [ "TcpClientComponentBase", null, [
+      [ "Drv::TcpClientComponentImpl", "class_drv_1_1_tcp_client_component_impl.html", null ]
+    ] ],
+    [ "TcpServerComponentBase", null, [
+      [ "Drv::TcpServerComponentImpl", "class_drv_1_1_tcp_server_component_impl.html", null ]
+    ] ],
     [ "testing::Test", null, [
       [ "ArrayTest< ArrayType >", "class_array_test.html", null ],
       [ "ArrayToStringTest< ArrayType >", "class_array_to_string_test.html", null ],
@@ -342,6 +343,9 @@ var hierarchy =
     [ "Utils::TokenBucket", "class_utils_1_1_token_bucket.html", null ],
     [ "Fw::TrapHandler", "class_fw_1_1_trap_handler.html", null ],
     [ "FppTest::Types::U32Type", "struct_fpp_test_1_1_types_1_1_u32_type.html", null ],
+    [ "UdpComponentBase", null, [
+      [ "Drv::UdpComponentImpl", "class_drv_1_1_udp_component_impl.html", null ]
+    ] ],
     [ "UdpReceiverComponentBase", null, [
       [ "Svc::UdpReceiverComponentImpl", "class_svc_1_1_udp_receiver_component_impl.html", null ]
     ] ],
