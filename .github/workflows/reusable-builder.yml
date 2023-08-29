@@ -34,6 +34,11 @@ on:
         required: false
         type: string
         default: ""
+      target_ref:
+        description: "Branch on target to checkout"
+        required: false
+        type: string
+        default: "devel"
 
 jobs:
   build:
@@ -45,6 +50,7 @@ jobs:
         with:
           submodules: recursive
           repository: ${{ inputs.target_repository }}
+          ref: ${{ inputs.target_ref }}
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v3
         with:
@@ -75,6 +81,7 @@ jobs:
         with:
           submodules: recursive
           repository: ${{ inputs.target_repository }}
+          ref: ${{ inputs.target_ref }}
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v3
         with:
