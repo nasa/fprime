@@ -100,6 +100,8 @@ class TopDictGenerator:
             enum_elem = etree.Element("enum")
             enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
             enum_elem.attrib["type"] = enum_type
+            if enum_model.get_serialize_type():
+                enum_elem.attrib["serialize_type"] = enum_model.get_serialize_type()
             enum_value = 0
             for (
                 member_name,
