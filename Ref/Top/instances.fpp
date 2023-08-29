@@ -120,9 +120,7 @@ module Ref {
 
   @ Communications driver. May be swapped with other comm drivers like UART
   @ Note: Here we have TCP reliable uplink and UDP (low latency) downlink
-  instance comm: Drv.ByteStreamDriverModel base id 0x4000 \
-    type "Drv::TcpClient" \ # type specified to select implementor of ByteStreamDriverModel
-    at "../../Drv/TcpClient/TcpClient.hpp" # location of above implementor must also be specified
+  instance comm: Drv.TcpClient base id 0x4000
 
   instance downlink: Svc.Framer base id 0x4100
 

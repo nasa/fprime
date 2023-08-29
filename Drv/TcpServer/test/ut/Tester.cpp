@@ -17,10 +17,6 @@
 
 Os::Log logger;
 
-#define INSTANCE 0
-#define MAX_HISTORY_SIZE 1000
-
-
 namespace Drv {
 
 // ----------------------------------------------------------------------
@@ -102,8 +98,8 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
 }
 
 Tester ::Tester()
-    : ByteStreamDriverModelGTestBase("Tester", MAX_HISTORY_SIZE),
-      component("ByteStreamDriverModel"),
+    : TcpServerGTestBase("Tester", MAX_HISTORY_SIZE),
+      component("TcpServer"),
       m_data_buffer(m_data_storage, 0), m_spinner(true) {
     this->initComponents();
     this->connectPorts();
@@ -169,55 +165,4 @@ Fw::Buffer Tester ::
   {
     this->pushFromPortEntry_deallocate(fwBuffer);
   }
-
-// ----------------------------------------------------------------------
-// Helper methods
-// ----------------------------------------------------------------------
-
-void Tester ::
-    connectPorts()
-  {
-
-    // send
-    this->connect_to_send(
-        0,
-        this->component.get_send_InputPort(0)
-    );
-
-    // poll
-    this->connect_to_poll(
-        0,
-        this->component.get_poll_InputPort(0)
-    );
-
-    // recv
-    this->component.set_recv_OutputPort(
-        0,
-        this->get_from_recv(0)
-    );
-
-    // recv
-    this->component.set_ready_OutputPort(
-      0,
-      this->get_from_ready(0)
-    );
-
-    // allocate
-    this->component.set_allocate_OutputPort(
-        0,
-        this->get_from_allocate(0)
-    );
-
-    // deallocate
-    this->component.set_deallocate_OutputPort(
-        0,
-        this->get_from_deallocate(0)
-    );
-  }
-
-void Tester ::initComponents() {
-    this->init();
-    this->component.init(INSTANCE);
-}
-
 }  // end namespace Drv
