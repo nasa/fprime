@@ -83,6 +83,7 @@ jobs:
           . venv/bin/activate
           ls -l
           pwd
+          mkdir -p ci-logs
           chmod +x build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker
           fprime-gds -d build-artifacts/raspberrypi/LedBlinker & 2>&1 > ./ci-logs/gds.log
           sleep 10
