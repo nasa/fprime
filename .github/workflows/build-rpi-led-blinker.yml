@@ -85,9 +85,9 @@ jobs:
           pwd
           mkdir -p ci-logs
           chmod +x ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker
-          fprime-gds -d ./build-artifacts/raspberrypi/LedBlinker 2>&1 > ./ci-logs/gds.log &
+          fprime-gds -d ./build-artifacts/raspberrypi/LedBlinker > ./ci-logs/gds.log &
           sleep 10
-          pytest ./int/led_integration_tests.py 2>&1 > ./ci-logs/led_integration_tests.log
+          pytest --dictionary ./build-artifacts/raspberrypi/LedBlinker/dict/LedBlinkerTopologyAppDictionary.xml ./int/led_integration_tests.py > ./ci-logs/led_integration_tests.log
       - name: 'Collect Logs'
         run: |
           tar -czvf ci-logs.tar.gz ci-logs
