@@ -80,6 +80,7 @@ jobs:
           name: rpi-artifacts
       - name: RPI Integration Tests
         run: |
+          . venv/bin/activate
           ls -l
           pwd
           chmod +x build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker
