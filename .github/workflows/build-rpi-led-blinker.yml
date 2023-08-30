@@ -1,7 +1,7 @@
-# Builds and runs UTs on https://github.com/fprime-community/fprime-workshop-led-blinker
-# Runs on RaspberryPi
+# Cross-compile https://github.com/fprime-community/fprime-workshop-led-blinker
+# Runs integration tests on RaspberryPi
 
-name: "RaspberryPi"
+name: "RPI LedBlinker"
 
 on:
   push:
@@ -49,15 +49,14 @@ jobs:
           mkdir -p rpi-artifacts
           cp -r ./build-artifacts rpi-artifacts
           cp -r Components/Led/test/int rpi-artifacts
-      # Build Artifacts
-      - name: 'RPI Build Output'
+      - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v3
         with:
           name: rpi-artifacts
           path: rpi-artifacts
           retention-days: 5
 
-  RPI-Integration:
+  RPI-integration:
     name: "RPI Integration Tests"
     runs-on: self-hosted
     needs: cross-compilation
@@ -71,7 +70,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: rpi-artifacts
-      - name: RPI Integration Tests
+      - name: Run Integration Tests
         run: |
           . venv/bin/activate
           mkdir -p ci-logs
@@ -79,13 +78,10 @@ jobs:
           fprime-gds -d ./build-artifacts/raspberrypi/LedBlinker --logs ./ci-logs &
           sleep 10
           pytest --dictionary ./build-artifacts/raspberrypi/LedBlinker/dict/LedBlinkerTopologyAppDictionary.xml ./int/led_integration_tests.py | tee ./ci-logs/led_integration_tests.log
-      - name: 'Collect Logs'
-        run: |
-          tar -czvf ci-logs.tar.gz ci-logs
       - name: 'Archive logs'
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: rpi-logs
-          path: ci-logs.tar.gz
+          path: ci-logs
           retention-days: 5
