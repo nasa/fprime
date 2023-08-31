@@ -76,7 +76,7 @@ jobs:
           . venv/bin/activate
           mkdir -p ci-logs
           chmod +x ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker
-          fprime-gds -d ./build-artifacts/raspberrypi/LedBlinker --logs ./ci-logs &
+          fprime-gds --ip-client -d ./build-artifacts/raspberrypi/LedBlinker --logs ./ci-logs &
           sleep 10
           pytest --dictionary ./build-artifacts/raspberrypi/LedBlinker/dict/LedBlinkerTopologyAppDictionary.xml ./int/led_integration_tests.py
       - name: 'Archive logs'
