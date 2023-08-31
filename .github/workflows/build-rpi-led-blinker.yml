@@ -27,6 +27,7 @@ jobs:
         with:
           submodules: recursive
           repository: fprime-community/fprime-workshop-led-blinker
+          ref: devel
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v3
         with:
