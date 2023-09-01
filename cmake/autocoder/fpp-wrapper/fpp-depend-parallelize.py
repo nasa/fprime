@@ -37,7 +37,7 @@ def raise_on_error(process, arguments):
         )
 
 
-def run_parallel_depend(fpp_depend, fpp_locs, file_input):
+def run_parallel_depend(fpp_depend, fpp_locs, file_input, ut=False):
     """Runs the fpp-depend tool in massive parallel"""
     max_jobs = int(os.environ.get("PARALLEL_JOBS", multiprocessing.cpu_count()))
     with open(file_input, "r") as file_handle:
@@ -62,8 +62,9 @@ def run_parallel_depend(fpp_depend, fpp_locs, file_input):
                 "generated.txt",
                 "-i",
                 "include.txt",
-            ]
+            ] + (["-u"] if ut else [])
         )
+
         wait_list.append((run_process(Path(directory), full_list), full_list))
 
         if len(wait_list) >= max_jobs:
@@ -75,15 +76,16 @@ def run_parallel_depend(fpp_depend, fpp_locs, file_input):
 
 def main():
     try:
-        _, fpp_depend, fpp_locs, file_input = sys.argv
-        run_parallel_depend(fpp_depend, fpp_locs, file_input)
+        _, fpp_depend, fpp_locs, file_input, ut = sys.argv
+        run_parallel_depend(fpp_depend, fpp_locs, file_input, ut.lower() in ["true", "on", "yes", "y", "1"])
         sys.exit(0)
     except ValueError:
         print(
-            "[ERROR] Bad arguments: fpp-depend path, locs file path, file input and integer PARALLEL_JOBS env var."
+            "[ERROR] Bad arguments: fpp-depend path, locs file path, file input and is ut build",
+            file=sys.stderr
         )
     except Exception as exc:
-        print(f"[ERROR] {exc}")
+        print(f"[ERROR] {exc}", file=sys.stderr)
     sys.exit(-1)
 
 

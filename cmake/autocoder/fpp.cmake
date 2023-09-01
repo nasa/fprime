@@ -161,6 +161,23 @@ function(fpp_info AC_INPUT_FILES)
     set(FPP_IMPORTS "${STDOUT}" PARENT_SCOPE)
 endfunction(fpp_info)
 
+function(fpp_filter_test_files FILTER_IN GENERATED_CPP)
+    set(NEW_LIST_CPP)
+    foreach(FILE IN LISTS "${GENERATED_CPP}")
+        set(MATCH FALSE)
+        foreach (MATCH IN ITEMS ".*GTestBase.[ch]pp" ".*TesterBase.[ch]pp" "TestHelpers.cpp")
+            if ("${FILE}" MATCHES "${MATCH}")
+                set(MATCH TRUE)
+                break()
+            elseif()
+        endforeach()
+
+        if (FILTER_IN EQUAL MATCH)
+            list(APPEND NEW_LIST_CPP "${FILE}")
+        endif()
+    endforeach()
+endfunction(fpp_filter_test_files)
+
 ####
 # Function `fpp_setup_autocode`:
 #
@@ -190,6 +207,7 @@ function(fpp_setup_autocode AC_INPUT_FILES)
             list(APPEND GENERATED_CPP "${GENERATED}")
         endif()
     endforeach()
+    fpp_filter_test_files(FALSE "${GENERATED_CPP}")
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/fpp-input-list" "${FPP_IMPORTS};${AC_INPUT_FILES}")
     # Add in steps for Ai.xml generation
     if (GENERATED_AI)
