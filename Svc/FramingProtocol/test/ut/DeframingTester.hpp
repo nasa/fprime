@@ -64,13 +64,19 @@ namespace Svc {
           }
 
           //! Route the buffer
-          void route(Fw::Buffer& data) {
+          void route(Fw::Buffer& data, Fw::Buffer& context) {
             this->routedBuffer = data;
+            this->routedContext = context;
           }
 
           //! Get the routed buffer
           Fw::Buffer getRoutedBuffer() {
             return this->routedBuffer;
+          }
+
+          //! Get the routed context
+          Fw::Buffer getRoutedContext() {
+            return this->routedContext;
           }
 
         private:
@@ -80,6 +86,9 @@ namespace Svc {
 
           //! The routed buffer
           Fw::Buffer routedBuffer;
+
+          //! The routed context
+          Fw::Buffer routedContext;
 
       };
 

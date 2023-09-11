@@ -18,10 +18,8 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     Tester::UplinkFrame::UplinkFrame(
-        Fw::ComPacket::ComPacketType packetType,
         U32 packetSize
     ) :
-        packetType(packetType),
         packetSize(packetSize),
         copyOffset(0),
         valid(false)
@@ -35,16 +33,10 @@ namespace Svc {
         // Update the hash value
         this->updateHash();
         // Check validity of packet type and size
-        if (
-            (packetType == Fw::ComPacket::FW_PACKET_COMMAND) &&
-            (packetSize <= getMaxValidCommandPacketSize())
-        ) {
+        if (packetSize <= getMaxValidCommandPacketSize()) {
             valid = true;
         }
-        if (
-            (packetType == Fw::ComPacket::FW_PACKET_FILE) &&
-            (packetSize <= getMaxValidFilePacketSize())
-        ) {
+        if (packetSize <= getMaxValidFilePacketSize()) {
             valid = true;
         }
     }
@@ -91,24 +83,6 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     Tester::UplinkFrame Tester::UplinkFrame::random() {
-        // Randomly set the packet type
-        Fw::ComPacket::ComPacketType packetType =
-            Fw::ComPacket::FW_PACKET_UNKNOWN;
-        const U32 packetSelector = STest::Pick::lowerUpper(0,1);
-        U32 maxValidPacketSize = 0;
-        switch (packetSelector) {
-            case 0:
-                packetType = Fw::ComPacket::FW_PACKET_COMMAND;
-                maxValidPacketSize = getMaxValidCommandPacketSize();
-                break;
-            case 1:
-                packetType = Fw::ComPacket::FW_PACKET_FILE;
-                maxValidPacketSize = getMaxValidFilePacketSize();
-                break;
-            default:
-                FW_ASSERT(0);
-                break;
-        }
         // Randomly set the packet size
         U32 packetSize = 0;
         // Invalidate 1 in 100 packet sizes
@@ -124,11 +98,11 @@ namespace Svc {
             // valid for the deframer
             packetSize = STest::Pick::lowerUpper(
                 getMinPacketSize(),
-                maxValidPacketSize
+                getMaxValidFilePacketSize()
             );
         }
         // Construct the frame
-        UplinkFrame frame = UplinkFrame(packetType, packetSize);
+        UplinkFrame frame = UplinkFrame(packetSize);
         // Randomly invalidate the frame, or leave it alone
         frame.randomlyInvalidate();
         // Return the frame
@@ -197,11 +171,6 @@ namespace Svc {
                     break;
                 }
                 case 1:
-                    // Invalidate the packet type
-                    writePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
-                    valid = false;
-                    break;
-                case 2:
                     // Invalidate the hash value
                     ++data[getSize() - 1];
                     valid = false;
@@ -228,8 +197,6 @@ namespace Svc {
         writeStartWord(FpFrameHeader::START_WORD);
         // Write the correct packet size
         writePacketSize(packetSize);
-        // Write the correct packet type
-        writePacketType(packetType);
     }
 
     void Tester::UplinkFrame::writePacketSize(
@@ -237,14 +204,6 @@ namespace Svc {
     ) {
         Fw::SerialBuffer sb(&data[PACKET_SIZE_OFFSET], sizeof ps);
         const Fw::SerializeStatus status = sb.serialize(packetSize);
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    }
-
-    void Tester::UplinkFrame::writePacketType(
-        FwPacketDescriptorType pt
-    ) {
-        Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof pt);
-        const Fw::SerializeStatus status = sb.serialize(pt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
 

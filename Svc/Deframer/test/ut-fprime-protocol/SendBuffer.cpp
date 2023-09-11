@@ -13,8 +13,7 @@ namespace Svc {
 
     SendBuffer :: SendBuffer() :
         STest::Rule<Tester>("SendBuffer"),
-        expectedComCount(0),
-        expectedBuffCount(0)
+        expectedSendCount(0)
     {
 
     }
@@ -42,10 +41,8 @@ namespace Svc {
         state.sendIncomingBuffer();
 
         // Check the counts
-        state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);
-        PRINT_ARGS("expectedComCount=%d", expectedComCount)
-        state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBuffCount);
-        PRINT_ARGS("expectedBuffCount=%d", expectedBuffCount)
+        state.assert_from_deframedOut_size(__FILE__, __LINE__, expectedSendCount);
+        PRINT_ARGS("expectedSendCount=%d", expectedBuffCount)
 
     }
 
@@ -61,9 +58,7 @@ namespace Svc {
         );
 
         // Reset the expected com count
-        expectedComCount = 0;
-        // Reset the expected buff count
-        expectedBuffCount = 0;
+        expectedSendCount = 0;
 
         // The number of bytes copied into the buffer
         U32 copiedSize = 0;
@@ -130,25 +125,7 @@ namespace Svc {
         if (frame.isValid()) {
             // Push frame F on the received queue
             state.m_framesToReceive.push_back(frame);
-            // Update the count of expected frames
-            switch (frame.packetType) {
-                case Fw::ComPacket::FW_PACKET_COMMAND:
-                    PRINT("popped valid command frame")
-                    // If F contains a command packet, then increment
-                    // the expected com count
-                    ++expectedComCount;
-                    break;
-                case Fw::ComPacket::FW_PACKET_FILE:
-                    PRINT("popped valid file frame")
-                    // If F contains a file packet, then increment
-                    // the expected buffer count
-                    ++expectedBuffCount;
-                    break;
-                default:
-                    // This should not happen for a valid frame
-                    FW_ASSERT(0, frame.packetType);
-                    break;
-            }
+            ++expectedSendCount;
         }
         else {
             PRINT("popped invalid frame")

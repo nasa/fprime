@@ -40,6 +40,7 @@ module Ref {
     instance fileManager
     instance fileUplink
     instance fileUplinkBufferManager
+    instance fprimeRouter
     instance linuxTime
     instance pingRcvr
     instance prmDb
@@ -140,12 +141,13 @@ module Ref {
       comm.$recv -> uplink.framedIn
       uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
 
-      uplink.comOut -> cmdDisp.seqCmdBuff
-      cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
+      fprimeRouter.comOut -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus -> fprimeRouter.cmdResponseIn
 
       uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      uplink.bufferOut -> fileUplink.bufferSendIn
-      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+      uplink.deframedOut -> fprimeRouter.deframedIn
+      fprimeRouter.fileBufferOut -> fileUplink.bufferSendIn
+      fprimeRouter.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
     }

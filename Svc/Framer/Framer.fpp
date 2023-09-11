@@ -15,13 +15,21 @@ module Svc {
     @ Fw::Buffer objects
     guarded input port bufferIn: Fw.BufferSend
 
+    @ Port for receiving file packets stored in dynamically-sized
+    @ Fw::Buffer objects along with Fw::Buffer storing contextual metadata
+    guarded input port bufferAndContextIn: Fw.BufferContextSend
+
     # ----------------------------------------------------------------------
     # Allocation and deallocation of buffers
     # ----------------------------------------------------------------------
 
-    @ Port for deallocating buffers received on bufferIn, after
+    @ Port for deallocating buffers received on bufferIn, and bufferAndContextIn after
     @ copying packet data to the frame buffer
     output port bufferDeallocate: Fw.BufferSend
+
+    @ Port for deallocating contextual buffers received on bufferAndContextIn, after
+    @ passing data to the frame buffer
+    output port contextDeallocate: Fw.BufferSend
 
     @ Port for allocating buffers to hold framed data
     output port framedAllocate: Fw.BufferGet

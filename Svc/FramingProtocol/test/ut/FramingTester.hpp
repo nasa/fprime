@@ -22,7 +22,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! The serialized packet type
-      typedef I32 SerialPacketType;
+      typedef FwPacketDescriptorType SerialPacketType;
 
       //! Constants
       enum Constants {

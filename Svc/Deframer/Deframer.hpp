@@ -68,25 +68,11 @@ class Deframer :
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler for input port cmdResponseIn
-    void cmdResponseIn_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
-        FwOpcodeType opcode, //!< The command opcode
-        U32 cmdSeq, //!< The command sequence number
-        const Fw::CmdResponse& response //!< The command response
-    );
-
     //! Handler implementation for framedIn
     void framedIn_handler(
         const NATIVE_INT_TYPE portNum, //!< The port number
         Fw::Buffer& recvBuffer, //!< Buffer containing framed data
         const Drv::RecvStatus& recvStatus //!< Status of the bytes
-    );
-
-    //! Handler implementation for schedIn
-    void schedIn_handler(
-        const NATIVE_INT_TYPE portNum, //!< The port number
-        NATIVE_UINT_TYPE context //!< The call order
     );
 
     // ----------------------------------------------------------------------
@@ -96,7 +82,8 @@ class Deframer :
     //! The implementation of DeframingProtocolInterface::route
     //! Send a data packet
     void route(
-        Fw::Buffer& packetBuffer //!< The packet buffer
+        Fw::Buffer& packetBuffer, //!< The packet buffer
+        Fw::Buffer& context //!< Context buffer
     );
 
     //! The implementation of DeframingProtocolInterface::allocate
@@ -131,10 +118,6 @@ class Deframer :
 
     //! Memory for the circular buffer
     U8 m_ringBuffer[DeframerCfg::RING_BUFFER_SIZE];
-
-    //! Memory for the polling buffer
-    U8 m_pollBuffer[DeframerCfg::POLL_BUFFER_SIZE];
-
 };
 
 }  // end namespace Svc

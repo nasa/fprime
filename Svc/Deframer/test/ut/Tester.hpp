@@ -20,6 +20,12 @@ namespace Svc {
 
 class Tester : public DeframerGTestBase {
   public:
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
+    // Instance ID supplied to the component instance under test
+    static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+    // Queue depth supplied to component instance under test
+    static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
     // ----------------------------------------------------------------------
     // Types
     // ----------------------------------------------------------------------
@@ -90,37 +96,21 @@ class Tester : public DeframerGTestBase {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_comOut
-    //!
-    void from_comOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                             Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
-                             U32 context                    /*!< Call context value; meaning chosen by user*/
-    );
-
     //! Handler for from_bufferOut
     //!
-    void from_bufferOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                Fw::Buffer& fwBuffer);
+    void from_deframedOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                  Fw::Buffer& fwBuffer,
+                                  Fw::Buffer& context);
 
     //! Handler for from_bufferAllocate
     //!
     Fw::Buffer from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                                            U32 size);
 
-    //! Handler for from_bufferDeallocate
-    //!
-    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                       Fw::Buffer& fwBuffer);
-
     //! Handler for from_framedDeallocate
     //!
     void from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                                        Fw::Buffer& fwBuffer);
-
-    //! Handler for from_framedPoll
-    //!
-    Drv::PollStatus from_framedPoll_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                            Fw::Buffer& pollBuffer);
 
   private:
     // ----------------------------------------------------------------------

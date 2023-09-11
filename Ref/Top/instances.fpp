@@ -144,6 +144,8 @@ module Ref {
 
   instance uplink: Svc.Deframer base id 0x4A00
 
-  instance systemResources: Svc.SystemResources base id 0x4B00
+  instance fprimeRouter: Svc.FprimeRouter base id 0x4B00
+
+  instance systemResources: Svc.SystemResources base id 0x4C00
 
 }

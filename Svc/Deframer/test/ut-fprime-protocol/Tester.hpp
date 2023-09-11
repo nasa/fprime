@@ -26,7 +26,12 @@
 namespace Svc {
 
     class Tester : public DeframerGTestBase {
-
+        // Maximum size of histories storing events, telemetry, and port outputs
+        static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
+        // Instance ID supplied to the component instance under test
+        static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+        // Queue depth supplied to component instance under test
+        static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
         // ----------------------------------------------------------------------
         // Friend classes
         // ----------------------------------------------------------------------
@@ -59,16 +64,6 @@ namespace Svc {
             PACKET_TYPE_OFFSET = FpFrameHeader::SIZE,
         };
 
-        //! The type of the input mode
-        struct InputMode {
-            typedef enum {
-                //! Push data from another thread
-                PUSH,
-                //! Poll for data on the schedIn thread
-                POLL
-            } t;
-        };
-
         //! An uplink frame for testing
         class UplinkFrame {
 
@@ -87,7 +82,6 @@ namespace Svc {
 
             //! Construct an uplink frame
             UplinkFrame(
-                Fw::ComPacket::ComPacketType packetType, //!< The packet type
                 U32 packetSize //!< The packet size
             );
 
@@ -158,11 +152,6 @@ namespace Svc {
                 FpFrameHeader::TokenType ps //!< The packet size
             );
 
-            //! Write an arbitrary packet type
-            void writePacketType(
-                FwPacketDescriptorType pt //!< The packet type
-            );
-
             //! Write an arbitrary start word
             void writeStartWord(
                 FpFrameHeader::TokenType sw //!< The start word
@@ -173,9 +162,6 @@ namespace Svc {
             // ----------------------------------------------------------------------
             // Public member variables
             // ----------------------------------------------------------------------
-
-            //! The packet type
-            const Fw::ComPacket::ComPacketType packetType;
 
             //! The packet size
             const U32 packetSize;
@@ -200,15 +186,7 @@ namespace Svc {
         };
 
       public:
-
-        // ----------------------------------------------------------------------
-        // Constructor
-        // ----------------------------------------------------------------------
-
-        //! Construct a Tester
-        Tester(InputMode::t inputMode);
-
-      public:
+        Tester();
 
         // ----------------------------------------------------------------------
         // Tests
@@ -235,17 +213,11 @@ namespace Svc {
         // Handlers for typed from ports
         // ----------------------------------------------------------------------
 
-        //! Handler for from_comOut
-        void from_comOut_handler(
-            const NATIVE_INT_TYPE portNum, //!< The port number
-            Fw::ComBuffer& data, //!< Buffer containing packet data
-            U32 context //!< Call context value; meaning chosen by user
-        );
-
         //! Handler for from_bufferOut
-        void from_bufferOut_handler(
+        void from_deframedOut_handler(
             const NATIVE_INT_TYPE portNum, //!< The port number
-            Fw::Buffer& fwBuffer //!< The buffer
+            Fw::Buffer& data, //!< The buffer
+            Fw::Buffer& context //!< The context buffer
         );
 
         //! Handler for from_bufferAllocate
@@ -254,23 +226,11 @@ namespace Svc {
             U32 size //!< The size
         );
 
-        //! Handler for from_bufferDeallocate
-        void from_bufferDeallocate_handler(
-            const NATIVE_INT_TYPE portNum, //!< The port number
-            Fw::Buffer& fwBuffer //!< The buffer
-        );
-
         //! Handler for from_framedDeallocate
         //!
         void from_framedDeallocate_handler(
             const NATIVE_INT_TYPE portNum, //!< The port number
             Fw::Buffer& fwBuffer //!< The buffer
-        );
-
-        //! Handler for from_framedPoll
-        Drv::PollStatus from_framedPoll_handler(
-            const NATIVE_INT_TYPE portNum, //!< The port number
-            Fw::Buffer& pollBuffer //!< The poll buffer
         );
 
       private:
@@ -284,11 +244,6 @@ namespace Svc {
 
         //! Initialize components
         void initComponents();
-
-        //! Allocate a packet buffer
-        Fw::Buffer allocatePacketBuffer(
-            U32 size //!< The buffer size
-        );
 
       private:
 
@@ -310,14 +265,10 @@ namespace Svc {
 
         //! Byte store for the incoming buffer
         //! In polling mode, the incoming buffer must fit in the poll buffer
-        U8 m_incomingBufferBytes[DeframerCfg::POLL_BUFFER_SIZE];
+        U8 m_incomingBufferBytes[DeframerCfg::RING_BUFFER_SIZE];
 
         //! Serialized frame data to send to the Deframer
         Fw::Buffer m_incomingBuffer;
-
-        //! The input mode
-        InputMode::t m_inputMode;
-
     };
 
 }

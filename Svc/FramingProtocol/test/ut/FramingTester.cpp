@@ -37,10 +37,15 @@ namespace Svc {
   void FramingTester ::
     check()
   {
+    U8 contextData[sizeof(FwPacketDescriptorType)];
+
+    Fw::Buffer dataBuffer(this->data, this->dataSize);
+    Fw::Buffer contextBuffer(contextData, sizeof contextData);
+    contextBuffer.getSerializeRepr().serialize(static_cast<FwPacketDescriptorType>(this->packetType));
+
     this->fprimeFraming.frame(
-        this->data,
-        this->dataSize,
-        this->packetType
+        dataBuffer,
+        contextBuffer
     );
     // Check that we received a buffer
     Fw::Buffer *const sentBuffer = this->interface.getSentBuffer();
@@ -52,9 +57,7 @@ namespace Svc {
       const U32 packetSize = this->getPacketSize();
       this->checkPacketSize(packetSize);
       // Check the packet type
-      if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-        this->checkPacketType();
-      }
+      this->checkPacketType();
       // Check the data
       this->checkData();
       // Check the hash value
@@ -84,10 +87,8 @@ namespace Svc {
     checkPacketSize(FpFrameHeader::TokenType packetSize)
   {
     U32 expectedPacketSize = this->dataSize;
-    if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-      // Packet type is stored in header
-      expectedPacketSize += sizeof(SerialPacketType);
-    }
+    // Packet type is stored in header
+    expectedPacketSize += sizeof(SerialPacketType);
     ASSERT_EQ(packetSize, expectedPacketSize);
   }
 
@@ -125,10 +126,8 @@ namespace Svc {
     checkData()
   {
     U32 dataOffset = PACKET_TYPE_OFFSET;
-    if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-      // Packet type is stored in header
-      dataOffset += sizeof(SerialPacketType);
-    }
+    // Packet type is stored in header
+    dataOffset += sizeof(SerialPacketType);
     const I32 result = memcmp(
         this->data,
         &this->bufferStorage[dataOffset],

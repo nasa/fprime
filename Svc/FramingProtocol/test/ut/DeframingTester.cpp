@@ -135,6 +135,8 @@ namespace Svc {
         packetSize
     );
     ASSERT_EQ(result, 0);
+    Fw::Buffer nullContext;
+    ASSERT_EQ(this->interface.getRoutedContext(), nullContext);
   }
 
   void DeframingTester ::

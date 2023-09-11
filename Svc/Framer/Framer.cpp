@@ -24,10 +24,6 @@ namespace Svc {
 Framer ::Framer(const char* const compName)
     : FramerComponentBase(compName), FramingProtocolInterface(), m_protocol(nullptr), m_frame_sent(false) {}
 
-void Framer ::init(const NATIVE_INT_TYPE instance) {
-    FramerComponentBase::init(instance);
-}
-
 Framer ::~Framer() {}
 
 void Framer ::setup(FramingProtocol& protocol) {
@@ -36,10 +32,10 @@ void Framer ::setup(FramingProtocol& protocol) {
     protocol.setup(*this);
 }
 
-void Framer ::handle_framing(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
+void Framer ::handle_framing(const Fw::Buffer& data, const Fw::Buffer& context) {
     FW_ASSERT(this->m_protocol != nullptr);
     this->m_frame_sent = false;  // Clear the flag to detect if frame was sent
-    this->m_protocol->frame(data, size, packet_type);
+    this->m_protocol->frame(data, context);
     // If no frame was sent, Framer has the obligation to report success
     if (this->isConnected_comStatusOut_OutputPort(0) && (!this->m_frame_sent)) {
         Fw::Success status = Fw::Success::SUCCESS;
@@ -52,11 +48,24 @@ void Framer ::handle_framing(const U8* const data, const U32 size, Fw::ComPacket
 // ----------------------------------------------------------------------
 
 void Framer ::comIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
-    this->handle_framing(data.getBuffAddr(), data.getBuffLength(), Fw::ComPacket::FW_PACKET_UNKNOWN);
+    Fw::Buffer buffer(data.getBuffAddr(), data.getBuffLength());
+    this->handle_framing(buffer, Fw::Buffer());
+}
+
+void Framer ::bufferAndContextIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& data, Fw::Buffer& context) {
+    this->handle_framing(data, context);
+    // Deallocate the buffer after it was processed by the framing protocol
+    this->bufferDeallocate_out(0, data);
+
+    // When context is passed-in then always deallocate
+    this->contextDeallocate_out(0, context);
 }
 
 void Framer ::bufferIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    this->handle_framing(fwBuffer.getData(), fwBuffer.getSize(), Fw::ComPacket::FW_PACKET_FILE);
+    U8 data[sizeof(FwPacketDescriptorType)];
+    Fw::Buffer context = Fw::Buffer(data, sizeof data);
+    context.getSerializeRepr().serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_FILE));
+    this->handle_framing(fwBuffer, context);
     // Deallocate the buffer after it was processed by the framing protocol
     this->bufferDeallocate_out(0, fwBuffer);
 }
@@ -72,7 +81,7 @@ void Framer ::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& co
 // ----------------------------------------------------------------------
 
 void Framer ::send(Fw::Buffer& outgoing) {
-    FW_ASSERT(!this->m_frame_sent); // Prevent multiple sends per-packet
+    FW_ASSERT(!this->m_frame_sent);  // Prevent multiple sends per-packet
     const Drv::SendStatus sendStatus = this->framedOut_out(0, outgoing);
     if (sendStatus.e != Drv::SendStatus::SEND_OK) {
         // Note: if there is a data sending problem, an EVR likely wouldn't
