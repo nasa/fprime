@@ -413,7 +413,11 @@ class Packet:
                 self.m_max_field_bits = field.m_bits
 
         for item in self.m_item_list:
-            if not item.m_is_reserve and not item.m_is_constant and item.m_bits > self.m_max_field_bits:
+            if (
+                not item.m_is_reserve
+                and not item.m_is_constant
+                and item.m_bits > self.m_max_field_bits
+            ):
                 self.m_max_field_bits = item.m_bits
 
         if verbose:

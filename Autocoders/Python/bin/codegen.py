@@ -1095,7 +1095,9 @@ def generate_dependency_file(filename, target_file, subst_path, parser, the_type
     subst_path_local = subst_path.replace("\\", "/")
 
     # normalize path to target file
-    full_path = os.path.abspath(f"{target_directory}/{target_file_local}").replace("\\", "/")
+    full_path = os.path.abspath(f"{target_directory}/{target_file_local}").replace(
+        "\\", "/"
+    )
     # if path to substitute is specified, replace with build root
     if subst_path_local is not None:
         full_path = full_path.replace(subst_path_local, "$(BUILD_ROOT)")
