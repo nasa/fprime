@@ -383,7 +383,6 @@ class GenFactory:
 
 
 def main():
-
     # Configures output only to stdout.
     Logger.connectOutputLogger(None)
 

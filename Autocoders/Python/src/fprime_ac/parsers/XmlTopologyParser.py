@@ -45,6 +45,8 @@ from lxml import etree, isoschematron
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
+
+
 #
 class XmlTopologyParser:
     def __init__(self, xml_file=None):

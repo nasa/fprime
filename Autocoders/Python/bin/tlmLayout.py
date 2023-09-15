@@ -152,7 +152,6 @@ class Packet:
     # previous packet (if any)
 
     def packet(self, line):
-
         self.packet_complete()
         self.init()
 
@@ -244,7 +243,6 @@ class Packet:
     # Process and save an item record
 
     def item(self, line):
-
         self.m_num_variable_fields += 1
         it = Item()
 
@@ -308,7 +306,6 @@ class Packet:
     # Process and save an align record
 
     def align(self, line):
-
         it = Item()
 
         it.m_bit_start = self.m_bit_index
@@ -341,7 +338,6 @@ class Packet:
     # Process and save a constant record
 
     def constant(self, line):
-
         self.m_num_fixed_fields += 1
         it = Item()
 
@@ -400,7 +396,6 @@ class Packet:
     # the packet
 
     def packet_complete(self):
-
         global tlm_input_line_num
         global tlm_packet_list
         global tlm_max_packet_bytes
@@ -520,7 +515,6 @@ class CsvLine:
     # process() is called with a single line already tokenized as a list
 
     def process(self, line):
-
         global tlm_input_line_num
 
         if not line:
@@ -543,7 +537,6 @@ class CsvLine:
             exit(1)
 
     def finish(self):
-
         self.packet.packet_complete()
 
 
@@ -710,7 +703,6 @@ def output(cpp_output_file, template_file):
 
 
 def main():
-
     global verbose
 
     parser = argparse.ArgumentParser(description="Process a telemetry definition file")

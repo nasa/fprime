@@ -60,7 +60,6 @@ def ParseNumDefine(defname, filename, loadfile=True):
     # set to True.
 
     if loadfile:
-
         if not os.path.isfile(filename):
             raise OSError("%r: file not found." % filename)
 
@@ -133,7 +132,6 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     # set to True.
 
     if loadfile:
-
         if not os.path.isfile(filename):
             ##################
             # EddieB ENUM path fix but I replace try/except
@@ -263,7 +261,6 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     debugOnType = "no_debugging_desired_here_sir_carry_on"
 
     for i in range(len(toks)):
-
         t = toks[i]
 
         if typename == debugOnType:
@@ -364,7 +361,6 @@ typedef enum cmd_status {
 """
 
 if __name__ == "__main__":
-
     ##################################################
 
     typename = "CmdStatus"

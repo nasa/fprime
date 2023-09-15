@@ -33,6 +33,8 @@ from genshi import XML
 # Global logger init. below.
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
+
+
 #
 class Parser:
     """
@@ -159,7 +161,6 @@ class Parser:
             self.__node_stack = []
 
         for token, content, loc in XML(self.__xml_string):
-
             # This next line presents a problem processing XML with special
             # formatting characters. It generates an exception. Since it is
             # only debug, we'll just comment this out until the XML is
@@ -195,9 +196,7 @@ class Parser:
         xml_text = self._make_string(filename)
 
         for token, content, loc in XML(xml_text):
-
             if token == "START":
-
                 name = content[0]
                 attr = content[1]
 
@@ -208,9 +207,7 @@ class Parser:
                 # named root Element.
 
                 if self.__root is not None and not root_name_checked:
-
                     if self.__root.getName() == name:
-
                         # We already have a root element, and that root element
                         # has the same name as the root element in this second
                         # file. Continue with the parse.
@@ -222,7 +219,6 @@ class Parser:
                         self.__node_stack.append(self.__root)
 
                     else:
-
                         # We already have a root element, but that root element
                         # name does not match the root element name from the
                         # previously parsed file. Stop since this will result
@@ -516,7 +512,6 @@ def node_visit(element):
 
 
 if __name__ == "__main__":
-
     xmlfile1 = os.environ["MSL_ROOT"] + "/cmd/cmd_ai_ipc.xml"
     xmlfile2 = os.environ["MSL_ROOT"] + "/apxs/apxs_ai_ipc.xml"
 

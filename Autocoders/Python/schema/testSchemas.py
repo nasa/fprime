@@ -35,7 +35,6 @@ class schema_test:
         self.__validate_file(self.__schema_path, "RNG")
 
         with open(self.__schema_path) as relax_file_handler:
-
             # Parse schema file
             relax_parsed = etree.parse(relax_file_handler)
 
@@ -64,7 +63,6 @@ class schema_test:
         """
 
         with open(file_path) as handler:
-
             # Parse schema file
             parsed = etree.parse(handler)
 

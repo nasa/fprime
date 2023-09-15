@@ -419,7 +419,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.has_guarded_ports = obj.get_has_guarded_ports()
         # Do we need a message size?
         c.needs_msg_size = False
-        for (name, type, direction, sync, priority, role) in c.ports_sync:
+        for name, type, direction, sync, priority, role in c.ports_sync:
             if self.isSerial(type) and self.isAsync(sync):
                 c.needs_msg_size = True
         # Flags for different port categories

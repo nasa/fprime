@@ -322,7 +322,6 @@ class CompFactory:
         # Add port type specifics to port object.
         # Specifics are things like: args, includes, etc.
         for port_obj in port_obj_list:
-
             for parsed_port_obj in parsed_port_xml_list:
                 # print "Meta: Name: %s, Type: %s" % (port_obj.get_name(), port_obj.get_type())
                 # print "Meta: Port Type: %s, Port Interface: %s" % (port_obj.get_type(),parsed_port_obj.get_interface().get_name())

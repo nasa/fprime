@@ -67,6 +67,7 @@ SYS_TIME = time.gmtime()
 # Deployment name from topology XML only
 DEPLOYMENT = None
 
+
 # Version label for now
 class Version:
     id = "0.1"
@@ -1079,7 +1080,6 @@ def generate_serializable(the_serial_xml, opt):
 
 
 def generate_dependency_file(filename, target_file, subst_path, parser, the_type):
-
     # verify directory exists for dependency file and is directory
     if not os.path.isdir(os.path.dirname(filename)):
         PRINT.info(
@@ -1240,7 +1240,6 @@ def main():
             set_build_roots(os.environ.get("BUILD_ROOT"))
 
     for xml_filename in xml_filenames:
-
         xml_type = XmlParser.XmlParser(xml_filename)()
 
         if xml_type == "component":

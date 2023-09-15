@@ -6,7 +6,7 @@ DEBUG = logging.getLogger("debug")
 
 
 def printDict(di, format="%-25s %s", log=None, loglvl=logging.DEBUG):
-    for (key, val) in list(di.items()):
+    for key, val in list(di.items()):
         if log:
             log.log(loglvl, format % (str(key) + ":", val))
         else:
@@ -198,7 +198,7 @@ def dumpObj(
             else:
                 print()
                 print("Classes:")
-        for (classname, classtype) in classes:
+        for classname, classtype in classes:
             classdoc = getattr(classtype, "__doc__", None) or "<No documentation>"
             prettyString = prettyPrintCols(
                 ("", classname, truncstring(classdoc, maxspew)), tabbedwidths, " "
@@ -216,7 +216,7 @@ def dumpObj(
             else:
                 print()
                 print("Methods:")
-        for (methodname, method) in methods:
+        for methodname, method in methods:
             methoddoc = getattr(method, "__doc__", None) or "<No documentation>"
             prettyString = prettyPrintCols(
                 ("", methodname, truncstring(methoddoc, maxspew)), tabbedwidths, " "
@@ -235,7 +235,7 @@ def dumpObj(
             else:
                 print()
                 print("Attributes:")
-        for (attr, val) in attrs:
+        for attr, val in attrs:
             prettyString = prettyPrintCols(
                 ("", attr, truncstring(str(val), maxspew)), tabbedwidths, " "
             )

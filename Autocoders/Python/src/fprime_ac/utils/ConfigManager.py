@@ -359,7 +359,7 @@ class ConfigManager(parent):
         For a section set up the default values.
         """
         self.add_section(section)
-        for (key, value) in list(self.__prop[section].items()):
+        for key, value in list(self.__prop[section].items()):
             self.set(section, key, "%s" % value)
 
 
@@ -370,7 +370,7 @@ if __name__ == "__main__":
     config = ConfigManager().getInstance()
     print()
     print("IPC section defaults:")
-    for (key, value) in config.items("ipc"):
+    for key, value in config.items("ipc"):
         print("{} = {}".format(key, value))
     print()
     print("Get some of the ipc values:")

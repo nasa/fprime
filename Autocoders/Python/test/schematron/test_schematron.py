@@ -23,7 +23,6 @@ def test_schematron():
     Tests that schematron files are properly running and asserting
     """
     try:
-
         # cd into test directory to find test files (code/test/schematron can only find files this way)
         testdir = build_root / "Autocoders" / "Python" / "test" / "schematron" / "xml"
         os.chdir(testdir)

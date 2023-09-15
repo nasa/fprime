@@ -34,9 +34,9 @@ from fprime_ac.utils.buildroot import (
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 
+
 # Abstract base class definition
 class AbstractVisitor:
-
     __generate_empty_file = False
 
     """
@@ -44,7 +44,6 @@ class AbstractVisitor:
     """
 
     def __init__(self):
-
         self.__generate_empty_file = False
 
     def setGenerateEmptyFile(self):

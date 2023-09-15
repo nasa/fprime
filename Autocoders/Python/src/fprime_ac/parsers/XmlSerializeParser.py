@@ -57,6 +57,8 @@ format_dictionary = {
     "string": "%s",
     "ENUM": "%d",
 }
+
+
 #
 class XmlSerializeParser:
     """

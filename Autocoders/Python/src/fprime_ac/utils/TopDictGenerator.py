@@ -263,7 +263,7 @@ class TopDictGenerator:
         enum_elem = etree.Element("enum")
         enum_elem.attrib["type"] = type_name
         # Add enum members
-        for (membername, value, comment) in member:
+        for membername, value, comment in member:
             enum_mem = etree.Element("item")
             enum_mem.attrib["name"] = membername
             # keep track of incrementing enum value
@@ -313,7 +313,7 @@ class TopDictGenerator:
                     enum_elem = etree.Element("enum")
                     enum_elem.attrib["type"] = type_name
                     # Add enum members
-                    for (membername, value, comment) in arg_type[1]:
+                    for membername, value, comment in arg_type[1]:
                         enum_mem = etree.Element("item")
                         enum_mem.attrib["name"] = membername
                         # keep track of incrementing enum value

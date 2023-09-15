@@ -36,6 +36,8 @@ from lxml import etree
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
+
+
 #
 class XmlPortsParser:
     """

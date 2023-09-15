@@ -23,9 +23,7 @@ import shutil
 ##    RuntimeError - all extensions used (eg: filename.c.999)
 ##
 def VersionFile(filename, vtype="copy"):
-
     if os.path.isfile(filename):
-
         # check the vtype parameter
         if vtype not in ("copy", "rename"):
             raise ValueError("Unknown vtype {!r}".format(vtype))
@@ -43,7 +41,6 @@ def VersionFile(filename, vtype="copy"):
 
         # Find the next available file version
         for i in range(num, 1000):
-
             new_file = "%s.%03d" % (root, i)
 
             if not os.path.exists(new_file):

@@ -115,6 +115,7 @@ class ParseBaseException(Exception):
     """base exception class for all parsing runtime exceptions"""
 
     __slots__ = ("loc", "msg", "pstr", "parserElement")
+
     # Performance tuning: we construct a *lot* of these, so keep this
     # constructor as small and fast as possible
     def __init__(self, pstr, loc, msg, elem=None):
@@ -1676,7 +1677,6 @@ class QuotedString(Token):
         ret = result.group()
 
         if self.unquoteResults:
-
             # strip off quotes
             ret = ret[self.quoteCharLen : -self.endQuoteCharLen]
 

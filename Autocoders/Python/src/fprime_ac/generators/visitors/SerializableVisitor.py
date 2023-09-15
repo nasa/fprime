@@ -54,6 +54,7 @@ DEBUG = logging.getLogger("debug")
 
 typelist = ["U8", "I8", "U16", "I16", "U32", "I32", "U64", "I64", "F32", "F64", "bool"]
 
+
 #
 # Module class or classes go here.
 class SerializableVisitor(AbstractVisitor.AbstractVisitor):
@@ -86,7 +87,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         for use in templates that generate prototypes.
         """
         arg_str = ""
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for name, mtype, size, format, comment in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
@@ -109,7 +110,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_list = []
 
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for name, mtype, size, format, comment in obj.get_members():
             typeinfo = None
             if isinstance(mtype, tuple):
                 mtype = mtype[0][1]
@@ -226,7 +227,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         c = SerialBody.SerialBody()
         c.name = obj.get_name()
         c.mem_list = []
-        for (n, t, s, f, comment) in obj.get_members():
+        for n, t, s, f, comment in obj.get_members():
             # convert XML types to Python classes
             (
                 type_string,

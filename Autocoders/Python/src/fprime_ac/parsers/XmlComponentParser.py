@@ -47,6 +47,8 @@ from lxml import etree, isoschematron
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
+
+
 #
 class XmlComponentParser:
     def __init__(self, xml_file=None):
@@ -1159,7 +1161,6 @@ class XmlComponentParser:
             self.__recursive_import_process(comp_tag)
 
     def __generate_port_from_role(self, role):
-
         special_ports = self.Config._ConfigManager__prop["special_ports"]
 
         n = special_ports[role]["name"]

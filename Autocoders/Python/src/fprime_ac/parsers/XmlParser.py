@@ -31,6 +31,8 @@ from lxml import etree
 # Global logger init. below.
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
+
+
 #
 class XmlParser:
     def __init__(self, xml_file=None):

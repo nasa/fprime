@@ -136,7 +136,6 @@ class TlmPacketParser(object):
         self.size_dict[type] = size
 
     def get_type_size(self, type_name, size):
-
         # switch based on type
         if type_name == "string":
             return int(size) + 2  # plus 2 to store the string length
@@ -248,7 +247,6 @@ class TlmPacketParser(object):
         return ch_size_dict
 
     def gen_packet_file(self, xml_filename):
-
         view_path = PACKET_VIEW_DIR
 
         if not os.path.exists(view_path):
@@ -267,7 +265,6 @@ class TlmPacketParser(object):
         it = Template(impl_file_template)
 
         if element_tree.getroot().tag == "packets":
-
             list_name = element_tree.getroot().attrib["name"]
             list_namespace = element_tree.getroot().attrib["namespace"]
             max_size = int(element_tree.getroot().attrib["size"])

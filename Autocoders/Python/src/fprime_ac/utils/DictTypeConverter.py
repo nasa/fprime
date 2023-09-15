@@ -6,7 +6,6 @@ class DictTypeConverter:
         pass
 
     def convert(self, t, size):
-
         # check for various type variations
         type_string = ""
         type_name = t
@@ -25,7 +24,7 @@ class DictTypeConverter:
                 sys.exit(-1)
             type_string += 'EnumType("' + t[0][1] + '",{'
 
-            for (mname, mval, mcomment) in t[1]:
+            for mname, mval, mcomment in t[1]:
                 # check for member value
                 if mval is not None:
                     curr_memb_val = int(mval)
