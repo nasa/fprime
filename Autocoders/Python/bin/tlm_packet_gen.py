@@ -116,6 +116,9 @@ DEBUG = logging.getLogger("debug")
 
 PACKET_VIEW_DIR = "./Packet-Views"
 
+STRING_BUFFER_SIZE = 2  # Size of string buffer in bytes
+ENUM_BASE_SIZE = 4  # Base size of enumeration in bytes
+
 
 class TlmPacketParseValueError(ValueError):
     pass
@@ -137,30 +140,16 @@ class TlmPacketParser(object):
 
     def get_type_size(self, type_name, size):
         # switch based on type
-        if type_name == "string":
-            return int(size) + 2  # plus 2 to store the string length
-        elif type_name == "I8":
-            return 1
-        elif type_name == "I16":
-            return 2
-        elif type_name == "I32":
-            return 4
-        elif type_name == "I64":
-            return 8
-        elif type_name == "U8":
-            return 1
-        elif type_name == "U16":
-            return 2
-        elif type_name == "U32":
-            return 4
-        elif type_name == "U64":
-            return 8
-        elif type_name == "F32":
-            return 4
-        elif type_name == "F64":
-            return 8
-        elif type_name == "bool":
-            return 1
+        if type_name in ("I16", "U16"):
+            return 2  # 2 bytes for 16 bit types
+        elif type_name in ("I32", "U32", "F32"):
+            return 4  # 4 bytes for 32 bit types
+        elif type_name in ("I64", "U64", "F64"):
+            return 8  # 8 bytes for 64 bit types
+        elif type_name in ("I8", "U8", "bool"):
+            return 1  # 1 byte for 8 bit types
+        elif type_name == "string":
+            return int(size) + STRING_BUFFER_SIZE  # String size + buffer size in bytes
         else:
             return None
 
@@ -181,18 +170,14 @@ class TlmPacketParser(object):
                 parsed_xml_dict[comp.get_type()] = comp.get_comp_xml()
             else:
                 PRINT.info(
-                    "Components with type {} aren't in the topology model.".format(
-                        comp.get_type()
-                    )
+                    f"Components with type {comp.get_type()} aren't in the topology model."
                 )
 
         xml_list = []
-        for parsed_xml_type in parsed_xml_dict:
-            if parsed_xml_dict[parsed_xml_type] is None:
+        for parsed_xml_type, value in parsed_xml_dict.items():
+            if value is None:
                 print(
-                    "ERROR: XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(
-                        parsed_xml_type
-                    )
+                    f"ERROR: XML of type {parsed_xml_type} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file."
                 )
                 raise Exception()
             xml_list.append(parsed_xml_dict[parsed_xml_type])
@@ -206,7 +191,7 @@ class TlmPacketParser(object):
             comp_id = int(comp.get_base_id(), 0)
             comp_type = comp.get_type()
             if self.verbose:
-                PRINT.debug("Processing %s" % comp_name)
+                PRINT.debug(f"Processing {comp_name}")
 
             # check for included XML types
             self.process_enum_files(parsed_xml_dict[comp_type].get_enum_type_files())
@@ -220,14 +205,15 @@ class TlmPacketParser(object):
                 for chan in parsed_xml_dict[comp_type].get_channels():
                     channel_name = f"{comp_name}.{chan.get_name()}"
                     if self.verbose:
-                        print("Processing Channel %s" % channel_name)
+                        print(f"Processing Channel {channel_name}")
                     chan_type = chan.get_type()
                     # if channel is enum
-                    if type(chan_type) == type(tuple()):
-                        chan_size = 4
+                    if isinstance(chan_type, tuple):
+                        chan_size = ENUM_BASE_SIZE
+
                     # if channel type is string
                     #                    elif chan_type == "string":
-                    #                        chan_size = int(chan.get_size()) + 2 # FIXME: buffer size storage size magic number - needs to be turned into a constant
+                    #                        chan_size = int(chan.get_size()) + STRING_BUFFER_SIZE # String size + buffer size in bytes
                     # if channel is serializable
                     elif chan_type in self.size_dict:
                         chan_size = self.size_dict[chan_type]
@@ -235,8 +221,7 @@ class TlmPacketParser(object):
                         chan_size = self.get_type_size(chan_type, chan.get_size())
                     if chan_size is None:
                         print(
-                            'Component %s channel %s type "%s" not found!'
-                            % (comp_name, channel_name, chan_type)
+                            f'Component {comp_name} channel {channel_name} type "{chan_type}" not found!'
                         )
                         sys.exit(-1)
                     chan_id = int(chan.get_ids()[0], 0) + comp_id
@@ -254,7 +239,7 @@ class TlmPacketParser(object):
 
         # Make sure files
         if not os.path.isfile(xml_filename):
-            raise TlmPacketParseIOError("File %s does not exist!" % xml_filename)
+            raise TlmPacketParseIOError(f"File {xml_filename} does not exist!")
 
         fd = open(xml_filename, "r")
         xml_parser = etree.XMLParser(remove_comments=True)
@@ -264,67 +249,65 @@ class TlmPacketParser(object):
         ht = Template(header_file_template)
         it = Template(impl_file_template)
 
-        if element_tree.getroot().tag == "packets":
-            list_name = element_tree.getroot().attrib["name"]
-            list_namespace = element_tree.getroot().attrib["namespace"]
-            max_size = int(element_tree.getroot().attrib["size"])
+        if element_tree.getroot().tag != "packets":
+            raise TlmPacketParseValueError(
+                f"Invalid xml type {element_tree.getroot().tag}"
+            )
 
-            # fill in template fields for header
-            ht.packet_list_name = list_name
-            ht.packet_list_namespace = list_namespace
+        list_name = element_tree.getroot().attrib["name"]
+        list_namespace = element_tree.getroot().attrib["namespace"]
+        max_size = int(element_tree.getroot().attrib["size"])
 
-            # fill in template fields for implementation file
-            it.packet_list_name = list_name
-            it.packet_list_namespace = list_namespace
-            it.max_size = max_size
+        # fill in template fields for header
+        ht.packet_list_name = list_name
+        ht.packet_list_namespace = list_namespace
 
-            packet_list_container = []
+        # fill in template fields for implementation file
+        it.packet_list_name = list_name
+        it.packet_list_namespace = list_namespace
+        it.max_size = max_size
 
-            packetized_channel_list = []
-            it.ignore_list = []
-            id_list = []  # check for duplicates
-            ignore_name_list = []
+        packet_list_container = []
 
-            size_dict = {}
+        packetized_channel_list = []
+        it.ignore_list = []
+        id_list = []  # check for duplicates
+        ignore_name_list = []
 
-            ht.num_packets = 0
-            total_packet_size = 0
-            levels = []
-            view_path = PACKET_VIEW_DIR
-            # find the topology import
-            for entry in element_tree.getroot():
-                # read in topology file
-                if entry.tag == "import_topology":
-                    top_file = search_for_file("Topology", entry.text)
-                    if top_file is None:
-                        raise TlmPacketParseIOError(
-                            "import file %s not found" % entry.text
-                        )
-                    the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(
-                        top_file
+        size_dict = {}
+
+        ht.num_packets = 0
+        total_packet_size = 0
+        levels = []
+        view_path = PACKET_VIEW_DIR
+        # find the topology import
+        for entry in element_tree.getroot():
+            # read in topology file
+            if entry.tag == "import_topology":
+                top_file = search_for_file("Topology", entry.text)
+                if top_file is None:
+                    raise TlmPacketParseIOError(f"import file {entry.text} not found")
+                the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(top_file)
+                deployment = the_parsed_topology_xml.get_deployment()
+                if self.verbose:
+                    print("Found assembly or deployment named: %s\n" % deployment)
+                channel_size_dict = self.generate_channel_size_dict(
+                    the_parsed_topology_xml, xml_filename
+                )
+            elif entry.tag == "packet":
+                if channel_size_dict is None:
+                    raise TlmPacketParseValueError(
+                        f"{xml_filename}: Topology import must be before packet definitions"
                     )
-                    deployment = the_parsed_topology_xml.get_deployment()
-                    if self.verbose:
-                        print("Found assembly or deployment named: %s\n" % deployment)
-                    channel_size_dict = self.generate_channel_size_dict(
-                        the_parsed_topology_xml, xml_filename
-                    )
-                elif entry.tag == "packet":
-                    if channel_size_dict is None:
-                        raise TlmPacketParseValueError(
-                            "%s: Topology import must be before packet definitions"
-                            % xml_filename
-                        )
-                    packet_size = 0
-                    packet_name = entry.attrib["name"]
-                    # Open a text file for a GDS view
-                    vfd = open("%s/%s.txt" % (view_path, packet_name), "w")
+                packet_size = 0
+                packet_name = entry.attrib["name"]
+                with open(f"{view_path}/{packet_name}.txt", "w") as vfd:
                     packet_id = entry.attrib["id"]
                     packet_level = entry.attrib["level"]
-                    print("Packetizing %s (%s)" % (packet_name, packet_id))
+                    print(f"Packetizing {packet_name} ({packet_id})")
                     if packet_id in id_list:
                         raise TlmPacketParseValueError(
-                            "Duplicate packet id %s" % packet_id
+                            f"Duplicate packet id {packet_id}"
                         )
                     else:
                         id_list.append(packet_id)
@@ -332,16 +315,15 @@ class TlmPacketParser(object):
                     channel_list = []
                     for channel in entry:
                         channel_name = channel.attrib["name"]
-                        if not channel_name in channel_size_dict:
+                        if channel_name not in channel_size_dict:
                             raise TlmPacketParseValueError(
-                                "Channel %s does not exist" % channel_name
+                                f"Channel {channel_name} does not exist"
                             )
                         (channel_id, channel_size) = channel_size_dict[channel_name]
                         packet_size += channel_size
                         if self.verbose:
                             print(
-                                " -Channel %s ID %d size %d"
-                                % (channel_name, channel_id, channel_size)
+                                f" -Channel {channel_name} ID {channel_id} size {channel_size}"
                             )
                         channel_list.append((channel_id, channel_size, channel_name))
                         packetized_channel_list.append(channel_name)
@@ -361,44 +343,34 @@ class TlmPacketParser(object):
                     print("Packet %s size %d/%d" % (packet_name, packet_size, max_size))
                     total_packet_size += packet_size
 
-                    if packet_level in size_dict:
-                        size_dict[packet_level] = size_dict[packet_level] + packet_size
-                    else:
-                        size_dict[packet_level] = packet_size
-
-                    if not packet_level in levels:
+                    size_dict[packet_level] = (
+                        size_dict[packet_level] + packet_size
+                        if packet_level in size_dict
+                        else packet_size
+                    )
+                    if packet_level not in levels:
                         levels.append(packet_level)
-                    vfd.close()
-
-                elif entry.tag == "ignore":
-                    if channel_size_dict is None:
+            elif entry.tag == "ignore":
+                if channel_size_dict is None:
+                    raise TlmPacketParseValueError(
+                        f"{xml_filename}: Topology import must be before packet definitions"
+                    )
+                for channel in entry:
+                    channel_name = channel.attrib["name"]
+                    if channel_name not in channel_size_dict:
                         raise TlmPacketParseValueError(
-                            "%s: Topology import must be before packet definitions"
-                            % xml_filename
+                            f"Channel {channel_name} does not exist"
                         )
-                    for channel in entry:
-                        channel_name = channel.attrib["name"]
-                        if not channel_name in channel_size_dict:
-                            raise TlmPacketParseValueError(
-                                "Channel %s does not exist" % channel_name
-                            )
-                        (channel_id, channel_size) = channel_size_dict[channel_name]
-                        it.ignore_list.append((channel_id, channel_name))
-                        if self.verbose:
-                            print(
-                                "Channel %s (%d) ignored" % (channel_name, channel_id)
-                            )
-                        ignore_name_list.append(channel_name)
-                else:
-                    raise TlmPacketParseValueError("Invalid packet tag %s" % entry.tag)
+                    (channel_id, channel_size) = channel_size_dict[channel_name]
+                    it.ignore_list.append((channel_id, channel_name))
+                    if self.verbose:
+                        print("Channel %s (%d) ignored" % (channel_name, channel_id))
+                    ignore_name_list.append(channel_name)
+            else:
+                raise TlmPacketParseValueError(f"Invalid packet tag {entry.tag}")
 
-                if self.verbose:
-                    print("Entry: %s" % entry.tag)
-        else:
-            raise TlmPacketParseValueError(
-                "Invalid xml type %s" % element_tree.getroot().tag
-            )
-
+            if self.verbose:
+                print(f"Entry: {entry.tag}")
         output_file_base = os.path.splitext(os.path.basename(xml_filename))[0]
         nearest_build_root = get_nearest_build_root(xml_filename)
         file_dir = os.path.relpath(os.path.dirname(xml_filename), nearest_build_root)
@@ -407,34 +379,30 @@ class TlmPacketParser(object):
 
         for channel in channel_size_dict:
             if (
-                not channel in packetized_channel_list
-                and not channel in ignore_name_list
+                channel not in packetized_channel_list
+                and channel not in ignore_name_list
             ):
                 (channel_id, channel_size) = channel_size_dict[channel]
-                print(
-                    "Channel %s (%d) not packetized or ignored." % (channel, channel_id)
-                )
+                print(f"Channel {channel} ({channel_id}) not packetized or ignored.")
                 missing_channels = True
 
         if missing_channels:
             raise TlmPacketParseValueError("Channels missing from packets")
 
-        header = "%sAc.hpp" % output_file_base
-        source = "%sAc.cpp" % output_file_base
-        print("Generating %s and %s" % (header, source))
+        header = f"{output_file_base}Ac.hpp"
+        source = f"{output_file_base}Ac.cpp"
+        print(f"Generating {header} and {source}")
         levels.sort()
         for level in levels:
             print(
-                "Level: %s Bytes: %d bits: %d"
-                % (level, size_dict[level], size_dict[level] * 8)
+                f"Level: {level} Bytes: {size_dict[level]} bits: {size_dict[level] * 8}"
             )
         print(
-            "Number of packets: %d\nTotal packet bytes: %d bits: %d"
-            % (ht.num_packets, total_packet_size, total_packet_size * 8)
+            f"Number of packets: {ht.num_packets}\nTotal packet bytes: {total_packet_size} bits: {total_packet_size * 8}"
         )
 
         it.packet_list = packet_list_container
-        it.output_header = "%s/%sAc.hpp" % (file_dir, output_file_base)
+        it.output_header = f"{file_dir}/{output_file_base}Ac.hpp"
 
         open(header, "w").write(str(ht))
         open(source, "w").write(str(it))
@@ -445,11 +413,7 @@ class TlmPacketParser(object):
 
         # write dependency file
         if self.dependency is not None:
-            dependency_file_txt = "\n%s %s: %s\n" % (
-                source_target,
-                header_target,
-                top_file,
-            )
+            dependency_file_txt = f"\n{source_target} {header_target}: {top_file}\n"
             open(self.dependency, "w").write(dependency_file_txt)
 
     def process_serializable_files(self, serializable_file_list):
@@ -478,8 +442,9 @@ class TlmPacketParser(object):
                 _,
             ) in serializable_model.get_members():
                 # if enumeration
-                if type(member_type) == type(tuple()):
-                    type_size = 4  # Fixme: can we put this in a constant somewhere?
+                if isinstance(member_type, tuple):
+                    type_size = ENUM_BASE_SIZE
+
                 elif (
                     member_type in self.size_dict.keys()
                 ):  # See if it is a registered type
@@ -488,8 +453,7 @@ class TlmPacketParser(object):
                     type_size = self.get_type_size(member_type, member_size)
                 if type_size is None:
                     print(
-                        "Illegal type %s in serializable %s"
-                        % (member_type, serializable_type)
+                        f"Illegal type {member_type} in serializable {serializable_type}"
                     )
                     sys.exit(-1)
                 serializable_size += type_size
@@ -497,18 +461,14 @@ class TlmPacketParser(object):
                     serializable_size *= member_array_size
             self.add_type_size(serializable_type, serializable_size)
             if self.verbose:
-                print(
-                    "Serializable %s size %d" % (serializable_type, serializable_size)
-                )
+                print(f"Serializable {serializable_type} size {serializable_size}")
 
     def process_enum_files(self, enum_file_list):
         for enum_file in enum_file_list:
             enum_file = search_for_file("Enumeration", enum_file)
             enum_model = XmlEnumParser.XmlEnumParser(enum_file)
-            enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
-            self.add_type_size(
-                enum_type, 4
-            )  # Fixme: can we put this in a constant somewhere?
+            enum_type = f"{enum_model.get_namespace()}::{enum_model.get_name()}"
+            self.add_type_size(enum_type, ENUM_BASE_SIZE)
 
     def process_array_files(self, array_file_list):
         for array_file in array_file_list:
@@ -518,18 +478,19 @@ class TlmPacketParser(object):
             self.process_enum_files(array_model.get_include_enum_files())
             self.process_array_files(array_model.get_include_array_files())
             self.process_serializable_files(array_model.get_includes())
-            array_type = array_model.get_namespace() + "::" + array_model.get_name()
+            array_type = f"{array_model.get_namespace()}::{array_model.get_name()}"
             array_size = int(array_model.get_size())
             elem_type = array_model.get_type()
             elem_type_size = None
-            if type(elem_type) == type(tuple()):
-                elem_type_size = 4  # Fixme: can we put this in a constant somewhere?
+            if isinstance(elem_type, tuple):
+                elem_type_size = ENUM_BASE_SIZE
+
             elif elem_type in self.size_dict.keys():  # See if it is a registered type
                 elem_type_size = self.size_dict[elem_type]
             else:
-                elem_type_size = self.get_type_size(elem_type, 1)  # Fixme: strings?
+                elem_type_size = self.get_type_size(elem_type, 1)  # FIXME: strings?
             if elem_type_size is None:
-                print("Illegal type %s in array %s" % (elem_type, array_type))
+                print(f"Illegal type {elem_type} in array {array_type}")
                 sys.exit(-1)
             self.add_type_size(array_type, elem_type_size * array_size)
 
@@ -596,17 +557,17 @@ def main():
         print("ERROR: Too many filenames, should only have one")
         return
 
-    print("Processing packet file %s" % xml_filename)
+    print(f"Processing packet file {xml_filename}")
     set_build_roots(os.environ.get("BUILD_ROOT"))
 
     packet_parser = TlmPacketParser(opt.verbose_flag, opt.dependency_file)
     try:
         packet_parser.gen_packet_file(xml_filename)
     except TlmPacketParseValueError as e:
-        print("Packet XML parsing error: %s" % e)
+        print(f"Packet XML parsing error: {e}")
         sys.exit(-1)
     except TlmPacketParseIOError as e:
-        print("Packet XML file error: %s" % e)
+        print(f"Packet XML file error: {e}")
         sys.exit(-1)
 
     sys.exit(0)

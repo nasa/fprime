@@ -84,3 +84,4 @@ depend
 /venv/
 
 Packet-Views
+*.yaml

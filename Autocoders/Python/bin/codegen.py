@@ -919,8 +919,8 @@ def generate_port(the_parsed_port_xml, port_file):
     #
     if "Ai" in port_file:
         base = the_type
-        h_instance_name = base + "_H"
-        cpp_instance_name = base + "_Cpp"
+        h_instance_name = f"{base}_H"
+        cpp_instance_name = f"{base}_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -999,8 +999,8 @@ def generate_serializable(the_serial_xml, opt):
     t = f.split(".")[0][-2:]
     if ("Ai" in f) & (t == "Ai"):
         base = n
-        h_instance_name = base + "_H"
-        cpp_instance_name = base + "_Cpp"
+        h_instance_name = f"{base}_H"
+        cpp_instance_name = f"{base}_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -1095,9 +1095,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, the_type
     subst_path_local = subst_path.replace("\\", "/")
 
     # normalize path to target file
-    full_path = os.path.abspath(target_directory + "/" + target_file_local).replace(
-        "\\", "/"
-    )
+    full_path = os.path.abspath(f"{target_directory}/{target_file_local}").replace("\\", "/")
     # if path to substitute is specified, replace with build root
     if subst_path_local is not None:
         full_path = full_path.replace(subst_path_local, "$(BUILD_ROOT)")
@@ -1207,12 +1205,7 @@ def main():
         "ERROR": logging.ERROR,
         "CRITICAL": logging.CRITICAL,
     }
-
-    if log_level_dict[log_level] is None:
-        stdout_enable = False
-    else:
-        stdout_enable = True
-
+    stdout_enable = log_level_dict[log_level] is not None
     log_fd = opt.logger_output
     # For now no log file
 
@@ -1225,13 +1218,9 @@ def main():
         PRINT.info(f"Usage: {sys.argv[0]} [options] xml_filename")
         return
     else:
-        xml_filenames = args[0:]
-    #
-    # Check for BUILD_ROOT variable for XML port searches
-    #
+        xml_filenames = args[:]
     if opt.build_root_flag:
-        # Check for BUILD_ROOT env. variable
-        if not ("BUILD_ROOT" in list(os.environ.keys())):
+        if "BUILD_ROOT" not in list(os.environ.keys()):
             PRINT.info(
                 "ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path..."
             )
@@ -1298,15 +1287,14 @@ def main():
             PRINT.info("Invalid XML found...this format not supported")
             ERROR = True
 
-        if opt.dependency_file is not None:
-            if opt.build_root_flag:
-                generate_dependency_file(
-                    opt.dependency_file,
-                    os.path.basename(xml_filename),
-                    list(get_build_roots())[0],
-                    dependency_parser,
-                    xml_type,
-                )
+        if opt.dependency_file is not None and opt.build_root_flag:
+            generate_dependency_file(
+                opt.dependency_file,
+                os.path.basename(xml_filename),
+                list(get_build_roots())[0],
+                dependency_parser,
+                xml_type,
+            )
 
     # Always return to directory where we started.
     os.chdir(starting_directory)
