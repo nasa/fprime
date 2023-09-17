@@ -23,15 +23,6 @@
 
 namespace Svc {
 
-    //! \class Divider
-    //! \brief Struct describing a divider
-    struct Divider{
-        //! Divisor
-        NATIVE_INT_TYPE divisor;
-        //! Offset
-        NATIVE_INT_TYPE offset;
-    };
-
     //! \class RateGroupDriver
     //! \brief Implementation class for RateGroupDriver
     //!
@@ -42,6 +33,24 @@ namespace Svc {
     class RateGroupDriver : public RateGroupDriverComponentBase {
 
         public:
+            //! Size of the divider table, provided as a constants to users passing the table in
+            static const NATIVE_UINT_TYPE DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
+
+            //! \class Divider
+            //! \brief Struct describing a divider
+            struct Divider{
+                //! Divisor
+                NATIVE_INT_TYPE divisor;
+                //! Offset
+                NATIVE_INT_TYPE offset;
+            };
+
+            //! \class DividerSet
+            //! \brief Struct containing an array of dividers
+            struct DividerSet {
+                //! Dividers
+                Divider dividers[Svc::RateGroupDriver::DIVIDER_SIZE];
+            };
 
             //!  \brief RateGroupDriver constructor
             //!
@@ -59,10 +68,10 @@ namespace Svc {
             void init(NATIVE_INT_TYPE instanceId = 0);
 
             //!  \brief RateGroupDriver configuration function
-            //!  \param dividers array of Divider used to divide down input tick
+            //!  \param dividersSet set of dividers used to divide down input tick
             //!  \param numDividers size of dividers array
 
-            void configure(Divider dividers[], NATIVE_INT_TYPE numDividers);
+            void configure(DividerSet dividersSet, NATIVE_INT_TYPE numDividers);
 
             //!  \brief RateGroupDriverImpl destructor
 
@@ -85,9 +94,6 @@ namespace Svc {
 
             //! rollover counter
             NATIVE_INT_TYPE m_rollover;
-        public:
-            //! Size of the divider table, provided as a constants to users passing the table in
-            static const NATIVE_UINT_TYPE DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
     };
 
 }

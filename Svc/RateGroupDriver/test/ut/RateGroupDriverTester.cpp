@@ -31,10 +31,10 @@ void connectPorts(Svc::RateGroupDriver& impl, Svc::RateGroupDriverImplTester& te
 
 TEST(RateGroupDriverTest,NominalSchedule) {
 
-    Svc::Divider dividers[] = {{1, 0}, {2, 1}, {3, 0}};
+    Svc::RateGroupDriver::DividerSet dividersSet{{{1, 0}, {2, 1}, {3, 0}}};
 
     Svc::RateGroupDriver impl("RateGroupDriver");
-    impl.configure(dividers,FW_NUM_ARRAY_ELEMENTS(dividers));
+    impl.configure(dividersSet,FW_NUM_ARRAY_ELEMENTS(dividersSet.dividers));
 
     Svc::RateGroupDriverImplTester tester(impl);
 
@@ -44,7 +44,7 @@ TEST(RateGroupDriverTest,NominalSchedule) {
     // connect ports
     connectPorts(impl,tester);
 
-    tester.runSchedNominal(dividers,FW_NUM_ARRAY_ELEMENTS(dividers));
+    tester.runSchedNominal(dividersSet,FW_NUM_ARRAY_ELEMENTS(dividersSet.dividers));
 
 }
 

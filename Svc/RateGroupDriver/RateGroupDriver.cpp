@@ -12,11 +12,11 @@ namespace Svc {
 
     }
 
-    void RateGroupDriver::configure(Divider dividers[], NATIVE_INT_TYPE numDividers)
+    void RateGroupDriver::configure(DividerSet dividersSet, NATIVE_INT_TYPE numDividers)
     {
 
         // check arguments
-        FW_ASSERT(dividers);
+        FW_ASSERT(dividersSet.dividers);
         FW_ASSERT(numDividers);
         this->m_numDividers = numDividers;
         FW_ASSERT(numDividers <= static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
@@ -34,11 +34,11 @@ namespace Svc {
             FW_ASSERT((this->m_dividers[entry].offset==0)||(this->m_dividers[entry].offset < this->m_dividers[entry].divisor),
                 this->m_dividers[entry].offset,
                 this->m_dividers[entry].divisor);
-            this->m_dividers[entry] = dividers[entry];
+            this->m_dividers[entry] = dividersSet.dividers[entry];
             // rollover value should be product of all dividers to make sure integer rollover doesn't jump cycles
             // only use non-zero dividers
-            if (dividers[entry].divisor != 0) {
-                this->m_rollover *= dividers[entry].divisor;
+            if (dividersSet.dividers[entry].divisor != 0) {
+                this->m_rollover *= dividersSet.dividers[entry].divisor;
             }
         }
 
