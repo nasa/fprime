@@ -68,6 +68,8 @@ class TopDictGenerator:
                         member_elem.attrib["description"] = member_comment
                     if member_default is not None:
                         member_elem.attrib["default"] = member_default
+                    if member_array_size is not None:
+                        member_elem.attrib["size"] = member_array_size
                     if isinstance(member_type, tuple):
                         type_name = "{}::{}::{}".format(
                             serializable_type,

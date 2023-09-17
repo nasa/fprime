@@ -21,12 +21,8 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 TcpServerComponentImpl::TcpServerComponentImpl(const char* const compName)
-    : ByteStreamDriverModelComponentBase(compName),
+    : TcpServerComponentBase(compName),
       SocketReadTask() {}
-
-void TcpServerComponentImpl::init(const NATIVE_INT_TYPE instance) {
-    ByteStreamDriverModelComponentBase::init(instance);
-}
 
 SocketIpStatus TcpServerComponentImpl::configure(const char* hostname,
                                                  const U16 port,
@@ -84,11 +80,6 @@ Drv::SendStatus TcpServerComponentImpl::send_handler(const NATIVE_INT_TYPE portN
     }
     deallocate_out(0, fwBuffer);
     return SendStatus::SEND_OK;
-}
-
-Drv::PollStatus TcpServerComponentImpl::poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    FW_ASSERT(0); // It is an error to call this handler on IP drivers
-    return PollStatus::POLL_ERROR;
 }
 
 }  // end namespace Drv

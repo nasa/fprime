@@ -1,0 +1,23 @@
+# Builds and runs UTs on https://github.com/fprime-community/fprime-workshop-led-blinker
+
+name: "Tutorial: LedBlinker"
+
+on:
+  push:
+    branches: [ master, devel ]
+  pull_request:
+    branches: [ master, devel ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+jobs:
+  run:
+    name: ""
+    uses: ./.github/workflows/reusable-builder.yml
+    with: 
+      target_repository: fprime-community/fprime-workshop-led-blinker
+      build_location: LedBlinker
+      run_unit_tests: true

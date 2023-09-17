@@ -26,9 +26,9 @@ class PrimitiveStructTest : public ::testing::Test {
 protected:
     void SetUp() override {
         testBool = true;
-        testU32 = FppTest::Utils::getU32();
-        testI16 = static_cast<I16>(FppTest::Utils::getU32());
-        testF64 = static_cast<F64>(FppTest::Utils::getU32());
+        testU32 = FppTest::Utils::getNonzeroU32();
+        testI16 = static_cast<I16>(FppTest::Utils::getNonzeroU32());
+        testF64 = static_cast<F64>(FppTest::Utils::getNonzeroU32());
     }
 
     void assertStructMembers(const Primitive& s) {
