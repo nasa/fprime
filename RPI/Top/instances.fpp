@@ -293,13 +293,13 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 10, 0 };
+    Svc::RateGroupDriver::DividerSet rgDivs{{{1, 0}, {10, 0}, {0, 0}}};
     """
-    
+
     phase Fpp.ToCpp.Phases.configComponents """
     rateGroupDriverComp.configure(
         ConfigObjects::rateGroupDriverComp::rgDivs,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs.dividers)
     );
     """
   }
