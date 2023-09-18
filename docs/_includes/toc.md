@@ -1,25 +1,17 @@
 
-<details>
-  <summary><a href="/fprime/INSTALL.html">Install</a></summary>
+<h4><a href="/fprime/INSTALL.html">Getting Started</a></h4>
+  <ul>
+    <!-- empty list for consistent spacing between items -->
+  </ul>
+<h4><a href="/fprime/Tutorials/README.html">Tutorials</a></h4>
     <ul>
-      <li><a href="/fprime/INSTALL.html">Installing F´</a></li>
-      <li><a href="/fprime/UsersGuide/user/autocomplete.html">Installing F´ Console Autocomplete</a></li>
+      <li><a href="https://fprime-community.github.io/fprime-tutorial-hello-world/">HelloWorld</a></li>
+      <li><a href="https://fprime-community.github.io/fprime-workshop-led-blinker/">LedBlinker</a></li>
+      <li><a href="https://fprime-community.github.io/fprime-tutorial-math-component/">MathComponent</a></li>
+      <li><a href="/fprime/Tutorials/CrossCompilationSetup/">Cross-Compilation Setup Tutorial</a></li>
+      <li><a href="https://fprime-community.github.io/fprime-tutorial-arduino-blinker/">Arduino LedBlinker</a></li>
     </ul>
-</details>
-
-<details>
-  <summary><a href="/fprime/Tutorials/README.html">Tutorials</a></summary>
-    <ul>
-      <li><a href="https://fprime-community.github.io/fprime-tutorial-hello-world/">HelloWorld</a>: An Introduction to F´</li>
-      <li><a href="https://fprime-community.github.io/fprime-workshop-led-blinker/">LedBlinker</a>: F´ and Embedded Hardware</li>
-      <li><a href="https://fprime-community.github.io/fprime-tutorial-math-component/">MathComponent</a>: Custom Ports and Types</li>
-      <li><a href="/fprime/Tutorials/CrossCompilationSetup/">Cross-Compilation Setup Tutorial</a>: Set up a cross-compilation environment</li>
-      <li><a href="https://fprime-community.github.io/fprime-tutorial-arduino-blinker/">Arduino LedBlinker</a>: Cross-Compile LedBlinker for Arduinos</li>
-    </ul>
-</details>
-
-<details>
-  <summary><a href="/fprime/UsersGuide/guide.html">User Guide</a></summary>
+<h4><a href="/fprime/UsersGuide/guide.html">User Guide</a></h4>
     <ul>
         <li>
           <details>
@@ -111,11 +103,8 @@
           </details>
         </li>
     </ul>
-</details>
-<details>
-  <summary><a href="/fprime/Design/general.html">Design and Philosophy</a></summary>
-    <ul>
-      <li><a href="/fprime/Design/numerical-types.html">Numerical Types Design</a></li>
-      <li><a href="/fprime/Design/communication-adapter-interface.html">Communication Adapter Interface</a></li>
-    </ul>
-</details>
+<h4><a href="/fprime/Design/general.html">Design and Philosophy</a></h4>
+      <ul>
+        <li><a href="/fprime/Design/numerical-types.html">Numerical Types Design</a></li>
+        <li><a href="/fprime/Design/communication-adapter-interface.html">Communication Adapter Interface</a></li>
+      </ul>
