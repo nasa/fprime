@@ -323,7 +323,8 @@ class TlmPacketParser(object):
                         packet_size += channel_size
                         if self.verbose:
                             print(
-                                f" -Channel {channel_name} ID {channel_id} size {channel_size}"
+                                " -Channel %s ID %d size %d"
+                                % (channel_name, channel_id, channel_size)
                             )
                         channel_list.append((channel_id, channel_size, channel_name))
                         packetized_channel_list.append(channel_name)
@@ -383,7 +384,9 @@ class TlmPacketParser(object):
                 and channel not in ignore_name_list
             ):
                 (channel_id, channel_size) = channel_size_dict[channel]
-                print(f"Channel {channel} ({channel_id}) not packetized or ignored.")
+                print(
+                    "Channel %s (%d) not packetized or ignored." % (channel, channel_id)
+                )
                 missing_channels = True
 
         if missing_channels:
@@ -395,10 +398,12 @@ class TlmPacketParser(object):
         levels.sort()
         for level in levels:
             print(
-                f"Level: {level} Bytes: {size_dict[level]} bits: {size_dict[level] * 8}"
+                "Level: %s Bytes: %d bits: %d"
+                % (level, size_dict[level], size_dict[level] * 8)
             )
         print(
-            f"Number of packets: {ht.num_packets}\nTotal packet bytes: {total_packet_size} bits: {total_packet_size * 8}"
+            "Number of packets: %d\nTotal packet bytes: %d bits: %d"
+            % (ht.num_packets, total_packet_size, total_packet_size * 8)
         )
 
         it.packet_list = packet_list_container
@@ -461,7 +466,9 @@ class TlmPacketParser(object):
                     serializable_size *= member_array_size
             self.add_type_size(serializable_type, serializable_size)
             if self.verbose:
-                print(f"Serializable {serializable_type} size {serializable_size}")
+                print(
+                    "Serializable %s size %d" % (serializable_type, serializable_size)
+                )
 
     def process_enum_files(self, enum_file_list):
         for enum_file in enum_file_list:
