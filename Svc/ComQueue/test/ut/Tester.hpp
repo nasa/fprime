@@ -7,7 +7,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "ComQueueGTestBase.hpp"
 #include "Svc/ComQueue/ComQueue.hpp"
 #define BUFFER_LENGTH 3u
 

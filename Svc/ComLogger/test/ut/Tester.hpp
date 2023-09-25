@@ -5,7 +5,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "ComLoggerGTestBase.hpp"
 #include "../../ComLogger.hpp"
 #include <Fw/Comp/ActiveComponentBase.hpp>
 #include <cstdio>

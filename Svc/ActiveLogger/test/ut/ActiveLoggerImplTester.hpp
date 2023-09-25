@@ -8,7 +8,7 @@
 #ifndef ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_
 #define ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_
 
-#include <GTestBase.hpp>
+#include <ActiveLoggerGTestBase.hpp>
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
 #include <Os/File.hpp>
 

@@ -7,7 +7,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "StreamCrossoverGTestBase.hpp"
 #include "Drv/StreamCrossover/StreamCrossover.hpp"
 
 namespace Drv {

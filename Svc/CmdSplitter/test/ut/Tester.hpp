@@ -7,7 +7,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "CmdSplitterGTestBase.hpp"
 #include "Svc/CmdSplitter/CmdSplitter.hpp"
 
 namespace Svc {

@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "DeframerGTestBase.hpp"
 #include "Svc/Deframer/Deframer.hpp"
 
 namespace Svc {

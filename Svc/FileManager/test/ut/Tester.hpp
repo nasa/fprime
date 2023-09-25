@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "FileManagerGTestBase.hpp"
 #include "Svc/FileManager/FileManager.hpp"
 
 namespace Svc {

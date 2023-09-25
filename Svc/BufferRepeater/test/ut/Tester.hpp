@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "BufferRepeaterGTestBase.hpp"
 #include "Svc/BufferRepeater/BufferRepeater.hpp"
 
 namespace Svc {

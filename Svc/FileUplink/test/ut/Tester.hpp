@@ -14,7 +14,7 @@
 #define TESTER_HPP
 
 #include <Svc/FileUplink/FileUplink.hpp>
-#include "GTestBase.hpp"
+#include "FileUplinkGTestBase.hpp"
 
 #define PACKET_SIZE 5
 

@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "TcpClientGTestBase.hpp"
 #include "Drv/TcpClient/TcpClientComponentImpl.hpp"
 #include "Drv/Ip/TcpServerSocket.hpp"
 

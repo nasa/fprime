@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "SystemResourcesGTestBase.hpp"
 #include "Svc/SystemResources/SystemResources.hpp"
 
 namespace Svc {

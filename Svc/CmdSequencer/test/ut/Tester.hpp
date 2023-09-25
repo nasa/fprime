@@ -13,7 +13,7 @@
 #define Svc_Tester_HPP
 
 #include "Fw/Types/MallocAllocator.hpp"
-#include "GTestBase.hpp"
+#include "CmdSequencerGTestBase.hpp"
 #include "Os/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
 #include "Svc/CmdSequencer/formats/AMPCSSequence.hpp"

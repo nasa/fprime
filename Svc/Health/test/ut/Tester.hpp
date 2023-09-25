@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "HealthGTestBase.hpp"
 #include "Svc/Health/HealthComponentImpl.hpp"
 
 namespace Svc {

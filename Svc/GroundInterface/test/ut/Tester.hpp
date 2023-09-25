@@ -14,7 +14,7 @@
 #define TESTER_HPP
 
 #include <ComPacket.hpp>
-#include "GTestBase.hpp"
+#include "GroundInterfaceGTestBase.hpp"
 #include "Svc/GroundInterface/GroundInterface.hpp"
 
 namespace Svc {

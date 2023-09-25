@@ -11,7 +11,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "TlmPacketizerGTestBase.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizer.hpp"
 
 namespace Svc {

@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 #include <STest/Pick/Pick.hpp>
-#include "GTestBase.hpp"
+#include "StaticMemoryGTestBase.hpp"
 #include "Svc/StaticMemory/StaticMemoryComponentImpl.hpp"
 
 namespace Svc {

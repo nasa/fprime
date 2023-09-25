@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "SignalGenGTestBase.hpp"
 #include "Ref/SignalGen/SignalGen.hpp"
 
 namespace Ref {

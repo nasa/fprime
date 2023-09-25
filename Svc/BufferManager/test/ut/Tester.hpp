@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "BufferManagerGTestBase.hpp"
 #include "Svc/BufferManager/BufferManagerComponentImpl.hpp"
 
 namespace Svc {

@@ -12,7 +12,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "ComSplitterGTestBase.hpp"
 #include "Svc/ComSplitter/ComSplitter.hpp"
 
 namespace Svc {

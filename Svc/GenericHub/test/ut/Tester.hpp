@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 #include <Fw/Com/ComBuffer.hpp>
-#include "GTestBase.hpp"
+#include "GenericHubGTestBase.hpp"
 #include "Svc/GenericHub/GenericHubComponentImpl.hpp"
 
 // Larger than com buffer size

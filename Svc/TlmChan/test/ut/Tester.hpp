@@ -7,7 +7,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "TlmChanGTestBase.hpp"
 #include "Svc/TlmChan/TlmChan.hpp"
 
 namespace Svc {

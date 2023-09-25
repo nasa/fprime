@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "LinuxSpiDriverGTestBase.hpp"
 #include "Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp"
 
 namespace Drv {

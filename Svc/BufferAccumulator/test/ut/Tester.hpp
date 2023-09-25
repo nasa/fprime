@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "BufferAccumulatorGTestBase.hpp"
 #include "Svc/BufferAccumulator/BufferAccumulator.hpp"
 
 #define MAX_NUM_BUFFERS 10

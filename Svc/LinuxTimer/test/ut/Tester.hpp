@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "LinuxTimerGTestBase.hpp"
 #include "Svc/LinuxTimer/LinuxTimerComponentImpl.hpp"
 
 namespace Svc {

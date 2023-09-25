@@ -13,7 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "AssertFatalAdapterGTestBase.hpp"
 #include "Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp"
 
 namespace Svc {

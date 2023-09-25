@@ -14,7 +14,7 @@
 #define TESTER_HPP
 
 #include "Drv/LinuxI2cDriver/LinuxI2cDriver.hpp"
-#include "GTestBase.hpp"
+#include "LinuxI2cDriverGTestBase.hpp"
 
 namespace Drv {
 

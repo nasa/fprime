@@ -6,7 +6,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "ActiveTextLoggerGTestBase.hpp"
 #include "Svc/ActiveTextLogger/ActiveTextLoggerImpl.hpp"
 
 namespace Svc {

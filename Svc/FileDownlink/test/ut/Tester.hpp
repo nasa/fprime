@@ -15,7 +15,7 @@
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Test/UnitTest.hpp>
-#include "GTestBase.hpp"
+#include "FileDownlinkGTestBase.hpp"
 
 #define MAX_HISTORY_SIZE 10
 #define FILE_BUFFER_CAPACITY 100
