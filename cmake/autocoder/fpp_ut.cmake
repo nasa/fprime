@@ -48,8 +48,7 @@ function(fpp_ut_setup_autocode AC_INPUT_FILES)
             list(APPEND GENERATED_CPP "${GENERATED}")
         endif()
     endforeach()
-    fpp_filter_test_files(TRUE "${GENERATED_CPP}")
-    message(STATUS ">>GENERATED_CPP: ${GENERATED_CPP}")
+    fpp_filter_test_files(GENERATED_CPP TRUE "${GENERATED_CPP}")
     # Add in steps for CPP generation
     if (GENERATED_CPP)
         add_custom_command(

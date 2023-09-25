@@ -57,10 +57,8 @@ function(generate_locations)
 endfunction()
 
 function(fpp_depend_in_parallel MODULES)
-    execute_process(COMMAND "${PYTHON}" "${FPP_DEPEND_PARALLELIZE}" "${FPP_DEPEND}" "${FPP_LOCS_FILE}" "${CMAKE_BINARY_DIR}/fpp-depend-input" RESULT_VARIABLE result ERROR_VARIABLE ERR_VAR OUTPUT_VARIABLE OUT_VAR OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_STRIP_TRAILING_WHITESPACE)
-    if (NOT result EQUAL 0)
-        message(FATAL_ERROR "Failed to run fpp-depend in parallel mode:\n${ERR_VAR}")
-    endif()
+    list(APPEND COMMAND_ARGS "${FPP_DEPEND_PARALLELIZE}" "${FPP_DEPEND}" "${FPP_LOCS_FILE}" "${CMAKE_BINARY_DIR}/fpp-depend-input" "${BUILD_TESTING}")
+    execute_process_or_fail("Failed to run fpp-depend in parallel mode" "${PYTHON}" ${COMMAND_ARGS})
 endfunction()
 
 ####
