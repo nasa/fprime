@@ -1,6 +1,6 @@
 # Builds and runs UTs on https://github.com/fprime-community/fprime-workshop-led-blinker
 
-name: "LedBlinker Tests"
+name: "Tutorial: LedBlinker"
 
 on:
   push:
@@ -10,6 +10,8 @@ on:
     paths-ignore:
       - 'docs/**'
       - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
 
 jobs:
   run:

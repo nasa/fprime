@@ -1,0 +1,23 @@
+# Builds and runs UTs on https://github.com/fprime-community/fprime-tutorial-hello-world
+
+name: "Tutorial: HelloWorld"
+
+on:
+  push:
+    branches: [ master, devel ]
+  pull_request:
+    branches: [ master, devel ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+jobs:
+  run:
+    name: ""
+    uses: ./.github/workflows/reusable-builder.yml
+    with:
+      target_repository: fprime-community/fprime-tutorial-hello-world
+      build_location: HelloWorldDeployment
+      run_unit_tests: true

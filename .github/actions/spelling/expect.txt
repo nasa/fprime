@@ -180,7 +180,7 @@ classmethod
 classname
 classtype
 climits
-clion
+CLion
 CLOCAL
 closedir
 CLOSEFILE
@@ -530,6 +530,7 @@ FPL
 fpp
 fppi
 FPport
+fpptest
 fprime
 fprintf
 fprofile

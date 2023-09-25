@@ -17,11 +17,11 @@
 #include <Drv/Ip/IpSocket.hpp>
 #include <Drv/Ip/SocketReadTask.hpp>
 #include <Drv/Ip/TcpServerSocket.hpp>
-#include "Drv/ByteStreamDriverModel/ByteStreamDriverModelComponentAc.hpp"
+#include "Drv/TcpServer/TcpServerComponentAc.hpp"
 
 namespace Drv {
 
-class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public SocketReadTask {
+class TcpServerComponentImpl : public TcpServerComponentBase, public SocketReadTask {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -32,13 +32,6 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
      * \param compName: name of this component
      */
     TcpServerComponentImpl(const char* const compName);
-
-
-    /**
-     * \brief Initialize this component
-     * \param instance: instance number of this component
-     */
-    void init(const NATIVE_INT_TYPE instance = 0);
 
     /**
      * \brief Destroy the component
@@ -151,13 +144,6 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
      * \return SEND_OK on success, SEND_RETRY when critical data should be retried and SEND_ERROR upon error
      */
     Drv::SendStatus send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
-
-    /**
-     * \brief **not supported**
-     *
-     * IP based ByteStreamDrivers don't support polling.
-     */
-    Drv::PollStatus poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
 
     Drv::TcpServerSocket m_socket; //!< Socket implementation
 };
