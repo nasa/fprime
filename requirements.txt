@@ -18,7 +18,7 @@ fprime-fpl-convert-xml==1.0.0
 fprime-fpl-extract-xml==1.0.0
 fprime-fpl-layout==1.0.0
 fprime-fpl-write-pic==1.0.0
-fprime-fpp==1.3.0-316-g5c5ca99d
+fprime-fpp==1.3.0-318-gdad4085f
 fprime-gds==3.3.2
 fprime-tools==3.3.3
 fprime-visual==1.0.0
