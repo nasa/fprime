@@ -4099,7 +4099,7 @@ void PassiveTestTesterBase ::
 
 void PassiveTestTesterBase ::
   tlmInput_ChannelString(
-      Fw::Time& timeTag,
+      const Fw::Time& timeTag,
       const Fw::TlmString& val
   )
 {

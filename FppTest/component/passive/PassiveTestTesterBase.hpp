@@ -1650,7 +1650,7 @@ class PassiveTestTesterBase :
 
     //! Handle channel ChannelString
     void tlmInput_ChannelString(
-        Fw::Time& timeTag, //!< The time
+        const Fw::Time& timeTag, //!< The time
         const Fw::TlmString& val //!< The channel value
     );
 
