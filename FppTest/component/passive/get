@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+files=`find ../../build-fprime-automatic-native-ut -name "$1"`
+for file in $files
+do
+  echo "getting $file"
+  cp $file .
+done
