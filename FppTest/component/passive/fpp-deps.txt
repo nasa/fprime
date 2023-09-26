@@ -1,0 +1,8 @@
+/Users/bocchino/JPL/Tools/FPrime/bocchino/fprime/FppTest/component/active/fpp_types.fpp
+/Users/bocchino/JPL/Tools/FPrime/bocchino/fprime/FppTest/component/active/port_types.fpp
+/Users/bocchino/JPL/Tools/FPrime/bocchino/fprime/Fw/Cmd/Cmd.fpp
+/Users/bocchino/JPL/Tools/FPrime/bocchino/fprime/Fw/Log/Log.fpp
+/Users/bocchino/JPL/Tools/FPrime/bocchino/fprime/Fw/Prm/Prm.fpp
+/Users/bocchino/JPL/Tools/FPrime/bocchino/fprime/Fw/Time/Time.fpp
+/Users/bocchino/JPL/Tools/FPrime/bocchino/fprime/Fw/Tlm/Tlm.fpp
+/Users/bocchino/JPL/Tools/FPrime/bocchino/fprime/config/FpConfig.fpp
