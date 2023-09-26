@@ -17,7 +17,7 @@
 #include "FppTest/component/tests/PortTests.hpp"
 #include "FppTest/component/tests/TlmTests.hpp"
 #include "FppTest/component/types/FormalParamTypes.hpp"
-#include "GTestBase.hpp"
+#include "QueuedTestGTestBase.hpp"
 
 class Tester : public QueuedTestGTestBase {
     // ----------------------------------------------------------------------
