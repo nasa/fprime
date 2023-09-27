@@ -19,7 +19,7 @@ namespace Svc {
             ActiveLoggerImplTester(Svc::ActiveLoggerImpl& inst);
             virtual ~ActiveLoggerImplTester();
 
-            void init(NATIVE_INT_TYPE instance = 0);
+            void init(NATIVE_INT_TYPE instance = 0) override;
 
             void runEventNominal();
             void runFilterEventNominal();
@@ -36,11 +36,11 @@ namespace Svc {
                     const NATIVE_INT_TYPE portNum, //!< The port number
                     Fw::ComBuffer &data, //!< Buffer containing packet data
                     U32 context //!< context (not used)
-                );
+                ) override;
             void from_FatalAnnounce_handler(
                       const NATIVE_INT_TYPE portNum, //!< The port number
                       FwEventIdType Id //!< The ID of the FATAL event
-                  );
+                  ) override;
 
             Svc::ActiveLoggerImpl& m_impl;
 
@@ -75,17 +75,17 @@ namespace Svc {
             NATIVE_INT_TYPE m_writeSize;
 
             void textLogIn(const FwEventIdType id, //!< The event ID
-                      Fw::Time& timeTag, //!< The time
+                      const Fw::Time& timeTag, //!< The time
                       const Fw::LogSeverity severity, //!< The severity
                       const Fw::TextLogString& text //!< The event string
-                      );
+                      ) override;
 
             //! Handler for from_pingOut
             //!
             void from_pingOut_handler(
                 const NATIVE_INT_TYPE portNum, /*!< The port number*/
                 U32 key /*!< Value to return to pinger*/
-            );
+            ) override;
     };
 
 } /* namespace Svc */
