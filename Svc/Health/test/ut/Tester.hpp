@@ -64,14 +64,14 @@ namespace Svc {
       void from_PingSend_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
           U32 key //!< Value to return to pinger
-      );
+      ) override;
 
       //! Handler for from_WdogStroke
       //!
       void from_WdogStroke_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
           U32 code //!< Watchdog stroke code
-      );
+      ) override;
 
     private:
 
@@ -107,10 +107,10 @@ namespace Svc {
       HealthImpl component;
 
       void textLogIn(const FwEventIdType id, //!< The event ID
-                Fw::Time& timeTag, //!< The time
+                const Fw::Time& timeTag, //!< The time
                 const Fw::LogSeverity severity, //!< The severity
                 const Fw::TextLogString& text //!< The event string
-                );
+                ) override;
 
   };
 
