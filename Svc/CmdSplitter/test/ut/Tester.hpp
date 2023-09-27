@@ -57,6 +57,10 @@ class Tester : public CmdSplitterGTestBase {
     //!
     Fw::ComBuffer build_command_around_opcode(FwOpcodeType opcode);
 
+    //! Helper to set opcode base and select a valid opcode
+    //!
+    FwOpcodeType setup_and_pick_valid_opcode(bool for_local /*!< Local command testing*/);
+
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
@@ -104,6 +108,7 @@ class Tester : public CmdSplitterGTestBase {
     //! The component under test
     //!
     CmdSplitter component;
+    NATIVE_INT_TYPE active_command_source;
 };
 
 }  // end namespace Svc
