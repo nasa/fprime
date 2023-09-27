@@ -22,7 +22,7 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester() : TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmPacketizer"), m_timeSent(false) {
+Tester ::Tester() : TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmPacketizer") {
     this->initComponents();
     this->connectPorts();
 }
@@ -904,11 +904,6 @@ void Tester ::pingTest() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_Time_handler(const NATIVE_INT_TYPE portNum, Fw::Time& time) {
-    time = this->m_testTime;
-    this->m_timeSent = true;
-}
-
 void Tester ::from_PktSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_PktSend(data, context);
 }
@@ -960,7 +955,7 @@ void Tester ::connectPorts() {
 }
 
 void Tester::textLogIn(const FwEventIdType id,          //!< The event ID
-                       Fw::Time& timeTag,               //!< The time
+                       const Fw::Time& timeTag,         //!< The time
                        const Fw::LogSeverity severity,  //!< The severity
                        const Fw::TextLogString& text    //!< The event string
 ) {

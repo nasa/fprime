@@ -80,30 +80,24 @@ class Tester : public TlmPacketizerGTestBase {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_Time
-    //!
-    void from_Time_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                           Fw::Time& time                 /*!< The U32 cmd argument*/
-    );
-
     //! Handler for from_PktSend
     //!
     void from_PktSend_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                               Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
                               U32 context                    /*!< Call context value; meaning chosen by user*/
-    );
+    ) override;
 
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                               U32 key                        /*!< Value to return to pinger*/
-    );
+    ) override;
 
     virtual void textLogIn(const FwEventIdType id,         /*!< The event ID*/
-                           Fw::Time& timeTag,              /*!< The time*/
+                           const Fw::Time& timeTag,        /*!< The time*/
                            const Fw::LogSeverity severity, /*!< The severity*/
                            const Fw::TextLogString& text   /*!< The event string*/
-    );
+    ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -128,7 +122,6 @@ class Tester : public TlmPacketizerGTestBase {
     TlmPacketizer component;
 
     Fw::Time m_testTime;  //!< store test time for packets
-    bool m_timeSent;      //!< flag when time was sent
 };
 
 }  // end namespace Svc
