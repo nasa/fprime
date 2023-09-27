@@ -6,7 +6,7 @@
 #define TESTER_HPP
 
 #include "../../LinuxTimeImpl.hpp"
-#include "LinuxTimeGTestBase.hpp"
+#include "TimeGTestBase.hpp"
 
 namespace Svc {
 
