@@ -9,23 +9,23 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Input port for local or remote commands
-    sync input port CmdBuff: [CmdDispatcherSequencePorts] Fw.Com
+    sync input port CmdBuff: [CmdSplitterPorts] Fw.Com
 
     @ Output port for forwarding the Command status
-    output port forwardSeqCmdStatus: [CmdDispatcherSequencePorts] Fw.CmdResponse
+    output port forwardSeqCmdStatus: [CmdSplitterPorts] Fw.CmdResponse
 
     # ----------------------------------------------------------------------
     # Downstream connections: local and remote command sequencers
     # ----------------------------------------------------------------------
 
     @ Input port for receiving the command status
-    sync input port seqCmdStatus: [CmdDispatcherSequencePorts] Fw.CmdResponse
+    sync input port seqCmdStatus: [CmdSplitterPorts] Fw.CmdResponse
 
     @ Output port for local commands
-    output port LocalCmd: [CmdDispatcherSequencePorts] Fw.Com
+    output port LocalCmd: [CmdSplitterPorts] Fw.Com
 
     @ Output port for remote commands
-    output port RemoteCmd: [CmdDispatcherSequencePorts] Fw.Com
+    output port RemoteCmd: [CmdSplitterPorts] Fw.Com
 
   }
 }

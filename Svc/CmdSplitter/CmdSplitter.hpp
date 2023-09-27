@@ -29,7 +29,7 @@ class CmdSplitter : public CmdSplitterComponentBase {
 
     //! Configure this splitter
     //!
-    void configure(FwOpcodeType remoteBaseOpcode /*!< Base remote opcode*/);
+    void configure(const FwOpcodeType remoteBaseOpcode /*!< Base remote opcode*/);
 
   PRIVATE:
 

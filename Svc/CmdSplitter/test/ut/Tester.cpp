@@ -68,7 +68,7 @@ void Tester ::test_local_routing() {
 
     U32 context = static_cast<U32>(STest::Pick::any());
     this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
-        0, CmdDispatcherSequencePorts));
+        0, CmdSplitterPorts));
     this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_RemoteCmd_SIZE(0);
     ASSERT_from_LocalCmd_SIZE(1);
@@ -85,7 +85,7 @@ void Tester ::test_remote_routing() {
 
     U32 context = static_cast<U32>(STest::Pick::any());
     this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
-        0, CmdDispatcherSequencePorts));
+        0, CmdSplitterPorts));
     this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_LocalCmd_SIZE(0);
     ASSERT_from_RemoteCmd_SIZE(1);
