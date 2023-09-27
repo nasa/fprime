@@ -1,4 +1,0 @@
-#!/bin/sh -e
-
-prefix=`cd ../../..; echo $PWD`
-fpp-to-cpp -u -p $prefix -i `cat fpp-deps-comma.txt` passive.fpp
