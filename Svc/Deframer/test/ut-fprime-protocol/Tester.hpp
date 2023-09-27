@@ -15,9 +15,9 @@
 #include <deque>
 #include <cstring>
 
+#include "DeframerGTestBase.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
-#include "GTestBase.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "Svc/Deframer/Deframer.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
