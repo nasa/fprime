@@ -18,7 +18,7 @@ The requirements for `Svc::CmdSplitter` are as follows:
 | SVC-CMD-SPLITTER-002 | The `Svc::CmdSplitter` component shall route commands under a configured value to the "local" port.  | Unit Test           |
 | SVC-CMD-SPLITTER-003 | The `Svc::CmdSplitter` component shall route commands under a configured value to the "remote" port. | Unit Test           |
 | SVC-CMD-SPLITTER-004 | The `Svc::CmdSplitter` component shall route commands to the "local" port when an error occurs.      | Unit Test           |
-| SVC-CMD-SPLITTER-005 | The `Svc::CmdSplitter` component shall forward command status responsess.                            | Unit Test           |
+| SVC-CMD-SPLITTER-005 | The `Svc::CmdSplitter` component shall forward command status responses.                             | Unit Test           |
 
 ## 3. Design
 
