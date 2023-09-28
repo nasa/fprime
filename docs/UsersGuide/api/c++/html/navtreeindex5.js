@@ -1,8 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"port_test_8hpp.html#a9da6e310e7e46b0d0c11ad4668ac231e":[23,0,4,4,3,17],
-"port_test_8hpp.html#aa10fe281ce1abda75a9c347af086de71":[23,0,4,4,3,13],
-"port_test_8hpp.html#aa9f4b020d5a617a8a187962caba5bcf5":[23,0,4,4,3,6],
 "port_test_8hpp.html#ab2367d2a81dde78330dfa4ea1b8fcf98":[23,0,4,4,3,10],
 "port_test_8hpp.html#ad07366bd7902421bca5ecda69516cda0":[23,0,4,4,3,20],
 "port_test_8hpp.html#ad87fe5c80a57bc0a11604724725278d8":[23,0,4,4,3,11],
@@ -74,10 +71,10 @@ var NAVTREEINDEX5 =
 "prm_db_impl_8cpp_source.html":[23,0,7,34,2],
 "prm_db_impl_8hpp.html":[23,0,7,34,3],
 "prm_db_impl_8hpp_source.html":[23,0,7,34,3],
-"prm_db_impl_cfg_8hpp.html":[23,0,1,11],
-"prm_db_impl_cfg_8hpp_source.html":[23,0,1,11],
-"prm_db_impl_tester_cfg_8hpp.html":[23,0,1,12],
-"prm_db_impl_tester_cfg_8hpp_source.html":[23,0,1,12],
+"prm_db_impl_cfg_8hpp.html":[23,0,1,10],
+"prm_db_impl_cfg_8hpp_source.html":[23,0,1,10],
+"prm_db_impl_tester_cfg_8hpp.html":[23,0,1,11],
+"prm_db_impl_tester_cfg_8hpp_source.html":[23,0,1,11],
 "prm_string_8cpp.html":[23,0,5,10,4],
 "prm_string_8cpp_source.html":[23,0,5,10,4],
 "prm_string_8hpp.html":[23,0,5,10,5],
@@ -157,10 +154,10 @@ var NAVTREEINDEX5 =
 "static_memory_component_impl_8cpp_source.html":[23,0,7,37,2],
 "static_memory_component_impl_8hpp.html":[23,0,7,37,3],
 "static_memory_component_impl_8hpp_source.html":[23,0,7,37,3],
-"static_memory_config_8hpp.html":[23,0,1,13],
-"static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625":[23,0,1,13,0],
-"static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625a9e9672fa96e8a1d300d3756c6d5c1e24":[23,0,1,13,0,0],
-"static_memory_config_8hpp_source.html":[23,0,1,13],
+"static_memory_config_8hpp.html":[23,0,1,12],
+"static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625":[23,0,1,12,0],
+"static_memory_config_8hpp.html#ad27f471a5a849fa12cbd97a3cecfa625a9e9672fa96e8a1d300d3756c6d5c1e24":[23,0,1,12,0,0],
+"static_memory_config_8hpp_source.html":[23,0,1,12],
 "stream_crossover_8cpp.html":[23,0,3,8,1],
 "stream_crossover_8cpp_source.html":[23,0,3,8,1],
 "stream_crossover_8hpp.html":[23,0,3,8,2],
@@ -249,5 +246,8 @@ var NAVTREEINDEX5 =
 "svc_active_text_logger_component.html#autotoc_md225":[8,3,0,2,0],
 "svc_active_text_logger_component.html#autotoc_md226":[8,3,0,2,0,0],
 "svc_active_text_logger_component.html#autotoc_md227":[8,3,0,2,0,1],
-"svc_active_text_logger_component.html#autotoc_md228":[8,3,0,2,1]
+"svc_active_text_logger_component.html#autotoc_md228":[8,3,0,2,1],
+"svc_active_text_logger_component.html#autotoc_md229":[8,3,0,2,1,0],
+"svc_active_text_logger_component.html#autotoc_md230":[8,3,0,2,2],
+"svc_active_text_logger_component.html#autotoc_md231":[8,3,0,2,3]
 };

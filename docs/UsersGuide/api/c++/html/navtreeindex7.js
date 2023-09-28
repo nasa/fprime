@@ -1,8 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"svc_framer_component.html#autotoc_md494":[8,14,0,3,6],
-"svc_framer_component.html#autotoc_md495":[8,14,0,3,6,0],
-"svc_framer_component.html#autotoc_md496":[8,14,0,3,6,1],
 "svc_framer_component.html#autotoc_md497":[8,14,0,3,6,2],
 "svc_framer_component.html#autotoc_md498":[8,14,0,3,7],
 "svc_framer_component.html#autotoc_md499":[8,14,0,3,7,0],
@@ -249,5 +246,8 @@ var NAVTREEINDEX7 =
 "tcp_client_8hpp_source.html":[23,0,3,9,1],
 "tcp_client_component_impl_8cpp.html":[23,0,3,9,2],
 "tcp_client_component_impl_8cpp_source.html":[23,0,3,9,2],
-"tcp_client_component_impl_8hpp.html":[23,0,3,9,3]
+"tcp_client_component_impl_8hpp.html":[23,0,3,9,3],
+"tcp_client_component_impl_8hpp_source.html":[23,0,3,9,3],
+"tcp_client_socket_8cpp.html":[23,0,3,3,5],
+"tcp_client_socket_8cpp_source.html":[23,0,3,3,5]
 };

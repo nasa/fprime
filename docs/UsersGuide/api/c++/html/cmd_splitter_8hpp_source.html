@@ -113,33 +113,38 @@ $(document).ready(function(){initNavTree('_cmd_splitter_8hpp_source.html',''); i
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="class_svc_1_1_cmd_splitter.html#a7a27a8274a0495ab9a58059aad632db0">~CmdSplitter</a>();</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    PRIVATE :</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_cmd_splitter.html#a1766e8aaa07ecac9827f2a1b52f70a97">configure</a>(<span class="keyword">const</span> <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> remoteBaseOpcode );</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  PRIVATE:</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">void</span> CmdBuff_handler(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                         <a class="code" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a>&amp; data,           </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                         U32 context                    </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    );</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">void</span> seqCmdStatus_handler(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,  </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                              <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,            </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                              U32 cmdSeq,                     </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                              <span class="keyword">const</span> Fw::CmdResponse&amp; response </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    );</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;};</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;}  <span class="comment">// end namespace Svc</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">void</span> CmdBuff_handler(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                         <a class="code" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a>&amp; data,           </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                         U32 context                    </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    );</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> seqCmdStatus_handler(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,  </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                              <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,            </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                              U32 cmdSeq,                     </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                              <span class="keyword">const</span> Fw::CmdResponse&amp; response </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    );</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> m_remoteBase; <span class="comment">// Opcodes greater than or equal than this value will route remotely</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;};</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}  <span class="comment">// end namespace Svc</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00056">FpConfig.h:56</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_com_buffer_html"><div class="ttname"><a href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="com_buffer_8hpp_source.html#l00020">ComBuffer.hpp:20</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_cmd_splitter_html"><div class="ttname"><a href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></div><div class="ttdef"><b>Definition:</b> <a href="cmd_splitter_8hpp_source.html#l00015">CmdSplitter.hpp:15</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_cmd_splitter_html_a4623648f83b05ea38d7cfa1a9b4430de"><div class="ttname"><a href="class_svc_1_1_cmd_splitter.html#a4623648f83b05ea38d7cfa1a9b4430de">Svc::CmdSplitter::CmdSplitter</a></div><div class="ttdeci">CmdSplitter(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="cmd_splitter_8cpp_source.html#l00018">CmdSplitter.cpp:18</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_cmd_splitter_html_a7a27a8274a0495ab9a58059aad632db0"><div class="ttname"><a href="class_svc_1_1_cmd_splitter.html#a7a27a8274a0495ab9a58059aad632db0">Svc::CmdSplitter::~CmdSplitter</a></div><div class="ttdeci">~CmdSplitter()</div><div class="ttdef"><b>Definition:</b> <a href="cmd_splitter_8cpp_source.html#l00020">CmdSplitter.cpp:20</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_cmd_splitter_html_a1766e8aaa07ecac9827f2a1b52f70a97"><div class="ttname"><a href="class_svc_1_1_cmd_splitter.html#a1766e8aaa07ecac9827f2a1b52f70a97">Svc::CmdSplitter::configure</a></div><div class="ttdeci">void configure(const FwOpcodeType remoteBaseOpcode)</div><div class="ttdef"><b>Definition:</b> <a href="cmd_splitter_8cpp_source.html#l00023">CmdSplitter.cpp:23</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_cmd_splitter_html_a4623648f83b05ea38d7cfa1a9b4430de"><div class="ttname"><a href="class_svc_1_1_cmd_splitter.html#a4623648f83b05ea38d7cfa1a9b4430de">Svc::CmdSplitter::CmdSplitter</a></div><div class="ttdeci">CmdSplitter(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="cmd_splitter_8cpp_source.html#l00019">CmdSplitter.cpp:19</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_cmd_splitter_html_a7a27a8274a0495ab9a58059aad632db0"><div class="ttname"><a href="class_svc_1_1_cmd_splitter.html#a7a27a8274a0495ab9a58059aad632db0">Svc::CmdSplitter::~CmdSplitter</a></div><div class="ttdeci">~CmdSplitter()</div><div class="ttdef"><b>Definition:</b> <a href="cmd_splitter_8cpp_source.html#l00021">CmdSplitter.cpp:21</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

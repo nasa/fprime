@@ -1,8 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"linux_spi_driver_component_impl_8hpp.html#a61d09174558e3591ec1e787fc84c27ffa180638b083054d8cb5b53b96873470ad":[23,0,3,6,2,1,0],
-"linux_spi_driver_component_impl_8hpp.html#a61d09174558e3591ec1e787fc84c27ffa7d506ad62449fc69f3f410494885c9fe":[23,0,3,6,2,1,3],
-"linux_spi_driver_component_impl_8hpp.html#a61d09174558e3591ec1e787fc84c27ffa9231d197ef21b49a0f03334a3dbeed0c":[23,0,3,6,2,1,4],
 "linux_spi_driver_component_impl_8hpp.html#a61d09174558e3591ec1e787fc84c27ffa9e429db61da3f38c26059299e91577aa":[23,0,3,6,2,1,1],
 "linux_spi_driver_component_impl_8hpp.html#a61d09174558e3591ec1e787fc84c27ffabefdcf962d164e886c9e8461c3dbb26f":[23,0,3,6,2,1,2],
 "linux_spi_driver_component_impl_8hpp.html#a92e6583aea010a65c34368a546ca7d91":[23,0,3,6,2,2],
@@ -228,8 +225,8 @@ var NAVTREEINDEX4 =
 "poly_db_impl_8cpp_source.html":[23,0,7,32,2],
 "poly_db_impl_8hpp.html":[23,0,7,32,3],
 "poly_db_impl_8hpp_source.html":[23,0,7,32,3],
-"poly_db_impl_cfg_8hpp.html":[23,0,1,10],
-"poly_db_impl_cfg_8hpp_source.html":[23,0,1,10],
+"poly_db_impl_cfg_8hpp.html":[23,0,1,9],
+"poly_db_impl_cfg_8hpp_source.html":[23,0,1,9],
 "poly_type_8cpp.html":[23,0,5,15,19],
 "poly_type_8cpp.html#aacbb9e1f38be71e22df1584a37c56693":[23,0,5,15,19,0],
 "poly_type_8cpp_source.html":[23,0,5,15,19],
@@ -249,5 +246,8 @@ var NAVTREEINDEX4 =
 "port_test_8hpp.html#a8bd88b12c927b344dac63b86d6cdf0b4":[23,0,4,4,3,14],
 "port_test_8hpp.html#a8e9e1987997a582af526a26dae11f995":[23,0,4,4,3,15],
 "port_test_8hpp.html#a9048f42d62c144d8925d9d8e40a2c527":[23,0,4,4,3,19],
-"port_test_8hpp.html#a90d1dbd0495589734cc1eb5ebe2031dd":[23,0,4,4,3,16]
+"port_test_8hpp.html#a90d1dbd0495589734cc1eb5ebe2031dd":[23,0,4,4,3,16],
+"port_test_8hpp.html#a9da6e310e7e46b0d0c11ad4668ac231e":[23,0,4,4,3,17],
+"port_test_8hpp.html#aa10fe281ce1abda75a9c347af086de71":[23,0,4,4,3,13],
+"port_test_8hpp.html#aa9f4b020d5a617a8a187962caba5bcf5":[23,0,4,4,3,6]
 };
