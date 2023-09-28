@@ -24,6 +24,8 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::NoParams& data)
 
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_EventNoArgs_SIZE(1);
+
+    this->printTextLogHistory(stdout);
 }
 
 void Tester ::testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::PrimitiveParams& data, NATIVE_UINT_TYPE size) {
@@ -50,6 +52,8 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::PrimitiveParams
     // Test throttle reset
     component.log_ACTIVITY_LO_EventPrimitive_ThrottleClear();
     testEventHelper(portNum, data, component.EVENTID_EVENTPRIMITIVE_THROTTLE + 1);
+
+    this->printTextLogHistory(stdout);
 }
 
 void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::LogStringParams& data) {
@@ -58,6 +62,8 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::LogStringParams
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_EventString_SIZE(1);
     ASSERT_EVENTS_EventString(portNum, data.args.val1.toChar(), data.args.val2.toChar());
+
+    this->printTextLogHistory(stdout);
 }
 
 void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::EnumParam& data) {
@@ -69,6 +75,8 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::EnumParam& data
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_EventEnum_SIZE(1);
     ASSERT_EVENTS_EventEnum(portNum, data.args.val);
+
+    this->printTextLogHistory(stdout);
 }
 
 void Tester ::testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayParam& data, NATIVE_UINT_TYPE size) {
@@ -96,6 +104,8 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayParam& dat
     // Test throttle reset
     component.log_FATAL_EventArray_ThrottleClear();
     testEventHelper(portNum, data, component.EVENTID_EVENTARRAY_THROTTLE + 1);
+
+    this->printTextLogHistory(stdout);
 }
 
 void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::StructParam& data) {
@@ -107,6 +117,8 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::StructParam& da
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_EventStruct_SIZE(1);
     ASSERT_EVENTS_EventStruct(portNum, data.args.val);
+
+    this->printTextLogHistory(stdout);
 }
 
 void Tester ::testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::BoolParam& data, NATIVE_UINT_TYPE size) {
@@ -134,4 +146,6 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::BoolParam& data
     // Test throttle reset
     component.log_WARNING_LO_EventBool_ThrottleClear();
     testEventHelper(portNum, data, component.EVENTID_EVENTBOOL_THROTTLE + 1);
+
+    this->printTextLogHistory(stdout);
 }
