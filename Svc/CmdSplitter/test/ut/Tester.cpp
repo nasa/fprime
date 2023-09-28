@@ -5,10 +5,10 @@
 // ======================================================================
 
 #include "Tester.hpp"
-#include <CmdSplitterCfg.hpp>
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/Test/UnitTest.hpp>
 #include <STest/Pick/Pick.hpp>
+#include "FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -43,51 +43,71 @@ Fw::ComBuffer Tester ::build_command_around_opcode(FwOpcodeType opcode) {
     return comBuffer;
 }
 
+FwOpcodeType Tester ::setup_and_pick_valid_opcode(bool for_local) {
+    const FwOpcodeType MAX_OPCODE = std::numeric_limits<FwOpcodeType>::max();
+    if (for_local) {
+        FwOpcodeType base = STest::Pick::lowerUpper(1, MAX_OPCODE);
+        component.configure(base);
+        EXPECT_GT(base, 0);  // Must leave some room for local commands
+        return static_cast<FwOpcodeType>(
+            STest::Pick::lowerUpper(0, FW_MIN(base - 1, MAX_OPCODE))
+        );
+    }
+    FwOpcodeType base = STest::Pick::lowerUpper(0, MAX_OPCODE);
+    component.configure(base);
+    return static_cast<FwOpcodeType>(STest::Pick::lowerUpper(base, MAX_OPCODE));
+}
+
 void Tester ::test_local_routing() {
+    REQUIREMENT("SVC-CMD-SPLITTER-000");
     REQUIREMENT("SVC-CMD-SPLITTER-001");
     REQUIREMENT("SVC-CMD-SPLITTER-002");
 
-    ASSERT_GT(Svc::CMD_SPLITTER_REMOTE_OPCODE_BASE, 0);  // Must leave some room for local commands
-    FwOpcodeType local_opcode = static_cast<FwOpcodeType>(STest::Pick::lowerUpper(
-        0, FW_MIN(Svc::CMD_SPLITTER_REMOTE_OPCODE_BASE - 1, std::numeric_limits<FwOpcodeType>::max())));
+    FwOpcodeType local_opcode = this->setup_and_pick_valid_opcode(true);
     Fw::ComBuffer testBuffer = this->build_command_around_opcode(local_opcode);
 
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->invoke_to_CmdBuff(0, testBuffer, context);
+    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
+        0, CmdSplitterPorts));
+    this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_RemoteCmd_SIZE(0);
     ASSERT_from_LocalCmd_SIZE(1);
     ASSERT_from_LocalCmd(0, testBuffer, context);
 }
 
 void Tester ::test_remote_routing() {
+    REQUIREMENT("SVC-CMD-SPLITTER-000");
     REQUIREMENT("SVC-CMD-SPLITTER-001");
     REQUIREMENT("SVC-CMD-SPLITTER-003");
 
-    ASSERT_LT(Svc::CMD_SPLITTER_REMOTE_OPCODE_BASE,
-              std::numeric_limits<FwOpcodeType>::max());  // Must leave some room for remote commands
-    FwOpcodeType local_opcode = static_cast<FwOpcodeType>(
-        STest::Pick::lowerUpper(Svc::CMD_SPLITTER_REMOTE_OPCODE_BASE, std::numeric_limits<FwOpcodeType>::max()));
-    Fw::ComBuffer testBuffer = this->build_command_around_opcode(local_opcode);
+    FwOpcodeType remote_opcode = this->setup_and_pick_valid_opcode(false);
+    Fw::ComBuffer testBuffer = this->build_command_around_opcode(remote_opcode);
 
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->invoke_to_CmdBuff(0, testBuffer, context);
+    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
+        0, CmdSplitterPorts));
+    this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_LocalCmd_SIZE(0);
     ASSERT_from_RemoteCmd_SIZE(1);
     ASSERT_from_RemoteCmd(0, testBuffer, context);
 }
 
 void Tester ::test_error_routing() {
+    REQUIREMENT("SVC-CMD-SPLITTER-000");
     REQUIREMENT("SVC-CMD-SPLITTER-001");
     REQUIREMENT("SVC-CMD-SPLITTER-004");
     Fw::ComBuffer testBuffer;  // Intentionally left empty
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->invoke_to_CmdBuff(0, testBuffer, context);
+    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
+        0, CmdDispatcherSequencePorts));
+    this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_RemoteCmd_SIZE(0);
     ASSERT_from_LocalCmd_SIZE(1);
     ASSERT_from_LocalCmd(0, testBuffer, context);
 }
 
 void Tester ::test_response_forwarding() {
+    REQUIREMENT("SVC-CMD-SPLITTER-000");
     REQUIREMENT("SVC-CMD-SPLITTER-001");
     REQUIREMENT("SVC-CMD-SPLITTER-005");
 
@@ -96,7 +116,10 @@ void Tester ::test_response_forwarding() {
     Fw::CmdResponse response;
     response.e = static_cast<Fw::CmdResponse::T>(STest::Pick::lowerUpper(0, Fw::CmdResponse::NUM_CONSTANTS));
     U32 cmdSeq = static_cast<U32>(STest::Pick::any());
-    this->invoke_to_seqCmdStatus(0, opcode, cmdSeq, response);
+    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
+        0, CmdDispatcherSequencePorts));
+
+    this->invoke_to_seqCmdStatus(this->active_command_source, opcode, cmdSeq, response);
     ASSERT_from_forwardSeqCmdStatus_SIZE(1);
     ASSERT_from_forwardSeqCmdStatus(0, opcode, cmdSeq, response);
 }
@@ -106,10 +129,12 @@ void Tester ::test_response_forwarding() {
 // ----------------------------------------------------------------------
 
 void Tester ::from_LocalCmd_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+    EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
     this->pushFromPortEntry_LocalCmd(data, context);
 }
 
 void Tester ::from_RemoteCmd_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+    EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
     this->pushFromPortEntry_RemoteCmd(data, context);
 }
 
@@ -117,6 +142,7 @@ void Tester ::from_forwardSeqCmdStatus_handler(const NATIVE_INT_TYPE portNum,
                                                FwOpcodeType opCode,
                                                U32 cmdSeq,
                                                const Fw::CmdResponse& response) {
+    EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
     this->pushFromPortEntry_forwardSeqCmdStatus(opCode, cmdSeq, response);
 }
 
