@@ -130,11 +130,3 @@ void Tester ::from_serialOut_handler(NATIVE_INT_TYPE portNum,        /*!< The po
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 }
-
-// ----------------------------------------------------------------------
-// Handlers for special from ports
-// ----------------------------------------------------------------------
-
-void Tester ::cmdResponseIn(const FwOpcodeType opCode, const U32 cmdSeq, const Fw::CmdResponse response) {
-    this->cmdResp = response;
-}
