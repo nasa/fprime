@@ -57,7 +57,10 @@ function(generate_locations)
 endfunction()
 
 function(fpp_depend_in_parallel MODULES)
-    list(APPEND COMMAND_ARGS "${FPP_DEPEND_PARALLELIZE}" "${FPP_DEPEND}" "${FPP_LOCS_FILE}" "${CMAKE_BINARY_DIR}/fpp-depend-input" "${BUILD_TESTING}")
+    set(COMMAND_ARGS "${FPP_DEPEND_PARALLELIZE}" "${FPP_DEPEND}" "${FPP_LOCS_FILE}" "${CMAKE_BINARY_DIR}/fpp-depend-input" "${BUILD_TESTING}")
+    #if (UT_AUTO_HELPERS OR TRUE)
+    #    list(APPEND COMMAND_ARGS "-a")
+    #endif()
     execute_process_or_fail("Failed to run fpp-depend in parallel mode" "${PYTHON}" ${COMMAND_ARGS})
 endfunction()
 

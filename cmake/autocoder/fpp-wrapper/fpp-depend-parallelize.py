@@ -62,7 +62,9 @@ def run_parallel_depend(fpp_depend, fpp_locs, file_input):
                 "generated.txt",
                 "-i",
                 "include.txt",
-                "-u"
+                "-u",
+                "unittest.txt",
+                "-a"
             ]
         )
 
