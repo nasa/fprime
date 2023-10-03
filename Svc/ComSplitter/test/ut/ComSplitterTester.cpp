@@ -9,7 +9,7 @@
 // acknowledged.
 // ======================================================================
 
-#include "Tester.hpp"
+#include "ComSplitterTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100
@@ -20,8 +20,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  ComSplitterTester ::
+    ComSplitterTester() :
       ComSplitterGTestBase("Tester", MAX_HISTORY_SIZE),
       component("ComSplitter")
   {
@@ -29,8 +29,8 @@ namespace Svc {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  ComSplitterTester ::
+    ~ComSplitterTester()
   {
 
   }
@@ -39,7 +39,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void ComSplitterTester ::
   test_nominal()
   {
       U8 d[4] = {0xde,0xad,0xbe,0xef};
@@ -60,7 +60,7 @@ namespace Svc {
       }
   }
 
-  void Tester ::
+  void ComSplitterTester ::
     assert_comOut(
         const U32 index,
         const Fw::ComBuffer &data
@@ -80,7 +80,7 @@ namespace Svc {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void ComSplitterTester ::
     from_comOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::ComBuffer &data,
@@ -94,7 +94,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void ComSplitterTester ::
     connectPorts()
   {
 
@@ -115,7 +115,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void ComSplitterTester ::
     initComponents()
   {
     this->init();

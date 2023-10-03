@@ -5,7 +5,7 @@
  *      Author: Gorang Gandhi
  */
 
-#include <Svc/ComSplitter/test/ut/Tester.hpp>
+#include "ComSplitterTester.hpp"
 #include <Svc/ComSplitter/ComSplitter.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <gtest/gtest.h>
@@ -14,7 +14,7 @@
 
 TEST(TestNominal,Nominal) {
 
-    Svc::Tester tester;
+    Svc::ComSplitterTester tester;
     tester.test_nominal();
 
 }

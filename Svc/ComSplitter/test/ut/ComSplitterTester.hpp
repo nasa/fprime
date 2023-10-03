@@ -17,7 +17,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class ComSplitterTester :
     public ComSplitterGTestBase
   {
 
@@ -27,13 +27,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object ComSplitterTester
       //!
-      Tester();
+      ComSplitterTester();
 
-      //! Destroy object Tester
+      //! Destroy object ComSplitterTester
       //!
-      ~Tester();
+      ~ComSplitterTester();
 
     public:
 
