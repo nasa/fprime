@@ -18,7 +18,7 @@
 
 namespace Drv {
 
-  class Tester :
+  class LinuxI2cDriverTester :
     public LinuxI2cDriverGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace Drv {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object LinuxI2cDriverTester
       //!
-      Tester();
+      LinuxI2cDriverTester();
 
-      //! Destroy object Tester
+      //! Destroy object LinuxI2cDriverTester
       //!
-      ~Tester();
+      ~LinuxI2cDriverTester();
 
     public:
 

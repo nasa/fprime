@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "LinuxI2cDriverTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -21,8 +21,8 @@ namespace Drv {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  LinuxI2cDriverTester ::
+    LinuxI2cDriverTester() :
       LinuxI2cDriverGTestBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxI2cDriver")
   {
@@ -30,8 +30,8 @@ namespace Drv {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  LinuxI2cDriverTester ::
+    ~LinuxI2cDriverTester()
   {
 
   }
@@ -40,7 +40,7 @@ namespace Drv {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxI2cDriverTester ::
     sendData(U32 addr, U8* data, NATIVE_INT_TYPE size)
   {
       Fw::Buffer dataBuff;
@@ -49,7 +49,7 @@ namespace Drv {
       this->invoke_to_write(0,addr,dataBuff);
   }
 
-  void Tester::open(const char* device) {
+  void LinuxI2cDriverTester::open(const char* device) {
 	  this->component.open(device);
   }
 
@@ -58,7 +58,7 @@ namespace Drv {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxI2cDriverTester ::
     connectPorts()
   {
 
@@ -73,7 +73,7 @@ namespace Drv {
 
   }
 
-  void Tester ::
+  void LinuxI2cDriverTester ::
     initComponents()
   {
     this->init();
