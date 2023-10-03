@@ -11,7 +11,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class ActiveTextLoggerTester :
     public ActiveTextLoggerGTestBase
   {
 
@@ -21,13 +21,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object ActiveTextLoggerTester
       //!
-      Tester();
+      ActiveTextLoggerTester();
 
-      //! Destroy object Tester
+      //! Destroy object ActiveTextLoggerTester
       //!
-      ~Tester();
+      ~ActiveTextLoggerTester();
 
     public:
 
