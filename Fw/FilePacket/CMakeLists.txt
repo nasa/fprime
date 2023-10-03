@@ -34,6 +34,6 @@ set(UT_MOD_DEPS
 )
 
 set(UT_SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FilePacketMain.cpp"
 )
 register_fprime_ut()
