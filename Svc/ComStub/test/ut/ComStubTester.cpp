@@ -4,7 +4,7 @@
 // \brief  cpp file for ComStub test harness implementation class
 // ======================================================================
 
-#include "Tester.hpp"
+#include "ComStubTester.hpp"
 #include <STest/Pick/Pick.hpp>
 
 #define INSTANCE 0
@@ -19,7 +19,7 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester()
+ComStubTester ::ComStubTester()
     : ComStubGTestBase("Tester", MAX_HISTORY_SIZE),
       m_component("ComStub"),
       m_send_mode(Drv::SendStatus::SEND_OK),
@@ -28,12 +28,12 @@ Tester ::Tester()
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+ComStubTester ::~ComStubTester() {}
 
 // ----------------------------------------------------------------------
 // Helpers
 // ----------------------------------------------------------------------
-void Tester ::fill(Fw::Buffer& buffer_to_fill) {
+void ComStubTester ::fill(Fw::Buffer& buffer_to_fill) {
     U8 size = STest::Pick::lowerUpper(1, sizeof(buffer_to_fill.getSize()));
     for (U32 i = 0; i < size; i++) {
         buffer_to_fill.getData()[i] = STest::Pick::any();
@@ -44,7 +44,7 @@ void Tester ::fill(Fw::Buffer& buffer_to_fill) {
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
-void Tester ::test_initial() {
+void ComStubTester ::test_initial() {
     Fw::Success condition = Fw::Success::SUCCESS;
     invoke_to_drvConnected(0);
     ASSERT_from_comStatus_SIZE(1);
@@ -52,7 +52,7 @@ void Tester ::test_initial() {
     this->fromPortHistory_comStatus->clear();
 }
 
-void Tester ::test_basic() {
+void ComStubTester ::test_basic() {
     this->test_initial();
     Fw::Buffer buffer(storage[0], sizeof(storage[0]));
     Fw::Success condition = Fw::Success::SUCCESS;
@@ -71,7 +71,7 @@ void Tester ::test_basic() {
     ASSERT_from_comDataOut(0, buffer, status);
 }
 
-void Tester ::test_fail() {
+void ComStubTester ::test_fail() {
     this->test_initial();
     Fw::Buffer buffer(storage[0], sizeof(storage[0]));
     this->fill(buffer);
@@ -92,7 +92,7 @@ void Tester ::test_fail() {
     ASSERT_from_comDataOut(0, buffer, status);
 }
 
-void Tester ::test_retry() {
+void ComStubTester ::test_retry() {
     this->test_initial();
     Fw::Buffer buffers[RETRIES];
     Fw::Success condition = Fw::Success::SUCCESS;
@@ -121,17 +121,17 @@ void Tester ::test_retry() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_comDataOut_handler(const NATIVE_INT_TYPE portNum,
+void ComStubTester ::from_comDataOut_handler(const NATIVE_INT_TYPE portNum,
                                       Fw::Buffer& recvBuffer,
                                       const Drv::RecvStatus& recvStatus) {
     this->pushFromPortEntry_comDataOut(recvBuffer, recvStatus);
 }
 
-void Tester ::from_comStatus_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
+void ComStubTester ::from_comStatus_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
     this->pushFromPortEntry_comStatus(condition);
 }
 
-Drv::SendStatus Tester ::from_drvDataOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& sendBuffer) {
+Drv::SendStatus ComStubTester ::from_drvDataOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& sendBuffer) {
     this->pushFromPortEntry_drvDataOut(sendBuffer);
     m_retries = (m_send_mode == Drv::SendStatus::SEND_RETRY) ? (m_retries + 1) : m_retries;
     if (m_retries < RETRIES) {
@@ -144,7 +144,7 @@ Drv::SendStatus Tester ::from_drvDataOut_handler(const NATIVE_INT_TYPE portNum, 
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {
+void ComStubTester ::connectPorts() {
     // comDataIn
     this->connect_to_comDataIn(0, this->m_component.get_comDataIn_InputPort(0));
 
@@ -164,7 +164,7 @@ void Tester ::connectPorts() {
     this->m_component.set_drvDataOut_OutputPort(0, this->get_from_drvDataOut(0));
 }
 
-void Tester ::initComponents() {
+void ComStubTester ::initComponents() {
     this->init();
     this->m_component.init(INSTANCE);
 }

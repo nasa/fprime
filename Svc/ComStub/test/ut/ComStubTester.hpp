@@ -12,19 +12,19 @@
 
 namespace Svc {
 
-class Tester : public ComStubGTestBase {
+class ComStubTester : public ComStubGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
   public:
-    //! Construct object Tester
+    //! Construct object ComStubTester
     //!
-    Tester();
+    ComStubTester();
 
-    //! Destroy object Tester
+    //! Destroy object ComStubTester
     //!
-    ~Tester();
+    ~ComStubTester();
 
   public:
     //! Buffer to fill with data

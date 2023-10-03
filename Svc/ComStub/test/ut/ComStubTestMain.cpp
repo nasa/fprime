@@ -2,26 +2,26 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "ComStubTester.hpp"
 
 TEST(Nominal, Initial) {
-    Svc::Tester tester;
+    Svc::ComStubTester tester;
     tester.test_initial();
 }
 
 TEST(Nominal, BasicIo) {
-    Svc::Tester tester;
+    Svc::ComStubTester tester;
     tester.test_basic();
 }
 
 
 TEST(Nominal, Fail) {
-    Svc::Tester tester;
+    Svc::ComStubTester tester;
     tester.test_fail();
 }
 
 TEST(OffNominal, Retry) {
-    Svc::Tester tester;
+    Svc::ComStubTester tester;
     tester.test_retry();
 }
 
