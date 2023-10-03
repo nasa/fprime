@@ -18,7 +18,7 @@
 
 namespace Ref {
 
-  class Tester :
+  class SignalGenTester :
     public SignalGenGTestBase
   {
       // ----------------------------------------------------------------------
@@ -33,13 +33,13 @@ namespace Ref {
       // Queue depth supplied to component instance under test
       static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
 
-      //! Construct object Tester
+      //! Construct object SignalGenTester
       //!
-      Tester();
+      SignalGenTester();
 
-      //! Destroy object Tester
+      //! Destroy object SignalGenTester
       //!
-      ~Tester();
+      ~SignalGenTester();
 
     public:
 

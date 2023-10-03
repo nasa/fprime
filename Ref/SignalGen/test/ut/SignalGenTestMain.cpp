@@ -2,10 +2,10 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "SignalGenTester.hpp"
 
 TEST(Nominal, TestStart) {
-    Ref::Tester tester;
+    Ref::SignalGenTester tester;
     tester.test_start();
 }
 

@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "SignalGenTester.hpp"
 
 namespace Ref {
 
@@ -18,8 +18,8 @@ namespace Ref {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  SignalGenTester ::
+    SignalGenTester() :
       SignalGenGTestBase("Tester", MAX_HISTORY_SIZE),
       component("SignalGen")
   {
@@ -27,8 +27,8 @@ namespace Ref {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  SignalGenTester ::
+    ~SignalGenTester()
   {
 
   }
@@ -37,7 +37,7 @@ namespace Ref {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void SignalGenTester ::
     test_start()
   {
        ASSERT_TLM_Output_SIZE(0);
