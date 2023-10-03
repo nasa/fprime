@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-class Tester : public DeframerGTestBase {
+class DeframerTester : public DeframerGTestBase {
   public:
     // ----------------------------------------------------------------------
     // Types
@@ -37,7 +37,7 @@ class Tester : public DeframerGTestBase {
     // ----------------------------------------------------------------------
     class MockDeframer : public DeframingProtocol {
       public:
-        MockDeframer(Tester& parent);
+        MockDeframer(DeframerTester& parent);
         DeframingStatus deframe(Types::CircularBuffer& ring_buffer, U32& needed);
         //! Test the implementation of DeframingProtocolInterface provided
         //! by the Deframer component
@@ -46,13 +46,13 @@ class Tester : public DeframerGTestBase {
     };
 
   public:
-    //! Construct object Tester
+    //! Construct object DeframerTester
     //!
-    Tester(ConnectStatus::t bufferOutStatus = ConnectStatus::CONNECTED);
+    DeframerTester(ConnectStatus::t bufferOutStatus = ConnectStatus::CONNECTED);
 
-    //! Destroy object Tester
+    //! Destroy object DeframerTester
     //!
-    ~Tester();
+    ~DeframerTester();
 
   public:
     // ----------------------------------------------------------------------

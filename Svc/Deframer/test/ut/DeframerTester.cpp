@@ -12,7 +12,7 @@
 
 #include <cstring>
 
-#include "Tester.hpp"
+#include "DeframerTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 1000
@@ -22,9 +22,9 @@ namespace Svc {
 // ----------------------------------------------------------------------
 // Construction and destruction
 // ----------------------------------------------------------------------
-Tester::MockDeframer::MockDeframer(Tester& parent) : m_status(DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {}
+DeframerTester::MockDeframer::MockDeframer(DeframerTester& parent) : m_status(DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {}
 
-Tester::MockDeframer::DeframingStatus Tester::MockDeframer::deframe(Types::CircularBuffer& ring_buffer, U32& needed) {
+DeframerTester::MockDeframer::DeframingStatus DeframerTester::MockDeframer::deframe(Types::CircularBuffer& ring_buffer, U32& needed) {
     needed = ring_buffer.get_allocated_size();
     if (m_status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
         needed = ring_buffer.get_allocated_size() + 1; // Obey the rules
@@ -32,7 +32,7 @@ Tester::MockDeframer::DeframingStatus Tester::MockDeframer::deframe(Types::Circu
     return m_status;
 }
 
-void Tester::MockDeframer::test_interface(Fw::ComPacket::ComPacketType com_packet_type) {
+void DeframerTester::MockDeframer::test_interface(Fw::ComPacket::ComPacketType com_packet_type) {
     const FwPacketDescriptorType descriptorType = com_packet_type;
     U8 chars[sizeof descriptorType];
     m_interface->allocate(3042);
@@ -42,7 +42,7 @@ void Tester::MockDeframer::test_interface(Fw::ComPacket::ComPacketType com_packe
 }
 
 
-Tester ::Tester(ConnectStatus::t bufferOutStatus)
+DeframerTester ::DeframerTester(ConnectStatus::t bufferOutStatus)
     : DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Deframer"),
       m_mock(*this),
@@ -52,12 +52,12 @@ Tester ::Tester(ConnectStatus::t bufferOutStatus)
     component.setup(this->m_mock);
 }
 
-Tester ::~Tester() {}
+DeframerTester ::~DeframerTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
-void Tester ::test_incoming_frame(Tester::MockDeframer::DeframingStatus status) {
+void DeframerTester ::test_incoming_frame(DeframerTester::MockDeframer::DeframingStatus status) {
     U32 buffer_size = 512;
     U8 data[buffer_size];
     ::memset(data, 0, buffer_size);
@@ -76,7 +76,7 @@ void Tester ::test_incoming_frame(Tester::MockDeframer::DeframingStatus status) 
     ASSERT_from_framedDeallocate(0, recvBuffer);
 }
 
-void Tester ::test_com_interface() {
+void DeframerTester ::test_com_interface() {
     m_mock.test_interface(Fw::ComPacket::FW_PACKET_COMMAND);
     ASSERT_from_comOut_SIZE(1);
     ASSERT_from_bufferAllocate(0, 3042);
@@ -84,7 +84,7 @@ void Tester ::test_com_interface() {
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
 
-void Tester ::test_file_interface() {
+void DeframerTester ::test_file_interface() {
     m_mock.test_interface(Fw::ComPacket::FW_PACKET_FILE);
     ASSERT_from_comOut_SIZE(0);
     ASSERT_from_bufferAllocate(0, 3042);
@@ -92,7 +92,7 @@ void Tester ::test_file_interface() {
     ASSERT_from_bufferDeallocate_SIZE(0);
 }
 
-void Tester ::test_unknown_interface() {
+void DeframerTester ::test_unknown_interface() {
     m_mock.test_interface(Fw::ComPacket::FW_PACKET_UNKNOWN);
     ASSERT_from_comOut_SIZE(0);
     ASSERT_from_bufferAllocate(0, 3042);
@@ -100,7 +100,7 @@ void Tester ::test_unknown_interface() {
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
 
-void Tester ::testCommandResponse() {
+void DeframerTester ::testCommandResponse() {
     const U32 portNum = 0;
     const U32 opcode = 0;
     const U32 cmdSeq = 0;
@@ -109,7 +109,7 @@ void Tester ::testCommandResponse() {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-void Tester ::testCommandPacketTooLarge() {
+void DeframerTester ::testCommandPacketTooLarge() {
     // Allocate a large packet buffer
     enum {
         BUFFER_SIZE = 2 * FW_COM_BUFFER_MAX_SIZE
@@ -131,7 +131,7 @@ void Tester ::testCommandPacketTooLarge() {
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
 
-void Tester ::testPacketBufferTooSmall() {
+void DeframerTester ::testPacketBufferTooSmall() {
     // Allocate a small packet buffer
     U8 byte = 0;
     Fw::Buffer buffer(&byte, sizeof byte);
@@ -142,7 +142,7 @@ void Tester ::testPacketBufferTooSmall() {
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
 
-void Tester ::testBufferOutUnconnected() {
+void DeframerTester ::testBufferOutUnconnected() {
     ASSERT_EQ(this->bufferOutStatus, ConnectStatus::UNCONNECTED);
     enum {
         BUFFER_SIZE = 256
@@ -168,29 +168,29 @@ void Tester ::testBufferOutUnconnected() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void DeframerTester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_comOut(data, context);
 }
 
-void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void DeframerTester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_bufferOut(fwBuffer);
 }
 
-Fw::Buffer Tester ::from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
+Fw::Buffer DeframerTester ::from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
     this->pushFromPortEntry_bufferAllocate(size);
     Fw::Buffer buffer(nullptr, size);
     return buffer;
 }
 
-void Tester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void DeframerTester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_bufferDeallocate(fwBuffer);
 }
 
-void Tester ::from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void DeframerTester ::from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_framedDeallocate(fwBuffer);
 }
 
-Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& pollBuffer) {
+Drv::PollStatus DeframerTester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& pollBuffer) {
     this->pushFromPortEntry_framedPoll(pollBuffer);
     return Drv::PollStatus::POLL_OK;
 }
@@ -199,7 +199,7 @@ Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, 
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {
+void DeframerTester ::connectPorts() {
     // bufferAllocate
     this->component.set_bufferAllocate_OutputPort(0, this->get_from_bufferAllocate(0));
 
@@ -230,7 +230,7 @@ void Tester ::connectPorts() {
     this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
 }
 
-void Tester ::initComponents() {
+void DeframerTester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }

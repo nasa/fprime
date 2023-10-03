@@ -24,8 +24,8 @@ register_fprime_module()
 # deframing protocol
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DeframerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DeframerTestMain.cpp"
 )
 register_fprime_ut()
 
@@ -37,8 +37,8 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/GenerateFrames.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/SendBuffer.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/DeframerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/DeframerTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/UplinkFrame.cpp"
 )
 set(UT_MOD_DEPS STest)
