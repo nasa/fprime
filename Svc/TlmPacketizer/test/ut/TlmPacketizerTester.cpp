@@ -8,7 +8,7 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 
-#include "Tester.hpp"
+#include "TlmPacketizerTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -22,12 +22,12 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester() : TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmPacketizer") {
+TlmPacketizerTester ::TlmPacketizerTester() : TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmPacketizer") {
     this->initComponents();
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+TlmPacketizerTester ::~TlmPacketizerTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
@@ -49,11 +49,11 @@ TlmPacketizerChannelEntry ignoreList[] = {{25, 0}, {50, 0}};
 
 TlmPacketizerPacket ignore = {ignoreList, 0, 0, FW_NUM_ARRAY_ELEMENTS(ignoreList)};
 
-void Tester ::initTest() {
+void TlmPacketizerTester ::initTest() {
     this->component.setPacketList(packetList, ignore, 2);
 }
 
-void Tester ::pushTlmTest() {
+void TlmPacketizerTester ::pushTlmTest() {
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -87,7 +87,7 @@ void Tester ::pushTlmTest() {
     this->invoke_to_TlmRecv(0, 22, ts, buff);
 }
 
-void Tester ::sendPacketsTest() {
+void TlmPacketizerTester ::sendPacketsTest() {
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -155,7 +155,7 @@ void Tester ::sendPacketsTest() {
     ASSERT_from_PktSend(1, comBuff, static_cast<U32>(0));
 }
 
-void Tester ::sendPacketLevelsTest() {
+void TlmPacketizerTester ::sendPacketLevelsTest() {
     this->component.setPacketList(packetList, ignore, 1);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -223,7 +223,7 @@ void Tester ::sendPacketLevelsTest() {
     ASSERT_from_PktSend(1, comBuff, static_cast<U32>(0));
 }
 
-void Tester ::updatePacketsTest() {
+void TlmPacketizerTester ::updatePacketsTest() {
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -536,7 +536,7 @@ void Tester ::updatePacketsTest() {
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 }
 
-void Tester ::ignoreTest() {
+void TlmPacketizerTester ::ignoreTest() {
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -602,7 +602,7 @@ void Tester ::ignoreTest() {
     ASSERT_from_PktSend_SIZE(0);
 }
 
-void Tester ::sendManualPacketTest() {
+void TlmPacketizerTester ::sendManualPacketTest() {
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -723,7 +723,7 @@ void Tester ::sendManualPacketTest() {
     ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_SEND_PKT, 12, Fw::CmdResponse::VALIDATION_ERROR);
 }
 
-void Tester ::setPacketLevelTest() {
+void TlmPacketizerTester ::setPacketLevelTest() {
     this->component.setPacketList(packetList, ignore, 0);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -860,7 +860,7 @@ void Tester ::setPacketLevelTest() {
     ASSERT_from_PktSend(1, comBuff, static_cast<U32>(0));
 }
 
-void Tester ::nonPacketizedChannelTest() {
+void TlmPacketizerTester ::nonPacketizedChannelTest() {
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -890,7 +890,7 @@ void Tester ::nonPacketizedChannelTest() {
     }
 }
 
-void Tester ::pingTest() {
+void TlmPacketizerTester ::pingTest() {
     this->component.setPacketList(packetList, ignore, 2);
     // ping component
     this->clearFromPortHistory();
@@ -904,11 +904,11 @@ void Tester ::pingTest() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_PktSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void TlmPacketizerTester ::from_PktSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_PktSend(data, context);
 }
 
-void Tester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+void TlmPacketizerTester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
 }
 
@@ -916,7 +916,7 @@ void Tester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {
+void TlmPacketizerTester ::connectPorts() {
     // PktSend
     this->component.set_PktSend_OutputPort(0, this->get_from_PktSend(0));
 
@@ -954,7 +954,7 @@ void Tester ::connectPorts() {
     this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
 }
 
-void Tester::textLogIn(const FwEventIdType id,          //!< The event ID
+void TlmPacketizerTester::textLogIn(const FwEventIdType id,          //!< The event ID
                        const Fw::Time& timeTag,         //!< The time
                        const Fw::LogSeverity severity,  //!< The severity
                        const Fw::TextLogString& text    //!< The event string
@@ -964,7 +964,7 @@ void Tester::textLogIn(const FwEventIdType id,          //!< The event ID
     printTextLogHistoryEntry(e, stdout);
 }
 
-void Tester ::initComponents() {
+void TlmPacketizerTester ::initComponents() {
     this->init();
     this->component.init(QUEUE_DEPTH, INSTANCE);
 }

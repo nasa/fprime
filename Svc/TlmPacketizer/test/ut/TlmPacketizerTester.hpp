@@ -16,19 +16,19 @@
 
 namespace Svc {
 
-class Tester : public TlmPacketizerGTestBase {
+class TlmPacketizerTester : public TlmPacketizerGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
   public:
-    //! Construct object Tester
+    //! Construct object TlmPacketizerTester
     //!
-    Tester(void);
+    TlmPacketizerTester(void);
 
-    //! Destroy object Tester
+    //! Destroy object TlmPacketizerTester
     //!
-    ~Tester(void);
+    ~TlmPacketizerTester(void);
 
   public:
     // ----------------------------------------------------------------------
