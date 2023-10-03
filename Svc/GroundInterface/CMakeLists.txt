@@ -20,8 +20,8 @@ set(UT_MOD_DEPS
 
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/GroundInterface.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/GroundInterfaceTester.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/GroundInterfaceTestMain.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/GroundInterfaceRules.cpp"
         )
 # STest Includes for this UT

@@ -2,7 +2,7 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "GroundInterfaceTester.hpp"
 #include <gtest/gtest.h>
 #include <Svc/GroundInterface/test/ut/GroundInterfaceRules.hpp>
 #include <STest/Scenario/Scenario.hpp>
@@ -15,7 +15,7 @@
  * A random hopper for rules. Apply STEP_COUNT times.
  */
 TEST(Nominal, RandomizedGroundIf) {
-    Svc::Tester tester;
+    Svc::GroundInterfaceTester tester;
 
     // Create rules, and assign them into the array
     Svc::RandomizeRule randomize("Randomize");
@@ -24,17 +24,17 @@ TEST(Nominal, RandomizedGroundIf) {
     Svc::SendAvailableRule sendup("");
 
     // Setup a list of rules to choose from
-    STest::Rule<Svc::Tester>* rules[] = {
+    STest::Rule<Svc::GroundInterfaceTester>* rules[] = {
             &randomize,
             &downlink,
             &filedown,
             &sendup
     };
     // Construct the random scenario and run it with the defined bounds
-    STest::RandomScenario<Svc::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
+    STest::RandomScenario<Svc::GroundInterfaceTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Setup a bounded scenario to run rules a set number of times
-    STest::BoundedScenario<Svc::Tester> bounded("Bounded Random Rules Scenario", random, STEP_COUNT);
+    STest::BoundedScenario<Svc::GroundInterfaceTester> bounded("Bounded Random Rules Scenario", random, STEP_COUNT);
     // Run!
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);
@@ -42,19 +42,19 @@ TEST(Nominal, RandomizedGroundIf) {
 
 
 TEST(Nominal, BasicUplink) {
-    Svc::Tester tester;
+    Svc::GroundInterfaceTester tester;
     Svc::SendAvailableRule rule("Uplink Rule");
     rule.apply(tester);
 }
 
 TEST(Nominal, BasicDownlink) {
-    Svc::Tester tester;
+    Svc::GroundInterfaceTester tester;
     Svc::DownlinkRule rule("Downlink Rule");
     rule.apply(tester);
 }
 
 TEST(Nominal, FileDownlink) {
-    Svc::Tester tester;
+    Svc::GroundInterfaceTester tester;
     Svc::FileDownlinkRule rule("File Down Rule");
     rule.apply(tester);
 }

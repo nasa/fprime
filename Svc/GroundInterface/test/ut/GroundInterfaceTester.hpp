@@ -19,7 +19,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class GroundInterfaceTester :
     public GroundInterfaceGTestBase
   {
     private:
@@ -32,13 +32,13 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
     public:
-      //! Construct object Tester
+      //! Construct object GroundInterfaceTester
       //!
-      Tester();
+      GroundInterfaceTester();
 
-      //! Destroy object Tester
+      //! Destroy object GroundInterfaceTester
       //!
-      ~Tester();
+      ~GroundInterfaceTester();
 
     public:
 

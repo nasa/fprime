@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "GroundInterfaceTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -22,8 +22,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  GroundInterfaceTester ::
+    GroundInterfaceTester() :
       GroundInterfaceGTestBase("Tester", MAX_HISTORY_SIZE),
       component("GroundInterface")
       ,
@@ -39,8 +39,8 @@ namespace Svc {
     update_header_info();
   }
 
-  Tester ::
-    ~Tester()
+  GroundInterfaceTester ::
+    ~GroundInterfaceTester()
   {
 
   }
@@ -51,7 +51,7 @@ namespace Svc {
   // Tests State Adjustments
   // ----------------------------------------------------------------------
 
-  void Tester :: update_header_info() {
+  void GroundInterfaceTester :: update_header_info() {
       // Write token types
       for (U32 i = 0; i < sizeof(TOKEN_TYPE); i++) {
           m_uplink_data[i] = (GroundInterfaceComponentImpl::START_WORD >> ((sizeof(TOKEN_TYPE) - 1 - i) * 8)) & 0xFF;
@@ -67,7 +67,7 @@ namespace Svc {
       m_uplink_data[2 * sizeof(TOKEN_TYPE) + 3] = (static_cast<U32>(m_uplink_com_type) >>  0) & 0xFF;
   }
 
-  void Tester :: setInputParams(TOKEN_TYPE size, U8* buffer, TOKEN_TYPE packet_type) {
+  void GroundInterfaceTester :: setInputParams(TOKEN_TYPE size, U8* buffer, TOKEN_TYPE packet_type) {
       m_size = size;
       m_buffer = buffer;
       m_packet = packet_type;
@@ -77,7 +77,7 @@ namespace Svc {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void GroundInterfaceTester ::
     from_fileUplinkBufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer
@@ -90,7 +90,7 @@ namespace Svc {
     }
   }
 
-  void Tester ::
+  void GroundInterfaceTester ::
     from_uplinkPort_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::ComBuffer &data,
@@ -103,7 +103,7 @@ namespace Svc {
     }
   }
 
-  void Tester ::
+  void GroundInterfaceTester ::
     from_fileDownlinkBufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer
@@ -113,7 +113,7 @@ namespace Svc {
 
   }
 
-  Fw::Buffer Tester ::
+  Fw::Buffer GroundInterfaceTester ::
     from_fileUplinkBufferGet_handler(
         const NATIVE_INT_TYPE portNum,
         U32 size
@@ -125,7 +125,7 @@ namespace Svc {
     return m_incoming_file_buffer;
   }
 
-  void Tester ::
+  void GroundInterfaceTester ::
     from_write_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer
@@ -163,7 +163,7 @@ namespace Svc {
     ASSERT_from_write_SIZE(1);
   }
 
-  void Tester ::
+  void GroundInterfaceTester ::
     from_readPoll_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer
@@ -182,7 +182,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void GroundInterfaceTester ::
     connectPorts()
   {
 
@@ -266,7 +266,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void GroundInterfaceTester ::
     initComponents()
   {
     this->init();
