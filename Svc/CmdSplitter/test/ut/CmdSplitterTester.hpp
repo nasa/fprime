@@ -12,7 +12,7 @@
 
 namespace Svc {
 
-class Tester : public CmdSplitterGTestBase {
+class CmdSplitterTester : public CmdSplitterGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -23,13 +23,13 @@ class Tester : public CmdSplitterGTestBase {
     // Instance ID supplied to the component instance under test
     static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
 
-    //! Construct object Tester
+    //! Construct object CmdSplitterTester
     //!
-    Tester();
+    CmdSplitterTester();
 
-    //! Destroy object Tester
+    //! Destroy object CmdSplitterTester
     //!
-    ~Tester();
+    ~CmdSplitterTester();
 
   public:
     // ----------------------------------------------------------------------

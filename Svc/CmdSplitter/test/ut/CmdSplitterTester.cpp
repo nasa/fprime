@@ -4,7 +4,7 @@
 // \brief  cpp file for CmdSplitter test harness implementation class
 // ======================================================================
 
-#include "Tester.hpp"
+#include "CmdSplitterTester.hpp"
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/Test/UnitTest.hpp>
 #include <STest/Pick/Pick.hpp>
@@ -16,18 +16,18 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester() : CmdSplitterGTestBase("Tester", Tester::MAX_HISTORY_SIZE), component("CmdSplitter") {
+CmdSplitterTester ::CmdSplitterTester() : CmdSplitterGTestBase("Tester", CmdSplitterTester::MAX_HISTORY_SIZE), component("CmdSplitter") {
     this->initComponents();
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+CmdSplitterTester ::~CmdSplitterTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-Fw::ComBuffer Tester ::build_command_around_opcode(FwOpcodeType opcode) {
+Fw::ComBuffer CmdSplitterTester ::build_command_around_opcode(FwOpcodeType opcode) {
     Fw::ComBuffer comBuffer;
     EXPECT_EQ(comBuffer.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(comBuffer.serialize(opcode), Fw::FW_SERIALIZE_OK);
@@ -43,7 +43,7 @@ Fw::ComBuffer Tester ::build_command_around_opcode(FwOpcodeType opcode) {
     return comBuffer;
 }
 
-FwOpcodeType Tester ::setup_and_pick_valid_opcode(bool for_local) {
+FwOpcodeType CmdSplitterTester ::setup_and_pick_valid_opcode(bool for_local) {
     const FwOpcodeType MAX_OPCODE = std::numeric_limits<FwOpcodeType>::max();
     if (for_local) {
         FwOpcodeType base = STest::Pick::lowerUpper(1, MAX_OPCODE);
@@ -58,7 +58,7 @@ FwOpcodeType Tester ::setup_and_pick_valid_opcode(bool for_local) {
     return static_cast<FwOpcodeType>(STest::Pick::lowerUpper(base, MAX_OPCODE));
 }
 
-void Tester ::test_local_routing() {
+void CmdSplitterTester ::test_local_routing() {
     REQUIREMENT("SVC-CMD-SPLITTER-000");
     REQUIREMENT("SVC-CMD-SPLITTER-001");
     REQUIREMENT("SVC-CMD-SPLITTER-002");
@@ -75,7 +75,7 @@ void Tester ::test_local_routing() {
     ASSERT_from_LocalCmd(0, testBuffer, context);
 }
 
-void Tester ::test_remote_routing() {
+void CmdSplitterTester ::test_remote_routing() {
     REQUIREMENT("SVC-CMD-SPLITTER-000");
     REQUIREMENT("SVC-CMD-SPLITTER-001");
     REQUIREMENT("SVC-CMD-SPLITTER-003");
@@ -92,7 +92,7 @@ void Tester ::test_remote_routing() {
     ASSERT_from_RemoteCmd(0, testBuffer, context);
 }
 
-void Tester ::test_error_routing() {
+void CmdSplitterTester ::test_error_routing() {
     REQUIREMENT("SVC-CMD-SPLITTER-000");
     REQUIREMENT("SVC-CMD-SPLITTER-001");
     REQUIREMENT("SVC-CMD-SPLITTER-004");
@@ -106,7 +106,7 @@ void Tester ::test_error_routing() {
     ASSERT_from_LocalCmd(0, testBuffer, context);
 }
 
-void Tester ::test_response_forwarding() {
+void CmdSplitterTester ::test_response_forwarding() {
     REQUIREMENT("SVC-CMD-SPLITTER-000");
     REQUIREMENT("SVC-CMD-SPLITTER-001");
     REQUIREMENT("SVC-CMD-SPLITTER-005");
@@ -128,17 +128,17 @@ void Tester ::test_response_forwarding() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_LocalCmd_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void CmdSplitterTester ::from_LocalCmd_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
     this->pushFromPortEntry_LocalCmd(data, context);
 }
 
-void Tester ::from_RemoteCmd_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void CmdSplitterTester ::from_RemoteCmd_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
     this->pushFromPortEntry_RemoteCmd(data, context);
 }
 
-void Tester ::from_forwardSeqCmdStatus_handler(const NATIVE_INT_TYPE portNum,
+void CmdSplitterTester ::from_forwardSeqCmdStatus_handler(const NATIVE_INT_TYPE portNum,
                                                FwOpcodeType opCode,
                                                U32 cmdSeq,
                                                const Fw::CmdResponse& response) {

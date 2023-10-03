@@ -2,25 +2,25 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "CmdSplitterTester.hpp"
 
 TEST(Nominal, Local) {
-    Svc::Tester tester;
+    Svc::CmdSplitterTester tester;
     tester.test_local_routing();
 }
 
 TEST(Nominal, Remote) {
-    Svc::Tester tester;
+    Svc::CmdSplitterTester tester;
     tester.test_remote_routing();
 }
 
 TEST(Nominal, Forwarding) {
-    Svc::Tester tester;
+    Svc::CmdSplitterTester tester;
     tester.test_response_forwarding();
 }
 
 TEST(Error, BadCommands) {
-    Svc::Tester tester;
+    Svc::CmdSplitterTester tester;
     tester.test_error_routing();
 }
 
