@@ -13,12 +13,12 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "command1GTestBase.hpp"
 #include "Autocoders/Python/test/command1/Test1ComponentImpl.hpp"
 
 namespace Cmd {
 
-  class Tester :
+  class command1Tester :
     public Test1GTestBase
   {
 
@@ -28,13 +28,13 @@ namespace Cmd {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object command1Tester
       //!
-      Tester();
+      command1Tester();
 
-      //! Destroy object Tester
+      //! Destroy object command1Tester
       //!
-      ~Tester();
+      ~command1Tester();
 
     public:
 

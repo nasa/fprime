@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "command1Tester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -21,8 +21,8 @@ namespace Cmd {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  command1Tester ::
+    command1Tester() :
       Test1GTestBase("Tester", MAX_HISTORY_SIZE),
       component("Test1")
   {
@@ -30,8 +30,8 @@ namespace Cmd {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  command1Tester ::
+    ~command1Tester()
   {
 
   }
@@ -40,7 +40,7 @@ namespace Cmd {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void command1Tester ::
     toDo()
   {
     // TODO
@@ -50,7 +50,7 @@ namespace Cmd {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void command1Tester ::
     connectPorts()
   {
 
@@ -80,7 +80,7 @@ namespace Cmd {
 
   }
 
-  void Tester ::
+  void command1Tester ::
     initComponents()
   {
     this->init();
