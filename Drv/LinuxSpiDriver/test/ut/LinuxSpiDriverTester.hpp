@@ -18,7 +18,7 @@
 
 namespace Drv {
 
-  class Tester :
+  class LinuxSpiDriverTester :
     public LinuxSpiDriverTesterBase
   {
 
@@ -28,13 +28,13 @@ namespace Drv {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object LinuxSpiDriverTester
       //!
-      Tester();
+      LinuxSpiDriverTester();
 
-      //! Destroy object Tester
+      //! Destroy object LinuxSpiDriverTester
       //!
-      ~Tester();
+      ~LinuxSpiDriverTester();
 
     public:
 

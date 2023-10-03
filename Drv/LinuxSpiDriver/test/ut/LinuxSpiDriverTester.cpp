@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "LinuxSpiDriverTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -21,8 +21,8 @@ namespace Drv {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  LinuxSpiDriverTester ::
+    LinuxSpiDriverTester() :
     LinuxSpiDriverTesterBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxSpiDriver")
   {
@@ -30,8 +30,8 @@ namespace Drv {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  LinuxSpiDriverTester ::
+    ~LinuxSpiDriverTester()
   {
 
   }
@@ -40,7 +40,7 @@ namespace Drv {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxSpiDriverTester ::
     connectPorts()
   {
 
@@ -76,7 +76,7 @@ namespace Drv {
 
   }
 
-  void Tester ::
+  void LinuxSpiDriverTester ::
     initComponents()
   {
     this->init();
@@ -87,7 +87,7 @@ namespace Drv {
     this->component.open(8,0,SPI_FREQUENCY_1MHZ);
   }
 
-  void Tester::textLogIn(const FwEventIdType id, //!< The event ID
+  void LinuxSpiDriverTester::textLogIn(const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
           const Fw::TextLogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
@@ -97,7 +97,7 @@ namespace Drv {
       printTextLogHistoryEntry(e, stdout);
   }
 
-  void Tester::sendBuffer(BYTE* buffer, NATIVE_INT_TYPE size) {
+  void LinuxSpiDriverTester::sendBuffer(BYTE* buffer, NATIVE_INT_TYPE size) {
       Fw::Buffer w;
       w.setdata(reinterpret_cast<POINTER_CAST>(buffer));
       w.setsize(size);
