@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "command_resTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -22,8 +22,8 @@ namespace Cmd {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  command_resTester ::
+    command_resTester() :
       Test1GTestBase("Tester", MAX_HISTORY_SIZE),
       component("Test1")
   {
@@ -31,8 +31,8 @@ namespace Cmd {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  command_resTester ::
+    ~command_resTester()
   {
 
   }
@@ -41,7 +41,7 @@ namespace Cmd {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void command_resTester ::
       residualTest()
   {
       // This test will do different things based on the configuration macro FW_CMD_CHECK_RESIDUAL
@@ -109,7 +109,7 @@ namespace Cmd {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void command_resTester ::
     connectPorts()
   {
 
@@ -139,7 +139,7 @@ namespace Cmd {
 
   }
 
-  void Tester ::
+  void command_resTester ::
     initComponents()
   {
     this->init();
