@@ -2,31 +2,31 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "GenericHubTester.hpp"
 
 TEST(Nominal, TestIo) {
-    Svc::Tester tester;
+    Svc::GenericHubTester tester;
     tester.test_in_out();
 }
 
 
 TEST(Nominal, TestBufferIo) {
-    Svc::Tester tester;
+    Svc::GenericHubTester tester;
     tester.test_buffer_io();
 }
 
 TEST(Nominal, TestRandomIo) {
-    Svc::Tester tester;
+    Svc::GenericHubTester tester;
     tester.test_random_io();
 }
 
 TEST(Nominal, TestEvents) {
-    Svc::Tester tester;
+    Svc::GenericHubTester tester;
     tester.test_events();
 }
 
 TEST(Nominal, TestTelemetry) {
-    Svc::Tester tester;
+    Svc::GenericHubTester tester;
     tester.test_telemetry();
 }
 

@@ -21,19 +21,19 @@
 
 namespace Svc {
 
-class Tester : public GenericHubGTestBase {
+class GenericHubTester : public GenericHubGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
   public:
-    //! Construct object Tester
+    //! Construct object GenericHubTester
     //!
-    Tester();
+    GenericHubTester();
 
-    //! Destroy object Tester
+    //! Destroy object GenericHubTester
     //!
-    ~Tester();
+    ~GenericHubTester();
 
   public:
     // ----------------------------------------------------------------------

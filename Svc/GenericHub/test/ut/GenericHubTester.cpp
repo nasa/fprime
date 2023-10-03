@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "GenericHubTester.hpp"
 #include <STest/Pick/Pick.hpp>
 
 #define INSTANCE 0
@@ -22,7 +22,7 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester()
+GenericHubTester ::GenericHubTester()
     : GenericHubGTestBase("Tester", MAX_HISTORY_SIZE),
       componentIn("GenericHubIn"),
       componentOut("GenericHubOut"),
@@ -36,13 +36,13 @@ Tester ::Tester()
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+GenericHubTester ::~GenericHubTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::test_in_out() {
+void GenericHubTester ::test_in_out() {
     U32 max = std::min(this->componentIn.getNum_portIn_InputPorts(), this->componentOut.getNum_portOut_OutputPorts());
     for (U32 i = 0; i < max; i++) {
         send_random_comm(i);
@@ -51,7 +51,7 @@ void Tester ::test_in_out() {
     }
 }
 
-void Tester ::test_buffer_io() {
+void GenericHubTester ::test_buffer_io() {
     U32 max =
         std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
     for (U32 i = 0; i < max; i++) {
@@ -61,7 +61,7 @@ void Tester ::test_buffer_io() {
     }
 }
 
-void Tester ::test_random_io() {
+void GenericHubTester ::test_random_io() {
     for (U32 i = 0; i < 10000; i++) {
         U32 choice = STest::Pick::lowerUpper(0, 1);
         if (choice) {
@@ -80,7 +80,7 @@ void Tester ::test_random_io() {
     }
 }
 
-void Tester ::random_fill(Fw::SerializeBufferBase& buffer, U32 max_size) {
+void GenericHubTester ::random_fill(Fw::SerializeBufferBase& buffer, U32 max_size) {
     U32 random_size = STest::Pick::lowerUpper(0, max_size);
     buffer.resetSer();
     for (U32 i = 0; i < random_size; i++) {
@@ -88,7 +88,7 @@ void Tester ::random_fill(Fw::SerializeBufferBase& buffer, U32 max_size) {
     }
 }
 
-void Tester ::test_telemetry() {
+void GenericHubTester ::test_telemetry() {
     Fw::TlmBuffer buffer;
     random_fill(buffer, FW_TLM_BUFFER_MAX_SIZE);
 
@@ -102,7 +102,7 @@ void Tester ::test_telemetry() {
     clearFromPortHistory();
 }
 
-void Tester ::test_events() {
+void GenericHubTester ::test_events() {
     Fw::LogSeverity severity = Fw::LogSeverity::WARNING_HI;
     Fw::LogBuffer buffer;
     random_fill(buffer, FW_LOG_BUFFER_MAX_SIZE);
@@ -118,7 +118,7 @@ void Tester ::test_events() {
 }
 // Helpers
 
-void Tester ::send_random_comm(U32 port) {
+void GenericHubTester ::send_random_comm(U32 port) {
     random_fill(m_comm, FW_COM_BUFFER_MAX_SIZE);
     m_current_port = port;
     invoke_to_portIn(m_current_port, m_comm);
@@ -128,7 +128,7 @@ void Tester ::send_random_comm(U32 port) {
     m_comm_in++;
 }
 
-void Tester ::send_random_buffer(U32 port) {
+void GenericHubTester ::send_random_buffer(U32 port) {
     U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
     m_buffer.set(m_data_store, sizeof(m_data_store));
     ASSERT_GE(m_buffer.getSize(), max_random_size);
@@ -149,7 +149,7 @@ void Tester ::send_random_buffer(U32 port) {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_LogSend_handler(const NATIVE_INT_TYPE portNum,
+void GenericHubTester ::from_LogSend_handler(const NATIVE_INT_TYPE portNum,
                                    FwEventIdType id,
                                    Fw::Time& timeTag,
                                    const Fw::LogSeverity& severity,
@@ -157,14 +157,14 @@ void Tester ::from_LogSend_handler(const NATIVE_INT_TYPE portNum,
     this->pushFromPortEntry_LogSend(id, timeTag, severity, args);
 }
 
-void Tester ::from_TlmSend_handler(const NATIVE_INT_TYPE portNum,
+void GenericHubTester ::from_TlmSend_handler(const NATIVE_INT_TYPE portNum,
                                    FwChanIdType id,
                                    Fw::Time& timeTag,
                                    Fw::TlmBuffer& val) {
     this->pushFromPortEntry_TlmSend(id, timeTag, val);
 }
 
-void Tester ::from_dataOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_dataOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     ASSERT_NE(fwBuffer.getData(), nullptr) << "Empty buffer to deallocate";
     ASSERT_GE(fwBuffer.getData(), m_data_for_allocation) << "Incorrect data pointer deallocated";
     ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation))
@@ -178,7 +178,7 @@ void Tester ::from_dataOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
 // Handlers for serial from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_buffersOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_buffersOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     m_buffer_out++;
     // Assert the buffer came through exactly on the right port
     ASSERT_EQ(portNum, m_current_port);
@@ -192,7 +192,7 @@ void Tester ::from_buffersOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer&
     this->from_dataInDeallocate_handler(0, fwBuffer);
 }
 
-void Tester ::from_portOut_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
+void GenericHubTester ::from_portOut_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
                                    Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     m_comm_out++;
@@ -205,21 +205,21 @@ void Tester ::from_portOut_handler(NATIVE_INT_TYPE portNum,        /*!< The port
     ASSERT_from_buffersOut_SIZE(0);
 }
 
-Fw::Buffer Tester ::from_dataOutAllocate_handler(const NATIVE_INT_TYPE portNum, const U32 size) {
+Fw::Buffer GenericHubTester ::from_dataOutAllocate_handler(const NATIVE_INT_TYPE portNum, const U32 size) {
     EXPECT_EQ(m_allocate.getData(), nullptr) << "Allocation buffer is still in use";
     EXPECT_LE(size, sizeof(m_data_for_allocation)) << "Allocation buffer is still in use";
     m_allocate.set(m_data_for_allocation, size);
     return m_allocate;
 }
 
-void Tester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     // Check buffer deallocations here
     ASSERT_EQ(fwBuffer.getData(), m_buffer.getData()) << "Ensure that the buffer was deallocated";
     ASSERT_EQ(fwBuffer.getSize(), m_buffer.getSize()) << "Ensure that the buffer was deallocated";
     this->pushFromPortEntry_bufferDeallocate(fwBuffer);
 }
 
-void Tester ::from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     ASSERT_NE(fwBuffer.getData(), nullptr) << "Empty buffer to deallocate";
     ASSERT_GE(fwBuffer.getData(), m_data_for_allocation) << "Incorrect data pointer deallocated";
     ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation))
@@ -233,7 +233,7 @@ void Tester ::from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::B
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {
+void GenericHubTester ::connectPorts() {
     // buffersIn
     U32 max =
         std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
@@ -290,7 +290,7 @@ void Tester ::connectPorts() {
     }
 }
 
-void Tester ::initComponents() {
+void GenericHubTester ::initComponents() {
     this->init();
     this->componentIn.init(INSTANCE);
     this->componentOut.init(INSTANCE + 1);
