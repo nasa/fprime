@@ -2,20 +2,20 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "SystemResourcesTester.hpp"
 
 TEST(Nominal, Telemetry) {
-    Svc::Tester tester;
+    Svc::SystemResourcesTester tester;
     tester.test_tlm();
 }
 
 TEST(OffNominal, Disabled) {
-    Svc::Tester tester;
+    Svc::SystemResourcesTester tester;
     tester.test_disable_enable();
 }
 
 TEST(Nominal, Events) {
-    Svc::Tester tester;
+    Svc::SystemResourcesTester tester;
     tester.test_version_evr();
 }
 

@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "SystemResourcesTester.hpp"
 #include "version.hpp"
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100
@@ -21,18 +21,18 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester() : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
+SystemResourcesTester ::SystemResourcesTester() : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
     this->initComponents();
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+SystemResourcesTester ::~SystemResourcesTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::test_tlm(bool enabled) {
+void SystemResourcesTester ::test_tlm(bool enabled) {
     U32 count = 0;
     if (Os::SystemResources::getCpuCount(count) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
         this->invoke_to_run(0, 0);
@@ -123,14 +123,14 @@ void Tester ::test_tlm(bool enabled) {
     }
 }
 
-void Tester ::test_disable_enable() {
+void SystemResourcesTester ::test_disable_enable() {
     this->sendCmd_ENABLE(0, 0, SystemResourceEnabled::DISABLED);
     this->test_tlm(false);
     this->sendCmd_ENABLE(0, 0, SystemResourceEnabled::ENABLED);
     this->test_tlm(true);
 }
 
-void Tester ::test_version_evr() {
+void SystemResourcesTester ::test_version_evr() {
     this->sendCmd_VERSION(0, 0);
     ASSERT_EVENTS_FRAMEWORK_VERSION_SIZE(1);
     ASSERT_EVENTS_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
@@ -142,7 +142,7 @@ void Tester ::test_version_evr() {
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {
+void SystemResourcesTester ::connectPorts() {
     // run
     this->connect_to_run(0, this->component.get_run_InputPort(0));
 
@@ -168,7 +168,7 @@ void Tester ::connectPorts() {
     this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
 }
 
-void Tester ::initComponents() {
+void SystemResourcesTester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }

@@ -18,19 +18,19 @@
 
 namespace Svc {
 
-class Tester : public SystemResourcesGTestBase {
+class SystemResourcesTester : public SystemResourcesGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
   public:
-    //! Construct object Tester
+    //! Construct object SystemResourcesTester
     //!
-    Tester();
+    SystemResourcesTester();
 
-    //! Destroy object Tester
+    //! Destroy object SystemResourcesTester
     //!
-    ~Tester();
+    ~SystemResourcesTester();
 
   public:
     // ----------------------------------------------------------------------
