@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class StaticMemoryTester :
     public StaticMemoryGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object StaticMemoryTester
       //!
-      Tester();
+      StaticMemoryTester();
 
-      //! Destroy object Tester
+      //! Destroy object StaticMemoryTester
       //!
-      ~Tester();
+      ~StaticMemoryTester();
 
     public:
 

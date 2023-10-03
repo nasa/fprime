@@ -2,10 +2,10 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "StaticMemoryTester.hpp"
 
 TEST(Nominal, BasicAllocation) {
-    Svc::Tester tester;
+    Svc::StaticMemoryTester tester;
     tester.test_allocate();
 }
 

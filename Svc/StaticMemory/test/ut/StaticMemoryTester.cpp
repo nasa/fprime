@@ -9,7 +9,7 @@
 // acknowledged.
 //
 // ======================================================================
-#include "Tester.hpp"
+#include "StaticMemoryTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -20,8 +20,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  StaticMemoryTester ::
+    StaticMemoryTester() :
       StaticMemoryGTestBase("Tester", MAX_HISTORY_SIZE),
       component("StaticMemory")
   {
@@ -29,8 +29,8 @@ namespace Svc {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  StaticMemoryTester ::
+    ~StaticMemoryTester()
   {
 
   }
@@ -39,7 +39,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void StaticMemoryTester ::
       test_allocate()
   {
      Fw::Buffer allocations[StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS];
@@ -65,7 +65,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void StaticMemoryTester ::
     connectPorts()
   {
 
@@ -90,7 +90,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void StaticMemoryTester ::
     initComponents()
   {
     this->init();
