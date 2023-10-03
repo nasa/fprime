@@ -18,19 +18,19 @@
 
 namespace Svc {
 
-class Tester : public BufferRepeaterGTestBase {
+class BufferRepeaterTester : public BufferRepeaterGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
   public:
-    //! Construct object Tester
+    //! Construct object BufferRepeaterTester
     //!
-    Tester();
+    BufferRepeaterTester();
 
-    //! Destroy object Tester
+    //! Destroy object BufferRepeaterTester
     //!
-    ~Tester();
+    ~BufferRepeaterTester();
 
   public:
     // ----------------------------------------------------------------------

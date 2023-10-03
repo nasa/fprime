@@ -2,25 +2,25 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "BufferRepeaterTester.hpp"
 
 TEST(Nominal, TestRepeater) {
-    Svc::Tester tester;
+    Svc::BufferRepeaterTester tester;
     tester.testRepeater();
 }
 
 TEST(OffNominal, NoMemoryResponse) {
-    Svc::Tester tester;
+    Svc::BufferRepeaterTester tester;
     tester.testFailure(Svc::BufferRepeater::NO_RESPONSE_ON_OUT_OF_MEMORY);
 }
 
 TEST(OffNominal, WarningMemoryResponse) {
-    Svc::Tester tester;
+    Svc::BufferRepeaterTester tester;
     tester.testFailure(Svc::BufferRepeater::WARNING_ON_OUT_OF_MEMORY);
 }
 
 TEST(OffNominal, FatalMemoryResponse) {
-    Svc::Tester tester;
+    Svc::BufferRepeaterTester tester;
     tester.testFailure(Svc::BufferRepeater::FATAL_ON_OUT_OF_MEMORY);
 }
 

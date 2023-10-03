@@ -4,7 +4,7 @@
 // \brief  cpp file for BufferRepeater test harness implementation class
 // ======================================================================
 
-#include "Tester.hpp"
+#include "BufferRepeaterTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -15,7 +15,7 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester()
+BufferRepeaterTester ::BufferRepeaterTester()
     : BufferRepeaterGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferRepeater"),
       m_port_index_history(MAX_HISTORY_SIZE),
@@ -25,13 +25,13 @@ Tester ::Tester()
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+BufferRepeaterTester ::~BufferRepeaterTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::testRepeater() {
+void BufferRepeaterTester ::testRepeater() {
     this->component.configure(BufferRepeater::FATAL_ON_OUT_OF_MEMORY);
     m_initial_buffer.setSize(1024);
     m_initial_buffer.setData(new U8[1024]);
@@ -66,7 +66,7 @@ void Tester ::testRepeater() {
     m_initial_buffer.setData(nullptr);
 }
 
-void Tester ::testFailure(BufferRepeater::BufferRepeaterFailureOption failure_option) {
+void BufferRepeaterTester ::testFailure(BufferRepeater::BufferRepeaterFailureOption failure_option) {
     this->m_failure = true;
     this->component.configure(failure_option);
     m_initial_buffer.setSize(1024);
@@ -104,7 +104,7 @@ void Tester ::testFailure(BufferRepeater::BufferRepeaterFailureOption failure_op
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-Fw::Buffer Tester ::from_allocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
+Fw::Buffer BufferRepeaterTester ::from_allocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
     this->pushFromPortEntry_allocate(size);
     Fw::Buffer new_buffer;
 
@@ -118,12 +118,12 @@ Fw::Buffer Tester ::from_allocate_handler(const NATIVE_INT_TYPE portNum, U32 siz
     return new_buffer;
 }
 
-void Tester ::from_deallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void BufferRepeaterTester ::from_deallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_deallocate(fwBuffer);
     EXPECT_EQ(fwBuffer.getData(), m_initial_buffer.getData()) << "Deallocated non-initial buffer";
 }
 
-void Tester ::from_portOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void BufferRepeaterTester ::from_portOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     this->m_port_index_history.push_back(portNum);
     this->pushFromPortEntry_portOut(fwBuffer);
     EXPECT_NE(fwBuffer.getData(), nullptr) << "Passed invalid buffer out port";
@@ -133,7 +133,7 @@ void Tester ::from_portOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {
+void BufferRepeaterTester ::connectPorts() {
     // portIn
     this->connect_to_portIn(0, this->component.get_portIn_InputPort(0));
 
@@ -158,7 +158,7 @@ void Tester ::connectPorts() {
     }
 }
 
-void Tester ::initComponents() {
+void BufferRepeaterTester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }
