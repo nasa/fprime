@@ -1,9 +1,14 @@
 // ----------------------------------------------------------------------
-// Main.cpp
+// param1Tester.hpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#ifndef TESTER_HPP
+#define TESTER_HPP
 
-int main(int argc, char **argv) {
-  return 0;
-}
+#include "../../TestPrmImpl.hpp"
+
+namespace Prm {
+
+};
+
+#endif

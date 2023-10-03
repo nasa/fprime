@@ -1,14 +1,5 @@
 // ----------------------------------------------------------------------
-// Tester.hpp
+// Autocoders/Python/test/param1/test/ut/Tester.cpp
 // ----------------------------------------------------------------------
 
-#ifndef TESTER_HPP
-#define TESTER_HPP
-
-#include "../../TestPrmImpl.hpp"
-
-namespace Prm {
-
-};
-
-#endif
+#include "param1Tester.hpp"

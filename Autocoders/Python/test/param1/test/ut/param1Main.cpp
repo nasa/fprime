@@ -1,5 +1,9 @@
 // ----------------------------------------------------------------------
-// Autocoders/Python/test/param1/test/ut/Tester.cpp
+// Main.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "param1Tester.hpp"
+
+int main(int argc, char **argv) {
+  return 0;
+}
