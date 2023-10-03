@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class FileManagerTester :
     public FileManagerGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object FileManagerTester
       //!
-      Tester();
+      FileManagerTester();
 
-      //! Destroy object Tester
+      //! Destroy object FileManagerTester
       //!
-      ~Tester();
+      ~FileManagerTester();
 
     public:
 

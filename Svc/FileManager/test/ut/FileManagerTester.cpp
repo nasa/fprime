@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Tester.cpp
+// \title  FileManagerTester.cpp
 // \author bocchino
 // \brief  cpp file for FileManager test harness implementation class
 //
@@ -12,7 +12,7 @@
 
 #include <fstream>
 
-#include "Tester.hpp"
+#include "FileManagerTester.hpp"
 
 #define INSTANCE 0
 #define CMD_SEQ 0
@@ -26,8 +26,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  FileManagerTester ::
+    FileManagerTester() :
       FileManagerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("FileManager")
   {
@@ -35,8 +35,8 @@ namespace Svc {
     this->initComponents();
   }
 
-  Tester ::
-    ~Tester()
+  FileManagerTester ::
+    ~FileManagerTester()
   {
 
   }
@@ -45,7 +45,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void FileManagerTester ::
     createDirectorySucceed()
   {
 
@@ -76,7 +76,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileManagerTester ::
     createDirectoryFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -103,7 +103,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileManagerTester ::
     moveFileSucceed()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -137,7 +137,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileManagerTester ::
     moveFileFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -164,7 +164,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileManagerTester ::
     removeDirectorySucceed()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -193,7 +193,7 @@ namespace Svc {
 #endif
   }
 
-  void Tester ::
+  void FileManagerTester ::
     removeDirectoryFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -219,7 +219,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileManagerTester ::
     removeFileSucceed()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -248,7 +248,7 @@ namespace Svc {
 #endif
   }
 
-  void Tester ::
+  void FileManagerTester ::
     removeFileFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -274,7 +274,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileManagerTester ::
     shellCommandSucceed()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -303,7 +303,7 @@ namespace Svc {
 #endif
   }
 
-  void Tester ::
+  void FileManagerTester ::
     shellCommandFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -333,7 +333,7 @@ namespace Svc {
     }
   }
 
-  void Tester ::
+  void FileManagerTester ::
     appendFileSucceed_newFile()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -362,7 +362,7 @@ namespace Svc {
 #endif
   }
 
-  void Tester ::
+  void FileManagerTester ::
     appendFileSucceed_existingFile()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -393,7 +393,7 @@ namespace Svc {
 #endif
   }
 
-  void Tester ::
+  void FileManagerTester ::
     appendFileFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -419,7 +419,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void FileManagerTester ::
     fileSizeSucceed() {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove testing files, if they exist
@@ -441,7 +441,7 @@ namespace Svc {
     ASSERT_EVENTS_FileSizeSucceeded(0, "file1", 11);
   }
 
-  void Tester ::
+  void FileManagerTester ::
     fileSizeFail() {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove testing files, if they exist
@@ -467,7 +467,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void FileManagerTester ::
     connectPorts()
   {
 
@@ -515,7 +515,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileManagerTester ::
     initComponents()
   {
     this->init();
@@ -525,14 +525,14 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void FileManagerTester ::
     system(const char *const cmd)
   {
     const NATIVE_INT_TYPE status = ::system(cmd);
     ASSERT_EQ(static_cast<NATIVE_INT_TYPE>(0), status);
   }
 
-  void Tester ::
+  void FileManagerTester ::
     createDirectory(const char *const dirName)
   {
     Fw::CmdStringArg cmdStringDir(dirName);
@@ -544,7 +544,7 @@ namespace Svc {
     this->component.doDispatch();
   }
 
-  void Tester ::
+  void FileManagerTester ::
     moveFile(
         const char *const sourceFileName,
         const char *const destFileName
@@ -561,7 +561,7 @@ namespace Svc {
     this->component.doDispatch();
   }
 
-  void Tester ::
+  void FileManagerTester ::
     removeDirectory(const char *const dirName)
   {
     Fw::CmdStringArg cmdStringDir(dirName);
@@ -573,7 +573,7 @@ namespace Svc {
     this->component.doDispatch();
   }
 
-  void Tester ::
+  void FileManagerTester ::
     removeFile(const char *const fileName, bool ignoreErrors)
   {
     Fw::CmdStringArg cmdStringFile(fileName);
@@ -586,7 +586,7 @@ namespace Svc {
     this->component.doDispatch();
   }
 
-  void Tester ::
+  void FileManagerTester ::
     shellCommand(
         const char *const command,
         const char *const logFileName
@@ -603,7 +603,7 @@ namespace Svc {
     this->component.doDispatch();
   }
 
-  void Tester ::
+  void FileManagerTester ::
     appendFile(
         const char *const source,
         const char *const target
@@ -620,7 +620,7 @@ namespace Svc {
     this->component.doDispatch();
   }
 
-  void Tester ::
+  void FileManagerTester ::
     assertSuccess(
         const FwOpcodeType opcode,
         const U32 eventSize
@@ -641,7 +641,7 @@ namespace Svc {
     ASSERT_TLM_CommandsExecuted(0, 1);
   }
 
-  void Tester ::
+  void FileManagerTester ::
     assertFileContent(
           const char *const fileName,
           const char *const expectedString,
@@ -658,7 +658,7 @@ namespace Svc {
     ASSERT_STREQ(expectedString, fileString);
   }
 
-  void Tester ::
+  void FileManagerTester ::
     assertFailure(const FwOpcodeType opcode) const
   {
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -675,7 +675,7 @@ namespace Svc {
     ASSERT_TLM_Errors_SIZE(1);
     ASSERT_TLM_Errors(0, 1);
   }
-  void Tester ::
+  void FileManagerTester ::
     from_pingOut_handler(
         const NATIVE_INT_TYPE portNum,
         U32 key

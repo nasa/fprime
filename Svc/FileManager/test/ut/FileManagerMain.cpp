@@ -2,80 +2,80 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "FileManagerTester.hpp"
 
 TEST(Test, createDirectorySucceed) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.createDirectorySucceed();
 }
 
 TEST(Test, createDirectoryFail) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.createDirectoryFail();
 }
 
 TEST(Test, moveFileSucceed) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.moveFileSucceed();
 }
 
 TEST(Test, moveFileFail) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.moveFileFail();
 }
 
 TEST(Test, removeDirectorySucceed) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.removeDirectorySucceed();
 }
 
 TEST(Test, removeDirectoryFail) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.removeDirectoryFail();
 }
 
 TEST(Test, removeFileSucceed) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.removeFileSucceed();
 }
 
 TEST(Test, removeFileFail) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.removeFileFail();
 }
 
 TEST(Test, shellCommandSucceed) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.shellCommandSucceed();
 }
 
 TEST(Test, shellCommandFail) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.shellCommandFail();
 }
 
 TEST(Test, appendFileSucceedNewFile) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.appendFileSucceed_newFile();
 }
 
 TEST(Test, appendFileSucceedExistingFile) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.appendFileSucceed_existingFile();
 }
 
 TEST(Test, appendFileFail) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.appendFileFail();
 }
 
 TEST(Test, fileSizeSucceed) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.fileSizeSucceed();
 }
 
 TEST(Test, fileSizeFail) {
-  Svc::Tester tester;
+  Svc::FileManagerTester tester;
   tester.fileSizeFail();
 }
 
