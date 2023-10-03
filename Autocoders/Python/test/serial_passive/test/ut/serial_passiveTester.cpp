@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "serial_passiveTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -22,8 +22,8 @@ namespace TestComponents {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  serial_passiveTester ::
+    serial_passiveTester() :
       TestSerialGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TestSerial")
   {
@@ -31,8 +31,8 @@ namespace TestComponents {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  serial_passiveTester ::
+    ~serial_passiveTester()
   {
 
   }
@@ -41,7 +41,7 @@ namespace TestComponents {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void serial_passiveTester ::
     toDo()
   {
     // TODO
@@ -51,7 +51,7 @@ namespace TestComponents {
   // Handlers for serial from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void serial_passiveTester ::
     from_SerialOut_handler(
         NATIVE_INT_TYPE portNum, //!< The port number
         Fw::SerializeBufferBase &Buffer //!< The serialization buffer
@@ -64,13 +64,13 @@ namespace TestComponents {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void serial_passiveTester ::
     connectPorts()
   {
 
   }
 
-  void Tester ::
+  void serial_passiveTester ::
     initComponents()
   {
     this->init();

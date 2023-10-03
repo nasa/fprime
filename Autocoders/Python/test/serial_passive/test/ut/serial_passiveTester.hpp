@@ -13,12 +13,12 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "serial_passiveGTestBase.hpp"
 #include "Autocoders/Python/test/serial_passive/TestSerialImpl.hpp"
 
 namespace TestComponents {
 
-  class Tester :
+  class serial_passiveTester :
     public TestSerialGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace TestComponents {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object serial_passiveTester
       //!
-      Tester();
+      serial_passiveTester();
 
-      //! Destroy object Tester
+      //! Destroy object serial_passiveTester
       //!
-      ~Tester();
+      ~serial_passiveTester();
 
     public:
 
