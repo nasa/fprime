@@ -1,15 +1,15 @@
 <h4><a href="/fprime/INSTALL.html">Getting Started</a></h4>
-<ul>
-  <!-- empty list for consistent spacing between items -->
-</ul>
+  <ul>
+    <!-- empty list for consistent spacing between items -->
+  </ul>
 <h4><a href="/fprime/Tutorials/README.html">Tutorials</a></h4>
-<ul>
-  <li><a href="https://fprime-community.github.io/fprime-tutorial-hello-world/">HelloWorld</a></li>
-  <li><a href="https://fprime-community.github.io/fprime-workshop-led-blinker/">LedBlinker</a></li>
-  <li><a href="https://fprime-community.github.io/fprime-tutorial-math-component/">MathComponent</a></li>
-  <li><a href="/fprime/Tutorials/CrossCompilationSetup/">Cross-Compilation Setup Tutorial</a></li>
-  <li><a href="https://fprime-community.github.io/fprime-tutorial-arduino-blinker/">Arduino LedBlinker</a></li>
-</ul>
+  <ul>
+    <li><a href="https://fprime-community.github.io/fprime-tutorial-hello-world/">HelloWorld</a></li>
+    <li><a href="https://fprime-community.github.io/fprime-workshop-led-blinker/">LedBlinker</a></li>
+    <li><a href="https://fprime-community.github.io/fprime-tutorial-math-component/">MathComponent</a></li>
+    <li><a href="/fprime/Tutorials/CrossCompilationSetup/">Cross-Compilation Setup Tutorial</a></li>
+    <li><a href="https://fprime-community.github.io/fprime-tutorial-arduino-blinker/">Arduino LedBlinker</a></li>
+  </ul>
 <h4><a href="/fprime/UsersGuide/guide.html">User Guide</a></h4>
   <ul>
     <details>
