@@ -19,7 +19,7 @@
 namespace Svc {
 
 
-class Tester : public FramerGTestBase {
+class FramerTester : public FramerGTestBase {
   public:
 
     // ----------------------------------------------------------------------
@@ -29,13 +29,13 @@ class Tester : public FramerGTestBase {
     //! Mock framing protocol
     class MockFramer : public FramingProtocol {
       public:
-        MockFramer(Tester& parent);
+        MockFramer(FramerTester& parent);
         void frame(
             const U8* const data,
             const U32 size,
             Fw::ComPacket::ComPacketType packet_type
         );
-        Tester& m_parent;
+        FramerTester& m_parent;
         bool m_do_not_send;
     };
 
@@ -45,11 +45,11 @@ class Tester : public FramerGTestBase {
 
   public:
 
-    //! Construct object Tester
-    Tester();
+    //! Construct object FramerTester
+    FramerTester();
 
-    //! Destroy object Tester
-    ~Tester();
+    //! Destroy object FramerTester
+    ~FramerTester();
 
   public:
 

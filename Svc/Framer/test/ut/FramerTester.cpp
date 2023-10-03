@@ -10,16 +10,16 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "FramerTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 1000
 
 namespace Svc {
 
-Tester::MockFramer::MockFramer(Tester& parent) : m_parent(parent), m_do_not_send(false) {}
+FramerTester::MockFramer::MockFramer(FramerTester& parent) : m_parent(parent), m_do_not_send(false) {}
 
-void Tester::MockFramer::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
+void FramerTester::MockFramer::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
     // When testing without the send case, disable all mock functions
     if (!m_do_not_send) {
         Fw::Buffer buffer(const_cast<U8*>(data), size);
@@ -33,7 +33,7 @@ void Tester::MockFramer::frame(const U8* const data, const U32 size, Fw::ComPack
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester()
+FramerTester ::FramerTester()
     : FramerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Framer"),
       m_mock(*this),
@@ -48,13 +48,13 @@ Tester ::Tester()
     component.setup(this->m_mock);
 }
 
-Tester ::~Tester() {}
+FramerTester ::~FramerTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::test_com(U32 iterations) {
+void FramerTester ::test_com(U32 iterations) {
     for (U32 i = 0; i < iterations; i++) {
         Fw::ComBuffer com;
         m_buffer.set(com.getBuffAddr(), com.getBuffLength());
@@ -72,7 +72,7 @@ void Tester ::test_com(U32 iterations) {
     }
 }
 
-void Tester ::test_buffer(U32 iterations) {
+void FramerTester ::test_buffer(U32 iterations) {
     for (U32 i = 0; i < iterations; i++) {
         Fw::Buffer buffer(new U8[3412], 3412);
         m_framed = false;
@@ -90,7 +90,7 @@ void Tester ::test_buffer(U32 iterations) {
     }
 }
 
-void Tester ::test_status_pass_through() {
+void FramerTester ::test_status_pass_through() {
     // Check not always success
     Fw::Success status = Fw::Success::FAILURE;
     invoke_to_comStatusIn(0, status);
@@ -102,7 +102,7 @@ void Tester ::test_status_pass_through() {
     ASSERT_from_comStatusOut(1, status);
 }
 
-void Tester ::test_no_send_status() {
+void FramerTester ::test_no_send_status() {
     Fw::Success status = Fw::Success::SUCCESS;
     m_mock.m_do_not_send = true;
     // Send com buffer and check no send and a status
@@ -121,7 +121,7 @@ void Tester ::test_no_send_status() {
     test_status_pass_through();
 }
 
-void Tester ::check_last_buffer(Fw::Buffer buffer) {
+void FramerTester ::check_last_buffer(Fw::Buffer buffer) {
     ASSERT_EQ(buffer, m_buffer);
 }
 
@@ -129,20 +129,20 @@ void Tester ::check_last_buffer(Fw::Buffer buffer) {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void FramerTester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_bufferDeallocate(fwBuffer);
     m_returned = true;
     delete[] fwBuffer.getData();
 }
 
-Fw::Buffer Tester ::from_framedAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
+Fw::Buffer FramerTester ::from_framedAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
     this->pushFromPortEntry_framedAllocate(size);
     Fw::Buffer buffer(new U8[size], size);
     m_buffer = buffer;
     return buffer;
 }
 
-Drv::SendStatus Tester ::from_framedOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& sendBuffer) {
+Drv::SendStatus FramerTester ::from_framedOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& sendBuffer) {
     this->pushFromPortEntry_framedOut(sendBuffer);
     this->check_last_buffer(sendBuffer);
     delete[] sendBuffer.getData();
@@ -153,7 +153,7 @@ Drv::SendStatus Tester ::from_framedOut_handler(const NATIVE_INT_TYPE portNum, F
     return m_sendStatus;
 }
 
-void Tester ::from_comStatusOut_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
+void FramerTester ::from_comStatusOut_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
     this->pushFromPortEntry_comStatusOut(condition);
 }
 
@@ -161,7 +161,7 @@ void Tester ::from_comStatusOut_handler(const NATIVE_INT_TYPE portNum, Fw::Succe
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {
+void FramerTester ::connectPorts() {
     // comIn
     this->connect_to_comIn(0, this->component.get_comIn_InputPort(0));
 
@@ -184,12 +184,12 @@ void Tester ::connectPorts() {
     this->component.set_comStatusOut_OutputPort(0, this->get_from_comStatusOut(0));
 }
 
-void Tester ::initComponents() {
+void FramerTester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }
 
-void Tester ::setSendStatus(Drv::SendStatus sendStatus) {
+void FramerTester ::setSendStatus(Drv::SendStatus sendStatus) {
     m_sendStatus = sendStatus;
 }
 
