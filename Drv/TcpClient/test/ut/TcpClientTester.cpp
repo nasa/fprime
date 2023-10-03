@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  Tester.cpp
+// \title  TcpClientTester.cpp
 // \author mstarch
-// \brief  cpp file for Tester of TcpClient
+// \brief  cpp file for TcpClientTester of TcpClient
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
@@ -9,7 +9,7 @@
 // acknowledged.
 //
 // ======================================================================
-#include "Tester.hpp"
+#include "TcpClientTester.hpp"
 #include "STest/Pick/Pick.hpp"
 #include <Os/Log.hpp>
 #include <Drv/Ip/test/ut/PortSelector.hpp>
@@ -23,7 +23,7 @@ namespace Drv {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
+void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
     U8 buffer[sizeof(m_data_storage)] = {};
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
@@ -95,7 +95,7 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
     ASSERT_from_ready_SIZE(iterations);
 }
 
-Tester ::Tester()
+TcpClientTester ::TcpClientTester()
     : TcpClientGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TcpClient"),
       m_data_buffer(m_data_storage, 0), m_spinner(true) {
@@ -104,26 +104,26 @@ Tester ::Tester()
     ::memset(m_data_storage, 0, sizeof(m_data_storage));
 }
 
-Tester ::~Tester() {}
+TcpClientTester ::~TcpClientTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
 
-void Tester ::test_basic_messaging() {
+void TcpClientTester ::test_basic_messaging() {
     test_with_loop(1);
 }
 
-void Tester ::test_multiple_messaging() {
+void TcpClientTester ::test_multiple_messaging() {
     test_with_loop(100);
 }
 
-void Tester ::test_receive_thread() {
+void TcpClientTester ::test_receive_thread() {
     test_with_loop(1, true);
 }
 
-void Tester ::test_advanced_reconnect() {
+void TcpClientTester ::test_advanced_reconnect() {
     test_with_loop(10, true); // Up to 10 * RECONNECT_MS
 }
 
@@ -131,7 +131,7 @@ void Tester ::test_advanced_reconnect() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-  void Tester ::
+  void TcpClientTester ::
     from_recv_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &recvBuffer,
@@ -146,11 +146,11 @@ void Tester ::test_advanced_reconnect() {
     delete[] recvBuffer.getData();
 }
 
-void Tester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
+void TcpClientTester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
     this->pushFromPortEntry_ready();
 }
 
-Fw::Buffer Tester ::
+Fw::Buffer TcpClientTester ::
     from_allocate_handler(
         const NATIVE_INT_TYPE portNum,
         U32 size
@@ -162,7 +162,7 @@ Fw::Buffer Tester ::
     return buffer;
   }
 
-  void Tester ::
+  void TcpClientTester ::
     from_deallocate_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer
