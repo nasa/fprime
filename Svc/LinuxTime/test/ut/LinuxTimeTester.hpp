@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// Tester.hpp
+// LinuxTimeTester.hpp
 // ----------------------------------------------------------------------
 
 #ifndef TESTER_HPP
@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class LinuxTimeTester :
     public TimeGTestBase
   {
 
@@ -20,9 +20,9 @@ namespace Svc {
 
     public:
 
-      Tester(const char *const compName);
+      LinuxTimeTester(const char *const compName);
 
-      ~Tester();
+      ~LinuxTimeTester();
 
       // ----------------------------------------------------------------------
       // Tests

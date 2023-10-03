@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <strings.h>
 
-#include "Tester.hpp"
+#include "LinuxTimeTester.hpp"
 
 #define INSTANCE 0
 
@@ -15,8 +15,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester(const char *const compName) :
+  LinuxTimeTester ::
+    LinuxTimeTester(const char *const compName) :
       TimeGTestBase(compName, 0),
       linuxTime("LinuxTime")
   {
@@ -28,8 +28,8 @@ namespace Svc {
     );
   }
 
-  Tester ::
-    ~Tester()
+  LinuxTimeTester ::
+    ~LinuxTimeTester()
   {
 
   }
@@ -38,7 +38,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxTimeTester ::
     getTime()
   {
     Fw::Time time;
