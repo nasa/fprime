@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "HealthTester.hpp"
 #include <Fw/Test/UnitTest.hpp>
 
 #define INSTANCE 0
@@ -26,8 +26,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  HealthTester ::
+    HealthTester() :
       HealthGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Health")
   {
@@ -35,8 +35,8 @@ namespace Svc {
     this->initComponents();
   }
 
-  Tester ::
-    ~Tester()
+  HealthTester ::
+    ~HealthTester()
   {
 
   }
@@ -45,7 +45,7 @@ namespace Svc {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void HealthTester ::
     from_PingSend_handler(
         const NATIVE_INT_TYPE portNum,
         U32 key
@@ -66,7 +66,7 @@ namespace Svc {
     this->pushFromPortEntry_PingSend(key);
   }
 
-  void Tester ::
+  void HealthTester ::
     from_WdogStroke_handler(
         const NATIVE_INT_TYPE portNum,
         U32 code
@@ -79,7 +79,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void HealthTester ::
     connectPorts()
   {
 
@@ -155,7 +155,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void HealthTester ::
     initComponents()
   {
     this->init();
@@ -183,7 +183,7 @@ namespace Svc {
     }
   }
 
-  void Tester ::
+  void HealthTester ::
   	  dispatchAll()
   {
 	  HealthComponentBase::MsgDispatchStatus stat = HealthComponentBase::MSG_DISPATCH_OK;
@@ -197,7 +197,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void HealthTester ::
   nominalTlm()
   {
 	  TEST_CASE(900.1.1,"Nominal Telemetry");
@@ -233,7 +233,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void HealthTester ::
   warningTlm()
   {
       TEST_CASE(900.1.2,"Warning Telemetry");
@@ -267,7 +267,7 @@ namespace Svc {
   }
 
 
-  void Tester ::
+  void HealthTester ::
   faultTlm()
   {
       TEST_CASE(900.1.3,"Fault Telemetry");
@@ -322,7 +322,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void HealthTester ::
   disableAllMonitoring()
   {
       TEST_CASE(900.1.4,"Enable/Disable all monitoring");
@@ -412,7 +412,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void HealthTester ::
   disableOneMonitoring()
   {
       TEST_CASE(900.1.5,"Enable/Disable individual monitors");
@@ -476,7 +476,7 @@ namespace Svc {
       }
   }
 
-  void Tester ::
+  void HealthTester ::
   updatePingTimeout()
   {
       TEST_CASE(900.1.6,"Update ping timeouts");
@@ -514,7 +514,7 @@ namespace Svc {
       }
   }
 
-  void Tester ::
+  void HealthTester ::
   watchdogCheck()
   {
       TEST_CASE(900.1.7,"Watchdog check");
@@ -536,7 +536,7 @@ namespace Svc {
       }
   }
 
-  void Tester ::
+  void HealthTester ::
   nominalCmd()
   {
 	  TEST_CASE(900.1.8,"Nominal Command");
@@ -586,7 +586,7 @@ namespace Svc {
   }
 
 
-  void Tester ::
+  void HealthTester ::
   nominal2CmdsDuringTlm()
   {
 	  TEST_CASE(900.1.9,"Nominal 2 commands called during telemetry readouts.");
@@ -633,7 +633,7 @@ namespace Svc {
   }
 
 
-  void Tester ::
+  void HealthTester ::
   miscellaneous()
   {
       TEST_CASE(900.1.10,"Miscellaneous remaining tests.");
@@ -756,7 +756,7 @@ namespace Svc {
 
   }
 
-  void Tester::textLogIn(const FwEventIdType id, //!< The event ID
+  void HealthTester::textLogIn(const FwEventIdType id, //!< The event ID
           const Fw::Time& timeTag, //!< The time
           const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string

@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class HealthTester :
     public HealthGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object HealthTester
       //!
-      Tester();
+      HealthTester();
 
-      //! Destroy object Tester
+      //! Destroy object HealthTester
       //!
-      ~Tester();
+      ~HealthTester();
 
     public:
 
