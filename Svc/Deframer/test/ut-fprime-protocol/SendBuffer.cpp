@@ -12,18 +12,18 @@
 namespace Svc {
 
     SendBuffer :: SendBuffer() :
-        STest::Rule<Tester>("SendBuffer"),
+        STest::Rule<DeframerTester>("SendBuffer"),
         expectedComCount(0),
         expectedBuffCount(0)
     {
 
     }
 
-    bool SendBuffer :: precondition(const Svc::Tester &state) {
+    bool SendBuffer :: precondition(const Svc::DeframerTester &state) {
         return state.m_framesToSend.size() > 0;
     }
 
-    void SendBuffer :: action(Svc::Tester &state) {
+    void SendBuffer :: action(Svc::DeframerTester &state) {
 
         PRINT("----------------------------------------------------------------------");
         PRINT("SendBuffer action");
@@ -49,7 +49,7 @@ namespace Svc {
 
     }
 
-    void SendBuffer :: fillIncomingBuffer(Svc::Tester &state) {
+    void SendBuffer :: fillIncomingBuffer(Svc::DeframerTester &state) {
 
         // Get the size of the incoming buffer
         const U32 incomingBufferSize = state.m_incomingBuffer.getSize();
@@ -84,7 +84,7 @@ namespace Svc {
             }
 
             // Get the frame from the head of the sending queue
-            Tester::UplinkFrame& frame = state.m_framesToSend.front();
+            DeframerTester::UplinkFrame& frame = state.m_framesToSend.front();
 
             // Compute the amount to copy
             const U32 frameAvailable = frame.getRemainingCopySize();
@@ -124,8 +124,8 @@ namespace Svc {
     }
 
     void SendBuffer :: recordReceivedFrame(
-        Svc::Tester& state,
-        Svc::Tester::UplinkFrame& frame
+        Svc::DeframerTester& state,
+        Svc::DeframerTester::UplinkFrame& frame
     ) {
         if (frame.isValid()) {
             // Push frame F on the received queue

@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Tester.cpp
+// \title  DeframerTester.cpp
 // \brief  Implementation file for Deframer test with F Prime protocol
 // \author mstarch, bocchino
 //
@@ -13,7 +13,7 @@
 #include <limits>
 
 #include "Fw/Types/Assert.hpp"
-#include "Tester.hpp"
+#include "DeframerTester.hpp"
 #include "Utils/Hash/Hash.hpp"
 #include "Utils/Hash/HashBuffer.hpp"
 
@@ -26,7 +26,7 @@ namespace Svc {
     // Constructor
     // ----------------------------------------------------------------------
 
-    Tester ::Tester(InputMode::t inputMode)
+    DeframerTester ::DeframerTester(InputMode::t inputMode)
         : DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
           component("Deframer"),
           m_inputMode(inputMode)
@@ -41,7 +41,7 @@ namespace Svc {
     // Tests
     // ----------------------------------------------------------------------
 
-    void Tester ::sizeOverflow() {
+    void DeframerTester ::sizeOverflow() {
         U8 data[FpFrameHeader::SIZE];
         Fw::Buffer buffer(data, sizeof data);
         Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
@@ -59,7 +59,7 @@ namespace Svc {
     // Public instance methods
     // ----------------------------------------------------------------------
 
-    void Tester ::setUpIncomingBuffer() {
+    void DeframerTester ::setUpIncomingBuffer() {
         const U32 bufferSize = STest::Pick::lowerUpper(
             1,
             sizeof m_incomingBufferBytes
@@ -71,7 +71,7 @@ namespace Svc {
         );
     }
 
-    void Tester ::sendIncomingBuffer() {
+    void DeframerTester ::sendIncomingBuffer() {
         switch (m_inputMode) {
             case InputMode::PUSH:
                 // Push buffer to framedIn
@@ -95,7 +95,7 @@ namespace Svc {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    void Tester ::from_comOut_handler(
+    void DeframerTester ::from_comOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::ComBuffer& data,
         U32 context
@@ -119,7 +119,7 @@ namespace Svc {
         this->pushFromPortEntry_comOut(data, context);
     }
 
-    void Tester ::from_bufferOut_handler(
+    void DeframerTester ::from_bufferOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& fwBuffer
     ) {
@@ -150,7 +150,7 @@ namespace Svc {
         this->pushFromPortEntry_bufferOut(fwBuffer);
     }
 
-    Fw::Buffer Tester ::from_bufferAllocate_handler(
+    Fw::Buffer DeframerTester ::from_bufferAllocate_handler(
         const NATIVE_INT_TYPE portNum,
         U32 size
     ) {
@@ -161,7 +161,7 @@ namespace Svc {
         return buffer;
     }
 
-    void Tester ::from_bufferDeallocate_handler(
+    void DeframerTester ::from_bufferDeallocate_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& fwBuffer
     ) {
@@ -169,14 +169,14 @@ namespace Svc {
         this->pushFromPortEntry_bufferDeallocate(fwBuffer);
     }
 
-    void Tester ::from_framedDeallocate_handler(
+    void DeframerTester ::from_framedDeallocate_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& fwBuffer
     ) {
         this->pushFromPortEntry_framedDeallocate(fwBuffer);
     }
 
-    Drv::PollStatus Tester ::from_framedPoll_handler(
+    Drv::PollStatus DeframerTester ::from_framedPoll_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& pollBuffer
     ) {
@@ -195,7 +195,7 @@ namespace Svc {
     // Helper methods
     // ----------------------------------------------------------------------
 
-    void Tester ::connectPorts() {
+    void DeframerTester ::connectPorts() {
 
         // bufferAllocate
         this->component.set_bufferAllocate_OutputPort(
@@ -253,7 +253,7 @@ namespace Svc {
 
     }
 
-    void Tester ::initComponents() {
+    void DeframerTester ::initComponents() {
         this->init();
         this->component.init(INSTANCE);
     }

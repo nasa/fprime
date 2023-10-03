@@ -11,7 +11,7 @@
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
 #include "SendBuffer.hpp"
-#include "Tester.hpp"
+#include "DeframerTester.hpp"
 
 #define STEP_COUNT 10000
 
@@ -23,27 +23,27 @@
 // ----------------------------------------------------------------------
 
 //! Run a random scenario
-static void runRandomScenario(Svc::Tester::InputMode::t inputMode) {
-    Svc::Tester tester(Svc::Tester::InputMode::PUSH);
+static void runRandomScenario(Svc::DeframerTester::InputMode::t inputMode) {
+    Svc::DeframerTester tester(Svc::DeframerTester::InputMode::PUSH);
 
     // Create rules, and assign them into the array
     Svc::GenerateFrames generateFrames;
     Svc::SendBuffer sendBuffer;
 
     // Setup a list of rules to choose from
-    STest::Rule<Svc::Tester>* rules[] = {
+    STest::Rule<Svc::DeframerTester>* rules[] = {
             &generateFrames,
             &sendBuffer
     };
     // Construct the random scenario and run it with the defined bounds
-    STest::RandomScenario<Svc::Tester> random(
+    STest::RandomScenario<Svc::DeframerTester> random(
         "Random Rules",
         rules,
         FW_NUM_ARRAY_ELEMENTS(rules)
     );
 
     // Setup a bounded scenario to run rules a set number of times
-    STest::BoundedScenario<Svc::Tester> bounded(
+    STest::BoundedScenario<Svc::DeframerTester> bounded(
         "Bounded Random Rules Scenario",
         random,
         STEP_COUNT
@@ -67,7 +67,7 @@ TEST(Nominal, BasicPush) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    Svc::Tester tester(Svc::Tester::InputMode::PUSH);
+    Svc::DeframerTester tester(Svc::DeframerTester::InputMode::PUSH);
     Svc::GenerateFrames().apply(tester);
     Svc::SendBuffer().apply(tester);
 }
@@ -83,7 +83,7 @@ TEST(Nominal, BasicPoll) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    Svc::Tester tester(Svc::Tester::InputMode::POLL);
+    Svc::DeframerTester tester(Svc::DeframerTester::InputMode::POLL);
     Svc::GenerateFrames().apply(tester);
     Svc::SendBuffer().apply(tester);
 }
@@ -98,7 +98,7 @@ TEST(Nominal, RandomPush) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    runRandomScenario(Svc::Tester::InputMode::PUSH);
+    runRandomScenario(Svc::DeframerTester::InputMode::PUSH);
 }
 
 TEST(Nominal, RandomPoll) {
@@ -112,12 +112,12 @@ TEST(Nominal, RandomPoll) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    runRandomScenario(Svc::Tester::InputMode::POLL);
+    runRandomScenario(Svc::DeframerTester::InputMode::POLL);
 }
 
 TEST(Error, SizeOverflow) {
     COMMENT("Test handling of size overflow in F Prime deframing protocol");
-    Svc::Tester tester(Svc::Tester::InputMode::PUSH);
+    Svc::DeframerTester tester(Svc::DeframerTester::InputMode::PUSH);
     tester.sizeOverflow();
 }
 

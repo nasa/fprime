@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Tester.hpp
+// \title  DeframerTester.hpp
 // \brief  Header file for Deframer test with F Prime protocol
 // \author mstarch, bocchino
 //
@@ -25,7 +25,7 @@
 
 namespace Svc {
 
-    class Tester : public DeframerGTestBase {
+    class DeframerTester : public DeframerGTestBase {
 
         // ----------------------------------------------------------------------
         // Friend classes
@@ -205,8 +205,8 @@ namespace Svc {
         // Constructor
         // ----------------------------------------------------------------------
 
-        //! Construct a Tester
-        Tester(InputMode::t inputMode);
+        //! Construct a DeframerTester
+        DeframerTester(InputMode::t inputMode);
 
       public:
 
@@ -302,10 +302,10 @@ namespace Svc {
         //! The deframing protocol
         Svc::FprimeDeframing protocol;
 
-        //! Frames that the Tester should send to the Deframer
+        //! Frames that the DeframerTester should send to the Deframer
         std::deque<UplinkFrame> m_framesToSend;
 
-        //! Frames that the Tester should receive from the Deframer
+        //! Frames that the DeframerTester should receive from the Deframer
         std::deque<UplinkFrame> m_framesToReceive;
 
         //! Byte store for the incoming buffer
