@@ -21,7 +21,7 @@
 
 namespace Drv {
 
-  class Tester :
+  class TcpServerTester :
     public TcpServerGTestBase
   {
       // Maximum size of histories storing events, telemetry, and port outputs
@@ -37,13 +37,13 @@ namespace Drv {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object TcpServerTester
       //!
-      Tester();
+      TcpServerTester();
 
-      //! Destroy object Tester
+      //! Destroy object TcpServerTester
       //!
-      ~Tester();
+      ~TcpServerTester();
 
     public:
 

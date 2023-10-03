@@ -2,25 +2,25 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "TcpServerTester.hpp"
 
 TEST(Nominal, BasicMessaging) {
-    Drv::Tester tester;
+    Drv::TcpServerTester tester;
     tester.test_basic_messaging();
 }
 
 TEST(Nominal, BasicReceiveThread) {
-    Drv::Tester tester;
+    Drv::TcpServerTester tester;
     tester.test_receive_thread();
 }
 
 TEST(Reconnect, MultiMessaging) {
-    Drv::Tester tester;
+    Drv::TcpServerTester tester;
     tester.test_multiple_messaging();
 }
 
 TEST(Reconnect, ReceiveThreadReconnect) {
-    Drv::Tester tester;
+    Drv::TcpServerTester tester;
     tester.test_advanced_reconnect();
 }
 
