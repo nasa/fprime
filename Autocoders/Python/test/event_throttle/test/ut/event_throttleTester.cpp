@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "event_throttleTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -21,8 +21,8 @@ namespace Somewhere {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  event_throttleTester ::
+    event_throttleTester() :
       TestLogGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TestLog")
   {
@@ -30,8 +30,8 @@ namespace Somewhere {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  event_throttleTester ::
+    ~event_throttleTester()
   {
 
   }
@@ -40,7 +40,7 @@ namespace Somewhere {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester::doEventThrottleTest() {
+  void event_throttleTester::doEventThrottleTest() {
       // should send up to EVENTID_SOMEEVENT_THROTTLE events
       for (NATIVE_UINT_TYPE call = 0; call < TestLogComponentBase::EVENTID_SOMEEVENT_THROTTLE; call++) {
           this->component.sendEvent(1, 2.0, 3);
@@ -74,7 +74,7 @@ namespace Somewhere {
   }
 
 
-  void Tester::textLogIn(
+  void event_throttleTester::textLogIn(
                   const FwEventIdType id, //!< The event ID
                   Fw::Time& timeTag, //!< The time
                   const Fw::LogSeverity severity, //!< The severity
@@ -89,7 +89,7 @@ namespace Somewhere {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void event_throttleTester ::
     connectPorts()
   {
 
@@ -119,7 +119,7 @@ namespace Somewhere {
 
   }
 
-  void Tester ::
+  void event_throttleTester ::
     initComponents()
   {
     this->init();

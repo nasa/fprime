@@ -13,12 +13,12 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "event_throttleGTestBase.hpp"
 #include "Autocoders/Python/test/event_throttle/TestLogImpl.hpp"
 
 namespace Somewhere {
 
-  class Tester :
+  class event_throttleTester :
     public TestLogGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace Somewhere {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object event_throttleTester
       //!
-      Tester();
+      event_throttleTester();
 
-      //! Destroy object Tester
+      //! Destroy object event_throttleTester
       //!
-      ~Tester();
+      ~event_throttleTester();
 
 
     public:
