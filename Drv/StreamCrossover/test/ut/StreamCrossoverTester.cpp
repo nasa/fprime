@@ -4,7 +4,7 @@
 // \brief  cpp file for StreamCrossover test harness implementation class
 // ======================================================================
 
-#include "Tester.hpp"
+#include "StreamCrossoverTester.hpp"
 
 namespace Drv {
 
@@ -12,17 +12,17 @@ namespace Drv {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
-      StreamCrossoverGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
+  StreamCrossoverTester ::
+    StreamCrossoverTester() :
+      StreamCrossoverGTestBase("Tester", StreamCrossoverTester::MAX_HISTORY_SIZE),
       component("StreamCrossover")
   {
     this->initComponents();
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  StreamCrossoverTester ::
+    ~StreamCrossoverTester()
   {
 
   }
@@ -31,7 +31,7 @@ namespace Drv {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void StreamCrossoverTester ::
     sendTestBuffer()
   {
     U8 testStr[6] = "test\n";
@@ -45,7 +45,7 @@ namespace Drv {
     ASSERT_from_streamOut(0, sendBuffer);
   }
 
-  void Tester ::
+  void StreamCrossoverTester ::
     testFail()
   {
     U8 testStr[6] = "test\n";
@@ -69,7 +69,7 @@ namespace Drv {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  Drv::SendStatus Tester ::
+  Drv::SendStatus StreamCrossoverTester ::
     from_streamOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &sendBuffer
@@ -88,7 +88,7 @@ namespace Drv {
     return Drv::SendStatus::SEND_OK;
   }
 
-  void Tester ::
+  void StreamCrossoverTester ::
     from_errorDeallocate_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer

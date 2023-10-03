@@ -2,15 +2,15 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "StreamCrossoverTester.hpp"
 
 TEST(Nominal, TestBuffer) {
-    Drv::Tester tester;
+    Drv::StreamCrossoverTester tester;
     tester.sendTestBuffer();
 }
 
 TEST(Nominal, TestFail) {
-    Drv::Tester tester;
+    Drv::StreamCrossoverTester tester;
     tester.testFail();
 }
 

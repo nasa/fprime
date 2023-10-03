@@ -12,7 +12,7 @@
 
 namespace Drv {
 
-  class Tester :
+  class StreamCrossoverTester :
     public StreamCrossoverGTestBase
   {
 
@@ -26,13 +26,13 @@ namespace Drv {
       // Instance ID supplied to the component instance under test
       static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
 
-      //! Construct object Tester
+      //! Construct object StreamCrossoverTester
       //!
-      Tester();
+      StreamCrossoverTester();
 
-      //! Destroy object Tester
+      //! Destroy object StreamCrossoverTester
       //!
-      ~Tester();
+      ~StreamCrossoverTester();
 
     public:
 
