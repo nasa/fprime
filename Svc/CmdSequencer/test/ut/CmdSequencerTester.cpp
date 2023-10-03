@@ -12,7 +12,7 @@
 #include "Os/Stubs/FileStubs.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
-#include "Svc/CmdSequencer/test/ut/Tester.hpp"
+#include "CmdSequencerTester.hpp"
 
 namespace Svc {
 
@@ -20,8 +20,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester(const SequenceFiles::File::Format::t format) :
+  CmdSequencerTester ::
+    CmdSequencerTester(const SequenceFiles::File::Format::t format) :
       CmdSequencerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("CmdSequencer"),
       format(format),
@@ -40,8 +40,8 @@ namespace Svc {
     this->component.regCommands();
   }
 
-  Tester ::
-    ~Tester()
+  CmdSequencerTester ::
+    ~CmdSequencerTester()
   {
     this->component.deallocateBuffer(this->mallocator);
   }
@@ -50,7 +50,7 @@ namespace Svc {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void CmdSequencerTester ::
     from_seqDone_handler(
       const NATIVE_INT_TYPE portNum,
       FwOpcodeType opCode,
@@ -61,7 +61,7 @@ namespace Svc {
     this->pushFromPortEntry_seqDone(opCode, cmdSeq, response);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     from_comCmdOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::ComBuffer &data,
@@ -71,7 +71,7 @@ namespace Svc {
     this->pushFromPortEntry_comCmdOut(data, context);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     from_pingOut_handler(
       const NATIVE_INT_TYPE portNum,
       U32 key
@@ -84,7 +84,7 @@ namespace Svc {
   // Virtual function interface
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void CmdSequencerTester ::
     executeCommandsAuto(
         const char *const fileName,
         const U32 numCommands,
@@ -95,7 +95,7 @@ namespace Svc {
     ASSERT_TRUE(false) << "executeCommandsAuto is not implemented\n";
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     executeCommandsError(
         const char *const fileName,
         const U32 numCommands
@@ -104,7 +104,7 @@ namespace Svc {
     ASSERT_TRUE(false) << "executeCommandsError is not implemented\n";
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     executeCommandsManual(
         const char *const fileName,
         const U32 numCommands
@@ -117,7 +117,7 @@ namespace Svc {
   // Tests parameterized by file type
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedAutoByCommand(
         SequenceFiles::File& file,
         const U32 numCommands,
@@ -127,7 +127,7 @@ namespace Svc {
     ASSERT_TRUE(false) << "parameterizedAutoByCommand is not implemented\n";
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedCancel(
         SequenceFiles::File& file,
         const U32 numCommands,
@@ -159,7 +159,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedFailedCommands(
         SequenceFiles::File& file,
         const U32 numCommands
@@ -190,7 +190,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedFileErrors(SequenceFiles::File& file)
   {
     this->parameterizedFileOpenErrors(file);
@@ -198,7 +198,7 @@ namespace Svc {
     this->parameterizedDataReadErrors(file);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedFileOpenErrors(SequenceFiles::File& file)
   {
     // Set the time
@@ -248,7 +248,7 @@ namespace Svc {
     this->openInterceptor.disable();
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedHeaderReadErrors(SequenceFiles::File& file)
   {
     // Set the time
@@ -295,7 +295,7 @@ namespace Svc {
     this->readInterceptor.disable();
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedDataReadErrors(SequenceFiles::File& file)
   {
     // Set the time
@@ -372,7 +372,7 @@ namespace Svc {
     this->readInterceptor.disable();
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedNeverLoaded()
   {
     // Try to run a sequence
@@ -390,7 +390,7 @@ namespace Svc {
     ASSERT_TLM_CS_Errors(0, 1);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedSequenceTimeout(SequenceFiles::File& file)
   {
 
@@ -450,7 +450,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedUnexpectedCommandResponse(
         SequenceFiles::File& file,
         const U32 numCommands,
@@ -468,7 +468,7 @@ namespace Svc {
     ASSERT_EVENTS_CS_UnexpectedCompletion(0, 0x10);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     parameterizedValidate(SequenceFiles::File& file)
   {
     // Set the time
@@ -485,7 +485,7 @@ namespace Svc {
   // Instance helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void CmdSequencerTester ::
     connectPorts()
   {
 
@@ -555,7 +555,7 @@ namespace Svc {
   }
 
 #if VERBOSE
-  void Tester ::
+  void CmdSequencerTester ::
     textLogIn(
         const FwEventIdType id, //!< The event ID
         Fw::Time& timeTag, //!< The time
@@ -568,14 +568,14 @@ namespace Svc {
   }
 #endif
 
-  void Tester ::
+  void CmdSequencerTester ::
     initComponents()
   {
     this->init();
     this->component.init(QUEUE_DEPTH, INSTANCE);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     setComponentSequenceFormat()
   {
     switch (this->format) {
@@ -591,7 +591,7 @@ namespace Svc {
     }
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     clearAndDispatch()
   {
     this->clearHistory();
@@ -601,7 +601,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     validateFile(const U32 cmdSeq, const char* const fileName)
   {
     // Validate the file
@@ -621,7 +621,7 @@ namespace Svc {
     ASSERT_EVENTS_CS_SequenceLoaded(0, fileName);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     loadSequence(const char* const fileName)
   {
     // Invoke the port
@@ -633,7 +633,7 @@ namespace Svc {
     ASSERT_EVENTS_CS_SequenceLoaded(0, fileName);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     runSequence(const U32 cmdSeq, const char* const fileName)
   {
     // Send run command
@@ -652,7 +652,7 @@ namespace Svc {
     ASSERT_EVENTS_CS_SequenceLoaded(0, fileName);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     runSequenceByPortCall(const char* const fileName)
   {
     // Invoke the port
@@ -667,7 +667,7 @@ namespace Svc {
     ASSERT_EVENTS_CS_PortSequenceStarted(0, fileName);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     runLoadedSequence()
   {
     // Invoke the port
@@ -683,7 +683,7 @@ namespace Svc {
     ASSERT_EVENTS_CS_PortSequenceStarted(0, fileName.toChar());
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     startNewSequence(const char *const fileName)
   {
     // Start the sequence
@@ -725,7 +725,7 @@ namespace Svc {
     ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     startSequence(const U32 cmdSeq, const char* const fileName)
   {
     // Send start command
@@ -744,7 +744,7 @@ namespace Svc {
     ASSERT_EVENTS_CS_CmdStarted(0, fileName);
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     cancelSequence(const U32 cmdSeq, const char* const fileName)
   {
     // Send cancel command
@@ -764,7 +764,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     goToManualMode(const U32 cmdSeq)
   {
     // Send manual command
@@ -786,7 +786,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     goToAutoMode(const U32 cmdSeq)
   {
     // Send auto command
@@ -802,7 +802,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void CmdSequencerTester ::
     stepSequence(const U32 cmdSeq)
   {
     // Send step command

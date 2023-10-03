@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Tester.hpp
+// \title  CmdSequencerTester.hpp
 // \author Bocchino/Canham
 // \brief  CmdSequencer test interface
 //
@@ -29,7 +29,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class CmdSequencerTester :
     public CmdSequencerGTestBase
   {
 
@@ -239,14 +239,14 @@ namespace Svc {
       // Construction and destruction
       // ----------------------------------------------------------------------
 
-      //! Construct object Tester
-      Tester(
+      //! Construct object CmdSequencerTester
+      CmdSequencerTester(
           const SequenceFiles::File::Format::t format =
           SequenceFiles::File::Format::F_PRIME //!< The file format to use
       );
 
-      //! Destroy object Tester
-      ~Tester();
+      //! Destroy object CmdSequencerTester
+      ~CmdSequencerTester();
 
     private:
 
