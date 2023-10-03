@@ -35,7 +35,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/activeTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/Tests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHandlers.cpp"
