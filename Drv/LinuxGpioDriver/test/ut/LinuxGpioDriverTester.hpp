@@ -18,7 +18,7 @@
 
 namespace Drv {
 
-  class Tester :
+  class LinuxGpioDriverTester :
     public LinuxGpioDriverTesterBase
   {
 
@@ -28,13 +28,13 @@ namespace Drv {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object LinuxGpioDriverTester
       //!
-      Tester();
+      LinuxGpioDriverTester();
 
-      //! Destroy object Tester
+      //! Destroy object LinuxGpioDriverTester
       //!
-      ~Tester();
+      ~LinuxGpioDriverTester();
 
     public:
 

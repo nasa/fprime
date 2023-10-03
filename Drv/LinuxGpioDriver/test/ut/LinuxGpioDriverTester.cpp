@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "LinuxGpioDriverTester.hpp"
 #include <Os/IntervalTimer.hpp>
 
 #define INSTANCE 0
@@ -26,8 +26,8 @@ namespace Drv {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  LinuxGpioDriverTester ::
+    LinuxGpioDriverTester() :
       LinuxGpioDriverTesterBase("Tester", MAX_HISTORY_SIZE),
       component("GP")
       ,m_cycles(0)
@@ -37,8 +37,8 @@ namespace Drv {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  LinuxGpioDriverTester ::
+    ~LinuxGpioDriverTester()
   {
 
   }
@@ -47,7 +47,7 @@ namespace Drv {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxGpioDriverTester ::
     testInterrupt(NATIVE_INT_TYPE gpio, NATIVE_INT_TYPE cycles)
   {
       // initialize the driver
@@ -86,7 +86,7 @@ namespace Drv {
 
   }
 
-  void Tester ::
+  void LinuxGpioDriverTester ::
     testOutput(NATIVE_INT_TYPE gpio, NATIVE_INT_TYPE cycles) {
 
       this->component.open(gpio,LinuxGpioDriverComponentImpl::GPIO_OUT);
@@ -105,7 +105,7 @@ namespace Drv {
       }
   }
 
-  void Tester ::
+  void LinuxGpioDriverTester ::
     testInput(NATIVE_INT_TYPE gpio, NATIVE_INT_TYPE cycles) {
 
       this->component.open(gpio,LinuxGpioDriverComponentImpl::GPIO_IN);
@@ -128,7 +128,7 @@ namespace Drv {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxGpioDriverTester ::
     from_intOut_handler(
         const NATIVE_INT_TYPE portNum,
         Svc::TimerVal &cycleStart
@@ -146,7 +146,7 @@ namespace Drv {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxGpioDriverTester ::
     connectPorts()
   {
 
@@ -190,7 +190,7 @@ namespace Drv {
 
   }
 
-  void Tester ::
+  void LinuxGpioDriverTester ::
     initComponents()
   {
     this->init();
@@ -199,7 +199,7 @@ namespace Drv {
     );
   }
 
-  void Tester::textLogIn(
+  void LinuxGpioDriverTester::textLogIn(
                    const FwEventIdType id, //!< The event ID
                    Fw::Time& timeTag, //!< The time
                    const Fw::TextLogSeverity severity, //!< The severity
