@@ -22,7 +22,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class FileDownlinkTester :
     public FileDownlinkGTestBase
   {
 
@@ -88,13 +88,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object FileDownlinkTester
       //!
-      Tester();
+      FileDownlinkTester();
 
-      //! Destroy object Tester
+      //! Destroy object FileDownlinkTester
       //!
-      ~Tester();
+      ~FileDownlinkTester();
 
     public:
 

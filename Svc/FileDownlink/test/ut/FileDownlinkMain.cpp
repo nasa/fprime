@@ -2,40 +2,40 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "FileDownlinkTester.hpp"
 
 TEST(FileDownlink, Downlink) {
-  Svc::Tester tester;
+  Svc::FileDownlinkTester tester;
   tester.downlink();
 }
 
 TEST(FileDownlink, FileOpenError) {
-  Svc::Tester tester;
+  Svc::FileDownlinkTester tester;
   tester.fileOpenError();
 }
 
 TEST(FileDownlink, CancelDownlink) {
-  Svc::Tester tester;
+  Svc::FileDownlinkTester tester;
   tester.cancelDownlink();
 }
 
 TEST(FileDownlink, CancelInIdleMode) {
-  Svc::Tester tester;
+  Svc::FileDownlinkTester tester;
   tester.cancelInIdleMode();
 }
 
 TEST(FileDownlink, DownlinkPartial) {
-  Svc::Tester tester;
+  Svc::FileDownlinkTester tester;
   tester.downlinkPartial();
 }
 
 TEST(FileDownlink, DownlinkTimeout) {
-    Svc::Tester tester;
+    Svc::FileDownlinkTester tester;
     tester.timeout();
 }
 
 TEST(FileDownlink, SendFilePort) {
-    Svc::Tester tester;
+    Svc::FileDownlinkTester tester;
     tester.sendFilePort();
 }
 

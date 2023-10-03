@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Tester.cpp
+// \title  FileDownlinkTester.cpp
 // \author bocchino
 // \brief  cpp file for FileDownlink test harness implementation class
 //
@@ -12,7 +12,7 @@
 #include <cerrno>
 #include <unistd.h>
 
-#include "Tester.hpp"
+#include "FileDownlinkTester.hpp"
 
 #define INSTANCE 0
 #define CMD_SEQ 0
@@ -28,8 +28,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  FileDownlinkTester ::
+    FileDownlinkTester() :
       FileDownlinkGTestBase("Tester", MAX_HISTORY_SIZE),
       component("FileDownlink"),
       buffers_index(0)
@@ -39,8 +39,8 @@ namespace Svc {
     this->initComponents();
   }
 
-  Tester ::
-    ~Tester()
+  FileDownlinkTester ::
+    ~FileDownlinkTester()
   {
       for (U32 i = 0; i < buffers_index; i++) {
           delete [] buffers[i];
@@ -51,7 +51,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void FileDownlinkTester ::
     downlink()
   {
     // Assert idle mode
@@ -108,7 +108,7 @@ namespace Svc {
     this->removeFile(sourceFileName);
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     fileOpenError()
   {
 
@@ -133,7 +133,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     cancelDownlink()
   {
     // Create a file
@@ -182,7 +182,7 @@ namespace Svc {
     this->removeFile(sourceFileName);
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     cancelInIdleMode()
   {
     // Assert idle mode
@@ -197,7 +197,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     downlinkPartial()
   {
     // Assert idle mode
@@ -270,7 +270,7 @@ namespace Svc {
 
   }
 
-    void Tester ::
+    void FileDownlinkTester ::
       timeout()
     {
         // Assert idle mode
@@ -324,7 +324,7 @@ namespace Svc {
         this->removeFile(sourceFileName);
     }
 
-    void Tester ::
+    void FileDownlinkTester ::
     sendFilePort()
   {
     // Create a file
@@ -393,7 +393,7 @@ namespace Svc {
   // Handlers for from ports
   // ----------------------------------------------------------------------
 
-   void Tester ::
+   void FileDownlinkTester ::
     from_bufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& buffer
@@ -411,7 +411,7 @@ namespace Svc {
     invoke_to_bufferReturn(0, buffer);
   }
 
-   void Tester ::
+   void FileDownlinkTester ::
      from_pingOut_handler(
          const NATIVE_INT_TYPE portNum,
          U32 key
@@ -420,7 +420,7 @@ namespace Svc {
         pushFromPortEntry_pingOut(key);
     }
 
-    void Tester ::
+    void FileDownlinkTester ::
       from_FileComplete_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const Svc::SendFileResponse& response
@@ -433,7 +433,7 @@ namespace Svc {
   // Private instance methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void FileDownlinkTester ::
     connectPorts()
   {
     // cmdIn
@@ -509,7 +509,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     initComponents()
   {
     this->init();
@@ -519,7 +519,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     sendFile(
         const char *const sourceFileName,
         const char *const destFileName,
@@ -549,7 +549,7 @@ namespace Svc {
     ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, response);
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     sendFilePartial(
       const char *const sourceFileName, //!< The source file name
       const char *const destFileName, //!< The destination file name
@@ -583,7 +583,7 @@ namespace Svc {
     ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDPARTIAL, CMD_SEQ, response);
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     cancel(const Fw::CmdResponse response)
   {
     // Command the File Downlink component to cancel a file downlink
@@ -599,7 +599,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     removeFile(const char *const name)
   {
     const NATIVE_INT_TYPE status = ::unlink(name);
@@ -613,7 +613,7 @@ namespace Svc {
   // Private static methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void FileDownlinkTester ::
     validatePacketHistory(
         const History<FromPortEntry_bufferSendOut>& historyIn,
         History<Fw::FilePacket::DataPacket>& historyOut,
@@ -663,7 +663,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     validateFilePacket(
         const Fw::Buffer& buffer,
         Fw::FilePacket& filePacket
@@ -673,7 +673,7 @@ namespace Svc {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     validateStartPacket(const Fw::Buffer& buffer)
   {
     Fw::FilePacket filePacket;
@@ -683,7 +683,7 @@ namespace Svc {
     ASSERT_EQ(Fw::FilePacket::T_START, header.type);
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     validateDataPacket(
         const Fw::Buffer& buffer,
         Fw::FilePacket::DataPacket& dataPacket,
@@ -701,7 +701,7 @@ namespace Svc {
     byteOffset += dataPacket.dataSize;
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     validateEndPacket(
         const Fw::Buffer& buffer,
         const U32 sequenceIndex,
@@ -719,7 +719,7 @@ namespace Svc {
     ASSERT_EQ(true, checksum == computedChecksum);
   }
 
-  void Tester ::
+  void FileDownlinkTester ::
     validateCancelPacket(
         const Fw::Buffer& buffer,
         const U32 sequenceIndex
