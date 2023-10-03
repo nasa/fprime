@@ -2,10 +2,10 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "noargportTester.hpp"
 
 TEST(Nominal, TestNoArgs) {
-    ExampleComponents::Tester tester;
+    ExampleComponents::noargportTester tester;
     tester.testNoArgs();
 }
 

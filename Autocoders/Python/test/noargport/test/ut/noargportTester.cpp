@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "noargportTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -22,8 +22,8 @@ namespace ExampleComponents {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  noargportTester ::
+    noargportTester() :
       ExampleGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Example")
   {
@@ -31,8 +31,8 @@ namespace ExampleComponents {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  noargportTester ::
+    ~noargportTester()
   {
 
   }
@@ -41,7 +41,7 @@ namespace ExampleComponents {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void noargportTester ::
     testNoArgs()
   {
     this->invoke_to_noArgPort(0);
@@ -55,7 +55,7 @@ namespace ExampleComponents {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void noargportTester ::
     connectPorts()
   {
 
@@ -90,7 +90,7 @@ namespace ExampleComponents {
 
   }
 
-  void Tester ::
+  void noargportTester ::
     initComponents()
   {
     this->init();

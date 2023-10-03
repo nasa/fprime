@@ -13,12 +13,12 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "noargportGTestBase.hpp"
 #include "Autocoders/Python/test/noargport/ExampleComponentImpl.hpp"
 
 namespace ExampleComponents {
 
-  class Tester :
+  class noargportTester :
     public ExampleGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace ExampleComponents {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object noargportTester
       //!
-      Tester();
+      noargportTester();
 
-      //! Destroy object Tester
+      //! Destroy object noargportTester
       //!
-      ~Tester();
+      ~noargportTester();
 
     public:
 
