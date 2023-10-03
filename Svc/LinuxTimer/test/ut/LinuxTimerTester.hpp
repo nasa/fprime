@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class LinuxTimerTester :
     public LinuxTimerGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object LinuxTimerTester
       //!
-      Tester();
+      LinuxTimerTester();
 
-      //! Destroy object Tester
+      //! Destroy object LinuxTimerTester
       //!
-      ~Tester();
+      ~LinuxTimerTester();
 
     public:
 

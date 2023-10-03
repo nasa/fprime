@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "LinuxTimerTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -21,8 +21,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  LinuxTimerTester ::
+    LinuxTimerTester() :
       LinuxTimerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxTimer")
       ,m_numCalls(0)
@@ -31,8 +31,8 @@ namespace Svc {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  LinuxTimerTester ::
+    ~LinuxTimerTester()
   {
 
   }
@@ -41,7 +41,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxTimerTester ::
       runCycles()
   {
     this->m_numCalls = 5;
@@ -52,7 +52,7 @@ namespace Svc {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxTimerTester ::
     from_CycleOut_handler(
         const NATIVE_INT_TYPE portNum,
         Svc::TimerVal &cycleStart
@@ -69,7 +69,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void LinuxTimerTester ::
     connectPorts()
   {
 
@@ -84,7 +84,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void LinuxTimerTester ::
     initComponents()
   {
     this->init();
