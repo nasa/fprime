@@ -4,7 +4,7 @@
 
 #include <cstdio>
 
-#include "Tester.hpp"
+#include "ComLoggerTester.hpp"
 #include "Fw/Cmd/CmdPacket.hpp"
 #include <Os/ValidateFile.hpp>
 #include <Os/FileSystem.hpp>
@@ -14,8 +14,8 @@
 
 namespace Svc {
 
-  Tester ::
-    Tester(
+  ComLoggerTester ::
+    ComLoggerTester(
         const char *const compName
     ) :
       ComLoggerGTestBase(compName, 30),
@@ -25,8 +25,8 @@ namespace Svc {
       this->initComponents();
   }
 
-  Tester ::
-    Tester(
+  ComLoggerTester ::
+    ComLoggerTester(
         const char *const compName,
         bool standardCLInit
     ) :
@@ -39,13 +39,13 @@ namespace Svc {
       (void)standardCLInit;
   }
 
-  Tester ::
-    ~Tester()
+  ComLoggerTester ::
+    ~ComLoggerTester()
   {
 
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     connectPorts()
   {
     comLogger.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
@@ -56,20 +56,20 @@ namespace Svc {
     comLogger.set_logOut_OutputPort(0, this->get_from_logOut(0));
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     initComponents()
   {
     this->init();
     this->comLogger.init(QUEUE_DEPTH, 0);
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     dispatchOne()
   {
     this->comLogger.doDispatch();
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     dispatchAll()
   {
     while(this->comLogger.m_queue.getNumMsgs() > 0)
@@ -79,7 +79,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
   // Tests
   // ----------------------------------------------------------------------
-  void Tester ::
+  void ComLoggerTester ::
     testLogging()
   {
       CHAR fileName[2048];
@@ -201,7 +201,7 @@ namespace Svc {
      }
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     testLoggingNoLength()
   {
       CHAR fileName[2048];
@@ -313,7 +313,7 @@ namespace Svc {
      }
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     openError()
   {
       // Construct illegal filePrefix, and set it via the friend:
@@ -401,7 +401,7 @@ namespace Svc {
       ASSERT_EVENTS_FileOpenError_SIZE(2);
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     writeError()
   {
       ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
@@ -488,7 +488,7 @@ namespace Svc {
       );
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     closeFileCommand()
   {
     Os::File file;
@@ -567,7 +567,7 @@ namespace Svc {
     file.close();
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     testLoggingWithInit()
   {
     CHAR fileName[2048];
@@ -687,7 +687,7 @@ namespace Svc {
    }
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     noInitError()
   {
     U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
@@ -708,7 +708,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void ComLoggerTester ::
     from_pingOut_handler(
         const NATIVE_INT_TYPE portNum,
         U32 key

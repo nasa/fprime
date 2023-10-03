@@ -4,40 +4,40 @@
 
 #include <iostream>
 
-#include "Tester.hpp"
+#include "ComLoggerTester.hpp"
 
 TEST(Test, testLogging) {
-  Svc::Tester tester("Tester");
+  Svc::ComLoggerTester tester("Tester");
   tester.testLogging();
 }
 
 TEST(Test, testLoggingNoLength) {
-  Svc::Tester tester("Tester");
+  Svc::ComLoggerTester tester("Tester");
   tester.testLoggingNoLength();
 }
 
 TEST(Test, openError) {
-  Svc::Tester tester("Tester");
+  Svc::ComLoggerTester tester("Tester");
   tester.openError();
 }
 
 TEST(Test, writeError) {
-  Svc::Tester tester("Tester");
+  Svc::ComLoggerTester tester("Tester");
   tester.writeError();
 }
 
 TEST(Test, closeFileCommand) {
-  Svc::Tester tester("Tester");
+  Svc::ComLoggerTester tester("Tester");
   tester.closeFileCommand();
 }
 
 TEST(Test, testLoggingWithInit) {
-  Svc::Tester tester("Tester", true);
+  Svc::ComLoggerTester tester("Tester", true);
   tester.testLoggingWithInit();
 }
 
 TEST(Test, noInitError) {
-  Svc::Tester tester("Tester", true);
+  Svc::ComLoggerTester tester("Tester", true);
   tester.noInitError();
 }
 

@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// Tester.hpp
+// ComLoggerTester.hpp
 // ----------------------------------------------------------------------
 
 #ifndef TESTER_HPP
@@ -18,17 +18,17 @@
 #define MAX_BYTES_PER_FILE_NO_LENGTH (MAX_ENTRIES_PER_FILE*COM_BUFFER_LENGTH)
 
 namespace Svc {
-  class Tester :
+  class ComLoggerTester :
     public ComLoggerGTestBase
   {
 
     public:
-      Tester(const char *const compName);
+      ComLoggerTester(const char *const compName);
 
       // This constructor will construct comLogger with its
       // standard constructor
-      Tester(const char *const compName, bool standardCLInit);
-      ~Tester();
+      ComLoggerTester(const char *const compName, bool standardCLInit);
+      ~ComLoggerTester();
 
       void testLogging();
       void testLoggingNoLength();
