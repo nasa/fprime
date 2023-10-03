@@ -12,19 +12,19 @@
 
 namespace Svc {
 
-class Tester : public TlmChanGTestBase {
+class TlmChanTester : public TlmChanGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
   public:
-    //! Construct object Tester
+    //! Construct object TlmChanTester
     //!
-    Tester();
+    TlmChanTester();
 
-    //! Destroy object Tester
+    //! Destroy object TlmChanTester
     //!
-    ~Tester();
+    ~TlmChanTester();
 
   public:
     // ----------------------------------------------------------------------

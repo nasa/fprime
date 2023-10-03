@@ -4,7 +4,7 @@
 // \brief  cpp file for TlmChan test harness implementation class
 // ======================================================================
 
-#include "Tester.hpp"
+#include "TlmChanTester.hpp"
 #include <Fw/Test/UnitTest.hpp>
 
 #define INSTANCE 0
@@ -21,19 +21,19 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester()
+TlmChanTester ::TlmChanTester()
     : TlmChanGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmChan"), m_numBuffs(0), m_bufferRecv(false) {
     this->initComponents();
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+TlmChanTester ::~TlmChanTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester::runNominalChannel() {
+void TlmChanTester::runNominalChannel() {
     this->clearBuffs();
     // send first buffer
     this->sendBuff(27, 10);
@@ -59,7 +59,7 @@ void Tester::runNominalChannel() {
     this->sendBuff(27, 20);
 }
 
-void Tester::runMultiChannel() {
+void TlmChanTester::runMultiChannel() {
     FwChanIdType ID_0[] = {// Test channel IDs
                            0x1000, 0x1001, 0x1002, 0x1003, 0x1004, 0x1005, 0x1100, 0x1101, 0x1102, 0x1103, 0x300,
                            0x301,  0x400,  0x401,  0x402,  0x100,  0x101,  0x102,  0x103,  0x104,  0x105};
@@ -112,7 +112,7 @@ void Tester::runMultiChannel() {
     }
 }
 
-void Tester::runOffNominal() {
+void TlmChanTester::runOffNominal() {
     // Ask for a packet that isn't written yet
     Fw::TlmBuffer buff;
     Fw::SerializeStatus stat;
@@ -133,14 +133,14 @@ void Tester::runOffNominal() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_PktSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void TlmChanTester ::from_PktSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_PktSend(data, context);
     this->m_bufferRecv = true;
     this->m_rcvdBuffer[this->m_numBuffs] = data;
     this->m_numBuffs++;
 }
 
-void Tester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+void TlmChanTester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
 }
 
@@ -148,7 +148,7 @@ void Tester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
 // Helper methods
 // ----------------------------------------------------------------------
 
-bool Tester::doRun(bool check) {
+bool TlmChanTester::doRun(bool check) {
     // execute run port to send packet
     this->invoke_to_Run(0, 0);
     // dispatch run message
@@ -160,7 +160,7 @@ bool Tester::doRun(bool check) {
     return this->m_bufferRecv;
 }
 
-void Tester::checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwChanIdType id, U32 val) {
+void TlmChanTester::checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwChanIdType id, U32 val) {
     Fw::Time timeTag;
     // deserialize packet
     Fw::SerializeStatus stat;
@@ -218,7 +218,7 @@ void Tester::checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwC
     }
 }
 
-void Tester::sendBuff(FwChanIdType id, U32 val) {
+void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
     Fw::TlmBuffer buff;
     Fw::TlmBuffer readBack;
     Fw::SerializeStatus stat;
@@ -253,14 +253,14 @@ void Tester::sendBuff(FwChanIdType id, U32 val) {
     ASSERT_EQ(retestVal, val);
 }
 
-void Tester::clearBuffs() {
+void TlmChanTester::clearBuffs() {
     this->m_numBuffs = 0;
     for (NATIVE_INT_TYPE n = 0; n < TLMCHAN_HASH_BUCKETS; n++) {
         this->m_rcvdBuffer[n].resetSer();
     }
 }
 
-void Tester::dumpTlmEntry(TlmChan::TlmEntry* entry) {
+void TlmChanTester::dumpTlmEntry(TlmChan::TlmEntry* entry) {
     printf(
         "Entry "
         " Ptr: %p"
@@ -270,7 +270,7 @@ void Tester::dumpTlmEntry(TlmChan::TlmEntry* entry) {
         static_cast<void*>(entry), entry->id, entry->bucketNo, static_cast<void*>(entry->next));
 }
 
-void Tester::dumpHash() {
+void TlmChanTester::dumpHash() {
     //        printf("**Buffer 0\n");
     for (NATIVE_INT_TYPE slot = 0; slot < TLMCHAN_NUM_TLM_HASH_SLOTS; slot++) {
         printf("Slot: %d\n", slot);
@@ -317,7 +317,7 @@ void Tester::dumpHash() {
     //        }
 }
 
-void Tester ::connectPorts() {
+void TlmChanTester ::connectPorts() {
     // Run
     this->connect_to_Run(0, this->component.get_Run_InputPort(0));
 
@@ -337,7 +337,7 @@ void Tester ::connectPorts() {
     this->component.set_pingOut_OutputPort(0, this->get_from_pingOut(0));
 }
 
-void Tester ::initComponents() {
+void TlmChanTester ::initComponents() {
     this->init();
     this->component.init(QUEUE_DEPTH, INSTANCE);
 }
