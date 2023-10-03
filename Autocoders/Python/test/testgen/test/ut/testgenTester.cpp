@@ -1,4 +1,4 @@
-#include "Tester.hpp"
+#include "testgenTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -10,8 +10,8 @@ namespace Ref {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  testgenTester ::
+    testgenTester() :
       MathSenderGTestBase("Tester", MAX_HISTORY_SIZE),
       component("MathSender")
   {
@@ -19,8 +19,8 @@ namespace Ref {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  testgenTester ::
+    ~testgenTester()
   {
 
   }
@@ -28,7 +28,7 @@ namespace Ref {
   // ----------------------------------------------------------------------
   // Tests
   // ----------------------------------------------------------------------
-  void Tester ::
+  void testgenTester ::
     testAddCommand()
   {
       // send MS_DO_MATH command
@@ -82,7 +82,7 @@ namespace Ref {
       ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
 
-  void Tester ::
+  void testgenTester ::
     testSubCommand()
   {
       // send MS_DO_MATH command
@@ -136,7 +136,7 @@ namespace Ref {
       ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
 
-  void Tester ::
+  void testgenTester ::
     testMultCommand()
   {
       // send MS_DO_MATH command
@@ -190,7 +190,7 @@ namespace Ref {
       ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
 
-  void Tester ::
+  void testgenTester ::
     testDivCommand()
   {
       // send MS_DO_MATH command
@@ -243,7 +243,7 @@ namespace Ref {
       // verify the expect value of the event
       ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
-  void Tester ::
+  void testgenTester ::
     toDo()
   {
     // TODO
@@ -253,7 +253,7 @@ namespace Ref {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void testgenTester ::
     from_mathOut_handler(
         const NATIVE_INT_TYPE portNum,
         F32 val1,
@@ -268,7 +268,7 @@ namespace Ref {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void testgenTester ::
     connectPorts()
   {
 
@@ -327,7 +327,7 @@ namespace Ref {
     );
   }
 
-  void Tester ::
+  void testgenTester ::
     initComponents()
   {
     this->init();

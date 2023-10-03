@@ -1,19 +1,19 @@
-#include "Tester.hpp"
+#include "testgenTester.hpp"
 
 TEST(Nominal, TestAddCommand) {
-    Ref::Tester tester;
+    Ref::testgenTester tester;
     tester.testAddCommand();
 }
 TEST(Nominal, TestSubCommand) {
-    Ref::Tester tester;
+    Ref::testgenTester tester;
     tester.testSubCommand();
 }
 TEST(Nominal, TestMultCommand) {
-    Ref::Tester tester;
+    Ref::testgenTester tester;
     tester.testMultCommand();
 }
 TEST(Nominal, TestDivCommand) {
-    Ref::Tester tester;
+    Ref::testgenTester tester;
     tester.testDivCommand();
 }
 

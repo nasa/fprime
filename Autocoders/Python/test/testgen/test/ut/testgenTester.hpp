@@ -1,12 +1,12 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "testgenGTestBase.hpp"
 #include "Autocoders/Python/test/testgen/MathSenderComponentImpl.hpp"
 
 namespace Ref {
 
-  class Tester :
+  class testgenTester :
     public MathSenderGTestBase
   {
 
@@ -16,13 +16,13 @@ namespace Ref {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object testgenTester
       //!
-      Tester();
+      testgenTester();
 
-      //! Destroy object Tester
+      //! Destroy object testgenTester
       //!
-      ~Tester();
+      ~testgenTester();
 
     public:
 
