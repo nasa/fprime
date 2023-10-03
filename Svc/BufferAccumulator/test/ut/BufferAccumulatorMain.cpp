@@ -14,19 +14,19 @@
 #include "Drain.hpp"
 #include "Errors.hpp"
 #include "Health.hpp"
-#include "Tester.hpp"
+#include "BufferAccumulatorTester.hpp"
 
 // ----------------------------------------------------------------------
 // Test Errors
 // ----------------------------------------------------------------------
 
 TEST(TestErrors, QueueFull) {
-  Svc::Errors::Tester tester;
+  Svc::Errors::BufferAccumulatorTester tester;
   tester.QueueFull();
 }
 
 TEST(TestErrors, PartialDrain) {
-  Svc::Errors::Tester tester;
+  Svc::Errors::BufferAccumulatorTester tester;
   tester.PartialDrain();
 }
 
@@ -35,7 +35,7 @@ TEST(TestErrors, PartialDrain) {
 // ----------------------------------------------------------------------
 
 TEST(TestAccumulate, OK) {
-  Svc::Accumulate::Tester tester;
+  Svc::Accumulate::BufferAccumulatorTester tester;
   tester.OK();
 }
 
@@ -44,12 +44,12 @@ TEST(TestAccumulate, OK) {
 // ----------------------------------------------------------------------
 
 TEST(TestDrain, OK) {
-  Svc::Drain::Tester tester;
+  Svc::Drain::BufferAccumulatorTester tester;
   tester.OK();
 }
 
 TEST(TestPartialDrain, OK) {
-  Svc::Drain::Tester tester;
+  Svc::Drain::BufferAccumulatorTester tester;
   tester.PartialDrainOK();
 }
 
@@ -58,7 +58,7 @@ TEST(TestPartialDrain, OK) {
 // ----------------------------------------------------------------------
 
 TEST(TestHealth, Ping) {
-  Svc::Health::Tester tester;
+  Svc::Health::BufferAccumulatorTester tester;
   tester.Ping();
 }
 

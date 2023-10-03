@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Tester.hpp
+// \title  BufferAccumulatorTester.hpp
 // \author bocchino, mereweth
 // \brief  BufferAccumulator test harness implementation
 //
@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "BufferAccumulatorTester.hpp"
 
 #include "Fw/Types/BasicTypes.hpp"
 
@@ -26,7 +26,7 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester(bool doAllocateQueue)
+BufferAccumulatorTester ::BufferAccumulatorTester(bool doAllocateQueue)
     :
 #if FW_OBJECT_NAMES == 1
       BufferAccumulatorGTestBase("Tester", MAX_HISTORY_SIZE),
@@ -50,7 +50,7 @@ Tester ::Tester(bool doAllocateQueue)
   }
 }
 
-Tester ::~Tester() {
+BufferAccumulatorTester ::~BufferAccumulatorTester() {
   if (this->doAllocateQueue) {
     Fw::MallocAllocator buffAccumMallocator;
     this->component.deallocateQueue(buffAccumMallocator);
@@ -61,17 +61,17 @@ Tester ::~Tester() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_bufferSendOutDrain_handler(const NATIVE_INT_TYPE portNum,
+void BufferAccumulatorTester ::from_bufferSendOutDrain_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer& fwBuffer) {
   this->pushFromPortEntry_bufferSendOutDrain(fwBuffer);
 }
 
-void Tester ::from_bufferSendOutReturn_handler(const NATIVE_INT_TYPE portNum,
+void BufferAccumulatorTester ::from_bufferSendOutReturn_handler(const NATIVE_INT_TYPE portNum,
                                                Fw::Buffer& fwBuffer) {
   this->pushFromPortEntry_bufferSendOutReturn(fwBuffer);
 }
 
-void Tester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+void BufferAccumulatorTester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
   this->pushFromPortEntry_pingOut(key);
 }
 
@@ -79,7 +79,7 @@ void Tester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {
+void BufferAccumulatorTester ::connectPorts() {
   // bufferSendInFill
   this->connect_to_bufferSendInFill(
       0, this->component.get_bufferSendInFill_InputPort(0));
@@ -125,7 +125,7 @@ void Tester ::connectPorts() {
   this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
 }
 
-void Tester ::initComponents() {
+void BufferAccumulatorTester ::initComponents() {
   this->init();
   this->component.init(QUEUE_DEPTH, INSTANCE);
 }

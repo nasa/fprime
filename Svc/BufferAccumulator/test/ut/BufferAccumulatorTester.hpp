@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Tester.hpp
+// \title  BufferAccumulatorTester.hpp
 // \author bocchino, mereweth
 // \brief  BufferAccumulator test harness interface
 //
@@ -20,19 +20,19 @@
 
 namespace Svc {
 
-class Tester : public BufferAccumulatorGTestBase {
+class BufferAccumulatorTester : public BufferAccumulatorGTestBase {
   // ----------------------------------------------------------------------
   // Construction and destruction
   // ----------------------------------------------------------------------
 
  public:
-  //! Construct object Tester
+  //! Construct object BufferAccumulatorTester
   //!
-  explicit Tester(bool doAllocateQueue = true);
+  explicit BufferAccumulatorTester(bool doAllocateQueue = true);
 
-  //! Destroy object Tester
+  //! Destroy object BufferAccumulatorTester
   //!
-  ~Tester(void);
+  ~BufferAccumulatorTester(void);
 
  private:
   // ----------------------------------------------------------------------

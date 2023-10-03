@@ -23,7 +23,7 @@ namespace Drain {
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::OK() {
+void BufferAccumulatorTester ::OK() {
   ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.mode.e);
   Fw::Buffer buffers[MAX_NUM_BUFFERS];
   // Buffer needs a valid pointer
@@ -46,7 +46,7 @@ void Tester ::OK() {
   delete[] data;
 }
 
-void Tester ::PartialDrainOK() {
+void BufferAccumulatorTester ::PartialDrainOK() {
   this->sendCmd_BA_SetMode(0, 0, BufferAccumulator_OpState::ACCUMULATE);
   this->component.doDispatch();
   ASSERT_CMD_RESPONSE_SIZE(1);
