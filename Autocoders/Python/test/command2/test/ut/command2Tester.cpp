@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "command2Tester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -22,8 +22,8 @@ namespace AcTest {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  command2Tester ::
+    command2Tester() :
       TestCommandGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TestCommand")
   {
@@ -31,8 +31,8 @@ namespace AcTest {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  command2Tester ::
+    ~command2Tester()
   {
 
   }
@@ -41,7 +41,7 @@ namespace AcTest {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void command2Tester ::
     msgTest()
   {
       for (NATIVE_UINT_TYPE iter=0; iter <= QUEUE_DEPTH; iter++) {
@@ -59,7 +59,7 @@ namespace AcTest {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void command2Tester ::
     connectPorts()
   {
 
@@ -89,7 +89,7 @@ namespace AcTest {
 
   }
 
-  void Tester ::
+  void command2Tester ::
     initComponents()
   {
     this->init();

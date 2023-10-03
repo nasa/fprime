@@ -13,12 +13,12 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
+#include "command2GTestBase.hpp"
 #include "Autocoders/Python/test/command2/TestCommandComponentImpl.hpp"
 
 namespace AcTest {
 
-  class Tester :
+  class command2Tester :
     public TestCommandGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace AcTest {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object command2Tester
       //!
-      Tester();
+      command2Tester();
 
-      //! Destroy object Tester
+      //! Destroy object command2Tester
       //!
-      ~Tester();
+      ~command2Tester();
 
     public:
 
