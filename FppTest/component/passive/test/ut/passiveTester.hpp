@@ -18,7 +18,7 @@
 #include "FppTest/component/types/FormalParamTypes.hpp"
 #include "PassiveTestGTestBase.hpp"
 
-class Tester : public PassiveTestGTestBase {
+class passiveTester : public PassiveTestGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -31,13 +31,13 @@ class Tester : public PassiveTestGTestBase {
     // Queue depth supplied to component instance under test
     static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
 
-    //! Construct object Tester
+    //! Construct object passiveTester
     //!
-    Tester();
+    passiveTester();
 
-    //! Destroy object Tester
+    //! Destroy object passiveTester
     //!
-    ~Tester();
+    ~passiveTester();
 
   public:
     // ----------------------------------------------------------------------

@@ -5,14 +5,14 @@
 // ======================================================================
 
 #include "STest/Pick/Pick.hpp"
-#include "test/ut/Tester.hpp"
+#include "passiveTester.hpp"
 
 // ----------------------------------------------------------------------
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester()
-    : PassiveTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
+passiveTester ::passiveTester()
+    : PassiveTestGTestBase("Tester", passiveTester::MAX_HISTORY_SIZE),
       component("PassiveTest"),
       primitiveBuf(primitiveData, sizeof(primitiveData)),
       stringBuf(stringData, sizeof(stringData)),
@@ -25,14 +25,14 @@ Tester ::Tester()
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+passiveTester ::~passiveTester() {}
 
-void Tester ::initComponents() {
+void passiveTester ::initComponents() {
     this->init();
-    this->component.init(Tester::TEST_INSTANCE_ID);
+    this->component.init(passiveTester::TEST_INSTANCE_ID);
 }
 
-Fw::ParamValid Tester ::from_prmGetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
+Fw::ParamValid passiveTester ::from_prmGetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
     val.resetSer();
 
     Fw::SerializeStatus status;
@@ -77,7 +77,7 @@ Fw::ParamValid Tester ::from_prmGetIn_handler(const NATIVE_INT_TYPE portNum, FwP
     return prmValid;
 }
 
-void Tester ::from_prmSetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
+void passiveTester ::from_prmSetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
     Fw::SerializeStatus status;
     U32 id_base = component.getIdBase();
 
