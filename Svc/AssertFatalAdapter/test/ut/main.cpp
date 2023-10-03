@@ -1,8 +1,8 @@
-#include "Tester.hpp"
+#include "AssertFatalAdapterTester.hpp"
 
 TEST(Nominal,NominalInit) {
 
-    Svc::Tester tester;
+    Svc::AssertFatalAdapterTester tester;
     tester.testAsserts();
 
 }

@@ -12,7 +12,7 @@
 
 #include "Fw/Types/String.hpp"
 #include "Fw/Types/StringUtils.hpp"
-#include "Tester.hpp"
+#include "AssertFatalAdapterTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -23,13 +23,13 @@ namespace Svc {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    Tester::Tester() : AssertFatalAdapterGTestBase("Tester", MAX_HISTORY_SIZE), component( "AssertFatalAdapter")
+    AssertFatalAdapterTester::AssertFatalAdapterTester() : AssertFatalAdapterGTestBase("Tester", MAX_HISTORY_SIZE), component( "AssertFatalAdapter")
     {
         this->initComponents();
         this->connectPorts();
     }
 
-    Tester::~Tester() {
+    AssertFatalAdapterTester::~AssertFatalAdapterTester() {
 
     }
 
@@ -37,7 +37,7 @@ namespace Svc {
     // Tests
     // ----------------------------------------------------------------------
 
-    void Tester::testAsserts() {
+    void AssertFatalAdapterTester::testAsserts() {
 
         U32 lineNo;
         char file[80 + 1]; // Limit to 80  characters in the port call
@@ -110,7 +110,7 @@ namespace Svc {
     // Helper methods
     // ----------------------------------------------------------------------
 
-    void Tester::connectPorts() {
+    void AssertFatalAdapterTester::connectPorts() {
 
         // Time
         this->component.set_Time_OutputPort(0, this->get_from_Time(0));
@@ -123,13 +123,13 @@ namespace Svc {
 
     }
 
-    void Tester::initComponents() {
+    void AssertFatalAdapterTester::initComponents() {
         this->init();
         this->component.init(
         INSTANCE);
     }
 
-    void Tester::textLogIn(const FwEventIdType id, //!< The event ID
+    void AssertFatalAdapterTester::textLogIn(const FwEventIdType id, //!< The event ID
             const Fw::Time& timeTag, //!< The time
             const Fw::LogSeverity severity, //!< The severity
             const Fw::TextLogString& text //!< The event string

@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class AssertFatalAdapterTester :
     public AssertFatalAdapterGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object AssertFatalAdapterTester
       //!
-      Tester();
+      AssertFatalAdapterTester();
 
-      //! Destroy object Tester
+      //! Destroy object AssertFatalAdapterTester
       //!
-      ~Tester();
+      ~AssertFatalAdapterTester();
 
     public:
 
