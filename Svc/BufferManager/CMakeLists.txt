@@ -16,7 +16,7 @@ register_fprime_module()
 ### UTS ###
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/BufferManager/BufferManager.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferManagerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferManagerTestMain.cpp"
 )
 register_fprime_ut()

@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "BufferManagerTester.hpp"
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Fw/Test/UnitTest.hpp>
 #include <cstdlib>
@@ -90,8 +90,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  BufferManagerTester ::
+    BufferManagerTester() :
       BufferManagerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferManager")
   {
@@ -99,8 +99,8 @@ namespace Svc {
     this->connectPorts();
   }
 
-  Tester ::
-    ~Tester()
+  BufferManagerTester ::
+    ~BufferManagerTester()
   {
 
   }
@@ -109,7 +109,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void BufferManagerTester ::
     testSetup()
   {
 
@@ -186,7 +186,7 @@ namespace Svc {
       ASSERT_FALSE(this->component.m_setup);
   }
 
-  void Tester::oneBufferSize() {
+  void BufferManagerTester::oneBufferSize() {
 
       BufferManagerComponentImpl::BufferBins bins;
       memset(&bins,0,sizeof(bins));
@@ -282,7 +282,7 @@ namespace Svc {
 
   }
 
-  void Tester::multBuffSize() {
+  void BufferManagerTester::multBuffSize() {
 
       BufferManagerComponentImpl::BufferBins bins;
       memset(&bins,0,sizeof(bins));
@@ -503,7 +503,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void BufferManagerTester ::
     connectPorts()
   {
 
@@ -551,7 +551,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void BufferManagerTester ::
     initComponents()
   {
     this->init();
@@ -560,7 +560,7 @@ namespace Svc {
     );
   }
 
-  void Tester::textLogIn(const FwEventIdType id, //!< The event ID
+  void BufferManagerTester::textLogIn(const FwEventIdType id, //!< The event ID
           const Fw::Time& timeTag, //!< The time
           const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string

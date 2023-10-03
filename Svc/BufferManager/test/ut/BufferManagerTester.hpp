@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class BufferManagerTester :
     public BufferManagerGTestBase
   {
 
@@ -28,13 +28,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object BufferManagerTester
       //!
-      Tester();
+      BufferManagerTester();
 
-      //! Destroy object Tester
+      //! Destroy object BufferManagerTester
       //!
-      ~Tester();
+      ~BufferManagerTester();
 
     public:
 

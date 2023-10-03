@@ -2,20 +2,20 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "BufferManagerTester.hpp"
 
 TEST(Nominal, Setup) {
-    Svc::Tester tester;
+    Svc::BufferManagerTester tester;
     tester.testSetup();
 }
 
 TEST(Nominal, OneSize) {
-    Svc::Tester tester;
+    Svc::BufferManagerTester tester;
     tester.oneBufferSize();
 }
 
 TEST(Nominal, MultSize) {
-    Svc::Tester tester;
+    Svc::BufferManagerTester tester;
     tester.multBuffSize();
 }
 
