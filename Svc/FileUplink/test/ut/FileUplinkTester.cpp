@@ -13,7 +13,7 @@
 #include <cerrno>
 #include <cstring>
 
-#include "Tester.hpp"
+#include "FileUplinkTester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -25,8 +25,8 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester() :
+  FileUplinkTester ::
+    FileUplinkTester() :
       FileUplinkGTestBase("Tester", MAX_HISTORY_SIZE),
       component("FileUplink"),
       expectedPacketsReceived(0),
@@ -36,8 +36,8 @@ namespace Svc {
     this->initComponents();
   }
 
-  Tester ::
-    ~Tester()
+  FileUplinkTester ::
+    ~FileUplinkTester()
   {
     this->component.file.osFile.close();
   }
@@ -46,7 +46,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void FileUplinkTester ::
     sendFile()
   {
 
@@ -106,7 +106,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     badChecksum()
   {
 
@@ -164,7 +164,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     fileOpenError()
   {
 
@@ -186,7 +186,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     fileWriteError()
   {
 
@@ -221,7 +221,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     startPacketInDataMode()
   {
     const char *const sourcePath = "source.bin";
@@ -256,7 +256,7 @@ namespace Svc {
     this->removeFile(destPath);
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     dataPacketInStartMode()
   {
 
@@ -279,7 +279,7 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     endPacketInStartMode()
   {
     CFDP::Checksum checksum;
@@ -303,7 +303,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     packetOutOfBounds()
   {
 
@@ -339,7 +339,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     packetOutOfOrder()
   {
 
@@ -377,7 +377,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     cancelPacketInStartMode()
   {
 
@@ -413,7 +413,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     cancelPacketInDataMode()
   {
 
@@ -464,7 +464,7 @@ namespace Svc {
   // Handlers for from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void FileUplinkTester ::
     from_bufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& buffer
@@ -473,7 +473,7 @@ namespace Svc {
     this->pushFromPortEntry_bufferSendOut(buffer);
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     from_pingOut_handler(
         const NATIVE_INT_TYPE portNum,
         U32 key
@@ -486,7 +486,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void FileUplinkTester ::
     connectPorts()
   {
 
@@ -540,14 +540,14 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     initComponents()
   {
     this->init();
     this->component.init(QUEUE_DEPTH, INSTANCE);
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     sendFilePacket(const Fw::FilePacket& filePacket)
   {
 
@@ -568,7 +568,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     sendStartPacket(
         const char *const sourcePath,
         const char *const destPath,
@@ -583,7 +583,7 @@ namespace Svc {
     this->sequenceIndex = 1;
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     sendDataPacket(
         const size_t byteOffset,
         U8 *const packetData
@@ -600,7 +600,7 @@ namespace Svc {
     this->sendFilePacket(filePacket);
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     sendEndPacket(const CFDP::Checksum& checksum)
   {
     const Fw::FilePacket::Header header = {
@@ -615,7 +615,7 @@ namespace Svc {
     this->sendFilePacket(filePacket);
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     sendCancelPacket()
   {
     const Fw::FilePacket::Header header = {
@@ -628,7 +628,7 @@ namespace Svc {
     this->sendFilePacket(filePacket);
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     verifyFileData(
         const char *const path,
         const U8 *const sentData,
@@ -652,7 +652,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void FileUplinkTester ::
     removeFile(const char *const path)
   {
     const NATIVE_INT_TYPE status = ::unlink(path);

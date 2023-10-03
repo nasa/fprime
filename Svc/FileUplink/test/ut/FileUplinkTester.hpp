@@ -20,7 +20,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class FileUplinkTester :
     public FileUplinkGTestBase
   {
 
@@ -30,13 +30,13 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object FileUplinkTester
       //!
-      Tester();
+      FileUplinkTester();
 
-      //! Destroy object Tester
+      //! Destroy object FileUplinkTester
       //!
-      ~Tester();
+      ~FileUplinkTester();
 
     public:
 

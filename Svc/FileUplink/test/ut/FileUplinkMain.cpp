@@ -2,60 +2,60 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "FileUplinkTester.hpp"
 
 TEST(FileUplink, SendFile) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.sendFile();
 }
 
 TEST(FileUplink, BadChecksum) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.badChecksum();
 }
 
 TEST(FileUplink, FileOpenError) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.fileOpenError();
 }
 
 TEST(FileUplink, FileWriteError) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.fileWriteError();
 }
 
 TEST(FileUplink, StartPacketInDataMode) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.startPacketInDataMode();
 }
 
 TEST(FileUplink, DataPacketInStartMode) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.dataPacketInStartMode();
 }
 
 TEST(FileUplink, EndPacketInStartMode) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.endPacketInStartMode();
 }
 
 TEST(FileUplink, PacketOutOfBounds) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.packetOutOfBounds();
 }
 
 TEST(FileUplink, PacketOutOfOrder) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.packetOutOfOrder();
 }
 
 TEST(FileUplink, CancelPacketInStartMode) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.cancelPacketInStartMode();
 }
 
 TEST(FileUplink, CancelPacketInDataMode) {
-  Svc::Tester tester;
+  Svc::FileUplinkTester tester;
   tester.cancelPacketInDataMode();
 }
 
