@@ -24,7 +24,7 @@
 
 namespace Svc {
 
-  class Tester :
+  class BufferLoggerTester :
     public BufferLoggerGTestBase
   {
 
@@ -34,15 +34,15 @@ namespace Svc {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object BufferLoggerTester
       //!
-      Tester(
+      BufferLoggerTester(
           bool doInitLog = true
       );
 
-      //! Destroy object Tester
+      //! Destroy object BufferLoggerTester
       //!
-      ~Tester();
+      ~BufferLoggerTester();
 
       // ----------------------------------------------------------------------
       // Tests (rest are in Errors, Health, and Logging classes)

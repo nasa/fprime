@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "BufferLoggerTester.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Os/ValidatedFile.hpp"
 #include "Os/FileSystem.hpp"
@@ -25,14 +25,14 @@ namespace Svc {
   // Instance variables
   // ----------------------------------------------------------------------
 
-  U8 Tester::data[COM_BUFFER_LENGTH] = { 0xDE, 0xAD, 0xBE, 0xEF };
+  U8 BufferLoggerTester::data[COM_BUFFER_LENGTH] = { 0xDE, 0xAD, 0xBE, 0xEF };
 
   // ----------------------------------------------------------------------
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  Tester ::
-    Tester(bool doInitLog) :
+  BufferLoggerTester ::
+    BufferLoggerTester(bool doInitLog) :
       BufferLoggerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferLogger")
   {
@@ -51,8 +51,8 @@ namespace Svc {
     }
   }
 
-  Tester ::
-    ~Tester()
+  BufferLoggerTester ::
+    ~BufferLoggerTester()
   {
 
   }
@@ -61,7 +61,7 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void BufferLoggerTester ::
     LogNoInit()
   {
     this->component.m_file.baseName = Fw::String("LogNoInit");
@@ -76,7 +76,7 @@ namespace Svc {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void BufferLoggerTester ::
     from_bufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& fwBuffer
@@ -85,7 +85,7 @@ namespace Svc {
     this->pushFromPortEntry_bufferSendOut(fwBuffer);
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     from_pingOut_handler(
         const NATIVE_INT_TYPE portNum,
         U32 key
@@ -98,7 +98,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester ::
+  void BufferLoggerTester ::
     connectPorts()
   {
 
@@ -182,7 +182,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     initComponents()
   {
     this->init();
@@ -191,34 +191,34 @@ namespace Svc {
     );
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     dispatchOne()
   {
     this->component.doDispatch();
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     dispatchAll()
   {
     while(this->component.m_queue.getNumMsgs() > 0)
       this->dispatchOne();
   }
 
-  Fw::Time Tester ::
+  Fw::Time BufferLoggerTester ::
     generateTestTime(const U32 seconds)
   {
     Fw::Time time(TB_DONT_CARE, FW_CONTEXT_DONT_CARE, 234567, seconds);
     return time;
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     setTestTimeSeconds(const U32 seconds)
   {
     Fw::Time time = this->generateTestTime(seconds);
     this->setTestTime(time);
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     sendComBuffers(const U32 n)
   {
     Fw::ComBuffer buffer(data, sizeof(data));
@@ -228,7 +228,7 @@ namespace Svc {
     }
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     sendManagedBuffers(const U32 n)
   {
     Fw::Buffer buffer(data, sizeof(data));
@@ -238,7 +238,7 @@ namespace Svc {
     }
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     checkFileExists(const Fw::StringBase& fileName)
   {
     Fw::String command;
@@ -247,7 +247,7 @@ namespace Svc {
     ASSERT_EQ(0, status);
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     checkHashFileExists(const Fw::StringBase& fileName)
   {
     Os::ValidatedFile validatedFile(fileName.toChar());
@@ -255,7 +255,7 @@ namespace Svc {
     this->checkFileExists(hashFileName);
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     checkLogFileIntegrity(
         const char *const fileName,
         const U32 expectedSize,
@@ -313,7 +313,7 @@ namespace Svc {
 
   }
 
-  void Tester ::
+  void BufferLoggerTester ::
     checkFileValidation(const char *const fileName)
   {
     Os::ValidatedFile validatedFile(fileName);

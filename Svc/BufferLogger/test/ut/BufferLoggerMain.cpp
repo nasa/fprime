@@ -2,13 +2,13 @@
 // Main.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "BufferLoggerTester.hpp"
 #include "Errors.hpp"
 #include "Logging.hpp"
 #include "Health.hpp"
 
 TEST(Test, LogNoInit) {
-  Svc::Tester tester(false); // don't call initLog for the user
+  Svc::BufferLoggerTester tester(false); // don't call initLog for the user
   tester.LogNoInit();
 }
 
@@ -17,17 +17,17 @@ TEST(Test, LogNoInit) {
 // ----------------------------------------------------------------------
 
 TEST(TestErrors, LogFileOpen) {
-  Svc::Errors::Tester tester;
+  Svc::Errors::BufferLoggerTester tester;
   tester.LogFileOpen();
 }
 
 TEST(TestErrors, LogFileWrite) {
-  Svc::Errors::Tester tester;
+  Svc::Errors::BufferLoggerTester tester;
   tester.LogFileWrite();
 }
 
 TEST(TestErrors, LogFileValidation) {
-  Svc::Errors::Tester tester;
+  Svc::Errors::BufferLoggerTester tester;
   tester.LogFileValidation();
 }
 
@@ -36,22 +36,22 @@ TEST(TestErrors, LogFileValidation) {
 // ----------------------------------------------------------------------
 
 TEST(TestLogging, BufferSendIn) {
-  Svc::Logging::Tester tester;
+  Svc::Logging::BufferLoggerTester tester;
   tester.BufferSendIn();
 }
 
 TEST(TestLogging, CloseFile) {
-  Svc::Logging::Tester tester;
+  Svc::Logging::BufferLoggerTester tester;
   tester.CloseFile();
 }
 
 TEST(TestLogging, ComIn) {
-  Svc::Logging::Tester tester;
+  Svc::Logging::BufferLoggerTester tester;
   tester.ComIn();
 }
 
 TEST(TestLogging, OnOff) {
-  Svc::Logging::Tester tester;
+  Svc::Logging::BufferLoggerTester tester;
   tester.OnOff();
 }
 
@@ -60,7 +60,7 @@ TEST(TestLogging, OnOff) {
 // ----------------------------------------------------------------------
 
 TEST(TestHealth, Ping) {
-  Svc::Health::Tester tester;
+  Svc::Health::BufferLoggerTester tester;
   tester.Ping();
 }
 
