@@ -2,30 +2,30 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Svc/ComQueue/test/ut/Tester.hpp"
+#include "ComQueueTester.hpp"
 
 TEST(Nominal, Send) {
-    Svc::Tester tester;
+    Svc::ComQueueTester tester;
     tester.testQueueSend();
 }
 
 TEST(Nominal, Pause) {
-    Svc::Tester tester;
+    Svc::ComQueueTester tester;
     tester.testQueuePause();
 }
 
 TEST(Nominal, Priority) {
-    Svc::Tester tester;
+    Svc::ComQueueTester tester;
     tester.testPrioritySend();
 }
 
 TEST(Nominal, Full) {
-    Svc::Tester tester;
+    Svc::ComQueueTester tester;
     tester.testQueueOverflow();
 }
 
 TEST(Nominal, ReadyFirst) {
-    Svc::Tester tester;
+    Svc::ComQueueTester tester;
     tester.testReadyFirst();
 }
 

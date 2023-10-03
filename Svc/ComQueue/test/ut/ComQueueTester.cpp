@@ -4,7 +4,7 @@
 // \brief  cpp file for ComQueue test harness implementation class
 // ======================================================================
 
-#include "Tester.hpp"
+#include "ComQueueTester.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
 using namespace std;
 
@@ -19,20 +19,20 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester() : ComQueueGTestBase("Tester", MAX_HISTORY_SIZE), component("ComQueue") {
+ComQueueTester ::ComQueueTester() : ComQueueGTestBase("Tester", MAX_HISTORY_SIZE), component("ComQueue") {
     this->initComponents();
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+ComQueueTester ::~ComQueueTester() {}
 
-void Tester ::dispatchAll() {
+void ComQueueTester ::dispatchAll() {
     while (this->component.m_queue.getNumMsgs() > 0) {
         this->component.doDispatch();
     }
 }
 
-void Tester ::configure() {
+void ComQueueTester ::configure() {
     ComQueue::QueueConfigurationTable configurationTable;
     for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++){
         configurationTable.entries[i].priority = i;
@@ -41,7 +41,7 @@ void Tester ::configure() {
     component.configure(configurationTable, 0, mallocAllocator);
 }
 
-void Tester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portNum, QueueType& queueType) {
+void ComQueueTester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portNum, QueueType& queueType) {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));
@@ -56,13 +56,13 @@ void Tester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portN
     }
 }
 
-void Tester ::emitOne() {
+void ComQueueTester ::emitOne() {
     Fw::Success state = Fw::Success::SUCCESS;
     invoke_to_comStatusIn(0, state);
     dispatchAll();
 }
 
-void Tester ::emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex,
+void ComQueueTester ::emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex,
                               QueueType expectedType,
                               Fw::ComBuffer& expectedCom,
                               Fw::Buffer& expectedBuff) {
@@ -79,7 +79,7 @@ void Tester ::emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex,
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::testQueueSend() {
+void ComQueueTester ::testQueueSend() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));
@@ -99,7 +99,7 @@ void Tester ::testQueueSend() {
     component.cleanup();
 }
 
-void Tester ::testQueuePause() {
+void ComQueueTester ::testQueuePause() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));
@@ -129,7 +129,7 @@ void Tester ::testQueuePause() {
     component.cleanup();
 }
 
-void Tester ::testPrioritySend() {
+void ComQueueTester ::testPrioritySend() {
     U8 data[ComQueue::TOTAL_PORT_COUNT][BUFFER_LENGTH];
 
     ComQueue::QueueConfigurationTable configurationTable;
@@ -186,7 +186,7 @@ void Tester ::testPrioritySend() {
     component.cleanup();
 }
 
-void Tester::testQueueOverflow(){
+void ComQueueTester::testQueueOverflow(){
     ComQueue::QueueConfigurationTable configurationTable;
     ComQueueDepth expectedComDepth;
     BuffQueueDepth expectedBuffDepth;
@@ -243,7 +243,7 @@ void Tester::testQueueOverflow(){
     component.cleanup();
 }
 
-void Tester ::testReadyFirst() {
+void ComQueueTester ::testReadyFirst() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));
@@ -271,11 +271,11 @@ void Tester ::testReadyFirst() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_buffQueueSend_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void ComQueueTester ::from_buffQueueSend_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_buffQueueSend(fwBuffer);
 }
 
-void Tester ::from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void ComQueueTester ::from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_comQueueSend(data, context);
 }
 
@@ -283,7 +283,7 @@ void Tester ::from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBu
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {
+void ComQueueTester ::connectPorts() {
     // buffQueueIn
     for (NATIVE_INT_TYPE i = 0; i < ComQueue::BUFFER_PORT_COUNT; ++i) {
         this->connect_to_buffQueueIn(i, this->component.get_buffQueueIn_InputPort(i));
@@ -319,7 +319,7 @@ void Tester ::connectPorts() {
     this->component.set_comQueueSend_OutputPort(0, this->get_from_comQueueSend(0));
 }
 
-void Tester ::initComponents() {
+void ComQueueTester ::initComponents() {
     this->init();
     this->component.init(QUEUE_DEPTH, INSTANCE);
 }

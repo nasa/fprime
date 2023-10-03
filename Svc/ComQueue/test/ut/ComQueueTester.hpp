@@ -13,20 +13,20 @@
 
 namespace Svc {
 
-class Tester : public ComQueueGTestBase {
+class ComQueueTester : public ComQueueGTestBase {
   private:
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
   public:
-    //! Construct object Tester
+    //! Construct object ComQueueTester
     //!
-    Tester();
+    ComQueueTester();
 
-    //! Destroy object Tester
+    //! Destroy object ComQueueTester
     //!
-    ~Tester();
+    ~ComQueueTester();
 
     //! Dispatch all component messages
     //!
