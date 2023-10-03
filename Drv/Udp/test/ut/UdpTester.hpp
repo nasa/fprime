@@ -21,7 +21,7 @@
 
 namespace Drv {
 
-  class Tester :
+  class UdpTester :
     public UdpGTestBase
   {
       // Maximum size of histories storing events, telemetry, and port outputs
@@ -37,15 +37,15 @@ namespace Drv {
 
     public:
 
-      //! Construct object Tester
+      //! Construct object UdpTester
       //!
-      Tester();
+      UdpTester();
 
       void initSetup();
 
-      //! Destroy object Tester
+      //! Destroy object UdpTester
       //!
-      ~Tester();
+      ~UdpTester();
 
     public:
 
