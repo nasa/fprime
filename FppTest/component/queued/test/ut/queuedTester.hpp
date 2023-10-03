@@ -19,7 +19,7 @@
 #include "FppTest/component/types/FormalParamTypes.hpp"
 #include "QueuedTestGTestBase.hpp"
 
-class Tester : public QueuedTestGTestBase {
+class queuedTester : public QueuedTestGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -32,13 +32,13 @@ class Tester : public QueuedTestGTestBase {
     // Queue depth supplied to component instance under test
     static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
 
-    //! Construct object Tester
+    //! Construct object queuedTester
     //!
-    Tester();
+    queuedTester();
 
-    //! Destroy object Tester
+    //! Destroy object queuedTester
     //!
-    ~Tester();
+    ~queuedTester();
 
   public:
     // ----------------------------------------------------------------------

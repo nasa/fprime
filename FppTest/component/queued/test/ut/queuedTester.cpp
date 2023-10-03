@@ -5,14 +5,14 @@
 // ======================================================================
 
 #include "STest/Pick/Pick.hpp"
-#include "test/ut/Tester.hpp"
+#include "queuedTester.hpp"
 
 // ----------------------------------------------------------------------
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester()
-    : QueuedTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
+queuedTester ::queuedTester()
+    : QueuedTestGTestBase("Tester", queuedTester::MAX_HISTORY_SIZE),
       component("QueuedTest"),
       primitiveBuf(primitiveData, sizeof(primitiveData)),
       stringBuf(stringData, sizeof(stringData)),
@@ -26,14 +26,14 @@ Tester ::Tester()
     this->connectAsyncPorts();
 }
 
-Tester ::~Tester() {}
+queuedTester ::~queuedTester() {}
 
-void Tester ::initComponents() {
+void queuedTester ::initComponents() {
     this->init();
-    this->component.init(Tester::TEST_INSTANCE_QUEUE_DEPTH, Tester::TEST_INSTANCE_ID);
+    this->component.init(queuedTester::TEST_INSTANCE_QUEUE_DEPTH, queuedTester::TEST_INSTANCE_ID);
 }
 
-Fw::ParamValid Tester ::from_prmGetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
+Fw::ParamValid queuedTester ::from_prmGetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
     val.resetSer();
 
     Fw::SerializeStatus status;
@@ -78,7 +78,7 @@ Fw::ParamValid Tester ::from_prmGetIn_handler(const NATIVE_INT_TYPE portNum, FwP
     return prmValid;
 }
 
-void Tester ::from_prmSetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
+void queuedTester ::from_prmSetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
     Fw::SerializeStatus status;
     U32 id_base = component.getIdBase();
 
