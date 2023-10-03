@@ -4,23 +4,23 @@
 // \brief  cpp file for Empty test harness implementation class
 // ======================================================================
 
-#include "Tester.hpp"
+#include "emptyTester.hpp"
 
 // ----------------------------------------------------------------------
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester() : EmptyGTestBase("Tester", Tester::MAX_HISTORY_SIZE), component("Empty") {
+emptyTester ::emptyTester() : EmptyGTestBase("Tester", emptyTester::MAX_HISTORY_SIZE), component("Empty") {
     this->initComponents();
     this->connectPorts();
 }
 
-Tester ::~Tester() {}
+emptyTester ::~emptyTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::test() {
+void emptyTester ::test() {
     // Nothing else to test in an empty component
 }

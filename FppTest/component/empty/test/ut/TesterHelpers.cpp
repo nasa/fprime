@@ -6,15 +6,15 @@
 // NOTE: this file was automatically generated
 //
 // ======================================================================
-#include "Tester.hpp"
+#include "emptyTester.hpp"
 
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts() {}
+void emptyTester ::connectPorts() {}
 
-void Tester ::initComponents() {
+void emptyTester ::initComponents() {
     this->init();
-    this->component.init(Tester::TEST_INSTANCE_ID);
+    this->component.init(emptyTester::TEST_INSTANCE_ID);
 }

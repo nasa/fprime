@@ -2,10 +2,10 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "emptyTester.hpp"
 
 TEST(Nominal, ToDo) {
-    Tester tester;
+    emptyTester tester;
     tester.test();
 }
 
