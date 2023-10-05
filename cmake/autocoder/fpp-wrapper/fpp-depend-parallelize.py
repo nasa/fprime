@@ -64,7 +64,7 @@ def run_parallel_depend(fpp_depend, fpp_locs, file_input):
                 "include.txt",
                 "-u",
                 "unittest.txt",
-                "-a"
+                "-a",
             ]
         )
 
@@ -85,7 +85,7 @@ def main():
     except ValueError:
         print(
             "[ERROR] Bad arguments: fpp-depend path, locs file path, and file input",
-            file=sys.stderr
+            file=sys.stderr,
         )
     except Exception as exc:
         print(f"[ERROR] {exc}", file=sys.stderr)
