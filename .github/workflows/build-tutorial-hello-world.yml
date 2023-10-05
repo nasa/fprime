@@ -16,14 +16,14 @@ on:
 jobs:
   get-branch:
     name: "Get target branch"
-    uses: ./.github/workflows/get-pr-branch.yml
+    uses: ./.github/workflows/reusable/get-pr-branch.yml
     with:
       target_repository: fprime-community/fprime-tutorial-hello-world
 
   run:
     needs: get-branch
     name: ""
-    uses: ./.github/workflows/reusable-builder.yml
+    uses: ./.github/workflows/reusable/project-builder.yml
     with:
       target_repository: fprime-community/fprime-tutorial-hello-world
       build_location: HelloWorldDeployment
