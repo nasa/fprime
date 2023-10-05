@@ -1,15 +1,16 @@
 // ======================================================================
-// \title  QueuedTest/test/ut/Tester.hpp
+// \title  ActiveTest/test/ut/Tester.hpp
 // \author tiffany
-// \brief  hpp file for QueuedTest test harness implementation class
+// \brief  hpp file for ActiveTest test harness implementation class
 // ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include "ActiveTestGTestBase.hpp"
+#include "FppTest/component/active/ActiveTest.hpp"
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 #include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
-#include "FppTest/component/queued/QueuedTest.hpp"
 #include "FppTest/component/tests/CmdTests.hpp"
 #include "FppTest/component/tests/EventTests.hpp"
 #include "FppTest/component/tests/InternalInterfaceTests.hpp"
@@ -17,9 +18,8 @@
 #include "FppTest/component/tests/PortTests.hpp"
 #include "FppTest/component/tests/TlmTests.hpp"
 #include "FppTest/component/types/FormalParamTypes.hpp"
-#include "QueuedTestGTestBase.hpp"
 
-class queuedTester : public QueuedTestGTestBase {
+class Tester : public ActiveTestGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -32,13 +32,13 @@ class queuedTester : public QueuedTestGTestBase {
     // Queue depth supplied to component instance under test
     static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
 
-    //! Construct object queuedTester
+    //! Construct object Tester
     //!
-    queuedTester();
+    Tester();
 
-    //! Destroy object queuedTester
+    //! Destroy object Tester
     //!
-    ~queuedTester();
+    ~Tester();
 
   public:
     // ----------------------------------------------------------------------
@@ -252,7 +252,7 @@ class queuedTester : public QueuedTestGTestBase {
 
     //! The component under test
     //!
-    QueuedTest component;
+    ActiveTest component;
 
     // Values returned by typed output ports
     FppTest::Types::BoolType noParamReturnVal;

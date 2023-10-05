@@ -10,7 +10,7 @@
 #include "EmptyGTestBase.hpp"
 #include "FppTest/component/empty/Empty.hpp"
 
-class emptyTester : public EmptyGTestBase {
+class Tester : public EmptyGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -21,13 +21,13 @@ class emptyTester : public EmptyGTestBase {
     // Instance ID supplied to the component instance under test
     static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
 
-    //! Construct object emptyTester
+    //! Construct object Tester
     //!
-    emptyTester();
+    Tester();
 
-    //! Destroy object emptyTester
+    //! Destroy object Tester
     //!
-    ~emptyTester();
+    ~Tester();
 
   public:
     // ----------------------------------------------------------------------

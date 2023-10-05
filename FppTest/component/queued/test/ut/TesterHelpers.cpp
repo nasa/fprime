@@ -6,13 +6,13 @@
 // NOTE: this file was automatically generated
 //
 // ======================================================================
-#include "queuedTester.hpp"
+#include "Tester.hpp"
 
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
 
-void queuedTester ::connectPorts() {
+void Tester ::connectPorts() {
     // arrayArgsAsyncBlockPriority
     this->connect_to_arrayArgsAsyncBlockPriority(0, this->component.get_arrayArgsAsyncBlockPriority_InputPort(0));
 
@@ -222,7 +222,7 @@ void queuedTester ::connectPorts() {
     this->connect_to_serialSync(0, this->component.get_serialSync_InputPort(0));
 }
 
-void queuedTester ::initComponents() {
+void Tester ::initComponents() {
     this->init();
-    this->component.init(queuedTester::TEST_INSTANCE_QUEUE_DEPTH, queuedTester::TEST_INSTANCE_ID);
+    this->component.init(Tester::TEST_INSTANCE_QUEUE_DEPTH, Tester::TEST_INSTANCE_ID);
 }

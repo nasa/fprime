@@ -29,8 +29,8 @@ set(UT_MOD_DEPS
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/empty.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/emptyTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TesterHelpers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/emptyTestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 register_fprime_ut()
