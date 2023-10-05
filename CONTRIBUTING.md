@@ -117,6 +117,15 @@ the end, these checks must pass for the submission to continue.
 If something seems amiss with one of these checks ask for help on your PR and a maintainer will do their best to help
 get the submission moving forward.
 
+### Automated Checks on Reference Repositories
+
+Some of the above-mentioned automated checks run on reference applications that are not part of the core F´ repository, such as our [tutorial repositories](https://github.com/fprime-community#tutorials). This serves two main purposes: running more tests, and making sure our suite of reference applications and tutorials do not go out-of-date.
+Because of this pattern, users who submit a pull request which introduces breaking changes on _how_ F´ is used in those external repositories will need to submit associated pull requests to introduce a fix on said external repositories. 
+
+The checks are configured to run on the `devel` branch of each external repository, but will prioritize the branch `pr-<PR_NUMBER>` if it exists, with `PR_NUMBER` being the number of the pull request that has been opened in nasa/fprime.
+
+Maintainers will gladly help you in this process.
+
 ## Final Approval and Submission
 
 Once all corrections have been made, automated checks are passing, and a maintainer has given final approval, it is time
