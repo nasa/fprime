@@ -7,8 +7,8 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include "EmptyGTestBase.hpp"
 #include "FppTest/component/empty/Empty.hpp"
-#include "GTestBase.hpp"
 
 class Tester : public EmptyGTestBase {
     // ----------------------------------------------------------------------

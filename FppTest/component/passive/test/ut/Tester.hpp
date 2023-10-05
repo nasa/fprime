@@ -16,7 +16,7 @@
 #include "FppTest/component/tests/PortTests.hpp"
 #include "FppTest/component/tests/TlmTests.hpp"
 #include "FppTest/component/types/FormalParamTypes.hpp"
-#include "GTestBase.hpp"
+#include "PassiveTestGTestBase.hpp"
 
 class Tester : public PassiveTestGTestBase {
     // ----------------------------------------------------------------------

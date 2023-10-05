@@ -99,7 +99,7 @@ endif()
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"

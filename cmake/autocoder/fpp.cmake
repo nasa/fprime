@@ -15,11 +15,11 @@ autocoder_setup_for_multiple_sources()
 # above install location and then to the system path as a fallback.
 ####
 function(locate_fpp_tools)
-    get_expected_tool_version("fprime-fpp" FPP_VERSION)
     # Loop through each tool, looking if it was found and check the version
     foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS)
         string(TOLOWER ${TOOL} PROGRAM)
         string(REPLACE "_" "-" PROGRAM "${PROGRAM}")
+        get_expected_tool_version("fprime-${PROGRAM}" FPP_VERSION)
 
         # Clear any previous version of this find and search in this order: install dir, system path
         unset(${TOOL} CACHE)
@@ -113,9 +113,10 @@ function(fpp_info AC_INPUT_FILES)
     set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/generated.txt")
     set(FRAMEWORK_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/framework.txt")
     set(STDOUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/stdout.txt")
+    set(UNITTEST_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/unittest.txt")
 
     # Read files and convert to lists of dependencies. e.g. read INCLUDED_FILE file into INCLUDED variable, then process
-    foreach(NAME INCLUDED MISSING GENERATED DIRECT_DEPENDENCIES FRAMEWORK STDOUT)
+    foreach(NAME INCLUDED MISSING GENERATED DIRECT_DEPENDENCIES FRAMEWORK STDOUT UNITTEST)
         if (NOT EXISTS "${${NAME}_FILE}")
             message(FATAL_ERROR "fpp-depend cache did not generate '${${NAME}_FILE}'")
         endif()
@@ -130,6 +131,10 @@ function(fpp_info AC_INPUT_FILES)
     set(GENERATED_FILES)
     foreach(LINE IN LISTS GENERATED)
         list(APPEND GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${LINE}")
+    endforeach()
+    set(UNITTEST_FILES)
+    foreach(LINE IN LISTS UNITTEST)
+        list(APPEND UNITTEST_FILES "${CMAKE_CURRENT_BINARY_DIR}/${LINE}")
     endforeach()
 
     # If we have missing dependencies, print and fail
@@ -156,6 +161,7 @@ function(fpp_info AC_INPUT_FILES)
 
     # Should have been inherited from previous call to `get_generated_files`
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
+    set(UNITTEST_FILES "${UNITTEST_FILES}" PARENT_SCOPE)
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
     set(FPP_IMPORTS "${STDOUT}" PARENT_SCOPE)

@@ -8,7 +8,7 @@
 #ifndef RATEGROUPDRIVER_TEST_UT_RATEGROUPDRIVERIMPLTESTER_HPP_
 #define RATEGROUPDRIVER_TEST_UT_RATEGROUPDRIVERIMPLTESTER_HPP_
 
-#include <GTestBase.hpp>
+#include <RateGroupDriverGTestBase.hpp>
 #include <Svc/RateGroupDriver/RateGroupDriver.hpp>
 
 namespace Svc {

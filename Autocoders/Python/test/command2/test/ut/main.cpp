@@ -2,10 +2,10 @@
 // Main.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "command2Tester.hpp"
 
 TEST(Test, Miscellaneous) {
-    AcTest::Tester tester;
+    AcTest::command2Tester tester;
     tester.msgTest();
 }
 

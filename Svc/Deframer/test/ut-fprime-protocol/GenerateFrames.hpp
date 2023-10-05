@@ -11,12 +11,12 @@
 #include "Fw/Types/StringType.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"
-#include "Svc/Deframer/test/ut-fprime-protocol/Tester.hpp"
+#include "DeframerTester.hpp"
 
 namespace Svc {
 
     //! Generate frames to send
-    struct GenerateFrames : public STest::Rule<Tester> {
+    struct GenerateFrames : public STest::Rule<DeframerTester> {
 
         // ----------------------------------------------------------------------
         // Construction
@@ -31,12 +31,12 @@ namespace Svc {
 
         //! Precondition
         bool precondition(
-            const Tester& state //!< The test state
+            const DeframerTester& state //!< The test state
         );
 
         //! Action
         void action(
-            Tester& state //!< The test state
+            DeframerTester& state //!< The test state
         );
 
     };

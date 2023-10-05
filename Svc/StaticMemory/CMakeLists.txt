@@ -16,8 +16,8 @@ register_fprime_module()
 #### UTS ###
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/StaticMemory.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/StaticMemoryTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/StaticMemoryMain.cpp"
 )
 set(UT_MOD_DEPS
   STest
