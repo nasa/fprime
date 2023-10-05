@@ -41,6 +41,7 @@ on:
         default: "devel"
 
 jobs:
+
   build:
     runs-on: ${{ inputs.runs_on }}
     name: "Build"
