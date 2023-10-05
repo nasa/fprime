@@ -34,37 +34,46 @@ on:
         required: false
         type: string
         default: ""
-      target_ref:
-        description: "Branch on target to checkout"
+      default_target_ref:
+        description: "Branch on target to checkout by default"
         required: false
         type: string
         default: "devel"
 
 jobs:
-  build:
+  # If the PR that triggered this job has a matching `pr-<number>` branch on inputs.target_repository,
+  # then return the name of that branch. Otherwise, return inputs.default_target_ref.
+  # This jobs then passes the target branch to the build/UT job.
+  get-branch:
     runs-on: ${{ inputs.runs_on }}
-    name: "Build"
+    name: "Get target branch"
+    outputs:
+      target-branch: ${{ steps.get_target_branch.outputs.TARGET_BRANCH }}
     steps:
-      # If the PR that triggered this job has a matching `pr-<number>` branch on inputs.target_repository,
-      # then return the name of that branch. Otherwise, return inputs.target_ref.
-      - name: "Get PR branch"
-        id: get_pr_branch
+      - name: "Get target branch"
+        id: get_target_branch
         run: |
           response_code=`curl -w '%{response_code}' https://api.github.com/repos/${{ inputs.target_repository }}/branches/pr-${{ github.event.number }} -o /dev/null`
           if [[ "${{ github.event_name }}" == "pull_request" && "$response_code" == "200" ]]; then
             echo "TARGET_BRANCH=pr-${{ github.event.number }}" >> $GITHUB_OUTPUT
             echo "PR branch found, using pr-${{ github.event.number }}"
           else
-            echo "TARGET_BRANCH=${{ inputs.target_ref }}" >> $GITHUB_OUTPUT
-            echo "PR branch not found, using ${{ inputs.target_ref }}"
+            echo "TARGET_BRANCH=${{ inputs.default_target_ref }}" >> $GITHUB_OUTPUT
+            echo "PR branch not found, using ${{ inputs.default_target_ref }}"
           fi
         shell: bash
+
+  build:
+    runs-on: ${{ inputs.runs_on }}
+    name: "Build"
+    needs: get-branch
+    steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v3
         with:
           submodules: recursive
           repository: ${{ inputs.target_repository }}
-          ref: ${{ steps.get_pr_branch.outputs.TARGET_BRANCH }}
+          ref: ${{ needs.get-branch.outputs.target-branch }}
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v3
         with:
@@ -88,26 +97,15 @@ jobs:
   runUT:
     if: ${{ inputs.run_unit_tests }}
     runs-on: ${{ inputs.runs_on }}
+    needs: get-branch
     name: "Unit Tests"
     steps:
-      - name: "Get PR branch"
-        id: get_pr_branch
-        run: |
-          response_code=`curl -w '%{response_code}' https://api.github.com/repos/${{ inputs.target_repository }}/branches/pr-${{ github.event.number }} -o /dev/null`
-          if [[ "${{ github.event_name }}" == "pull_request" && "$response_code" == "200" ]]; then
-            echo "TARGET_BRANCH=pr-${{ github.event.number }}" >> $GITHUB_OUTPUT
-            echo "PR branch found, using pr-${{ github.event.number }}"
-          else
-            echo "TARGET_BRANCH=${{ inputs.target_ref }}" >> $GITHUB_OUTPUT
-            echo "PR branch not found, using ${{ inputs.target_ref }}"
-          fi
-        shell: bash
       - name: "Checkout target repository"
         uses: actions/checkout@v3
         with:
           submodules: recursive
           repository: ${{ inputs.target_repository }}
-          ref: ${{ steps.get_pr_branch.outputs.TARGET_BRANCH }}
+          ref: ${{ needs.get-branch.outputs.target-branch }}
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v3
         with:

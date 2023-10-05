@@ -4,7 +4,7 @@ name: "Tutorial: HelloWorld"
 
 on:
   push:
-    branches: [ master, devel ]
+    branches: [ master, devel, issue-2278-testing ]
   pull_request:
     branches: [ master, devel ]
     paths-ignore:
