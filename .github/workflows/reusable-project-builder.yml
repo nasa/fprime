@@ -35,7 +35,7 @@ on:
         type: string
         default: ""
       target_ref:
-        description: "Branch on target to checkout by default"
+        description: "Branch on target to checkout"
         required: false
         type: string
         default: "devel"
