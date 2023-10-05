@@ -1,5 +1,6 @@
 var NAVTREEINDEX18 =
 {
+"struct_fpp_test_1_1_types_1_1_primitive_types.html#a51839acff07e8eb9f46191e9d46ebe13":[23,0,2,0,5,6],
 "struct_fpp_test_1_1_types_1_1_primitive_types.html#aad04adb2a7b4b7d83659ba9fdda9ebb7":[23,0,2,0,5,1],
 "struct_fpp_test_1_1_types_1_1_primitive_types.html#ac594c53ba6d3f3e885fd2250210409e7":[23,0,2,0,5,3],
 "struct_fpp_test_1_1_types_1_1_primitive_types.html#aec7c16c19bfca8cc61bb47fa4d12db94":[23,0,2,0,5,0],
