@@ -218,3 +218,14 @@ Prints the dependency list of the module supplied as well as the include directo
 - **MODULE_NAME**: module name to print dependencies
 
 
+## Function `execute_process_or_fail`:
+
+Calls CMake's `execute_process` with the arguments passed in via ARGN. This call is wrapped to print out the command
+line invocation when CMAKE_DEBUG_OUTPUT is set ON, and will check that the command processes correctly.  Any error
+message is output should the command fail. No handling is done of standard error.
+
+Errors are determined by checking the process's return code where a FATAL_ERROR is produced on non-zero.
+
+- **ERROR_MESSAGE**: message to output should an error occurs
+
+
