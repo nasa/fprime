@@ -15,11 +15,11 @@ autocoder_setup_for_multiple_sources()
 # above install location and then to the system path as a fallback.
 ####
 function(locate_fpp_tools)
-    get_expected_tool_version("fprime-fpp" FPP_VERSION)
     # Loop through each tool, looking if it was found and check the version
     foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS)
         string(TOLOWER ${TOOL} PROGRAM)
         string(REPLACE "_" "-" PROGRAM "${PROGRAM}")
+        get_expected_tool_version("fprime-${PROGRAM}" FPP_VERSION)
 
         # Clear any previous version of this find and search in this order: install dir, system path
         unset(${TOOL} CACHE)
