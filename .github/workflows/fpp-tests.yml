@@ -1,0 +1,41 @@
+name: "FppTest"
+
+on:
+  push:
+    branches: [ master, devel ]
+  pull_request:
+    branches: [ master, devel ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+jobs:
+  fpptest:
+    name: Run FppTest
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: "Install requirements.txt"
+        run: |
+          pip3 install -r ./requirements.txt
+        shell: bash
+      - name: "Generate UT build cache"
+        working-directory: ./FppTest
+        run: |
+          fprime-util generate --ut
+        shell: bash
+      - name: "Build UTs"
+        working-directory: ./FppTest
+        run: |
+          fprime-util build --ut
+        shell: bash
+      - name: "Run UTs"
+        working-directory: ./FppTest
+        run: |
+          fprime-util check
+        shell: bash
