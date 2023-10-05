@@ -37,9 +37,11 @@ jobs:
         shell: bash
 
   run:
+    needs: get-branch
     name: ""
     uses: ./.github/workflows/reusable-builder.yml
     with:
       target_repository: fprime-community/fprime-tutorial-hello-world
       build_location: HelloWorldDeployment
       run_unit_tests: true
+      target_ref: ${{ needs.get-branch.outputs.target-branch }}
