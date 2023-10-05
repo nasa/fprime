@@ -16,15 +16,9 @@ on:
 jobs:
   get-branch:
     name: "Get target branch"
-    runs-on: ubuntu-latest
-    outputs:
-      target-branch: ${{ steps.get-target-branch.outputs.TARGET_BRANCH }}
-    steps:
-      - name: "Get PR branch"
-        id: get-target-branch
-        uses: ./.github/actions/get-pr-branch
-        with:
-          target_repository: fprime-community/fprime-tutorial-hello-world
+    uses: ./.github/workflows/get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-tutorial-hello-world
 
   run:
     needs: get-branch
