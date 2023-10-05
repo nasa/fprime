@@ -16,7 +16,7 @@
 #ifndef ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_
 #define ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_
 
-#include <GTestBase.hpp>
+#include <ActiveRateGroupGTestBase.hpp>
 #include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
 
 namespace Svc {

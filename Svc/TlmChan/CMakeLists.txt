@@ -16,8 +16,8 @@ register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/TlmChan/TlmChan.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanTester.cpp"
 )
 register_fprime_ut()
 

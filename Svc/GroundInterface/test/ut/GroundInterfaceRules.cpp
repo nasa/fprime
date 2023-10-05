@@ -12,14 +12,14 @@
 
 namespace Svc {
     // Constructor
-    RandomizeRule :: RandomizeRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
+    RandomizeRule :: RandomizeRule(const Fw::String& name) : STest::Rule<GroundInterfaceTester>(name.toChar()) {}
 
     // Can always randomize
-    bool RandomizeRule :: precondition(const Svc::Tester &state) {
+    bool RandomizeRule :: precondition(const Svc::GroundInterfaceTester &state) {
         return true;
     }
     // Randomize
-    void RandomizeRule :: action(Svc::Tester &state) {
+    void RandomizeRule :: action(Svc::GroundInterfaceTester &state) {
         state.m_uplink_type = STest::Pick::lowerUpper(0, 1);
         state.m_uplink_size = STest::Pick::lowerUpper(0, sizeof(state.m_uplink_data) - 1);
         // Reset or not sent allows randomization
@@ -39,14 +39,14 @@ namespace Svc {
 
 
     // Constructor
-    DownlinkRule :: DownlinkRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
+    DownlinkRule :: DownlinkRule(const Fw::String& name) : STest::Rule<GroundInterfaceTester>(name.toChar()) {}
 
     // Can always downlink
-    bool DownlinkRule :: precondition(const Svc::Tester &state) {
+    bool DownlinkRule :: precondition(const Svc::GroundInterfaceTester &state) {
         return true;
     }
     // Pick a rule and downlink
-    void DownlinkRule :: action(Svc::Tester &state) {
+    void DownlinkRule :: action(Svc::GroundInterfaceTester &state) {
         Fw::ComBuffer buffer;
         // Force a U32 to know the size
         buffer.serialize(static_cast<U32>(0xdeadbeef));
@@ -57,14 +57,14 @@ namespace Svc {
     }
 
     // Constructor
-    FileDownlinkRule :: FileDownlinkRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
+    FileDownlinkRule :: FileDownlinkRule(const Fw::String& name) : STest::Rule<GroundInterfaceTester>(name.toChar()) {}
 
     // Can always downlink
-    bool FileDownlinkRule :: precondition(const Svc::Tester &state) {
+    bool FileDownlinkRule :: precondition(const Svc::GroundInterfaceTester &state) {
         return true;
     }
     // Pick a rule and downlink
-    void FileDownlinkRule :: action(Svc::Tester &state) {
+    void FileDownlinkRule :: action(Svc::GroundInterfaceTester &state) {
         U8 data_holder[2048];
         Fw::Buffer buffer(data_holder, sizeof(data_holder));
         Fw::ExternalSerializeBuffer buffer_wrapper(buffer.getData(), buffer.getSize());
@@ -80,15 +80,15 @@ namespace Svc {
     }
 
     // Constructor
-    SendAvailableRule :: SendAvailableRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
+    SendAvailableRule :: SendAvailableRule(const Fw::String& name) : STest::Rule<GroundInterfaceTester>(name.toChar()) {}
 
     // Can always downlink
-    bool SendAvailableRule :: precondition(const Svc::Tester &state) {
+    bool SendAvailableRule :: precondition(const Svc::GroundInterfaceTester &state) {
         return true;
     }
 
     // Pick a rule and downlink
-    void SendAvailableRule :: action(Svc::Tester &state) {
+    void SendAvailableRule :: action(Svc::GroundInterfaceTester &state) {
         U32 total_used = state.m_uplink_used + HEADER_SIZE + sizeof(U32);
         U8* up_ptr = state.m_uplink_data + state.m_uplink_point;
         U32 size = ((state.m_uplink_point + state.m_uplink_size) >= total_used) ?

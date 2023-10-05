@@ -549,3 +549,31 @@ function(introspect MODULE_NAME)
     print_property("${MODULE_NAME}" INCLUDE_DIRECTORIES)
     print_property("${MODULE_NAME}" LINK_LIBRARIES)
 endfunction(introspect)
+
+####
+# Function `execute_process_or_fail`:
+#
+# Calls CMake's `execute_process` with the arguments passed in via ARGN. This call is wrapped to print out the command
+# line invocation when CMAKE_DEBUG_OUTPUT is set ON, and will check that the command processes correctly.  Any error
+# message is output should the command fail. No handling is done of standard error.
+#
+# Errors are determined by checking the process's return code where a FATAL_ERROR is produced on non-zero.
+#
+# - **ERROR_MESSAGE**: message to output should an error occurs
+####
+function(execute_process_or_fail ERROR_MESSAGE)
+    # Print the invocation if debug output is set
+    if (CMAKE_DEBUG_OUTPUT)
+        string(REPLACE ";" " " COMMAND_AS_STRING "${ARGN}")
+        message(STATUS "[CLI Invocation] ${COMMAND_AS_STRING}")
+    endif()
+    execute_process(
+            COMMAND ${ARGN}
+            RESULT_VARIABLE RETURN_CODE
+            ERROR_VARIABLE STANDARD_ERROR
+            ERROR_STRIP_TRAILING_WHITESPACE
+    )
+    if (NOT RETURN_CODE EQUAL 0)
+        message(FATAL_ERROR "${ERROR_MESSAGE}:\n${STANDARD_ERROR}")
+    endif()
+endfunction()

@@ -17,7 +17,7 @@
 
 #include <FpConfig.hpp>
 #include <Fw/Types/EightyCharString.hpp>
-#include <Svc/GroundInterface/test/ut/Tester.hpp>
+#include "GroundInterfaceTester.hpp"
 #include <STest/STest/Rule/Rule.hpp>
 #include <STest/STest/Pick/Pick.hpp>
 
@@ -29,48 +29,48 @@ namespace Svc {
      *
      * This rule sets up random state
      */
-    struct RandomizeRule : public STest::Rule<Tester> {
+    struct RandomizeRule : public STest::Rule<GroundInterfaceTester> {
         // Constructor
         RandomizeRule(const Fw::EightyCharString& name);
 
         // Always valid
-        bool precondition(const Tester& state);
+        bool precondition(const GroundInterfaceTester& state);
 
         // Will randomize the test state
-        void action(Tester& truth);
+        void action(GroundInterfaceTester& truth);
     };
 
-    struct DownlinkRule : public STest::Rule<Tester> {
+    struct DownlinkRule : public STest::Rule<GroundInterfaceTester> {
         // Constructor
         DownlinkRule(const Fw::EightyCharString& name);
 
         // Always valid
-        bool precondition(const Tester& state);
+        bool precondition(const GroundInterfaceTester& state);
 
         // Will randomize the test state
-        void action(Tester& truth);
+        void action(GroundInterfaceTester& truth);
     };
 
-    struct FileDownlinkRule : public STest::Rule<Tester> {
+    struct FileDownlinkRule : public STest::Rule<GroundInterfaceTester> {
         // Constructor
         FileDownlinkRule(const Fw::EightyCharString& name);
 
         // Always valid
-        bool precondition(const Tester& state);
+        bool precondition(const GroundInterfaceTester& state);
 
         // Will randomize the test state
-        void action(Tester& truth);
+        void action(GroundInterfaceTester& truth);
     };
 
-    struct SendAvailableRule : public STest::Rule<Tester> {
+    struct SendAvailableRule : public STest::Rule<GroundInterfaceTester> {
         // Constructor
         SendAvailableRule(const Fw::EightyCharString& name);
 
         // Always valid
-        bool precondition(const Tester& state);
+        bool precondition(const GroundInterfaceTester& state);
 
         // Will randomize the test state
-        void action(Tester& truth);
+        void action(GroundInterfaceTester& truth);
     };
 
 };

@@ -62,8 +62,12 @@ def run_parallel_depend(fpp_depend, fpp_locs, file_input):
                 "generated.txt",
                 "-i",
                 "include.txt",
+                "-u",
+                "unittest.txt",
+                "-a",
             ]
         )
+
         wait_list.append((run_process(Path(directory), full_list), full_list))
 
         if len(wait_list) >= max_jobs:
@@ -75,15 +79,16 @@ def run_parallel_depend(fpp_depend, fpp_locs, file_input):
 
 def main():
     try:
-        _, fpp_depend, fpp_locs, file_input = sys.argv
+        _, fpp_depend, fpp_locs, file_input, ut = sys.argv
         run_parallel_depend(fpp_depend, fpp_locs, file_input)
         sys.exit(0)
     except ValueError:
         print(
-            "[ERROR] Bad arguments: fpp-depend path, locs file path, file input and integer PARALLEL_JOBS env var."
+            "[ERROR] Bad arguments: fpp-depend path, locs file path, and file input",
+            file=sys.stderr,
         )
     except Exception as exc:
-        print(f"[ERROR] {exc}")
+        print(f"[ERROR] {exc}", file=sys.stderr)
     sys.exit(-1)
 
 

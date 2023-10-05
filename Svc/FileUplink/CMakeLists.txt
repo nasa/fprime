@@ -24,7 +24,7 @@ register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FileUplink.fpp"
-  ${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/test/ut/FileUplinkTester.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/test/ut/FileUplinkMain.cpp
 )
 register_fprime_ut()

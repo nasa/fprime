@@ -6,8 +6,8 @@ register_fprime_module()
 
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/CmdSplitter.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSplitterTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSplitterTester.cpp"
 
 )
 set(UT_MOD_DEPS STest)

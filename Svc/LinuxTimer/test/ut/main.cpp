@@ -2,12 +2,12 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "LinuxTimerTester.hpp"
 #include <Fw/Test/UnitTest.hpp>
 
 TEST(Nominal, InitTest) {
     TEST_CASE(103.1.1,"Cycle Test");
-    Svc::Tester tester;
+    Svc::LinuxTimerTester tester;
     tester.runCycles();
 }
 
