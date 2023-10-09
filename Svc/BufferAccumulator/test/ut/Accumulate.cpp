@@ -20,7 +20,7 @@ namespace Accumulate {
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::OK() {
+void BufferAccumulatorTester ::OK() {
   ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.mode.e);
   this->sendCmd_BA_SetMode(0, 0, BufferAccumulator_OpState::ACCUMULATE);
   this->component.doDispatch();

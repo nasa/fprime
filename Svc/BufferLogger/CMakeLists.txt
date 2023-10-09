@@ -17,11 +17,11 @@ register_fprime_module()
 ### UTS ###
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/BufferLogger.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferLoggerTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Logging.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Errors.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Health.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferLoggerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferLoggerMain.cpp"
 )
 register_fprime_ut()

@@ -7,6 +7,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include "ActiveTestGTestBase.hpp"
 #include "FppTest/component/active/ActiveTest.hpp"
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 #include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
@@ -17,7 +18,6 @@
 #include "FppTest/component/tests/PortTests.hpp"
 #include "FppTest/component/tests/TlmTests.hpp"
 #include "FppTest/component/types/FormalParamTypes.hpp"
-#include "GTestBase.hpp"
 
 class Tester : public ActiveTestGTestBase {
     // ----------------------------------------------------------------------
@@ -197,8 +197,6 @@ class Tester : public ActiveTestGTestBase {
                                                       */
     );
 
-    void cmdResponseIn(const FwOpcodeType opCode, const U32 cmdSeq, const Fw::CmdResponse response);
-
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handlers for serial from ports
@@ -277,9 +275,6 @@ class Tester : public ActiveTestGTestBase {
     Fw::SerialBuffer arrayBuf;
     Fw::SerialBuffer structBuf;
     Fw::SerialBuffer serialBuf;
-
-    // Command test values
-    Fw::CmdResponse cmdResp;
 
     // Parameter test values
     FppTest::Types::BoolParam boolPrm;

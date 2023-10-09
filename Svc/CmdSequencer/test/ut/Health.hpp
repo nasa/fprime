@@ -12,14 +12,14 @@
 #ifndef Svc_Health_HPP
 #define Svc_Health_HPP
 
-#include "Svc/CmdSequencer/test/ut/Tester.hpp"
+#include "CmdSequencerTester.hpp"
 
 namespace Svc {
 
   namespace Health {
 
-    class Tester :
-      public Svc::Tester
+    class CmdSequencerTester :
+      public Svc::CmdSequencerTester
     {
 
       public:

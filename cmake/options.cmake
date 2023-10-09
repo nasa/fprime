@@ -131,7 +131,7 @@ option(FPRIME_ENABLE_FRAMEWORK_UTS "Enable framework UT generation" ON)
 #
 # e.g. `-DFPRIME_ENABLE_AUTOCODER_UTS=OFF`
 ####
-option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
+option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" OFF)
 
 ####
 # `FPRIME_ENABLE_UT_COVERAGE`:

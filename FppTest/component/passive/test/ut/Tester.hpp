@@ -16,7 +16,7 @@
 #include "FppTest/component/tests/PortTests.hpp"
 #include "FppTest/component/tests/TlmTests.hpp"
 #include "FppTest/component/types/FormalParamTypes.hpp"
-#include "GTestBase.hpp"
+#include "PassiveTestGTestBase.hpp"
 
 class Tester : public PassiveTestGTestBase {
     // ----------------------------------------------------------------------
@@ -193,8 +193,6 @@ class Tester : public PassiveTestGTestBase {
                                                       */
     );
 
-    void cmdResponseIn(const FwOpcodeType opCode, const U32 cmdSeq, const Fw::CmdResponse response);
-
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handlers for serial from ports
@@ -267,9 +265,6 @@ class Tester : public PassiveTestGTestBase {
     Fw::SerialBuffer arrayBuf;
     Fw::SerialBuffer structBuf;
     Fw::SerialBuffer serialBuf;
-
-    // Command test values
-    Fw::CmdResponse cmdResp;
 
     // Parameter test values
     FppTest::Types::BoolParam boolPrm;

@@ -2,55 +2,55 @@
 // Main.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "HealthTester.hpp"
 
 TEST(Test, NominalTlm) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.nominalTlm();
 }
 
 TEST(Test, WarningTlm) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.warningTlm();
 }
 
 TEST(Test, FaultTlm) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.faultTlm();
 }
 
 TEST(Test, DisableAllMonitoring) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.disableAllMonitoring();
 }
 
 TEST(Test, DisableOneMonitoring) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.disableOneMonitoring();
 }
 
 TEST(Test, UpdatePingTimeout) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.updatePingTimeout();
 }
 
 TEST(Test, WatchdogCheck) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.watchdogCheck();
 }
 
 TEST(Test, NominalCmd) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.nominalCmd();
 }
 
 TEST(Test, Nominal2CmdsDuringTlm) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.nominal2CmdsDuringTlm();
 }
 
 TEST(Test, Miscellaneous) {
-  Svc::Tester tester;
+  Svc::HealthTester tester;
   tester.miscellaneous();
 }
 

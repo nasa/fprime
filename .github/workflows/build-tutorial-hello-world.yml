@@ -14,10 +14,18 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
 
 jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-tutorial-hello-world
+
   run:
+    needs: get-branch
     name: ""
-    uses: ./.github/workflows/reusable-builder.yml
+    uses: ./.github/workflows/reusable-project-builder.yml
     with:
       target_repository: fprime-community/fprime-tutorial-hello-world
       build_location: HelloWorldDeployment
       run_unit_tests: true
+      target_ref: ${{ needs.get-branch.outputs.target-branch }}

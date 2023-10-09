@@ -7,7 +7,8 @@
 #include <FpConfig.hpp>
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Svc/CmdSplitter/CmdSplitter.hpp>
-#include <config/CmdSplitterCfg.hpp>
+#include <Fw/Types/Assert.hpp>
+#include <FppConstantsAc.hpp>
 
 namespace Svc {
 
@@ -19,6 +20,10 @@ CmdSplitter ::CmdSplitter(const char* const compName) : CmdSplitterComponentBase
 
 CmdSplitter ::~CmdSplitter() {}
 
+void CmdSplitter ::configure(const FwOpcodeType remoteBaseOpcode) {
+    this->m_remoteBase = remoteBaseOpcode;
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
@@ -27,15 +32,16 @@ void CmdSplitter ::CmdBuff_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer&
     Fw::CmdPacket cmdPkt;
     Fw::SerializeStatus stat = cmdPkt.deserialize(data);
 
+    FW_ASSERT(portNum < CmdSplitterPorts);
     if (stat != Fw::FW_SERIALIZE_OK) {
         // Let the local command dispatcher deal with it
-        this->LocalCmd_out(0, data, context);
+        this->LocalCmd_out(portNum, data, context);
     } else {
         // Check if local or remote
-        if (cmdPkt.getOpCode() < CMD_SPLITTER_REMOTE_OPCODE_BASE) {
-            this->LocalCmd_out(0, data, context);
+        if (cmdPkt.getOpCode() < this->m_remoteBase) {
+            this->LocalCmd_out(portNum, data, context);
         } else {
-            this->RemoteCmd_out(0, data, context);
+            this->RemoteCmd_out(portNum, data, context);
         }
     }
 }
@@ -44,6 +50,7 @@ void CmdSplitter ::seqCmdStatus_handler(const NATIVE_INT_TYPE portNum,
                                         FwOpcodeType opCode,
                                         U32 cmdSeq,
                                         const Fw::CmdResponse& response) {
+    FW_ASSERT(portNum < CmdSplitterPorts);
     // Forward the command status
     this->forwardSeqCmdStatus_out(portNum, opCode, cmdSeq, response);
 }

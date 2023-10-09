@@ -5,23 +5,27 @@ module Svc {
   passive component CmdSplitter {
 
     # ----------------------------------------------------------------------
-    # General ports
+    # Upstream connections: uplink commanding and command sequencers
     # ----------------------------------------------------------------------
 
     @ Input port for local or remote commands
-    sync input port CmdBuff: Fw.Com
-
-    @ Input port for receiving the command status
-    sync input port seqCmdStatus: Fw.CmdResponse
+    sync input port CmdBuff: [CmdSplitterPorts] Fw.Com
 
     @ Output port for forwarding the Command status
-    output port forwardSeqCmdStatus: Fw.CmdResponse
+    output port forwardSeqCmdStatus: [CmdSplitterPorts] Fw.CmdResponse
+
+    # ----------------------------------------------------------------------
+    # Downstream connections: local and remote command sequencers
+    # ----------------------------------------------------------------------
+
+    @ Input port for receiving the command status
+    sync input port seqCmdStatus: [CmdSplitterPorts] Fw.CmdResponse
 
     @ Output port for local commands
-    output port LocalCmd: Fw.Com
+    output port LocalCmd: [CmdSplitterPorts] Fw.Com
 
     @ Output port for remote commands
-    output port RemoteCmd: Fw.Com
+    output port RemoteCmd: [CmdSplitterPorts] Fw.Com
 
   }
 }

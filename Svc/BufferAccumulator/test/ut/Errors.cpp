@@ -20,7 +20,7 @@ namespace Errors {
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::PartialDrain() {
+void BufferAccumulatorTester ::PartialDrain() {
   ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.mode.e);
   this->sendCmd_BA_DrainBuffers(0, 0, 1, BufferAccumulator_BlockMode::BLOCK);
   this->component.doDispatch();  // will fail - we are still in
@@ -61,7 +61,7 @@ void Tester ::PartialDrain() {
   ASSERT_EQ(10u, this->component.numToDrain);
 }
 
-void Tester ::QueueFull() {
+void BufferAccumulatorTester ::QueueFull() {
   U8* data = new U8[10];
   const U32 size = 10;
   Fw::Buffer buffer(data, size);
