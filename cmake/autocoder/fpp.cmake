@@ -4,8 +4,10 @@
 # CMake implementation of an fprime autocoder. Includes the necessary function definitions to implement the fprime
 # autocoder API and wraps calls to the FPP tools.
 ####
+include_guard()
 include(utilities)
 include(autocoder/helpers)
+set(FPP_LOCATE_DEFS_HELPER "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/fpp-wrapper/fpp-redirect-helper")
 
 autocoder_setup_for_multiple_sources()
 ####

@@ -485,11 +485,10 @@ endfunction(register_fprime_ut)
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
 ###
 macro(register_fprime_target TARGET_FILE_PATH)
-    # Normal registered targets don't run in prescan
-    if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
-        setup_global_target("${TARGET_FILE_PATH}")
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
     endif()
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
 endmacro(register_fprime_target)
 
 ####
@@ -502,9 +501,11 @@ endmacro(register_fprime_target)
 ###
 macro(register_fprime_ut_target TARGET_FILE_PATH)
     # UT targets only allowed when testing
-    if (BUILD_TESTING AND NOT DEFINED FPRIME_PRESCAN)
+    if (BUILD_TESTING)
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
+        endif()
         register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
-        setup_global_target("${TARGET_FILE_PATH}")
     endif()
 endmacro(register_fprime_ut_target)
 
@@ -544,10 +545,10 @@ endmacro(register_fprime_list_helper)
 ###
 macro(register_fprime_build_autocoder TARGET_FILE_PATH)
     # Normal registered targets don't run in prescan
-    message(STATUS "Registering custom autocoder: ${TARGET_FILE_PATH}")
-    if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[autocoder] Registering custom build target autocoder: ${TARGET_FILE_PATH}")
     endif()
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
 endmacro(register_fprime_build_autocoder)
 
 #### Documentation links
