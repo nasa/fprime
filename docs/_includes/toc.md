@@ -86,8 +86,8 @@
       <summary>API Documentation</summary>
       <ul>
         <li><a href="/fprime/UsersGuide/dev/gds-cli-dev.html">GDS CLI Design</a></li>
-        <li><a href="./api/c++/html/index.html">C++ Documentation</a></li>
-        <li><a href="./api/cmake/API.html">CMake User API</a></li>
+        <li><a href="/fprime/UsersGuide/api/c++/html/index.html">C++ Documentation</a></li>
+        <li><a href="/fprime/UsersGuide/api/cmake/API.html">CMake User API</a></li>
       </ul>
     </details>
   </ul>
