@@ -46,7 +46,7 @@ def connectOutputLogger(file=None, logger_name="output"):
     Function that connects the output logger.
     This is always enabled and hardwired to
     generate logging.INFO level messages only.
-    @params  file : Output file to store these messages into.
+    @param   file : Output file to store these messages into.
     @default None : If file is None no output file generated.
     """
     # Create logger for logging messages
