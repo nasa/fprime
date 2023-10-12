@@ -38,4 +38,4 @@ docker run --platform=linux/amd64 --net host -e USER=$USER -u "`id -u`:`id -g`" 
 
 > Anytime Macintosh users run cross-compilation commands, they **must** do so in a terminal inside the docker container.
 
-[Return to Macintosh tutorial.](./MacOS.md)
+[Return to Macintosh tutorial.](./macOS.md)
