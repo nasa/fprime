@@ -25,8 +25,6 @@ namespace Svc {
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_dividers) == this->getNum_CycleOut_OutputPorts(),
                 static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
                 this->getNum_CycleOut_OutputPorts());
-        // clear table
-        ::memset(this->m_dividers,0,sizeof(this->m_dividers));
         // copy provided array of dividers
         for (NATIVE_UINT_TYPE entry = 0; entry < RateGroupDriver::DIVIDER_SIZE; entry++) {
             // A port with an offset equal or bigger than the divisor is not accepted because it would never be called
