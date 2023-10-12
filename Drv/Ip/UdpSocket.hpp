@@ -24,7 +24,7 @@ namespace Drv {
 struct SocketState;
 
 /**
- * \brief Helper for setting up Udp using Berkley sockets as a client
+ * \brief Helper for setting up Udp using Berkeley sockets as a client
  *
  * Certain IP headers have conflicting definitions with the m_data member of various types in fprime. UdpSocket
  * separates the ip setup from the incoming Fw::Buffer in the primary component class preventing this collision.

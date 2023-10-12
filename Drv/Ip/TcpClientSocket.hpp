@@ -18,7 +18,7 @@
 
 namespace Drv {
 /**
- * \brief Helper for setting up Tcp using Berkley sockets as a client
+ * \brief Helper for setting up Tcp using Berkeley sockets as a client
  *
  * Certain IP headers have conflicting definitions with the m_data member of various types in fprime. TcpClientSocket
  * separates the ip setup from the incoming Fw::Buffer in the primary component class preventing this collision.

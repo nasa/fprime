@@ -38,7 +38,7 @@ enum SocketIpStatus {
 };
 
 /**
- * \brief Helper base-class for setting up Berkley sockets
+ * \brief Helper base-class for setting up Berkeley sockets
  *
  * Certain IP headers have conflicting definitions with the m_data member of various types in fprime. TcpHelper
  * separates the ip setup from the incoming Fw::Buffer in the primary component class preventing this collision.
