@@ -12,15 +12,14 @@ namespace Svc {
 
     }
 
-    void RateGroupDriver::configure(DividerSet dividersSet, NATIVE_INT_TYPE numDividers)
+    void RateGroupDriver::configure(DividerSet dividersSet)
     {
 
         // check arguments
         FW_ASSERT(dividersSet.dividers);
-        FW_ASSERT(numDividers);
-        this->m_numDividers = numDividers;
-        FW_ASSERT(numDividers <= static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
-                numDividers,
+        this->m_numDividers = RateGroupDriver::DIVIDER_SIZE;
+        FW_ASSERT(this->m_numDividers <= static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
+                this->m_numDividers,
                 static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)));
         // verify port/table size matches
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_dividers) == this->getNum_CycleOut_OutputPorts(),
@@ -29,7 +28,7 @@ namespace Svc {
         // clear table
         ::memset(this->m_dividers,0,sizeof(this->m_dividers));
         // copy provided array of dividers
-        for (NATIVE_INT_TYPE entry = 0; entry < numDividers; entry++) {
+        for (NATIVE_UINT_TYPE entry = 0; entry < RateGroupDriver::DIVIDER_SIZE; entry++) {
             // A port with an offset equal or bigger than the divisor is not accepted because it would never be called
             FW_ASSERT((this->m_dividers[entry].offset==0)||(this->m_dividers[entry].offset < this->m_dividers[entry].divisor),
                 this->m_dividers[entry].offset,
@@ -46,10 +45,6 @@ namespace Svc {
 
     RateGroupDriver::~RateGroupDriver() {
 
-    }
-
-    void RateGroupDriver::init(NATIVE_INT_TYPE instanceId) {
-        RateGroupDriverComponentBase::init(instanceId);
     }
 
     void RateGroupDriver::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {

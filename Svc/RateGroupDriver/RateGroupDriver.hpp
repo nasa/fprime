@@ -39,6 +39,13 @@ namespace Svc {
             //! \class Divider
             //! \brief Struct describing a divider
             struct Divider{
+                //! Initializes divisor and offset to 0 (unused)
+                Divider() : divisor(0), offset(0)
+                {}
+                //! Initializes divisor and offset to passed-in pair 
+                Divider(NATIVE_INT_TYPE divisorIn, NATIVE_INT_TYPE offsetIn) :
+                    divisor(divisorIn), offset(offsetIn)
+                {}
                 //! Divisor
                 NATIVE_INT_TYPE divisor;
                 //! Offset
@@ -61,17 +68,10 @@ namespace Svc {
             //!
             RateGroupDriver(const char* compName);
 
-            //!  \brief RateGroupDriver initialization function
-            //!
-            //!  The init() function initializes the autocoded base class
-
-            void init(NATIVE_INT_TYPE instanceId = 0);
-
             //!  \brief RateGroupDriver configuration function
             //!  \param dividersSet set of dividers used to divide down input tick
-            //!  \param numDividers size of dividers array
 
-            void configure(DividerSet dividersSet, NATIVE_INT_TYPE numDividers);
+            void configure(DividerSet dividersSet);
 
             //!  \brief RateGroupDriverImpl destructor
 

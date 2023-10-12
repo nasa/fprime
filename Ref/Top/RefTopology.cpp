@@ -88,7 +88,7 @@ void configureTopology() {
     cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
 
     // Rate group driver needs a divisor list
-    rateGroupDriverComp.configure(rateGroupDivisorsSet, FW_NUM_ARRAY_ELEMENTS(rateGroupDivisorsSet.dividers));
+    rateGroupDriverComp.configure(rateGroupDivisorsSet);
 
     // Rate groups require context arrays. Empty for Reference example.
     rateGroup1Comp.configure(rateGroup1Context, FW_NUM_ARRAY_ELEMENTS(rateGroup1Context));

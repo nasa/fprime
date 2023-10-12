@@ -34,7 +34,7 @@ TEST(RateGroupDriverTest,NominalSchedule) {
     Svc::RateGroupDriver::DividerSet dividersSet{{{1, 0}, {2, 1}, {3, 0}}};
 
     Svc::RateGroupDriver impl("RateGroupDriver");
-    impl.configure(dividersSet,FW_NUM_ARRAY_ELEMENTS(dividersSet.dividers));
+    impl.configure(dividersSet);
 
     Svc::RateGroupDriverImplTester tester(impl);
 

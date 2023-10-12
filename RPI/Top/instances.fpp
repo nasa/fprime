@@ -298,8 +298,7 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     rateGroupDriverComp.configure(
-        ConfigObjects::rateGroupDriverComp::rgDivs,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs.dividers)
+        ConfigObjects::rateGroupDriverComp::rgDivs
     );
     """
   }
