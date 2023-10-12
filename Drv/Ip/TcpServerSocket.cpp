@@ -75,9 +75,8 @@ SocketIpStatus TcpServerSocket::startup() {
     this->m_lock.lock();
     m_base_fd = serverFd;
     this->m_lock.unLock();
-    this->IpSocket::startup();
 
-    return SOCK_SUCCESS;
+    return this->IpSocket::startup();
 }
 
 void TcpServerSocket::shutdown() {
@@ -105,7 +104,8 @@ SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     this->m_lock.unLock();
 
     // TCP requires accepting on a the socket to get the client socket file descriptor.
-    if ((clientFd = ::accept(serverFd, nullptr, nullptr)) < 0) {
+    clientFd = ::accept(serverFd, nullptr, nullptr);
+    if (clientFd < 0) {
         return SOCK_FAILED_TO_ACCEPT; // What we have here is a failure to communicate
     }
     // Setup client send timeouts

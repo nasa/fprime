@@ -75,7 +75,7 @@ void SocketReadTask::readTask(void* pointer) {
         if ((not self->getSocketHandler().isStarted()) and (not self->m_stop) and
             ((status = self->startup()) != SOCK_SUCCESS)) {
             Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
-            Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
+            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
             continue;
         }
 
@@ -83,7 +83,7 @@ void SocketReadTask::readTask(void* pointer) {
         if ((not self->getSocketHandler().isOpened()) and (not self->m_stop) and
             ((status = self->open()) != SOCK_SUCCESS)) {
             Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
-            Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
+            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
             continue;
         }
 
