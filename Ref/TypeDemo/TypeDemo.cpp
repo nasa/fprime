@@ -135,4 +135,10 @@ void TypeDemo ::DUMP_FLOATS_cmdHandler(const FwOpcodeType opCode, const U32 cmdS
     this->tlmWrite_FloatSet(invalid);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
+
+void TypeDemo ::SEND_SCALARS_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, Ref::ScalarStruct scalar_input) {
+    this->log_ACTIVITY_HI_ScalarStructEv(scalar_input);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
 }  // end namespace Ref
