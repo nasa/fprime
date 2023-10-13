@@ -2,8 +2,8 @@
 // PosixTimeTester.hpp
 // ----------------------------------------------------------------------
 
-#ifndef POSIXTIME_TESTER_HPP
-#define POSIXTIME_TESTER_HPP
+#ifndef POSIX_TIME_TESTER_HPP
+#define POSIX_TIME_TESTER_HPP
 
 #include "Svc/PosixTime/PosixTime.hpp"
 #include "PosixTimeGTestBase.hpp"

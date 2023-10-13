@@ -5,8 +5,8 @@
  *      Author: tcanham
  */
 
-#ifndef POSIXTIMEIMPL_HPP_
-#define POSIXTIMEIMPL_HPP_
+#ifndef POSIX_TIME_HPP_
+#define POSIX_TIME_HPP_
 
 #include <Svc/PosixTime/PosixTimeComponentAc.hpp>
 
@@ -26,4 +26,4 @@ class PosixTime: public PosixTimeComponentBase {
 
 }
 
-#endif /* POSIXTIMEIMPL_HPP_ */
+#endif /* POSIX_TIME_HPP_ */
