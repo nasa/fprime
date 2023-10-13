@@ -14,7 +14,7 @@ namespace Svc {
 
 class PosixTime: public PosixTimeComponentBase {
     public:
-        PosixTime(const char* compName);
+        explicit PosixTime(const char* compName);
         virtual ~PosixTime();
     protected:
         void timeGetPort_handler(

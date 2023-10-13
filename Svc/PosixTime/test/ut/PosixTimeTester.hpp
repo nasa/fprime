@@ -20,7 +20,7 @@ namespace Svc {
 
     public:
 
-      PosixTimeTester(const char *const compName);
+      explicit PosixTimeTester(const char *const compName);
 
       ~PosixTimeTester();
 
