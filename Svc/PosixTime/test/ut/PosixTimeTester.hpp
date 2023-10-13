@@ -1,17 +1,17 @@
 // ----------------------------------------------------------------------
-// LinuxTimeTester.hpp
+// PosixTimeTester.hpp
 // ----------------------------------------------------------------------
 
-#ifndef TESTER_HPP
-#define TESTER_HPP
+#ifndef POSIXTIME_TESTER_HPP
+#define POSIXTIME_TESTER_HPP
 
-#include "../../LinuxTimeImpl.hpp"
-#include "TimeGTestBase.hpp"
+#include "Svc/PosixTime/PosixTime.hpp"
+#include "PosixTimeGTestBase.hpp"
 
 namespace Svc {
 
-  class LinuxTimeTester :
-    public TimeGTestBase
+  class PosixTimeTester :
+    public PosixTimeGTestBase
   {
 
       // ----------------------------------------------------------------------
@@ -20,9 +20,9 @@ namespace Svc {
 
     public:
 
-      LinuxTimeTester(const char *const compName);
+      PosixTimeTester(const char *const compName);
 
-      ~LinuxTimeTester();
+      ~PosixTimeTester();
 
       // ----------------------------------------------------------------------
       // Tests
@@ -38,7 +38,7 @@ namespace Svc {
 
     private:
 
-      LinuxTimeImpl linuxTime;
+      PosixTime component;
 
   };
 

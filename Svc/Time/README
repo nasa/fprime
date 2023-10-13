@@ -1,3 +1,0 @@
-This directory defines a time source component. It provides ports for retrieving the current time for telemetry channels and events.
-
-TimeComponentAi.xml - The XML definition of the time component

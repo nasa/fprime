@@ -8,7 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/PosixTimecpp"
+  "${CMAKE_CURRENT_LIST_DIR}/PosixTime.cpp"
 )
 
 register_fprime_module()
