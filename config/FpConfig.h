@@ -271,11 +271,6 @@ typedef U16 FwTlmPacketizeIdType;
 #define FW_PARAM_STRING_MAX_SIZE 40  //!< Max size of parameter string type
 #endif
 
-// Specifies the maximum size of a file upload chunk
-#ifndef FW_FILE_BUFFER_MAX_SIZE
-#define FW_FILE_BUFFER_MAX_SIZE 255  //!< Max size of file buffer (i.e. chunk of file)
-#endif
-
 // Specifies the maximum size of a string in an interface call
 #ifndef FW_INTERNAL_INTERFACE_STRING_MAX_SIZE
 #define FW_INTERNAL_INTERFACE_STRING_MAX_SIZE 256  //!< Max size of interface string parameter type
