@@ -5,6 +5,28 @@
 ####
 include(target/build) # Borrows some implementation
 set(UT_TARGET "ut_exe") # For historical reasons
+set(UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
+
+
+####
+# Function `_ut_setup_clean_file`:
+#
+# Setup a file that cleans out *.gcda files before running tests. This is run before testing as registered through
+# TEST_INCLUDE_FILES.
+####
+function(_ut_setup_clean_file)
+    set(REMOVAL_GLOB "*.gcda")
+    file(WRITE "${UT_CLEAN_SCRIPT}" "
+        file(GLOB_RECURSE GCDA_FILES \"${CMAKE_BINARY_DIR}/**/${REMOVAL_GLOB}\")
+        if (GCDA_FILES)
+            file(REMOVE \${GCDA_FILES})
+        endif()
+    ")
+    set_property(DIRECTORY APPEND PROPERTY
+        TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
+    )
+endfunction(_ut_setup_clean_file)
+
 ####
 # `ut_add_global_target`:
 #
@@ -14,6 +36,7 @@ function(ut_add_global_target TARGET)
     if (FPRIME_ENABLE_UTIL_TARGETS)
         add_custom_target(${UT_TARGET})
     endif()
+    _ut_setup_clean_file()
 endfunction(ut_add_global_target)
 
 
@@ -31,6 +54,9 @@ function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPEND
     if (NOT FPRIME_ENABLE_UTIL_TARGETS)
         return()
     endif()
+    set_property(DIRECTORY APPEND PROPERTY
+        TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
+    )
     add_custom_target("${MODULE}_${UT_TARGET}")
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
         get_property(DEPENDENCY_UTS TARGET "${DEPENDENCY}" PROPERTY FPRIME_UTS)
@@ -82,6 +108,9 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
         return()
     endif()
     message(STATUS "Adding Unit Test: ${UT_EXE_NAME}")
+    set_property(DIRECTORY APPEND PROPERTY
+        TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
+    )
     run_ac_set("${SOURCE_FILES}" autocoder/fpp autocoder/fpp_ut)
     resolve_dependencies(RESOLVED gtest_main ${DEPENDENCIES} ${AC_DEPENDENCIES})
     build_setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
