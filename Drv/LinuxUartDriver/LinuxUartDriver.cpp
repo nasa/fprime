@@ -173,6 +173,38 @@ bool LinuxUartDriver::open(const char* const device,
         case BAUD_921K:
             relayRate = B921600;
             break;
+        case BAUD_1000K:
+            relayRate = B1000000;
+            break;
+        case BAUD_1152K:
+            relayRate = B1152000;
+            break;
+        case BAUD_1500K:
+            relayRate = B1500000;
+            break;
+        case BAUD_2000K:
+            relayRate = B2000000;
+            break;
+#ifdef B2500000
+        case BAUD_2500K:
+            relayRate = B2500000;
+            break;
+#endif
+#ifdef B3000000
+        case BAUD_3000K:
+            relayRate = B3000000;
+            break;
+#endif
+#ifdef B3500000
+        case BAUD_3500K:
+            relayRate = B3500000;
+            break;
+#endif
+#ifdef B4000000
+        case BAUD_4000K:
+            relayRate = B4000000;
+            break;
+#endif
 #endif
         default:
             FW_ASSERT(0, baud);

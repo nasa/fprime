@@ -16,7 +16,7 @@ register_fprime_module()
 # ### UTs ###
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/Health/Health.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/HealthTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 register_fprime_ut()

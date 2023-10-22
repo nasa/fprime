@@ -20,7 +20,7 @@ register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/ComQueue.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComQueueTestMain.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComQueueTester.cpp"
         )
 register_fprime_ut()

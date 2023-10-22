@@ -21,9 +21,9 @@ namespace Svc {
     // Constructors
     // ----------------------------------------------------------------------
 
-    Tester ::
-      Tester(const SequenceFiles::File::Format::t format) :
-        Svc::Tester(format)
+    CmdSequencerTester ::
+      CmdSequencerTester(const SequenceFiles::File::Format::t format) :
+        Svc::CmdSequencerTester(format)
     {
 
     }
@@ -32,7 +32,7 @@ namespace Svc {
     // Tests
     // ----------------------------------------------------------------------
 
-    void Tester ::
+    void CmdSequencerTester ::
       BadCRC()
     {
 
@@ -71,7 +71,7 @@ namespace Svc {
       ASSERT_TLM_CS_Errors(0, 1);
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       BadRecordDescriptor()
     {
       // Set the time
@@ -122,7 +122,7 @@ namespace Svc {
       );
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       BadTimeBase()
     {
       // Set the time
@@ -155,7 +155,7 @@ namespace Svc {
       );
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       BadTimeContext()
     {
       // Set the time
@@ -183,7 +183,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_TimeContextMismatch(0, fileName, 0, 1);
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       EmptyFile()
     {
       // Write the file
@@ -214,7 +214,7 @@ namespace Svc {
       ASSERT_TLM_CS_Errors(0, 1);
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       DataAfterRecords()
     {
 
@@ -246,7 +246,7 @@ namespace Svc {
 
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       FileTooLarge()
     {
       // Write the file
@@ -276,7 +276,7 @@ namespace Svc {
       ASSERT_TLM_CS_Errors(0, 1);
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       MissingCRC()
     {
       // Write the file
@@ -351,7 +351,7 @@ namespace Svc {
       ASSERT_TLM_CS_Errors(0, 3);
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       MissingFile()
     {
       // Remove the file
@@ -377,7 +377,7 @@ namespace Svc {
       ASSERT_TLM_CS_Errors(0, 1);
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       SizeFieldTooLarge()
     {
       // Set the time
@@ -427,7 +427,7 @@ namespace Svc {
       );
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       SizeFieldTooSmall()
     {
       // Set the time
@@ -479,7 +479,7 @@ namespace Svc {
       );
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       USecFieldTooShort()
     {
       // Set the time

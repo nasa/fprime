@@ -12,15 +12,15 @@
 #ifndef Svc_NoFiles_HPP
 #define Svc_NoFiles_HPP
 
-#include "Svc/CmdSequencer/test/ut/Tester.hpp"
+#include "CmdSequencerTester.hpp"
 
 namespace Svc {
 
   namespace NoFiles {
 
     //! Test sequencer behavior with no input files
-    class Tester :
-      public Svc::Tester
+    class CmdSequencerTester :
+      public Svc::CmdSequencerTester
     {
 
       public:
@@ -29,8 +29,8 @@ namespace Svc {
         // Constructors
         // ----------------------------------------------------------------------
 
-        //! Construct object Tester
-        Tester(
+        //! Construct object CmdSequencerTester
+        CmdSequencerTester(
             const SequenceFiles::File::Format::t format =
             SequenceFiles::File::Format::F_PRIME //!< The file format to use
         );

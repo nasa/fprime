@@ -33,8 +33,7 @@ To run this container, users may wish to download [this script](https://github.c
 
 Alternatively, the user may run the following command to start the terminal
 ```bash 
-docker run --platform=linux/amd64 --net host -e USER=$USER -u "`id -u`:`id -g`" -v "/path/to/project:/project" -it \
-    docker pull nasafprime/fprime-arm:latest
+docker run --platform=linux/amd64 --net host -e USER=$USER -u "`id -u`:`id -g`" -v "/path/to/project:/project" -it nasafprime/fprime-arm:latest
 ```
 
 > Anytime Macintosh users run cross-compilation commands, they **must** do so in a terminal inside the docker container.

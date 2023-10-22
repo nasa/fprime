@@ -35,6 +35,20 @@ module Ref {
 
     @ Set of floating points to emit
     array FloatSet = [3] F32;
+   
+    @ All scalar inputs 
+    struct ScalarStruct {
+        i8: I8,
+        i16: I16,
+        i32: I32,
+        i64: I64,
+        u8: U8,
+        u16: U16,
+        u32: U32,
+        u64: U64,
+        f32: F32,
+        f64: F64
+    }
 
     @ Component to demonstrate multiple type configurations
     passive component TypeDemo {
@@ -216,6 +230,15 @@ module Ref {
 
         @ Dump the float values
         sync command DUMP_FLOATS()
+
+        @ Send scalars
+        sync command SEND_SCALARS(scalar_input: ScalarStruct)
+
+        @ Event for scalar struct
+        event ScalarStructEv(scalar_argument: ScalarStruct) severity activity high \
+            format "ScalarStruct: {}"
+
+
 
         # ----------------------------------------------------------------------
         # Special ports

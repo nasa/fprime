@@ -25,8 +25,8 @@ set_target_properties(
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ExampleComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/noargportTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/noargportTestMain.cpp"
 )
 register_fprime_ut()
 

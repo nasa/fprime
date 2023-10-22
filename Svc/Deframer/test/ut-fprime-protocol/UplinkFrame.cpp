@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  UplinkFrame.cpp
 // \author mstarch, bocchino
-// \brief  Implementation file for Tester::UplinkFrame
+// \brief  Implementation file for DeframerTester::UplinkFrame
 //
 // \copyright
 // Copyright 2009-2022, by the California Institute of Technology.
@@ -9,7 +9,7 @@
 // acknowledged.
 // ======================================================================
 
-#include "Tester.hpp"
+#include "DeframerTester.hpp"
 
 namespace Svc {
 
@@ -17,7 +17,7 @@ namespace Svc {
     // Constructor
     // ----------------------------------------------------------------------
 
-    Tester::UplinkFrame::UplinkFrame(
+    DeframerTester::UplinkFrame::UplinkFrame(
         Fw::ComPacket::ComPacketType packetType,
         U32 packetSize
     ) :
@@ -53,27 +53,27 @@ namespace Svc {
     // Public instance methods
     // ----------------------------------------------------------------------
 
-    U32 Tester::UplinkFrame::getRemainingCopySize() const {
+    U32 DeframerTester::UplinkFrame::getRemainingCopySize() const {
         const U32 frameSize = getSize();
         FW_ASSERT(frameSize >= copyOffset, frameSize, copyOffset);
         return frameSize - copyOffset;
     }
 
-    U32 Tester::UplinkFrame::getSize() const {
+    U32 DeframerTester::UplinkFrame::getSize() const {
         return NON_PACKET_SIZE + packetSize;
     }
 
-    bool Tester::UplinkFrame::isValid() const {
+    bool DeframerTester::UplinkFrame::isValid() const {
         return valid;
     }
 
-    const Tester::UplinkFrame::FrameData&
-        Tester::UplinkFrame::getData() const
+    const DeframerTester::UplinkFrame::FrameData&
+        DeframerTester::UplinkFrame::getData() const
     {
         return data;
     }
 
-    void Tester::UplinkFrame::copyDataOut(
+    void DeframerTester::UplinkFrame::copyDataOut(
         Fw::SerialBuffer& serialBuffer,
         U32 size
     ) {
@@ -90,7 +90,7 @@ namespace Svc {
     // Public static methods
     // ----------------------------------------------------------------------
 
-    Tester::UplinkFrame Tester::UplinkFrame::random() {
+    DeframerTester::UplinkFrame DeframerTester::UplinkFrame::random() {
         // Randomly set the packet type
         Fw::ComPacket::ComPacketType packetType =
             Fw::ComPacket::FW_PACKET_UNKNOWN;
@@ -135,7 +135,7 @@ namespace Svc {
         return frame;
     }
 
-    U32 Tester::UplinkFrame::getInvalidPacketSize() {
+    U32 DeframerTester::UplinkFrame::getInvalidPacketSize() {
         FW_ASSERT(
             MAX_FRAME_SIZE >= NON_PACKET_SIZE,
             MAX_FRAME_SIZE,
@@ -156,7 +156,7 @@ namespace Svc {
         return result;
     }
 
-    U32 Tester::UplinkFrame::getMaxValidCommandPacketSize() {
+    U32 DeframerTester::UplinkFrame::getMaxValidCommandPacketSize() {
         return std::min(
             // Packet must fit into a com buffer
             static_cast<U32>(FW_COM_BUFFER_MAX_SIZE),
@@ -165,7 +165,7 @@ namespace Svc {
         );
     }
 
-    U32 Tester::UplinkFrame::getMaxValidFilePacketSize() {
+    U32 DeframerTester::UplinkFrame::getMaxValidFilePacketSize() {
         FW_ASSERT(
             MAX_VALID_FRAME_SIZE >= NON_PACKET_SIZE,
             MAX_VALID_FRAME_SIZE,
@@ -174,7 +174,7 @@ namespace Svc {
         return MAX_VALID_FRAME_SIZE - NON_PACKET_SIZE;
     }
 
-    U32 Tester::UplinkFrame::getMinPacketSize() {
+    U32 DeframerTester::UplinkFrame::getMinPacketSize() {
         // Packet must hold the packet type
         return sizeof(FwPacketDescriptorType);
     }
@@ -183,7 +183,7 @@ namespace Svc {
     // Private instance methods
     // ----------------------------------------------------------------------
 
-    void Tester::UplinkFrame::randomlyInvalidate() {
+    void DeframerTester::UplinkFrame::randomlyInvalidate() {
         if (valid) {
             // Invalidation cases occur out of 100 samples
             const U32 invalidateIndex = STest::Pick::startLength(0, 100);
@@ -213,7 +213,7 @@ namespace Svc {
         }
     }
 
-    void Tester::UplinkFrame::updateHash() {
+    void DeframerTester::UplinkFrame::updateHash() {
         Utils::Hash hash;
         Utils::HashBuffer hashBuffer;
         const U32 dataSize = FpFrameHeader::SIZE + packetSize;
@@ -223,7 +223,7 @@ namespace Svc {
         memcpy(&data[dataSize], hashAddr, HASH_DIGEST_LENGTH);
     }
 
-    void Tester::UplinkFrame::updateHeader() {
+    void DeframerTester::UplinkFrame::updateHeader() {
         // Write the correct start word
         writeStartWord(FpFrameHeader::START_WORD);
         // Write the correct packet size
@@ -232,7 +232,7 @@ namespace Svc {
         writePacketType(packetType);
     }
 
-    void Tester::UplinkFrame::writePacketSize(
+    void DeframerTester::UplinkFrame::writePacketSize(
         FpFrameHeader::TokenType ps
     ) {
         Fw::SerialBuffer sb(&data[PACKET_SIZE_OFFSET], sizeof ps);
@@ -240,7 +240,7 @@ namespace Svc {
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
 
-    void Tester::UplinkFrame::writePacketType(
+    void DeframerTester::UplinkFrame::writePacketType(
         FwPacketDescriptorType pt
     ) {
         Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof pt);
@@ -248,7 +248,7 @@ namespace Svc {
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
 
-    void Tester::UplinkFrame::writeStartWord(
+    void DeframerTester::UplinkFrame::writeStartWord(
         FpFrameHeader::TokenType sw
     ) {
         Fw::SerialBuffer sb(data, sizeof sw);

@@ -20,6 +20,6 @@ set(UT_MOD_DEPS
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveTextLogger/ActiveTextLogger.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTextLoggerTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTextLoggerTester.cpp"
 )
 register_fprime_ut()

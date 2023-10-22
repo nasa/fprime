@@ -180,7 +180,7 @@ classmethod
 classname
 classtype
 climits
-clion
+CLion
 CLOCAL
 closedir
 CLOSEFILE

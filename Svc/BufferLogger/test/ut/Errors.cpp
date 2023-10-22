@@ -19,7 +19,7 @@ namespace Svc {
 
   namespace Errors {
 
-    void Tester ::
+    void BufferLoggerTester ::
       LogFileOpen()
     {
       // Remove buf directory
@@ -80,7 +80,7 @@ namespace Svc {
 
     }
 
-    void Tester ::
+    void BufferLoggerTester ::
       LogFileWrite()
     {
       ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
@@ -161,7 +161,7 @@ namespace Svc {
 
     }
 
-    void Tester ::
+    void BufferLoggerTester ::
       LogFileValidation()
     {
       this->component.m_file.baseName = Fw::String("LogFileValidation");

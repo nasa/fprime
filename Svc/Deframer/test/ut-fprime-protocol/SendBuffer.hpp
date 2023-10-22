@@ -11,13 +11,13 @@
 #include "Fw/Types/StringType.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"
-#include "Tester.hpp"
+#include "DeframerTester.hpp"
 
 namespace Svc {
 
     //! Pack generated frames into a buffer
     //! Send the buffer
-    class SendBuffer : public STest::Rule<Tester> {
+    class SendBuffer : public STest::Rule<DeframerTester> {
 
       public:
 
@@ -36,12 +36,12 @@ namespace Svc {
 
         //! Precondition
         bool precondition(
-            const Tester& state //!< The test state
+            const DeframerTester& state //!< The test state
         );
 
         //! Action
         void action(
-            Svc::Tester &state //!< The test state
+            Svc::DeframerTester &state //!< The test state
         );
 
       private:
@@ -52,13 +52,13 @@ namespace Svc {
 
         //! Fill the incoming buffer with frame data
         void fillIncomingBuffer(
-            Svc::Tester &state //!< The test state
+            Svc::DeframerTester &state //!< The test state
         );
 
         //! Record a received frame
         void recordReceivedFrame(
-            Svc::Tester& state, //!< The test state
-            Svc::Tester::UplinkFrame& frame //!< The frame
+            Svc::DeframerTester& state, //!< The test state
+            Svc::DeframerTester::UplinkFrame& frame //!< The frame
         );
 
       private:

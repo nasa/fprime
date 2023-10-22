@@ -56,8 +56,8 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/TooLargeFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/USecFieldTooShortFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/JoinWait.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSequencerMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSequencerTester.cpp"
 )
 set(UT_MOD_DEPS "Os_Stubs")
 register_fprime_ut()

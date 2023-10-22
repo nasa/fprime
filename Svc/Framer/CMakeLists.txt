@@ -20,7 +20,7 @@ register_fprime_module()
 #### UTS ###
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Framer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FramerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FramerTestMain.cpp"
 )
 register_fprime_ut()

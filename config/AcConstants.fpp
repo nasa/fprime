@@ -18,6 +18,9 @@ constant CmdDispatcherComponentCommandPorts = 30
 @ Used for uplink/sequencer buffer/response ports
 constant CmdDispatcherSequencePorts = 5
 
+@ Used for sizing the command splitter input arrays
+constant CmdSplitterPorts = CmdDispatcherSequencePorts
+
 @ Number of static memory allocations
 constant StaticMemoryAllocations = 4
 
