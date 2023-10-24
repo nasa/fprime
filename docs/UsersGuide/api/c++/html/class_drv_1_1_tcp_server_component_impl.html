@@ -115,12 +115,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab569a3a4a1ae9468f080b33d7748d5bd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_component_impl.html#ab569a3a4a1ae9468f080b33d7748d5bd">configure</a> (const char *hostname, const U16 port, const U32 send_timeout_seconds=<a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74a13c2974f4bb646b1b469e1cc4ff7fcdf">SOCKET_SEND_TIMEOUT_SECONDS</a>, const U32 send_timeout_microseconds=<a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74a9bf9b8ed768b479725c43505b7282640">SOCKET_SEND_TIMEOUT_MICROSECONDS</a>)</td></tr>
 <tr class="memdesc:ab569a3a4a1ae9468f080b33d7748d5bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configures the TcpClient settings but does not open the connection.  <a href="class_drv_1_1_tcp_server_component_impl.html#ab569a3a4a1ae9468f080b33d7748d5bd">More...</a><br /></td></tr>
 <tr class="separator:ab569a3a4a1ae9468f080b33d7748d5bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24cd4772c000f1179ce37148ae3a852a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_component_impl.html#a24cd4772c000f1179ce37148ae3a852a">startup</a> ()</td></tr>
-<tr class="memdesc:a24cd4772c000f1179ce37148ae3a852a"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup the TcpServer  <a href="class_drv_1_1_tcp_server_component_impl.html#a24cd4772c000f1179ce37148ae3a852a">More...</a><br /></td></tr>
-<tr class="separator:a24cd4772c000f1179ce37148ae3a852a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80c6a6e567de36e625730c1281e23944"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_component_impl.html#a80c6a6e567de36e625730c1281e23944">shutdown</a> ()</td></tr>
-<tr class="memdesc:a80c6a6e567de36e625730c1281e23944"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown the TcpServer  <a href="class_drv_1_1_tcp_server_component_impl.html#a80c6a6e567de36e625730c1281e23944">More...</a><br /></td></tr>
-<tr class="separator:a80c6a6e567de36e625730c1281e23944"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_drv_1_1_socket_read_task"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_drv_1_1_socket_read_task')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_drv_1_1_socket_read_task.html">Drv::SocketReadTask</a></td></tr>
 <tr class="memitem:ad9b83b99c853f55a016bf33805858b9f inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html#ad9b83b99c853f55a016bf33805858b9f">SocketReadTask</a> ()</td></tr>
 <tr class="memdesc:ad9b83b99c853f55a016bf33805858b9f inherit pub_methods_class_drv_1_1_socket_read_task"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructs the socket read task  <a href="class_drv_1_1_socket_read_task.html#ad9b83b99c853f55a016bf33805858b9f">More...</a><br /></td></tr>
@@ -131,12 +125,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a88d458afeabc00db74848e3d9c24d979 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html#a88d458afeabc00db74848e3d9c24d979">startSocketTask</a> (const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, const bool reconnect=true, const <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> priority=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a>, const <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> stack=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a>, const <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> cpuAffinity=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a>)</td></tr>
 <tr class="memdesc:a88d458afeabc00db74848e3d9c24d979 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the socket read task to start producing data  <a href="class_drv_1_1_socket_read_task.html#a88d458afeabc00db74848e3d9c24d979">More...</a><br /></td></tr>
 <tr class="separator:a88d458afeabc00db74848e3d9c24d979 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5b182e368cf57fdf7e913d704dfbd38 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html#ad5b182e368cf57fdf7e913d704dfbd38">startup</a> ()</td></tr>
+<tr class="memdesc:ad5b182e368cf57fdf7e913d704dfbd38 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup the socket for communications  <a href="class_drv_1_1_socket_read_task.html#ad5b182e368cf57fdf7e913d704dfbd38">More...</a><br /></td></tr>
+<tr class="separator:ad5b182e368cf57fdf7e913d704dfbd38 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abae0c4c62dbebd9c2e418b49c2760561 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html#abae0c4c62dbebd9c2e418b49c2760561">open</a> ()</td></tr>
 <tr class="memdesc:abae0c4c62dbebd9c2e418b49c2760561 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="mdescLeft">&#160;</td><td class="mdescRight">open the socket for communications  <a href="class_drv_1_1_socket_read_task.html#abae0c4c62dbebd9c2e418b49c2760561">More...</a><br /></td></tr>
 <tr class="separator:abae0c4c62dbebd9c2e418b49c2760561 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e99c88eed967c35990a122539eed249 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html#a3e99c88eed967c35990a122539eed249">close</a> ()</td></tr>
 <tr class="memdesc:a3e99c88eed967c35990a122539eed249 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="mdescLeft">&#160;</td><td class="mdescRight">close the socket communications  <a href="class_drv_1_1_socket_read_task.html#a3e99c88eed967c35990a122539eed249">More...</a><br /></td></tr>
 <tr class="separator:a3e99c88eed967c35990a122539eed249 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51c69187c98eae51a668ee0b46bb8ce9 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html#a51c69187c98eae51a668ee0b46bb8ce9">shutdown</a> ()</td></tr>
+<tr class="memdesc:a51c69187c98eae51a668ee0b46bb8ce9 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown the socket communications  <a href="class_drv_1_1_socket_read_task.html#a51c69187c98eae51a668ee0b46bb8ce9">More...</a><br /></td></tr>
+<tr class="separator:a51c69187c98eae51a668ee0b46bb8ce9 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1dd4def263b974c02c0748514554d1b4 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html#a1dd4def263b974c02c0748514554d1b4">stopSocketTask</a> ()</td></tr>
 <tr class="memdesc:a1dd4def263b974c02c0748514554d1b4 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="mdescLeft">&#160;</td><td class="mdescRight">stop the socket read task and close the associated socket.  <a href="class_drv_1_1_socket_read_task.html#a1dd4def263b974c02c0748514554d1b4">More...</a><br /></td></tr>
 <tr class="separator:a1dd4def263b974c02c0748514554d1b4 inherit pub_methods_class_drv_1_1_socket_read_task"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -311,7 +311,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_socket_read_task.html#a01f23457f3c50c166ec4960fd5b53a11">Drv::SocketReadTask</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00061">61</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00053">53</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
 
 </div>
 </div>
@@ -344,7 +344,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_socket_read_task.html#a3a74bde5c804e6816d3d015cef74f31d">Drv::SocketReadTask</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00052">52</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00044">44</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
 
 </div>
 </div>
@@ -372,12 +372,12 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>returns a reference to the socket handler </p>
-<p>Gets a reference to the current socket handler in order to operate generically on the <a class="el" href="class_drv_1_1_ip_socket.html" title="Helper base-class for setting up Berkley sockets.">IpSocket</a> instance. Used for receive, and open calls. This socket handler will be a TcpClient.</p>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_drv_1_1_ip_socket.html" title="Helper base-class for setting up Berkley sockets.">IpSocket</a> reference </dd></dl>
+<p>Gets a reference to the current socket handler in order to operate generically on the <a class="el" href="class_drv_1_1_ip_socket.html" title="Helper base-class for setting up Berkeley sockets.">IpSocket</a> instance. Used for receive, and open calls. This socket handler will be a TcpClient.</p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_drv_1_1_ip_socket.html" title="Helper base-class for setting up Berkeley sockets.">IpSocket</a> reference </dd></dl>
 
 <p>Implements <a class="el" href="class_drv_1_1_socket_read_task.html#a45ad2655c7da2d8d6d893a3f984788d5">Drv::SocketReadTask</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00048">48</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00040">40</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
 
 </div>
 </div>
@@ -421,52 +421,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_socket_read_task.html#abc94a3b38263cbc7bb5339166e547bc7">Drv::SocketReadTask</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00056">56</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a80c6a6e567de36e625730c1281e23944"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80c6a6e567de36e625730c1281e23944">&#9670;&nbsp;</a></span>shutdown()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Drv::TcpServerComponentImpl::shutdown </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>shutdown the TcpServer </p>
-<p>This will shutdown the TcpServer including closing any active client connections, and then closing the listening port of this server. </p>
-
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00040">40</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a24cd4772c000f1179ce37148ae3a852a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24cd4772c000f1179ce37148ae3a852a">&#9670;&nbsp;</a></span>startup()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a> Drv::TcpServerComponentImpl::startup </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>startup the TcpServer </p>
-<p>This will launch the TcpServer's internal tcp connection, bind to the port, and listen. This call will <em>not</em> block, nor does it accept incoming connections. It configures the port to listen and then returns. In order to accept incoming connections the <code>open</code> call must be made. Only when the startup method returns SOCK_SUCCESS has the server successfully bound to the port/</p>
-<dl class="section return"><dt>Returns</dt><dd>status of startup. SOCK_SUCCESS on success, something else on error. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00036">36</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00048">48</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
 
 </div>
 </div>

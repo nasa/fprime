@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('_drv_tcp_server.html',''); initResizab
 <div class="textblock"><h1><a class="anchor" id="autotoc_md72"></a>
 Drv::TcpServer Tcp Server Component</h1>
 <p>The TCP server component bridges the byte stream driver model interface to a remote TCP client to which this tcp server connects and sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data and producing the callback port call. Since it is a server, it must startup and listen for client connections. Designed for single client communication, it does not permit a queue of connecting clients.</p>
-<p>For more information on the supporting TCP implementation see: <a class="el" href="class_drv_1_1_tcp_server_socket.html" title="Helper for setting up Tcp using Berkley sockets as a server.">Drv::TcpServerSocket</a>. For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverModel.</p>
+<p>For more information on the supporting TCP implementation see: <a class="el" href="class_drv_1_1_tcp_server_socket.html" title="Helper for setting up Tcp using Berkeley sockets as a server.">Drv::TcpServerSocket</a>. For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverModel.</p>
 <h2><a class="anchor" id="autotoc_md73"></a>
 Design</h2>
 <p>The manager component (typically the ground interface) initiates the transfer of send data by calling the "send" port. The caller will provide a <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> containing the data to send and the port call will return a status of that send. These responses are an enumeration whose values are described in the following table:</p>

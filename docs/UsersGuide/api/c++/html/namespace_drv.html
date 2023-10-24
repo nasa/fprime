@@ -101,21 +101,21 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_data_buffer.html">DataBuffer</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html">IpSocket</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper base-class for setting up Berkley sockets.  <a href="class_drv_1_1_ip_socket.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper base-class for setting up Berkeley sockets.  <a href="class_drv_1_1_ip_socket.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html">SocketReadTask</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">supports a task to read a given socket adaptation  <a href="class_drv_1_1_socket_read_task.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_client_socket.html">TcpClientSocket</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for setting up Tcp using Berkley sockets as a client.  <a href="class_drv_1_1_tcp_client_socket.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for setting up Tcp using Berkeley sockets as a client.  <a href="class_drv_1_1_tcp_client_socket.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_socket.html">TcpServerSocket</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for setting up Tcp using Berkley sockets as a server.  <a href="class_drv_1_1_tcp_server_socket.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for setting up Tcp using Berkeley sockets as a server.  <a href="class_drv_1_1_tcp_server_socket.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_drv_1_1_socket_state.html">SocketState</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html">UdpSocket</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for setting up Udp using Berkley sockets as a client.  <a href="class_drv_1_1_udp_socket.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for setting up Udp using Berkeley sockets as a client.  <a href="class_drv_1_1_udp_socket.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_gpio_driver_component_impl.html">LinuxGpioDriverComponentImpl</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,6 +168,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da15e3766da7278a2ccfb60fbc77e2fa4c">SOCK_FAILED_TO_ACCEPT</a> = -11
 , <br />
 &#160;&#160;<a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734daa614f2b5448fd9505969e26b61dda751">SOCK_SEND_ERROR</a> = -13
+, <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734daf7ee8b5efcdf13641c0e24a150015e01">SOCK_NOT_STARTED</a> = -14
 <br />
  }</td></tr>
 <tr class="memdesc:a1c85f9fab0c8763f9fec49eee9fc734d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Status enumeration for socket return values.  <a href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">More...</a><br /></td></tr>
@@ -345,6 +346,8 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a1c85f9fab0c8763f9fec49eee9fc734da15e3766da7278a2ccfb60fbc77e2fa4c"></a>SOCK_FAILED_TO_ACCEPT&#160;</td><td class="fielddoc"><p>Failed to accept connection. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a1c85f9fab0c8763f9fec49eee9fc734daa614f2b5448fd9505969e26b61dda751"></a>SOCK_SEND_ERROR&#160;</td><td class="fielddoc"><p>Failed to send after configured retries. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a1c85f9fab0c8763f9fec49eee9fc734daf7ee8b5efcdf13641c0e24a150015e01"></a>SOCK_NOT_STARTED&#160;</td><td class="fielddoc"><p>Socket has not been started. </p>
 </td></tr>
 </table>
 

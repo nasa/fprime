@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"svc_active_text_logger_component.html#autotoc_md232":[9,3,0,2,3],
 "svc_active_text_logger_component.html#autotoc_md233":[9,3,0,2,4],
 "svc_active_text_logger_component.html#autotoc_md234":[9,3,0,3],
 "svc_active_text_logger_component.html#autotoc_md235":[9,3,0,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "svc_framer_component.html#autotoc_md493":[9,14,0,3,4],
 "svc_framer_component.html#autotoc_md494":[9,14,0,3,5],
 "svc_framer_component.html#autotoc_md495":[9,14,0,3,6],
-"svc_framer_component.html#autotoc_md496":[9,14,0,3,6,0],
-"svc_framer_component.html#autotoc_md497":[9,14,0,3,6,1]
+"svc_framer_component.html#autotoc_md496":[9,14,0,3,6,0]
 };

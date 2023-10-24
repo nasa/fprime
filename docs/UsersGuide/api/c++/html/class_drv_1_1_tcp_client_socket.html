@@ -93,7 +93,7 @@ $(document).ready(function(){initNavTree('class_drv_1_1_tcp_client_socket.html',
 </div><!--header-->
 <div class="contents">
 
-<p>Helper for setting up Tcp using Berkley sockets as a client.  
+<p>Helper for setting up Tcp using Berkeley sockets as a client.  
  <a href="class_drv_1_1_tcp_client_socket.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="tcp_client_socket_8hpp_source.html">Drv/Ip/TcpClientSocket.hpp</a>&gt;</code></p>
@@ -103,7 +103,7 @@ Inheritance diagram for Drv::TcpClientSocket:</div>
  <div class="center">
   <img src="class_drv_1_1_tcp_client_socket.png" usemap="#Drv::TcpClientSocket_map" alt=""/>
   <map id="Drv::TcpClientSocket_map" name="Drv::TcpClientSocket_map">
-<area href="class_drv_1_1_ip_socket.html" title="Helper base-class for setting up Berkley sockets." alt="Drv::IpSocket" shape="rect" coords="0,0,130,24"/>
+<area href="class_drv_1_1_ip_socket.html" title="Helper base-class for setting up Berkeley sockets." alt="Drv::IpSocket" shape="rect" coords="0,0,130,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -120,9 +120,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a98a57bf24cdeb8673be4780a8be2db55 inherit pub_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a98a57bf24cdeb8673be4780a8be2db55">configure</a> (const char *hostname, const U16 port, const U32 send_timeout_seconds, const U32 send_timeout_microseconds)</td></tr>
 <tr class="memdesc:a98a57bf24cdeb8673be4780a8be2db55 inherit pub_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">configure the ip socket with host and transmission timeouts  <a href="class_drv_1_1_ip_socket.html#a98a57bf24cdeb8673be4780a8be2db55">More...</a><br /></td></tr>
 <tr class="separator:a98a57bf24cdeb8673be4780a8be2db55 inherit pub_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fba8f06e5712d505822b10ca343052b inherit pub_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a1fba8f06e5712d505822b10ca343052b">isStarted</a> ()</td></tr>
+<tr class="memdesc:a1fba8f06e5712d505822b10ca343052b inherit pub_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true when the socket is started.  <a href="class_drv_1_1_ip_socket.html#a1fba8f06e5712d505822b10ca343052b">More...</a><br /></td></tr>
+<tr class="separator:a1fba8f06e5712d505822b10ca343052b inherit pub_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35254851774fc34559a9f775de0b693a inherit pub_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a35254851774fc34559a9f775de0b693a">isOpened</a> ()</td></tr>
 <tr class="memdesc:a35254851774fc34559a9f775de0b693a inherit pub_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if IP socket has previously been opened  <a href="class_drv_1_1_ip_socket.html#a35254851774fc34559a9f775de0b693a">More...</a><br /></td></tr>
 <tr class="separator:a35254851774fc34559a9f775de0b693a inherit pub_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af267d5989af0035804eee9f2950d96ed inherit pub_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#af267d5989af0035804eee9f2950d96ed">startup</a> ()</td></tr>
+<tr class="memdesc:af267d5989af0035804eee9f2950d96ed inherit pub_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup the socket, a no-op on unless this is server  <a href="class_drv_1_1_ip_socket.html#af267d5989af0035804eee9f2950d96ed">More...</a><br /></td></tr>
+<tr class="separator:af267d5989af0035804eee9f2950d96ed inherit pub_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeed642d83d6e65344cc6e4db43f2bc5a inherit pub_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#aeed642d83d6e65344cc6e4db43f2bc5a">open</a> ()</td></tr>
 <tr class="memdesc:aeed642d83d6e65344cc6e4db43f2bc5a inherit pub_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">open the IP socket for communications  <a href="class_drv_1_1_ip_socket.html#aeed642d83d6e65344cc6e4db43f2bc5a">More...</a><br /></td></tr>
 <tr class="separator:aeed642d83d6e65344cc6e4db43f2bc5a inherit pub_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -135,18 +141,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a083d68f288494c9ffef7a789f846c6bc inherit pub_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a083d68f288494c9ffef7a789f846c6bc">close</a> ()</td></tr>
 <tr class="memdesc:a083d68f288494c9ffef7a789f846c6bc inherit pub_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">closes the socket  <a href="class_drv_1_1_ip_socket.html#a083d68f288494c9ffef7a789f846c6bc">More...</a><br /></td></tr>
 <tr class="separator:a083d68f288494c9ffef7a789f846c6bc inherit pub_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbc9a65b96aeddc37660e114c3ca9434 inherit pub_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#adbc9a65b96aeddc37660e114c3ca9434">shutdown</a> ()</td></tr>
+<tr class="memdesc:adbc9a65b96aeddc37660e114c3ca9434 inherit pub_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown the socket  <a href="class_drv_1_1_ip_socket.html#adbc9a65b96aeddc37660e114c3ca9434">More...</a><br /></td></tr>
+<tr class="separator:adbc9a65b96aeddc37660e114c3ca9434 inherit pub_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a39e6851fe99a5dc5ea530ccd59bd6f56"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_client_socket.html#a39e6851fe99a5dc5ea530ccd59bd6f56">openProtocol</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;fd)</td></tr>
-<tr class="memdesc:a39e6851fe99a5dc5ea530ccd59bd6f56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tcp specific implementation for opening a client socket.  <a href="class_drv_1_1_tcp_client_socket.html#a39e6851fe99a5dc5ea530ccd59bd6f56">More...</a><br /></td></tr>
-<tr class="separator:a39e6851fe99a5dc5ea530ccd59bd6f56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6d253351d9136cd8fe46981f78079c8"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_client_socket.html#af6d253351d9136cd8fe46981f78079c8">sendProtocol</a> (const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)</td></tr>
-<tr class="memdesc:af6d253351d9136cd8fe46981f78079c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of send. Called directly with retry from send.  <a href="class_drv_1_1_tcp_client_socket.html#af6d253351d9136cd8fe46981f78079c8">More...</a><br /></td></tr>
-<tr class="separator:af6d253351d9136cd8fe46981f78079c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4782dcea386c6c317cc315bcd1c89ba5"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_client_socket.html#a4782dcea386c6c317cc315bcd1c89ba5">recvProtocol</a> (<a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)</td></tr>
-<tr class="memdesc:a4782dcea386c6c317cc315bcd1c89ba5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of recv. Called directly with error handling from recv.  <a href="class_drv_1_1_tcp_client_socket.html#a4782dcea386c6c317cc315bcd1c89ba5">More...</a><br /></td></tr>
-<tr class="separator:a4782dcea386c6c317cc315bcd1c89ba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3e7fe8328f36f7c10ec7994ccd3940f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_client_socket.html#ac3e7fe8328f36f7c10ec7994ccd3940f">openProtocol</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;fd) override</td></tr>
+<tr class="memdesc:ac3e7fe8328f36f7c10ec7994ccd3940f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tcp specific implementation for opening a client socket.  <a href="class_drv_1_1_tcp_client_socket.html#ac3e7fe8328f36f7c10ec7994ccd3940f">More...</a><br /></td></tr>
+<tr class="separator:ac3e7fe8328f36f7c10ec7994ccd3940f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c32788f8356c0a7e94e77ddb540f0f3"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_client_socket.html#a0c32788f8356c0a7e94e77ddb540f0f3">sendProtocol</a> (const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size) override</td></tr>
+<tr class="memdesc:a0c32788f8356c0a7e94e77ddb540f0f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of send. Called directly with retry from send.  <a href="class_drv_1_1_tcp_client_socket.html#a0c32788f8356c0a7e94e77ddb540f0f3">More...</a><br /></td></tr>
+<tr class="separator:a0c32788f8356c0a7e94e77ddb540f0f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18804fe002020eb34435b13a38299c3a"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_client_socket.html#a18804fe002020eb34435b13a38299c3a">recvProtocol</a> (<a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size) override</td></tr>
+<tr class="memdesc:a18804fe002020eb34435b13a38299c3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of recv. Called directly with error handling from recv.  <a href="class_drv_1_1_tcp_client_socket.html#a18804fe002020eb34435b13a38299c3a">More...</a><br /></td></tr>
+<tr class="separator:a18804fe002020eb34435b13a38299c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_drv_1_1_ip_socket"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_drv_1_1_ip_socket')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_drv_1_1_ip_socket.html">Drv::IpSocket</a></td></tr>
 <tr class="memitem:ad9129e203803f3a0229fdfd7cf832180 inherit pro_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">setupTimeouts</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> socketFd)</td></tr>
 <tr class="memdesc:ad9129e203803f3a0229fdfd7cf832180 inherit pro_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup the socket timeout properties of the opened outgoing socket  <a href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">More...</a><br /></td></tr>
@@ -173,13 +182,16 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a5ab0e64ea2d4c686d794f9c7d27e19de inherit pro_attribs_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a5ab0e64ea2d4c686d794f9c7d27e19de">m_open</a></td></tr>
 <tr class="memdesc:a5ab0e64ea2d4c686d794f9c7d27e19de inherit pro_attribs_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">Have we successfully opened.  <a href="class_drv_1_1_ip_socket.html#a5ab0e64ea2d4c686d794f9c7d27e19de">More...</a><br /></td></tr>
 <tr class="separator:a5ab0e64ea2d4c686d794f9c7d27e19de inherit pro_attribs_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a541cfbfee7366e523dfccd94c6d0eef8 inherit pro_attribs_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a541cfbfee7366e523dfccd94c6d0eef8">m_started</a></td></tr>
+<tr class="memdesc:a541cfbfee7366e523dfccd94c6d0eef8 inherit pro_attribs_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">Have we successfully started the socket.  <a href="class_drv_1_1_ip_socket.html#a541cfbfee7366e523dfccd94c6d0eef8">More...</a><br /></td></tr>
+<tr class="separator:a541cfbfee7366e523dfccd94c6d0eef8 inherit pro_attribs_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a7e3b055090bc63df43c0e2c67b11d8 inherit pro_attribs_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a3a7e3b055090bc63df43c0e2c67b11d8">m_hostname</a> [<a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74a7aeda4b8b71dde2ec8930c45caa6da96">SOCKET_MAX_HOSTNAME_SIZE</a>]</td></tr>
 <tr class="memdesc:a3a7e3b055090bc63df43c0e2c67b11d8 inherit pro_attribs_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hostname to supply.  <a href="class_drv_1_1_ip_socket.html#a3a7e3b055090bc63df43c0e2c67b11d8">More...</a><br /></td></tr>
 <tr class="separator:a3a7e3b055090bc63df43c0e2c67b11d8 inherit pro_attribs_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Helper for setting up Tcp using Berkley sockets as a client. </p>
-<p>Certain IP headers have conflicting definitions with the m_data member of various types in fprime. <a class="el" href="class_drv_1_1_tcp_client_socket.html" title="Helper for setting up Tcp using Berkley sockets as a client.">TcpClientSocket</a> separates the ip setup from the incoming <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> in the primary component class preventing this collision. </p>
+<div class="textblock"><p>Helper for setting up Tcp using Berkeley sockets as a client. </p>
+<p>Certain IP headers have conflicting definitions with the m_data member of various types in fprime. <a class="el" href="class_drv_1_1_tcp_client_socket.html" title="Helper for setting up Tcp using Berkeley sockets as a client.">TcpClientSocket</a> separates the ip setup from the incoming <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> in the primary component class preventing this collision. </p>
 
 <p class="definition">Definition at line <a class="el" href="tcp_client_socket_8hpp_source.html#l00026">26</a> of file <a class="el" href="tcp_client_socket_8hpp_source.html">TcpClientSocket.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -205,8 +217,8 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a39e6851fe99a5dc5ea530ccd59bd6f56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39e6851fe99a5dc5ea530ccd59bd6f56">&#9670;&nbsp;</a></span>openProtocol()</h2>
+<a id="ac3e7fe8328f36f7c10ec7994ccd3940f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3e7fe8328f36f7c10ec7994ccd3940f">&#9670;&nbsp;</a></span>openProtocol()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -224,7 +236,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -244,8 +256,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a4782dcea386c6c317cc315bcd1c89ba5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4782dcea386c6c317cc315bcd1c89ba5">&#9670;&nbsp;</a></span>recvProtocol()</h2>
+<a id="a18804fe002020eb34435b13a38299c3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18804fe002020eb34435b13a38299c3a">&#9670;&nbsp;</a></span>recvProtocol()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,7 +285,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -294,8 +306,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="af6d253351d9136cd8fe46981f78079c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af6d253351d9136cd8fe46981f78079c8">&#9670;&nbsp;</a></span>sendProtocol()</h2>
+<a id="a0c32788f8356c0a7e94e77ddb540f0f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c32788f8356c0a7e94e77ddb540f0f3">&#9670;&nbsp;</a></span>sendProtocol()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -323,7 +335,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

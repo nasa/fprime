@@ -14,6 +14,7 @@ var _ip_socket_8hpp =
       [ "SOCK_FAILED_TO_BIND", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da26054082faf7d1c58303a778dc24adae", null ],
       [ "SOCK_FAILED_TO_LISTEN", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da6d04d3665a92c6a1074d42590016a51a", null ],
       [ "SOCK_FAILED_TO_ACCEPT", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da15e3766da7278a2ccfb60fbc77e2fa4c", null ],
-      [ "SOCK_SEND_ERROR", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734daa614f2b5448fd9505969e26b61dda751", null ]
+      [ "SOCK_SEND_ERROR", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734daa614f2b5448fd9505969e26b61dda751", null ],
+      [ "SOCK_NOT_STARTED", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734daf7ee8b5efcdf13641c0e24a150015e01", null ]
     ] ]
 ];
