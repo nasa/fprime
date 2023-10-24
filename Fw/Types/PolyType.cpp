@@ -402,7 +402,7 @@ namespace Fw {
                 case TYPE_PTR:
                     valIsEqual = (this->m_val.ptrVal == other.m_val.ptrVal);
                     break;
-#if FW_HAS_64_BIT
+#if FW_HAS_F64
                 case TYPE_F64: // fall through, shouldn't test floating point
 #endif
                 case TYPE_F32: // fall through, shouldn't test floating point
