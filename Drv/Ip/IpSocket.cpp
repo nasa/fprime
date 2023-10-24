@@ -46,7 +46,7 @@
 
 namespace Drv {
 
-IpSocket::IpSocket() : m_fd(-1), m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0), m_open(false) {
+IpSocket::IpSocket() : m_fd(-1), m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0), m_open(false), m_started(false) {
     ::memset(m_hostname, 0, sizeof(m_hostname));
 }
 
@@ -98,23 +98,45 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     return SOCK_SUCCESS;
 }
 
+bool IpSocket::isStarted() {
+    bool is_started = false;
+    this->m_lock.lock();
+    is_started = this->m_started;
+    this->m_lock.unLock();
+    return is_started;
+}
+
 bool IpSocket::isOpened() {
     bool is_open = false;
-    m_lock.lock();
-    is_open = m_open;
-    m_lock.unLock();
+    this->m_lock.lock();
+    is_open = this->m_open;
+    this->m_lock.unLock();
     return is_open;
 }
 
 void IpSocket::close() {
-    m_lock.lock();
+    this->m_lock.lock();
     if (this->m_fd != -1) {
         (void)::shutdown(this->m_fd, SHUT_RDWR);
         (void)::close(this->m_fd);
         this->m_fd = -1;
     }
-    m_open = false;
-    m_lock.unLock();
+    this->m_open = false;
+    this->m_lock.unLock();
+}
+
+void IpSocket::shutdown() {
+    this->close();
+    this->m_lock.lock();
+    this->m_started = false;
+    this->m_lock.unLock();
+}
+
+SocketIpStatus IpSocket::startup() {
+    this->m_lock.lock();
+    this->m_started = true;
+    this->m_lock.unLock();
+    return SOCK_SUCCESS;
 }
 
 SocketIpStatus IpSocket::open() {
@@ -128,10 +150,10 @@ SocketIpStatus IpSocket::open() {
         return status;
     }
     // Lock to update values and "officially open"
-    m_lock.lock();
-    m_fd = fd;
-    m_open = true;
-    m_lock.unLock();
+    this->m_lock.lock();
+    this->m_fd = fd;
+    this->m_open = true;
+    this->m_lock.unLock();
     return status;
 }
 

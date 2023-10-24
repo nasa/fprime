@@ -1,7 +1,7 @@
 \page DrvIp Drv::Ip IPv4 Socket Implementations
 # Drv::Ip IPv4 Socket Implementations
 
-This package contains utility classes to help interact with standard IPv4 (Berkley) sockets. These classes implement the
+This package contains utility classes to help interact with standard IPv4 (Berkeley) sockets. These classes implement the
 core features of IPv4. This includes a tcp server socket (Drv::TcpServerSocket), a tcp client socket (Drv::TcpClient)
 and a udp socket (Drv::UdpSocket).  These are not F´ components, but an F´ component wrapper of each exists:
 Drv::TcpClientComponent,  Drv::TcpServerComponent, and Drv::UdpComponent.
@@ -28,7 +28,7 @@ Each of these classes is explained in more detail below.
 
 The Drv::IpSocket class represents the external interface to IPv4 socket components. This class provides a top-level
 interface to IPv4 sockets for connecting, disconnecting, sending, and receiving  using the socket. This implements the
-IPv4 socket protocol as provided by the unix (Berkley) sockets implementation.
+IPv4 socket protocol as provided by the unix (Berkeley) sockets implementation.
 
 High-level interfaces are provided for the standard functions of: `open`, `close`, `send`, and `recv`.  FramingProtocol and
 implementation specific functionality are implemented in derived classes by implementing the pure virtual functions:
