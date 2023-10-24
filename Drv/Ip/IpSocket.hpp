@@ -34,10 +34,11 @@ enum SocketIpStatus {
     SOCK_FAILED_TO_LISTEN = -10,             //!< Failed to listen on socket
     SOCK_FAILED_TO_ACCEPT = -11,             //!< Failed to accept connection
     SOCK_SEND_ERROR = -13,                   //!< Failed to send after configured retries
+    SOCK_NOT_STARTED = -14,                  //!< Socket has not been started
 };
 
 /**
- * \brief Helper base-class for setting up Berkley sockets
+ * \brief Helper base-class for setting up Berkeley sockets
  *
  * Certain IP headers have conflicting definitions with the m_data member of various types in fprime. TcpHelper
  * separates the ip setup from the incoming Fw::Buffer in the primary component class preventing this collision.
@@ -66,6 +67,13 @@ class IpSocket {
      */
     SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
                              const U32 send_timeout_microseconds);
+    /**
+     * \brief Returns true when the socket is started
+     *
+     * Returns true when the socket is started up sufficiently to be actively listening to clients. Returns false
+     * otherwise. This means `startup()` was called and returned success.
+     */
+    bool isStarted();
 
     /**
      * \brief check if IP socket has previously been opened
@@ -77,6 +85,16 @@ class IpSocket {
      * \return true if socket is open, false otherwise
      */
     bool isOpened();
+
+    /**
+     * \brief startup the socket, a no-op on unless this is server
+     *
+     * This will start-up the socket. In the case of most sockets, this is a no-op. On server sockets this binds to the
+     * server address and progresses through the `listen` step such that on `open` new clients may be accepted.
+     *
+     * \return status of startup
+     */
+    virtual SocketIpStatus startup();
 
     /**
      * \brief open the IP socket for communications
@@ -92,6 +110,7 @@ class IpSocket {
      * In the case of server components (TcpServer) this function will block until a client has connected.
      *
      * Note: delegates to openProtocol for protocol specific implementation
+     *
      * \return status of open
      */
     SocketIpStatus open();
@@ -134,6 +153,14 @@ class IpSocket {
      * port (call `shutdown`) but will close the active client connection.
      */
     void close();
+
+    /**
+     * \brief shutdown the socket
+     *
+     * Closes the socket opened by the open call. In this case of the TcpServer, this does close server's listening
+     * port. This will shutdown all clients.
+     */
+    virtual void shutdown();
 
   PROTECTED:
 
@@ -179,6 +206,7 @@ class IpSocket {
     U32 m_timeoutMicroseconds;
     U16 m_port;  //!< IP address port used
     bool m_open; //!< Have we successfully opened
+    bool m_started; //!< Have we successfully started the socket
     char m_hostname[SOCKET_MAX_HOSTNAME_SIZE];  //!< Hostname to supply
 };
 }  // namespace Drv

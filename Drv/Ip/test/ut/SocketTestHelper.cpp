@@ -70,5 +70,15 @@ bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations) {
     return false;
 }
 
+bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations) {
+    for (U32 i = 0; i < iterations; i++) {
+        if (open == socket.isStarted()) {
+            return true;
+        }
+        Os::Task::delay(10);
+    }
+    return false;
+}
+
 };
 };
