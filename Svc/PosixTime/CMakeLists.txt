@@ -7,18 +7,15 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/Time/Time.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LinuxTimeImpl.cpp"
-)
-set(MOD_DEPS
-  Svc/Time
+  "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/PosixTime.cpp"
 )
 
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/Time/Time.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/LinuxTimeTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/LinuxTimeMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeMain.cpp"
 )
 register_fprime_ut()

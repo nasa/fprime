@@ -23,7 +23,7 @@ module RPI {
     instance gpio24Drv
     instance gpio25Drv
     instance ledDrv
-    instance linuxTime
+    instance posixTime
     instance linuxTimer
     instance prmDb
     instance rateGroup10HzComp
@@ -53,7 +53,7 @@ module RPI {
 
     text event connections instance textLogger
 
-    time connections instance linuxTime
+    time connections instance posixTime
 
     # ----------------------------------------------------------------------
     # Direct graph specifiers

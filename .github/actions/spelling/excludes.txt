@@ -92,7 +92,7 @@ ignore$
 ^Fw/Types/Linux/StandardTypes\.hpp$
 ^requirements\.txt$
 ^RPI/settings\.ini$
-^Svc/LinuxTime/LinuxTime\.hpp$
+^Svc/PosixTime/PosixTime\.hpp$
 ^Svc/PrmDb/PrmDb\.hpp$
 ^Svc/TlmChan/TlmChan\.hpp$
 ^\.github/actions/spelling/
@@ -113,6 +113,6 @@ ignore$
 ^\Qrequirements.txt\E$
 ^\QSTest/README.md\E$
 ^\QSvc/FileDownlink/check.xml\E$
-^\QSvc/LinuxTime/LinuxTime.hpp\E$
+^\QSvc/PosixTime/PosixTime.hpp\E$
 ^\QSvc/PrmDb/PrmDb.hpp\E$
 ^\QSvc/TlmChan/TlmChan.hpp\E$

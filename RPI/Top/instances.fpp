@@ -276,9 +276,7 @@ module RPI {
 
   }
 
-  instance linuxTime: Svc.Time base id 1500 \
-    type "Svc::LinuxTime" \
-    at "../../Svc/LinuxTime/LinuxTime.hpp"
+  instance posixTime: Svc.PosixTime base id 1500
 
   instance linuxTimer: Svc.LinuxTimer base id 1600 \
   {
