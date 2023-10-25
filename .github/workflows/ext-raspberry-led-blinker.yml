@@ -72,6 +72,8 @@ jobs:
       - name: "Setup environment"
         run: |
           touch /tmp/hello.sh
+          chmod +x /tmp/hello.sh
+          /tmp/hello.sh
           python -m venv venv
           . venv/bin/activate
           pip install fprime-gds
