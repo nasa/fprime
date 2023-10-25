@@ -27,6 +27,7 @@ jobs:
   cross-compilation:
     name: "Cross Compilation"
     runs-on: ubuntu-latest
+    needs: get-branch
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v3
