@@ -29,7 +29,7 @@ def print_setting(setting: str, value: str = "", ending: str = ";"):
 def print_list_settings(items: List[str]):
     """Print a list of settings of form SETTING=VALUE"""
     for item in items:
-        splits = item.strip().split("=")
+        splits = item.strip().split("=", 1)
         if splits[0] != "":
             print_setting(*splits)
 

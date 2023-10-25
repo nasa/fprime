@@ -48,7 +48,6 @@ set(EXCLUDED_CACHE_VARIABLES
 set(TYPES_DISALLOWED_LIST
     INTERNAL
     STATIC
-    UNINITIALIZED
 )
 # Directory in-which to build the prescan directory
 set(PRESCAN_DIR "${CMAKE_BINARY_DIR}/prescan")
