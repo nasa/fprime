@@ -5,6 +5,12 @@
 UTs target implementation.
 
 
+## Function `_ut_setup_clean_file`:
+
+Setup a file that cleans out *.gcda files before running tests. This is run before testing as registered through
+TEST_INCLUDE_FILES.
+
+
 ## `ut_add_global_target`:
 
 Implementation defines the target using `add_custom_target` and nothing more.
@@ -14,6 +20,9 @@ Implementation defines the target using `add_custom_target` and nothing more.
     if (NOT FPRIME_ENABLE_UTIL_TARGETS)
         return()
     endif()
+    set_property(DIRECTORY APPEND PROPERTY
+        TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
+    )
     add_custom_target("${MODULE}_${UT_TARGET}")
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
         get_property(DEPENDENCY_UTS TARGET "${DEPENDENCY}" PROPERTY FPRIME_UTS)
@@ -49,6 +58,9 @@ endfunction(ut_setup_unit_test_include_directories)
         return()
     endif()
     message(STATUS "Adding Unit Test: ${UT_EXE_NAME}")
+    set_property(DIRECTORY APPEND PROPERTY
+        TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
+    )
     run_ac_set("${SOURCE_FILES}" autocoder/fpp autocoder/fpp_ut)
     resolve_dependencies(RESOLVED gtest_main ${DEPENDENCIES} ${AC_DEPENDENCIES})
     build_setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
