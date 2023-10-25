@@ -39,7 +39,11 @@ function(locate_fpp_tools)
                 set(FPP_ERROR_MESSAGE
                     "fpp-tools version incompatible. Found ${CMAKE_MATCH_1}, expected ${FPP_VERSION}" PARENT_SCOPE
                 )
+            else()
+                message(STATUS "[fpp-tools] ${PROGRAM} appears corrupt.")
             endif()
+        else()
+            message(STATUS "[fpp-tools] Could not find ${PROGRAM}")
         endif()
         set(FPP_FOUND FALSE PARENT_SCOPE)
         return()

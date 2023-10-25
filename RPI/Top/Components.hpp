@@ -8,7 +8,7 @@
 #include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
 #include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
-#include <Svc/LinuxTime/LinuxTimeImpl.hpp>
+#include <Svc/PosixTime/PosixTime.hpp>
 #include <Svc/LinuxTimer/LinuxTimerComponentImpl.hpp>
 #include <Svc/TlmChan/TlmChanImpl.hpp>
 #include <Svc/PrmDb/PrmDbImpl.hpp>
@@ -45,7 +45,7 @@ extern Svc::ActiveRateGroupImpl rateGroup1HzComp;
 extern Svc::CmdSequencerComponentImpl cmdSeq;
 extern Svc::ConsoleTextLoggerImpl textLogger;
 extern Svc::ActiveLoggerImpl eventLogger;
-extern Svc::LinuxTimeImpl linuxTime;
+extern Svc::PosixTime posixTime;
 extern Svc::LinuxTimerComponentImpl linuxTimer;
 extern Svc::TlmChanImpl chanTlm;
 extern Svc::CommandDispatcherImpl cmdDisp;

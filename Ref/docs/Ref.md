@@ -35,7 +35,7 @@
 |Svc/PassiveConsoleTextLogger|[Link](../../Svc/PassiveConsoleTextLogger/docs/sdd.md)|
 |Svc/Time|[Link](../../Svc/Time/docs/sdd.md)|
 |Svc/Cycle|[Link](../../Svc/Cycle/docs/sdd.md)|
-|Svc/LinuxTime|[Link](../../Svc/LinuxTime/docs/sdd.md)|
+|Svc/PosixTime|[Link](../../Svc/PosixTime/docs/sdd.md)|
 |Svc/ActiveLogger|[Link](../../Svc/ActiveLogger/docs/sdd.md)|
 |Svc/Fatal|[Link](../../Svc/Fatal/docs/sdd.md)|
 |Svc/PolyIf|[Link](../../Svc/PolyIf/docs/sdd.md)|

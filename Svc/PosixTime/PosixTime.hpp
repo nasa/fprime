@@ -5,18 +5,17 @@
  *      Author: tcanham
  */
 
-#ifndef LINUXTIMEIMPL_HPP_
-#define LINUXTIMEIMPL_HPP_
+#ifndef POSIX_TIME_HPP_
+#define POSIX_TIME_HPP_
 
-#include <Svc/Time/TimeComponentAc.hpp>
+#include <Svc/PosixTime/PosixTimeComponentAc.hpp>
 
 namespace Svc {
 
-class LinuxTimeImpl: public TimeComponentBase {
+class PosixTime: public PosixTimeComponentBase {
     public:
-        LinuxTimeImpl(const char* compName);
-        virtual ~LinuxTimeImpl();
-        void init(NATIVE_INT_TYPE instance);
+        explicit PosixTime(const char* compName);
+        virtual ~PosixTime();
     protected:
         void timeGetPort_handler(
                 NATIVE_INT_TYPE portNum, /*!< The port number*/
@@ -27,4 +26,4 @@ class LinuxTimeImpl: public TimeComponentBase {
 
 }
 
-#endif /* LINUXTIMEIMPL_HPP_ */
+#endif /* POSIX_TIME_HPP_ */

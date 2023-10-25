@@ -2,10 +2,10 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#include "LinuxTimeTester.hpp"
+#include "PosixTimeTester.hpp"
 
 TEST(Test, GetTime) {
-  Svc::LinuxTimeTester tester("Tester");
+  Svc::PosixTimeTester tester("Tester");
   tester.getTime();
 }
 
