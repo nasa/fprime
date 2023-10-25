@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>F´ Flight Software - C/C++ Documentation: Svc::LinuxTimeImpl Class Reference</title>
+<title>F´ Flight Software - C/C++ Documentation: Svc::PosixTime Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -65,7 +65,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('class_svc_1_1_linux_time_impl.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('class_svc_1_1_posix_time.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -87,60 +87,38 @@ $(document).ready(function(){initNavTree('class_svc_1_1_linux_time_impl.html',''
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="class_svc_1_1_linux_time_impl-members.html">List of all members</a>  </div>
+<a href="class_svc_1_1_posix_time-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Svc::LinuxTimeImpl Class Reference</div>  </div>
+<div class="title">Svc::PosixTime Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="linux_time_impl_8hpp_source.html">Svc/LinuxTime/LinuxTimeImpl.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="posix_time_8hpp_source.html">Svc/PosixTime/PosixTime.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for Svc::LinuxTimeImpl:</div>
+Inheritance diagram for Svc::PosixTime:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="class_svc_1_1_linux_time_impl.png" alt=""/>
+  <img src="class_svc_1_1_posix_time.png" alt=""/>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a084800252af7d81467bbd1bf2e020389"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_linux_time_impl.html#a084800252af7d81467bbd1bf2e020389">LinuxTimeImpl</a> (const char *compName)</td></tr>
-<tr class="separator:a084800252af7d81467bbd1bf2e020389"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c2902e5139d49e6f1e2fb8076ac2d19"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_linux_time_impl.html#a6c2902e5139d49e6f1e2fb8076ac2d19">~LinuxTimeImpl</a> ()</td></tr>
-<tr class="separator:a6c2902e5139d49e6f1e2fb8076ac2d19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affa2a9a3a85e5f4d321f8acaa1602217"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_linux_time_impl.html#affa2a9a3a85e5f4d321f8acaa1602217">init</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance)</td></tr>
-<tr class="separator:affa2a9a3a85e5f4d321f8acaa1602217"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0904c4fa0bd6f0a44886c8682f8debe4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_posix_time.html#a0904c4fa0bd6f0a44886c8682f8debe4">PosixTime</a> (const char *compName)</td></tr>
+<tr class="separator:a0904c4fa0bd6f0a44886c8682f8debe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5614ad384021badf0c66a36003ef18c7"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_posix_time.html#a5614ad384021badf0c66a36003ef18c7">~PosixTime</a> ()</td></tr>
+<tr class="separator:a5614ad384021badf0c66a36003ef18c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a03ca2ec0cbb2e75474c4a77ff49d9ea1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_linux_time_impl.html#a03ca2ec0cbb2e75474c4a77ff49d9ea1">timeGetPort_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time)</td></tr>
-<tr class="separator:a03ca2ec0cbb2e75474c4a77ff49d9ea1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8d909cd8c8d11a9992398fe1a76f514"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_posix_time.html#ab8d909cd8c8d11a9992398fe1a76f514">timeGetPort_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time)</td></tr>
+<tr class="separator:ab8d909cd8c8d11a9992398fe1a76f514"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="linux_time_impl_8hpp_source.html#l00015">15</a> of file <a class="el" href="linux_time_impl_8hpp_source.html">LinuxTimeImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="posix_time_8hpp_source.html#l00015">15</a> of file <a class="el" href="posix_time_8hpp_source.html">PosixTime.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a084800252af7d81467bbd1bf2e020389"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a084800252af7d81467bbd1bf2e020389">&#9670;&nbsp;</a></span>LinuxTimeImpl()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Svc::LinuxTimeImpl::LinuxTimeImpl </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>compName</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="darwin_time_impl_8cpp_source.html#l00013">13</a> of file <a class="el" href="darwin_time_impl_8cpp_source.html">DarwinTimeImpl.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a6c2902e5139d49e6f1e2fb8076ac2d19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c2902e5139d49e6f1e2fb8076ac2d19">&#9670;&nbsp;</a></span>~LinuxTimeImpl()</h2>
+<a id="a0904c4fa0bd6f0a44886c8682f8debe4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0904c4fa0bd6f0a44886c8682f8debe4">&#9670;&nbsp;</a></span>PosixTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -149,7 +127,35 @@ Protected Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Svc::LinuxTimeImpl::~LinuxTimeImpl </td>
+          <td class="memname">Svc::PosixTime::PosixTime </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>compName</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="posix_time_8cpp_source.html#l00014">14</a> of file <a class="el" href="posix_time_8cpp_source.html">PosixTime.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a5614ad384021badf0c66a36003ef18c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5614ad384021badf0c66a36003ef18c7">&#9670;&nbsp;</a></span>~PosixTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Svc::PosixTime::~PosixTime </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -162,33 +168,13 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="darwin_time_impl_8cpp_source.html#l00017">17</a> of file <a class="el" href="darwin_time_impl_8cpp_source.html">DarwinTimeImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="posix_time_8cpp_source.html#l00018">18</a> of file <a class="el" href="posix_time_8cpp_source.html">PosixTime.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="affa2a9a3a85e5f4d321f8acaa1602217"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#affa2a9a3a85e5f4d321f8acaa1602217">&#9670;&nbsp;</a></span>init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Svc::LinuxTimeImpl::init </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>instance</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="darwin_time_impl_8cpp_source.html#l00029">29</a> of file <a class="el" href="darwin_time_impl_8cpp_source.html">DarwinTimeImpl.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a03ca2ec0cbb2e75474c4a77ff49d9ea1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03ca2ec0cbb2e75474c4a77ff49d9ea1">&#9670;&nbsp;</a></span>timeGetPort_handler()</h2>
+<a id="ab8d909cd8c8d11a9992398fe1a76f514"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8d909cd8c8d11a9992398fe1a76f514">&#9670;&nbsp;</a></span>timeGetPort_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -197,7 +183,7 @@ Protected Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void Svc::LinuxTimeImpl::timeGetPort_handler </td>
+          <td class="memname">void Svc::PosixTime::timeGetPort_handler </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
@@ -228,22 +214,20 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="darwin_time_impl_8cpp_source.html#l00020">20</a> of file <a class="el" href="darwin_time_impl_8cpp_source.html">DarwinTimeImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="posix_time_8cpp_source.html#l00021">21</a> of file <a class="el" href="posix_time_8cpp_source.html">PosixTime.cpp</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>Svc/LinuxTime/<a class="el" href="linux_time_impl_8hpp_source.html">LinuxTimeImpl.hpp</a></li>
-<li>Svc/LinuxTime/<a class="el" href="darwin_time_impl_8cpp_source.html">DarwinTimeImpl.cpp</a></li>
-<li>Svc/LinuxTime/<a class="el" href="linux_time_impl_8cpp_source.html">LinuxTimeImpl.cpp</a></li>
-<li>Svc/LinuxTime/<a class="el" href="vx_works_time_impl_8cpp_source.html">VxWorksTimeImpl.cpp</a></li>
+<li>Svc/PosixTime/<a class="el" href="posix_time_8hpp_source.html">PosixTime.hpp</a></li>
+<li>Svc/PosixTime/<a class="el" href="posix_time_8cpp_source.html">PosixTime.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="namespace_svc.html">Svc</a></li><li class="navelem"><a class="el" href="class_svc_1_1_linux_time_impl.html">LinuxTimeImpl</a></li>
+    <li class="navelem"><a class="el" href="namespace_svc.html">Svc</a></li><li class="navelem"><a class="el" href="class_svc_1_1_posix_time.html">PosixTime</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

@@ -1,10 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"svc_active_text_logger_component.html#autotoc_md232":[9,3,0,2,3],
-"svc_active_text_logger_component.html#autotoc_md233":[9,3,0,2,4],
-"svc_active_text_logger_component.html#autotoc_md234":[9,3,0,3],
-"svc_active_text_logger_component.html#autotoc_md235":[9,3,0,4],
-"svc_active_text_logger_component.html#autotoc_md236":[9,3,0,5],
 "svc_active_text_logger_component.html#autotoc_md237":[9,3,0,6],
 "svc_assert_fatal_adapter_component.html":[9,4],
 "svc_assert_fatal_adapter_component.html#autotoc_md238":[9,4,0],
@@ -249,5 +244,10 @@ var NAVTREEINDEX6 =
 "svc_framer_component.html#autotoc_md493":[9,14,0,3,4],
 "svc_framer_component.html#autotoc_md494":[9,14,0,3,5],
 "svc_framer_component.html#autotoc_md495":[9,14,0,3,6],
-"svc_framer_component.html#autotoc_md496":[9,14,0,3,6,0]
+"svc_framer_component.html#autotoc_md496":[9,14,0,3,6,0],
+"svc_framer_component.html#autotoc_md497":[9,14,0,3,6,1],
+"svc_framer_component.html#autotoc_md498":[9,14,0,3,6,2],
+"svc_framer_component.html#autotoc_md499":[9,14,0,3,7],
+"svc_framer_component.html#autotoc_md500":[9,14,0,3,7,0],
+"svc_framer_component.html#autotoc_md501":[9,14,0,3,7,1]
 };

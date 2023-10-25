@@ -201,6 +201,9 @@ var hierarchy =
     ] ],
     [ "FppTest::Types::PortStringType", "struct_fpp_test_1_1_types_1_1_port_string_type.html", null ],
     [ "FppTest::Types::PortStringTypes", "struct_fpp_test_1_1_types_1_1_port_string_types.html", null ],
+    [ "PosixTimeComponentBase", null, [
+      [ "Svc::PosixTime", "class_svc_1_1_posix_time.html", null ]
+    ] ],
     [ "FppTest::Types::PrimitiveTypes", "struct_fpp_test_1_1_types_1_1_primitive_types.html", null ],
     [ "Os::PriorityQueue", "struct_os_1_1_priority_queue.html", null ],
     [ "PrmDbComponentBase", null, [
@@ -325,9 +328,6 @@ var hierarchy =
       [ "TypedPortTest< PortType >", "class_typed_port_test.html", null ]
     ] ],
     [ "Svc::AMPCSSequence::Record::Time", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time.html", null ],
-    [ "TimeComponentBase", null, [
-      [ "Svc::LinuxTimeImpl", "class_svc_1_1_linux_time_impl.html", null ]
-    ] ],
     [ "Svc::AMPCSSequence::Record::TimeFlag", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time_flag.html", null ],
     [ "TlmChanComponentBase", null, [
       [ "Svc::TlmChan", "class_svc_1_1_tlm_chan.html", null ]
