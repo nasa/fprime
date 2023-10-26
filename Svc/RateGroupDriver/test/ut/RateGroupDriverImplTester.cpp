@@ -37,7 +37,7 @@ namespace Svc {
         this->m_portCalls[portNum] = true;
     }
 
-    void RateGroupDriverImplTester::runSchedNominal(NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers) {
+    void RateGroupDriverImplTester::runSchedNominal(Svc::RateGroupDriver::DividerSet dividersSet, NATIVE_INT_TYPE numDividers) {
 
         TEST_CASE(106.1.1,"Nominal Execution");
         COMMENT(
@@ -48,7 +48,7 @@ namespace Svc {
         NATIVE_INT_TYPE expected_rollover = 1;
 
         for (NATIVE_INT_TYPE div = 0; div < numDividers; div++) {
-            expected_rollover *= dividers[div];
+            expected_rollover *= dividersSet.dividers[div].divisor;
         }
 
         ASSERT_EQ(expected_rollover,this->m_impl.m_rollover);
@@ -65,7 +65,7 @@ namespace Svc {
             ASSERT_EQ((cycle+1)%expected_rollover,this->m_impl.m_ticks);
             // check for various intervals
             for (NATIVE_INT_TYPE div = 0; div < numDividers; div++) {
-                if (cycle % dividers[div] == 0) {
+                if (cycle % dividersSet.dividers[div].divisor == dividersSet.dividers[div].offset) {
                     EXPECT_TRUE(this->m_portCalls[div]);
                 } else {
                     EXPECT_FALSE(this->m_portCalls[div]);
