@@ -12,11 +12,11 @@ namespace Svc {
 
     }
 
-    void RateGroupDriver::configure(const DividerSet& dividersSet)
+    void RateGroupDriver::configure(const DividerSet& dividerSet)
     {
 
         // check arguments
-        FW_ASSERT(dividersSet.dividers);
+        FW_ASSERT(dividerSet.dividers);
         // verify port/table size matches
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_dividers) == this->getNum_CycleOut_OutputPorts(),
                 static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
@@ -24,14 +24,14 @@ namespace Svc {
         // copy provided array of dividers
         for (NATIVE_UINT_TYPE entry = 0; entry < RateGroupDriver::DIVIDER_SIZE; entry++) {
             // A port with an offset equal or bigger than the divisor is not accepted because it would never be called
-            FW_ASSERT((dividersSet.dividers[entry].offset==0)||(dividersSet.dividers[entry].offset < dividersSet.dividers[entry].divisor),
-                dividersSet.dividers[entry].offset,
-                dividersSet.dividers[entry].divisor);
-            this->m_dividers[entry] = dividersSet.dividers[entry];
+            FW_ASSERT((dividerSet.dividers[entry].offset==0)||(dividerSet.dividers[entry].offset < dividerSet.dividers[entry].divisor),
+                dividerSet.dividers[entry].offset,
+                dividerSet.dividers[entry].divisor);
+            this->m_dividers[entry] = dividerSet.dividers[entry];
             // rollover value should be product of all dividers to make sure integer rollover doesn't jump cycles
             // only use non-zero dividers
-            if (dividersSet.dividers[entry].divisor != 0) {
-                this->m_rollover *= dividersSet.dividers[entry].divisor;
+            if (dividerSet.dividers[entry].divisor != 0) {
+                this->m_rollover *= dividerSet.dividers[entry].divisor;
             }
         }
         this->m_configured = true;
