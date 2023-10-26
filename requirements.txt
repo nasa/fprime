@@ -29,8 +29,8 @@ fprime-fpp-format==2.0.0
 fprime-fpp-filenames==2.0.0
 fprime-fpp-depend==2.0.0
 fprime-fpp-check==2.0.0
-fprime-gds==3.3.2
-fprime-tools==3.3.3
+fprime-gds==3.3.3
+fprime-tools==3.4.0a1
 fprime-visual==1.0.0
 gcovr==6.0
 idna==3.4
