@@ -71,7 +71,7 @@ namespace Svc {
             //!  \brief RateGroupDriver configuration function
             //!  \param dividersSet set of dividers used to divide down input tick
 
-            void configure(DividerSet dividersSet);
+            void configure(const DividerSet& dividersSet);
 
             //!  \brief RateGroupDriverImpl destructor
 
@@ -86,14 +86,14 @@ namespace Svc {
             //! divider array
             Divider m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
 
-            //! size of divider array
-            NATIVE_INT_TYPE m_numDividers;
-
             //! tick counter
             NATIVE_INT_TYPE m_ticks;
 
             //! rollover counter
             NATIVE_INT_TYPE m_rollover;
+
+            //! has the configure method been called
+            bool m_configured;
     };
 
 }
