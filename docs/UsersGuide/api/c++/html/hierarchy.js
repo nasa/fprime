@@ -84,6 +84,8 @@ var hierarchy =
       [ "Svc::Deframer", "class_svc_1_1_deframer.html", null ]
     ] ],
     [ "Os::Directory", "class_os_1_1_directory.html", null ],
+    [ "Svc::RateGroupDriver::Divider", "struct_svc_1_1_rate_group_driver_1_1_divider.html", null ],
+    [ "Svc::RateGroupDriver::DividerSet", "struct_svc_1_1_rate_group_driver_1_1_divider_set.html", null ],
     [ "FppTest::Types::Empty", "struct_fpp_test_1_1_types_1_1_empty.html", null ],
     [ "EmptyComponentBase", null, [
       [ "Empty", "class_empty.html", null ]
