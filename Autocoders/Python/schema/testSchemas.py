@@ -249,7 +249,7 @@ def setup():
         AssertionError,
     )
     command_test.add_test(
-        "Kind not sync nor async",
+        "Kind neither sync nor async",
         "sample_XML_files/command/kindMixed.xml",
         AssertionError,
     )

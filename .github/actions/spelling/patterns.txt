@@ -1,17 +1,32 @@
 # See https://github.com/check-spelling/check-spelling/wiki/Configuration-Examples:-patterns
 
-# hit-count: 106 file-count: 28
-# Compiler flags
-(?:^|[\t ,"'`=(])-(?:[DLP](?=[A-Z]{2,})|[WXYlf](?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,}))
+# Automatically suggested patterns
+# hit-count: 1004 file-count: 122
+# Ignore any text between inline back-ticks
+`(.{2,}?)`
 
-# http|ftp|file URLs
-#(?:\b(?:https?|ftp|file)://)[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]
+# hit-count: 154 file-count: 42
+# hex digits including css/html color classes:
+(?:[\\0][xX]|\\u|[uU]\+|#x?|\%23)[0-9_a-fA-FgGrR]*?[a-fA-FgGrR]{2,}[0-9_a-fA-FgGrR]*(?:[uUlL]{0,3}|[iu]\d+)\b
 
-# hit-count: 48 file-count: 18
+# hit-count: 121 file-count: 35
+# Compiler flags (Unix, Java/Scala)
+# Use if you have things like `-Pdocker` and want to treat them as `docker`
+(?:^|[\t ,>"'`=(])-(?:(?:J-|)[DPWXY]|[Llf])(?=[A-Z]{2,}|[A-Z][a-z]|[a-z]{2,})
+
+# hit-count: 81 file-count: 25
 # GitHub SHAs (markdown)
 (?:\[`?[0-9a-f]+`?\]\(https:/|)/(?:www\.|)github\.com(?:/[^/\s"]+){2,}(?:/[^/\s")]+)(?:[0-9a-f]+(?:[-0-9a-zA-Z/#.]*|)\b|)
 
-# hit-count: 29 file-count: 13
+# hit-count: 27 file-count: 5
+# hex runs
+\b[0-9a-fA-F]{16,}\b
+
+# hit-count: 20 file-count: 7
+# alternate markers if you run into latex and friends
+(?<!\\)\\[nrt](?=[a-z]{2,})(?=.*['"`])
+
+# hit-count: 18 file-count: 8
 # version suffix <word>v#
 (?:(?<=[A-Z]{2})V|(?<=[a-z]{2}|[A-Z]{2})v)\d+(?:\b|(?=[a-zA-Z_]))
 
@@ -19,104 +34,68 @@
 # Wikipedia
 \ben\.wikipedia\.org/wiki/[-\w%.#]+
 
-# hit-count: 5 file-count: 2
-# w3
-\bw3\.org/[-0-9a-zA-Z/#.]+
+# hit-count: 7 file-count: 6
+# base64 encoded content, possibly wrapped in mime
+(?:^|[\s=;:?])[-a-zA-Z=;:/0-9+]{50,}(?:[\s=;:?]|$)
 
-# hit-count: 3 file-count: 3
-# Contributor
-\[[^\]]+\]\(https://github\.com/[^/\s"]+\)
-
-# hit-count: 3 file-count: 3
+# hit-count: 6 file-count: 6
 # stackexchange -- https://stackexchange.com/feeds/sites
 \b(?:askubuntu|serverfault|stack(?:exchange|overflow)|superuser).com/(?:questions/\w+/[-\w]+|a/)
 
-# hit-count: 2 file-count: 1
+# hit-count: 6 file-count: 3
+# Contributor
+\[[^\]]+\]\(https://github\.com/[^/\s"]+/?\)
+
+# hit-count: 5 file-count: 1
+# URL escaped characters
+\%[0-9A-F][A-F](?=[A-Za-z])
+
+# hit-count: 4 file-count: 3
 # mailto urls
-\[([-a-zA-Z=;:/?%&0-9+@.]{3,})]\(mailto:\g{-1}\)
+mailto:[-a-zA-Z=;:/?%&0-9+@.]{3,}
+
+# hit-count: 3 file-count: 2
+# tar arguments
+\b(?:\\n|)g?tar(?:\.exe|)(?:(?:\s+--[-a-zA-Z]+|\s+-[a-zA-Z]+|\s[ABGJMOPRSUWZacdfh-pr-xz]+\b)(?:=[^ ]*|))+
+
+# hit-count: 2 file-count: 2
+# node packages
+(["'])\@[^/'" ]+/[^/'" ]+\g{-1}
+
+# hit-count: 1 file-count: 1
+# apple
+\bdeveloper\.apple\.com/[-\w?=/]+
 
 # Ignore links in MD
 \[[^\]]+\]\(([#/:a-z0-9-]+)\)
 
-# hit-count: 2 file-count: 1
-# apple
-\bdeveloper\.apple\.com/[-\w?=/]+
-
-# hit-count: 2 file-count: 1
-# shields.io
-\bshields\.io/[-\w/%?=&.:+;,]*
-
-# hit-count: 1 file-count: 1
-# hex runs
-\b[0-9a-fA-F]{16,}\b
-
-# data urls
-"data:[^"]*"
-'data:[^']*'
-data:[-a-zA-Z=;:/0-9+]*,\S*
-
-(?:optionsString|symbolStylesString|modelElementStyleString|diagramViewStyleString)="[^"]+"
-<filePart[^>]*>[^<]*<
-'local:[^']*'
-"local:[^"]*"
-__sscaeProjectUsageGraphSerialization='[^']*'
-xmi:id="[^"]*"
-[_"]PROJECT[-0-9a-zA-Z_$?#=.]+
-
-# URL escaped characters
-\%[0-9A-F]{2}
-# hex in url queries
-=[0-9a-fA-F]+&
-# hex digits including css/html color classes:
-(?:[\\0][xX]|\\u|[uU]\+|#x?|\%23)[0-9a-fA-FgGrR_]{2,}(?:[uU]?[lL]{0,2}|u\d+)\b
-
-\@[0-9a-f]{8}\b
-
-# uuid:
-\b[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}\b
-
-# github hash
-[a-f0-9]{40}
-
-# https://www.gnu.org/software/groff/manual/groff.html
-# man troff content
-\\f[BCIPR]
-
-\&#x[AD];
-value="(?:[0-9a-f]{1,2} )*"
-\b(?:belongsTo|featuredBy|sections|sharePointID|user|ID)="[0-9a-zA-Z_ ]*"
-
-\ben masse\b
-
-# ignore long runs of a single character:
-\b([A-Za-z])\g{-1}{3,}\b
-
-# Ignore string sequence if it is assigned to a variable and has special symbols | \ / % * & %
-=\s*["'].*[\|\\\/\#\*\&\%].*["']
-
-# Ignore any text between inline back-ticks
-`(.*?)`
-
-# Tar archive items
-\b(?:\\n|)tar(?:\s+-[a-zA-Z]+|\s[a-z]+)+
-
-# slashes after spaces are not in paths
-LaTeX \\.* \\
+# Ignore setup.py category
+:: MacOS
 
 # Questionably acceptable forms of `in to`
 # Personally, I prefer `log into`, but people object
 # https://www.tprteaching.com/log-into-log-in-to-login/
-\b[Ll]og in to\b
+\b(?:[Ll]og|[Ss]ign) in to\b
+
+# to opt in
+\bto opt in\b
 
 # acceptable duplicates
 # ls directory listings
-[-bcdlpsw](?:[-r][-w][-Ssx]){3}\s+\d+\s+\S+\s+\S+\s+\d+\s+
+[-bcdlpsw](?:[-r][-w][-SsTtx]){3}[\.+*]?\s+\d+\s+\S+\s+\S+\s+\d+\s+
+# mount
+\bmount\s+-t\s+(\w+)\s+\g{-1}\b
 # C types and repeated CSS values
-\s(center|div|inherit|expr|long|LONG|none|normal|solid|Time|thin|transparent|very)(?: \g{-1})+\s
+\s(auto|center|div|inherit|long|LONG|none|normal|solid|thin|transparent|very)(?: \g{-1})+\s
+# C struct
+\bstruct\s+(\w+)\s+\g{-1}\b
 # go templates
-\s(\w+)\s+\g{-1}\s+\`(?:graphql|json|yaml):
-# javadoc / .net
-(?:[\\@](?:groupname|page|param)|(?:public|private)(?:\s+static|\s+readonly)*)\s+(\w+)\s+\g{-1}\s
+\s(\w+)\s+\g{-1}\s+\`(?:graphql|inject|json|yaml):
+# doxygen / javadoc / .net
+(?:[\\@](?:brief|groupname|page|t?param|return|retval)|(?:public|private|\[Parameter(?:\(.+\)|)\])(?:\s+static|\s+override|\s+readonly)*)(?:\s+\{\w+\}|)\s+(\w+)\s+\g{-1}\s
+
+\s+(\w+)\s+\g{-1}\s+::$
+\s+(\w+)\s+\g{-1}\.{3}$
 
 # Commit message -- Signed-off-by and friends
 ^\s*(?:(?:Based-on-patch|Co-authored|Helped|Mentored|Reported|Reviewed|Signed-off)-by|Thanks-to): (?:[^<]*<[^>]*>|[^<]*)\s*$

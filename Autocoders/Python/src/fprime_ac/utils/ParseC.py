@@ -48,7 +48,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     @return: the integer value, or exception
 
     Note: A ValueError exception is raised if the value is not found,
-    or if the value can not be represented as an integer.
+    or if the value cannot be represented as an integer.
     """
     if loadfile not in (True, False):
         raise ValueError("%r: invalid loadfile argument" % loadfile)

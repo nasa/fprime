@@ -53,7 +53,7 @@ each command's usage in more detail.
 8. `coverage`: Similar to check, but calculates and generates unit test code coverage reports.
 9. `new`: Creates either a new component or port. Use `--component` or `--port` to specify whether
     you want to create a component or port. If you would like to use a custom component
-    cookiecutter, specify the template with `component-cookeicutter:` in the settings.ini.
+    cookiecutter, specify the template with `component-cookiecutter:` in the settings.ini.
 
 Most `fprime-util` commands support a common set of flags that can be used to modify command
 behavior:
