@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: MacOS-CI
+name: macOS-CI
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -17,7 +17,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  MacOS-Framework:
+  macOS-Framework:
     runs-on: macos-latest
     steps:
     - name: "Checkout F´ Repository"
@@ -36,7 +36,7 @@ jobs:
         path: ci-logs.tar.gz
         retention-days: 5
 
-  MacOS-Ref:
+  macOS-Ref:
     runs-on: macos-latest
     steps:
     - name: "Checkout F´ Repository"
@@ -55,7 +55,7 @@ jobs:
         path: ci-logs.tar.gz
         retention-days: 5
 
-  MacOS-Integration:
+  macOS-Integration:
     runs-on: macos-latest
     steps:
     - name: "Checkout F´ Repository"

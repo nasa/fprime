@@ -1,6 +1,6 @@
-# Mac OS X
+# macOS
 
-MacOS like Linux is a unix system and thus may be used directly for most of this 
+macOS, like Linux, is a Unix system and thus may be used directly for most of this 
 tutorial. However, Mac users must install the following utilities 
 *and ensure they are available on the command line path*.
 
