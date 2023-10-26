@@ -20,7 +20,7 @@ namespace Svc {
 
             void init(NATIVE_INT_TYPE instance = 0);
 
-            void runSchedNominal(NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
+            void runSchedNominal(Svc::RateGroupDriver::DividerSet dividersSet, NATIVE_INT_TYPE numDividers);
 
         private:
 
