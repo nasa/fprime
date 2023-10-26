@@ -547,7 +547,8 @@ customObjectInstantitationMethod
 # base64 encoded content
 ([`'"])[-a-zA-Z=;:/0-9+]+=\g{-1}
 # base64 encoded content in xml/sgml
->[-a-zA-Z=;:/0-9+]+=</
+# Commented out because of false positives
+# >[-a-zA-Z=;:/0-9+]+=</
 # base64 encoded content, possibly wrapped in mime
 (?:^|[\s=;:?])[-a-zA-Z=;:/0-9+]{50,}(?:[\s=;:?]|$)
 
