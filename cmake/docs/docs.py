@@ -19,9 +19,16 @@ import enum
 import os
 import re
 import sys
+from pathlib import Path
 
 LINE_RE = re.compile(r"^#{1,4} ?")
 
+EXCLUDED = [
+    "test",
+    "googletest-download",
+]
+CURRENT_DIR = Path(".")
+CURRENT_OFFSET = 0
 
 class DocState(enum.IntEnum):
     """
@@ -60,6 +67,9 @@ def main():
 
 def process_file(file_name, outdir):
     """Process a file"""
+    global CURRENT_DIR, CURRENT_OFFSET
+    if any([Path(x) in Path(file_name).parents for x in EXCLUDED]):
+        return
     # Read a line, and output it
     out_fn = file_name
     if os.path.basename(out_fn) == "CMakeLists.txt":
@@ -73,7 +83,12 @@ def process_file(file_name, outdir):
     out_fn = os.path.join(outdir, out_fn)
     os.makedirs(os.path.dirname(out_fn), exist_ok=True)
     # Open both files, and loop over all the lines reading and writing each
-    print("[{}]({})".format(os.path.basename(out_fn).replace(".md", ""), relative_fn))
+    if Path(file_name).parent != CURRENT_DIR:
+        CURRENT_DIR = Path(file_name).parent
+        CURRENT_OFFSET = len(Path(file_name).relative_to(CURRENT_DIR).parents)
+        print(f"## {CURRENT_DIR}")
+    print("  " * CURRENT_OFFSET, end="")
+    print("- [{}](../api/cmake/{})".format(os.path.basename(out_fn).replace(".md", ""), relative_fn))
     with open(file_name, "r") as in_file_handle:
         with open(out_fn, "w") as out_file_handle:
             state = DocState.SEARCH
