@@ -30,6 +30,7 @@ EXCLUDED = [
 CURRENT_DIR = Path(".")
 CURRENT_OFFSET = 0
 
+
 class DocState(enum.IntEnum):
     """
     Holds the documentation generation states.
@@ -88,7 +89,11 @@ def process_file(file_name, outdir):
         CURRENT_OFFSET = len(Path(file_name).relative_to(CURRENT_DIR).parents)
         print(f"## {CURRENT_DIR}")
     print("  " * CURRENT_OFFSET, end="")
-    print("- [{}](../api/cmake/{})".format(os.path.basename(out_fn).replace(".md", ""), relative_fn))
+    print(
+        "- [{}](../api/cmake/{})".format(
+            os.path.basename(out_fn).replace(".md", ""), relative_fn
+        )
+    )
     with open(file_name, "r") as in_file_handle:
         with open(out_fn, "w") as out_file_handle:
             state = DocState.SEARCH
