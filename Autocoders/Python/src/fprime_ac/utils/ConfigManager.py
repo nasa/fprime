@@ -72,7 +72,6 @@ class ConfigManager(parent):
         Used only by constructor to set all ConfigParser defaults. Establishes
         a dictionary of sections and then a dictionary of keyword, value
         association for each section.
-        @params None
         """
         ################################################################
         # General parameters here. This is the DEFAULT section.

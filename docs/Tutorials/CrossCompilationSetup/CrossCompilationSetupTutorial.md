@@ -29,7 +29,7 @@ To run through this tutorial, you must have a computer that meets the following 
 Choose the operating system you are using to install F Prime:
 
 - [Windows 10/11 WSL](./Windows.md)
-- [Mac OS X](./MacOS.md)
+- [Mac OS X](./macOS.md)
 - [Ubuntu 20.04 / 22.04 / Generic Linux](./Linux.md)
 
 <a name="Installing the Toolchain"></a>

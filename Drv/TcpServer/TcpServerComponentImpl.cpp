@@ -33,14 +33,6 @@ SocketIpStatus TcpServerComponentImpl::configure(const char* hostname,
 
 TcpServerComponentImpl::~TcpServerComponentImpl() {}
 
-SocketIpStatus TcpServerComponentImpl::startup() {
-    return  this->m_socket.startup();
-}
-
-void TcpServerComponentImpl::shutdown() {
-    this->m_socket.shutdown();
-}
-
 // ----------------------------------------------------------------------
 // Implementations for socket read task virtual methods
 // ----------------------------------------------------------------------

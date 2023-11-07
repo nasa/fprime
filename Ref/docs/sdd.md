@@ -44,7 +44,7 @@ There is a set of useful utility components that can be used on supported operat
 
 |Component|Description|Link
 |---|---|---|
-|LinuxTime|Provides time stamps for telemetry on a Linux system|[HTML](../../Svc/LinuxTime/docs/sdd.html) [MD](../../Svc/LinuxTime/docs/sdd.md)|
+|PosixTime|Provides time stamps for telemetry on a posix systems|[HTML](../../Svc/PosixTime/docs/sdd.html) [MD](../../Svc/PosixTime/docs/sdd.md)|
 |PassiveConsoleTextLogger|Prints the text form of events to standard output|[HTML](../../Svc/PassiveConsoleTextLogger/docs/sdd.html) [MD](../../Svc/PassiveConsoleTextLogger/docs/sdd.md)|
 |SocketGndIf|Provides a socket for communicating with the ground system|[HTML](../../Svc/SocketGndIf/docs/sdd.html) [MD](../../Svc/SocketGndIf/docs/sdd.md)|
 

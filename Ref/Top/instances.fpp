@@ -130,9 +130,7 @@ module Ref {
 
   instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400
 
-  instance linuxTime: Svc.Time base id 0x4500 \
-    type "Svc::LinuxTime" \
-    at "../../Svc/LinuxTime/LinuxTime.hpp"
+  instance posixTime: Svc.PosixTime base id 0x4500
 
   instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4600
 

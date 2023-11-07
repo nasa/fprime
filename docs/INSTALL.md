@@ -144,11 +144,11 @@ sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
 More information can be found [here](https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac)
 
 
-### SSL Error with Python 3.7+ on macOS
+### SSL Error with Python 3.8+ on macOS
 
 > This fix will not work for Python installed via Homebrew.  Try installing Python published at python.org. 
 
-The version of openSSL bundled with Python 3.7+ requires access to macOS's root certificates. If the following error is  encountered while installing fprime: 
+The version of openSSL bundled with Python 3.8+ requires access to macOS's root certificates. If the following error is  encountered while installing fprime: 
 
 ```
 Failed find expected download: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get  local issuer certificate

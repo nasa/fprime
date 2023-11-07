@@ -1,11 +1,11 @@
 // ----------------------------------------------------------------------
-// LinuxTime/test/ut/Tester.cpp
+// PosixTime/test/ut/Tester.cpp
 // ----------------------------------------------------------------------
 
 #include <cstdio>
 #include <strings.h>
 
-#include "LinuxTimeTester.hpp"
+#include "PosixTimeTester.hpp"
 
 #define INSTANCE 0
 
@@ -15,21 +15,21 @@ namespace Svc {
   // Construction and destruction
   // ----------------------------------------------------------------------
 
-  LinuxTimeTester ::
-    LinuxTimeTester(const char *const compName) :
-      TimeGTestBase(compName, 0),
-      linuxTime("LinuxTime")
+  PosixTimeTester ::
+    PosixTimeTester(const char *const compName) :
+      PosixTimeGTestBase(compName, 0),
+      component("PosixTime")
   {
     this->init();
-    this->linuxTime.init(INSTANCE);
+    this->component.init(INSTANCE);
     this->connect_to_timeGetPort(
         0,
-        this->linuxTime.get_timeGetPort_InputPort(0)
+        this->component.get_timeGetPort_InputPort(0)
     );
   }
 
-  LinuxTimeTester ::
-    ~LinuxTimeTester()
+  PosixTimeTester ::
+    ~PosixTimeTester()
   {
 
   }
@@ -38,13 +38,11 @@ namespace Svc {
   // Tests
   // ----------------------------------------------------------------------
 
-  void LinuxTimeTester ::
+  void PosixTimeTester ::
     getTime()
   {
     Fw::Time time;
     this->invoke_to_timeGetPort(0,time);
-    //printf("seconds: %d\n", time.getSeconds());
-    //printf("useconds: %d\n", time.getUSeconds());
     ASSERT_GT(time.getSeconds(), 0U);
     ASSERT_GE(time.getUSeconds(), 0U);
     ASSERT_LE(time.getUSeconds(), 999999U);

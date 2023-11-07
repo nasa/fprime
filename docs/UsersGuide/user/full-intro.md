@@ -87,6 +87,6 @@ required.  See: [F´ On Baremetal and Multi-Core Systems](../dev/baremetal-multi
 
 ## Conclusion
 
-The F′ software framework is released as open source and has been ported to Linux, MacOS, Windows (WSL), VxWorks, ARINC
+The F′ software framework is released as open source and has been ported to Linux, macOS, Windows (WSL), VxWorks, ARINC
  653, RTEMS, Baremetal(No OS), PPC, Leon3, x86, ARM (A15/A7), and MSP430. Mature sets of CD&H components are available
 following flight process, such as code inspections, static analysis, and full-coverage unit testing.

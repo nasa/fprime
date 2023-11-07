@@ -51,7 +51,7 @@ UNIT_TESTS = [
     "Svc_GenericHub_ut_exe",
     "Svc_GroundInterface_ut_exe",
     "Svc_Health_ut_exe",
-    "Svc_LinuxTime_ut_exe",
+    "Svc_PosixTime_ut_exe",
     "Svc_LinuxTimer_ut_exe",
     "Svc_PolyDb_ut_exe",
     "Svc_PrmDb_ut_exe",
