@@ -23,12 +23,6 @@ from pathlib import Path
 
 LINE_RE = re.compile(r"^#{1,4} ?")
 
-# Directories to exclude from doc generation
-EXCLUDED = [
-    "test",
-    "googletest-download",
-]
-
 
 class DocState(enum.IntEnum):
     """
@@ -56,9 +50,6 @@ def main():
     outdir = os.path.abspath(sys.argv[2])
     os.chdir(sys.argv[1])
     for dirpath, dirnames, filenames in os.walk("."):
-        # Skip excluded directories
-        if any([Path(x) in Path(dirpath).parents for x in EXCLUDED]):
-            continue
         for filename in filenames:
             if (
                 ".cmake" in filename
