@@ -103,8 +103,8 @@ function(_get_call_properties)
         elseif("${CACHE_TYPE}" IN_LIST TYPES_DISALLOWED_LIST)
             continue()
         endif()
-        # Add escaping for list type variables
-        string(REPLACE ";" "\\;" PROP_VALUE "${${PROPERTY}}" )
+        # Add escaping for list type variables (for pass to function call and then again to another function call)
+        string(REPLACE ";" "\\\\;" PROP_VALUE "${${PROPERTY}}" )
         # Check for debugging output
         if (CMAKE_DEBUG_OUTPUT)
             message(STATUS "[prescan] Adding cache variable: '${PROPERTY}=${PROP_VALUE}'")

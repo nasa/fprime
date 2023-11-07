@@ -63,12 +63,12 @@ endfunction(fprime_setup_global_includes)
 # 3. Add the library root as an include directory
 # 4. Add option() to disable library UTs
 ####
-function(fprime_detect_libraries)
+macro(fprime_detect_libraries)
     foreach (LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
-        get_filename_component(LIB_NAME "${LIBRARY_DIR}" NAME)
+        get_filename_component(LIBRARY_NAME "${LIBRARY_DIR}" NAME)
         # Detect manifest file:
         #  1. library.cmake (preferred)
-        #  2. <library>.cmake (old standard
+        #  2. <library>.cmake (old standard)
         if (EXISTS "${LIBRARY_DIR}/library.cmake")
             set(MANIFEST_FILE "${LIBRARY_DIR}/library.cmake")
         elseif (EXISTS "${LIBRARY_DIR}/${LIBRARY_NAME}.cmake")
@@ -89,7 +89,7 @@ function(fprime_detect_libraries)
         include_directories("${LIBRARY_DIR}")
         option(FPRIME_ENABLE_${LIB_NAME}_UTS "Enable UT generation for ${LIB_NAME}" ON)
     endforeach()
-endfunction(fprime_detect_libraries)
+endmacro(fprime_detect_libraries)
 
 ####
 # Function `fprime_setup_standard_targets`:
@@ -153,7 +153,7 @@ endmacro(fprime_initialize_build_system)
 ####
 # Function `fprime_setup_included_code`:
 #
-# Sets up the code/build for fprime and librarys. Call after all project specific targets and autocoders are set up and
+# Sets up the code/build for fprime and libraries. Call after all project specific targets and autocoders are set up and
 # registered.
 ####
 function(fprime_setup_included_code)
