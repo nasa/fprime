@@ -28,8 +28,6 @@ EXCLUDED = [
     "test",
     "googletest-download",
 ]
-# CURRENT_DIR tracks which directory docs are currently being generated for
-CURRENT_DIR = Path(".")
 
 
 class DocState(enum.IntEnum):
@@ -55,11 +53,12 @@ def main():
     if not os.path.isdir(sys.argv[1]) or not os.path.isdir(sys.argv[2]):
         print("[ERROR] Not a directory!")
         sys.exit(2)
-    # Print the index header (stdout is redirected to index.md)
-    print("# CMake API Index")
     outdir = os.path.abspath(sys.argv[2])
     os.chdir(sys.argv[1])
     for dirpath, dirnames, filenames in os.walk("."):
+        # Skip excluded directories
+        if any([Path(x) in Path(dirpath).parents for x in EXCLUDED]):
+            continue
         for filename in filenames:
             if (
                 ".cmake" in filename
@@ -71,9 +70,6 @@ def main():
 
 def process_file(file_name, outdir):
     """Process a file"""
-    global CURRENT_DIR
-    if any([Path(x) in Path(file_name).parents for x in EXCLUDED]):
-        return
     # Read a line, and output it
     out_fn = file_name
     if os.path.basename(out_fn) == "CMakeLists.txt":
@@ -83,20 +79,8 @@ def process_file(file_name, outdir):
     )
     if out_fn == file_name:
         raise AssertionError("File collision imminent")
-    relative_fn = out_fn
     out_fn = os.path.join(outdir, out_fn)
     os.makedirs(os.path.dirname(out_fn), exist_ok=True)
-    # The following print statements are used to generate the index.md file
-    # If parent is not current dir, change CURRENT_DIR and print section header
-    # This conveniently works because os.walk is depth first (used in main())
-    if Path(file_name).parent != CURRENT_DIR:
-        CURRENT_DIR = Path(file_name).parent
-        print(f"### {CURRENT_DIR}")
-    print(
-        "- [{}](../api/cmake/{})".format(
-            os.path.basename(out_fn).replace(".md", ""), relative_fn.lstrip("./")
-        )
-    )
     # Open both files, and loop over all the lines reading and writing each
     with open(file_name, "r") as in_file_handle:
         with open(out_fn, "w") as out_file_handle:
