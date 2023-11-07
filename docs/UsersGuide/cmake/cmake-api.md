@@ -37,6 +37,8 @@ them into a global dictionary.
 
 [Target](./Targets.md): target subsystem documentation
 
+All available targets are listed and described in the [CMake API Index](../api/cmake/index.md)
+
 
 ## CMake Support Code Documentation
 
