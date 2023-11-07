@@ -89,7 +89,7 @@ function make_version
     cd "${FPRIME}"
     clobber "${CMAKE_OUTPUT}"
     mkdir -p "${CMAKE_OUTPUT}"
-    "${FPRIME}/cmake/docs/docs.py" "${FPRIME}/cmake/" "${FPRIME}/docs/UsersGuide/api/cmake" >> "${FPRIME}/docs/UsersGuide/cmake/cmake-api.md"
+    "${FPRIME}/cmake/docs/docs.py" "${FPRIME}/cmake/" "${CMAKE_OUTPUT}" > "${CMAKE_OUTPUT}/index.md"
 ) || exit 1
 
 # Fix for github pages

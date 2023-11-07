@@ -55,6 +55,8 @@ def main():
     if not os.path.isdir(sys.argv[1]) or not os.path.isdir(sys.argv[2]):
         print("[ERROR] Not a directory!")
         sys.exit(2)
+    # Print the index header (stdout is redirected to index.md)
+    print("# CMake API Index")
     outdir = os.path.abspath(sys.argv[2])
     os.chdir(sys.argv[1])
     for dirpath, dirnames, filenames in os.walk("."):
@@ -84,6 +86,7 @@ def process_file(file_name, outdir):
     relative_fn = out_fn
     out_fn = os.path.join(outdir, out_fn)
     os.makedirs(os.path.dirname(out_fn), exist_ok=True)
+    # The following print statements are used to generate the index.md file
     # If parent is not current dir, change CURRENT_DIR and print section header
     # This conveniently works because os.walk is depth first (used in main())
     if Path(file_name).parent != CURRENT_DIR:
