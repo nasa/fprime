@@ -31,7 +31,7 @@ parser.add_argument(
     "title", type=str, help="The title to use for the header of the generated file"
 )
 parser.add_argument(
-    "excludes", type=str, help="Comma-sperated list of directories to exclude"
+    "excludes", type=str, help="Comma-separated list of directories to exclude"
 )
 args = parser.parse_args()
 
