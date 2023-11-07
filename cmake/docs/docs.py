@@ -19,7 +19,6 @@ import enum
 import os
 import re
 import sys
-from pathlib import Path
 
 LINE_RE = re.compile(r"^#{1,4} ?")
 
