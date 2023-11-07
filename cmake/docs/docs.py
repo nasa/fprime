@@ -23,12 +23,13 @@ from pathlib import Path
 
 LINE_RE = re.compile(r"^#{1,4} ?")
 
+# Directories to exclude from doc generation
 EXCLUDED = [
     "test",
     "googletest-download",
 ]
+# CURRENT_DIR tracks which directory docs are currently being generated for
 CURRENT_DIR = Path(".")
-CURRENT_OFFSET = 0
 
 
 class DocState(enum.IntEnum):
@@ -68,7 +69,7 @@ def main():
 
 def process_file(file_name, outdir):
     """Process a file"""
-    global CURRENT_DIR, CURRENT_OFFSET
+    global CURRENT_DIR
     if any([Path(x) in Path(file_name).parents for x in EXCLUDED]):
         return
     # Read a line, and output it
@@ -83,17 +84,17 @@ def process_file(file_name, outdir):
     relative_fn = out_fn
     out_fn = os.path.join(outdir, out_fn)
     os.makedirs(os.path.dirname(out_fn), exist_ok=True)
-    # Open both files, and loop over all the lines reading and writing each
+    # If parent is not current dir, change CURRENT_DIR and print section header
+    # This conveniently works because os.walk is depth first (used in main())
     if Path(file_name).parent != CURRENT_DIR:
         CURRENT_DIR = Path(file_name).parent
-        CURRENT_OFFSET = len(Path(file_name).relative_to(CURRENT_DIR).parents)
-        print(f"## {CURRENT_DIR}")
-    print("  " * CURRENT_OFFSET, end="")
+        print(f"### {CURRENT_DIR}")
     print(
         "- [{}](../api/cmake/{})".format(
-            os.path.basename(out_fn).replace(".md", ""), relative_fn
+            os.path.basename(out_fn).replace(".md", ""), relative_fn.lstrip("./")
         )
     )
+    # Open both files, and loop over all the lines reading and writing each
     with open(file_name, "r") as in_file_handle:
         with open(out_fn, "w") as out_file_handle:
             state = DocState.SEARCH

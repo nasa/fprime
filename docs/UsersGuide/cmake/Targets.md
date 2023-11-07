@@ -14,23 +14,9 @@ For projects generating GNU make files, these targets can be executed with the `
 ## Built-In Targets
 
 The CMake system supplies several targets that are useful for all projects and thus are included
-as part of the CMake system. These targets are described in more detail below.
+as part of the CMake system. These targets are described in the [index](cmake-api.md)
 
-### `<MODULE>_coverage` Targets
-
-The coverage target works on systems where the `gcov` executable is available on the executable
-search path and the `CMAKE_BUILD_TYPE` variable has been set to `TESTING`. If these two conditions
-are met, then the user can build both the `<MODULE>_coverage` targets to run unit tests and generate
-coverage reports for the specified module.
-
-See: [coverage.md](coverage.md)
-
-### `dict` Target
-
-The target system is also used to produce dictionaries. These dictionaries can be created using the
-top-level `dict` target. Dictionaries do not make use of module-specific targets in terms of user
-interaction.
 
 ## Adding Custom Targets
 
-See [support/Target.md](../support/Target.md) for a description of adding custom targets.
+See the [Customization Guide](Customization.md) for a description of adding custom targets.
