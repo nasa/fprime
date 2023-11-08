@@ -39,13 +39,8 @@ endfunction(build_add_global_target)
 # - EXCLUDED_SOURCES: sources already "consumed", that is, processed by an autocoder
 # - DEPENDENCIES: dependencies of this module. Also link flags and libraries.
 ####
-function(build_setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCIES)
-    # Add generated sources
-    foreach(SOURCE IN LISTS SOURCES GENERATED)
-        if (NOT SOURCE IN_LIST EXCLUDED_SOURCES)
-            target_sources("${MODULE}" PRIVATE "${SOURCE}")
-        endif()
-    endforeach()
+function(build_setup_build_module MODULE SOURCES GENERATED DEPENDENCIES)
+    target_sources("${MODULE}" PRIVATE ${SOURCES} ${GENERATED})
 
     # Set those files as generated to prevent build errors
     foreach(SOURCE IN LISTS GENERATED)
@@ -124,7 +119,20 @@ function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     get_property(CUSTOM_AUTOCODERS GLOBAL PROPERTY FPRIME_AUTOCODER_TARGET_LIST)
     run_ac_set("${SOURCES}" ${CUSTOM_AUTOCODERS})
     resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES} )
-    build_setup_build_module("${MODULE}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
+
+    # Create lists of hand-coded and generated sources not "consumed" by an autocoder
+    foreach(SOURCE_LIST IN ITEMS SOURCES AC_GENERATED)
+        set(${SOURCE_LIST}_FILTERED "")
+        foreach(SOURCE IN LISTS ${SOURCE_LIST})
+            if (NOT SOURCE IN_LIST AC_SOURCES)
+                list(APPEND ${SOURCE_LIST}_FILTERED "${SOURCE}")
+            endif()
+        endforeach()
+    endforeach()
+
+    build_setup_build_module("${MODULE}" "${SOURCES_FILTERED}" "${AC_GENERATED_FILTERED}" "${RESOLVED}")
+
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/sources.txt" "${SOURCES_FILTERED}\n${AC_GENERATED}\n${AC_SOURCES}")
 
     if (CMAKE_DEBUG_OUTPUT)
         introspect("${MODULE}")
