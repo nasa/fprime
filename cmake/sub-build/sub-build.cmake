@@ -10,6 +10,7 @@
 # maintaining the efficiency of properly expressed builds.
 #
 ####
+include_guard()
 include(utilities)
 include(sub-build/sub-build-config)
 

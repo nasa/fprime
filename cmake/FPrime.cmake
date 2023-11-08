@@ -5,6 +5,7 @@
 # rather allows the users to build against fprime, fprime libraries while taking advantage of fprime's autocoding
 # support. This file includes the cmake build system setup for building like fprime.
 ####
+include_guard()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 include(utilities)
 include(options)

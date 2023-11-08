@@ -6,6 +6,7 @@
 # generate these files.
 #
 ####
+include_guard()
 # Basic definitions
 get_filename_component(TOOLCHAIN_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME_WE)
 # Setup fallback toolchain name
