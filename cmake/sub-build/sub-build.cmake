@@ -11,11 +11,6 @@
 #
 ####
 include(utilities)
-
-# When with-in a sub-build, don't even consider allowing further sub-builds
-if (DEFINED FPRIME_SUB_BUILD_TARGETS)
-    return()
-endif()
 include(sub-build/sub-build-config)
 
 ####
@@ -33,53 +28,50 @@ include(sub-build/sub-build-config)
 # `ARGN`: list of targets to run as part of this sub-build. These will be registered, and run in order.
 #####
 function(run_sub_build SUB_BUILD_NAME)
-    message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME}")
-    _get_call_properties()
+    if (NOT DEFINED FPRIME_SUB_BUILD_TARGETS)
+        message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME}")
+        _get_call_properties()
 
-    # Run CMake as efficiently as possible
-    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}")
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "[sub-build] Generating: ${SUB_BUILD_NAME} with ${ARGN}")
-    endif ()
-    string(REPLACE ";" "\\;" TARGET_LIST_AS_STRING "${ARGN}")
-    execute_process_or_fail("[sub-build] Failed to generate: ${SUB_BUILD_NAME}"
-        "${CMAKE_COMMAND}"
-        -G "${CMAKE_GENERATOR}"
-        "${CMAKE_CURRENT_SOURCE_DIR}"
-        "-DFPRIME_SUB_BUILD_TARGETS=${TARGET_LIST_AS_STRING}"
-        "-DCMAKE_C_COMPILER_FORCED=TRUE"
-        "-DCMAKE_CXX_COMPILER_FORCED=TRUE"
-        "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
-        "-DFPRIME_BINARY_DIR=${CMAKE_BINARY_DIR}"
-        ${CALL_PROPS}
-        RESULT_VARIABLE result
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
-    )
-    set(BUILD_EXTRA_ARGS)
-    if (DEFINED FPRIME_SUB_BUILD_JOBS)
-        list(APPEND BUILD_EXTRA_ARGS "--" "--jobs=${FPRIME_SUB_BUILD_JOBS}")
-    endif()
-    foreach (TARGET IN LISTS ARGN)
-        get_filename_component(TARGET_NAME "${TARGET}" NAME_WE)
+        # Run CMake as efficiently as possible
+        file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}")
         if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[sub-build] Executing: ${SUB_BUILD_NAME} with ${TARGET_NAME}")
+            message(STATUS "[sub-build] Generating: ${SUB_BUILD_NAME} with ${ARGN}")
         endif ()
-        execute_process_or_fail("[sub-build] Failed to execute: ${SUB_BUILD_NAME}/${TARGET_NAME}"
+        string(REPLACE ";" "\\;" TARGET_LIST_AS_STRING "${ARGN}")
+        execute_process_or_fail("[sub-build] Failed to generate: ${SUB_BUILD_NAME}"
             "${CMAKE_COMMAND}"
-            --build
-            "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
-            --target
-            "${TARGET_NAME}"
-            ${BUILD_EXTRA_ARGS}
+            -G "${CMAKE_GENERATOR}"
+            "${CMAKE_CURRENT_SOURCE_DIR}"
+            "-DFPRIME_SUB_BUILD_TARGETS=${TARGET_LIST_AS_STRING}"
+            "-DCMAKE_C_COMPILER_FORCED=TRUE"
+            "-DCMAKE_CXX_COMPILER_FORCED=TRUE"
+            "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
+            "-DFPRIME_BINARY_DIR=${CMAKE_BINARY_DIR}"
+            ${CALL_PROPS}
             RESULT_VARIABLE result
+            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
         )
-    endforeach()
-    message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME} - DONE")
-
-    # Process the results of the above run
-    #file(READ "${CMAKE_BINARY_DIR}/prescan-fpp-list" FPP_LISTING OFFSET 1) # Skips leading ";" preventing null element
-    #set_property(GLOBAL PROPERTY FP_FPP_LIST ${FPP_LISTING})
-    #message(STATUS "Performing CMake source prescan - DONE")
+        set(BUILD_EXTRA_ARGS)
+        if (DEFINED FPRIME_SUB_BUILD_JOBS)
+            list(APPEND BUILD_EXTRA_ARGS "--" "--jobs=${FPRIME_SUB_BUILD_JOBS}")
+        endif()
+        foreach (TARGET IN LISTS ARGN)
+            get_filename_component(TARGET_NAME "${TARGET}" NAME_WE)
+            if (CMAKE_DEBUG_OUTPUT)
+                message(STATUS "[sub-build] Executing: ${SUB_BUILD_NAME} with ${TARGET_NAME}")
+            endif ()
+            execute_process_or_fail("[sub-build] Failed to execute: ${SUB_BUILD_NAME}/${TARGET_NAME}"
+                "${CMAKE_COMMAND}"
+                --build
+                "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
+                --target
+                "${TARGET_NAME}"
+                ${BUILD_EXTRA_ARGS}
+                RESULT_VARIABLE result
+            )
+        endforeach()
+        message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME} - DONE")
+    endif()
 endfunction(run_sub_build)
 
 ####
