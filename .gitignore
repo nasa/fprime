@@ -44,6 +44,7 @@ coverity.out
 .#*
 
 **/docs/*.html
+/docs/UsersGuide/api/cmake/*
 *-template
 
 logs
@@ -52,9 +53,6 @@ test_harness/.autotools
 core
 
 *.swp4
-
-./Gds/logs/*
-./Gds/docs/doxy
 
 *AppDictionary.xml
 *TopologyAppID.csv
@@ -71,9 +69,6 @@ build-fprime-automatic*
 /ci-logs*
 TesterBase.*
 GTestBase.*
-/Fw/Python/.eggs
-/Fw/Python/src/fprime.egg-info
-/Gds/src/fprime_gds.egg-info
 **/DefaultDict/serializable/*
 
 fprime-venv
