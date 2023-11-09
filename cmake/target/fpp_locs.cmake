@@ -9,7 +9,7 @@
 # fpp_locs_add_module_target: used to identify all source files to pass to location global target
 ####
 include_guard()
-include(autocoder/fpp)
+set(FPP_LOCATE_DEFS_HELPER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
 
 ####
 # Function `fpp_locs_add_global_target`:

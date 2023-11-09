@@ -7,7 +7,6 @@
 include_guard()
 include(utilities)
 include(autocoder/helpers)
-set(FPP_LOCATE_DEFS_HELPER "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/fpp-wrapper/fpp-redirect-helper")
 
 autocoder_setup_for_multiple_sources()
 ####
@@ -19,6 +18,10 @@ autocoder_setup_for_multiple_sources()
 function(locate_fpp_tools)
     # Loop through each tool, looking if it was found and check the version
     foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS)
+        # Skipped already defined tools
+        if (${TOOL})
+            continue()
+        endif ()
         string(TOLOWER ${TOOL} PROGRAM)
         string(REPLACE "_" "-" PROGRAM "${PROGRAM}")
         get_expected_tool_version("fprime-${PROGRAM}" FPP_VERSION)
@@ -27,9 +30,9 @@ function(locate_fpp_tools)
         unset(${TOOL} CACHE)
         find_program(${TOOL} ${PROGRAM})
         # If the tool exists, check the version
-        if (TOOL AND FPRIME_SKIP_TOOLS_VERSION_CHECK)
+        if (${TOOL} AND FPRIME_SKIP_TOOLS_VERSION_CHECK)
             continue()
-        elseif(TOOL)
+        elseif(${TOOL})
             set(FPP_RE_MATCH "(v[0-9]+\.[0-9]+\.[0-9]+[a-g0-9-]*)")
             execute_process(COMMAND ${${TOOL}} --help OUTPUT_VARIABLE OUTPUT_TEXT)
             if (OUTPUT_TEXT MATCHES "${FPP_RE_MATCH}")

@@ -44,17 +44,23 @@ function(run_sub_build SUB_BUILD_NAME)
             -G "${CMAKE_GENERATOR}"
             "${CMAKE_CURRENT_SOURCE_DIR}"
             "-DFPRIME_SUB_BUILD_TARGETS=${TARGET_LIST_AS_STRING}"
-            "-DCMAKE_C_COMPILER_FORCED=TRUE"
-            "-DCMAKE_CXX_COMPILER_FORCED=TRUE"
             "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
             "-DFPRIME_BINARY_DIR=${CMAKE_BINARY_DIR}"
             ${CALL_PROPS}
             RESULT_VARIABLE result
             WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
         )
+
         set(BUILD_EXTRA_ARGS)
+        # When specified add specific number of jobs to the sub build
         if (DEFINED FPRIME_SUB_BUILD_JOBS)
             list(APPEND BUILD_EXTRA_ARGS "--" "--jobs=${FPRIME_SUB_BUILD_JOBS}")
+        # Otherwise specify the MAKEFLAGS variable to speed-up makefile driven systems
+        else()
+            cmake_host_system_information(RESULT CPU_COUNT QUERY NUMBER_OF_PHYSICAL_CORES)
+            if(CPU_COUNT GREATER 0)
+                set(ENV{MAKEFLAGS} "--jobs=${CPU_COUNT}")
+            endif()
         endif()
         foreach (TARGET IN LISTS ARGN)
             get_filename_component(TARGET_NAME "${TARGET}" NAME_WE)

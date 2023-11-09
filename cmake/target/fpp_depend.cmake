@@ -8,8 +8,7 @@
 # fpp_locs_add_global_target: global registration target setting up the fpp-locs target run
 ####
 include_guard()
-include(autocoder/fpp)
-
+set(FPP_LOCATE_DEFS_HELPER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
 ####
 # Function `fpp_depend_add_global_target`:
 #
@@ -61,7 +60,7 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
                 "${CMAKE_COMMAND}" -E make_directory 
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache"
             COMMAND
-                "${FPP_LOCATE_DEFS_HELPER}"
+                ${FPP_LOCATE_DEFS_HELPER}
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
                 "${FPP_DEPEND}"
                 "${FPRIME_BINARY_DIR}/locs.fpp"
