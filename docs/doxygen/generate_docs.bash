@@ -9,7 +9,6 @@ APIDOCS="${FPRIME}/docs/UsersGuide/api"
 
 DOXY_OUTPUT="${FPRIME}/docs/UsersGuide/api/c++"
 CMAKE_OUTPUT="${FPRIME}/docs/UsersGuide/api/cmake"
-PY_OUTPUT="${FPRIME}/docs/UsersGuide/api/python"
 
 VERSIONED_OUTPUT="${1:-}"
 
@@ -89,7 +88,14 @@ function make_version
     cd "${FPRIME}"
     clobber "${CMAKE_OUTPUT}"
     mkdir -p "${CMAKE_OUTPUT}"
-    "${FPRIME}/cmake/docs/docs.py" "${FPRIME}/cmake/" "${FPRIME}/docs/UsersGuide/api/cmake"
+    "${FPRIME}/cmake/docs/docs.py" "${FPRIME}/cmake/" "${CMAKE_OUTPUT}"
+    "${FPRIME}/docs/doxygen/index_gen.py" "${CMAKE_OUTPUT}" 'CMake API Index' 'test,googletest-download' > "${CMAKE_OUTPUT}/index.md"
+) || exit 1
+
+# Generate full index
+(
+    cd "${FPRIME}"
+    "${FPRIME}/docs/doxygen/index_gen.py" "${FPRIME}/docs" "F´ Documentation Index" "_data,_includes,doxygen,img" > "${FPRIME}/docs/doc-index.md"
 ) || exit 1
 
 # Fix for github pages
