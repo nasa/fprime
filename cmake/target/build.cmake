@@ -100,11 +100,11 @@ endfunction()
 # of arguments. FULL_DEPENDENCY_LIST is unused (these are already known to CMake).
 ####
 function(build_add_deployment_target MODULE TARGET SOURCES DIRECT_DEPENDENCIES FULL_DEPENDENCY_LIST)
-    build_add_module_target("${MODULE}" "${TARGET}" "${SOURCES}" "${DEPENDENCIES}")
+    build_add_module_target("${MODULE}" "${TARGET}" "${SOURCES}" "${FULL_DEPENDENCY_LIST}")
 endfunction()
 
 ####
-# Build function `add_module_target`:
+# Function `build_add_module_target`:
 #
 # Adds a module-by-module target for building fprime.
 #
@@ -118,21 +118,14 @@ function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     message(STATUS "Adding ${MODULE_TYPE}: ${MODULE}")
     get_property(CUSTOM_AUTOCODERS GLOBAL PROPERTY FPRIME_AUTOCODER_TARGET_LIST)
     run_ac_set("${SOURCES}" ${CUSTOM_AUTOCODERS})
-    resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES} )
+    resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES})
 
     # Create lists of hand-coded and generated sources not "consumed" by an autocoder
-    foreach(SOURCE_LIST IN ITEMS SOURCES AC_GENERATED)
-        set(${SOURCE_LIST}_FILTERED "")
-        foreach(SOURCE IN LISTS ${SOURCE_LIST})
-            if (NOT SOURCE IN_LIST AC_SOURCES)
-                list(APPEND ${SOURCE_LIST}_FILTERED "${SOURCE}")
-            endif()
-        endforeach()
-    endforeach()
-
+    filter_lists("${AC_SOURCES}" SOURCES AC_GENERATED)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/module-info.txt"
+        "${HEADER_FILES}\n${SOURCES_FILTERED}\n${AC_GENERATED}\n${AC_FILE_DEPENDENCIES}\n${DEPENDENCIES}\n"
+    )
     build_setup_build_module("${MODULE}" "${SOURCES_FILTERED}" "${AC_GENERATED_FILTERED}" "${RESOLVED}")
-
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/sources.txt" "${SOURCES_FILTERED}\n${AC_GENERATED}\n${AC_SOURCES}")
 
     if (CMAKE_DEBUG_OUTPUT)
         introspect("${MODULE}")
