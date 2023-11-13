@@ -7,6 +7,7 @@ supplied. CMake is run as a command line call to the cmake system. Thus CMake mu
 
 @author mstarch
 """
+import multiprocessing
 import select
 import shutil
 import subprocess
@@ -17,9 +18,10 @@ from pathlib import Path
 import pytest
 
 # Constants to supplied to the calls to subprocess
+CPUS = multiprocessing.cpu_count()
 CMAKE = "cmake"
 MAKE_CALL = "make"
-MAKE_ARGS = ["-j2"]
+MAKE_ARGS = [f"-j{CPUS}"]
 
 
 def subprocess_helper(args, cwd):
@@ -118,7 +120,9 @@ def get_build(
     install_directory=None,
 ):
     """Generate and build a cmake deployment, then returns a pytest fixture for it"""
+    base_cmake_arguments = {"FPRIME_SUB_BUILD_JOBS": f"{CPUS}"}
     cmake_arguments = {} if cmake_arguments is None else cmake_arguments
+    cmake_arguments.update(base_cmake_arguments)
     build_directory = Path(tempfile.mkdtemp())
     install_directory_calc = Path(
         Path(source_directory) / "build-artifacts"

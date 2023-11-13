@@ -560,6 +560,7 @@ MACROFILE
 maincpp
 makefiles
 makeindex
+MAKEFLAGS
 MAKEVAR
 MALLOCALLOCATOR
 mallocator

@@ -16,6 +16,7 @@
 # the `-D` option there.
 #
 ####
+include_guard()
 # Remap changed settings
 if (DEFINED FPRIME_INSTALL_DEST)
     set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)

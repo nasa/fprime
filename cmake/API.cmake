@@ -11,6 +11,7 @@
 # - Register an fprime build target/build stage to allow custom build steps. (Experimental)
 #
 ####
+include_guard()
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
@@ -485,11 +486,10 @@ endfunction(register_fprime_ut)
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
 ###
 macro(register_fprime_target TARGET_FILE_PATH)
-    # Normal registered targets don't run in prescan
-    if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
-        setup_global_target("${TARGET_FILE_PATH}")
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
     endif()
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
 endmacro(register_fprime_target)
 
 ####
@@ -502,9 +502,11 @@ endmacro(register_fprime_target)
 ###
 macro(register_fprime_ut_target TARGET_FILE_PATH)
     # UT targets only allowed when testing
-    if (BUILD_TESTING AND NOT DEFINED FPRIME_PRESCAN)
+    if (BUILD_TESTING)
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
+        endif()
         register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
-        setup_global_target("${TARGET_FILE_PATH}")
     endif()
 endmacro(register_fprime_ut_target)
 
@@ -514,15 +516,17 @@ endmacro(register_fprime_ut_target)
 # Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check.
 ####
 macro(register_fprime_list_helper TARGET_FILE_PATH TARGET_LIST)
-    include("${TARGET_FILE_PATH}")
-    # Prevent out-of-order setups
-    get_property(MODULE_DETECTION_STARTED GLOBAL PROPERTY MODULE_DETECTION SET)
-    if (MODULE_DETECTION_STARTED)
-        message(FATAL_ERROR "Cannot register fprime target after including subdirectories or FPrime-Code.cmake'")
-    endif()
-    get_property(TARGETS GLOBAL PROPERTY "${TARGET_LIST}")
-    if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
-        set_property(GLOBAL APPEND PROPERTY "${TARGET_LIST}" "${TARGET_FILE_PATH}")
+    if (NOT DEFINED FPRIME_SUB_BUILD_TARGETS OR "${TARGET_FILE_PATH}" IN_LIST FPRIME_SUB_BUILD_TARGETS)
+        include("${TARGET_FILE_PATH}")
+        # Prevent out-of-order setups
+        get_property(MODULE_DETECTION_STARTED GLOBAL PROPERTY MODULE_DETECTION SET)
+        if (MODULE_DETECTION_STARTED)
+            message(FATAL_ERROR "Cannot register fprime target after including subdirectories or FPrime-Code.cmake'")
+        endif()
+        get_property(TARGETS GLOBAL PROPERTY "${TARGET_LIST}")
+        if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
+            set_property(GLOBAL APPEND PROPERTY "${TARGET_LIST}" "${TARGET_FILE_PATH}")
+        endif()
     endif()
 endmacro(register_fprime_list_helper)
 
@@ -544,10 +548,10 @@ endmacro(register_fprime_list_helper)
 ###
 macro(register_fprime_build_autocoder TARGET_FILE_PATH)
     # Normal registered targets don't run in prescan
-    message(STATUS "Registering custom autocoder: ${TARGET_FILE_PATH}")
-    if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[autocoder] Registering custom build target autocoder: ${TARGET_FILE_PATH}")
     endif()
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
 endmacro(register_fprime_build_autocoder)
 
 #### Documentation links
