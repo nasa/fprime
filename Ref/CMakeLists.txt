@@ -30,10 +30,6 @@ project(Ref VERSION 1.0.0 LANGUAGES C CXX)
 ##
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
-#include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
-
-#find_package(fprime)
-
 fprime_setup_included_code()
 ##
 # Section 3: Components and Topology

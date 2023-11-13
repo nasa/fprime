@@ -5,10 +5,9 @@
 # implemented in this file. This includes the ability to setup targets, builds, and handle information passing back and
 # forth between the modules.
 #
-# This file runs CMake on fprime, but registering only a single target: (e.g. [prescan](./target/prescan.cmake) that
-# does the work ot the build. This allows CMake to generate build information to be consumed at the generate phase while
+# This file runs CMake on fprime, but registering only a set of target: (e.g. [fpp_locs](./target/fpp_locs.cmake) that
+# do the work on the build. This allows CMake to generate build information to be consumed at the generate phase while
 # maintaining the efficiency of properly expressed builds.
-#
 ####
 include_guard()
 include(utilities)
@@ -35,9 +34,7 @@ function(run_sub_build SUB_BUILD_NAME)
 
         # Run CMake as efficiently as possible
         file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}")
-        if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[sub-build] Generating: ${SUB_BUILD_NAME} with ${ARGN}")
-        endif ()
+        message(STATUS "[sub-build] Generating: ${SUB_BUILD_NAME} with ${ARGN}")
         string(REPLACE ";" "\\;" TARGET_LIST_AS_STRING "${ARGN}")
         execute_process_or_fail("[sub-build] Failed to generate: ${SUB_BUILD_NAME}"
             "${CMAKE_COMMAND}"
@@ -64,9 +61,7 @@ function(run_sub_build SUB_BUILD_NAME)
         endif()
         foreach (TARGET IN LISTS ARGN)
             get_filename_component(TARGET_NAME "${TARGET}" NAME_WE)
-            if (CMAKE_DEBUG_OUTPUT)
-                message(STATUS "[sub-build] Executing: ${SUB_BUILD_NAME} with ${TARGET_NAME}")
-            endif ()
+            message(STATUS "[sub-build] Executing: ${SUB_BUILD_NAME} with ${TARGET_NAME}")
             execute_process_or_fail("[sub-build] Failed to execute: ${SUB_BUILD_NAME}/${TARGET_NAME}"
                 "${CMAKE_COMMAND}"
                 --build
@@ -106,7 +101,7 @@ function(_get_call_properties)
         string(REPLACE ";" "\\\\;" PROP_VALUE "${${PROPERTY}}" )
         # Check for debugging output
         if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[prescan] Adding cache variable: '${PROPERTY}=${PROP_VALUE}'")
+            message(STATUS "[sub-build] Adding cache variable: '${PROPERTY}=${PROP_VALUE}'")
         endif()
         set(CALL_PROP "-D${PROPERTY}=${PROP_VALUE}")
         list(APPEND CALL_PROPS "${CALL_PROP}")
