@@ -336,6 +336,7 @@ fileopen
 FILESTUBS
 fio
 Firefox
+FLDP
 flist
 FNDELAY
 fns
