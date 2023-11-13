@@ -7,7 +7,6 @@
 - [module-CMakeLists.txt-template](module-CMakeLists.txt-template.md)
 - [module](module.md)
 - [options](options.md)
-- [prescan](prescan.md)
 - [profile](profile.md)
 - [required](required.md)
 - [sanitizers](sanitizers.md)
@@ -34,15 +33,18 @@
 - [profile](profile/profile.md)
 ## settings
 - [ini](settings/ini.md)
+## sub-build
+- [sub-build-config](sub-build/sub-build-config.md)
+- [sub-build](sub-build/sub-build.md)
 ## target
 - [build](target/build.md)
 - [check](target/check.md)
 - [check_leak](target/check_leak.md)
 - [default](target/default.md)
+- [fpp_depend](target/fpp_depend.md)
 - [fpp_locs](target/fpp_locs.md)
 - [impl](target/impl.md)
 - [install](target/install.md)
-- [prescan](target/prescan.md)
 - [refresh_cache](target/refresh_cache.md)
 - [target](target/target.md)
 - [testimpl](target/testimpl.md)

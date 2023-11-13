@@ -351,11 +351,10 @@ should define three functions: `add_global_target`, `add_module_target`, and `ad
 **TARGET_FILE_PATH:** include path or file path file defining above functions
 
 macro(register_fprime_target TARGET_FILE_PATH)
-    # Normal registered targets don't run in prescan
-    if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
-        setup_global_target("${TARGET_FILE_PATH}")
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
     endif()
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
 endmacro(register_fprime_target)
 
 
@@ -381,10 +380,10 @@ the same thing. Note: make sure the directory is on the CMake include path to us
 
 macro(register_fprime_build_autocoder TARGET_FILE_PATH)
     # Normal registered targets don't run in prescan
-    message(STATUS "Registering custom autocoder: ${TARGET_FILE_PATH}")
-    if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[autocoder] Registering custom build target autocoder: ${TARGET_FILE_PATH}")
     endif()
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
 endmacro(register_fprime_build_autocoder)
 
 

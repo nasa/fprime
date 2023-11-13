@@ -229,3 +229,16 @@ Errors are determined by checking the process's return code where a FATAL_ERROR 
 - **ERROR_MESSAGE**: message to output should an error occurs
 
 
+## Function `append_list_property`:
+
+Appends the NEW_ITEM to a property. ARGN is a set of arguments that are passed into the get and set property calls.
+This function calls get_property with ARGN appends NEW_ITEM to the result and then turns around and calls set_property
+with the new list. Callers **should not** supply the variable name argument to get_property.
+
+Duplicate entries are removed.
+
+Args:
+- `NEW_ITEM`: item to append to the property
+- `ARGN`: list of arguments forwarded to get and set property calls.
+
+

@@ -45,6 +45,11 @@ generated and placed in parent scope: TARGET_NAME, and TARGET_MOD_NAME.
 **Note:** TARGET_MOD_NAME not set if optional argument `MODULE_NAME` not supplied
 
 
+## Function `setup_global_targets`:
+
+Loops through all targets registered and sets up the global target.
+
+
 ## Function `setup_global_target`:
 
 Setup a given target file in global scope. This also includes the target file once and thus must be called regardless

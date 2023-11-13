@@ -2,37 +2,33 @@
 
 ## fpp_locs.cmake:
 
-fpp_locs is a special target used to build fpp_locs file output. It is run in a special build of the fprime system
-specifically focused on generating the locator file for fpp.  It registers normal targets for building these items,
-but also comes with a function to run the separate build of fprime.
+fpp_locs is a special target used to build fpp_locs file output. It is run as part of the sub-build that generates
+cached-information about the build itself. This file defines the following target functions:
+
+fpp_locs_add_global_target: global registration target setting up the fpp-locs target run
+fpp_locs_add_deployment_target: unused, required for the API
+fpp_locs_add_module_target: used to identify all source files to pass to location global target
 
 
-## Function `determine_global_fpps`:
+## Function `fpp_locs_add_global_target`:
 
-Processes the global set of modules and determines all FPP files.
-OUTPUT_VAR: variable storing the output of this call
-MODULES: global set of modules passed in
-
-
-## Function `generate_locations`:
-
-Generates the FPP locations index. This is needed for all subsequent steps of FPP.
+Sets up the `fpp_locs` target used to generate the FPP locs file. This is build and then updated in the outer build
+cache.
+- **TARGET:** name of the target to setup (fpp_locs)
 
 
-## Function `generate_dependencies`:
+## Function `fpp_locs_add_module_target`:
 
-Generate dependencies for FPP modules. This is done here for performance, and the generated caches will be read later.
-MODULES: modules to generate from
-
-
-## Function `add_global_target`:
-
-Performs special FPP setup and handling.
+Pass-through to fpp_locs_add_module_target. FULL_DEPENDENCIES is unused.
 
 
-## Not defined to prevent defaults from engaging
+## Function `fpp_locs_add_module_target`:
 
-
-## Not defined to prevent defaults from engaging
+Sets up the list of FPP files used in locations generation.  Each FPP source file for each module is added to the
+global target's GLOBAL_FPP_FILES property that is referenced to pass in targets.
+- **MODULE:** module name, unused
+- **TARGET:** name of the target to setup (fpp_locs)
+- **SOURCES:** list of sources filtered to .fpp
+- **DEPENDENCIES:** module dependencies, unused.
 
 
