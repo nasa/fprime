@@ -7,6 +7,7 @@
 # These are used as the building blocks of F prime items. This includes deployments,
 # tools, and individual components.
 ####
+include_guard()
 include(target/target)
 set(EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
 
