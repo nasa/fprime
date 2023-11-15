@@ -61,4 +61,5 @@ function(ai_ut_setup_autocode AC_INPUT_FILE)
         DEPENDS "${AC_INPUT_FILE}" "${CODEGEN_TARGET}"
     )
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
+    set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
 endfunction(ai_ut_setup_autocode)

@@ -606,3 +606,23 @@ function(append_list_property NEW_ITEM)
     list(REMOVE_DUPLICATES LOCAL_COPY)
     set_property(${ARGN} "${LOCAL_COPY}")
 endfunction()
+
+####
+# Function `filter_lists`:
+#
+# Filters lists set in ARGN to to ensure that they are not in the exclude list. Sets the <LIST>_FILTERED variable in
+# PARENT_SCOPE with the results
+# **EXCLUDE_LIST**: list of items to filter-out of ARGN lists
+# **ARGN:** list of list names in parent scope to filter
+####
+function (filter_lists EXCLUDE_LIST)
+    foreach(SOURCE_LIST IN LISTS ARGN)
+        set(${SOURCE_LIST}_FILTERED "")
+        foreach(SOURCE IN LISTS ${SOURCE_LIST})
+            if (NOT SOURCE IN_LIST EXCLUDE_LIST)
+                list(APPEND ${SOURCE_LIST}_FILTERED "${SOURCE}")
+            endif()
+        endforeach()
+        set(${SOURCE_LIST}_FILTERED "${${SOURCE_LIST}_FILTERED}" PARENT_SCOPE)
+    endforeach()
+endfunction(filter_lists)
