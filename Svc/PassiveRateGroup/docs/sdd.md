@@ -1,4 +1,4 @@
-<title>PassiveRateGroup Component SDD</title>
+\page RateGroupDriverComponent Svc::RateGroupDriver Component
 # RateGroupDriver Component
 
 ## 1. Introduction
