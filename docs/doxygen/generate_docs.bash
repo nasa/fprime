@@ -65,14 +65,14 @@ function make_version
 # Doxygen generation
 (
     cd "${FPRIME}"
+    DOCS_CACHE="${FPRIME}/docs-cache"
     clobber "${DOXY_OUTPUT}"
     echo "[INFO] Building fprime"
-    (
-        mkdir -p "${FPRIME}/build-fprime-automatic-docs"
-        cd "${FPRIME}/build-fprime-automatic-docs"
-        cmake "${FPRIME}" -DCMAKE_BUILD_TYPE=Release 1>/dev/null
-    )
-    fprime-util build "docs" --all -j32 1> /dev/null
+    rm -rf "${DOCS_CACHE}"
+
+    fprime-util generate --build-cache ${DOCS_CACHE} -DCMAKE_BUILD_TYPE=Release 1>/dev/null
+    fprime-util build --build-cache ${DOCS_CACHE} --all -j32 1> /dev/null
+
     if (( $? != 0 ))
     then
         echo "[ERROR] Failed to build fprime please generate build cache"
@@ -80,7 +80,7 @@ function make_version
     fi
     mkdir -p ${DOXY_OUTPUT}
     ${DOXYGEN} "${FPRIME}/docs/doxygen/Doxyfile"
-    rm -r "${FPRIME}/build-fprime-automatic-docs"
+    rm -r "${DOCS_CACHE}"
 ) || exit 1
 
 # CMake
