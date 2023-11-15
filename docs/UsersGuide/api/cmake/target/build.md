@@ -30,7 +30,7 @@ Adds in a deployment target, which for build, is just a normal module target. Se
 of arguments. FULL_DEPENDENCY_LIST is unused (these are already known to CMake).
 
 
-## Build function `add_module_target`:
+## Function `build_add_module_target`:
 
 Adds a module-by-module target for building fprime.
 

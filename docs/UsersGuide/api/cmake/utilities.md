@@ -242,3 +242,11 @@ Args:
 - `ARGN`: list of arguments forwarded to get and set property calls.
 
 
+## Function `filter_lists`:
+
+Filters lists set in ARGN to to ensure that they are not in the exclude list. Sets the <LIST>_FILTERED variable in
+PARENT_SCOPE with the results
+**EXCLUDE_LIST**: list of items to filter-out of ARGN lists
+**ARGN:** list of list names in parent scope to filter
+
+
