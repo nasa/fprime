@@ -69,7 +69,7 @@
         <li><a href="/fprime/UsersGuide/dev/assert.html">Asserts in F´</a></li>
         <li><a href="/fprime/UsersGuide/dev/gds-dashboard-reference.html">GDS Dashboard Reference</a></li>
         <li><a href="/fprime/UsersGuide/dev/testAPI/user_guide.html">Integration Test API</a></li>
-        <li><a href="/fprime/UsersGuide/user/v3-migration-guide.html">v3 Migration Guide</a></li>
+        <li><a href="/fprime/UsersGuide/cmake/cmake-intro.html">CMake User Guide</a></li>
       </ul>
     </details>
     <details>
@@ -80,6 +80,7 @@
         <li><a href="/fprime/UsersGuide/dev/baremetal-multicore.html">F´ On Baremetal and Multi-Core Systems</a></li>
         <li><a href="/fprime/UsersGuide/dev/configure-ide.html">Configuring an IDE for Use With F´</a></li>
         <li><a href="/fprime/UsersGuide/dev/os-docs.html">OS Layer Description</a></li>
+        <li><a href="/fprime/UsersGuide/user/v3-migration-guide.html">v3 Migration Guide</a></li>
       </ul>
     </details>
     <details>
@@ -87,12 +88,13 @@
       <ul>
         <li><a href="/fprime/UsersGuide/dev/gds-cli-dev.html">GDS CLI Design</a></li>
         <li><a href="/fprime/UsersGuide/api/c++/html/index.html">C++ Documentation</a></li>
-        <li><a href="/fprime/UsersGuide/api/cmake/API.html">CMake User API</a></li>
+        <li><a href="/fprime/UsersGuide/cmake/cmake-api.html">CMake User API</a></li>
       </ul>
     </details>
   </ul>
 <h4><a href="/fprime/Design/general.html">Design and Philosophy</a></h4>
   <ul>
+    <li><a href="/fprime/Design/fprime-architecture.html">F´ Software Architecture</a></li>
     <li><a href="/fprime/Design/numerical-types.html">Numerical Types Design</a></li>
     <li><a href="/fprime/Design/communication-adapter-interface.html">Communication Adapter Interface</a></li>
   </ul>

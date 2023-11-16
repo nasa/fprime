@@ -4,6 +4,7 @@
 # CMake implementation of an fprime autocoder. Includes the necessary function definitions to implement the fprime
 # autocoder API and wraps calls to the FPP tools.
 ####
+include_guard()
 include(utilities)
 include(autocoder/helpers)
 
@@ -17,6 +18,10 @@ autocoder_setup_for_multiple_sources()
 function(locate_fpp_tools)
     # Loop through each tool, looking if it was found and check the version
     foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS)
+        # Skipped already defined tools
+        if (${TOOL})
+            continue()
+        endif ()
         string(TOLOWER ${TOOL} PROGRAM)
         string(REPLACE "_" "-" PROGRAM "${PROGRAM}")
         get_expected_tool_version("fprime-${PROGRAM}" FPP_VERSION)
@@ -25,9 +30,9 @@ function(locate_fpp_tools)
         unset(${TOOL} CACHE)
         find_program(${TOOL} ${PROGRAM})
         # If the tool exists, check the version
-        if (TOOL AND FPRIME_SKIP_TOOLS_VERSION_CHECK)
+        if (${TOOL} AND FPRIME_SKIP_TOOLS_VERSION_CHECK)
             continue()
-        elseif(TOOL)
+        elseif(${TOOL})
             set(FPP_RE_MATCH "(v[0-9]+\.[0-9]+\.[0-9]+[a-g0-9-]*)")
             execute_process(COMMAND ${${TOOL}} --help OUTPUT_VARIABLE OUTPUT_TEXT)
             if (OUTPUT_TEXT MATCHES "${FPP_RE_MATCH}")
@@ -223,6 +228,7 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP})
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
+    set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
 endfunction(fpp_setup_autocode)
 
 ####

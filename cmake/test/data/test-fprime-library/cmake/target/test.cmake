@@ -1,5 +1,5 @@
 ####
-# target/test-target.cmake:
+# target/test.cmake:
 #
 # This target sets up a test target for testing purposes.
 ####

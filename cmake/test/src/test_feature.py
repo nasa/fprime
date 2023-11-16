@@ -111,3 +111,15 @@ def test_feature_installation(FEATURE_BUILD):
         / deployment_name
     )
     assert output_path.exists(), "Failed to locate TestDeployment in build output"
+
+
+def test_sub_build(FEATURE_BUILD):
+    """Test that the sub buil process builds"""
+    output_paths = [
+        # Test that a file in the sub build exists
+        FEATURE_BUILD["build"] / f"sub-build-test-sub-build" / "sub-test",
+        # Test the sub build could "return" files to the primary build
+        FEATURE_BUILD["build"] / "sub-test",
+    ]
+    for output_path in output_paths:
+        assert output_path.exists(), "Failed to locate sub-build artifact"

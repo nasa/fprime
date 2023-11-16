@@ -113,7 +113,13 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     )
     run_ac_set("${SOURCE_FILES}" autocoder/fpp autocoder/fpp_ut)
     resolve_dependencies(RESOLVED gtest_main ${DEPENDENCIES} ${AC_DEPENDENCIES})
-    build_setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
+
+    # Create lists of hand-coded and generated sources not "consumed" by an autocoder
+    filter_lists("${AC_SOURCES}" SOURCE_FILES AC_GENERATED)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/module-ut-info.txt"
+        "${UT_HEADER_FILES}\n${SOURCE_FILES_FILTERED}\n${AC_GENERATED}\n${AC_FILE_DEPENDENCIES}\n${DEPENDENCIES}"
+    )
+    build_setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES_FILTERED}" "${AC_GENERATED_FILTERED}" "${RESOLVED}")
 
     ut_setup_unit_test_include_directories("${UT_EXE_NAME}" "${SOURCE_FILES}")
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})

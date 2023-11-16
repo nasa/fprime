@@ -336,6 +336,7 @@ fileopen
 FILESTUBS
 fio
 Firefox
+FLDP
 flist
 FNDELAY
 fns
@@ -560,6 +561,7 @@ MACROFILE
 maincpp
 makefiles
 makeindex
+MAKEFLAGS
 MAKEVAR
 MALLOCALLOCATOR
 mallocator
