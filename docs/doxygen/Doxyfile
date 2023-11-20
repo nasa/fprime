@@ -38,8 +38,8 @@ PROJECT_NAME           = "F´ Flight Software - C/C++ Documentation"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-# commented out to avoid having to update it every release
-# PROJECT_NUMBER         = NASA-v1.6.0
+# Replaced with version number by ./generate_docs.bash <VERSION>
+PROJECT_NUMBER         = devel
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a

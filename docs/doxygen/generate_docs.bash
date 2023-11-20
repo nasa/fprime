@@ -70,7 +70,7 @@ function make_version
     echo "[INFO] Building fprime"
     rm -rf "${DOCS_CACHE}"
 
-    fprime-util generate --build-cache ${DOCS_CACHE} -DCMAKE_BUILD_TYPE=Release 1>/dev/null
+    fprime-util generate --build-cache ${DOCS_CACHE} -DCMAKE_BUILD_TYPE=Release -DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON 1>/dev/null
     fprime-util build --build-cache ${DOCS_CACHE} --all -j32 1> /dev/null
 
     if (( $? != 0 ))
@@ -79,6 +79,13 @@ function make_version
         exit 2
     fi
     mkdir -p ${DOXY_OUTPUT}
+
+    # Replace version number in Doxyfile
+    if [[ "${VERSIONED_OUTPUT}" != "" ]]
+    then
+        sed -i "s/^PROJECT_NUMBER[ ]*=.*$/PROJECT_NUMBER=${VERSIONED_OUTPUT}/g" docs/doxygen/Doxyfile
+    fi
+
     ${DOXYGEN} "${FPRIME}/docs/doxygen/Doxyfile"
     rm -r "${DOCS_CACHE}"
 ) || exit 1
