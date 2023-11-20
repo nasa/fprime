@@ -390,6 +390,7 @@ gettime
 gettimeofday
 getty
 ghprb
+gitmodules
 gmock
 Gnc
 Gnd
