@@ -901,7 +901,8 @@ EXCLUDE                = ./docs/Architecture/ ./docs/UsersGuide/ ./docs/Tutorial
                          ./docs/INSTALL.md ./docs/projects.md ./docs/index.md ./docs/_config.yml \
                          ./docs/upcoming.md ./docs/latest.md ./docs/documentation.md ./docs/features.md \
                          *CMakeFiles/* ./Autocoders ./cmake ./gtest ./Ref ./RPI ./FppTest \
-                         STest ./mk ./README.md ./CONTRIBUTORS.md ./CONTRIBUTING.md ./SECURITY.md 
+                         STest ./mk ./README.md ./CONTRIBUTORS.md ./CONTRIBUTING.md ./SECURITY.md \
+                         ./googletest/
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
