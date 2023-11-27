@@ -7,6 +7,7 @@
 #
 ####
 include_guard()
+include(API)
 # Basic definitions
 get_filename_component(TOOLCHAIN_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME_WE)
 # Native toolchains use the system name for the toolchain and FPRIME_PLATFORM
