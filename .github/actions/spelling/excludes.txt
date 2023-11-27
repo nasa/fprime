@@ -133,3 +133,4 @@
 ^Svc/PrmDb/PrmDb\.hpp$
 ^Svc/TlmChan/TlmChan\.hpp$
 ignore$
+^docs/doxygen/mainpage.md$
