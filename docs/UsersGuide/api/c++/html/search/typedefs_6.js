@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['health_5504',['Health',['../namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb',1,'Svc']]]
+  ['generichub_6645',['GenericHub',['../namespace_svc.html#a2726e21edb6ef5238cd546d94c01c0fa',1,'Svc']]]
 ];

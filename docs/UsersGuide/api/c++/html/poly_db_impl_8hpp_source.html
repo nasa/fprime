@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">devel</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -92,20 +92,20 @@ $(document).ready(function(){initNavTree('_poly_db_impl_8hpp_source.html',''); i
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifndef POLYDBIMPL_HPP_</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define POLYDBIMPL_HPP_</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;Svc/PolyDb/PolyDbComponentAc.hpp&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="poly_db_component_ac_8hpp.html">Svc/PolyDb/PolyDbComponentAc.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="poly_type_8hpp.html">Fw/Types/PolyType.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="poly_db_impl_cfg_8hpp.html">PolyDbImplCfg.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="class_svc_1_1_poly_db_impl.html">   31</a></span>&#160;    <span class="keyword">class </span><a class="code" href="class_svc_1_1_poly_db_impl.html">PolyDbImpl</a> : <span class="keyword">public</span> PolyDbComponentBase {</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="class_svc_1_1_poly_db_impl.html">   31</a></span>&#160;    <span class="keyword">class </span><a class="code" href="class_svc_1_1_poly_db_impl.html">PolyDbImpl</a> : <span class="keyword">public</span> <a class="code" href="class_svc_1_1_poly_db_component_base.html">PolyDbComponentBase</a> {</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <a class="code" href="class_svc_1_1_poly_db_impl.html#aec6d24d976afda00e31e828b90dfdc84">PolyDbImpl</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* name);</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_poly_db_impl.html#aca4d3ca4960130b5e397928235b493a5">init</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">init</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance);</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            <span class="keyword">virtual</span> <a class="code" href="class_svc_1_1_poly_db_impl.html#a93f7b152758733d0e8722d417fe8dc72">~PolyDbImpl</a>();</div>
@@ -113,14 +113,14 @@ $(document).ready(function(){initNavTree('_poly_db_impl_8hpp_source.html',''); i
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordtype">void</span> getValue_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 entry, MeasurementStatus &amp;status, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordtype">void</span> getValue_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 entry, <a class="code" href="class_svc_1_1_measurement_status.html">MeasurementStatus</a> &amp;status, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val);</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keywordtype">void</span> setValue_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 entry, MeasurementStatus &amp;status, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keywordtype">void</span> setValue_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 entry, <a class="code" href="class_svc_1_1_measurement_status.html">MeasurementStatus</a> &amp;status, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val);</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            <span class="keyword">struct </span>t_dbStruct {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                MeasurementStatus status; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                <a class="code" href="class_svc_1_1_measurement_status.html">MeasurementStatus</a> status; </div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> val; </div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                <a class="code" href="class_fw_1_1_time.html">Fw::Time</a> time; </div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            } m_db[POLYDB_NUM_DB_ENTRIES];</div>
@@ -130,13 +130,16 @@ $(document).ready(function(){initNavTree('_poly_db_impl_8hpp_source.html',''); i
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* POLYDBIMPL_HPP_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
+<div class="ttc" id="a_poly_db_component_ac_8hpp_html"><div class="ttname"><a href="poly_db_component_ac_8hpp.html">PolyDbComponentAc.hpp</a></div></div>
 <div class="ttc" id="a_poly_db_impl_cfg_8hpp_html"><div class="ttname"><a href="poly_db_impl_cfg_8hpp.html">PolyDbImplCfg.hpp</a></div></div>
 <div class="ttc" id="a_poly_type_8hpp_html"><div class="ttname"><a href="poly_type_8hpp.html">PolyType.hpp</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_poly_type_html"><div class="ttname"><a href="class_fw_1_1_poly_type.html">Fw::PolyType</a></div><div class="ttdef"><b>Definition:</b> <a href="poly_type_8hpp_source.html#l00011">PolyType.hpp:11</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_time_html"><div class="ttname"><a href="class_fw_1_1_time.html">Fw::Time</a></div><div class="ttdef"><b>Definition:</b> <a href="time_8hpp_source.html#l00009">Time.hpp:9</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_measurement_status_html"><div class="ttname"><a href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a></div><div class="ttdoc">An enumeration for measurement status.</div><div class="ttdef"><b>Definition:</b> <a href="measurement_status_enum_ac_8hpp_source.html#l00017">MeasurementStatusEnumAc.hpp:19</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_poly_db_component_base_html"><div class="ttname"><a href="class_svc_1_1_poly_db_component_base.html">Svc::PolyDbComponentBase</a></div><div class="ttdoc">Auto-generated base for PolyDb component.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_component_ac_8hpp_source.html#l00023">PolyDbComponentAc.hpp:25</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_poly_db_impl_html"><div class="ttname"><a href="class_svc_1_1_poly_db_impl.html">Svc::PolyDbImpl</a></div><div class="ttdoc">PolyDb Component Class.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_impl_8hpp_source.html#l00031">PolyDbImpl.hpp:31</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_poly_db_impl_html_a93f7b152758733d0e8722d417fe8dc72"><div class="ttname"><a href="class_svc_1_1_poly_db_impl.html#a93f7b152758733d0e8722d417fe8dc72">Svc::PolyDbImpl::~PolyDbImpl</a></div><div class="ttdeci">virtual ~PolyDbImpl()</div><div class="ttdoc">PolyDbImpl destructor.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_impl_8cpp_source.html#l00041">PolyDbImpl.cpp:41</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_poly_db_impl_html_aca4d3ca4960130b5e397928235b493a5"><div class="ttname"><a href="class_svc_1_1_poly_db_impl.html#aca4d3ca4960130b5e397928235b493a5">Svc::PolyDbImpl::init</a></div><div class="ttdeci">void init(NATIVE_INT_TYPE instance)</div><div class="ttdoc">PolyDbImpl initialization.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_impl_8cpp_source.html#l00020">PolyDbImpl.cpp:20</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_poly_db_impl_html_aec6d24d976afda00e31e828b90dfdc84"><div class="ttname"><a href="class_svc_1_1_poly_db_impl.html#aec6d24d976afda00e31e828b90dfdc84">Svc::PolyDbImpl::PolyDbImpl</a></div><div class="ttdeci">PolyDbImpl(const char *name)</div><div class="ttdoc">PolyDbImpl constructor.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_impl_8cpp_source.html#l00013">PolyDbImpl.cpp:13</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

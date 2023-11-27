@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">devel</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -104,12 +104,12 @@ $(document).ready(function(){initNavTree('_passive_rate_group_8hpp_source.html',
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#ifndef SVC_PASSIVERATEGROUP_IMPL_HPP</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#define SVC_PASSIVERATEGROUP_IMPL_HPP</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;Svc/PassiveRateGroup/PassiveRateGroupComponentAc.hpp&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="passive_rate_group_component_ac_8hpp.html">Svc/PassiveRateGroup/PassiveRateGroupComponentAc.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="class_svc_1_1_passive_rate_group.html">   30</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_svc_1_1_passive_rate_group.html">PassiveRateGroup</a> : <span class="keyword">public</span> PassiveRateGroupComponentBase {</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="class_svc_1_1_passive_rate_group.html">   30</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_svc_1_1_passive_rate_group.html">PassiveRateGroup</a> : <span class="keyword">public</span> <a class="code" href="class_svc_1_1_passive_rate_group_component_base.html">PassiveRateGroupComponentBase</a> {</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_svc_1_1_passive_rate_group.html#ada4b3bcd24327ecc51caa62fa465b8b7">PassiveRateGroup</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* compName);  </div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
@@ -123,13 +123,16 @@ $(document).ready(function(){initNavTree('_passive_rate_group_8hpp_source.html',
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    U32 m_cycles;                                                     </div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    U32 m_maxTime;                                                    </div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> m_numContexts;                                    </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];  </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> m_contexts[<a class="code" href="class_svc_1_1_passive_rate_group_component_base.html#a06e7f2b981fadb8ce0498504433c12eaaa7abd260eb9a072926d4ee41f4440381">NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS</a>];  </div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;};</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;}  <span class="comment">// namespace Svc</span></div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
+<div class="ttc" id="a_passive_rate_group_component_ac_8hpp_html"><div class="ttname"><a href="passive_rate_group_component_ac_8hpp.html">PassiveRateGroupComponentAc.hpp</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_passive_rate_group_component_base_html"><div class="ttname"><a href="class_svc_1_1_passive_rate_group_component_base.html">Svc::PassiveRateGroupComponentBase</a></div><div class="ttdoc">Auto-generated base for PassiveRateGroup component.</div><div class="ttdef"><b>Definition:</b> <a href="passive_rate_group_component_ac_8hpp_source.html#l00026">PassiveRateGroupComponentAc.hpp:28</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_passive_rate_group_component_base_html_a06e7f2b981fadb8ce0498504433c12eaaa7abd260eb9a072926d4ee41f4440381"><div class="ttname"><a href="class_svc_1_1_passive_rate_group_component_base.html#a06e7f2b981fadb8ce0498504433c12eaaa7abd260eb9a072926d4ee41f4440381">Svc::PassiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS</a></div><div class="ttdeci">@ NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS</div><div class="ttdef"><b>Definition:</b> <a href="passive_rate_group_component_ac_8hpp_source.html#l00056">PassiveRateGroupComponentAc.hpp:56</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_passive_rate_group_html"><div class="ttname"><a href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></div><div class="ttdef"><b>Definition:</b> <a href="passive_rate_group_8hpp_source.html#l00030">PassiveRateGroup.hpp:30</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_passive_rate_group_html_a4c0508b847d2d11a3ea485e604b54507"><div class="ttname"><a href="class_svc_1_1_passive_rate_group.html#a4c0508b847d2d11a3ea485e604b54507">Svc::PassiveRateGroup::~PassiveRateGroup</a></div><div class="ttdeci">~PassiveRateGroup()</div><div class="ttdoc">PassiveRateGroupImpl destructor.</div><div class="ttdef"><b>Definition:</b> <a href="passive_rate_group_8cpp_source.html#l00024">PassiveRateGroup.cpp:24</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_passive_rate_group_html_a9efa1a587113368a8a379892ee4eff8a"><div class="ttname"><a href="class_svc_1_1_passive_rate_group.html#a9efa1a587113368a8a379892ee4eff8a">Svc::PassiveRateGroup::configure</a></div><div class="ttdeci">void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts)</div><div class="ttdoc">PassiveRateGroupImpl initialization function.</div><div class="ttdef"><b>Definition:</b> <a href="passive_rate_group_8cpp_source.html#l00026">PassiveRateGroup.cpp:26</a></div></div>

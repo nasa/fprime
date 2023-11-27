@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">devel</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('_deframer_8hpp_source.html',''); initR
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef Svc_Deframer_HPP</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define Svc_Deframer_HPP</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;Svc/Deframer/DeframerComponentAc.hpp&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="deframer_component_ac_8hpp.html">Svc/Deframer/DeframerComponentAc.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="deframing_protocol_8hpp.html">Svc/FramingProtocol/DeframingProtocol.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="deframing_protocol_interface_8hpp.html">Svc/FramingProtocol/DeframingProtocolInterface.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="circular_buffer_8hpp.html">Utils/Types/CircularBuffer.hpp</a>&quot;</span></div>
@@ -112,7 +112,7 @@ $(document).ready(function(){initNavTree('_deframer_8hpp_source.html',''); initR
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
 <div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="class_svc_1_1_deframer.html">   37</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_svc_1_1_deframer.html">Deframer</a> :</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">public</span> DeframerComponentBase,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">public</span> <a class="code" href="class_svc_1_1_deframer_component_base.html">DeframerComponentBase</a>,</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">public</span> <a class="code" href="class_svc_1_1_deframing_protocol_interface.html">DeframingProtocolInterface</a></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">public</span>:</div>
@@ -125,7 +125,7 @@ $(document).ready(function(){initNavTree('_deframer_8hpp_source.html',''); initR
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span>* <span class="keyword">const</span> compName </div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    );</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_deframer.html#a2dcaca5a8e0155b48e1fe69e3b57ad73">init</a>(</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">init</a>(</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance = 0 </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    );</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
@@ -145,13 +145,13 @@ $(document).ready(function(){initNavTree('_deframer_8hpp_source.html',''); initR
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opcode, </div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        U32 cmdSeq, </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keyword">const</span> Fw::CmdResponse&amp; response </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a>&amp; response </div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    );</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">void</span> framedIn_handler(</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&amp; recvBuffer, </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keyword">const</span> Drv::RecvStatus&amp; recvStatus </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_drv_1_1_recv_status.html">Drv::RecvStatus</a>&amp; recvStatus </div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    );</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> schedIn_handler(</div>
@@ -203,12 +203,16 @@ $(document).ready(function(){initNavTree('_deframer_8hpp_source.html',''); initR
 <div class="ttc" id="a_basic_types_8h_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00052">BasicTypes.h:52</a></div></div>
 <div class="ttc" id="a_circular_buffer_8hpp_html"><div class="ttname"><a href="circular_buffer_8hpp.html">CircularBuffer.hpp</a></div></div>
 <div class="ttc" id="a_deframer_cfg_8hpp_html"><div class="ttname"><a href="deframer_cfg_8hpp.html">DeframerCfg.hpp</a></div></div>
+<div class="ttc" id="a_deframer_component_ac_8hpp_html"><div class="ttname"><a href="deframer_component_ac_8hpp.html">DeframerComponentAc.hpp</a></div></div>
 <div class="ttc" id="a_deframing_protocol_8hpp_html"><div class="ttname"><a href="deframing_protocol_8hpp.html">DeframingProtocol.hpp</a></div></div>
 <div class="ttc" id="a_deframing_protocol_interface_8hpp_html"><div class="ttname"><a href="deframing_protocol_interface_8hpp.html">DeframingProtocolInterface.hpp</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00056">FpConfig.h:56</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_recv_status_html"><div class="ttname"><a href="class_drv_1_1_recv_status.html">Drv::RecvStatus</a></div><div class="ttdoc">Status associated with the received data.</div><div class="ttdef"><b>Definition:</b> <a href="recv_status_enum_ac_8hpp_source.html#l00017">RecvStatusEnumAc.hpp:19</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_buffer_html"><div class="ttname"><a href="class_fw_1_1_buffer.html">Fw::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8hpp_source.html#l00043">Buffer.hpp:43</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_cmd_response_html"><div class="ttname"><a href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a></div><div class="ttdoc">Enum representing a command response.</div><div class="ttdef"><b>Definition:</b> <a href="cmd_response_enum_ac_8hpp_source.html#l00017">CmdResponseEnumAc.hpp:19</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_deframer_component_base_html"><div class="ttname"><a href="class_svc_1_1_deframer_component_base.html">Svc::DeframerComponentBase</a></div><div class="ttdoc">Auto-generated base for Deframer component.</div><div class="ttdef"><b>Definition:</b> <a href="deframer_component_ac_8hpp_source.html#l00030">DeframerComponentAc.hpp:32</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_deframer_html"><div class="ttname"><a href="class_svc_1_1_deframer.html">Svc::Deframer</a></div><div class="ttdoc">Generic deframing component using DeframingProtocol implementation for actual deframing.</div><div class="ttdef"><b>Definition:</b> <a href="deframer_8hpp_source.html#l00037">Deframer.hpp:40</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_deframer_html_a2dcaca5a8e0155b48e1fe69e3b57ad73"><div class="ttname"><a href="class_svc_1_1_deframer.html#a2dcaca5a8e0155b48e1fe69e3b57ad73">Svc::Deframer::init</a></div><div class="ttdeci">void init(const NATIVE_INT_TYPE instance=0)</div><div class="ttdoc">Initialize Deframer instance.</div><div class="ttdef"><b>Definition:</b> <a href="deframer_8cpp_source.html#l00048">Deframer.cpp:48</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_deframer_html_a60c5458e342f37a30dbae30fb6161e1c"><div class="ttname"><a href="class_svc_1_1_deframer.html#a60c5458e342f37a30dbae30fb6161e1c">Svc::Deframer::~Deframer</a></div><div class="ttdeci">~Deframer()</div><div class="ttdoc">Destroy Deframer instance.</div><div class="ttdef"><b>Definition:</b> <a href="deframer_8cpp_source.html#l00052">Deframer.cpp:52</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_deframer_html_aa3995dfd4866b87bc790983e2ec26135"><div class="ttname"><a href="class_svc_1_1_deframer.html#aa3995dfd4866b87bc790983e2ec26135">Svc::Deframer::setup</a></div><div class="ttdeci">void setup(DeframingProtocol &amp;protocol)</div><div class="ttdoc">Set up the instance.</div><div class="ttdef"><b>Definition:</b> <a href="deframer_8cpp_source.html#l00054">Deframer.cpp:54</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_deframer_html_aaa9688396e68f9d3ef3e838014362c20"><div class="ttname"><a href="class_svc_1_1_deframer.html#aaa9688396e68f9d3ef3e838014362c20">Svc::Deframer::Deframer</a></div><div class="ttdeci">Deframer(const char *const compName)</div><div class="ttdoc">Construct Deframer instance.</div><div class="ttdef"><b>Definition:</b> <a href="deframer_8cpp_source.html#l00039">Deframer.cpp:39</a></div></div>

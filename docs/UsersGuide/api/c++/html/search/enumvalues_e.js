@@ -1,12 +1,15 @@
 var searchData=
 [
-  ['packet_5fupdate_5fafter_5ffirst_5fchange_5770',['PACKET_UPDATE_AFTER_FIRST_CHANGE',['../namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79ea7c063a71c5313caf81abf5564f1a00df',1,'Svc']]],
-  ['packet_5fupdate_5falways_5771',['PACKET_UPDATE_ALWAYS',['../namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79eadbc35cb86a4a2cb3ba61924533572c50',1,'Svc']]],
-  ['packet_5fupdate_5fon_5fchange_5772',['PACKET_UPDATE_ON_CHANGE',['../namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79ea2977cef2992ea14464dc0293b26be1e0',1,'Svc']]],
-  ['parity_5feven_5773',['PARITY_EVEN',['../class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601afac884302ac9fffb601f99673c1a49535d',1,'Drv::LinuxUartDriver']]],
-  ['parity_5fnone_5774',['PARITY_NONE',['../class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601afa6df518c93f02783b30dbb31172aaf554',1,'Drv::LinuxUartDriver']]],
-  ['parity_5fodd_5775',['PARITY_ODD',['../class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601afa8ab285c472ed1343bbb1cff080da1660',1,'Drv::LinuxUartDriver']]],
-  ['passed_5ffile_5fcrc_5fcheck_5776',['PASSED_FILE_CRC_CHECK',['../namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a4cb62b6d0ced173d615e469f25f6aba2',1,'Utils']]],
-  ['passed_5ffile_5fcrc_5fwrite_5777',['PASSED_FILE_CRC_WRITE',['../namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a105d813f21299854d33e22b61281e592',1,'Utils']]],
-  ['prmdb_5fimpl_5ftester_5fmax_5fread_5fbuffer_5778',['PRMDB_IMPL_TESTER_MAX_READ_BUFFER',['../prm_db_impl_tester_cfg_8hpp.html#a726ca809ffd3d67ab4b8476646f26635a55fd93cc753e3f9506f41f1649a43ebb',1,'PrmDbImplTesterCfg.hpp']]]
+  ['queue_5fblocking_7345',['QUEUE_BLOCKING',['../class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffada38de06220fe8a97d99347ff23e18c2',1,'Os::Queue']]],
+  ['queue_5fempty_5fbuffer_7346',['QUEUE_EMPTY_BUFFER',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba86d69a066b00aac03fe36d8e6cc84f46',1,'Os::Queue']]],
+  ['queue_5ffull_7347',['QUEUE_FULL',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baac94c448c78c60149014efd5dd8ee1f9',1,'Os::Queue']]],
+  ['queue_5finvalid_5fpriority_7348',['QUEUE_INVALID_PRIORITY',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba6203ea4d55e8f1c8a6aa664173ea8fe5',1,'Os::Queue']]],
+  ['queue_5fno_5fmore_5fmsgs_7349',['QUEUE_NO_MORE_MSGS',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba4fe7580ade5df51257de6e8fb01bd558',1,'Os::Queue']]],
+  ['queue_5fnonblocking_7350',['QUEUE_NONBLOCKING',['../class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a',1,'Os::Queue']]],
+  ['queue_5fok_7351',['QUEUE_OK',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc',1,'Os::Queue']]],
+  ['queue_5freceive_5ferror_7352',['QUEUE_RECEIVE_ERROR',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baca317150550a59fbc9dc2833248fadd8',1,'Os::Queue']]],
+  ['queue_5fsend_5ferror_7353',['QUEUE_SEND_ERROR',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba4ee228e8badc5d30f16548c6f56e8591',1,'Os::Queue']]],
+  ['queue_5fsize_5fmismatch_7354',['QUEUE_SIZE_MISMATCH',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba221b1e44801904db970ae089c3bb8cff',1,'Os::Queue']]],
+  ['queue_5funinitialized_7355',['QUEUE_UNINITIALIZED',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba48062f0fe18c7b402de63fb97044ff92',1,'Os::Queue']]],
+  ['queue_5funknown_5ferror_7356',['QUEUE_UNKNOWN_ERROR',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba9b9f470d71ab1c1b82d50cbdb582a590',1,'Os::Queue']]]
 ];

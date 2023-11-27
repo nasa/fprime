@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['makeresultignoredvalue_5520',['MakeResultIgnoredValue',['../structtesting_1_1internal_1_1_function_3_01_r_07_args_8_8_8_08_4.html#a23361a5e5eb49aad2e1dfe784e60b5da',1,'testing::internal::Function&lt; R(Args...)&gt;']]],
-  ['makeresultvoid_5521',['MakeResultVoid',['../structtesting_1_1internal_1_1_function_3_01_r_07_args_8_8_8_08_4.html#a763920d3647641e1100bc4ade26d1d0c',1,'testing::internal::Function&lt; R(Args...)&gt;']]]
+  ['linuxgpiodriver_6648',['LinuxGpioDriver',['../namespace_drv.html#aefc6c37e8b4769c8b6dd1b4fd15fff67',1,'Drv']]],
+  ['linuxspidriver_6649',['LinuxSpiDriver',['../namespace_drv.html#aa86eb5da99f6dc3f78c88e4af49b1ce2',1,'Drv']]],
+  ['linuxtimer_6650',['LinuxTimer',['../namespace_svc.html#aa2d44f66ecbeb1f2a04d17e1c19ea7fe',1,'Svc']]],
+  ['logstate_6651',['LogState',['../namespace_svc.html#a55d3fa3e9b6fdd43da4a15cb53833fd2',1,'Svc']]]
 ];

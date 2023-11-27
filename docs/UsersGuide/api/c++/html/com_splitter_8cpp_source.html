@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">devel</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -105,7 +105,7 @@ $(document).ready(function(){initNavTree('_com_splitter_8cpp_source.html',''); i
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="class_svc_1_1_com_splitter.html#a3acc56746e28ec547a68b0ef08deb4ca">   16</a></span>&#160;  <a class="code" href="class_svc_1_1_com_splitter.html#a3acc56746e28ec547a68b0ef08deb4ca">ComSplitter ::</a></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<a class="code" href="class_svc_1_1_com_splitter.html#a3acc56746e28ec547a68b0ef08deb4ca">    ComSplitter</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* compName) :</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;      ComSplitterComponentBase(compName)</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;      <a class="code" href="class_svc_1_1_com_splitter_component_base.html">ComSplitterComponentBase</a>(compName)</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  {</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  }</div>
@@ -116,10 +116,10 @@ $(document).ready(function(){initNavTree('_com_splitter_8cpp_source.html',''); i
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  }</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="class_svc_1_1_com_splitter.html#acb327f0937dca31130f1339da60cf136">   29</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_com_splitter.html#acb327f0937dca31130f1339da60cf136">ComSplitter ::</a></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<a class="code" href="class_svc_1_1_com_splitter.html#acb327f0937dca31130f1339da60cf136">    init</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance)</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="class_svc_1_1_com_splitter.html#acb327f0937dca31130f1339da60cf136">   29</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">ComSplitter ::</a></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">    init</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance)</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    ComSplitterComponentBase::init(instance);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">ComSplitterComponentBase::init</a>(instance);</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  }</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
@@ -135,14 +135,14 @@ $(document).ready(function(){initNavTree('_com_splitter_8cpp_source.html',''); i
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  {</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(portNum == 0);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> numPorts = getNum_comOut_OutputPorts();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> numPorts = <a class="code" href="class_svc_1_1_com_splitter_component_base.html#a223af6d3631fb982dfaf82576712879e">getNum_comOut_OutputPorts</a>();</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(numPorts &gt; 0);</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> i = 0; i &lt; numPorts; i++) {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="keywordflow">if</span>( isConnected_comOut_OutputPort(i) ) {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="keywordflow">if</span>( <a class="code" href="class_svc_1_1_com_splitter_component_base.html#a1bc5adc65ddc913b1a66d41d8d31a878">isConnected_comOut_OutputPort</a>(i) ) {</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="comment">// Need to make a copy because we are passing by reference!:</span></div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <a class="code" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a> dataToSend = data;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        comOut_out(i, dataToSend, 0);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <a class="code" href="class_svc_1_1_com_splitter_component_base.html#a71319e8cf1a98388fb4d8f6896f72f85">comOut_out</a>(i, dataToSend, 0);</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      }</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  }</div>
@@ -153,8 +153,12 @@ $(document).ready(function(){initNavTree('_com_splitter_8cpp_source.html',''); i
 <div class="ttc" id="a_com_splitter_8hpp_html"><div class="ttname"><a href="com_splitter_8hpp.html">ComSplitter.hpp</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
 <div class="ttc" id="aclass_fw_1_1_com_buffer_html"><div class="ttname"><a href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="com_buffer_8hpp_source.html#l00020">ComBuffer.hpp:20</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_com_splitter_component_base_html"><div class="ttname"><a href="class_svc_1_1_com_splitter_component_base.html">Svc::ComSplitterComponentBase</a></div><div class="ttdoc">Auto-generated base for ComSplitter component.</div><div class="ttdef"><b>Definition:</b> <a href="com_splitter_component_ac_8hpp_source.html#l00022">ComSplitterComponentAc.hpp:24</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_com_splitter_component_base_html_a1bc5adc65ddc913b1a66d41d8d31a878"><div class="ttname"><a href="class_svc_1_1_com_splitter_component_base.html#a1bc5adc65ddc913b1a66d41d8d31a878">Svc::ComSplitterComponentBase::isConnected_comOut_OutputPort</a></div><div class="ttdeci">bool isConnected_comOut_OutputPort(NATIVE_INT_TYPE portNum)</div><div class="ttdef"><b>Definition:</b> <a href="com_splitter_component_ac_8cpp_source.html#l00171">ComSplitterComponentAc.cpp:172</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_com_splitter_component_base_html_a223af6d3631fb982dfaf82576712879e"><div class="ttname"><a href="class_svc_1_1_com_splitter_component_base.html#a223af6d3631fb982dfaf82576712879e">Svc::ComSplitterComponentBase::getNum_comOut_OutputPorts</a></div><div class="ttdeci">NATIVE_INT_TYPE getNum_comOut_OutputPorts() const</div><div class="ttdef"><b>Definition:</b> <a href="com_splitter_component_ac_8cpp_source.html#l00161">ComSplitterComponentAc.cpp:162</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_com_splitter_component_base_html_a71319e8cf1a98388fb4d8f6896f72f85"><div class="ttname"><a href="class_svc_1_1_com_splitter_component_base.html#a71319e8cf1a98388fb4d8f6896f72f85">Svc::ComSplitterComponentBase::comOut_out</a></div><div class="ttdeci">void comOut_out(NATIVE_INT_TYPE portNum, Fw::ComBuffer &amp;data, U32 context)</div><div class="ttdoc">Invoke output port comOut.</div><div class="ttdef"><b>Definition:</b> <a href="com_splitter_component_ac_8cpp_source.html#l00213">ComSplitterComponentAc.cpp:214</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_com_splitter_html_a3acc56746e28ec547a68b0ef08deb4ca"><div class="ttname"><a href="class_svc_1_1_com_splitter.html#a3acc56746e28ec547a68b0ef08deb4ca">Svc::ComSplitter::ComSplitter</a></div><div class="ttdeci">ComSplitter(const char *compName)</div><div class="ttdef"><b>Definition:</b> <a href="com_splitter_8cpp_source.html#l00016">ComSplitter.cpp:17</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_com_splitter_html_acb327f0937dca31130f1339da60cf136"><div class="ttname"><a href="class_svc_1_1_com_splitter.html#acb327f0937dca31130f1339da60cf136">Svc::ComSplitter::init</a></div><div class="ttdeci">void init(NATIVE_INT_TYPE instance)</div><div class="ttdef"><b>Definition:</b> <a href="com_splitter_8cpp_source.html#l00029">ComSplitter.cpp:30</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_com_splitter_html_af298a69e68928a67052805c04db4f779"><div class="ttname"><a href="class_svc_1_1_com_splitter.html#af298a69e68928a67052805c04db4f779">Svc::ComSplitter::~ComSplitter</a></div><div class="ttdeci">~ComSplitter()</div><div class="ttdef"><b>Definition:</b> <a href="com_splitter_8cpp_source.html#l00023">ComSplitter.cpp:24</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

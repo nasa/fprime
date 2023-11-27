@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">devel</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_8hpp_source.html',''); 
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef Svc_BufferLogger_HPP</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define Svc_BufferLogger_HPP</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;Svc/BufferLogger/BufferLoggerComponentAc.hpp&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="buffer_logger_component_ac_8hpp.html">Svc/BufferLogger/BufferLoggerComponentAc.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="file_8hpp.html">Os/File.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="string_8hpp.html">Fw/Types/String.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="assert_8hpp.html">Fw/Types/Assert.hpp</a>&quot;</span></div>
@@ -113,7 +113,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_8hpp_source.html',''); 
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
 <div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="class_svc_1_1_buffer_logger.html">   25</a></span>&#160;  <span class="keyword">class </span><a class="code" href="class_svc_1_1_buffer_logger.html">BufferLogger</a> :</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">public</span> BufferLoggerComponentBase</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">public</span> <a class="code" href="class_svc_1_1_buffer_logger_component_base.html">BufferLoggerComponentBase</a></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  {</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    PRIVATE:</div>
@@ -143,7 +143,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_8hpp_source.html',''); 
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_buffer_logger.html#af2cb07b29a6aa75594bcce920322e9ea">init</a>(</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">init</a>(</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> prefix, </div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> suffix, </div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;              <span class="keyword">const</span> U32 maxSize, </div>
@@ -222,7 +222,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_8hpp_source.html',''); 
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> compName </div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;      );</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_buffer_logger.html#af2cb07b29a6aa75594bcce920322e9ea">init</a>(</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">init</a>(</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, </div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance </div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      );</div>
@@ -285,7 +285,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_8hpp_source.html',''); 
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;      <span class="keywordtype">void</span> BL_SetLogging_cmdHandler(</div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;          <span class="keyword">const</span> <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, </div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;          <span class="keyword">const</span> U32 cmdSeq, </div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;          BufferLogger_LogState state</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;          <a class="code" href="class_svc_1_1_buffer_logger___log_state.html">BufferLogger_LogState</a> state</div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;      );</div>
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      <span class="keywordtype">void</span> BL_FlushFile_cmdHandler(</div>
@@ -299,7 +299,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_8hpp_source.html',''); 
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;      <span class="comment">// Private instance variables</span></div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;      BufferLogger_LogState m_state;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;      <a class="code" href="class_svc_1_1_buffer_logger___log_state.html">BufferLogger_LogState</a> m_state;</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;      File m_file;</div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160; </div>
@@ -312,6 +312,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_8hpp_source.html',''); 
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00026">BasicTypes.h:26</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00052">BasicTypes.h:52</a></div></div>
+<div class="ttc" id="a_buffer_logger_component_ac_8hpp_html"><div class="ttname"><a href="buffer_logger_component_ac_8hpp.html">BufferLoggerComponentAc.hpp</a></div></div>
 <div class="ttc" id="a_file_8hpp_html"><div class="ttname"><a href="file_8hpp.html">File.hpp</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00056">FpConfig.h:56</a></div></div>
 <div class="ttc" id="a_hash_8hpp_html"><div class="ttname"><a href="hash_8hpp.html">Hash.hpp</a></div></div>
@@ -320,13 +321,15 @@ $(document).ready(function(){initNavTree('_buffer_logger_8hpp_source.html',''); 
 <div class="ttc" id="aclass_fw_1_1_buffer_html"><div class="ttname"><a href="class_fw_1_1_buffer.html">Fw::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8hpp_source.html#l00043">Buffer.hpp:43</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_cmd_string_arg_html"><div class="ttname"><a href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a></div><div class="ttdef"><b>Definition:</b> <a href="cmd_string_8hpp_source.html#l00010">CmdString.hpp:10</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_com_buffer_html"><div class="ttname"><a href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="com_buffer_8hpp_source.html#l00020">ComBuffer.hpp:20</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_string_base_html"><div class="ttname"><a href="class_fw_1_1_string_base.html">Fw::StringBase</a></div><div class="ttdef"><b>Definition:</b> <a href="string_type_8hpp_source.html#l00023">StringType.hpp:23</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_string_html"><div class="ttname"><a href="class_fw_1_1_string.html">Fw::String</a></div><div class="ttdef"><b>Definition:</b> <a href="string_8hpp_source.html#l00010">String.hpp:10</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html"><div class="ttname"><a href="class_os_1_1_file.html">Os::File</a></div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00010">File.hpp:10</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_buffer_logger___log_state_html"><div class="ttname"><a href="class_svc_1_1_buffer_logger___log_state.html">Svc::BufferLogger_LogState</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_logger___log_state_enum_ac_8hpp_source.html#l00016">BufferLogger_LogStateEnumAc.hpp:18</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_buffer_logger_component_base_html"><div class="ttname"><a href="class_svc_1_1_buffer_logger_component_base.html">Svc::BufferLoggerComponentBase</a></div><div class="ttdoc">Auto-generated base for BufferLogger component.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_logger_component_ac_8hpp_source.html#l00036">BufferLoggerComponentAc.hpp:38</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_buffer_logger_html"><div class="ttname"><a href="class_svc_1_1_buffer_logger.html">Svc::BufferLogger</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_logger_8hpp_source.html#l00025">BufferLogger.hpp:27</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_buffer_logger_html_a0e194a7394acb513c2ea076e8f6e016c"><div class="ttname"><a href="class_svc_1_1_buffer_logger.html#a0e194a7394acb513c2ea076e8f6e016c">Svc::BufferLogger::initLog</a></div><div class="ttdeci">void initLog(const char *const logFilePrefix, const char *const logFileSuffix, const U32 maxFileSize, const U8 sizeOfSize)</div><div class="ttdoc">Set up log file parameters.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_logger_8cpp_source.html#l00045">BufferLogger.cpp:46</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_buffer_logger_html_ad320521af9d42b38379b1c85fdb4b165"><div class="ttname"><a href="class_svc_1_1_buffer_logger.html#ad320521af9d42b38379b1c85fdb4b165">Svc::BufferLogger::BufferLogger</a></div><div class="ttdeci">BufferLogger(const char *const compName)</div><div class="ttdoc">Create a BufferLogger object.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_logger_8cpp_source.html#l00022">BufferLogger.cpp:23</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_buffer_logger_html_af2cb07b29a6aa75594bcce920322e9ea"><div class="ttname"><a href="class_svc_1_1_buffer_logger.html#af2cb07b29a6aa75594bcce920322e9ea">Svc::BufferLogger::init</a></div><div class="ttdeci">void init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance)</div><div class="ttdoc">Initialize a BufferLogger object.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_logger_8cpp_source.html#l00031">BufferLogger.cpp:32</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
 <div class="ttc" id="astruct_svc_1_1_buffer_logger_1_1_file_1_1_mode_html"><div class="ttname"><a href="struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html">Svc::BufferLogger::File::Mode</a></div><div class="ttdoc">The file mode.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_logger_8hpp_source.html#l00041">BufferLogger.hpp:41</a></div></div>
 <div class="ttc" id="astruct_svc_1_1_buffer_logger_1_1_file_1_1_mode_html_a2ec257a538c939ffcd04d39e07c8606f"><div class="ttname"><a href="struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html#a2ec257a538c939ffcd04d39e07c8606f">Svc::BufferLogger::File::Mode::t</a></div><div class="ttdeci">t</div><div class="ttdef"><b>Definition:</b> <a href="buffer_logger_8hpp_source.html#l00042">BufferLogger.hpp:42</a></div></div>

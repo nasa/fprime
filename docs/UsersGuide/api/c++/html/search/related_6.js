@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['queue_3c_20e_20_3e_5865',['Queue&lt; E &gt;',['../class_queue_node.html#ad4336229b1d7c3626e4ba69f236b202d',1,'QueueNode']]]
+  ['healthcomponentbasefriend_7479',['HealthComponentBaseFriend',['../class_svc_1_1_health_component_base.html#aa0c14a7d13b436198170ebba374af9b7',1,'Svc::HealthComponentBase']]]
 ];
