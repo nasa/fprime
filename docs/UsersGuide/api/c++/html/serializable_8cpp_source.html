@@ -118,7 +118,7 @@ $(document).ready(function(){initNavTree('_serializable_8cpp_source.html',''); i
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#ifdef BUILD_UT</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> Serializable&amp; val) {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    std::ostream&amp; <a class="code" href="namespacetesting.html#a266e39b7c4691fedb856047673a412d8">operator&lt;&lt;</a>(std::ostream&amp; os, <span class="keyword">const</span> Serializable&amp; val) {</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <a class="code" href="class_fw_1_1_string.html">Fw::String</a> out;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        val.toString(out);</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
@@ -773,7 +773,7 @@ $(document).ready(function(){initNavTree('_serializable_8cpp_source.html',''); i
 <div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    }</div>
 <div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160; </div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;    std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> SerializeBufferBase&amp; buff) {</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;    std::ostream&amp; <a class="code" href="namespacetesting.html#a266e39b7c4691fedb856047673a412d8">operator&lt;&lt;</a>(std::ostream&amp; os, <span class="keyword">const</span> SerializeBufferBase&amp; buff) {</div>
 <div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160; </div>
 <div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* us = buff.getBuffAddr();</div>
 <div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160; </div>
@@ -872,6 +872,7 @@ $(document).ready(function(){initNavTree('_serializable_8cpp_source.html',''); i
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a></div><div class="ttdeci">@ FW_SERIALIZE_OK</div><div class="ttdoc">Serialization/Deserialization operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00014">Serializable.hpp:14</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32aad4b2c76b207502b423c84e40e518874"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32aad4b2c76b207502b423c84e40e518874">Fw::FW_DESERIALIZE_SIZE_MISMATCH</a></div><div class="ttdeci">@ FW_DESERIALIZE_SIZE_MISMATCH</div><div class="ttdoc">Data was left in the buffer, but not enough to deserialize.</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00019">Serializable.hpp:19</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32abf90ba041233c53150bf49a6ac056b1f"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32abf90ba041233c53150bf49a6ac056b1f">Fw::FW_SERIALIZE_NO_ROOM_LEFT</a></div><div class="ttdeci">@ FW_SERIALIZE_NO_ROOM_LEFT</div><div class="ttdoc">No room left in the buffer to serialize data.</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00016">Serializable.hpp:16</a></div></div>
+<div class="ttc" id="anamespacetesting_html_a266e39b7c4691fedb856047673a412d8"><div class="ttname"><a href="namespacetesting.html#a266e39b7c4691fedb856047673a412d8">testing::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;os, const TestPartResult &amp;result)</div><div class="ttdef"><b>Definition:</b> <a href="gtest-test-part_8cc_source.html#l00050">gtest-test-part.cc:50</a></div></div>
 <div class="ttc" id="asha_8h_html_ae5a6272795b1b8e0045aa7a4319dceb8"><div class="ttname"><a href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a></div><div class="ttdeci">#define U64(C)</div><div class="ttdef"><b>Definition:</b> <a href="sha_8h_source.html#l00176">sha.h:176</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

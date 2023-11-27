@@ -1,12 +1,13 @@
 var searchData=
 [
-  ['packet_5fupdate_5fafter_5ffirst_5fchange_4028',['PACKET_UPDATE_AFTER_FIRST_CHANGE',['../namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79ea7c063a71c5313caf81abf5564f1a00df',1,'Svc']]],
-  ['packet_5fupdate_5falways_4029',['PACKET_UPDATE_ALWAYS',['../namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79eadbc35cb86a4a2cb3ba61924533572c50',1,'Svc']]],
-  ['packet_5fupdate_5fon_5fchange_4030',['PACKET_UPDATE_ON_CHANGE',['../namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79ea2977cef2992ea14464dc0293b26be1e0',1,'Svc']]],
-  ['parity_5feven_4031',['PARITY_EVEN',['../class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601afac884302ac9fffb601f99673c1a49535d',1,'Drv::LinuxUartDriver']]],
-  ['parity_5fnone_4032',['PARITY_NONE',['../class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601afa6df518c93f02783b30dbb31172aaf554',1,'Drv::LinuxUartDriver']]],
-  ['parity_5fodd_4033',['PARITY_ODD',['../class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601afa8ab285c472ed1343bbb1cff080da1660',1,'Drv::LinuxUartDriver']]],
-  ['passed_5ffile_5fcrc_5fcheck_4034',['PASSED_FILE_CRC_CHECK',['../namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a4cb62b6d0ced173d615e469f25f6aba2',1,'Utils']]],
-  ['passed_5ffile_5fcrc_5fwrite_4035',['PASSED_FILE_CRC_WRITE',['../namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a105d813f21299854d33e22b61281e592',1,'Utils']]],
-  ['prmdb_5fimpl_5ftester_5fmax_5fread_5fbuffer_4036',['PRMDB_IMPL_TESTER_MAX_READ_BUFFER',['../prm_db_impl_tester_cfg_8hpp.html#a726ca809ffd3d67ab4b8476646f26635a55fd93cc753e3f9506f41f1649a43ebb',1,'PrmDbImplTesterCfg.hpp']]]
+  ['op_5fok_5760',['OP_OK',['../class_fw_1_1_serializable_file.html#a5f04d8113d943cbb949f693060a310eea003ceee284993b3e32cb69c25fefcb5c',1,'Fw::SerializableFile::OP_OK()'],['../class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2ba12063f75af229ebe45e9deee0da81b6b',1,'Os::Directory::OP_OK()'],['../class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7ab195b6300645908a16f113ed9eae7ee3',1,'Os::File::OP_OK()'],['../namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d',1,'Os::FileSystem::OP_OK()']]],
+  ['open_5761',['OPEN',['../struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html#a2ec257a538c939ffcd04d39e07c8606fa6cb8db4ba6538561dca97ff40c2b7665',1,'Svc::BufferLogger::File::Mode']]],
+  ['open_5fappend_5762',['OPEN_APPEND',['../class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105a340d8dcfef7b6014d2f9b92b51732bf3',1,'Os::File']]],
+  ['open_5fcreate_5763',['OPEN_CREATE',['../class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105add42a8f7f16b019111a578af042802d1',1,'Os::File']]],
+  ['open_5fno_5fmode_5764',['OPEN_NO_MODE',['../class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105aaa4f09e4e276390f8f03cdeb3fa6eddc',1,'Os::File']]],
+  ['open_5fread_5765',['OPEN_READ',['../class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105afb791cd4ea04f97e6d3a402574bc9489',1,'Os::File']]],
+  ['open_5fsync_5fdirect_5fwrite_5766',['OPEN_SYNC_DIRECT_WRITE',['../class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105a19877e06bd526f05e14be06c147e51a0',1,'Os::File']]],
+  ['open_5fsync_5fwrite_5767',['OPEN_SYNC_WRITE',['../class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105aaf0864b2e443d2cfa8cdf9fc81eb10f9',1,'Os::File']]],
+  ['open_5fwrite_5768',['OPEN_WRITE',['../class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105a626c9f0570ced53ed79104f83b71854b',1,'Os::File']]],
+  ['other_5ferror_5769',['OTHER_ERROR',['../class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2ba2344b7f3d900fd37c50739cfa53cb1f3',1,'Os::Directory::OTHER_ERROR()'],['../class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a47f14b86c38a965aee25ad46e436e998',1,'Os::File::OTHER_ERROR()'],['../namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa9eb0685130fed6d05a91c9ee59821525',1,'Os::FileSystem::OTHER_ERROR()'],['../namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1a9eb9a7aeeacad9d855d64daa10ae10af',1,'Os::ValidateFile::OTHER_ERROR()']]]
 ];

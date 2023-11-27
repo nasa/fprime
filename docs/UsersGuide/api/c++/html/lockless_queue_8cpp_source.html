@@ -147,20 +147,20 @@ $(document).ready(function(){initNavTree('_lockless_queue_8cpp_source.html','');
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">void</span> LocklessQueue::PushFree(QueueNode * my_node) {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        QueueNode * old_free_head;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">void</span> LocklessQueue::PushFree(<a class="code" href="class_queue_node.html">QueueNode</a> * my_node) {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <a class="code" href="class_queue_node.html">QueueNode</a> * old_free_head;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(my_node != <span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="comment">// CAS the node into the free list</span></div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keywordflow">do</span> {</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            old_free_head = m_free_head;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            my_node-&gt;next = old_free_head;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            my_node-&gt;<a class="code" href="class_queue_node.html#a8a9fdf488da06533360999ef85db56ea">next</a> = old_free_head;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        } <span class="keywordflow">while</span> (!<a class="code" href="lockless_queue_8cpp.html#a45d4f10e85e5c529f465481ffc0f4172">CAS</a>(&amp;m_free_head, old_free_head, my_node));</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> LocklessQueue::PopFree(QueueNode ** free_node) {</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        QueueNode * my_node;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> LocklessQueue::PopFree(<a class="code" href="class_queue_node.html">QueueNode</a> ** free_node) {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <a class="code" href="class_queue_node.html">QueueNode</a> * my_node;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="comment">// CAS a buffer from the free list</span></div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">do</span> {</div>
@@ -170,7 +170,7 @@ $(document).ready(function(){initNavTree('_lockless_queue_8cpp_source.html','');
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            }</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        } <span class="keywordflow">while</span> (!<a class="code" href="lockless_queue_8cpp.html#a45d4f10e85e5c529f465481ffc0f4172">CAS</a>(&amp;m_free_head, my_node, my_node-&gt;next));</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        } <span class="keywordflow">while</span> (!<a class="code" href="lockless_queue_8cpp.html#a45d4f10e85e5c529f465481ffc0f4172">CAS</a>(&amp;m_free_head, my_node, my_node-&gt;<a class="code" href="class_queue_node.html#a8a9fdf488da06533360999ef85db56ea">next</a>));</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        (*free_node) = my_node;</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
@@ -263,6 +263,8 @@ $(document).ready(function(){initNavTree('_lockless_queue_8cpp_source.html','');
 <div class="ttc" id="aclass_os_1_1_queue_html_a0c0ecc2d5d5be2f2f3f0ed94672f778ba4fe7580ade5df51257de6e8fb01bd558"><div class="ttname"><a href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba4fe7580ade5df51257de6e8fb01bd558">Os::Queue::QUEUE_NO_MORE_MSGS</a></div><div class="ttdeci">@ QUEUE_NO_MORE_MSGS</div><div class="ttdoc">If non-blocking, all the messages have been drained.</div><div class="ttdef"><b>Definition:</b> <a href="os_2_queue_8hpp_source.html#l00029">Queue.hpp:29</a></div></div>
 <div class="ttc" id="aclass_os_1_1_queue_html_a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc"><div class="ttname"><a href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a></div><div class="ttdeci">@ QUEUE_OK</div><div class="ttdoc">message sent/received okay</div><div class="ttdef"><b>Definition:</b> <a href="os_2_queue_8hpp_source.html#l00028">Queue.hpp:28</a></div></div>
 <div class="ttc" id="aclass_os_1_1_queue_html_a0c0ecc2d5d5be2f2f3f0ed94672f778baac94c448c78c60149014efd5dd8ee1f9"><div class="ttname"><a href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baac94c448c78c60149014efd5dd8ee1f9">Os::Queue::QUEUE_FULL</a></div><div class="ttdeci">@ QUEUE_FULL</div><div class="ttdoc">queue was full when attempting to send a message</div><div class="ttdef"><b>Definition:</b> <a href="os_2_queue_8hpp_source.html#l00036">Queue.hpp:36</a></div></div>
+<div class="ttc" id="aclass_queue_node_html"><div class="ttname"><a href="class_queue_node.html">QueueNode</a></div><div class="ttdef"><b>Definition:</b> <a href="sample3-inl_8h_source.html#l00046">sample3-inl.h:46</a></div></div>
+<div class="ttc" id="aclass_queue_node_html_a8a9fdf488da06533360999ef85db56ea"><div class="ttname"><a href="class_queue_node.html#a8a9fdf488da06533360999ef85db56ea">QueueNode::next</a></div><div class="ttdeci">QueueNode * next()</div><div class="ttdef"><b>Definition:</b> <a href="sample3-inl_8h_source.html#l00054">sample3-inl.h:54</a></div></div>
 <div class="ttc" id="anamespace_os_html"><div class="ttname"><a href="namespace_os.html">Os</a></div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_file_8cpp_source.html#l00006">File.cpp:6</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

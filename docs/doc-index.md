@@ -59,8 +59,6 @@
 - [fpp_ut](UsersGuide/api/cmake/autocoder/fpp_ut.md)
 - [helpers](UsersGuide/api/cmake/autocoder/helpers.md)
 - [packets](UsersGuide/api/cmake/autocoder/packets.md)
-##### UsersGuide/api/cmake/googletest-download
-- [googletest](UsersGuide/api/cmake/googletest-download/googletest.md)
 ##### UsersGuide/api/cmake/platform
 - [Darwin](UsersGuide/api/cmake/platform/Darwin.md)
 - [Linux](UsersGuide/api/cmake/platform/Linux.md)

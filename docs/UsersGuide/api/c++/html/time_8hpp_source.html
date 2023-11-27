@@ -159,7 +159,7 @@ $(document).ready(function(){initNavTree('_time_8hpp_source.html',''); initResiz
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_time.html#a04bb5855a5c1a2ea0253f43eb0cc0cc3">add</a>(U32 seconds, U32 mseconds);</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#ifdef BUILD_UT </span><span class="comment">// Stream operators to support Googletest</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os,  <span class="keyword">const</span> <a class="code" href="class_fw_1_1_time.html">Time</a>&amp; val);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <span class="keyword">friend</span> std::ostream&amp; <a class="code" href="namespacetesting.html#a266e39b7c4691fedb856047673a412d8">operator&lt;&lt;</a>(std::ostream&amp; os,  <span class="keyword">const</span> <a class="code" href="class_fw_1_1_time.html">Time</a>&amp; val);</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        PRIVATE:</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            U32 m_seconds; <span class="comment">// !&lt; seconds portion</span></div>
@@ -213,6 +213,7 @@ $(document).ready(function(){initNavTree('_time_8hpp_source.html',''); initResiz
 <div class="ttc" id="anamespace_fw_html"><div class="ttname"><a href="namespace_fw.html">Fw</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8cpp_source.html#l00021">Buffer.cpp:21</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a></div><div class="ttdeci">SerializeStatus</div><div class="ttdoc">forward declaration for string</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00013">Serializable.hpp:13</a></div></div>
 <div class="ttc" id="anamespace_fw_html_ab159b7685b88bad9925b9d9a2e24cda7"><div class="ttname"><a href="namespace_fw.html#ab159b7685b88bad9925b9d9a2e24cda7">Fw::ZERO_TIME</a></div><div class="ttdeci">const Time ZERO_TIME</div><div class="ttdef"><b>Definition:</b> <a href="time_8cpp_source.html#l00005">Time.cpp:5</a></div></div>
+<div class="ttc" id="anamespacetesting_html_a266e39b7c4691fedb856047673a412d8"><div class="ttname"><a href="namespacetesting.html#a266e39b7c4691fedb856047673a412d8">testing::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;os, const TestPartResult &amp;result)</div><div class="ttdef"><b>Definition:</b> <a href="gtest-test-part_8cc_source.html#l00050">gtest-test-part.cc:50</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

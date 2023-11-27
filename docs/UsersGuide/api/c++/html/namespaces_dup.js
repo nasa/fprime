@@ -6,6 +6,7 @@ var namespaces_dup =
     [ "Fw", "namespace_fw.html", "namespace_fw" ],
     [ "Os", "namespace_os.html", "namespace_os" ],
     [ "Svc", "namespace_svc.html", "namespace_svc" ],
+    [ "testing", "namespacetesting.html", "namespacetesting" ],
     [ "Types", "namespace_types.html", "namespace_types" ],
     [ "Utils", "namespace_utils.html", "namespace_utils" ]
 ];

@@ -163,9 +163,9 @@ $(document).ready(function(){initNavTree('_string_type_8cpp_source.html',''); in
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">#ifdef BUILD_UT</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> StringBase&amp; str)</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    std::ostream&amp; <a class="code" href="namespacetesting.html#a266e39b7c4691fedb856047673a412d8">operator&lt;&lt;</a>(std::ostream&amp; os, <span class="keyword">const</span> StringBase&amp; str)</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        os &lt;&lt; str.<a class="code" href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">toChar</a>();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        os &lt;&lt; str.toChar();</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keywordflow">return</span> os;</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    }</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#endif</span></div>
@@ -251,6 +251,7 @@ $(document).ready(function(){initNavTree('_string_type_8cpp_source.html',''); in
 <div class="ttc" id="anamespace_fw_1_1_string_utils_html_afcf5c356fc8ac545dc89b54abe0baa4f"><div class="ttname"><a href="namespace_fw_1_1_string_utils.html#afcf5c356fc8ac545dc89b54abe0baa4f">Fw::StringUtils::string_length</a></div><div class="ttdeci">U32 string_length(const CHAR *source, U32 max_len)</div><div class="ttdoc">get the length of the source string or max_len if the string is longer than max_len.</div><div class="ttdef"><b>Definition:</b> <a href="string_utils_8cpp_source.html#l00020">StringUtils.cpp:20</a></div></div>
 <div class="ttc" id="anamespace_fw_html"><div class="ttname"><a href="namespace_fw.html">Fw</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8cpp_source.html#l00021">Buffer.cpp:21</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a></div><div class="ttdeci">SerializeStatus</div><div class="ttdoc">forward declaration for string</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00013">Serializable.hpp:13</a></div></div>
+<div class="ttc" id="anamespacetesting_html_a266e39b7c4691fedb856047673a412d8"><div class="ttname"><a href="namespacetesting.html#a266e39b7c4691fedb856047673a412d8">testing::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;os, const TestPartResult &amp;result)</div><div class="ttdef"><b>Definition:</b> <a href="gtest-test-part_8cc_source.html#l00050">gtest-test-part.cc:50</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

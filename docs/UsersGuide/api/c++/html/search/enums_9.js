@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['queueblocking_3871',['QueueBlocking',['../class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff',1,'Os::Queue']]],
-  ['queuestatus_3872',['QueueStatus',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b',1,'Os::Queue']]]
+  ['options_5596',['Options',['../class_os_1_1_event.html#a0066af638f60b8e7cbd8f70f6bb01a5b',1,'Os::Event']]]
 ];
