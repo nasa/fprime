@@ -1,6 +1,7 @@
 build/
 build*/
 gtest/
+docs-cache/
 
 AutoXML/
 test_harness/src/test_harness-C/application.out
@@ -44,7 +45,7 @@ coverity.out
 .#*
 
 **/docs/*.html
-/docs/UsersGuide/api/cmake/*
+/docs/UsersGuide/api/*
 *-template
 
 logs
