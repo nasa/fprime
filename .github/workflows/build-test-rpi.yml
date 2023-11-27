@@ -23,9 +23,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        submodules: true
     - uses: ./.github/actions/setup
     - name: Setup RPI Toolchain
       uses: fprime-community/setup-rpi-sysroot@main

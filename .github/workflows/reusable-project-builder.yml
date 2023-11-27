@@ -47,15 +47,15 @@ jobs:
     name: "Build"
     steps:
       - name: "Checkout target repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false 
           repository: ${{ inputs.target_repository }}
           ref: ${{ inputs.target_ref }}
       - name: "Overlay current F´ revision"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: true
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |
@@ -78,15 +78,15 @@ jobs:
     name: "Unit Tests"
     steps:
       - name: "Checkout target repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
           repository: ${{ inputs.target_repository }}
           ref: ${{ inputs.target_ref }}
       - name: "Overlay current F´ revision"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: true
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |

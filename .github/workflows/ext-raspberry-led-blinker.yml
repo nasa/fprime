@@ -30,15 +30,15 @@ jobs:
     needs: get-branch
     steps:
       - name: "Checkout target repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
           repository: fprime-community/fprime-workshop-led-blinker
           ref: ${{ needs.get-branch.outputs.target-branch }}
       - name: "Overlay current F´ revision"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: true
           path: ./fprime
           fetch-depth: 0
       - uses: ./fprime/.github/actions/setup
