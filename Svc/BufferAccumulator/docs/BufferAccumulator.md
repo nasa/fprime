@@ -1,4 +1,4 @@
-\page BufferAccumulatorComponent Svc::BufferAccumulator Component
+\page SvcBufferAccumulatorComponent Svc::BufferAccumulator Component
 # BufferAccumulator Component Dictionary
 
 
