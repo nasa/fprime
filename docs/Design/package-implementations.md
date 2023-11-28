@@ -2,7 +2,7 @@
 
 Certain parts of F´ have different implementations that a project may choose from.  The canonical example of this is a file system implementation. Projects may wish to use the stubbed implementation of the file system, the platform supplied standard implementation, or something project-specific like a flash chip or SD card.
 
-These packages are must be fully specified. Thus, every platform must specify a specific implementation for every package. These specific implementations may be overridden for a specific executable deployment or unit test.
+These packages must be fully specified. Thus, every platform must specify a specific implementation for every package. These specific implementations may be overridden for a specific executable deployment or unit test.
 
 ## Requiring an Implementation
 
@@ -18,7 +18,7 @@ Choosing an implementation is done with a series of `choose_fprime_implementatio
 
 ## Overriding an Implementation Choice
 
-Some executables, unit tests, and deployments may wish to use a different implementation than that specified by the platform. This can be done by a `choose_fprime_implementation` call in the deployment, executable, or unit test's module. For example, a unit test may which to choose `Os_File_Stub` as an implementation of `Os_File` to disable platform file system support for the given unit test.
+Some executables, unit tests, and deployments may wish to use a different implementation than that specified by the platform. This can be done by a `choose_fprime_implementation` call in the deployment, executable, or unit test's module. For example, a unit test may wish to choose `Os_File_Stub` as an implementation of `Os_File` to disable platform file system support for the given unit test.
 
 > A CMake target with the name of the chosen implementor *must* be defined somewhere in F´, an F´ library used by the project, or by the project itself.
 
