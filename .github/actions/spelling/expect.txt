@@ -785,6 +785,7 @@ ptf
 pthread
 ptmcg
 pton
+ptrt
 puml
 punc
 pushd
