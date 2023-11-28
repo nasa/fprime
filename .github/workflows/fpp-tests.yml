@@ -17,9 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout F´ Repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: true
       - name: "Install requirements.txt"
         run: |
           pip3 install -r ./requirements.txt

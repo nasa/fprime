@@ -52,7 +52,7 @@ function make_version
     then
         mkdir "${FPRIME}/docs/${VERSION}"
         cp "${FPRIME}/docs/latest.md" "${FPRIME}/docs/${VERSION}/index.md"
-        cp -r "${FPRIME}/docs/INSTALL.md" "${FPRIME}/docs/Tutorials" "${FPRIME}/docs/UsersGuide" "${FPRIME}/docs/${VERSION}"
+        cp -r "${FPRIME}/docs/INSTALL.md" "${FPRIME}/docs/Tutorials" "${FPRIME}/docs/UsersGuide" "${FPRIME}/docs/Design" "${FPRIME}/docs/${VERSION}"
         REPLACE='| ['$VERSION' Documentation](https:\/\/nasa.github.io\/fprime\/'$VERSION') |\n'
     else
         echo "No version specified, updating local only"
@@ -65,22 +65,29 @@ function make_version
 # Doxygen generation
 (
     cd "${FPRIME}"
+    DOCS_CACHE="${FPRIME}/docs-cache"
     clobber "${DOXY_OUTPUT}"
     echo "[INFO] Building fprime"
-    (
-        mkdir -p "${FPRIME}/build-fprime-automatic-docs"
-        cd "${FPRIME}/build-fprime-automatic-docs"
-        cmake "${FPRIME}" -DCMAKE_BUILD_TYPE=Release 1>/dev/null
-    )
-    fprime-util build "docs" --all -j32 1> /dev/null
+    rm -rf "${DOCS_CACHE}"
+
+    fprime-util generate --build-cache ${DOCS_CACHE} -DCMAKE_BUILD_TYPE=Release -DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON 1>/dev/null
+    fprime-util build --build-cache ${DOCS_CACHE} --all -j32 1> /dev/null
+
     if (( $? != 0 ))
     then
         echo "[ERROR] Failed to build fprime please generate build cache"
         exit 2
     fi
     mkdir -p ${DOXY_OUTPUT}
+
+    # Replace version number in Doxyfile
+    if [[ "${VERSIONED_OUTPUT}" != "" ]]
+    then
+        sed -i "s/^PROJECT_NUMBER[ ]*=.*$/PROJECT_NUMBER=${VERSIONED_OUTPUT}/g" docs/doxygen/Doxyfile
+    fi
+
     ${DOXYGEN} "${FPRIME}/docs/doxygen/Doxyfile"
-    rm -r "${FPRIME}/build-fprime-automatic-docs"
+    rm -r "${DOCS_CACHE}"
 ) || exit 1
 
 # CMake

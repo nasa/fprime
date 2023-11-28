@@ -160,7 +160,7 @@ function(fprime_setup_included_code)
     setup_global_targets()
     # For BUILD_TESTING builds then set up libraries that support testing
     if (BUILD_TESTING AND NOT DEFINED FPRIME_SUB_BUILD_TARGETS)
-        include("${FPRIME_FRAMEWORK_PATH}/cmake/googletest-download/googletest.cmake")
+        add_subdirectory("${FPRIME_FRAMEWORK_PATH}/googletest/" "${CMAKE_BINARY_DIR}/F-Prime/googletest")
     endif()
     if (BUILD_TESTING)
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")

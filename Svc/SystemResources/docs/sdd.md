@@ -1,4 +1,5 @@
-# System Resources Component
+\page SvcSystemResourcesComponent Svc::SystemResources Component
+# SystemResources Component
 
 The system resources component downlinks information about the running F´ system. This information includes:
 
