@@ -479,7 +479,7 @@ namespace Fw {
 
     SerializeStatus SerializeBufferBase::deserialize(void*& val) {
         // Deserialize as pointer cast, then convert to void*
-        POINTER_CAST pointerCastVal = 0;
+        PlatformPointerCastType pointerCastVal = 0;
         const SerializeStatus stat = this->deserialize(pointerCastVal);
         if (stat == FW_SERIALIZE_OK) {
             val = reinterpret_cast<void*>(pointerCastVal);
