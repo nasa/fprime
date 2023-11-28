@@ -30,9 +30,9 @@ set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST
 #####
 macro(restrict_platforms)
     set(__CHECKER ${ARGN})
-    if (NOT CMAKE_SYSTEM_NAME IN_LIST __CHECKER)
+    if (NOT FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER AND NOT CMAKE_SYSTEM_NAME IN_LIST __CHECKER)
         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-        message(STATUS "Platform ${CMAKE_SYSTEM_NAME} not supported for module ${MODULE_NAME}")
+        message(STATUS "Neither toolchain ${FPRIME_TOOLCHAIN_NAME} nor platform ${CMAKE_SYSTEM_NAME} supported for module ${MODULE_NAME}")
         return()
     endif()
 endmacro()
