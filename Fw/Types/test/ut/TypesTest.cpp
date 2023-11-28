@@ -369,6 +369,23 @@ TEST(SerializationTest,Serialization1) {
 #if DEBUG_VERBOSE
     printf("Val: in: %s out: %s stat1: %d stat2: %d\n",
             boolt1 ? "TRUE" : "FALSE", boolt2 ? "TRUE" : "FALSE", stat1, stat2);
+    printf("Pointer Test\n");
+#endif
+
+    U32 u32Var = 0;
+    void* ptrt1 = &u32Var;
+    void* ptrt2 = nullptr;
+
+    buff.resetSer();
+    stat1 = buff.serialize(ptrt1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    stat2 = buff.deserialize(ptrt2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(ptrt1,ptrt2);
+
+#if DEBUG_VERBOSE
+    printf("Val: in: %p out: %p stat1: %d stat2: %d\n",
+            ptrt1, ptrt2, stat1, stat2);
 
     printf("Skip deserialization Tests\n");
 #endif
@@ -422,6 +439,7 @@ TEST(SerializationTest,Serialization1) {
     f32t2 = 0.0;
     f64t2 = 0.0;
     boolt2 = false;
+    ptrt2 = nullptr;
 
     buff.resetSer();
     stat1 = buff.serialize(u8t1);
@@ -445,6 +463,8 @@ TEST(SerializationTest,Serialization1) {
     stat1 = buff.serialize(f64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
     stat1 = buff.serialize(boolt1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    stat1 = buff.serialize(ptrt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
 
     // TKC - commented out due to fprime-util choking on output
@@ -473,6 +493,8 @@ TEST(SerializationTest,Serialization1) {
     stat1 = buff2.serialize(f64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
     stat1 = buff2.serialize(boolt1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    stat1 = buff2.serialize(ptrt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
 
     ASSERT_EQ(buff,buff2);
@@ -512,6 +534,9 @@ TEST(SerializationTest,Serialization1) {
     stat2 = buff.deserialize(boolt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(boolt1,boolt2);
+    stat2 = buff.deserialize(ptrt2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(ptrt1,ptrt2);
 
 // reset and deserialize again
 #if DEBUG_VERBOSE
@@ -531,6 +556,7 @@ TEST(SerializationTest,Serialization1) {
     f32t2 = 0.0;
     f64t2 = 0.0;
     boolt2 = false;
+    ptrt2 = nullptr;
 
     stat2 = buff.deserialize(u8t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
@@ -565,6 +591,9 @@ TEST(SerializationTest,Serialization1) {
     stat2 = buff.deserialize(boolt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(boolt1,boolt2);
+    stat2 = buff.deserialize(ptrt2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(ptrt1,ptrt2);
 
     // serialize string
     Fw::String str1;
