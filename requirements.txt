@@ -29,9 +29,9 @@ fprime-fpp-syntax==2.0.1
 fprime-fpp-to-cpp==2.0.1
 fprime-fpp-to-json==2.0.1
 fprime-fpp-to-xml==2.0.1
-fprime-gds==3.3.3
-fprime-tools==3.4.0a1
-fprime-visual==1.0.1a2
+fprime-gds==3.4.0
+fprime-tools==3.4.0
+fprime-visual==1.0.1
 gcovr==6.0
 idna==3.4
 importlib-metadata==6.7.0
