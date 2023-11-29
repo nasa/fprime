@@ -46,6 +46,9 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
             list(APPEND FPP_SOURCES "${SOURCE}")
         endif()
     endforeach()
+    file(RELATIVE_PATH OFFSET "${CMAKE_BINARY_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache")
+    file(MAKE_DIRECTORY "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache")
     if (FPP_SOURCES)
         add_custom_command(
             OUTPUT
@@ -56,9 +59,6 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/generated.txt"
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/include.txt"
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/unittest.txt"
-            COMMAND
-                "${CMAKE_COMMAND}" -E make_directory 
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache"
             COMMAND
                 ${FPP_LOCATE_DEFS_HELPER}
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
@@ -88,9 +88,6 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/include.txt"
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/unittest.txt"
             COMMAND
-                "${CMAKE_COMMAND}" -E make_directory 
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/fpp-cache"
-            COMMAND
                 "${CMAKE_COMMAND}" -E touch
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
                 "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/direct.txt"
@@ -102,7 +99,6 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
             COMMAND_EXPAND_LISTS
         )
     endif()
-    file(RELATIVE_PATH OFFSET "${CMAKE_BINARY_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 
     add_custom_command(
         OUTPUT
@@ -121,9 +117,6 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
             "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/generated.txt"
             "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/include.txt"
             "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/unittest.txt"
-        COMMAND
-            "${CMAKE_COMMAND}" -E make_directory 
-            "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache"
         COMMAND
             "${CMAKE_COMMAND}" -E copy_if_different
             "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
