@@ -7,15 +7,27 @@
 #
 ####
 include_guard()
+include(API)
 # Basic definitions
 get_filename_component(TOOLCHAIN_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME_WE)
-# Setup fallback toolchain name
-if ("${TOOLCHAIN_NAME}" STREQUAL "")
+# Native toolchains use the system name for the toolchain and FPRIME_PLATFORM
+if (NOT TOOLCHAIN_NAME)
     set(TOOLCHAIN_NAME "${CMAKE_SYSTEM_NAME}")
+    set(FPRIME_PLATFORM "${CMAKE_SYSTEM_NAME}")
+# It is an error to use a "Generic" toolchain without setting FPRIME_PLATFORM correctly
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Generic" AND NOT FPRIME_PLATFORM)
+    message(FATAL_ERROR "Toolchain '${TOOLCHAIN_NAME}' set CMAKE_SYSTEM_NAME to 'Generic' without setting FPRIME_PLATFORM")
+# It is an error to set neither of CMAKE_SYSTEM_NAME and FPRIME_PLATFORM
+elseif (NOT CMAKE_SYSTEM_NAME AND NOT FPRIME_PLATFORM)
+    message(FATAL_ERROR "Toolchain '${TOOLCHAIN_NAME}' should set CMAKE_SYSTEM_NAME to 'Generic' and set FPRIME_PLATFORM")
+# Fallback to CMAKE_SYSTEM_NAME when only CMAKE_SYSTEM_NAME is set
+elseif (NOT FPRIME_PLATFORM)
+    message(WARNING "Toolchain '${TOOLCHAIN_NAME}' should set CMAKE_SYSTEM_NAME to 'Generic' and set FPRIME_PLATFORM")
+    set(FPRIME_PLATFORM "${CMAKE_SYSTEM_NAME}")
 endif()
 
 # Include platform file based on system name
-message(STATUS "Target build toolchain/platform: ${TOOLCHAIN_NAME}/${CMAKE_SYSTEM_NAME}")
+message(STATUS "Target build toolchain/platform: ${TOOLCHAIN_NAME}/${FPRIME_PLATFORM}")
 
 # Output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
@@ -25,7 +37,7 @@ set(EXPECTED_PLATFORM_FILE "")
 
 # Loop over locations of platform files in order: project, libraries, then framework
 foreach(ROOT ${FPRIME_PROJECT_ROOT};${FPRIME_LIBRARY_LOCATIONS};${FPRIME_FRAMEWORK_PATH} )
-    set(EXPECTED_PLATFORM_FILE "${ROOT}/cmake/platform/${CMAKE_SYSTEM_NAME}.cmake")
+    set(EXPECTED_PLATFORM_FILE "${ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake")
     # Include host machine settings
     if (EXISTS "${EXPECTED_PLATFORM_FILE}")
         message(STATUS "Including ${EXPECTED_PLATFORM_FILE}")
@@ -35,5 +47,5 @@ foreach(ROOT ${FPRIME_PROJECT_ROOT};${FPRIME_LIBRARY_LOCATIONS};${FPRIME_FRAMEWO
 endforeach()
 # Ensure the last attempt for the platform file was successful, otherwise error.
 if (NOT EXISTS "${EXPECTED_PLATFORM_FILE}")
-  message(FATAL_ERROR "\n[F-PRIME] No platform config for '${CMAKE_SYSTEM_NAME}'. Please create: '${CMAKE_SYSTEM_NAME}.cmake'\n")
+  message(FATAL_ERROR "\n[F-PRIME] No platform config for '${FPRIME_PLATFORM}'. Please create: '${FPRIME_PLATFORM}.cmake'\n")
 endif()

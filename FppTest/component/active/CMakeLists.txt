@@ -54,4 +54,6 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/../types/FormalParamTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
 )
+# Needed for compiling files using Tester.hpp from outside the directory
+include_directories("${CMAKE_CURRENT_LIST_DIR}/test/ut")
 register_fprime_ut()
