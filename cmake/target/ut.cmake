@@ -107,7 +107,10 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     if (NOT BUILD_TESTING OR NOT MODULE_TYPE STREQUAL "Unit Test")
         return()
     endif()
-    message(STATUS "Adding Unit Test: ${UT_EXE_NAME}")
+    # Set some local variables
+    set(UT_EXECUTABLE_TARGET "${MODULE_NAME}")
+    set(UT_MODULE_TARGET "${FPRIME_CURRENT_MODULE}_${UT_TARGET}")
+    message(STATUS "Adding Unit Test: ${UT_EXECUTABLE_TARGET}")
     set_property(DIRECTORY APPEND PROPERTY
         TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
     )
@@ -119,23 +122,23 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/module-ut-info.txt"
         "${UT_HEADER_FILES}\n${SOURCE_FILES_FILTERED}\n${AC_GENERATED}\n${AC_FILE_DEPENDENCIES}\n${DEPENDENCIES}"
     )
-    build_setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES_FILTERED}" "${AC_GENERATED_FILTERED}" "${RESOLVED}")
+    build_setup_build_module("${UT_EXECUTABLE_TARGET}" "${SOURCE_FILES_FILTERED}" "${AC_GENERATED_FILTERED}" "${RESOLVED}")
 
-    ut_setup_unit_test_include_directories("${UT_EXE_NAME}" "${SOURCE_FILES}")
-    add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
+    ut_setup_unit_test_include_directories("${UT_EXECUTABLE_TARGET}" "${SOURCE_FILES}")
+    add_test(NAME ${UT_EXECUTABLE_TARGET} COMMAND ${UT_EXECUTABLE_TARGET})
 
     # Create a module-level target if not already done
-    if (NOT TARGET "${MODULE_NAME}_${UT_TARGET}" AND FPRIME_ENABLE_UTIL_TARGETS)
-        add_custom_target("${MODULE_NAME}_${UT_TARGET}")
+    if (NOT TARGET "${UT_MODULE_TARGET}" AND FPRIME_ENABLE_UTIL_TARGETS)
+        add_custom_target("${UT_MODULE_TARGET}")
     endif()
     # Add module level target dependencies to this UT
     if (FPRIME_ENABLE_UTIL_TARGETS)
-        add_dependencies("${MODULE_NAME}_${UT_TARGET}" "${UT_EXE_NAME}")
-        add_dependencies("${UT_TARGET}" "${UT_EXE_NAME}")
-        set_property(TARGET "${MODULE_NAME}" APPEND PROPERTY FPRIME_UTS "${UT_EXE_NAME}")
+        add_dependencies("${UT_MODULE_TARGET}" "${UT_EXECUTABLE_TARGET}")
+        add_dependencies("${UT_TARGET}" "${UT_EXECUTABLE_TARGET}")
+        set_property(TARGET "${FPRIME_CURRENT_MODULE}" APPEND PROPERTY FPRIME_UTS "${UT_MODULE_TARGET}")
     endif()
     # Link library list output on per-module basis
     if (CMAKE_DEBUG_OUTPUT)
-        introspect("${UT_EXE_NAME}")
+        introspect("${UT_MODULE_TARGET}")
     endif()
 endfunction(ut_add_module_target)

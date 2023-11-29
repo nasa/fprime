@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include "STest/Pick/Pick.hpp"
-#include "test/ut/Tester.hpp"
+#include "Tester.hpp"
 
 // ----------------------------------------------------------------------
 // Construction and destruction
