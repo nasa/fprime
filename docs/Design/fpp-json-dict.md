@@ -35,7 +35,7 @@ This document describes the format of FPP JSON dictionaries.
   - [Formal Parameters](#formal-parameters)
   - [Parameters](#parameters)
   - [Commands](#commands)
-  - [Telemtry Channels](#telemtry-channels)
+  - [Telemetry Channels](#telemetry-channels)
   - [Events](#events)
 - [Data Products](#data-products)
   - [Record](#record)
@@ -197,7 +197,7 @@ Example JSON of qualified name
 | Field | Description | Options | Required | 
 | ----- | ----------- | ------- | -------- |
 | `kind` | **String** representing the kind of type | array | true |
-| `qualifiedName` | **String** representing unique qualified name of element in FPP model | Period seperated **String** | true |
+| `qualifiedName` | **String** representing unique qualified name of element in FPP model | Period separated **String** | true |
 | `size` | Max **Number** of elements that can be in the data structure | **Number** | true |
 | `elementType` | A **JSON dictionary** representing the type of array | **JSON Dictionary** | true
 | `default` | Default array value | Value of type specified in `elementType` | false |
@@ -281,7 +281,7 @@ module M {
 | `kind` | String representing the kind of type | struct | true |
 | `qualifiedName` | String representing unique qualified name of element in FPP model | Period seperated **String** | true |
 | `members` | JSON dictionary consisting of **String** identifier (key) and [Struct Member](#struct-member) (value) | JSON dictionary | true |
-| `default` | JSON dictionary consising of **String** identifier (key) and default value (value) | JSON dictionary | false |
+| `default` | JSON dictionary consisting of **String** identifier (key) and default value (value) | JSON dictionary | false |
 
 Example FPP model with JSON representation:
 ```
@@ -549,15 +549,15 @@ module MyComponents {
 }
 ```
 
-## Telemtry Channels
+## Telemetry Channels
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `identifier` | **String** qualified name of the telemetry channel | Period separated **String** | true |
 | `description` | **String** annotation of channel | **String** | true |
-| `type` | [Type Name](#type-names) the telemtry channel | [Type Name](#type-names) | true |
+| `type` | [Type Name](#type-names) the telemetry channel | [Type Name](#type-names) | true |
 | `numericIdentifier` | **Number** representing numeric identifier | **Number** | true |
-| `telemtryUpdate` | **String** representing when the telemetry channel can update | always, on change | false |
-| `formatString` | **String** format with a single argument (the telemtry channel) | **String** | false |
+| `telemetryUpdate` | **String** representing when the telemetry channel can update | always, on change | false |
+| `formatString` | **String** format with a single argument (the telemetry channel) | **String** | false |
 | `limit` | **JSON dictionary** consisting of low and high limits | **JSON dictionary** | false |
 
 Example FPP model with JSON representation:
@@ -587,7 +587,7 @@ module MyModule {
             "size": 64
         },
         "numericIdentifier": 256,
-        "telemtryUpdate": "on change",
+        "telemetryUpdate": "on change",
         "limit": {
             "low": {
                 "yellow": -1,
@@ -609,7 +609,7 @@ module MyModule {
 | ----- | ----------- | ------- | -------- |
 | `identifier` | **String** qualified name of the event | Period separated **String** | true |
 | `description` | **String** annotation of event | **String** | true |
-| `severity` | **String** representing severit of the event | activity high, activity low, command, diagnostic, fatal, warning high, warning low | true |
+| `severity` | **String** representing severity of the event | activity high, activity low, command, diagnostic, fatal, warning high, warning low | true |
 | `formalParams` | Array of [Formal Parameters](#formal-parameters) | Array [Formal Parameters](#formal-parameters) | true |
 | `numericIdentifier` | **Number** representing the numeric identifier of the event | **Number** | true |
 | `formatString` | **String** format with event parameters as arguments | **String** | false |
@@ -812,7 +812,7 @@ module MyModule {
 | `structs` | Array of [Structs](#struct-type-definition-1) | Array of [Structs](#struct-type-definition-1) | true |
 | `commands` | Array of [Commands](#commands) | Array of [Commands](#commands) | true |
 | `events` | Array of [Events](#events) | Array of [Events](#events) | true |
-| `telemetryChannels` | Array of [Telemetry Channels](#telemtry-channels) | Array of [Telemetry Channels](#telemtry-channels) | true |
+| `telemetryChannels` | Array of [Telemetry Channels](#telemetry-channels) | Array of [Telemetry Channels](#telemetry-channels) | true |
 | `parameters` | Array of [Parameters](#parameters) | Array of [Parameters](#parameters) | true |
 
 ```json
@@ -1001,7 +1001,7 @@ module MyModule {
                 "size": 64
             },
             "numericIdentifier": 256,
-            "telemtryUpdate": "on change",
+            "telemetryUpdate": "on change",
             "limit": {
                 "low": {
                     "yellow": -1,
