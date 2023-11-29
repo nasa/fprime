@@ -378,14 +378,43 @@ the same thing. Note: make sure the directory is on the CMake include path to us
 
 **TARGET_FILE_PATH:** include path or file path file defining above functions
 
-macro(register_fprime_build_autocoder TARGET_FILE_PATH)
-    # Normal registered targets don't run in prescan
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "[autocoder] Registering custom build target autocoder: ${TARGET_FILE_PATH}")
-    endif()
-    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
-endmacro(register_fprime_build_autocoder)
+
+## Function `require_fprime_implementation`:
+
+Designates that the current module requires a separate implementation in order for it to function properly. As an
+example, Os requires an implementation of `Os_Task`. These implementations must be set via
+`choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
+
+**IMPLEMENTATION:** implementation module name that must be covered
 
 
+## Function `register_fprime_implementation`:
 
-## 
+Designates that the given implementor implements the required implementation. As an example Os_Task_Posix implements
+Os_Task. These implementations must be set via
+`choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
+
+**IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
+**IMPLEMENTOR:** implementor of IMPLEMENTATION
+
+
+## Function `choose_fprime_implementation`:
+
+Designates that the given implementor is the selected implementor for the needed implementation. Platforms must call
+this function once for each defined IMPLEMENTATION. An executable/deployment/unit-test may call this function to set
+a specific implementor for any needed implementation
+
+**IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
+**IMPLEMENTOR:** implementor of IMPLEMENTATION
+
+
+## Next Topics:
+ - Setting Options: [Options](Options.md) are used to vary a CMake build.
+ - Adding Deployments: [Deployments](deployment.md) create fprime builds.
+ - Adding Modules: [Modules](module.md) register fprime Ports, Components, etc.
+ - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
+ - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
+ - Adding Targets: [Targets](targets.md) for help defining custom build targets
+ - Implementation Packages Design: [Implementation Packages](/Design/package-implementor.md)
+
+
