@@ -231,7 +231,7 @@ module M {
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `kind` | String representing the kind of type | enum | true |
-| `qualifiedName` | String representing unique qualified name of element in FPP model | Period seperated **String** | true |
+| `qualifiedName` | String representing unique qualified name of element in FPP model | Period separated **String** | true |
 | `representationType` | The [Type Name](#type-names) of values in the enumeration | [Type Name](#type-names) | true |
 | `identifiers` | Dictionary of identifiers (keys) and numeric values (values) | **JSON Dictionary** | true |
 | `default` | String qualified name of the enumeration value | **String** qualified name | false |
@@ -279,7 +279,7 @@ module M {
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `kind` | String representing the kind of type | struct | true |
-| `qualifiedName` | String representing unique qualified name of element in FPP model | Period seperated **String** | true |
+| `qualifiedName` | String representing unique qualified name of element in FPP model | Period separated **String** | true |
 | `members` | JSON dictionary consisting of **String** identifier (key) and [Struct Member](#struct-member) (value) | JSON dictionary | true |
 | `default` | JSON dictionary consisting of **String** identifier (key) and default value (value) | JSON dictionary | false |
 
