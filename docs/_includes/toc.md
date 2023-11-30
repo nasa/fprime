@@ -98,4 +98,5 @@
     <li><a href="/fprime/Design/numerical-types.html">Numerical Types Design</a></li>
     <li><a href="/fprime/Design/communication-adapter-interface.html">Communication Adapter Interface</a></li>
     <li><a href="/fprime/Design/package-implementations.html">Package Implementations</a></li>
+    <li><a href="/fprime/Design/fpp-json-dict.html">FPP JSON Dictionary Specification</a></li>
   </ul>
