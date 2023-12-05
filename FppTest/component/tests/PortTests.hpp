@@ -12,7 +12,7 @@
 
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 #include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
-#include "test/ut/Tester.hpp"
+#include "Tester.hpp"
 
 // ----------------------------------------------------------------------
 // Port test declarations

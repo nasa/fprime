@@ -9,6 +9,7 @@
 ####
 include_guard()
 include(target/target)
+include(implementation)
 set(EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
 
 ####
@@ -27,11 +28,17 @@ function(generate_base_module_properties TARGET_TYPE TARGET_NAME SOURCE_FILES DE
     if (TARGET_TYPE STREQUAL "Executable" OR TARGET_TYPE STREQUAL "Deployment")
         add_executable("${TARGET_NAME}" "${EMPTY}")
     elseif(TARGET_TYPE STREQUAL "Unit Test")
-        add_executable("${UT_EXE_NAME}" "${EMPTY}")
+        add_executable("${TARGET_NAME}" "${EMPTY}")
     elseif(TARGET_TYPE STREQUAL "Library")
         add_library("${TARGET_NAME}" "${EMPTY}")
     else()
-        message(FATAL_ERROR "Module ${TARGET_NAME} cannot register object of type ${TARGET_TYPE}")
+        message(FATAL_ERROR "Module ${FPRIME_CURRENT_MODULE} cannot register object of type ${TARGET_TYPE}")
+    endif()
+
+    # Handle updates when the types have diverged
+    if (NOT TARGET_NAME STREQUAL "${FPRIME_CURRENT_MODULE}")
+        # Update implementation choices
+        remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${TARGET_NAME}")
     endif()
 
     # Modules properties for posterity
@@ -96,7 +103,7 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_FILE UT_DEPENDENCIES)
     # Only for BUILD_TESTING
     if (BUILD_TESTING)
         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-        generate_base_module_properties("Unit Test" "${MODULE_NAME}" "${UT_SOURCES_FILE}" "${UT_DEPENDENCIES}")
+        generate_base_module_properties("Unit Test" "${UT_EXE_NAME}" "${UT_SOURCES_FILE}" "${UT_DEPENDENCIES}")
     endif()
 endfunction(generate_ut)
 

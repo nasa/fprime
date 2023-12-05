@@ -8,7 +8,7 @@ on:
   push:
     branches: [ master, devel ]
   pull_request:
-    branches: [ master, devel, release/v3.0.0 ]
+    branches: [ master, devel ]
     paths-ignore:
       - 'docs/**'
       - '**.md'

@@ -7,6 +7,7 @@
 include_guard()
 include(autocoder/autocoder)
 include(utilities)
+include(implementation)
 
 # Flags used when BUILD_TESTING is enabled
 set(FPRIME_TESTING_REQUIRED_COMPILE_FLAGS)
@@ -62,7 +63,14 @@ function(build_setup_build_module MODULE SOURCES GENERATED DEPENDENCIES)
         endforeach()
     endif()
     # Includes the source, so that the Ac files can include source headers
-    target_include_directories("${MODULE}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+    #target_include_directories("${MODULE}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+
+    # Handle executable items' need for determined package implementation choices
+    is_target_library(IS_LIB "${MODULE}")
+    if (NOT IS_LIB)
+        setup_executable_implementations("${MODULE}")
+    endif ()
 
     # For every detected dependency, add them to the supplied module. This enforces build order.
     # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
@@ -92,6 +100,11 @@ function(build_setup_build_module MODULE SOURCES GENERATED DEPENDENCIES)
         target_link_libraries("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_LINK_FLAGS})
     endif()
 endfunction()
+
+
+
+
+
 
 ####
 # Function `add_deployment_target`:
