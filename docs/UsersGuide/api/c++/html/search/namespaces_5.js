@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['types_4058',['Types',['../namespace_types.html',1,'']]]
+  ['types_4060',['Types',['../namespace_types.html',1,'']]]
 ];
