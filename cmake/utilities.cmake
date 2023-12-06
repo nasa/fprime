@@ -626,3 +626,21 @@ function (filter_lists EXCLUDE_LIST)
         set(${SOURCE_LIST}_FILTERED "${${SOURCE_LIST}_FILTERED}" PARENT_SCOPE)
     endforeach()
 endfunction(filter_lists)
+
+####
+# Function `get_fprime_library_option_string`:
+#
+# Returns a standard library option string from a name. Library option strings are derived from the directory and
+# converted to a set of valid characters: [A-Z0-9_]. Alphabetic characters are made uppercase, numeric characters are
+# maintained, and other characters are replaced with _.
+#
+# If multiple directories convert to the same name, these are effectively merged with respect to library options.
+#
+# OUTPUT_VAR: output variable to be set in parent scope
+# LIBRARY_NAME: library name to convert to option
+####
+function(get_fprime_library_option_string OUTPUT_VAR LIBRARY_NAME)
+    string(TOUPPER "${LIBRARY_NAME}" LIBRARY_NAME_UPPER)
+    string(REGEX REPLACE "[^A-Z0-9_]" "_" LIBRARY_OPTION "${LIBRARY_NAME_UPPER}")
+    set("${OUTPUT_VAR}" "${LIBRARY_OPTION}" PARENT_SCOPE)
+endfunction(get_fprime_library_option_string)
