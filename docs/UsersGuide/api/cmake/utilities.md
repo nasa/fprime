@@ -250,3 +250,15 @@ PARENT_SCOPE with the results
 **ARGN:** list of list names in parent scope to filter
 
 
+## Function `get_fprime_library_option_string`:
+
+Returns a standard library option string from a name. Library option strings are derived from the directory and
+converted to a set of valid characters: [A-Z0-9_]. Alphabetic characters are made uppercase, numeric characters are
+maintained, and other characters are replaced with _.
+
+If multiple directories convert to the same name, these are effectively merged with respect to library options.
+
+OUTPUT_VAR: output variable to be set in parent scope
+LIBRARY_NAME: library name to convert to option
+
+
