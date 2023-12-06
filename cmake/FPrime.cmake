@@ -161,7 +161,7 @@ function(fprime_setup_included_code)
     # For BUILD_TESTING builds then set up libraries that support testing
     if (BUILD_TESTING AND NOT DEFINED FPRIME_SUB_BUILD_TARGETS)
         if (NOT EXISTS "${FPRIME_FRAMEWORK_PATH}/googletest/CMakeLists.txt")
-            message(FATAL_ERROR "googletest submodule not initialized or corrupted. Please run `git submodule update --init`.")
+            message(FATAL_ERROR "googletest submodule not initialized or corrupted. Please run `git submodule update --init --recursive`.")
         endif()
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/googletest/" "${CMAKE_BINARY_DIR}/F-Prime/googletest")
     endif()
