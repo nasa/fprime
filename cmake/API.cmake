@@ -98,8 +98,9 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     set(FPRIME_CURRENT_MODULE "${MODULE_NAME}")
 
     # Unset all variables that carry special meaning as it is dangerous to pass them through
-    init_variables(SOURCE_FILES MOD_DEPS UT_SOURCE_FILES UT_MOD_DEPS EXECUTABLE_NAME)
-
+    foreach (VARIABLE IN ITEMS SOURCE_FILES MOD_DEPS UT_SOURCE_FILES UT_MOD_DEPS EXECUTABLE_NAME)
+        set(${VARIABLE} PARENT_SCOPE)
+    endforeach()
 
     # Check if the binary and source directory are in agreement. If they agree, then normally add
     # the directory, as no adjustments need be made.
