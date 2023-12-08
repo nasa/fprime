@@ -4,10 +4,10 @@ name: "Tutorial: HelloWorld"
 
 on:
   push:
-    branches: [ devel, release/* ]
+    branches: [ devel, release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ devel, release/* ]
+    branches: [ devel, release/** ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
