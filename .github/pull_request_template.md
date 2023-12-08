@@ -1,7 +1,7 @@
 | | |
 |:---|:---|
 |**_Related Issue(s)_**|  |
-|**_Has Unit Tests (y/n)_**|  ||
+|**_Has Unit Tests (y/n)_**|  |
 |**_Documentation Included (y/n)_**|  |
 
 ---

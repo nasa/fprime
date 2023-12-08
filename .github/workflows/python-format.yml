@@ -2,10 +2,10 @@ name: Format Python
 
 on:
   push:
-    branches: [master, devel]
+    branches: [ devel, release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [master, devel]
+    branches: [ devel, release/** ]
 
 jobs:
   format:
