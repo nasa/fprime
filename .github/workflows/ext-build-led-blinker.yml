@@ -4,9 +4,10 @@ name: "Tutorial: LedBlinker"
 
 on:
   push:
-    branches: [ master, devel ]
+    branches: [ devel, release/** ]
   pull_request:
-    branches: [ master, devel ]
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
