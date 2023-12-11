@@ -93,8 +93,8 @@ endif()
 ####
 # `FPRIME_ENABLE_UTIL_TARGETS`:
 #
-# Enables the targets required to run using `fprime-util`.  These include: check, check-leak, coverage, impl, and
-# testimpl targets. This switch defaults to "ON" providing those targets, but may be set to off when running within an
+# Enables the targets required to run using `fprime-util`.  These include: check and refresh_cache.
+# This switch defaults to "ON" providing those targets, but may be set to off when running within an
 # IDE where limiting the number of targets is desirable. Note: unit test targets are still only generated when running
 # with -DBUILD_TESTING=ON.
 #
