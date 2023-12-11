@@ -33,6 +33,31 @@ namespace Svc {
     class RateGroupDriver : public RateGroupDriverComponentBase {
 
         public:
+            //! Size of the divider table, provided as a constants to users passing the table in
+            static const NATIVE_UINT_TYPE DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
+
+            //! \class Divider
+            //! \brief Struct describing a divider
+            struct Divider{
+                //! Initializes divisor and offset to 0 (unused)
+                Divider() : divisor(0), offset(0)
+                {}
+                //! Initializes divisor and offset to passed-in pair 
+                Divider(NATIVE_INT_TYPE divisorIn, NATIVE_INT_TYPE offsetIn) :
+                    divisor(divisorIn), offset(offsetIn)
+                {}
+                //! Divisor
+                NATIVE_INT_TYPE divisor;
+                //! Offset
+                NATIVE_INT_TYPE offset;
+            };
+
+            //! \class DividerSet
+            //! \brief Struct containing an array of dividers
+            struct DividerSet {
+                //! Dividers
+                Divider dividers[Svc::RateGroupDriver::DIVIDER_SIZE];
+            };
 
             //!  \brief RateGroupDriver constructor
             //!
@@ -43,17 +68,10 @@ namespace Svc {
             //!
             RateGroupDriver(const char* compName);
 
-            //!  \brief RateGroupDriver initialization function
-            //!
-            //!  The init() function initializes the autocoded base class
-
-            void init(NATIVE_INT_TYPE instanceId = 0);
-
             //!  \brief RateGroupDriver configuration function
-            //!  \param dividers array of integers used to divide down input tick
-            //!  \param numDividers size of dividers array
+            //!  \param dividersSet set of dividers used to divide down input tick
 
-            void configure(NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
+            void configure(const DividerSet& dividersSet);
 
             //!  \brief RateGroupDriverImpl destructor
 
@@ -66,18 +84,16 @@ namespace Svc {
             void CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart);
 
             //! divider array
-            NATIVE_INT_TYPE m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
-
-            //! size of divider array
-            NATIVE_INT_TYPE m_numDividers;
+            Divider m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
 
             //! tick counter
             NATIVE_INT_TYPE m_ticks;
+
             //! rollover counter
             NATIVE_INT_TYPE m_rollover;
-        public:
-            //! Size of the divider table, provided as a constants to users passing the table in
-            static const NATIVE_UINT_TYPE DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
+
+            //! has the configure method been called
+            bool m_configured;
     };
 
 }

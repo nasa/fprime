@@ -69,6 +69,11 @@ to the deployment `CMakeLists.txt`.
 The CMake automatically documented API describes the above steps with all details.  The index for this documentation can
 be found here: [CMake API](./cmake-api.md).
 
+## Build Options
+
+Options describe the runtime options that the CMake system takes. Users wanting to alter the build should look here.
+The list of all available options can be found here: [CMake Options](../api/cmake/options.md)
+
 ## Toolchains and Platforms
 
 To integrate with new hardware platforms users need to build or acquire a CMake toolchain file, and add a platform
@@ -77,9 +82,9 @@ support file to the F´ CMake system. These steps can be reviewed here:
 [CMake Toolchains](./cmake-toolchains.md): F´ CMake toolchain file usage
 [F´ Platforms](./cmake-platforms.md): F´ CMake platform files
 
-## Advance CMake Usage
+## Advanced CMake Usage
 
-Most users don't need the CMAke advanced usage, as they use `fprime-util`.  However, to use CMake without `fprime-util`
+Most users don't need the CMake advanced usage, as they use `fprime-util`.  However, to use CMake without `fprime-util`
 please see: [CMake Advanced Usage](./cmake-advanced.md)
 
 Should a user want to run the unit tests that check CMake, see [CMake UTs](./cmake-uts.md).

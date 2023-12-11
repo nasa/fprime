@@ -164,7 +164,7 @@ the next. Parallelism has been virtualized and the processor is shareable withou
 nor requiring processor instruction set support to switch threading contexts.
 
 Inside F´ a parallel implementation of the active component task was implemented such that it returns rather than blocks
-on receiving messages. When `BAREMERAL_SCHEDULER` is enabled in the F´ configuration, this alternate implementation is
+on receiving messages. When `BAREMETAL_SCHEDULER` is enabled in the F´ configuration, this alternate implementation is
 used. Under `Os/Baremetal`, an implementation of a sequential scheduler exists.  This scheduler snoops on task
 registration and will call all thread executions in a loop driven from the main program loop similar to below.
 

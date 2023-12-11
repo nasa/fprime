@@ -266,7 +266,7 @@ endfunction()
 function(is_target_library OUTPUT TEST_TARGET)
     set("${OUTPUT}" FALSE PARENT_SCOPE)
     if (TARGET "${TEST_TARGET}")
-        get_target_property(TARGET_TYPE "${DEPENDENCY}" TYPE)
+        get_target_property(TARGET_TYPE "${TEST_TARGET}" TYPE)
         ends_with(IS_LIBRARY "${TARGET_TYPE}" "_LIBRARY")
         set("${OUTPUT}" "${IS_LIBRARY}" PARENT_SCOPE)
     endif()
@@ -562,18 +562,85 @@ endfunction(introspect)
 # - **ERROR_MESSAGE**: message to output should an error occurs
 ####
 function(execute_process_or_fail ERROR_MESSAGE)
+    # Quiet standard output unless we are doing verbose output generate
+    set(OUTPUT_ARGS OUTPUT_QUIET)
     # Print the invocation if debug output is set
     if (CMAKE_DEBUG_OUTPUT)
-        string(REPLACE ";" " " COMMAND_AS_STRING "${ARGN}")
-        message(STATUS "[CLI Invocation] ${COMMAND_AS_STRING}")
+        set(OUTPUT_ARGS)
+        set(COMMAND_AS_STRING "")
+        foreach(ARG IN LISTS ARGN)
+            set(COMMAND_AS_STRING "${COMMAND_AS_STRING}\"${ARG}\" ")
+        endforeach()
+        
+        #string(REPLACE ";" "\" \"" COMMAND_AS_STRING "${ARGN}")
+        message(STATUS "[cli] ${COMMAND_AS_STRING}")
     endif()
     execute_process(
-            COMMAND ${ARGN}
-            RESULT_VARIABLE RETURN_CODE
-            ERROR_VARIABLE STANDARD_ERROR
-            ERROR_STRIP_TRAILING_WHITESPACE
+        COMMAND ${ARGN}
+        RESULT_VARIABLE RETURN_CODE
+        ERROR_VARIABLE STANDARD_ERROR
+        ERROR_STRIP_TRAILING_WHITESPACE
+        ${OUTPUT_ARGS}
     )
     if (NOT RETURN_CODE EQUAL 0)
         message(FATAL_ERROR "${ERROR_MESSAGE}:\n${STANDARD_ERROR}")
     endif()
 endfunction()
+
+####
+# Function `append_list_property`:
+#
+# Appends the NEW_ITEM to a property. ARGN is a set of arguments that are passed into the get and set property calls.
+# This function calls get_property with ARGN appends NEW_ITEM to the result and then turns around and calls set_property
+# with the new list. Callers **should not** supply the variable name argument to get_property.
+#
+# Duplicate entries are removed.
+#
+# Args:
+# - `NEW_ITEM`: item to append to the property
+# - `ARGN`: list of arguments forwarded to get and set property calls.
+####
+function(append_list_property NEW_ITEM)
+    get_property(LOCAL_COPY ${ARGN})
+    list(APPEND LOCAL_COPY "${NEW_ITEM}")
+    list(REMOVE_DUPLICATES LOCAL_COPY)
+    set_property(${ARGN} "${LOCAL_COPY}")
+endfunction()
+
+####
+# Function `filter_lists`:
+#
+# Filters lists set in ARGN to to ensure that they are not in the exclude list. Sets the <LIST>_FILTERED variable in
+# PARENT_SCOPE with the results
+# **EXCLUDE_LIST**: list of items to filter-out of ARGN lists
+# **ARGN:** list of list names in parent scope to filter
+####
+function (filter_lists EXCLUDE_LIST)
+    foreach(SOURCE_LIST IN LISTS ARGN)
+        set(${SOURCE_LIST}_FILTERED "")
+        foreach(SOURCE IN LISTS ${SOURCE_LIST})
+            if (NOT SOURCE IN_LIST EXCLUDE_LIST)
+                list(APPEND ${SOURCE_LIST}_FILTERED "${SOURCE}")
+            endif()
+        endforeach()
+        set(${SOURCE_LIST}_FILTERED "${${SOURCE_LIST}_FILTERED}" PARENT_SCOPE)
+    endforeach()
+endfunction(filter_lists)
+
+####
+# Function `get_fprime_library_option_string`:
+#
+# Returns a standard library option string from a name. Library option strings are derived from the directory and
+# converted to a set of valid characters: [A-Z0-9_]. Alphabetic characters are made uppercase, numeric characters are
+# maintained, and other characters are replaced with _.
+#
+# If multiple directories convert to the same name, these are effectively merged with respect to library options.
+#
+# OUTPUT_VAR: output variable to be set in parent scope
+# LIBRARY_NAME: library name to convert to option
+####
+function(get_fprime_library_option_string OUTPUT_VAR LIBRARY_NAME)
+    string(TOUPPER "${LIBRARY_NAME}" LIBRARY_NAME_UPPER)
+    string(REGEX REPLACE "[^A-Z0-9_]" "_" LIBRARY_OPTION "${LIBRARY_NAME_UPPER}")
+    set("${OUTPUT_VAR}" "${LIBRARY_OPTION}" PARENT_SCOPE)
+endfunction(get_fprime_library_option_string)

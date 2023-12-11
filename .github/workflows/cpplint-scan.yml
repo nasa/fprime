@@ -2,10 +2,10 @@ name: "Cpplint Scan"
 
 on:
   push:
-    branches: [master, devel]
+    branches: [ devel, release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [master, devel]
+    branches: [ devel, release/** ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
@@ -23,9 +23,10 @@ jobs:
 
     steps:
       - name: "Checkout F´ Repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: true
       - uses: ./.github/actions/setup
 
       - name: Install cpplint

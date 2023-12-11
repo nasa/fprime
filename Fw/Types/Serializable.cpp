@@ -478,7 +478,13 @@ namespace Fw {
     }
 
     SerializeStatus SerializeBufferBase::deserialize(void*& val) {
-        return this->deserialize(reinterpret_cast<POINTER_CAST&>(val));
+        // Deserialize as pointer cast, then convert to void*
+        PlatformPointerCastType pointerCastVal = 0;
+        const SerializeStatus stat = this->deserialize(pointerCastVal);
+        if (stat == FW_SERIALIZE_OK) {
+            val = reinterpret_cast<void*>(pointerCastVal);
+        }
+        return stat;
     }
 
     SerializeStatus SerializeBufferBase::deserialize(F32 &val) {

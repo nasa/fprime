@@ -5,6 +5,7 @@
 # cmake. These items are strictly required and will fail if not found, which will prevent confusing errors further
 # within the build process.
 ####
+include_guard()
 include(autocoder/fpp)
 
 find_program(PYTHON NAMES python3 python)

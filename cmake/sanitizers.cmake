@@ -13,7 +13,7 @@
 # If a relative path is specified, this will be relative to the component's folder **in the build cache** 
 # if using fprime-util check, OR relative to the current directory if running a single executable.
 ####
-
+include_guard()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
     set(SANITIZERS)
 

@@ -11,6 +11,8 @@
 # - Register an fprime build target/build stage to allow custom build steps. (Experimental)
 #
 ####
+include_guard()
+include(utilities)
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
@@ -29,9 +31,9 @@ set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST
 #####
 macro(restrict_platforms)
     set(__CHECKER ${ARGN})
-    if (NOT CMAKE_SYSTEM_NAME IN_LIST __CHECKER)
+    if (NOT FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER AND NOT FPRIME_PLATFORM IN_LIST __CHECKER)
         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-        message(STATUS "Platform ${CMAKE_SYSTEM_NAME} not supported for module ${MODULE_NAME}")
+        message(STATUS "Neither toolchain ${FPRIME_TOOLCHAIN_NAME} nor platform ${FPRIME_PLATFORM} supported for module ${MODULE_NAME}")
         return()
     endif()
 endmacro()
@@ -94,6 +96,11 @@ endmacro()
 function(add_fprime_subdirectory FP_SOURCE_DIR)
     get_module_name("${FP_SOURCE_DIR}")
     set(FPRIME_CURRENT_MODULE "${MODULE_NAME}")
+
+    # Unset all variables that carry special meaning as it is dangerous to pass them through
+    foreach (VARIABLE IN ITEMS SOURCE_FILES MOD_DEPS UT_SOURCE_FILES UT_MOD_DEPS EXECUTABLE_NAME)
+        set(${VARIABLE} PARENT_SCOPE)
+    endforeach()
 
     # Check if the binary and source directory are in agreement. If they agree, then normally add
     # the directory, as no adjustments need be made.
@@ -485,11 +492,10 @@ endfunction(register_fprime_ut)
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
 ###
 macro(register_fprime_target TARGET_FILE_PATH)
-    # Normal registered targets don't run in prescan
-    if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
-        setup_global_target("${TARGET_FILE_PATH}")
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
     endif()
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
 endmacro(register_fprime_target)
 
 ####
@@ -502,9 +508,11 @@ endmacro(register_fprime_target)
 ###
 macro(register_fprime_ut_target TARGET_FILE_PATH)
     # UT targets only allowed when testing
-    if (BUILD_TESTING AND NOT DEFINED FPRIME_PRESCAN)
+    if (BUILD_TESTING)
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
+        endif()
         register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
-        setup_global_target("${TARGET_FILE_PATH}")
     endif()
 endmacro(register_fprime_ut_target)
 
@@ -514,15 +522,17 @@ endmacro(register_fprime_ut_target)
 # Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check.
 ####
 macro(register_fprime_list_helper TARGET_FILE_PATH TARGET_LIST)
-    include("${TARGET_FILE_PATH}")
-    # Prevent out-of-order setups
-    get_property(MODULE_DETECTION_STARTED GLOBAL PROPERTY MODULE_DETECTION SET)
-    if (MODULE_DETECTION_STARTED)
-        message(FATAL_ERROR "Cannot register fprime target after including subdirectories or FPrime-Code.cmake'")
-    endif()
-    get_property(TARGETS GLOBAL PROPERTY "${TARGET_LIST}")
-    if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
-        set_property(GLOBAL APPEND PROPERTY "${TARGET_LIST}" "${TARGET_FILE_PATH}")
+    if (NOT DEFINED FPRIME_SUB_BUILD_TARGETS OR "${TARGET_FILE_PATH}" IN_LIST FPRIME_SUB_BUILD_TARGETS)
+        include("${TARGET_FILE_PATH}")
+        # Prevent out-of-order setups
+        get_property(MODULE_DETECTION_STARTED GLOBAL PROPERTY MODULE_DETECTION SET)
+        if (MODULE_DETECTION_STARTED)
+            message(FATAL_ERROR "Cannot register fprime target after including subdirectories or FPrime-Code.cmake'")
+        endif()
+        get_property(TARGETS GLOBAL PROPERTY "${TARGET_LIST}")
+        if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
+            set_property(GLOBAL APPEND PROPERTY "${TARGET_LIST}" "${TARGET_FILE_PATH}")
+        endif()
     endif()
 endmacro(register_fprime_list_helper)
 
@@ -541,21 +551,81 @@ endmacro(register_fprime_list_helper)
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form.
 #
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
-###
+####
 macro(register_fprime_build_autocoder TARGET_FILE_PATH)
     # Normal registered targets don't run in prescan
-    message(STATUS "Registering custom autocoder: ${TARGET_FILE_PATH}")
-    if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[autocoder] Registering custom build target autocoder: ${TARGET_FILE_PATH}")
     endif()
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
 endmacro(register_fprime_build_autocoder)
+
+
+####
+# Function `require_fprime_implementation`:
+#
+# Designates that the current module requires a separate implementation in order for it to function properly. As an
+# example, Os requires an implementation of `Os_Task`. These implementations must be set via
+# `choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
+#
+# **IMPLEMENTATION:** implementation module name that must be covered
+####
+function(require_fprime_implementation IMPLEMENTATION)
+    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
+    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
+    append_list_property("${FPRIME_CURRENT_MODULE}" GLOBAL PROPERTY "${IMPLEMENTATION}_REQUESTERS")
+endfunction()
+
+####
+# Function `register_fprime_implementation`:
+#
+# Designates that the given implementor implements the required implementation. As an example Os_Task_Posix implements
+# Os_Task. These implementations must be set via
+## `choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
+#
+# **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
+# **IMPLEMENTOR:** implementor of IMPLEMENTATION
+####
+function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
+    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
+    resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
+    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
+endfunction()
+####
+# Function `choose_fprime_implementation`:
+#
+# Designates that the given implementor is the selected implementor for the needed implementation. Platforms must call
+# this function once for each defined IMPLEMENTATION. An executable/deployment/unit-test may call this function to set
+# a specific implementor for any needed implementation
+#
+# **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
+# **IMPLEMENTOR:** implementor of IMPLEMENTATION
+####
+function(choose_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
+    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
+    resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
+    # Check for passed in module name
+    if (ARGC EQUAL 3)
+        set(ACTIVE_MODULE "${ARGV2}")
+    elseif (FPRIME_CURRENT_MODULE)
+        set(ACTIVE_MODULE "${FPRIME_CURRENT_MODULE}")
+    elseif(FPRIME_PLATFORM)
+        set(ACTIVE_MODULE "${FPRIME_PLATFORM}")
+    else()
+        message(FATAL_ERROR "Cannot call 'choose_fprime_implementation' outside an fprime module or platform CMake file")
+    endif()
+    set_property(GLOBAL PROPERTY "${IMPLEMENTATION}_${ACTIVE_MODULE}" "${IMPLEMENTOR}")
+    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
+    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
+endfunction()
 
 #### Documentation links
 # Next Topics:
 #  - Setting Options: [Options](Options.md) are used to vary a CMake build.
-#  - Adding Deployment: [Deployments](deployment.md) create fprime builds.
-#  - Adding Module: [Modules](module.md) register fprime Ports, Components, etc.
+#  - Adding Deployments: [Deployments](deployment.md) create fprime builds.
+#  - Adding Modules: [Modules](module.md) register fprime Ports, Components, etc.
 #  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
 #  - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
 #  - Adding Targets: [Targets](targets.md) for help defining custom build targets
+#  - Implementation Packages Design: [Implementation Packages](/Design/package-implementor.md)
 ####

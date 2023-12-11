@@ -56,6 +56,17 @@ class SocketReadTask {
                          const NATIVE_UINT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT);
 
     /**
+     * \brief startup the socket for communications
+     *
+     * Status of the socket handler.
+     *
+     * Note: this just delegates to the handler
+     *
+     * \return status of open, SOCK_SUCCESS for success, something else on error
+     */
+    SocketIpStatus startup();
+
+    /**
      * \brief open the socket for communications
      *
      * Typically the socket read task will open the connection and keep it open. However, in cases where the read task
@@ -70,12 +81,24 @@ class SocketReadTask {
     /**
      * \brief close the socket communications
      *
-     * Typically stopping the socket read task will close the connection. However, in cases where the read task
-     * will not be started, this function may be used to close the socket.
+     * Typically stopping the socket read task will shutdown the connection. However, in cases where the read task
+     * will not be started, this function may be used to close the socket. This calls a full `close` on the client
+     * socket.
      *
      * Note: this just delegates to the handler
      */
     void close();
+
+    /**
+     * \brief shutdown the socket communications
+     *
+     * Typically stopping the socket read task will shutdown the connection. However, in cases where the read task
+     * will not be started, this function may be used to close the socket. This calls a full `shutdown` on the client
+     * socket.
+     *
+     * Note: this just delegates to the handler
+     */
+    void shutdown();
 
     /**
      * \brief stop the socket read task and close the associated socket.

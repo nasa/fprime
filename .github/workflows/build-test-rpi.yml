@@ -6,9 +6,10 @@ name: RPI-CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master, devel ]
+    branches: [ devel, release/** ]
   pull_request:
-    branches: [ master, devel, release/v3.0.0 ]
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
@@ -23,9 +24,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        submodules: true
     - uses: ./.github/actions/setup
     - name: Setup RPI Toolchain
       uses: fprime-community/setup-rpi-sysroot@main

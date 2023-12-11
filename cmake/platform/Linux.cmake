@@ -1,7 +1,7 @@
 ####
 # Linux.cmake:
 #
-# Linux platform file for standard linux targets. Merely defers to [./Linux-common.cmake](Linux-common.cmake).
+# Linux platform file for standard linux targets.
 ####
 # Set platform default for baremetal scheduler drivers
 if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)

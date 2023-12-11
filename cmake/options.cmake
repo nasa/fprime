@@ -16,6 +16,7 @@
 # the `-D` option there.
 #
 ####
+include_guard()
 # Remap changed settings
 if (DEFINED FPRIME_INSTALL_DEST)
     set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
@@ -346,4 +347,13 @@ set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration h
 # Override the AC constants file when specified
 if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
     set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_CONFIG_DIR}/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
+endif()
+
+# Set FPRIME_TOOLCHAIN_NAME when not set by toolchain directly
+if (NOT DEFINED FPRIME_TOOLCHAIN_NAME)
+    if (DEFINED CMAKE_TOOLCHAIN_FILE)
+        get_filename_component(FPRIME_TOOLCHAIN_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME_WE CACHE)
+    else()
+        set(FPRIME_TOOLCHAIN_NAME "native" CACHE INTERNAL "Name of toolchain used" FORCE)
+    endif()
 endif()

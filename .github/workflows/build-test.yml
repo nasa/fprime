@@ -6,9 +6,10 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master, devel ]
+    branches: [ devel, release/** ]
   pull_request:
-    branches: [ master, devel, release/v3.0.0 ]
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
@@ -21,9 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        submodules: true
     - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Framework.bash
@@ -40,9 +42,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        submodules: true
     - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Ref.bash
@@ -59,9 +62,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        submodules: true
     - uses: ./.github/actions/setup
     - name: Setup Valgrind
       run: |
@@ -82,9 +86,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        submodules: true
     - uses: ./.github/actions/setup
     - name: Setup Dependencies
       run: |
@@ -104,9 +109,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        submodules: true
     - uses: ./.github/actions/setup
     - name: CMake Tests
       working-directory: ./cmake/test

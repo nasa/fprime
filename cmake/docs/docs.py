@@ -69,11 +69,9 @@ def process_file(file_name, outdir):
     )
     if out_fn == file_name:
         raise AssertionError("File collision imminent")
-    relative_fn = out_fn
     out_fn = os.path.join(outdir, out_fn)
     os.makedirs(os.path.dirname(out_fn), exist_ok=True)
     # Open both files, and loop over all the lines reading and writing each
-    print("[{}]({})".format(os.path.basename(out_fn).replace(".md", ""), relative_fn))
     with open(file_name, "r") as in_file_handle:
         with open(out_fn, "w") as out_file_handle:
             state = DocState.SEARCH

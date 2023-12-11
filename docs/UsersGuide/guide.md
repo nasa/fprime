@@ -74,17 +74,18 @@ This section is divided into three sub-sections:
     - [Asserts in F´](./dev/assert.md)
     - [GDS Dashboard Reference](./dev/gds-dashboard-reference.md)
     - [Integration Test API](./dev/testAPI/user_guide.md)
-    - [v3 Migration Guide](./user/v3-migration-guide.md)
+    - [CMake User Guide](./cmake/cmake-intro.md)
 - Advanced F´ Topics:
     - [F´ Python Guidelines](./dev/py-dev.md)
     - [Porting F´ To a New Platform](./dev/porting-guide.md)
     - [F´ On Baremetal and Multi-Core Systems](./dev/baremetal-multicore.md)
     - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
     - [OS Layer Description](./dev/os-docs.md)
+    - [v3 Migration Guide](./user/v3-migration-guide.md)
 - API Documentation
     - [GDS CLI Design](./dev/gds-cli-dev.md)
     - [C++ Documentation](./api/c++/html/index.html)
-    - [CMake User API](./api/cmake/API.html)
+    - [CMake User API](./cmake/cmake-api.md)
 
 
 

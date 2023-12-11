@@ -8,9 +8,9 @@ cd "$GITHUB_WORKSPACE"
 REMOTE="${1:-origin}"
 git config --local user.email "nasa-fprime[bot]@users.noreply.github.com"
 git config --local user.name "nasa-fprime[bot]"
-git fetch "${REMOTE}" release/documentation
+git fetch "${REMOTE}" docs/auto-documentation
 git fetch "${REMOTE}" devel
-git checkout release/documentation
+git checkout docs/auto-documentation
 GIT_EDITOR=true git merge "${REMOTE}"/devel
 ${GITHUB_WORKSPACE}/docs/doxygen/generate_docs.bash
 git add -Af "${GITHUB_WORKSPACE}/docs"

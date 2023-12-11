@@ -1,108 +1,69 @@
 ####
 # fpp_locs.cmake:
 #
-# fpp_locs is a special target used to build fpp_locs file output. It is run in a special build of the fprime system
-# specifically focused on generating the locator file for fpp.  It registers normal targets for building these items,
-# but also comes with a function to run the separate build of fprime.
-####
-
-# Static and configuration FPP files
-set(FPP_CONFIGS
-    "${FPRIME_FRAMEWORK_PATH}/Fpp/ToCpp.fpp"
-)
-set(FPP_LOCATE_DEFS_HELPER "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/fpp-wrapper/fpp-redirect-helper")
-set(FPP_DEPEND_PARALLELIZE "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/fpp-wrapper/fpp-depend-parallelize.py")
-set(FPP_LOCS_FILE "${CMAKE_BINARY_DIR}/locs.fpp")
-
-####
-# Function `determine_global_fpps`:
+# fpp_locs is a special target used to build fpp_locs file output. It is run as part of the sub-build that generates
+# cached-information about the build itself. This file defines the following target functions:
 #
-# Processes the global set of modules and determines all FPP files.
-# OUTPUT_VAR: variable storing the output of this call
-# MODULES: global set of modules passed in
+# fpp_locs_add_global_target: global registration target setting up the fpp-locs target run
+# fpp_locs_add_deployment_target: unused, required for the API
+# fpp_locs_add_module_target: used to identify all source files to pass to location global target
 ####
-function(determine_global_fpp_inputs MODULES)
-    include(autocoder/fpp)
-    # Loop through the modules
-    foreach (MODULE IN LISTS MODULES)
-        get_target_property(SOURCES "${MODULE}" FP_SRC)
-        # Check each source for FPP support
-        foreach(SOURCE IN LISTS SOURCES)
-            is_supported("${SOURCE}")
-            if (IS_SUPPORTED)
-                set_property(GLOBAL APPEND PROPERTY ALL_FPPS "${SOURCE}")
-                set_property(TARGET "${MODULE}" APPEND PROPERTY FPP_INPUTS "${SOURCE}")
-            endif()
-        endforeach()
-    endforeach()
-endfunction(determine_global_fpp_inputs)
+include_guard()
+set(FPP_LOCATE_DEFS_HELPER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
 
 ####
-# Function `generate_locations`:
+# Function `fpp_locs_add_global_target`:
 #
-# Generates the FPP locations index. This is needed for all subsequent steps of FPP.
+# Sets up the `fpp_locs` target used to generate the FPP locs file. This is build and then updated in the outer build
+# cache.
+# - **TARGET:** name of the target to setup (fpp_locs)
 ####
-function(generate_locations)
-    if (NOT FPP_LOCATE_DEFS)
-        message(FATAL_ERROR "Unable to determine fpp-locate-defs executable")
-    endif()
-    message(STATUS "Generating FPP location index")
-    get_property(FPP_FILES GLOBAL PROPERTY FP_FPP_LIST)
-    list(REMOVE_DUPLICATES FPP_FILES)
-    execute_process(COMMAND "${FPP_LOCATE_DEFS_HELPER}" "${FPP_LOCS_FILE}" "${FPP_LOCATE_DEFS}" -d "${CMAKE_BINARY_DIR}" ${FPP_CONFIGS} ${FPP_FILES} RESULT_VARIABLE result)
-    if (NOT result EQUAL 0)
-        message(FATAL_ERROR "Helper script 'fpp-redirect-helper' exited with reason: ${result}")
-    endif()
-    message(STATUS "Generating FPP location index - DONE")
-endfunction()
-
-function(fpp_depend_in_parallel MODULES)
-    set(COMMAND_ARGS "${FPP_DEPEND_PARALLELIZE}" "${FPP_DEPEND}" "${FPP_LOCS_FILE}" "${CMAKE_BINARY_DIR}/fpp-depend-input" "${BUILD_TESTING}")
-    #if (UT_AUTO_HELPERS OR TRUE)
-    #    list(APPEND COMMAND_ARGS "-a")
-    #endif()
-    execute_process_or_fail("Failed to run fpp-depend in parallel mode" "${PYTHON}" ${COMMAND_ARGS})
-endfunction()
-
-####
-# Function `generate_dependencies`:
-#
-# Generate dependencies for FPP modules. This is done here for performance, and the generated caches will be read later.
-# MODULES: modules to generate from
-####
-function(generate_dependencies MODULES)
-    if (NOT FPP_DEPEND)
-        message(FATAL_ERROR "Unable to determine fpp-depend executable")
-    endif()
-    if (NOT PYTHON)
-        message(FATAL_ERROR "Unable to determine python executable")
-    endif()
-    message(STATUS "Generating FPP dependency caches")
-    fpp_depend_in_parallel("${MODULES}")
-    message(STATUS "Generating FPP dependency caches - DONE")
-endfunction(generate_dependencies)
-
-####
-# Function `add_global_target`:
-#
-# Performs special FPP setup and handling.
-####
-function(fpp_locs_add_global_target TARGET_NAME)
-    get_property(GLOBAL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
-    # One-time FPP setup done to absolve performance issues
-    determine_global_fpp_inputs("${GLOBAL_MODULES}")
-    generate_locations()
-    generate_dependencies("${GLOBAL_MODULES}")
+function(fpp_locs_add_global_target TARGET)
+    set(FPP_CONFIGS "${FPRIME_FRAMEWORK_PATH}/Fpp/ToCpp.fpp")
+    add_custom_command(
+        OUTPUT "${FPRIME_BINARY_DIR}/locs.fpp"
+        COMMAND 
+            "${FPP_LOCATE_DEFS_HELPER}"
+            "${CMAKE_BINARY_DIR}/locs.fpp"
+            "${FPP_LOCATE_DEFS}"
+            -d "${FPRIME_BINARY_DIR}"
+            $<TARGET_PROPERTY:${TARGET},GLOBAL_FPP_FILES>
+        COMMAND_EXPAND_LISTS
+        COMMAND
+            "${CMAKE_COMMAND}"
+            -E copy_if_different
+            "${CMAKE_BINARY_DIR}/locs.fpp"
+            "${FPRIME_BINARY_DIR}/locs.fpp"
+    )
+    add_custom_target("${TARGET}" DEPENDS "${FPRIME_BINARY_DIR}/locs.fpp")
+    set_property(TARGET "${TARGET}" PROPERTY GLOBAL_FPP_FILES ${FPP_CONFIGS})
 endfunction(fpp_locs_add_global_target)
 
 ####
-# Not defined to prevent defaults from engaging
+# Function `fpp_locs_add_module_target`:
+#
+# Pass-through to fpp_locs_add_module_target. FULL_DEPENDENCIES is unused.
 ####
 function(fpp_locs_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
-endfunction()
+    fpp_locs_add_module_target("${MODULE}" "${TARGET}" "${SOURCES}" "${DEPENDENCIES}")
+endfunction(fpp_locs_add_deployment_target)
 
 ####
-# Not defined to prevent defaults from engaging
+# Function `fpp_locs_add_module_target`:
+#
+# Sets up the list of FPP files used in locations generation.  Each FPP source file for each module is added to the
+# global target's GLOBAL_FPP_FILES property that is referenced to pass in targets.
+# - **MODULE:** module name, unused
+# - **TARGET:** name of the target to setup (fpp_locs)
+# - **SOURCES:** list of sources filtered to .fpp
+# - **DEPENDENCIES:** module dependencies, unused.
 ####
 function(fpp_locs_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+    # Check each source for FPP support
+    foreach(SOURCE IN LISTS SOURCES)
+        fpp_is_supported("${SOURCE}")
+        if (IS_SUPPORTED)
+            append_list_property("${SOURCE}" TARGET "${TARGET_NAME}" PROPERTY GLOBAL_FPP_FILES)
+        endif()
+    endforeach()
 endfunction(fpp_locs_add_module_target)

@@ -2,10 +2,10 @@ name: Format Python
 
 on:
   push:
-    branches: [master, devel]
+    branches: [ devel, release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [master, devel]
+    branches: [ devel, release/** ]
 
 jobs:
   format:
@@ -13,10 +13,10 @@ jobs:
       runs-on: ubuntu-latest
       steps:
       - uses: actions/checkout@v3
-      - name: Setup Python 3.7
+      - name: Setup Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.8
       - name: Check formatting
         run: |
           pip install click==8.0.4 black==21.6b0

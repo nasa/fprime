@@ -61,25 +61,6 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketReadT
                              const U16 port,
                              const U32 send_timeout_seconds = SOCKET_SEND_TIMEOUT_SECONDS,
                              const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS);
-    /**
-     * \brief startup the TcpServer
-     *
-     * This will launch the TcpServer's internal tcp connection, bind to the port, and listen. This call will *not*
-     * block, nor does it accept incoming connections. It configures the port to listen and then returns. In order to
-     * accept incoming connections the `open` call must be made.  Only when the startup method returns SOCK_SUCCESS has
-     * the server successfully bound to the port/
-     *
-     * \return status of startup. SOCK_SUCCESS on success, something else on error.
-     */
-    SocketIpStatus startup();
-
-    /**
-     * \brief shutdown the TcpServer
-     *
-     * This will shutdown the TcpServer including closing any active client connections, and then closing the listening
-     * port of this server.
-     */
-    void shutdown();
 
   PROTECTED:
     // ----------------------------------------------------------------------
