@@ -82,11 +82,9 @@
 - [default](UsersGuide/api/cmake/target/default.md)
 - [fpp_depend](UsersGuide/api/cmake/target/fpp_depend.md)
 - [fpp_locs](UsersGuide/api/cmake/target/fpp_locs.md)
-- [impl](UsersGuide/api/cmake/target/impl.md)
 - [install](UsersGuide/api/cmake/target/install.md)
 - [refresh_cache](UsersGuide/api/cmake/target/refresh_cache.md)
 - [target](UsersGuide/api/cmake/target/target.md)
-- [testimpl](UsersGuide/api/cmake/target/testimpl.md)
 - [ut](UsersGuide/api/cmake/target/ut.md)
 - [version](UsersGuide/api/cmake/target/version.md)
 ###### UsersGuide/api/cmake/test/data

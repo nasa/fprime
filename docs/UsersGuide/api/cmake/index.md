@@ -44,11 +44,9 @@
 - [default](target/default.md)
 - [fpp_depend](target/fpp_depend.md)
 - [fpp_locs](target/fpp_locs.md)
-- [impl](target/impl.md)
 - [install](target/install.md)
 - [refresh_cache](target/refresh_cache.md)
 - [target](target/target.md)
-- [testimpl](target/testimpl.md)
 - [ut](target/ut.md)
 - [version](target/version.md)
 ## toolchain
