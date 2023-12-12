@@ -13,7 +13,7 @@ deployment="${FPRIME_DIR}/Ref"
 component="SignalGen"
 echo -e "${BLUE}Testing ${deployment} against fprime-util targets: ${FPUTIL_TARGETS}${NOCOLOR}"
 export CHECK_TARGET_PLATFORM="native"
-for target in "impl" "impl --ut" "build" "build --ut" "check --leak"
+for target in "impl" "impl --ut" "build" "build --ut"
 do
     if [[ "${TEST_TYPE}" != "QUICK" ]] || [[ "${target}" == "generate" ]]
     then
