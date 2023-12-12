@@ -40,7 +40,6 @@
 ## target
 - [build](target/build.md)
 - [check](target/check.md)
-- [check_leak](target/check_leak.md)
 - [default](target/default.md)
 - [fpp_depend](target/fpp_depend.md)
 - [fpp_locs](target/fpp_locs.md)

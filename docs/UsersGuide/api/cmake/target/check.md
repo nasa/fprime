@@ -23,9 +23,9 @@ Creates a target for "check" per-deployment, to run all UTs within that deployme
 - **FULL_DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 
 
-## Dict function `add_module_target`:
+## Function `check_add_module_target`:
 
-Creates each module's coverage targets. Note: only run for "BUILD_TESTING=ON" builds.
+Creates each module's check targets. Note: only run for "BUILD_TESTING=ON" builds.
 
 - **MODULE_NAME:** name of the module
 - **TARGET_NAME:** name of target to produce

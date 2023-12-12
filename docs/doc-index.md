@@ -78,7 +78,6 @@
 ##### UsersGuide/api/cmake/target
 - [build](UsersGuide/api/cmake/target/build.md)
 - [check](UsersGuide/api/cmake/target/check.md)
-- [check_leak](UsersGuide/api/cmake/target/check_leak.md)
 - [default](UsersGuide/api/cmake/target/default.md)
 - [fpp_depend](UsersGuide/api/cmake/target/fpp_depend.md)
 - [fpp_locs](UsersGuide/api/cmake/target/fpp_locs.md)
