@@ -29,6 +29,8 @@ Requirements:
 4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
 5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
 
+> Latest versions of PIP are strongly recommended, as this will install native packages with improved performance and no dependency on Java. See [Recommended PIP Versions](#recommended-pip-versions)
+
 > Ubuntu and Debian users should see notes on [Python installation](#ubuntu-debian-java-and-python-pip)
 
 > macOS users must ensure the [CMake command line utility is on their path](#mac-os-x-and-cmake-command-not-found)
@@ -162,3 +164,16 @@ cd /Applications/Python\ 3.X/
 ```
 
 After running above command, re-try installing `fprime-tools`.
+
+
+### Recommended PIP Versions
+
+Some of the F´ Python packages are built in a way that it is recommended to install them with modern versions of PIP. Systems not recommended or pip versions less than recommended will require Java and run slower versions of FPP tools. The recommended versions are described below:
+
+| System | Recommended `pip` version |
+|---|---|
+| macOS (10.9+) | >= 21.0.1 |
+| x86_64 | >= 19.3 |
+| aarch64| >= 20.3 |
+
+
