@@ -29,13 +29,13 @@ function(fpp_locs_add_global_target TARGET)
             -d "${FPRIME_BINARY_DIR}"
             $<TARGET_PROPERTY:${TARGET},GLOBAL_FPP_FILES>
         COMMAND_EXPAND_LISTS
-        COMMAND
-            "${CMAKE_COMMAND}"
-            -E copy_if_different
+    )
+    add_custom_target(
+        "${TARGET}" DEPENDS "${FPRIME_BINARY_DIR}/locs.fpp"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
             "${CMAKE_BINARY_DIR}/locs.fpp"
             "${FPRIME_BINARY_DIR}/locs.fpp"
     )
-    add_custom_target("${TARGET}" DEPENDS "${FPRIME_BINARY_DIR}/locs.fpp")
     set_property(TARGET "${TARGET}" PROPERTY GLOBAL_FPP_FILES ${FPP_CONFIGS})
 endfunction(fpp_locs_add_global_target)
 

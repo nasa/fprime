@@ -2,10 +2,7 @@
 # fpp_depend.cmake:
 #
 # fpp_depend is a special target used to build cached information for fpp-depend output. It is run as part of the
-# sub-build that generates cached-information about the build itself. This file defines the following target
-# functions:
-#
-# fpp_locs_add_global_target: global registration target setting up the fpp-locs target run
+# sub-build that generates cached-information about the build itself.
 ####
 include_guard()
 set(FPP_LOCATE_DEFS_HELPER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
@@ -47,94 +44,43 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
         endif()
     endforeach()
     file(RELATIVE_PATH OFFSET "${CMAKE_BINARY_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
-    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache")
-    file(MAKE_DIRECTORY "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache")
+    set(LOCAL_CACHE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache")
+    set(DELIVERY_CACHE "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache")
+    file(MAKE_DIRECTORY "${LOCAL_CACHE}")
+    file(MAKE_DIRECTORY "${DELIVERY_CACHE}")
     if (FPP_SOURCES)
+        set(OUTPUT_FILES
+            "${LOCAL_CACHE}/stdout.txt"
+            "${LOCAL_CACHE}/direct.txt"
+            "${LOCAL_CACHE}/missing.txt"
+            "${LOCAL_CACHE}/framework.txt"
+            "${LOCAL_CACHE}/generated.txt"
+            "${LOCAL_CACHE}/include.txt"
+            "${LOCAL_CACHE}/unittest.txt"
+        )
         add_custom_command(
-            OUTPUT
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/direct.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/missing.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/framework.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/generated.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/include.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/unittest.txt"
-            COMMAND
-                ${FPP_LOCATE_DEFS_HELPER}
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
+            OUTPUT ${OUTPUT_FILES}
+            COMMAND ${FPP_LOCATE_DEFS_HELPER}
+                "${LOCAL_CACHE}/stdout.txt"
                 "${FPP_DEPEND}"
                 "${FPRIME_BINARY_DIR}/locs.fpp"
-                "-d" "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/direct.txt"
-                "-m" "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/missing.txt"
-                "-f" "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/framework.txt"
-                "-g" "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/generated.txt"
-                "-i" "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/include.txt"
-                "-u" "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/unittest.txt"
+                "-d" "${LOCAL_CACHE}/direct.txt"
+                "-m" "${LOCAL_CACHE}/missing.txt"
+                "-f" "${LOCAL_CACHE}/framework.txt"
+                "-g" "${LOCAL_CACHE}/generated.txt"
+                "-i" "${LOCAL_CACHE}/include.txt"
+                "-u" "${LOCAL_CACHE}/unittest.txt"
                 "-a"
                 ${FPP_SOURCES}
             DEPENDS
-                "${FPRIME_BINARY_DIR}/locs.fpp"
+                fpp_locs
                 ${FPP_SOURCES}
-            COMMAND_EXPAND_LISTS
+        )
+        add_custom_target("${TARGET}_${MODULE}" DEPENDS ${OUTPUT_FILES}
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different ${OUTPUT_FILES} "${DELIVERY_CACHE}"
         )
     else()
-        add_custom_command(
-            OUTPUT
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/direct.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/missing.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/framework.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/generated.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/include.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/unittest.txt"
-            COMMAND
-                "${CMAKE_COMMAND}" -E touch
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/direct.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/missing.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/framework.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/generated.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/include.txt"
-                "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/unittest.txt"
-            COMMAND_EXPAND_LISTS
-        )
+        add_custom_target("${TARGET}_${MODULE}")
     endif()
-
-    add_custom_command(
-        OUTPUT
-            "${FPRIME_BINARY_DIR}/${OFFSET}/fpp_cache/stdout.txt"
-            "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/direct.txt"
-            "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/missing.txt"
-            "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/framework.txt"
-            "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/generated.txt"
-            "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/include.txt"
-            "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/unittest.txt"
-        DEPENDS
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/direct.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/missing.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/framework.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/generated.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/include.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/unittest.txt"
-        COMMAND
-            "${CMAKE_COMMAND}" -E copy_if_different
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/stdout.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/direct.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/missing.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/framework.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/generated.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/include.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/fpp_cache/unittest.txt"
-            "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache"
-    )
-    add_custom_target("${TARGET}_${MODULE}" DEPENDS 
-        "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/direct.txt"
-        "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/missing.txt"
-        "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/framework.txt"
-        "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/generated.txt"
-        "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/include.txt"
-        "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache/unittest.txt"
-    )
     add_dependencies("${TARGET}" "${TARGET}_${MODULE}")
 endfunction(fpp_depend_add_module_target)
