@@ -3,10 +3,7 @@
 ## fpp_depend.cmake:
 
 fpp_depend is a special target used to build cached information for fpp-depend output. It is run as part of the
-sub-build that generates cached-information about the build itself. This file defines the following target
-functions:
-
-fpp_locs_add_global_target: global registration target setting up the fpp-locs target run
+sub-build that generates cached-information about the build itself.
 
 
 ## Function `fpp_depend_add_global_target`:
