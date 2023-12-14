@@ -10,3 +10,5 @@ viewed through F´.
 | [Numerical Types Design](./numerical-types.md)                          |
 | [Communication Adapter Interface](./communication-adapter-interface.md) |
 | [Package Implementations](./package-implementations.md)                 |
+| [FPP JSON Dictionary Specification](./fpp-json-dict.md)                 |
+

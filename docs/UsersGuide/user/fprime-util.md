@@ -48,8 +48,7 @@ each command's usage in more detail.
    *Ai.xml file, saving significant development time. Providing the `--ut` flag will generate a unit
    testing skeleton for the component.
 7. `check`: Builds, if necessary, then runs unit tests in the current directory. The `--all` runs all
-   unit tests known to a deployment. The `--leak` flag will check for memory leaks while running the
-   unit tests.
+   unit tests known to a deployment.
 8. `coverage`: Similar to check, but calculates and generates unit test code coverage reports.
 9. `new`: Creates either a new component or port. Use `--component` or `--port` to specify whether
     you want to create a component or port. If you would like to use a custom component

@@ -1,3 +1,5 @@
+include(target/ut)
+
 ####
 # check.cmake:
 #
@@ -46,9 +48,9 @@ function(check_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEP
 endfunction()
 
 ####
-# Dict function `add_module_target`:
+# Function `check_add_module_target`:
 #
-# Creates each module's coverage targets. Note: only run for "BUILD_TESTING=ON" builds.
+# Creates each module's check targets. Note: only run for "BUILD_TESTING=ON" builds.
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce
@@ -59,12 +61,17 @@ function(check_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCI
     # Protects against multiple calls to fprime_register_ut()
     if (NOT BUILD_TESTING OR NOT MODULE_TYPE STREQUAL "Unit Test")
         return()
-    elseif (NOT TARGET ${MODULE_NAME}_${TARGET_NAME})
+    endif()
+    # UTs MODULE_NAME defaults to <FPRIME_MODULE_NAME>_ut_exe
+    # The below handling gives CHECK_TARGET_NAME = <FPRIME_MODULE_NAME>_check
+    string(REGEX REPLACE "_${UT_TARGET}$" "" CHECK_TARGET_NAME "${MODULE_NAME}")
+    string(APPEND CHECK_TARGET_NAME "_${TARGET_NAME}")
+    if (NOT TARGET ${CHECK_TARGET_NAME})
         add_custom_target(
-            "${MODULE_NAME}_${TARGET_NAME}"
+            "${CHECK_TARGET_NAME}"
             COMMAND ${CMAKE_CTEST_COMMAND} --verbose
         )
     endif()
-    add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
+    add_dependencies("${CHECK_TARGET_NAME}" ${UT_EXE_NAME})
     add_dependencies(check ${UT_EXE_NAME})
 endfunction(check_add_module_target)
