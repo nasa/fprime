@@ -7,9 +7,13 @@
     #define FW_ASSERT(...)
 #else // ASSERT is defined
 
+// Return only the first argument passed to the macro.
 #define FW_ASSERT_FIRST_ARG(ARG_0, ...) ARG_0
+// Return all the arguments of the macro, but the first one
 #define FW_ASSERT_NO_FIRST_ARG(ARG_0, ...) __VA_ARGS__
 
+// Passing the __LINE__ argument at the end of the function ensures that
+// the FW_ASSERT_NO_FIRST_ARG macro will never have an empty variadic variable
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
     #define FILE_NAME_ARG U32
     #define FW_ASSERT(...) \

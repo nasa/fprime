@@ -165,6 +165,7 @@ namespace Fw {
         s_assertHook = this->previousHook;
     }
 
+    // Default handler of SwAssert functions
     NATIVE_INT_TYPE defaultSwAssert(
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
