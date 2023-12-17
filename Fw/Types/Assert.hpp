@@ -42,18 +42,6 @@
 #endif
 
 namespace Fw {
-    //! Assert default handler
-    NATIVE_INT_TYPE defaultSwAssert(
-            FILE_NAME_ARG file,
-            NATIVE_UINT_TYPE lineNo,
-            NATIVE_UINT_TYPE numArgs,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwAssertArgType arg4,
-            FwAssertArgType arg5,
-            FwAssertArgType arg6);
-
     //! Assert with no arguments
     NATIVE_INT_TYPE SwAssert(
         FILE_NAME_ARG file,
