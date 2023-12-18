@@ -375,7 +375,7 @@ namespace Drv {
         // Read is only taking 22 usecs each time, so it is not blocking for long
         if (fdset[0].revents & POLLPRI) {
 
-            char *buf[MAX_BUF];
+            char buf[MAX_BUF];
             (void) lseek(fdset[0].fd, 0, SEEK_SET); // Must seek back to the starting
             if(read(fdset[0].fd, buf, MAX_BUF) > 0) {
                 DEBUG_PRINT("\npoll() GPIO interrupt occurred w/ value: %c\n", buf[0]);
