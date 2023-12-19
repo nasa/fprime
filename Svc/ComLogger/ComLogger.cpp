@@ -290,4 +290,4 @@ namespace Svc {
       this->log_WARNING_LO_FileValidationError(logStringArg1, logStringArg2, validateStatus);
     }
   }
-};
+}

@@ -20,7 +20,7 @@ namespace Svc {
         m_allocatorId(0)
     {
 
-    };
+    }
 
     CmdSequencerComponentImpl::Sequence ::
       ~Sequence()

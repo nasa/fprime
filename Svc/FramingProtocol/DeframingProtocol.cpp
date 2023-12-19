@@ -22,4 +22,4 @@ void DeframingProtocol::setup(DeframingProtocolInterface& interface) {
     FW_ASSERT(m_interface == nullptr);
     m_interface = &interface;
 }
-};
+}

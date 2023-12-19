@@ -31,5 +31,4 @@ namespace Fw {
     Logger::~Logger() {
     }
 
-};
-//End namespace Fw
+} //End namespace Fw

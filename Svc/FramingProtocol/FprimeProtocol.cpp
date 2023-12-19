@@ -131,4 +131,4 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     m_interface->route(buffer);
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
 }
-};
+}

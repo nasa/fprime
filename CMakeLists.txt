@@ -20,6 +20,7 @@ add_compile_options(
     -Wall
     -Wextra
     -Werror
+#    -pedantic
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
     -Wno-unused-parameter
 )
