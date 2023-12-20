@@ -12,6 +12,11 @@ include(options)
 include(sanitizers) # Enable sanitizers if they are requested
 include(required)
 
+# Add project root's cmake folder to module path
+if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/cmake")
+    list(APPEND CMAKE_MODULE_PATH "${FPRIME_PROJECT_ROOT}/cmake")
+endif()
+
 # Setup fprime library locations
 list(REMOVE_DUPLICATES FPRIME_LIBRARY_LOCATIONS)
 set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
