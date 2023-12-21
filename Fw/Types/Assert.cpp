@@ -5,10 +5,6 @@
 
 #define FW_ASSERT_DFL_MSG_LEN 256
 
-#if FW_ASSERT_LEVEL == FW_NO_ASSERT
-
-#else
-
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define fileIdFs "Assert: 0x%08" PRIx32 ":%" PRI_PlatformUIntType
 #else
@@ -287,6 +283,3 @@ NATIVE_INT_TYPE CAssert0(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) {
     }
     return 0;
 }
-
-#endif // FW_NO_ASSERT
-
