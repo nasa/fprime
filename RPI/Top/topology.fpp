@@ -62,7 +62,7 @@ module RPI {
     connections Downlink {
       chanTlm.PktSend -> downlink.comIn
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
-      downlink.framedOut -> comm.send
+      downlink.framedOut -> comm.$send
       eventLogger.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
     }
@@ -123,7 +123,7 @@ module RPI {
 
     connections UART {
       rpiDemo.UartBuffers -> uartBufferManager.bufferSendIn
-      rpiDemo.UartWrite -> uartDrv.send
+      rpiDemo.UartWrite -> uartDrv.$send
       uartDrv.$recv -> rpiDemo.UartRead
       uartDrv.allocate -> uartBufferManager.bufferGetCallee
     }
