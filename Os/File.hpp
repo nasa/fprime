@@ -34,8 +34,18 @@ namespace Os {
             File(); //!<  Constructor
             virtual ~File(); //!<  Destructor. Will close file if still open
             Status prealloc(NATIVE_INT_TYPE offset, NATIVE_INT_TYPE len);
-            Status open(const char* fileName, Mode mode); //!<  open file. Writing creates file if it doesn't exist
-            Status open(const char* fileName, Mode mode, bool include_excl); //!<  open file. Writing creates file if it doesn't exist
+
+            /**
+             * Open the file passed in with the given mode.  If overwrite is set to true then opening files for
+             * in OPEN_CREATE mode will clobber existing files. Set overwrite to false to preserve existing files.
+             * @param path: c-string of path to open
+             * @param mode: file operation mode
+             * @param overwrite: overwrite existing file on create
+             * @return: status of the open
+             */
+            Status open(const char* path, Mode mode, bool overwrite=false);
+
+
             bool isOpen(); //!< check if file descriptor is open or not.
             Status seek(NATIVE_INT_TYPE offset, bool absolute = true); //!<  seek to location. If absolute = true, absolute from beginning of file
             Status flush(); //!< flush data to disk. No-op on systems that do not support.
@@ -53,6 +63,11 @@ namespace Os {
 
             static Status niceCRC32(U32 &crc, const char* fileName); //!< Calculates CRC32 of file, not burdening FS
 
+        private:
+          /**
+           * Internal implementation of the `open` call. See above.
+           */
+          Status openInternal(const char* path, Mode mode, bool overwrite=false);
         private:
 
             NATIVE_INT_TYPE m_fd; //!<  Stored file descriptor

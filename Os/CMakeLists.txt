@@ -5,6 +5,8 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stub")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
 
 # Basic module dependencies
 set(MOD_DEPS
@@ -27,6 +29,9 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
+
+    # Refactored common files
+    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
 )
 # Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
@@ -42,7 +47,6 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
@@ -71,7 +75,7 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
       list(APPEND MOD_DEPS "-lrt")
   endif()
 endif()
-
+require_fprime_implementation(Os/File)
 
 # If baremetal scheduler is set, remove the previous task files and add in the Baremetal variant
 if (FPRIME_USE_BAREMETAL_SCHEDULER)
