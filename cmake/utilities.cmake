@@ -201,7 +201,7 @@ function(normalize_paths OUTPUT_NAME)
     # Loop over the list and check
     foreach (PATH_LIST IN LISTS ARGN)
         foreach(PATH IN LISTS PATH_LIST)
-            get_filename_component(PATH "${PATH}" REALPATH)
+            get_filename_component(PATH "${PATH}" ABSOLUTE)
             list(APPEND OUTPUT_LIST "${PATH}")
         endforeach()
     endforeach()
