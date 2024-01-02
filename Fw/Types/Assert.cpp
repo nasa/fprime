@@ -165,162 +165,11 @@ namespace Fw {
         s_assertHook = this->previousHook;
     }
 
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) {
-        if (nullptr == s_assertHook) {
-            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
-            defaultReportAssert(
-                file,
-                lineNo,
-                0,
-                0,0,0,0,0,0,
-                assertMsg,sizeof(assertMsg));
-                // print message
-            defaultPrintAssert(assertMsg);
-            assert(0);
-        }
-        else {
-            s_assertHook->reportAssert(
-                file,
-                lineNo,
-                0,
-                0,0,0,0,0,0);
-            s_assertHook->doAssert();
-        }
-        return 0;
-    }
-
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            FwAssertArgType arg1) {
-        if (nullptr == s_assertHook) {
-            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
-            defaultReportAssert(
-                file,
-                lineNo,
-                1,
-                arg1,0,0,0,0,0,
-                assertMsg,sizeof(assertMsg));
-            // print message
-            defaultPrintAssert(assertMsg);
-            assert(0);
-        }
-        else {
-            s_assertHook->reportAssert(
-                file,
-                lineNo,
-                1,
-                arg1,0,0,0,0,0);
-            s_assertHook->doAssert();
-        }
-        return 0;
-    }
-
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2) {
-        if (nullptr == s_assertHook) {
-            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
-            defaultReportAssert(
-                file,
-                lineNo,
-                2,
-                arg1,arg2,0,0,0,0,
-                assertMsg,sizeof(assertMsg));
-            defaultPrintAssert(assertMsg);
-            assert(0);
-        }
-        else {
-            s_assertHook->reportAssert(
-                file,
-                lineNo,
-                2,
-                arg1,arg2,0,0,0,0);
-            s_assertHook->doAssert();
-        }
-        return 0;
-    }
-
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3) {
-        if (nullptr == s_assertHook) {
-            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
-            defaultReportAssert(
-                file,
-                lineNo,
-                3,
-                arg1,arg2,arg3,0,0,0,
-                assertMsg,sizeof(assertMsg));
-            defaultPrintAssert(assertMsg);
-            assert(0);
-        }
-        else {
-            s_assertHook->reportAssert(
-                file,
-                lineNo,
-                3,
-                arg1,arg2,arg3,0,0,0);
-            s_assertHook->doAssert();
-        }
-        return 0;
-    }
-
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwAssertArgType arg4) {
-        if (nullptr == s_assertHook) {
-            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
-            defaultReportAssert(
-                file,
-                lineNo,
-                4,
-                arg1,arg2,arg3,arg4,0,0,
-                assertMsg,sizeof(assertMsg));
-            defaultPrintAssert(assertMsg);
-            assert(0);
-        }
-        else {
-            s_assertHook->reportAssert(
-                file,
-                lineNo,
-                4,
-                arg1,arg2,arg3,arg4,0,0);
-            s_assertHook->doAssert();
-        }
-        return 0;
-    }
-
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwAssertArgType arg4,
-            FwAssertArgType arg5) {
-        if (nullptr == s_assertHook) {
-            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
-            defaultReportAssert(
-                file,
-                lineNo,
-                5,
-                arg1,arg2,arg3,arg4,arg5,0,
-                assertMsg,sizeof(assertMsg));
-            defaultPrintAssert(assertMsg);
-            assert(0);
-        }
-        else {
-            s_assertHook->reportAssert(
-                file,
-                lineNo,
-                5,
-                arg1,arg2,arg3,arg4,arg5,0);
-            s_assertHook->doAssert();
-        }
-        return 0;
-    }
-
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
+    // Default handler of SwAssert functions
+    NATIVE_INT_TYPE defaultSwAssert(
+            FILE_NAME_ARG file,
+            NATIVE_UINT_TYPE lineNo,
+            NATIVE_UINT_TYPE numArgs,
             FwAssertArgType arg1,
             FwAssertArgType arg2,
             FwAssertArgType arg3,
@@ -332,7 +181,7 @@ namespace Fw {
             defaultReportAssert(
                 file,
                 lineNo,
-                6,
+                numArgs,
                 arg1,arg2,arg3,arg4,arg5,arg6,
                 assertMsg,sizeof(assertMsg));
             defaultPrintAssert(assertMsg);
@@ -342,11 +191,74 @@ namespace Fw {
             s_assertHook->reportAssert(
                 file,
                 lineNo,
-                6,
+                numArgs,
                 arg1,arg2,arg3,arg4,arg5,arg6);
             s_assertHook->doAssert();
         }
         return 0;
+    }
+
+    NATIVE_INT_TYPE SwAssert(
+            FILE_NAME_ARG file,
+            NATIVE_UINT_TYPE lineNo) {
+        return defaultSwAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0);
+    }
+
+    NATIVE_INT_TYPE SwAssert(
+            FILE_NAME_ARG file,
+            FwAssertArgType arg1,
+            NATIVE_UINT_TYPE lineNo) {
+        return defaultSwAssert(file, lineNo, 1, arg1, 0, 0, 0, 0, 0);
+    }
+
+    NATIVE_INT_TYPE SwAssert(
+            FILE_NAME_ARG file,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            NATIVE_UINT_TYPE lineNo) {
+        return defaultSwAssert(file, lineNo, 2, arg1, arg2, 0, 0, 0, 0);
+    }
+
+    NATIVE_INT_TYPE SwAssert(
+            FILE_NAME_ARG file,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            NATIVE_UINT_TYPE lineNo) {
+        return defaultSwAssert(file, lineNo, 3, arg1, arg2, arg3, 0, 0, 0);
+    }
+
+    NATIVE_INT_TYPE SwAssert(
+            FILE_NAME_ARG file,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            NATIVE_UINT_TYPE lineNo) {
+        return defaultSwAssert(file, lineNo, 4, arg1, arg2, arg3, arg4, 0, 0);
+    }
+
+    NATIVE_INT_TYPE SwAssert(
+            FILE_NAME_ARG file,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            NATIVE_UINT_TYPE lineNo) {
+        return defaultSwAssert(file, lineNo, 5, arg1, arg2, arg3, arg4, arg5, 0);
+    }
+
+    NATIVE_INT_TYPE SwAssert(
+            FILE_NAME_ARG file,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6,
+            NATIVE_UINT_TYPE lineNo) {
+        return defaultSwAssert(file, lineNo, 6, arg1, arg2, arg3, arg4, arg5, arg6);
     }
 }
 

@@ -7,22 +7,28 @@
     #define FW_ASSERT(...)
 #else // ASSERT is defined
 
+// Return only the first argument passed to the macro.
+#define FW_ASSERT_FIRST_ARG(ARG_0, ...) ARG_0
+// Return all the arguments of the macro, but the first one
+#define FW_ASSERT_NO_FIRST_ARG(ARG_0, ...) __VA_ARGS__
 
+// Passing the __LINE__ argument at the end of the function ensures that
+// the FW_ASSERT_NO_FIRST_ARG macro will never have an empty variadic variable
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
     #define FILE_NAME_ARG U32
-    #define FW_ASSERT(cond, ...) \
-        ((void) ((cond) ? (0) : \
-        (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))
+    #define FW_ASSERT(...) \
+        ((void) ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) ? (0) : \
+        (Fw::SwAssert(ASSERT_FILE_ID, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)))))
 #elif FW_ASSERT_LEVEL == FW_RELATIVE_PATH_ASSERT
     #define FILE_NAME_ARG const CHAR*
-    #define FW_ASSERT(cond, ...) \
-        ((void) ((cond) ? (0) : \
-        (Fw::SwAssert(ASSERT_RELATIVE_PATH, __LINE__, ##__VA_ARGS__))))
+    #define FW_ASSERT(...) \
+        ((void) ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) ? (0) : \
+        (Fw::SwAssert(ASSERT_RELATIVE_PATH, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)))))
 #else
     #define FILE_NAME_ARG const CHAR*
-    #define FW_ASSERT(cond, ...) \
-        ((void) ((cond) ? (0) : \
-        (Fw::SwAssert(__FILE__, __LINE__, ##__VA_ARGS__))))
+    #define FW_ASSERT(...) \
+        ((void) ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) ? (0) : \
+        (Fw::SwAssert(__FILE__, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)))))
 #endif
 
 // F' Assertion functions can technically return even though the intention is for the assertion to terminate the program.
@@ -40,13 +46,61 @@
 #endif
 
 namespace Fw {
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN; //!< Assert with no arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1) CLANG_ANALYZER_NORETURN; //!< Assert with one argument
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2) CLANG_ANALYZER_NORETURN; //!< Assert with two arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3) CLANG_ANALYZER_NORETURN; //!< Assert with three arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwAssertArgType arg4) CLANG_ANALYZER_NORETURN; //!< Assert with four arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwAssertArgType arg4, FwAssertArgType arg5) CLANG_ANALYZER_NORETURN; //!< Assert with five arguments
-    NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwAssertArgType arg4, FwAssertArgType arg5, FwAssertArgType arg6) CLANG_ANALYZER_NORETURN; //!< Assert with six arguments
+    //! Assert with no arguments
+    NATIVE_INT_TYPE SwAssert(
+        FILE_NAME_ARG file,
+        NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+
+    //! Assert with one argument
+    NATIVE_INT_TYPE SwAssert(
+        FILE_NAME_ARG file,
+        FwAssertArgType arg1,
+        NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+
+    //! Assert with two arguments
+    NATIVE_INT_TYPE SwAssert(
+        FILE_NAME_ARG file,
+        FwAssertArgType arg1,
+        FwAssertArgType arg2,
+        NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+
+    //! Assert with three arguments
+    NATIVE_INT_TYPE SwAssert(
+        FILE_NAME_ARG file,
+        FwAssertArgType arg1,
+        FwAssertArgType arg2,
+        FwAssertArgType arg3,
+        NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+
+    //! Assert with four arguments
+    NATIVE_INT_TYPE SwAssert(
+        FILE_NAME_ARG file,
+        FwAssertArgType arg1,
+        FwAssertArgType arg2,
+        FwAssertArgType arg3,
+        FwAssertArgType arg4,
+        NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+
+    //! Assert with five arguments
+    NATIVE_INT_TYPE SwAssert(
+        FILE_NAME_ARG file,
+        FwAssertArgType arg1,
+        FwAssertArgType arg2,
+        FwAssertArgType arg3,
+        FwAssertArgType arg4,
+        FwAssertArgType arg5,
+        NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+
+    //! Assert with six arguments
+    NATIVE_INT_TYPE SwAssert(
+        FILE_NAME_ARG file,
+        FwAssertArgType arg1,
+        FwAssertArgType arg2,
+        FwAssertArgType arg3,
+        FwAssertArgType arg4,
+        FwAssertArgType arg5,
+        FwAssertArgType arg6,
+        NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
 }
 
 // Base class for declaring an assert hook
@@ -91,4 +145,4 @@ namespace Fw {
 #endif // if ASSERT is defined
 
 
-#endif
+#endif // FW_ASSERT_HPP

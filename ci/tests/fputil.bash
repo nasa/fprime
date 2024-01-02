@@ -17,7 +17,7 @@ export FPUTIL_TARGETS=("generate" "generate --ut" "build" "build --all" "check -
 function fputil_action {
     export WORKDIR="${1}"
     export TARGET="${2}"
-    let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
+    let JOBS="${JOBS:-$(( ( RANDOM % 9 )  + 1 ))}"
     (
         PLATFORM=""
 
