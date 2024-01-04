@@ -20,6 +20,7 @@ on:
 jobs:
   macOS-Framework:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -29,6 +30,9 @@ jobs:
     - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Framework.bash
+      env:
+        # Limit to 2 jobs to avoid resource exhaustion (https://github.com/nasa/fprime/issues/2462)
+        JOBS: 2
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v3
@@ -40,6 +44,7 @@ jobs:
 
   macOS-Ref:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -49,6 +54,8 @@ jobs:
     - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Ref.bash
+      env:
+        JOBS: 2
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v3
@@ -60,6 +67,7 @@ jobs:
 
   macOS-Integration:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -71,6 +79,8 @@ jobs:
       run: brew install coreutils
     - name: F prime CI step
       run: ./ci/tests/30-ints.bash
+      env:
+        JOBS: 2
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v3
