@@ -248,7 +248,7 @@ function(fpp_to_modules FILE_LIST OUTPUT_VAR)
         # Here we are adding a module to the modules list if all of the following are true:
         #  1. Not present already (deduplication)
         #  2. Not the current module directory as learned by the path to the autocoder inputs
-        #  3. Not withing the config directory. Config dependencies are attached to every module automatically.
+        #  3. Not within the config directory. Config dependencies are attached to every module automatically.
         if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIR}/.*")
             continue() # Skip adding to module list
         endif()
