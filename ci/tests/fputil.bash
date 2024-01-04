@@ -17,8 +17,7 @@ export FPUTIL_TARGETS=("generate" "generate --ut" "build" "build --all" "check -
 function fputil_action {
     export WORKDIR="${1}"
     export TARGET="${2}"
-    # let JOBS="${JOBS:-$(( ( RANDOM % 9 )  + 1 ))}"
-    let JOBS="2"
+    let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     (
         PLATFORM=""
 
@@ -44,8 +43,7 @@ export -f fputil_action
 ####
 function integration_test {
     export WORKDIR="${1}"
-    # let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
-    let JOBS="2"
+    let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
 
     CMAKE_EXTRA_SETTINGS=""
     PLATFORM=""
