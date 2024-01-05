@@ -3,14 +3,19 @@
 
 #include <FpConfig.hpp>
 
-#if FW_ASSERT_LEVEL == FW_NO_ASSERT
-    #define FW_ASSERT(...)
-#else // ASSERT is defined
-
 // Return only the first argument passed to the macro.
 #define FW_ASSERT_FIRST_ARG(ARG_0, ...) ARG_0
 // Return all the arguments of the macro, but the first one
 #define FW_ASSERT_NO_FIRST_ARG(ARG_0, ...) __VA_ARGS__
+
+#if FW_ASSERT_LEVEL == FW_NO_ASSERT
+    // Users may override the NO_ASSERT case should they choose
+    #ifndef FW_ASSERT
+    #define FW_ASSERT(...) ((void)(FW_ASSERT_FIRST_ARG(__VA_ARGS__)))
+    #endif
+    #define FILE_NAME_ARG const CHAR*
+#else // ASSERT is defined
+
 
 // Passing the __LINE__ argument at the end of the function ensures that
 // the FW_ASSERT_NO_FIRST_ARG macro will never have an empty variadic variable
@@ -30,6 +35,7 @@
         ((void) ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) ? (0) : \
         (Fw::SwAssert(__FILE__, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)))))
 #endif
+#endif // if ASSERT is defined
 
 // F' Assertion functions can technically return even though the intention is for the assertion to terminate the program.
 // This breaks static analysis depending on assertions, since the analyzer has to assume the assertion will return.
@@ -142,7 +148,5 @@ namespace Fw {
             AssertHook *previousHook;
     };
 }
-#endif // if ASSERT is defined
-
 
 #endif // FW_ASSERT_HPP

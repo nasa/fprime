@@ -42,6 +42,14 @@ namespace Svc {
         U32 lineNo;
         char file[80 + 1]; // Limit to 80  characters in the port call
         Fw::String fileString;
+
+// Asserts may be turned off resulting in this component doing a no-op
+#if FW_ASSERT_LEVEL == FW_NO_ASSERT
+        const int expectedSize = 0;
+#else
+        const int expectedSize = 1;
+#endif
+
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
         fileString.format("0x%08" PRIX32, ASSERT_FILE_ID);
 #else
@@ -52,45 +60,58 @@ namespace Svc {
         // FW_ASSERT_0
 
         FW_ASSERT(0);lineNo = __LINE__;
-        ASSERT_EVENTS_AF_ASSERT_0_SIZE(1);
-        ASSERT_EVENTS_AF_ASSERT_0(0,file,lineNo);
+        ASSERT_EVENTS_AF_ASSERT_0_SIZE(expectedSize);
+        if (expectedSize > 0) {
+            ASSERT_EVENTS_AF_ASSERT_0(0,file,lineNo);
+        }
 
         // FW_ASSERT_1
 
         FW_ASSERT(0,1);lineNo = __LINE__;
-        ASSERT_EVENTS_AF_ASSERT_1_SIZE(1);
-        ASSERT_EVENTS_AF_ASSERT_1(0,file,lineNo,1);
+        ASSERT_EVENTS_AF_ASSERT_1_SIZE(expectedSize);
+        if (expectedSize > 0) {
+            ASSERT_EVENTS_AF_ASSERT_1(0,file,lineNo,1);
+        }
 
         // FW_ASSERT_2
 
         FW_ASSERT(0,1,2);lineNo = __LINE__;
-        ASSERT_EVENTS_AF_ASSERT_2_SIZE(1);
-        ASSERT_EVENTS_AF_ASSERT_2(0,file,lineNo,1,2);
+        ASSERT_EVENTS_AF_ASSERT_2_SIZE(expectedSize);
+        if (expectedSize > 0) {
+            ASSERT_EVENTS_AF_ASSERT_2(0,file,lineNo,1,2);
+        }
 
         // FW_ASSERT_3
 
         FW_ASSERT(0,1,2,3);lineNo = __LINE__;
-        ASSERT_EVENTS_AF_ASSERT_3_SIZE(1);
-        ASSERT_EVENTS_AF_ASSERT_3(0,file,lineNo,1,2,3);
+        ASSERT_EVENTS_AF_ASSERT_3_SIZE(expectedSize);
+        if (expectedSize > 0) {
+             ASSERT_EVENTS_AF_ASSERT_3(0,file,lineNo,1,2,3);
+        }
 
         // FW_ASSERT_4
 
         FW_ASSERT(0,1,2,3,4);lineNo = __LINE__;
-        ASSERT_EVENTS_AF_ASSERT_4_SIZE(1);
-        ASSERT_EVENTS_AF_ASSERT_4(0,file,lineNo,1,2,3,4);
+        ASSERT_EVENTS_AF_ASSERT_4_SIZE(expectedSize);
+        if (expectedSize > 0) {
+            ASSERT_EVENTS_AF_ASSERT_4(0,file,lineNo,1,2,3,4);
+        }
 
         // FW_ASSERT_5
 
         FW_ASSERT(0,1,2,3,4,5);lineNo = __LINE__;
-        ASSERT_EVENTS_AF_ASSERT_5_SIZE(1);
-        ASSERT_EVENTS_AF_ASSERT_5(0,file,lineNo,1,2,3,4,5);
+        ASSERT_EVENTS_AF_ASSERT_5_SIZE(expectedSize);
+        if (expectedSize > 0) {
+             ASSERT_EVENTS_AF_ASSERT_5(0,file,lineNo,1,2,3,4,5);
+        }
 
         // FW_ASSERT_6
 
         FW_ASSERT(0,1,2,3,4,5,6);lineNo = __LINE__;
-        ASSERT_EVENTS_AF_ASSERT_6_SIZE(1);
-        ASSERT_EVENTS_AF_ASSERT_6(0,file,lineNo,1,2,3,4,5,6);
-
+        ASSERT_EVENTS_AF_ASSERT_6_SIZE(expectedSize);
+        if (expectedSize > 0) {
+            ASSERT_EVENTS_AF_ASSERT_6(0,file,lineNo,1,2,3,4,5,6);
+        }
         // Test unexpected assert
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
         U32 unexpectedFile = 0xF00;

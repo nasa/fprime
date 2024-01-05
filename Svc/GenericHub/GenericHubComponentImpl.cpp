@@ -147,13 +147,18 @@ void GenericHubComponentImpl ::LogRecv_handler(const NATIVE_INT_TYPE portNum,
                                   Fw::Time& timeTag,
                                   const Fw::LogSeverity& severity,
                                   Fw::LogBuffer& args) {
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     U8 buffer[sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + Fw::LogSeverity::SERIALIZED_SIZE + FW_LOG_BUFFER_MAX_SIZE];
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
-    FW_ASSERT(serializer.serialize(id) == Fw::SerializeStatus::FW_SERIALIZE_OK);;
-    FW_ASSERT(serializer.serialize(timeTag) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(serializer.serialize(severity) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(serializer.serialize(args) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    status = serializer.serialize(id);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    status = serializer.serialize(timeTag);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    status = serializer.serialize(severity);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    status = serializer.serialize(args);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
     U32 size = serializer.getBuffLength();
     this->send_data(HubType::HUB_TYPE_EVENT, portNum, buffer, size);
 
@@ -163,12 +168,16 @@ void GenericHubComponentImpl ::TlmRecv_handler(const NATIVE_INT_TYPE portNum,
                                   FwChanIdType id,
                                   Fw::Time& timeTag,
                                   Fw::TlmBuffer& val) {
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     U8 buffer[sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + FW_TLM_BUFFER_MAX_SIZE];
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
-    FW_ASSERT(serializer.serialize(id) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(serializer.serialize(timeTag) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(serializer.serialize(val) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    status = serializer.serialize(id);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    status = serializer.serialize(timeTag);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    status = serializer.serialize(val);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
     U32 size = serializer.getBuffLength();
     this->send_data(HubType::HUB_TYPE_CHANNEL, portNum, buffer, size);
 }
