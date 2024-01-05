@@ -1,6 +1,6 @@
 var hierarchy =
 [
-    [ "Fw::AssertHook", null, [
+    [ "Fw::AssertHook", "class_fw_1_1_assert_hook.html", [
       [ "Fw::LogAssertHook", "class_fw_1_1_log_assert_hook.html", null ]
     ] ],
     [ "Os::BareQueueHandle", "class_os_1_1_bare_queue_handle.html", null ],

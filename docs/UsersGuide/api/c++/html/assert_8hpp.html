@@ -85,7 +85,10 @@ $(document).ready(function(){initNavTree('_assert_8hpp.html',''); initResizable(
 
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">Assert.hpp File Reference</div>  </div>
 </div><!--header-->
@@ -94,12 +97,108 @@ $(document).ready(function(){initNavTree('_assert_8hpp.html',''); initResizable(
 </div>
 <p><a href="assert_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_assert_hook.html">Fw::AssertHook</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespace_fw"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw.html">Fw</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ae203ae2022a5f92eea0ceb85a0d62c3c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(...)</td></tr>
+<tr class="memitem:af15f4a57cfffc18da6f07fe4838f0a01"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#af15f4a57cfffc18da6f07fe4838f0a01">FW_ASSERT_FIRST_ARG</a>(ARG_0, ...)&#160;&#160;&#160;ARG_0</td></tr>
+<tr class="separator:af15f4a57cfffc18da6f07fe4838f0a01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a232f8c00fa65436fd4256eac3abad512"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#a232f8c00fa65436fd4256eac3abad512">FW_ASSERT_NO_FIRST_ARG</a>(ARG_0, ...)&#160;&#160;&#160;__VA_ARGS__</td></tr>
+<tr class="separator:a232f8c00fa65436fd4256eac3abad512"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae203ae2022a5f92eea0ceb85a0d62c3c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(...)&#160;&#160;&#160;((void)(<a class="el" href="assert_8hpp.html#af15f4a57cfffc18da6f07fe4838f0a01">FW_ASSERT_FIRST_ARG</a>(__VA_ARGS__)))</td></tr>
 <tr class="separator:ae203ae2022a5f92eea0ceb85a0d62c3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5a28500bcc7ea8428b3590a50e0a64d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a>&#160;&#160;&#160;const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a>*</td></tr>
+<tr class="separator:af5a28500bcc7ea8428b3590a50e0a64d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af989845e24678c452b9222afdac95e7f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#af989845e24678c452b9222afdac95e7f">__has_feature</a>(x)&#160;&#160;&#160;0</td></tr>
+<tr class="separator:af989845e24678c452b9222afdac95e7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ff2abd2d5d0e4ac906f6ef19b47676e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#a0ff2abd2d5d0e4ac906f6ef19b47676e">CLANG_ANALYZER_NORETURN</a></td></tr>
+<tr class="separator:a0ff2abd2d5d0e4ac906f6ef19b47676e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a164bc0d007284a2c339151f631f4075d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw.html#a164bc0d007284a2c339151f631f4075d">Fw::SwAssert</a> (<a class="el" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> lineNo) <a class="el" href="assert_8hpp.html#a0ff2abd2d5d0e4ac906f6ef19b47676e">CLANG_ANALYZER_NORETURN</a></td></tr>
+<tr class="memdesc:a164bc0d007284a2c339151f631f4075d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert with no arguments.  <a href="namespace_fw.html#a164bc0d007284a2c339151f631f4075d">More...</a><br /></td></tr>
+<tr class="separator:a164bc0d007284a2c339151f631f4075d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a426e0d6ad109877c6307393b1b4c5608"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw.html#a426e0d6ad109877c6307393b1b4c5608">Fw::SwAssert</a> (<a class="el" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg1, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> lineNo) <a class="el" href="assert_8hpp.html#a0ff2abd2d5d0e4ac906f6ef19b47676e">CLANG_ANALYZER_NORETURN</a></td></tr>
+<tr class="memdesc:a426e0d6ad109877c6307393b1b4c5608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert with one argument.  <a href="namespace_fw.html#a426e0d6ad109877c6307393b1b4c5608">More...</a><br /></td></tr>
+<tr class="separator:a426e0d6ad109877c6307393b1b4c5608"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02c502472c570ba4387f25351ccb148a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw.html#a02c502472c570ba4387f25351ccb148a">Fw::SwAssert</a> (<a class="el" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg1, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg2, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> lineNo) <a class="el" href="assert_8hpp.html#a0ff2abd2d5d0e4ac906f6ef19b47676e">CLANG_ANALYZER_NORETURN</a></td></tr>
+<tr class="memdesc:a02c502472c570ba4387f25351ccb148a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert with two arguments.  <a href="namespace_fw.html#a02c502472c570ba4387f25351ccb148a">More...</a><br /></td></tr>
+<tr class="separator:a02c502472c570ba4387f25351ccb148a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab502275f5526a357f3877d700756acda"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw.html#ab502275f5526a357f3877d700756acda">Fw::SwAssert</a> (<a class="el" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg1, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg2, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg3, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> lineNo) <a class="el" href="assert_8hpp.html#a0ff2abd2d5d0e4ac906f6ef19b47676e">CLANG_ANALYZER_NORETURN</a></td></tr>
+<tr class="memdesc:ab502275f5526a357f3877d700756acda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert with three arguments.  <a href="namespace_fw.html#ab502275f5526a357f3877d700756acda">More...</a><br /></td></tr>
+<tr class="separator:ab502275f5526a357f3877d700756acda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7290197550e6e0757514692ad4260ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw.html#ae7290197550e6e0757514692ad4260ea">Fw::SwAssert</a> (<a class="el" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg1, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg2, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg3, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg4, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> lineNo) <a class="el" href="assert_8hpp.html#a0ff2abd2d5d0e4ac906f6ef19b47676e">CLANG_ANALYZER_NORETURN</a></td></tr>
+<tr class="memdesc:ae7290197550e6e0757514692ad4260ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert with four arguments.  <a href="namespace_fw.html#ae7290197550e6e0757514692ad4260ea">More...</a><br /></td></tr>
+<tr class="separator:ae7290197550e6e0757514692ad4260ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90bb35672435a49ba33551993fd2b6a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw.html#a90bb35672435a49ba33551993fd2b6a1">Fw::SwAssert</a> (<a class="el" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg1, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg2, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg3, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg4, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg5, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> lineNo) <a class="el" href="assert_8hpp.html#a0ff2abd2d5d0e4ac906f6ef19b47676e">CLANG_ANALYZER_NORETURN</a></td></tr>
+<tr class="memdesc:a90bb35672435a49ba33551993fd2b6a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert with five arguments.  <a href="namespace_fw.html#a90bb35672435a49ba33551993fd2b6a1">More...</a><br /></td></tr>
+<tr class="separator:a90bb35672435a49ba33551993fd2b6a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66a67e569a8e331fbc69c3d1a9707479"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw.html#a66a67e569a8e331fbc69c3d1a9707479">Fw::SwAssert</a> (<a class="el" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg1, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg2, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg3, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg4, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg5, <a class="el" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a> arg6, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> lineNo) <a class="el" href="assert_8hpp.html#a0ff2abd2d5d0e4ac906f6ef19b47676e">CLANG_ANALYZER_NORETURN</a></td></tr>
+<tr class="memdesc:a66a67e569a8e331fbc69c3d1a9707479"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert with six arguments.  <a href="namespace_fw.html#a66a67e569a8e331fbc69c3d1a9707479">More...</a><br /></td></tr>
+<tr class="separator:a66a67e569a8e331fbc69c3d1a9707479"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="af989845e24678c452b9222afdac95e7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af989845e24678c452b9222afdac95e7f">&#9670;&nbsp;</a></span>__has_feature</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define __has_feature</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x</td><td>)</td>
+          <td>&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="assert_8hpp_source.html#l00045">45</a> of file <a class="el" href="assert_8hpp_source.html">Assert.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0ff2abd2d5d0e4ac906f6ef19b47676e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ff2abd2d5d0e4ac906f6ef19b47676e">&#9670;&nbsp;</a></span>CLANG_ANALYZER_NORETURN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CLANG_ANALYZER_NORETURN</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="assert_8hpp_source.html#l00050">50</a> of file <a class="el" href="assert_8hpp_source.html">Assert.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af5a28500bcc7ea8428b3590a50e0a64d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5a28500bcc7ea8428b3590a50e0a64d">&#9670;&nbsp;</a></span>FILE_NAME_ARG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FILE_NAME_ARG&#160;&#160;&#160;const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a>*</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="assert_8hpp_source.html#l00016">16</a> of file <a class="el" href="assert_8hpp_source.html">Assert.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ae203ae2022a5f92eea0ceb85a0d62c3c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae203ae2022a5f92eea0ceb85a0d62c3c">&#9670;&nbsp;</a></span>FW_ASSERT</h2>
 
@@ -111,12 +210,72 @@ Macros</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>...</em></td><td>)</td>
+          <td>&#160;&#160;&#160;((void)(<a class="el" href="assert_8hpp.html#af15f4a57cfffc18da6f07fe4838f0a01">FW_ASSERT_FIRST_ARG</a>(__VA_ARGS__)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="assert_8hpp_source.html#l00014">14</a> of file <a class="el" href="assert_8hpp_source.html">Assert.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af15f4a57cfffc18da6f07fe4838f0a01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af15f4a57cfffc18da6f07fe4838f0a01">&#9670;&nbsp;</a></span>FW_ASSERT_FIRST_ARG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FW_ASSERT_FIRST_ARG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ARG_0, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;ARG_0</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="assert_8hpp_source.html#l00007">7</a> of file <a class="el" href="assert_8hpp_source.html">Assert.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a232f8c00fa65436fd4256eac3abad512"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a232f8c00fa65436fd4256eac3abad512">&#9670;&nbsp;</a></span>FW_ASSERT_NO_FIRST_ARG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FW_ASSERT_NO_FIRST_ARG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ARG_0, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;__VA_ARGS__</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="assert_8hpp_source.html#l00009">9</a> of file <a class="el" href="assert_8hpp_source.html">Assert.hpp</a>.</p>
 
 </div>
 </div>

@@ -126,6 +126,7 @@ var annotated_dup =
       [ "TlmPacket", "class_fw_1_1_tlm_packet.html", "class_fw_1_1_tlm_packet" ],
       [ "TlmString", "class_fw_1_1_tlm_string.html", "class_fw_1_1_tlm_string" ],
       [ "TrapHandler", "class_fw_1_1_trap_handler.html", "class_fw_1_1_trap_handler" ],
+      [ "AssertHook", "class_fw_1_1_assert_hook.html", "class_fw_1_1_assert_hook" ],
       [ "ByteArray", "struct_fw_1_1_byte_array.html", "struct_fw_1_1_byte_array" ],
       [ "ConstByteArray", "struct_fw_1_1_const_byte_array.html", "struct_fw_1_1_const_byte_array" ],
       [ "EightyCharString", "class_fw_1_1_eighty_char_string.html", "class_fw_1_1_eighty_char_string" ],

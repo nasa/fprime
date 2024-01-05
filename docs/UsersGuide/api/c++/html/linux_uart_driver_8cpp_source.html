@@ -112,8 +112,8 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//#include &lt;cstdlib&gt;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">//#include &lt;cstdio&gt;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">   26</a></span>&#160;<span class="preprocessor">#define DEBUG_PRINT(x, ...)</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">//#define DEBUG_PRINT(...) printf(##__VA_ARGS__); fflush(stdout)</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">   26</a></span>&#160;<span class="preprocessor">#define DEBUG_PRINT(...)</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_drv.html">Drv</a> {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
@@ -141,7 +141,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    this-&gt;m_device = device;</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Opening UART device %s\n&quot;</span>, device);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Opening UART device %s\n&quot;</span>, device);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="comment">/*</span></div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">     The O_NOCTTY flag tells UNIX that this program doesn&#39;t want to be the &quot;controlling terminal&quot; for that port. If you</span></div>
@@ -152,13 +152,13 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    fd = <a class="code" href="class_drv_1_1_linux_uart_driver.html#a244a7d081a0bf1019784a00738467842">::open</a>(device, O_RDWR | O_NOCTTY);</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordflow">if</span> (fd == -1) {</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;open UART device %s failed.\n&quot;</span>, device);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;open UART device %s failed.\n&quot;</span>, device);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _arg = device;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _err = strerror(errno);</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_linux_uart_driver_component_base.html#a9279322a8e280d4c6cafbcdc21f15c05">log_WARNING_HI_OpenError</a>(_arg, this-&gt;m_fd, _err);</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Successfully opened UART device %s fd %d\n&quot;</span>, device, fd);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Successfully opened UART device %s fd %d\n&quot;</span>, device, fd);</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    }</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    this-&gt;m_fd = fd;</div>
@@ -168,14 +168,14 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    stat = tcgetattr(fd, &amp;cfg);</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">if</span> (-1 == stat) {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcgetattr failed: (%d): %s\n&quot;</span>, stat, strerror(errno));</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcgetattr failed: (%d): %s\n&quot;</span>, stat, strerror(errno));</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        close(fd);</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _arg = device;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _err = strerror(errno);</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_linux_uart_driver_component_base.html#a9279322a8e280d4c6cafbcdc21f15c05">log_WARNING_HI_OpenError</a>(_arg, fd, _err);</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcgetattr passed.\n&quot;</span>);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcgetattr passed.\n&quot;</span>);</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    }</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">/*</span></div>
@@ -198,14 +198,14 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    stat = tcsetattr(fd, TCSANOW, &amp;cfg);</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">if</span> (-1 == stat) {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcsetattr failed: (%d): %s\n&quot;</span>, stat, strerror(errno));</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcsetattr failed: (%d): %s\n&quot;</span>, stat, strerror(errno));</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        close(fd);</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _arg = device;</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _err = strerror(errno);</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_linux_uart_driver_component_base.html#a9279322a8e280d4c6cafbcdc21f15c05">log_WARNING_HI_OpenError</a>(_arg, fd, _err);</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcsetattr passed.\n&quot;</span>);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcsetattr passed.\n&quot;</span>);</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="comment">// Set flow control</span></div>
@@ -214,7 +214,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordtype">int</span> stat = tcgetattr(fd, &amp;t);</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <span class="keywordflow">if</span> (-1 == stat) {</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcgetattr UART fd %d failed\n&quot;</span>, fd);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcgetattr UART fd %d failed\n&quot;</span>, fd);</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            close(fd);</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _arg = device;</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _err = strerror(errno);</div>
@@ -227,7 +227,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        stat = tcsetattr(fd, TCSANOW, &amp;t);</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordflow">if</span> (-1 == stat) {</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcsetattr UART fd %d failed\n&quot;</span>, fd);</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcsetattr UART fd %d failed\n&quot;</span>, fd);</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            close(fd);</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _arg = device;</div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _err = strerror(errno);</div>
@@ -305,7 +305,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    stat = tcgetattr(fd, &amp;newtio);</div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordflow">if</span> (-1 == stat) {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcgetattr UART fd %d failed\n&quot;</span>, fd);</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcgetattr UART fd %d failed\n&quot;</span>, fd);</div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        close(fd);</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _arg = device;</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _err = strerror(errno);</div>
@@ -348,7 +348,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="comment">// Set baud rate:</span></div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    stat = cfsetispeed(&amp;newtio, relayRate);</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordflow">if</span> (stat) {</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;cfsetispeed failed\n&quot;</span>);</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;cfsetispeed failed\n&quot;</span>);</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        close(fd);</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _arg = device;</div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _err = strerror(errno);</div>
@@ -357,7 +357,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    }</div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    stat = cfsetospeed(&amp;newtio, relayRate);</div>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="keywordflow">if</span> (stat) {</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;cfsetospeed failed\n&quot;</span>);</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;cfsetospeed failed\n&quot;</span>);</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        close(fd);</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _arg = device;</div>
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _err = strerror(errno);</div>
@@ -379,7 +379,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="comment">// Set attributes:</span></div>
 <div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    stat = tcsetattr(fd, TCSANOW, &amp;newtio);</div>
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="keywordflow">if</span> (-1 == stat) {</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcsetattr UART fd %d failed\n&quot;</span>, fd);</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcsetattr UART fd %d failed\n&quot;</span>, fd);</div>
 <div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        close(fd);</div>
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _arg = device;</div>
 <div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;        <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> _err = strerror(errno);</div>
@@ -398,7 +398,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
 <div class="line"><a name="l00309"></a><span class="lineno"><a class="line" href="class_drv_1_1_linux_uart_driver.html#a823e807b3ec996fd56037a2f0a32e814">  309</a></span>&#160;<a class="code" href="class_drv_1_1_linux_uart_driver.html#a823e807b3ec996fd56037a2f0a32e814">LinuxUartDriver ::~LinuxUartDriver</a>() {</div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    <span class="keywordflow">if</span> (this-&gt;m_fd != -1) {</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Closing UART device %d\n&quot;</span>, this-&gt;m_fd);</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Closing UART device %d\n&quot;</span>, this-&gt;m_fd);</div>
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
 <div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        (void)close(this-&gt;m_fd);</div>
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    }</div>
@@ -497,11 +497,11 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;}</div>
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160; </div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;}  <span class="comment">// end namespace Drv</span></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00007">Assert.hpp:7</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00052">BasicTypes.h:52</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html"><div class="ttname"><a href="basic_types_8hpp.html">BasicTypes.hpp</a></div><div class="ttdoc">C++ header for working with basic fprime types.</div></div>
-<div class="ttc" id="a_linux_uart_driver_8cpp_html_a9e21a2a88f554186e2b2380b00eab944"><div class="ttname"><a href="linux_uart_driver_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a></div><div class="ttdeci">#define DEBUG_PRINT(x,...)</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_8cpp_source.html#l00026">LinuxUartDriver.cpp:26</a></div></div>
+<div class="ttc" id="a_linux_uart_driver_8cpp_html_a88edd2aa4feabff4af21a997d5d8aa23"><div class="ttname"><a href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a></div><div class="ttdeci">#define DEBUG_PRINT(...)</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_8cpp_source.html#l00026">LinuxUartDriver.cpp:26</a></div></div>
 <div class="ttc" id="a_linux_uart_driver_8hpp_html"><div class="ttname"><a href="linux_uart_driver_8hpp.html">LinuxUartDriver.hpp</a></div></div>
 <div class="ttc" id="a_task_string_8hpp_html"><div class="ttname"><a href="task_string_8hpp.html">TaskString.hpp</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_linux_uart_driver_component_base_html"><div class="ttname"><a href="class_drv_1_1_linux_uart_driver_component_base.html">Drv::LinuxUartDriverComponentBase</a></div><div class="ttdoc">Auto-generated base for LinuxUartDriver component.</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_component_ac_8hpp_source.html#l00033">LinuxUartDriverComponentAc.hpp:35</a></div></div>

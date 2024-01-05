@@ -117,8 +117,8 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;fcntl.h&gt;</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;poll.h&gt;</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">   31</a></span>&#160;<span class="preprocessor">#define DEBUG_PRINT(x,...)</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">//#define DEBUG_PRINT(...) printf(##__VA_ARGS__); fflush(stdout)</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">   31</a></span>&#160;<span class="preprocessor">#define DEBUG_PRINT(...)</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_drv.html">Drv</a> {</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
@@ -134,7 +134,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        fd = open(<a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a2186edfe157722c7ba835017f4047dc9">SYSFS_GPIO_DIR</a> <span class="stringliteral">&quot;/export&quot;</span>, O_WRONLY);</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordflow">if</span> (fd &lt; 0) {</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/export error!\n&quot;</span>);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/export error!\n&quot;</span>);</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        }</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
@@ -142,7 +142,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        len = snprintf(buf, <span class="keyword">sizeof</span>(buf), <span class="stringliteral">&quot;%u&quot;</span>, gpio);</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordflow">if</span>(write(fd, buf, len) != len) {</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            (void) close(fd);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/export error!\n&quot;</span>);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/export error!\n&quot;</span>);</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        (void) close(fd);</div>
@@ -165,7 +165,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        fd = open(<a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a2186edfe157722c7ba835017f4047dc9">SYSFS_GPIO_DIR</a> <span class="stringliteral">&quot;/unexport&quot;</span>, O_WRONLY);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordflow">if</span> (fd &lt; 0) {</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/unexport error!\n&quot;</span>);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/unexport error!\n&quot;</span>);</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        }</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
@@ -173,7 +173,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        len = snprintf(buf, <span class="keyword">sizeof</span>(buf), <span class="stringliteral">&quot;%u&quot;</span>, gpio);</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">if</span>(write(fd, buf, len) != len) {</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            (void) close(fd);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/unexport error!\n&quot;</span>);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/unexport error!\n&quot;</span>);</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        }</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        (void) close(fd);</div>
@@ -199,7 +199,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        fd = open(buf, O_WRONLY);</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordflow">if</span> (fd &lt; 0) {</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/direction error!\n&quot;</span>);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/direction error!\n&quot;</span>);</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        }</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
@@ -208,7 +208,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keywordflow">if</span> (write(fd, dir, len) != len) {</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            (void) close(fd);</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/direction error!\n&quot;</span>);</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/direction error!\n&quot;</span>);</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        }</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
@@ -230,11 +230,11 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> len = 1;</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <span class="keywordflow">if</span>(write(fd, val, len) != len) {</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/set value error!\n&quot;</span>);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/set value error!\n&quot;</span>);</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        }</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;GPIO fd %d value %d written\n&quot;</span>,fd,value);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;GPIO fd %d value %d written\n&quot;</span>,fd,value);</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    }</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
@@ -251,7 +251,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> stat2 = read(fd, &amp;ch, 1);</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordflow">if</span> (stat1 == -1 || stat2 != 1) {</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;GPIO read failure: %d %d!\n&quot;</span>,stat1,stat2);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;GPIO read failure: %d %d!\n&quot;</span>,stat1,stat2);</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        }</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
@@ -262,7 +262,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;            *value = 0;</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        }</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;GPIO fd %d value %c read\n&quot;</span>,fd,ch);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;GPIO fd %d value %c read\n&quot;</span>,fd,ch);</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    }</div>
@@ -285,14 +285,14 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        fd = open(buf, O_WRONLY);</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        <span class="keywordflow">if</span> (fd &lt; 0) {</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/set-edge error!\n&quot;</span>);</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/set-edge error!\n&quot;</span>);</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        }</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        len = strlen(edge) + 1;</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <span class="keywordflow">if</span>(write(fd, edge, len) != len) {</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;            (void) close(fd);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/set-edge error!\n&quot;</span>);</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/set-edge error!\n&quot;</span>);</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        }</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
@@ -314,7 +314,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        fd = open(buf, O_RDWR | O_NONBLOCK );</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <span class="keywordflow">if</span> (fd &lt; 0) {</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/fd_open error!\n&quot;</span>);</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;gpio/fd_open error!\n&quot;</span>);</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        }</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <span class="keywordflow">return</span> fd;</div>
@@ -443,7 +443,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;<span class="comment">        * http://stackoverflow.com/questions/27411013/poll-returns-both-pollpri-pollerr</span></div>
 <div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;<span class="comment">        */</span></div>
 <div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        <span class="keywordflow">if</span> (stat &lt; 0) {</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;stat: %d, revents: 0x%x, POLLERR: 0x%x, POLLIN: 0x%x, POLLPRI: 0x%x\n&quot;</span>,</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;stat: %d, revents: 0x%x, POLLERR: 0x%x, POLLIN: 0x%x, POLLPRI: 0x%x\n&quot;</span>,</div>
 <div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                    stat, fdset[0].revents, POLLERR, POLLIN, POLLPRI); <span class="comment">// TODO remove</span></div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;            compPtr-&gt;<a class="code" href="class_drv_1_1_linux_gpio_driver_component_base.html#a75a200b7b148c1cf252bc139303ae61c">log_WARNING_HI_GP_IntWaitError</a>(compPtr-&gt;m_gpio);</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;            <span class="keywordflow">return</span>;</div>
@@ -451,7 +451,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160; </div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        <span class="keywordflow">if</span> (stat == 0) {</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;            <span class="comment">// continue to poll</span></div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Krait timed out waiting for GPIO interrupt\n&quot;</span>);</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;            <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Krait timed out waiting for GPIO interrupt\n&quot;</span>);</div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;            <span class="keywordflow">continue</span>;</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        }</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160; </div>
@@ -467,7 +467,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;            <span class="keywordtype">char</span> buf[<a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a2491303d0fe260aaba8f46717cda66cc">MAX_BUF</a>];</div>
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;            (void) lseek(fdset[0].fd, 0, SEEK_SET); <span class="comment">// Must seek back to the starting</span></div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;            <span class="keywordflow">if</span>(read(fdset[0].fd, buf, <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a2491303d0fe260aaba8f46717cda66cc">MAX_BUF</a>) &gt; 0) {</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;                <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;\npoll() GPIO interrupt occurred w/ value: %c\n&quot;</span>, buf[0]);</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;                <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;\npoll() GPIO interrupt occurred w/ value: %c\n&quot;</span>, buf[0]);</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;            }</div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        }</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160; </div>
@@ -492,7 +492,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;      <a class="code" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Os::Task::TaskStatus</a> stat = this-&gt;m_intTask.<a class="code" href="class_os_1_1_task.html#ad310818e9faa33e1a8f930b673aa7e45">start</a>(name, LinuxGpioDriverComponentImpl::intTaskEntry, <span class="keyword">this</span>, priority, stackSize, cpuAffinity);</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
 <div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;      <span class="keywordflow">if</span> (stat != <a class="code" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa38fdf68e513d964c543e6082ffde55b9">Os::Task::TASK_OK</a>) {</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;          <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Task start error: %d\n&quot;</span>,stat);</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;          <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Task start error: %d\n&quot;</span>,stat);</div>
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;      }</div>
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160; </div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;      <span class="keywordflow">return</span> stat;</div>
@@ -510,7 +510,7 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<a class="code" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a597f5d222833b99445494ceda7a0bd0e">    ~LinuxGpioDriverComponentImpl</a>()</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;  {</div>
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_fd != -1) {</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;          <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Closing GPIO %d fd %d\n&quot;</span>,this-&gt;m_gpio, this-&gt;m_fd);</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;          <a class="code" href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Closing GPIO %d fd %d\n&quot;</span>,this-&gt;m_gpio, this-&gt;m_fd);</div>
 <div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;          (void) <a class="code" href="namespace_drv.html#a7277b31c45e1f399f51453d65914068d">gpio_fd_close</a>(this-&gt;m_fd, this-&gt;m_gpio);</div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;      }</div>
 <div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160; </div>
@@ -518,13 +518,13 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_8cpp
 <div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160; </div>
 <div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160; </div>
 <div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;} <span class="comment">// end namespace Drv</span></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00007">Assert.hpp:7</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00052">BasicTypes.h:52</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
 <div class="ttc" id="a_linux_gpio_driver_component_impl_8cpp_html_a2186edfe157722c7ba835017f4047dc9"><div class="ttname"><a href="linux_gpio_driver_component_impl_8cpp.html#a2186edfe157722c7ba835017f4047dc9">SYSFS_GPIO_DIR</a></div><div class="ttdeci">#define SYSFS_GPIO_DIR</div><div class="ttdef"><b>Definition:</b> <a href="linux_gpio_driver_component_impl_8cpp_source.html#l00019">LinuxGpioDriverComponentImpl.cpp:19</a></div></div>
 <div class="ttc" id="a_linux_gpio_driver_component_impl_8cpp_html_a2491303d0fe260aaba8f46717cda66cc"><div class="ttname"><a href="linux_gpio_driver_component_impl_8cpp.html#a2491303d0fe260aaba8f46717cda66cc">MAX_BUF</a></div><div class="ttdeci">#define MAX_BUF</div><div class="ttdef"><b>Definition:</b> <a href="linux_gpio_driver_component_impl_8cpp_source.html#l00020">LinuxGpioDriverComponentImpl.cpp:20</a></div></div>
-<div class="ttc" id="a_linux_gpio_driver_component_impl_8cpp_html_a9e21a2a88f554186e2b2380b00eab944"><div class="ttname"><a href="linux_gpio_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a></div><div class="ttdeci">#define DEBUG_PRINT(x,...)</div><div class="ttdef"><b>Definition:</b> <a href="linux_gpio_driver_component_impl_8cpp_source.html#l00031">LinuxGpioDriverComponentImpl.cpp:31</a></div></div>
+<div class="ttc" id="a_linux_gpio_driver_component_impl_8cpp_html_a88edd2aa4feabff4af21a997d5d8aa23"><div class="ttname"><a href="linux_gpio_driver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a></div><div class="ttdeci">#define DEBUG_PRINT(...)</div><div class="ttdef"><b>Definition:</b> <a href="linux_gpio_driver_component_impl_8cpp_source.html#l00031">LinuxGpioDriverComponentImpl.cpp:31</a></div></div>
 <div class="ttc" id="a_linux_gpio_driver_component_impl_8hpp_html"><div class="ttname"><a href="linux_gpio_driver_component_impl_8hpp.html">LinuxGpioDriverComponentImpl.hpp</a></div></div>
 <div class="ttc" id="a_task_string_8hpp_html"><div class="ttname"><a href="task_string_8hpp.html">TaskString.hpp</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_linux_gpio_driver_component_base_html_a29734b08b82f949ed89f496f23e5574b"><div class="ttname"><a href="class_drv_1_1_linux_gpio_driver_component_base.html#a29734b08b82f949ed89f496f23e5574b">Drv::LinuxGpioDriverComponentBase::log_WARNING_HI_GP_IntStartError</a></div><div class="ttdeci">void log_WARNING_HI_GP_IntStartError(I32 gpio)</div><div class="ttdef"><b>Definition:</b> <a href="linux_gpio_driver_component_ac_8cpp_source.html#l01073">LinuxGpioDriverComponentAc.cpp:1074</a></div></div>

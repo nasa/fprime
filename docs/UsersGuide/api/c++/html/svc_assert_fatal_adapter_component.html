@@ -116,7 +116,7 @@ Svc::AssertFatalAdapter Component</h1>
 <p>Port Data Type | Name | Direction | Kind | Usage -----------&mdash; | -&mdash; | ------&mdash; | -&mdash; | --&mdash;</p>
 <h4><a class="anchor" id="autotoc_md419"></a>
 3.2 Functional Description</h4>
-<p>The <code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> component contains a private implementation of the <code>Fw::AssertHook</code> base class (<code>AssertFatalAdapter</code>). Upon instantiation, the derived class registers itself to receive calls the FW_ASSERT. When it receives any one of them, it issues a FATAL event corresponding to the number of arguments to FW_ASSERT. Whatever mechanism in the system that deals with FATAL events will handle the asserts via that mechanism. <br  />
+<p>The <code><a class="el" href="namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08">Svc::AssertFatalAdapter</a></code> component contains a private implementation of the <code><a class="el" href="class_fw_1_1_assert_hook.html">Fw::AssertHook</a></code> base class (<code>AssertFatalAdapter</code>). Upon instantiation, the derived class registers itself to receive calls the FW_ASSERT. When it receives any one of them, it issues a FATAL event corresponding to the number of arguments to FW_ASSERT. Whatever mechanism in the system that deals with FATAL events will handle the asserts via that mechanism. <br  />
 </p>
 <h3><a class="anchor" id="autotoc_md420"></a>
 3.3 Scenarios</h3>
