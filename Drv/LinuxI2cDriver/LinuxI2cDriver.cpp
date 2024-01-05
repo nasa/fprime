@@ -174,25 +174,23 @@ namespace Drv {
       Fw::Logger::logMsg("I2c addr: 0x%02X\n",addr);
     #endif
 
-    struct i2c_msg rdwr_msgs[2] = {
-        {  // Start address
-            .addr = static_cast<U16>(addr),
-            .flags = 0, // write
-            .len = static_cast<U16>(writeBuffer.getSize()),
-            .buf = writeBuffer.getData()
-        },
-        { // Read buffer
-            .addr = static_cast<U16>(addr),
-            .flags = I2C_M_RD, // read
-            .len = static_cast<U16>(readBuffer.getSize()),
-            .buf = readBuffer.getData()
-        }
-    };
+    struct i2c_msg rdwr_msgs[2];
 
-    struct i2c_rdwr_ioctl_data rdwr_data = {
-        .msgs = rdwr_msgs,
-        .nmsgs = 2
-    };
+    // Start address
+    rdwr_msgs[0].addr = static_cast<U16>(addr);
+    rdwr_msgs[0].flags = 0; // write
+    rdwr_msgs[0].len = static_cast<U16>(writeBuffer.getSize());
+    rdwr_msgs[0].buf = writeBuffer.getData();
+
+    // Read buffer
+    rdwr_msgs[1].addr = static_cast<U16>(addr);
+    rdwr_msgs[1].flags = I2C_M_RD; // read
+    rdwr_msgs[1].len = static_cast<U16>(readBuffer.getSize());
+    rdwr_msgs[1].buf = readBuffer.getData();
+
+    struct i2c_rdwr_ioctl_data rdwr_data;
+    rdwr_data.msgs = rdwr_msgs;
+    rdwr_data.nmsgs = 2;
 
     //Use ioctl to perform the combined write/read transaction
     NATIVE_INT_TYPE stat = ioctl(this->m_fd, I2C_RDWR, &rdwr_data);

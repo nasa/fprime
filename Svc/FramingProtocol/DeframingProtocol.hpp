@@ -62,5 +62,5 @@ class DeframingProtocol {
   PROTECTED:
     DeframingProtocolInterface* m_interface;
 };
-};
+}
 #endif  // SVC_DEFRAMING_PROTOCOL_HPP

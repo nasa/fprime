@@ -53,4 +53,4 @@ NATIVE_UINT_TYPE Queue::getQueueSize() const {
 }
 
 
-};  // namespace Types
+}  // namespace Types

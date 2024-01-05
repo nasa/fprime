@@ -12,7 +12,7 @@
 // Use C linkage for the basic items
 extern "C" {
 #include "BasicTypes.h"
-};
+}
 
 #ifndef FW_BASIC_TYPES_HPP
 #define FW_BASIC_TYPES_HPP
