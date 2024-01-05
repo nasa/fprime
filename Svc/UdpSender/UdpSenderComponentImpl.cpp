@@ -19,8 +19,8 @@
 #include <cstdlib>
 #include <unistd.h>
 
-//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__)
-#define DEBUG_PRINT(x,...)
+//#define DEBUG_PRINT(...) printf(##__VA_ARGS__)
+#define DEBUG_PRINT(...)
 
 namespace Svc {
 

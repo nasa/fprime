@@ -65,6 +65,6 @@ namespace Os {
       Utils::HashBuffer hashBuffer;
   };
 
-};
+}
 
 #endif

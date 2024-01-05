@@ -22,8 +22,8 @@
 #include <arpa/inet.h>
 #include <Os/TaskString.hpp>
 
-//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__)
-#define DEBUG_PRINT(x,...)
+//#define DEBUG_PRINT(...) printf(##__VA_ARGS__)
+#define DEBUG_PRINT(...)
 
 namespace Svc {
 

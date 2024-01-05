@@ -173,5 +173,5 @@ class SocketReadTask {
     bool m_stop; //!< Stops the task when set to true
 
 };
-};
+}
 #endif  // DRV_SOCKETREADTASK_HPP

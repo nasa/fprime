@@ -152,6 +152,6 @@ namespace Svc {
       void writeHashFile(
       );
   };
-};
+}
 
 #endif
