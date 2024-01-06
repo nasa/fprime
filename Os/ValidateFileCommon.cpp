@@ -30,12 +30,12 @@ namespace Os {
         Utils::Hash hash;
         hash.init();
         U8 buffer[VFILE_HASH_CHUNK_SIZE];
-        NATIVE_INT_TYPE size = 0;
-        NATIVE_INT_TYPE cnt = 0;
+        FwSizeType size = 0;
+        FwSizeType cnt = 0;
         while( cnt <= max_itr ) {
             // Read out chunk from file:
             size = sizeof(buffer);
-            status = file.read(&buffer, size, false);
+            status = file.read(buffer, size, false);
             if( File::OP_OK != status ) {
                 return status;
             }
@@ -74,8 +74,8 @@ namespace Os {
 
         // Read hash from checksum file:
         unsigned char savedHash[HASH_DIGEST_LENGTH];
-        NATIVE_INT_TYPE size = hashBuffer.getBuffCapacity();
-        status = hashFile.read(&savedHash[0], size);
+        FwSizeType size = hashBuffer.getBuffCapacity();
+        status = hashFile.read(savedHash, size);
         if( File::OP_OK != status ) {
             return status;
         }
@@ -101,7 +101,7 @@ namespace Os {
         }
 
         // Write out the hash
-        NATIVE_INT_TYPE size = hashBuffer.getBuffLength();
+        FwSizeType size = hashBuffer.getBuffLength();
         status = hashFile.write(hashBuffer.getBuffAddr(), size, false);
         if( File::OP_OK != status ) {
             return status;

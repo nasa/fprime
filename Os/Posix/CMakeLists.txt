@@ -17,6 +17,7 @@ register_fprime_implementation(Os/File Os_File_Posix)
 
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/errno.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/CommonFileTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixFileTests.cpp"
 )
 set(UT_MOD_DEPS

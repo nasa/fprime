@@ -326,10 +326,10 @@ Status copyFileData(File source, File destination, FwSizeType size) {
     const FwSizeType copyLoopLimit = (size / FILE_SYSTEM_CHUNK_SIZE) + 2;
 
     FwSizeType loopCounter = 0;
-    NATIVE_INT_TYPE chunkSize;
+    FwSizeType chunkSize;
     while (loopCounter < copyLoopLimit) {
         chunkSize = FILE_SYSTEM_CHUNK_SIZE;
-        file_status = source.read(&fileBuffer, chunkSize, false);
+        file_status = source.read(fileBuffer, chunkSize, false);
         if (file_status != File::OP_OK) {
             return handleFileError(file_status);
         }

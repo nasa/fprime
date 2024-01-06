@@ -14,7 +14,7 @@ namespace Posix {
  * @param errno: errno representation of the error
  * @return: Os::File::Status representation of the error
  */
-File::Status errno_to_file_status(PlatformIntType errno);
+File::Status errno_to_file_status(PlatformIntType errno_input);
 
 }
 }

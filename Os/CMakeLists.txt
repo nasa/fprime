@@ -28,7 +28,6 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/MemCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
 
     # Refactored common files
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
