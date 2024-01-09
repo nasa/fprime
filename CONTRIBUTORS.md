@@ -60,6 +60,7 @@ Non-JPL Contributors to the F' Software Framework:
 
 * AaronMcDaniel
 * acxz
+* japrozs
 * jasonduley
 * keck-in-space
 * sommercharles
