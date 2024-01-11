@@ -5,4 +5,4 @@
     output port $recv: Drv.ByteStreamRecv
 
     @ Port invoked to send data out the driver
-    guarded input port send: Drv.ByteStreamSend
+    guarded input port $send: Drv.ByteStreamSend

@@ -111,4 +111,4 @@ void SocketReadTask::readTask(void* pointer) {
            (status == SOCK_SUCCESS || status == SOCK_INTERRUPTED_TRY_AGAIN || self->m_reconnect));
     self->getSocketHandler().shutdown(); // Shutdown the port entirely
 }
-};  // namespace Drv
+}  // namespace Drv

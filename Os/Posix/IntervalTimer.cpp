@@ -14,8 +14,8 @@
 namespace Os {
     void IntervalTimer::getRawTime(RawTime& time) {
         timespec t;
-
-        FW_ASSERT(clock_gettime(CLOCK_REALTIME,&t) == 0,errno);
+        PlatformIntType status = clock_gettime(CLOCK_REALTIME,&t);
+        FW_ASSERT(status == 0,errno);
         time.upper = t.tv_sec;
         time.lower = t.tv_nsec;
     }

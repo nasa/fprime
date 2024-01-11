@@ -847,36 +847,57 @@ void AssertTest() {
 
     // issue an assert
     FW_ASSERT(0);
+#if FW_ASSERT_LEVEL != FW_NO_ASSERT
     // hook should have intercepted it
     ASSERT_TRUE(hook.asserted());
     ASSERT_EQ(0u,hook.getNumArgs());
+#else
+    // assert does not fire when asserts are off
+    ASSERT_FALSE(hook.asserted());
+#endif
 
     // issue an assert
     FW_ASSERT(0,1);
+#if FW_ASSERT_LEVEL != FW_NO_ASSERT
     // hook should have intercepted it
     ASSERT_TRUE(hook.asserted());
     ASSERT_EQ(1u,hook.getNumArgs());
     ASSERT_EQ(1u,hook.getArg1());
+#else
+    // assert does not fire when asserts are off
+    ASSERT_FALSE(hook.asserted());
+#endif
 
     // issue an assert
     FW_ASSERT(0,1,2);
+#if FW_ASSERT_LEVEL != FW_NO_ASSERT
     // hook should have intercepted it
     ASSERT_TRUE(hook.asserted());
     ASSERT_EQ(2u,hook.getNumArgs());
     ASSERT_EQ(1u,hook.getArg1());
     ASSERT_EQ(2u,hook.getArg2());
+#else
+    // assert does not fire when asserts are off
+    ASSERT_FALSE(hook.asserted());
+#endif
 
     // issue an assert
     FW_ASSERT(0,1,2,3);
+#if FW_ASSERT_LEVEL != FW_NO_ASSERT
     // hook should have intercepted it
     ASSERT_TRUE(hook.asserted());
     ASSERT_EQ(3u,hook.getNumArgs());
     ASSERT_EQ(1u,hook.getArg1());
     ASSERT_EQ(2u,hook.getArg2());
     ASSERT_EQ(3u,hook.getArg3());
+#else
+    // assert does not fire when asserts are off
+    ASSERT_FALSE(hook.asserted());
+#endif
 
     // issue an assert
     FW_ASSERT(0,1,2,3,4);
+#if FW_ASSERT_LEVEL != FW_NO_ASSERT
     // hook should have intercepted it
     ASSERT_TRUE(hook.asserted());
     ASSERT_EQ(4u,hook.getNumArgs());
@@ -884,9 +905,14 @@ void AssertTest() {
     ASSERT_EQ(2u,hook.getArg2());
     ASSERT_EQ(3u,hook.getArg3());
     ASSERT_EQ(4u,hook.getArg4());
+#else
+    // assert does not fire when asserts are off
+    ASSERT_FALSE(hook.asserted());
+#endif
 
     // issue an assert
     FW_ASSERT(0,1,2,3,4,5);
+#if FW_ASSERT_LEVEL != FW_NO_ASSERT
     // hook should have intercepted it
     ASSERT_TRUE(hook.asserted());
     ASSERT_EQ(5u,hook.getNumArgs());
@@ -895,9 +921,14 @@ void AssertTest() {
     ASSERT_EQ(3u,hook.getArg3());
     ASSERT_EQ(4u,hook.getArg4());
     ASSERT_EQ(5u,hook.getArg5());
+#else
+    // assert does not fire when asserts are off
+    ASSERT_FALSE(hook.asserted());
+#endif
 
     // issue an assert
     FW_ASSERT(0,1,2,3,4,5,6);
+#if FW_ASSERT_LEVEL != FW_NO_ASSERT
     // hook should have intercepted it
     ASSERT_TRUE(hook.asserted());
     ASSERT_EQ(6u,hook.getNumArgs());
@@ -907,6 +938,10 @@ void AssertTest() {
     ASSERT_EQ(4u,hook.getArg4());
     ASSERT_EQ(5u,hook.getArg5());
     ASSERT_EQ(6u,hook.getArg6());
+#else
+    // assert does not fire when asserts are off
+    ASSERT_FALSE(hook.asserted());
+#endif
 
 }
 

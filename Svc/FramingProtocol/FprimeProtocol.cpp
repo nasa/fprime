@@ -62,7 +62,7 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
     // Initialize the checksum and loop through all bytes calculating it
     hash.init();
     for (U32 i = 0; i < size; i++) {
-        char byte;
+        U8 byte;
         const Fw::SerializeStatus status = ring.peek(byte, i);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
         hash.update(&byte, 1);
@@ -70,8 +70,8 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
     hash.final(hashBuffer);
     // Now loop through the hash digest bytes and check for equality
     for (U32 i = 0; i < HASH_DIGEST_LENGTH; i++) {
-        char calc = static_cast<char>(hashBuffer.getBuffAddr()[i]);
-        char sent = 0;
+        U8 calc = static_cast<char>(hashBuffer.getBuffAddr()[i]);
+        U8 sent = 0;
         const Fw::SerializeStatus status = ring.peek(sent, size + i);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
         if (calc != sent) {
@@ -131,4 +131,4 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     m_interface->route(buffer);
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
 }
-};
+}

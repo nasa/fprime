@@ -68,7 +68,7 @@ namespace Os {
 
     SystemResources::SystemResourcesStatus parseCpuData(char proc_stat_line[LINE_SIZE],
                                                     U32 cpu_data[4]) {
-        if (sscanf(proc_stat_line, "%*s %d %d %d %d", &cpu_data[0], &cpu_data[1], &cpu_data[2], &cpu_data[3]) !=
+        if (sscanf(proc_stat_line, "%*s %u %u %u %u", &cpu_data[0], &cpu_data[1], &cpu_data[2], &cpu_data[3]) !=
             4) {
             return SystemResources::SYSTEM_RESOURCES_ERROR;
         }
