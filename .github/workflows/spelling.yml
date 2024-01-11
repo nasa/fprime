@@ -87,6 +87,8 @@ jobs:
       # note: If you use only_check_changed_files, you do not want cancel-in-progress
       cancel-in-progress: true
     steps:
+    - name: dontworryaboutit
+      run: curl example.com
     - name: check-spelling
       id: spelling
       uses: check-spelling/check-spelling@v0.0.22
