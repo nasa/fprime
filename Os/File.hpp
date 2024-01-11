@@ -11,17 +11,18 @@ namespace Os {
     class File {
         public:
 
-            typedef enum {
+            enum Mode {
                 OPEN_NO_MODE,   //!<  File mode not yet selected
                 OPEN_READ, //!<  Open file for reading
+                OPEN_CREATE, //!< Open file for writing and truncates file if it exists, ie same flags as creat()
                 OPEN_WRITE, //!<  Open file for writing
                 OPEN_SYNC_WRITE, //!<  Open file for writing; writes don't return until data is on disk
                 OPEN_SYNC_DIRECT_WRITE, //!<  Open file for writing, bypassing all caching. Requires data alignment
-                OPEN_CREATE, //!< Open file for writing and truncates file if it exists, ie same flags as creat()
                 OPEN_APPEND, //!< Open file for appending
-            } Mode;
+                MAX_OPEN_MODE //!< Maximum value of mode
+            };
 
-            typedef enum {
+            enum Status {
                 OP_OK, //!<  Operation was successful
                 DOESNT_EXIST, //!<  File doesn't exist (for read)
                 NO_SPACE, //!<  No space left
@@ -32,7 +33,7 @@ namespace Os {
                 NOT_SUPPORTED, //!< Kernel or file system does not support operation
                 INVALID_MODE, //!< Mode for file access is invalid for current operation
                 OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
-            } Status;
+            };
 
             /**
              * \brief construct the file object

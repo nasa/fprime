@@ -7,6 +7,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <limits>
+// remove these
+#include <cstdio>
+#include <cstring>
 
 #include <Os/File.hpp>
 #include <Os/Posix/File.hpp>
@@ -28,6 +31,24 @@ namespace Os {
 #define USER_FLAGS (0)
 #endif
 
+
+
+// Ensure size of FwSizeType is large enough to fit eh necessary range
+static_assert(sizeof(FwSizeType) >= sizeof(off_t), "FwSizeType is not large enough to store values of type off_t");
+static_assert(sizeof(FwSizeType) >= sizeof(size_t), "FwSizeType is not large enough to store values of type size_t");
+static_assert(sizeof(FwSizeType) >= sizeof(ssize_t), "FwSizeType is not large enough to store values of type ssize_t");
+
+// Now check ranges of FwSizeType
+static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<off_t>::max(),
+              "Maximum value of FwSizeType less than the maximum value of off_t. Configure a larger type.");
+static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<ssize_t>::max(),
+              "Maximum value of FwSizeType less than the maximum value of ssize_t. Configure a larger type.");
+static_assert(std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<off_t>::min(),
+              "Minimum value of FwSizeType larger than the minimum value of off_t. Configure a larger type.");
+static_assert(std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<ssize_t>::min(),
+              "Minimum value of FwSizeType larger than the minimum value of ssize_t. Configure a larger type.");
+
+
 FileHandle::FileHandle() : file_descriptor(-1) {}
 
 void File::constructInternal() {
@@ -37,7 +58,7 @@ void File::constructInternal() {
 
 void File::destructInternal() {}
 
-File::Status File::openInternal(const char* path, File::Mode requested_mode, bool overwrite) {
+File::Status File::openInternal(const char* filepath, File::Mode requested_mode, bool overwrite) {
     PlatformIntType mode_flags = 0;
     Status status = OP_OK;
 
@@ -65,10 +86,12 @@ File::Status File::openInternal(const char* path, File::Mode requested_mode, boo
             break;
     }
 
-    PlatformIntType descriptor = ::open(path, mode_flags, USER_FLAGS);
+    PlatformIntType descriptor = ::open(filepath, mode_flags, USER_FLAGS);
     if (-1 == descriptor) {
         PlatformIntType errno_store = errno;
         status = Os::Posix::errno_to_file_status(errno_store);
+    } else {
+        this->path = filepath;
     }
     this->handle->file_descriptor = descriptor;
     return status;
@@ -116,9 +139,7 @@ File::Status File::preallocateInternal(FwSizeType offset, FwSizeType length) {
     return status;
 }
 
-static_assert(sizeof(FwSizeType) >= sizeof(off_t), "FwSizeType is not large enough to store off_t");
-static_assert(sizeof(FwSizeType) >= sizeof(size_t), "FwSizeType is not large enough to store size_t");
-static_assert(sizeof(FwSizeType) >= sizeof(ssize_t), "FwSizeType is not large enough to store ssize_t");
+
 
 File::Status File::seekInternal(FwSizeType offset, bool absolute) {
     Status status = OP_OK;

@@ -12,7 +12,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-
 namespace Os {
 
 File::File() : mode(OPEN_NO_MODE), path(nullptr), handle(nullptr), handle_storage() {
@@ -28,7 +27,13 @@ File::~File() {
 }
 
 File::Status File::open(const CHAR* filepath, File::Mode requested_mode, bool overwrite) {
-    File::Status status = this->openInternal(path, requested_mode, overwrite);
+    FW_ASSERT(nullptr != filepath);
+    FW_ASSERT(File::Mode::OPEN_NO_MODE < requested_mode && File::Mode::MAX_OPEN_MODE > requested_mode);
+    // Check for already opened file
+    if (this->isOpen()) {
+        return File::Status::INVALID_MODE;
+    }
+    File::Status status = this->openInternal(filepath, requested_mode, overwrite);
     if (status == File::Status::OP_OK) {
         this->mode = requested_mode;
         this->path = filepath;
@@ -59,11 +64,11 @@ File::Status File::preallocate(FwSizeType offset, FwSizeType length) {
 }
 
 File::Status File::seek(FwSizeType offset, bool absolute) {
+    // Cannot do a seek with a negative offset in absolute mode
+    FW_ASSERT(not absolute || offset >= 0);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->mode) {
         return File::Status::NOT_OPENED;
-    } else if (OPEN_READ == this->mode) {
-        return File::Status::INVALID_MODE;
     }
     return this->seekInternal(offset, absolute);
 }
