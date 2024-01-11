@@ -59,6 +59,8 @@ The [F´ Community](https://github.com/fprime-community) GitHub Organization con
 ## Resources
 - [User Guide](https://nasa.github.io/fprime/UsersGuide/guide.html)
 - [Tutorials](https://nasa.github.io/fprime/Tutorials/README.html)
+
+What if I added non-nefarious things here...
 - [Discussions](https://github.com/nasa/fprime/discussions)
 - [Submit an Issue](https://github.com/nasa/fprime/issues)
 - [F´ Community](https://github.com/fprime-community)
