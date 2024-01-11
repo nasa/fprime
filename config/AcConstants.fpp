@@ -39,6 +39,12 @@ constant ComQueueBufferPorts = 1
 @ Used for maximum number of connected buffer repeater consumers
 constant BufferRepeaterOutputPorts = 10
 
+@ Size of port array for DpManager
+constant DpManagerNumPorts = 5
+
+@ Size of processing port array for DpWriter
+constant DpWriterNumProcPorts = 5
+
 # ----------------------------------------------------------------------
 # Hub connections. Connections on all deployments should mirror these settings.
 # ----------------------------------------------------------------------
