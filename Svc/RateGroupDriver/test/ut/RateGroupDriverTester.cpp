@@ -31,7 +31,11 @@ void connectPorts(Svc::RateGroupDriver& impl, Svc::RateGroupDriverImplTester& te
 
 TEST(RateGroupDriverTest,NominalSchedule) {
 
-    Svc::RateGroupDriver::DividerSet dividersSet{{{1, 0}, {2, 1}, {3, 0}}};
+    Svc::RateGroupDriver::DividerSet dividersSet{};
+    for(FwIndexType i=0; i<static_cast<FwIndexType>(Svc::RateGroupDriver::DIVIDER_SIZE); i++)
+    {
+        dividersSet.dividers[i] = {i+1, i%2};
+    }
 
     Svc::RateGroupDriver impl("RateGroupDriver");
     impl.configure(dividersSet);
