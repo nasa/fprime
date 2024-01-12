@@ -71,6 +71,19 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
 
     enum UartParity { PARITY_NONE, PARITY_ODD, PARITY_EVEN };
 
+    enum UartStopBits { STOP_BITS_ONE, STOP_BITS_TWO };
+
+    //! Uart configuration structure
+    struct UartConfig {
+        UartBaudRate baud; //! Baud rate
+        UartFlowControl flow; //! flow control
+        UartParity parity; //! parity
+        UartStopBits stopBits; //! stop bits
+    };
+
+    // open device with configuration struct
+    bool open(const char* const device, const UartConfig& config, NATIVE_INT_TYPE allocationSize);
+
     // Open device with specified baud and flow control.
     bool open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, NATIVE_INT_TYPE allocationSize);
 

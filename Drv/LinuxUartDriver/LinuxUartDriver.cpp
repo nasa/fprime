@@ -39,11 +39,8 @@ void LinuxUartDriver ::init(const NATIVE_INT_TYPE instance) {
   LinuxUartDriverComponentBase::init(instance);
 }
 
-bool LinuxUartDriver::open(const char* const device,
-                           UartBaudRate baud,
-                           UartFlowControl fc,
-                           UartParity parity,
-                           NATIVE_INT_TYPE allocationSize) {
+bool LinuxUartDriver::open(const char* const device, const UartConfig& config, NATIVE_INT_TYPE allocationSize) {
+
     FW_ASSERT(device != nullptr);
     NATIVE_INT_TYPE fd = -1;
     NATIVE_INT_TYPE stat = -1;
@@ -119,7 +116,7 @@ bool LinuxUartDriver::open(const char* const device,
     }
 
     // Set flow control
-    if (fc == HW_FLOW) {
+    if (config.flow == HW_FLOW) {
         struct termios t;
 
         int stat = tcgetattr(fd, &t);
@@ -147,7 +144,7 @@ bool LinuxUartDriver::open(const char* const device,
     }
 
     NATIVE_INT_TYPE relayRate = B0;
-    switch (baud) {
+    switch (config.baud) {
         case BAUD_9600:
             relayRate = B9600;
             break;
@@ -207,7 +204,7 @@ bool LinuxUartDriver::open(const char* const device,
 #endif
 #endif
         default:
-            FW_ASSERT(0, baud);
+            FW_ASSERT(0, config.baud);
             break;
     }
 
@@ -238,9 +235,9 @@ bool LinuxUartDriver::open(const char* const device,
       options.c_cflag &= ~CSIZE;
       options.c_cflag |= CS7;
      */
-    newtio.c_cflag |= CS8 | CLOCAL | CREAD;
+    newtio.c_cflag |= CS8 | CLOCAL | CREAD | CSTOPB ;
 
-    switch (parity) {
+    switch (config.parity) {
         case PARITY_ODD:
             newtio.c_cflag |= (PARENB | PARODD);
             break;
@@ -251,7 +248,7 @@ bool LinuxUartDriver::open(const char* const device,
             newtio.c_cflag &= ~PARENB;
             break;
         default:
-            FW_ASSERT(0, parity);
+            FW_ASSERT(0, config.parity);
             break;
     }
 
@@ -304,6 +301,26 @@ bool LinuxUartDriver::open(const char* const device,
         this->ready_out(0); // Indicate the driver is connected
     }
     return true;
+
+
+}
+
+bool LinuxUartDriver::open(const char* const device,
+                           UartBaudRate baud,
+                           UartFlowControl fc,
+                           UartParity parity,
+                           NATIVE_INT_TYPE allocationSize) {
+
+
+    UartConfig cfg = { 
+        .baud = baud,
+        .flow = fc,
+        .parity = parity,
+        .stopBits = STOP_BITS_ONE
+    };
+
+    return this->open(device,cfg,allocationSize);
+
 }
 
 LinuxUartDriver ::~LinuxUartDriver() {
