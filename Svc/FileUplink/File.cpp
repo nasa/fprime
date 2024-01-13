@@ -27,7 +27,7 @@ namespace Svc {
     this->name = logStringArg;
     this->size = startPacket.fileSize;
     CFDP::Checksum checksum;
-    this->checksum = checksum;
+    this->m_checksum = checksum;
     return this->osFile.open(path, Os::File::OPEN_WRITE);
   }
 
@@ -53,7 +53,7 @@ namespace Svc {
     }
 
     FW_ASSERT(static_cast<U32>(intLength) == length, intLength);
-    this->checksum.update(data, byteOffset, length);
+    this->m_checksum.update(data, byteOffset, length);
     return Os::File::OP_OK;
 
   }

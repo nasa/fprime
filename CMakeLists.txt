@@ -20,11 +20,18 @@ add_compile_options(
     -Wall
     -Wextra
     -Werror
-#    -Wshadow
 #    -pedantic
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
     -Wno-unused-parameter
 )
+
+# Add -Wshadow only for framework code, not the unit tests
+if (BUILD_TESTING STREQUAL "OFF")
+    message(STATUS "Enabling shadow warning")
+    add_compile_options(
+        -Wshadow
+    )
+endif()
 
 # Turn on pedantic checks for clang, but disable specific checks that F' doesn't comply with.
 # GCC doesn't support disabling specific pedantic checks, so skip pedantic on GCC for now.

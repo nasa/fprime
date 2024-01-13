@@ -165,7 +165,7 @@ void TlmChan::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
                 // reset packet for more entries
                 pkt.resetPktSer();
                 // add entry to new packet
-                Fw::SerializeStatus stat = pkt.addValue(p_entry->id, p_entry->lastUpdate, p_entry->buffer);
+                stat = pkt.addValue(p_entry->id, p_entry->lastUpdate, p_entry->buffer);
                 // if this doesn't work, that means packet isn't big enough for
                 // even one channel, so assert
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));

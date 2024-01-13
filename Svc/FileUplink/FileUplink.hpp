@@ -49,7 +49,7 @@ namespace Svc {
         PRIVATE:
 
           //! The checksum for the file
-          ::CFDP::Checksum checksum;
+          ::CFDP::Checksum m_checksum;
 
         public:
 
@@ -67,7 +67,7 @@ namespace Svc {
 
           //! Get the checksum
           void getChecksum(::CFDP::Checksum& checksum) {
-            checksum = this->checksum;
+            checksum = this->m_checksum;
           }
 
       };
@@ -79,24 +79,24 @@ namespace Svc {
 
           //! Construct a FilesReceived object
           FilesReceived(FileUplink *const fileUplink) :
-            n(0), fileUplink(fileUplink)
+            m_n(0), m_fileUplink(fileUplink)
           { }
 
         public:
 
           //! Record a received file
           void fileReceived() {
-            ++this->n;
-            this->fileUplink->tlmWrite_FilesReceived(n);
+            ++this->m_n;
+            this->m_fileUplink->tlmWrite_FilesReceived(m_n);
           }
 
         PRIVATE:
 
           //! The total number of files received
-          U32 n;
+          U32 m_n;
 
           //! The enclosing FileUplink object
-          FileUplink *const fileUplink;
+          FileUplink *const m_fileUplink;
 
       };
 
@@ -107,24 +107,24 @@ namespace Svc {
 
           //! Construct a PacketsReceived object
           PacketsReceived(FileUplink *const fileUplink) :
-            n(0), fileUplink(fileUplink)
+            m_n(0), m_fileUplink(fileUplink)
           { }
 
         public:
 
           //! Record a packet received
           void packetReceived() {
-            ++this->n;
-            this->fileUplink->tlmWrite_PacketsReceived(n);
+            ++this->m_n;
+            this->m_fileUplink->tlmWrite_PacketsReceived(m_n);
           }
 
         PRIVATE:
 
           //! The total number of cancel packets
-          U32 n;
+          U32 m_n;
 
           //! The enclosing FileUplink object
-          FileUplink *const fileUplink;
+          FileUplink *const m_fileUplink;
 
       };
 
@@ -135,7 +135,7 @@ namespace Svc {
 
           //! Construct a Warnings object
           Warnings(FileUplink *const fileUplink) :
-            n(0), fileUplink(fileUplink)
+            m_n(0), m_fileUplink(fileUplink)
           { }
 
         public:
@@ -171,17 +171,17 @@ namespace Svc {
 
           //! Record a warning
           void warning() {
-            ++this->n;
-            this->fileUplink->tlmWrite_Warnings(n);
+            ++this->m_n;
+            this->m_fileUplink->tlmWrite_Warnings(m_n);
           }
 
         PRIVATE:
 
           //! The total number of warnings
-          U32 n;
+          U32 m_n;
 
           //! The enclosing FileUplink object
-          FileUplink *const fileUplink;
+          FileUplink *const m_fileUplink;
 
       };
 
