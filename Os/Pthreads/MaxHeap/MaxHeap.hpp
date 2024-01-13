@@ -25,7 +25,7 @@ namespace Os {
   //! off in FIFO order. Insertion and deletion from the heap are both
   //! O(log(n)) time.
   class MaxHeap {
-    
+
     public:
     //! \brief MaxHeap constructor
     //!
@@ -47,7 +47,7 @@ namespace Os {
     //! \brief Push an item onto the heap.
     //!
     //! The item will be put into the heap according to its value. The
-    //! id field is a data field set by the user which can be used to 
+    //! id field is a data field set by the user which can be used to
     //! identify the element when it is popped off the heap.
     //!
     //! \param value the value of the element to push onto the heap
@@ -87,7 +87,7 @@ namespace Os {
     //! This function here is for debugging purposes.
     //!
     void print();
-  
+
     private:
     // Private functions:
     // Ensure the heap meets the heap property:
@@ -101,14 +101,14 @@ namespace Os {
     struct Node {
       NATIVE_INT_TYPE value; // the priority of the node
       NATIVE_UINT_TYPE order; // order in which node was pushed
-      NATIVE_UINT_TYPE id; // unique id for this node 
+      NATIVE_UINT_TYPE id; // unique id for this node
     };
-  
+
     // Private members:
-    Node* heap; // the heap itself
-    NATIVE_UINT_TYPE size; // the current size of the heap
-    NATIVE_UINT_TYPE order; // the current count of heap pushes
-    NATIVE_UINT_TYPE capacity; // the maximum capacity of the heap
+    Node* m_heap; // the heap itself
+    NATIVE_UINT_TYPE m_size; // the current size of the heap
+    NATIVE_UINT_TYPE m_order; // the current count of heap pushes
+    NATIVE_UINT_TYPE m_capacity; // the maximum capacity of the heap
   };
 
 }

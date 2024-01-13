@@ -30,7 +30,7 @@ namespace Fw {
   U32 FilePacket::EndPacket ::
     bufferSize() const
   {
-    return this->header.bufferSize() + sizeof(this->checksumValue);
+    return this->header.bufferSize() + sizeof(this->m_checksumValue);
   }
 
   SerializeStatus FilePacket::EndPacket ::
@@ -46,14 +46,14 @@ namespace Fw {
   void FilePacket::EndPacket ::
     setChecksum(const CFDP::Checksum& checksum)
   {
-    this->checksumValue = checksum.getValue();
+    this->m_checksumValue = checksum.getValue();
   }
 
 
   void FilePacket::EndPacket ::
     getChecksum(CFDP::Checksum& checksum) const
   {
-    CFDP::Checksum c(this->checksumValue);
+    CFDP::Checksum c(this->m_checksumValue);
     checksum = c;
   }
 
@@ -64,7 +64,7 @@ namespace Fw {
     FW_ASSERT(this->header.type == T_END);
 
     const SerializeStatus status =
-      serialBuffer.deserialize(this->checksumValue);
+      serialBuffer.deserialize(this->m_checksumValue);
 
     return status;
 
@@ -82,7 +82,7 @@ namespace Fw {
     if (status != FW_SERIALIZE_OK)
       return status;
 
-    status = serialBuffer.serialize(this->checksumValue);
+    status = serialBuffer.serialize(this->m_checksumValue);
     if (status != FW_SERIALIZE_OK)
       return status;
 
