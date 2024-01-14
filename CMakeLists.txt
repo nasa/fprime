@@ -26,7 +26,7 @@ add_compile_options(
 )
 
 # Add -Wshadow only for framework code, not the unit tests
-if (BUILD_TESTING STREQUAL "OFF")
+if (NOT BUILD_TESTING)
     message(STATUS "Enabling shadow warning")
     add_compile_options(
         -Wshadow
