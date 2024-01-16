@@ -72,7 +72,7 @@ void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE con
 }
 
 // ----------------------------------------------------------------------
-// Data product handler impelentations
+// Data product handler implementations
 // ----------------------------------------------------------------------
 
 void DpTest ::dpRecv_Container1_handler(DpContainer& container, Fw::Success::T status) {
