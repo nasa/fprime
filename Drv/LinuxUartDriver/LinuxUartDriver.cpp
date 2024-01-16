@@ -235,8 +235,23 @@ bool LinuxUartDriver::open(const char* const device, const UartConfig& config, N
       options.c_cflag &= ~CSIZE;
       options.c_cflag |= CS7;
      */
-    newtio.c_cflag |= CS8 | CLOCAL | CREAD | CSTOPB ;
+    newtio.c_cflag |= CS8 | CLOCAL | CREAD ;
 
+    // configure stop bits
+
+    switch (config.stopBits) {
+        case STOP_BITS_ONE:
+            break; // do nothing; default
+        case STOP_BITS_TWO:
+            newtio.c_cflag |= CSTOPB;
+            break;
+        default:
+            FW_ASSERT(0, config.stopBits);
+            break;
+    }
+
+    // configure parity
+    
     switch (config.parity) {
         case PARITY_ODD:
             newtio.c_cflag |= (PARENB | PARODD);
