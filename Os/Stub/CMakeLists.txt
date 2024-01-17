@@ -14,11 +14,10 @@ register_fprime_implementation(Os/File Os_File_Stub)
 
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileTests.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/CommonTests.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/MyRules.cpp"
 )
 set(UT_MOD_DEPS
     Os
+    STest
 )
 choose_fprime_implementation(Os/File Os_File_Stub)
 register_fprime_ut(StubFileTest)

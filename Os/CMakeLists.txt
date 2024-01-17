@@ -94,11 +94,6 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
 endif()
 register_fprime_module()
 
-# Add stubs directory for testing builds
-if (BUILD_TESTING)
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
-endif()
-
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
@@ -106,7 +101,6 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )

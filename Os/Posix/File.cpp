@@ -147,7 +147,7 @@ File::Status File::seekInternal(FwSizeType offset, bool absolute) {
     if (actual == -1) {
         PlatformIntType errno_store = errno;
         status = Os::Posix::errno_to_file_status(errno_store);
-    } else if (actual != offset) {
+    } else if (absolute && (actual != offset)) {
         status = Os::File::Status::BAD_SIZE;
     }
     return status;

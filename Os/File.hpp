@@ -237,14 +237,14 @@ namespace Os {
           Status updateCRC(CrcWorkingSet& data, bool nice);
 
         PRIVATE:
-          Mode mode; //!< Stores mode for error checking
-          const CHAR* path; //!< Path last opened
+          Mode mode = Mode::OPEN_NO_MODE; //!< Stores mode for error checking
+          const CHAR* path = nullptr; //!< Path last opened
           /**
            * This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
            * opaque and thus normal allocation cannot be done. Instead we allow the implementor to store then handle in
            * the byte-array here and set `handle` to that address for storage.
            */
-          FileHandle* handle; //!< Pointer to the implementation defined file handle
+          FileHandle* handle = nullptr; //!< Pointer to the implementation defined file handle
           alignas(FW_HANDLE_ALIGNMENT) U8 handle_storage[FW_HANDLE_MAX_SIZE]; //!< Storage for aligned FileHandle data
     };
 }

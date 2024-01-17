@@ -14,7 +14,7 @@ extern "C" {
 #endif // __cplusplus
 namespace Os {
 
-File::File() : mode(OPEN_NO_MODE), path(nullptr), handle(nullptr), handle_storage() {
+File::File() {
     this->constructInternal();
     FW_ASSERT(reinterpret_cast<U8*>(handle) == handle_storage);
 }
@@ -29,6 +29,7 @@ File::~File() {
 File::Status File::open(const CHAR* filepath, File::Mode requested_mode, bool overwrite) {
     FW_ASSERT(nullptr != filepath);
     FW_ASSERT(File::Mode::OPEN_NO_MODE < requested_mode && File::Mode::MAX_OPEN_MODE > requested_mode);
+    FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
     // Check for already opened file
     if (this->isOpen()) {
         return File::Status::INVALID_MODE;
@@ -42,11 +43,13 @@ File::Status File::open(const CHAR* filepath, File::Mode requested_mode, bool ov
 }
 
 void File::close() {
+    FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
     this->closeInternal();
     this->mode = Mode::OPEN_NO_MODE;
 }
 
 bool File::isOpen() const {
+    FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
     return this->mode != Mode::OPEN_NO_MODE;
 }
 
@@ -54,6 +57,7 @@ bool File::isOpen() const {
 File::Status File::preallocate(FwSizeType offset, FwSizeType length) {
     FW_ASSERT(offset >= 0);
     FW_ASSERT(length >= 0);
+    FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->mode) {
         return File::Status::NOT_OPENED;
@@ -66,6 +70,7 @@ File::Status File::preallocate(FwSizeType offset, FwSizeType length) {
 File::Status File::seek(FwSizeType offset, bool absolute) {
     // Cannot do a seek with a negative offset in absolute mode
     FW_ASSERT(not absolute || offset >= 0);
+    FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->mode) {
         return File::Status::NOT_OPENED;
@@ -74,6 +79,7 @@ File::Status File::seek(FwSizeType offset, bool absolute) {
 }
 
 File::Status File::flush() {
+    FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->mode) {
         return File::Status::NOT_OPENED;
@@ -86,6 +92,7 @@ File::Status File::flush() {
 File::Status File::read(U8* buffer, FwSizeType &size, bool wait) {
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(size >= 0);
+    FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->mode) {
         size = 0;
@@ -100,6 +107,7 @@ File::Status File::read(U8* buffer, FwSizeType &size, bool wait) {
 File::Status File::write(const void* buffer, FwSizeType &size, bool wait) {
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(size >= 0);
+    FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->mode) {
         size = 0;
@@ -116,6 +124,7 @@ File::CrcWorkingSet::CrcWorkingSet() : crc(INITIAL_CRC), eof(false) {}
 File::Status File::updateCRC(Os::File::CrcWorkingSet& data, bool nice) {
     FwSizeType size = sizeof data.buffer;
     File::Status status = File::Status::OP_OK;
+    FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
 
     // Reopen file and seek in nice mode
     if (nice && not this->isOpen()) {
