@@ -13,9 +13,11 @@ Status removeDirectory(const char* path) {
     return INVALID_PATH;
 }  // end removeDirectory
 
-Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[]) {
+Status readDirectory(const char* path, const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
+    numFiles = 0;
     return OTHER_ERROR;
-}
+}  // end readDirectory
+
 Status removeFile(const char* path) {
     return OTHER_ERROR;
 }  // end removeFile
