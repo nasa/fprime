@@ -24,9 +24,10 @@ void tearDown();
 
 class Functionality : public ::testing::Test {
   public:
-    //! Setup function delegating to UT setup function
-    virtual void SetUp() override { Os::Test::File::setUp(false); }
+    //! Setup function delegating to UT setUp function
+    virtual void SetUp() override;
 
-    void TearDown() override { Os::Test::File::tearDown(); }
+    //! Setup function delegating to UT tearDown function
+    virtual void TearDown() override;
 };
 #endif  // OS_TEST_UT_COMMON_FILE_TESTS_HPP

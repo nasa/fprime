@@ -47,7 +47,7 @@ struct Tester {
      * @param random: true if filename should be random, false if predictable
      * @return: filename to use for testing as a shared pointer
      */
-    virtual std::shared_ptr<std::string> get_filename(bool random) const = 0;
+    virtual std::shared_ptr<const std::string> get_filename(bool random) const = 0;
 
     /**
      * Reports that a file may be opens.
@@ -62,6 +62,11 @@ struct Tester {
     virtual FwSizeType size(const std::string& filename) const = 0;
 
     /**
+     * Assert file and shadow state are in-sync
+     */
+    void assert_file_consistent();
+
+    /**
      * Assert that the supplied status is appropriate for the current mode.
      * @param status: status to check
      */
@@ -70,7 +75,7 @@ struct Tester {
     /**
      * Assert that the file is opened
      */
-    void assert_file_opened(std::string& path, Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE, bool overwrite = false);
+    void assert_file_opened(const std::string& path, Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE, bool overwrite = false);
 
     /**
      * Assert that the file is closed

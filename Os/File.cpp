@@ -46,6 +46,7 @@ void File::close() {
     FW_ASSERT(this->mode < Mode::MAX_OPEN_MODE);
     this->closeInternal();
     this->mode = Mode::OPEN_NO_MODE;
+    this->path = nullptr;
 }
 
 bool File::isOpen() const {

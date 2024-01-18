@@ -5,8 +5,39 @@
 namespace Os {
 namespace Test {
 namespace File {
+//! Bound for randomized testing
+const static U32 RANDOM_BOUND = 10000;
 
-void Tester::assert_file_opened(std::string& path, Os::File::Mode newly_opened_mode, bool overwrite) {
+//! Rule counter
+static FwSizeType RULE_COUNT = 0;
+
+void Tester::assert_file_consistent() {
+    // Ensure file mode
+    ASSERT_EQ(this->mode, this->file.mode);
+    if (this->file.path == nullptr) {
+        ASSERT_EQ(this->current_path, std::string(""));
+    } else {
+        // Ensure the state path matches the file path
+        std::string path = std::string(this->file.path);
+        ASSERT_EQ(path, this->current_path);
+
+        // Check file properties
+        if (this->filesystem.count(this->current_path) > 0) {
+            ASSERT_EQ(this->filesystem.count(this->current_path), 1);
+            FileData &data = *this->filesystem.at(this->current_path);
+            // Ensure the file pointer is consistent
+            ASSERT_EQ(this->position(), data.pointer);
+            // Ensure the file size is consistent
+            ASSERT_EQ(this->size(this->current_path), data.data.size());
+        }
+        // Does not exist
+        else {
+            ASSERT_FALSE(this->exists(this->current_path));
+        }
+    }
+}
+
+void Tester::assert_file_opened(const std::string& path, Os::File::Mode newly_opened_mode, bool overwrite) {
     // Assert the that the file is opened in some mode
     ASSERT_NE(this->file.mode, Os::File::Mode::OPEN_NO_MODE) << "File is in unexpected mode";
     ASSERT_TRUE(this->file.isOpen()) << "`isOpen()` failed to indicate file is open";
@@ -14,7 +45,6 @@ void Tester::assert_file_opened(std::string& path, Os::File::Mode newly_opened_m
 
     // When the open mode has been specified assert that is in an exact state
     if (Os::File::Mode::OPEN_NO_MODE != newly_opened_mode) {
-
         ASSERT_EQ(this->file.mode, newly_opened_mode) << "File is in unexpected mode";
         const bool truncate = (Os::File::Mode::OPEN_CREATE == newly_opened_mode) && overwrite;
 
@@ -28,41 +58,52 @@ void Tester::assert_file_opened(std::string& path, Os::File::Mode newly_opened_m
         if (truncate) {
             data.data.clear();
         }
-        ASSERT_EQ(this->size(this->current_path), data.data.size());
-        data.pointer = (newly_opened_mode != Os::File::Mode::OPEN_APPEND) ? 0 : data.data.size();
+        data.pointer = 0;
     }
-    ASSERT_GE(this->filesystem.at(this->current_path).get()->pointer, 0);
-    ASSERT_EQ(this->position(), this->filesystem.at(this->current_path).get()->pointer);
 }
 
 void Tester::assert_file_read(const unsigned char* read_data, FwSizeType size_read, FwSizeType size_desired) {
-    FileData& data = *this->filesystem.at(this->current_path).get();
-    ASSERT_GE(data.data.size(), data.pointer);
+    FileData& data = *this->filesystem.at(this->current_path);
+    if (static_cast<FwSizeType>(data.data.size()) <= data.pointer) {
+        ASSERT_EQ(size_read, 0);
+    } else {
+        FwSizeType remaining = static_cast<FwSizeType>(data.data.size() - data.pointer);
+        FwSizeType expected_read = FW_MIN(size_desired, remaining);
+        const FwSizeType new_pointer = data.pointer + expected_read;
+        ASSERT_EQ(size_read, expected_read);
 
-    FwSizeType remaining = static_cast<FwSizeType>(data.data.size() - data.pointer);
-    FwSizeType expected_read = FW_MIN(size_desired, remaining);
-    const FwSizeType new_pointer = data.pointer + expected_read;
-    ASSERT_EQ(size_read, expected_read);
-
-    // Check expected read bytes
-    for (FwSizeType i = 0; i < size_desired; i++, data.pointer++) {
-        // End of file
-        if (data.pointer == static_cast<FwSizeType>(data.data.size())) {
-            ASSERT_EQ(i, expected_read);
-            break;
+        // Check expected read bytes
+        for (FwSizeType i = 0; i < size_desired; i++, data.pointer++) {
+            // End of file
+            if (data.pointer == static_cast<FwSizeType>(data.data.size())) {
+                ASSERT_EQ(i, expected_read);
+                break;
+            }
+            ASSERT_EQ(read_data[i], data.data.at(data.pointer));
         }
-        ASSERT_EQ(read_data[i], data.data.at(data.pointer));
+        ASSERT_EQ(data.pointer, new_pointer);
+        ASSERT_EQ(this->position(), data.pointer);
     }
-    ASSERT_EQ(data.pointer, new_pointer);
-    ASSERT_EQ(this->position(), data.pointer);
 }
 
 void Tester::assert_file_write(const unsigned char* write_data, FwSizeType size_written, FwSizeType size_desired) {
     FileData& data = *this->filesystem.at(this->current_path).get();
     ASSERT_EQ(size_written, size_desired); // Baring errors
+
+    // Seek to end of file when in append mode
+    if (Os::File::Mode::OPEN_APPEND == this->mode) {
+        data.pointer = data.data.size();
+    }
     const FwSizeType new_pointer = size_desired + data.pointer;
 
-    // Assure that the file size matches
+    // Add in zeros to account for a pointer past the end of the file
+    const FwSizeType zeros = static_cast<FwSizeType>(data.pointer) - static_cast<FwSizeType>(data.data.size());
+    for (FwSizeType i = 0; i < zeros; i++) {
+        data.data.push_back(0);
+    }
+    ASSERT_LE(data.pointer, data.data.size());
+
+    // Now write data to file
     for (FwSizeType i = 0; i < size_desired; i++, data.pointer++) {
         if (data.pointer < static_cast<FwSizeType>(data.data.size())) {
             data.data[data.pointer] = write_data[i];
@@ -71,8 +112,8 @@ void Tester::assert_file_write(const unsigned char* write_data, FwSizeType size_
         }
     }
     ASSERT_EQ(data.pointer, new_pointer);
-    ASSERT_EQ(static_cast<FwSizeType>(data.data.size()), this->size(this->current_path));
     ASSERT_EQ(this->position(), data.pointer);
+    ASSERT_EQ(static_cast<FwSizeType>(data.data.size()), this->size(this->current_path));
 }
 
 void Tester::assert_file_seek(FwSizeType seek_desired, bool absolute) {
@@ -99,13 +140,23 @@ void Tester::assert_file_closed() {
 }  // Test
 }  // Os
 
+void Functionality::SetUp() {
+    Os::Test::File::RULE_COUNT = 0;
+    Os::Test::File::setUp(false);
+}
+
+void Functionality::TearDown() {
+    Os::Test::File::tearDown();
+}
+
 //! Category of tests to check for invalid argument assertions
 class InvalidArguments : public Functionality {};
 
 //! Category of tests to check for functional i/o operations
 class FunctionalIO : public Functionality {
-    //! Setup function delegating to UT setup function
-    virtual void SetUp() override { Os::Test::File::setUp(true); }
+    virtual void SetUp() override {
+        this->Functionality::SetUp();
+        Os::Test::File::setUp(true); }
 };
 
 // Ensure that open mode changes work reliably
@@ -255,6 +306,62 @@ TEST_F(FunctionalIO, WriteReadSeek) {
     seek_rule.apply(*tester);
 }
 
+// Ensure a write followed by a read produces valid data
+TEST_F(FunctionalIO, RandomizedTesting) {
+    std::unique_ptr<Os::Test::File::Tester> tester = Os::Test::File::get_tester_implementation();
+    // Enumerate all rules and construct an instance of each
+    Os::Test::File::Tester::OpenFileCreate open_file_create_rule(false, true);
+    Os::Test::File::Tester::OpenFileCreate open_file_create_overwrite_rule(true, true);
+    Os::Test::File::Tester::OpenForWrite open_for_write_rule(true);
+    Os::Test::File::Tester::OpenForRead open_for_read_rule(true);
+    Os::Test::File::Tester::CloseFile close_file_rule;
+    Os::Test::File::Tester::Read read_rule;
+    Os::Test::File::Tester::Write write_rule;
+    Os::Test::File::Tester::Seek seek_rule;
+    Os::Test::File::Tester::OpenInvalidModes open_invalid_modes_rule;
+    Os::Test::File::Tester::PreallocateWithoutOpen preallocate_without_open_rule;
+    Os::Test::File::Tester::SeekWithoutOpen seek_without_open_rule;
+    Os::Test::File::Tester::FlushInvalidModes flush_invalid_modes_rule;
+    Os::Test::File::Tester::ReadInvalidModes read_invalid_modes_rule;
+    Os::Test::File::Tester::WriteInvalidModes write_invalid_modes_rule;
+
+    // Place these rules into a list of rules
+    STest::Rule<Os::Test::File::Tester>* rules[] = {
+        &open_file_create_rule,
+        &open_file_create_overwrite_rule,
+        &open_for_write_rule,
+        &open_for_read_rule,
+        &close_file_rule,
+        &read_rule,
+        &write_rule,
+        &seek_rule,
+        &open_invalid_modes_rule,
+        &preallocate_without_open_rule,
+        &seek_without_open_rule,
+        &flush_invalid_modes_rule,
+        &read_invalid_modes_rule,
+        &write_invalid_modes_rule,
+    };
+
+    // Take the rules and place them into a random scenario
+    STest::RandomScenario<Os::Test::File::Tester> random(
+        "Random Rules",
+        rules,
+        FW_NUM_ARRAY_ELEMENTS(rules)
+    );
+
+    // Create a bounded scenario wrapping the random scenario
+    STest::BoundedScenario<Os::Test::File::Tester> bounded(
+        "Bounded Random Rules Scenario",
+        random,
+        Os::Test::File::RANDOM_BOUND
+    );
+    // Run!
+    const U32 numSteps = bounded.run(*tester);
+    printf("Ran %u steps.\n", numSteps);
+
+
+}
 
 // Ensure open prevents nullptr as path
 TEST_F(InvalidArguments, OpenBadPath) {
