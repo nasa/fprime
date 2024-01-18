@@ -376,7 +376,7 @@ var NAVTREEINDEX =
 "dir_afe338198968cfb26be821a9ec7286d5.html",
 "md_docs__design_fpp_json_dict.html#autotoc_md35",
 "namespace_os.html#a0e23ab1974f2567f0f21c229784a6dd2",
-"struct_drv_1_1_socket_state.html#a79fba79f80533ea1bae3589fb30bb041"
+"struct_drv_1_1_socket_state.html#af7f4587869e95afb9e99dedf1e1a47b1"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

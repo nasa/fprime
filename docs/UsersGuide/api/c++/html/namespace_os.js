@@ -25,7 +25,6 @@ var namespace_os =
       [ "handleFileError", "namespace_os_1_1_file_system.html#a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2", null ],
       [ "initAndCheckFileStats", "namespace_os_1_1_file_system.html#ae3aab765b588856e37710720bcd3d165", null ],
       [ "moveFile", "namespace_os_1_1_file_system.html#a4d57326006eacb1c947c884e8f2c3574", null ],
-      [ "readDirectory", "namespace_os_1_1_file_system.html#a9d9c6070010b97ca6d7ada7dc7fe240f", null ],
       [ "readDirectory", "namespace_os_1_1_file_system.html#aef0e542bc6a12590a0ac50784739bd91", null ],
       [ "removeDirectory", "namespace_os_1_1_file_system.html#a8ebc004827e449953db79b509e260d6c", null ],
       [ "removeFile", "namespace_os_1_1_file_system.html#aa9cc00d2e1f1ebf4fb489c55569b59b1", null ]
