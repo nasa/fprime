@@ -21,7 +21,7 @@ namespace Fw {
   void FilePacket::PathName ::
     initialize(const char *const a_value)
   {
-    const U8 new_length = static_cast<U8>(StringUtils::string_length(value, MAX_LENGTH));
+    const U8 new_length = static_cast<U8>(StringUtils::string_length(a_value, MAX_LENGTH));
     this->length = new_length;
     this->value = a_value;
   }
