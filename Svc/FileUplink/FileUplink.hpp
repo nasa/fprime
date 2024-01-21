@@ -79,21 +79,22 @@ namespace Svc {
 
           //! Construct a FilesReceived object
           FilesReceived(FileUplink *const fileUplink) :
-            m_n(0), m_fileUplink(fileUplink)
+            m_received_files_counter(0),
+            m_fileUplink(fileUplink)
           { }
 
         public:
 
           //! Record a received file
           void fileReceived() {
-            ++this->m_n;
-            this->m_fileUplink->tlmWrite_FilesReceived(m_n);
+            ++this->m_received_files_counter;
+            this->m_fileUplink->tlmWrite_FilesReceived(m_received_files_counter);
           }
 
         PRIVATE:
 
           //! The total number of files received
-          U32 m_n;
+          U32 m_received_files_counter;
 
           //! The enclosing FileUplink object
           FileUplink *const m_fileUplink;
@@ -107,21 +108,22 @@ namespace Svc {
 
           //! Construct a PacketsReceived object
           PacketsReceived(FileUplink *const fileUplink) :
-            m_n(0), m_fileUplink(fileUplink)
+            m_received_packet_count(0),
+            m_fileUplink(fileUplink)
           { }
 
         public:
 
           //! Record a packet received
           void packetReceived() {
-            ++this->m_n;
-            this->m_fileUplink->tlmWrite_PacketsReceived(m_n);
+            ++this->m_received_packet_count;
+            this->m_fileUplink->tlmWrite_PacketsReceived(m_received_packet_count);
           }
 
         PRIVATE:
 
-          //! The total number of cancel packets
-          U32 m_n;
+          //! The total number of received packets
+          U32 m_received_packet_count;
 
           //! The enclosing FileUplink object
           FileUplink *const m_fileUplink;
@@ -135,7 +137,8 @@ namespace Svc {
 
           //! Construct a Warnings object
           Warnings(FileUplink *const fileUplink) :
-            m_n(0), m_fileUplink(fileUplink)
+            m_warning_count(0),
+            m_fileUplink(fileUplink)
           { }
 
         public:
@@ -171,14 +174,14 @@ namespace Svc {
 
           //! Record a warning
           void warning() {
-            ++this->m_n;
-            this->m_fileUplink->tlmWrite_Warnings(m_n);
+            ++this->m_warning_count;
+            this->m_fileUplink->tlmWrite_Warnings(m_warning_count);
           }
 
         PRIVATE:
 
           //! The total number of warnings
-          U32 m_n;
+          U32 m_warning_count;
 
           //! The enclosing FileUplink object
           FileUplink *const m_fileUplink;

@@ -26,7 +26,7 @@ add_compile_options(
 )
 
 # Add -Wshadow only for framework code, not the unit tests
-# Next lines to be uncommented once FPP is not generating files with shadow variables
+# TODO: Next lines to be uncommented once FPP is not generating files with shadow variables
 # if (NOT BUILD_TESTING)
 #     add_compile_options(
 #         -Wshadow

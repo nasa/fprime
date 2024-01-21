@@ -126,21 +126,22 @@ namespace Svc {
 
           //! Construct a FilesSent object
           FilesSent(FileDownlink *const fileDownlink) :
-            m_n(0), m_fileDownlink(fileDownlink)
+            m_sent_file_count(0),
+            m_fileDownlink(fileDownlink)
           { }
 
         public:
 
           //! Record a file sent
           void fileSent() {
-            ++this->m_n;
-            this->m_fileDownlink->tlmWrite_FilesSent(m_n);
+            ++this->m_sent_file_count;
+            this->m_fileDownlink->tlmWrite_FilesSent(m_sent_file_count);
           }
 
         PRIVATE:
 
-          //! The total number of downlinks canceled
-          U32 m_n;
+          //! The total number of file sent
+          U32 m_sent_file_count;
 
           //! The enclosing FileDownlink object
           FileDownlink *const m_fileDownlink;
@@ -154,21 +155,22 @@ namespace Svc {
 
           //! Construct a PacketsSent object
           PacketsSent(FileDownlink *const fileDownlink) :
-            m_n(0), m_fileDownlink(fileDownlink)
+            m_sent_packet_count(0),
+            m_fileDownlink(fileDownlink)
           { }
 
         public:
 
           //! Record a packet sent
           void packetSent() {
-            ++this->m_n;
-            this->m_fileDownlink->tlmWrite_PacketsSent(m_n);
+            ++this->m_sent_packet_count;
+            this->m_fileDownlink->tlmWrite_PacketsSent(m_sent_packet_count);
           }
 
         PRIVATE:
 
           //! The total number of downlinks canceled
-          U32 m_n;
+          U32 m_sent_packet_count;
 
           //! The enclosing FileDownlink object
           FileDownlink *const m_fileDownlink;
@@ -182,7 +184,8 @@ namespace Svc {
 
           //! Construct a Warnings object
           Warnings(FileDownlink *const fileDownlink) :
-            m_n(0), m_fileDownlink(fileDownlink)
+            m_warning_count(0),
+            m_fileDownlink(fileDownlink)
           { }
 
         public:
@@ -197,14 +200,14 @@ namespace Svc {
 
           //! Record a warning
           void warning() {
-            ++this->m_n;
-            this->m_fileDownlink->tlmWrite_Warnings(m_n);
+            ++this->m_warning_count;
+            this->m_fileDownlink->tlmWrite_Warnings(m_warning_count);
           }
 
         PRIVATE:
 
           //! The total number of warnings
-          U32 m_n;
+          U32 m_warning_count;
 
           //! The enclosing FileDownlink object
           FileDownlink *const m_fileDownlink;
