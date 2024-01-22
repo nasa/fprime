@@ -38,17 +38,16 @@ namespace Fw {
 
 #if FW_OBJECT_NAMES == 1
     const char* ObjBase::getObjName() {
-        return this->m_objName;
+        return this->m_objName.toChar();
     }
 
     void ObjBase::setObjName(const char* name) {
-        strncpy(this->m_objName, name, sizeof(this->m_objName));
-        this->m_objName[sizeof(this->m_objName)-1] = 0;
+        this->m_objName = name;
     }
 #if FW_OBJECT_TO_STRING == 1
     void ObjBase::toString(char* str, NATIVE_INT_TYPE size) {
         FW_ASSERT(size > 0);
-        if (snprintf(str, size, "Obj: %s",this->m_objName) < 0) {
+        if (snprintf(str, size, "Obj: %s",this->m_objName.toChar()) < 0) {
             str[0] = 0;
         }
     }

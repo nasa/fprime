@@ -14,6 +14,7 @@
 #define FW_OBJ_BASE_HPP
 
 #include <FpConfig.hpp>
+#include <Fw/Types/ObjectName.hpp>
 
 namespace Fw {
 
@@ -79,7 +80,7 @@ namespace Fw {
         protected:
 
 #if FW_OBJECT_NAMES == 1
-            char m_objName[FW_OBJ_NAME_MAX_SIZE]; //!< stores object name
+            Fw::ObjectName m_objName; //!< stores object name
 #endif
 
             //!  \brief ObjBase constructor
