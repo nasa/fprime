@@ -12,23 +12,22 @@ Requirement | Description | Rationale | Verification Method
 SVC-DPCAT-001 | `DpCatalog` shall read a set of directories and build a list of data products. | `DpCatalog` needs to know at least one directory where data products reside  | Test
 SVC-DPCAT-002 | `DpCatalog` shall sort data products first based on the internally recorded priority. | `DpCatalog` needs to downlink highest priority items first | Test
 SVC-DPCAT-003 | `DpCatalog` shall sort data products second based on the internally recorded time with oldest products as higher priority. | `DpCatalog` needs to downlink oldest items first | Test
-SVC-DPCAT-004 | `DpCatalog` shall provide a command to build the catalog. | `DpCatalog` needs to downlink oldest items first | Test
-SVC-DPCAT-005 | `DpCatalog` shall provide a way to insert newly-generated data products into the catalog after the catalog is built | `DpCatalog` should notice new products and not require a rebuild of the catalog | Test
-
+SVC-DPCAT-004 | `DpCatalog` shall sort data products third based on the internally recorded product ID with the lowest as higher priority. | `DpCatalog` needs to resolve case where priority and time match | Test
+SVC-DPCAT-005 | `DpCatalog` shall update the data product metadata once download is complete | `DpCatalog` needs to track completion status to avoid duplicate downloads | Test
+SVC-DPCAT-006 | `DpCatalog` shall implement a command to build the catalog. | `DpCatalog` needs to downlink oldest items first | Test
+SVC-DPCAT-007 | `DpCatalog` shall implement a way to insert newly-generated data products into the catalog after the catalog is built | `DpCatalog` should notice new products and not require a rebuild of the catalog | Test
+SVC-DPCAT-008 | `DpCatalog` shall implement commands to modify the priority of existing data products | Operators made change the priority to lower or raise priorities due to troubleshooting, etc | Test
+SVC-DPCAT-009 | `DpCatalog` shall implement commands to delete data products | Ground tools can use DpManager commands to automatically delete DPs | Test
 
 ## 3 Design
 
 ### 3.1 Assumptions
 
-The design of `FileDownlink` assumes the following:
+The design of `DpCatalog` assumes the following:
 
-1. File downlink occurs by dividing files into packets
-of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.html).
-
-2. One file downlink happens at a time.
-
-3. Both components and operators must be able to enqueue files, necessitating both a `SendFile`
-   command and port.
+1. A file system exists to store the data product files.
+2. The contents of the data product files match the data product specification.
+3. The file downlink will acknowledge completion of each file
 
 ### 3.3 Ports
 
@@ -47,13 +46,29 @@ Name | Type | Role
 
 Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
-`sendFile` | `Svc::SendFileRequest` | guarded_input | Enqueues file for downlink
-`fileComplete` | `Svc::SendFileComplete` | output | Emits notifications when a file downlink initiated by a port completes
-`Run` | `Svc::Sched` | async_input | Periodic clock input used to trigger internal state machine
-<a name="bufferGet">`bufferGet`</a> | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.html) | output (caller) | Requests buffers for sending file packets.
-<a name="bufferSendOut">`bufferSendOut`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.html) | output | Sends buffers containing file packets.
+sendFile|SendFileRequest|output|Send next file to downlink
+fileDone|SendFileComplete|async_input|Last requested file is complete
+newDp|DpNotify|async_input|Notification that a new DP has been generated
 
 ### 3.4 Constants
+
+`DpCatalog` can be statically configured with the following constants:
+
+|Constant|Purpose|
+|---|---|
+|MAX_DP_DIRS|Maximum directories that can be provided for DPs
+
+### 3.5 Configuration
+
+During initialization, the intialization function takes a set of parameters:
+
+|Psrameter|Purpose|
+|---|---|
+|dpDirs|A set of strings up to `MAX_DP_DIRS` that are directory names where DPs are written
+|maxFiles|Specify the maximum number of files the catalog can track|
+|allocator|Memory allocator for catalog records
+
+### TODO From here
 
 `FileDownlink` has the following constants, initialized
 at component instantiation time:
@@ -67,7 +82,7 @@ at component instantiation time:
   queue. Attempting to dispatch a SendFile command or port call while the queue is full will result
   in a busy error response.
 
-### 3.5 State
+### 3.6 State
 
 `FileDownlink` maintains a *mode* equal to
 one of the following values:
