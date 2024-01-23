@@ -42,7 +42,6 @@ CMAKE_NEEDED_SETTINGS = {
         "FPRIME_LIBRARY_LOCATIONS", ";".join(str(item) for item in value)
     ),
     "default_cmake_options": lambda value: print_list_settings(value.split("\n")),
-    "ac_constants": partial(print_setting, "FPRIME_AC_CONSTANTS_FILE"),
     # Sets two settings from install dest: fprime and cmake settings
     "install_destination": partial(print_setting, "CMAKE_INSTALL_PREFIX"),
 }

@@ -262,8 +262,7 @@ endif()
 include(CTest)
 
 ####
-# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
-# `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
+# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`, and `FPRIME_CONFIG_DIR`:
 #
 # Note: these settings are supplied by `fprime-util` and need not be provided unless running CMake directly or through
 # any way bypassing that utility (e.g. inside your beloved IDE).
@@ -344,10 +343,6 @@ if (NOT DEFINED FPRIME_CONFIG_DIR)
 endif()
 set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
 
-# Override the AC constants file when specified
-if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
-    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_CONFIG_DIR}/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
-endif()
 
 # Set FPRIME_TOOLCHAIN_NAME when not set by toolchain directly
 if (NOT DEFINED FPRIME_TOOLCHAIN_NAME)
