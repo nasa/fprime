@@ -52,5 +52,4 @@ namespace Fw {
     NATIVE_UINT_TYPE ObjectName::getCapacity() const {
         return STRING_SIZE;
     }
-    
 }
