@@ -9,15 +9,19 @@
 
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
-SVC-DPCAT-001 | `DpCatalog` shall read a set of directories and build a list of data products. | `DpCatalog` needs to know at least one directory where data products reside  | Test
+SVC-DPCAT-001 | `DpCatalog` shall read a set of directories and build a catalog of data products. | `DpCatalog` needs to know at least one directory where data products reside | Test
 SVC-DPCAT-002 | `DpCatalog` shall sort data products first based on the internally recorded priority. | `DpCatalog` needs to downlink highest priority items first | Test
 SVC-DPCAT-003 | `DpCatalog` shall sort data products second based on the internally recorded time with oldest products as higher priority. | `DpCatalog` needs to downlink oldest items first | Test
 SVC-DPCAT-004 | `DpCatalog` shall sort data products third based on the internally recorded product ID with the lowest as higher priority. | `DpCatalog` needs to resolve case where priority and time match | Test
 SVC-DPCAT-005 | `DpCatalog` shall update the data product metadata once download is complete | `DpCatalog` needs to track completion status to avoid duplicate downloads | Test
-SVC-DPCAT-006 | `DpCatalog` shall implement a command to build the catalog. | `DpCatalog` needs to downlink oldest items first | Test
-SVC-DPCAT-007 | `DpCatalog` shall implement a way to insert newly-generated data products into the catalog after the catalog is built | `DpCatalog` should notice new products and not require a rebuild of the catalog | Test
-SVC-DPCAT-008 | `DpCatalog` shall implement commands to modify the priority of existing data products | Operators made change the priority to lower or raise priorities due to troubleshooting, etc | Test
-SVC-DPCAT-009 | `DpCatalog` shall implement commands to delete data products | Ground tools can use DpManager commands to automatically delete DPs | Test
+SVC-DPCAT-006 | `DpCatalog` shall implement a command and port to build the catalog. | `DpCatalog` should consume the resources to build the catalog only when needed | Test
+SVC-DPCAT-007 | `DpCatalog` shall implement a command and port to start downloading the catalog. | `DpCatalog` downloads should be timed for when communications are ready, and not consume comm window time building | Test
+SVC-DPCAT-008 | `DpCatalog` shall have filters for the download based on container ID, priority, and data size limit. | `DpCatalog` downloads should be tunable for available bandwidth and container metadata | Test
+SVC-DPCAT-009 | `DpCatalog` shall implement a way to insert newly-generated data products into the catalog after the catalog is built | `DpCatalog` should notice new products and not require a rebuild of the catalog | Test
+SVC-DPCAT-010 | `DpCatalog` shall implement commands to modify the priority of existing data products | Operators made change the priority to lower or raise priorities due to troubleshooting, etc | Test
+SVC-DPCAT-011 | `DpCatalog` shall implement commands to delete data products | Ground tools can use DpManager commands to automatically delete DPs | Test
+SVC-DPCAT-012 | `DpCatalog` shall implement a catalog data product that is a listing of existing data products and their metadata | Allow operators to know what products exist | Test
+SVC-DPCAT-013 | `DpCatalog` shall have filters for the catalog data product for priority, container ID, and time range | Allow operators to know what products exist | Test
 
 ## 3 Design
 
