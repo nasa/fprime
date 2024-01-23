@@ -169,7 +169,7 @@ namespace Svc {
 
         PRIVATE:
 
-          //! The total number of downlinks canceled
+          //! The total number of downlinked packets
           U32 m_sent_packet_count;
 
           //! The enclosing FileDownlink object
