@@ -1209,8 +1209,8 @@ TEST(TypesTest,ObjectNameTest) {
     str3 += str2;
     ASSERT_EQ(str3,"foo_bar");
 
-    str3 += "xyzz";
-    ASSERT_EQ(str3,"foo_barxyzz");
+    str3 += "_foo";
+    ASSERT_EQ(str3,"foo_bar_foo");
 
 
     Fw::ObjectName copyStr("ASTRING");
