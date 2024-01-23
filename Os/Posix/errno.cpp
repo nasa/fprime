@@ -35,6 +35,9 @@ File::Status errno_to_file_status(PlatformIntType errno_input) {
         case EOPNOTSUPP:
             status = File::Status::NOT_SUPPORTED;
             break;
+        case EINVAL:
+            status = File::Status::INVALID_ARGUMENT;
+            break;
         default:
             status = File::Status::OTHER_ERROR;
             break;

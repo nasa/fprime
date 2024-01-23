@@ -8,9 +8,24 @@
 // ------------------------------------------------------------------------------------------------------
 struct OpenBaseRule : public STest::Rule<Os::Test::File::Tester> {
     //! Constructor
-    OpenBaseRule(const char *rule_name, const bool randomize_filename = false);
+    OpenBaseRule(const char *rule_name, Os::File::Mode mode = Os::File::Mode::OPEN_CREATE, const bool overwrite = false,
+                 const bool randomize_filename = false);
 
-    bool random;
+    Os::File::Mode m_mode;
+    bool m_overwrite;
+    bool m_random;
+
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
+    //! Precondition
+    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    );
+
+    //! Action
+    void action(Os::Test::File::Tester &state  //!< The test state
+    );
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -23,23 +38,22 @@ struct OpenFileCreate : public OpenBaseRule {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    OpenFileCreate(const bool overwrite, const bool randomize_filename = false);
-
-    // ----------------------------------------------------------------------
-    // Public member functions
-    // ----------------------------------------------------------------------
-
-    //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
-    );
-
-    //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
-    );
-
-    //! Overwrite files
-    bool file_overwrite;
+    OpenFileCreate(const bool randomize_filename = false);
 };
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenFileCreateOverwrite
+//
+// ------------------------------------------------------------------------------------------------------
+struct OpenFileCreateOverwrite : public OpenBaseRule {
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
+    //! Constructor
+    OpenFileCreateOverwrite(const bool randomize_filename = false);
+};
+
 
 // ------------------------------------------------------------------------------------------------------
 // Rule:  OpenForWrite
@@ -52,18 +66,6 @@ struct OpenForWrite : public OpenBaseRule {
 
     //! Constructor
     OpenForWrite(const bool randomize_filename = false);
-
-    // ----------------------------------------------------------------------
-    // Public member functions
-    // ----------------------------------------------------------------------
-
-    //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
-    );
-
-    //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
-    );
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -77,18 +79,6 @@ struct OpenForRead : public OpenBaseRule {
 
     //! Constructor
     OpenForRead(const bool randomize_filename = false);
-
-    // ----------------------------------------------------------------------
-    // Public member functions
-    // ----------------------------------------------------------------------
-
-    //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
-    );
-
-    //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
-    );
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -206,6 +196,65 @@ struct Seek : public STest::Rule<Os::Test::File::Tester> {
 
 };
 
+// ------------------------------------------------------------------------------------------------------
+// Rule:  Preallocate
+//
+// ------------------------------------------------------------------------------------------------------
+struct Preallocate : public STest::Rule<Os::Test::File::Tester> {
+
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
+    //! Constructor
+    Preallocate();
+
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
+    //! Precondition
+    bool precondition(
+            const Os::Test::File::Tester &state //!< The test state
+    );
+
+    //! Action
+    void action(
+            Os::Test::File::Tester &state //!< The test state
+    );
+
+};
+
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  Flush
+//
+// ------------------------------------------------------------------------------------------------------
+struct Flush : public STest::Rule<Os::Test::File::Tester> {
+
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
+    //! Constructor
+    Flush();
+
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
+    //! Precondition
+    bool precondition(
+            const Os::Test::File::Tester &state //!< The test state
+    );
+
+    //! Action
+    void action(
+            Os::Test::File::Tester &state //!< The test state
+    );
+
+};
+
 
 // ------------------------------------------------------------------------------------------------------
 // Rule:  OpenInvalidModes
@@ -268,6 +317,31 @@ struct SeekWithoutOpen : public STest::Rule<Os::Test::File::Tester> {
 
     //! Constructor
     SeekWithoutOpen();
+
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
+    //! Precondition
+    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    );
+
+    //! Action
+    void action(Os::Test::File::Tester &state  //!< The test state
+    );
+};
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  SeekInvalidSize
+//
+// ------------------------------------------------------------------------------------------------------
+struct SeekInvalidSize : public STest::Rule<Os::Test::File::Tester> {
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
+    //! Constructor
+    SeekInvalidSize();
 
     // ----------------------------------------------------------------------
     // Public member functions
@@ -570,3 +644,4 @@ struct WriteIllegalSize : public AssertRule {
     void action(Os::Test::File::Tester &state  //!< The test state
     );
 };
+    

@@ -32,6 +32,7 @@ namespace Os {
                 FILE_EXISTS, //!< file already exist (for CREATE with O_EXCL enabled)
                 NOT_SUPPORTED, //!< Kernel or file system does not support operation
                 INVALID_MODE, //!< Mode for file access is invalid for current operation
+                INVALID_ARGUMENT, //!< Invalid argument passed in
                 OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
             };
 
@@ -75,6 +76,24 @@ namespace Os {
              * \return true if file is open, false otherwise
              */
             bool isOpen() const;
+
+            /**
+             * \brief get size of currently open file
+             *
+             * Get the size of the currently open file and fill the size parameter. Return status of the operation.
+             * @param size: output parameter for size.
+             * @return OP_OK on success otherwise error status
+             */
+            Status size(FwSizeType& size_result);
+
+            /**
+             * \brief get file pointer position of the currently open file
+             *
+             * Get the current position of the read/write pointer of the open file.
+             * @param position: output parameter for size.
+             * @return OP_OK on success otherwise error status
+             */
+            Status position(FwSizeType& position_result);
 
             /**
              * \brief pre-allocate file storage
@@ -187,6 +206,17 @@ namespace Os {
           void closeInternal();
 
           /**
+           * Internal implementation of the `size` call. See above.
+           */
+          Status sizeInternal(FwSizeType& size_result);
+
+          /**
+           * Internal implementation of the `position` call. See above.
+           */
+          Status positionInternal(FwSizeType& position_result);
+
+
+          /**
            * Internal implementation of the `preallocate` call. See above.
            */
           Status preallocateInternal(FwSizeType offset, FwSizeType length);
@@ -216,10 +246,10 @@ namespace Os {
            * Working set for CRC calculations.
            */
           struct CrcWorkingSet {
-              FwSizeType offset; //!< File offset tracking CRC calculation
-              U32 crc; //!< CRC value currently calculated
-              U8 buffer[FW_FILE_CHUNK_SIZE];
-              bool eof; //!< End-of-file reached
+              FwSizeType m_offset; //!< File offset tracking CRC calculation
+              U32 m_crc; //!< CRC value currently calculated
+              U8 m_buffer[FW_FILE_CHUNK_SIZE];
+              bool m_eof; //!< End-of-file reached
               //! Constructor initializing CRC to 0xFFFFFFFF
               CrcWorkingSet();
           };
@@ -237,15 +267,15 @@ namespace Os {
           Status updateCRC(CrcWorkingSet& data, bool nice);
 
         PRIVATE:
-          Mode mode = Mode::OPEN_NO_MODE; //!< Stores mode for error checking
-          const CHAR* path = nullptr; //!< Path last opened
+          Mode m_mode = Mode::OPEN_NO_MODE; //!< Stores mode for error checking
+          const CHAR* m_path = nullptr; //!< Path last opened
           /**
            * This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
            * opaque and thus normal allocation cannot be done. Instead we allow the implementor to store then handle in
            * the byte-array here and set `handle` to that address for storage.
            */
-          FileHandle* handle = nullptr; //!< Pointer to the implementation defined file handle
-          alignas(FW_HANDLE_ALIGNMENT) U8 handle_storage[FW_HANDLE_MAX_SIZE]; //!< Storage for aligned FileHandle data
+          FileHandle* m_handle = nullptr; //!< Pointer to the implementation defined file handle
+          alignas(FW_HANDLE_ALIGNMENT) U8 m_handle_storage[FW_HANDLE_MAX_SIZE]; //!< Storage for aligned FileHandle data
     };
 }
 

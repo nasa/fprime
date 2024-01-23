@@ -16,9 +16,19 @@ namespace Test {
 namespace File {
 
 struct Tester {
+    /**
+     * Shadow state for a given file consisting of file data and a data pointer.
+     */
     struct FileData {
         std::vector<U8> data;
         FwSizeType pointer;
+    };
+    /**
+     * State data for an open OS file.
+     */
+    struct FileState {
+        FwSizeType size = -1;
+        FwSizeType position = -1;
     };
 
     //! Assert in File.cpp for searching death text
@@ -37,10 +47,10 @@ struct Tester {
     virtual bool exists(const std::string& filename) const = 0;
 
     /**
-     * Current offset of the open file
-     * @return: offset into file of read/write/seek position
+     * Check if the back-end tester is fully functional
+     * @return true if functional, false otherwise
      */
-    virtual FwSizeType position() const = 0;
+    virtual bool functional() const = 0;
 
     /**
      * Get a filename, randomly if random is true, otherwise use a basic filename.
@@ -50,16 +60,48 @@ struct Tester {
     virtual std::shared_ptr<const std::string> get_filename(bool random) const = 0;
 
     /**
-     * Reports that a file may be opens.
-     * @return: true if a file may yet be created, false otherwise
+     * Performs the "open" action on the shadow state.
      */
-    virtual bool can_create_file() const = 0;
+    Os::File::Status shadow_open(const std::string &path, Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE,
+                                 bool overwrite = false);
 
     /**
-     * Get size of given file.
-     * @return: size of file
+     * Perform the "close" action on the shadow state.
      */
-    virtual FwSizeType size(const std::string& filename) const = 0;
+    void shadow_close();
+
+    /**
+     * Perform the "read" action on the shadow state returning the read data.
+     * @return data read
+     */
+    std::vector<U8> shadow_read(FwSizeType size);
+
+    /**
+     * Perform the "write" action on the shadow state given the data.
+     */
+    void shadow_write(const std::vector<U8>& data);
+
+    /**
+     * Perform the "seek" action on the shadow state given.
+     */
+    void shadow_seek(const FwSizeType offset, const bool absolute);
+
+    /**
+     * Perform the "preallocate" action on the shadow state.
+     */
+    void shadow_preallocate(const FwSizeType offset, const FwSizeType length);
+
+    /**
+     * Perform the "flush" action on the shadow state.
+     */
+    void shadow_flush();
+
+    /**
+     * Detect current state of the file. Note: for files that are known, but unopened this will open the file as read
+     * detect the state, and then close it again.
+     * @return file state for the test
+     */
+    FileState current_file_state();
 
     /**
      * Assert file and shadow state are in-sync
@@ -75,7 +117,7 @@ struct Tester {
     /**
      * Assert that the file is opened
      */
-    void assert_file_opened(const std::string& path, Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE, bool overwrite = false);
+    void assert_file_opened(const std::string& path="", Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE, bool overwrite = false);
 
     /**
      * Assert that the file is closed
@@ -85,17 +127,17 @@ struct Tester {
     /**
      * Assert a file read
      */
-    void assert_file_read(const unsigned char* read_data, FwSizeType size_read, FwSizeType size_desired);
+    void assert_file_read(const std::vector<U8>& state_data, const unsigned char* read_data, FwSizeType size_read);
 
     /**
      * Assert a file write
      */
-    void assert_file_write(const unsigned char* write_data, FwSizeType size_written, FwSizeType size_desired);
+    void assert_file_write(const std::vector<U8>& write_data, FwSizeType size_written);
 
     /**
      * Assert a file seek
      */
-    void assert_file_seek(FwSizeType seek_desired, bool absolute);
+    void assert_file_seek(const FwSizeType original_position, const FwSizeType seek_desired, const bool absolute);
 
     //! File under test
     Os::File file;

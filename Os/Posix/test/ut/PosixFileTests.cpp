@@ -93,7 +93,6 @@ void setUp(bool requires_io) {
             GTEST_SKIP() << "Cannot register signal handler for cleanup";
         }
     }
-
 }
 
 /**
@@ -129,33 +128,11 @@ class PosixTester : public Tester {
     }
 
     /**
-     * Reports that a file may be opens.
-     * @return: true if a file may yet be created, false otherwise
+     * Posix tester is fully functional
+     * @return true
      */
-    bool can_create_file() const override { return true; }
-
-    /**
-     * Size of given filename.
-     * @return: true if a file may yet be created, false otherwise
-     */
-    FwSizeType size(const std::string& filename) const override {
-        struct stat status;
-        int result = stat(filename.c_str(), &status);
-        return (result != 0) ? -1 : status.st_size;
-    }
-
-    /**
-     * Current offset of the open file
-     * @return: offset into file of read/write/seek position
-     */
-    FwSizeType position() const override {
-        int file_descriptor = this->file.handle->file_descriptor;
-        if (file_descriptor == -1) {
-            return -1;
-        }
-        FwSizeType offset = lseek(file_descriptor, 0, SEEK_CUR);
-        EXPECT_GE(offset, 0);
-        return offset;
+    bool functional() const override{
+        return true;
     }
 
 };
