@@ -12,6 +12,11 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.cpp"
 )
 
+set(HEADER_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.hpp"
+)
+
+
 register_fprime_module()
 ### UTs ###
 # set(UT_SOURCE_FILES

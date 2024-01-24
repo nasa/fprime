@@ -1,6 +1,28 @@
 
 module Svc {
 
+
+  # This structure will use to store the state
+  # in the component and to generate a catalog
+  # data product
+
+  @ Enumeration for data product downlink state
+  enum DpState {
+    PENDING
+    COMPLETED
+  }
+
+  @ Data structure representing a data product.
+  struct DpRecord {
+    $id: U32
+    tSec: U32
+    tSub: U32
+    $priority: U32
+    $size: U64
+    state: DpState
+  }
+
+
   @ A component for managing downling of data products
   active component DpCatalog {
 
@@ -59,11 +81,12 @@ module Svc {
 
     @ Error opening directory
     event DirectoryOpenError(
-                            loc: string size 80 @< The directory 
+                            loc: string size 80 @< The directory
+                            stat: I32 @< status
                           ) \
       severity warning high \
       id 0 \
-      format "Unable to process directory {}"
+      format "Unable to process directory {} state {}"
 
     @ Processing directory
     event ProcessingDirectory (
@@ -123,6 +146,20 @@ module Svc {
       severity activity low \
       id 11 \
       format "Product {} complete"
+
+    @ Component not intialized error
+    event ComponentNotIntialized \
+      severity warning high \
+      id 12 \
+      format "DpCatalog not initialized!" \
+      throttle 10
+
+    @ Component didn't get memory error
+    event ComponentNoMemory \
+      severity warning high \
+      id 13 \
+      format "DpCatalog couldn't get memory" \
+      throttle 10
 
     # ----------------------------------------------------------------------
     # Telemetry
