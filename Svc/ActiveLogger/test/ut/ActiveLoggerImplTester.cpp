@@ -11,7 +11,6 @@
 #include <Os/IntervalTimer.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
-#include <Os/Stubs/FileStubs.hpp>
 
 #include <cstdio>
 
@@ -583,7 +582,7 @@ namespace Svc {
 
         // first read should be delimiter
         BYTE de;
-        NATIVE_INT_TYPE readSize = sizeof(de);
+        FwSizeType readSize = sizeof(de);
 
         ASSERT_EQ(file.read(&de,readSize,true),Os::File::OP_OK);
         ASSERT_EQ(delimiter,de);

@@ -61,7 +61,7 @@ namespace Svc {
             // Won't exceed max size, so write to file:
             else {
 
-                NATIVE_INT_TYPE writeSize = static_cast<NATIVE_INT_TYPE>(size);
+                FwSizeType writeSize = size;
                 Os::File::Status stat = this->m_file.write(buf,writeSize,true);
 
                 // Assert that we are not trying to write to a file we never opened:

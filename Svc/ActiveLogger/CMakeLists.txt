@@ -13,9 +13,6 @@ set(SOURCE_FILES
 
 register_fprime_module()
 ### UTs ###
-set(UT_MOD_DEPS
-    Os_Stubs
-)
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveLogger/ActiveLogger.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerTester.cpp"

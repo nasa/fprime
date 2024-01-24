@@ -39,8 +39,8 @@ namespace Fw {
       return FILE_OPEN_ERROR;
     }
 
-    NATIVE_INT_TYPE capacity = this->m_buffer.getBuffCapacity();
-    NATIVE_INT_TYPE length = capacity;
+    FwSizeType capacity = this->m_buffer.getBuffCapacity();
+    FwSizeType length = capacity;
     status = file.read(this->m_buffer.getBuffAddr(), length, false);
     if( Os::File::OP_OK != status ) {
       file.close();
@@ -72,8 +72,8 @@ namespace Fw {
       return FILE_OPEN_ERROR;
     }
 
-    NATIVE_INT_TYPE length = this->m_buffer.getBuffLength();
-    NATIVE_INT_TYPE size = length;
+    FwSizeType length = this->m_buffer.getBuffLength();
+    FwSizeType size = length;
     status = file.write(this->m_buffer.getBuffAddr(), length);
     if( (Os::File::OP_OK != status) ||
         (length != size) )

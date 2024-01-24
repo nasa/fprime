@@ -41,41 +41,27 @@ namespace Svc {
             Svc::PrmDbImpl& m_impl;
             void resetEvents();
 
-            // open call modifiers
 
-            static bool OpenInterceptor(Os::File::Status &stat, const char* fileName, Os::File::Mode mode, void* ptr);
-            Os::File::Status m_testOpenStatus;
 
-            // read call modifiers
-
-            static bool ReadInterceptor(Os::File::Status &stat, void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr);
-            Os::File::Status m_testReadStatus;
-            // How many read calls to let pass before modifying
-            NATIVE_INT_TYPE m_readsToWait;
+            static Os::File::Status readInterceptor(U8 *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+            static Os::File::Status writeInterceptor(const void *buffer, FwSignedSizeType &size, bool wait, void* pointer);
             // enumeration to tell what kind of error to inject
-            typedef enum {
-                FILE_READ_READ_ERROR, // return a bad read status
-                FILE_READ_SIZE_ERROR, // return a bad size
-                FILE_READ_DATA_ERROR  // return unexpected data
-            } FileReadTestType;
-            FileReadTestType m_readTestType;
-            NATIVE_INT_TYPE m_readSize;
-            BYTE m_readData[PRMDB_IMPL_TESTER_MAX_READ_BUFFER];
+            enum ErrorType {
+                FILE_STATUS_ERROR, // return a bad read status
+                FILE_SIZE_ERROR, // return a bad size
+                FILE_DATA_ERROR,  // return unexpected data
+                FILE_READ_NO_ERROR,    // No error
+            };
+            Os::File::Status m_status;
+            FwUnsignedSizeType m_waits = 0;
+            ErrorType m_errorType = FILE_READ_NO_ERROR;
+
+            BYTE m_io_data[PRMDB_IMPL_TESTER_MAX_READ_BUFFER];
 
             // write call modifiers
 
-            static bool WriteInterceptor(Os::File::Status &status, const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone, void* ptr);
+            Os::File::Status WriteInterceptor();
             Os::File::Status m_testWriteStatus;
-            // How many read calls to let pass before modifying
-            NATIVE_INT_TYPE m_writesToWait;
-            // enumeration to tell what kind of error to inject
-            typedef enum {
-                FILE_WRITE_WRITE_ERROR, // return a bad read status
-                FILE_WRITE_SIZE_ERROR, // return a bad size
-            } FileWriteTestType;
-            FileWriteTestType m_writeTestType;
-            NATIVE_INT_TYPE m_writeSize;
-
     };
 
 } /* namespace SvcTest */
