@@ -26,8 +26,14 @@ namespace FppTest {
         // Returns a random non-null char
         char getChar();
 
-        // Populates buf with a random nonempty string of random length with max length size
-        void setString(char *buf, U32 size);
+        // Populates buf with a random string of random length that fits
+        // within capacity, including the null terminator (i.e., length + 1 <= capacity)
+        void setString(
+            char *buf, //!< The buffer pointer
+            FwSizeType capacity, //!< The buffer capacity
+            FwSizeType minLength = 0 //!< The minimum string length, not including the null terminator
+                                     //!< minLength + 1 must be <= capacity
+        );
             
     } // namespace Utils
 

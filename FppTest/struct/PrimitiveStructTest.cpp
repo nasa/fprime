@@ -39,8 +39,9 @@ protected:
     }
 
     void assertUnsuccessfulSerialization(Primitive& s, U32 bufSize) {
-        U8 data[bufSize];
-        Fw::SerialBuffer buf(data, sizeof(data));
+        // Avoid creating an array of size zero
+        U8 data[bufSize + 1];
+        Fw::SerialBuffer buf(data, bufSize);
         Fw::SerializeStatus status;
 
         // Serialize

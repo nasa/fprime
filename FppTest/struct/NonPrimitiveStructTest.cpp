@@ -26,7 +26,8 @@ class NonPrimitiveStructTest : public ::testing::Test {
 protected:
     void SetUp() override {
         char buf[testString.getCapacity()];
-        FppTest::Utils::setString(buf, sizeof(buf));
+        // Test string must be non-empty
+        FppTest::Utils::setString(buf, sizeof(buf), 1);
         testString = buf;
 
         testEnum = static_cast<StructEnum::T>(STest::Pick::startLength(
@@ -106,7 +107,7 @@ TEST_F(NonPrimitiveStructTest, Default) {
     // Constants
     ASSERT_EQ(
         NonPrimitive::SERIALIZED_SIZE,
-        NonPrimitive::StringSize80::SERIALIZED_SIZE 
+        NonPrimitive::StringSize80::SERIALIZED_SIZE
             + StructEnum::SERIALIZED_SIZE
             + StructArray::SERIALIZED_SIZE
             + Primitive::SERIALIZED_SIZE
@@ -131,12 +132,12 @@ TEST_F(NonPrimitiveStructTest, Default) {
 // Test struct constructors
 TEST_F(NonPrimitiveStructTest, Constructors) {
     // Member constructor
-    NonPrimitive s1(testString, testEnum, testArray, 
+    NonPrimitive s1(testString, testEnum, testArray,
                     testStruct, testU32Arr, testStructArr);
     assertStructMembers(s1);
 
     // Scalar member constructor
-    NonPrimitive s2(testString, testEnum, testArray, 
+    NonPrimitive s2(testString, testEnum, testArray,
                     testStruct, testU32Arr[0], testStructArr[0]);
 
     ASSERT_EQ(s2.getmString(), testString);
@@ -159,7 +160,7 @@ TEST_F(NonPrimitiveStructTest, Constructors) {
 // Test struct assignment operator
 TEST_F(NonPrimitiveStructTest, AssignmentOp) {
     NonPrimitive s1;
-    NonPrimitive s2(testString, testEnum, testArray, 
+    NonPrimitive s2(testString, testEnum, testArray,
                     testStruct, testU32Arr, testStructArr);
 
     // Copy assignment
@@ -225,7 +226,7 @@ TEST_F(NonPrimitiveStructTest, GetterSetterFunctions) {
     NonPrimitive s1, s2;
 
     // Set all members
-    s1.set(testString, testEnum, testArray, 
+    s1.set(testString, testEnum, testArray,
            testStruct, testU32Arr, testStructArr);
     assertStructMembers(s1);
 
@@ -259,7 +260,7 @@ TEST_F(NonPrimitiveStructTest, GetterSetterFunctions) {
 
 // Test struct serialization and deserialization
 TEST_F(NonPrimitiveStructTest, Serialization) {
-    NonPrimitive s(testString, testEnum, testArray, 
+    NonPrimitive s(testString, testEnum, testArray,
                    testStruct, testU32Arr, testStructArr);
     NonPrimitive sCopy;
 
@@ -287,22 +288,22 @@ TEST_F(NonPrimitiveStructTest, Serialization) {
 
     // Test unsuccessful serialization
     assertUnsuccessfulSerialization(s, stringSerializedSize - 1);
-    assertUnsuccessfulSerialization(s, stringSerializedSize 
+    assertUnsuccessfulSerialization(s, stringSerializedSize
             + StructEnum::SERIALIZED_SIZE - 1);
-    assertUnsuccessfulSerialization(s, stringSerializedSize 
+    assertUnsuccessfulSerialization(s, stringSerializedSize
             + StructEnum::SERIALIZED_SIZE + StructArray::SERIALIZED_SIZE - 1);
-    assertUnsuccessfulSerialization(s, stringSerializedSize 
-            + StructEnum::SERIALIZED_SIZE + StructArray::SERIALIZED_SIZE 
+    assertUnsuccessfulSerialization(s, stringSerializedSize
+            + StructEnum::SERIALIZED_SIZE + StructArray::SERIALIZED_SIZE
             + Primitive::SERIALIZED_SIZE - 1);
-    assertUnsuccessfulSerialization(s, stringSerializedSize 
-            + StructEnum::SERIALIZED_SIZE + StructArray::SERIALIZED_SIZE 
+    assertUnsuccessfulSerialization(s, stringSerializedSize
+            + StructEnum::SERIALIZED_SIZE + StructArray::SERIALIZED_SIZE
             + Primitive::SERIALIZED_SIZE + (3 * sizeof(U32)) - 1);
     assertUnsuccessfulSerialization(s, serializedSize - 1);
 }
 
 // Test struct toString() and ostream operator functions
 TEST_F(NonPrimitiveStructTest, ToString) {
-    NonPrimitive s(testString, testEnum, testArray, 
+    NonPrimitive s(testString, testEnum, testArray,
                    testStruct, testU32Arr, testStructArr);
     std::stringstream buf1, buf2;
 
@@ -311,21 +312,21 @@ TEST_F(NonPrimitiveStructTest, ToString) {
     buf2 << "( "
          << "mString = " << testString << ", "
          << "mEnum = " << testEnum << ", "
-         << "mArray = " << testArray << ", "        
-         << "mStruct = " << testStruct << ", "        
-         << "mU32Arr = [ " 
+         << "mArray = " << testArray << ", "
+         << "mStruct = " << testStruct << ", "
+         << "mU32Arr = [ "
          << testU32Arr[0] << ", "
          << testU32Arr[1] << ", "
          << testU32Arr[2] << " ], "
-         << "mStructArr = [ " 
+         << "mStructArr = [ "
          << testStructArr[0] << ", "
          << testStructArr[1] << ", "
          << testStructArr[2] << " ] "
          << " )";
 
     // Truncate string output
-    char buf2Str[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE]; 
-    Fw::StringUtils::string_copy(buf2Str, buf2.str().c_str(), 
+    char buf2Str[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE];
+    Fw::StringUtils::string_copy(buf2Str, buf2.str().c_str(),
                                  FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE);
 
     ASSERT_STREQ(buf1.str().c_str(), buf2Str);
