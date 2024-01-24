@@ -21,14 +21,14 @@ struct Tester {
      */
     struct FileData {
         std::vector<U8> data;
-        FwSizeType pointer;
+        FwSignedSizeType pointer;
     };
     /**
      * State data for an open OS file.
      */
     struct FileState {
-        FwSizeType size = -1;
-        FwSizeType position = -1;
+        FwSignedSizeType size = -1;
+        FwSignedSizeType position = -1;
     };
 
     //! Assert in File.cpp for searching death text
@@ -74,7 +74,7 @@ struct Tester {
      * Perform the "read" action on the shadow state returning the read data.
      * @return data read
      */
-    std::vector<U8> shadow_read(FwSizeType size);
+    std::vector<U8> shadow_read(FwSignedSizeType size);
 
     /**
      * Perform the "write" action on the shadow state given the data.
@@ -84,12 +84,12 @@ struct Tester {
     /**
      * Perform the "seek" action on the shadow state given.
      */
-    void shadow_seek(const FwSizeType offset, const bool absolute);
+    void shadow_seek(const FwSignedSizeType offset, const bool absolute);
 
     /**
      * Perform the "preallocate" action on the shadow state.
      */
-    void shadow_preallocate(const FwSizeType offset, const FwSizeType length);
+    void shadow_preallocate(const FwSignedSizeType offset, const FwSignedSizeType length);
 
     /**
      * Perform the "flush" action on the shadow state.
@@ -127,17 +127,17 @@ struct Tester {
     /**
      * Assert a file read
      */
-    void assert_file_read(const std::vector<U8>& state_data, const unsigned char* read_data, FwSizeType size_read);
+    void assert_file_read(const std::vector<U8>& state_data, const unsigned char* read_data, FwSignedSizeType size_read);
 
     /**
      * Assert a file write
      */
-    void assert_file_write(const std::vector<U8>& write_data, FwSizeType size_written);
+    void assert_file_write(const std::vector<U8>& write_data, FwSignedSizeType size_written);
 
     /**
      * Assert a file seek
      */
-    void assert_file_seek(const FwSizeType original_position, const FwSizeType seek_desired, const bool absolute);
+    void assert_file_seek(const FwSignedSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute);
 
     //! File under test
     Os::File file;

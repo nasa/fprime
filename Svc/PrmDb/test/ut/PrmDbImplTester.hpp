@@ -53,7 +53,7 @@ namespace Svc {
                 FILE_READ_NO_ERROR,    // No error
             };
             Os::File::Status m_status;
-            FwUnsignedSizeType m_waits = 0;
+            FwSizeType m_waits = 0;
             ErrorType m_errorType = FILE_READ_NO_ERROR;
 
             BYTE m_io_data[PRMDB_IMPL_TESTER_MAX_READ_BUFFER];

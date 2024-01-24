@@ -4,7 +4,7 @@
 #include "STest/Pick/Pick.hpp"
 
 // For testing, limit files to 32K
-const FwSizeType FILE_DATA_MAXIMUM = 32 * 1024;
+const FwSignedSizeType FILE_DATA_MAXIMUM = 32 * 1024;
 
 Os::File::Status Os::Test::File::Tester::shadow_open(const std::string &path, Os::File::Mode open_mode, bool overwrite) {
     Os::File::Status status = Os::File::Status::OP_OK;
@@ -55,15 +55,15 @@ void Os::Test::File::Tester::shadow_close() {
     ASSERT_TRUE(this->current_path.empty());
 }
 
-std::vector<U8> Os::Test::File::Tester::shadow_read(FwSizeType size) {
+std::vector<U8> Os::Test::File::Tester::shadow_read(FwSignedSizeType size) {
     std::vector<U8> output;
     FileData &data = *filesystem.at(this->current_path);
-    FwSizeType original_pointer = data.pointer;
-    FwSizeType original_size = data.data.size();
+    FwSignedSizeType original_pointer = data.pointer;
+    FwSignedSizeType original_size = data.data.size();
     // Check expected read bytes
-    for (FwSizeType i = 0; i < size; i++, data.pointer++) {
+    for (FwSignedSizeType i = 0; i < size; i++, data.pointer++) {
         // End of file
-        if (data.pointer >= static_cast<FwSizeType>(data.data.size())) {
+        if (data.pointer >= static_cast<FwSignedSizeType>(data.data.size())) {
             break;
         }
         output.push_back(data.data.at(data.pointer));
@@ -77,8 +77,8 @@ std::vector<U8> Os::Test::File::Tester::shadow_read(FwSizeType size) {
 
 void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
     FileData &data = *filesystem.at(this->current_path);
-    FwSizeType original_position = data.pointer;
-    FwSizeType original_size = data.data.size();
+    FwSignedSizeType original_position = data.pointer;
+    FwSignedSizeType original_size = data.data.size();
 
     // Appends seek to end before writing
     if (Os::File::Mode::OPEN_APPEND == this->mode) {
@@ -86,8 +86,8 @@ void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
     }
 
     // First add in zeros to account for a pointer past the end of the file
-    const FwSizeType zeros = static_cast<FwSizeType>(data.pointer) - static_cast<FwSizeType>(data.data.size());
-    for (FwSizeType i = 0; i < zeros; i++) {
+    const FwSignedSizeType zeros = static_cast<FwSignedSizeType>(data.pointer) - static_cast<FwSignedSizeType>(data.data.size());
+    for (FwSignedSizeType i = 0; i < zeros; i++) {
         data.data.push_back(0);
     }
     // Interim checks to ensure zeroing performed correctly
@@ -95,13 +95,13 @@ void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
     ASSERT_EQ(data.data.size(),
               ((Os::File::Mode::OPEN_APPEND == this->mode) ? original_size : FW_MAX(original_position, original_size)));
 
-    FwSizeType pre_write_position = data.pointer;
-    FwSizeType pre_write_size = data.data.size();
+    FwSignedSizeType pre_write_position = data.pointer;
+    FwSignedSizeType pre_write_size = data.data.size();
 
     // Next write data
-    for (FwSizeType i = 0; i < static_cast<FwSizeType>(write_data.size()); i++, data.pointer++) {
+    for (FwSignedSizeType i = 0; i < static_cast<FwSignedSizeType>(write_data.size()); i++, data.pointer++) {
         // Overwrite case
-        if (data.pointer < static_cast<FwSizeType>(data.data.size())) {
+        if (data.pointer < static_cast<FwSignedSizeType>(data.data.size())) {
             data.data.at(data.pointer) = write_data[i];
         }
         // Append case
@@ -111,24 +111,24 @@ void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
     }
     // Checks on the shadow data to ensure consistency
     EXPECT_EQ(data.data.size(),
-              FW_MAX(pre_write_position + static_cast<FwSizeType>(write_data.size()), pre_write_size));
+              FW_MAX(pre_write_position + static_cast<FwSignedSizeType>(write_data.size()), pre_write_size));
     EXPECT_EQ(data.pointer,
               ((Os::File::Mode::OPEN_APPEND == this->mode) ? pre_write_size : pre_write_position) + write_data.size());
 }
 
-void Os::Test::File::Tester::shadow_seek(const FwSizeType offset, const bool absolute) {
+void Os::Test::File::Tester::shadow_seek(const FwSignedSizeType offset, const bool absolute) {
     FileData &data = *filesystem.at(this->current_path);
-    FwSizeType new_offset = (absolute) ? offset : (offset + data.pointer);
+    FwSignedSizeType new_offset = (absolute) ? offset : (offset + data.pointer);
     ASSERT_GE(new_offset, 0);
     data.pointer = new_offset;
 }
 
-void Os::Test::File::Tester::shadow_preallocate(const FwSizeType offset, const FwSizeType length) {
+void Os::Test::File::Tester::shadow_preallocate(const FwSignedSizeType offset, const FwSignedSizeType length) {
     FileData& data = *this->filesystem.at(this->current_path);
-    const FwSizeType original_size = data.data.size();
-    const FwSizeType new_length = offset + length;
+    const FwSignedSizeType original_size = data.data.size();
+    const FwSignedSizeType new_length = offset + length;
     // Loop from existing size to new size adding zeros
-    for (FwSizeType i = static_cast<FwSizeType>(data.data.size()); i < new_length; i++) {
+    for (FwSignedSizeType i = static_cast<FwSignedSizeType>(data.data.size()); i < new_length; i++) {
         data.data.push_back(0);
     }
     ASSERT_EQ(data.data.size(), FW_MAX(offset + length, original_size));
@@ -148,7 +148,7 @@ Os::Test::File::Tester::FileState Os::Test::File::Tester::current_file_state() {
         EXPECT_EQ(this->file.position(state.position), Os::File::Status::OP_OK);
         EXPECT_EQ(this->file.size(state.size), Os::File::Status::OP_OK);
         // Extra check to ensure size does not alter pointer
-        FwSizeType new_position = -1;
+        FwSignedSizeType new_position = -1;
         EXPECT_EQ(this->file.position(new_position), Os::File::Status::OP_OK);
         EXPECT_EQ(new_position, state.position);
     }
@@ -181,11 +181,11 @@ void Os::Test::File::Tester::assert_file_consistent() {
                 ASSERT_EQ(this->filesystem.count(this->current_path), 1);
                 FileData &data = *this->filesystem.at(this->current_path);
                 // Ensure the file pointer is consistent
-                FwSizeType current_position = 0;
+                FwSignedSizeType current_position = 0;
                 ASSERT_EQ(this->file.position(current_position), Os::File::Status::OP_OK);
                 ASSERT_EQ(current_position, data.pointer);
                 // Ensure the file size is consistent
-                FwSizeType current_size = 0;
+                FwSignedSizeType current_size = 0;
                 ASSERT_EQ(this->file.size(current_size), Os::File::Status::OP_OK);
                 ASSERT_EQ(current_size, data.data.size());
             }
@@ -207,7 +207,7 @@ void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::Fil
     if (not path.empty() && Os::File::Mode::OPEN_NO_MODE != newly_opened_mode) {
         // Assert file pointer always at beginning when functional
         if (functional() ) {
-            FwSizeType file_position = -1;
+            FwSignedSizeType file_position = -1;
             ASSERT_EQ(this->file.position(file_position), Os::File::Status::OP_OK);
             ASSERT_EQ(file_position, 0);
         }
@@ -218,7 +218,7 @@ void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::Fil
         const bool truncate = (Os::File::Mode::OPEN_CREATE == newly_opened_mode) && overwrite;
         if (truncate) {
             if (this->functional()) {
-                FwSizeType file_size = -1;
+                FwSignedSizeType file_size = -1;
                 ASSERT_EQ(this->file.size(file_size), Os::File::Status::OP_OK);
                 ASSERT_EQ(file_size, 0);
             }
@@ -231,35 +231,35 @@ void Os::Test::File::Tester::assert_file_closed() {
     ASSERT_FALSE(this->file.isOpen()) << "`isOpen()` failed to indicate file is open";
 }
 
-void Os::Test::File::Tester::assert_file_read(const std::vector<U8>& state_data, const unsigned char *read_data, FwSizeType size_read) {
+void Os::Test::File::Tester::assert_file_read(const std::vector<U8>& state_data, const unsigned char *read_data, FwSignedSizeType size_read) {
     FileData &data = *this->filesystem.at(this->current_path);
     // Functional tests
     if (functional()) {
         ASSERT_EQ(size_read, state_data.size());
         ASSERT_EQ(std::vector<U8>(read_data, read_data + size_read), state_data);
-        FwSizeType position = -1;
+        FwSignedSizeType position = -1;
         ASSERT_EQ(this->file.position(position), Os::File::Status::OP_OK);
         ASSERT_EQ(position, data.pointer);
     }
 }
 
-void Os::Test::File::Tester::assert_file_write(const std::vector<U8>& write_data, FwSizeType size_written) {
+void Os::Test::File::Tester::assert_file_write(const std::vector<U8>& write_data, FwSignedSizeType size_written) {
     FileData &data = *this->filesystem.at(this->current_path);
     ASSERT_EQ(size_written, write_data.size());
-    FwSizeType file_size = 0;
+    FwSignedSizeType file_size = 0;
     ASSERT_EQ(this->file.size(file_size), Os::File::Status::OP_OK);
-    ASSERT_EQ(static_cast<FwSizeType>(data.data.size()), file_size);
-    FwSizeType file_position = -1;
+    ASSERT_EQ(static_cast<FwSignedSizeType>(data.data.size()), file_size);
+    FwSignedSizeType file_position = -1;
     ASSERT_EQ(this->file.position(file_position), Os::File::Status::OP_OK);
     ASSERT_EQ(file_position, data.pointer);
 }
 
-void Os::Test::File::Tester::assert_file_seek(const FwSizeType original_position, const FwSizeType seek_desired, const bool absolute) {
+void Os::Test::File::Tester::assert_file_seek(const FwSignedSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute) {
     FileData &data = *this->filesystem.at(this->current_path);
-    FwSizeType new_position = 0;
+    FwSignedSizeType new_position = 0;
     ASSERT_EQ(this->file.position(new_position), Os::File::Status::OP_OK);
 
-    const FwSizeType expected_offset = (absolute) ? seek_desired : (original_position + seek_desired);
+    const FwSignedSizeType expected_offset = (absolute) ? seek_desired : (original_position + seek_desired);
     if (expected_offset > 0) {
         ASSERT_EQ(new_position, expected_offset);
     } else {
@@ -412,8 +412,8 @@ void Os::Test::File::Tester::Read::action(
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
-    FwSizeType size_desired = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
-    FwSizeType size_read = size_desired;
+    FwSignedSizeType size_desired = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
+    FwSignedSizeType size_read = size_desired;
     bool wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     Os::File::Status status = state.file.read(buffer, size_read, wait);
     ASSERT_EQ(Os::File::Status::OP_OK, status);
@@ -448,10 +448,10 @@ void Os::Test::File::Tester::Write::action(
     U8 buffer[FILE_DATA_MAXIMUM];
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
-    FwSizeType size_desired = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
-    FwSizeType size_written = size_desired;
+    FwSignedSizeType size_desired = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
+    FwSignedSizeType size_written = size_desired;
     bool wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-    for (FwSizeType i = 0; i < size_desired; i++) {
+    for (FwSignedSizeType i = 0; i < size_desired; i++) {
         buffer[i] = static_cast<U8>(STest::Pick::lowerUpper(0, std::numeric_limits<U8>::max()));
     }
     std::vector<U8> write_data(buffer, buffer + size_desired);
@@ -483,7 +483,7 @@ bool Os::Test::File::Tester::Seek::precondition(
 void Os::Test::File::Tester::Seek::action(
         Os::Test::File::Tester &state //!< The test state
 ) {
-    FwSizeType seek_offset = 0;
+    FwSignedSizeType seek_offset = 0;
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
@@ -525,8 +525,8 @@ void Os::Test::File::Tester::Preallocate::action(
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
-    FwSizeType offset = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
-    FwSizeType length = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
+    FwSignedSizeType offset = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
+    FwSignedSizeType length = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
     Os::File::Status status = state.file.preallocate(offset, length);
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     state.shadow_preallocate(offset, length);
@@ -622,8 +622,8 @@ void Os::Test::File::Tester::PreallocateWithoutOpen::action(Os::Test::File::Test
     // Check initial file state
     state.assert_file_closed();
     // Open file of given filename
-    FwSizeType random_offset = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
-    FwSizeType random_size = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
+    FwSignedSizeType random_offset = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
+    FwSignedSizeType random_size = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
 
     Os::File::Status status = state.file.preallocate(random_offset, random_size);
     state.assert_valid_mode_status(status);
@@ -649,7 +649,7 @@ void Os::Test::File::Tester::SeekWithoutOpen::action(Os::Test::File::Tester &sta
     // Check initial file state
     state.assert_file_closed();
     // Open file of given filename
-    FwSizeType random_offset = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
+    FwSignedSizeType random_offset = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
     bool random_absolute = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
 
     Os::File::Status status = state.file.seek(random_offset, random_absolute);
@@ -675,7 +675,7 @@ void Os::Test::File::Tester::SeekInvalidSize::action(Os::Test::File::Tester &sta
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
     // Open file of given filename
-    FwSizeType random_offset = STest::Pick::lowerUpper(original_file_state.position + 1, std::numeric_limits<U32>::max());
+    FwSignedSizeType random_offset = STest::Pick::lowerUpper(original_file_state.position + 1, std::numeric_limits<U32>::max());
     ASSERT_GT(random_offset, original_file_state.position);
 
     Os::File::Status status = state.file.seek(-1 * random_offset, false);
@@ -731,7 +731,7 @@ bool Os::Test::File::Tester::ReadInvalidModes::precondition(const Os::Test::File
 void Os::Test::File::Tester::ReadInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
 ) {
     U8 buffer[10];
-    FwSizeType size = sizeof buffer;
+    FwSignedSizeType size = sizeof buffer;
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
@@ -762,7 +762,7 @@ bool Os::Test::File::Tester::WriteInvalidModes::precondition(const Os::Test::Fil
 void Os::Test::File::Tester::WriteInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
 ) {
     U8 buffer[10];
-    FwSizeType size = sizeof buffer;
+    FwSignedSizeType size = sizeof buffer;
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
@@ -844,9 +844,9 @@ void Os::Test::File::Tester::PreallocateIllegalOffset::action(Os::Test::File::Te
 ) {
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
-    FwSizeType length = static_cast<FwSizeType>(STest::Pick::any());
-    FwSizeType invalid_offset =
-            -1 * static_cast<FwSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
+    FwSignedSizeType length = static_cast<FwSignedSizeType>(STest::Pick::any());
+    FwSignedSizeType invalid_offset =
+            -1 * static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
     ASSERT_DEATH_IF_SUPPORTED(state.file.preallocate(invalid_offset, length),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP) << "With offset: " << invalid_offset;
     state.assert_file_consistent();
@@ -864,9 +864,9 @@ void Os::Test::File::Tester::PreallocateIllegalLength::action(Os::Test::File::Te
 ) {
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
-    FwSizeType offset = static_cast<FwSizeType>(STest::Pick::any());
-    FwSizeType invalid_length =
-            -1 * static_cast<FwSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
+    FwSignedSizeType offset = static_cast<FwSignedSizeType>(STest::Pick::any());
+    FwSignedSizeType invalid_length =
+            -1 * static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
     ASSERT_DEATH_IF_SUPPORTED(state.file.preallocate(offset, invalid_length),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
@@ -899,7 +899,7 @@ void Os::Test::File::Tester::ReadIllegalBuffer::action(Os::Test::File::Tester &s
 ) {
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
-    FwSizeType size = static_cast<FwSizeType>(STest::Pick::any());
+    FwSignedSizeType size = static_cast<FwSignedSizeType>(STest::Pick::any());
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     ASSERT_DEATH_IF_SUPPORTED(state.file.read(nullptr, size, random_wait), Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
@@ -917,7 +917,7 @@ void Os::Test::File::Tester::ReadIllegalSize::action(Os::Test::File::Tester &sta
     U8 buffer[10] = {};
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
-    FwSizeType invalid_size = -1 * static_cast<FwSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
+    FwSignedSizeType invalid_size = -1 * static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     ASSERT_DEATH_IF_SUPPORTED(state.file.read(buffer, invalid_size, random_wait),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
@@ -936,7 +936,7 @@ void Os::Test::File::Tester::WriteIllegalBuffer::action(Os::Test::File::Tester &
 ) {
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
-    FwSizeType size = static_cast<FwSizeType>(STest::Pick::any());
+    FwSignedSizeType size = static_cast<FwSignedSizeType>(STest::Pick::any());
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     ASSERT_DEATH_IF_SUPPORTED(state.file.write(nullptr, size, random_wait), Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
@@ -954,7 +954,7 @@ void Os::Test::File::Tester::WriteIllegalSize::action(Os::Test::File::Tester &st
     U8 buffer[10] = {};
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
-    FwSizeType invalid_size = -1 * static_cast<FwSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
+    FwSignedSizeType invalid_size = -1 * static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     ASSERT_DEATH_IF_SUPPORTED(state.file.read(buffer, invalid_size, random_wait),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP);

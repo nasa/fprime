@@ -34,18 +34,17 @@ namespace Os {
 
 
 // Ensure size of FwSizeType is large enough to fit eh necessary range
-static_assert(sizeof(FwSizeType) >= sizeof(off_t), "FwSizeType is not large enough to store values of type off_t");
-static_assert(sizeof(FwSizeType) >= sizeof(size_t), "FwSizeType is not large enough to store values of type size_t");
-static_assert(sizeof(FwSizeType) >= sizeof(ssize_t), "FwSizeType is not large enough to store values of type ssize_t");
+static_assert(sizeof(FwSignedSizeType) >= sizeof(off_t), "FwSizeType is not large enough to store values of type off_t");
+static_assert(sizeof(FwSignedSizeType) >= sizeof(ssize_t), "FwSizeType is not large enough to store values of type ssize_t");
 
 // Now check ranges of FwSizeType
-static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<off_t>::max(),
+static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<off_t>::max(),
               "Maximum value of FwSizeType less than the maximum value of off_t. Configure a larger type.");
-static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<ssize_t>::max(),
+static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<ssize_t>::max(),
               "Maximum value of FwSizeType less than the maximum value of ssize_t. Configure a larger type.");
-static_assert(std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<off_t>::min(),
+static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limits<off_t>::min(),
               "Minimum value of FwSizeType larger than the minimum value of off_t. Configure a larger type.");
-static_assert(std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<ssize_t>::min(),
+static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limits<ssize_t>::min(),
               "Minimum value of FwSizeType larger than the minimum value of ssize_t. Configure a larger type.");
 
 
@@ -106,8 +105,8 @@ void File::closeInternal() {
     this->m_mode = OPEN_NO_MODE;
 }
 
-File::Status  File::sizeInternal(FwSizeType& size_result) {
-    FwSizeType current_position = 0;
+File::Status  File::sizeInternal(FwSignedSizeType& size_result) {
+    FwSignedSizeType current_position = 0;
     Status status = this->positionInternal(current_position);
     size_result = 0;
     if (Os::File::Status::OP_OK == status) {
@@ -129,7 +128,7 @@ File::Status  File::sizeInternal(FwSizeType& size_result) {
     return status;
 }
 
-File::Status  File::positionInternal(FwSizeType &position_result) {
+File::Status  File::positionInternal(FwSignedSizeType &position_result) {
     Status status = OP_OK;
     position_result = 0;
     off_t actual = ::lseek(this->m_handle->file_descriptor, 0, SEEK_CUR);
@@ -137,11 +136,11 @@ File::Status  File::positionInternal(FwSizeType &position_result) {
         PlatformIntType errno_store = errno;
         status = Os::Posix::errno_to_file_status(errno_store);
     }
-    position_result = static_cast<FwSizeType>(actual);
+    position_result = static_cast<FwSignedSizeType>(actual);
     return status;
 }
 
-File::Status File::preallocateInternal(FwSizeType offset, FwSizeType length) {
+File::Status File::preallocateInternal(FwSignedSizeType offset, FwSignedSizeType length) {
     File::Status status = Os::File::Status::NOT_SUPPORTED;
 // Efficient linux/gnu implementation
 #if _POSIX_C_SOURCE >= 200112L
@@ -151,23 +150,23 @@ File::Status File::preallocateInternal(FwSizeType offset, FwSizeType length) {
     // When the operation is not supported, fallback to base algorithm
     if (Os::File::Status::NOT_SUPPORTED == status) {
         // Calculate size
-        FwSizeType file_size = 0;
+        FwSignedSizeType file_size = 0;
         status = this->size(file_size);
         if (Os::File::Status::OP_OK == status) {
             // Calculate current position
-            FwSizeType file_position = 0;
+            FwSignedSizeType file_position = 0;
             status = this->position(file_position);
             if (Os::File::Status::OP_OK == status) {
                 // Check for integer overflow
-                if ((std::numeric_limits<FwSizeType>::max() - offset - length) < 0) {
+                if ((std::numeric_limits<FwSignedSizeType>::max() - offset - length) < 0) {
                     status = File::NO_SPACE;
                 } else if (file_size < (offset + length)) {
-                    const FwSizeType write_length = (offset + length) - file_size;
+                    const FwSignedSizeType write_length = (offset + length) - file_size;
                     status = this->seek(file_size, true);
                     if (Os::File::Status::OP_OK == status) {
                         // Fill in zeros past size of file to ensure compatibility with fallocate
-                        for (FwSizeType i = 0; i < write_length; i++) {
-                            FwSizeType write_size = 1;
+                        for (FwSignedSizeType i = 0; i < write_length; i++) {
+                            FwSignedSizeType write_size = 1;
                             status = this->write("\0", write_size, false);
                             if (Status::OP_OK != status || write_size != 1) {
                                 break;
@@ -185,7 +184,7 @@ File::Status File::preallocateInternal(FwSizeType offset, FwSizeType length) {
     return status;
 }
 
-File::Status File::seekInternal(FwSizeType offset, bool absolute) {
+File::Status File::seekInternal(FwSignedSizeType offset, bool absolute) {
     Status status = OP_OK;
     off_t actual = ::lseek(this->m_handle->file_descriptor, offset, absolute ? SEEK_SET : SEEK_CUR);
     PlatformIntType errno_store = errno;
@@ -207,13 +206,13 @@ File::Status File::flushInternal() {
 }
 
 
-File::Status File::readInternal(U8* buffer, FwSizeType &size, bool wait) {
+File::Status File::readInternal(U8* buffer, FwSignedSizeType &size, bool wait) {
     Status status = OP_OK;
-    FwSizeType accumulated = 0;
+    FwSignedSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
-    const FwSizeType maximum = (size > (std::numeric_limits<FwSizeType>::max()/2)) ? std::numeric_limits<FwSizeType>::max() : size * 2;
+    const FwSignedSizeType maximum = (size > (std::numeric_limits<FwSignedSizeType>::max()/2)) ? std::numeric_limits<FwSignedSizeType>::max() : size * 2;
 
-    for (FwSizeType i = 0; i < maximum && accumulated < size; i++) {
+    for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
         ssize_t read_size = ::read(this->m_handle->file_descriptor, reinterpret_cast<CHAR*>(buffer + accumulated), size - accumulated);
         // Non-interrupt error
@@ -240,14 +239,14 @@ File::Status File::readInternal(U8* buffer, FwSizeType &size, bool wait) {
     return status;
 }
 
-File::Status File::writeInternal(const void* buffer_in, FwSizeType &size, bool wait) {
+File::Status File::writeInternal(const void* buffer_in, FwSignedSizeType &size, bool wait) {
     Status status = OP_OK;
-    FwSizeType accumulated = 0;
+    FwSignedSizeType accumulated = 0;
     U8* buffer = reinterpret_cast<U8*>(const_cast<void *>(buffer_in));
     // Loop up to 2 times for each by, bounded to prevent overflow
-    const FwSizeType maximum = (size > (std::numeric_limits<FwSizeType>::max()/2)) ? std::numeric_limits<FwSizeType>::max() : size * 2;
+    const FwSignedSizeType maximum = (size > (std::numeric_limits<FwSignedSizeType>::max()/2)) ? std::numeric_limits<FwSignedSizeType>::max() : size * 2;
 
-    for (FwSizeType i = 0; i < maximum && accumulated < size; i++) {
+    for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
         ssize_t write_size = ::write(this->m_handle->file_descriptor, reinterpret_cast<CHAR*>(buffer + accumulated), size - accumulated);
         // Non-interrupt error

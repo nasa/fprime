@@ -406,7 +406,7 @@ namespace Svc {
         Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
         Os::Stub::File::Test::Data::setReadOverride(PrmDbImplTester::readInterceptor, this);
         this->m_errorType = FILE_SIZE_ERROR;
-        for (FwUnsignedSizeType i = 0; i < 4; i++) {
+        for (FwSizeType i = 0; i < 4; i++) {
             clearEvents();
             this->m_waits = i;
             this->m_impl.readParamFile();
@@ -433,7 +433,7 @@ namespace Svc {
             }
         }
         // Loop through failure statuses
-        for (FwUnsignedSizeType i = 0; i < 2; i++) {
+        for (FwSizeType i = 0; i < 2; i++) {
             this->m_errorType = FILE_STATUS_ERROR;
             // Set various file errors
             switch (i) {
@@ -447,7 +447,7 @@ namespace Svc {
                     FAIL() << "Reached unknown case";
             }
             // Loop through various field reads
-            for (FwUnsignedSizeType j = 0; j < 4; j++) {
+            for (FwSizeType j = 0; j < 4; j++) {
                 clearEvents();
                 this->m_waits = j;
                 this->m_impl.readParamFile();
@@ -475,7 +475,7 @@ namespace Svc {
             }
         }
         this->m_errorType = FILE_DATA_ERROR;
-        for (FwUnsignedSizeType i = 0; i < 2; i++) {
+        for (FwSizeType i = 0; i < 2; i++) {
             clearEvents();
             this->m_waits = i;
             this->m_impl.readParamFile();
@@ -521,7 +521,7 @@ namespace Svc {
         Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
         Os::Stub::File::Test::Data::setWriteOverride(PrmDbImplTester::writeInterceptor, this);
         this->m_errorType = FILE_SIZE_ERROR;
-        for (FwUnsignedSizeType i = 0; i < 4; i++) {
+        for (FwSizeType i = 0; i < 4; i++) {
             clearEvents();
             this->clearHistory();
             this->m_waits = i;
@@ -554,7 +554,7 @@ namespace Svc {
         }
 
         // Loop through failure statuses
-        for (FwUnsignedSizeType i = 0; i < 2; i++) {
+        for (FwSizeType i = 0; i < 2; i++) {
             this->m_errorType = FILE_STATUS_ERROR;
             // Set various file errors
             switch (i) {
@@ -568,7 +568,7 @@ namespace Svc {
                     FAIL() << "Reached unknown case";
             }
             // Loop through various field reads
-            for (FwUnsignedSizeType j = 0; j < 4; j++) {
+            for (FwSizeType j = 0; j < 4; j++) {
                 clearEvents();
                 this->clearHistory();
                 this->m_waits = j;

@@ -12,6 +12,12 @@ set(SOURCE_FILES
 register_fprime_module(Os_File_Stub)
 register_fprime_implementation(Os/File Os_File_Stub)
 
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/test/File.cpp"
+)
+register_fprime_module(Os_File_Stub_Test)
+register_fprime_implementation(Os/File Os_File_Stub_Test)
+
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/CommonTests.cpp"
@@ -19,8 +25,7 @@ set(UT_SOURCE_FILES
 )
 set(UT_MOD_DEPS
     Os
-    Os_File_Stub
     STest
 )
-choose_fprime_implementation(Os/File Os_File_Stub)
+choose_fprime_implementation(Os/File Os_File_Stub_Test)
 register_fprime_ut(StubFileTest)

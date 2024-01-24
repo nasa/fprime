@@ -202,7 +202,7 @@ namespace Svc {
     )
   {
     FW_ASSERT(length > 0, length);
-    NATIVE_INT_TYPE size = length;
+    FwSignedSizeType size = length;
     const Os::File::Status fileStatus = this->m_osFile.write(data, size);
     bool status;
     if (fileStatus == Os::File::OP_OK && size == static_cast<NATIVE_INT_TYPE>(length)) {

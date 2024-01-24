@@ -1,4 +1,6 @@
 #include "Os/File.hpp"
+#include <string.h>
+
 #ifndef OS_STUB_FILE_TEST_HPP
 #define OS_STUB_FILE_TEST_HPP
 namespace Os {
@@ -27,6 +29,12 @@ struct Data {
         READ_FN,
         WRITE_FN
     };
+    //! Read override function
+    typedef Os::File::Status (*ReadOverride)(U8 *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+
+    //! Write override function
+    typedef Os::File::Status (*WriteOverride)(const void *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+
     //! Last function called
     LastFn lastCalled = NONE_FN;
     //! Path of last open call
@@ -36,117 +44,94 @@ struct Data {
     //! Overwrite of last open call
     bool openOverwrite = false;
     //! Offset of last preallocate call
-    FwSizeType preallocateOffset = -1;
+    FwSignedSizeType preallocateOffset = -1;
     //! Length of last preallocate call
-    FwSizeType preallocateLength = -1;
+    FwSignedSizeType preallocateLength = -1;
     //! Offset of last seek call
-    FwSizeType seekOffset = -1;
+    FwSignedSizeType seekOffset = -1;
     //! Absolute of last seek call
     bool seekAbsolute = false;
     //! Buffer of last read call
     U8 *readBuffer = nullptr;
     //! Size of last read call
-    FwSizeType readSize = -1;
+    FwSignedSizeType readSize = -1;
     //! Wait of last read call
     bool readWait = false;
     //! Buffer of last write call
     const void *writeBuffer = nullptr;
     //! Size of last write call
-    FwSizeType writeSize = -1;
+    FwSignedSizeType writeSize = -1;
     //! Wait of last write call
     bool writeWait = false;
+
+    //! File pointer
+    FwSignedSizeType pointer = 0;
 
     //! Next status to be returned
     Os::File::Status nextStatus = Os::File::Status::OTHER_ERROR;
     //! Return of next size call
-    FwSizeType sizeResult = -1;
+    FwSignedSizeType sizeResult = -1;
     //! Return of next position call
-    FwSizeType positionResult = -1;
+    FwSignedSizeType positionResult = 0;
     //! Result of next read call
     U8 *readResult = nullptr;
-    //! Size of next read call
-    FwSizeType readSizeResult = -1;
+    //! Size result of next read data
+    FwSignedSizeType readResultSize = -1;
+    //! Size result of next read call
+    FwSignedSizeType readSizeResult = -1;
+    //! Result holding buffer of next write call
+    U8 *writeResult = nullptr;
+    //! Size result of next write data
+    FwSignedSizeType writeResultSize = -1;
+    //! Size result of next read call
+    FwSignedSizeType writeSizeResult = -1;
 
     // Singleton data
-    static TestData TEST_DATA;
+    static Data testData;
+
+    //! Set next status to return
+    static void setNextStatus(Os::File::Status status);
+
+    //! Set next size to result
+    static void setSizeResult(FwSignedSizeType size);
+
+    //! Set next position to result
+    static void setPositionResult(FwSignedSizeType position);
+
+    //! Set next read result
+    static void setReadResult(U8 *buffer, FwSignedSizeType size);
+
+    //! Set next read size result
+    static void setReadSize(FwSignedSizeType size);
+
+    //! Set next write result
+    static void setWriteResult(U8 *buffer, FwSignedSizeType size);
+
+    //! Set next write size result
+    static void setWriteSize(FwSignedSizeType size);
+
+    //! Set next read size result
+    static void setReadOverride(ReadOverride function, void* pointer);
+
+    //! Set next write size result
+    static void setWriteOverride(WriteOverride function, void* pointer);
+
+    //! Basic read implementation
+    static Os::File::Status basicRead(U8 *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+
+    //! Basic write implementation
+    static Os::File::Status basicWrite(const void *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+
+    //! Read override function
+    ReadOverride readOverride = Data::basicRead;
+    //! Read override pointer
+    void* readOverridePointer = nullptr;
+
+    //! Write override function
+    WriteOverride writeOverride = Data::basicWrite;
+    //! Write override pointer
+    void* writeOverridePointer = nullptr;
 };
-
-
-
-    void constructInternal() {
-        TEST_DATA.lastCalled = TestData::CONSTRUCT_FN;
-    }
-
-    void testDestructHandler() {
-        TEST_DATA.lastCalled = TestData::DESTRUCT_FN;
-    }
-
-    Os::File::Status testOpenHandler(const char *filepath, Os::File::Mode open_mode, bool overwrite) {
-        TEST_DATA.openPath = filepath;
-        TEST_DATA.openMode = open_mode;
-        TEST_DATA.openOverwrite = overwrite;
-        TEST_DATA.lastCalled = TestData::OPEN_FN;
-        return TEST_DATA.nextStatus;
-    }
-
-    void testCloseHandler(void* pointer) {
-        TEST_DATA.lastCalled = TestData::CLOSE_FN;
-    }
-
-    Os::File::Status testSizeHandler(FwSizeType& size_result) {
-        TEST_DATA.lastCalled = TestData::SIZE_FN;
-        size_result = TEST_DATA.sizeResult;
-        return TEST_DATA.nextStatus;
-    }
-
-    Os::File::Status testPositionHandler(FwSizeType& position_result) {
-        TEST_DATA.lastCalled = TestData::POSITION_FN;
-        position_result = TEST_DATA.positionResult;
-        return TEST_DATA.nextStatus;
-    }
-
-    Os::File::Status testPreallocateHandler(FwSizeType offset, FwSizeType length) {
-        TEST_DATA.preallocateOffset = offset;
-        TEST_DATA.preallocateLength = length;
-        TEST_DATA.lastCalled = TestData::PREALLOCATE_FN;
-        return TEST_DATA.nextStatus;
-
-    }
-
-    Os::File::Status testSeekHandler(FwSizeType offset, bool absolute) {
-        TEST_DATA.seekOffset = offset;
-        TEST_DATA.seekAbsolute = absolute;
-        TEST_DATA.lastCalled = TestData::SEEK_FN;
-        return TEST_DATA.nextStatus;
-    }
-
-    Os::File::Status testFlushHandler() {
-        TEST_DATA.lastCalled = TestData::FLUSH_FN;
-        return TEST_DATA.nextStatus;
-    }
-
-    Os::File::Status testReadHandler(U8 *buffer, FwSizeType &size, bool wait) {
-        TEST_DATA.readBuffer = buffer;
-        TEST_DATA.readSize = size;
-        TEST_DATA.readWait = wait;
-        TEST_DATA.lastCalled = TestData::READ_FN;
-        // Copy read data if set
-        if (nullptr != TEST_DATA.readResult) {
-            size = FW_MIN(size, TEST_DATA.readSizeResult);
-            (void) ::memcpy(buffer, TEST_DATA.readResult, size);
-        }
-        return TEST_DATA.nextStatus;
-    }
-
-    Os::File::Status testWriteHandler(const void *buffer, FwSizeType &size, bool wait) {
-        TEST_DATA.writeBuffer = buffer;
-        TEST_DATA.writeSize = size;
-        TEST_DATA.writeWait = wait;
-        TEST_DATA.lastCalled = TestData::WRITE_FN;
-        return TEST_DATA.nextStatus;
-    }
-}
-
 
 } // namespace Test
 } // namespace File

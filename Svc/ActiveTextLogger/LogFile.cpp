@@ -61,7 +61,7 @@ namespace Svc {
             // Won't exceed max size, so write to file:
             else {
 
-                FwSizeType writeSize = size;
+                FwSignedSizeType writeSize = size;
                 Os::File::Status stat = this->m_file.write(buf,writeSize,true);
 
                 // Assert that we are not trying to write to a file we never opened:
@@ -95,7 +95,7 @@ namespace Svc {
         }
 
         U32 suffix = 0;
-        FwSizeType tmp;
+        FwSignedSizeType tmp;
         char fileNameFinal[Fw::String::STRING_SIZE];
         (void) strncpy(fileNameFinal,fileName,
                        Fw::String::STRING_SIZE);

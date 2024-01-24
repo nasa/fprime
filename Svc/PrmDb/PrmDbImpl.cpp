@@ -327,7 +327,7 @@ namespace Svc {
                 this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID,recordNum,fStat);
                 return;
             }
-            if (sizeof(parameterId) != static_cast<FwUnsignedSizeType>(readSize)) {
+            if (sizeof(parameterId) != static_cast<FwSizeType>(readSize)) {
                 this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID_SIZE,recordNum,readSize);
                 return;
             }

@@ -84,7 +84,7 @@ namespace Os {
              * @param size: output parameter for size.
              * @return OP_OK on success otherwise error status
              */
-            Status size(FwSizeType& size_result);
+            Status size(FwSignedSizeType& size_result);
 
             /**
              * \brief get file pointer position of the currently open file
@@ -93,7 +93,7 @@ namespace Os {
              * @param position: output parameter for size.
              * @return OP_OK on success otherwise error status
              */
-            Status position(FwSizeType& position_result);
+            Status position(FwSignedSizeType& position_result);
 
             /**
              * \brief pre-allocate file storage
@@ -108,7 +108,7 @@ namespace Os {
              * \param length: length after offset to preallocate
              * \return OP_OK on success otherwise error status
              */
-            Status preallocate(FwSizeType offset, FwSizeType length);
+            Status preallocate(FwSignedSizeType offset, FwSignedSizeType length);
 
             /**
              * \brief seek the file pointer to the given offset
@@ -120,7 +120,7 @@ namespace Os {
              * \param absolute: true for seeking from beginning of file, false to use current position. Default: true.
              * \return OP_OK on success otherwise error status
              */
-            Status seek(FwSizeType offset, bool absolute = true);
+            Status seek(FwSignedSizeType offset, bool absolute = true);
 
             /**
              * \brief flush file contents to storage
@@ -150,7 +150,7 @@ namespace Os {
              * \param wait: true if call should block until `size` data read, false otherwise
              * \return OP_OK on success otherwise error status
              */
-            Status read(U8* buffer, FwSizeType &size, bool wait = true);
+            Status read(U8* buffer, FwSignedSizeType &size, bool wait = true);
 
             /**
              * \brief write data to this file from the supplied buffer bounded by size
@@ -169,7 +169,7 @@ namespace Os {
              * \param wait: true if call should block until `size` data is written, false otherwise
              * \return OP_OK on success otherwise error status
              */
-            Status write(const void * buffer, FwSizeType &size, bool wait = true);
+            Status write(const void * buffer, FwSignedSizeType &size, bool wait = true);
 
             /**
              * \brief calculate the CRC32 of this file
@@ -208,23 +208,23 @@ namespace Os {
           /**
            * Internal implementation of the `size` call. See above.
            */
-          Status sizeInternal(FwSizeType& size_result);
+          Status sizeInternal(FwSignedSizeType& size_result);
 
           /**
            * Internal implementation of the `position` call. See above.
            */
-          Status positionInternal(FwSizeType& position_result);
+          Status positionInternal(FwSignedSizeType& position_result);
 
 
           /**
            * Internal implementation of the `preallocate` call. See above.
            */
-          Status preallocateInternal(FwSizeType offset, FwSizeType length);
+          Status preallocateInternal(FwSignedSizeType offset, FwSignedSizeType length);
 
           /**
            * Internal implementation of the `seek` call. See above.
            */
-          Status seekInternal(FwSizeType offset, bool absolute);
+          Status seekInternal(FwSignedSizeType offset, bool absolute);
 
           /**
            * Internal implementation of the `flush` call. See above.
@@ -234,19 +234,19 @@ namespace Os {
           /**
            * Internal implementation of the `read` call. See above.
            */
-          Status readInternal(U8* buffer, FwSizeType &size, bool wait);
+          Status readInternal(U8* buffer, FwSignedSizeType &size, bool wait);
 
           /**
            * Internal implementation of the `write` call. See above.
            */
-          Status writeInternal(const void* buffer, FwSizeType &size, bool wait);
+          Status writeInternal(const void* buffer, FwSignedSizeType &size, bool wait);
         private:
           static const U32 INITIAL_CRC = 0xFFFFFFFF;
           /**
            * Working set for CRC calculations.
            */
           struct CrcWorkingSet {
-              FwSizeType m_offset; //!< File offset tracking CRC calculation
+              FwSignedSizeType m_offset; //!< File offset tracking CRC calculation
               U32 m_crc; //!< CRC value currently calculated
               U8 m_buffer[FW_FILE_CHUNK_SIZE];
               bool m_eof; //!< End-of-file reached

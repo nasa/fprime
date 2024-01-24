@@ -39,8 +39,8 @@ namespace Fw {
       return FILE_OPEN_ERROR;
     }
 
-    FwSizeType capacity = this->m_buffer.getBuffCapacity();
-    FwSizeType length = capacity;
+    FwSignedSizeType capacity = static_cast<FwSignedSizeType>(this->m_buffer.getBuffCapacity());
+    FwSignedSizeType length = static_cast<FwSignedSizeType>(capacity);
     status = file.read(this->m_buffer.getBuffAddr(), length, false);
     if( Os::File::OP_OK != status ) {
       file.close();
@@ -72,12 +72,10 @@ namespace Fw {
       return FILE_OPEN_ERROR;
     }
 
-    FwSizeType length = this->m_buffer.getBuffLength();
-    FwSizeType size = length;
+    FwSignedSizeType length = static_cast<FwSignedSizeType>(this->m_buffer.getBuffLength());
+    FwSignedSizeType size = length;
     status = file.write(this->m_buffer.getBuffAddr(), length);
-    if( (Os::File::OP_OK != status) ||
-        (length != size) )
-    {
+    if( (Os::File::OP_OK != status) || (length != size)) {
       file.close();
       return FILE_WRITE_ERROR;
     }

@@ -45,7 +45,7 @@ namespace Svc {
         return status;
     }
 
-    NATIVE_INT_TYPE intLength = length;
+    FwSignedSizeType intLength = length;
     //Note: not waiting for the file write to finish
     status = this->osFile.write(data, intLength, false);
     if (status != Os::File::OP_OK) {

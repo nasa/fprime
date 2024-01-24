@@ -15,6 +15,9 @@
 typedef PlatformIndexType FwIndexType;
 #define PRI_FwIndexType PRI_PlatformIndexType
 
+typedef PlatformSignedSizeType FwSignedSizeType;
+#define PRI_FwSignedSizeType PRI_PlatformSignedSizeType
+
 typedef PlatformSizeType FwSizeType;
 #define PRI_FwSizeType PRI_PlatformSizeType
 

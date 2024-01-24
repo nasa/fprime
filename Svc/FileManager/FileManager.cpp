@@ -234,7 +234,7 @@ namespace Svc {
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
 
-    FwSizeType size_arg;
+    FwSignedSizeType size_arg;
     const Os::FileSystem::Status status =
       Os::FileSystem::getFileSize(fileName.toChar(), size_arg);
     if (status != Os::FileSystem::OP_OK) {
