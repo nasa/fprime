@@ -3,7 +3,7 @@
 
 namespace Fw {
 
-    ObjectName::ObjectName(const char* src) : StringBase() {
+    ObjectName::ObjectName(const CHAR* src) : StringBase() {
         Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
@@ -37,7 +37,7 @@ namespace Fw {
         return *this;
     }
 
-    ObjectName& ObjectName::operator=(const char* other) {
+    ObjectName& ObjectName::operator=(const CHAR* other) {
         Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
         return *this;
     }
@@ -45,7 +45,7 @@ namespace Fw {
     ObjectName::~ObjectName() {
     }
 
-    const char* ObjectName::toChar() const {
+    const CHAR* ObjectName::toChar() const {
         return this->m_buf;
     }
 

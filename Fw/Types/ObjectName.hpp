@@ -16,21 +16,21 @@ namespace Fw {
                 SERIALIZED_SIZE = STRING_SIZE + sizeof(FwBuffSizeType) //!< Serialized size is size of buffer + size field
             };
 
-            ObjectName(const char* src); //!< char* source constructor
-            ObjectName(const StringBase& src); //!< StringBase string constructor
+            explicit ObjectName(const CHAR* src); //!< char* source constructor
+            explicit ObjectName(const StringBase& src); //!< StringBase string constructor
             ObjectName(const ObjectName& src); //!< ObjectName string constructor
             ObjectName(); //!< default constructor
             ObjectName& operator=(const ObjectName& other); //!< assignment operator
             ObjectName& operator=(const StringBase& other); //!< StringBase string assignment operator
-            ObjectName& operator=(const char* other); //!< char* assignment operator
+            ObjectName& operator=(const CHAR* other); //!< char* assignment operator
             ~ObjectName(); //!< destructor
 
-            const char* toChar() const; //!< gets char buffer
+            const CHAR* toChar() const; //!< gets char buffer
             NATIVE_UINT_TYPE getCapacity() const; //!< return buffer size
 
         private:
 
-            char m_buf[STRING_SIZE]; //!< storage for string data
+            CHAR m_buf[STRING_SIZE]; //!< storage for string data
     };
 }
 

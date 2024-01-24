@@ -1215,10 +1215,8 @@ TEST(TypesTest,ObjectNameTest) {
 
     Fw::ObjectName copyStr("ASTRING");
     ASSERT_EQ(copyStr,"ASTRING");
-    Fw::ObjectName copyStr2 = "ASTRING";
+    Fw::ObjectName copyStr2(copyStr);
     ASSERT_EQ(copyStr2,"ASTRING");
-    Fw::ObjectName copyStr3(copyStr2);
-    ASSERT_EQ(copyStr3,"ASTRING");
 
     Fw::InternalInterfaceString ifstr("IfString");
     Fw::ObjectName if2(ifstr);
