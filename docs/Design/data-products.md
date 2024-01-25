@@ -176,14 +176,14 @@ struct FixedSizeData {
   data: [1024] F32
 }
 @ A record containing fixed-size data
-product record FixedSizeDataRecord: FixedSizeData
+product record FixedSizeDataRecord: FixedSizeData id 0x00
 @ A record containing a variable-size array
 product record F32ArrayRecord: F32 array id 0x01
 ```
 
 #### 3.2.3. Containers
 
-A container is a data structure that  records.
+A container is a data structure that stores records.
 When defining a producer component, you can specify one or more containers.
 Each container specified in a component can store
 any of the records specified in the component.
@@ -434,7 +434,10 @@ The component referred to as `producer` in that document
 is a data product producer.
 
 **Writing data products to non-volatile storage:**
-TODO
+See the example uses in the documentation for
+[`Svc::DpWriter`](../../Svc/DpWriter/docs/sdd.md#6-example-uses).
+The component referred to as `producer` in that document
+is a data product producer.
 
 **Cataloging and downlinking data products:**
 TODO
