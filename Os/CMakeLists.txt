@@ -8,6 +8,12 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stub")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
 
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
+)
+register_fprime_module(Os_Test_File_SyntheticFileSystem)
+
+
 # Basic module dependencies
 set(MOD_DEPS
   ${CMAKE_THREAD_LIBS_INIT}

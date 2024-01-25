@@ -191,7 +191,7 @@ File::Status File::seekInternal(FwSignedSizeType offset, bool absolute) {
     if (actual == -1) {
         status = Os::Posix::errno_to_file_status(errno_store);
     } else if (absolute && (actual != offset)) {
-        status = Os::File::Status::INVALID_ARGUMENT;
+        status = Os::File::Status::OTHER_ERROR;
     }
     return status;
 }

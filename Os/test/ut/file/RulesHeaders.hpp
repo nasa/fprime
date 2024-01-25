@@ -10,19 +10,13 @@
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
+#include "Os/test/ut/file/SyntheticFileSystem.hpp"
 
 namespace Os {
 namespace Test {
 namespace File {
 
 struct Tester {
-    /**
-     * Shadow state for a given file consisting of file data and a data pointer.
-     */
-    struct FileData {
-        std::vector<U8> data;
-        FwSignedSizeType pointer;
-    };
     /**
      * State data for an open OS file.
      */
@@ -35,7 +29,7 @@ struct Tester {
     static constexpr const char* ASSERT_IN_FILE_CPP = "Assert: \".*/Os/File\\.cpp:[0-9]+\"";
 
     // Constructors that ensures the file is always valid
-    Tester() : file(), mode(Os::File::Mode::OPEN_NO_MODE) {}
+    Tester() : m_file(), m_mode(Os::File::Mode::OPEN_NO_MODE) {}
 
     // Destructor must be virtual
     virtual ~Tester() = default;
@@ -140,16 +134,16 @@ struct Tester {
     void assert_file_seek(const FwSignedSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute);
 
     //! File under test
-    Os::File file;
-
-    //! Shadow file mode
-    Os::File::Mode mode;
+    Os::File m_file;
 
     //! Shadow file state: file system
-    std::map<std::string, std::unique_ptr<FileData>> filesystem;
+    SyntheticFileSystem m_file_system;
 
     //! Currently opened path
-    std::string current_path;
+    std::string m_current_path;
+
+    //! Independent tracking of mode
+    Os::File::Mode m_mode;
 
 // Do NOT alter, adds rules to Tester as inner classes
 #include "MyRules.hpp"

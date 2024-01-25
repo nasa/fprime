@@ -3,160 +3,86 @@
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
 
+
 // For testing, limit files to 32K
 const FwSignedSizeType FILE_DATA_MAXIMUM = 32 * 1024;
 
 Os::File::Status Os::Test::File::Tester::shadow_open(const std::string &path, Os::File::Mode open_mode, bool overwrite) {
-    Os::File::Status status = Os::File::Status::OP_OK;
-    bool exists = (this->filesystem.count(path) > 0);
-
-    // Error case: read on file that does not exist
-    if ((not exists) && (Os::File::Mode::OPEN_READ == open_mode)) {
-        status = Os::File::Status::DOESNT_EXIST;
-        this->current_path.clear();
-        this->mode = Os::File::Mode::OPEN_NO_MODE;
+    SyntheticFileSystem::OpenData data = this->m_file_system.open(path.c_str(), open_mode, overwrite);
+    if (Os::File::Status::OP_OK == data.status) {
+        this->m_current_path = path;
+        this->m_mode = open_mode;
+    } else {
+        this->m_current_path.clear();
+        this->m_mode = Os::File::Mode::OPEN_NO_MODE;
     }
-    // Error case: create on existing file without overwrite
-    else if (exists and (not overwrite) && (open_mode == Os::File::Mode::OPEN_CREATE)) {
-        status = Os::File::Status::FILE_EXISTS;
-        this->current_path.clear();
-        this->mode = Os::File::Mode::OPEN_NO_MODE;
-    }
-    // Case where file should be opened correctly
-    else {
-        const bool truncate = (Os::File::Mode::OPEN_CREATE == open_mode) && overwrite;
-        this->current_path = path;
-        this->mode = open_mode;
-
-        // Add new shadow file data when the file is new
-        if (not exists) {
-            this->filesystem[this->current_path] = std::unique_ptr<FileData>(new FileData);
-        }
-        // Update the shadow state to look like a newly opened file
-        FileData &data = *this->filesystem.at(this->current_path);
-        if (truncate) {
-            data.data.clear();
-        }
-        data.pointer = 0;
-        // Checks on the shadow data to ensure consistency
-        EXPECT_NE(this->mode, Os::File::OPEN_NO_MODE);
-        EXPECT_EQ(data.pointer, 0);
-        EXPECT_EQ(this->current_path, path);
-        EXPECT_TRUE(not truncate || data.data.empty());
-    }
-    return status;
+    return data.status;
 }
 
 void Os::Test::File::Tester::shadow_close() {
-    this->mode = Os::File::Mode::OPEN_NO_MODE;
-    this->current_path.clear();
+    this->m_file_system.getFile(this->m_current_path.c_str())->close();
+    this->m_current_path.clear();
+    this->m_mode = Os::File::Mode::OPEN_NO_MODE;
     // Checks on the shadow data to ensure consistency
-    ASSERT_EQ(this->mode, Os::File::Mode::OPEN_NO_MODE);
-    ASSERT_TRUE(this->current_path.empty());
+    ASSERT_TRUE(this->m_current_path.empty());
 }
 
 std::vector<U8> Os::Test::File::Tester::shadow_read(FwSignedSizeType size) {
+    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
     std::vector<U8> output;
-    FileData &data = *filesystem.at(this->current_path);
-    FwSignedSizeType original_pointer = data.pointer;
-    FwSignedSizeType original_size = data.data.size();
-    // Check expected read bytes
-    for (FwSignedSizeType i = 0; i < size; i++, data.pointer++) {
-        // End of file
-        if (data.pointer >= static_cast<FwSignedSizeType>(data.data.size())) {
-            break;
-        }
-        output.push_back(data.data.at(data.pointer));
-    }
-    // Checks on the shadow data to ensure consistency
-    EXPECT_EQ(data.data.size(), original_size);
-    EXPECT_EQ(data.pointer, (original_pointer > original_size) ? original_pointer : FW_MIN(original_pointer + size, original_size));
-    EXPECT_EQ(output.size(), (original_pointer > original_size) ? 0 : FW_MIN(size, original_size - original_pointer));
+    output.resize(size);
+    Os::File::Status status = file_data->read(output.data(), size, true);
+    output.resize(size);
+    EXPECT_EQ(status, Os::File::Status::OP_OK);
     return output;
 }
 
 void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
-    FileData &data = *filesystem.at(this->current_path);
-    FwSignedSizeType original_position = data.pointer;
-    FwSignedSizeType original_size = data.data.size();
-
-    // Appends seek to end before writing
-    if (Os::File::Mode::OPEN_APPEND == this->mode) {
-        data.pointer = data.data.size();
-    }
-
-    // First add in zeros to account for a pointer past the end of the file
-    const FwSignedSizeType zeros = static_cast<FwSignedSizeType>(data.pointer) - static_cast<FwSignedSizeType>(data.data.size());
-    for (FwSignedSizeType i = 0; i < zeros; i++) {
-        data.data.push_back(0);
-    }
-    // Interim checks to ensure zeroing performed correctly
-    ASSERT_LE(data.pointer, data.data.size());
-    ASSERT_EQ(data.data.size(),
-              ((Os::File::Mode::OPEN_APPEND == this->mode) ? original_size : FW_MAX(original_position, original_size)));
-
-    FwSignedSizeType pre_write_position = data.pointer;
-    FwSignedSizeType pre_write_size = data.data.size();
-
-    // Next write data
-    for (FwSignedSizeType i = 0; i < static_cast<FwSignedSizeType>(write_data.size()); i++, data.pointer++) {
-        // Overwrite case
-        if (data.pointer < static_cast<FwSignedSizeType>(data.data.size())) {
-            data.data.at(data.pointer) = write_data[i];
-        }
-        // Append case
-        else {
-            data.data.push_back(write_data[i]);
-        }
-    }
-    // Checks on the shadow data to ensure consistency
-    EXPECT_EQ(data.data.size(),
-              FW_MAX(pre_write_position + static_cast<FwSignedSizeType>(write_data.size()), pre_write_size));
-    EXPECT_EQ(data.pointer,
-              ((Os::File::Mode::OPEN_APPEND == this->mode) ? pre_write_size : pre_write_position) + write_data.size());
+    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
+    FwSignedSizeType size = static_cast<FwSignedSizeType>(write_data.size());
+    FwSignedSizeType original_size = size;
+    Os::File::Status status = file_data->write(write_data.data(), size, true);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+    ASSERT_EQ(size, original_size);
 }
 
 void Os::Test::File::Tester::shadow_seek(const FwSignedSizeType offset, const bool absolute) {
-    FileData &data = *filesystem.at(this->current_path);
-    FwSignedSizeType new_offset = (absolute) ? offset : (offset + data.pointer);
-    ASSERT_GE(new_offset, 0);
-    data.pointer = new_offset;
+    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
+    Os::File::Status status = file_data->seek(offset, absolute);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
 
 void Os::Test::File::Tester::shadow_preallocate(const FwSignedSizeType offset, const FwSignedSizeType length) {
-    FileData& data = *this->filesystem.at(this->current_path);
-    const FwSignedSizeType original_size = data.data.size();
-    const FwSignedSizeType new_length = offset + length;
-    // Loop from existing size to new size adding zeros
-    for (FwSignedSizeType i = static_cast<FwSignedSizeType>(data.data.size()); i < new_length; i++) {
-        data.data.push_back(0);
-    }
-    ASSERT_EQ(data.data.size(), FW_MAX(offset + length, original_size));
+    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
+    Os::File::Status status = file_data->preallocate(offset, length);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
 
 void Os::Test::File::Tester::shadow_flush() {
-    // Flush does nothing, function kept as pattern placeholder
+    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
+    Os::File::Status status = file_data->flush();
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
 
 Os::Test::File::Tester::FileState Os::Test::File::Tester::current_file_state() {
     Os::Test::File::Tester::FileState state;
     // Invariant: mode must not be closed, or path must be nullptr
-    EXPECT_TRUE((Os::File::Mode::OPEN_NO_MODE != this->file.m_mode) || (nullptr == file.m_path));
+    EXPECT_TRUE((Os::File::Mode::OPEN_NO_MODE != this->m_file.m_mode) || (nullptr == this->m_file.m_path));
 
     // Read state when file is open
-    if (Os::File::Mode::OPEN_NO_MODE != this->file.m_mode) {
-        EXPECT_EQ(this->file.position(state.position), Os::File::Status::OP_OK);
-        EXPECT_EQ(this->file.size(state.size), Os::File::Status::OP_OK);
+    if (Os::File::Mode::OPEN_NO_MODE != this->m_file.m_mode) {
+        EXPECT_EQ(this->m_file.position(state.position), Os::File::Status::OP_OK);
+        EXPECT_EQ(this->m_file.size(state.size), Os::File::Status::OP_OK);
         // Extra check to ensure size does not alter pointer
         FwSignedSizeType new_position = -1;
-        EXPECT_EQ(this->file.position(new_position), Os::File::Status::OP_OK);
+        EXPECT_EQ(this->m_file.position(new_position), Os::File::Status::OP_OK);
         EXPECT_EQ(new_position, state.position);
     }
     return state;
 }
 
 void Os::Test::File::Tester::assert_valid_mode_status(Os::File::Status &status) const {
-    if (Os::File::Mode::OPEN_NO_MODE == this->mode) {
+    if (Os::File::Mode::OPEN_NO_MODE == this->m_mode) {
         ASSERT_EQ(status, Os::File::Status::NOT_OPENED);
     } else {
         ASSERT_EQ(status, Os::File::Status::INVALID_MODE);
@@ -166,32 +92,31 @@ void Os::Test::File::Tester::assert_valid_mode_status(Os::File::Status &status) 
 
 void Os::Test::File::Tester::assert_file_consistent() {
     // Ensure file mode
-    ASSERT_EQ(this->mode, this->file.m_mode);
-    if (this->file.m_path == nullptr) {
-        ASSERT_EQ(this->current_path, std::string(""));
+    ASSERT_EQ(this->m_mode, this->m_file.m_mode);
+    if (this->m_file.m_path == nullptr) {
+        ASSERT_EQ(this->m_current_path, std::string(""));
     } else {
         // Ensure the state path matches the file path
-        std::string path = std::string(this->file.m_path);
-        ASSERT_EQ(path, this->current_path);
+        std::string path = std::string(this->m_file.m_path);
+        ASSERT_EQ(path, this->m_current_path);
 
         // Check real file properties when able to do so
         if (this->functional()) {
             //  File exists, check all properties
-            if (this->filesystem.count(this->current_path) > 0) {
-                ASSERT_EQ(this->filesystem.count(this->current_path), 1);
-                FileData &data = *this->filesystem.at(this->current_path);
+            if (this->m_file_system.exists(this->m_current_path.c_str())) {
+                std::shared_ptr<SyntheticFile> data = this->m_file_system.getFile(this->m_current_path.c_str());
                 // Ensure the file pointer is consistent
                 FwSignedSizeType current_position = 0;
-                ASSERT_EQ(this->file.position(current_position), Os::File::Status::OP_OK);
-                ASSERT_EQ(current_position, data.pointer);
+                ASSERT_EQ(this->m_file.position(current_position), Os::File::Status::OP_OK);
+                ASSERT_EQ(current_position, data->getPointer());
                 // Ensure the file size is consistent
                 FwSignedSizeType current_size = 0;
-                ASSERT_EQ(this->file.size(current_size), Os::File::Status::OP_OK);
-                ASSERT_EQ(current_size, data.data.size());
+                ASSERT_EQ(this->m_file.size(current_size), Os::File::Status::OP_OK);
+                ASSERT_EQ(current_size, data->getSize());
             }
                 // Does not exist
             else {
-                ASSERT_FALSE(this->exists(this->current_path));
+                ASSERT_FALSE(this->exists(this->m_current_path));
             }
         }
     }
@@ -199,27 +124,27 @@ void Os::Test::File::Tester::assert_file_consistent() {
 
 void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::File::Mode newly_opened_mode, bool overwrite) {
     // Assert the that the file is opened in some mode
-    ASSERT_NE(this->file.m_mode, Os::File::Mode::OPEN_NO_MODE);
-    ASSERT_TRUE(this->file.isOpen()) << "`isOpen()` failed to indicate file is open";
-    ASSERT_EQ(this->file.m_mode, this->mode);
+    ASSERT_NE(this->m_file.m_mode, Os::File::Mode::OPEN_NO_MODE);
+    ASSERT_TRUE(this->m_file.isOpen()) << "`isOpen()` failed to indicate file is open";
+    ASSERT_EQ(this->m_file.m_mode, this->m_mode);
 
     // When the open mode has been specified assert that is in an exact state
     if (not path.empty() && Os::File::Mode::OPEN_NO_MODE != newly_opened_mode) {
         // Assert file pointer always at beginning when functional
         if (functional() ) {
             FwSignedSizeType file_position = -1;
-            ASSERT_EQ(this->file.position(file_position), Os::File::Status::OP_OK);
+            ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
             ASSERT_EQ(file_position, 0);
         }
-        ASSERT_EQ(std::string(this->file.m_path), path);
-        ASSERT_EQ(this->file.m_mode, newly_opened_mode) << "File is in unexpected mode";
+        ASSERT_EQ(std::string(this->m_file.m_path), path);
+        ASSERT_EQ(this->m_file.m_mode, newly_opened_mode) << "File is in unexpected mode";
 
         // Check truncations
         const bool truncate = (Os::File::Mode::OPEN_CREATE == newly_opened_mode) && overwrite;
         if (truncate) {
             if (this->functional()) {
                 FwSignedSizeType file_size = -1;
-                ASSERT_EQ(this->file.size(file_size), Os::File::Status::OP_OK);
+                ASSERT_EQ(this->m_file.size(file_size), Os::File::Status::OP_OK);
                 ASSERT_EQ(file_size, 0);
             }
         }
@@ -227,37 +152,37 @@ void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::Fil
 }
 
 void Os::Test::File::Tester::assert_file_closed() {
-    ASSERT_EQ(this->file.m_mode, Os::File::Mode::OPEN_NO_MODE) << "File is in unexpected mode";
-    ASSERT_FALSE(this->file.isOpen()) << "`isOpen()` failed to indicate file is open";
+    ASSERT_EQ(this->m_file.m_mode, Os::File::Mode::OPEN_NO_MODE) << "File is in unexpected mode";
+    ASSERT_FALSE(this->m_file.isOpen()) << "`isOpen()` failed to indicate file is open";
 }
 
 void Os::Test::File::Tester::assert_file_read(const std::vector<U8>& state_data, const unsigned char *read_data, FwSignedSizeType size_read) {
-    FileData &data = *this->filesystem.at(this->current_path);
+    std::shared_ptr<SyntheticFile> data = this->m_file_system.getFile(this->m_current_path.c_str());
     // Functional tests
     if (functional()) {
         ASSERT_EQ(size_read, state_data.size());
         ASSERT_EQ(std::vector<U8>(read_data, read_data + size_read), state_data);
         FwSignedSizeType position = -1;
-        ASSERT_EQ(this->file.position(position), Os::File::Status::OP_OK);
-        ASSERT_EQ(position, data.pointer);
+        ASSERT_EQ(this->m_file.position(position), Os::File::Status::OP_OK);
+        ASSERT_EQ(position, data->getPointer());
     }
 }
 
 void Os::Test::File::Tester::assert_file_write(const std::vector<U8>& write_data, FwSignedSizeType size_written) {
-    FileData &data = *this->filesystem.at(this->current_path);
+    std::shared_ptr<SyntheticFile> data = this->m_file_system.getFile(this->m_current_path.c_str());
     ASSERT_EQ(size_written, write_data.size());
     FwSignedSizeType file_size = 0;
-    ASSERT_EQ(this->file.size(file_size), Os::File::Status::OP_OK);
-    ASSERT_EQ(static_cast<FwSignedSizeType>(data.data.size()), file_size);
+    ASSERT_EQ(this->m_file.size(file_size), Os::File::Status::OP_OK);
+    ASSERT_EQ(static_cast<FwSignedSizeType>(data->getSize()), file_size);
     FwSignedSizeType file_position = -1;
-    ASSERT_EQ(this->file.position(file_position), Os::File::Status::OP_OK);
-    ASSERT_EQ(file_position, data.pointer);
+    ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
+    ASSERT_EQ(file_position, data->getPointer());
 }
 
 void Os::Test::File::Tester::assert_file_seek(const FwSignedSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute) {
-    FileData &data = *this->filesystem.at(this->current_path);
+    std::shared_ptr<SyntheticFile> data = this->m_file_system.getFile(this->m_current_path.c_str());
     FwSignedSizeType new_position = 0;
-    ASSERT_EQ(this->file.position(new_position), Os::File::Status::OP_OK);
+    ASSERT_EQ(this->m_file.position(new_position), Os::File::Status::OP_OK);
 
     const FwSignedSizeType expected_offset = (absolute) ? seek_desired : (original_position + seek_desired);
     if (expected_offset > 0) {
@@ -265,7 +190,7 @@ void Os::Test::File::Tester::assert_file_seek(const FwSignedSizeType original_po
     } else {
         ASSERT_EQ(new_position, original_position);
     }
-    ASSERT_EQ(data.pointer, new_position);
+    ASSERT_EQ(data->getPointer(), new_position);
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -281,7 +206,7 @@ Os::Test::File::Tester::OpenBaseRule::OpenBaseRule(const char *rule_name,
 
 bool Os::Test::File::Tester::OpenBaseRule::precondition(const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return state.mode == Os::File::Mode::OPEN_NO_MODE;
+    return state.m_mode == Os::File::Mode::OPEN_NO_MODE;
 }
 
 void Os::Test::File::Tester::OpenBaseRule::action(Os::Test::File::Tester &state  //!< The test state
@@ -295,7 +220,7 @@ void Os::Test::File::Tester::OpenBaseRule::action(Os::Test::File::Tester &state 
     state.assert_file_closed();
 
     // Perform action and shadow action asserting the results are the same
-    Os::File::Status status = state.file.open(filename->c_str(), m_mode, this->m_overwrite);
+    Os::File::Status status = state.m_file.open(filename->c_str(), m_mode, this->m_overwrite);
     ASSERT_EQ(status, state.shadow_open(*filename, m_mode, this->m_overwrite));
 
     // Extra check to ensure file is consistently open
@@ -371,7 +296,7 @@ Os::Test::File::Tester::CloseFile::CloseFile() : STest::Rule<Os::Test::File::Tes
 
 bool Os::Test::File::Tester::CloseFile::precondition(const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return Os::File::Mode::OPEN_NO_MODE != state.mode;
+    return Os::File::Mode::OPEN_NO_MODE != state.m_mode;
 }
 
 void Os::Test::File::Tester::CloseFile::action(Os::Test::File::Tester &state  //!< The test state
@@ -379,9 +304,9 @@ void Os::Test::File::Tester::CloseFile::action(Os::Test::File::Tester &state  //
     printf("--> Rule: %s \n", this->name);
     // Make sure test state and file state synchronized
     state.assert_file_consistent();
-    state.assert_file_opened(state.current_path);
+    state.assert_file_opened(state.m_current_path);
     // Close file and shadow state
-    state.file.close();
+    state.m_file.close();
     state.shadow_close();
     // Assert test state and file state synchronized
     state.assert_file_closed();
@@ -401,7 +326,7 @@ Os::Test::File::Tester::Read::Read() :
 bool Os::Test::File::Tester::Read::precondition(
         const Os::Test::File::Tester &state //!< The test state
 ) {
-    return Os::File::Mode::OPEN_READ == state.mode;
+    return Os::File::Mode::OPEN_READ == state.m_mode;
 }
 
 
@@ -415,7 +340,7 @@ void Os::Test::File::Tester::Read::action(
     FwSignedSizeType size_desired = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
     FwSignedSizeType size_read = size_desired;
     bool wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-    Os::File::Status status = state.file.read(buffer, size_read, wait);
+    Os::File::Status status = state.m_file.read(buffer, size_read, wait);
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     std::vector<U8> read_data = state.shadow_read(size_desired);
     state.assert_file_read(read_data, buffer, size_read);
@@ -438,7 +363,7 @@ Os::Test::File::Tester::Write::Write() :
 bool Os::Test::File::Tester::Write::precondition(
         const Os::Test::File::Tester &state //!< The test state
 ) {
-    return Os::File::Mode::OPEN_CREATE <= state.mode;
+    return Os::File::Mode::OPEN_CREATE <= state.m_mode;
 }
 
 
@@ -455,7 +380,7 @@ void Os::Test::File::Tester::Write::action(
         buffer[i] = static_cast<U8>(STest::Pick::lowerUpper(0, std::numeric_limits<U8>::max()));
     }
     std::vector<U8> write_data(buffer, buffer + size_desired);
-    Os::File::Status status = state.file.write(buffer, size_written, wait);
+    Os::File::Status status = state.m_file.write(buffer, size_written, wait);
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     ASSERT_EQ(size_written, size_desired);
     state.shadow_write(write_data);
@@ -476,7 +401,7 @@ Os::Test::File::Tester::Seek::Seek() :
 bool Os::Test::File::Tester::Seek::precondition(
         const Os::Test::File::Tester &state //!< The test state
 ) {
-    return Os::File::Mode::OPEN_NO_MODE < state.mode;
+    return Os::File::Mode::OPEN_NO_MODE < state.m_mode;
 }
 
 
@@ -495,7 +420,7 @@ void Os::Test::File::Tester::Seek::action(
     } else {
         seek_offset = STest::Pick::lowerUpper(0, original_file_state.position + FILE_DATA_MAXIMUM) - original_file_state.position;
     }
-    Os::File::Status status = state.file.seek(seek_offset, absolute);
+    Os::File::Status status = state.m_file.seek(seek_offset, absolute);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
     state.shadow_seek(seek_offset, absolute);
     state.assert_file_seek(original_file_state.position, seek_offset, absolute);
@@ -515,7 +440,7 @@ Os::Test::File::Tester::Preallocate::Preallocate() :
 bool Os::Test::File::Tester::Preallocate::precondition(
         const Os::Test::File::Tester &state //!< The test state
 ) {
-    return Os::File::Mode::OPEN_CREATE <= state.mode;
+    return Os::File::Mode::OPEN_CREATE <= state.m_mode;
 }
 
 
@@ -527,7 +452,7 @@ void Os::Test::File::Tester::Preallocate::action(
     FileState original_file_state = state.current_file_state();
     FwSignedSizeType offset = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
     FwSignedSizeType length = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
-    Os::File::Status status = state.file.preallocate(offset, length);
+    Os::File::Status status = state.m_file.preallocate(offset, length);
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     state.shadow_preallocate(offset, length);
     FileState final_file_state = state.current_file_state();
@@ -549,7 +474,7 @@ Os::Test::File::Tester::Flush::Flush() :
 bool Os::Test::File::Tester::Flush::precondition(
         const Os::Test::File::Tester &state //!< The test state
 ) {
-    return Os::File::Mode::OPEN_CREATE <= state.mode;
+    return Os::File::Mode::OPEN_CREATE <= state.m_mode;
 }
 
 
@@ -559,7 +484,7 @@ void Os::Test::File::Tester::Flush::action(
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
-    Os::File::Status status = state.file.flush();
+    Os::File::Status status = state.m_file.flush();
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     // Ensure no change in size or pointer
     FileState final_file_state = state.current_file_state();
@@ -580,7 +505,7 @@ Os::Test::File::Tester::OpenInvalidModes::OpenInvalidModes()
 
 bool Os::Test::File::Tester::OpenInvalidModes::precondition(const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return Os::File::Mode::OPEN_NO_MODE != state.mode;
+    return Os::File::Mode::OPEN_NO_MODE != state.m_mode;
 }
 
 void Os::Test::File::Tester::OpenInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
@@ -589,11 +514,11 @@ void Os::Test::File::Tester::OpenInvalidModes::action(Os::Test::File::Tester &st
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
     // Check initial file state
-    state.assert_file_opened(state.current_path);
+    state.assert_file_opened(state.m_current_path);
     std::shared_ptr<const std::string> filename = state.get_filename(true);
-    Os::File::Status status = state.file.open(filename->c_str(), Os::File::Mode::OPEN_CREATE);
+    Os::File::Status status = state.m_file.open(filename->c_str(), Os::File::Mode::OPEN_CREATE);
     state.assert_valid_mode_status(status);
-    state.assert_file_opened(state.current_path);  // Original file remains open
+    state.assert_file_opened(state.m_current_path);  // Original file remains open
     // Ensure no change in size or pointer of original file
     FileState final_file_state = state.current_file_state();
     ASSERT_EQ(final_file_state.size, original_file_state.size);
@@ -612,7 +537,7 @@ Os::Test::File::Tester::PreallocateWithoutOpen::PreallocateWithoutOpen()
 bool Os::Test::File::Tester::PreallocateWithoutOpen::precondition(
         const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return Os::File::Mode::OPEN_NO_MODE == state.mode;
+    return Os::File::Mode::OPEN_NO_MODE == state.m_mode;
 }
 
 void Os::Test::File::Tester::PreallocateWithoutOpen::action(Os::Test::File::Tester &state  //!< The test state
@@ -625,7 +550,7 @@ void Os::Test::File::Tester::PreallocateWithoutOpen::action(Os::Test::File::Test
     FwSignedSizeType random_offset = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
     FwSignedSizeType random_size = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
 
-    Os::File::Status status = state.file.preallocate(random_offset, random_size);
+    Os::File::Status status = state.m_file.preallocate(random_offset, random_size);
     state.assert_valid_mode_status(status);
     state.assert_file_consistent();
 }
@@ -639,7 +564,7 @@ Os::Test::File::Tester::SeekWithoutOpen::SeekWithoutOpen() : STest::Rule<Os::Tes
 
 bool Os::Test::File::Tester::SeekWithoutOpen::precondition(const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return Os::File::Mode::OPEN_NO_MODE == state.mode;
+    return Os::File::Mode::OPEN_NO_MODE == state.m_mode;
 }
 
 void Os::Test::File::Tester::SeekWithoutOpen::action(Os::Test::File::Tester &state  //!< The test state
@@ -652,7 +577,7 @@ void Os::Test::File::Tester::SeekWithoutOpen::action(Os::Test::File::Tester &sta
     FwSignedSizeType random_offset = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
     bool random_absolute = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
 
-    Os::File::Status status = state.file.seek(random_offset, random_absolute);
+    Os::File::Status status = state.m_file.seek(random_offset, random_absolute);
     state.assert_valid_mode_status(status);
     state.assert_file_consistent();
 }
@@ -666,7 +591,7 @@ Os::Test::File::Tester::SeekInvalidSize::SeekInvalidSize() : STest::Rule<Os::Tes
 
 bool Os::Test::File::Tester::SeekInvalidSize::precondition(const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return Os::File::Mode::OPEN_NO_MODE < state.mode;;
+    return Os::File::Mode::OPEN_NO_MODE < state.m_mode;;
 }
 
 void Os::Test::File::Tester::SeekInvalidSize::action(Os::Test::File::Tester &state  //!< The test state
@@ -678,7 +603,7 @@ void Os::Test::File::Tester::SeekInvalidSize::action(Os::Test::File::Tester &sta
     FwSignedSizeType random_offset = STest::Pick::lowerUpper(original_file_state.position + 1, std::numeric_limits<U32>::max());
     ASSERT_GT(random_offset, original_file_state.position);
 
-    Os::File::Status status = state.file.seek(-1 * random_offset, false);
+    Os::File::Status status = state.m_file.seek(-1 * random_offset, false);
     ASSERT_EQ(Os::File::Status::INVALID_ARGUMENT, status);
     // Ensure no change in size or pointer
     FileState final_file_state = state.current_file_state();
@@ -697,7 +622,7 @@ Os::Test::File::Tester::FlushInvalidModes::FlushInvalidModes()
 
 bool Os::Test::File::Tester::FlushInvalidModes::precondition(const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return Os::File::Mode::OPEN_NO_MODE == state.mode || Os::File::Mode::OPEN_READ == state.mode;
+    return Os::File::Mode::OPEN_NO_MODE == state.m_mode || Os::File::Mode::OPEN_READ == state.m_mode;
 }
 
 void Os::Test::File::Tester::FlushInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
@@ -705,8 +630,8 @@ void Os::Test::File::Tester::FlushInvalidModes::action(Os::Test::File::Tester &s
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
-    ASSERT_TRUE(Os::File::Mode::OPEN_NO_MODE == state.file.m_mode || Os::File::Mode::OPEN_READ == state.file.m_mode);
-    Os::File::Status status = state.file.flush();
+    ASSERT_TRUE(Os::File::Mode::OPEN_NO_MODE == state.m_file.m_mode || Os::File::Mode::OPEN_READ == state.m_file.m_mode);
+    Os::File::Status status = state.m_file.flush();
     state.assert_valid_mode_status(status);
     // Ensure no change in size or pointer
     FileState final_file_state = state.current_file_state();
@@ -725,7 +650,7 @@ Os::Test::File::Tester::ReadInvalidModes::ReadInvalidModes()
 
 bool Os::Test::File::Tester::ReadInvalidModes::precondition(const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return Os::File::Mode::OPEN_READ != state.mode;
+    return Os::File::Mode::OPEN_READ != state.m_mode;
 }
 
 void Os::Test::File::Tester::ReadInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
@@ -735,8 +660,8 @@ void Os::Test::File::Tester::ReadInvalidModes::action(Os::Test::File::Tester &st
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
-    ASSERT_NE(Os::File::Mode::OPEN_READ, state.file.m_mode);
-    Os::File::Status status = state.file.read(buffer, size, static_cast<bool>(STest::Pick::lowerUpper(0, 1)));
+    ASSERT_NE(Os::File::Mode::OPEN_READ, state.m_file.m_mode);
+    Os::File::Status status = state.m_file.read(buffer, size, static_cast<bool>(STest::Pick::lowerUpper(0, 1)));
     state.assert_valid_mode_status(status);
 
     // Ensure no change in size or pointer
@@ -756,7 +681,7 @@ Os::Test::File::Tester::WriteInvalidModes::WriteInvalidModes()
 
 bool Os::Test::File::Tester::WriteInvalidModes::precondition(const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return Os::File::Mode::OPEN_NO_MODE == state.mode || Os::File::Mode::OPEN_READ == state.mode;
+    return Os::File::Mode::OPEN_NO_MODE == state.m_mode || Os::File::Mode::OPEN_READ == state.m_mode;
 }
 
 void Os::Test::File::Tester::WriteInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
@@ -766,8 +691,8 @@ void Os::Test::File::Tester::WriteInvalidModes::action(Os::Test::File::Tester &s
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
-    ASSERT_TRUE(Os::File::Mode::OPEN_NO_MODE == state.file.m_mode || Os::File::Mode::OPEN_READ == state.file.m_mode);
-    Os::File::Status status = state.file.write(buffer, size, static_cast<bool>(STest::Pick::lowerUpper(0, 1)));
+    ASSERT_TRUE(Os::File::Mode::OPEN_NO_MODE == state.m_file.m_mode || Os::File::Mode::OPEN_READ == state.m_file.m_mode);
+    Os::File::Status status = state.m_file.write(buffer, size, static_cast<bool>(STest::Pick::lowerUpper(0, 1)));
     state.assert_valid_mode_status(status);
     // Ensure no change in size or pointer
     FileState final_file_state = state.current_file_state();
@@ -803,7 +728,7 @@ void Os::Test::File::Tester::OpenIllegalPath::action(Os::Test::File::Tester &sta
             static_cast<Os::File::Mode>(STest::Pick::lowerUpper(Os::File::Mode::OPEN_READ,
                                                                 Os::File::Mode::OPEN_APPEND));
     bool overwrite = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-    ASSERT_DEATH_IF_SUPPORTED(state.file.open(nullptr, random_mode, overwrite), ASSERT_IN_FILE_CPP);
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.open(nullptr, random_mode, overwrite), ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
 
@@ -827,7 +752,7 @@ void Os::Test::File::Tester::OpenIllegalMode::action(Os::Test::File::Tester &sta
         any = STest::Pick::any();
     } while ((any != static_cast<U32>(Os::File::Mode::OPEN_NO_MODE)) &&
              (any < static_cast<U32>(Os::File::Mode::MAX_OPEN_MODE)));
-    ASSERT_DEATH_IF_SUPPORTED(state.file.open(random_filename->c_str(), static_cast<Os::File::Mode>(any), overwrite),
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.open(random_filename->c_str(), static_cast<Os::File::Mode>(any), overwrite),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
@@ -847,7 +772,7 @@ void Os::Test::File::Tester::PreallocateIllegalOffset::action(Os::Test::File::Te
     FwSignedSizeType length = static_cast<FwSignedSizeType>(STest::Pick::any());
     FwSignedSizeType invalid_offset =
             -1 * static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
-    ASSERT_DEATH_IF_SUPPORTED(state.file.preallocate(invalid_offset, length),
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.preallocate(invalid_offset, length),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP) << "With offset: " << invalid_offset;
     state.assert_file_consistent();
 }
@@ -867,7 +792,7 @@ void Os::Test::File::Tester::PreallocateIllegalLength::action(Os::Test::File::Te
     FwSignedSizeType offset = static_cast<FwSignedSizeType>(STest::Pick::any());
     FwSignedSizeType invalid_length =
             -1 * static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
-    ASSERT_DEATH_IF_SUPPORTED(state.file.preallocate(offset, invalid_length),
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.preallocate(offset, invalid_length),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
@@ -883,7 +808,7 @@ void Os::Test::File::Tester::SeekIllegal::action(Os::Test::File::Tester &state  
 ) {
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
-    ASSERT_DEATH_IF_SUPPORTED(state.file.seek(-1, true), Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.seek(-1, true), Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
 
@@ -901,7 +826,7 @@ void Os::Test::File::Tester::ReadIllegalBuffer::action(Os::Test::File::Tester &s
     state.assert_file_consistent();
     FwSignedSizeType size = static_cast<FwSignedSizeType>(STest::Pick::any());
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-    ASSERT_DEATH_IF_SUPPORTED(state.file.read(nullptr, size, random_wait), Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.read(nullptr, size, random_wait), Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
 
@@ -919,7 +844,7 @@ void Os::Test::File::Tester::ReadIllegalSize::action(Os::Test::File::Tester &sta
     state.assert_file_consistent();
     FwSignedSizeType invalid_size = -1 * static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-    ASSERT_DEATH_IF_SUPPORTED(state.file.read(buffer, invalid_size, random_wait),
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.read(buffer, invalid_size, random_wait),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
@@ -938,7 +863,7 @@ void Os::Test::File::Tester::WriteIllegalBuffer::action(Os::Test::File::Tester &
     state.assert_file_consistent();
     FwSignedSizeType size = static_cast<FwSignedSizeType>(STest::Pick::any());
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-    ASSERT_DEATH_IF_SUPPORTED(state.file.write(nullptr, size, random_wait), Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.write(nullptr, size, random_wait), Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
 
@@ -956,7 +881,7 @@ void Os::Test::File::Tester::WriteIllegalSize::action(Os::Test::File::Tester &st
     state.assert_file_consistent();
     FwSignedSizeType invalid_size = -1 * static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-    ASSERT_DEATH_IF_SUPPORTED(state.file.read(buffer, invalid_size, random_wait),
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.read(buffer, invalid_size, random_wait),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }

@@ -100,7 +100,7 @@ TEST_F(Functionality, FlushInvalidModes) {
     close_rule.apply(*tester);
     tester->assert_file_closed();
     open_read.apply(*tester);
-    tester->assert_file_opened(tester->current_path);
+    tester->assert_file_opened(tester->m_current_path);
 
     // Check that a read-mode file cannot flush
     flush_rule.apply(*tester);
@@ -125,7 +125,7 @@ TEST_F(Functionality, ReadInvalidModes) {
 
     // Used to open (now existent) file in write-mode
     open_write.apply(*tester);
-    tester->assert_file_opened(tester->current_path);
+    tester->assert_file_opened(tester->m_current_path);
 
     // Check that a read won't work on write-mode data
     read_rule.apply(*tester);
@@ -147,7 +147,7 @@ TEST_F(Functionality, WriteInvalidModes) {
     close_rule.apply(*tester);
     tester->assert_file_closed();
     open_read.apply(*tester);
-    tester->assert_file_opened(tester->current_path);
+    tester->assert_file_opened(tester->m_current_path);
 
     // Check that a write won't work on write-mode data
     write_rule.apply(*tester);

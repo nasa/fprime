@@ -23,7 +23,8 @@ set(UT_SOURCE_FILES
 )
 set(UT_MOD_DEPS
     Os
-        STest
+    STest
+    Os_Test_File_SyntheticFileSystem
 )
 choose_fprime_implementation(Os/File Os_File_Posix)
 register_fprime_ut(PosixFileTest)
