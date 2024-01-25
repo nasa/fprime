@@ -9,7 +9,7 @@
 // acknowledged.
 // ======================================================================
 
-#include "Os/Stubs/FileStubs.hpp"
+#include "Os/Stub/test/File.hpp"
 #include "CmdSequencerTester.hpp"
 #include "gtest/gtest.h"
 
@@ -25,34 +25,15 @@ namespace Svc {
   void CmdSequencerTester::Interceptors::Open ::
     enable()
   {
-    Os::registerOpenInterceptor(registerFunction, this);
+      Os::Stub::File::Test::Data::setNextStatus(this->fileStatus);
   }
 
   void CmdSequencerTester::Interceptors::Open ::
     disable()
   {
-    Os::clearOpenInterceptor();
+      Os::Stub::File::Test::Data::setNextStatus(Os::File::Status::OP_OK);
   }
 
-  bool CmdSequencerTester::Interceptors::Open ::
-    intercept(Os::File::Status& fileStatus)
-  {
-    fileStatus = this->fileStatus;
-    return fileStatus == Os::File::OP_OK;
-  }
-
-  bool CmdSequencerTester::Interceptors::Open ::
-    registerFunction(
-        Os::File::Status& fileStatus,
-        const char* fileName,
-        Os::File::Mode mode,
-        void* ptr
-    )
-  {
-    EXPECT_TRUE(ptr);
-    Open *const open = static_cast<Open*>(ptr);
-    return open->intercept(fileStatus);
-  }
 
   CmdSequencerTester::Interceptors::Read ::
     Read() :
@@ -67,20 +48,20 @@ namespace Svc {
   void CmdSequencerTester::Interceptors::Read ::
     enable()
   {
-    Os::registerReadInterceptor(registerFunction, this);
+    Os::Stub::File::Test::Data::testData.setReadOverride(CmdSequencerTester::Interceptors::Read::registerFunction, this);
   }
 
   void CmdSequencerTester::Interceptors::Read ::
     disable()
   {
-    Os::clearReadInterceptor();
+      Os::Stub::File::Test::Data::testData.setReadOverride(Os::Stub::File::Test::Data::basicRead, nullptr);
   }
 
   bool CmdSequencerTester::Interceptors::Read ::
     intercept(
         Os::File::Status& fileStatus,
-        void *buffer,
-        NATIVE_INT_TYPE &size
+        U8 *buffer,
+        FwSignedSizeType &size
     )
   {
     bool status;
@@ -116,18 +97,21 @@ namespace Svc {
     return status;
   }
 
-  bool CmdSequencerTester::Interceptors::Read ::
+    Os::File::Status CmdSequencerTester::Interceptors::Read ::
     registerFunction(
-        Os::File::Status& fileStatus,
-        void * buffer,
-        NATIVE_INT_TYPE &size,
+        U8 * buffer,
+        FwSignedSizeType &size,
         bool waitForFull,
         void* ptr
     )
   {
+    Os::File::Status fileStatus = Os::File::Status::OP_OK;
     EXPECT_TRUE(ptr);
     Read *const read = static_cast<Read*>(ptr);
-    return read->intercept(fileStatus, buffer, size);
+    if (read->intercept(fileStatus, buffer, size)) {
+        fileStatus = Os::Stub::File::Test::Data::basicRead(buffer, size, waitForFull, nullptr);
+    }
+      return fileStatus;
   }
 
 }

@@ -46,7 +46,7 @@ namespace Svc {
               const void *const buffer, //!< The buffer
               const U32 size //!< The number of bytes to write
           ) {
-            NATIVE_INT_TYPE sizeThenActualSize = size;
+            FwSignedSizeType sizeThenActualSize = size;
             const Os::File::Status status = file.write(
                 buffer,
                 sizeThenActualSize,

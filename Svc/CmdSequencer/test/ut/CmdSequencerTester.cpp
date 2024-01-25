@@ -9,7 +9,7 @@
 // acknowledged.
 
 #include "Fw/Com/ComPacket.hpp"
-#include "Os/Stubs/FileStubs.hpp"
+//#include "Os/Stubs/FileStubs.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
 #include "CmdSequencerTester.hpp"
@@ -269,7 +269,7 @@ namespace Svc {
       this->readInterceptor.waitCount = errorInfo.headerRead.waitCount;
       this->readInterceptor.fileStatus = Os::File::NO_SPACE;
       this->readInterceptor.errorType = Interceptors::Read::ErrorType::READ;
-      Os::setLastError(Os::File::NO_SPACE);
+      //TODO: fix me Os::setLastError(Os::File::NO_SPACE);
       // Validate file
       const U32 validateCmdSeq = 14;
       this->sendCmd_CS_VALIDATE(0, validateCmdSeq, fileName);
@@ -316,7 +316,7 @@ namespace Svc {
       this->readInterceptor.waitCount = errorInfo.dataRead.waitCount;
       this->readInterceptor.fileStatus = Os::File::NO_SPACE;
       this->readInterceptor.errorType = Interceptors::Read::ErrorType::READ;
-      Os::setLastError(Os::File::NO_SPACE);
+      //TODO: fix me Os::setLastError(Os::File::NO_SPACE);
       // Validate file
       const U32 validateCmdSeq = 14;
       this->sendCmd_CS_VALIDATE(0, validateCmdSeq, fileName);

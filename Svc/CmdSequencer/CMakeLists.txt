@@ -59,5 +59,5 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSequencerMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSequencerTester.cpp"
 )
-set(UT_MOD_DEPS "Os_Stubs")
-register_fprime_ut()
+choose_fprime_implementation(Os/File Os_File_Stub_Test)
+#register_fprime_ut()

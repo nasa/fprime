@@ -101,31 +101,6 @@ namespace Svc {
             //! Disable the interceptor
             void disable();
 
-          private:
-
-            // ----------------------------------------------------------------------
-            // Private instance methods
-            // ----------------------------------------------------------------------
-
-            //! Intercept an open request
-            //! \return Success or failure
-            bool intercept(
-                Os::File::Status &fileStatus //!< The returned file status
-            );
-
-          private:
-
-            // ----------------------------------------------------------------------
-            // Private static methods
-            // ----------------------------------------------------------------------
-
-            //! Register function
-            static bool registerFunction(
-                Os::File::Status& fileStatus,
-                const char* fileName,
-                Os::File::Mode mode,
-                void* ptr
-            );
 
           public:
 
@@ -188,9 +163,9 @@ namespace Svc {
             //! Intercept an open request
             //! \return Success or failure
             bool intercept(
-                Os::File::Status &fileStatus,
-                void *buffer,
-                NATIVE_INT_TYPE &size
+                Os::File::Status& status,
+                U8 *buffer,
+                FwSignedSizeType &size
             );
 
           private:
@@ -200,10 +175,9 @@ namespace Svc {
             // ----------------------------------------------------------------------
 
             //! Register function
-            static bool registerFunction(
-                Os::File::Status &stat,
-                void *buffer,
-                NATIVE_INT_TYPE &size,
+            static Os::File::Status registerFunction(
+                U8 *buffer,
+                FwSignedSizeType &size,
                 bool waitForFull,
                 void *ptr
             );
