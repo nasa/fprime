@@ -137,7 +137,7 @@ File::Status File::write(const void* buffer, FwSignedSizeType &size, bool wait) 
     return this->writeInternal(buffer, size, wait);
 }
 
-File::CrcWorkingSet::CrcWorkingSet() : m_crc(INITIAL_CRC), m_eof(false) {}
+File::CrcWorkingSet::CrcWorkingSet() : m_offset(0), m_crc(INITIAL_CRC), m_buffer(), m_eof(false) {}
 
 File::Status File::updateCRC(Os::File::CrcWorkingSet& data, bool nice) {
     FwSignedSizeType size = sizeof data.m_buffer;

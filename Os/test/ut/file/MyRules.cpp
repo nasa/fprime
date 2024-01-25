@@ -1,4 +1,7 @@
-
+// ======================================================================
+// \title Os/test/ut/file/MyRules.cpp
+// \brief rule implementations for common testing
+// ======================================================================
 
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"

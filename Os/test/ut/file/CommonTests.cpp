@@ -1,8 +1,12 @@
+// ======================================================================
+// \title Os/test/ut/file/CommonFileTests.cpp
+// \brief common test implementations
+// ======================================================================
 #include "Os/test/ut/file/CommonTests.hpp"
 #include <gtest/gtest.h>
 #include "Os/File.hpp"
 
-const static U32 RANDOM_BOUND = 1000;
+static const U32 RANDOM_BOUND = 1000;
 
 Functionality::Functionality() : tester(Os::Test::File::get_tester_implementation()) {}
 

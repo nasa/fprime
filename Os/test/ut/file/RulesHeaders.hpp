@@ -1,4 +1,7 @@
-
+// ======================================================================
+// \title Os/test/ut/file/RulesHeaders.hpp
+// \brief rule definitions for common testing
+// ======================================================================
 
 #ifndef __RULES_HEADERS__
 #define __RULES_HEADERS__

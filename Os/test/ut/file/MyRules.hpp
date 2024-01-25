@@ -1,4 +1,7 @@
-
+// ======================================================================
+// \title Os/test/ut/file/MyRules.hpp
+// \brief rule definitions for common testing
+// ======================================================================
 // Stripped when compiled, here for IDEs
 #include "RulesHeaders.hpp"
 
@@ -38,7 +41,7 @@ struct OpenFileCreate : public OpenBaseRule {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    OpenFileCreate(const bool randomize_filename = false);
+    explicit OpenFileCreate(const bool randomize_filename = false);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -51,7 +54,7 @@ struct OpenFileCreateOverwrite : public OpenBaseRule {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    OpenFileCreateOverwrite(const bool randomize_filename = false);
+    explicit OpenFileCreateOverwrite(const bool randomize_filename = false);
 };
 
 
@@ -65,7 +68,7 @@ struct OpenForWrite : public OpenBaseRule {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    OpenForWrite(const bool randomize_filename = false);
+    explicit OpenForWrite(const bool randomize_filename = false);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -78,7 +81,7 @@ struct OpenForRead : public OpenBaseRule {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    OpenForRead(const bool randomize_filename = false);
+    explicit OpenForRead(const bool randomize_filename = false);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -441,7 +444,7 @@ struct AssertRule : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    AssertRule(const char *name);
+    explicit AssertRule(const char *name);
 
     // ----------------------------------------------------------------------
     // Public member functions

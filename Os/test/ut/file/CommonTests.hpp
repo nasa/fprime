@@ -1,5 +1,5 @@
 // ======================================================================
-// \title Os/test/ut/CommonFileTests.hpp
+// \title Os/test/ut/file/CommonFileTests.hpp
 // \brief definitions used in common file testing
 // ======================================================================
 #include <Os/File.hpp>
@@ -29,10 +29,10 @@ class Functionality : public ::testing::Test {
     Functionality();
 
     //! Setup function delegating to UT setUp function
-    virtual void SetUp() override;
+    void SetUp() override;
 
     //! Setup function delegating to UT tearDown function
-    virtual void TearDown() override;
+    void TearDown() override;
 
     //! Tester/state implementation
     std::unique_ptr<Os::Test::File::Tester> tester;
@@ -48,7 +48,7 @@ class InvalidArguments : public Functionality {};
 class FunctionalIO : public Functionality {
 
     //! Specialized setup method used to pass requirement for functional i/o
-    virtual void SetUp() override;
+    void SetUp() override;
 };
 
 #endif  // OS_TEST_UT_COMMON_FILE_TESTS_HPP
