@@ -644,4 +644,4 @@ struct WriteIllegalSize : public AssertRule {
     void action(Os::Test::File::Tester &state  //!< The test state
     );
 };
-    
+
