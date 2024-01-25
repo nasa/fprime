@@ -62,7 +62,7 @@ namespace Svc {
             else {
 
                 FwSignedSizeType writeSize = size;
-                Os::File::Status stat = this->m_file.write(buf,writeSize,true);
+                Os::File::Status stat = this->m_file.write(reinterpret_cast<const U8*>(buf),writeSize,Os::File::WAIT);
 
                 // Assert that we are not trying to write to a file we never opened:
                 FW_ASSERT(stat != Os::File::NOT_OPENED);
@@ -140,7 +140,7 @@ namespace Svc {
         }
 
         // Open the file (using CREATE so that it truncates an already existing file):
-        Os::File::Status stat = this->m_file.open(fileNameFinal, Os::File::OPEN_CREATE, false);
+        Os::File::Status stat = this->m_file.open(fileNameFinal, Os::File::OPEN_CREATE, Os::File::OverwriteType::NO_OVERWRITE);
 
         // Bad status when trying to open the file:
         if (stat != Os::File::OP_OK) {

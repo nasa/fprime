@@ -53,11 +53,13 @@ FileHandle::FileHandle() : file_descriptor(-1) {}
 void File::constructInternal() {
     // Placement-new the file handle into the opaque file-handle storage
     this->m_handle = new (&this->m_handle_storage[0]) FileHandle;
+    static_assert(sizeof(FileHandle) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
+    static_assert((FW_HANDLE_ALIGNMENT % alignof(FileHandle)) == 0, "Handle alignment invalid");
 }
 
 void File::destructInternal() {}
 
-File::Status File::openInternal(const char* filepath, File::Mode requested_mode, bool overwrite) {
+File::Status File::openInternal(const char* filepath, File::Mode requested_mode, File::OverwriteType overwrite) {
     PlatformIntType mode_flags = 0;
     Status status = OP_OK;
 
@@ -75,7 +77,7 @@ File::Status File::openInternal(const char* filepath, File::Mode requested_mode,
             mode_flags = O_WRONLY | O_CREAT | O_DSYNC | DIRECT_FLAGS;
             break;
         case OPEN_CREATE:
-            mode_flags = O_WRONLY | O_CREAT | O_TRUNC | (overwrite ? 0 : O_EXCL);
+            mode_flags = O_WRONLY | O_CREAT | O_TRUNC | ((overwrite == File::OverwriteType::OVERWRITE) ? 0 : O_EXCL);
             break;
         case OPEN_APPEND:
             mode_flags = O_WRONLY | O_CREAT | O_APPEND;
@@ -162,19 +164,19 @@ File::Status File::preallocateInternal(FwSignedSizeType offset, FwSignedSizeType
                     status = File::NO_SPACE;
                 } else if (file_size < (offset + length)) {
                     const FwSignedSizeType write_length = (offset + length) - file_size;
-                    status = this->seek(file_size, true);
+                    status = this->seek(file_size, File::SeekType::ABSOLUTE);
                     if (Os::File::Status::OP_OK == status) {
                         // Fill in zeros past size of file to ensure compatibility with fallocate
                         for (FwSignedSizeType i = 0; i < write_length; i++) {
                             FwSignedSizeType write_size = 1;
-                            status = this->write("\0", write_size, false);
+                            status = this->write(reinterpret_cast<const U8*>("\0"), write_size, File::WaitType::NO_WAIT);
                             if (Status::OP_OK != status || write_size != 1) {
                                 break;
                             }
                         }
                         // Return to original position
                         if (Os::File::Status::OP_OK == status) {
-                            status = this->seek(file_position, true);
+                            status = this->seek(file_position, File::SeekType::ABSOLUTE);
                         }
                     }
                 }
@@ -184,13 +186,13 @@ File::Status File::preallocateInternal(FwSignedSizeType offset, FwSignedSizeType
     return status;
 }
 
-File::Status File::seekInternal(FwSignedSizeType offset, bool absolute) {
+File::Status File::seekInternal(FwSignedSizeType offset, File::SeekType seekType) {
     Status status = OP_OK;
-    off_t actual = ::lseek(this->m_handle->file_descriptor, offset, absolute ? SEEK_SET : SEEK_CUR);
+    off_t actual = ::lseek(this->m_handle->file_descriptor, offset, (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);
     PlatformIntType errno_store = errno;
     if (actual == -1) {
         status = Os::Posix::errno_to_file_status(errno_store);
-    } else if (absolute && (actual != offset)) {
+    } else if ((seekType == SeekType::ABSOLUTE) && (actual != offset)) {
         status = Os::File::Status::OTHER_ERROR;
     }
     return status;
@@ -206,7 +208,7 @@ File::Status File::flushInternal() {
 }
 
 
-File::Status File::readInternal(U8* buffer, FwSignedSizeType &size, bool wait) {
+File::Status File::readInternal(U8* buffer, FwSignedSizeType &size, File::WaitType wait) {
     Status status = OP_OK;
     FwSignedSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
@@ -239,16 +241,15 @@ File::Status File::readInternal(U8* buffer, FwSignedSizeType &size, bool wait) {
     return status;
 }
 
-File::Status File::writeInternal(const void* buffer_in, FwSignedSizeType &size, bool wait) {
+File::Status File::writeInternal(const U8* buffer, FwSignedSizeType &size, File::WaitType wait) {
     Status status = OP_OK;
     FwSignedSizeType accumulated = 0;
-    U8* buffer = reinterpret_cast<U8*>(const_cast<void *>(buffer_in));
     // Loop up to 2 times for each by, bounded to prevent overflow
     const FwSignedSizeType maximum = (size > (std::numeric_limits<FwSignedSizeType>::max()/2)) ? std::numeric_limits<FwSignedSizeType>::max() : size * 2;
 
     for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
-        ssize_t write_size = ::write(this->m_handle->file_descriptor, reinterpret_cast<CHAR*>(buffer + accumulated), size - accumulated);
+        ssize_t write_size = ::write(this->m_handle->file_descriptor, reinterpret_cast<const CHAR*>(buffer + accumulated), size - accumulated);
         // Non-interrupt error
         if (-1 == write_size) {
             PlatformIntType errno_store = errno;

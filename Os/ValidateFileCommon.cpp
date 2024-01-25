@@ -35,7 +35,7 @@ namespace Os {
         while( cnt <= max_itr ) {
             // Read out chunk from file:
             size = sizeof(buffer);
-            status = file.read(buffer, size, false);
+            status = file.read(buffer, size, Os::File::WaitType::NO_WAIT);
             if( File::OP_OK != status ) {
                 return status;
             }
@@ -102,7 +102,7 @@ namespace Os {
 
         // Write out the hash
         FwSignedSizeType size = hashBuffer.getBuffLength();
-        status = hashFile.write(hashBuffer.getBuffAddr(), size, false);
+        status = hashFile.write(hashBuffer.getBuffAddr(), size, Os::File::WaitType::NO_WAIT);
         if( File::OP_OK != status ) {
             return status;
         }

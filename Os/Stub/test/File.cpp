@@ -48,7 +48,7 @@ void Data::setWriteOverride(Data::WriteOverride function, void *pointer) {
     Data::testData.writeOverridePointer = pointer;
 }
 
-Os::File::Status Data::basicRead(U8 *buffer, FwSignedSizeType &size, bool wait, void* pointer) {
+Os::File::Status Data::basicRead(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer) {
     Os::Stub::File::Test::Data::testData.readBuffer = buffer;
     Os::Stub::File::Test::Data::testData.readSize = size;
     Os::Stub::File::Test::Data::testData.readWait = wait;
@@ -64,7 +64,7 @@ Os::File::Status Data::basicRead(U8 *buffer, FwSignedSizeType &size, bool wait, 
     return Os::Stub::File::Test::Data::testData.nextStatus;
 }
 
-Os::File::Status Data::basicWrite(const void *buffer, FwSignedSizeType &size, bool wait, void* pointer) {
+Os::File::Status Data::basicWrite(const U8* buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer) {
     Os::Stub::File::Test::Data::testData.writeBuffer = buffer;
     Os::Stub::File::Test::Data::testData.writeSize = size;
     Os::Stub::File::Test::Data::testData.writeWait = wait;
@@ -91,13 +91,16 @@ void File::constructInternal() {
     Os::Stub::File::Test::Data::testData.lastCalled = Os::Stub::File::Test::Data::CONSTRUCT_FN;
     // Placement-new the file handle into the opaque file-handle storage
     this->m_handle = new(&this->m_handle_storage[0]) FileHandle;
+    static_assert(sizeof(FileHandle) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
+    static_assert((FW_HANDLE_ALIGNMENT % alignof(FileHandle)) == 0, "Handle alignment invalid");
+
 }
 
 void File::destructInternal() {
     Os::Stub::File::Test::Data::testData.lastCalled = Os::Stub::File::Test::Data::DESTRUCT_FN;
 }
 
-Os::File::Status File::openInternal(const char *filepath, Os::File::Mode open_mode, bool overwrite) {
+Os::File::Status File::openInternal(const char *filepath, Os::File::Mode open_mode, Os::File::OverwriteType overwrite) {
     Os::Stub::File::Test::Data::testData.openPath = filepath;
     Os::Stub::File::Test::Data::testData.openMode = open_mode;
     Os::Stub::File::Test::Data::testData.openOverwrite = overwrite;
@@ -129,9 +132,9 @@ Os::File::Status File::preallocateInternal(FwSignedSizeType offset, FwSignedSize
     return Os::Stub::File::Test::Data::testData.nextStatus;
 }
 
-Os::File::Status File::seekInternal(FwSignedSizeType offset, bool absolute) {
+Os::File::Status File::seekInternal(FwSignedSizeType offset, Os::File::SeekType seekType) {
     Os::Stub::File::Test::Data::testData.seekOffset = offset;
-    Os::Stub::File::Test::Data::testData.seekAbsolute = absolute;
+    Os::Stub::File::Test::Data::testData.seekType = seekType;
     Os::Stub::File::Test::Data::testData.lastCalled = Os::Stub::File::Test::Data::SEEK_FN;
     return Os::Stub::File::Test::Data::testData.nextStatus;
 }
@@ -141,7 +144,7 @@ Os::File::Status File::flushInternal() {
     return Os::Stub::File::Test::Data::testData.nextStatus;
 }
 
-Os::File::Status File::readInternal(U8 *buffer, FwSignedSizeType &size, bool wait) {
+Os::File::Status File::readInternal(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait) {
     Os::File::Status status = Os::File::Status::NOT_SUPPORTED;
     if (Os::Stub::File::Test::Data::testData.readOverride != nullptr) {
         status = Os::Stub::File::Test::Data::testData.readOverride(buffer, size, wait, Os::Stub::File::Test::Data::testData.readOverridePointer);
@@ -149,7 +152,7 @@ Os::File::Status File::readInternal(U8 *buffer, FwSignedSizeType &size, bool wai
     return status;
 }
 
-Os::File::Status File::writeInternal(const void *buffer, FwSignedSizeType &size, bool wait) {
+Os::File::Status File::writeInternal(const U8* buffer, FwSignedSizeType &size, Os::File::WaitType wait) {
     Os::File::Status status = Os::File::Status::NOT_SUPPORTED;
     if (Os::Stub::File::Test::Data::testData.writeOverride != nullptr) {
         status = Os::Stub::File::Test::Data::testData.writeOverride(buffer, size, wait, Os::Stub::File::Test::Data::testData.writeOverridePointer);

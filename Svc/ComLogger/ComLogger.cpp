@@ -263,7 +263,7 @@ namespace Svc {
     )
   {
     FwSignedSizeType size = length;
-    Os::File::Status ret = m_file.write(data, size);
+    Os::File::Status ret = m_file.write(reinterpret_cast<const U8*>(data), size);
     if( Os::File::OP_OK != ret || size != static_cast<NATIVE_INT_TYPE>(length) ) {
       if( !this->m_writeErrorOccurred ) { // throttle this event, otherwise a positive
                                         // feedback event loop can occur!

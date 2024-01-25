@@ -15,7 +15,7 @@ struct OpenBaseRule : public STest::Rule<Os::Test::File::Tester> {
                  const bool randomize_filename = false);
 
     Os::File::Mode m_mode;
-    bool m_overwrite;
+    Os::File::OverwriteType m_overwrite;
     bool m_random;
 
     // ----------------------------------------------------------------------

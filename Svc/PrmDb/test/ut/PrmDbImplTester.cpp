@@ -351,7 +351,7 @@ namespace Svc {
         PrmDbGTestBase::init();
     }
 
-    Os::File::Status PrmDbImplTester::readInterceptor(U8 *buffer, FwSignedSizeType &size, bool wait, void* pointer) {
+    Os::File::Status PrmDbImplTester::readInterceptor(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer) {
         EXPECT_NE(pointer, nullptr);
         PrmDbImplTester* tester = reinterpret_cast<PrmDbImplTester*>(pointer);
         Os::File::Status status = Os::Stub::File::Test::Data::basicRead(buffer, size, wait, pointer);
@@ -375,10 +375,10 @@ namespace Svc {
         return status;
     }
 
-    Os::File::Status PrmDbImplTester::writeInterceptor(const void *buffer, FwSignedSizeType &size, bool wait, void* pointer) {
+    Os::File::Status PrmDbImplTester::writeInterceptor(const U8* buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer) {
         EXPECT_NE(pointer, nullptr);
         PrmDbImplTester* tester = reinterpret_cast<PrmDbImplTester*>(pointer);
-        Os::File::Status status = Os::Stub::File::Test::Data::basicWrite(buffer, size, wait, pointer);
+        Os::File::Status status = Os::Stub::File::Test::Data::basicWrite(reinterpret_cast<const U8*>(buffer), size, wait, pointer);
         if (tester->m_waits == 0) {
             switch (tester->m_errorType) {
                 case FILE_STATUS_ERROR:

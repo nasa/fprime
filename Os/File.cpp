@@ -26,7 +26,7 @@ File::~File() {
     this->destructInternal();
 }
 
-File::Status File::open(const CHAR* filepath, File::Mode requested_mode, bool overwrite) {
+File::Status File::open(const CHAR* filepath, File::Mode requested_mode, File::OverwriteType overwrite) {
     FW_ASSERT(nullptr != filepath);
     FW_ASSERT(File::Mode::OPEN_NO_MODE < requested_mode && File::Mode::MAX_OPEN_MODE > requested_mode);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
@@ -85,15 +85,15 @@ File::Status File::preallocate(FwSignedSizeType offset, FwSignedSizeType length)
     return this->preallocateInternal(offset, length);
 }
 
-File::Status File::seek(FwSignedSizeType offset, bool absolute) {
+File::Status File::seek(FwSignedSizeType offset, File::SeekType seekType) {
     // Cannot do a seek with a negative offset in absolute mode
-    FW_ASSERT(not absolute || offset >= 0);
+    FW_ASSERT((seekType == File::SeekType::RELATIVE) || (offset >= 0));
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->m_mode) {
         return File::Status::NOT_OPENED;
     }
-    return this->seekInternal(offset, absolute);
+    return this->seekInternal(offset, seekType);
 }
 
 File::Status File::flush() {
@@ -107,7 +107,7 @@ File::Status File::flush() {
     return this->flushInternal();
 }
 
-File::Status File::read(U8* buffer, FwSignedSizeType &size, bool wait) {
+File::Status File::read(U8* buffer, FwSignedSizeType &size, File::WaitType wait) {
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
@@ -122,7 +122,7 @@ File::Status File::read(U8* buffer, FwSignedSizeType &size, bool wait) {
     return this->readInternal(buffer, size, wait);
 }
 
-File::Status File::write(const void* buffer, FwSignedSizeType &size, bool wait) {
+File::Status File::write(const U8* buffer, FwSignedSizeType &size, File::WaitType wait) {
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
@@ -148,12 +148,12 @@ File::Status File::updateCRC(Os::File::CrcWorkingSet& data, bool nice) {
     if (nice && not this->isOpen()) {
         status = this->open(this->m_path, this->m_mode);
         if (File::Status::OP_OK == status) {
-            status = this->seek(data.m_offset, true);
+            status = this->seek(data.m_offset, File::SeekType::ABSOLUTE);
         }
     }
     // On good status, read data
     if (File::Status::OP_OK == status) {
-        status = this->read(data.m_buffer, size, false);
+        status = this->read(data.m_buffer, size, File::WaitType::NO_WAIT);
         // Zero size read, end-of-file reached
         if (File::Status::OP_OK == status && size == 0) {
             data.m_eof = true;

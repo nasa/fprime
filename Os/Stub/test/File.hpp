@@ -30,10 +30,10 @@ struct Data {
         WRITE_FN
     };
     //! Read override function
-    typedef Os::File::Status (*ReadOverride)(U8 *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+    typedef Os::File::Status (*ReadOverride)(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer);
 
     //! Write override function
-    typedef Os::File::Status (*WriteOverride)(const void *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+    typedef Os::File::Status (*WriteOverride)(const U8* buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer);
 
     //! Last function called
     LastFn lastCalled = NONE_FN;
@@ -42,7 +42,7 @@ struct Data {
     //! Mode of last open call
     Os::File::Mode openMode = Os::File::MAX_OPEN_MODE;
     //! Overwrite of last open call
-    bool openOverwrite = false;
+    Os::File::OverwriteType openOverwrite = Os::File::OverwriteType::NO_OVERWRITE;
     //! Offset of last preallocate call
     FwSignedSizeType preallocateOffset = -1;
     //! Length of last preallocate call
@@ -50,19 +50,19 @@ struct Data {
     //! Offset of last seek call
     FwSignedSizeType seekOffset = -1;
     //! Absolute of last seek call
-    bool seekAbsolute = false;
+    Os::File::SeekType seekType = Os::File::SeekType::ABSOLUTE;
     //! Buffer of last read call
     U8 *readBuffer = nullptr;
     //! Size of last read call
     FwSignedSizeType readSize = -1;
     //! Wait of last read call
-    bool readWait = false;
+    Os::File::WaitType readWait = Os::File::WaitType::NO_WAIT;
     //! Buffer of last write call
     const void *writeBuffer = nullptr;
     //! Size of last write call
     FwSignedSizeType writeSize = -1;
     //! Wait of last write call
-    bool writeWait = false;
+    Os::File::WaitType  writeWait = Os::File::WaitType::NO_WAIT;
 
     //! File pointer
     FwSignedSizeType pointer = 0;
@@ -117,10 +117,10 @@ struct Data {
     static void setWriteOverride(WriteOverride function, void* pointer);
 
     //! Basic read implementation
-    static Os::File::Status basicRead(U8 *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+    static Os::File::Status basicRead(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer);
 
     //! Basic write implementation
-    static Os::File::Status basicWrite(const void *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+    static Os::File::Status basicWrite(const U8* buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer);
 
     //! Read override function
     ReadOverride readOverride = Data::basicRead;

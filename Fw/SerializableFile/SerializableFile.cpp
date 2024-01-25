@@ -41,7 +41,7 @@ namespace Fw {
 
     FwSignedSizeType capacity = static_cast<FwSignedSizeType>(this->m_buffer.getBuffCapacity());
     FwSignedSizeType length = static_cast<FwSignedSizeType>(capacity);
-    status = file.read(this->m_buffer.getBuffAddr(), length, false);
+    status = file.read(this->m_buffer.getBuffAddr(), length, Os::File::WaitType::NO_WAIT);
     if( Os::File::OP_OK != status ) {
       file.close();
       return FILE_READ_ERROR;

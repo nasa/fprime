@@ -7,7 +7,6 @@ namespace Os {
     class FileHandle;
 
     // This class encapsulates a very simple file interface that has the most often-used features
-
     class File {
         public:
 
@@ -36,6 +35,21 @@ namespace Os {
                 OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
             };
 
+            enum OverwriteType {
+                NO_OVERWRITE, //!< Do NOT overwrite existing files
+                OVERWRITE, //!< Overwrite file when it exists and creation was requested
+            };
+
+            enum SeekType {
+                RELATIVE, //!< Relative seek from current file offset
+                ABSOLUTE //!< Absolute seek from beginning of file
+            };
+
+            enum WaitType {
+                NO_WAIT, //!< Do not wait for read/write operation to finish
+                WAIT, //!< Do wait for read/write operation to finish
+            };
+
             /**
              * \brief construct the file object
              * Initializes a file object without specifying the path. A follow-up call to `open` is required to use the
@@ -61,7 +75,7 @@ namespace Os {
              * \param overwrite: overwrite existing file on create
              * \return: status of the open
              */
-            Status open(const char* path, Mode mode, bool overwrite=false);
+            Status open(const char* path, Mode mode, OverwriteType overwrite=NO_OVERWRITE);
 
             /**
              * \brief close the file, if not opened then do nothing
@@ -120,7 +134,7 @@ namespace Os {
              * \param absolute: true for seeking from beginning of file, false to use current position. Default: true.
              * \return OP_OK on success otherwise error status
              */
-            Status seek(FwSignedSizeType offset, bool absolute = true);
+            Status seek(FwSignedSizeType offset, SeekType seekType=ABSOLUTE);
 
             /**
              * \brief flush file contents to storage
@@ -150,7 +164,7 @@ namespace Os {
              * \param wait: true if call should block until `size` data read, false otherwise
              * \return OP_OK on success otherwise error status
              */
-            Status read(U8* buffer, FwSignedSizeType &size, bool wait = true);
+            Status read(U8* buffer, FwSignedSizeType &size, WaitType wait=WAIT);
 
             /**
              * \brief write data to this file from the supplied buffer bounded by size
@@ -169,7 +183,7 @@ namespace Os {
              * \param wait: true if call should block until `size` data is written, false otherwise
              * \return OP_OK on success otherwise error status
              */
-            Status write(const void * buffer, FwSignedSizeType &size, bool wait = true);
+            Status write(const U8* buffer, FwSignedSizeType &size, WaitType wait=WAIT);
 
             /**
              * \brief calculate the CRC32 of this file
@@ -198,7 +212,7 @@ namespace Os {
           /**
            * Internal implementation of the `open` call. See above.
            */
-          Status openInternal(const char* path, Mode mode, bool overwrite=false);
+          Status openInternal(const char* path, Mode mode, OverwriteType overwrite);
 
           /**
            * Internal implementation of the `close` call. See above.
@@ -224,7 +238,7 @@ namespace Os {
           /**
            * Internal implementation of the `seek` call. See above.
            */
-          Status seekInternal(FwSignedSizeType offset, bool absolute);
+          Status seekInternal(FwSignedSizeType offset, SeekType seekType);
 
           /**
            * Internal implementation of the `flush` call. See above.
@@ -234,12 +248,12 @@ namespace Os {
           /**
            * Internal implementation of the `read` call. See above.
            */
-          Status readInternal(U8* buffer, FwSignedSizeType &size, bool wait);
+          Status readInternal(U8* buffer, FwSignedSizeType &size, WaitType wait);
 
           /**
            * Internal implementation of the `write` call. See above.
            */
-          Status writeInternal(const void* buffer, FwSignedSizeType &size, bool wait);
+          Status writeInternal(const U8* buffer, FwSignedSizeType &size, WaitType wait);
         private:
           static const U32 INITIAL_CRC = 0xFFFFFFFF;
           /**

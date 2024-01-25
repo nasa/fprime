@@ -329,7 +329,7 @@ Status copyFileData(File source, File destination, FwSignedSizeType size) {
     FwSignedSizeType chunkSize;
     while (loopCounter < copyLoopLimit) {
         chunkSize = FILE_SYSTEM_CHUNK_SIZE;
-        file_status = source.read(fileBuffer, chunkSize, false);
+        file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::NO_WAIT);
         if (file_status != File::OP_OK) {
             return handleFileError(file_status);
         }
@@ -339,7 +339,7 @@ Status copyFileData(File source, File destination, FwSignedSizeType size) {
             break;
         }
 
-        file_status = destination.write(fileBuffer, chunkSize, true);
+        file_status = destination.write(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
         if (file_status != File::OP_OK) {
             return handleFileError(file_status);
         }

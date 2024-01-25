@@ -43,8 +43,8 @@ namespace Svc {
 
 
 
-            static Os::File::Status readInterceptor(U8 *buffer, FwSignedSizeType &size, bool wait, void* pointer);
-            static Os::File::Status writeInterceptor(const void *buffer, FwSignedSizeType &size, bool wait, void* pointer);
+            static Os::File::Status readInterceptor(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer);
+            static Os::File::Status writeInterceptor(const U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer);
             // enumeration to tell what kind of error to inject
             enum ErrorType {
                 FILE_STATUS_ERROR, // return a bad read status
