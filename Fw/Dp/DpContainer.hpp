@@ -101,11 +101,6 @@ class DpContainer {
     //! \return The processing types
     DpCfg::ProcType::SerialType getProcTypes() const { return this->procTypes; }
 
-    //! Move the packet serialization to the specified offset
-    //! \return The serialize status
-    Fw::SerializeStatus moveSerToOffset(FwSizeType offset  //!< The offset
-    );
-
     //! Serialize the header into the packet buffer and update the header hash
     void serializeHeader();
 

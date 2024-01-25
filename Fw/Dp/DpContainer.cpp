@@ -34,12 +34,6 @@ DpContainer::DpContainer() : id(0), priority(0), procTypes(0), dataSize(0), buff
 // Public member functions
 // ----------------------------------------------------------------------
 
-Fw::SerializeStatus DpContainer::moveSerToOffset(FwSizeType offset  //!< The offset
-) {
-    Fw::SerializeBufferBase& serializeRepr = this->buffer.getSerializeRepr();
-    return serializeRepr.moveSerToOffset(offset);
-}
-
 void DpContainer::serializeHeader() {
     Fw::SerializeBufferBase& serializeRepr = this->buffer.getSerializeRepr();
     // Reset serialization
