@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/test/ut/file/SyntheticFileSystem.hpp
-// \brief stl-driven synthetic file system definitions
+// \brief standard template library driven synthetic file system definitions
 // ======================================================================
 #include "config/FpConfig.h"
 #include "Os/File.hpp"
@@ -15,12 +15,12 @@
 namespace Os {
 namespace Test {
 // Forward declaration
-    class SyntheticFileSystem;
+class SyntheticFileSystem;
 
 /**
  * \brief Synthetic file data implementation
  *
- * File implementation for a synthetic stl-based file.
+ * File implementation for a synthetic standard template library based file.
  */
 class SyntheticFile {
   public:
@@ -82,7 +82,7 @@ class SyntheticFile {
      * Preallocate data within the file.
      *
      * \param offset: offset to start pre-allocation
-     * \param length: length of the preallocation
+     * \param length: length of the pre-allocation
      * \return status of the preallocate
      */
     Os::File::Status preallocate(const FwSignedSizeType offset, const FwSignedSizeType length);
@@ -115,7 +115,7 @@ class SyntheticFile {
 /**
  * \brief Synthetic file system implementation
  *
- * A synthetic stl-based in-memory file system for use with testing. It is composed of a map of string paths to a
+ * A synthetic standard template library based in-memory file system for use with testing. It is composed of a map of string paths to a
  * synthetic file data packet that tracks data and file pointer
  */
 class SyntheticFileSystem {
@@ -135,7 +135,7 @@ class SyntheticFileSystem {
     virtual ~SyntheticFileSystem() = default;
 
     /**
-     * \breif open a given path with mode and overwrite
+     * \brief open a given path with mode and overwrite
      *
      * This opens a file at the given path. Mode drives the mode of the file and overwrite will overwrite files if it
      * exists and was created. Returns a pair of status and synthetic file data.

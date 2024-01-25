@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/test/ut/file/SyntheticFileSystem.cpp
-// \brief stl-driven synthetic file system implementation
+// \brief standard template library driven synthetic file system implementation
 // ======================================================================
 #include "Os/test/ut/file/SyntheticFileSystem.hpp"
 #include "Fw/Types/Assert.hpp"
