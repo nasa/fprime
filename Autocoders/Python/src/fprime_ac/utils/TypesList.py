@@ -18,8 +18,8 @@ types_list = [
 port_types_list = [
     "FwBuffSizeType",
     "FwChanIdType",
-    "FwDpBuffSizeType",
     "FwDpIdType",
+    "FwDpPriorityType",
     "FwEnumStoreType",
     "FwEventIdType",
     "FwIndexType",

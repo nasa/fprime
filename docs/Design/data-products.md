@@ -192,7 +192,7 @@ A container specification consists of a name, an optional
 identifier, and an optional default priority.
 The default priority is the priority to use if no
 other priority is specified for the container
-during ground operations.
+during operations.
 Example syntax:
 ```
 product container C1

@@ -11,12 +11,12 @@ For more information on data products and records, see the
 ## 2. Configuration
 
 The following types and constants are configurable via the file
-[`config/DpCfg.hpp`](../../../config/DpCfg.hpp):
+[`config/DpCfg.fpp`](../../../config/DpCfg.fpp):
 
 | Name | Kind | Description |
 | ---- | ---- | ---- |
 | `Fw::DpCfg::ProcType` | Type | The enumeration type that defines the bit mask for selecting a type of processing. The processing is applied to a container before writing it to disk. |
-| `Fw::DpCfg::CONTAINER_DATA_SIZE` | Constant | The size of the user-configurable data in the container packet header. |
+| `Fw::DpCfg::CONTAINER_USER_DATA_SIZE` | Constant | The size of the user-configurable data in the container packet header. |
 
 ## 3. FPP Types
 
@@ -67,7 +67,7 @@ The data product header has the following format.
 |----------|---------|---------------|-----------|
 |`PacketDescriptor`|`FwPacketDescriptorType`|`sizeof(FwPacketDescriptorType)`|The F Prime packet descriptor [`FW_PACKET_DP`](../../../Fw/Com/ComPacket.hpp)|
 |`Id`|`FwDpIdType`|`sizeof(FwDpIdType)`|The container ID. This is a system-global ID (component-local ID + component base ID)|
-|`Priority`|`FwDpPriorityType`|`sizeof(FwDpPriorityType)`|The container default priority|
+|`Priority`|`FwDpPriorityType`|`sizeof(FwDpPriorityType)`|The container priority|
 |`TimeTag`|`Fw::Time`|`Fw::Time::SERIALIZED_SIZE`|The time tag associated with the container|
 |`ProcTypes`|`Fw::DpCfg::ProcType::SerialType`|`sizeof(Fw::DpCfg::ProcType::SerialType)`|The processing types, represented as a bit mask|
 |`UserData`|`Header::UserData`|`DpCfg::CONTAINER_USER_DATA_SIZE`|User-configurable data|
