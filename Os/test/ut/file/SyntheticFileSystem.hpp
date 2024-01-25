@@ -5,6 +5,7 @@
 #include "config/FpConfig.h"
 #include "Os/File.hpp"
 #include <map>
+#include <memory>
 #include <vector>
 #include <string>
 
@@ -166,9 +167,6 @@ class SyntheticFileSystem {
     std::shared_ptr<SyntheticFile> getFile(const CHAR *path);
 
   private:
-
-    //! Shadow file state: created but unopened files
-    std::vector<std::shared_ptr<SyntheticFile>> m_unopened;
     //! Shadow file state: file system
     std::map<std::string, std::shared_ptr<SyntheticFile>> m_filesystem;
 };

@@ -144,7 +144,7 @@ File::Status File::preallocateInternal(FwSignedSizeType offset, FwSignedSizeType
     File::Status status = Os::File::Status::NOT_SUPPORTED;
 // Efficient linux/gnu implementation
 #if _POSIX_C_SOURCE >= 200112L
-    PlatformIntType errno_status = ::posix_fallocate(this->handle->file_descriptor, offset, length);
+    PlatformIntType errno_status = ::posix_fallocate(this->m_handle->file_descriptor, offset, length);
     status = Os::Posix::errno_to_file_status(errno_status);
 #endif
     // When the operation is not supported, fallback to base algorithm
