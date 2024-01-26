@@ -76,68 +76,73 @@ class DpContainer {
 
     //! Get the container id
     //! \return The id
-    FwDpIdType getId() const { return this->id; }
+    FwDpIdType getId() const { return this->m_id; }
 
     //! Get the data size
     //! \return The data size
-    FwSizeType getDataSize() const { return this->dataSize; }
+    FwSizeType getDataSize() const { return this->m_dataSize; }
 
     //! Get the packet buffer
     //! \return The buffer
-    Fw::Buffer getBuffer() const { return this->buffer; }
+    Fw::Buffer getBuffer() const { return this->m_buffer; }
 
     //! Get the packet size corresponding to the data size
-    FwSizeType getPacketSize() const { return getPacketSizeForDataSize(this->dataSize); }
+    FwSizeType getPacketSize() const { return getPacketSizeForDataSize(this->m_dataSize); }
 
     //! Get the priority
     //! \return The priority
-    FwDpPriorityType getPriority() const { return this->priority; }
+    FwDpPriorityType getPriority() const { return this->m_priority; }
 
     //! Get the time tag
     //! \return The time tag
-    Fw::Time getTimeTag() const { return this->timeTag; }
+    Fw::Time getTimeTag() const { return this->m_timeTag; }
 
     //! Get the processing types
     //! \return The processing types
-    DpCfg::ProcType::SerialType getProcTypes() const { return this->procTypes; }
+    DpCfg::ProcType::SerialType getProcTypes() const { return this->m_procTypes; }
+
+    //! Deserialize the header from the packet buffer
+    //! Buffer must be valid and large enough to hold a DP container packet
+    void deserializeHeader();
 
     //! Serialize the header into the packet buffer and update the header hash
+    //! Buffer must be valid and large enough to hold a DP container packet
     void serializeHeader();
 
     //! Set the id
     void setId(FwDpIdType id  //!< The id
     ) {
-        this->id = id;
+        this->m_id = id;
     }
 
     //! Set the priority
     void setPriority(FwDpPriorityType priority  //!< The priority
     ) {
-        this->priority = priority;
+        this->m_priority = priority;
     }
 
     //! Set the time tag
     void setTimeTag(Fw::Time timeTag  //!< The time tag
     ) {
-        this->timeTag = timeTag;
+        this->m_timeTag = timeTag;
     }
 
     //! Set the processing types bit mask
     void setProcTypes(DpCfg::ProcType::SerialType procTypes  //!< The processing types
     ) {
-        this->procTypes = procTypes;
+        this->m_procTypes = procTypes;
     }
 
     //! Set the data product state
     void setDpState(DpState dpState  //!< The data product state
     ) {
-        this->dpState = dpState;
+        this->m_dpState = dpState;
     }
 
     //! Set the data size
-    void setDataSize(FwSizeType dataSize //!< The data size
+    void setDataSize(FwSizeType dataSize  //!< The data size
     ) {
-        this->dataSize = dataSize;
+        this->m_dataSize = dataSize;
     }
 
     //! Set the packet buffer
@@ -150,7 +155,7 @@ class DpContainer {
     //! Get the data hash offset
     FwSizeType getDataHashOffset() const {
         // Data hash goes after the header, the header hash, and the data
-        return Header::SIZE + HASH_DIGEST_LENGTH + this->dataSize;
+        return Header::SIZE + HASH_DIGEST_LENGTH + this->m_dataSize;
     }
 
     //! Update the data hash
@@ -181,7 +186,7 @@ class DpContainer {
     // ----------------------------------------------------------------------
 
     //! The user data
-    Header::UserData userData;
+    Header::UserData m_userData;
 
   PROTECTED:
     // ----------------------------------------------------------------------
@@ -190,28 +195,28 @@ class DpContainer {
 
     //! The container id
     //! This is a system-global id (component-local id + component base id)
-    FwDpIdType id;
+    FwDpIdType m_id;
 
     //! The priority
-    FwDpPriorityType priority;
+    FwDpPriorityType m_priority;
 
     //! The time tag
-    Time timeTag;
+    Time m_timeTag;
 
     //! The processing types
-    DpCfg::ProcType::SerialType procTypes;
+    DpCfg::ProcType::SerialType m_procTypes;
 
     //! The data product state
-    DpState dpState;
+    DpState m_dpState;
 
     //! The data size
-    FwSizeType dataSize;
+    FwSizeType m_dataSize;
 
     //! The packet buffer
-    Buffer buffer;
+    Buffer m_buffer;
 
     //! The data buffer
-    Fw::ExternalSerializeBuffer dataBuffer;
+    Fw::ExternalSerializeBuffer m_dataBuffer;
 };
 
 }  // end namespace Fw

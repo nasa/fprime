@@ -40,14 +40,14 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
     for (U8& data : userData) {
         data = static_cast<U8>(STest::Pick::any());
     }
-    FW_ASSERT(sizeof userData == sizeof container.userData);
-    (void)::memcpy(container.userData, userData, sizeof container.userData);
+    FW_ASSERT(sizeof userData == sizeof container.m_userData);
+    (void)::memcpy(container.m_userData, userData, sizeof container.m_userData);
     // Set the DP state
     const DpState dpState(static_cast<DpState::T>(STest::Pick::startLength(0, DpState::NUM_CONSTANTS)));
     container.setDpState(dpState);
     // Set the data size
     container.setDataSize(DATA_SIZE);
-    // Serialize the header
+    // Test serialization: Serialize the header
     container.serializeHeader();
     TestUtil::DpContainerHeader header;
     // Update the data hash
@@ -56,17 +56,29 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
     header.deserialize(__FILE__, __LINE__, buffer);
     // Check the deserialized header fields
     header.check(__FILE__, __LINE__, buffer, id, priority, timeTag, procTypes, userData, dpState, DATA_SIZE);
+    // Test deserialization: Deserialize the header into a new container
+    DpContainer deserContainer;
+    deserContainer.setBuffer(container.getBuffer());
+    deserContainer.deserializeHeader();
+    // Clear out the header in the buffer
+    FW_ASSERT(buffer.isValid());
+    ::memset(buffer.getData(), 0, DpContainer::Header::SIZE);
+    // Serialize the header from the new container
+    deserContainer.serializeHeader();
+    // Deserialize and check the header
+    header.deserialize(__FILE__, __LINE__, buffer);
+    header.check(__FILE__, __LINE__, buffer, id, priority, timeTag, procTypes, userData, dpState, DATA_SIZE);
 }
 
 void checkBuffers(DpContainer& container, FwSizeType bufferSize) {
   // Check the packet buffer
-  ASSERT_EQ(container.buffer.getSize(), bufferSize);
+  ASSERT_EQ(container.m_buffer.getSize(), bufferSize);
   // Check the data buffer
-  U8 *const buffPtr = container.buffer.getData();
+  U8 *const buffPtr = container.m_buffer.getData();
   U8 *const dataPtr = &buffPtr[Fw::DpContainer::DATA_OFFSET];
-  const FwSizeType dataCapacity = container.buffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE;
-  ASSERT_EQ(container.dataBuffer.getBuffAddr(), dataPtr);
-  ASSERT_EQ(container.dataBuffer.getBuffCapacity(), dataCapacity);
+  const FwSizeType dataCapacity = container.m_buffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE;
+  ASSERT_EQ(container.m_dataBuffer.getBuffAddr(), dataPtr);
+  ASSERT_EQ(container.m_dataBuffer.getBuffCapacity(), dataCapacity);
 }
 
 void fillWithData(Fw::Buffer& buffer) {
