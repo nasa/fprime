@@ -102,10 +102,12 @@ namespace Svc {
         // keep cumulative number of files
         FwSizeType totalFiles = 0;
 
-        // array for directory listing
+        // array for directory listing. Max size would
+        // be the full number of supported data products
         Fw::String listing[this->m_numDpRecords];
         // get file listings from file system
         for (FwSizeType dir=0; dir<this->m_numDirectories; dir++) {
+            // read in each directory and keep track of total
             U32 filesRead = 0;
             Os::FileSystem::Status stat =
                 Os::FileSystem::readDirectory(
@@ -122,7 +124,16 @@ namespace Svc {
                 return Fw::CmdResponse::EXECUTION_ERROR;
             }
 
+            // extract metadata for each file
+
             totalFiles += filesRead;
+
+            // check to see if catalog is full
+            // that means generated products exceed the catalog size
+            if (totalFiles == this->m_numDpRecords) {
+                this->log_WARNING_HI_CatalogFull(this->m_directories[dir]);
+                break;
+            }
         }
 
 

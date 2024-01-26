@@ -161,6 +161,16 @@ module Svc {
       format "DpCatalog couldn't get memory" \
       throttle 10
 
+    @ Catalog is full
+    event CatalogFull (
+                            dir: string size 80 @< last directory read 
+                          ) \
+      severity warning high \
+      id 14 \
+      format "DpCatalog full during directory {}" \
+      throttle 10
+
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
