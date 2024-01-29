@@ -12,6 +12,14 @@ module Svc {
     COMPLETED
   }
 
+  @ Header validation error
+  enum DpHdrField {
+    DESCRIPTOR,
+    ID,
+    PRIORITY,
+    CRC
+  }
+
   @ Data structure representing a data product.
   struct DpRecord {
     $id: U32
@@ -86,7 +94,7 @@ module Svc {
                           ) \
       severity warning high \
       id 0 \
-      format "Unable to process directory {} state {}"
+      format "Unable to process directory {} status {}"
 
     @ Processing directory
     event ProcessingDirectory (
@@ -170,6 +178,37 @@ module Svc {
       format "DpCatalog full during directory {}" \
       throttle 10
 
+    @ Error opening file
+    event FileOpenError(
+                            loc: string size 80 @< The directory
+                            stat: I32 @< status
+                          ) \
+      severity warning high \
+      id 15 \
+      format "Unable to open DP file {} status {}" \
+      throttle 10
+
+    @ Error opening file
+    event FileReadError(
+                            file: string size 80 @< The file
+                            stat: I32 @< status
+                          ) \
+      severity warning high \
+      id 16 \
+      format "Error reading DP file {} status {}" \
+      throttle 10
+
+    @ Error reading header data
+    event FileHdrError(
+                            file: string size 80 @< The file
+                            field: DpHdrField, @< incorrect value
+                            exp: U32 @< expected value
+                            act: U32 @< expected value
+                          ) \
+      severity warning high \
+      id 17 \
+      format "Error reading DP {} header {} field. Expected: {} Actual: {}" \
+      throttle 10
 
     # ----------------------------------------------------------------------
     # Telemetry

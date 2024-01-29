@@ -102,6 +102,12 @@ namespace Svc {
         // keep cumulative number of files
         FwSizeType totalFiles = 0;
 
+        // file class instance for processing files
+        Os::File dpFile;
+        // Working buffer for DP headers
+        U8 dpBuff[3*sizeof(U32) + Fw::Time::SERIALIZED_SIZE]; // FIXME: replace magic number
+        Fw::ExternalSerializeBuffer dpHdr(dpBuff, sizeof(dpBuff));
+
         // array for directory listing. Max size would
         // be the full number of supported data products
         Fw::String listing[this->m_numDpRecords];
@@ -124,7 +130,53 @@ namespace Svc {
                 return Fw::CmdResponse::EXECUTION_ERROR;
             }
 
+            // Assert number of files isn't more than asked
+            FW_ASSERT(filesRead <= this->m_numDpRecords-totalFiles,filesRead,this->m_numDpRecords-totalFiles);
+
             // extract metadata for each file
+            for (FwNativeUIntType file = 0; file < filesRead; file++) {
+                Os::File::Status stat = dpFile.open(listing[file].toChar(),Os::File::OPEN_READ);
+                if (stat != Os::File::OP_OK) {
+                    this->log_WARNING_HI_FileOpenError(listing[file],stat);
+                }
+                // FIXME: Replace with DP header helper
+                // Read DP header
+                FwNativeIntType size = sizeof(dpBuff);
+                stat = dpFile.read(dpBuff,size);
+                if (stat != Os::File::OP_OK) {
+                    this->log_WARNING_HI_FileReadError(listing[file],Os::File::BAD_SIZE);
+                    dpFile.close();
+                    continue; // maybe next file is fine
+                }
+                dpHdr.resetDeser();
+                Fw::SerializeStatus desStat;
+                // Deserialize header
+                U32 desc;
+                desStat = dpHdr.deserialize(desc);
+                // We have allocated enough room for the header, so deserialization
+                // should never fail
+                FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK,desStat);
+                // validate descriptor
+                if (desc != 5) {
+                    this->log_WARNING_HI_FileHdrError(
+                        listing[file],
+                        DpHdrField::DESCRIPTOR,
+                        5,desc
+                    );
+                    dpFile.close();
+                    continue; // maybe next file is fine
+                }
+                U32 id;
+                desStat = dpHdr.deserialize(id);
+                FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK,desStat);
+                U32 prio;
+                desStat = dpHdr.deserialize(prio);
+                FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK,desStat);
+                
+                
+
+
+            }
 
             totalFiles += filesRead;
 
