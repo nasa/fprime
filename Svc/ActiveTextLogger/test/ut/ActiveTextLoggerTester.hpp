@@ -60,7 +60,7 @@ namespace Svc {
 
       //! The component under test
       //!
-      ActiveTextLoggerComponentImpl component;
+      ActiveTextLogger component;
 
   };
 
