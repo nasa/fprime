@@ -3,7 +3,7 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 
-#include <Svc/ActiveTextLogger/ActiveTextLoggerImpl.hpp>
+#include <Svc/ActiveTextLogger/ActiveTextLogger.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <ctime>
@@ -14,19 +14,19 @@ namespace Svc {
     // Initialization/Exiting
     // ----------------------------------------------------------------------
 
-    ActiveTextLoggerComponentImpl::ActiveTextLoggerComponentImpl(const char* name) :
+    ActiveTextLogger::ActiveTextLogger(const char* name) :
         ActiveTextLoggerComponentBase(name),
         m_log_file()
     {
 
     }
 
-    ActiveTextLoggerComponentImpl::~ActiveTextLoggerComponentImpl()
+    ActiveTextLogger::~ActiveTextLogger()
     {
 
     }
 
-    void ActiveTextLoggerComponentImpl::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
+    void ActiveTextLogger::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
     {
         ActiveTextLoggerComponentBase::init(queueDepth,instance);
     }
@@ -35,7 +35,7 @@ namespace Svc {
     // Handlers to implement for typed input ports
     // ----------------------------------------------------------------------
 
-    void ActiveTextLoggerComponentImpl::TextLogger_handler(NATIVE_INT_TYPE portNum,
+    void ActiveTextLogger::TextLogger_handler(NATIVE_INT_TYPE portNum,
                                                   FwEventIdType id,
                                                   Fw::Time &timeTag,
                                                   const Fw::LogSeverity& severity,
@@ -117,7 +117,7 @@ namespace Svc {
     // Internal interface handlers
     // ----------------------------------------------------------------------
 
-    void ActiveTextLoggerComponentImpl::TextQueue_internalInterfaceHandler(const Fw::InternalInterfaceString& text)
+    void ActiveTextLogger::TextQueue_internalInterfaceHandler(const Fw::InternalInterfaceString& text)
     {
 
         // Print to console:
@@ -132,7 +132,7 @@ namespace Svc {
     // Helper Methods
     // ----------------------------------------------------------------------
 
-    bool ActiveTextLoggerComponentImpl::set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups)
+    bool ActiveTextLogger::set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups)
     {
         FW_ASSERT(fileName != nullptr);
 
