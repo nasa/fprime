@@ -32,7 +32,7 @@ struct Tester {
     static constexpr const char* ASSERT_IN_FILE_CPP = "Assert: \".*/Os/File\\.cpp:[0-9]+\"";
 
     // Constructors that ensures the file is always valid
-    Tester() : m_file(), m_mode(Os::File::Mode::OPEN_NO_MODE) {}
+    Tester() = default;
 
     // Destructor must be virtual
     virtual ~Tester() = default;
@@ -146,7 +146,7 @@ struct Tester {
     std::string m_current_path;
 
     //! Independent tracking of mode
-    Os::File::Mode m_mode;
+    Os::File::Mode m_mode = Os::File::Mode::OPEN_NO_MODE;
 
 // Do NOT alter, adds rules to Tester as inner classes
 #include "MyRules.hpp"

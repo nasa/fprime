@@ -14,27 +14,33 @@ extern "C" {
 #endif // __cplusplus
 namespace Os {
 
-File::File() {
-    this->constructInternal();
-    FW_ASSERT(reinterpret_cast<U8*>(m_handle) == m_handle_storage);
+File::File() : m_delegate(*getDefaultDelegate(&m_handle_storage[0])) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }
 
 File::~File() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     if (this->m_mode != OPEN_NO_MODE) {
         this->close();
     }
-    this->destructInternal();
+    m_delegate.~FileInterface();
+}
+
+File::Status File::open(const CHAR* filepath, File::Mode requested_mode) {
+    return this->open(filepath, requested_mode, OverwriteType::NO_OVERWRITE);
 }
 
 File::Status File::open(const CHAR* filepath, File::Mode requested_mode, File::OverwriteType overwrite) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(nullptr != filepath);
     FW_ASSERT(File::Mode::OPEN_NO_MODE < requested_mode && File::Mode::MAX_OPEN_MODE > requested_mode);
-    FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
+    FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
+    FW_ASSERT((0 <= overwrite) && (overwrite < OverwriteType::MAX_OVERWRITE_TYPE));
     // Check for already opened file
     if (this->isOpen()) {
         return File::Status::INVALID_MODE;
     }
-    File::Status status = this->openInternal(filepath, requested_mode, overwrite);
+    File::Status status = this->m_delegate.open(filepath, requested_mode, overwrite);
     if (status == File::Status::OP_OK) {
         this->m_mode = requested_mode;
         this->m_path = filepath;
@@ -43,60 +49,68 @@ File::Status File::open(const CHAR* filepath, File::Mode requested_mode, File::O
 }
 
 void File::close() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
-    this->closeInternal();
+    FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
+    this->m_delegate.close();
     this->m_mode = Mode::OPEN_NO_MODE;
     this->m_path = nullptr;
 }
 
 bool File::isOpen() const {
-    FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<const FileInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     return this->m_mode != Mode::OPEN_NO_MODE;
 }
 
 File::Status File::size(FwSignedSizeType& size_result) {
-    FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
-    // Check that the file is open before attempting operation
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     if (OPEN_NO_MODE == this->m_mode) {
         return File::Status::NOT_OPENED;
     }
-    return this->sizeInternal(size_result);
+    return this->m_delegate.size(size_result);
 }
 
 File::Status File::position(FwSignedSizeType &position_result) {
-    FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->m_mode) {
         return File::Status::NOT_OPENED;
     }
-    return this->positionInternal(position_result);
+    return this->m_delegate.position(position_result);
 }
 
 File::Status File::preallocate(FwSignedSizeType offset, FwSignedSizeType length) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(offset >= 0);
     FW_ASSERT(length >= 0);
-    FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
+    FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->m_mode) {
         return File::Status::NOT_OPENED;
     } else if (OPEN_READ == this->m_mode) {
         return File::Status::INVALID_MODE;
     }
-    return this->preallocateInternal(offset, length);
+    return this->m_delegate.preallocate(offset, length);
 }
 
 File::Status File::seek(FwSignedSizeType offset, File::SeekType seekType) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT((0 <= seekType) && (seekType < SeekType::MAX_SEEK_TYPE));
     // Cannot do a seek with a negative offset in absolute mode
     FW_ASSERT((seekType == File::SeekType::RELATIVE) || (offset >= 0));
-    FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
+    FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->m_mode) {
         return File::Status::NOT_OPENED;
     }
-    return this->seekInternal(offset, seekType);
+    return this->m_delegate.seek(offset, seekType);
 }
 
 File::Status File::flush() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->m_mode) {
@@ -104,10 +118,15 @@ File::Status File::flush() {
     } else if (OPEN_READ == this->m_mode) {
         return File::Status::INVALID_MODE;
     }
-    return this->flushInternal();
+    return this->m_delegate.flush();
+}
+
+File::Status File::read(U8* buffer, FwSignedSizeType &size) {
+    return this->read(buffer, size, WaitType::WAIT);
 }
 
 File::Status File::read(U8* buffer, FwSignedSizeType &size, File::WaitType wait) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
@@ -119,10 +138,16 @@ File::Status File::read(U8* buffer, FwSignedSizeType &size, File::WaitType wait)
         size = 0;
         return File::Status::INVALID_MODE;
     }
-    return this->readInternal(buffer, size, wait);
+    return this->m_delegate.read(buffer, size, wait);
 }
 
+File::Status File::write(const U8* buffer, FwSignedSizeType &size) {
+    return this->write(buffer, size, WaitType::WAIT);
+}
+
+
 File::Status File::write(const U8* buffer, FwSignedSizeType &size, File::WaitType wait) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
@@ -134,7 +159,12 @@ File::Status File::write(const U8* buffer, FwSignedSizeType &size, File::WaitTyp
         size = 0;
         return File::Status::INVALID_MODE;
     }
-    return this->writeInternal(buffer, size, wait);
+    return this->m_delegate.write(buffer, size, wait);
+}
+
+FileHandle* File::getHandle() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.getHandle();
 }
 
 File::CrcWorkingSet::CrcWorkingSet() : m_offset(0), m_crc(INITIAL_CRC), m_buffer(), m_eof(false) {}

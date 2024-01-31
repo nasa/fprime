@@ -9,6 +9,14 @@ add_custom_target("${FPRIME_CURRENT_MODULE}")
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
 )
+register_fprime_module(Os_File_Stub_Impl)
+
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp"
+)
+set(MOD_DEPS
+    Os_File_Stub_Impl
+)
 register_fprime_module(Os_File_Stub)
 register_fprime_implementation(Os/File Os_File_Stub)
 
@@ -16,8 +24,17 @@ if (BUILD_TESTING)
     set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/File.cpp"
     )
-    register_fprime_module(Os_File_Stub_Test)
-    register_fprime_implementation(Os/File Os_File_Stub_Test)
+    register_fprime_module(Os_File_Test_Stub_Impl)
+
+    set(SOURCE_FILES
+            "${CMAKE_CURRENT_LIST_DIR}/test/DefaultFile.cpp"
+    )
+    set(MOD_DEPS
+            Os_File_Test_Stub_Impl
+    )
+    register_fprime_module(Os_File_Test_Stub)
+
+    register_fprime_implementation(Os/File Os_File_Test_Stub)
 
     set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileTests.cpp"
@@ -29,6 +46,6 @@ if (BUILD_TESTING)
         Os_Test_File_SyntheticFileSystem
         STest
     )
-    choose_fprime_implementation(Os/File Os_File_Stub_Test)
+    choose_fprime_implementation(Os/File Os_File_Test_Stub)
     register_fprime_ut(StubFileTest)
 endif()

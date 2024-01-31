@@ -19,8 +19,8 @@ void setUp(bool requires_io) {
     if (requires_io) {
         GTEST_SKIP() << "Cannot run tests requiring functional i/o";
     }
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
-    Os::Stub::File::Test::Data::setPositionResult(0);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+    Os::Stub::File::Test::StaticData::setPositionResult(0);
 }
 std::vector<std::shared_ptr<const std::string> > FILES;
 /**
@@ -75,13 +75,13 @@ std::unique_ptr<Os::Test::File::Tester> get_tester_implementation() {
 // Ensure that Os::File properly routes constructor calls to the `constructInternal` function.
 TEST_F(Interface, Construction) {
     Os::File file;
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::CONSTRUCT_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::CONSTRUCT_FN);
 }
 
 // Ensure that Os::File properly routes destructor calls to the `destructInternal` function.
 TEST_F(Interface, Destruction) {
     delete (new Os::File);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::DESTRUCT_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::DESTRUCT_FN);
 }
 
 // Ensure that Os::File properly routes open calls to the `openInternal` function.
@@ -89,78 +89,78 @@ TEST_F(Interface, Open) {
     const char* path = "/does/not/matter";
     Os::File file;
     ASSERT_EQ(file.open(path, Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::Status::OP_OK);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::OPEN_FN);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.openPath, path);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.openMode, Os::File::OPEN_CREATE);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.openOverwrite, Os::File::OverwriteType::OVERWRITE);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::OPEN_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.openPath, path);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.openMode, Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.openOverwrite, Os::File::OverwriteType::OVERWRITE);
 }
 
 // Ensure that Os::File properly routes close calls to the `closeInternal` function.
 TEST_F(Interface, Close) {
     Os::File file;
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
     file.close();
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::CLOSE_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::CLOSE_FN);
 }
 
 // Ensure that Os::File properly routes close calls to the `sizeInternal` function.
 TEST_F(Interface, Size) {
     FwSignedSizeType sizeResult = -1;
     Os::File file;
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
-    Os::Stub::File::Test::Data::setSizeResult(30);
+    Os::Stub::File::Test::StaticData::setSizeResult(30);
     ASSERT_EQ(file.size(sizeResult), Os::File::OP_OK);
     ASSERT_EQ(sizeResult, 30);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::SIZE_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::SIZE_FN);
 }
 
 // Ensure that Os::File properly routes close calls to the `positionInternal` function.
 TEST_F(Interface, Position) {
     FwSignedSizeType positionResult = -1;
     Os::File file;
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
-    Os::Stub::File::Test::Data::setPositionResult(50);
+    Os::Stub::File::Test::StaticData::setPositionResult(50);
     ASSERT_EQ(file.position(positionResult), Os::File::OP_OK);
     ASSERT_EQ(positionResult, 50);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::POSITION_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::POSITION_FN);
 }
 
 // Ensure that Os::File properly routes preallocate calls to the `preallocateInternal` function.
 TEST_F(Interface, Preallocate) {
     Os::File file;
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OTHER_ERROR);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OTHER_ERROR);
     ASSERT_EQ(file.preallocate(0, 0), Os::File::Status::OTHER_ERROR);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::PREALLOCATE_FN);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.preallocateOffset, 0);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.preallocateLength, 0);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::PREALLOCATE_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.preallocateOffset, 0);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.preallocateLength, 0);
 
 }
 
 // Ensure that Os::File properly routes seek calls to the `seekInternal` function.
 TEST_F(Interface, Seek) {
     Os::File file;
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OTHER_ERROR);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OTHER_ERROR);
     ASSERT_EQ(file.seek(0, Os::File::SeekType::ABSOLUTE), Os::File::Status::OTHER_ERROR);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::SEEK_FN);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.seekOffset, 0);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.seekType, Os::File::SeekType::ABSOLUTE);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::SEEK_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.seekOffset, 0);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.seekType, Os::File::SeekType::ABSOLUTE);
 }
 
 // Ensure that Os::File properly routes flush calls to the `flushInternal` function.
 TEST_F(Interface, Flush) {
     Os::File file;
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OTHER_ERROR);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OTHER_ERROR);
     ASSERT_EQ(file.flush(), Os::File::Status::OTHER_ERROR);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::FLUSH_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::FLUSH_FN);
 }
 
 // Ensure that Os::File properly routes flush calls to the `flushInternal` function.
@@ -169,14 +169,14 @@ TEST_F(Interface, Read) {
     FwSignedSizeType size = static_cast<FwSignedSizeType>(sizeof buffer);
     FwSignedSizeType original_size = size;
     Os::File file;
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_READ, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OTHER_ERROR);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OTHER_ERROR);
     ASSERT_EQ(file.read(buffer, size, Os::File::WaitType::WAIT), Os::File::Status::OTHER_ERROR);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::READ_FN);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.readBuffer, buffer);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.readSize, original_size);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.readWait, Os::File::WaitType::WAIT);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::READ_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.readBuffer, buffer);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.readSize, original_size);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.readWait, Os::File::WaitType::WAIT);
 }
 
 // Ensure that Os::File properly routes statuses returned from the `flushInternal` function back to the caller.
@@ -185,14 +185,14 @@ TEST_F(Interface, Write) {
     FwSignedSizeType size = static_cast<FwSignedSizeType>(sizeof buffer);
     FwSignedSizeType original_size = size;
     Os::File file;
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_WRITE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
-    Os::Stub::File::Test::Data::setNextStatus(Os::File::OTHER_ERROR);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OTHER_ERROR);
     ASSERT_EQ(file.write(buffer, size, Os::File::WaitType::WAIT), Os::File::Status::OTHER_ERROR);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.lastCalled, Os::Stub::File::Test::Data::WRITE_FN);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.writeBuffer, buffer);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.writeSize, original_size);
-    ASSERT_EQ(Os::Stub::File::Test::Data::testData.writeWait, Os::File::WaitType::WAIT);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::WRITE_FN);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.writeBuffer, buffer);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.writeSize, original_size);
+    ASSERT_EQ(Os::Stub::File::Test::StaticData::data.writeWait, Os::File::WaitType::WAIT);
 }
 
 int main(int argc, char **argv) {

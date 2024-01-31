@@ -14,6 +14,7 @@ File::Status errno_to_file_status(PlatformIntType errno_input) {
         case 0:
             status = File::Status::OP_OK;
             break;
+        // Fallthrough intended
         case ENOSPC:
         case EFBIG:
             status = File::Status::NO_SPACE;
@@ -21,6 +22,7 @@ File::Status errno_to_file_status(PlatformIntType errno_input) {
         case ENOENT:
             status = File::Status::DOESNT_EXIST;
             break;
+        // Fallthrough intended
         case EPERM:
         case EACCES:
             status = File::Status::NO_PERMISSION;
@@ -31,6 +33,7 @@ File::Status errno_to_file_status(PlatformIntType errno_input) {
         case EBADF:
             status = File::Status::NOT_OPENED;
             break;
+        // Fallthrough intended
         case ENOSYS:
         case EOPNOTSUPP:
             status = File::Status::NOT_SUPPORTED;

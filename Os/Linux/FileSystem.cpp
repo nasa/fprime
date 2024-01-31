@@ -317,7 +317,7 @@ Status initAndCheckFileStats(const char* filePath, struct stat* fileInfo = nullp
  * @param destination File to copy data to
  * @param size The number of bytes to copy
  */
-Status copyFileData(File source, File destination, FwSignedSizeType size) {
+Status copyFileData(File& source, File& destination, FwSignedSizeType size) {
     static_assert(FILE_SYSTEM_CHUNK_SIZE != 0, "FILE_SYSTEM_CHUNK_SIZE must be >0");
     U8 fileBuffer[FILE_SYSTEM_CHUNK_SIZE];
     File::Status file_status;

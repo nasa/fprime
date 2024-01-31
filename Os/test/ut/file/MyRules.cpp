@@ -753,16 +753,11 @@ void Os::Test::File::Tester::OpenIllegalMode::action(Os::Test::File::Tester &sta
     printf("--> Rule: %s \n", this->name);
     state.assert_file_consistent();
     std::shared_ptr<const std::string> random_filename = state.get_filename(true);
+    U32 mode = STest::Pick::lowerUpper(0, 1);
     bool overwrite = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-
-    // Loop until we find a non-valid mode randomly
-    U32 any = 0;
-    do {
-        any = STest::Pick::any();
-    } while ((any != static_cast<U32>(Os::File::Mode::OPEN_NO_MODE)) &&
-             (any < static_cast<U32>(Os::File::Mode::MAX_OPEN_MODE)));
     ASSERT_DEATH_IF_SUPPORTED(
-            state.m_file.open(random_filename->c_str(), static_cast<Os::File::Mode>(any),
+            state.m_file.open(random_filename->c_str(),
+                              (mode == 0) ? Os::File::Mode::MAX_OPEN_MODE : Os::File::Mode::OPEN_NO_MODE,
                               overwrite ? Os::File::OverwriteType::OVERWRITE : Os::File::OverwriteType::NO_OVERWRITE),
                               Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
