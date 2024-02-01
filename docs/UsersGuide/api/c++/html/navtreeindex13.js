@@ -1,5 +1,6 @@
 var NAVTREEINDEX13 =
 {
+"class_fw_1_1_deserial_status.html#ab7ddb47cedc03b68a1b07418b4f36040":[15,0,2,32,13],
 "class_fw_1_1_deserial_status.html#aca486b8c7dfbaa71c94a45f2a0e027fe":[15,0,2,32,2],
 "class_fw_1_1_deserial_status.html#aca486b8c7dfbaa71c94a45f2a0e027fea6832b3346da42e01192521576449913d":[15,0,2,32,2,4],
 "class_fw_1_1_deserial_status.html#aca486b8c7dfbaa71c94a45f2a0e027fea88c1c626432e3bb3efdbd55a05ade0bb":[15,0,2,32,2,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX13 =
 "class_fw_1_1_log_packet.html#ad565a9576ab8f60ebdad7154727b8fcd":[15,0,2,54,5],
 "class_fw_1_1_log_packet.html#adf4a96e9301f2bd592a079f5e451bc8a":[15,0,2,54,0],
 "class_fw_1_1_log_packet.html#ae4c2ae06c1c9fff4e266592bc28c39b2":[15,0,2,54,4],
-"class_fw_1_1_log_severity.html":[15,0,2,15],
-"class_fw_1_1_log_severity.html#a06850e79ad1377c8a40a1cd46214f3b3":[15,0,2,15,11]
+"class_fw_1_1_log_severity.html":[15,0,2,15]
 };

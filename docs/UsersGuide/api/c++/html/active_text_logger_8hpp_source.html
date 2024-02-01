@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>F´ Flight Software - C/C++ Documentation: Svc/ActiveTextLogger/ActiveTextLoggerImpl.hpp Source File</title>
+<title>F´ Flight Software - C/C++ Documentation: Svc/ActiveTextLogger/ActiveTextLogger.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -65,7 +65,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('_active_text_logger_impl_8hpp_source.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('_active_text_logger_8hpp_source.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -85,10 +85,10 @@ $(document).ready(function(){initNavTree('_active_text_logger_impl_8hpp_source.h
 
 <div class="header">
   <div class="headertitle">
-<div class="title">ActiveTextLoggerImpl.hpp</div>  </div>
+<div class="title">ActiveTextLogger.hpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="active_text_logger_impl_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// \copyright</span></div>
+<a href="active_text_logger_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// \copyright</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// Copyright 2009-2015, by the California Institute of Technology.</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">// ALL RIGHTS RESERVED.  United States Government Sponsorship</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// acknowledged.</span></div>
@@ -104,17 +104,17 @@ $(document).ready(function(){initNavTree('_active_text_logger_impl_8hpp_source.h
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="class_svc_1_1_active_text_logger_component_impl.html">   24</a></span>&#160;    <span class="keyword">class </span><a class="code" href="class_svc_1_1_active_text_logger_component_impl.html">ActiveTextLoggerComponentImpl</a>: <span class="keyword">public</span> <a class="code" href="class_svc_1_1_active_text_logger_component_base.html">ActiveTextLoggerComponentBase</a> {</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="class_svc_1_1_active_text_logger.html">   24</a></span>&#160;    <span class="keyword">class </span><a class="code" href="class_svc_1_1_active_text_logger.html">ActiveTextLogger</a>: <span class="keyword">public</span> <a class="code" href="class_svc_1_1_active_text_logger_component_base.html">ActiveTextLoggerComponentBase</a> {</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keyword">explicit</span> <a class="code" href="class_svc_1_1_active_text_logger_component_impl.html#a7e93b881fae8ab1fe782794cbce93e30">ActiveTextLoggerComponentImpl</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* compName);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keyword">explicit</span> <a class="code" href="class_svc_1_1_active_text_logger.html#a743af9769b6e14290459be8f16924ba9">ActiveTextLogger</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* compName);</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <span class="keyword">virtual</span> <a class="code" href="class_svc_1_1_active_text_logger_component_impl.html#a1f0b9ffb5eba11e313c01854887091f1">~ActiveTextLoggerComponentImpl</a>(); </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <span class="keyword">virtual</span> <a class="code" href="class_svc_1_1_active_text_logger.html#a8eb68b9f7ba074e439aa2646ad5676f2">~ActiveTextLogger</a>(); </div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">init</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance = 0);</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            <span class="keywordtype">bool</span> <a class="code" href="class_svc_1_1_active_text_logger_component_impl.html#a997805030740a620811d60634077de2e">set_log_file</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* fileName, <span class="keyword">const</span> U32 maxSize, <span class="keyword">const</span> U32 maxBackups = 10);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            <span class="keywordtype">bool</span> <a class="code" href="class_svc_1_1_active_text_logger.html#a904ab6a610a7b0459cc52a898f7bd513">set_log_file</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* fileName, <span class="keyword">const</span> U32 maxSize, <span class="keyword">const</span> U32 maxBackups = 10);</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        PRIVATE:</div>
@@ -123,9 +123,9 @@ $(document).ready(function(){initNavTree('_active_text_logger_impl_8hpp_source.h
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="comment">// Prohibit Copying</span></div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <a class="code" href="class_svc_1_1_active_text_logger_component_impl.html#a7e93b881fae8ab1fe782794cbce93e30">ActiveTextLoggerComponentImpl</a>(<span class="keyword">const</span> <a class="code" href="class_svc_1_1_active_text_logger_component_impl.html">ActiveTextLoggerComponentImpl</a>&amp;);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <a class="code" href="class_svc_1_1_active_text_logger.html#a743af9769b6e14290459be8f16924ba9">ActiveTextLogger</a>(<span class="keyword">const</span> <a class="code" href="class_svc_1_1_active_text_logger.html">ActiveTextLogger</a>&amp;);</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <a class="code" href="class_svc_1_1_active_text_logger_component_impl.html">ActiveTextLoggerComponentImpl</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="class_svc_1_1_active_text_logger_component_impl.html">ActiveTextLoggerComponentImpl</a>&amp;);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <a class="code" href="class_svc_1_1_active_text_logger.html">ActiveTextLogger</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="class_svc_1_1_active_text_logger.html">ActiveTextLogger</a>&amp;);</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="comment">// Constants/Types</span></div>
@@ -177,10 +177,10 @@ $(document).ready(function(){initNavTree('_active_text_logger_impl_8hpp_source.h
 <div class="ttc" id="aclass_fw_1_1_text_log_string_html"><div class="ttname"><a href="class_fw_1_1_text_log_string.html">Fw::TextLogString</a></div><div class="ttdef"><b>Definition:</b> <a href="text_log_string_8hpp_source.html#l00010">TextLogString.hpp:10</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_time_html"><div class="ttname"><a href="class_fw_1_1_time.html">Fw::Time</a></div><div class="ttdef"><b>Definition:</b> <a href="time_8hpp_source.html#l00009">Time.hpp:9</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_active_text_logger_component_base_html"><div class="ttname"><a href="class_svc_1_1_active_text_logger_component_base.html">Svc::ActiveTextLoggerComponentBase</a></div><div class="ttdoc">Auto-generated base for ActiveTextLogger component.</div><div class="ttdef"><b>Definition:</b> <a href="active_text_logger_component_ac_8hpp_source.html#l00025">ActiveTextLoggerComponentAc.hpp:27</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_active_text_logger_component_impl_html"><div class="ttname"><a href="class_svc_1_1_active_text_logger_component_impl.html">Svc::ActiveTextLoggerComponentImpl</a></div><div class="ttdoc">Active text logger component class.</div><div class="ttdef"><b>Definition:</b> <a href="active_text_logger_impl_8hpp_source.html#l00024">ActiveTextLoggerImpl.hpp:24</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_active_text_logger_component_impl_html_a1f0b9ffb5eba11e313c01854887091f1"><div class="ttname"><a href="class_svc_1_1_active_text_logger_component_impl.html#a1f0b9ffb5eba11e313c01854887091f1">Svc::ActiveTextLoggerComponentImpl::~ActiveTextLoggerComponentImpl</a></div><div class="ttdeci">virtual ~ActiveTextLoggerComponentImpl()</div><div class="ttdoc">Component destructor.</div><div class="ttdef"><b>Definition:</b> <a href="active_text_logger_impl_8cpp_source.html#l00024">ActiveTextLoggerImpl.cpp:24</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_active_text_logger_component_impl_html_a7e93b881fae8ab1fe782794cbce93e30"><div class="ttname"><a href="class_svc_1_1_active_text_logger_component_impl.html#a7e93b881fae8ab1fe782794cbce93e30">Svc::ActiveTextLoggerComponentImpl::ActiveTextLoggerComponentImpl</a></div><div class="ttdeci">ActiveTextLoggerComponentImpl(const char *compName)</div><div class="ttdoc">Component constructor.</div><div class="ttdef"><b>Definition:</b> <a href="active_text_logger_impl_8cpp_source.html#l00017">ActiveTextLoggerImpl.cpp:17</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_active_text_logger_component_impl_html_a997805030740a620811d60634077de2e"><div class="ttname"><a href="class_svc_1_1_active_text_logger_component_impl.html#a997805030740a620811d60634077de2e">Svc::ActiveTextLoggerComponentImpl::set_log_file</a></div><div class="ttdeci">bool set_log_file(const char *fileName, const U32 maxSize, const U32 maxBackups=10)</div><div class="ttdoc">Set log file and max size.</div><div class="ttdef"><b>Definition:</b> <a href="active_text_logger_impl_8cpp_source.html#l00135">ActiveTextLoggerImpl.cpp:135</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_active_text_logger_html"><div class="ttname"><a href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></div><div class="ttdef"><b>Definition:</b> <a href="active_text_logger_8hpp_source.html#l00024">ActiveTextLogger.hpp:24</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_active_text_logger_html_a743af9769b6e14290459be8f16924ba9"><div class="ttname"><a href="class_svc_1_1_active_text_logger.html#a743af9769b6e14290459be8f16924ba9">Svc::ActiveTextLogger::ActiveTextLogger</a></div><div class="ttdeci">ActiveTextLogger(const char *compName)</div><div class="ttdoc">Component constructor.</div><div class="ttdef"><b>Definition:</b> <a href="active_text_logger_8cpp_source.html#l00017">ActiveTextLogger.cpp:17</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_active_text_logger_html_a8eb68b9f7ba074e439aa2646ad5676f2"><div class="ttname"><a href="class_svc_1_1_active_text_logger.html#a8eb68b9f7ba074e439aa2646ad5676f2">Svc::ActiveTextLogger::~ActiveTextLogger</a></div><div class="ttdeci">virtual ~ActiveTextLogger()</div><div class="ttdoc">Component destructor.</div><div class="ttdef"><b>Definition:</b> <a href="active_text_logger_8cpp_source.html#l00024">ActiveTextLogger.cpp:24</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_active_text_logger_html_a904ab6a610a7b0459cc52a898f7bd513"><div class="ttname"><a href="class_svc_1_1_active_text_logger.html#a904ab6a610a7b0459cc52a898f7bd513">Svc::ActiveTextLogger::set_log_file</a></div><div class="ttdeci">bool set_log_file(const char *fileName, const U32 maxSize, const U32 maxBackups=10)</div><div class="ttdoc">Set log file and max size.</div><div class="ttdef"><b>Definition:</b> <a href="active_text_logger_8cpp_source.html#l00135">ActiveTextLogger.cpp:135</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
 <div class="ttc" id="astruct_svc_1_1_log_file_html"><div class="ttname"><a href="struct_svc_1_1_log_file.html">Svc::LogFile</a></div><div class="ttdoc">LogFile struct.</div><div class="ttdef"><b>Definition:</b> <a href="log_file_8hpp_source.html#l00022">LogFile.hpp:22</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -188,7 +188,7 @@ $(document).ready(function(){initNavTree('_active_text_logger_impl_8hpp_source.h
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_5a5011284398685ffa1265751a46ea1a.html">Svc</a></li><li class="navelem"><a class="el" href="dir_8442d6d3b00608b56eb9b656ee0beb00.html">ActiveTextLogger</a></li><li class="navelem"><a class="el" href="active_text_logger_impl_8hpp.html">ActiveTextLoggerImpl.hpp</a></li>
+    <li class="navelem"><a class="el" href="dir_5a5011284398685ffa1265751a46ea1a.html">Svc</a></li><li class="navelem"><a class="el" href="dir_8442d6d3b00608b56eb9b656ee0beb00.html">ActiveTextLogger</a></li><li class="navelem"><a class="el" href="active_text_logger_8hpp.html">ActiveTextLogger.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

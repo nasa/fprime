@@ -1,5 +1,6 @@
 var NAVTREEINDEX18 =
 {
+"class_svc_1_1_buff_queue_depth.html#aeca4f9148e6af37e494054a35cd57f81":[15,0,4,21,11],
 "class_svc_1_1_buff_queue_depth.html#af839f301c75e8e98ef455194cdc030b3":[15,0,4,21,5],
 "class_svc_1_1_buffer_accumulator.html":[15,0,4,78],
 "class_svc_1_1_buffer_accumulator.html#a16be0726f4574705ce2290e6a1ff4b74":[15,0,4,78,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX18 =
 "class_svc_1_1_buffer_manager_component_impl.html#a360e4d0a7c374c2407252ab8d96077bd":[15,0,4,80,4],
 "class_svc_1_1_buffer_manager_component_impl.html#a3c39e3a9da3d100d3b6ee4babef86f63":[15,0,4,80,6],
 "class_svc_1_1_buffer_manager_component_impl.html#a69d9dc4b163944f803bcc86beb151a26":[15,0,4,80,2],
-"class_svc_1_1_buffer_repeater.html":[15,0,4,81],
-"class_svc_1_1_buffer_repeater.html#a56f281f770455430c635b21162c429fe":[15,0,4,81,0]
+"class_svc_1_1_buffer_repeater.html":[15,0,4,81]
 };

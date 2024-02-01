@@ -83,7 +83,7 @@ var namespace_svc =
     [ "OutputWatchDogPort", "class_svc_1_1_output_watch_dog_port.html", "class_svc_1_1_output_watch_dog_port" ],
     [ "ActiveLoggerImpl", "class_svc_1_1_active_logger_impl.html", "class_svc_1_1_active_logger_impl" ],
     [ "ActiveRateGroup", "class_svc_1_1_active_rate_group.html", "class_svc_1_1_active_rate_group" ],
-    [ "ActiveTextLoggerComponentImpl", "class_svc_1_1_active_text_logger_component_impl.html", "class_svc_1_1_active_text_logger_component_impl" ],
+    [ "ActiveTextLogger", "class_svc_1_1_active_text_logger.html", "class_svc_1_1_active_text_logger" ],
     [ "LogFile", "struct_svc_1_1_log_file.html", "struct_svc_1_1_log_file" ],
     [ "AssertFatalAdapterComponentImpl", "class_svc_1_1_assert_fatal_adapter_component_impl.html", "class_svc_1_1_assert_fatal_adapter_component_impl" ],
     [ "BufferAccumulator", "class_svc_1_1_buffer_accumulator.html", "class_svc_1_1_buffer_accumulator" ],

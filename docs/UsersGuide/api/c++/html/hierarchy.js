@@ -1,5 +1,6 @@
 var hierarchy =
 [
+    [ "ActiveTextLoggerComponent", "class_active_text_logger_component.html", null ],
     [ "Fw::AssertHook", "class_fw_1_1_assert_hook.html", [
       [ "Fw::LogAssertHook", "class_fw_1_1_log_assert_hook.html", null ]
     ] ],
@@ -102,7 +103,7 @@ var hierarchy =
               [ "Svc::ActiveRateGroup", "class_svc_1_1_active_rate_group.html", null ]
             ] ],
             [ "Svc::ActiveTextLoggerComponentBase", "class_svc_1_1_active_text_logger_component_base.html", [
-              [ "Svc::ActiveTextLoggerComponentImpl", "class_svc_1_1_active_text_logger_component_impl.html", null ]
+              [ "Svc::ActiveTextLogger", "class_svc_1_1_active_text_logger.html", null ]
             ] ],
             [ "Svc::BufferAccumulatorComponentBase", "class_svc_1_1_buffer_accumulator_component_base.html", [
               [ "Svc::BufferAccumulator", "class_svc_1_1_buffer_accumulator.html", null ]

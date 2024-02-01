@@ -1,5 +1,6 @@
 var NAVTREEINDEX29 =
 {
+"namespace_os.html#a0cf45aa980f019bd85c20ac1964726ad":[14,0,3,90],
 "namespace_os.html#a0e23ab1974f2567f0f21c229784a6dd2":[14,0,3,87],
 "namespace_os.html#a0e82484cd96cc2297e9c4082f0de6295":[14,0,3,61],
 "namespace_os.html#a25cd7085322e6093e4171f264a5f0ecd":[14,0,3,39],
@@ -248,6 +249,5 @@ var NAVTREEINDEX29 =
 "sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8":[16,0,14,1,1,0,15],
 "sha_8h_source.html":[16,0,14,1,1,0],
 "struct_drv_1_1_socket_state.html":[15,0,1,39],
-"struct_drv_1_1_socket_state.html#a72912ac0ad48ef77c2c795712301370b":[15,0,1,39,2],
-"struct_drv_1_1_socket_state.html#a79fba79f80533ea1bae3589fb30bb041":[15,0,1,39,0]
+"struct_drv_1_1_socket_state.html#a72912ac0ad48ef77c2c795712301370b":[15,0,1,39,2]
 };
