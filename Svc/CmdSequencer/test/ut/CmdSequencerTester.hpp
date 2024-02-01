@@ -14,7 +14,7 @@
 
 #include "Fw/Types/MallocAllocator.hpp"
 #include "CmdSequencerGTestBase.hpp"
-#include "Os/File.hpp"
+#include "Os/test/ut/file/SyntheticFileSystem.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
 #include "Svc/CmdSequencer/formats/AMPCSSequence.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/SequenceFiles.hpp"
@@ -75,46 +75,8 @@ namespace Svc {
         AMPCSSequence ampcsSequence;
 
       };
-
-      struct Interceptors {
-
-        //! Open interceptor
-        class Open {
-
-          public:
-
-            // ----------------------------------------------------------------------
-            // Constructors
-            // ----------------------------------------------------------------------
-
-            Open();
-
-          public:
-
-            // ----------------------------------------------------------------------
-            // Public instance methods
-            // ----------------------------------------------------------------------
-
-            //! Enable the interceptor
-            void enable();
-
-            //! Disable the interceptor
-            void disable();
-
-
-          public:
-
-            // ----------------------------------------------------------------------
-            // Public member variables
-            // ----------------------------------------------------------------------
-
-            //! File status
-            Os::File::Status fileStatus;
-
-        };
-
-        //! Read interceptor
-        class Read {
+  public:
+      class Interceptor : public Os::Test::SyntheticFile {
 
           public:
 
@@ -123,16 +85,26 @@ namespace Svc {
             // ----------------------------------------------------------------------
 
             //! Type of injected errors
-            struct ErrorType {
+            struct EnableType {
 
               typedef enum {
-                NONE, // Don't inject any errors
-                READ, // Bad read status
-                SIZE, // Bad size
-                DATA  // Unexpected data
+                NONE, // Don't enable interception
+                OPEN, // Intercept opens
+                READ, // Intercept reads
+              } t;
+            };
+
+          //! Type of injected errors
+          struct ErrorType {
+
+              typedef enum {
+                  NONE, // Don't inject any errors
+                  READ, // Bad read status
+                  SIZE, // Bad size
+                  DATA  // Unexpected data
               } t;
 
-            };
+          };
 
           public:
 
@@ -140,7 +112,7 @@ namespace Svc {
             // Constructors
             // ----------------------------------------------------------------------
 
-            Read();
+            Interceptor();
 
           public:
 
@@ -149,44 +121,20 @@ namespace Svc {
             // ----------------------------------------------------------------------
 
             //! Enable the interceptor
-            void enable();
+            void enable(EnableType::t enableType);
 
             //! Disable the interceptor
             void disable();
 
-          private:
+            Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
 
-            // ----------------------------------------------------------------------
-            // Private instance methods
-            // ----------------------------------------------------------------------
-
-            //! Intercept an open request
-            //! \return Success or failure
-            bool intercept(
-                Os::File::Status& status,
-                U8 *buffer,
-                FwSignedSizeType &size
-            );
-
-          private:
-
-            // ----------------------------------------------------------------------
-            // Private static methods
-            // ----------------------------------------------------------------------
-
-            //! Register function
-            static Os::File::Status registerFunction(
-                U8 *buffer,
-                FwSignedSizeType &size,
-                bool waitForFull,
-                void *ptr
-            );
-
+            Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
           public:
 
             // ----------------------------------------------------------------------
             // Public member variables
             // ----------------------------------------------------------------------
+            EnableType::t enabled;
 
             //! Error type
             ErrorType::t errorType;
@@ -205,9 +153,7 @@ namespace Svc {
 
         };
 
-      };
 
-    public:
 
       // ----------------------------------------------------------------------
       // Construction and destruction
@@ -453,12 +399,9 @@ namespace Svc {
       //! The allocator
       Fw::MallocAllocator mallocator;
 
-      //! Open interceptor
-      Interceptors::Open openInterceptor;
 
-      //! Read interceptor
-      Interceptors::Read readInterceptor;
-
+      //! Opaen/Read interceptor
+      Interceptor interceptor;
   };
 
 }

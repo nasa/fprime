@@ -11,11 +11,11 @@
 #include <PrmDbGTestBase.hpp>
 #include <PrmDbImplTesterCfg.hpp>
 #include <Svc/PrmDb/PrmDbImpl.hpp>
-#include <Os/File.hpp>
+#include <Os/Stub/test/File.hpp>
 
 namespace Svc {
 
-    class PrmDbImplTester: public PrmDbGTestBase {
+    class PrmDbImplTester : public PrmDbGTestBase {
         public:
             PrmDbImplTester(Svc::PrmDbImpl& inst);
             virtual ~PrmDbImplTester();
@@ -43,8 +43,6 @@ namespace Svc {
 
 
 
-            static Os::File::Status readInterceptor(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer);
-            static Os::File::Status writeInterceptor(const U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer);
             // enumeration to tell what kind of error to inject
             enum ErrorType {
                 FILE_STATUS_ERROR, // return a bad read status
@@ -62,6 +60,20 @@ namespace Svc {
 
             Os::File::Status WriteInterceptor();
             Os::File::Status m_testWriteStatus;
+
+      public:
+        class PrmDbTestFile : public Os::Stub::File::Test::TestFile {
+          public:
+            Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+
+            Status write(const U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+
+            // Tracks the current tester
+            static void setTester(PrmDbImplTester* tester);
+            static PrmDbImplTester* s_tester;
+
+        };
+
     };
 
 } /* namespace SvcTest */

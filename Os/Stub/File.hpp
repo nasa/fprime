@@ -10,7 +10,7 @@ namespace Os {
 namespace Stub {
 namespace File {
 
-struct StubFileHandle {};
+struct StubFileHandle : public FileHandle {};
 
 /**
  * \brief stub implementation of Os::File

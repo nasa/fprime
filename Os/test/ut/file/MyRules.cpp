@@ -11,19 +11,19 @@
 const FwSignedSizeType FILE_DATA_MAXIMUM = 32 * 1024;
 
 Os::File::Status Os::Test::File::Tester::shadow_open(const std::string &path, Os::File::Mode open_mode, bool overwrite) {
-    SyntheticFileSystem::OpenData data = this->m_file_system.open(path.c_str(), open_mode, overwrite);
-    if (Os::File::Status::OP_OK == data.status) {
+    Os::File::Status status = this->m_shadow.open(path.c_str(), open_mode, overwrite ? Os::File::OverwriteType::OVERWRITE : Os::File::OverwriteType::NO_OVERWRITE);
+    if (Os::File::Status::OP_OK == status) {
         this->m_current_path = path;
         this->m_mode = open_mode;
     } else {
         this->m_current_path.clear();
         this->m_mode = Os::File::Mode::OPEN_NO_MODE;
     }
-    return data.status;
+    return status;
 }
 
 void Os::Test::File::Tester::shadow_close() {
-    this->m_file_system.getFile(this->m_current_path.c_str())->close();
+    this->m_shadow.close();
     this->m_current_path.clear();
     this->m_mode = Os::File::Mode::OPEN_NO_MODE;
     // Checks on the shadow data to ensure consistency
@@ -31,39 +31,34 @@ void Os::Test::File::Tester::shadow_close() {
 }
 
 std::vector<U8> Os::Test::File::Tester::shadow_read(FwSignedSizeType size) {
-    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
     std::vector<U8> output;
     output.resize(size);
-    Os::File::Status status = file_data->read(output.data(), size, true);
+    Os::File::Status status = m_shadow.read(output.data(), size, Os::File::WaitType::WAIT);
     output.resize(size);
     EXPECT_EQ(status, Os::File::Status::OP_OK);
     return output;
 }
 
 void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
-    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
     FwSignedSizeType size = static_cast<FwSignedSizeType>(write_data.size());
     FwSignedSizeType original_size = size;
-    Os::File::Status status = file_data->write(write_data.data(), size, true);
+    Os::File::Status status = m_shadow.write(write_data.data(), size, Os::File::WaitType::WAIT);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
     ASSERT_EQ(size, original_size);
 }
 
 void Os::Test::File::Tester::shadow_seek(const FwSignedSizeType offset, const bool absolute) {
-    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
-    Os::File::Status status = file_data->seek(offset, absolute);
+    Os::File::Status status = m_shadow.seek(offset, absolute ?Os::File::SeekType::ABSOLUTE : Os::File::SeekType::RELATIVE);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
 
 void Os::Test::File::Tester::shadow_preallocate(const FwSignedSizeType offset, const FwSignedSizeType length) {
-    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
-    Os::File::Status status = file_data->preallocate(offset, length);
+    Os::File::Status status = m_shadow.preallocate(offset, length);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
 
 void Os::Test::File::Tester::shadow_flush() {
-    std::shared_ptr<SyntheticFile> file_data = this->m_file_system.getFile(this->m_current_path.c_str());
-    Os::File::Status status = file_data->flush();
+    Os::File::Status status = m_shadow.flush();
     ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
 
@@ -106,18 +101,22 @@ void Os::Test::File::Tester::assert_file_consistent() {
         // Check real file properties when able to do so
         if (this->functional()) {
             //  File exists, check all properties
-            if (this->m_file_system.exists(this->m_current_path.c_str())) {
-                std::shared_ptr<SyntheticFile> data = this->m_file_system.getFile(this->m_current_path.c_str());
+            if (SyntheticFile::exists(this->m_current_path.c_str())) {
                 // Ensure the file pointer is consistent
                 FwSignedSizeType current_position = 0;
+                FwSignedSizeType shadow_position = 0;
                 ASSERT_EQ(this->m_file.position(current_position), Os::File::Status::OP_OK);
-                ASSERT_EQ(current_position, data->getPointer());
+                ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
+
+                ASSERT_EQ(current_position, shadow_position);
                 // Ensure the file size is consistent
                 FwSignedSizeType current_size = 0;
+                FwSignedSizeType shadow_size = 0;
                 ASSERT_EQ(this->m_file.size(current_size), Os::File::Status::OP_OK);
-                ASSERT_EQ(current_size, data->getSize());
+                ASSERT_EQ(this->m_shadow.size(shadow_size), Os::File::Status::OP_OK);
+                ASSERT_EQ(current_size, shadow_size);
             }
-                // Does not exist
+            // Does not exist
             else {
                 ASSERT_FALSE(this->exists(this->m_current_path));
             }
@@ -160,32 +159,38 @@ void Os::Test::File::Tester::assert_file_closed() {
 }
 
 void Os::Test::File::Tester::assert_file_read(const std::vector<U8>& state_data, const unsigned char *read_data, FwSignedSizeType size_read) {
-    std::shared_ptr<SyntheticFile> data = this->m_file_system.getFile(this->m_current_path.c_str());
     // Functional tests
     if (functional()) {
         ASSERT_EQ(size_read, state_data.size());
         ASSERT_EQ(std::vector<U8>(read_data, read_data + size_read), state_data);
         FwSignedSizeType position = -1;
+        FwSignedSizeType shadow_position = -1;
         ASSERT_EQ(this->m_file.position(position), Os::File::Status::OP_OK);
-        ASSERT_EQ(position, data->getPointer());
+        ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
+        ASSERT_EQ(position, shadow_position);
     }
 }
 
 void Os::Test::File::Tester::assert_file_write(const std::vector<U8>& write_data, FwSignedSizeType size_written) {
-    std::shared_ptr<SyntheticFile> data = this->m_file_system.getFile(this->m_current_path.c_str());
     ASSERT_EQ(size_written, write_data.size());
     FwSignedSizeType file_size = 0;
+    FwSignedSizeType shadow_size = 0;
     ASSERT_EQ(this->m_file.size(file_size), Os::File::Status::OP_OK);
-    ASSERT_EQ(static_cast<FwSignedSizeType>(data->getSize()), file_size);
+    ASSERT_EQ(this->m_shadow.size(shadow_size), Os::File::Status::OP_OK);
+    ASSERT_EQ(file_size, shadow_size);
     FwSignedSizeType file_position = -1;
+    FwSignedSizeType shadow_position = -1;
     ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
-    ASSERT_EQ(file_position, data->getPointer());
+    ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
+    ASSERT_EQ(file_position, shadow_position);
 }
 
 void Os::Test::File::Tester::assert_file_seek(const FwSignedSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute) {
-    std::shared_ptr<SyntheticFile> data = this->m_file_system.getFile(this->m_current_path.c_str());
     FwSignedSizeType new_position = 0;
+    FwSignedSizeType shadow_position = 0;
+
     ASSERT_EQ(this->m_file.position(new_position), Os::File::Status::OP_OK);
+    ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
 
     const FwSignedSizeType expected_offset = (absolute) ? seek_desired : (original_position + seek_desired);
     if (expected_offset > 0) {
@@ -193,7 +198,7 @@ void Os::Test::File::Tester::assert_file_seek(const FwSignedSizeType original_po
     } else {
         ASSERT_EQ(new_position, original_position);
     }
-    ASSERT_EQ(data->getPointer(), new_position);
+    ASSERT_EQ(new_position, shadow_position);
 }
 
 // ------------------------------------------------------------------------------------------------------

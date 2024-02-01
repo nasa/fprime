@@ -40,7 +40,7 @@ namespace Svc {
   {
 
     Os::File::Status status;
-    status = this->osFile.seek(byteOffset);
+    status = this->osFile.seek(byteOffset, Os::File::SeekType::ABSOLUTE);
     if (status != Os::File::OP_OK) {
         return status;
     }

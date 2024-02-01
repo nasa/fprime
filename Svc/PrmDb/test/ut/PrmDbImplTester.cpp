@@ -113,8 +113,8 @@ namespace Svc {
     }
 
     void PrmDbImplTester::runNominalSaveFile() {
-        Os::Stub::File::Test::Data::setWriteResult(m_io_data, sizeof m_io_data);
-        Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+        Os::Stub::File::Test::StaticData::setWriteResult(m_io_data, sizeof m_io_data);
+        Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
         // fill with data
         this->runNominalPopulate();
         // save the data
@@ -142,8 +142,8 @@ namespace Svc {
         // Preconditions to populate the write file
         this->runNominalSaveFile();
 
-        Os::Stub::File::Test::Data::setReadResult(m_io_data, Os::Stub::File::Test::Data::testData.pointer);
-        Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
+        Os::Stub::File::Test::StaticData::setReadResult(m_io_data, Os::Stub::File::Test::StaticData::data.pointer);
+        Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
 
         // save the data
         this->clearEvents();
@@ -351,14 +351,20 @@ namespace Svc {
         PrmDbGTestBase::init();
     }
 
-    Os::File::Status PrmDbImplTester::readInterceptor(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer) {
-        EXPECT_NE(pointer, nullptr);
-        PrmDbImplTester* tester = reinterpret_cast<PrmDbImplTester*>(pointer);
-        Os::File::Status status = Os::Stub::File::Test::Data::basicRead(buffer, size, wait, pointer);
-        if (tester->m_waits == 0) {
-            switch (tester->m_errorType) {
+    PrmDbImplTester* PrmDbImplTester::PrmDbTestFile::s_tester = nullptr;
+
+    void PrmDbImplTester::PrmDbTestFile::setTester(Svc::PrmDbImplTester *tester) {
+        ASSERT_NE(tester, nullptr);
+        s_tester = tester;
+    }
+
+    Os::File::Status PrmDbImplTester::PrmDbTestFile::read(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait) {
+        EXPECT_NE(s_tester, nullptr);
+        Os::File::Status status = this->Os::Stub::File::Test::TestFile::read(buffer, size, wait);
+        if (s_tester->m_waits == 0) {
+            switch (s_tester->m_errorType) {
                 case FILE_STATUS_ERROR:
-                    status = tester->m_status;
+                    status = s_tester->m_status;
                     break;
                 case FILE_SIZE_ERROR:
                     size += 1;
@@ -370,19 +376,18 @@ namespace Svc {
                     break;
             }
         } else {
-            tester->m_waits -= 1;
+            s_tester->m_waits -= 1;
         }
         return status;
     }
 
-    Os::File::Status PrmDbImplTester::writeInterceptor(const U8* buffer, FwSignedSizeType &size, Os::File::WaitType wait, void* pointer) {
-        EXPECT_NE(pointer, nullptr);
-        PrmDbImplTester* tester = reinterpret_cast<PrmDbImplTester*>(pointer);
-        Os::File::Status status = Os::Stub::File::Test::Data::basicWrite(reinterpret_cast<const U8*>(buffer), size, wait, pointer);
-        if (tester->m_waits == 0) {
-            switch (tester->m_errorType) {
+    Os::File::Status PrmDbImplTester::PrmDbTestFile::write(const U8* buffer, FwSignedSizeType &size, Os::File::WaitType wait) {
+        EXPECT_NE(s_tester, nullptr);
+        Os::File::Status status = this->Os::Stub::File::Test::TestFile::write(buffer, size, wait);
+        if (s_tester->m_waits == 0) {
+            switch (s_tester->m_errorType) {
                 case FILE_STATUS_ERROR:
-                    status = tester->m_status;
+                    status = s_tester->m_status;
                     break;
                 case FILE_SIZE_ERROR:
                     size += 1;
@@ -391,7 +396,7 @@ namespace Svc {
                     break;
             }
         } else {
-            tester->m_waits -= 1;
+            s_tester->m_waits -= 1;
         }
         return status;
     }
@@ -403,8 +408,7 @@ namespace Svc {
 
         this->clearEvents();
         // Loop through all size errors testing each
-        Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
-        Os::Stub::File::Test::Data::setReadOverride(PrmDbImplTester::readInterceptor, this);
+        Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
         this->m_errorType = FILE_SIZE_ERROR;
         for (FwSizeType i = 0; i < 4; i++) {
             clearEvents();
@@ -500,7 +504,7 @@ namespace Svc {
         // File open error
         this->clearEvents();
         // register interceptor
-        Os::Stub::File::Test::Data::setNextStatus(Os::File::DOESNT_EXIST);
+        Os::Stub::File::Test::StaticData::setNextStatus(Os::File::DOESNT_EXIST);
         // dispatch command
         this->sendCmd_PRM_SAVE_FILE(0,12);
         Fw::QueuedComponentBase::MsgDispatchStatus stat = this->m_impl.doDispatch();
@@ -518,8 +522,7 @@ namespace Svc {
         this->runNominalPopulate();
 
         // Loop through all size errors testing each
-        Os::Stub::File::Test::Data::setNextStatus(Os::File::OP_OK);
-        Os::Stub::File::Test::Data::setWriteOverride(PrmDbImplTester::writeInterceptor, this);
+        Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
         this->m_errorType = FILE_SIZE_ERROR;
         for (FwSizeType i = 0; i < 4; i++) {
             clearEvents();
@@ -604,7 +607,7 @@ namespace Svc {
 
     PrmDbImplTester::PrmDbImplTester(Svc::PrmDbImpl& inst) :
             PrmDbGTestBase("testerbase",100), m_impl(inst) {
-
+        PrmDbImplTester::PrmDbTestFile::setTester(this);
     }
 
     PrmDbImplTester::~PrmDbImplTester() {
@@ -618,5 +621,15 @@ namespace Svc {
     {
       this->pushFromPortEntry_pingOut(key);
     }
+} /* namespace Svc */
 
-} /* namespace SvcTest */
+namespace Os {
+    FileInterface *getDefaultDelegate(U8 *aligned_placement_new_memory) {
+        FW_ASSERT(aligned_placement_new_memory != nullptr);
+        // Placement-new the file handle into the opaque file-handle storage
+        static_assert(sizeof(Svc::PrmDbImplTester::PrmDbTestFile) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
+        static_assert((FW_HANDLE_ALIGNMENT % alignof(Svc::PrmDbImplTester::PrmDbTestFile)) == 0, "Handle alignment invalid");
+        Svc::PrmDbImplTester::PrmDbTestFile *interface = new(aligned_placement_new_memory) Svc::PrmDbImplTester::PrmDbTestFile;
+        return interface;
+    }
+}

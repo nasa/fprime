@@ -8,6 +8,11 @@
 
 static const U32 RANDOM_BOUND = 1000;
 
+Os::Test::File::Tester::Tester() {
+    // Wipe out the file system with a fresh copy
+    SyntheticFile::setFileSystem(std::unique_ptr<SyntheticFileSystem>(new SyntheticFileSystem()));
+}
+
 Functionality::Functionality() : tester(Os::Test::File::get_tester_implementation()) {}
 
 void Functionality::SetUp() {

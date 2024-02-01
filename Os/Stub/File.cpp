@@ -49,6 +49,11 @@ namespace File {
         Status status = Status::NOT_SUPPORTED;
         return status;
     }
+
+    FileHandle* StubFile::getHandle() {
+        return &this->m_handle;
+    }
+
 } // namespace File
 } // namespace Stub
 } // namespace Os

@@ -32,7 +32,7 @@ struct Tester {
     static constexpr const char* ASSERT_IN_FILE_CPP = "Assert: \".*/Os/File\\.cpp:[0-9]+\"";
 
     // Constructors that ensures the file is always valid
-    Tester() = default;
+    Tester();
 
     // Destructor must be virtual
     virtual ~Tester() = default;
@@ -140,7 +140,7 @@ struct Tester {
     Os::File m_file;
 
     //! Shadow file state: file system
-    SyntheticFileSystem m_file_system;
+    Os::Test::SyntheticFile m_shadow;
 
     //! Currently opened path
     std::string m_current_path;

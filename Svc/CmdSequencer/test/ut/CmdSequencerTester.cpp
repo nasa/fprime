@@ -27,6 +27,9 @@ namespace Svc {
       format(format),
       sequences(this->component)
   {
+    Os::Test::SyntheticFile::setFileSystem(std::unique_ptr<Os::Test::SyntheticFileSystem>(
+            new Os::Test::SyntheticFileSystem()
+    ));
     this->initComponents();
     this->connectPorts();
     this->setComponentSequenceFormat();
@@ -212,10 +215,10 @@ namespace Svc {
     file.getErrorInfo(errorInfo);
     const char *const errorFileName = errorInfo.open.fileName.toChar();
     // Enable open interceptor
-    this->openInterceptor.enable();
+    this->interceptor.enable(Interceptor::EnableType::OPEN);
     // DOESNT_EXIST
     {
-      this->openInterceptor.fileStatus = Os::File::DOESNT_EXIST;
+      this->interceptor.fileStatus = Os::File::DOESNT_EXIST;
       // Validate the file
       this->sendCmd_CS_VALIDATE(0, 0, fileName);
       this->clearAndDispatch();
@@ -226,7 +229,7 @@ namespace Svc {
     }
     // NO_PERMISSION
     {
-      this->openInterceptor.fileStatus = Os::File::NO_PERMISSION;
+      this->interceptor.fileStatus = Os::File::NO_PERMISSION;
       // Validate the file
       const U32 validateCmdSeq = 14;
       this->sendCmd_CS_VALIDATE(0, validateCmdSeq, fileName);
@@ -245,7 +248,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileReadError(0, errorFileName);
     }
     // Disable open interceptor
-    this->openInterceptor.disable();
+    this->interceptor.disable();
   }
 
   void CmdSequencerTester ::
@@ -262,13 +265,13 @@ namespace Svc {
     file.getErrorInfo(errorInfo);
     const char *const errorFileName = errorInfo.headerRead.fileName.toChar();
     // Enable read interceptor
-    this->readInterceptor.enable();
+    this->interceptor.enable(Interceptor::EnableType::READ);
     // Read error reading header
     {
       // Set up fault injection state
-      this->readInterceptor.waitCount = errorInfo.headerRead.waitCount;
-      this->readInterceptor.fileStatus = Os::File::NO_SPACE;
-      this->readInterceptor.errorType = Interceptors::Read::ErrorType::READ;
+      this->interceptor.waitCount = errorInfo.headerRead.waitCount;
+      this->interceptor.fileStatus = Os::File::NO_SPACE;
+      this->interceptor.errorType = Interceptor::ErrorType::READ;
       //TODO: fix me Os::setLastError(Os::File::NO_SPACE);
       // Validate file
       const U32 validateCmdSeq = 14;
@@ -292,7 +295,7 @@ namespace Svc {
       );
     }
     // Disable read interceptor
-    this->readInterceptor.disable();
+    this->interceptor.disable();
   }
 
   void CmdSequencerTester ::
@@ -309,14 +312,14 @@ namespace Svc {
     file.getErrorInfo(errorInfo);
     const char *const errorFileName = errorInfo.dataRead.fileName.toChar();
     // Enable read interceptor
-    this->readInterceptor.enable();
+      this->interceptor.enable(Interceptor::EnableType::READ);
     // Read error reading data
     {
       // Set up fault injection state
-      this->readInterceptor.waitCount = errorInfo.dataRead.waitCount;
-      this->readInterceptor.fileStatus = Os::File::NO_SPACE;
-      this->readInterceptor.errorType = Interceptors::Read::ErrorType::READ;
-      //TODO: fix me Os::setLastError(Os::File::NO_SPACE);
+      this->interceptor.waitCount = errorInfo.dataRead.waitCount;
+      this->interceptor.fileStatus = Os::File::NO_SPACE;
+      this->interceptor.errorType = Interceptor::ErrorType::READ;
+
       // Validate file
       const U32 validateCmdSeq = 14;
       this->sendCmd_CS_VALIDATE(0, validateCmdSeq, fileName);
@@ -342,10 +345,10 @@ namespace Svc {
     // Size error reading data
     {
       // Set up fault injection state
-      this->readInterceptor.waitCount = errorInfo.dataRead.waitCount;
-      this->readInterceptor.fileStatus = Os::File::OP_OK;
-      this->readInterceptor.errorType = Interceptors::Read::ErrorType::SIZE;
-      this->readInterceptor.size = 2;
+      this->interceptor.waitCount = errorInfo.dataRead.waitCount;
+      this->interceptor.fileStatus = Os::File::OP_OK;
+      this->interceptor.errorType = Interceptor::ErrorType::SIZE;
+      this->interceptor.size = 2;
       // Validate file
       const U32 validateCmdSeq = 14;
       this->sendCmd_CS_VALIDATE(0, validateCmdSeq, fileName);
@@ -369,7 +372,7 @@ namespace Svc {
       );
     }
     // Disable read interceptor
-    this->readInterceptor.disable();
+    this->interceptor.disable();
   }
 
   void CmdSequencerTester ::
@@ -817,5 +820,15 @@ namespace Svc {
         Fw::CmdResponse(Fw::CmdResponse::OK)
     );
   }
+} // namespace Svc
 
+namespace Os {
+    FileInterface *getDefaultDelegate(U8 *aligned_placement_new_memory) {
+        FW_ASSERT(aligned_placement_new_memory != nullptr);
+        // Placement-new the file handle into the opaque file-handle storage
+        static_assert(sizeof(Svc::CmdSequencerTester::Interceptor) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
+        static_assert((FW_HANDLE_ALIGNMENT % alignof(Svc::CmdSequencerTester::Interceptor)) == 0, "Handle alignment invalid");
+        Svc::CmdSequencerTester::Interceptor *interface = new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor;
+        return interface;
+    }
 }

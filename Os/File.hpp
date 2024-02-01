@@ -208,6 +208,10 @@ namespace Os {
          */
         ~File() override;
 
+        File(const File& other) = delete;
+
+        File& operator=(const File& other) = delete;
+
         /**
          * \brief determine if the file is open
          * \return true if file is open, false otherwise
@@ -459,7 +463,7 @@ namespace Os {
          * the byte-array here and set `handle` to that address for storage.
          */
         FileInterface& m_delegate; //!< Delegate for the real implementation
-        alignas(FW_HANDLE_ALIGNMENT) U8 m_handle_storage[FW_HANDLE_MAX_SIZE]; //!< Storage for aligned FileHandle data
+        alignas(FW_HANDLE_ALIGNMENT) U8 m_handle_storage[FW_HANDLE_MAX_SIZE*1000]; //!< Storage for aligned FileHandle data
 
     };
 

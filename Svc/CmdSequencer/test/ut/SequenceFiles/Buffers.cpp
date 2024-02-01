@@ -47,7 +47,7 @@ namespace Svc {
         const U32 expectedSize = size;
         const U8 *const buffAddr = buffer.getBuffAddr();
         ASSERT_EQ(
-            file.write(buffAddr, size, true),
+            file.write(buffAddr, size, Os::File::WaitType::WAIT),
             Os::File::OP_OK
         );
         ASSERT_EQ(expectedSize, static_cast<U32>(size));

@@ -59,5 +59,12 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSequencerMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSequencerTester.cpp"
 )
-choose_fprime_implementation(Os/File Os_File_Stub_Test)
-#register_fprime_ut()
+
+# Choose stub as the implementation of file as we'll link over it
+choose_fprime_implementation(Os/File Os_File_Stub)
+set(UT_MOD_DEPS
+    Os_File_Test_Stub_Impl
+    Os_Test_File_SyntheticFileSystem
+)
+register_fprime_ut()
+target_compile_definitions("${FPRIME_CURRENT_MODULE}_ut_exe" PRIVATE "-DFW_HANDLE_MAX_SIZE=304")
