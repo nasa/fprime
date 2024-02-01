@@ -122,7 +122,7 @@ bool LinuxUartDriver::open(const char* const device,
     if (fc == HW_FLOW) {
         struct termios t;
 
-        int stat = tcgetattr(fd, &t);
+        stat = tcgetattr(fd, &t);
         if (-1 == stat) {
             DEBUG_PRINT("tcgetattr UART fd %d failed\n", fd);
             close(fd);

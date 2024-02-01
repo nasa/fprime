@@ -63,7 +63,7 @@ namespace Fw {
 
           //! Initialize a PathName
           void initialize(
-              const char *const value //! The path value
+              const char *const a_value //! The path value
           );
 
           //! Compute the buffer size needed to hold this PathName
@@ -99,8 +99,8 @@ namespace Fw {
 
           //! Initialize a file packet header
           void initialize(
-              const Type type, //!< The packet type
-              const U32 sequenceIndex //!< The sequence index
+              const Type a_type, //!< The packet type
+              const U32 a_sequenceIndex //!< The sequence index
           );
 
           //! Compute the buffer size needed to hold this Header
@@ -137,9 +137,9 @@ namespace Fw {
 
           //! Initialize a StartPacket with sequence number 0
           void initialize(
-              const U32 fileSize, //!< The file size
-              const char *const sourcePath, //!< The source path
-              const char *const destinationPath //!< The destination path
+              const U32 a_fileSize, //!< The file size
+              const char *const a_sourcePath, //!< The source path
+              const char *const a_destinationPath //!< The destination path
           );
 
           //! Compute the buffer size needed to hold this StartPacket
@@ -188,9 +188,9 @@ namespace Fw {
           //! Initialize a data packet
           void initialize(
               const U32 sequenceIndex, //!< The sequence index
-              const U32 byteOffset, //!< The byte offset
-              const U16 dataSize, //!< The data size
-              const U8 *const data //!< The file data
+              const U32 a_byteOffset, //!< The byte offset
+              const U16 a_dataSize, //!< The data size
+              const U8 *const a_data //!< The file data
           );
 
           //! Compute the buffer size needed to hold this DataPacket
@@ -245,7 +245,7 @@ namespace Fw {
         PRIVATE:
 
           //! The checksum
-          U32 checksumValue;
+          U32 m_checksumValue;
 
           //! Initialize this EndPacket from a SerialBuffer
           SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
@@ -291,7 +291,7 @@ namespace Fw {
       // Constructor
       // ----------------------------------------------------------------------
 
-      FilePacket() { this->header.type = T_NONE; }
+      FilePacket() { this->m_header.type = T_NONE; }
 
     public:
 
@@ -365,23 +365,23 @@ namespace Fw {
 
       //! this, seen as a header
       //!
-      Header header;
+      Header m_header;
 
       //! this, seen as a Start packet
       //!
-      StartPacket startPacket;
+      StartPacket m_startPacket;
 
       //! this, seen as a Data packet
       //!
-      DataPacket dataPacket;
+      DataPacket m_dataPacket;
 
       //! this, seen as an End packet
       //!
-      EndPacket endPacket;
+      EndPacket m_endPacket;
 
       //! this, seen as a Cancel packet
       //!
-      CancelPacket cancelPacket;
+      CancelPacket m_cancelPacket;
 
   };
 

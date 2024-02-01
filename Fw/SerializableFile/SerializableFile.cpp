@@ -17,18 +17,18 @@
 namespace Fw {
 
   SerializableFile::SerializableFile(MemAllocator* allocator, NATIVE_UINT_TYPE maxSerializedSize) :
-    allocator(allocator),
-    recoverable(false), // for compiler; not used
-    actualSize(maxSerializedSize),
-    buffer(static_cast<U8*>(this->allocator->allocate(0, actualSize, recoverable)), actualSize)
+    m_allocator(allocator),
+    m_recoverable(false), // for compiler; not used
+    m_actualSize(maxSerializedSize),
+    m_buffer(static_cast<U8*>(this->m_allocator->allocate(0, m_actualSize, m_recoverable)), m_actualSize)
   {
     // assert if allocator returns smaller size
-    FW_ASSERT(maxSerializedSize == actualSize,maxSerializedSize,actualSize);
-    FW_ASSERT(nullptr != buffer.getBuffAddr());
+    FW_ASSERT(maxSerializedSize == m_actualSize,maxSerializedSize,m_actualSize);
+    FW_ASSERT(nullptr != m_buffer.getBuffAddr());
   }
 
   SerializableFile::~SerializableFile() {
-    this->allocator->deallocate(0, this->buffer.getBuffAddr());
+    this->m_allocator->deallocate(0, this->m_buffer.getBuffAddr());
   }
 
   SerializableFile::Status SerializableFile::load(const char* fileName, Serializable& serializable) {
@@ -39,9 +39,9 @@ namespace Fw {
       return FILE_OPEN_ERROR;
     }
 
-    NATIVE_INT_TYPE capacity = this->buffer.getBuffCapacity();
+    NATIVE_INT_TYPE capacity = this->m_buffer.getBuffCapacity();
     NATIVE_INT_TYPE length = capacity;
-    status = file.read(this->buffer.getBuffAddr(), length, false);
+    status = file.read(this->m_buffer.getBuffAddr(), length, false);
     if( Os::File::OP_OK != status ) {
       file.close();
       return FILE_READ_ERROR;
@@ -50,9 +50,9 @@ namespace Fw {
 
     this->reset();
     SerializeStatus serStatus;
-    serStatus = this->buffer.setBuffLen(static_cast<NATIVE_UINT_TYPE>(length));
+    serStatus = this->m_buffer.setBuffLen(static_cast<NATIVE_UINT_TYPE>(length));
     FW_ASSERT(FW_SERIALIZE_OK == serStatus, serStatus);
-    serStatus = serializable.deserialize(this->buffer);
+    serStatus = serializable.deserialize(this->m_buffer);
     if(FW_SERIALIZE_OK != serStatus) {
       return DESERIALIZATION_ERROR;
     }
@@ -62,7 +62,7 @@ namespace Fw {
 
   SerializableFile::Status SerializableFile::save(const char* fileName, Serializable& serializable) {
     this->reset();
-    SerializeStatus serStatus = serializable.serialize(this->buffer);
+    SerializeStatus serStatus = serializable.serialize(this->m_buffer);
     FW_ASSERT(FW_SERIALIZE_OK == serStatus, serStatus);
 
     Os::File file;
@@ -72,9 +72,9 @@ namespace Fw {
       return FILE_OPEN_ERROR;
     }
 
-    NATIVE_INT_TYPE length = this->buffer.getBuffLength();
+    NATIVE_INT_TYPE length = this->m_buffer.getBuffLength();
     NATIVE_INT_TYPE size = length;
-    status = file.write(this->buffer.getBuffAddr(), length);
+    status = file.write(this->m_buffer.getBuffAddr(), length);
     if( (Os::File::OP_OK != status) ||
         (length != size) )
     {
@@ -88,7 +88,7 @@ namespace Fw {
   }
 
   void SerializableFile::reset() {
-    this->buffer.resetSer(); //!< reset to beginning of buffer to reuse for serialization
-    this->buffer.resetDeser(); //!< reset deserialization to beginning
+    this->m_buffer.resetSer(); //!< reset to beginning of buffer to reuse for serialization
+    this->m_buffer.resetDeser(); //!< reset deserialization to beginning
   }
 }

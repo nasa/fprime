@@ -17,16 +17,16 @@ namespace Fw {
 
   void FilePacket::StartPacket ::
     initialize(
-      const U32 fileSize,
-      const char *const sourcePath,
-      const char *const destinationPath
+      const U32 a_fileSize,
+      const char *const a_sourcePath,
+      const char *const a_destinationPath
     )
   {
-    const FilePacket::Header header = { FilePacket::T_START, 0 };
-    this->header = header;
-    this->fileSize = fileSize;
-    this->sourcePath.initialize(sourcePath);
-    this->destinationPath.initialize(destinationPath);
+    const FilePacket::Header new_header = { FilePacket::T_START, 0 };
+    this->header = new_header;
+    this->fileSize = a_fileSize;
+    this->sourcePath.initialize(a_sourcePath);
+    this->destinationPath.initialize(a_destinationPath);
   }
 
   U32 FilePacket::StartPacket ::
