@@ -112,11 +112,11 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#ad6d712b94c53fc6eeaf099982a4b0bd5">   25</a></span>&#160;  <a class="code" href="class_os_1_1_buffer_queue.html#ad6d712b94c53fc6eeaf099982a4b0bd5">BufferQueue::BufferQueue</a>() {</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="comment">// Set member variables:</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    this-&gt;queue = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    this-&gt;msgSize = 0;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    this-&gt;depth = 0;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    this-&gt;count = 0;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    this-&gt;maxCount = 0;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    this-&gt;m_queue = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    this-&gt;m_msgSize = 0;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    this-&gt;m_depth = 0;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    this-&gt;m_count = 0;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    this-&gt;m_maxCount = 0;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  }</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#ab49c2edaba26c85014172ae80c698a09">   34</a></span>&#160;  <a class="code" href="class_os_1_1_buffer_queue.html#ab49c2edaba26c85014172ae80c698a09">BufferQueue::~BufferQueue</a>() {</div>
@@ -125,20 +125,20 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
 <div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a163b04376b7a663099a1eb46b0e71b4d">   38</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_os_1_1_buffer_queue.html#a163b04376b7a663099a1eb46b0e71b4d">BufferQueue::create</a>(<a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> depth, <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> msgSize) {</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="comment">// Queue is already set up. destroy it and try again:</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">nullptr</span> != this-&gt;queue) {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">nullptr</span> != this-&gt;m_queue) {</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      this-&gt;finalize();</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">nullptr</span> == this-&gt;queue, <span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a><span class="keyword">&gt;</span>(this-&gt;queue));</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">nullptr</span> == this-&gt;m_queue, <span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a><span class="keyword">&gt;</span>(this-&gt;m_queue));</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="comment">// Set member variables:</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    this-&gt;msgSize = msgSize;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    this-&gt;depth = depth;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    this-&gt;m_msgSize = msgSize;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    this-&gt;m_depth = depth;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">return</span> this-&gt;initialize(depth, msgSize);</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  }</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
 <div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#ad18f9a1ef99f7c0e34a2c8b1d0e50a53">   51</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_os_1_1_buffer_queue.html#ad18f9a1ef99f7c0e34a2c8b1d0e50a53">BufferQueue::push</a>(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* buffer, <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> size, <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> priority) {</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(size &lt;= this-&gt;msgSize);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(size &lt;= this-&gt;m_msgSize);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordflow">if</span>( this-&gt;<a class="code" href="class_os_1_1_buffer_queue.html#ae62b62521a12d436bbd9cb33fb46c997">isFull</a>() ) {</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    }</div>
@@ -150,9 +150,9 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="comment">// Increment count:</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    ++this-&gt;count;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">if</span>( this-&gt;count &gt; this-&gt;maxCount ) {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      this-&gt;maxCount = this-&gt;count;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    ++this-&gt;m_count;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">if</span>( this-&gt;m_count &gt; this-&gt;m_maxCount ) {</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      this-&gt;m_maxCount = this-&gt;m_count;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    }</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  }</div>
@@ -171,38 +171,38 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="comment">// Decrement count:</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    --this-&gt;count;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    --this-&gt;m_count;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  }</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#ae62b62521a12d436bbd9cb33fb46c997">   91</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_os_1_1_buffer_queue.html#ae62b62521a12d436bbd9cb33fb46c997">BufferQueue::isFull</a>() {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">return</span> (this-&gt;count == this-&gt;depth);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">return</span> (this-&gt;m_count == this-&gt;m_depth);</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  }</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
 <div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a9a351ec41f4e9fa27ed7c0d34ef80703">   95</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_os_1_1_buffer_queue.html#a9a351ec41f4e9fa27ed7c0d34ef80703">BufferQueue::isEmpty</a>() {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">return</span> (this-&gt;count == 0);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">return</span> (this-&gt;m_count == 0);</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  }</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
 <div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a203b6d42cc9b772180cc970eb794ee29">   99</a></span>&#160;  <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> <a class="code" href="class_os_1_1_buffer_queue.html#a203b6d42cc9b772180cc970eb794ee29">BufferQueue::getCount</a>() {</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordflow">return</span> this-&gt;count;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_count;</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  }</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
 <div class="line"><a name="l00103"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#af0c5a199605310ec71de9339ecb862c7">  103</a></span>&#160;  <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> <a class="code" href="class_os_1_1_buffer_queue.html#af0c5a199605310ec71de9339ecb862c7">BufferQueue::getMaxCount</a>() {</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">return</span> this-&gt;maxCount;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_maxCount;</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  }</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
 <div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a2311df41ce25c4d86da3c830c03e2226">  108</a></span>&#160;  <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> <a class="code" href="class_os_1_1_buffer_queue.html#a2311df41ce25c4d86da3c830c03e2226">BufferQueue::getMsgSize</a>() {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">return</span> this-&gt;msgSize;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_msgSize;</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  }</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
 <div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a4c560b468e1b33b3562d27d7c7e05fd8">  112</a></span>&#160;  <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> <a class="code" href="class_os_1_1_buffer_queue.html#a4c560b468e1b33b3562d27d7c7e05fd8">BufferQueue::getDepth</a>() {</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">return</span> this-&gt;depth;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_depth;</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  }</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> BufferQueue::getBufferIndex(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> index) {</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">return</span> (index % this-&gt;depth) * (<span class="keyword">sizeof</span>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>) + this-&gt;msgSize);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">return</span> (index % this-&gt;m_depth) * (<span class="keyword">sizeof</span>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>) + this-&gt;m_msgSize);</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  }</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keywordtype">void</span> BufferQueue::enqueueBuffer(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* buffer, <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> size, <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* data, <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> index) {</div>

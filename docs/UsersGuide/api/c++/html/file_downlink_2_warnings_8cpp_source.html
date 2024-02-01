@@ -105,8 +105,8 @@ $(document).ready(function(){initNavTree('_file_downlink_2_warnings_8cpp_source.
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keywordtype">void</span> FileDownlink::Warnings ::</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    fileOpenError()</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    this-&gt;fileDownlink-&gt;log_WARNING_HI_FileOpenError(</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        this-&gt;fileDownlink-&gt;file.sourceName</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    this-&gt;m_fileDownlink-&gt;log_WARNING_HI_FileOpenError(</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        this-&gt;m_fileDownlink-&gt;m_file.sourceName</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    );</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    this-&gt;warning();</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  }</div>
@@ -114,8 +114,8 @@ $(document).ready(function(){initNavTree('_file_downlink_2_warnings_8cpp_source.
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keywordtype">void</span> FileDownlink::Warnings ::</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    fileRead(<span class="keyword">const</span> <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">Os::File::Status</a> status)</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    this-&gt;fileDownlink-&gt;log_WARNING_HI_FileReadError(</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        this-&gt;fileDownlink-&gt;file.sourceName,</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    this-&gt;m_fileDownlink-&gt;log_WARNING_HI_FileReadError(</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        this-&gt;m_fileDownlink-&gt;m_file.sourceName,</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        status</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    );</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    this-&gt;warning();</div>

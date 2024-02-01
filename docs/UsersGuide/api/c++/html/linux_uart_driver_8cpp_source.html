@@ -212,7 +212,7 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8cpp_source.html','
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordflow">if</span> (fc == <a class="code" href="class_drv_1_1_linux_uart_driver.html#a0fba14f12df587cc24548e441a4c4d00ad009e359db8962895d8c0cfdd24afd26">HW_FLOW</a>) {</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keyword">struct </span>termios t;</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordtype">int</span> stat = tcgetattr(fd, &amp;t);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        stat = tcgetattr(fd, &amp;t);</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <span class="keywordflow">if</span> (-1 == stat) {</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <a class="code" href="linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;tcgetattr UART fd %d failed\n&quot;</span>, fd);</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            close(fd);</div>

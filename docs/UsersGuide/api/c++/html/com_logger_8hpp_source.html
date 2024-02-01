@@ -193,8 +193,8 @@ $(document).ready(function(){initNavTree('_com_logger_8hpp_source.html',''); ini
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      };</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      <span class="comment">// The filename data:</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <a class="code" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      U32 maxFileSize;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <a class="code" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> m_filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      U32 m_maxFileSize;</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      <span class="comment">// Internal state:</span></div>
@@ -204,15 +204,15 @@ $(document).ready(function(){initNavTree('_com_logger_8hpp_source.html',''); ini
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;          OPEN = 1</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      };</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      FileMode fileMode;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      <a class="code" href="class_os_1_1_file.html">Os::File</a> file;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      <a class="code" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <a class="code" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      U32 byteCount;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      <span class="keywordtype">bool</span> writeErrorOccurred;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordtype">bool</span> openErrorOccurred;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      <span class="keywordtype">bool</span> storeBufferLength;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      <span class="keywordtype">bool</span> initialized;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      FileMode m_fileMode;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      <a class="code" href="class_os_1_1_file.html">Os::File</a> m_file;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      <a class="code" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> m_fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <a class="code" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> m_hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      U32 m_byteCount;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      <span class="keywordtype">bool</span> m_writeErrorOccurred;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordtype">bool</span> m_openErrorOccurred;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      <span class="keywordtype">bool</span> m_storeBufferLength;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      <span class="keywordtype">bool</span> m_initialized;</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;      <span class="comment">// File functions:</span></div>

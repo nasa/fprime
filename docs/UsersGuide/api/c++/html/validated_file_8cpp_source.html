@@ -107,11 +107,11 @@ $(document).ready(function(){initNavTree('_validated_file_8cpp_source.html','');
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="class_os_1_1_validated_file.html#afc9f3ed73a43f4dc41ddd0ed3bc3917e">   18</a></span>&#160;  <a class="code" href="class_os_1_1_validated_file.html#afc9f3ed73a43f4dc41ddd0ed3bc3917e">ValidatedFile ::</a></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<a class="code" href="class_os_1_1_validated_file.html#afc9f3ed73a43f4dc41ddd0ed3bc3917e">    ValidatedFile</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> fileName) :</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;      fileName(fileName),</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;      hashFileName(<span class="stringliteral">&quot;&quot;</span>),</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;      hashBuffer()</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;      m_fileName(fileName),</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;      m_hashFileName(<span class="stringliteral">&quot;&quot;</span>),</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;      m_hashBuffer()</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <a class="code" href="class_utils_1_1_hash.html#a74da2d07352420d7032a33dc4c1c1d6e">Utils::Hash::addFileExtension</a>(this-&gt;fileName, this-&gt;hashFileName);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <a class="code" href="class_utils_1_1_hash.html#a74da2d07352420d7032a33dc4c1c1d6e">Utils::Hash::addFileExtension</a>(this-&gt;m_fileName, this-&gt;m_hashFileName);</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  }</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
 <div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="class_os_1_1_validated_file.html#a7875a15e99faddc9e7e5457abc6e5d14">   27</a></span>&#160;  <a class="code" href="namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1">Os::ValidateFile::Status</a> <a class="code" href="class_os_1_1_validated_file.html#a7875a15e99faddc9e7e5457abc6e5d14">ValidatedFile ::</a></div>
@@ -119,9 +119,9 @@ $(document).ready(function(){initNavTree('_validated_file_8cpp_source.html','');
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  {</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1">Os::ValidateFile::Status</a> status =</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;      <a class="code" href="namespace_os_1_1_validate_file.html#aafefcd3043d3757fb000d372f5cf2705">Os::ValidateFile::validate</a>(</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;          this-&gt;fileName.<a class="code" href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">toChar</a>(),</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;          this-&gt;hashFileName.toChar(),</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;          this-&gt;hashBuffer</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;          this-&gt;m_fileName.<a class="code" href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">toChar</a>(),</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;          this-&gt;m_hashFileName.toChar(),</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;          this-&gt;m_hashBuffer</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      );</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordflow">return</span> status;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  }</div>
@@ -131,9 +131,9 @@ $(document).ready(function(){initNavTree('_validated_file_8cpp_source.html','');
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  {</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1">Os::ValidateFile::Status</a> status =</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <a class="code" href="namespace_os_1_1_validate_file.html#a8174613e8d564cd35491f134daa0464e">Os::ValidateFile::createValidation</a>(</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;         this-&gt;fileName.<a class="code" href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">toChar</a>(),</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;         this-&gt;hashFileName.toChar(),</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;         this-&gt;hashBuffer</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;         this-&gt;m_fileName.<a class="code" href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">toChar</a>(),</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;         this-&gt;m_hashFileName.toChar(),</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;         this-&gt;m_hashBuffer</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      );</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">return</span> status;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  }</div>
@@ -141,19 +141,19 @@ $(document).ready(function(){initNavTree('_validated_file_8cpp_source.html','');
 <div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="class_os_1_1_validated_file.html#a1239eb3bc09a9b1e599c445371379701">   51</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; <a class="code" href="class_os_1_1_validated_file.html#a1239eb3bc09a9b1e599c445371379701">ValidatedFile ::</a></div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<a class="code" href="class_os_1_1_validated_file.html#a1239eb3bc09a9b1e599c445371379701">    getFileName</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordflow">return</span> this-&gt;fileName;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_fileName;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  }</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
 <div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="class_os_1_1_validated_file.html#a53637c797f3fa0f9ad7033f9c12c1a61">   57</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; <a class="code" href="class_os_1_1_validated_file.html#a53637c797f3fa0f9ad7033f9c12c1a61">ValidatedFile ::</a></div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<a class="code" href="class_os_1_1_validated_file.html#a53637c797f3fa0f9ad7033f9c12c1a61">    getHashFileName</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordflow">return</span> this-&gt;hashFileName;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_hashFileName;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  }</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
 <div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="class_os_1_1_validated_file.html#adb8644d102d76b4d6c7997f3576f1a11">   63</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a>&amp; <a class="code" href="class_os_1_1_validated_file.html#adb8644d102d76b4d6c7997f3576f1a11">ValidatedFile ::</a></div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<a class="code" href="class_os_1_1_validated_file.html#adb8644d102d76b4d6c7997f3576f1a11">    getHashBuffer</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">return</span> this-&gt;hashBuffer;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_hashBuffer;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  }</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;}</div>

@@ -101,9 +101,9 @@ $(document).ready(function(){initNavTree('struct_fw_1_1_file_packet_1_1_start_pa
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae0672af45f145b88887adb9cf0b3532c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html#ae0672af45f145b88887adb9cf0b3532c">initialize</a> (const U32 <a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html#ada495730299a722b2d14099439639ef2">fileSize</a>, const char *const <a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html#a88c991903578356e513c881043d69426">sourcePath</a>, const char *const <a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html#af5bbd2272929852db4a742bb83b91e4d">destinationPath</a>)</td></tr>
-<tr class="memdesc:ae0672af45f145b88887adb9cf0b3532c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a <a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html" title="The type of a start packet.">StartPacket</a> with sequence number 0.  <a href="struct_fw_1_1_file_packet_1_1_start_packet.html#ae0672af45f145b88887adb9cf0b3532c">More...</a><br /></td></tr>
-<tr class="separator:ae0672af45f145b88887adb9cf0b3532c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e7c2518820aefaa4aa500cd1c913599"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html#a0e7c2518820aefaa4aa500cd1c913599">initialize</a> (const U32 a_fileSize, const char *const a_sourcePath, const char *const a_destinationPath)</td></tr>
+<tr class="memdesc:a0e7c2518820aefaa4aa500cd1c913599"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a <a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html" title="The type of a start packet.">StartPacket</a> with sequence number 0.  <a href="struct_fw_1_1_file_packet_1_1_start_packet.html#a0e7c2518820aefaa4aa500cd1c913599">More...</a><br /></td></tr>
+<tr class="separator:a0e7c2518820aefaa4aa500cd1c913599"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac78ee8fe1a50d998e589227e50d7a740"><td class="memItemLeft" align="right" valign="top">U32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html#ac78ee8fe1a50d998e589227e50d7a740">bufferSize</a> () const</td></tr>
 <tr class="memdesc:ac78ee8fe1a50d998e589227e50d7a740"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the buffer size needed to hold this <a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html" title="The type of a start packet.">StartPacket</a>.  <a href="struct_fw_1_1_file_packet_1_1_start_packet.html#ac78ee8fe1a50d998e589227e50d7a740">More...</a><br /></td></tr>
 <tr class="separator:ac78ee8fe1a50d998e589227e50d7a740"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,8 +157,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="ae0672af45f145b88887adb9cf0b3532c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0672af45f145b88887adb9cf0b3532c">&#9670;&nbsp;</a></span>initialize()</h2>
+<a id="a0e7c2518820aefaa4aa500cd1c913599"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e7c2518820aefaa4aa500cd1c913599">&#9670;&nbsp;</a></span>initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,19 +167,19 @@ Friends</h2></td></tr>
           <td class="memname">void Fw::FilePacket::StartPacket::initialize </td>
           <td>(</td>
           <td class="paramtype">const U32&#160;</td>
-          <td class="paramname"><em>fileSize</em>, </td>
+          <td class="paramname"><em>a_fileSize</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *const&#160;</td>
-          <td class="paramname"><em>sourcePath</em>, </td>
+          <td class="paramname"><em>a_sourcePath</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *const&#160;</td>
-          <td class="paramname"><em>destinationPath</em>&#160;</td>
+          <td class="paramname"><em>a_destinationPath</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -192,9 +192,9 @@ Friends</h2></td></tr>
 <p>Initialize a <a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html" title="The type of a start packet.">StartPacket</a> with sequence number 0. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fileSize</td><td>The file size </td></tr>
-    <tr><td class="paramname">sourcePath</td><td>The source path </td></tr>
-    <tr><td class="paramname">destinationPath</td><td>The destination path </td></tr>
+    <tr><td class="paramname">a_fileSize</td><td>The file size </td></tr>
+    <tr><td class="paramname">a_sourcePath</td><td>The source path </td></tr>
+    <tr><td class="paramname">a_destinationPath</td><td>The destination path </td></tr>
   </table>
   </dd>
 </dl>

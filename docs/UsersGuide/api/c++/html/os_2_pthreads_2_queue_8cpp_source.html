@@ -200,7 +200,7 @@ $(document).ready(function(){initNavTree('_os_2_pthreads_2_queue_8cpp_source.htm
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">if</span>(pushSucceeded) {</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      <span class="comment">// Push worked - wake up a thread that might be waiting on</span></div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;      <span class="comment">// the other end of the queue:</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> ret = pthread_cond_signal(queueNotEmpty);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      ret = pthread_cond_signal(queueNotEmpty);</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(ret == 0, errno); <span class="comment">// If this fails, something horrible happened.</span></div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    }</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keywordflow">else</span> {</div>
@@ -228,7 +228,7 @@ $(document).ready(function(){initNavTree('_os_2_pthreads_2_queue_8cpp_source.htm
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="comment">// If the queue is full, wait until a message is taken off the queue:</span></div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordflow">while</span>( queue-&gt;<a class="code" href="class_os_1_1_buffer_queue.html#ae62b62521a12d436bbd9cb33fb46c997">isFull</a>() ) {</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> ret = pthread_cond_wait(queueNotFull, queueLock);</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      ret = pthread_cond_wait(queueNotFull, queueLock);</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(ret == 0, errno);</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    }</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
@@ -302,7 +302,7 @@ $(document).ready(function(){initNavTree('_os_2_pthreads_2_queue_8cpp_source.htm
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <span class="comment">// Pop worked - wake up a thread that might be waiting on</span></div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="comment">// the send end of the queue:</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> ret = pthread_cond_signal(queueNotFull);</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        ret = pthread_cond_signal(queueNotFull);</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(ret == 0, errno); <span class="comment">// If this fails, something horrible happened.</span></div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;      }</div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;      <span class="keywordflow">else</span> {</div>
@@ -345,7 +345,7 @@ $(document).ready(function(){initNavTree('_os_2_pthreads_2_queue_8cpp_source.htm
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;      <span class="comment">// If the queue is empty, wait until a message is put on the queue:</span></div>
 <div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;      <span class="keywordflow">while</span>( queue-&gt;<a class="code" href="class_os_1_1_buffer_queue.html#a9a351ec41f4e9fa27ed7c0d34ef80703">isEmpty</a>() ) {</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> ret = pthread_cond_wait(queueNotEmpty, queueLock);</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        ret = pthread_cond_wait(queueNotEmpty, queueLock);</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(ret == 0, errno);</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;      }</div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
@@ -359,7 +359,7 @@ $(document).ready(function(){initNavTree('_os_2_pthreads_2_queue_8cpp_source.htm
 <div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160; </div>
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        <span class="comment">// Pop worked - wake up a thread that might be waiting on</span></div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        <span class="comment">// the send end of the queue:</span></div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> ret = pthread_cond_signal(queueNotFull);</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        ret = pthread_cond_signal(queueNotFull);</div>
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(ret == 0, errno); <span class="comment">// If this fails, something horrible happened.</span></div>
 <div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;      }</div>
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;      <span class="keywordflow">else</span> {</div>

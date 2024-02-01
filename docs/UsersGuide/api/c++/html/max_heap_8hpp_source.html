@@ -108,7 +108,7 @@ $(document).ready(function(){initNavTree('_max_heap_8hpp_source.html',''); initR
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_os.html">Os</a> {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="class_os_1_1_max_heap.html">   27</a></span>&#160;  <span class="keyword">class </span><a class="code" href="class_os_1_1_max_heap.html">MaxHeap</a> {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <a class="code" href="class_os_1_1_max_heap.html#a88940eab864f282fc213117e27133935">MaxHeap</a>();</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <a class="code" href="class_os_1_1_max_heap.html#a44ba45e0568e1f45608efc1bbf712340">~MaxHeap</a>();</div>
@@ -119,7 +119,7 @@ $(document).ready(function(){initNavTree('_max_heap_8hpp_source.html',''); initR
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_os_1_1_max_heap.html#ab1a057195e2932335e3f5fdd193b00b0">isEmpty</a>();</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> <a class="code" href="class_os_1_1_max_heap.html#afe39136ffd9469b9e69fea2804141f7b">getSize</a>();</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_os_1_1_max_heap.html#aa44ad32cd6a4a59d37e8b47ab9a454d1">print</a>();</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="comment">// Private functions:</span></div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="comment">// Ensure the heap meets the heap property:</span></div>
@@ -133,14 +133,14 @@ $(document).ready(function(){initNavTree('_max_heap_8hpp_source.html',''); initR
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">struct </span>Node {</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> value; <span class="comment">// the priority of the node</span></div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> order; <span class="comment">// order in which node was pushed</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> id; <span class="comment">// unique id for this node </span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> id; <span class="comment">// unique id for this node</span></div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    };</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="comment">// Private members:</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    Node* heap; <span class="comment">// the heap itself</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> size; <span class="comment">// the current size of the heap</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> order; <span class="comment">// the current count of heap pushes</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> capacity; <span class="comment">// the maximum capacity of the heap</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    Node* m_heap; <span class="comment">// the heap itself</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> m_size; <span class="comment">// the current size of the heap</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> m_order; <span class="comment">// the current count of heap pushes</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> m_capacity; <span class="comment">// the maximum capacity of the heap</span></div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  };</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}</div>

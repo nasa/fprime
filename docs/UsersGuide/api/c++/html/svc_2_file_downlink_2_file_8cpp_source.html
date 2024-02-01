@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('_svc_2_file_downlink_2_file_8cpp_sourc
 <div class="title">File.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="svc_2_file_downlink_2_file_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ====================================================================== </span></div>
+<a href="svc_2_file_downlink_2_file_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// \title  File.cpp</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">// \author bocchino</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// \brief  cpp file for FileDownlink::File</span></div>
@@ -97,8 +97,8 @@ $(document).ready(function(){initNavTree('_svc_2_file_downlink_2_file_8cpp_sourc
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">// Copyright 2009-2015, by the California Institute of Technology.</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">// ALL RIGHTS RESERVED.  United States Government Sponsorship</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// acknowledged.</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">// </span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// ====================================================================== </span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="file_downlink_8hpp.html">Svc/FileDownlink/FileDownlink.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="assert_8hpp.html">Fw/Types/Assert.hpp</a>&gt;</span></div>
@@ -123,20 +123,20 @@ $(document).ready(function(){initNavTree('_svc_2_file_downlink_2_file_8cpp_sourc
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    this-&gt;destName = destLogStringArg;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="comment">// Set size</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> size;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Os::FileSystem::Status</a> status = </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <a class="code" href="namespace_os_1_1_file_system.html#a4dc2c43756fb8ed89c502f6d452ec473">Os::FileSystem::getFileSize</a>(sourceFileName, size);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> file_size;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Os::FileSystem::Status</a> status =</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <a class="code" href="namespace_os_1_1_file_system.html#a4dc2c43756fb8ed89c502f6d452ec473">Os::FileSystem::getFileSize</a>(sourceFileName, file_size);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d">Os::FileSystem::OP_OK</a>)</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a332cbae4ad8df187e3772090e2576db8">Os::File::BAD_SIZE</a>;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="comment">// If the size does not cast cleanly to the desired U32 type, return size error</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(size)) != size) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(file_size)) != file_size) {</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a332cbae4ad8df187e3772090e2576db8">Os::File::BAD_SIZE</a>;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    this-&gt;size = <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(size);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    this-&gt;size = <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(file_size);</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="comment">// Initialize checksum</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <a class="code" href="class_c_f_d_p_1_1_checksum.html">CFDP::Checksum</a> checksum;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    this-&gt;checksum = checksum;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    this-&gt;m_checksum = checksum;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">// Open osFile for reading</span></div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">return</span> this-&gt;osFile.open(sourceFileName, <a class="code" href="class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105afb791cd4ea04f97e6d3a402574bc9489">Os::File::OPEN_READ</a>);</div>
@@ -147,7 +147,7 @@ $(document).ready(function(){initNavTree('_svc_2_file_downlink_2_file_8cpp_sourc
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    read(</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> data,</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keyword">const</span> U32 byteOffset,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keyword">const</span> U32 size</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keyword">const</span> U32 a_size</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    )</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  {</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
@@ -156,15 +156,15 @@ $(document).ready(function(){initNavTree('_svc_2_file_downlink_2_file_8cpp_sourc
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7ab195b6300645908a16f113ed9eae7ee3">Os::File::OP_OK</a>)</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      <span class="keywordflow">return</span> status;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> intSize = size;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> intSize = a_size;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    status = this-&gt;osFile.read(data, intSize);</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7ab195b6300645908a16f113ed9eae7ee3">Os::File::OP_OK</a>)</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordflow">return</span> status;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="comment">// Force a bad size error when the U32 carrying size is bad</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(intSize) != size) {</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(intSize) != a_size) {</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a332cbae4ad8df187e3772090e2576db8">Os::File::BAD_SIZE</a>;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    }</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    this-&gt;checksum.<a class="code" href="class_c_f_d_p_1_1_checksum.html#af9b17cd8248c102e848356188a513ba3">update</a>(data, byteOffset, size);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    this-&gt;m_checksum.update(data, byteOffset, a_size);</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7ab195b6300645908a16f113ed9eae7ee3">Os::File::OP_OK</a>;</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
@@ -178,7 +178,6 @@ $(document).ready(function(){initNavTree('_svc_2_file_downlink_2_file_8cpp_sourc
 <div class="ttc" id="a_fp_config_8h_html_a924ef0ded73e6ec8a0a0b55e9e555fc4"><div class="ttname"><a href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a></div><div class="ttdeci">PlatformSizeType FwSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00018">FpConfig.h:18</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
 <div class="ttc" id="aclass_c_f_d_p_1_1_checksum_html"><div class="ttname"><a href="class_c_f_d_p_1_1_checksum.html">CFDP::Checksum</a></div><div class="ttdoc">Class representing a CFDP checksum.</div><div class="ttdef"><b>Definition:</b> <a href="checksum_8hpp_source.html#l00023">Checksum.hpp:23</a></div></div>
-<div class="ttc" id="aclass_c_f_d_p_1_1_checksum_html_af9b17cd8248c102e848356188a513ba3"><div class="ttname"><a href="class_c_f_d_p_1_1_checksum.html#af9b17cd8248c102e848356188a513ba3">CFDP::Checksum::update</a></div><div class="ttdeci">void update(const U8 *const data, const U32 offset, const U32 length)</div><div class="ttdoc">Update the checksum value by accumulating the words in the data.</div><div class="ttdef"><b>Definition:</b> <a href="checksum_8cpp_source.html#l00071">Checksum.cpp:72</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_log_string_arg_html"><div class="ttname"><a href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a></div><div class="ttdef"><b>Definition:</b> <a href="log_string_8hpp_source.html#l00010">LogString.hpp:10</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_a7ee286422e714489bb92d2228075f0b7"><div class="ttname"><a href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">Os::File::Status</a></div><div class="ttdeci">Status</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00023">File.hpp:23</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_a7ee286422e714489bb92d2228075f0b7a332cbae4ad8df187e3772090e2576db8"><div class="ttname"><a href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a332cbae4ad8df187e3772090e2576db8">Os::File::BAD_SIZE</a></div><div class="ttdeci">@ BAD_SIZE</div><div class="ttdoc">Invalid size parameter.</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00028">File.hpp:28</a></div></div>

@@ -107,12 +107,12 @@ $(document).ready(function(){initNavTree('_header_8cpp_source.html',''); initRes
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keywordtype">void</span> FilePacket::Header ::</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    initialize(</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keyword">const</span> Type type,</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">const</span> U32 sequenceIndex</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keyword">const</span> Type a_type,</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">const</span> U32 a_sequenceIndex</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    )</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    this-&gt;type = <a class="code" href="class_fw_1_1_file_packet_1_1_header.html#a266c7a4d752eb9c308c7f4f663daf1d2">type</a>;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    this-&gt;sequenceIndex = <a class="code" href="class_fw_1_1_file_packet_1_1_header.html#a0eb22a36da1f32cf19d8b5e28ff37c43">sequenceIndex</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    this-&gt;<a class="code" href="class_fw_1_1_file_packet_1_1_header.html#a266c7a4d752eb9c308c7f4f663daf1d2">type</a> = a_type;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    this-&gt;<a class="code" href="class_fw_1_1_file_packet_1_1_header.html#a0eb22a36da1f32cf19d8b5e28ff37c43">sequenceIndex</a> = a_sequenceIndex;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  }</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  U32 FilePacket::Header ::</div>
@@ -125,14 +125,14 @@ $(document).ready(function(){initNavTree('_header_8cpp_source.html',''); initRes
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    fromSerialBuffer(SerialBuffer&amp; serialBuffer)</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  {</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> type;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> new_type;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> status;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    status = serialBuffer.deserialize(type);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    status = serialBuffer.deserialize(new_type);</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>) {</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="keywordflow">return</span> status;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    this-&gt;type = <span class="keyword">static_cast&lt;</span><a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501b">Type</a><span class="keyword">&gt;</span>(type);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    this-&gt;type = <span class="keyword">static_cast&lt;</span><a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501b">Type</a><span class="keyword">&gt;</span>(new_type);</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    status = serialBuffer.deserialize(this-&gt;sequenceIndex);</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
@@ -144,10 +144,10 @@ $(document).ready(function(){initNavTree('_header_8cpp_source.html',''); initRes
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    toSerialBuffer(SerialBuffer&amp; serialBuffer)<span class="keyword"> const</span></div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">  </span>{</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> type = <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(this-&gt;type);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> type_casted = <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a><span class="keyword">&gt;</span>(this-&gt;type);</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> status;</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    status = serialBuffer.serialize(type);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    status = serialBuffer.serialize(type_casted);</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>)</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      <span class="keywordflow">return</span> status;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>

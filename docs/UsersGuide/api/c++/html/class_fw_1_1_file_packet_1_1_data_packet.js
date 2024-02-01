@@ -1,7 +1,7 @@
 var class_fw_1_1_file_packet_1_1_data_packet =
 [
     [ "bufferSize", "class_fw_1_1_file_packet_1_1_data_packet.html#af74edc92a8ad795aedcc9d7ea1550d05", null ],
-    [ "initialize", "class_fw_1_1_file_packet_1_1_data_packet.html#a3f315b1c293fe28b8825bd764aabcc25", null ],
+    [ "initialize", "class_fw_1_1_file_packet_1_1_data_packet.html#a01f5e010768e382a191edd0aef543502", null ],
     [ "toBuffer", "class_fw_1_1_file_packet_1_1_data_packet.html#a3e80f1b17135813a054583e2d7c569a0", null ],
     [ "FilePacket", "class_fw_1_1_file_packet_1_1_data_packet.html#a017d6c45fe8f75de4eb3a3c2b1647044", null ],
     [ "byteOffset", "class_fw_1_1_file_packet_1_1_data_packet.html#a387ca5e23e6f5fb1fa6c6493cdb2b330", null ],
