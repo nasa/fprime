@@ -43,7 +43,6 @@ These settings include:
   computer platform.
 - `environment_file`: An ini file that can be used to set environmental variables during the build
   process.
-- `ac_constants`: Path to autocode constants ini file.
 - `config_directory`: Path to configuration header directory.
 
 ### Platform Sections
@@ -52,9 +51,8 @@ Some settings may be overridden for specific platforms using specific platform s
 have the same name as the platform and may set the following settings:
 
 1. `config_directory`
-2. `ac_constants`
-3. `install_destination`
-4. `environment_file`
+2. `install_destination`
+3. `environment_file`
 
 These settings only apply when building for the specified platform.
 
@@ -71,8 +69,7 @@ framework_path: ../fprime
 library_locations: ../fprime-vxworks:../fprime-sphinx-drivers:../fprime-jplffs
 default_toolchain: gr712-vxworks6
 environment_file: ../fprime-vxworks/cmake/env/VxWorks-GR712.ini
-ac_constants: ./Cfg/AcConstants.ini
-config_directory: Cfg
+config_directory: ./config
 
 [gr712-vxworks6]
 config_directory: Cfg_gr712
