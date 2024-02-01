@@ -6,7 +6,7 @@ system is most efficient.
 
 This guide includes:
 - [How to Configure F´](#how-to-configure-f)
-- [AcConstants.ini](#acconstantsini)
+- [AcConstants.fpp](#acconstantsfpp)
 - [FpConfig.hpp](#fpconfighpp)
     - [Type Settings](#type-settings)
     - [Object Settings](#object-settings)
@@ -24,21 +24,19 @@ This guide includes:
 ## How To Configure F´
 
 All configurable files (top-level and component-specific) for F´ are available in the top-level
-`config` directory. By default, all deployments use the F´ provided default configuration options,
-but as of F´ version 1.5, deployments can provide their own `AcConstants.ini` and configuration
-`*.hpp` files by using the `ac_constants` and `config_directory` options in the deployment's
-`settings.ini` file. See the [settings.ini guide](../user/settings.md) for more details.
+`config` directory. By default, all deployments use the F´ provided default configuration options.
 
-A deployment can clone `AcConstants.ini` or the whole set of `*.hpp` files or both. The deployment
-must take ownership of all `*.hpp` due to C++ compiler constraints.
+Projects can also take ownership of the `config` directory to provide their own `AcConstants.fpp`
+and configuration `*.hpp` files. To do so, copy the `config` directory into your project and use the
+`config_directory` options in the project's `settings.ini` file.
+See the [settings.ini guide](../user/settings.md) for more details.
 
-AcConstants.ini follows [python's INI](https://docs.python.org/3/library/configparser.html#supported-ini-file-structure)
-format and the `FpConfig.h` file is a C header allowing the user to define global settings.
+The `FpConfig.h` file is a C header allowing the user to define global settings.
 Where components allow specific configuration, a `<component>Cfg.hpp` is available to be modified as well.
 
-## AcConstants.ini
+## AcConstants.fpp
 
-AcConstants.ini is used to set the constants for the autocoded components provided by the framework. This allows
+`AcConstants.fpp` is used to set the constants for the autocoded components provided by the framework. This allows
 projects to appropriately size the number of ports provided by many of the command and data handling components defined
 in the `Svc` package.
 
@@ -56,11 +54,6 @@ number of components.
 | RateGroupDriverRateGroupPorts      | Number of rate group driver output ports. Limits total number of different rate groups                | 3       | Positive integer |
 | HealthPingPorts                    | Number of health ping output ports. Limits number of components attached to health component          | 25      | Positive integer |
 
-An example INI setting would look like:
-
-```ini
-setting = 123; Comment
-```
 
 ## FpConfig.h
 
