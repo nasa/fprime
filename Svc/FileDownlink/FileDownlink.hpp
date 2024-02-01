@@ -77,23 +77,21 @@ namespace Svc {
         public:
 
           //! Constructor
-          File() : size(0) { }
-
-        public:
-
-          //! The source file name
-          Fw::LogStringArg sourceName;
-
-          //! The destination file name
-          Fw::LogStringArg destName;
-
-          //! The underlying OS file
-          Os::File osFile;
-
-          //! The file size
-          U32 size;
+          File() : m_size(0) { }
 
         PRIVATE:
+
+          //! The source file name
+          Fw::LogStringArg m_sourceName;
+
+          //! The destination file name
+          Fw::LogStringArg m_destName;
+
+          //! The underlying OS file
+          Os::File m_osFile;
+
+          //! The file size
+          U32 m_size;
 
           //! The checksum for the file
           CFDP::Checksum m_checksum;
@@ -110,12 +108,32 @@ namespace Svc {
           Os::File::Status read(
               U8 *const data,
               const U32 byteOffset,
-              const U32 a_size
+              const U32 size
           );
 
           //! Get the checksum
           void getChecksum(CFDP::Checksum& checksum) {
             checksum = this->m_checksum;
+          }
+
+          //! Get the source file name
+          Fw::LogStringArg& getSourceName(void) {
+            return this->m_sourceName;
+          }
+
+          //! Get the destination file name
+          Fw::LogStringArg& getDestName(void) {
+            return this->m_destName;
+          }
+
+          //! Get the underlying OS file
+          Os::File& getOsFile(void) {
+            return this->m_osFile;
+          }
+
+          //! Get the file size
+          U32 getSize(void) {
+            return this->m_size;
           }
       };
 

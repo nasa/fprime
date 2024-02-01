@@ -19,13 +19,13 @@ namespace Svc {
   Os::File::Status FileUplink::File ::
     open(const Fw::FilePacket::StartPacket& startPacket)
   {
-    const U32 length = startPacket.destinationPath.length;
+    const U32 length = startPacket.getDestinationPath().getLength();
     char path[Fw::FilePacket::PathName::MAX_LENGTH + 1];
-    memcpy(path, startPacket.destinationPath.value, length);
+    memcpy(path, startPacket.getDestinationPath().getValuePointer(), length);
     path[length] = 0;
     Fw::LogStringArg logStringArg(path);
     this->name = logStringArg;
-    this->size = startPacket.fileSize;
+    this->size = startPacket.getFileSize();
     CFDP::Checksum checksum;
     this->m_checksum = checksum;
     return this->osFile.open(path, Os::File::OPEN_WRITE);
