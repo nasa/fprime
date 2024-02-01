@@ -109,12 +109,12 @@ Example Formations</h3>
 <p><img src="./img/gh-right.png" alt="Top Level Generic Hub" class="inline"/></p>
 <h2><a class="anchor" id="autotoc_md708"></a>
 Configuration</h2>
-<p>Generic hub maximum output and input ports are configured using <code>AcConstants.ini</code> as shown below. Since hubs work in tandem with another hub, the input ports on the first must match the output ports on the second. Both the number of port and buffer inputs/outputs may be configured.</p>
-<div class="fragment"><div class="line">; Hub connections. Connections on all deployments should mirror these settings.</div>
-<div class="line">GenericHubInputPorts = 10</div>
-<div class="line">GenericHubOutputPorts = 10</div>
-<div class="line">GenericHubInputBuffers = 10</div>
-<div class="line">GenericHubOutputBuffers = 10</div>
+<p>Generic hub maximum output and input ports are configured using <code>AcConstants.fpp</code> as shown below. Since hubs work in tandem with another hub, the input ports on the first must match the output ports on the second. Both the number of port and buffer inputs/outputs may be configured.</p>
+<div class="fragment"><div class="line">@ Hub connections. Connections on all deployments should mirror these settings.</div>
+<div class="line">constant GenericHubInputPorts = 10</div>
+<div class="line">constant GenericHubOutputPorts = 10</div>
+<div class="line">constant GenericHubInputBuffers = 10</div>
+<div class="line">constant GenericHubOutputBuffers = 10</div>
 </div><!-- fragment --><p>The above configuration may be used with both deployments hubs as the input/output pairs match.</p>
 <p>To use the hub in a pattern specifier, include this in your topology:</p>
 <div class="fragment"><div class="line">event connections instance hub</div>

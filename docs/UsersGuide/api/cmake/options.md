@@ -201,8 +201,7 @@ Note: ThreadSanitizer does not work with Address or Leak sanitizer enabled
 e.g. `-DENABLE_SANITIZER_THREAD=ON`
 
 
-## Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
-`FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
+## Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`, and `FPRIME_CONFIG_DIR`:
 
 Note: these settings are supplied by `fprime-util` and need not be provided unless running CMake directly or through
 any way bypassing that utility (e.g. inside your beloved IDE).
