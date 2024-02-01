@@ -27,9 +27,9 @@ namespace STest {
 
       //! Construct object Rule
       Rule(
-          const char *const name //!< The name of the rule
+          const char *const a_name //!< The name of the rule
       ) :
-        name(name)
+        name(a_name)
       {
 
       }

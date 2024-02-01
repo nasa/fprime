@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Warnings.cpp
 // \author bocchino
 // \brief  cpp file for FileUplink::Warnings
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <Svc/FileUplink/FileUplink.hpp>
 
@@ -17,9 +17,9 @@ namespace Svc {
   void FileUplink::Warnings ::
     invalidReceiveMode(const Fw::FilePacket::Type packetType)
   {
-    this->fileUplink->log_WARNING_HI_InvalidReceiveMode(
+    this->m_fileUplink->log_WARNING_HI_InvalidReceiveMode(
         static_cast<U32>(packetType),
-        static_cast<U32>(fileUplink->receiveMode)
+        static_cast<U32>(m_fileUplink->receiveMode)
     );
     this->warning();
   }
@@ -27,7 +27,7 @@ namespace Svc {
   void FileUplink::Warnings ::
     fileOpen(Fw::LogStringArg& fileName)
   {
-    this->fileUplink->log_WARNING_HI_FileOpenError(fileName);
+    this->m_fileUplink->log_WARNING_HI_FileOpenError(fileName);
     this->warning();
   }
 
@@ -37,7 +37,7 @@ namespace Svc {
         Fw::LogStringArg& fileName
     )
   {
-    this->fileUplink->log_WARNING_HI_PacketOutOfBounds(
+    this->m_fileUplink->log_WARNING_HI_PacketOutOfBounds(
         sequenceIndex,
         fileName
     );
@@ -50,7 +50,7 @@ namespace Svc {
         const U32 lastSequenceIndex
     )
   {
-    this->fileUplink->log_WARNING_HI_PacketOutOfOrder(
+    this->m_fileUplink->log_WARNING_HI_PacketOutOfOrder(
         sequenceIndex,
         lastSequenceIndex
     );
@@ -60,7 +60,7 @@ namespace Svc {
   void FileUplink::Warnings ::
     fileWrite(Fw::LogStringArg& fileName)
   {
-    this->fileUplink->log_WARNING_HI_FileWriteError(fileName);
+    this->m_fileUplink->log_WARNING_HI_FileWriteError(fileName);
     this->warning();
   }
 
@@ -70,8 +70,8 @@ namespace Svc {
         const U32 read
     )
   {
-    this->fileUplink->log_WARNING_HI_BadChecksum(
-        this->fileUplink->file.name,
+    this->m_fileUplink->log_WARNING_HI_BadChecksum(
+        this->m_fileUplink->file.name,
         computed,
         read
     );

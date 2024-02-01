@@ -43,32 +43,32 @@ namespace Svc {
         public:
 
           //! Constructor
-          Mode() : value(IDLE) { }
+          Mode() : m_value(IDLE) { }
 
         public:
 
           //! Set the Mode value
           void set(const Type value) {
-            this->mutex.lock();
-            this->value = value;
-            this->mutex.unLock();
+            this->m_mutex.lock();
+            this->m_value = value;
+            this->m_mutex.unLock();
           }
 
           //! Get the Mode value
           Type get() {
-            this->mutex.lock();
-            const Type value = this->value;
-            this->mutex.unLock();
+            this->m_mutex.lock();
+            const Type value = this->m_value;
+            this->m_mutex.unLock();
             return value;
           }
 
         private:
 
           //! The Mode value
-          Type value;
+          Type m_value;
 
           //! The Mode mutex
-          Os::Mutex mutex;
+          Os::Mutex m_mutex;
       };
 
       //! Class representing an outgoing file
@@ -96,7 +96,7 @@ namespace Svc {
         PRIVATE:
 
           //! The checksum for the file
-          CFDP::Checksum checksum;
+          CFDP::Checksum m_checksum;
 
         public:
 
@@ -110,12 +110,12 @@ namespace Svc {
           Os::File::Status read(
               U8 *const data,
               const U32 byteOffset,
-              const U32 size
+              const U32 a_size
           );
 
           //! Get the checksum
           void getChecksum(CFDP::Checksum& checksum) {
-            checksum = this->checksum;
+            checksum = this->m_checksum;
           }
       };
 
@@ -126,24 +126,25 @@ namespace Svc {
 
           //! Construct a FilesSent object
           FilesSent(FileDownlink *const fileDownlink) :
-            n(0), fileDownlink(fileDownlink)
+            m_sent_file_count(0),
+            m_fileDownlink(fileDownlink)
           { }
 
         public:
 
           //! Record a file sent
           void fileSent() {
-            ++this->n;
-            this->fileDownlink->tlmWrite_FilesSent(n);
+            ++this->m_sent_file_count;
+            this->m_fileDownlink->tlmWrite_FilesSent(m_sent_file_count);
           }
 
         PRIVATE:
 
-          //! The total number of downlinks canceled
-          U32 n;
+          //! The total number of file sent
+          U32 m_sent_file_count;
 
           //! The enclosing FileDownlink object
-          FileDownlink *const fileDownlink;
+          FileDownlink *const m_fileDownlink;
 
       };
 
@@ -154,24 +155,25 @@ namespace Svc {
 
           //! Construct a PacketsSent object
           PacketsSent(FileDownlink *const fileDownlink) :
-            n(0), fileDownlink(fileDownlink)
+            m_sent_packet_count(0),
+            m_fileDownlink(fileDownlink)
           { }
 
         public:
 
           //! Record a packet sent
           void packetSent() {
-            ++this->n;
-            this->fileDownlink->tlmWrite_PacketsSent(n);
+            ++this->m_sent_packet_count;
+            this->m_fileDownlink->tlmWrite_PacketsSent(m_sent_packet_count);
           }
 
         PRIVATE:
 
-          //! The total number of downlinks canceled
-          U32 n;
+          //! The total number of downlinked packets
+          U32 m_sent_packet_count;
 
           //! The enclosing FileDownlink object
-          FileDownlink *const fileDownlink;
+          FileDownlink *const m_fileDownlink;
 
       };
 
@@ -182,7 +184,8 @@ namespace Svc {
 
           //! Construct a Warnings object
           Warnings(FileDownlink *const fileDownlink) :
-            n(0), fileDownlink(fileDownlink)
+            m_warning_count(0),
+            m_fileDownlink(fileDownlink)
           { }
 
         public:
@@ -197,17 +200,17 @@ namespace Svc {
 
           //! Record a warning
           void warning() {
-            ++this->n;
-            this->fileDownlink->tlmWrite_Warnings(n);
+            ++this->m_warning_count;
+            this->m_fileDownlink->tlmWrite_Warnings(m_warning_count);
           }
 
         PRIVATE:
 
           //! The total number of warnings
-          U32 n;
+          U32 m_warning_count;
 
           //! The enclosing FileDownlink object
-          FileDownlink *const fileDownlink;
+          FileDownlink *const m_fileDownlink;
 
       };
 
@@ -390,67 +393,67 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! Whether the configuration function has been called.
-      bool configured;
+      bool m_configured;
 
       //! File downlink queue
-      Os::Queue fileQueue;
+      Os::Queue m_fileQueue;
 
       //!Buffer's memory backing
-      U8 memoryStore[COUNT_PACKET_TYPE][FILEDOWNLINK_INTERNAL_BUFFER_SIZE];
+      U8 m_memoryStore[COUNT_PACKET_TYPE][FILEDOWNLINK_INTERNAL_BUFFER_SIZE];
 
       //! The mode
-      Mode mode;
+      Mode m_mode;
 
       //! The file
-      File file;
+      File m_file;
 
       //! Files sent
-      FilesSent filesSent;
+      FilesSent m_filesSent;
 
       //! Packets sent
-      PacketsSent packetsSent;
+      PacketsSent m_packetsSent;
 
       //! Warnings
-      Warnings warnings;
+      Warnings m_warnings;
 
       //! The current sequence index
-      U32 sequenceIndex;
+      U32 m_sequenceIndex;
 
       //! Timeout threshold (milliseconds) while in WAIT state
-      U32 timeout;
+      U32 m_timeout;
 
       //! Cooldown (in ms) between finishing a downlink and starting the next file.
-      U32 cooldown;
+      U32 m_cooldown;
 
       //! current time residing in WAIT state
-      U32 curTimer;
+      U32 m_curTimer;
 
       //! rate (milliseconds) at which we are running
-      U32 cycleTime;
+      U32 m_cycleTime;
 
       ////! Buffer for sending file data
-      Fw::Buffer buffer;
+      Fw::Buffer m_buffer;
 
       //! Buffer size for file data
-      U32 bufferSize;
+      U32 m_bufferSize;
 
       //! Current byte offset in file
-      U32 byteOffset;
+      U32 m_byteOffset;
 
       //! Amount of bytes left to read
-      U32 endOffset;
+      U32 m_endOffset;
 
       //! Set to true when all data packets have been sent
-      Fw::FilePacket::Type lastCompletedType;
+      Fw::FilePacket::Type m_lastCompletedType;
 
       //! Last buffer used
-      U32 lastBufferId;
+      U32 m_lastBufferId;
 
       //! Current in progress file entry from queue
-      struct FileEntry curEntry;
+      struct FileEntry m_curEntry;
 
       //! Incrementing context id used to unique identify a specific downlink request
-      U32 cntxId;
+      U32 m_cntxId;
     };
 
 } // end namespace Svc

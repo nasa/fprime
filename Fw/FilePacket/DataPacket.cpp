@@ -18,15 +18,15 @@ namespace Fw {
   void FilePacket::DataPacket ::
     initialize(
         const U32 sequenceIndex,
-        const U32 byteOffset,
-        const U16 dataSize,
-        const U8 *const data
+        const U32 a_byteOffset,
+        const U16 a_dataSize,
+        const U8 *const a_data
     )
   {
     this->header.initialize(FilePacket::T_DATA, sequenceIndex);
-    this->byteOffset = byteOffset;
-    this->dataSize = dataSize;
-    this->data = data;
+    this->byteOffset = a_byteOffset;
+    this->dataSize = a_dataSize;
+    this->data = a_data;
   }
 
   U32 FilePacket::DataPacket ::

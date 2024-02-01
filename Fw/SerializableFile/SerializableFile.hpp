@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SerializableFile.hpp
 // \author dinkel
 // \brief  hpp file for SerializableFile
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Fw_SerializableFile_HPP
 #define Fw_SerializableFile_HPP
@@ -34,16 +34,16 @@ namespace Fw {
     // NOTE!: This should not be used with an allocator that can return a smaller buffer than requested
     SerializableFile(MemAllocator* allocator, NATIVE_UINT_TYPE maxSerializedSize);
     ~SerializableFile();
-    
+
     Status load(const char* fileName, Serializable& serializable);
     Status save(const char* fileName, Serializable& serializable);
 
     PRIVATE:
     void reset();
-    MemAllocator* allocator;
-    bool recoverable; // don't care; for allocator
-    NATIVE_UINT_TYPE actualSize; // for checking
-    SerialBuffer buffer;
+    MemAllocator* m_allocator;
+    bool m_recoverable; // don't care; for allocator
+    NATIVE_UINT_TYPE m_actualSize; // for checking
+    SerialBuffer m_buffer;
   };
 }
 

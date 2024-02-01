@@ -56,13 +56,13 @@ namespace Os {
     PRIVATE:
 
       //! The file name
-      Fw::String fileName;
+      Fw::String m_fileName;
 
       //! The hash file name
-      Fw::String hashFileName;
+      Fw::String m_hashFileName;
 
       //! The hash value after creating or loading a validation file
-      Utils::HashBuffer hashBuffer;
+      Utils::HashBuffer m_hashBuffer;
   };
 
 }
