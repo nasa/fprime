@@ -9,7 +9,7 @@
 
 namespace Os {
     /**
-     * \breif base implementation of FileHandle
+     * \brief base implementation of FileHandle
      */
     struct FileHandle {};
 
