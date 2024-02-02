@@ -128,6 +128,10 @@ namespace Svc {
 
             class Override : public Os::Posix::File::PosixFile {
                 friend class Interceptor;
+              public:
+                Override() = default;
+
+                Override(const Override& other) = default;
 
                 Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
 

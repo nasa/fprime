@@ -819,15 +819,26 @@ namespace Svc {
 } // namespace Svc
 
 namespace Os {
-    FileInterface *getDefaultDelegate(U8 *aligned_placement_new_memory) {
-        FW_ASSERT(aligned_placement_new_memory != nullptr);
-        // Placement-new the file handle into the opaque file-handle storage
-        static_assert(sizeof(Svc::CmdSequencerTester::Interceptor::Override) <= sizeof Os::File::m_handle_storage,
-                "Handle size not large enough");
-        static_assert((FW_HANDLE_ALIGNMENT % alignof(Svc::CmdSequencerTester::Interceptor::Override)) == 0,
-                "Handle alignment invalid");
-        Svc::CmdSequencerTester::Interceptor::Override *interface =
-                new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor::Override;
-        return interface;
+//! Overrides the default delegate function with this one as it is defined in the local compilation archive
+//! \param aligned_placement_new_memory: memory to fill
+//! \param to_copy: possible copy
+//! \return: new interceptor
+FileInterface *getDelegate(U8 *aligned_placement_new_memory, const FileInterface* to_copy) {
+    FW_ASSERT(aligned_placement_new_memory != nullptr);
+    const Svc::CmdSequencerTester::Interceptor::Override* copy_me =
+            reinterpret_cast<const Svc::CmdSequencerTester::Interceptor::Override*>(to_copy);
+    // Placement-new the file handle into the opaque file-handle storage
+    static_assert(sizeof(Svc::CmdSequencerTester::Interceptor::Override) <= sizeof Os::File::m_handle_storage,
+            "Handle size not large enough");
+    static_assert((FW_HANDLE_ALIGNMENT % alignof(Svc::CmdSequencerTester::Interceptor::Override)) == 0,
+            "Handle alignment invalid");
+    Svc::CmdSequencerTester::Interceptor::Override *interface = nullptr;
+    if (to_copy == nullptr) {
+        interface = new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor::Override;
+    } else {
+        interface = new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor::Override(*copy_me);
     }
+    FW_ASSERT(interface != nullptr);
+    return interface;
+}
 }

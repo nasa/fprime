@@ -35,6 +35,9 @@ class PosixFile : public FileInterface {
      */
     PosixFile() = default;
 
+    //!\brief default copy constructor
+    PosixFile(const PosixFile& other) = default;
+
     /**
      * \brief destructor
     */

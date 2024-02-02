@@ -24,6 +24,9 @@ class StubFile : public FileInterface {
      */
     StubFile() = default;
 
+    //!\brief default copy constructor
+    StubFile(const StubFile& other) = default;
+
     /**
      * \brief destructor
     */

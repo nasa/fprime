@@ -208,9 +208,11 @@ namespace Os {
          */
         ~File() override;
 
-        File(const File& other) = delete;
+        //! \brief copy constructor that copies the internal representation
+        File(const File& other);
 
-        File& operator=(const File& other) = delete;
+        //! \brief assignment operator that copies the internal representation
+        File& operator=(const File& other);
 
         /**
          * \brief determine if the file is open
@@ -476,16 +478,20 @@ namespace Os {
      *
      * 1. Assert that the supplied memory is non-null. e.g `FW_ASSERT(aligned_placement_new_memory != NULL);`
      * 2. Assert that their implementation fits within FW_HANDLE_MAX_SIZE.
-     *    e.g. `static_assert(sizeof(PosixFileImplementation) <= FW_HANDLE_MAX_SIZE, "FW_HANDLE_MAX_SIZE to small");`
+     *    e.g. `static_assert(sizeof(PosixFileImplementation) <= sizeof Os::File::m_handle_storage,
+     *        "FW_HANDLE_MAX_SIZE to small");`
      * 3. Assert that their implementation aligns within FW_HANDLE_ALIGNMENT.
      *    e.g. `static_assert((FW_HANDLE_ALIGNMENT % alignof(PosixFileImplementation)) == 0, "Bad handle alignment");`
-     * 4. Placement new their implementation into `aligned_placement_new_memory`
+     * 4. If to_copy is null, placement new their implementation into `aligned_placement_new_memory`
      *    e.g. `FileInterface* interface = new (aligned_placement_new_memory) PosixFileImplementation;`
-     * 5. Return the result of the placement new
+     * 5. If to_copy is non-null, placement new using copy constructor their implementation into
+     *    `aligned_placement_new_memory`
+     *    e.g. `FileInterface* interface = new (aligned_placement_new_memory) PosixFileImplementation(*to_copy);`
+     * 6. Return the result of the placement new
      *    e.g. `return interface;`
      *
      * \return result of placement new, must be equivalent to `aligned_placement_new_memory`
      */
-    FileInterface* getDefaultDelegate(U8* aligned_placement_new_memory);
+    FileInterface* getDelegate(U8* aligned_placement_new_memory, const FileInterface* to_copy=nullptr);
 }
 #endif

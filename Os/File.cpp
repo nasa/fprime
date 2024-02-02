@@ -14,7 +14,7 @@ extern "C" {
 #endif // __cplusplus
 namespace Os {
 
-File::File() : m_delegate(*getDefaultDelegate(&m_handle_storage[0])) {
+File::File() : m_delegate(*getDelegate(&m_handle_storage[0])) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -24,6 +24,22 @@ File::~File() {
         this->close();
     }
     m_delegate.~FileInterface();
+}
+
+File::File(const File& other) :
+    m_mode(other.m_mode),
+    m_path(other.m_path),
+    m_delegate(*getDelegate(&m_handle_storage[0], &other.m_delegate)) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
+}
+
+File& File::operator=(const File& other) {
+    if (this != &other) {
+        this->m_mode = other.m_mode;
+        this->m_path = other.m_path;
+        this->m_delegate = *getDelegate(&m_handle_storage[0], &other.m_delegate);
+    }
+    return *this;
 }
 
 File::Status File::open(const CHAR* filepath, File::Mode requested_mode) {
