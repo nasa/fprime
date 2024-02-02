@@ -103,7 +103,8 @@ class DpContainer {
 
     //! Deserialize the header from the packet buffer
     //! Buffer must be valid and large enough to hold a DP container packet
-    void deserializeHeader();
+    //! \return The serialize status
+    Fw::SerializeStatus deserializeHeader();
 
     //! Serialize the header into the packet buffer and update the header hash
     //! Buffer must be valid and large enough to hold a DP container packet

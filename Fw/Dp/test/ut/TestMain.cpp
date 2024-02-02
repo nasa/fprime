@@ -59,7 +59,8 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
     // Test deserialization: Deserialize the header into a new container
     DpContainer deserContainer;
     deserContainer.setBuffer(container.getBuffer());
-    deserContainer.deserializeHeader();
+    const Fw::SerializeStatus serialStatus = deserContainer.deserializeHeader();
+    ASSERT_EQ(serialStatus, Fw::FW_SERIALIZE_OK);
     // Clear out the header in the buffer
     FW_ASSERT(buffer.isValid());
     ::memset(buffer.getData(), 0, DpContainer::Header::SIZE);
@@ -119,6 +120,24 @@ TEST(Header, BufferSet) {
     checkHeader(id, buffer, container);
     // Check the buffers
     checkBuffers(container, sizeof bufferData);
+}
+
+TEST(Header, BadPacketDescriptor) {
+    COMMENT("Test header serialization with bad packet descriptor");
+    // Create a buffer
+    Fw::Buffer buffer(bufferData, sizeof bufferData);
+    // Set the packet descriptor to a bad value
+    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    const FwPacketDescriptorType badPacketDescriptor = Fw::ComPacket::FW_PACKET_DP + 1;
+    Fw::SerializeStatus status = serialRepr.serialize(badPacketDescriptor);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    // Use the buffer to create a container
+    DpContainer container;
+    container.setBuffer(buffer);
+    // Deserialize the header
+    const Fw::SerializeStatus serialStatus = container.deserializeHeader();
+    // Check the error
+    ASSERT_EQ(serialStatus, Fw::FW_SERIALIZE_FORMAT_ERROR);
 }
 
 int main(int argc, char** argv) {
