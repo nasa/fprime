@@ -199,6 +199,8 @@ namespace Os {
 
     class File final : public FileInterface {
       public:
+        // Required for access to m_handle_storage for static assertions against actual storage
+        friend FileInterface* getDelegate(U8*, const FileInterface*);
         /**
          * \brief constructor
          */
@@ -429,7 +431,7 @@ namespace Os {
          * \return OP_OK on success otherwise error status
          */
         Status calculateCRC32(U32 &crc, bool nice = true); //!< calculates the CRC32 of the file
-    private:
+      private:
         static const U32 INITIAL_CRC = 0xFFFFFFFF;
         /**
          * Working set for CRC calculations.
@@ -455,7 +457,7 @@ namespace Os {
          */
         Status updateCRC(CrcWorkingSet& data, bool nice);
 
-    PRIVATE:
+      PRIVATE:
         Mode m_mode = Mode::OPEN_NO_MODE; //!< Stores mode for error checking
         const CHAR* m_path = nullptr; //!< Path last opened
 

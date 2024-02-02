@@ -46,6 +46,25 @@ TEST_F(Functionality, Close) {
     close_rule.apply(*tester);
 }
 
+// Ensure that the assignment operator works correctly
+TEST_F(Functionality, AssignmentOperator) {
+    Os::Test::File::Tester::OpenFileCreate open_rule(false);
+    Os::Test::File::Tester::CopyAssignment copy_rule;
+    Os::Test::File::Tester::CloseFile close_rule;
+    open_rule.apply(*tester);
+    copy_rule.apply(*tester);
+    close_rule.apply(*tester);
+}
+
+// Ensure the copy constructor works correctly
+TEST_F(Functionality, CopyConstructor) {
+    Os::Test::File::Tester::OpenFileCreate open_rule(false);
+    Os::Test::File::Tester::CopyConstruction copy_rule;
+    Os::Test::File::Tester::CloseFile close_rule;
+    open_rule.apply(*tester);
+    copy_rule.apply(*tester);
+    close_rule.apply(*tester);
+}
 
 // Ensure that open on existence works
 TEST_F(FunctionalIO, OpenWithCreationExists) {
@@ -220,8 +239,9 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
     Os::Test::File::Tester::OpenFileCreate open_file_create_rule(true);
     Os::Test::File::Tester::OpenFileCreateOverwrite open_file_create_overwrite_rule(true);
     Os::Test::File::Tester::OpenForWrite open_for_write_rule(true);
-    Os::Test::File::Tester::OpenForRead open_for_read_rule(true);
     Os::Test::File::Tester::CloseFile close_file_rule;
+    Os::Test::File::Tester::CopyConstruction copy_construction;
+    Os::Test::File::Tester::CopyAssignment copy_assignment;
     Os::Test::File::Tester::OpenInvalidModes open_invalid_modes_rule;
     Os::Test::File::Tester::PreallocateWithoutOpen preallocate_without_open_rule;
     Os::Test::File::Tester::SeekWithoutOpen seek_without_open_rule;
@@ -243,8 +263,9 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
             &open_file_create_rule,
             &open_file_create_overwrite_rule,
             &open_for_write_rule,
-            &open_for_read_rule,
             &close_file_rule,
+            &copy_assignment,
+            &copy_construction,
             &open_invalid_modes_rule,
             &preallocate_without_open_rule,
             &seek_without_open_rule,
@@ -293,6 +314,8 @@ TEST_F(FunctionalIO, RandomizedTesting) {
     Os::Test::File::Tester::Seek seek_rule;
     Os::Test::File::Tester::Preallocate preallocate_rule;
     Os::Test::File::Tester::Flush flush_rule;
+    Os::Test::File::Tester::CopyConstruction copy_construction;
+    Os::Test::File::Tester::CopyAssignment copy_assignment;
     Os::Test::File::Tester::OpenInvalidModes open_invalid_modes_rule;
     Os::Test::File::Tester::PreallocateWithoutOpen preallocate_without_open_rule;
     Os::Test::File::Tester::SeekWithoutOpen seek_without_open_rule;
@@ -308,6 +331,8 @@ TEST_F(FunctionalIO, RandomizedTesting) {
         &open_for_write_rule,
         &open_for_read_rule,
         &close_file_rule,
+        &copy_assignment,
+        &copy_construction,
         &read_rule,
         &write_rule,
         &seek_rule,

@@ -105,7 +105,8 @@ void Os::Test::File::Tester::assert_file_consistent() {
                 // Ensure the file pointer is consistent
                 FwSignedSizeType current_position = 0;
                 FwSignedSizeType shadow_position = 0;
-                ASSERT_EQ(this->m_file.position(current_position), Os::File::Status::OP_OK);
+                Os::File::Status status123 = this->m_file.position(current_position);
+                ASSERT_EQ(status123, Os::File::Status::OP_OK);
                 ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
 
                 ASSERT_EQ(current_position, shadow_position);
@@ -903,3 +904,57 @@ void Os::Test::File::Tester::WriteIllegalSize::action(Os::Test::File::Tester &st
             Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
+
+    
+
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  CopyAssignment
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::File::Tester::CopyAssignment::CopyAssignment() :
+    STest::Rule<Os::Test::File::Tester>("CopyAssignment") {}
+
+
+bool Os::Test::File::Tester::CopyAssignment::precondition(const Os::Test::File::Tester& state //!< The test state
+) {
+  return true;
+}
+
+
+void Os::Test::File::Tester::CopyAssignment::action(Os::Test::File::Tester& state //!< The test state
+) {
+    printf("--> Rule: %s \n", this->name);
+    state.assert_file_consistent();
+    Os::File temp = state.m_file;
+    state.assert_file_consistent(); // Prevents optimization
+    state.m_file = temp;
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  CopyConstruction
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::File::Tester::CopyConstruction::CopyConstruction() :
+    STest::Rule<Os::Test::File::Tester>("CopyConstruction") {}
+
+
+bool Os::Test::File::Tester::CopyConstruction::precondition(const Os::Test::File::Tester& state //!< The test state
+) {
+  return true;
+}
+
+
+void Os::Test::File::Tester::CopyConstruction::action(Os::Test::File::Tester& state //!< The test state
+) {
+    printf("--> Rule: %s \n", this->name);
+    state.assert_file_consistent();
+    Os::File temp(state.m_file);
+    state.assert_file_consistent(); // Interim check to ensure original file did not change
+    (void) new(&state.m_file)Os::File(temp); // Copy-construct overtop of the original file
+    state.assert_file_consistent();
+}
+

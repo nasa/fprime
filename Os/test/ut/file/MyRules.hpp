@@ -648,3 +648,60 @@ struct WriteIllegalSize : public AssertRule {
     );
 };
 
+// ------------------------------------------------------------------------------------------------------
+// Rule:  CopyAssignment
+//
+// ------------------------------------------------------------------------------------------------------
+struct CopyAssignment : public STest::Rule<Os::Test::File::Tester> {
+
+        // ----------------------------------------------------------------------
+        // Construction
+        // ----------------------------------------------------------------------
+
+        //! Constructor
+        CopyAssignment();
+
+        // ----------------------------------------------------------------------
+        // Public member functions
+        // ----------------------------------------------------------------------
+
+        //! Precondition
+        bool precondition(
+            const Os::Test::File::Tester& state //!< The test state
+        );
+
+        //! Action
+        void action(
+            Os::Test::File::Tester& state //!< The test state
+        );
+
+};
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  CopyConstruction
+//
+// ------------------------------------------------------------------------------------------------------
+struct CopyConstruction : public STest::Rule<Os::Test::File::Tester> {
+
+        // ----------------------------------------------------------------------
+        // Construction
+        // ----------------------------------------------------------------------
+
+        //! Constructor
+        CopyConstruction();
+
+        // ----------------------------------------------------------------------
+        // Public member functions
+        // ----------------------------------------------------------------------
+
+        //! Precondition
+        bool precondition(
+            const Os::Test::File::Tester& state //!< The test state
+        );
+
+        //! Action
+        void action(
+            Os::Test::File::Tester& state //!< The test state
+        );
+
+};

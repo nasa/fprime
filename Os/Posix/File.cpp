@@ -3,13 +3,9 @@
 // \brief posix implementation for Os::File
 // ======================================================================
 #include <cerrno>
-#include <new>
 #include <fcntl.h>
 #include <unistd.h>
 #include <limits>
-// remove these
-#include <cstdio>
-#include <cstring>
 
 #include <Os/File.hpp>
 #include <Os/Posix/File.hpp>
@@ -48,6 +44,12 @@ static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limit
               "Minimum value of FwSizeType larger than the minimum value of off_t. Configure a larger type.");
 static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limits<ssize_t>::min(),
               "Minimum value of FwSizeType larger than the minimum value of ssize_t. Configure a larger type.");
+
+//!\brief default copy constructor
+PosixFile::PosixFile(const PosixFile& other) {
+    // Must properly duplicate the file handle
+    this->m_handle.m_file_descriptor = ::dup(other.m_handle.m_file_descriptor);
+};
 
 PosixFile::Status PosixFile::open(const char* filepath, PosixFile::Mode requested_mode, PosixFile::OverwriteType overwrite) {
     PlatformIntType mode_flags = 0;
