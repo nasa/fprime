@@ -63,8 +63,7 @@ set(UT_SOURCE_FILES
 # Choose stub as the implementation of file as we'll link over it
 choose_fprime_implementation(Os/File Os_File_Stub)
 set(UT_MOD_DEPS
-    Os_File_Test_Stub_Impl
-    Os_Test_File_SyntheticFileSystem
+    Os_File_Test_Stub_Implementation
+    Os_File_Posix_Implementation
 )
 register_fprime_ut()
-target_compile_definitions("${FPRIME_CURRENT_MODULE}_ut_exe" PRIVATE "-DFW_HANDLE_MAX_SIZE=304")

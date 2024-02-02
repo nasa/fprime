@@ -17,7 +17,7 @@ namespace Os {
 FileInterface *getDefaultDelegate(U8 *aligned_placement_new_memory) {
     FW_ASSERT(aligned_placement_new_memory != nullptr);
     // Placement-new the file handle into the opaque file-handle storage
-    static_assert(sizeof(Os::Stub::File::StubFile) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
+    static_assert(sizeof(Os::Stub::File::StubFile) <= sizeof Os::File::m_handle_storage, "Handle size not large enough");
     static_assert((FW_HANDLE_ALIGNMENT % alignof(Os::Stub::File::StubFile)) == 0, "Handle alignment invalid");
     Os::Stub::File::StubFile *interface = new(aligned_placement_new_memory) Os::Stub::File::StubFile;
     return interface;

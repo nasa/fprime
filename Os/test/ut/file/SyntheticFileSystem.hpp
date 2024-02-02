@@ -43,6 +43,9 @@ class SyntheticFile : public FileInterface {
     //! \brief set the file system
     static void setFileSystem(std::unique_ptr<SyntheticFileSystem> new_file_system);
 
+    //! \brief remove a file by path
+    static void remove(const CHAR* path);
+
     /**
      * \brief open a given path with mode and overwrite
      *
@@ -121,7 +124,7 @@ class SyntheticFile : public FileInterface {
     //! \brief silt data handle
     FileHandle* getHandle() override;
 
-    std::shared_ptr<SyntheticFileData> m_data = nullptr;
+    std::shared_ptr<SyntheticFileData> m_data;
 
     static std::unique_ptr<SyntheticFileSystem> s_file_system;
 };
@@ -140,7 +143,7 @@ class SyntheticFileSystem {
      * \brief data returned by the open call
      */
     struct OpenData {
-        std::shared_ptr<SyntheticFileData> file = nullptr;
+        std::shared_ptr<SyntheticFileData> file;
         Os::File::Status status = Os::File::Status::OTHER_ERROR;
     };
 
@@ -158,6 +161,9 @@ class SyntheticFileSystem {
      * \return: true if exists, false otherwise
      */
     bool exists(const CHAR *path);
+
+    //! \brief remove file
+    void remove(const CHAR* path);
 
   private:
     /**

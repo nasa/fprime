@@ -2,6 +2,7 @@
 // \title Os/Posix/File.hpp
 // \brief posix implementation for Os::File, header and test definitions
 // ======================================================================
+#include <Os/File.hpp>
 #ifndef OS_POSIX_FILE_HPP
 #define OS_POSIX_FILE_HPP
 

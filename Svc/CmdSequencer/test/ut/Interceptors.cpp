@@ -15,14 +15,14 @@
 
 namespace Svc {
 
-
+    CmdSequencerTester::Interceptor* CmdSequencerTester::Interceptor::Override::s_current_interceptor = nullptr;
     CmdSequencerTester::Interceptor::Interceptor() :
             enabled(EnableType::NONE),
             errorType(ErrorType::NONE),
             waitCount(0),
             size(0),
             fileStatus(Os::File::OP_OK) {
-
+            CmdSequencerTester::Interceptor::Override::s_current_interceptor = this;
     }
 
     void CmdSequencerTester::Interceptor::enable(EnableType::t enableType) {
@@ -33,36 +33,38 @@ namespace Svc {
         this->enabled = EnableType::t::NONE;
     }
 
-    Os::FileInterface::Status CmdSequencerTester::Interceptor::open(const char *path, Mode mode, OverwriteType overwrite) {
-        if (this->enabled == EnableType::OPEN) {
-            return this->fileStatus;
+    Os::FileInterface::Status CmdSequencerTester::Interceptor::Override::open(const char *path, Mode mode, OverwriteType overwrite) {
+        if ((s_current_interceptor != nullptr) && (s_current_interceptor ->enabled == EnableType::t::OPEN)) {
+            return s_current_interceptor->fileStatus;
         }
-        return this->Os::Test::SyntheticFile::open(path, mode, overwrite);
+        return this->Os::Posix::File::PosixFile::open(path, mode, overwrite);
     }
 
-    Os::File::Status CmdSequencerTester::Interceptor::read(
+    Os::File::Status CmdSequencerTester::Interceptor::Override::read(
             U8 *buffer,
             FwSignedSizeType &requestSize,
             Os::File::WaitType waitType
     ) {
         (void) waitType;
-        Os::File::Status status = this->Os::Test::SyntheticFile::read(buffer, requestSize, waitType);
-        if ((this->enabled == EnableType::READ) && (this->errorType != ErrorType::NONE)) {
-            if (this->waitCount > 0) {
+        Os::File::Status status = this->Os::Posix::File::PosixFile::read(buffer, requestSize, waitType);
+        if (s_current_interceptor == nullptr) {
+            return status;
+        } else if ((s_current_interceptor->enabled == EnableType::READ) && (s_current_interceptor->errorType != ErrorType::NONE)) {
+            if (s_current_interceptor->waitCount > 0) {
                 // Not time to inject an error yet: decrement wait count
-                --this->waitCount;
+                --s_current_interceptor->waitCount;
             } else {
                 // Time to inject an error: check test scenario
-                switch (this->errorType) {
+                switch (s_current_interceptor->errorType) {
                     case ErrorType::READ:
-                        status = this->fileStatus;
+                        status = s_current_interceptor->fileStatus;
                         break;
                     case ErrorType::SIZE:
-                        requestSize = this->size;
+                        requestSize = s_current_interceptor->size;
                         status = Os::File::OP_OK;
                         break;
                     case ErrorType::DATA:
-                        memcpy(buffer, this->data, size);
+                        memcpy(buffer, s_current_interceptor->data, s_current_interceptor->size);
                         status = Os::File::OP_OK;
                         break;
                     default:

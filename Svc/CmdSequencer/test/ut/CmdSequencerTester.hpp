@@ -14,7 +14,7 @@
 
 #include "Fw/Types/MallocAllocator.hpp"
 #include "CmdSequencerGTestBase.hpp"
-#include "Os/test/ut/file/SyntheticFileSystem.hpp"
+#include "Os/Posix/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
 #include "Svc/CmdSequencer/formats/AMPCSSequence.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/SequenceFiles.hpp"
@@ -76,7 +76,7 @@ namespace Svc {
 
       };
   public:
-      class Interceptor : public Os::Test::SyntheticFile {
+      class Interceptor {
 
           public:
 
@@ -126,9 +126,16 @@ namespace Svc {
             //! Disable the interceptor
             void disable();
 
-            Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
+            class Override : public Os::Posix::File::PosixFile {
+                friend class Interceptor;
 
-            Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+                Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
+
+                Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+
+                //! Current interceptor
+                static Interceptor* s_current_interceptor;
+            };
           public:
 
             // ----------------------------------------------------------------------
@@ -400,7 +407,7 @@ namespace Svc {
       Fw::MallocAllocator mallocator;
 
 
-      //! Opaen/Read interceptor
+      //! Open/Read interceptor
       Interceptor interceptor;
   };
 

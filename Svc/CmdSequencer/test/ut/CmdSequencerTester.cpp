@@ -9,7 +9,6 @@
 // acknowledged.
 
 #include "Fw/Com/ComPacket.hpp"
-//#include "Os/Stubs/FileStubs.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
 #include "CmdSequencerTester.hpp"
@@ -27,9 +26,6 @@ namespace Svc {
       format(format),
       sequences(this->component)
   {
-    Os::Test::SyntheticFile::setFileSystem(std::unique_ptr<Os::Test::SyntheticFileSystem>(
-            new Os::Test::SyntheticFileSystem()
-    ));
     this->initComponents();
     this->connectPorts();
     this->setComponentSequenceFormat();
@@ -218,7 +214,7 @@ namespace Svc {
     this->interceptor.enable(Interceptor::EnableType::OPEN);
     // DOESNT_EXIST
     {
-      this->interceptor.fileStatus = Os::File::DOESNT_EXIST;
+      this->interceptor.fileStatus = Os::File::Status::DOESNT_EXIST;
       // Validate the file
       this->sendCmd_CS_VALIDATE(0, 0, fileName);
       this->clearAndDispatch();
@@ -826,9 +822,12 @@ namespace Os {
     FileInterface *getDefaultDelegate(U8 *aligned_placement_new_memory) {
         FW_ASSERT(aligned_placement_new_memory != nullptr);
         // Placement-new the file handle into the opaque file-handle storage
-        static_assert(sizeof(Svc::CmdSequencerTester::Interceptor) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
-        static_assert((FW_HANDLE_ALIGNMENT % alignof(Svc::CmdSequencerTester::Interceptor)) == 0, "Handle alignment invalid");
-        Svc::CmdSequencerTester::Interceptor *interface = new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor;
+        static_assert(sizeof(Svc::CmdSequencerTester::Interceptor::Override) <= sizeof Os::File::m_handle_storage,
+                "Handle size not large enough");
+        static_assert((FW_HANDLE_ALIGNMENT % alignof(Svc::CmdSequencerTester::Interceptor::Override)) == 0,
+                "Handle alignment invalid");
+        Svc::CmdSequencerTester::Interceptor::Override *interface =
+                new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor::Override;
         return interface;
     }
 }

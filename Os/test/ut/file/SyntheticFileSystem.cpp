@@ -54,10 +54,20 @@ bool SyntheticFileSystem::exists(const CHAR* char_path) {
     return this->m_filesystem.count(path) == 1;
 }
 
+void SyntheticFileSystem::remove(const CHAR* char_path) {
+    std::string path = char_path;
+    this->m_filesystem.erase(path);
+}
+
 std::unique_ptr<SyntheticFileSystem> SyntheticFile::s_file_system = std::unique_ptr<SyntheticFileSystem>(new SyntheticFileSystem());
 
 void SyntheticFile::setFileSystem(std::unique_ptr<SyntheticFileSystem> new_file_system) {
     s_file_system = std::move(new_file_system);
+}
+
+void SyntheticFile::remove(const CHAR* char_path) {
+    FW_ASSERT(s_file_system != nullptr);
+    s_file_system->remove(char_path);
 }
 
 File::Status SyntheticFile::open(const CHAR* char_path, const Os::File::Mode open_mode, const File::OverwriteType overwrite) {
