@@ -31,6 +31,8 @@ module Ref {
         separateChoice: Choice
         @ A pair of choices
         choicePair: ChoicePair
+        @ An array of choices defined as member array
+        choiceAsMemberArrat: [5] Choice
     }
 
     @ Set of floating points to emit
