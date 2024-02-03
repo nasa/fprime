@@ -138,7 +138,7 @@ namespace Svc {
       return;
     }
     const Os::File::Status status = this->file.write(
-        dataPacket.getDataPointer(),
+        dataPacket.getData(),
         byteOffset,
         dataSize
     );

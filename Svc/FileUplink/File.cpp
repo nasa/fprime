@@ -21,7 +21,7 @@ namespace Svc {
   {
     const U32 length = startPacket.getDestinationPath().getLength();
     char path[Fw::FilePacket::PathName::MAX_LENGTH + 1];
-    memcpy(path, startPacket.getDestinationPath().getValuePointer(), length);
+    memcpy(path, startPacket.getDestinationPath().getValue(), length);
     path[length] = 0;
     Fw::LogStringArg logStringArg(path);
     this->name = logStringArg;

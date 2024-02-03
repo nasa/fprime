@@ -74,8 +74,8 @@ namespace Fw {
               return this->m_length;
           };
 
-          //! Get the path name value pointer
-          const char* getValuePointer(void) const {
+          //! Get the path name value
+          const char* getValue(void) const {
               return this->m_value;
           };
 
@@ -248,8 +248,8 @@ namespace Fw {
               return this->m_dataSize;
           };
 
-          //! Get the data pointer
-          const U8* getDataPointer() const {
+          //! Get the data
+          const U8* getData() const {
               return this->m_data;
           };
         PRIVATE:

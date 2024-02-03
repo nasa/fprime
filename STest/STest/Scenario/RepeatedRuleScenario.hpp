@@ -31,7 +31,7 @@ namespace STest {
       RepeatedRuleScenario(
           Rule<State>& rule //!< The rule
       ) :
-        Scenario<State>(rule.getRuleNamePointer()),
+        Scenario<State>(rule.getRuleName()),
         rule(rule)
       {
 
