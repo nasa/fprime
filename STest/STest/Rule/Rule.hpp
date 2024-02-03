@@ -61,7 +61,7 @@ namespace STest {
       ) = 0;
 
       //! Get rule name
-      char const * getRuleName() const {
+      char const * getName() const {
         return this->m_name;
       }
 
