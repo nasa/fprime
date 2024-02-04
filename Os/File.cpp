@@ -29,6 +29,7 @@ File::~File() {
 File::File(const File& other) :
     m_mode(other.m_mode),
     m_path(other.m_path),
+    m_crc(other.m_crc),
     m_delegate(*getDelegate(&m_handle_storage[0], &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }
@@ -37,6 +38,7 @@ File& File::operator=(const File& other) {
     if (this != &other) {
         this->m_mode = other.m_mode;
         this->m_path = other.m_path;
+        this->m_crc = other.m_crc;
         this->m_delegate = *getDelegate(&m_handle_storage[0], &other.m_delegate);
     }
     return *this;
@@ -61,6 +63,8 @@ File::Status File::open(const CHAR* filepath, File::Mode requested_mode, File::O
         this->m_mode = requested_mode;
         this->m_path = filepath;
     }
+    // Reset any open CRC calculations
+    this->m_crc = File::INITIAL_CRC;
     return status;
 }
 
@@ -183,41 +187,44 @@ FileHandle* File::getHandle() {
     return this->m_delegate.getHandle();
 }
 
-File::CrcWorkingSet::CrcWorkingSet() : m_offset(0), m_crc(INITIAL_CRC), m_buffer(), m_eof(false) {}
+File::Status File::calculateCrc(U32 &crc) {
+    
+}
 
-File::Status File::updateCRC(Os::File::CrcWorkingSet& data, bool nice) {
-    FwSignedSizeType size = sizeof data.m_buffer;
+File::Status File::incrementalCrc(FwSignedSizeType &size) {
     File::Status status = File::Status::OP_OK;
-    FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
-
-    // Reopen file and seek in nice mode
-    if (nice && not this->isOpen()) {
-        status = this->open(this->m_path, this->m_mode);
-        if (File::Status::OP_OK == status) {
-            status = this->seek(data.m_offset, File::SeekType::ABSOLUTE);
+    FW_ASSERT(size > 0);
+    FW_ASSERT(size <= FW_FILE_CHUNK_SIZE);
+    if (OPEN_NO_MODE == this->m_mode) {
+        status = File::Status::NOT_OPENED;
+    } else if  (OPEN_READ != this->m_mode) {
+        status = File::Status::INVALID_MODE;
+    } else {
+        // Read data without waiting for additional data to be available
+        status = this->read(this->m_crc_buffer, size, File::WaitType::NO_WAIT);
+        if (OP_OK == status) {
+            for (FwSignedSizeType i = 0; i < size && i < FW_FILE_CHUNK_SIZE; i++) {
+                this->m_crc = update_crc_32(this->m_crc, static_cast<CHAR>(this->m_crc_buffer[i]));
+            }
         }
     }
-    // On good status, read data
-    if (File::Status::OP_OK == status) {
-        status = this->read(data.m_buffer, size, File::WaitType::NO_WAIT);
-        // Zero size read, end-of-file reached
-        if (File::Status::OP_OK == status && size == 0) {
-            data.m_eof = true;
-        }
-        // Successful read, update CRC
-        else if (File::Status::OP_OK == status) {
-            // Close file before heavy computations in nice mode
-            if (nice) {
-                this->close();
-            }
-            for (FwSignedSizeType i = 0; i < size; i++) {
-                data.m_crc = update_crc_32(data.m_crc, data.m_buffer[i]);
-            }
-            data.m_offset += size;
-        }
-    }
+    this->m_crc = File::INITIAL_CRC;
     return status;
 }
+
+File::Status File::finalizeCrc(U32 &crc) {
+    File::Status status = File::Status::INVALID_MODE;
+    crc = 0;
+    if (OPEN_NO_MODE == this->m_mode) {
+        status = File::Status::NOT_OPENED;
+    } else if  (OPEN_READ == this->m_mode) {
+        crc = this->m_crc;
+        status = File::Status::OP_OK;
+    }
+    this->m_crc = File::INITIAL_CRC;
+    return status;
+}
+
 
 
 File::Status File::calculateCRC32(U32 &crc, bool nice) {

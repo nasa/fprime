@@ -419,47 +419,73 @@ namespace Os {
         FileHandle* getHandle() override;
 
         /**
-         * \brief calculate the CRC32 of this file
+         * \brief calculate the CRC32 of the entire file
          *
-         * Calculates the CRC32 of the file's contents. If `nice` is true, the file will be closed during the
-         * computation of the CRC and reopened afterwards. The CRC will be calculated in chunk sizes of
-         * FW_FILE_CHUNK_SIZE. The `crc` parameter will be updated to contain the CRC or 0 on failure. Status will
-         * represent failure conditions.
+         * Calculates the CRC32 of the file's contents. The `crc` parameter will be updated to contain the CRC or 0 on
+         * failure. Status will represent failure conditions. This call will be decomposed into calculations on
+         * sections of the file `FW_FILE_CHUNK_SIZE` bytes long.
          *
+         * This function requires that the file already be opened for "READ" mode.
+         *
+         * On error crc will be set to 0.
+         *
+         * This function is equivalent to the following pseudo-code:
+         *
+         * ```
+         * U32 crc;
+         * do {
+         *     size = FW_FILE_CHUNK_SIZE;
+         *     m_file.incrementalCrc(size);
+         * while (size == FW_FILE_CHUNK_SIZE);
+         * m_file.finalize(crc);
+         * ```
          * \param crc: U32 bit value to fill with CRC
-         * \param nice: true to use nice, less impactful file system usage by closing the file, false otherwise
          * \return OP_OK on success otherwise error status
          */
-        Status calculateCRC32(U32 &crc, bool nice = true); //!< calculates the CRC32 of the file
+        Status calculateCrc(U32& crc);
+
+        /**
+         * \brief calculate the CRC32 of the next section of data
+         *
+         * Starting at the current file pointer, this will add `size` bytes of data to the currently calculated CRC.
+         * Call `finalizeCrc` to retrieve the CRC or `calculateCrc` to perform a CRC on the entire file. This call will
+         * not block waiting for data on the underlying read, nor will it reset the file position pointer. On error,
+         * the current CRC results should be discarded by reopening the file or calling `finalizeCrc` and
+         * discarding its result. `size` will be updated with the `size` actually read and used in the CRC calculation.
+         *
+         * This function requires that the file already be opened for "READ" mode.
+         *
+         * It is illegal for size to be less than or equal to 0 or greater than FW_FILE_CHUNK_SIZE.
+         *
+         * \param size: size of data to read for CRC
+         * \return: status of the CRC calculation
+         */
+        Status incrementalCrc(FwSignedSizeType& size);
+
+        /**
+         * \brief finalize and retrieve the CRC value
+         *
+         * Finalizes the CRC computation and returns the CRC value. The `crc` value will be modified to contain the
+         * crc or 0 on error. Note: this will reset any active CRC calculation and effectively re-initializes any
+         * `incrementalCrc` calculation.
+         *
+         * On error crc will be set to 0.
+         *
+         * \param crc: value to fill
+         * \return status of the CRC calculation
+         */
+        Status finalizeCrc(U32& crc);
+
       private:
-        static const U32 INITIAL_CRC = 0xFFFFFFFF;
-        /**
-         * Working set for CRC calculations.
-         */
-        struct CrcWorkingSet {
-            FwSignedSizeType m_offset; //!< File offset tracking CRC calculation
-            U32 m_crc; //!< CRC value currently calculated
-            U8 m_buffer[FW_FILE_CHUNK_SIZE];
-            bool m_eof; //!< End-of-file reached
-            //! Constructor initializing CRC to 0xFFFFFFFF
-            CrcWorkingSet();
-        };
-        /**
-         * \brief Updates the CRC data by reading a chunk of data
-         *
-         * Helper function to perform CRC on single chunk of data. Expected to be called within loop until data.eof
-         * reads true. Can perform nice calculations by closing and reopening the file to avoid holding file while the
-         * CRC loop is performed.
-         *
-         * \param data: CrcWorkingSet data storing working set data
-         * \param nice: true for less intrusive "nice" calculations, false otherwise
-         * \return OP_OK on success otherwise error status
-         */
-        Status updateCRC(CrcWorkingSet& data, bool nice);
+
 
       PRIVATE:
+        static const U32 INITIAL_CRC = 0xFFFFFFFF; //!< Initial value for CRC calculation
         Mode m_mode = Mode::OPEN_NO_MODE; //!< Stores mode for error checking
         const CHAR* m_path = nullptr; //!< Path last opened
+
+        U32 m_crc = File::INITIAL_CRC; //!< Current CRC calculation
+        U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];
 
         /**
          * This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
