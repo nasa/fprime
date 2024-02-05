@@ -188,12 +188,26 @@ FileHandle* File::getHandle() {
 }
 
 File::Status File::calculateCrc(U32 &crc) {
-    
+    File::Status status = File::Status::OP_OK;
+    FwSignedSizeType size = FW_FILE_CHUNK_SIZE;
+    crc = 0;
+    for (FwSizeType i = 0; i < std::numeric_limits<FwSizeType>::max(); i++) {
+        status = this->incrementalCrc(size);
+        // Break on eof or error
+        if ((size != FW_FILE_CHUNK_SIZE) || (status != File::OP_OK)) {
+            break;
+        }
+    }
+    // When successful, finalize the CRC
+    if (status == File::OP_OK) {
+        status = this->finalizeCrc(crc);
+    }
+    return status;
 }
 
 File::Status File::incrementalCrc(FwSignedSizeType &size) {
     File::Status status = File::Status::OP_OK;
-    FW_ASSERT(size > 0);
+    FW_ASSERT(size >= 0);
     FW_ASSERT(size <= FW_FILE_CHUNK_SIZE);
     if (OPEN_NO_MODE == this->m_mode) {
         status = File::Status::NOT_OPENED;
@@ -208,53 +222,13 @@ File::Status File::incrementalCrc(FwSignedSizeType &size) {
             }
         }
     }
-    this->m_crc = File::INITIAL_CRC;
     return status;
 }
 
 File::Status File::finalizeCrc(U32 &crc) {
-    File::Status status = File::Status::INVALID_MODE;
-    crc = 0;
-    if (OPEN_NO_MODE == this->m_mode) {
-        status = File::Status::NOT_OPENED;
-    } else if  (OPEN_READ == this->m_mode) {
-        crc = this->m_crc;
-        status = File::Status::OP_OK;
-    }
-    this->m_crc = File::INITIAL_CRC;
-    return status;
-}
-
-
-
-File::Status File::calculateCRC32(U32 &crc, bool nice) {
-    // Make sure file is opened correctly
-    if (OPEN_NO_MODE == this->m_mode) {
-        crc = 0;
-        return NOT_OPENED;
-    } else if (OPEN_READ != this->m_mode) {
-        crc = 0;
-        return INVALID_MODE;
-    }
-    FW_ASSERT(this->m_path != nullptr);
-    File::CrcWorkingSet crc_data;
     File::Status status = File::Status::OP_OK;
-    for (FwSignedSizeType i = 0; i < std::numeric_limits<FwSignedSizeType>::max(); i++) {
-        status = File::updateCRC(crc_data, nice);
-        // End loop on bad status or end-of-file
-        if (File::Status::OP_OK != status || crc_data.m_eof) {
-            break;
-        }
-    }
-    // Check if the whole file was read
-    if (crc_data.m_eof) {
-        crc = crc_data.m_crc;
-    }
-    // Correct for the condition when we had valid read but did not reach end of file
-    else if (File::Status::OP_OK == status) {
-        crc = 0;
-        status = File::Status::OTHER_ERROR;
-    }
+    crc = this->m_crc;
+    this->m_crc = File::INITIAL_CRC;
     return status;
 }
 } // Os

@@ -44,6 +44,7 @@ if (BUILD_TESTING)
     set(UT_MOD_DEPS
         Os
         Os_Test_File_SyntheticFileSystem
+        Os_Models
         STest
     )
     choose_fprime_implementation(Os/File Os_File_Test_Stub)

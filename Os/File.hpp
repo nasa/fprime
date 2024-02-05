@@ -39,6 +39,7 @@ namespace Os {
                 INVALID_MODE, //!< Mode for file access is invalid for current operation
                 INVALID_ARGUMENT, //!< Invalid argument passed in
                 OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
+                MAX_STATUS //!< Maximum value of status
             };
 
             enum OverwriteType {

@@ -5,7 +5,13 @@
 
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
-
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+#include <Utils/Hash/libcrc/lib_crc.h> // borrow CRC
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 // For testing, limit files to 32K
 const FwSignedSizeType FILE_DATA_MAXIMUM = 32 * 1024;
@@ -15,6 +21,7 @@ Os::File::Status Os::Test::File::Tester::shadow_open(const std::string &path, Os
     if (Os::File::Status::OP_OK == status) {
         this->m_current_path = path;
         this->m_mode = open_mode;
+        this->m_independent_crc = Os::File::INITIAL_CRC;
     } else {
         this->m_current_path.clear();
         this->m_mode = Os::File::Mode::OPEN_NO_MODE;
@@ -42,7 +49,10 @@ std::vector<U8> Os::Test::File::Tester::shadow_read(FwSignedSizeType size) {
 void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
     FwSignedSizeType size = static_cast<FwSignedSizeType>(write_data.size());
     FwSignedSizeType original_size = size;
-    Os::File::Status status = m_shadow.write(write_data.data(), size, Os::File::WaitType::WAIT);
+    Os::File::Status status = Os::File::OP_OK;
+    if (write_data.data() != nullptr) {
+        status = m_shadow.write(write_data.data(), size, Os::File::WaitType::WAIT);
+    }
     ASSERT_EQ(status, Os::File::Status::OP_OK);
     ASSERT_EQ(size, original_size);
 }
@@ -61,6 +71,37 @@ void Os::Test::File::Tester::shadow_flush() {
     Os::File::Status status = m_shadow.flush();
     ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
+
+void Os::Test::File::Tester::shadow_crc(U32& crc) {
+    crc = this->m_independent_crc;
+    SyntheticFileData data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
+
+    // Calculate CRC on full file starting at m_pointer
+    for (FwSizeType i = data.m_pointer; i < data.m_data.size(); i++) {
+        crc = update_crc_32(crc, static_cast<char>(data.m_data.at(i)));
+    }
+    // Update tracking variables
+    this->m_independent_crc = Os::File::INITIAL_CRC;
+    this->m_shadow.seek(data.m_data.size(), Os::File::SeekType::ABSOLUTE);
+}
+
+void Os::Test::File::Tester::shadow_partial_crc(FwSignedSizeType& size) {
+    SyntheticFileData data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
+
+    // Calculate CRC on full file starting at m_pointer
+    const FwSizeType bound = FW_MIN(static_cast<FwSizeType>(data.m_pointer) + size, data.m_data.size());
+    size = FW_MAX(0, static_cast<FwSignedSizeType>(bound - data.m_pointer));
+    for (FwSizeType i = data.m_pointer; i < bound; i++) {
+        this->m_independent_crc = update_crc_32(this->m_independent_crc, static_cast<char>(data.m_data.at(i)));
+        this->m_shadow.seek(1, Os::File::SeekType::RELATIVE);
+    }
+}
+
+void Os::Test::File::Tester::shadow_finalize(U32& crc) {
+    crc = this->m_independent_crc;
+    this->m_independent_crc = Os::File::INITIAL_CRC;
+}
+
 
 Os::Test::File::Tester::FileState Os::Test::File::Tester::current_file_state() {
     Os::Test::File::Tester::FileState state;
@@ -105,8 +146,7 @@ void Os::Test::File::Tester::assert_file_consistent() {
                 // Ensure the file pointer is consistent
                 FwSignedSizeType current_position = 0;
                 FwSignedSizeType shadow_position = 0;
-                Os::File::Status status123 = this->m_file.position(current_position);
-                ASSERT_EQ(status123, Os::File::Status::OP_OK);
+                ASSERT_EQ(this->m_file.position(current_position), Os::File::Status::OP_OK);
                 ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
 
                 ASSERT_EQ(current_position, shadow_position);
@@ -495,7 +535,9 @@ void Os::Test::File::Tester::Flush::action(
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
     Os::File::Status status = state.m_file.flush();
-    ASSERT_EQ(Os::File::Status::OP_OK, status);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+    state.shadow_flush();
+
     // Ensure no change in size or pointer
     FileState final_file_state = state.current_file_state();
     ASSERT_EQ(final_file_state.size, original_file_state.size);
@@ -905,9 +947,6 @@ void Os::Test::File::Tester::WriteIllegalSize::action(Os::Test::File::Tester &st
     state.assert_file_consistent();
 }
 
-    
-
-
 // ------------------------------------------------------------------------------------------------------
 // Rule:  CopyAssignment
 //
@@ -955,6 +994,160 @@ void Os::Test::File::Tester::CopyConstruction::action(Os::Test::File::Tester& st
     Os::File temp(state.m_file);
     state.assert_file_consistent(); // Interim check to ensure original file did not change
     (void) new(&state.m_file)Os::File(temp); // Copy-construct overtop of the original file
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  FullCrc
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::File::Tester::FullCrc::FullCrc() :
+    STest::Rule<Os::Test::File::Tester>("FullCrc") {}
+
+bool Os::Test::File::Tester::FullCrc::precondition(
+        const Os::Test::File::Tester& state //!< The test state
+) {
+    return state.m_mode == Os::File::Mode::OPEN_READ;
+}
+
+
+void Os::Test::File::Tester::FullCrc::action(
+        Os::Test::File::Tester& state //!< The test state
+) {
+    U32 crc = 1;
+    U32 shadow_crc = 2;
+    printf("--> Rule: %s \n", this->name);
+    state.assert_file_consistent();
+    Os::File::Status  status = state.m_file.calculateCrc(crc);
+    state.shadow_crc(shadow_crc);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+    ASSERT_EQ(crc, shadow_crc);
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  IncrementalCrc
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::File::Tester::IncrementalCrc::IncrementalCrc() :
+    STest::Rule<Os::Test::File::Tester>("IncrementalCrc") {}
+
+
+bool Os::Test::File::Tester::IncrementalCrc::precondition(
+        const Os::Test::File::Tester& state //!< The test state
+) {
+    return state.m_mode == Os::File::Mode::OPEN_READ;
+}
+
+
+void Os::Test::File::Tester::IncrementalCrc::action(
+        Os::Test::File::Tester& state //!< The test state
+){
+    printf("--> Rule: %s \n", this->name);
+    state.assert_file_consistent();
+    FwSignedSizeType size_desired = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FW_FILE_CHUNK_SIZE));
+    FwSignedSizeType shadow_size = size_desired;
+    Os::File::Status  status = state.m_file.incrementalCrc(size_desired);
+    state.shadow_partial_crc(shadow_size);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+    ASSERT_EQ(size_desired, shadow_size);
+    ASSERT_EQ(state.m_file.m_crc, state.m_independent_crc);
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  FinalizeCrc
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::File::Tester::FinalizeCrc::FinalizeCrc() :
+    STest::Rule<Os::Test::File::Tester>("FinalizeCrc") {}
+
+bool Os::Test::File::Tester::FinalizeCrc::precondition(
+        const Os::Test::File::Tester& state //!< The test state
+) {
+    return true;
+}
+
+void Os::Test::File::Tester::FinalizeCrc::action(
+        Os::Test::File::Tester& state //!< The test state
+) {
+    U32 crc = 1;
+    U32 shadow_crc = 2;
+    printf("--> Rule: %s \n", this->name);
+    state.assert_file_consistent();
+    Os::File::Status  status = state.m_file.finalizeCrc(crc);
+    state.shadow_finalize(shadow_crc);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+    ASSERT_EQ(crc, shadow_crc);
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  FullCrcInvalidModes
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::File::Tester::FullCrcInvalidModes::FullCrcInvalidModes() :
+    STest::Rule<Os::Test::File::Tester>("FullCrcInvalidModes") {}
+
+
+bool Os::Test::File::Tester::FullCrcInvalidModes::precondition(
+        const Os::Test::File::Tester& state //!< The test state
+) {
+    return Os::File::Mode::OPEN_READ != state.m_mode;
+}
+
+void Os::Test::File::Tester::FullCrcInvalidModes::action(
+        Os::Test::File::Tester& state //!< The test state
+) {
+    printf("--> Rule: %s \n", this->name);
+    state.assert_file_consistent();
+    FileState original_file_state = state.current_file_state();
+    ASSERT_TRUE(Os::File::Mode::OPEN_READ != state.m_file.m_mode);
+    U32 crc = 1;
+    Os::File::Status status = state.m_file.calculateCrc(crc);
+    ASSERT_EQ(crc, 0);
+    state.assert_valid_mode_status(status);
+    // Ensure no change in size or pointer
+    FileState final_file_state = state.current_file_state();
+    ASSERT_EQ(final_file_state.size, original_file_state.size);
+    ASSERT_EQ(final_file_state.position, original_file_state.position);
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  IncrementalCrcInvalidModes
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::File::Tester::IncrementalCrcInvalidModes::IncrementalCrcInvalidModes() :
+    STest::Rule<Os::Test::File::Tester>("IncrementalCrcInvalidModes") {}
+
+
+bool Os::Test::File::Tester::IncrementalCrcInvalidModes::precondition(
+        const Os::Test::File::Tester& state //!< The test state
+) {
+    return Os::File::Mode::OPEN_READ != state.m_mode;;
+}
+
+
+void Os::Test::File::Tester::IncrementalCrcInvalidModes::action(
+        Os::Test::File::Tester& state //!< The test state
+) {
+    printf("--> Rule: %s \n", this->name);
+    state.assert_file_consistent();
+    FileState original_file_state = state.current_file_state();
+    ASSERT_TRUE(Os::File::Mode::OPEN_READ != state.m_file.m_mode);
+    FwSignedSizeType size = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, 1));
+    Os::File::Status status = state.m_file.incrementalCrc(size);
+    state.assert_valid_mode_status(status);
+    // Ensure no change in size or pointer
+    FileState final_file_state = state.current_file_state();
+    ASSERT_EQ(final_file_state.size, original_file_state.size);
+    ASSERT_EQ(final_file_state.position, original_file_state.position);
     state.assert_file_consistent();
 }
 

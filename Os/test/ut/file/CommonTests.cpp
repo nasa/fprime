@@ -213,6 +213,38 @@ TEST_F(FunctionalIO, WriteReadSeek) {
     seek_rule.apply(*tester);
 }
 
+// Ensure a write followed by a full crc produces valid results
+TEST_F(FunctionalIO, WriteFullCrc) {
+    Os::Test::File::Tester::OpenFileCreate open_rule(false);
+    Os::Test::File::Tester::Write write_rule;
+    Os::Test::File::Tester::CloseFile close_rule;
+    Os::Test::File::Tester::OpenForRead open_read;
+    Os::Test::File::Tester::FullCrc crc_rule;
+
+    open_rule.apply(*tester);
+    write_rule.apply(*tester);
+    close_rule.apply(*tester);
+    open_read.apply(*tester);
+    crc_rule.apply(*tester);
+}
+
+// Ensure a write followed by a partial crc produces valid results
+TEST_F(FunctionalIO, WritePartialCrc) {
+    Os::Test::File::Tester::OpenFileCreate open_rule(false);
+    Os::Test::File::Tester::Write write_rule;
+    Os::Test::File::Tester::CloseFile close_rule;
+    Os::Test::File::Tester::OpenForRead open_read;
+    Os::Test::File::Tester::IncrementalCrc crc_rule;
+    Os::Test::File::Tester::FinalizeCrc finalize_rule;
+
+    open_rule.apply(*tester);
+    write_rule.apply(*tester);
+    close_rule.apply(*tester);
+    open_read.apply(*tester);
+    crc_rule.apply(*tester);
+    finalize_rule.apply(*tester);
+}
+
 // Ensure a preallocate produces valid sizes
 TEST_F(FunctionalIO, Flush) {
     Os::Test::File::Tester::OpenFileCreate open_rule(false);
@@ -257,6 +289,8 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
     Os::Test::File::Tester::ReadIllegalSize read_illegal_size;
     Os::Test::File::Tester::WriteIllegalBuffer write_illegal_buffer;
     Os::Test::File::Tester::WriteIllegalSize write_illegal_size;
+    Os::Test::File::Tester::IncrementalCrcInvalidModes incremental_invalid_mode_rule;
+    Os::Test::File::Tester::FullCrcInvalidModes full_invalid_mode_rule;
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::File::Tester>* rules[] = {
@@ -280,7 +314,9 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
             &read_illegal_buffer,
             &read_illegal_size,
             &write_illegal_buffer,
-            &write_illegal_size
+            &write_illegal_size,
+            &incremental_invalid_mode_rule,
+            &full_invalid_mode_rule
     };
 
     // Take the rules and place them into a random scenario
@@ -316,6 +352,9 @@ TEST_F(FunctionalIO, RandomizedTesting) {
     Os::Test::File::Tester::Flush flush_rule;
     Os::Test::File::Tester::CopyConstruction copy_construction;
     Os::Test::File::Tester::CopyAssignment copy_assignment;
+    Os::Test::File::Tester::IncrementalCrc incremental_crc_rule;
+    Os::Test::File::Tester::FinalizeCrc finalize_crc_rule;
+    Os::Test::File::Tester::FullCrc full_crc_rule;
     Os::Test::File::Tester::OpenInvalidModes open_invalid_modes_rule;
     Os::Test::File::Tester::PreallocateWithoutOpen preallocate_without_open_rule;
     Os::Test::File::Tester::SeekWithoutOpen seek_without_open_rule;
@@ -323,6 +362,9 @@ TEST_F(FunctionalIO, RandomizedTesting) {
     Os::Test::File::Tester::FlushInvalidModes flush_invalid_modes_rule;
     Os::Test::File::Tester::ReadInvalidModes read_invalid_modes_rule;
     Os::Test::File::Tester::WriteInvalidModes write_invalid_modes_rule;
+    Os::Test::File::Tester::IncrementalCrcInvalidModes incremental_invalid_mode_rule;
+    Os::Test::File::Tester::FullCrcInvalidModes full_invalid_mode_rule;
+
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::File::Tester>* rules[] = {
@@ -338,6 +380,9 @@ TEST_F(FunctionalIO, RandomizedTesting) {
         &seek_rule,
         &preallocate_rule,
         &flush_rule,
+        &incremental_crc_rule,
+        &finalize_crc_rule,
+        &full_crc_rule,
         &open_invalid_modes_rule,
         &preallocate_without_open_rule,
         &seek_without_open_rule,
@@ -345,6 +390,8 @@ TEST_F(FunctionalIO, RandomizedTesting) {
         &flush_invalid_modes_rule,
         &read_invalid_modes_rule,
         &write_invalid_modes_rule,
+        &incremental_invalid_mode_rule,
+        &full_invalid_mode_rule
     };
 
     // Take the rules and place them into a random scenario
@@ -364,6 +411,23 @@ TEST_F(FunctionalIO, RandomizedTesting) {
     const U32 numSteps = bounded.run(*tester);
     printf("Ran %u steps.\n", numSteps);
 }
+
+// Ensure that Os::File properly refuses fullCrc when not in write mode
+TEST_F(Functionality, FullCrcInvalidMode) {
+    Os::Test::File::Tester::OpenFileCreate open_rule(false);
+    Os::Test::File::Tester::FullCrcInvalidModes rule;
+    open_rule.apply(*tester);
+    rule.apply(*tester);
+}
+
+// Ensure that Os::File properly refuses incrementalCrc when not in write mode
+TEST_F(Functionality, IncrementalCrcInvalidMode) {
+    Os::Test::File::Tester::OpenFileCreate open_rule(false);
+    Os::Test::File::Tester::IncrementalCrcInvalidModes rule;
+    open_rule.apply(*tester);
+    rule.apply(*tester);
+}
+
 
 // Ensure open prevents nullptr as path
 TEST_F(InvalidArguments, OpenBadPath) {

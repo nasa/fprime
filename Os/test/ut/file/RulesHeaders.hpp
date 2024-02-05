@@ -94,6 +94,24 @@ struct Tester {
     void shadow_flush();
 
     /**
+     * Perform the "full crc" action on the shadow state.
+     * \param crc: output for CRC value
+     */
+    void shadow_crc(U32& crc);
+
+    /**
+     * Perform the "incremental crc" action on the shadow state.
+     * \param crc: output for CRC value
+     */
+    void shadow_partial_crc(FwSignedSizeType& size);
+
+    /**
+     * Perform the "crc finalize" action on the shadow state.
+     * \param crc: output for CRC value
+     */
+    void shadow_finalize(U32& crc);
+
+    /**
      * Detect current state of the file. Note: for files that are known, but unopened this will open the file as read
      * detect the state, and then close it again.
      * @return file state for the test
@@ -147,6 +165,8 @@ struct Tester {
 
     //! Independent tracking of mode
     Os::File::Mode m_mode = Os::File::Mode::OPEN_NO_MODE;
+
+    U32 m_independent_crc = 0;
 
 // Do NOT alter, adds rules to Tester as inner classes
 #include "MyRules.hpp"
