@@ -32,7 +32,7 @@ module Ref {
         @ A pair of choices
         choicePair: ChoicePair
         @ An array of choices defined as member array
-        choiceAsMemberArrat: [5] Choice
+        choiceAsMemberArrat: [2] U8
     }
 
     @ Set of floating points to emit
