@@ -166,7 +166,7 @@ struct Tester {
     //! Independent tracking of mode
     Os::File::Mode m_mode = Os::File::Mode::OPEN_NO_MODE;
 
-    U32 m_independent_crc = 0;
+    U32 m_independent_crc = Os::File::INITIAL_CRC;
 
 // Do NOT alter, adds rules to Tester as inner classes
 #include "MyRules.hpp"

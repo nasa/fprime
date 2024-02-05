@@ -10,8 +10,9 @@
 #define OS_MODELS_MODELS_HPP
 
 // Check consistency of every constant in the Os::File::Status enum
-static_assert(Os::File::Status::MAX_STATUS == Os::FileStatus::NUM_CONSTANTS,
-        "File status and FPP shadow enum have inconsistent number of values");
+static_assert(static_cast<FwIndexType>(Os::File::Status::MAX_STATUS) ==
+              static_cast<FwIndexType>(Os::FileStatus::NUM_CONSTANTS),
+              "File status and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::OP_OK) == Os::FileStatus::T::OP_OK,
               "File status and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::DOESNT_EXIST) == Os::FileStatus::T::DOESNT_EXIST,
@@ -36,7 +37,8 @@ static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::OTHER_ERROR) == O
               "File status and FPP shadow enum do not match");
 
 // Check consistency of every constant in the Os::File::Mode enum
-static_assert(Os::File::Mode::MAX_OPEN_MODE == Os::FileMode::NUM_CONSTANTS,
+static_assert(static_cast<FwIndexType>(Os::File::Mode::MAX_OPEN_MODE) ==
+              static_cast<FwIndexType>(Os::FileMode::NUM_CONSTANTS),
               "File mode and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_NO_MODE) == Os::FileMode::T::OPEN_NO_MODE,
               "File mode and FPP shadow enum do not match");
