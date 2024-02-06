@@ -1,6 +1,6 @@
 module FppTest {
 
-  @ A component for testing  data product code gen
+  @ A component for testing data product code gen
   active component DpTest {
 
     # ----------------------------------------------------------------------

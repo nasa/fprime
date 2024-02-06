@@ -46,6 +46,10 @@ void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE con
     this->dpRequest_Container2(CONTAINER_2_DATA_SIZE);
     // Request a buffer for Container 3
     this->dpRequest_Container3(CONTAINER_3_DATA_SIZE);
+    // Request a buffer for Container 4
+    this->dpRequest_Container4(CONTAINER_4_DATA_SIZE);
+    // Request a buffer for Container 5
+    this->dpRequest_Container5(CONTAINER_5_DATA_SIZE);
     // Get a buffer for Container 1
     {
         DpContainer container;
@@ -68,6 +72,22 @@ void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE con
         Fw::Success status = this->dpGet_Container3(CONTAINER_3_DATA_SIZE, container);
         // This one should fail
         FW_ASSERT(status == Fw::Success::FAILURE);
+    }
+    // Get a buffer for Container 4
+    {
+        DpContainer container;
+        Fw::Success status = this->dpGet_Container4(CONTAINER_4_DATA_SIZE, container);
+        FW_ASSERT(status == Fw::Success::SUCCESS);
+        // Check the container
+        this->checkContainer(container, ContainerId::Container4, CONTAINER_4_PACKET_SIZE);
+    }
+    // Get a buffer for Container 5
+    {
+        DpContainer container;
+        Fw::Success status = this->dpGet_Container5(CONTAINER_5_DATA_SIZE, container);
+        FW_ASSERT(status == Fw::Success::SUCCESS);
+        // Check the container
+        this->checkContainer(container, ContainerId::Container5, CONTAINER_5_PACKET_SIZE);
     }
 }
 

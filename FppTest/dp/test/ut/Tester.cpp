@@ -58,14 +58,18 @@ Tester::~Tester() {}
 void Tester::schedIn_OK() {
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_PRODUCT_REQUEST_SIZE(3);
+    ASSERT_PRODUCT_REQUEST_SIZE(5);
     ASSERT_PRODUCT_REQUEST(0, ID_BASE + DpTest::ContainerId::Container1, FwSizeType(DpTest::CONTAINER_1_PACKET_SIZE));
     ASSERT_PRODUCT_REQUEST(1, ID_BASE + DpTest::ContainerId::Container2, FwSizeType(DpTest::CONTAINER_2_PACKET_SIZE));
     ASSERT_PRODUCT_REQUEST(2, ID_BASE + DpTest::ContainerId::Container3, FwSizeType(DpTest::CONTAINER_3_PACKET_SIZE));
-    ASSERT_PRODUCT_GET_SIZE(3);
+    ASSERT_PRODUCT_REQUEST(3, ID_BASE + DpTest::ContainerId::Container4, FwSizeType(DpTest::CONTAINER_4_PACKET_SIZE));
+    ASSERT_PRODUCT_REQUEST(4, ID_BASE + DpTest::ContainerId::Container5, FwSizeType(DpTest::CONTAINER_5_PACKET_SIZE));
+    ASSERT_PRODUCT_GET_SIZE(5);
     ASSERT_PRODUCT_GET(0, ID_BASE + DpTest::ContainerId::Container1, FwSizeType(DpTest::CONTAINER_1_PACKET_SIZE));
     ASSERT_PRODUCT_GET(1, ID_BASE + DpTest::ContainerId::Container2, FwSizeType(DpTest::CONTAINER_2_PACKET_SIZE));
     ASSERT_PRODUCT_GET(2, ID_BASE + DpTest::ContainerId::Container3, FwSizeType(DpTest::CONTAINER_3_PACKET_SIZE));
+    ASSERT_PRODUCT_GET(3, ID_BASE + DpTest::ContainerId::Container4, FwSizeType(DpTest::CONTAINER_4_PACKET_SIZE));
+    ASSERT_PRODUCT_GET(4, ID_BASE + DpTest::ContainerId::Container5, FwSizeType(DpTest::CONTAINER_5_PACKET_SIZE));
 }
 
 void Tester::productRecvIn_Container1_SUCCESS() {
@@ -307,6 +311,16 @@ Fw::Success::T Tester::productGet_handler(FwDpIdType id, FwSizeType size, Fw::Bu
             break;
         case DpTest::ContainerId::Container3:
             // Make this one fail for testing purposes
+            break;
+        case DpTest::ContainerId::Container4:
+            FW_ASSERT(size == DpTest::CONTAINER_4_PACKET_SIZE);
+            buffer = this->container4Buffer;
+            status = Fw::Success::SUCCESS;
+            break;
+        case DpTest::ContainerId::Container5:
+            FW_ASSERT(size == DpTest::CONTAINER_5_PACKET_SIZE);
+            buffer = this->container5Buffer;
+            status = Fw::Success::SUCCESS;
             break;
         default:
             break;
