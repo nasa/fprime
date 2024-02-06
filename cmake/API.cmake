@@ -572,8 +572,13 @@ endmacro(register_fprime_build_autocoder)
 ####
 function(require_fprime_implementation IMPLEMENTATION)
     resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
+    # Create interface target if necessary
+    if (NOT TARGET "${IMPLEMENTATION}")
+        add_custom_target("${IMPLEMENTATION}" INTERFACE)
+    endif()
     append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
-    append_list_property("${FPRIME_CURRENT_MODULE}" GLOBAL PROPERTY "${IMPLEMENTATION}_REQUESTERS")
+    append_list_property("${FPRIME_CURRENT_MODULE}" TARGET "${IMPLEMENTATION}" PROPERTY "REQUESTERS")
+    get_property(VAR123 TARGET "${IMPLEMENTATION}" PROPERTY "REQUESTERS")
 endfunction()
 
 ####
@@ -589,7 +594,11 @@ endfunction()
 function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
     resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
-    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
+    # Create interface target if necessary
+    if (NOT TARGET "${IMPLEMENTATION}")
+        add_custom_target("${IMPLEMENTATION}" INTERFACE)
+    endif()
+    append_list_property("${IMPLEMENTOR}" TARGET "${IMPLEMENTATION}" PROPERTY "IMPLEMENTORS")
 endfunction()
 ####
 # Function `choose_fprime_implementation`:
@@ -614,9 +623,11 @@ function(choose_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     else()
         message(FATAL_ERROR "Cannot call 'choose_fprime_implementation' outside an fprime module or platform CMake file")
     endif()
+    # Create interface target if necessary
+    if (NOT TARGET "${IMPLEMENTATION}")
+        add_custom_target("${IMPLEMENTATION}" INTERFACE)
+    endif()
     set_property(GLOBAL PROPERTY "${IMPLEMENTATION}_${ACTIVE_MODULE}" "${IMPLEMENTOR}")
-    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
-    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
 endfunction()
 
 #### Documentation links
