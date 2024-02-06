@@ -38,9 +38,12 @@ DpContainer::DpContainer()
 Fw::SerializeStatus DpContainer::deserializeHeader() {
     FW_ASSERT(this->m_buffer.isValid());
     Fw::SerializeBufferBase& serializeRepr = this->m_buffer.getSerializeRepr();
+    // Set buffer length
+    Fw::SerializeStatus status = serializeRepr.setBuffLen(this->m_buffer.getSize());
     // Reset deserialization
-    serializeRepr.setBuffLen(this->m_buffer.getSize());
-    Fw::SerializeStatus status = serializeRepr.moveDeserToOffset(Header::PACKET_DESCRIPTOR_OFFSET);
+    if (status == Fw::FW_SERIALIZE_OK) {
+        status = serializeRepr.moveDeserToOffset(Header::PACKET_DESCRIPTOR_OFFSET);
+    }
     // Deserialize the packet type
     if (status == Fw::FW_SERIALIZE_OK) {
         FwPacketDescriptorType packetDescriptor;
