@@ -488,14 +488,12 @@ namespace Os {
         U32 m_crc = File::INITIAL_CRC; //!< Current CRC calculation
         U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];
 
-        /**
-         * This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
-         * opaque and thus normal allocation cannot be done. Instead we allow the implementor to store then handle in
-         * the byte-array here and set `handle` to that address for storage.
-         */
-        FileInterface& m_delegate; //!< Delegate for the real implementation
+        // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
+        // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
+        // the byte-array here and set `handle` to that address for storage.
+        //
         alignas(FW_HANDLE_ALIGNMENT) U8 m_handle_storage[FW_HANDLE_MAX_SIZE]; //!< Storage for aligned FileHandle data
-
+        FileInterface& m_delegate; //!< Delegate for the real implementation
     };
 
     /**

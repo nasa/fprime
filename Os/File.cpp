@@ -14,7 +14,7 @@ extern "C" {
 #endif // __cplusplus
 namespace Os {
 
-File::File() : m_delegate(*getDelegate(&m_handle_storage[0])) {
+File::File() : m_crc_buffer(), m_handle_storage(), m_delegate(*getDelegate(&m_handle_storage[0])) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -30,6 +30,8 @@ File::File(const File& other) :
     m_mode(other.m_mode),
     m_path(other.m_path),
     m_crc(other.m_crc),
+    m_crc_buffer(),
+    m_handle_storage(),
     m_delegate(*getDelegate(&m_handle_storage[0], &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }

@@ -53,6 +53,13 @@ PosixFile::PosixFile(const PosixFile& other) {
     this->m_handle.m_file_descriptor = ::dup(other.m_handle.m_file_descriptor);
 };
 
+PosixFile& PosixFile::operator=(const PosixFile& other) {
+    if (this != &other) {
+        this->m_handle.m_file_descriptor = ::dup(other.m_handle.m_file_descriptor);
+    }
+    return *this;
+}
+
 PosixFile::Status PosixFile::open(const char* filepath, PosixFile::Mode requested_mode, PosixFile::OverwriteType overwrite) {
     PlatformIntType mode_flags = 0;
     Status status = OP_OK;

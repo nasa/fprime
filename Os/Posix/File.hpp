@@ -35,11 +35,15 @@ class PosixFile : public FileInterface {
      */
     PosixFile() = default;
 
-    //\brief copy constructor
+    //! \brief copy constructor
     PosixFile(const PosixFile& other);
+
+    //! \brief assignment operator that copies the internal representation
+    PosixFile& operator=(const PosixFile& other);
+
     /**
      * \brief destructor
-    */
+     */
     ~PosixFile() override = default;
 
     // ------------------------------------
