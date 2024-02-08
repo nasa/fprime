@@ -25,6 +25,8 @@ namespace File {
 
 #if defined(S_IREAD) && defined(S_IWRITE)
 #define USER_FLAGS (S_IREAD | S_IWRITE)
+#elif defined(S_IRUSR) && defined(S_IWUSR)
+#define USER_FLAGS (S_IRUSR | S_IWUSR)
 #else
 #define USER_FLAGS (0)
 #endif
@@ -77,7 +79,6 @@ PosixFile::Status PosixFile::open(const char* filepath, PosixFile::Mode requeste
             FW_ASSERT(0, requested_mode);
             break;
     }
-
     PlatformIntType descriptor = ::open(filepath, mode_flags, USER_FLAGS);
     if (PosixFileHandle::INVALID_FILE_DESCRIPTOR == descriptor) {
         PlatformIntType errno_store = errno;
