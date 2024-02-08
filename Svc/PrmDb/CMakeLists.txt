@@ -19,10 +19,9 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbImplTester.cpp"
 )
-# Choose stub as the implementation of file as we'll link over it
-choose_fprime_implementation(Os/File Os_File_Stub)
+
 set(UT_MOD_DEPS
-    Os_File_Test_Stub_Implementation
+    Os_File_Test_Stub
 )
 register_fprime_ut()
 

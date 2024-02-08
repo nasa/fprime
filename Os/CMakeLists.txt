@@ -81,7 +81,7 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
       list(APPEND MOD_DEPS "-lrt")
   endif()
 endif()
-require_fprime_implementation(Os/File)
+
 
 # If baremetal scheduler is set, remove the previous task files and add in the Baremetal variant
 if (FPRIME_USE_BAREMETAL_SCHEDULER)
@@ -100,6 +100,7 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
 endif()
 register_fprime_module()
+require_fprime_implementation(Os/File)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES

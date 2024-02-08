@@ -69,6 +69,11 @@ function(build_setup_build_module MODULE SOURCES GENERATED DEPENDENCIES)
     # Handle executable items' need for determined package implementation choices
     is_target_library(IS_LIB "${MODULE}")
     if (NOT IS_LIB)
+        # Handle updates when the types have diverged
+        if (NOT MODULE STREQUAL "${FPRIME_CURRENT_MODULE}")
+            # Update implementation choices
+            remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${MODULE}")
+        endif()
         setup_executable_implementations("${MODULE}")
     endif ()
 
