@@ -74,15 +74,14 @@ void Os::Test::File::Tester::shadow_flush() {
 
 void Os::Test::File::Tester::shadow_crc(U32& crc) {
     crc = this->m_independent_crc;
-    SyntheticFileData data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
+    SyntheticFileData& data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
     // Calculate CRC on full file starting at m_pointer
-    for (FwSizeType i = data.m_pointer; i < data.m_data.size(); i++) {
+    for (FwSizeType i = data.m_pointer; i < data.m_data.size(); i++, this->m_shadow.seek(1, Os::File::SeekType::RELATIVE)) {
         crc = update_crc_32(crc, static_cast<char>(data.m_data.at(i)));
     }
     // Update tracking variables
     this->m_independent_crc = Os::File::INITIAL_CRC;
-    this->m_shadow.seek(data.m_data.size(), Os::File::SeekType::ABSOLUTE);
 }
 
 void Os::Test::File::Tester::shadow_partial_crc(FwSignedSizeType& size) {
