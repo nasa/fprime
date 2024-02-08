@@ -617,6 +617,7 @@ function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
     create_implementation_interface("${IMPLEMENTATION}")
     append_list_property("${IMPLEMENTOR}" TARGET "${IMPLEMENTATION}" PROPERTY "IMPLEMENTORS")
+    append_list_property("${ARGN}" TARGET "${IMPLEMENTOR}" PROPERTY "REQUIRED_SOURCE_FILES")
     add_dependencies("${IMPLEMENTATION}" "${IMPLEMENTOR}")
 endfunction()
 
