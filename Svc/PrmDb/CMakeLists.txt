@@ -23,5 +23,6 @@ set(UT_SOURCE_FILES
 set(UT_MOD_DEPS
     Os_File_Test_Stub
 )
+choose_fprime_implementation(Os/File Os/File/None)
 register_fprime_ut()
 
