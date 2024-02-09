@@ -318,9 +318,7 @@ Os::Test::File::Tester::OpenForWrite::OpenForWrite(const bool randomize_filename
                                                randomize_filename) {
     // Ensures that a random write mode will work correctly
     static_assert((Os::File::Mode::OPEN_SYNC_WRITE - 1) == Os::File::Mode::OPEN_WRITE, "Write modes not contiguous");
-    static_assert((Os::File::Mode::OPEN_SYNC_DIRECT_WRITE - 1) == Os::File::Mode::OPEN_SYNC_WRITE,
-                  "Write modes not contiguous");
-    static_assert((Os::File::Mode::OPEN_APPEND - 1) == Os::File::Mode::OPEN_SYNC_DIRECT_WRITE,
+    static_assert((Os::File::Mode::OPEN_APPEND - 1) == Os::File::Mode::OPEN_SYNC_WRITE,
                   "Write modes not contiguous");
 
 }

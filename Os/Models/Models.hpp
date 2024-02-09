@@ -50,9 +50,6 @@ static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_WRITE) == Os::Fi
               "File mode and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_SYNC_WRITE) == Os::FileMode::T::OPEN_SYNC_WRITE,
               "File mode and FPP shadow enum do not match");
-static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_SYNC_DIRECT_WRITE) ==
-              Os::FileMode::T::OPEN_SYNC_DIRECT_WRITE,
-              "File mode and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_APPEND) == Os::FileMode::T::OPEN_APPEND,
               "File mode and FPP shadow enum do not Mode");
 

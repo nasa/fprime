@@ -22,7 +22,6 @@ namespace Os {
                 OPEN_CREATE, //!< Open file for writing and truncates file if it exists, ie same flags as creat()
                 OPEN_WRITE, //!<  Open file for writing
                 OPEN_SYNC_WRITE, //!<  Open file for writing; writes don't return until data is on disk
-                OPEN_SYNC_DIRECT_WRITE, //!<  Open file for writing, bypassing all caching. Requires data alignment
                 OPEN_APPEND, //!< Open file for appending
                 MAX_OPEN_MODE //!< Maximum value of mode
             };

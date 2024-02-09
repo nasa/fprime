@@ -73,9 +73,6 @@ PosixFile::Status PosixFile::open(const char* filepath, PosixFile::Mode requeste
         case OPEN_SYNC_WRITE:
             mode_flags = O_WRONLY | O_CREAT | O_SYNC;
             break;
-        case OPEN_SYNC_DIRECT_WRITE:
-            mode_flags = O_WRONLY | O_CREAT | O_DSYNC | DIRECT_FLAGS;
-            break;
         case OPEN_CREATE:
             mode_flags = O_WRONLY | O_CREAT | O_TRUNC | ((overwrite == PosixFile::OverwriteType::OVERWRITE) ? 0 : O_EXCL);
             break;
