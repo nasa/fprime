@@ -132,12 +132,12 @@ $(document).ready(function(){initNavTree('_f_i_f_o_buffer_queue_8cpp_source.html
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    fifoQueue-&gt;data = data;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    fifoQueue-&gt;head = 0;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    fifoQueue-&gt;tail = 0;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    this-&gt;queue = fifoQueue;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    this-&gt;m_queue = fifoQueue;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  }</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keywordtype">void</span> BufferQueue::finalize() {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    FIFOQueue* fQueue = <span class="keyword">static_cast&lt;</span>FIFOQueue*<span class="keyword">&gt;</span>(this-&gt;queue);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    FIFOQueue* fQueue = <span class="keyword">static_cast&lt;</span>FIFOQueue*<span class="keyword">&gt;</span>(this-&gt;m_queue);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">nullptr</span> != fQueue)</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    {</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* data = fQueue-&gt;data;</div>
@@ -146,13 +146,13 @@ $(document).ready(function(){initNavTree('_f_i_f_o_buffer_queue_8cpp_source.html
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      }</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="keyword">delete</span> fQueue;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    this-&gt;queue = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    this-&gt;m_queue = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="keywordtype">bool</span> BufferQueue::enqueue(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* buffer, <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> size, <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> priority) {</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    (void) priority;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    FIFOQueue* fQueue = <span class="keyword">static_cast&lt;</span>FIFOQueue*<span class="keyword">&gt;</span>(this-&gt;queue);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    FIFOQueue* fQueue = <span class="keyword">static_cast&lt;</span>FIFOQueue*<span class="keyword">&gt;</span>(this-&gt;m_queue);</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* data = fQueue-&gt;data;</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="comment">// Store the buffer to the queue:</span></div>
@@ -167,7 +167,7 @@ $(document).ready(function(){initNavTree('_f_i_f_o_buffer_queue_8cpp_source.html
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="keywordtype">bool</span> BufferQueue::dequeue(<a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* buffer, <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&amp; size, <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;priority) {</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    (void) priority;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    FIFOQueue* fQueue = <span class="keyword">static_cast&lt;</span>FIFOQueue*<span class="keyword">&gt;</span>(this-&gt;queue);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    FIFOQueue* fQueue = <span class="keyword">static_cast&lt;</span>FIFOQueue*<span class="keyword">&gt;</span>(this-&gt;m_queue);</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* data = fQueue-&gt;data;</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="comment">// Get the buffer from the queue:</span></div>
