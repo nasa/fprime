@@ -16,7 +16,7 @@ namespace Os {
  * \param aligned_placement_new_memory: memory to placement-new into
  * \return FileInterface pointer result of placement new
  */
-FileInterface* getDelegate(U8* aligned_placement_new_memory, const FileInterface* to_copy) {
+FileInterface* FileInterface::getDelegate(U8* aligned_placement_new_memory, const FileInterface* to_copy) {
     FW_ASSERT(aligned_placement_new_memory != nullptr);
     const Os::Posix::File::PosixFile* copy_me = reinterpret_cast<const Os::Posix::File::PosixFile*>(to_copy);
     // Placement-new the file handle into the opaque file-handle storage

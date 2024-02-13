@@ -823,7 +823,7 @@ namespace Os {
 //! \param aligned_placement_new_memory: memory to fill
 //! \param to_copy: possible copy
 //! \return: new interceptor
-FileInterface *getDelegate(U8 *aligned_placement_new_memory, const FileInterface* to_copy) {
+FileInterface *FileInterface::getDelegate(U8 *aligned_placement_new_memory, const FileInterface* to_copy) {
     FW_ASSERT(aligned_placement_new_memory != nullptr);
     const Svc::CmdSequencerTester::Interceptor::Override* copy_me =
             reinterpret_cast<const Svc::CmdSequencerTester::Interceptor::Override*>(to_copy);
