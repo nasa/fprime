@@ -16,7 +16,7 @@ namespace Svc {
     fileOpenError()
   {
     this->m_fileDownlink->log_WARNING_HI_FileOpenError(
-        this->m_fileDownlink->m_file.sourceName
+        this->m_fileDownlink->m_file.getSourceName()
     );
     this->warning();
   }
@@ -25,8 +25,8 @@ namespace Svc {
     fileRead(const Os::File::Status status)
   {
     this->m_fileDownlink->log_WARNING_HI_FileReadError(
-        this->m_fileDownlink->m_file.sourceName,
-		status
+        this->m_fileDownlink->m_file.getSourceName(),
+		    status
     );
     this->warning();
   }

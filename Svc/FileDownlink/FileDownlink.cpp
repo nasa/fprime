@@ -133,7 +133,7 @@ namespace Svc {
         //If current timeout is too-high and we are waiting for a packet, issue a timeout
         if (this->m_curTimer >= this->m_timeout) {
           this->m_curTimer = 0;
-          this->log_WARNING_HI_DownlinkTimeout(this->m_file.sourceName, this->m_file.destName);
+          this->log_WARNING_HI_DownlinkTimeout(this->m_file.getSourceName(), this->m_file.getDestName());
           this->enterCooldown();
           this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
         } else { //Otherwise update the current counter
@@ -358,16 +358,16 @@ namespace Svc {
     }
 
 
-    if (startOffset >= this->m_file.size) {
+    if (startOffset >= this->m_file.getSize()) {
         this->enterCooldown();
-        this->log_WARNING_HI_DownlinkPartialFail(this->m_file.sourceName, this->m_file.destName, startOffset, this->m_file.size);
+        this->log_WARNING_HI_DownlinkPartialFail(this->m_file.getSourceName(), this->m_file.getDestName(), startOffset, this->m_file.getSize());
         sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_INVALID);
         return;
-    } else if (startOffset + length > this->m_file.size) {
+    } else if (startOffset + length > this->m_file.getSize()) {
         // If the amount to downlink is greater than the file size, emit a Warning and then allow
         // the file to be downlinked anyway
-        this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, this->m_file.size, this->m_file.sourceName, this->m_file.destName);
-        length = this->m_file.size - startOffset;
+        this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, this->m_file.getSize(), this->m_file.getSourceName(), this->m_file.getDestName());
+        length = this->m_file.getSize() - startOffset;
     }
 
     // Send file and switch to WAIT mode
@@ -381,12 +381,12 @@ namespace Svc {
 
     // zero length means read until end of file
     if (length > 0) {
-        this->log_ACTIVITY_HI_SendStarted(length, this->m_file.sourceName, this->m_file.destName);
+        this->log_ACTIVITY_HI_SendStarted(length, this->m_file.getSourceName(), this->m_file.getDestName());
         this->m_endOffset = startOffset + length;
     }
     else {
-        this->log_ACTIVITY_HI_SendStarted(this->m_file.size - startOffset, this->m_file.sourceName, this->m_file.destName);
-        this->m_endOffset = this->m_file.size;
+        this->log_ACTIVITY_HI_SendStarted(this->m_file.getSize() - startOffset, this->m_file.getSourceName(), this->m_file.getDestName());
+        this->m_endOffset = this->m_file.getSize();
     }
   }
 
@@ -409,12 +409,12 @@ namespace Svc {
       return status;
     }
 
-    const Fw::FilePacket::DataPacket dataPacket = {
-      { Fw::FilePacket::T_DATA, this->m_sequenceIndex },
+    Fw::FilePacket::DataPacket dataPacket;
+    dataPacket.initialize(
+      this->m_sequenceIndex,
       byteOffset,
       static_cast<U16>(dataSize),
-      buffer
-    };
+      buffer);
     ++this->m_sequenceIndex;
     Fw::FilePacket filePacket;
     filePacket.fromDataPacket(dataPacket);
@@ -430,9 +430,8 @@ namespace Svc {
     sendCancelPacket()
   {
     Fw::Buffer buffer;
-    const Fw::FilePacket::CancelPacket cancelPacket = {
-      { Fw::FilePacket::T_CANCEL, this->m_sequenceIndex }
-    };
+    Fw::FilePacket::CancelPacket cancelPacket;
+    cancelPacket.initialize(this->m_sequenceIndex);
 
     Fw::FilePacket filePacket;
     filePacket.fromCancelPacket(cancelPacket);
@@ -447,16 +446,11 @@ namespace Svc {
   void FileDownlink ::
     sendEndPacket()
   {
-    const Fw::FilePacket::Header header = {
-      Fw::FilePacket::T_END,
-      this->m_sequenceIndex
-    };
-    Fw::FilePacket::EndPacket endPacket;
-    endPacket.header = header;
-
     CFDP::Checksum checksum;
     this->m_file.getChecksum(checksum);
-    endPacket.setChecksum(checksum);
+
+    Fw::FilePacket::EndPacket endPacket;
+    endPacket.initialize(this->m_sequenceIndex, checksum);
 
     Fw::FilePacket filePacket;
     filePacket.fromEndPacket(endPacket);
@@ -469,9 +463,9 @@ namespace Svc {
   {
     Fw::FilePacket::StartPacket startPacket;
     startPacket.initialize(
-        this->m_file.size,
-        this->m_file.sourceName.toChar(),
-        this->m_file.destName.toChar()
+        this->m_file.getSize(),
+        this->m_file.getSourceName().toChar(),
+        this->m_file.getDestName().toChar()
     );
     Fw::FilePacket filePacket;
     filePacket.fromStartPacket(startPacket);
@@ -497,7 +491,7 @@ namespace Svc {
   void FileDownlink ::
     enterCooldown()
   {
-    this->m_file.osFile.close();
+    this->m_file.getOsFile().close();
     this->m_mode.set(Mode::COOLDOWN);
     this->m_lastCompletedType = Fw::FilePacket::T_NONE;
     this->m_curTimer = 0;
@@ -518,7 +512,7 @@ namespace Svc {
           //Send the next packet, or fail doing so
           const Os::File::Status status = this->sendDataPacket(this->m_byteOffset);
           if (status != Os::File::OP_OK) {
-              this->log_WARNING_HI_SendDataFail(this->m_file.sourceName, this->m_byteOffset);
+              this->log_WARNING_HI_SendDataFail(this->m_file.getSourceName(), this->m_byteOffset);
               this->enterCooldown();
               this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
               //Don't go to wait state
@@ -540,9 +534,9 @@ namespace Svc {
       //Complete command and switch to IDLE
       if (not cancel) {
           this->m_filesSent.fileSent();
-          this->log_ACTIVITY_HI_FileSent(this->m_file.sourceName, this->m_file.destName);
+          this->log_ACTIVITY_HI_FileSent(this->m_file.getSourceName(), this->m_file.getDestName());
       } else {
-          this->log_ACTIVITY_HI_DownlinkCanceled(this->m_file.sourceName, this->m_file.destName);
+          this->log_ACTIVITY_HI_DownlinkCanceled(this->m_file.getSourceName(), this->m_file.getDestName());
       }
       this->enterCooldown();
       sendResponse(SendFileStatus::STATUS_OK);
