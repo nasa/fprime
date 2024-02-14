@@ -161,7 +161,7 @@ void setupTopology(const TopologyState& state) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(state.hostname, state.port);
-        comm.startSocketTask(name, true, COMM_PRIORITY, Default::STACK_SIZE);
+        comm.start(name, true, COMM_PRIORITY, Default::STACK_SIZE);
     }
 }
 
@@ -197,8 +197,8 @@ void teardownTopology(const TopologyState& state) {
     freeThreads(state);
 
     // Other task clean-up.
-    comm.stopSocketTask();
-    (void)comm.joinSocketTask(nullptr);
+    comm.stop();
+    (void)comm.join();
 
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);
