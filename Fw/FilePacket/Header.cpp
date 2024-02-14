@@ -17,18 +17,18 @@ namespace Fw {
 
   void FilePacket::Header ::
     initialize(
-        const Type a_type,
-        const U32 a_sequenceIndex
+        const Type type,
+        const U32 sequenceIndex
     )
   {
-    this->type = a_type;
-    this->sequenceIndex = a_sequenceIndex;
+    this->m_type = type;
+    this->m_sequenceIndex = sequenceIndex;
   }
 
   U32 FilePacket::Header ::
     bufferSize() const
   {
-    return sizeof(U8) + sizeof(this->sequenceIndex);
+    return sizeof(U8) + sizeof(this->m_sequenceIndex);
   }
 
   SerializeStatus FilePacket::Header ::
@@ -42,9 +42,9 @@ namespace Fw {
     if (status != FW_SERIALIZE_OK) {
       return status;
     }
-    this->type = static_cast<Type>(new_type);
+    this->m_type = static_cast<Type>(new_type);
 
-    status = serialBuffer.deserialize(this->sequenceIndex);
+    status = serialBuffer.deserialize(this->m_sequenceIndex);
 
     return status;
 
@@ -54,14 +54,14 @@ namespace Fw {
     toSerialBuffer(SerialBuffer& serialBuffer) const
   {
 
-    const U8 type_casted = static_cast<U8>(this->type);
+    const U8 type_casted = static_cast<U8>(this->m_type);
     SerializeStatus status;
 
     status = serialBuffer.serialize(type_casted);
     if (status != FW_SERIALIZE_OK)
       return status;
 
-    status = serialBuffer.serialize(this->sequenceIndex);
+    status = serialBuffer.serialize(this->m_sequenceIndex);
     if (status != FW_SERIALIZE_OK)
       return status;
 

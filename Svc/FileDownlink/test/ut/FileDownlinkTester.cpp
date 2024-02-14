@@ -679,8 +679,8 @@ namespace Svc {
     Fw::FilePacket filePacket;
     validateFilePacket(buffer, filePacket);
     const Fw::FilePacket::Header& header = filePacket.asHeader();
-    ASSERT_EQ(0U, header.sequenceIndex);
-    ASSERT_EQ(Fw::FilePacket::T_START, header.type);
+    ASSERT_EQ(0U, header.m_sequenceIndex);
+    ASSERT_EQ(Fw::FilePacket::T_START, header.m_type);
   }
 
   void FileDownlinkTester ::
@@ -694,11 +694,11 @@ namespace Svc {
     Fw::FilePacket filePacket;
     validateFilePacket(buffer, filePacket);
     const Fw::FilePacket::Header& header = filePacket.asHeader();
-    ASSERT_EQ(sequenceIndex, header.sequenceIndex);
-    ASSERT_EQ(Fw::FilePacket::T_DATA, header.type);
+    ASSERT_EQ(sequenceIndex, header.m_sequenceIndex);
+    ASSERT_EQ(Fw::FilePacket::T_DATA, header.m_type);
     dataPacket = filePacket.asDataPacket();
-    ASSERT_EQ(byteOffset, dataPacket.byteOffset);
-    byteOffset += dataPacket.dataSize;
+    ASSERT_EQ(byteOffset, dataPacket.m_byteOffset);
+    byteOffset += dataPacket.m_dataSize;
   }
 
   void FileDownlinkTester ::
@@ -711,8 +711,8 @@ namespace Svc {
     Fw::FilePacket filePacket;
     validateFilePacket(buffer, filePacket);
     const Fw::FilePacket::Header& header = filePacket.asHeader();
-    ASSERT_EQ(sequenceIndex, header.sequenceIndex);
-    ASSERT_EQ(Fw::FilePacket::T_END, header.type);
+    ASSERT_EQ(sequenceIndex, header.m_sequenceIndex);
+    ASSERT_EQ(Fw::FilePacket::T_END, header.m_type);
     const Fw::FilePacket::EndPacket endPacket = filePacket.asEndPacket();
     CFDP::Checksum computedChecksum;
     endPacket.getChecksum(computedChecksum);
@@ -728,8 +728,8 @@ namespace Svc {
     Fw::FilePacket filePacket;
     validateFilePacket(buffer, filePacket);
     const Fw::FilePacket::Header& header = filePacket.asHeader();
-    ASSERT_EQ(sequenceIndex, header.sequenceIndex);
-    ASSERT_EQ(Fw::FilePacket::T_CANCEL, header.type);
+    ASSERT_EQ(sequenceIndex, header.m_sequenceIndex);
+    ASSERT_EQ(Fw::FilePacket::T_CANCEL, header.m_type);
   }
 
 }

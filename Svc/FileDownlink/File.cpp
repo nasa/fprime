@@ -26,11 +26,11 @@ namespace Svc {
 
     // Set source name
     Fw::LogStringArg sourceLogStringArg(sourceFileName);
-    this->sourceName = sourceLogStringArg;
+    this->m_sourceName = sourceLogStringArg;
 
     // Set dest name
     Fw::LogStringArg destLogStringArg(destFileName);
-    this->destName = destLogStringArg;
+    this->m_destName = destLogStringArg;
 
     // Set size
     FwSizeType file_size;
@@ -42,14 +42,14 @@ namespace Svc {
     if (static_cast<FwSizeType>(static_cast<U32>(file_size)) != file_size) {
         return Os::File::BAD_SIZE;
     }
-    this->size = static_cast<U32>(file_size);
+    this->m_size = static_cast<U32>(file_size);
 
     // Initialize checksum
     CFDP::Checksum checksum;
     this->m_checksum = checksum;
 
     // Open osFile for reading
-    return this->osFile.open(sourceFileName, Os::File::OPEN_READ);
+    return this->m_osFile.open(sourceFileName, Os::File::OPEN_READ);
 
   }
 
@@ -57,24 +57,24 @@ namespace Svc {
     read(
         U8 *const data,
         const U32 byteOffset,
-        const U32 a_size
+        const U32 size
     )
   {
 
     Os::File::Status status;
-    status = this->osFile.seek(byteOffset);
+    status = this->m_osFile.seek(byteOffset);
     if (status != Os::File::OP_OK)
       return status;
 
-    NATIVE_INT_TYPE intSize = a_size;
-    status = this->osFile.read(data, intSize);
+    NATIVE_INT_TYPE intSize = size;
+    status = this->m_osFile.read(data, intSize);
     if (status != Os::File::OP_OK)
       return status;
     // Force a bad size error when the U32 carrying size is bad
-    if (static_cast<U32>(intSize) != a_size) {
+    if (static_cast<U32>(intSize) != size) {
         return Os::File::BAD_SIZE;
     }
-    this->m_checksum.update(data, byteOffset, a_size);
+    this->m_checksum.update(data, byteOffset, size);
 
     return Os::File::OP_OK;
 
