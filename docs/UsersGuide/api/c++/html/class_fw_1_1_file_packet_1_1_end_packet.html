@@ -86,7 +86,6 @@ $(document).ready(function(){initNavTree('class_fw_1_1_file_packet_1_1_end_packe
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="class_fw_1_1_file_packet_1_1_end_packet-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -113,15 +112,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acb0d731a13559c003cbca1728409e27d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_packet_1_1_end_packet.html#acb0d731a13559c003cbca1728409e27d">toBuffer</a> (<a class="el" href="class_fw_1_1_buffer.html">Buffer</a> &amp;buffer) const</td></tr>
 <tr class="memdesc:acb0d731a13559c003cbca1728409e27d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert this <a class="el" href="class_fw_1_1_file_packet_1_1_end_packet.html" title="The type of an end packet.">EndPacket</a> to a <a class="el" href="class_fw_1_1_buffer.html">Buffer</a>.  <a href="class_fw_1_1_file_packet_1_1_end_packet.html#acb0d731a13559c003cbca1728409e27d">More...</a><br /></td></tr>
 <tr class="separator:acb0d731a13559c003cbca1728409e27d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8b3f64b50ca4d7636061e8a488f2085"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_fw_1_1_file_packet_1_1_header.html">FilePacket::Header</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_packet_1_1_end_packet.html#ac8b3f64b50ca4d7636061e8a488f2085">asHeader</a> () const</td></tr>
+<tr class="memdesc:ac8b3f64b50ca4d7636061e8a488f2085"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get this as a <a class="el" href="class_fw_1_1_file_packet_1_1_header.html" title="The type of a packet header.">Header</a>.  <a href="class_fw_1_1_file_packet_1_1_end_packet.html#ac8b3f64b50ca4d7636061e8a488f2085">More...</a><br /></td></tr>
+<tr class="separator:ac8b3f64b50ca4d7636061e8a488f2085"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9080f2d98a0335e05357b3b41519676"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_packet_1_1_end_packet.html#aa9080f2d98a0335e05357b3b41519676">initialize</a> (const U32 sequenceIndex, const <a class="el" href="class_c_f_d_p_1_1_checksum.html">CFDP::Checksum</a> &amp;checksum)</td></tr>
 <tr class="memdesc:aa9080f2d98a0335e05357b3b41519676"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize an end packet.  <a href="class_fw_1_1_file_packet_1_1_end_packet.html#aa9080f2d98a0335e05357b3b41519676">More...</a><br /></td></tr>
 <tr class="separator:aa9080f2d98a0335e05357b3b41519676"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:aa1122ebdf3a3206e59e66f91a46c8e2e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_file_packet_1_1_header.html">Header</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_packet_1_1_end_packet.html#aa1122ebdf3a3206e59e66f91a46c8e2e">header</a></td></tr>
-<tr class="memdesc:aa1122ebdf3a3206e59e66f91a46c8e2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The packet header.  <a href="class_fw_1_1_file_packet_1_1_end_packet.html#aa1122ebdf3a3206e59e66f91a46c8e2e">More...</a><br /></td></tr>
-<tr class="separator:aa1122ebdf3a3206e59e66f91a46c8e2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -131,8 +127,37 @@ Friends</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The type of an end packet. </p>
 
-<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00216">216</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00269">269</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac8b3f64b50ca4d7636061e8a488f2085"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8b3f64b50ca4d7636061e8a488f2085">&#9670;&nbsp;</a></span>asHeader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_fw_1_1_file_packet_1_1_header.html">FilePacket::Header</a>&amp; Fw::FilePacket::EndPacket::asHeader </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get this as a <a class="el" href="class_fw_1_1_file_packet_1_1_header.html" title="The type of a packet header.">Header</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00293">293</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a0b29929812c5f0914c2f08cb5be3a6fe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0b29929812c5f0914c2f08cb5be3a6fe">&#9670;&nbsp;</a></span>bufferSize()</h2>
 
@@ -280,26 +305,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00218">218</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="aa1122ebdf3a3206e59e66f91a46c8e2e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1122ebdf3a3206e59e66f91a46c8e2e">&#9670;&nbsp;</a></span>header</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_file_packet_1_1_header.html">Header</a> Fw::FilePacket::EndPacket::header</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>The packet header. </p>
-
-<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00223">223</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00271">271</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
 
 </div>
 </div>

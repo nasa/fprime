@@ -86,7 +86,6 @@ $(document).ready(function(){initNavTree('class_fw_1_1_file_packet_1_1_cancel_pa
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="class_fw_1_1_file_packet_1_1_cancel_packet-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -110,12 +109,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a23c47b8bda42e53f6f279a618ed3b272"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_packet_1_1_cancel_packet.html#a23c47b8bda42e53f6f279a618ed3b272">toBuffer</a> (<a class="el" href="class_fw_1_1_buffer.html">Buffer</a> &amp;buffer) const</td></tr>
 <tr class="memdesc:a23c47b8bda42e53f6f279a618ed3b272"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert this <a class="el" href="class_fw_1_1_file_packet_1_1_cancel_packet.html" title="The type of a cancel packet.">CancelPacket</a> to a <a class="el" href="class_fw_1_1_buffer.html">Buffer</a>.  <a href="class_fw_1_1_file_packet_1_1_cancel_packet.html#a23c47b8bda42e53f6f279a618ed3b272">More...</a><br /></td></tr>
 <tr class="separator:a23c47b8bda42e53f6f279a618ed3b272"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a60c14df30678b072c085b207e6b5da01"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_file_packet_1_1_header.html">Header</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_packet_1_1_cancel_packet.html#a60c14df30678b072c085b207e6b5da01">header</a></td></tr>
-<tr class="memdesc:a60c14df30678b072c085b207e6b5da01"><td class="mdescLeft">&#160;</td><td class="mdescRight">The packet header.  <a href="class_fw_1_1_file_packet_1_1_cancel_packet.html#a60c14df30678b072c085b207e6b5da01">More...</a><br /></td></tr>
-<tr class="separator:a60c14df30678b072c085b207e6b5da01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a391022124de09ec787dc237664f030bb"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_fw_1_1_file_packet_1_1_header.html">FilePacket::Header</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_packet_1_1_cancel_packet.html#a391022124de09ec787dc237664f030bb">asHeader</a> () const</td></tr>
+<tr class="memdesc:a391022124de09ec787dc237664f030bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get this as a <a class="el" href="class_fw_1_1_file_packet_1_1_header.html" title="The type of a packet header.">Header</a>.  <a href="class_fw_1_1_file_packet_1_1_cancel_packet.html#a391022124de09ec787dc237664f030bb">More...</a><br /></td></tr>
+<tr class="separator:a391022124de09ec787dc237664f030bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -125,8 +121,37 @@ Friends</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The type of a cancel packet. </p>
 
-<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00259">259</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00318">318</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a391022124de09ec787dc237664f030bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a391022124de09ec787dc237664f030bb">&#9670;&nbsp;</a></span>asHeader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_fw_1_1_file_packet_1_1_header.html">FilePacket::Header</a>&amp; Fw::FilePacket::CancelPacket::asHeader </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get this as a <a class="el" href="class_fw_1_1_file_packet_1_1_header.html" title="The type of a packet header.">Header</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00341">341</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a64c3e507a0de1b41d49dfecf524fa571"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a64c3e507a0de1b41d49dfecf524fa571">&#9670;&nbsp;</a></span>bufferSize()</h2>
 
@@ -219,26 +244,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00261">261</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a60c14df30678b072c085b207e6b5da01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60c14df30678b072c085b207e6b5da01">&#9670;&nbsp;</a></span>header</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_file_packet_1_1_header.html">Header</a> Fw::FilePacket::CancelPacket::header</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>The packet header. </p>
-
-<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00266">266</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_packet_8hpp_source.html#l00320">320</a> of file <a class="el" href="file_packet_8hpp_source.html">FilePacket.hpp</a>.</p>
 
 </div>
 </div>
