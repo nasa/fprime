@@ -213,7 +213,7 @@ namespace Os {
     class File final : public FileInterface {
       public:
         // Required for access to m_handle_storage for static assertions against actual storage
-        friend FileInterface* getDelegate(U8*, const FileInterface*);
+        friend FileInterface* FileInterface::getDelegate(U8*, const FileInterface*);
         //! \brief constructor
         //!
         File();
