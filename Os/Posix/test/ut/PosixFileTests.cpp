@@ -20,19 +20,17 @@ std::vector<std::shared_ptr<const std::string> > FILES;
 static const U32 MAX_FILES = 100;
 static const char BASE_PATH[] = "/tmp/fprime";
 static const char TEST_FILE[] = "fprime-os-file-test";
-/**
- * Check if we can use the file. F_OK file exists, R_OK, W_OK are read and write.
- * @return true if it exists, false otherwise.
- */
+//! Check if we can use the file. F_OK file exists, R_OK, W_OK are read and write.
+//! \return true if it exists, false otherwise.
+//!
 bool check_permissions(const char* path, int permission) {
     return ::access(path, permission) == 0;
 }
 
-/**
- * Get a filename, randomly if random is true, otherwise use a basic filename.
- * @param random: true if filename should be random, false if predictable
- * @return: filename to use for testing
- */
+//! Get a filename, randomly if random is true, otherwise use a basic filename.
+//! \param random: true if filename should be random, false if predictable
+//! \return: filename to use for testing
+//!
 std::shared_ptr<std::string> get_test_filename(bool random) {
     const char* filename = TEST_FILE;
     char full_buffer[PATH_MAX];
@@ -55,9 +53,8 @@ std::shared_ptr<std::string> get_test_filename(bool random) {
     return pointer;
 }
 
-/**
- * Clean-up the files created during this test.
- */
+//! Clean-up the files created during this test.
+//!
 void cleanup(int signal) {
     // Ensure the test files are removed only when the test was run
     for (const auto& val : FILES) {
@@ -68,9 +65,8 @@ void cleanup(int signal) {
     FILES.clear();
 }
 
-/**
- * Set up for the test ensures that the test can run at all
- */
+//! Set up for the test ensures that the test can run at all
+//!
 void setUp(bool requires_io) {
     std::shared_ptr<std::string> non_random_filename = get_test_filename(false);
     int result = mkdir(BASE_PATH, 0777);
@@ -95,28 +91,25 @@ void setUp(bool requires_io) {
     }
 }
 
-/**
- * Tear down for the tests cleans up the test file used
- */
+//! Tear down for the tests cleans up the test file used
+//!
 void tearDown() {
     cleanup(0);
 }
 
 class PosixTester : public Tester {
-    /**
-     * Check if the test file exists.
-     * @return true if it exists, false otherwise.
-     */
+    //! Check if the test file exists.
+    //! \return true if it exists, false otherwise.
+    //!
     bool exists(const std::string& filename) const override {
         bool exits =  check_permissions(filename.c_str(), F_OK);
         return exits;
     }
 
-    /**
-     * Get a filename, randomly if random is true, otherwise use a basic filename.
-     * @param random: true if filename should be random, false if predictable
-     * @return: filename to use for testing
-     */
+    //! Get a filename, randomly if random is true, otherwise use a basic filename.
+    //! \param random: true if filename should be random, false if predictable
+    //! \return: filename to use for testing
+    //!
     std::shared_ptr<const std::string> get_filename(bool random) const override {
         U32 pick = STest::Pick::lowerUpper(0, MAX_FILES);
         if (random && pick < FILES.size()) {
@@ -127,10 +120,9 @@ class PosixTester : public Tester {
         return filename;
     }
 
-    /**
-     * Posix tester is fully functional
-     * @return true
-     */
+    //! Posix tester is fully functional
+    //! \return true
+    //!
     bool functional() const override{
         return true;
     }

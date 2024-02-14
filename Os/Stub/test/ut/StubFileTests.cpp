@@ -13,9 +13,8 @@ namespace Os {
 namespace Test {
 namespace File {
 
-/**
- * Set up for the test ensures that the test can run at all
- */
+//! Set up for the test ensures that the test can run at all
+//!
 void setUp(bool requires_io) {
     if (requires_io) {
         GTEST_SKIP() << "Cannot run tests requiring functional i/o";
@@ -24,16 +23,14 @@ void setUp(bool requires_io) {
     Os::Stub::File::Test::StaticData::setPositionResult(0);
 }
 std::vector<std::shared_ptr<const std::string> > FILES;
-/**
- * Tear down for the tests cleans up the test file used
- */
+//! Tear down for the tests cleans up the test file used
+//!
 void tearDown() {}
 
 class StubsTester : public Tester {
-    /**
-     * Check if the test file exists.
-     * @return true if it exists, false otherwise.
-     */
+    //! Check if the test file exists.
+    //! \return true if it exists, false otherwise.
+    //!
     bool exists(const std::string &filename) const override {
         for (size_t i = 0; i < FILES.size(); i++) {
             if (filename == *FILES.at(i)) {
@@ -43,21 +40,19 @@ class StubsTester : public Tester {
         return false;
     }
 
-    /**
-     * Get a filename, randomly if random is true, otherwise use a basic filename.
-     * @param random: true if filename should be random, false if predictable
-     * @return: filename to use for testing
-     */
+    //! Get a filename, randomly if random is true, otherwise use a basic filename.
+    //! \param random: true if filename should be random, false if predictable
+    //! \return: filename to use for testing
+    //!
     std::shared_ptr<const std::string> get_filename(bool random) const override {
         std::shared_ptr<const std::string> filename = std::shared_ptr<const std::string>(new std::string("DOES-NOT-MATTER"), std::default_delete<std::string>());
         FILES.push_back(filename);
         return filename;
     }
 
-    /**
-     * Posix tester is fully functional
-     * @return true
-     */
+    //! Posix tester is fully functional
+    //! \return true
+    //!
     bool functional() const override {
         return false;
     }

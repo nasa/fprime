@@ -6,14 +6,13 @@
 #include "Fw/Types/Assert.hpp"
 #include <new>
 namespace Os {
-/**
- * \brief get implementation file interface for use as delegate
- *
- * Added via linker to ensure that the no-op stub implementation of Os::File is the default.
- *
- * \param aligned_placement_new_memory: memory to placement-new into
- * \return FileInterface pointer result of placement new
- */
+//! \brief get implementation file interface for use as delegate
+//!
+//! Added via linker to ensure that the no-op stub implementation of Os::File is the default.
+//!
+//! \param aligned_placement_new_memory: memory to placement-new into
+//! \return FileInterface pointer result of placement new
+//!
 FileInterface *FileInterface::getDelegate(U8 *aligned_placement_new_memory, const FileInterface* to_copy) {
     FW_ASSERT(aligned_placement_new_memory != nullptr);
     const Os::Stub::File::StubFile* copy_me = reinterpret_cast<const Os::Stub::File::StubFile*>(to_copy);

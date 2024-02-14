@@ -9,11 +9,10 @@
 namespace Os {
 namespace Posix {
 
-/**
- * Convert an errno representation of an error to the Os::File::Status representation.
- * @param errno: errno representation of the error
- * @return: Os::File::Status representation of the error
- */
+//! Convert an errno representation of an error to the Os::File::Status representation.
+//! \param errno: errno representation of the error
+//! \return: Os::File::Status representation of the error
+//!
 Os::File::Status errno_to_file_status(PlatformIntType errno_input);
 
 }
