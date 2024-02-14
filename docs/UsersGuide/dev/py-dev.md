@@ -2,6 +2,11 @@
 
 This guide describes the guidelines for developing Python code to be used with F´. This is done when contributing to the
 F´ Python code and is recommended for project Python code as well.
+Start by cloning the F´ repositories you wish to work on, e.g.
+
+```
+git clone https://github.com/fprime-community/fprime-gds
+```
 
 ## Required Development Installs
 
@@ -9,8 +14,11 @@ Setup the virtual environment per the install guide using the small additions be
 facilitate Python development.
 
 ```bash
-pip install -e fprime/Fw/Python[dev]
-pip install -e fprime/Gds/
+pip install -e ./fprime-gds
+```
+or
+```
+pip install -e ./fprime-tools
 ```
 
 After you have installed the python packages you need to set up pre-commit hooks using the following command. This
@@ -25,12 +33,12 @@ pre-commit install
 Probably one of the most important parts of developing code is to ensure Python unit tests pass. We use pytest:
 
 ```bash
-cd fprime/Fw/Python/
+cd fprime-tools
 pytest
 ```
 
 ```bash
-cd fprime/Gds/
+cd fprime-gds
 pytest
 ```
 
