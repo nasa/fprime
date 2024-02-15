@@ -15,14 +15,14 @@
 
 namespace Svc {
 
-    CmdSequencerTester::Interceptor* CmdSequencerTester::Interceptor::Override::s_current_interceptor = nullptr;
+    CmdSequencerTester::Interceptor* CmdSequencerTester::Interceptor::PosixFileInterceptor::s_current_interceptor = nullptr;
     CmdSequencerTester::Interceptor::Interceptor() :
             enabled(EnableType::NONE),
             errorType(ErrorType::NONE),
             waitCount(0),
             size(0),
             fileStatus(Os::File::OP_OK) {
-            CmdSequencerTester::Interceptor::Override::s_current_interceptor = this;
+            CmdSequencerTester::Interceptor::PosixFileInterceptor::s_current_interceptor = this;
     }
 
     void CmdSequencerTester::Interceptor::enable(EnableType::t enableType) {
@@ -33,14 +33,14 @@ namespace Svc {
         this->enabled = EnableType::t::NONE;
     }
 
-    Os::FileInterface::Status CmdSequencerTester::Interceptor::Override::open(const char *path, Mode mode, OverwriteType overwrite) {
+    Os::FileInterface::Status CmdSequencerTester::Interceptor::PosixFileInterceptor::open(const char *path, Mode mode, OverwriteType overwrite) {
         if ((s_current_interceptor != nullptr) && (s_current_interceptor ->enabled == EnableType::t::OPEN)) {
             return s_current_interceptor->fileStatus;
         }
         return this->Os::Posix::File::PosixFile::open(path, mode, overwrite);
     }
 
-    Os::File::Status CmdSequencerTester::Interceptor::Override::read(
+    Os::File::Status CmdSequencerTester::Interceptor::PosixFileInterceptor::read(
             U8 *buffer,
             FwSignedSizeType &requestSize,
             Os::File::WaitType waitType

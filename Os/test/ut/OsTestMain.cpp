@@ -49,7 +49,7 @@ TEST(Nominal, DISABLED_IntervalTimerTest) {
    intervalTimerTest();
 }
 TEST(Nominal, FileSystemTest) {
-//   fileSystemTest();
+   fileSystemTest();
 }
 TEST(Nominal, ValidateFileTest) {
    validateFileTest(filename);

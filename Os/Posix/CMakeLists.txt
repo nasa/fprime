@@ -20,7 +20,7 @@ register_fprime_implementation(Os/File Os_File_Posix "${CMAKE_CURRENT_LIST_DIR}/
 
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/CommonTests.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/MyRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/FileRules.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixFileTests.cpp"
 )
 set(UT_MOD_DEPS

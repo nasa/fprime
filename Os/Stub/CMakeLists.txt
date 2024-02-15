@@ -28,7 +28,7 @@ register_fprime_implementation(Os/File Os_File_Test_Stub)
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/CommonTests.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/MyRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/FileRules.cpp"
 )
 set(UT_MOD_DEPS
     Os

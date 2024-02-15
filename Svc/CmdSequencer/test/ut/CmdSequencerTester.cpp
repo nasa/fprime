@@ -825,18 +825,18 @@ namespace Os {
 //! \return: new interceptor
 FileInterface *FileInterface::getDelegate(U8 *aligned_placement_new_memory, const FileInterface* to_copy) {
     FW_ASSERT(aligned_placement_new_memory != nullptr);
-    const Svc::CmdSequencerTester::Interceptor::Override* copy_me =
-            reinterpret_cast<const Svc::CmdSequencerTester::Interceptor::Override*>(to_copy);
+    const Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor* copy_me =
+            reinterpret_cast<const Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor*>(to_copy);
     // Placement-new the file handle into the opaque file-handle storage
-    static_assert(sizeof(Svc::CmdSequencerTester::Interceptor::Override) <= sizeof Os::File::m_handle_storage,
+    static_assert(sizeof(Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor) <= sizeof Os::File::m_handle_storage,
             "Handle size not large enough");
-    static_assert((FW_HANDLE_ALIGNMENT % alignof(Svc::CmdSequencerTester::Interceptor::Override)) == 0,
+    static_assert((FW_HANDLE_ALIGNMENT % alignof(Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor)) == 0,
             "Handle alignment invalid");
-    Svc::CmdSequencerTester::Interceptor::Override *interface = nullptr;
+    Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor *interface = nullptr;
     if (to_copy == nullptr) {
-        interface = new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor::Override;
+        interface = new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor;
     } else {
-        interface = new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor::Override(*copy_me);
+        interface = new(aligned_placement_new_memory) Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor(*copy_me);
     }
     FW_ASSERT(interface != nullptr);
     return interface;

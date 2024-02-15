@@ -107,6 +107,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"

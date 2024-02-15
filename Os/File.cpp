@@ -5,13 +5,9 @@
 #include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>
 
-#ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
 #include <Utils/Hash/libcrc/lib_crc.h> // borrow CRC
-#ifdef __cplusplus
 }
-#endif // __cplusplus
 namespace Os {
 
 File::File() : m_crc_buffer(), m_handle_storage(), m_delegate(*FileInterface::getDelegate(&m_handle_storage[0])) {

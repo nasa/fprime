@@ -16,13 +16,10 @@ namespace Os {
 namespace Posix {
 namespace File {
 
-// Os specific direct writing support
-#ifdef __linux__
-#define DIRECT_FLAGS O_DIRECT
-#else
-#define DIRECT_FLAGS 0
-#endif
-
+// Sets up the default file permission as user read + user write
+// Some posix systems (e.g. Darwin) use the older S_IREAD and S_IWRITE flags while other systems (e.g. Linux) use the
+// newer S_IRUSR and S_IWUSR flags, and some don't support these flags at all. Hence, we look if flags are defined then
+// set USER_FLAGS to be the set of flags supported or 0 in the case neither is defined.
 #if defined(S_IREAD) && defined(S_IWRITE)
 #define USER_FLAGS (S_IREAD | S_IWRITE)
 #elif defined(S_IRUSR) && defined(S_IWUSR)
@@ -30,8 +27,6 @@ namespace File {
 #else
 #define USER_FLAGS (0)
 #endif
-
-
 
 // Ensure size of FwSizeType is large enough to fit eh necessary range
 static_assert(sizeof(FwSignedSizeType) >= sizeof(off_t), "FwSizeType is not large enough to store values of type off_t");
@@ -211,7 +206,7 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSignedSizeType &size, PosixFile:
 
     for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
-        ssize_t read_size = ::read(this->m_handle.m_file_descriptor, reinterpret_cast<CHAR*>(buffer + accumulated), size - accumulated);
+        ssize_t read_size = ::read(this->m_handle.m_file_descriptor, reinterpret_cast<CHAR*>(&buffer[accumulated]), size - accumulated);
         // Non-interrupt error
         if (PosixFileHandle::ERROR_RETURN_VALUE == read_size) {
             PlatformIntType errno_store = errno;
@@ -244,7 +239,7 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSignedSizeType &size, Pos
 
     for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
-        ssize_t write_size = ::write(this->m_handle.m_file_descriptor, reinterpret_cast<const CHAR*>(buffer + accumulated), size - accumulated);
+        ssize_t write_size = ::write(this->m_handle.m_file_descriptor, reinterpret_cast<const CHAR*>(&buffer[accumulated]), size - accumulated);
         // Non-interrupt error
         if (PosixFileHandle::ERROR_RETURN_VALUE == write_size) {
             PlatformIntType errno_store = errno;

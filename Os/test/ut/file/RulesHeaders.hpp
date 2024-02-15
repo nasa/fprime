@@ -147,7 +147,7 @@ struct Tester {
     U32 m_independent_crc = Os::File::INITIAL_CRC;
 
 // Do NOT alter, adds rules to Tester as inner classes
-#include "MyRules.hpp"
+#include "FileRules.hpp"
 };
 
 //! Get the tester implementation for the given backend.

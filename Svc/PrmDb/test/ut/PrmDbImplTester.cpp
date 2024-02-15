@@ -487,12 +487,18 @@ namespace Svc {
             switch (i) {
                 case 0:
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-                    ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::DELIMITER_VALUE, 0, 0xA6);
+                    // Parameter read error caused by adding one to the expected read
+                    ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::DELIMITER_VALUE, 0, PRMDB_ENTRY_DELIMITER + 1);
                     break;
-                case 1:
+                case 1: {
+                    // Data in this test is corrupted by adding 1 to the first data byte read. Since data is stored in
+                    // big-endian format the highest order byte of the record size (U32) must have one added to it.
+                    // Expected result of '8' inherited from original design of test.
+                    U32 expected_error_value = 8 + (1 << ((sizeof(U32) - 1) * 8));
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-                    ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_VALUE, 0, 16777224);
+                    ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_VALUE, 0, expected_error_value);
                     break;
+                }
                 default:
                     FAIL() << "Reached unknown case";
             }
