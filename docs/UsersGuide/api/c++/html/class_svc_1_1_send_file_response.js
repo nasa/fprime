@@ -13,6 +13,6 @@ var class_svc_1_1_send_file_response =
     [ "set", "class_svc_1_1_send_file_response.html#ac04a5aafd8eedb91300c1cb1e408084f", null ],
     [ "setcontext", "class_svc_1_1_send_file_response.html#a3e19b21e5d150c5618ed4a086d13f60a", null ],
     [ "setstatus", "class_svc_1_1_send_file_response.html#a3444c8376d42838b0264e1c69e5498df", null ],
-    [ "context", "class_svc_1_1_send_file_response.html#a87c1c24486d45b3c8d78ea34e45b8ed6", null ],
-    [ "status", "class_svc_1_1_send_file_response.html#a5ba92cb236407683c0275fe7747a3f51", null ]
+    [ "m_context", "class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b", null ],
+    [ "m_status", "class_svc_1_1_send_file_response.html#ad9b78945ad750d669721e059d7c60fc1", null ]
 ];

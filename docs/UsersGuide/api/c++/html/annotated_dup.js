@@ -55,6 +55,9 @@ var annotated_dup =
       [ "UdpComponentImpl", "class_drv_1_1_udp_component_impl.html", "class_drv_1_1_udp_component_impl" ]
     ] ],
     [ "Fw", "namespace_fw.html", [
+      [ "DpCfg", "namespace_fw_1_1_dp_cfg.html", [
+        [ "ProcType", "class_fw_1_1_dp_cfg_1_1_proc_type.html", "class_fw_1_1_dp_cfg_1_1_proc_type" ]
+      ] ],
       [ "InputBufferGetPort", "class_fw_1_1_input_buffer_get_port.html", "class_fw_1_1_input_buffer_get_port" ],
       [ "OutputBufferGetPort", "class_fw_1_1_output_buffer_get_port.html", "class_fw_1_1_output_buffer_get_port" ],
       [ "InputBufferSendPort", "class_fw_1_1_input_buffer_send_port.html", "class_fw_1_1_input_buffer_send_port" ],
@@ -68,6 +71,15 @@ var annotated_dup =
       [ "OutputCmdResponsePort", "class_fw_1_1_output_cmd_response_port.html", "class_fw_1_1_output_cmd_response_port" ],
       [ "InputComPort", "class_fw_1_1_input_com_port.html", "class_fw_1_1_input_com_port" ],
       [ "OutputComPort", "class_fw_1_1_output_com_port.html", "class_fw_1_1_output_com_port" ],
+      [ "InputDpGetPort", "class_fw_1_1_input_dp_get_port.html", "class_fw_1_1_input_dp_get_port" ],
+      [ "OutputDpGetPort", "class_fw_1_1_output_dp_get_port.html", "class_fw_1_1_output_dp_get_port" ],
+      [ "InputDpRequestPort", "class_fw_1_1_input_dp_request_port.html", "class_fw_1_1_input_dp_request_port" ],
+      [ "OutputDpRequestPort", "class_fw_1_1_output_dp_request_port.html", "class_fw_1_1_output_dp_request_port" ],
+      [ "InputDpResponsePort", "class_fw_1_1_input_dp_response_port.html", "class_fw_1_1_input_dp_response_port" ],
+      [ "OutputDpResponsePort", "class_fw_1_1_output_dp_response_port.html", "class_fw_1_1_output_dp_response_port" ],
+      [ "InputDpSendPort", "class_fw_1_1_input_dp_send_port.html", "class_fw_1_1_input_dp_send_port" ],
+      [ "OutputDpSendPort", "class_fw_1_1_output_dp_send_port.html", "class_fw_1_1_output_dp_send_port" ],
+      [ "DpState", "class_fw_1_1_dp_state.html", "class_fw_1_1_dp_state" ],
       [ "InputLogPort", "class_fw_1_1_input_log_port.html", "class_fw_1_1_input_log_port" ],
       [ "OutputLogPort", "class_fw_1_1_output_log_port.html", "class_fw_1_1_output_log_port" ],
       [ "LogSeverity", "class_fw_1_1_log_severity.html", "class_fw_1_1_log_severity" ],
@@ -106,6 +118,7 @@ var annotated_dup =
       [ "ActiveComponentBase", "class_fw_1_1_active_component_base.html", "class_fw_1_1_active_component_base" ],
       [ "PassiveComponentBase", "class_fw_1_1_passive_component_base.html", "class_fw_1_1_passive_component_base" ],
       [ "QueuedComponentBase", "class_fw_1_1_queued_component_base.html", "class_fw_1_1_queued_component_base" ],
+      [ "DpContainer", "class_fw_1_1_dp_container.html", "class_fw_1_1_dp_container" ],
       [ "FilePacket", "union_fw_1_1_file_packet.html", "union_fw_1_1_file_packet" ],
       [ "AmpcsEvrLogPacket", "class_fw_1_1_ampcs_evr_log_packet.html", "class_fw_1_1_ampcs_evr_log_packet" ],
       [ "LogBuffer", "class_fw_1_1_log_buffer.html", "class_fw_1_1_log_buffer" ],

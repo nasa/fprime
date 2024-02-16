@@ -6,6 +6,7 @@ var class_fw_1_1_com_packet =
       [ "FW_PACKET_LOG", "class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a72f39225b887e43644e65d18b6e90fde", null ],
       [ "FW_PACKET_FILE", "class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a2af3697dc87c65b5561ac143e7197189", null ],
       [ "FW_PACKET_PACKETIZED_TLM", "class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a951d84934844e3be7c04d1d7f06d7a53", null ],
+      [ "FW_PACKET_DP", "class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a96e81761eb085f60ad8e3a535bce0d6c", null ],
       [ "FW_PACKET_IDLE", "class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425ae515e365b270a6d093f0b4e8611b25e5", null ],
       [ "FW_PACKET_UNKNOWN", "class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a89bc97f02f96b31614df715ff6e36eb0", null ]
     ] ],

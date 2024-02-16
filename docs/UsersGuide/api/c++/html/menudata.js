@@ -88,6 +88,7 @@ var menudata={children:[
 {text:"Enumerator",url:"namespacemembers_eval.html",children:[
 {text:"a",url:"namespacemembers_eval.html#index_a"},
 {text:"b",url:"namespacemembers_eval.html#index_b"},
+{text:"c",url:"namespacemembers_eval.html#index_c"},
 {text:"f",url:"namespacemembers_eval.html#index_f"},
 {text:"h",url:"namespacemembers_eval.html#index_h"},
 {text:"i",url:"namespacemembers_eval.html#index_i"},
@@ -177,6 +178,7 @@ var menudata={children:[
 {text:"e",url:"functions_type.html#index_e"},
 {text:"s",url:"functions_type.html#index_s"},
 {text:"t",url:"functions_type.html#index_t"},
+{text:"u",url:"functions_type.html#index_u"},
 {text:"w",url:"functions_type.html#index_w"}]},
 {text:"Enumerations",url:"functions_enum.html",children:[
 {text:"b",url:"functions_enum.html#index_b"},
@@ -280,6 +282,7 @@ var menudata={children:[
 {text:"a",url:"globals_eval.html#index_a"},
 {text:"b",url:"globals_eval.html#index_b"},
 {text:"c",url:"globals_eval.html#index_c"},
+{text:"d",url:"globals_eval.html#index_d"},
 {text:"f",url:"globals_eval.html#index_f"},
 {text:"g",url:"globals_eval.html#index_g"},
 {text:"h",url:"globals_eval.html#index_h"},

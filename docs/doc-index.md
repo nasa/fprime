@@ -9,6 +9,7 @@
 - [upcoming](upcoming.md)
 ## Design
 - [communication-adapter-interface](Design/communication-adapter-interface.md)
+- [data-products](Design/data-products.md)
 - [fpp-json-dict](Design/fpp-json-dict.md)
 - [fprime-architecture](Design/fprime-architecture.md)
 - [general](Design/general.md)

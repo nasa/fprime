@@ -21,6 +21,15 @@ var _fpp_constants_ac_8hpp =
     [ "FppConstant_ComQueueComPorts", "fpp_constants_ac_8hpp.html#a6f4d08ce69e19a2776a8a8214860eb28", [
       [ "ComQueueComPorts", "fpp_constants_ac_8hpp.html#a6f4d08ce69e19a2776a8a8214860eb28a623ff1dc6aa4858dd75c1ea62c448db0", null ]
     ] ],
+    [ "FppConstant_CONTAINER_USER_DATA_SIZE", "fpp_constants_ac_8hpp.html#a9ea816f1c2196b8ded72c6b2a709b40b", [
+      [ "CONTAINER_USER_DATA_SIZE", "fpp_constants_ac_8hpp.html#a9ea816f1c2196b8ded72c6b2a709b40ba265dc0a37c075f1af68057c21e58a091", null ]
+    ] ],
+    [ "FppConstant_DpManagerNumPorts", "fpp_constants_ac_8hpp.html#ad4b6057c338f7cb402f2e83c2800afb6", [
+      [ "DpManagerNumPorts", "fpp_constants_ac_8hpp.html#ad4b6057c338f7cb402f2e83c2800afb6acb1f3a0fcdcac1c19c60f68d424e7097", null ]
+    ] ],
+    [ "FppConstant_DpWriterNumProcPorts", "fpp_constants_ac_8hpp.html#aa09457527ff211727403e7c2f32ed529", [
+      [ "DpWriterNumProcPorts", "fpp_constants_ac_8hpp.html#aa09457527ff211727403e7c2f32ed529af79769aa4929bf1bf6fb51b34e448cb5", null ]
+    ] ],
     [ "FppConstant_FileDownCompletePorts", "fpp_constants_ac_8hpp.html#af11882352596900f352b053266d64db0", [
       [ "FileDownCompletePorts", "fpp_constants_ac_8hpp.html#af11882352596900f352b053266d64db0a06cfdea156f4ec048349bbf15a518912", null ]
     ] ],
