@@ -217,6 +217,7 @@ dawbarton
 DDDTHH
 ddl
 ddmm
+dealloc
 Debian
 deconstructor
 Deerin
@@ -265,6 +266,8 @@ doxyrules
 doxysearch
 Doxywizard
 dpi
+DPMANAGER
+DPWRITER
 DRAINBUFFERS
 drv
 dsdl
@@ -285,6 +288,7 @@ EGB
 EHAs
 elist
 ELOG
+Elts
 emoji
 endcode
 endcond
@@ -389,6 +393,7 @@ getquaternion
 gettime
 gettimeofday
 getty
+getu
 ghprb
 gitmodules
 gmock
