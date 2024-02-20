@@ -34,77 +34,77 @@ namespace Fw {
   const FilePacket::Header& FilePacket ::
     asHeader() const
   {
-    return this->header;
+    return this->m_header;
   }
 
   const FilePacket::StartPacket& FilePacket ::
     asStartPacket() const
   {
-    FW_ASSERT(this->header.type == T_START);
-    return this->startPacket;
+    FW_ASSERT(this->m_header.m_type == T_START);
+    return this->m_startPacket;
   }
 
   const FilePacket::DataPacket& FilePacket ::
     asDataPacket() const
   {
-    FW_ASSERT(this->header.type == T_DATA);
-    return this->dataPacket;
+    FW_ASSERT(this->m_header.m_type == T_DATA);
+    return this->m_dataPacket;
   }
 
   const FilePacket::EndPacket& FilePacket ::
     asEndPacket() const
   {
-    FW_ASSERT(this->header.type == T_END);
-    return this->endPacket;
+    FW_ASSERT(this->m_header.m_type == T_END);
+    return this->m_endPacket;
   }
 
   const FilePacket::CancelPacket& FilePacket ::
     asCancelPacket() const
   {
-    FW_ASSERT(this->header.type == T_CANCEL);
-    return this->cancelPacket;
+    FW_ASSERT(this->m_header.m_type == T_CANCEL);
+    return this->m_cancelPacket;
   }
 
   void FilePacket ::
     fromStartPacket(const StartPacket& startPacket)
   {
-    this->startPacket = startPacket;
-    this->header.type = T_START;
+    this->m_startPacket = startPacket;
+    this->m_header.m_type = T_START;
   }
 
   void FilePacket ::
     fromDataPacket(const DataPacket& dataPacket)
   {
-    this->dataPacket = dataPacket;
-    this->header.type = T_DATA;
+    this->m_dataPacket = dataPacket;
+    this->m_header.m_type = T_DATA;
   }
 
   void FilePacket ::
     fromEndPacket(const EndPacket& endPacket)
   {
-    this->endPacket = endPacket;
-    this->header.type = T_END;
+    this->m_endPacket = endPacket;
+    this->m_header.m_type = T_END;
   }
 
   void FilePacket ::
     fromCancelPacket(const CancelPacket& cancelPacket)
   {
-    this->cancelPacket = cancelPacket;
-    this->header.type = T_CANCEL;
+    this->m_cancelPacket = cancelPacket;
+    this->m_header.m_type = T_CANCEL;
   }
 
   U32 FilePacket ::
     bufferSize() const
   {
-    switch (this->header.type) {
+    switch (this->m_header.m_type) {
       case T_START:
-        return this->startPacket.bufferSize();
+        return this->m_startPacket.bufferSize();
       case T_DATA:
-        return this->dataPacket.bufferSize();
+        return this->m_dataPacket.bufferSize();
       case T_END:
-        return this->endPacket.bufferSize();
+        return this->m_endPacket.bufferSize();
       case T_CANCEL:
-        return this->cancelPacket.bufferSize();
+        return this->m_cancelPacket.bufferSize();
       case T_NONE:
         return 0;
       default:
@@ -116,15 +116,15 @@ namespace Fw {
   SerializeStatus FilePacket ::
     toBuffer(Buffer& buffer) const
   {
-    switch (this->header.type) {
+    switch (this->m_header.m_type) {
       case T_START:
-        return this->startPacket.toBuffer(buffer);
+        return this->m_startPacket.toBuffer(buffer);
       case T_DATA:
-        return this->dataPacket.toBuffer(buffer);
+        return this->m_dataPacket.toBuffer(buffer);
       case T_END:
-        return this->endPacket.toBuffer(buffer);
+        return this->m_endPacket.toBuffer(buffer);
       case T_CANCEL:
-        return this->cancelPacket.toBuffer(buffer);
+        return this->m_cancelPacket.toBuffer(buffer);
       default:
         FW_ASSERT(0);
         return static_cast<SerializeStatus>(0);
@@ -139,21 +139,21 @@ namespace Fw {
     fromSerialBuffer(SerialBuffer& serialBuffer)
   {
     SerializeStatus status;
-    status = this->header.fromSerialBuffer(serialBuffer);
+    status = this->m_header.fromSerialBuffer(serialBuffer);
     if (status != FW_SERIALIZE_OK)
       return status;
-    switch (this->header.type) {
+    switch (this->m_header.m_type) {
       case T_START:
-        status = this->startPacket.fromSerialBuffer(serialBuffer);
+        status = this->m_startPacket.fromSerialBuffer(serialBuffer);
         break;
       case T_DATA:
-        status = this->dataPacket.fromSerialBuffer(serialBuffer);
+        status = this->m_dataPacket.fromSerialBuffer(serialBuffer);
         break;
       case T_END:
-        status = this->endPacket.fromSerialBuffer(serialBuffer);
+        status = this->m_endPacket.fromSerialBuffer(serialBuffer);
         break;
       case T_CANCEL:
-        status = this->cancelPacket.fromSerialBuffer(serialBuffer);
+        status = this->m_cancelPacket.fromSerialBuffer(serialBuffer);
         break;
       case T_NONE:
         status = FW_DESERIALIZE_TYPE_MISMATCH;

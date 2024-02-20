@@ -13,7 +13,7 @@
 
 namespace Svc {
 
-    //! \class ActiveTextLoggerComponentImpl
+    //! \class ActiveTextLoggerComponent
     //! \brief Active text logger component class
     //!
     //! Similarly to the PassiveTextLogger, this component takes log texts
@@ -21,7 +21,7 @@ namespace Svc {
     //! consistent ordering.  It also provides the option to write the text
     //! to a file as well.
 
-    class ActiveTextLoggerComponentImpl: public ActiveTextLoggerComponentBase {
+    class ActiveTextLogger: public ActiveTextLoggerComponentBase {
 
         public:
 
@@ -33,11 +33,11 @@ namespace Svc {
             //!  type conversion.
             //!
             //!  \param compName the component instance name
-            explicit ActiveTextLoggerComponentImpl(const char* compName);
+            explicit ActiveTextLogger(const char* compName);
 
             //!  \brief Component destructor
             //!
-            virtual ~ActiveTextLoggerComponentImpl(); //!< destructor
+            virtual ~ActiveTextLogger(); //!< destructor
 
             //!  \brief Component initialization routine
             //!
@@ -70,12 +70,12 @@ namespace Svc {
         /*! \brief Copy constructor
          *
          */
-        ActiveTextLoggerComponentImpl(const ActiveTextLoggerComponentImpl&);
+        ActiveTextLogger(const ActiveTextLogger&);
 
         /*! \brief Copy assignment operator
          *
          */
-        ActiveTextLoggerComponentImpl& operator=(const ActiveTextLoggerComponentImpl&);
+        ActiveTextLogger& operator=(const ActiveTextLogger&);
 
         // ----------------------------------------------------------------------
         // Constants/Types

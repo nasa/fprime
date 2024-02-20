@@ -55,7 +55,7 @@ namespace Svc {
     downlink()
   {
     // Assert idle mode
-    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
 
     // Create a file
     const char *const sourceFileName = "source.bin";
@@ -102,7 +102,7 @@ namespace Svc {
     ASSERT_EQ(true, FileBuffer::compare(fileBufferIn, fileBufferOut));
 
     // Assert idle mode
-    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
 
     // Remove the outgoing file
     this->removeFile(sourceFileName);
@@ -160,7 +160,7 @@ namespace Svc {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_CANCEL, CMD_SEQ, Fw::CmdResponse::OK);
     this->cmdResponseHistory->clear();
-    ASSERT_EQ(FileDownlink::Mode::CANCEL, this->component.mode.get());
+    ASSERT_EQ(FileDownlink::Mode::CANCEL, this->component.m_mode.get());
 
     this->component.doDispatch(); // Process return of original buffer and send cancel packet
     this->component.doDispatch(); // Process return of cancel packet
@@ -177,7 +177,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(2); // Started and cancel
     ASSERT_EVENTS_DownlinkCanceled_SIZE(1);
 
-    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.mode.get());
+    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
 
     this->removeFile(sourceFileName);
   }
@@ -186,14 +186,14 @@ namespace Svc {
     cancelInIdleMode()
   {
     // Assert idle mode
-    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
 
     // Send a cancel command
     this->cancel(Fw::CmdResponse::OK);
 
     this->component.Run_handler(0,0);
     // Assert idle mode
-    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
 
   }
 
@@ -201,7 +201,7 @@ namespace Svc {
     downlinkPartial()
   {
     // Assert idle mode
-    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
 
     // Create a file
     const char *const sourceFileName = "source.bin";
@@ -263,7 +263,7 @@ namespace Svc {
     ASSERT_EQ(true, FileBuffer::compare(fileBufferIn, fileBufferOutSubset));
 
     // Assert idle mode
-    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
 
     // Remove the outgoing file
     this->removeFile(sourceFileName);
@@ -274,7 +274,7 @@ namespace Svc {
       timeout()
     {
         // Assert idle mode
-        ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+        ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
 
         // Create a file
         const char *const sourceFileName = "source.bin";
@@ -318,7 +318,7 @@ namespace Svc {
         ASSERT_EVENTS_DownlinkTimeout(0, sourceFileName, destFileName);
 
         // Assert idle mode
-        ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.mode.get());
+        ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
 
         // Remove the outgoing file
         this->removeFile(sourceFileName);
@@ -342,8 +342,8 @@ namespace Svc {
     ASSERT_EQ(resp.getcontext(), 0);
 
     this->component.Run_handler(0,0); // Dequeue file downlink request
-    while (this->component.mode.get() != FileDownlink::Mode::IDLE) {
-      if(this->component.mode.get() != FileDownlink::Mode::COOLDOWN) {
+    while (this->component.m_mode.get() != FileDownlink::Mode::IDLE) {
+      if(this->component.m_mode.get() != FileDownlink::Mode::COOLDOWN) {
         this->component.doDispatch();
       }
       this->component.Run_handler(0,0);
@@ -538,8 +538,8 @@ namespace Svc {
     this->component.doDispatch();
     this->component.Run_handler(0,0);
 
-    while (this->component.mode.get() != FileDownlink::Mode::IDLE) {
-      if(this->component.mode.get() != FileDownlink::Mode::COOLDOWN) {
+    while (this->component.m_mode.get() != FileDownlink::Mode::IDLE) {
+      if(this->component.m_mode.get() != FileDownlink::Mode::COOLDOWN) {
         this->component.doDispatch();
       }
       this->component.Run_handler(0,0);
@@ -572,8 +572,8 @@ namespace Svc {
     this->component.doDispatch();
     this->component.Run_handler(0,0);
 
-    while (this->component.mode.get() != FileDownlink::Mode::IDLE) {
-      if(this->component.mode.get() != FileDownlink::Mode::COOLDOWN) {
+    while (this->component.m_mode.get() != FileDownlink::Mode::IDLE) {
+      if(this->component.m_mode.get() != FileDownlink::Mode::COOLDOWN) {
         this->component.doDispatch();
       }
       this->component.Run_handler(0,0);
@@ -679,8 +679,8 @@ namespace Svc {
     Fw::FilePacket filePacket;
     validateFilePacket(buffer, filePacket);
     const Fw::FilePacket::Header& header = filePacket.asHeader();
-    ASSERT_EQ(0U, header.sequenceIndex);
-    ASSERT_EQ(Fw::FilePacket::T_START, header.type);
+    ASSERT_EQ(0U, header.m_sequenceIndex);
+    ASSERT_EQ(Fw::FilePacket::T_START, header.m_type);
   }
 
   void FileDownlinkTester ::
@@ -694,11 +694,11 @@ namespace Svc {
     Fw::FilePacket filePacket;
     validateFilePacket(buffer, filePacket);
     const Fw::FilePacket::Header& header = filePacket.asHeader();
-    ASSERT_EQ(sequenceIndex, header.sequenceIndex);
-    ASSERT_EQ(Fw::FilePacket::T_DATA, header.type);
+    ASSERT_EQ(sequenceIndex, header.m_sequenceIndex);
+    ASSERT_EQ(Fw::FilePacket::T_DATA, header.m_type);
     dataPacket = filePacket.asDataPacket();
-    ASSERT_EQ(byteOffset, dataPacket.byteOffset);
-    byteOffset += dataPacket.dataSize;
+    ASSERT_EQ(byteOffset, dataPacket.m_byteOffset);
+    byteOffset += dataPacket.m_dataSize;
   }
 
   void FileDownlinkTester ::
@@ -711,8 +711,8 @@ namespace Svc {
     Fw::FilePacket filePacket;
     validateFilePacket(buffer, filePacket);
     const Fw::FilePacket::Header& header = filePacket.asHeader();
-    ASSERT_EQ(sequenceIndex, header.sequenceIndex);
-    ASSERT_EQ(Fw::FilePacket::T_END, header.type);
+    ASSERT_EQ(sequenceIndex, header.m_sequenceIndex);
+    ASSERT_EQ(Fw::FilePacket::T_END, header.m_type);
     const Fw::FilePacket::EndPacket endPacket = filePacket.asEndPacket();
     CFDP::Checksum computedChecksum;
     endPacket.getChecksum(computedChecksum);
@@ -728,8 +728,8 @@ namespace Svc {
     Fw::FilePacket filePacket;
     validateFilePacket(buffer, filePacket);
     const Fw::FilePacket::Header& header = filePacket.asHeader();
-    ASSERT_EQ(sequenceIndex, header.sequenceIndex);
-    ASSERT_EQ(Fw::FilePacket::T_CANCEL, header.type);
+    ASSERT_EQ(sequenceIndex, header.m_sequenceIndex);
+    ASSERT_EQ(Fw::FilePacket::T_CANCEL, header.m_type);
   }
 
 }

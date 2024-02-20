@@ -608,7 +608,7 @@ namespace Svc {
       this->sequenceIndex++
     };
     Fw::FilePacket::EndPacket endPacket;
-    endPacket.header = header;
+    endPacket.m_header = header;
     endPacket.setChecksum(checksum);
     Fw::FilePacket filePacket;
     filePacket.fromEndPacket(endPacket);

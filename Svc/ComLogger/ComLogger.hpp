@@ -105,8 +105,8 @@ namespace Svc {
       };
 
       // The filename data:
-      CHAR filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
-      U32 maxFileSize;
+      CHAR m_filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      U32 m_maxFileSize;
 
       // ----------------------------------------------------------------------
       // Internal state:
@@ -116,15 +116,15 @@ namespace Svc {
           OPEN = 1
       };
 
-      FileMode fileMode;
-      Os::File file;
-      CHAR fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
-      CHAR hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
-      U32 byteCount;
-      bool writeErrorOccurred;
-      bool openErrorOccurred;
-      bool storeBufferLength;
-      bool initialized;
+      FileMode m_fileMode;
+      Os::File m_file;
+      CHAR m_fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      CHAR m_hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      U32 m_byteCount;
+      bool m_writeErrorOccurred;
+      bool m_openErrorOccurred;
+      bool m_storeBufferLength;
+      bool m_initialized;
 
       // ----------------------------------------------------------------------
       // File functions:

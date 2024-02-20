@@ -7,7 +7,7 @@
 #define TESTER_HPP
 
 #include "ActiveTextLoggerGTestBase.hpp"
-#include "Svc/ActiveTextLogger/ActiveTextLoggerImpl.hpp"
+#include "Svc/ActiveTextLogger/ActiveTextLogger.hpp"
 
 namespace Svc {
 
@@ -60,7 +60,7 @@ namespace Svc {
 
       //! The component under test
       //!
-      ActiveTextLoggerComponentImpl component;
+      ActiveTextLogger component;
 
   };
 

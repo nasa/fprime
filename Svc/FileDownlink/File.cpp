@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  File.cpp
 // \author bocchino
 // \brief  cpp file for FileDownlink::File
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -26,30 +26,30 @@ namespace Svc {
 
     // Set source name
     Fw::LogStringArg sourceLogStringArg(sourceFileName);
-    this->sourceName = sourceLogStringArg;
+    this->m_sourceName = sourceLogStringArg;
 
     // Set dest name
     Fw::LogStringArg destLogStringArg(destFileName);
-    this->destName = destLogStringArg;
+    this->m_destName = destLogStringArg;
 
     // Set size
-    FwSizeType size;
-    const Os::FileSystem::Status status = 
-      Os::FileSystem::getFileSize(sourceFileName, size);
+    FwSizeType file_size;
+    const Os::FileSystem::Status status =
+      Os::FileSystem::getFileSize(sourceFileName, file_size);
     if (status != Os::FileSystem::OP_OK)
       return Os::File::BAD_SIZE;
     // If the size does not cast cleanly to the desired U32 type, return size error
-    if (static_cast<FwSizeType>(static_cast<U32>(size)) != size) {
+    if (static_cast<FwSizeType>(static_cast<U32>(file_size)) != file_size) {
         return Os::File::BAD_SIZE;
     }
-    this->size = static_cast<U32>(size);
+    this->m_size = static_cast<U32>(file_size);
 
     // Initialize checksum
     CFDP::Checksum checksum;
-    this->checksum = checksum;
+    this->m_checksum = checksum;
 
     // Open osFile for reading
-    return this->osFile.open(sourceFileName, Os::File::OPEN_READ);
+    return this->m_osFile.open(sourceFileName, Os::File::OPEN_READ);
 
   }
 
@@ -62,19 +62,19 @@ namespace Svc {
   {
 
     Os::File::Status status;
-    status = this->osFile.seek(byteOffset);
+    status = this->m_osFile.seek(byteOffset);
     if (status != Os::File::OP_OK)
       return status;
 
     NATIVE_INT_TYPE intSize = size;
-    status = this->osFile.read(data, intSize);
+    status = this->m_osFile.read(data, intSize);
     if (status != Os::File::OP_OK)
       return status;
     // Force a bad size error when the U32 carrying size is bad
     if (static_cast<U32>(intSize) != size) {
         return Os::File::BAD_SIZE;
     }
-    this->checksum.update(data, byteOffset, size);
+    this->m_checksum.update(data, byteOffset, size);
 
     return Os::File::OP_OK;
 

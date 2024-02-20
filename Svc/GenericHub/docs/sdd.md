@@ -54,16 +54,16 @@ into the hub which expands the port to the various right-side components.
 
 ## Configuration
 
-Generic hub maximum output and input ports are configured using `AcConstants.ini` as shown below. Since hubs work in
+Generic hub maximum output and input ports are configured using `AcConstants.fpp` as shown below. Since hubs work in
 tandem with another hub, the input ports on the first must match the output ports on the second. Both the number of port
 and buffer inputs/outputs may be configured.
 
-```ini
-; Hub connections. Connections on all deployments should mirror these settings.
-GenericHubInputPorts = 10
-GenericHubOutputPorts = 10
-GenericHubInputBuffers = 10
-GenericHubOutputBuffers = 10
+```
+@ Hub connections. Connections on all deployments should mirror these settings.
+constant GenericHubInputPorts = 10
+constant GenericHubOutputPorts = 10
+constant GenericHubInputBuffers = 10
+constant GenericHubOutputBuffers = 10
 ```
 
 The above configuration may be used with both deployments hubs as the input/output pairs match.

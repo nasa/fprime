@@ -31,31 +31,31 @@ namespace Os {
 
     MaxHeap::MaxHeap() {
       // Initialize the heap:
-      this->capacity = 0;
-      this->heap = nullptr;
-      this->size = 0;
-      this->order = 0;
+      this->m_capacity = 0;
+      this->m_heap = nullptr;
+      this->m_size = 0;
+      this->m_order = 0;
     }
 
     MaxHeap::~MaxHeap() {
-      delete [] this->heap;
-      this->heap = nullptr;
+      delete [] this->m_heap;
+      this->m_heap = nullptr;
     }
 
     bool MaxHeap::create(NATIVE_UINT_TYPE capacity)
     {
       // The heap has already been created.. so delete
       // it and try again.
-      if( nullptr != this->heap ) {
-        delete [] this->heap;
-        this->heap = nullptr;
+      if( nullptr != this->m_heap ) {
+        delete [] this->m_heap;
+        this->m_heap = nullptr;
       }
 
-      this->heap = new(std::nothrow) Node[capacity];
-      if( nullptr == this->heap ) {
+      this->m_heap = new(std::nothrow) Node[capacity];
+      if( nullptr == this->m_heap ) {
         return false;
       }
-      this->capacity = capacity;
+      this->m_capacity = capacity;
       return true;
     }
 
@@ -67,10 +67,10 @@ namespace Os {
 
       // Heap indexes:
       NATIVE_UINT_TYPE parent;
-      NATIVE_UINT_TYPE index = this->size;
+      NATIVE_UINT_TYPE index = this->m_size;
 
       // Max loop bounds for bit flip protection:
-      NATIVE_UINT_TYPE maxIter = this->size+1;
+      NATIVE_UINT_TYPE maxIter = this->m_size+1;
       NATIVE_UINT_TYPE maxCount = 0;
 
       // Start at the bottom of the heap and work our ways
@@ -85,26 +85,26 @@ namespace Os {
         // If the current value is less than the parent,
         // then the current index is in the correct place,
         // so break out of the loop:
-        if(value <= this->heap[parent].value) {
+        if(value <= this->m_heap[parent].value) {
           break;
         }
         // Swap the parent and child:
-        this->heap[index] = this->heap[parent];
+        this->m_heap[index] = this->m_heap[parent];
         index = parent;
         ++maxCount;
       }
 
       // Check for programming errors or bit flips:
       FW_ASSERT(maxCount < maxIter, maxCount, maxIter);
-      FW_ASSERT(index <= this->size, index);
+      FW_ASSERT(index <= this->m_size, index);
 
       // Set the values of the new element:
-      this->heap[index].value = value;
-      this->heap[index].order = order;
-      this->heap[index].id = id;
+      this->m_heap[index].value = value;
+      this->m_heap[index].order = m_order;
+      this->m_heap[index].id = id;
 
-      ++this->size;
-      ++this->order;
+      ++this->m_size;
+      ++this->m_order;
       return true;
     }
 
@@ -117,17 +117,17 @@ namespace Os {
 
       // Set the return values to the top (max) of
       // the heap:
-      value = this->heap[0].value;
-      id = this->heap[0].id;
+      value = this->m_heap[0].value;
+      id = this->m_heap[0].id;
 
       // Now place the last element on the heap in
       // the root position, and resize the heap.
       // This will put the smallest value in the
       // heap on the top, violating the heap property.
-      NATIVE_UINT_TYPE index = this->size-1;
-      // Fw::Logger::logMsg("Putting on top: i: %u v: %d\n", index, this->heap[index].value);
-      this->heap[0]= this->heap[index];
-      --this->size;
+      NATIVE_UINT_TYPE index = this->m_size-1;
+      // Fw::Logger::logMsg("Putting on top: i: %u v: %d\n", index, this->m_heap[index].value);
+      this->m_heap[0]= this->m_heap[index];
+      --this->m_size;
 
       // Now that the heap property is violated, we
       // need to reorganize the heap to restore it's
@@ -138,17 +138,17 @@ namespace Os {
 
     // Is the heap full:
     bool MaxHeap::isFull() {
-      return (this->size == this->capacity);
+      return (this->m_size == this->m_capacity);
     }
 
     // Is the heap empty:
     bool MaxHeap::isEmpty() {
-      return (this->size == 0);
+      return (this->m_size == 0);
     }
 
     // Get the current size of the heap:
     NATIVE_UINT_TYPE MaxHeap::getSize() {
-      return this->size;
+      return this->m_size;
     }
 
     // A non-recursive heapify method.
@@ -162,10 +162,10 @@ namespace Os {
       NATIVE_UINT_TYPE largest;
 
       // Max loop bounds for bit flip protection:
-      NATIVE_UINT_TYPE maxIter = this->size+1;
+      NATIVE_UINT_TYPE maxIter = this->m_size+1;
       NATIVE_UINT_TYPE maxCount = 0;
 
-      while(index <= this->size && maxCount < maxIter) {
+      while(index <= this->m_size && maxCount < maxIter) {
         // Get the children indexes for this node:
         left = LCHILD(index);
         right = RCHILD(index);
@@ -175,7 +175,7 @@ namespace Os {
         // If the left node is bigger than the heap
         // size, we have reached the end of the heap
         // so we can stop:
-        if (left >= this->size) {
+        if (left >= this->m_size) {
           break;
         }
 
@@ -188,7 +188,7 @@ namespace Os {
         largest = this->max(left, largest);
 
         // Make sure the right node exists before checking it:
-        if (right < this->size) {
+        if (right < this->m_size) {
           // Which one is larger, the current largest
           // node or the right node?
           largest = this->max(right, largest);
@@ -203,8 +203,8 @@ namespace Os {
 
         // Swap the largest node with the current node:
         // Fw::Logger::logMsg("Swapping: i: %u v: %d with i: %u v: %d\n",
-        //   index, this->heap[index].value,
-        //   largest, this->heap[largest].value);
+        //   index, this->m_heap[index].value,
+        //   largest, this->m_heap[largest].value);
         this->swap(index, largest);
 
         // Set the new index to whichever child was larger:
@@ -213,18 +213,18 @@ namespace Os {
 
       // Check for programming errors or bit flips:
       FW_ASSERT(maxCount < maxIter, maxCount, maxIter);
-      FW_ASSERT(index <= this->size, index);
+      FW_ASSERT(index <= this->m_size, index);
     }
 
     // Return the maximum priority index between two nodes. If their
     // priorities are equal, return the oldest to keep the heap stable
     NATIVE_UINT_TYPE MaxHeap::max(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b) {
-      FW_ASSERT(a < this->size, a, this->size);
-      FW_ASSERT(b < this->size, b, this->size);
+      FW_ASSERT(a < this->m_size, a, this->m_size);
+      FW_ASSERT(b < this->m_size, b, this->m_size);
 
       // Extract the priorities:
-      NATIVE_INT_TYPE aValue = this->heap[a].value;
-      NATIVE_INT_TYPE bValue = this->heap[b].value;
+      NATIVE_INT_TYPE aValue = this->m_heap[a].value;
+      NATIVE_INT_TYPE bValue = this->m_heap[b].value;
 
       // If the priorities are equal, the "larger" one will be
       // the "older" one as determined by order pushed on to the
@@ -233,8 +233,8 @@ namespace Os {
       // Note: We check this first, because it is the most common
       // case. Let's save as many ticks as we can...
       if(aValue == bValue) {
-        NATIVE_UINT_TYPE aAge = this->order - this->heap[a].order;
-        NATIVE_UINT_TYPE bAge = this->order - this->heap[b].order;
+        NATIVE_UINT_TYPE aAge = this->m_order - this->m_heap[a].order;
+        NATIVE_UINT_TYPE bAge = this->m_order - this->m_heap[b].order;
         if(aAge > bAge) {
           return a;
         }
@@ -251,11 +251,11 @@ namespace Os {
 
     // Swap two nodes in the heap:
     void MaxHeap::swap(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b) {
-      FW_ASSERT(a < this->size, a, this->size);
-      FW_ASSERT(b < this->size, b, this->size);
-      Node temp = this->heap[a];
-      this->heap[a] = this->heap[b];
-      this->heap[b] = temp;
+      FW_ASSERT(a < this->m_size, a, this->m_size);
+      FW_ASSERT(b < this->m_size, b, this->m_size);
+      Node temp = this->m_heap[a];
+      this->m_heap[a] = this->m_heap[b];
+      this->m_heap[b] = temp;
     }
 
     // Print heap, for debugging purposes only:
@@ -263,25 +263,25 @@ namespace Os {
       NATIVE_UINT_TYPE index = 0;
       NATIVE_UINT_TYPE left;
       NATIVE_UINT_TYPE right;
-      Fw::Logger::logMsg("Printing Heap of Size: %d\n", this->size);
-      while(index < this->size) {
+      Fw::Logger::logMsg("Printing Heap of Size: %d\n", this->m_size);
+      while(index < this->m_size) {
         left = LCHILD(index);
         right = RCHILD(index);
 
-        if( left >= size && index == 0) {
+        if( left >= m_size && index == 0) {
           Fw::Logger::logMsg("i: %u v: %d d: %u -> (NULL, NULL)\n",
-            index, this->heap[index].value, this->heap[index].id);
+            index, this->m_heap[index].value, this->m_heap[index].id);
         }
-        else if( right >= size && left < size ) {
+        else if( right >= m_size && left < m_size ) {
           Fw::Logger::logMsg("i: %u v: %d d: %u -> (i: %u v: %d d: %u, NULL)\n",
-            index, this->heap[index].value, this->heap[index].id,
-            left, this->heap[left].value, this->heap[left].id);
+            index, this->m_heap[index].value, this->m_heap[index].id,
+            left, this->m_heap[left].value, this->m_heap[left].id);
         }
-        else if( right < size && left < size ) {
+        else if( right < m_size && left < m_size ) {
           Fw::Logger::logMsg("i: %u v: %d d: %u -> (i: %u v: %d d: %u, i: %u v: %d d: %u)\n",
-            index, this->heap[index].value, this->heap[index].id,
-            left, this->heap[left].value,this->heap[left].id,
-            right, this->heap[right].value, this->heap[right].id);
+            index, this->m_heap[index].value, this->m_heap[index].id,
+            left, this->m_heap[left].value,this->m_heap[left].id,
+            right, this->m_heap[right].value, this->m_heap[right].id);
         }
 
         ++index;
