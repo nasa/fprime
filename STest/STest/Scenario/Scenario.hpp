@@ -136,7 +136,7 @@ namespace STest {
           printf(
               "[Scenario %s] Applying rule %s\n",
               this->name,
-              rule.name
+              rule.getName()
           );
         }
         rule.apply(state);

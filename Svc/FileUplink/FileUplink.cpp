@@ -62,8 +62,8 @@ namespace Svc {
     if (status != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_DecodeError(status);
     } else {
-        const Fw::FilePacket::Header& header = filePacket.asHeader();
-        switch (header.type) {
+        Fw::FilePacket::Type header_type = filePacket.asHeader().getType();
+        switch (header_type) {
           case Fw::FilePacket::T_START:
             this->handleStartPacket(filePacket.asStartPacket());
             break;
@@ -129,16 +129,16 @@ namespace Svc {
       this->warnings.invalidReceiveMode(Fw::FilePacket::T_DATA);
       return;
     }
-    const U32 sequenceIndex = dataPacket.header.sequenceIndex;
+    const U32 sequenceIndex = dataPacket.asHeader().getSequenceIndex();
     this->checkSequenceIndex(sequenceIndex);
-    const U32 byteOffset = dataPacket.byteOffset;
-    const U32 dataSize = dataPacket.dataSize;
+    const U32 byteOffset = dataPacket.getByteOffset();
+    const U32 dataSize = dataPacket.getDataSize();
     if (byteOffset + dataSize > this->file.size) {
       this->warnings.packetOutOfBounds(sequenceIndex, this->file.name);
       return;
     }
     const Os::File::Status status = this->file.write(
-        dataPacket.data,
+        dataPacket.getData(),
         byteOffset,
         dataSize
     );
@@ -153,7 +153,7 @@ namespace Svc {
     this->packetsReceived.packetReceived();
     if (this->receiveMode == DATA) {
       this->filesReceived.fileReceived();
-      this->checkSequenceIndex(endPacket.header.sequenceIndex);
+      this->checkSequenceIndex(endPacket.asHeader().getSequenceIndex());
       this->compareChecksums(endPacket);
       this->log_ACTIVITY_HI_FileReceived(this->file.name);
     }

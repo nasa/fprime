@@ -68,6 +68,12 @@ typedef U32 FwPrmIdType;
 typedef U16 FwTlmPacketizeIdType;
 #define PRI_FwTlmPacketizeIdType PRIu16
 
+typedef U32 FwDpIdType;
+#define PRI_FwDpIdType PRIu32
+
+typedef U32 FwDpPriorityType;
+#define PRI_FwDpPriorityType PRIu32
+
 // Boolean values for serialization
 #ifndef FW_SERIALIZE_TRUE_VALUE
 #define FW_SERIALIZE_TRUE_VALUE (0xFF)  //!< Value encoded during serialization for boolean true

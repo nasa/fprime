@@ -8,7 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ActiveTextLogger.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveTextLoggerImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ActiveTextLogger.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/LogFile.cpp"
 )
 
