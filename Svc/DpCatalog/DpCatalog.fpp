@@ -214,6 +214,32 @@ module Svc {
       format "Error deserializing DP {} header stat: {}" \
       throttle 10
 
+    @ Error inserting entry into list
+    event DpInsertError(
+                            dp: DpRecord @< The DP
+                          ) \
+      severity warning high \
+      id 19 \
+      format "Error deserializing DP {}" \
+      throttle 10
+
+    @ Error inserting entry into list
+    event DpDuplicate(
+                            dp: DpRecord @< The DP
+                          ) \
+      severity diagnostic \
+      id 20 \
+      format "DP {} already in catalog" \
+      throttle 10
+
+    @ Error inserting entry into list
+    event DpCatalogFull(
+                            dp: DpRecord @< The DP
+                          ) \
+      severity warning high \
+      id 21 \
+      format "Catalog full trying to insert DP {}" \
+      throttle 10
 
     # ----------------------------------------------------------------------
     # Telemetry

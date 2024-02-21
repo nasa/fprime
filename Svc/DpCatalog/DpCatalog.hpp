@@ -125,10 +125,19 @@ namespace Svc {
         // Private helpers
         // ----------------------------------
 
+        /// @brief search for an entry in the sorted list
+        /// @param entry new entry
+        /// @return true if entry found
+        bool searchForEntry(const DpStateEntry& entry);
+
         /// @brief insert an entry into the sorted list
         /// @param entry new entry
         /// @return failed if couldn't find a slot FIXME: Should we just assert? We should never run out.
         bool insertEntry(const DpStateEntry& entry);
+
+        /// @brief delete an entry from the sorted list
+        /// @param entry new entry
+        void deleteEntry(const DpStateEntry& entry);
 
         /// @brief check to see if component successfully initialized
         /// @return bool if it was initialized
@@ -143,8 +152,10 @@ namespace Svc {
         // ----------------------------------
         bool m_initialized; //!< set when the component has been initialized
         DpStateEntry* m_dpList; //!< unsorted list of DPs read in
-        DpSortedList* m_sortedDpList; //!< sorted list of DPs
+        DpSortedList* m_sortedDpList; //!< sorted list of DPs; head of linked list
+
         FwSizeType m_numDpRecords; //!< Stores the actual number of records.
+        FwSizeType m_numDpSlots; //!< Stores the available number of record slots.
 
         Fw::String m_directories[DP_MAX_DIRECTORIES]; //!< List of supplied DP directories
         FwSizeType m_numDirectories; //!< number of supplied directories

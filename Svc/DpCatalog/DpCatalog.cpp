@@ -25,6 +25,7 @@ namespace Svc {
         m_dpList(nullptr),
         m_sortedDpList(nullptr),
         m_numDpRecords(0),
+        m_numDpSlots(0),
         m_numDirectories(0),
         m_memSize(0),
         m_memPtr(nullptr),
@@ -61,24 +62,25 @@ namespace Svc {
                 (this->m_memSize >= (sizeof(DpSortedList) + sizeof(DpStateEntry))) and
                 (this->m_memPtr != nullptr)
             ) {
-            this->m_numDpRecords = this->m_memSize/(sizeof(DpSortedList) + sizeof(DpStateEntry));
+            // set the number of available record slots
+            this->m_numDpSlots = this->m_memSize/(sizeof(DpSortedList) + sizeof(DpStateEntry));
             // intialize data structures
             // state entry pointers will be at the beginning of the memory
             this->m_dpList = static_cast<DpStateEntry*>(this->m_memPtr);
             // sorted list will be after state structures
-            this->m_sortedDpList = reinterpret_cast<DpSortedList*>(&this->m_dpList[this->m_numDpRecords]);
-            for (FwSizeType record = 0; record < this->m_numDpRecords; record++) {
+            this->m_sortedDpList = reinterpret_cast<DpSortedList*>(&this->m_dpList[this->m_numDpSlots]);
+            for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
                 // overlay new instance of the DpState entry on the memory
-                (void) new(&this->m_dpList[record]) DpStateEntry();
-                this->m_dpList[record].entry = false;
-                this->m_dpList[record].dir = -1;
+                (void) new(&this->m_dpList[slot]) DpStateEntry();
+                this->m_dpList[slot].entry = false;
+                this->m_dpList[slot].dir = -1;
                 // intialize sorted list entry to empty
-                this->m_sortedDpList[record].recPtr = nullptr;
+                this->m_sortedDpList[slot].recPtr = nullptr;
             }
         } else {
             // if we don't have enough memory, set the number of records 
             // to zero for later detection
-            this->m_numDpRecords = 0;
+            this->m_numDpSlots = 0;
         }
 
         // assign directory names
@@ -112,7 +114,7 @@ namespace Svc {
 
         // array for directory listing. Max size would
         // be the full number of supported data products
-        Fw::String listing[this->m_numDpRecords];
+        Fw::String listing[this->m_numDpSlots];
         // get file listings from file system
         for (FwSizeType dir=0; dir<this->m_numDirectories; dir++) {
             // read in each directory and keep track of total
@@ -120,7 +122,7 @@ namespace Svc {
             Os::FileSystem::Status stat =
                 Os::FileSystem::readDirectory(
                     this->m_directories[dir].toChar(),
-                    this->m_numDpRecords-totalFiles,
+                    this->m_numDpSlots-totalFiles,
                     listing,
                     filesRead
                 );
@@ -133,7 +135,7 @@ namespace Svc {
             }
 
             // Assert number of files isn't more than asked
-            FW_ASSERT(filesRead <= this->m_numDpRecords-totalFiles,filesRead,this->m_numDpRecords-totalFiles);
+            FW_ASSERT(filesRead <= this->m_numDpSlots-totalFiles,filesRead,this->m_numDpSlots-totalFiles);
 
             // extract metadata for each file
             for (FwNativeUIntType file = 0; file < filesRead; file++) {
@@ -171,16 +173,40 @@ namespace Svc {
                     this->log_WARNING_HI_FileHdrDesError(listing[file],desStat);
                 }
                 
-                // add entry to catalog
+                // add entry to catalog. 
                 DpStateEntry entry;
+                entry.dir = dir;
                 entry.record.setid(container.getId());
                 entry.record.setpriority(container.getPriority());
                 entry.record.setstate(container.getState());
                 entry.record.settSec(container.getTimeTag().getSeconds());
                 entry.record.settSub(container.getTimeTag().getUSeconds());
                 entry.record.setsize(container.getDataSize() + Fw::DpContainer::DATA_OFFSET);
+                entry.entry = true;
 
-                this->insertEntry(entry);
+                // see if the entry is already there. If so, don't insert it.
+                // this could happen if the catalog is built multiple times.
+                if (this->searchForEntry(entry)) {
+                    this->log_DIAGNOSTIC_DpDuplicate(entry.record);
+                    continue;
+                }
+
+                // assign the entry to the stored list
+                this->m_dpList[this->m_numDpRecords] = entry;
+
+                // if can't insert, quit
+                if (not this->insertEntry(this->m_dpList[this->m_numDpRecords])) {
+                    this->log_WARNING_HI_DpInsertError(entry.record);
+                    break;
+                }
+
+                // increment to next slot
+                this->m_numDpRecords++;
+                // make sure we haven't exceeded the limit
+                if (this->m_numDpRecords > this->m_numDpSlots) {
+                    this->log_WARNING_HI_DpCatalogFull(entry.record);
+                    break;
+                }
 
             }
 
@@ -188,7 +214,7 @@ namespace Svc {
 
             // check to see if catalog is full
             // that means generated products exceed the catalog size
-            if (totalFiles == this->m_numDpRecords) {
+            if (totalFiles == this->m_numDpSlots) {
                 this->log_WARNING_HI_CatalogFull(this->m_directories[dir]);
                 break;
             }
@@ -202,16 +228,20 @@ namespace Svc {
     bool DpCatalog::insertEntry(const DpStateEntry& entry) {
 
 
+
         return true;
 
     }
 
+    void DpCatalog::deleteEntry(const DpStateEntry& entry) {
+        
+    }
 
     bool DpCatalog::checkInit() {
         if (not this->m_initialized) {
             this->log_WARNING_HI_ComponentNotIntialized();
             return false;
-        } else if (0 == this->m_numDpRecords) {
+        } else if (0 == this->m_numDpSlots) {
             this->log_WARNING_HI_ComponentNoMemory();
             return false;
         }
