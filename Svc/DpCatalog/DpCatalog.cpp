@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "FpConfig.hpp"
+#include "Fw/Dp/DpContainer.hpp"
 #include "Svc/DpCatalog/DpCatalog.hpp"
 
 #include "Os/FileSystem.hpp"
@@ -105,8 +106,9 @@ namespace Svc {
         // file class instance for processing files
         Os::File dpFile;
         // Working buffer for DP headers
-        U8 dpBuff[3*sizeof(U32) + Fw::Time::SERIALIZED_SIZE]; // FIXME: replace magic number
-        Fw::ExternalSerializeBuffer dpHdr(dpBuff, sizeof(dpBuff));
+        U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE]; // FIXME: replace magic number
+        Fw::Buffer hdrBuff(dpBuff,sizeof(dpBuff)); // buffer for container header decoding
+        Fw::DpContainer container; // container object for extracting header fields
 
         // array for directory listing. Max size would
         // be the full number of supported data products
@@ -139,42 +141,46 @@ namespace Svc {
                 if (stat != Os::File::OP_OK) {
                     this->log_WARNING_HI_FileOpenError(listing[file],stat);
                 }
-                // FIXME: Replace with DP header helper
+
                 // Read DP header
-                FwNativeIntType size = sizeof(dpBuff);
+                FwNativeIntType size = Fw::DpContainer::DATA_OFFSET;
+
                 stat = dpFile.read(dpBuff,size);
                 if (stat != Os::File::OP_OK) {
+                    this->log_WARNING_HI_FileReadError(listing[file],stat);
+                    dpFile.close();
+                    continue; // maybe next file is fine
+                }
+
+                // if full header isn't read, something's wrong with the file, so skip
+                if (size != Fw::DpContainer::DATA_OFFSET) {
                     this->log_WARNING_HI_FileReadError(listing[file],Os::File::BAD_SIZE);
                     dpFile.close();
                     continue; // maybe next file is fine
                 }
-                dpHdr.resetDeser();
-                Fw::SerializeStatus desStat;
-                // Deserialize header
-                U32 desc;
-                desStat = dpHdr.deserialize(desc);
-                // We have allocated enough room for the header, so deserialization
-                // should never fail
-                FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK,desStat);
-                // validate descriptor
-                if (desc != 5) {
-                    this->log_WARNING_HI_FileHdrError(
-                        listing[file],
-                        DpHdrField::DESCRIPTOR,
-                        5,desc
-                    );
-                    dpFile.close();
-                    continue; // maybe next file is fine
-                }
-                U32 id;
-                desStat = dpHdr.deserialize(id);
-                FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK,desStat);
-                U32 prio;
-                desStat = dpHdr.deserialize(prio);
-                FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK,desStat);
-                
-                
 
+                // if all is well, don't need the file any more
+                dpFile.close();
+
+                // give buffer to container instance
+                container.setBuffer(hdrBuff);
+
+                // reset header deserialization in the container
+                Fw::SerializeStatus desStat = container.deserializeHeader();
+                if (desStat != Fw::FW_SERIALIZE_OK) {
+                    this->log_WARNING_HI_FileHdrDesError(listing[file],desStat);
+                }
+                
+                // add entry to catalog
+                DpStateEntry entry;
+                entry.record.setid(container.getId());
+                entry.record.setpriority(container.getPriority());
+                entry.record.setstate(container.getState());
+                entry.record.settSec(container.getTimeTag().getSeconds());
+                entry.record.settSub(container.getTimeTag().getUSeconds());
+                entry.record.setsize(container.getDataSize() + Fw::DpContainer::DATA_OFFSET);
+
+                this->insertEntry(entry);
 
             }
 
@@ -191,6 +197,13 @@ namespace Svc {
 
 
         return Fw::CmdResponse::OK;
+    }
+
+    bool DpCatalog::insertEntry(const DpStateEntry& entry) {
+
+
+        return true;
+
     }
 
 

@@ -6,12 +6,6 @@ module Svc {
   # in the component and to generate a catalog
   # data product
 
-  @ Enumeration for data product downlink state
-  enum DpState {
-    PENDING
-    COMPLETED
-  }
-
   @ Header validation error
   enum DpHdrField {
     DESCRIPTOR,
@@ -27,7 +21,7 @@ module Svc {
     tSub: U32
     $priority: U32
     $size: U64
-    state: DpState
+    state: Fw.DpState
   }
 
 
@@ -198,7 +192,7 @@ module Svc {
       format "Error reading DP file {} status {}" \
       throttle 10
 
-    @ Error reading header data
+    @ Error reading header data from DP file
     event FileHdrError(
                             file: string size 80 @< The file
                             field: DpHdrField, @< incorrect value
@@ -209,6 +203,17 @@ module Svc {
       id 17 \
       format "Error reading DP {} header {} field. Expected: {} Actual: {}" \
       throttle 10
+
+    @ Error deserializing header data
+    event FileHdrDesError(
+                            file: string size 80 @< The file
+                            stat: I32
+                          ) \
+      severity warning high \
+      id 18 \
+      format "Error deserializing DP {} header stat: {}" \
+      throttle 10
+
 
     # ----------------------------------------------------------------------
     # Telemetry
