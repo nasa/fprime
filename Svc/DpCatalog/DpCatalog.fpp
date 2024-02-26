@@ -36,6 +36,12 @@ module Svc {
     @ Ping output port
     output port pingOut: Svc.Ping
 
+    @ File Downlink send port
+    output port fileOut: Svc.SendFileRequest
+
+    @ File Downlink send complete port
+    async input port fileDone: SendFileComplete
+
     # ----------------------------------------------------------------------
     # F Prime infrastructure ports
     # ----------------------------------------------------------------------
@@ -70,12 +76,18 @@ module Svc {
       opcode 0
 
     @ Start transmitting catalog
-    async command START_XMIT_CATALOG \
+    async command START_XMIT_CATALOG (
+                                    wait: Fw.Wait @< have START_XMIT command wait for catalog to complete transmitting
+                                  ) \    
       opcode 1
 
     @ Stop transmitting catalog
     async command STOP_XMIT_CATALOG \
       opcode 2
+
+    @ clear existing catalog
+    async command CLEAR_CATALOG \
+      opcode 3
 
     # ----------------------------------------------------------------------
     # Events
@@ -239,6 +251,13 @@ module Svc {
       severity warning high \
       id 21 \
       format "Catalog full trying to insert DP {}" \
+      throttle 10
+
+    @ Tried to build catalog while downlink process active
+    event DpXmitInProgress \
+      severity warning low \
+      id 22 \
+      format "Cannot build new catalog while DPs are being transmitted" \
       throttle 10
 
     # ----------------------------------------------------------------------

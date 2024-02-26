@@ -30,7 +30,11 @@ namespace Svc {
         m_memSize(0),
         m_memPtr(nullptr),
         m_allocatorId(0),
-        m_allocator(nullptr)
+        m_allocator(nullptr),
+        m_xmitInProgress(false),
+        m_xmitCmdWait(false),
+        m_xmitOpCode(0),
+        m_xmitCmdSeq(0)
     {
 
     }
@@ -54,16 +58,16 @@ namespace Svc {
         this->m_memSize = maxDpFiles * (sizeof(DpStateEntry) + sizeof(DpSortedList));
         bool notUsed; // we don't need to recover the catalog.
         // request memory
-        this->m_memPtr = allocator.allocate(memId,this->m_memSize,notUsed);
+        this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
         // adjust to actual size if less allocated and only initialize
         // if there is enough room for at least one record and memory 
         // was allocated
         if (
-                (this->m_memSize >= (sizeof(DpSortedList) + sizeof(DpStateEntry))) and
-                (this->m_memPtr != nullptr)
+            (this->m_memSize >= (sizeof(DpSortedList) + sizeof(DpStateEntry))) and
+            (this->m_memPtr != nullptr)
             ) {
             // set the number of available record slots
-            this->m_numDpSlots = this->m_memSize/(sizeof(DpSortedList) + sizeof(DpStateEntry));
+            this->m_numDpSlots = this->m_memSize / (sizeof(DpSortedList) + sizeof(DpStateEntry));
             // intialize data structures
             // state entry pointers will be at the beginning of the memory
             this->m_dpList = static_cast<DpStateEntry*>(this->m_memPtr);
@@ -76,8 +80,10 @@ namespace Svc {
                 this->m_dpList[slot].dir = -1;
                 // intialize sorted list entry to empty
                 this->m_sortedDpList[slot].recPtr = nullptr;
+                this->m_sortedDpList[slot].sent = false;
             }
-        } else {
+        }
+        else {
             // if we don't have enough memory, set the number of records 
             // to zero for later detection
             this->m_numDpSlots = 0;
@@ -102,6 +108,12 @@ namespace Svc {
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
+        // make sure a downlink is not in progress
+        if (this->m_xmitInProgress) {
+            this->log_WARNING_LO_DpXmitInProgress();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
+
         // keep cumulative number of files
         FwSizeType totalFiles = 0;
 
@@ -109,20 +121,20 @@ namespace Svc {
         Os::File dpFile;
         // Working buffer for DP headers
         U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE]; // FIXME: replace magic number
-        Fw::Buffer hdrBuff(dpBuff,sizeof(dpBuff)); // buffer for container header decoding
+        Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff)); // buffer for container header decoding
         Fw::DpContainer container; // container object for extracting header fields
 
         // array for directory listing. Max size would
         // be the full number of supported data products
         Fw::String listing[this->m_numDpSlots];
         // get file listings from file system
-        for (FwSizeType dir=0; dir<this->m_numDirectories; dir++) {
+        for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
             // read in each directory and keep track of total
             U32 filesRead = 0;
             Os::FileSystem::Status stat =
                 Os::FileSystem::readDirectory(
                     this->m_directories[dir].toChar(),
-                    this->m_numDpSlots-totalFiles,
+                    this->m_numDpSlots - totalFiles,
                     listing,
                     filesRead
                 );
@@ -135,28 +147,28 @@ namespace Svc {
             }
 
             // Assert number of files isn't more than asked
-            FW_ASSERT(filesRead <= this->m_numDpSlots-totalFiles,filesRead,this->m_numDpSlots-totalFiles);
+            FW_ASSERT(filesRead <= this->m_numDpSlots - totalFiles, filesRead, this->m_numDpSlots - totalFiles);
 
             // extract metadata for each file
             for (FwNativeUIntType file = 0; file < filesRead; file++) {
-                Os::File::Status stat = dpFile.open(listing[file].toChar(),Os::File::OPEN_READ);
+                Os::File::Status stat = dpFile.open(listing[file].toChar(), Os::File::OPEN_READ);
                 if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_FileOpenError(listing[file],stat);
+                    this->log_WARNING_HI_FileOpenError(listing[file], stat);
                 }
 
                 // Read DP header
                 FwNativeIntType size = Fw::DpContainer::DATA_OFFSET;
 
-                stat = dpFile.read(dpBuff,size);
+                stat = dpFile.read(dpBuff, size);
                 if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_FileReadError(listing[file],stat);
+                    this->log_WARNING_HI_FileReadError(listing[file], stat);
                     dpFile.close();
                     continue; // maybe next file is fine
                 }
 
                 // if full header isn't read, something's wrong with the file, so skip
                 if (size != Fw::DpContainer::DATA_OFFSET) {
-                    this->log_WARNING_HI_FileReadError(listing[file],Os::File::BAD_SIZE);
+                    this->log_WARNING_HI_FileReadError(listing[file], Os::File::BAD_SIZE);
                     dpFile.close();
                     continue; // maybe next file is fine
                 }
@@ -170,9 +182,9 @@ namespace Svc {
                 // reset header deserialization in the container
                 Fw::SerializeStatus desStat = container.deserializeHeader();
                 if (desStat != Fw::FW_SERIALIZE_OK) {
-                    this->log_WARNING_HI_FileHdrDesError(listing[file],desStat);
+                    this->log_WARNING_HI_FileHdrDesError(listing[file], desStat);
                 }
-                
+
                 // add entry to catalog. 
                 DpStateEntry entry;
                 entry.dir = dir;
@@ -184,17 +196,10 @@ namespace Svc {
                 entry.record.setsize(container.getDataSize() + Fw::DpContainer::DATA_OFFSET);
                 entry.entry = true;
 
-                // see if the entry is already there. If so, don't insert it.
-                // this could happen if the catalog is built multiple times.
-                if (this->searchForEntry(entry)) {
-                    this->log_DIAGNOSTIC_DpDuplicate(entry.record);
-                    continue;
-                }
-
                 // assign the entry to the stored list
                 this->m_dpList[this->m_numDpRecords] = entry;
 
-                // if can't insert, quit
+                // insert entry. if can't insert, quit
                 if (not this->insertEntry(this->m_dpList[this->m_numDpRecords])) {
                     this->log_WARNING_HI_DpInsertError(entry.record);
                     break;
@@ -225,23 +230,53 @@ namespace Svc {
         return Fw::CmdResponse::OK;
     }
 
-    bool DpCatalog::insertEntry(const DpStateEntry& entry) {
+    bool DpCatalog::insertEntry(DpStateEntry& entry) {
 
-
+        // Prototype version: Just add the record to the end of the list
+        this->m_sortedDpList[this->m_numDpRecords].recPtr = &entry;
+        this->m_sortedDpList[this->m_numDpRecords].sent = false;
 
         return true;
 
     }
 
-    void DpCatalog::deleteEntry(const DpStateEntry& entry) {
-        
+    void DpCatalog::deleteEntry(DpStateEntry& entry) {
+
+    }
+
+    void DpCatalog::sendNextEntry() {
+
+        // Make sure that pointer is valid
+        FW_ASSERT(this->m_sortedDpList);
+
+        Svc::SendFileRequestPortStrings::StringSize100 fileName;
+
+        // Demo code: Walk through list and send first file
+        for (FwSizeType record = 0; record < this->m_numDpRecords; record++) {
+            if (not this->m_sortedDpList[record].sent) {
+                // make sure the entry is used
+                if (this->m_sortedDpList[record].recPtr != nullptr) {
+                    // build file name
+                    fileName.format(DP_FILENAME_FORMAT,
+                        this->m_directories[this->m_sortedDpList[record].recPtr->dir],
+                        this->m_sortedDpList[record].recPtr->record.getid(),
+                        this->m_sortedDpList[record].recPtr->record.gettSec(),
+                        this->m_sortedDpList[record].recPtr->record.gettSub()
+                        );
+                    this->fileOut_out(0,fileName,fileName,0,0);
+                }
+            }
+        }
+
+
     }
 
     bool DpCatalog::checkInit() {
         if (not this->m_initialized) {
             this->log_WARNING_HI_ComponentNotIntialized();
             return false;
-        } else if (0 == this->m_numDpSlots) {
+        }
+        else if (0 == this->m_numDpSlots) {
             this->log_WARNING_HI_ComponentNoMemory();
             return false;
         }
@@ -254,7 +289,7 @@ namespace Svc {
         // it's a way to more gracefully shut down if there are missing
         // pointers
         if ((this->m_allocator != nullptr) and (this->m_memPtr != nullptr)) {
-            this->m_allocator->deallocate(this->m_allocatorId,this->m_memPtr);
+            this->m_allocator->deallocate(this->m_allocatorId, this->m_memPtr);
         }
 
     }
@@ -263,6 +298,15 @@ namespace Svc {
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
+
+    void DpCatalog ::
+        fileDone_handler(
+            NATIVE_INT_TYPE portNum,
+            const Svc::SendFileResponse& resp
+        )
+    {
+        // TODO
+    }
 
     void DpCatalog ::
         pingIn_handler(
@@ -288,15 +332,36 @@ namespace Svc {
         this->cmdResponse_out(opCode, cmdSeq, this->doCatalogBuild());
     }
 
-    void DpCatalog ::
-        START_XMIT_CATALOG_cmdHandler(
-            FwOpcodeType opCode,
-            U32 cmdSeq
-        )
+  void DpCatalog ::
+    START_XMIT_CATALOG_cmdHandler(
+        FwOpcodeType opCode,
+        U32 cmdSeq,
+        Fw::Wait wait
+    )
     {
-        // TODO
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+
+        Fw::CmdResponse resp = this->doCatalogXmit();
+
+        if (Fw::Wait::NO_WAIT == wait) {
+            this->cmdResponse_out(opCode, cmdSeq, resp);
+            this->m_xmitCmdWait = false;
+            this->m_xmitOpCode = 0;
+            this->m_xmitCmdSeq = 0;
+        } else {
+            this->m_xmitCmdWait = true;
+            this->m_xmitOpCode = opCode;
+            this->m_xmitCmdSeq = cmdSeq;
+        }
+    
     }
+
+    Fw::CmdResponse DpCatalog::doCatalogXmit() {
+
+        this->sendNextEntry();
+        return Fw::CmdResponse::OK;
+
+    }
+
 
     void DpCatalog ::
         STOP_XMIT_CATALOG_cmdHandler(

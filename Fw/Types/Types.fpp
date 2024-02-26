@@ -71,4 +71,10 @@ module Fw {
       FAILURE @< Representing failure
       SUCCESS @< Representing success
   }
+
+  @ Wait or don't wait for something
+  enum Wait {
+    WAIT,
+    NO_WAIT
+  }
 }

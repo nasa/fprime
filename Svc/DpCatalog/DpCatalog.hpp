@@ -64,6 +64,14 @@ namespace Svc {
         // Handler implementations for user-defined typed input ports
         // ----------------------------------------------------------------------
 
+        //! Handler implementation for fileDone
+        //!
+        //! File Downlink send complete port
+        void fileDone_handler(
+            NATIVE_INT_TYPE portNum, //!< The port number
+            const Svc::SendFileResponse& resp
+        ) override;
+
         //! Handler implementation for pingIn
         //!
         //! Ping input port
@@ -91,8 +99,9 @@ namespace Svc {
         //! Start transmitting catalog
         void START_XMIT_CATALOG_cmdHandler(
             FwOpcodeType opCode, //!< The opcode
-            U32 cmdSeq //!< The command sequence number
-        );
+            U32 cmdSeq, //!< The command sequence number
+            Fw::Wait wait //!< have START_XMIT command wait for catalog to complete transmitting
+        ) override;
 
         //! Handler implementation for command STOP_XMIT_CATALOG
         //!
@@ -102,6 +111,13 @@ namespace Svc {
             U32 cmdSeq //!< The command sequence number
         );
 
+        //! Handler implementation for command CLEAR_CATALOG
+        //!
+        //! clear existing catalog
+        void CLEAR_CATALOG_cmdHandler(
+            FwOpcodeType opCode, //!< The opcode
+            U32 cmdSeq //!< The command sequence number
+        ) override;
 
 
         // ----------------------------------
@@ -118,6 +134,7 @@ namespace Svc {
         /// @brief A list sorted in priority order for downlink
         struct DpSortedList {
             DpStateEntry* recPtr; //!< pointer to DP record          
+            bool sent; //!< flag if file sent yet
         };
 
 
@@ -125,19 +142,17 @@ namespace Svc {
         // Private helpers
         // ----------------------------------
 
-        /// @brief search for an entry in the sorted list
-        /// @param entry new entry
-        /// @return true if entry found
-        bool searchForEntry(const DpStateEntry& entry);
-
-        /// @brief insert an entry into the sorted list
+        /// @brief insert an entry into the sorted list; if it exists, update the metadata
         /// @param entry new entry
         /// @return failed if couldn't find a slot FIXME: Should we just assert? We should never run out.
-        bool insertEntry(const DpStateEntry& entry);
+        bool insertEntry(DpStateEntry& entry);
 
         /// @brief delete an entry from the sorted list
         /// @param entry new entry
-        void deleteEntry(const DpStateEntry& entry);
+        void deleteEntry(DpStateEntry& entry);
+
+        /// @brief send the next entry to file downlink
+        void sendNextEntry();
 
         /// @brief check to see if component successfully initialized
         /// @return bool if it was initialized
@@ -146,6 +161,10 @@ namespace Svc {
         /// @brief build catalog. Shared between command and port
         /// @return command response for pass/fail
         Fw::CmdResponse doCatalogBuild();
+
+        /// @brief start transmitting catalog. Shared between command and port
+        /// @return command response for pass/fail
+        Fw::CmdResponse doCatalogXmit();
 
         // ----------------------------------
         // Private data
@@ -161,9 +180,14 @@ namespace Svc {
         FwSizeType m_numDirectories; //!< number of supplied directories
 
         FwSizeType m_memSize; //!< size of allocated buffer
-        void *m_memPtr; //!< stored for shutdown
+        void* m_memPtr; //!< stored for shutdown
         NATIVE_UINT_TYPE m_allocatorId; //!< stored for shutdown
         Fw::MemAllocator* m_allocator; //!< stored for shutdown
+
+        bool m_xmitInProgress; //!< set if DP files are in the process of being sent
+        bool m_xmitCmdWait; //!< true if waiting for transmission complete to complete xmit command
+        FwOpcodeType m_xmitOpCode; //!< stored xmit command opcode
+        U32 m_xmitCmdSeq; //!< stored command sequence id
 
     };
 
