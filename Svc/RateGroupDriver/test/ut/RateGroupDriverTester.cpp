@@ -17,9 +17,10 @@ static Fw::SimpleObjRegistry simpleReg;
 
 void connectPorts(Svc::RateGroupDriver& impl, Svc::RateGroupDriverImplTester& tester) {
 
-    impl.set_CycleOut_OutputPort(0,tester.get_from_CycleOut(0));
-    impl.set_CycleOut_OutputPort(1,tester.get_from_CycleOut(1));
-    impl.set_CycleOut_OutputPort(2,tester.get_from_CycleOut(2));
+    for(NATIVE_UINT_TYPE i=0; i<Svc::RateGroupDriver::DIVIDER_SIZE; i++)
+    {
+        impl.set_CycleOut_OutputPort(i,tester.get_from_CycleOut(i));
+    }
 
     tester.connect_to_CycleIn(0,impl.get_CycleIn_InputPort(0));
 #if FW_PORT_TRACING
