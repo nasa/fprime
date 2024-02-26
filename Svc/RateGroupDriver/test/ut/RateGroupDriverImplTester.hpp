@@ -30,7 +30,7 @@ namespace Svc {
 
             void clearPortCalls();
 
-            bool m_portCalls[3];
+            bool m_portCalls[Svc::RateGroupDriver::DIVIDER_SIZE];
 
     };
 
