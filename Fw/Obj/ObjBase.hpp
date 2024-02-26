@@ -14,7 +14,9 @@
 #define FW_OBJ_BASE_HPP
 
 #include <FpConfig.hpp>
+#if FW_OBJECT_NAMES == 1
 #include <Fw/Types/ObjectName.hpp>
+#endif
 
 namespace Fw {
 
