@@ -102,7 +102,7 @@ namespace CFDP {
       // ----------------------------------------------------------------------
 
       //! The accumulated checksum value
-      U32 value;
+      U32 m_value;
 
     };
 

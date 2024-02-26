@@ -495,9 +495,10 @@ class TlmPacketParser(object):
                         % (member_type, serializable_type)
                     )
                     sys.exit(-1)
-                serializable_size += type_size
                 if member_array_size != None:
-                    serializable_size *= member_array_size
+                    serializable_size += int(member_array_size) * type_size
+                else:
+                    serializable_size += type_size
             self.add_type_size(serializable_type, serializable_size)
             if self.verbose:
                 print(

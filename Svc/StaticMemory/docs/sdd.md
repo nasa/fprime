@@ -15,11 +15,12 @@ expense of extra allocations.
 
 ## Configuration
 
-StaticMemory number of allocations and ports are configured using `AcConstants.ini` as shown below. This sets the number
+StaticMemory number of allocations and ports are configured using `AcConstants.fpp` as shown below. This sets the number
 of allocate and deallocate port indices as well as the memory segments.
 
-```ini
-StaticMemoryAllocations = 4
+```
+@ Number of static memory allocations
+constant StaticMemoryAllocations = 4
 ```
 
 The size of each memory segment is set in `StaticMemoryConfig.hpp` as shown below.

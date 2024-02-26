@@ -20,13 +20,13 @@ static U32 min(const U32 a, const U32 b) {
 namespace CFDP {
 
   Checksum ::
-    Checksum() : value(0)
+    Checksum() : m_value(0)
   {
 
   }
 
   Checksum ::
-    Checksum(const U32 value) : value(value)
+    Checksum(const U32 value) : m_value(value)
   {
 
   }
@@ -34,7 +34,7 @@ namespace CFDP {
   Checksum ::
     Checksum(const Checksum &original)
   {
-    this->value = original.getValue();
+    this->m_value = original.getValue();
   }
 
   Checksum ::
@@ -46,14 +46,14 @@ namespace CFDP {
   Checksum& Checksum ::
     operator=(const Checksum& checksum)
   {
-    this->value = checksum.value;
+    this->m_value = checksum.m_value;
     return *this;
   }
 
   bool Checksum ::
     operator==(const Checksum& checksum) const
   {
-    return this->value == checksum.value;
+    return this->m_value == checksum.m_value;
   }
 
   bool Checksum ::
@@ -65,7 +65,7 @@ namespace CFDP {
   U32 Checksum ::
     getValue() const
   {
-    return this->value;
+    return this->m_value;
   }
 
   void Checksum ::
@@ -137,7 +137,7 @@ namespace CFDP {
   {
     FW_ASSERT(offset < 4);
     const U32 addend = byte << (8*(3-offset));
-    this->value += addend;
+    this->m_value += addend;
   }
 
 }

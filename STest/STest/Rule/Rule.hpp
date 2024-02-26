@@ -29,7 +29,7 @@ namespace STest {
       Rule(
           const char *const name //!< The name of the rule
       ) :
-        name(name)
+        m_name(name)
       {
 
       }
@@ -50,7 +50,7 @@ namespace STest {
           State& state //!< The system state
       ) {
         ASSERT_TRUE(this->precondition(state))
-          << "precondition failed applying rule " << this->name;
+          << "precondition failed applying rule " << this->m_name;
         this->action(state);
       }
 
@@ -59,6 +59,11 @@ namespace STest {
       virtual bool precondition(
           const State& state //!< The system state
       ) = 0;
+
+      //! Get rule name
+      char const * getName() const {
+        return this->m_name;
+      }
 
     protected:
 
@@ -77,8 +82,14 @@ namespace STest {
       // Public member variables
       // ----------------------------------------------------------------------
 
+    private:
+
+      // ----------------------------------------------------------------------
+      // Private member variables
+      // ----------------------------------------------------------------------
+
       //! The name of the rule
-      const char *const name;
+      const char *const m_name;
 
   };
 

@@ -23,14 +23,14 @@ namespace Fw {
         const CFDP::Checksum& checksum
     )
   {
-    this->header.initialize(FilePacket::T_END, sequenceIndex);
+    this->m_header.initialize(FilePacket::T_END, sequenceIndex);
     this->setChecksum(checksum);
   }
 
   U32 FilePacket::EndPacket ::
     bufferSize() const
   {
-    return this->header.bufferSize() + sizeof(this->checksumValue);
+    return this->m_header.bufferSize() + sizeof(this->m_checksumValue);
   }
 
   SerializeStatus FilePacket::EndPacket ::
@@ -46,14 +46,14 @@ namespace Fw {
   void FilePacket::EndPacket ::
     setChecksum(const CFDP::Checksum& checksum)
   {
-    this->checksumValue = checksum.getValue();
+    this->m_checksumValue = checksum.getValue();
   }
 
 
   void FilePacket::EndPacket ::
     getChecksum(CFDP::Checksum& checksum) const
   {
-    CFDP::Checksum c(this->checksumValue);
+    CFDP::Checksum c(this->m_checksumValue);
     checksum = c;
   }
 
@@ -61,10 +61,10 @@ namespace Fw {
     fromSerialBuffer(SerialBuffer& serialBuffer)
   {
 
-    FW_ASSERT(this->header.type == T_END);
+    FW_ASSERT(this->m_header.m_type == T_END);
 
     const SerializeStatus status =
-      serialBuffer.deserialize(this->checksumValue);
+      serialBuffer.deserialize(this->m_checksumValue);
 
     return status;
 
@@ -74,15 +74,15 @@ namespace Fw {
     toSerialBuffer(SerialBuffer& serialBuffer) const
   {
 
-    FW_ASSERT(this->header.type == T_END);
+    FW_ASSERT(this->m_header.m_type == T_END);
 
     SerializeStatus status;
 
-    status = this->header.toSerialBuffer(serialBuffer);
+    status = this->m_header.toSerialBuffer(serialBuffer);
     if (status != FW_SERIALIZE_OK)
       return status;
 
-    status = serialBuffer.serialize(this->checksumValue);
+    status = serialBuffer.serialize(this->m_checksumValue);
     if (status != FW_SERIALIZE_OK)
       return status;
 

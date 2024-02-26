@@ -66,19 +66,19 @@ namespace Svc {
                 // ----------------------------------------------------------------------
 
                 //! The memory for the elements
-                Fw::Buffer* elements;
+                Fw::Buffer* m_elements;
 
                 //! The capacity of the queue
-                NATIVE_UINT_TYPE capacity;
+                NATIVE_UINT_TYPE m_capacity;
 
                 //! The enqueue index
-                NATIVE_UINT_TYPE enqueueIndex;
+                NATIVE_UINT_TYPE m_enqueueIndex;
 
                 //! The dequeue index
-                NATIVE_UINT_TYPE dequeueIndex;
+                NATIVE_UINT_TYPE m_dequeueIndex;
 
                 //! The size of the queue
-                NATIVE_UINT_TYPE size;
+                NATIVE_UINT_TYPE m_size;
         };  // class ArrayFIFOBuffer
 
         public:
@@ -178,39 +178,39 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! The mode
-        BufferAccumulator_OpState mode;
+        BufferAccumulator_OpState m_mode;
 
         //! Memory for the buffer array
-        Fw::Buffer* bufferMemory;
+        Fw::Buffer* m_bufferMemory;
 
         //! The FIFO queue of buffers
-        ArrayFIFOBuffer bufferQueue;
+        ArrayFIFOBuffer m_bufferQueue;
 
         //! Whether to send a buffer to the downstream client
-        bool send;
+        bool m_send;
 
         //! If we are switched to ACCUMULATE then back to DRAIN, whether we were
         //! waiting on a buffer
-        bool waitForBuffer;
+        bool m_waitForBuffer;
 
         //! The number of QueueFull warnings sent since the last successful enqueue
         //! operation
-        U32 numWarnings;
+        U32 m_numWarnings;
 
         //! The number of buffers drained in a partial drain command
-        U32 numDrained;
+        U32 m_numDrained;
 
         //! The number of buffers TO drain in a partial drain command
-        U32 numToDrain;
+        U32 m_numToDrain;
 
         //! The DrainBuffers opcode to respond to
-        FwOpcodeType opCode;
+        FwOpcodeType m_opCode;
 
         //! The DrainBuffers cmdSeq to respond to
-        U32 cmdSeq;
+        U32 m_cmdSeq;
 
         //! The allocator ID
-        NATIVE_INT_TYPE allocatorId;
+        NATIVE_INT_TYPE m_allocatorId;
     };
 
 }  // namespace Svc

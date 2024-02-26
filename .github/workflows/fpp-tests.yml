@@ -41,3 +41,10 @@ jobs:
         run: |
           fprime-util check
         shell: bash
+      - name: "Archive Logs"
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: FppTest-Logs
+          path: ./FppTest/build-fprime-automatic-native-ut/Testing/Temporary/*.log
+          retention-days: 5

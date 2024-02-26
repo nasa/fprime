@@ -64,7 +64,7 @@ namespace Svc {
   void BufferLoggerTester ::
     LogNoInit()
   {
-    this->component.m_file.baseName = Fw::String("LogNoInit");
+    this->component.m_file.m_baseName = Fw::String("LogNoInit");
     // NOTE (mereweth) - make something sensible happen when no-one calls initLog()
     // Send data
     this->sendComBuffers(3);

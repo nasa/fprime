@@ -24,11 +24,11 @@ namespace Os {
 
   BufferQueue::BufferQueue() {
     // Set member variables:
-    this->queue = nullptr;
-    this->msgSize = 0;
-    this->depth = 0;
-    this->count = 0;
-    this->maxCount = 0;
+    this->m_queue = nullptr;
+    this->m_msgSize = 0;
+    this->m_depth = 0;
+    this->m_count = 0;
+    this->m_maxCount = 0;
   }
 
   BufferQueue::~BufferQueue() {
@@ -37,20 +37,20 @@ namespace Os {
 
   bool BufferQueue::create(NATIVE_UINT_TYPE depth, NATIVE_UINT_TYPE msgSize) {
     // Queue is already set up. destroy it and try again:
-    if (nullptr != this->queue) {
+    if (nullptr != this->m_queue) {
       this->finalize();
     }
-    FW_ASSERT(nullptr == this->queue, reinterpret_cast<POINTER_CAST>(this->queue));
+    FW_ASSERT(nullptr == this->m_queue, reinterpret_cast<POINTER_CAST>(this->m_queue));
 
     // Set member variables:
-    this->msgSize = msgSize;
-    this->depth = depth;
+    this->m_msgSize = msgSize;
+    this->m_depth = depth;
     return this->initialize(depth, msgSize);
   }
 
   bool BufferQueue::push(const U8* buffer, NATIVE_UINT_TYPE size, NATIVE_INT_TYPE priority) {
 
-    FW_ASSERT(size <= this->msgSize);
+    FW_ASSERT(size <= this->m_msgSize);
     if( this->isFull() ) {
       return false;
     }
@@ -62,9 +62,9 @@ namespace Os {
     }
 
     // Increment count:
-    ++this->count;
-    if( this->count > this->maxCount ) {
-      this->maxCount = this->count;
+    ++this->m_count;
+    if( this->m_count > this->m_maxCount ) {
+      this->m_maxCount = this->m_count;
     }
     return true;
   }
@@ -83,38 +83,38 @@ namespace Os {
     }
 
     // Decrement count:
-    --this->count;
+    --this->m_count;
 
     return true;
   }
 
   bool BufferQueue::isFull() {
-    return (this->count == this->depth);
+    return (this->m_count == this->m_depth);
   }
 
   bool BufferQueue::isEmpty() {
-    return (this->count == 0);
+    return (this->m_count == 0);
   }
 
   NATIVE_UINT_TYPE BufferQueue::getCount() {
-    return this->count;
+    return this->m_count;
   }
 
   NATIVE_UINT_TYPE BufferQueue::getMaxCount() {
-    return this->maxCount;
+    return this->m_maxCount;
   }
 
 
   NATIVE_UINT_TYPE BufferQueue::getMsgSize() {
-    return this->msgSize;
+    return this->m_msgSize;
   }
 
   NATIVE_UINT_TYPE BufferQueue::getDepth() {
-    return this->depth;
+    return this->m_depth;
   }
 
   NATIVE_UINT_TYPE BufferQueue::getBufferIndex(NATIVE_INT_TYPE index) {
-    return (index % this->depth) * (sizeof(NATIVE_INT_TYPE) + this->msgSize);
+    return (index % this->m_depth) * (sizeof(NATIVE_INT_TYPE) + this->m_msgSize);
   }
 
   void BufferQueue::enqueueBuffer(const U8* buffer, NATIVE_UINT_TYPE size, U8* data, NATIVE_UINT_TYPE index) {

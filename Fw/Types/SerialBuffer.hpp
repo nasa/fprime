@@ -78,10 +78,10 @@ namespace Fw {
       // ----------------------------------------------------------------------
 
       //! The data
-      U8 *const data;
+      U8 *const m_data;
 
       //! The capacity
-      const U32 capacity;
+      const U32 m_capacity;
 
   };
 

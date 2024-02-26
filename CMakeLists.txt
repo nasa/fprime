@@ -25,6 +25,14 @@ add_compile_options(
     -Wno-unused-parameter
 )
 
+# Add -Wshadow only for framework code, not the unit tests
+# TODO: Next lines to be uncommented once FPP is not generating files with shadow variables
+# if (NOT BUILD_TESTING)
+#     add_compile_options(
+#         -Wshadow
+#     )
+# endif()
+
 # Turn on pedantic checks for clang, but disable specific checks that F' doesn't comply with.
 # GCC doesn't support disabling specific pedantic checks, so skip pedantic on GCC for now.
 #

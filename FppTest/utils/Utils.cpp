@@ -10,16 +10,17 @@
 //
 // ======================================================================
 
-#include "STest/Pick/Pick.hpp"
-
 #include <string>
 #include <limits>
 #include <iostream>
 
+#include "Fw/Types/Assert.hpp"
+#include "STest/Pick/Pick.hpp"
+
 namespace FppTest {
-        
+
     namespace Utils {
-    
+
         U8 getNonzeroU8() {
             return static_cast<U8>(STest::Pick::lowerUpper(
                 1,
@@ -38,21 +39,23 @@ namespace FppTest {
             return static_cast<char>(STest::Pick::lowerUpper(32, 127));
         }
 
-        void setString(char* buf, U32 size) {
-            U32 length = STest::Pick::lowerUpper(1, size);
+        void setString(char* buf, FwSizeType capacity, FwSizeType minLength) {
+            FW_ASSERT(buf != nullptr);
+            // capacity must be able to hold a null-terminated string
+            FW_ASSERT(capacity > 0);
+            // min length must fit within capacity
+            FW_ASSERT(minLength < capacity);
+            U32 length = STest::Pick::lowerUpper(minLength, capacity - 1);
 
-            if (length == 0) {
-                buf[0] = 0;
-                return;
-            }
-
-            for (U32 i = 0; i < length - 1; i++) {
+            for (U32 i = 0; i < length; i++) {
+                FW_ASSERT(i < capacity);
                 buf[i] = getChar();
             }
 
-            buf[length-1] = 0;
+            FW_ASSERT(length < capacity);
+            buf[length] = 0;
         }
-        
+
     } // namespace Utils
 
 } // namespace FppTest

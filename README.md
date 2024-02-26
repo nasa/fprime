@@ -31,14 +31,14 @@ Learn more about F' key features [here](https://nasa.github.io/fprime/features.h
 
 ## Getting Started
 
-To get started with F´, install the F´ toolset with:
+To get started with F´, install the F´ bootstrapping tool with:
 ```
-pip install fprime-tools
+pip install fprime-bootstrap
 ```
 
 Then, create a new project with:
 ```
-fprime-util new --project
+fprime-bootstrap project
 ```
 
 See the [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/) to guide you through all the steps of developing an F´ project.

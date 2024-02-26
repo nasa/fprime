@@ -92,7 +92,7 @@ namespace Svc {
       Os::File::Status ret;
       Os::File file;
 
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
       ASSERT_EVENTS_SIZE(0);
 
       U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
@@ -125,7 +125,7 @@ namespace Svc {
         {
           invoke_to_comIn(0, buffer, 0);
           dispatchAll();
-          ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+          ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
         }
 
         // OK a new file should be opened after this final invoke, set a new test time so that a file
@@ -133,12 +133,12 @@ namespace Svc {
         setTestTime(testTimeNext);
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
 
         // A new file should have been opened from the previous loop iteration:
         if( j > 0 ) {
-          ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
-          ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.fileName), fileName) == 0 );
+          ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
+          ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.m_fileName), fileName) == 0 );
         }
 
         // Make sure we got a closed file event:
@@ -213,15 +213,15 @@ namespace Svc {
       Os::File::Status ret;
       Os::File file;
 
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
       ASSERT_EVENTS_SIZE(0);
 
       U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
       Fw::ComBuffer buffer(&data[0], sizeof(data));
 
       // Make sure that noLengthMode is enabled:
-      comLogger.storeBufferLength = false;
-      comLogger.maxFileSize = MAX_BYTES_PER_FILE_NO_LENGTH;
+      comLogger.m_storeBufferLength = false;
+      comLogger.m_maxFileSize = MAX_BYTES_PER_FILE_NO_LENGTH;
 
       for(int j = 0; j < 3; j++)
       {
@@ -248,7 +248,7 @@ namespace Svc {
         {
           invoke_to_comIn(0, buffer, 0);
           dispatchAll();
-          ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+          ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
         }
 
         // OK a new file should be opened after this final invoke, set a new test time so that a file
@@ -256,12 +256,12 @@ namespace Svc {
         setTestTime(testTimeNext);
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
 
         // A new file should have been opened from the previous loop iteration:
         if( j > 0 ) {
-          ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
-          ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.fileName), fileName) == 0 );
+          ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
+          ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.m_fileName), fileName) == 0 );
         }
 
         // Make sure we got a closed file event:
@@ -323,9 +323,9 @@ namespace Svc {
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf(filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");
 
-      strncpy(static_cast<char*>(comLogger.filePrefix), filePrefix, sizeof(comLogger.filePrefix));
+      strncpy(static_cast<char*>(comLogger.m_filePrefix), filePrefix, sizeof(comLogger.m_filePrefix));
 
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
       ASSERT_EVENTS_SIZE(0);
 
       const U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
@@ -340,7 +340,7 @@ namespace Svc {
       {
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
       }
 
       // Check generated events:
@@ -358,9 +358,9 @@ namespace Svc {
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf(filePrefix, sizeof(filePrefix), "good_");
 
-      strncpy(comLogger.filePrefix, filePrefix, sizeof(comLogger.filePrefix));
+      strncpy(comLogger.m_filePrefix, filePrefix, sizeof(comLogger.m_filePrefix));
 
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
 
       snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", filePrefix, static_cast<U32>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds());
 
@@ -368,7 +368,7 @@ namespace Svc {
       {
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
       }
 
       // Check generated events:
@@ -382,9 +382,9 @@ namespace Svc {
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf(filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");
 
-      strncpy(static_cast<char*>(comLogger.filePrefix), filePrefix, sizeof(comLogger.filePrefix));
+      strncpy(static_cast<char*>(comLogger.m_filePrefix), filePrefix, sizeof(comLogger.m_filePrefix));
 
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
 
       snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", filePrefix, static_cast<U32>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds());
 
@@ -392,7 +392,7 @@ namespace Svc {
       {
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
       }
 
       // Check generated events:
@@ -404,7 +404,7 @@ namespace Svc {
   void ComLoggerTester ::
     writeError()
   {
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
       ASSERT_EVENTS_SIZE(0);
 
       const U8 data[4] = {0xde,0xad,0xbe,0xef};
@@ -417,17 +417,17 @@ namespace Svc {
       {
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
       }
 
       // Force close the file from underneath the component:
-      comLogger.file.close();
+      comLogger.m_file.close();
 
       // Send 2 packets:
       for(int i = 0; i < 3; i++) {
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
       }
 
       // Construct filename:
@@ -449,7 +449,7 @@ namespace Svc {
       );
 
       // Make comlogger open a new file:
-      comLogger.fileMode = ComLogger::CLOSED;
+      comLogger.m_fileMode = ComLogger::CLOSED;
       comLogger.openFile();
 
       // Try to write and make sure it succeeds:
@@ -457,7 +457,7 @@ namespace Svc {
       for(int i = 0; i < 3; i++) {
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
       }
 
       // Expect no new errors:
@@ -465,13 +465,13 @@ namespace Svc {
       ASSERT_EVENTS_FileWriteError_SIZE(1);
 
       // Force close the file from underneath the component:
-      comLogger.file.close();
+      comLogger.m_file.close();
 
       // Send 2 packets:
       for(int i = 0; i < 3; i++) {
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
       }
 
       // Check generated events:
@@ -504,14 +504,14 @@ namespace Svc {
     memset(hashFileName, 0, sizeof(hashFileName));
     snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
 
-    ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+    ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     ASSERT_EVENTS_SIZE(0);
 
     // Send close file commands:
     for(int i = 0; i < 3; i++) {
       sendCmd_CloseFile(0, i+1);
       dispatchAll();
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     }
 
     ASSERT_CMD_RESPONSE_SIZE(3);
@@ -532,14 +532,14 @@ namespace Svc {
     {
       invoke_to_comIn(0, buffer, 0);
       dispatchAll();
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
 
      // Send close file commands:
     for(int i = 0; i < 3; i++) {
       sendCmd_CloseFile(0, i+1);
       dispatchAll();
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     }
 
     ASSERT_CMD_RESPONSE_SIZE(6);
@@ -582,7 +582,7 @@ namespace Svc {
 
     this->comLogger.init_log_file(FILE_STR, MAX_BYTES_PER_FILE);
 
-    ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+    ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     ASSERT_EVENTS_SIZE(0);
 
     U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
@@ -615,7 +615,7 @@ namespace Svc {
       {
         invoke_to_comIn(0, buffer, 0);
         dispatchAll();
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
       }
 
       // OK a new file should be opened after this final invoke, set a new test time so that a file
@@ -623,12 +623,12 @@ namespace Svc {
       setTestTime(testTimeNext);
       invoke_to_comIn(0, buffer, 0);
       dispatchAll();
-      ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+      ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
 
       // A new file should have been opened from the previous loop iteration:
       if( j > 0 ) {
-        ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
-        ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.fileName), fileName) == 0 );
+        ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
+        ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.m_fileName), fileName) == 0 );
       }
 
       // Make sure we got a closed file event:
@@ -695,7 +695,7 @@ namespace Svc {
 
     this->invoke_to_comIn(0, buffer, 0);
     dispatchAll();
-    ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
+    ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     ASSERT_EVENTS_FileNotInitialized_SIZE(1);
 
     this->comLogger.init_log_file(FILE_STR, MAX_BYTES_PER_FILE);
@@ -703,7 +703,7 @@ namespace Svc {
     this->clearHistory();
     this->invoke_to_comIn(0, buffer, 0);
     dispatchAll();
-    ASSERT_TRUE(comLogger.fileMode == ComLogger::OPEN);
+    ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     ASSERT_EVENTS_FileNotInitialized_SIZE(0);
 
   }

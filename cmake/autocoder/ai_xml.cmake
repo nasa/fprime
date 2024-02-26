@@ -76,7 +76,6 @@ macro(__ai_info XML_PATH MODULE_NAME)
         # Next parse the output matching one line at a time
         read_from_lines("${AI_OUTPUT}" XML_TYPE_FROM_FILE MODULE_DEPENDENCIES FILE_DEPENDENCIES)
     endif()
-    list(APPEND FILE_DEPENDENCIES "${FPRIME_AC_CONSTANTS_FILE}")
 endmacro(__ai_info)
 
 ####

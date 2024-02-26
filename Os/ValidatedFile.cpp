@@ -17,11 +17,11 @@ namespace Os {
 
   ValidatedFile ::
     ValidatedFile(const char *const fileName) :
-      fileName(fileName),
-      hashFileName(""),
-      hashBuffer()
+      m_fileName(fileName),
+      m_hashFileName(""),
+      m_hashBuffer()
   {
-    Utils::Hash::addFileExtension(this->fileName, this->hashFileName);
+    Utils::Hash::addFileExtension(this->m_fileName, this->m_hashFileName);
   }
 
   Os::ValidateFile::Status ValidatedFile ::
@@ -29,9 +29,9 @@ namespace Os {
   {
     const Os::ValidateFile::Status status =
       Os::ValidateFile::validate(
-          this->fileName.toChar(),
-          this->hashFileName.toChar(),
-          this->hashBuffer
+          this->m_fileName.toChar(),
+          this->m_hashFileName.toChar(),
+          this->m_hashBuffer
       );
     return status;
   }
@@ -41,9 +41,9 @@ namespace Os {
   {
     const Os::ValidateFile::Status status =
       Os::ValidateFile::createValidation(
-         this->fileName.toChar(),
-         this->hashFileName.toChar(),
-         this->hashBuffer
+         this->m_fileName.toChar(),
+         this->m_hashFileName.toChar(),
+         this->m_hashBuffer
       );
     return status;
   }
@@ -51,19 +51,19 @@ namespace Os {
   const Fw::StringBase& ValidatedFile ::
     getFileName() const
   {
-    return this->fileName;
+    return this->m_fileName;
   }
 
   const Fw::StringBase& ValidatedFile ::
     getHashFileName() const
   {
-    return this->hashFileName;
+    return this->m_hashFileName;
   }
 
   const Utils::HashBuffer& ValidatedFile ::
     getHashBuffer() const
   {
-    return this->hashBuffer;
+    return this->m_hashBuffer;
   }
 
 }

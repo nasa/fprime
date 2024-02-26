@@ -27,19 +27,19 @@ namespace Svc {
         const char *const name
     ) :
       FileDownlinkComponentBase(name),
-      configured(false),
-      filesSent(this),
-      packetsSent(this),
-      warnings(this),
-      sequenceIndex(0),
-      curTimer(0),
-      bufferSize(0),
-      byteOffset(0),
-      endOffset(0),
-      lastCompletedType(Fw::FilePacket::T_NONE),
-      lastBufferId(0),
-      curEntry(),
-      cntxId(0)
+      m_configured(false),
+      m_filesSent(this),
+      m_packetsSent(this),
+      m_warnings(this),
+      m_sequenceIndex(0),
+      m_curTimer(0),
+      m_bufferSize(0),
+      m_byteOffset(0),
+      m_endOffset(0),
+      m_lastCompletedType(Fw::FilePacket::T_NONE),
+      m_lastBufferId(0),
+      m_curEntry(),
+      m_cntxId(0)
   {
   }
 
@@ -60,12 +60,12 @@ namespace Svc {
         U32 fileQueueDepth
     )
   {
-    this->timeout = timeout;
-    this->cooldown = cooldown;
-    this->cycleTime = cycleTime;
-    this->configured = true;
+    this->m_timeout = timeout;
+    this->m_cooldown = cooldown;
+    this->m_cycleTime = cycleTime;
+    this->m_configured = true;
 
-    Os::Queue::QueueStatus stat = fileQueue.create(
+    Os::Queue::QueueStatus stat = m_fileQueue.create(
       Os::QueueString("fileDownlinkQueue"),
       fileQueueDepth,
       sizeof(struct FileEntry)
@@ -76,7 +76,7 @@ namespace Svc {
   void FileDownlink ::
     preamble()
   {
-    FW_ASSERT(this->configured == true);
+    FW_ASSERT(this->m_configured == true);
   }
 
   FileDownlink ::
@@ -95,49 +95,49 @@ namespace Svc {
         NATIVE_UINT_TYPE context
     )
   {
-    switch(this->mode.get())
+    switch(this->m_mode.get())
     {
       case Mode::IDLE: {
         NATIVE_INT_TYPE real_size = 0;
         NATIVE_INT_TYPE prio = 0;
-        Os::Queue::QueueStatus stat = fileQueue.receive(
-          reinterpret_cast<U8*>(&this->curEntry),
-          sizeof(this->curEntry),
+        Os::Queue::QueueStatus stat = m_fileQueue.receive(
+          reinterpret_cast<U8*>(&this->m_curEntry),
+          sizeof(this->m_curEntry),
           real_size,
           prio,
           Os::Queue::QUEUE_NONBLOCKING
         );
 
-        if(stat != Os::Queue::QUEUE_OK || sizeof(this->curEntry) != real_size) {
+        if(stat != Os::Queue::QUEUE_OK || sizeof(this->m_curEntry) != real_size) {
           return;
         }
 
         sendFile(
-          this->curEntry.srcFilename,
-          this->curEntry.destFilename,
-          this->curEntry.offset,
-          this->curEntry.length
+          this->m_curEntry.srcFilename,
+          this->m_curEntry.destFilename,
+          this->m_curEntry.offset,
+          this->m_curEntry.length
         );
         break;
       }
       case Mode::COOLDOWN: {
-        if (this->curTimer >= this->cooldown) {
-          this->curTimer = 0;
-          this->mode.set(Mode::IDLE);
+        if (this->m_curTimer >= this->m_cooldown) {
+          this->m_curTimer = 0;
+          this->m_mode.set(Mode::IDLE);
         } else {
-          this->curTimer += cycleTime;
+          this->m_curTimer += m_cycleTime;
         }
         break;
       }
       case Mode::WAIT: {
         //If current timeout is too-high and we are waiting for a packet, issue a timeout
-        if (this->curTimer >= this->timeout) {
-          this->curTimer = 0;
-          this->log_WARNING_HI_DownlinkTimeout(this->file.sourceName, this->file.destName);
+        if (this->m_curTimer >= this->m_timeout) {
+          this->m_curTimer = 0;
+          this->log_WARNING_HI_DownlinkTimeout(this->m_file.getSourceName(), this->m_file.getDestName());
           this->enterCooldown();
           this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
         } else { //Otherwise update the current counter
-          this->curTimer += cycleTime;
+          this->m_curTimer += m_cycleTime;
         }
         break;
       }
@@ -163,14 +163,14 @@ namespace Svc {
     entry.source = FileDownlink::PORT;
     entry.opCode = 0;
     entry.cmdSeq = 0;
-    entry.context = cntxId++;
+    entry.context = m_cntxId++;
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
     Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
     Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
-    Os::Queue::QueueStatus status = fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::QueueStatus status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
       return SendFileResponse(SendFileStatus::STATUS_ERROR, std::numeric_limits<U32>::max());
@@ -195,21 +195,21 @@ namespace Svc {
   {
 	  //If this is a stale buffer (old, timed-out, or both), then ignore its return.
 	  //File downlink actions only respond to the return of the most-recently-sent buffer.
-	  if (this->lastBufferId != fwBuffer.getContext() + 1 ||
-	      this->mode.get() == Mode::IDLE) {
+	  if (this->m_lastBufferId != fwBuffer.getContext() + 1 ||
+	      this->m_mode.get() == Mode::IDLE) {
 		  return;
 	  }
 	  //Non-ignored buffers cannot be returned in "DOWNLINK" and "IDLE" state.  Only in "WAIT", "CANCEL" state.
-	  FW_ASSERT(this->mode.get() == Mode::WAIT || this->mode.get() == Mode::CANCEL, this->mode.get());
+	  FW_ASSERT(this->m_mode.get() == Mode::WAIT || this->m_mode.get() == Mode::CANCEL, this->m_mode.get());
       //If the last packet has been sent (and is returning now) then finish the file
-	  if (this->lastCompletedType == Fw::FilePacket::T_END ||
-          this->lastCompletedType == Fw::FilePacket::T_CANCEL) {
-          finishHelper(this->lastCompletedType == Fw::FilePacket::T_CANCEL);
+	  if (this->m_lastCompletedType == Fw::FilePacket::T_END ||
+          this->m_lastCompletedType == Fw::FilePacket::T_CANCEL) {
+          finishHelper(this->m_lastCompletedType == Fw::FilePacket::T_CANCEL);
           return;
       }
       //If waiting and a buffer is in-bound, then switch to downlink mode
-      else if (this->mode.get() == Mode::WAIT) {
-          this->mode.set(Mode::DOWNLINK);
+      else if (this->m_mode.get() == Mode::WAIT) {
+          this->m_mode.set(Mode::DOWNLINK);
       }
 
       this->downlinkPacket();
@@ -243,7 +243,7 @@ namespace Svc {
     Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
     Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
-    Os::Queue::QueueStatus status = fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::QueueStatus status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -276,7 +276,7 @@ namespace Svc {
     Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
     Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
-    Os::Queue::QueueStatus status = fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::QueueStatus status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -290,8 +290,8 @@ namespace Svc {
     )
   {
       //Must be able to cancel in both downlink and waiting states
-      if (this->mode.get() == Mode::DOWNLINK || this->mode.get() == Mode::WAIT) {
-          this->mode.set(Mode::CANCEL);
+      if (this->m_mode.get() == Mode::DOWNLINK || this->m_mode.get() == Mode::WAIT) {
+          this->m_mode.set(Mode::CANCEL);
       }
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
@@ -324,12 +324,12 @@ namespace Svc {
   void FileDownlink ::
     sendResponse(SendFileStatus resp)
   {
-    if(this->curEntry.source == FileDownlink::COMMAND) {
-      this->cmdResponse_out(this->curEntry.opCode, this->curEntry.cmdSeq, statusToCmdResp(resp));
+    if(this->m_curEntry.source == FileDownlink::COMMAND) {
+      this->cmdResponse_out(this->m_curEntry.opCode, this->m_curEntry.cmdSeq, statusToCmdResp(resp));
     } else {
       for(NATIVE_INT_TYPE i = 0; i < this->getNum_FileComplete_OutputPorts(); i++) {
         if(this->isConnected_FileComplete_OutputPort(i)) {
-          this->FileComplete_out(i, Svc::SendFileResponse(resp, this->curEntry.context));
+          this->FileComplete_out(i, Svc::SendFileResponse(resp, this->m_curEntry.context));
         }
       }
     }
@@ -344,78 +344,78 @@ namespace Svc {
       )
   {
     // Open file for downlink
-    Os::File::Status status = this->file.open(
+    Os::File::Status status = this->m_file.open(
         sourceFilename,
         destFilename
     );
 
     // Reject command if error when opening file
     if (status != Os::File::OP_OK) {
-      this->mode.set(Mode::IDLE);
-      this->warnings.fileOpenError();
+      this->m_mode.set(Mode::IDLE);
+      this->m_warnings.fileOpenError();
       sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
       return;
     }
 
 
-    if (startOffset >= this->file.size) {
+    if (startOffset >= this->m_file.getSize()) {
         this->enterCooldown();
-        this->log_WARNING_HI_DownlinkPartialFail(this->file.sourceName, this->file.destName, startOffset, this->file.size);
+        this->log_WARNING_HI_DownlinkPartialFail(this->m_file.getSourceName(), this->m_file.getDestName(), startOffset, this->m_file.getSize());
         sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_INVALID);
         return;
-    } else if (startOffset + length > this->file.size) {
+    } else if (startOffset + length > this->m_file.getSize()) {
         // If the amount to downlink is greater than the file size, emit a Warning and then allow
         // the file to be downlinked anyway
-        this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, this->file.size, this->file.sourceName, this->file.destName);
-        length = this->file.size - startOffset;
+        this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, this->m_file.getSize(), this->m_file.getSourceName(), this->m_file.getDestName());
+        length = this->m_file.getSize() - startOffset;
     }
 
     // Send file and switch to WAIT mode
-    this->getBuffer(this->buffer, FILE_PACKET);
+    this->getBuffer(this->m_buffer, FILE_PACKET);
     this->sendStartPacket();
-    this->mode.set(Mode::WAIT);
-    this->sequenceIndex = 1;
-    this->curTimer = 0;
-    this->byteOffset = startOffset;
-    this->lastCompletedType = Fw::FilePacket::T_START;
+    this->m_mode.set(Mode::WAIT);
+    this->m_sequenceIndex = 1;
+    this->m_curTimer = 0;
+    this->m_byteOffset = startOffset;
+    this->m_lastCompletedType = Fw::FilePacket::T_START;
 
     // zero length means read until end of file
     if (length > 0) {
-        this->log_ACTIVITY_HI_SendStarted(length, this->file.sourceName, this->file.destName);
-        this->endOffset = startOffset + length;
+        this->log_ACTIVITY_HI_SendStarted(length, this->m_file.getSourceName(), this->m_file.getDestName());
+        this->m_endOffset = startOffset + length;
     }
     else {
-        this->log_ACTIVITY_HI_SendStarted(this->file.size - startOffset, this->file.sourceName, this->file.destName);
-        this->endOffset = this->file.size;
+        this->log_ACTIVITY_HI_SendStarted(this->m_file.getSize() - startOffset, this->m_file.getSourceName(), this->m_file.getDestName());
+        this->m_endOffset = this->m_file.getSize();
     }
   }
 
   Os::File::Status FileDownlink ::
     sendDataPacket(U32 &byteOffset)
   {
-    FW_ASSERT(byteOffset < this->endOffset);
+    FW_ASSERT(byteOffset < this->m_endOffset);
     const U32 maxDataSize = FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE;
-    const U32 dataSize = (byteOffset + maxDataSize > this->endOffset) ? (this->endOffset - byteOffset) : maxDataSize;
+    const U32 dataSize = (byteOffset + maxDataSize > this->m_endOffset) ? (this->m_endOffset - byteOffset) : maxDataSize;
     U8 buffer[FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE];
     //This will be last data packet sent
-    if (dataSize + byteOffset == this->endOffset) {
-        this->lastCompletedType = Fw::FilePacket::T_DATA;
+    if (dataSize + byteOffset == this->m_endOffset) {
+        this->m_lastCompletedType = Fw::FilePacket::T_DATA;
     }
 
     const Os::File::Status status =
-      this->file.read(buffer, byteOffset, dataSize);
+      this->m_file.read(buffer, byteOffset, dataSize);
     if (status != Os::File::OP_OK) {
-      this->warnings.fileRead(status);
+      this->m_warnings.fileRead(status);
       return status;
     }
 
-    const Fw::FilePacket::DataPacket dataPacket = {
-      { Fw::FilePacket::T_DATA, this->sequenceIndex },
+    Fw::FilePacket::DataPacket dataPacket;
+    dataPacket.initialize(
+      this->m_sequenceIndex,
       byteOffset,
       static_cast<U16>(dataSize),
-      buffer
-    };
-    ++this->sequenceIndex;
+      buffer);
+    ++this->m_sequenceIndex;
     Fw::FilePacket filePacket;
     filePacket.fromDataPacket(dataPacket);
     this->sendFilePacket(filePacket);
@@ -430,9 +430,8 @@ namespace Svc {
     sendCancelPacket()
   {
     Fw::Buffer buffer;
-    const Fw::FilePacket::CancelPacket cancelPacket = {
-      { Fw::FilePacket::T_CANCEL, this->sequenceIndex }
-    };
+    Fw::FilePacket::CancelPacket cancelPacket;
+    cancelPacket.initialize(this->m_sequenceIndex);
 
     Fw::FilePacket filePacket;
     filePacket.fromCancelPacket(cancelPacket);
@@ -441,22 +440,17 @@ namespace Svc {
     const Fw::SerializeStatus status = filePacket.toBuffer(buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     this->bufferSendOut_out(0, buffer);
-    this->packetsSent.packetSent();
+    this->m_packetsSent.packetSent();
   }
 
   void FileDownlink ::
     sendEndPacket()
   {
-    const Fw::FilePacket::Header header = {
-      Fw::FilePacket::T_END,
-      this->sequenceIndex
-    };
-    Fw::FilePacket::EndPacket endPacket;
-    endPacket.header = header;
-
     CFDP::Checksum checksum;
-    this->file.getChecksum(checksum);
-    endPacket.setChecksum(checksum);
+    this->m_file.getChecksum(checksum);
+
+    Fw::FilePacket::EndPacket endPacket;
+    endPacket.initialize(this->m_sequenceIndex, checksum);
 
     Fw::FilePacket filePacket;
     filePacket.fromEndPacket(endPacket);
@@ -469,9 +463,9 @@ namespace Svc {
   {
     Fw::FilePacket::StartPacket startPacket;
     startPacket.initialize(
-        this->file.size,
-        this->file.sourceName.toChar(),
-        this->file.destName.toChar()
+        this->m_file.getSize(),
+        this->m_file.getSourceName().toChar(),
+        this->m_file.getDestName().toChar()
     );
     Fw::FilePacket filePacket;
     filePacket.fromStartPacket(startPacket);
@@ -482,43 +476,43 @@ namespace Svc {
     sendFilePacket(const Fw::FilePacket& filePacket)
   {
     const U32 bufferSize = filePacket.bufferSize();
-    FW_ASSERT(this->buffer.getData() != nullptr);
-    FW_ASSERT(this->buffer.getSize() >= bufferSize, bufferSize, this->buffer.getSize());
-    const Fw::SerializeStatus status = filePacket.toBuffer(this->buffer);
+    FW_ASSERT(this->m_buffer.getData() != nullptr);
+    FW_ASSERT(this->m_buffer.getSize() >= bufferSize, bufferSize, this->m_buffer.getSize());
+    const Fw::SerializeStatus status = filePacket.toBuffer(this->m_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // set the buffer size to the packet size
-    this->buffer.setSize(bufferSize);
-    this->bufferSendOut_out(0, this->buffer);
+    this->m_buffer.setSize(bufferSize);
+    this->bufferSendOut_out(0, this->m_buffer);
     // restore buffer size to max
-    this->buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);
-    this->packetsSent.packetSent();
+    this->m_buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);
+    this->m_packetsSent.packetSent();
   }
 
   void FileDownlink ::
     enterCooldown()
   {
-    this->file.osFile.close();
-    this->mode.set(Mode::COOLDOWN);
-    this->lastCompletedType = Fw::FilePacket::T_NONE;
-    this->curTimer = 0;
+    this->m_file.getOsFile().close();
+    this->m_mode.set(Mode::COOLDOWN);
+    this->m_lastCompletedType = Fw::FilePacket::T_NONE;
+    this->m_curTimer = 0;
   }
 
   void FileDownlink ::
     downlinkPacket()
   {
-      FW_ASSERT(this->lastCompletedType != Fw::FilePacket::T_NONE, this->lastCompletedType);
-      FW_ASSERT(this->mode.get() == Mode::CANCEL || this->mode.get() == Mode::DOWNLINK, this->mode.get());
+      FW_ASSERT(this->m_lastCompletedType != Fw::FilePacket::T_NONE, this->m_lastCompletedType);
+      FW_ASSERT(this->m_mode.get() == Mode::CANCEL || this->m_mode.get() == Mode::DOWNLINK, this->m_mode.get());
       //If canceled mode and currently downlinking data then send a cancel packet
-      if (this->mode.get() == Mode::CANCEL && this->lastCompletedType == Fw::FilePacket::T_START) {
+      if (this->m_mode.get() == Mode::CANCEL && this->m_lastCompletedType == Fw::FilePacket::T_START) {
           this->sendCancelPacket();
-          this->lastCompletedType = Fw::FilePacket::T_CANCEL;
+          this->m_lastCompletedType = Fw::FilePacket::T_CANCEL;
       }
       //If in downlink mode and currently downlinking data then continue with the next packer
-      else if (this->mode.get() == Mode::DOWNLINK && this->lastCompletedType == Fw::FilePacket::T_START) {
+      else if (this->m_mode.get() == Mode::DOWNLINK && this->m_lastCompletedType == Fw::FilePacket::T_START) {
           //Send the next packet, or fail doing so
-          const Os::File::Status status = this->sendDataPacket(this->byteOffset);
+          const Os::File::Status status = this->sendDataPacket(this->m_byteOffset);
           if (status != Os::File::OP_OK) {
-              this->log_WARNING_HI_SendDataFail(this->file.sourceName, this->byteOffset);
+              this->log_WARNING_HI_SendDataFail(this->m_file.getSourceName(), this->m_byteOffset);
               this->enterCooldown();
               this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
               //Don't go to wait state
@@ -526,12 +520,12 @@ namespace Svc {
           }
       }
       //If in downlink mode or cancel and finished downlinking data then send the last packet
-      else if (this->lastCompletedType == Fw::FilePacket::T_DATA) {
+      else if (this->m_lastCompletedType == Fw::FilePacket::T_DATA) {
           this->sendEndPacket();
-          this->lastCompletedType = Fw::FilePacket::T_END;
+          this->m_lastCompletedType = Fw::FilePacket::T_END;
       }
-      this->mode.set(Mode::WAIT);
-      this->curTimer = 0;
+      this->m_mode.set(Mode::WAIT);
+      this->m_curTimer = 0;
   }
 
   void FileDownlink ::
@@ -539,10 +533,10 @@ namespace Svc {
   {
       //Complete command and switch to IDLE
       if (not cancel) {
-          this->filesSent.fileSent();
-          this->log_ACTIVITY_HI_FileSent(this->file.sourceName, this->file.destName);
+          this->m_filesSent.fileSent();
+          this->log_ACTIVITY_HI_FileSent(this->m_file.getSourceName(), this->m_file.getDestName());
       } else {
-          this->log_ACTIVITY_HI_DownlinkCanceled(this->file.sourceName, this->file.destName);
+          this->log_ACTIVITY_HI_DownlinkCanceled(this->m_file.getSourceName(), this->m_file.getDestName());
       }
       this->enterCooldown();
       sendResponse(SendFileStatus::STATUS_OK);
@@ -554,10 +548,10 @@ namespace Svc {
       //Check type is correct
       FW_ASSERT(type < COUNT_PACKET_TYPE && type >= 0, type);
       // Wrap the buffer around our indexed memory.
-      buffer.setData(this->memoryStore[type]);
+      buffer.setData(this->m_memoryStore[type]);
       buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);
       //Set a known ID to look for later
-      buffer.setContext(lastBufferId);
-      lastBufferId++;
+      buffer.setContext(m_lastBufferId);
+      m_lastBufferId++;
   }
 } // end namespace Svc

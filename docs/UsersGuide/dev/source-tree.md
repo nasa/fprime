@@ -71,20 +71,17 @@ This code should not be modified (with one exception, see Cfg in Section
 5.3.1) by developers using the framework. The code generation relies on
 the types declared to construct the entities in the architecture.
 
-### Cfg
+### config
 
-The Cfg directory contains a header file (Config.hpp) that is used to
+The config directory contains header files used to
 configure various properties of the architecture. The developer can
 modify the file to tune the architecture for the requirements of a
 particular deployment environment. The contents are described in Section
 9.
 
-The file AcConstants.ini contains a set of values for variables used in
-the code generator. This file follows the Python ConfigParser syntax,
-which is based on Windows .ini files. Using this file allows component
-features like opcodes and port numbers to be changed without modifying
-the component XML itself. See the component XML specification in Section
-6.6.3.
+The file AcConstants.fpp contains a set of values for variables used in
+the code generation. Using this file allows component features like opcodes
+and port numbers to be changed without modifying the component FPP itself. 
 
 ### Types
 

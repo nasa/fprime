@@ -20,8 +20,8 @@ namespace Fw {
         U8 *const data,
         const U32 capacity
     ) :
-      data(data),
-      capacity(capacity)
+      m_data(data),
+      m_capacity(capacity)
   {
 
   }
@@ -29,25 +29,25 @@ namespace Fw {
   NATIVE_UINT_TYPE SerialBuffer ::
     getBuffCapacity() const
   {
-    return capacity;
+    return m_capacity;
   }
 
   U8* SerialBuffer ::
     getBuffAddr()
   {
-    return data;
+    return m_data;
   }
 
   const U8* SerialBuffer ::
     getBuffAddr() const
   {
-    return data;
+    return m_data;
   }
 
   void SerialBuffer ::
     fill()
   {
-    const SerializeStatus status = this->setBuffLen(this->capacity);
+    const SerializeStatus status = this->setBuffLen(this->m_capacity);
     FW_ASSERT(status == FW_SERIALIZE_OK);
   }
 
