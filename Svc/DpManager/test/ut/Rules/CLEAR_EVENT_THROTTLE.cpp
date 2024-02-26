@@ -50,7 +50,7 @@ void Tester::OK() {
     Testers::bufferGetStatus.ruleInvalid.apply(this->testState);
     for (FwSizeType i = 0; i <= DpManagerComponentBase::EVENTID_BUFFERALLOCATIONFAILED_THROTTLE; ++i) {
         Testers::productRequestIn.ruleBufferInvalid.apply(this->testState);
-    } 
+    }
     this->ruleOK.apply(this->testState);
     Testers::productRequestIn.ruleBufferInvalid.apply(this->testState);
 }
