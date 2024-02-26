@@ -23,11 +23,11 @@ namespace Svc {
   FileUplink ::
     FileUplink(const char *const name) :
       FileUplinkComponentBase(name),
-      receiveMode(START),
-      lastSequenceIndex(0),
-      filesReceived(this),
-      packetsReceived(this),
-      warnings(this)
+      m_receiveMode(START),
+      m_lastSequenceIndex(0),
+      m_filesReceived(this),
+      m_packetsReceived(this),
+      m_warnings(this)
   {
 
   }
@@ -106,17 +106,17 @@ namespace Svc {
     this->log_WARNING_HI_InvalidReceiveMode_ThrottleClear();
     this->log_WARNING_HI_PacketOutOfBounds_ThrottleClear();
     this->log_WARNING_HI_PacketOutOfOrder_ThrottleClear();
-    this->packetsReceived.packetReceived();
-    if (this->receiveMode != START) {
-      this->file.osFile.close();
-      this->warnings.invalidReceiveMode(Fw::FilePacket::T_START);
+    this->m_packetsReceived.packetReceived();
+    if (this->m_receiveMode != START) {
+      this->m_file.osFile.close();
+      this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_START);
     }
-    const Os::File::Status status = this->file.open(startPacket);
+    const Os::File::Status status = this->m_file.open(startPacket);
     if (status == Os::File::OP_OK) {
       this->goToDataMode();
     }
     else {
-      this->warnings.fileOpen(this->file.name);
+      this->m_warnings.fileOpen(this->m_file.name);
       this->goToStartMode();
     }
   }
@@ -124,41 +124,41 @@ namespace Svc {
   void FileUplink ::
     handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket)
   {
-    this->packetsReceived.packetReceived();
-    if (this->receiveMode != DATA) {
-      this->warnings.invalidReceiveMode(Fw::FilePacket::T_DATA);
+    this->m_packetsReceived.packetReceived();
+    if (this->m_receiveMode != DATA) {
+      this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_DATA);
       return;
     }
     const U32 sequenceIndex = dataPacket.asHeader().getSequenceIndex();
     this->checkSequenceIndex(sequenceIndex);
     const U32 byteOffset = dataPacket.getByteOffset();
     const U32 dataSize = dataPacket.getDataSize();
-    if (byteOffset + dataSize > this->file.size) {
-      this->warnings.packetOutOfBounds(sequenceIndex, this->file.name);
+    if (byteOffset + dataSize > this->m_file.size) {
+      this->m_warnings.packetOutOfBounds(sequenceIndex, this->m_file.name);
       return;
     }
-    const Os::File::Status status = this->file.write(
+    const Os::File::Status status = this->m_file.write(
         dataPacket.getData(),
         byteOffset,
         dataSize
     );
     if (status != Os::File::OP_OK) {
-      this->warnings.fileWrite(this->file.name);
+      this->m_warnings.fileWrite(this->m_file.name);
     }
   }
 
   void FileUplink ::
     handleEndPacket(const Fw::FilePacket::EndPacket& endPacket)
   {
-    this->packetsReceived.packetReceived();
-    if (this->receiveMode == DATA) {
-      this->filesReceived.fileReceived();
+    this->m_packetsReceived.packetReceived();
+    if (this->m_receiveMode == DATA) {
+      this->m_filesReceived.fileReceived();
       this->checkSequenceIndex(endPacket.asHeader().getSequenceIndex());
       this->compareChecksums(endPacket);
-      this->log_ACTIVITY_HI_FileReceived(this->file.name);
+      this->log_ACTIVITY_HI_FileReceived(this->m_file.name);
     }
     else {
-      this->warnings.invalidReceiveMode(Fw::FilePacket::T_END);
+      this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_END);
     }
     this->goToStartMode();
   }
@@ -166,7 +166,7 @@ namespace Svc {
   void FileUplink ::
     handleCancelPacket()
   {
-    this->packetsReceived.packetReceived();
+    this->m_packetsReceived.packetReceived();
     this->log_ACTIVITY_HI_UplinkCanceled();
     this->goToStartMode();
   }
@@ -174,23 +174,23 @@ namespace Svc {
   void FileUplink ::
     checkSequenceIndex(const U32 sequenceIndex)
   {
-    if (sequenceIndex != this->lastSequenceIndex + 1) {
-      this->warnings.packetOutOfOrder(
+    if (sequenceIndex != this->m_lastSequenceIndex + 1) {
+      this->m_warnings.packetOutOfOrder(
           sequenceIndex,
-          this->lastSequenceIndex
+          this->m_lastSequenceIndex
       );
     }
-    this->lastSequenceIndex = sequenceIndex;
+    this->m_lastSequenceIndex = sequenceIndex;
   }
 
   void FileUplink ::
     compareChecksums(const Fw::FilePacket::EndPacket& endPacket)
   {
     CFDP::Checksum computed, stored;
-    this->file.getChecksum(computed);
+    this->m_file.getChecksum(computed);
     endPacket.getChecksum(stored);
     if (computed != stored) {
-      this->warnings.badChecksum(
+      this->m_warnings.badChecksum(
           computed.getValue(),
           stored.getValue()
       );
@@ -200,16 +200,16 @@ namespace Svc {
   void FileUplink ::
     goToStartMode()
   {
-    this->file.osFile.close();
-    this->receiveMode = START;
-    this->lastSequenceIndex = 0;
+    this->m_file.osFile.close();
+    this->m_receiveMode = START;
+    this->m_lastSequenceIndex = 0;
   }
 
   void FileUplink ::
     goToDataMode()
   {
-    this->receiveMode = DATA;
-    this->lastSequenceIndex = 0;
+    this->m_receiveMode = DATA;
+    this->m_lastSequenceIndex = 0;
   }
 
 }
