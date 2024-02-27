@@ -22,8 +22,8 @@ class Option {
     enum class State { VALUE, NO_VALUE };
 
   public:
-    Option<T>(T value) : state(State::VALUE), value(value) {}
-    Option<T>() : state(State::NO_VALUE), value(noValue) {}
+    Option(T value) : state(State::VALUE), value(value) {}
+    Option() : state(State::NO_VALUE), value(noValue) {}
 
   public:
     static Option<T> some(T value) { return Option(value); }
