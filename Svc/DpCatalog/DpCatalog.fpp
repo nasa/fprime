@@ -25,7 +25,7 @@ module Svc {
   }
 
 
-  @ A component for managing downling of data products
+  @ A component for managing downlink of data products
   active component DpCatalog {
 
     # Component specific ports
@@ -161,8 +161,8 @@ module Svc {
       id 11 \
       format "Product {} complete"
 
-    @ Component not intialized error
-    event ComponentNotIntialized \
+    @ Component not initialized error
+    event ComponentNotInitialized \
       severity warning high \
       id 12 \
       format "DpCatalog not initialized!" \
@@ -265,7 +265,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Number of data products in catalog
-    telemetry CatlogDps: U32 id 0 
+    telemetry CatalogDps: U32 id 0 
 
     @ Number of data products sent
     telemetry DpsSent: U32 id 1

@@ -68,7 +68,7 @@ namespace Svc {
             ) {
             // set the number of available record slots
             this->m_numDpSlots = this->m_memSize / (sizeof(DpSortedList) + sizeof(DpStateEntry));
-            // intialize data structures
+            // initialize data structures
             // state entry pointers will be at the beginning of the memory
             this->m_dpList = static_cast<DpStateEntry*>(this->m_memPtr);
             // sorted list will be after state structures
@@ -78,7 +78,7 @@ namespace Svc {
                 (void) new(&this->m_dpList[slot]) DpStateEntry();
                 this->m_dpList[slot].entry = false;
                 this->m_dpList[slot].dir = -1;
-                // intialize sorted list entry to empty
+                // initialize sorted list entry to empty
                 this->m_sortedDpList[slot].recPtr = nullptr;
                 this->m_sortedDpList[slot].sent = false;
             }
@@ -273,7 +273,7 @@ namespace Svc {
 
     bool DpCatalog::checkInit() {
         if (not this->m_initialized) {
-            this->log_WARNING_HI_ComponentNotIntialized();
+            this->log_WARNING_HI_ComponentNotInitialized();
             return false;
         }
         else if (0 == this->m_numDpSlots) {
