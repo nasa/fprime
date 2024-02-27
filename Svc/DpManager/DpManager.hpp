@@ -21,27 +21,27 @@ class DpManager : public DpManagerComponentBase {
     // ----------------------------------------------------------------------
 
     static_assert(
-        DpManager::NUM_PRODUCTGETIN_INPUT_PORTS == DpManagerNumPorts,
+        DpManager::NUM_PRODUCTGETIN_INPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
         "Number of product get in ports must equal DpManagerNumPorts"
     );
     static_assert(
-        DpManager::NUM_PRODUCTREQUESTIN_INPUT_PORTS == DpManagerNumPorts,
+        DpManager::NUM_PRODUCTREQUESTIN_INPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
         "Number of product request in ports must equal DpManagerNumPorts"
     );
     static_assert(
-        DpManager::NUM_PRODUCTRESPONSEOUT_OUTPUT_PORTS == DpManagerNumPorts,
+        DpManager::NUM_PRODUCTRESPONSEOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
         "Number of product response out ports must equal DpManagerNumPorts"
     );
     static_assert(
-        DpManager::NUM_BUFFERGETOUT_OUTPUT_PORTS == DpManagerNumPorts,
+        DpManager::NUM_BUFFERGETOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
         "Number of buffer get out ports must equal DpManagerNumPorts"
     );
     static_assert(
-        DpManager::NUM_PRODUCTSENDIN_INPUT_PORTS == DpManagerNumPorts,
+        DpManager::NUM_PRODUCTSENDIN_INPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
         "Number of product send in ports must equal DpManagerNumPorts"
     );
     static_assert(
-        DpManager::NUM_PRODUCTSENDOUT_OUTPUT_PORTS == DpManagerNumPorts,
+        DpManager::NUM_PRODUCTSENDOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
         "Number of product send out ports must equal DpManagerNumPorts"
     );
 
