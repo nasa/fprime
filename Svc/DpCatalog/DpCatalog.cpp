@@ -52,7 +52,7 @@ namespace Svc {
     ) {
 
         // Do some assertion checks
-        FW_ASSERT(numDirs < DP_MAX_DIRECTORIES, numDirs);
+        FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, numDirs);
 
         // request memory for catalog
         this->m_memSize = maxDpFiles * (sizeof(DpStateEntry) + sizeof(DpSortedList));
@@ -262,8 +262,8 @@ namespace Svc {
                         this->m_sortedDpList[record].recPtr->record.getid(),
                         this->m_sortedDpList[record].recPtr->record.gettSec(),
                         this->m_sortedDpList[record].recPtr->record.gettSub()
-                        );
-                    this->fileOut_out(0,fileName,fileName,0,0);
+                    );
+                    this->fileOut_out(0, fileName, fileName, 0, 0);
                 }
             }
         }
@@ -332,12 +332,12 @@ namespace Svc {
         this->cmdResponse_out(opCode, cmdSeq, this->doCatalogBuild());
     }
 
-  void DpCatalog ::
-    START_XMIT_CATALOG_cmdHandler(
-        FwOpcodeType opCode,
-        U32 cmdSeq,
-        Fw::Wait wait
-    )
+    void DpCatalog ::
+        START_XMIT_CATALOG_cmdHandler(
+            FwOpcodeType opCode,
+            U32 cmdSeq,
+            Fw::Wait wait
+        )
     {
 
         Fw::CmdResponse resp = this->doCatalogXmit();
@@ -347,12 +347,13 @@ namespace Svc {
             this->m_xmitCmdWait = false;
             this->m_xmitOpCode = 0;
             this->m_xmitCmdSeq = 0;
-        } else {
+        }
+        else {
             this->m_xmitCmdWait = true;
             this->m_xmitOpCode = opCode;
             this->m_xmitCmdSeq = cmdSeq;
         }
-    
+
     }
 
     Fw::CmdResponse DpCatalog::doCatalogXmit() {
@@ -372,5 +373,16 @@ namespace Svc {
         // TODO
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
+
+    void DpCatalog ::
+        CLEAR_CATALOG_cmdHandler(
+            FwOpcodeType opCode,
+            U32 cmdSeq
+        )
+    {
+        // TODO
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
 
 }

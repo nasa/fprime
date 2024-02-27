@@ -19,9 +19,10 @@ set(HEADER_FILES
 
 register_fprime_module()
 ### UTs ###
-# set(UT_SOURCE_FILES
-#   "${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher.fpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherImplTester.cpp"
-# )
-# register_fprime_ut()
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTesterHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTestMain.cpp"
+)
+register_fprime_ut()
