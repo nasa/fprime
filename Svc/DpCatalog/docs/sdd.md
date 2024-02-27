@@ -64,9 +64,9 @@ newDp|DpNotify|async_input|Notification that a new DP has been generated
 
 ### 3.5 Configuration
 
-During initialization, the intialization function takes a set of parameters:
+During initialization, the initialization function takes a set of parameters:
 
-|Psrameter|Purpose|
+|Parameter|Purpose|
 |---|---|
 |dpDirs|A set of strings up to `MAX_DP_DIRS` that are directory names where DPs are written
 |maxFiles|Specify the maximum number of files the catalog can track|
