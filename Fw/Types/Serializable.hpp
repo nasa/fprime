@@ -38,6 +38,14 @@ namespace Fw {
             virtual ~Serializable(); //!< destructor
     };
 
+    class Serialization {
+      public:
+        enum t {
+            INCLUDE_LENGTH, //!< Include length as first token in serialization
+            OMIT_LENGTH //!< Omit length from serialization
+        };
+    };
+
     class SerializeBufferBase {
         public:
 
@@ -72,6 +80,17 @@ namespace Fw {
 
             SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length, bool noLength = false); //!< serialize data buffer
 
+            //! \brief serialize a byte buffer of a given length
+            //!
+            //! Serialize bytes from `buff` up to `length`.  If `serializationMode` is set to `INCLUDE_LENGTH` then the
+            //! length is included as the first token. Length may be omitted with `OMIT_LENGTH`.
+            //!
+            //! \param buff: buffer to serialize
+            //! \param length: length of data to serialize
+            //! \param mode: serialization type
+            //! \return status of serialization
+            SerializeStatus serialize(const U8* buff, FwSizeType length, Serialization::t mode);
+
             SerializeStatus serialize(const SerializeBufferBase& val); //!< serialize a serialized buffer
 
             SerializeStatus serialize(const Serializable &val); //!< serialize an object derived from serializable base class
@@ -105,8 +124,19 @@ namespace Fw {
             // length should be set to max, returned value is actual size stored. If noLength
             // is true, use the length variable as the actual number of bytes to deserialize
             SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length, bool noLength = false); //!< deserialize data buffer
-            // serialize/deserialize Serializable
 
+            //! \brief deserialize a byte buffer of a given length
+            //!
+            //! Deserialize bytes into `buff` of `length` bytes.  If `serializationMode` is set to `INCLUDE_LENGTH` then
+            //! the length is deserialized first followed by the bytes. Length may be omitted with `OMIT_LENGTH` and
+            //! in this case `length` bytes will be deserialized. `length` will be filled with the amount of data
+            //! deserialized.
+            //!
+            //! \param buff: buffer to hold deserialized data
+            //! \param length: length of data to deserialize length is filled with deserialized length
+            //! \param mode: deserialization type
+            //! \return status of serialization
+            SerializeStatus deserialize(U8* buff, FwSizeType& length, Serialization::t mode);
 
             SerializeStatus deserialize(Serializable &val);  //!< deserialize an object derived from serializable base class
 
