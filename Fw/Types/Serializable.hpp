@@ -6,6 +6,7 @@
 #endif
 
 #include <FpConfig.hpp>
+#include "Fw/Deprecate.hpp"
 
 namespace Fw {
 
@@ -78,7 +79,10 @@ namespace Fw {
 
             SerializeStatus serialize(const void* val); //!< serialize pointer (careful, only pointer value, not contents are serialized)
 
-            SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length, bool noLength = false); //!< serialize data buffer
+            //! serialize data buffer
+            SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length, bool noLength);
+            //! serialize data buffer
+            SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length);
 
             //! \brief serialize a byte buffer of a given length
             //!
@@ -121,10 +125,11 @@ namespace Fw {
 
             SerializeStatus deserialize(void*& val); //!< deserialize point value (careful, pointer value only, not contents)
 
-            // length should be set to max, returned value is actual size stored. If noLength
-            // is true, use the length variable as the actual number of bytes to deserialize
-            SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length, bool noLength = false); //!< deserialize data buffer
+            //! deserialize data buffer
+            SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length, bool noLength);
 
+            //! deserialize data buffer
+            SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length);
             //! \brief deserialize a byte buffer of a given length
             //!
             //! Deserialize bytes into `buff` of `length` bytes.  If `serializationMode` is set to `INCLUDE_LENGTH` then
