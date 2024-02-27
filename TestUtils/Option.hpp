@@ -22,7 +22,7 @@ class Option {
     enum class State { VALUE, NO_VALUE };
 
   public:
-    Option(T value) : state(State::VALUE), value(value) {}
+    explicit Option(T value) : state(State::VALUE), value(value) {}
     Option() : state(State::NO_VALUE), value(noValue) {}
 
   public:
