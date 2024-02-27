@@ -165,7 +165,7 @@ class DpContainer {
     Utils::HashBuffer computeHeaderHash() const;
 
     //! Set the header hash
-    void setHeaderHash(Utils::HashBuffer hash  //!< The hash
+    void setHeaderHash(const Utils::HashBuffer& hash  //!< The hash
     );
 
     //! Compute and set the header hash

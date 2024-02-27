@@ -162,16 +162,13 @@ Utils::HashBuffer DpContainer::computeHeaderHash() const {
     return computedHash;
 }
 
-void DpContainer::setHeaderHash(Utils::HashBuffer hash) {
+void DpContainer::setHeaderHash(const Utils::HashBuffer& hash) {
     const FwSizeType bufferSize = this->m_buffer.getSize();
     const FwSizeType minBufferSize = HEADER_HASH_OFFSET + HASH_DIGEST_LENGTH;
     FW_ASSERT(bufferSize >= minBufferSize, static_cast<FwAssertArgType>(bufferSize),
               static_cast<FwAssertArgType>(minBufferSize));
     U8* const buffAddr = this->m_buffer.getData();
-    ExternalSerializeBuffer serialBuffer(&buffAddr[HEADER_HASH_OFFSET], HASH_DIGEST_LENGTH);
-    hash.resetSer();
-    const Fw::SerializeStatus status = hash.copyRaw(serialBuffer, HASH_DIGEST_LENGTH);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    (void)::memcpy(&buffAddr[HEADER_HASH_OFFSET], hash.getBuffAddr(), HASH_DIGEST_LENGTH);
 }
 
 void DpContainer::updateHeaderHash() {
