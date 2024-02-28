@@ -234,10 +234,18 @@ namespace Fw {
 
     }
 
+    SerializeStatus SerializeBufferBase::serialize(const U8* buff, NATIVE_UINT_TYPE length) {
+        return this->serialize(buff, static_cast<FwSizeType>(length), Serialization::INCLUDE_LENGTH);
+    }
+
     SerializeStatus SerializeBufferBase::serialize(const U8* buff, NATIVE_UINT_TYPE length, bool noLength) {
+        return this->serialize(buff, static_cast<FwSizeType>(length), noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
+    }
+
+    SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, Fw::Serialization::t mode) {
         // First serialize length
         SerializeStatus stat;
-        if (not noLength) {
+        if (mode == Serialization::INCLUDE_LENGTH) {
             stat = this->serialize(static_cast<FwBuffSizeType>(length));
             if (stat != FW_SERIALIZE_OK) {
                 return stat;
@@ -499,11 +507,25 @@ namespace Fw {
         return FW_SERIALIZE_OK;
     }
 
+    SerializeStatus SerializeBufferBase::deserialize(U8* buff, NATIVE_UINT_TYPE& length) {
+        FwSizeType length_in_out = static_cast<FwSizeType>(length);
+        SerializeStatus status = this->deserialize(buff, length_in_out, Serialization::INCLUDE_LENGTH);
+        length = static_cast<NATIVE_UINT_TYPE>(length_in_out);
+        return status;
+    }
+
     SerializeStatus SerializeBufferBase::deserialize(U8* buff, NATIVE_UINT_TYPE& length, bool noLength) {
+        FwSizeType length_in_out = static_cast<FwSizeType>(length);
+        SerializeStatus status = this->deserialize(buff, length_in_out, noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
+        length = static_cast<NATIVE_UINT_TYPE>(length_in_out);
+        return status;
+    }
+
+    SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, Serialization::t mode) {
 
         FW_ASSERT(this->getBuffAddr());
 
-        if (not noLength) {
+        if (mode == Serialization::INCLUDE_LENGTH) {
             FwBuffSizeType storedLength;
 
             SerializeStatus stat = this->deserialize(storedLength);
@@ -519,7 +541,7 @@ namespace Fw {
 
             (void) memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], storedLength);
 
-            length = static_cast<NATIVE_UINT_TYPE>(storedLength);
+            length = static_cast<FwSizeType>(storedLength);
 
         } else {
             // make sure enough is left

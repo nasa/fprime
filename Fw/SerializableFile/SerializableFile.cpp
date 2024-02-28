@@ -39,9 +39,9 @@ namespace Fw {
       return FILE_OPEN_ERROR;
     }
 
-    NATIVE_INT_TYPE capacity = this->m_buffer.getBuffCapacity();
-    NATIVE_INT_TYPE length = capacity;
-    status = file.read(this->m_buffer.getBuffAddr(), length, false);
+    FwSignedSizeType capacity = static_cast<FwSignedSizeType>(this->m_buffer.getBuffCapacity());
+    FwSignedSizeType length = static_cast<FwSignedSizeType>(capacity);
+    status = file.read(this->m_buffer.getBuffAddr(), length, Os::File::WaitType::NO_WAIT);
     if( Os::File::OP_OK != status ) {
       file.close();
       return FILE_READ_ERROR;
@@ -72,12 +72,10 @@ namespace Fw {
       return FILE_OPEN_ERROR;
     }
 
-    NATIVE_INT_TYPE length = this->m_buffer.getBuffLength();
-    NATIVE_INT_TYPE size = length;
+    FwSignedSizeType length = static_cast<FwSignedSizeType>(this->m_buffer.getBuffLength());
+    FwSignedSizeType size = length;
     status = file.write(this->m_buffer.getBuffAddr(), length);
-    if( (Os::File::OP_OK != status) ||
-        (length != size) )
-    {
+    if( (Os::File::OP_OK != status) || (length != size)) {
       file.close();
       return FILE_WRITE_ERROR;
     }

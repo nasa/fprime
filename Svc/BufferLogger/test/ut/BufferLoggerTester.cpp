@@ -265,7 +265,7 @@ namespace Svc {
 
     {
       // Make sure the file size is within bounds
-      FwSizeType actualSize = 0;
+      FwSignedSizeType actualSize = 0;
       const Os::FileSystem::Status status =
         Os::FileSystem::getFileSize(fileName, actualSize);
       ASSERT_EQ(Os::FileSystem::OP_OK, status);
@@ -284,8 +284,8 @@ namespace Svc {
     U8 buf[expectedSize];
     for (U32 i = 0; i < expectedNumBuffers; ++i) {
       // Get length of buffer to read
-      NATIVE_INT_TYPE length = sizeof(SIZE_TYPE);
-      Os::File::Status status = file.read(&buf, length);
+      FwSignedSizeType length = sizeof(SIZE_TYPE);
+      Os::File::Status status = file.read(buf, length);
       ASSERT_EQ(Os::File::OP_OK, status);
       ASSERT_EQ(sizeof(SIZE_TYPE), static_cast<U32>(length));
       Fw::SerialBuffer comBuffLength(buf, length);
@@ -297,7 +297,7 @@ namespace Svc {
       ASSERT_EQ(sizeof(data), bufferSize);
       // Read and check the buffer
       length = bufferSize;
-      status = file.read(&buf, length);
+      status = file.read(buf, length);
       ASSERT_EQ(Os::File::OP_OK, status);
       ASSERT_EQ(bufferSize, static_cast<U32>(length));
       ASSERT_EQ(memcmp(buf, data, sizeof(data)), 0);
@@ -305,8 +305,8 @@ namespace Svc {
 
     // Make sure we reached the end of the file
     {
-      NATIVE_INT_TYPE length = 10;
-      const Os::File::Status status = file.read(&buf, length);
+      FwSignedSizeType length = 10;
+      const Os::File::Status status = file.read(buf, length);
       ASSERT_EQ(Os::File::OP_OK, status);
       ASSERT_EQ(0, length);
     }

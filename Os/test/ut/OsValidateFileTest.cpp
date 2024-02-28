@@ -48,7 +48,7 @@ void testValidateFile(const char* fileName) {
 
     // Get file size:
     printf("Checking file size of %s.\n", hashFileName);
-    FwSizeType fileSize=0;
+    FwSignedSizeType fileSize=0;
     fsStatus = Os::FileSystem::getFileSize(hashFileName, fileSize);
     if( Os::FileSystem::OP_OK != fsStatus ) {
     	printf("\tFailed to get file size of %s\n", hashFileName);

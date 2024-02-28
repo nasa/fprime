@@ -33,13 +33,13 @@ namespace Svc {
     this->m_destName = destLogStringArg;
 
     // Set size
-    FwSizeType file_size;
-    const Os::FileSystem::Status status =
+    FwSignedSizeType file_size;
+    const Os::FileSystem::Status status = 
       Os::FileSystem::getFileSize(sourceFileName, file_size);
     if (status != Os::FileSystem::OP_OK)
       return Os::File::BAD_SIZE;
     // If the size does not cast cleanly to the desired U32 type, return size error
-    if (static_cast<FwSizeType>(static_cast<U32>(file_size)) != file_size) {
+    if (static_cast<FwSignedSizeType>(static_cast<U32>(file_size)) != file_size) {
         return Os::File::BAD_SIZE;
     }
     this->m_size = static_cast<U32>(file_size);
@@ -62,14 +62,17 @@ namespace Svc {
   {
 
     Os::File::Status status;
-    status = this->m_osFile.seek(byteOffset);
-    if (status != Os::File::OP_OK)
-      return status;
+    status = this->m_osFile.seek(byteOffset, Os::File::SeekType::ABSOLUTE);
+    if (status != Os::File::OP_OK) {
+        return status;
+    }
 
-    NATIVE_INT_TYPE intSize = size;
+    FwSignedSizeType intSize = size;
     status = this->m_osFile.read(data, intSize);
-    if (status != Os::File::OP_OK)
-      return status;
+
+    if (status != Os::File::OP_OK) {
+        return status;
+    }
     // Force a bad size error when the U32 carrying size is bad
     if (static_cast<U32>(intSize) != size) {
         return Os::File::BAD_SIZE;

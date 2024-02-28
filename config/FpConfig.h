@@ -20,7 +20,12 @@
 typedef PlatformIndexType FwIndexType;
 #define PRI_FwIndexType PRI_PlatformIndexType
 
-// The type of larger sizes internal to the software, e.g., memory buffer sizes,
+// The signed type of larger sizes internal to the software, e.g., memory buffer sizes,
+// file sizes
+typedef PlatformSignedSizeType FwSignedSizeType;
+#define PRI_FwSignedSizeType PRI_PlatformSignedSizeType
+
+// The unsigned type of larger sizes internal to the software, e.g., memory buffer sizes,
 // file sizes
 typedef PlatformSizeType FwSizeType;
 #define PRI_FwSizeType PRI_PlatformSizeType
@@ -107,11 +112,6 @@ typedef U32 FwDpPriorityType;
 // If necessary, you can change these definitions
 // In most cases, the defaults should work
 // ----------------------------------------------------------------------
-
-// For backwards compatibility
-// Eventually we should replace uses of FwBuffSizeType with FwSizeStoreType
-typedef FwSizeStoreType FwBuffSizeType;
-#define PRI_FwBuffSizeType PRI_FwSizeStoreType
 
 // The type used to serialize a message ID.
 // Used in the auto-generated component code.
@@ -407,7 +407,23 @@ typedef FwIndexType FwEventCounterType;
 #define FW_FIXED_LENGTH_STRING_SIZE 256  //!< Character array size for the filepath character type
 #endif
 
+#ifndef FW_HANDLE_MAX_SIZE
+#define FW_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#endif
+
+#ifndef FW_HANDLE_ALIGNMENT
+#define FW_HANDLE_ALIGNMENT 16  //!< Alignment of handle storage
+#endif
+
+#ifndef FW_FILE_CHUNK_SIZE
+#define FW_FILE_CHUNK_SIZE 512  //!< Chunk size for working with files
+#endif
+
+
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
 
+// DO NOT TOUCH.  These types are specified for backwards naming compatibility.
+typedef FwSizeStoreType FwBuffSizeType;
+#define PRI_FwBuffSizeType PRI_FwSizeStoreType
 #endif

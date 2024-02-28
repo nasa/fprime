@@ -40,14 +40,14 @@ namespace Svc {
   {
 
     Os::File::Status status;
-    status = this->osFile.seek(byteOffset);
+    status = this->osFile.seek(byteOffset, Os::File::SeekType::ABSOLUTE);
     if (status != Os::File::OP_OK) {
         return status;
     }
 
-    NATIVE_INT_TYPE intLength = length;
+    FwSignedSizeType intLength = length;
     //Note: not waiting for the file write to finish
-    status = this->osFile.write(data, intLength, false);
+    status = this->osFile.write(data, intLength, Os::File::WaitType::NO_WAIT);
     if (status != Os::File::OP_OK) {
         return status;
     }
