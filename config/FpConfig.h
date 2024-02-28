@@ -30,8 +30,8 @@ typedef PlatformIntType FwNativeIntType;
 typedef PlatformUIntType FwNativeUIntType;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
 
-typedef U16 FwBuffSizeType;
-#define PRI_FwBuffSizeType PRIu16
+typedef U16 FwExternalSizeType;
+#define PRI_FwExternalSizeType PRIu16
 
 typedef I32 FwEnumStoreType;
 #define PRI_FwEnumStoreType PRId32
@@ -363,4 +363,7 @@ typedef U32 FwDpPriorityType;
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
 
+// DO NOT TOUCH
+typedef FwExternalSizeType FwBuffSizeType;
+#define PRI_FwBuffSizeType PRI_FwExternalSizeType
 #endif
