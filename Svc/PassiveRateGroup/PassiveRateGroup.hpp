@@ -67,7 +67,7 @@ class PassiveRateGroup : public PassiveRateGroupComponentBase {
     U32 m_cycles;                                                     //!< cycles executed
     U32 m_maxTime;                                                    //!< maximum execution time in microseconds
     NATIVE_INT_TYPE m_numContexts;                                    //!< number of contexts
-    NATIVE_INT_TYPE m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];  //!< Must match number of output ports
+    U32 m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];              //!< Must match number of output ports
 };
 
 }  // namespace Svc

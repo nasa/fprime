@@ -36,7 +36,7 @@ namespace Fw {
     }
 
     bool StringBase::operator==(const StringBase& other) const {
-        NATIVE_UINT_TYPE len = this->length();
+        SizeType len = this->length();
         if (len != other.length()) {
             return false;
         } else {
@@ -51,7 +51,7 @@ namespace Fw {
             return false;
         }
 
-        const NATIVE_UINT_TYPE capacity = this->getCapacity();
+        const SizeType capacity = this->getCapacity();
         const size_t result = strncmp(us, other, capacity);
         return (result == 0);
 
@@ -59,7 +59,7 @@ namespace Fw {
 
     void StringBase::format(const CHAR* formatString, ...) {
         CHAR* us = const_cast<CHAR*>(this->toChar());
-        NATIVE_UINT_TYPE cap = this->getCapacity();
+        SizeType cap = this->getCapacity();
         FW_ASSERT(us);
         va_list args;
         va_start(args, formatString);
@@ -107,12 +107,12 @@ namespace Fw {
         return *this;
     }
 
-    void StringBase::appendBuff(const CHAR* buff, NATIVE_UINT_TYPE size) {
-        const U32 capacity = this->getCapacity();
-        const U32 length = this->length();
+    void StringBase::appendBuff(const CHAR* buff, SizeType size) {
+        const SizeType capacity = this->getCapacity();
+        const SizeType length = this->length();
         FW_ASSERT(capacity > length, capacity, length);
         // Subtract 1 to leave space for null terminator
-        U32 remaining = capacity - length - 1;
+        SizeType remaining = capacity - length - 1;
         if(size < remaining) {
             remaining = size;
         }
@@ -120,21 +120,21 @@ namespace Fw {
         (void) strncat(const_cast<CHAR*>(this->toChar()), buff, remaining);
     }
 
-    NATIVE_UINT_TYPE StringBase::length() const {
-        return static_cast<NATIVE_UINT_TYPE>(StringUtils::string_length(this->toChar(),this->getCapacity()));
+    StringBase::SizeType StringBase::length() const {
+        return static_cast<SizeType>(StringUtils::string_length(this->toChar(),this->getCapacity()));
     }
 
     SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
         return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()),this->length());
     }
 
-    SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLength) const {
-        NATIVE_INT_TYPE len = FW_MIN(maxLength,this->length());
+    SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
+        SizeType len = FW_MIN(maxLength,this->length());
         return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len);
     }
 
     SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
-        NATIVE_UINT_TYPE maxSize = this->getCapacity() - 1;
+        SizeType maxSize = this->getCapacity() - 1;
         CHAR* raw = const_cast<CHAR*>(this->toChar());
         SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(raw),maxSize);
         // Null terminate deserialized string

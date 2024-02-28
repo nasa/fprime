@@ -38,7 +38,7 @@ void PassiveRateGroupTester::clearPortCalls() {
 
 PassiveRateGroupTester::~PassiveRateGroupTester() {}
 
-void PassiveRateGroupTester::from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+void PassiveRateGroupTester::from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, U32 context) {
     ASSERT_TRUE(portNum < static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(m_impl.m_RateGroupMemberOut_OutputPort)));
     this->m_callLog[portNum].portCalled = true;
     this->m_callLog[portNum].contextVal = context;

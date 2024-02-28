@@ -93,7 +93,7 @@ namespace Svc {
   void UdpSenderComponentImpl ::
     Sched_handler(
         const NATIVE_INT_TYPE portNum,
-        NATIVE_UINT_TYPE context
+        U32 context
     )
   {
       this->tlmWrite_US_BytesSent(this->m_bytesSent);
