@@ -363,7 +363,7 @@ typedef U32 FwDpPriorityType;
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
 
-// DO NOT TOUCH
+// DO NOT TOUCH.  These types are specified for backwards naming compatibility.
 typedef FwExternalSizeType FwBuffSizeType;
 #define PRI_FwBuffSizeType PRI_FwExternalSizeType
 #endif
