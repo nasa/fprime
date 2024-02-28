@@ -12,13 +12,10 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SerializableFile.cpp"
 )
 set(MOD_DEPS
-  Fw/Cfg
-  Fw/Types
+    Fw/Cfg
+    Fw/Types
+    Os
 )
-# For shared libraries, Os must exist in the module list
-if (BUILD_SHARED_LIBS)
-    list(APPEND MOD_DEPS "Os")
-endif()
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES

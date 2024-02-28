@@ -9,6 +9,7 @@ if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
    message(STATUS "Requiring thread library")
    FIND_PACKAGE ( Threads REQUIRED )
 endif()
+choose_fprime_implementation(Os/File Os/File/Posix)
 
 # Use common linux setup
 add_definitions(-DTGT_OS_TYPE_LINUX)

@@ -641,7 +641,7 @@ namespace Svc {
 
     file.open(path, Os::File::OPEN_READ);
 
-    NATIVE_INT_TYPE intSize = static_cast<NATIVE_INT_TYPE>(dataSize);
+    FwSignedSizeType intSize = static_cast<FwSignedSizeType>(dataSize);
     const Os::File::Status status = file.read(fileData, intSize);
 
     ASSERT_EQ(Os::File::OP_OK, status);

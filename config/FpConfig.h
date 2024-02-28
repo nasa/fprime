@@ -15,6 +15,9 @@
 typedef PlatformIndexType FwIndexType;
 #define PRI_FwIndexType PRI_PlatformIndexType
 
+typedef PlatformSignedSizeType FwSignedSizeType;
+#define PRI_FwSignedSizeType PRI_PlatformSignedSizeType
+
 typedef PlatformSizeType FwSizeType;
 #define PRI_FwSizeType PRI_PlatformSizeType
 
@@ -27,8 +30,8 @@ typedef PlatformIntType FwNativeIntType;
 typedef PlatformUIntType FwNativeUIntType;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
 
-typedef U16 FwBuffSizeType;
-#define PRI_FwBuffSizeType PRIu16
+typedef U16 FwSizeStoreType;
+#define PRI_FwSizeStoreType PRIu16
 
 typedef I32 FwEnumStoreType;
 #define PRI_FwEnumStoreType PRId32
@@ -344,7 +347,23 @@ typedef U32 FwDpPriorityType;
 #define FW_FIXED_LENGTH_STRING_SIZE 256  //!< Character array size for the filepath character type
 #endif
 
+#ifndef FW_HANDLE_MAX_SIZE
+#define FW_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#endif
+
+#ifndef FW_HANDLE_ALIGNMENT
+#define FW_HANDLE_ALIGNMENT 16  //!< Alignment of handle storage
+#endif
+
+#ifndef FW_FILE_CHUNK_SIZE
+#define FW_FILE_CHUNK_SIZE 512  //!< Chunk size for working with files
+#endif
+
+
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
 
+// DO NOT TOUCH.  These types are specified for backwards naming compatibility.
+typedef FwSizeStoreType FwBuffSizeType;
+#define PRI_FwBuffSizeType PRI_FwSizeStoreType
 #endif
