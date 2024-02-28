@@ -39,7 +39,7 @@ namespace Svc {
   FileUplinkTester ::
     ~FileUplinkTester()
   {
-    this->component.file.osFile.close();
+    this->component.m_file.osFile.close();
   }
 
   // ----------------------------------------------------------------------
@@ -96,7 +96,7 @@ namespace Svc {
     ASSERT_EVENTS_FileReceived(0, destPath);
 
     // Assert we are back in START mode
-    ASSERT_EQ(FileUplink::START, this->component.receiveMode);
+    ASSERT_EQ(FileUplink::START, this->component.m_receiveMode);
 
     // Verify the file data
     this->verifyFileData(destPath, linearPacketData, fileSize);
@@ -182,7 +182,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileOpenError(0, destPath);
 
-    ASSERT_EQ(FileUplink::START, this->component.receiveMode);
+    ASSERT_EQ(FileUplink::START, this->component.m_receiveMode);
 
   }
 
@@ -205,7 +205,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(0);
 
     // Close the file so writing will fail
-    this->component.file.osFile.close();
+    this->component.m_file.osFile.close();
 
     // Send the data packet (packet 1)
     const size_t byteOffset = PACKET_SIZE;
@@ -251,7 +251,7 @@ namespace Svc {
         FileUplink::DATA
     );
 
-    ASSERT_EQ(FileUplink::DATA, this->component.receiveMode);
+    ASSERT_EQ(FileUplink::DATA, this->component.m_receiveMode);
 
     this->removeFile(destPath);
   }
@@ -299,7 +299,7 @@ namespace Svc {
         FileUplink::START
     );
 
-    ASSERT_EQ(FileUplink::START, this->component.receiveMode);
+    ASSERT_EQ(FileUplink::START, this->component.m_receiveMode);
 
   }
 
@@ -405,8 +405,8 @@ namespace Svc {
     ASSERT_EVENTS_UplinkCanceled_SIZE(1);
 
     // Check component state
-    ASSERT_EQ(0U, this->component.lastSequenceIndex);
-    ASSERT_EQ(FileUplink::START, this->component.receiveMode);
+    ASSERT_EQ(0U, this->component.m_lastSequenceIndex);
+    ASSERT_EQ(FileUplink::START, this->component.m_receiveMode);
 
     // Remove the file
     this->removeFile("test.bin");
@@ -452,8 +452,8 @@ namespace Svc {
     ASSERT_EVENTS_UplinkCanceled_SIZE(1);
 
     // Check component state
-    ASSERT_EQ(0U, this->component.lastSequenceIndex);
-    ASSERT_EQ(FileUplink::START, this->component.receiveMode);
+    ASSERT_EQ(0U, this->component.m_lastSequenceIndex);
+    ASSERT_EQ(FileUplink::START, this->component.m_receiveMode);
 
     // Remove the file
     this->removeFile("test.bin");
