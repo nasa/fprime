@@ -379,6 +379,13 @@ the same thing. Note: make sure the directory is on the CMake include path to us
 **TARGET_FILE_PATH:** include path or file path file defining above functions
 
 
+## Function `create_implementation_interface`:
+
+Helper function to create implementation interface library once and only once to ensure it exists.
+
+**IMPLEMENTATION**: implementation library name (resolved)
+
+
 ## Function `require_fprime_implementation`:
 
 Designates that the current module requires a separate implementation in order for it to function properly. As an
@@ -386,6 +393,7 @@ example, Os requires an implementation of `Os_Task`. These implementations must 
 `choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
 
 **IMPLEMENTATION:** implementation module name that must be covered
+**REQUESTER:** (optional) the requester of the implementation. Default: ${FPRIME_CURRENT_MODULE}
 
 
 ## Function `register_fprime_implementation`:

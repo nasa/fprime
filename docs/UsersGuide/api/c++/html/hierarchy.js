@@ -33,7 +33,15 @@ var hierarchy =
     [ "Os::Event", "class_os_1_1_event.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence::Events", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_events.html", null ],
     [ "Os::FIFOQueue", "struct_os_1_1_f_i_f_o_queue.html", null ],
-    [ "Os::File", "class_os_1_1_file.html", null ],
+    [ "Os::FileHandle", "struct_os_1_1_file_handle.html", [
+      [ "Os::Posix::File::PosixFileHandle", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle.html", null ],
+      [ "Os::Stub::File::StubFileHandle", "struct_os_1_1_stub_1_1_file_1_1_stub_file_handle.html", null ]
+    ] ],
+    [ "Os::FileInterface", "class_os_1_1_file_interface.html", [
+      [ "Os::File", "class_os_1_1_file.html", null ],
+      [ "Os::Posix::File::PosixFile", "class_os_1_1_posix_1_1_file_1_1_posix_file.html", null ],
+      [ "Os::Stub::File::StubFile", "class_os_1_1_stub_1_1_file_1_1_stub_file.html", null ]
+    ] ],
     [ "Fw::FilePacket", "union_fw_1_1_file_packet.html", null ],
     [ "Svc::FramingProtocol", "class_svc_1_1_framing_protocol.html", [
       [ "Svc::FprimeFraming", "class_svc_1_1_fprime_framing.html", null ]
@@ -354,6 +362,8 @@ var hierarchy =
       ] ],
       [ "Fw::Success", "class_fw_1_1_success.html", null ],
       [ "Fw::Time", "class_fw_1_1_time.html", null ],
+      [ "Os::FileMode", "class_os_1_1_file_mode.html", null ],
+      [ "Os::FileStatus", "class_os_1_1_file_status.html", null ],
       [ "Svc::ActiveLogger_Enabled", "class_svc_1_1_active_logger___enabled.html", null ],
       [ "Svc::ActiveLogger_FilterSeverity", "class_svc_1_1_active_logger___filter_severity.html", null ],
       [ "Svc::BuffQueueDepth", "class_svc_1_1_buff_queue_depth.html", null ],
@@ -374,6 +384,7 @@ var hierarchy =
       [ "Svc::TimerVal", "class_svc_1_1_timer_val.html", null ]
     ] ],
     [ "Fw::SerializableFile", "class_fw_1_1_serializable_file.html", null ],
+    [ "Fw::Serialization", "class_fw_1_1_serialization.html", null ],
     [ "Fw::SerializeBufferBase", "class_fw_1_1_serialize_buffer_base.html", [
       [ "Drv::DataBuffer", "class_drv_1_1_data_buffer.html", null ],
       [ "Fw::ActiveComponentExitSerializableBuffer", "class_fw_1_1_active_component_exit_serializable_buffer.html", null ],

@@ -97,6 +97,7 @@ var namespace_fw =
     [ "PolyType", "class_fw_1_1_poly_type.html", "class_fw_1_1_poly_type" ],
     [ "SerialBuffer", "class_fw_1_1_serial_buffer.html", "class_fw_1_1_serial_buffer" ],
     [ "Serializable", "class_fw_1_1_serializable.html", "class_fw_1_1_serializable" ],
+    [ "Serialization", "class_fw_1_1_serialization.html", "class_fw_1_1_serialization" ],
     [ "SerializeBufferBase", "class_fw_1_1_serialize_buffer_base.html", "class_fw_1_1_serialize_buffer_base" ],
     [ "ExternalSerializeBuffer", "class_fw_1_1_external_serialize_buffer.html", "class_fw_1_1_external_serialize_buffer" ],
     [ "String", "class_fw_1_1_string.html", "class_fw_1_1_string" ],

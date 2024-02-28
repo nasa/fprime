@@ -150,21 +150,38 @@ var annotated_dup =
       [ "PolyType", "class_fw_1_1_poly_type.html", "class_fw_1_1_poly_type" ],
       [ "SerialBuffer", "class_fw_1_1_serial_buffer.html", "class_fw_1_1_serial_buffer" ],
       [ "Serializable", "class_fw_1_1_serializable.html", "class_fw_1_1_serializable" ],
+      [ "Serialization", "class_fw_1_1_serialization.html", "class_fw_1_1_serialization" ],
       [ "SerializeBufferBase", "class_fw_1_1_serialize_buffer_base.html", "class_fw_1_1_serialize_buffer_base" ],
       [ "ExternalSerializeBuffer", "class_fw_1_1_external_serialize_buffer.html", "class_fw_1_1_external_serialize_buffer" ],
       [ "String", "class_fw_1_1_string.html", "class_fw_1_1_string" ],
       [ "StringBase", "class_fw_1_1_string_base.html", "class_fw_1_1_string_base" ]
     ] ],
     [ "Os", "namespace_os.html", [
+      [ "Posix", "namespace_os_1_1_posix.html", [
+        [ "File", "namespace_os_1_1_posix_1_1_file.html", [
+          [ "PosixFileHandle", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle.html", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle" ],
+          [ "PosixFile", "class_os_1_1_posix_1_1_file_1_1_posix_file.html", "class_os_1_1_posix_1_1_file_1_1_posix_file" ]
+        ] ]
+      ] ],
+      [ "Stub", "namespace_os_1_1_stub.html", [
+        [ "File", "namespace_os_1_1_stub_1_1_file.html", [
+          [ "StubFileHandle", "struct_os_1_1_stub_1_1_file_1_1_stub_file_handle.html", null ],
+          [ "StubFile", "class_os_1_1_stub_1_1_file_1_1_stub_file.html", "class_os_1_1_stub_1_1_file_1_1_stub_file" ]
+        ] ]
+      ] ],
       [ "SystemResources", "namespace_os_1_1_system_resources.html", [
         [ "CpuTicks", "struct_os_1_1_system_resources_1_1_cpu_ticks.html", "struct_os_1_1_system_resources_1_1_cpu_ticks" ],
         [ "MemUtil", "struct_os_1_1_system_resources_1_1_mem_util.html", "struct_os_1_1_system_resources_1_1_mem_util" ]
       ] ],
+      [ "FileMode", "class_os_1_1_file_mode.html", "class_os_1_1_file_mode" ],
+      [ "FileStatus", "class_os_1_1_file_status.html", "class_os_1_1_file_status" ],
       [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
       [ "BareTaskHandle", "class_os_1_1_bare_task_handle.html", "class_os_1_1_bare_task_handle" ],
       [ "TaskRunner", "class_os_1_1_task_runner.html", "class_os_1_1_task_runner" ],
       [ "Directory", "class_os_1_1_directory.html", "class_os_1_1_directory" ],
       [ "Event", "class_os_1_1_event.html", "class_os_1_1_event" ],
+      [ "FileHandle", "struct_os_1_1_file_handle.html", null ],
+      [ "FileInterface", "class_os_1_1_file_interface.html", "class_os_1_1_file_interface" ],
       [ "File", "class_os_1_1_file.html", "class_os_1_1_file" ],
       [ "InterruptLock", "class_os_1_1_interrupt_lock.html", "class_os_1_1_interrupt_lock" ],
       [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ],

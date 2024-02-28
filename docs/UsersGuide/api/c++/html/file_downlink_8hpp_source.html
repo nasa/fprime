@@ -174,12 +174,12 @@ $(document).ready(function(){initNavTree('_file_downlink_8hpp_source.html',''); 
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;          <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">Os::File::Status</a> open(</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;          <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> open(</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> sourceFileName, </div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> destFileName </div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;          );</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;          <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">Os::File::Status</a> read(</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;          <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> read(</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;              <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> data,</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;              <span class="keyword">const</span> U32 byteOffset,</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;              <span class="keyword">const</span> U32 size</div>
@@ -267,7 +267,7 @@ $(document).ready(function(){initNavTree('_file_downlink_8hpp_source.html',''); 
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160; </div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;          <span class="keywordtype">void</span> fileOpenError();</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;          <span class="keywordtype">void</span> fileRead(<span class="keyword">const</span> <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">Os::File::Status</a> status);</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;          <span class="keywordtype">void</span> fileRead(<span class="keyword">const</span> <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> status);</div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        PRIVATE:</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
@@ -406,7 +406,7 @@ $(document).ready(function(){initNavTree('_file_downlink_8hpp_source.html',''); 
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;      );</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160; </div>
 <div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;      <span class="comment">//Individual packet transfer functions</span></div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;      <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">Os::File::Status</a> sendDataPacket(U32 &amp;byteOffset);</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;      <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> sendDataPacket(U32 &amp;byteOffset);</div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;      <span class="keywordtype">void</span> sendCancelPacket();</div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;      <span class="keywordtype">void</span> sendEndPacket();</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;      <span class="keywordtype">void</span> sendStartPacket();</div>
@@ -487,7 +487,7 @@ $(document).ready(function(){initNavTree('_file_downlink_8hpp_source.html',''); 
 <div class="ttc" id="a_file_downlink_cfg_8hpp_html"><div class="ttname"><a href="file_downlink_cfg_8hpp.html">FileDownlinkCfg.hpp</a></div></div>
 <div class="ttc" id="a_file_downlink_component_ac_8hpp_html"><div class="ttname"><a href="file_downlink_component_ac_8hpp.html">FileDownlinkComponentAc.hpp</a></div></div>
 <div class="ttc" id="a_file_packet_8hpp_html"><div class="ttname"><a href="file_packet_8hpp.html">FilePacket.hpp</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00056">FpConfig.h:56</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00059">FpConfig.h:59</a></div></div>
 <div class="ttc" id="a_mutex_8hpp_html"><div class="ttname"><a href="mutex_8hpp.html">Mutex.hpp</a></div></div>
 <div class="ttc" id="a_os_2_queue_8hpp_html"><div class="ttname"><a href="os_2_queue_8hpp.html">Queue.hpp</a></div></div>
 <div class="ttc" id="aclass_c_f_d_p_1_1_checksum_html"><div class="ttname"><a href="class_c_f_d_p_1_1_checksum.html">CFDP::Checksum</a></div><div class="ttdoc">Class representing a CFDP checksum.</div><div class="ttdef"><b>Definition:</b> <a href="checksum_8hpp_source.html#l00023">Checksum.hpp:23</a></div></div>
@@ -496,8 +496,8 @@ $(document).ready(function(){initNavTree('_file_downlink_8hpp_source.html',''); 
 <div class="ttc" id="aclass_fw_1_1_cmd_string_arg_html"><div class="ttname"><a href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a></div><div class="ttdef"><b>Definition:</b> <a href="cmd_string_8hpp_source.html#l00010">CmdString.hpp:10</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_log_string_arg_html"><div class="ttname"><a href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a></div><div class="ttdef"><b>Definition:</b> <a href="log_string_8hpp_source.html#l00010">LogString.hpp:10</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
-<div class="ttc" id="aclass_os_1_1_file_html"><div class="ttname"><a href="class_os_1_1_file.html">Os::File</a></div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00010">File.hpp:10</a></div></div>
-<div class="ttc" id="aclass_os_1_1_file_html_a7ee286422e714489bb92d2228075f0b7"><div class="ttname"><a href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">Os::File::Status</a></div><div class="ttdeci">Status</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00023">File.hpp:23</a></div></div>
+<div class="ttc" id="aclass_os_1_1_file_html"><div class="ttname"><a href="class_os_1_1_file.html">Os::File</a></div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00213">File.hpp:213</a></div></div>
+<div class="ttc" id="aclass_os_1_1_file_interface_html_ab25fd826bc916398d70a8232f326b703"><div class="ttname"><a href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::FileInterface::Status</a></div><div class="ttdeci">Status</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00028">File.hpp:28</a></div></div>
 <div class="ttc" id="aclass_os_1_1_mutex_html"><div class="ttname"><a href="class_os_1_1_mutex.html">Os::Mutex</a></div><div class="ttdef"><b>Definition:</b> <a href="mutex_8hpp_source.html#l00008">Mutex.hpp:8</a></div></div>
 <div class="ttc" id="aclass_os_1_1_queue_html"><div class="ttname"><a href="class_os_1_1_queue.html">Os::Queue</a></div><div class="ttdef"><b>Definition:</b> <a href="os_2_queue_8hpp_source.html#l00024">Queue.hpp:24</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_file_downlink_component_base_html"><div class="ttname"><a href="class_svc_1_1_file_downlink_component_base.html">Svc::FileDownlinkComponentBase</a></div><div class="ttdoc">Auto-generated base for FileDownlink component.</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_component_ac_8hpp_source.html#l00039">FileDownlinkComponentAc.hpp:41</a></div></div>

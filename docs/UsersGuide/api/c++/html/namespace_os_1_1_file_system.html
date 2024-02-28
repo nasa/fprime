@@ -128,13 +128,12 @@ Functions</h2></td></tr>
 <tr class="separator:aa9cc00d2e1f1ebf4fb489c55569b59b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d57326006eacb1c947c884e8f2c3574"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a4d57326006eacb1c947c884e8f2c3574">moveFile</a> (const char *originPath, const char *destPath)</td></tr>
 <tr class="separator:a4d57326006eacb1c947c884e8f2c3574"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2">handleFileError</a> (<a class="el" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">File::Status</a> fileStatus)</td></tr>
+<tr class="memitem:a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2">handleFileError</a> (<a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">File::Status</a> fileStatus)</td></tr>
 <tr class="separator:a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d8d0bc159589ebf09030dff7b294816"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a8d8d0bc159589ebf09030dff7b294816">copyFile</a> (const char *originPath, const char *destPath)</td></tr>
 <tr class="memdesc:a8d8d0bc159589ebf09030dff7b294816"><td class="mdescLeft">&#160;</td><td class="mdescRight">moves a file from origin to destination  <a href="namespace_os_1_1_file_system.html#a8d8d0bc159589ebf09030dff7b294816">More...</a><br /></td></tr>
 <tr class="separator:a8d8d0bc159589ebf09030dff7b294816"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4dc2c43756fb8ed89c502f6d452ec473"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a4dc2c43756fb8ed89c502f6d452ec473">getFileSize</a> (const char *path, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;size)</td></tr>
-<tr class="memdesc:a4dc2c43756fb8ed89c502f6d452ec473"><td class="mdescLeft">&#160;</td><td class="mdescRight">append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.  <a href="namespace_os_1_1_file_system.html#a4dc2c43756fb8ed89c502f6d452ec473">More...</a><br /></td></tr>
 <tr class="separator:a4dc2c43756fb8ed89c502f6d452ec473"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57ef865fb8cb2693f8df7241914403e1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a57ef865fb8cb2693f8df7241914403e1">changeWorkingDirectory</a> (const char *path)</td></tr>
 <tr class="memdesc:a57ef865fb8cb2693f8df7241914403e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">move current directory to path  <a href="namespace_os_1_1_file_system.html#a57ef865fb8cb2693f8df7241914403e1">More...</a><br /></td></tr>
@@ -148,10 +147,13 @@ Functions</h2></td></tr>
 <tr class="memitem:a08a5d8ccc71b6d83da1d4305d459988c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a08a5d8ccc71b6d83da1d4305d459988c">getFreeSpace</a> (const char *path, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;totalBytes, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;freeBytes)</td></tr>
 <tr class="memdesc:a08a5d8ccc71b6d83da1d4305d459988c"><td class="mdescLeft">&#160;</td><td class="mdescRight">get FS free and total space in bytes on filesystem containing path  <a href="namespace_os_1_1_file_system.html#a08a5d8ccc71b6d83da1d4305d459988c">More...</a><br /></td></tr>
 <tr class="separator:a08a5d8ccc71b6d83da1d4305d459988c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a614db4ea521dd5508de3da2e903abf5c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a614db4ea521dd5508de3da2e903abf5c">getFileSize</a> (const char *path, <a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> &amp;size)</td></tr>
+<tr class="memdesc:a614db4ea521dd5508de3da2e903abf5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.  <a href="namespace_os_1_1_file_system.html#a614db4ea521dd5508de3da2e903abf5c">More...</a><br /></td></tr>
+<tr class="separator:a614db4ea521dd5508de3da2e903abf5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3aab765b588856e37710720bcd3d165"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#ae3aab765b588856e37710720bcd3d165">initAndCheckFileStats</a> (const char *filePath, struct stat *fileInfo=nullptr)</td></tr>
 <tr class="separator:ae3aab765b588856e37710720bcd3d165"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef28b92d4625384a3dc052617dbe7885"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#aef28b92d4625384a3dc052617dbe7885">copyFileData</a> (<a class="el" href="class_os_1_1_file.html">File</a> source, <a class="el" href="class_os_1_1_file.html">File</a> destination, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> size)</td></tr>
-<tr class="separator:aef28b92d4625384a3dc052617dbe7885"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cf21d0ab36d83a3475fbcc79a385ca3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a7cf21d0ab36d83a3475fbcc79a385ca3">copyFileData</a> (<a class="el" href="class_os_1_1_file.html">File</a> &amp;source, <a class="el" href="class_os_1_1_file.html">File</a> &amp;destination, <a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> size)</td></tr>
+<tr class="separator:a7cf21d0ab36d83a3475fbcc79a385ca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a8bcd5b75e145d2e7f77d68eec9b5ca9f"></a>
@@ -291,8 +293,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aef28b92d4625384a3dc052617dbe7885"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef28b92d4625384a3dc052617dbe7885">&#9670;&nbsp;</a></span>copyFileData()</h2>
+<a id="a7cf21d0ab36d83a3475fbcc79a385ca3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cf21d0ab36d83a3475fbcc79a385ca3">&#9670;&nbsp;</a></span>copyFileData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -300,19 +302,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a> Os::FileSystem::copyFileData </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_file.html">File</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_file.html">File</a> &amp;&#160;</td>
           <td class="paramname"><em>source</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_file.html">File</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_file.html">File</a> &amp;&#160;</td>
           <td class="paramname"><em>destination</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a>&#160;</td>
           <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
@@ -391,8 +393,41 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a614db4ea521dd5508de3da2e903abf5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a614db4ea521dd5508de3da2e903abf5c">&#9670;&nbsp;</a></span>getFileSize() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a> Os::FileSystem::getFileSize </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> &amp;&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist. </p>
+<p>gets the size of the file (in bytes) at location path </p>
+
+<p class="definition">Definition at line <a class="el" href="linux_2_file_system_8cpp_source.html#l00438">438</a> of file <a class="el" href="linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a4dc2c43756fb8ed89c502f6d452ec473"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4dc2c43756fb8ed89c502f6d452ec473">&#9670;&nbsp;</a></span>getFileSize()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4dc2c43756fb8ed89c502f6d452ec473">&#9670;&nbsp;</a></span>getFileSize() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -416,9 +451,6 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist. </p>
-<p>gets the size of the file (in bytes) at location path </p>
 
 <p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00038">38</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
@@ -471,7 +503,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a> Os::FileSystem::handleFileError </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">File::Status</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">File::Status</a>&#160;</td>
           <td class="paramname"><em>fileStatus</em></td><td>)</td>
           <td></td>
         </tr>

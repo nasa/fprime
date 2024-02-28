@@ -1,6 +1,7 @@
 var _serializable_8hpp =
 [
     [ "Serializable", "class_fw_1_1_serializable.html", "class_fw_1_1_serializable" ],
+    [ "Serialization", "class_fw_1_1_serialization.html", "class_fw_1_1_serialization" ],
     [ "SerializeBufferBase", "class_fw_1_1_serialize_buffer_base.html", "class_fw_1_1_serialize_buffer_base" ],
     [ "ExternalSerializeBuffer", "class_fw_1_1_external_serialize_buffer.html", "class_fw_1_1_external_serialize_buffer" ],
     [ "SerializeStatus", "serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32", [

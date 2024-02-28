@@ -3,9 +3,10 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "Baremetal", "dir_4619be047ff79d3a605279c962371c8c.html", "dir_4619be047ff79d3a605279c962371c8c" ],
     [ "Linux", "dir_e8b0a4431f50aa1b66ecfcf904ec6845.html", "dir_e8b0a4431f50aa1b66ecfcf904ec6845" ],
     [ "MacOs", "dir_da072c950dfe9ef89d97b4f59ceb0221.html", "dir_da072c950dfe9ef89d97b4f59ceb0221" ],
+    [ "Models", "dir_0e548070549289538222d2105f4d6175.html", "dir_0e548070549289538222d2105f4d6175" ],
     [ "Posix", "dir_5d2d44be9d89e5af4b3ae87b5b477c1c.html", "dir_5d2d44be9d89e5af4b3ae87b5b477c1c" ],
     [ "Pthreads", "dir_30cfc134b577cd702e1c8791e7064e55.html", "dir_30cfc134b577cd702e1c8791e7064e55" ],
-    [ "Stubs", "dir_b3dc9076636a3595610781d0a0d8ecc5.html", "dir_b3dc9076636a3595610781d0a0d8ecc5" ],
+    [ "Stub", "dir_4df893a225f727201a6771996bba0a27.html", "dir_4df893a225f727201a6771996bba0a27" ],
     [ "X86", "dir_71e76e8b77715942fc3d0db018d76ead.html", "dir_71e76e8b77715942fc3d0db018d76ead" ],
     [ "Directory.hpp", "directory_8hpp.html", [
       [ "Directory", "class_os_1_1_directory.html", "class_os_1_1_directory" ]
@@ -13,10 +14,12 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "Event.hpp", "event_8hpp.html", [
       [ "Event", "class_os_1_1_event.html", "class_os_1_1_event" ]
     ] ],
+    [ "File.cpp", "os_2_file_8cpp.html", null ],
     [ "File.hpp", "file_8hpp.html", [
+      [ "FileHandle", "struct_os_1_1_file_handle.html", null ],
+      [ "FileInterface", "class_os_1_1_file_interface.html", "class_os_1_1_file_interface" ],
       [ "File", "class_os_1_1_file.html", "class_os_1_1_file" ]
     ] ],
-    [ "FileCommon.cpp", "file_common_8cpp.html", null ],
     [ "FileSystem.hpp", "file_system_8hpp.html", "_file_system_8hpp" ],
     [ "InterruptLock.hpp", "interrupt_lock_8hpp.html", [
       [ "InterruptLock", "class_os_1_1_interrupt_lock.html", "class_os_1_1_interrupt_lock" ]
