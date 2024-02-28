@@ -16,11 +16,12 @@
 // Type aliases
 // ----------------------------------------------------------------------
 
-// The type of port indices and smaller sizes
+// The type of port indices and smaller sizes internal to the software
 typedef PlatformIndexType FwIndexType;
 #define PRI_FwIndexType PRI_PlatformIndexType
 
-// The type of larger sizes, e.g., memory buffer sizes, file sizes
+// The type of larger sizes internal to the software, e.g., memory buffer sizes,
+// file sizes
 typedef PlatformSizeType FwSizeType;
 #define PRI_FwSizeType PRI_PlatformSizeType
 
@@ -36,13 +37,12 @@ typedef PlatformIntType FwNativeIntType;
 typedef PlatformUIntType FwNativeUIntType;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
 
-// The type of a buffer size
-// TODO: Replace this with FwExternalSizeType
-typedef U16 FwBuffSizeType;
-#define PRI_FwBuffSizeType PRIu16
+// The type used to serialize a size value
+typedef U16 FwSizeStoreType;
+#define PRI_FwSizeStoreType PRIu16
 
-// The type of a stored enumeration constant
-// TODO: Eliminate this type. It is no longer used after the switch to FPP enums.
+// The type used to serialize a C++ enumeration constant
+// FPP enumerations are serialized according to their representation types
 typedef I32 FwEnumStoreType;
 #define PRI_FwEnumStoreType PRId32
 
@@ -57,11 +57,11 @@ typedef enum {
 } TimeBase;
 #define FW_CONTEXT_DONT_CARE 0xFF  //!< Don't care value for time contexts in sequences
 
-// The type used to store the time base in a serialized time value
+// The type used to serialize a time base value
 typedef U16 FwTimeBaseStoreType;
 #define PRI_FwTimeBaseStoreType PRIu16
 
-// The type used to store the context in a serialized time value
+// The type used to serialize a time context value
 typedef U8 FwTimeContextStoreType;
 #define PRI_FwTimeContextStoreType PRIu8
 
@@ -108,10 +108,15 @@ typedef U32 FwDpPriorityType;
 // In most cases, the defaults should work
 // ----------------------------------------------------------------------
 
+// For backwards compatibility
+// Eventually we should replace uses of FwBuffSizeType with FwSizeStoreType
+typedef FwSizeStoreType FwBuffSizeType;
+#define PRI_FwBuffSizeType PRI_FwSizeStoreType
+
 // The type used to serialize a message ID.
 // Used in the auto-generated component code.
 typedef FwIndexType FwMsgIdType;
-#define PRI_FwMsgIdType PRI_FwIndexType
+#define PRI_FwMsgIdType PRI_FwEnumStoreType
 
 // The type of a queue size
 typedef FwIndexType FwQueueSizeType;
@@ -121,7 +126,7 @@ typedef FwIndexType FwQueueSizeType;
 // Each component instance has a unique auto-generated identifier
 // These are small integers 0, 1, 2, ...
 typedef FwIndexType FwInstanceIdType;
-#define PRI_FwInstanceIdType PRI_FwIndexType
+#define PRI_FwInstanceIdType PRI_FwEnumStoreType
 
 // The type of an event counter
 // Used in the auto-generated component code.
