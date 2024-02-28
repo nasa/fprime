@@ -602,7 +602,7 @@ endfunction()
 ####
 function(append_list_property NEW_ITEM)
     get_property(LOCAL_COPY ${ARGN})
-    list(APPEND LOCAL_COPY "${NEW_ITEM}")
+    list(APPEND LOCAL_COPY ${NEW_ITEM})
     list(REMOVE_DUPLICATES LOCAL_COPY)
     set_property(${ARGN} "${LOCAL_COPY}")
 endfunction()

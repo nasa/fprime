@@ -5,6 +5,15 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Models")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stub")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
+
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
+)
+register_fprime_module(Os_Test_File_SyntheticFileSystem)
+
 
 # Basic module dependencies
 set(MOD_DEPS
@@ -26,7 +35,9 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/MemCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
+
+    # Refactored common files
+    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
 )
 # Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
@@ -42,7 +53,6 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
@@ -90,20 +100,16 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
 endif()
 register_fprime_module()
-
-# Add stubs directory for testing builds
-if (BUILD_TESTING)
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
-endif()
+require_fprime_implementation(Os/File)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )

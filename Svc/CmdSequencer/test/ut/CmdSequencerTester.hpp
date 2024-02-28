@@ -14,7 +14,7 @@
 
 #include "Fw/Types/MallocAllocator.hpp"
 #include "CmdSequencerGTestBase.hpp"
-#include "Os/File.hpp"
+#include "Os/Posix/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
 #include "Svc/CmdSequencer/formats/AMPCSSequence.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/SequenceFiles.hpp"
@@ -75,71 +75,8 @@ namespace Svc {
         AMPCSSequence ampcsSequence;
 
       };
-
-      struct Interceptors {
-
-        //! Open interceptor
-        class Open {
-
-          public:
-
-            // ----------------------------------------------------------------------
-            // Constructors
-            // ----------------------------------------------------------------------
-
-            Open();
-
-          public:
-
-            // ----------------------------------------------------------------------
-            // Public instance methods
-            // ----------------------------------------------------------------------
-
-            //! Enable the interceptor
-            void enable();
-
-            //! Disable the interceptor
-            void disable();
-
-          private:
-
-            // ----------------------------------------------------------------------
-            // Private instance methods
-            // ----------------------------------------------------------------------
-
-            //! Intercept an open request
-            //! \return Success or failure
-            bool intercept(
-                Os::File::Status &fileStatus //!< The returned file status
-            );
-
-          private:
-
-            // ----------------------------------------------------------------------
-            // Private static methods
-            // ----------------------------------------------------------------------
-
-            //! Register function
-            static bool registerFunction(
-                Os::File::Status& fileStatus,
-                const char* fileName,
-                Os::File::Mode mode,
-                void* ptr
-            );
-
-          public:
-
-            // ----------------------------------------------------------------------
-            // Public member variables
-            // ----------------------------------------------------------------------
-
-            //! File status
-            Os::File::Status fileStatus;
-
-        };
-
-        //! Read interceptor
-        class Read {
+  public:
+      class Interceptor {
 
           public:
 
@@ -148,16 +85,26 @@ namespace Svc {
             // ----------------------------------------------------------------------
 
             //! Type of injected errors
-            struct ErrorType {
+            struct EnableType {
 
               typedef enum {
-                NONE, // Don't inject any errors
-                READ, // Bad read status
-                SIZE, // Bad size
-                DATA  // Unexpected data
+                NONE, // Don't enable interception
+                OPEN, // Intercept opens
+                READ, // Intercept reads
+              } t;
+            };
+
+          //! Type of injected errors
+          struct ErrorType {
+
+              typedef enum {
+                  NONE, // Don't inject any errors
+                  READ, // Bad read status
+                  SIZE, // Bad size
+                  DATA  // Unexpected data
               } t;
 
-            };
+          };
 
           public:
 
@@ -165,7 +112,7 @@ namespace Svc {
             // Constructors
             // ----------------------------------------------------------------------
 
-            Read();
+            Interceptor();
 
           public:
 
@@ -174,45 +121,31 @@ namespace Svc {
             // ----------------------------------------------------------------------
 
             //! Enable the interceptor
-            void enable();
+            void enable(EnableType::t enableType);
 
             //! Disable the interceptor
             void disable();
 
-          private:
+            class PosixFileInterceptor : public Os::Posix::File::PosixFile {
+                friend class Interceptor;
+              public:
+                PosixFileInterceptor() = default;
 
-            // ----------------------------------------------------------------------
-            // Private instance methods
-            // ----------------------------------------------------------------------
+                PosixFileInterceptor(const PosixFileInterceptor& other) = default;
 
-            //! Intercept an open request
-            //! \return Success or failure
-            bool intercept(
-                Os::File::Status &fileStatus,
-                void *buffer,
-                NATIVE_INT_TYPE &size
-            );
+                Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
 
-          private:
+                Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
 
-            // ----------------------------------------------------------------------
-            // Private static methods
-            // ----------------------------------------------------------------------
-
-            //! Register function
-            static bool registerFunction(
-                Os::File::Status &stat,
-                void *buffer,
-                NATIVE_INT_TYPE &size,
-                bool waitForFull,
-                void *ptr
-            );
-
+                //! Current interceptor
+                static Interceptor* s_current_interceptor;
+            };
           public:
 
             // ----------------------------------------------------------------------
             // Public member variables
             // ----------------------------------------------------------------------
+            EnableType::t enabled;
 
             //! Error type
             ErrorType::t errorType;
@@ -231,9 +164,7 @@ namespace Svc {
 
         };
 
-      };
 
-    public:
 
       // ----------------------------------------------------------------------
       // Construction and destruction
@@ -479,12 +410,9 @@ namespace Svc {
       //! The allocator
       Fw::MallocAllocator mallocator;
 
-      //! Open interceptor
-      Interceptors::Open openInterceptor;
 
-      //! Read interceptor
-      Interceptors::Read readInterceptor;
-
+      //! Open/Read interceptor
+      Interceptor interceptor;
   };
 
 }
