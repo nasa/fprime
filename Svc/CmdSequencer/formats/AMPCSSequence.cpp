@@ -80,23 +80,19 @@ namespace Svc {
     getFileSize(const Fw::CmdStringArg& seqFileName)
   {
     bool status = true;
-    FwSizeType fileSize;
+    FwSignedSizeType fileSize;
     this->setFileName(seqFileName);
     const Os::FileSystem::Status fileStatus =
       Os::FileSystem::getFileSize(this->m_fileName.toChar(), fileSize);
-    // fileSize will be used to set a U32 member below, thus we check overflow first
-    bool overflow = static_cast<FwSizeType>(static_cast<U32>(fileSize)) != fileSize;
     if (
         fileStatus == Os::FileSystem::OP_OK and
-        fileSize >= sizeof(this->m_sequenceHeader) and
-        !overflow
+        fileSize >= static_cast<FwSignedSizeType>(sizeof(this->m_sequenceHeader))
     ) {
       this->m_header.m_fileSize = static_cast<U32>(fileSize - sizeof(this->m_sequenceHeader));
     }
     else {
       this->m_events.fileInvalid(
-          CmdSequencer_FileReadStage::READ_HEADER_SIZE,
-            overflow ? Os::FileSystem::OTHER_ERROR : fileStatus
+          CmdSequencer_FileReadStage::READ_HEADER_SIZE, fileStatus
       );
       status = false;
     }
@@ -205,7 +201,7 @@ namespace Svc {
     bool status = true;
     Fw::SerializeStatus ser_status;
 
-    NATIVE_INT_TYPE readLen = sizeof(U32);
+    FwSignedSizeType readLen = sizeof(U32);
     FW_ASSERT(readLen >= 0, readLen);
 
     ser_status = buffer.setBuffLen(readLen);
@@ -217,7 +213,7 @@ namespace Svc {
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_SEQ_CRC,
-          file.getLastError()
+          fileStatus
       );
       status = false;
     }
@@ -277,7 +273,7 @@ namespace Svc {
 
     bool status = true;
 
-    NATIVE_INT_TYPE readLen = sizeof this->m_sequenceHeader;
+    FwSignedSizeType readLen = sizeof this->m_sequenceHeader;
     const Os::File::Status fileStatus = file.read(
         this->m_sequenceHeader,
         readLen
@@ -286,7 +282,7 @@ namespace Svc {
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_HEADER,
-          file.getLastError()
+          fileStatus
       );
       status = false;
     }
@@ -318,13 +314,13 @@ namespace Svc {
       return false;
     }
 
-    NATIVE_INT_TYPE readLen = size;
+    FwSignedSizeType readLen = size;
     const Os::File::Status fileStatus = file.read(addr, readLen);
     // Check read status
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_SEQ_DATA,
-          file.getLastError()
+          fileStatus
       );
       return false;
     }

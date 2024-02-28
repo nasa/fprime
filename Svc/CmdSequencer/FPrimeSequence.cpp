@@ -163,7 +163,7 @@ namespace Svc {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     bool status = true;
 
-    NATIVE_INT_TYPE readLen = Sequence::Header::SERIALIZED_SIZE;
+    FwSignedSizeType readLen = Sequence::Header::SERIALIZED_SIZE;
     FW_ASSERT(readLen >= 0, readLen);
 
     const NATIVE_UINT_TYPE capacity = buffer.getBuffCapacity();
@@ -180,7 +180,7 @@ namespace Svc {
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_HEADER,
-          file.getLastError()
+          fileStatus
       );
       status = false;
     }
@@ -263,7 +263,7 @@ namespace Svc {
     const NATIVE_UINT_TYPE size = this->m_header.m_fileSize;
     Fw::SerializeBufferBase& buffer = this->m_buffer;
 
-    NATIVE_INT_TYPE readLen = size;
+    FwSignedSizeType readLen = size;
     Os::File::Status fileStatus = file.read(
       buffer.getBuffAddr(),
       readLen
@@ -272,7 +272,7 @@ namespace Svc {
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_SEQ_DATA,
-          file.getLastError()
+          fileStatus
       );
       return false;
     }

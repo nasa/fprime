@@ -16,6 +16,7 @@ include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TestModule")
 set(FPRIME_CURRENT_MODULE Deployment)
 set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Main.cpp")
-set(MOD_DEPS Deployment/TestModule)
+set(MOD_DEPS Fw_Types Deployment/TestModule)
 choose_fprime_implementation(Test/Override Test/Override/Override) # Choose an override
+choose_fprime_implementation(Os/File Os/File/Posix)
 register_fprime_executable()

@@ -11,7 +11,6 @@
 #include <Os/IntervalTimer.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
-#include <Os/Stubs/FileStubs.hpp>
 
 #include <cstdio>
 
@@ -583,15 +582,15 @@ namespace Svc {
 
         // first read should be delimiter
         BYTE de;
-        NATIVE_INT_TYPE readSize = sizeof(de);
+        FwSignedSizeType readSize = sizeof(de);
 
-        ASSERT_EQ(file.read(&de,readSize,true),Os::File::OP_OK);
+        ASSERT_EQ(file.read(&de,readSize,Os::File::WaitType::WAIT),Os::File::OP_OK);
         ASSERT_EQ(delimiter,de);
         // next is LogPacket
         Fw::ComBuffer comBuff;
         // size is specific to this test
         readSize = sizeof(FwPacketDescriptorType) + sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
-        ASSERT_EQ(file.read(comBuff.getBuffAddr(),readSize,true),Os::File::OP_OK);
+        ASSERT_EQ(file.read(comBuff.getBuffAddr(),readSize,Os::File::WaitType::WAIT),Os::File::OP_OK);
         comBuff.setBuffLen(readSize);
 
         // deserialize LogPacket

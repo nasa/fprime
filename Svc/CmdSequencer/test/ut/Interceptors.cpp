@@ -9,125 +9,70 @@
 // acknowledged.
 // ======================================================================
 
-#include "Os/Stubs/FileStubs.hpp"
+#include "Os/Stub/test/File.hpp"
 #include "CmdSequencerTester.hpp"
 #include "gtest/gtest.h"
 
 namespace Svc {
 
-  CmdSequencerTester::Interceptors::Open ::
-    Open() :
-      fileStatus(Os::File::OP_OK)
-  {
-
-  }
-
-  void CmdSequencerTester::Interceptors::Open ::
-    enable()
-  {
-    Os::registerOpenInterceptor(registerFunction, this);
-  }
-
-  void CmdSequencerTester::Interceptors::Open ::
-    disable()
-  {
-    Os::clearOpenInterceptor();
-  }
-
-  bool CmdSequencerTester::Interceptors::Open ::
-    intercept(Os::File::Status& fileStatus)
-  {
-    fileStatus = this->fileStatus;
-    return fileStatus == Os::File::OP_OK;
-  }
-
-  bool CmdSequencerTester::Interceptors::Open ::
-    registerFunction(
-        Os::File::Status& fileStatus,
-        const char* fileName,
-        Os::File::Mode mode,
-        void* ptr
-    )
-  {
-    EXPECT_TRUE(ptr);
-    Open *const open = static_cast<Open*>(ptr);
-    return open->intercept(fileStatus);
-  }
-
-  CmdSequencerTester::Interceptors::Read ::
-    Read() :
-      errorType(ErrorType::NONE),
-      waitCount(0),
-      size(0),
-      fileStatus(Os::File::OP_OK)
-  {
-
-  }
-
-  void CmdSequencerTester::Interceptors::Read ::
-    enable()
-  {
-    Os::registerReadInterceptor(registerFunction, this);
-  }
-
-  void CmdSequencerTester::Interceptors::Read ::
-    disable()
-  {
-    Os::clearReadInterceptor();
-  }
-
-  bool CmdSequencerTester::Interceptors::Read ::
-    intercept(
-        Os::File::Status& fileStatus,
-        void *buffer,
-        NATIVE_INT_TYPE &size
-    )
-  {
-    bool status;
-    if (this->errorType == ErrorType::NONE) {
-      // No errors: return true
-      status = true;
+    CmdSequencerTester::Interceptor* CmdSequencerTester::Interceptor::PosixFileInterceptor::s_current_interceptor = nullptr;
+    CmdSequencerTester::Interceptor::Interceptor() :
+            enabled(EnableType::NONE),
+            errorType(ErrorType::NONE),
+            waitCount(0),
+            size(0),
+            fileStatus(Os::File::OP_OK) {
+            CmdSequencerTester::Interceptor::PosixFileInterceptor::s_current_interceptor = this;
     }
-    else if (this->waitCount > 0) {
-      // Not time to inject an error yet: decrement wait count
-      --this->waitCount;
-      status = true;
-    }
-    else {
-      // Time to inject an error: check test scenario
-      switch (this->errorType) {
-        case ErrorType::READ:
-          fileStatus = this->fileStatus;
-          break;
-        case ErrorType::SIZE:
-          size = this->size;
-          fileStatus = Os::File::OP_OK;
-          break;
-        case Read::ErrorType::DATA:
-          memcpy(buffer, this->data, size);
-          fileStatus = Os::File::OP_OK;
-          break;
-        default:
-          EXPECT_TRUE(false);
-          break;
-      }
-      status = false;
-    }
-    return status;
-  }
 
-  bool CmdSequencerTester::Interceptors::Read ::
-    registerFunction(
-        Os::File::Status& fileStatus,
-        void * buffer,
-        NATIVE_INT_TYPE &size,
-        bool waitForFull,
-        void* ptr
-    )
-  {
-    EXPECT_TRUE(ptr);
-    Read *const read = static_cast<Read*>(ptr);
-    return read->intercept(fileStatus, buffer, size);
-  }
+    void CmdSequencerTester::Interceptor::enable(EnableType::t enableType) {
+        this->enabled = enableType;
+    }
 
+    void CmdSequencerTester::Interceptor::disable() {
+        this->enabled = EnableType::t::NONE;
+    }
+
+    Os::FileInterface::Status CmdSequencerTester::Interceptor::PosixFileInterceptor::open(const char *path, Mode mode, OverwriteType overwrite) {
+        if ((s_current_interceptor != nullptr) && (s_current_interceptor ->enabled == EnableType::t::OPEN)) {
+            return s_current_interceptor->fileStatus;
+        }
+        return this->Os::Posix::File::PosixFile::open(path, mode, overwrite);
+    }
+
+    Os::File::Status CmdSequencerTester::Interceptor::PosixFileInterceptor::read(
+            U8 *buffer,
+            FwSignedSizeType &requestSize,
+            Os::File::WaitType waitType
+    ) {
+        (void) waitType;
+        Os::File::Status status = this->Os::Posix::File::PosixFile::read(buffer, requestSize, waitType);
+        if (s_current_interceptor == nullptr) {
+            return status;
+        } else if ((s_current_interceptor->enabled == EnableType::READ) && (s_current_interceptor->errorType != ErrorType::NONE)) {
+            if (s_current_interceptor->waitCount > 0) {
+                // Not time to inject an error yet: decrement wait count
+                --s_current_interceptor->waitCount;
+            } else {
+                // Time to inject an error: check test scenario
+                switch (s_current_interceptor->errorType) {
+                    case ErrorType::READ:
+                        status = s_current_interceptor->fileStatus;
+                        break;
+                    case ErrorType::SIZE:
+                        requestSize = s_current_interceptor->size;
+                        status = Os::File::OP_OK;
+                        break;
+                    case ErrorType::DATA:
+                        memcpy(buffer, s_current_interceptor->data, s_current_interceptor->size);
+                        status = Os::File::OP_OK;
+                        break;
+                    default:
+                        EXPECT_TRUE(false);
+                        break;
+                }
+            }
+        }
+        return status;
+    }
 }
