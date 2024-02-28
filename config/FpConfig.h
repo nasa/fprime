@@ -30,8 +30,8 @@ typedef PlatformIntType FwNativeIntType;
 typedef PlatformUIntType FwNativeUIntType;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
 
-typedef U16 FwExternalSizeType;
-#define PRI_FwExternalSizeType PRIu16
+typedef U16 FwSizeStoreType;
+#define PRI_FwSizeStoreType PRIu16
 
 typedef I32 FwEnumStoreType;
 #define PRI_FwEnumStoreType PRId32
@@ -364,6 +364,6 @@ typedef U32 FwDpPriorityType;
 // the type definitions in Fw/Types/BasicTypes available.
 
 // DO NOT TOUCH.  These types are specified for backwards naming compatibility.
-typedef FwExternalSizeType FwBuffSizeType;
-#define PRI_FwBuffSizeType PRI_FwExternalSizeType
+typedef FwSizeStoreType FwBuffSizeType;
+#define PRI_FwBuffSizeType PRI_FwSizeStoreType
 #endif

@@ -24,10 +24,10 @@ static_assert(FW_PARAM_STRING_MAX_SIZE <= FW_PARAM_BUFFER_MAX_SIZE, "FW_PARAM_ST
 // value.
 static_assert((FW_ENABLE_TEXT_LOGGING == 0) || ( FW_SERIALIZABLE_TO_STRING == 1), "FW_SERIALIZABLE_TO_STRING must be enabled to enable FW_ENABLE_TEXT_LOGGING");
 
-static_assert(std::numeric_limits<FwBuffSizeType>::max() == std::numeric_limits<FwExternalSizeType>::max() &&
-              std::numeric_limits<FwBuffSizeType>::min() == std::numeric_limits<FwExternalSizeType>::min(),
+static_assert(std::numeric_limits<FwBuffSizeType>::max() == std::numeric_limits<FwSizeStoreType>::max() &&
+              std::numeric_limits<FwBuffSizeType>::min() == std::numeric_limits<FwSizeStoreType>::min(),
               "FwBuffSizeType must be equivalent to FwExternalSizeType");
 
-static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<FwExternalSizeType>::max() &&
-              std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<FwExternalSizeType>::min(),
+static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<FwSizeStoreType>::max() &&
+              std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<FwSizeStoreType>::min(),
               "FwSizeType cannot entirely store values of type FwExternalSizeType");
