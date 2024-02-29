@@ -120,7 +120,7 @@ struct DpContainerHeader {
         Utils::HashBuffer computedHashBuffer;
         U8* const buffAddrBase = buffer.getData();
         U8* const dataAddr = &buffAddrBase[DpContainer::DATA_OFFSET];
-        Utils::Hash::hash(dataAddr, this->m_dataSize, computedHashBuffer);
+        Utils::Hash::hash(dataAddr, static_cast<U32>(this->m_dataSize), computedHashBuffer);
         DpContainer container(this->m_id, buffer);
         container.setDataSize(this->m_dataSize);
         const FwSizeType dataHashOffset = container.getDataHashOffset();
