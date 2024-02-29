@@ -115,7 +115,7 @@ typedef U32 FwDpPriorityType;
 
 // The type used to serialize a message ID.
 // Used in the auto-generated component code.
-typedef FwIndexType FwMsgIdType;
+typedef FwEnumStoreType FwMsgIdType;
 #define PRI_FwMsgIdType PRI_FwEnumStoreType
 
 // The type of a queue size
@@ -125,7 +125,7 @@ typedef FwIndexType FwQueueSizeType;
 // The type of a component instance identifier
 // Each component instance has a unique auto-generated identifier
 // These are small integers 0, 1, 2, ...
-typedef FwIndexType FwInstanceIdType;
+typedef FwEnumStoreType FwInstanceIdType;
 #define PRI_FwInstanceIdType PRI_FwEnumStoreType
 
 // The type of an event counter
