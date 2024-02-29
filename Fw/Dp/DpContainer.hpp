@@ -45,7 +45,7 @@ class DpContainer {
         //! The offset for the data size field
         static constexpr FwSizeType DATA_SIZE_OFFSET = DP_STATE_OFFSET + DpState::SERIALIZED_SIZE;
         //! The header size
-        static constexpr FwSizeType SIZE = DATA_SIZE_OFFSET + sizeof(FwSizeType);
+        static constexpr FwSizeType SIZE = DATA_SIZE_OFFSET + sizeof(FwSizeStoreType);
     };
 
     //! The header hash offset

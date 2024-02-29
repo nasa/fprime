@@ -72,7 +72,7 @@ The data product header has the following format.
 |`ProcTypes`|`Fw::DpCfg::ProcType::SerialType`|`sizeof(Fw::DpCfg::ProcType::SerialType)`|The processing types, represented as a bit mask|
 |`UserData`|`Header::UserData`|`DpCfg::CONTAINER_USER_DATA_SIZE`|User-configurable data|
 |`DpState`|`DpState`|`DpState::SERIALIZED_SIZE`|The data product state
-|`DataSize`|`FwSizeType`|`sizeof(FwSizeType)`|The size of the data payload in bytes|
+|`DataSize`|`FwSizeType`|`sizeof(FwSizeStoreType)`|The size of the data payload in bytes|
 
 `Header::UserData` is an array of `U8` of size `Fw::DpCfg::CONTAINER_USER_DATA_SIZE`.
 
@@ -112,6 +112,10 @@ Array records with _type = T_ have the following format:
 |`Id`|`FwDpIdType`|`sizeof(FwDpIdType)`|The record ID|
 |`Size`|`FwSizeType`|`sizeof(FwSizeType)`|The number _n_ of elements in the record|
 |`Data`|Array of _n_ _T_|_n_ * [`sizeof(`_T_`)` if _T_ is a primitive type; otherwise _T_`::SERIALIZED_SIZE`]|_n_ elements, each of type _T_|
+
+_TODO: The array size should be serialized as `FwSizeStoreType`.
+This requires a change to the FPP code generation.
+See https://github.com/fprime-community/fpp/issues/393._
 
 #### 5.1.4. Data Hash
 

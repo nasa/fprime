@@ -87,8 +87,10 @@ struct DpContainerHeader {
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the data size
         DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::DATA_SIZE_OFFSET);
-        status = serializeRepr.deserialize(this->m_dataSize);
+        FwSizeStoreType storedDataSize = 0;
+        status = serializeRepr.deserialize(storedDataSize);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
+        this->m_dataSize = static_cast<FwSizeType>(storedDataSize);
         // After deserializing time, the deserialization index should be at
         // the header hash offset
         checkDeserialAtOffset(serializeRepr, DpContainer::HEADER_HASH_OFFSET);
