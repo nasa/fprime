@@ -49,8 +49,32 @@ namespace Svc {
         // Tests
         // ----------------------------------------------------------------------
 
-        //! To do
+        //! Initialization/teardown smoke test
         void doInit();
+
+        //! Read one DP
+        void readOneDp();
+
+        //! Generate some data product files
+        void genDP(
+            FwDpIdType id,
+            FwDpPriorityType prio,
+            Fw::Time& time,
+            FwSizeType dataSize,
+            Fw::DpState dpState,
+            bool hdrHashError,
+            const char *dir
+        );
+
+        void delDp(
+            FwDpIdType id,
+            Fw::Time& time,
+            const char* dir
+        );
+
+        void makeDpDir(
+            const char* dir
+        );
 
     private:
 
@@ -72,6 +96,14 @@ namespace Svc {
             NATIVE_INT_TYPE portNum, //!< The port number
             U32 key //!< Value to return to pinger
         );
+
+        void textLogIn(
+            FwEventIdType id, //!< The event ID
+            const Fw::Time& timeTag, //!< The time
+            const Fw::LogSeverity severity, //!< The severity
+            const Fw::TextLogString& text //!< The event string
+        ) override;
+
 
     private:
 

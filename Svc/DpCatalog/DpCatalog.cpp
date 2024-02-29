@@ -130,6 +130,7 @@ namespace Svc {
         // get file listings from file system
         for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
             // read in each directory and keep track of total
+            this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
             U32 filesRead = 0;
             Os::FileSystem::Status stat =
                 Os::FileSystem::readDirectory(
@@ -151,9 +152,16 @@ namespace Svc {
 
             // extract metadata for each file
             for (FwNativeUIntType file = 0; file < filesRead; file++) {
-                Os::File::Status stat = dpFile.open(listing[file].toChar(), Os::File::OPEN_READ);
+                Fw::String fullFile;
+                fullFile.format("%s/%s",
+                    this->m_directories[dir].toChar(),
+                    listing[file].toChar()
+                );
+                this->log_ACTIVITY_LO_ProcessingFile(fullFile);
+                Os::File::Status stat = dpFile.open(fullFile.toChar(), Os::File::OPEN_READ);
                 if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_FileOpenError(listing[file], stat);
+                    this->log_WARNING_HI_FileOpenError(fullFile, stat);
+                    continue;
                 }
 
                 // Read DP header
@@ -161,14 +169,14 @@ namespace Svc {
 
                 stat = dpFile.read(dpBuff, size);
                 if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_FileReadError(listing[file], stat);
+                    this->log_WARNING_HI_FileReadError(fullFile, stat);
                     dpFile.close();
                     continue; // maybe next file is fine
                 }
 
                 // if full header isn't read, something's wrong with the file, so skip
                 if (size != Fw::DpContainer::DATA_OFFSET) {
-                    this->log_WARNING_HI_FileReadError(listing[file], Os::File::BAD_SIZE);
+                    this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
                     dpFile.close();
                     continue; // maybe next file is fine
                 }
@@ -182,7 +190,7 @@ namespace Svc {
                 // reset header deserialization in the container
                 Fw::SerializeStatus desStat = container.deserializeHeader();
                 if (desStat != Fw::FW_SERIALIZE_OK) {
-                    this->log_WARNING_HI_FileHdrDesError(listing[file], desStat);
+                    this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
                 }
 
                 // add entry to catalog. 
@@ -199,14 +207,12 @@ namespace Svc {
                 // assign the entry to the stored list
                 this->m_dpList[this->m_numDpRecords] = entry;
 
-                // insert entry. if can't insert, quit
+                // insert entry into sorted list. if can't insert, quit
                 if (not this->insertEntry(this->m_dpList[this->m_numDpRecords])) {
                     this->log_WARNING_HI_DpInsertError(entry.record);
                     break;
                 }
 
-                // increment to next slot
-                this->m_numDpRecords++;
                 // make sure we haven't exceeded the limit
                 if (this->m_numDpRecords > this->m_numDpSlots) {
                     this->log_WARNING_HI_DpCatalogFull(entry.record);
@@ -235,6 +241,7 @@ namespace Svc {
         // Prototype version: Just add the record to the end of the list
         this->m_sortedDpList[this->m_numDpRecords].recPtr = &entry;
         this->m_sortedDpList[this->m_numDpRecords].sent = false;
+        this->m_numDpRecords++;
 
         return true;
 
@@ -258,11 +265,12 @@ namespace Svc {
                 if (this->m_sortedDpList[record].recPtr != nullptr) {
                     // build file name
                     fileName.format(DP_FILENAME_FORMAT,
-                        this->m_directories[this->m_sortedDpList[record].recPtr->dir],
+                        this->m_directories[this->m_sortedDpList[record].recPtr->dir].toChar(),
                         this->m_sortedDpList[record].recPtr->record.getid(),
                         this->m_sortedDpList[record].recPtr->record.gettSec(),
                         this->m_sortedDpList[record].recPtr->record.gettSub()
                     );
+                    this->log_ACTIVITY_LO_SendingProduct(fileName,0,this->m_sortedDpList[record].recPtr->record.getpriority());
                     this->fileOut_out(0, fileName, fileName, 0, 0);
                 }
             }

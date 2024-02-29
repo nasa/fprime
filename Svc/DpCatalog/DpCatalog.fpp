@@ -104,11 +104,20 @@ module Svc {
 
     @ Processing directory
     event ProcessingDirectory (
-                            loc: string size 80 @< The directory 
+                            directory: string size 80 @< The directory 
                           ) \
       severity activity low \
       id 1 \
       format "Processing directory {}"
+
+    @ Processing directory
+    event ProcessingFile (
+                            file: string size 80 @< The directory 
+                          ) \
+      severity activity low \
+      id 2 \
+      format "Processing file {}"
+
 
     @ Processing complete
     event ProcessingComplete (
@@ -118,13 +127,13 @@ module Svc {
                             pending_bytes: U32 @< pending data product volume
                           ) \
       severity activity high \
-      id 2 \
+      id 3 \
       format "Completed processing directory {}. Total products: {} Pending products: {} Pending bytes: {}"
 
     @ Catalog transmission started
     event CatalogXmitStarted \
       severity activity high \
-      id 5 \
+      id 10 \
       format "Catalog transmission started"
 
     @ Catalog transmission stopped
@@ -132,7 +141,7 @@ module Svc {
                             bytes: U32 @< data transmitted
                           ) \
       severity activity high \
-      id 6 \
+      id 11 \
       format "Catalog transmission stopped. {} bytes transmitted."
 
     @ Catalog transmission completed
@@ -140,7 +149,7 @@ module Svc {
                             bytes: U32 @< data transmitted
                           ) \
       severity activity high \
-      id 7 \
+      id 12 \
       format "Catalog transmission completed.  {} bytes transmitted."
 
     @ Sending product
@@ -150,7 +159,7 @@ module Svc {
                             prio: U32 @< DP priority
                           ) \
       severity activity low \
-      id 10 \
+      id 13 \
       format "Sending product {} of size {} priority {}"
 
     @ Sending product
@@ -158,20 +167,20 @@ module Svc {
                             file: string size 80 @< The file 
                           ) \
       severity activity low \
-      id 11 \
+      id 14 \
       format "Product {} complete"
 
     @ Component not initialized error
     event ComponentNotInitialized \
       severity warning high \
-      id 12 \
+      id 20 \
       format "DpCatalog not initialized!" \
       throttle 10
 
     @ Component didn't get memory error
     event ComponentNoMemory \
       severity warning high \
-      id 13 \
+      id 21 \
       format "DpCatalog couldn't get memory" \
       throttle 10
 
@@ -180,7 +189,7 @@ module Svc {
                             dir: string size 80 @< last directory read 
                           ) \
       severity warning high \
-      id 14 \
+      id 22 \
       format "DpCatalog full during directory {}" \
       throttle 10
 
@@ -190,7 +199,7 @@ module Svc {
                             stat: I32 @< status
                           ) \
       severity warning high \
-      id 15 \
+      id 23 \
       format "Unable to open DP file {} status {}" \
       throttle 10
 
@@ -200,7 +209,7 @@ module Svc {
                             stat: I32 @< status
                           ) \
       severity warning high \
-      id 16 \
+      id 24 \
       format "Error reading DP file {} status {}" \
       throttle 10
 
@@ -212,7 +221,7 @@ module Svc {
                             act: U32 @< expected value
                           ) \
       severity warning high \
-      id 17 \
+      id 25 \
       format "Error reading DP {} header {} field. Expected: {} Actual: {}" \
       throttle 10
 
@@ -222,7 +231,7 @@ module Svc {
                             stat: I32
                           ) \
       severity warning high \
-      id 18 \
+      id 26 \
       format "Error deserializing DP {} header stat: {}" \
       throttle 10
 
@@ -231,7 +240,7 @@ module Svc {
                             dp: DpRecord @< The DP
                           ) \
       severity warning high \
-      id 19 \
+      id 27 \
       format "Error deserializing DP {}" \
       throttle 10
 
@@ -240,7 +249,7 @@ module Svc {
                             dp: DpRecord @< The DP
                           ) \
       severity diagnostic \
-      id 20 \
+      id 28 \
       format "DP {} already in catalog" \
       throttle 10
 
@@ -249,14 +258,14 @@ module Svc {
                             dp: DpRecord @< The DP
                           ) \
       severity warning high \
-      id 21 \
+      id 29 \
       format "Catalog full trying to insert DP {}" \
       throttle 10
 
     @ Tried to build catalog while downlink process active
     event DpXmitInProgress \
       severity warning low \
-      id 22 \
+      id 30 \
       format "Cannot build new catalog while DPs are being transmitted" \
       throttle 10
 
