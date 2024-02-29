@@ -30,7 +30,8 @@ typedef PlatformIntType FwNativeIntType;
 typedef PlatformUIntType FwNativeUIntType;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
 
-typedef U16 FwSizeStoreType;
+// FIXME: Temporary for CI testing only
+typedef FwSizeType FwSizeStoreType;
 #define PRI_FwSizeStoreType PRIu16
 
 typedef I32 FwEnumStoreType;
