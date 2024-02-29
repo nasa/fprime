@@ -740,9 +740,13 @@ except (ValueError) as e:
     msg = f'ValueError in JSON file {error["loc"]}: {error["msg"]}'
     handleException(msg)
 
+# Ensure the output directory exists
+output_directory = "./JSONoutput/"
+if not os.path.exists(output_directory):
+    os.makedirs(output_directory)
 
 # Output the generated json to a file
-outputJsonFile = os.path.splitext(args.binFile)[0] + '.json'
+outputJsonFile = "./JSONoutput/" + os.path.splitext(args.binFile)[0] + '.json'
 with open(outputJsonFile, 'w') as file:
     json.dump(recordList, file, indent=2)
 

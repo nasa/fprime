@@ -1,0 +1,22 @@
+#!/bin/sh -e
+
+# ----------------------------------------------------------------------
+# fprime-setup: Set up F Prime
+# Run this script in the root directory of the F Prime working repo
+# ----------------------------------------------------------------------
+
+# Check for existence of requirements.txt
+if ! test -f requirements.txt
+then
+  echo 'fprime-setup: requirements.txt does not exist in the current directory' 1>&2
+  exit 1
+fi
+
+# Set up virtual environment
+rm -rf fprime-venv
+python3 -m venv ./fprime-venv
+. fprime-venv/bin/activate
+
+# Install F Prime Python packages
+pip install -U setuptools setuptools_scm wheel pip
+pip install -U -r requirements.txt
