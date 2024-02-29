@@ -1,0 +1,156 @@
+{
+    "typeDefinitions" : [
+        {
+            "kind": "array",
+            "qualifiedName": "UserDataArray",
+            "size": 32,
+            "elementType": {
+                "name": "U8",
+                "kind": "integer",
+                "signed": false,
+                "size": 8
+            }
+        },
+
+        {
+            "kind": "struct",
+            "qualifiedName": "timeStruct",
+            "members": {
+                "seconds": {
+                    "type": {
+                        "name": "U32",
+                        "kind": "integer",
+                        "signed": false,
+                        "size": 32
+                    }
+                },
+                "useconds": {
+                    "type": {
+                        "name": "U32",
+                        "kind": "integer",
+                        "signed": false,
+                        "size": 32
+                    }
+                },
+                "timeBase": {
+                    "type": {
+                        "name": "U16",
+                        "kind": "integer",
+                        "signed": false,
+                        "size": 16
+                    }
+                },
+                "context": {
+                    "type": {
+                        "name": "U8",
+                        "kind": "integer",
+                        "signed": false,
+                        "size": 8
+                    }
+                }
+            }
+        }
+    ],
+
+    "enums" : [
+    ],
+
+    "header": {
+        "PacketDescriptor": {
+            "type": {
+                "name": "U32",
+                "kind": "integer",
+                "signed": false,
+                "size": 32
+            }
+        },
+        "Id": {
+            "type": {
+                "name": "U32",
+                "kind": "integer",
+                "signed": false,
+                "size": 32
+            }
+        },
+        "Priority": {
+            "type": {
+                "name": "U32",
+                "kind": "integer",
+                "signed": false,
+                "size": 32
+            }
+        },
+        "TimeTag": {
+            "type": {
+                "name": "timeStruct",
+                "kind": "qualifiedIdentifier"
+            }
+        },
+        "ProcTypes": {
+            "type": {
+                "name": "U8",
+                "kind": "integer",
+                "signed": false,
+                "size": 8
+            }
+        },
+        "UserData": {
+            "type": {
+                "name": "UserDataArray",
+                "kind": "qualifiedIdentifier"
+            }
+        },
+        "DpState": {
+            "type": {
+                "name": "U8",
+                "kind": "integer",
+                "signed": false,
+                "size": 8
+            }
+        },
+        "DataSize": {
+            "type": {
+                "name": "U64",
+                "kind": "integer",
+                "signed": false,
+                "size": 64
+            }       
+        }
+    },
+
+    "headerHash": {
+        "type": {
+            "name": "U32",
+            "kind": "integer",
+            "signed": false,
+            "size": 32
+        }
+    },
+
+    "dataId": {
+        "type": {
+            "name": "U32",
+            "kind": "integer",
+            "signed": false,
+            "size": 32
+        }
+    },
+
+    "dataSize": {
+        "type": {
+            "name": "U64",
+            "kind": "integer",
+            "signed": false,
+            "size": 64
+        }
+    },
+
+    "dataHash": {
+        "type": {
+            "name": "U32",
+            "kind": "integer",
+            "signed": false,
+            "size": 32
+        }
+    }
+}

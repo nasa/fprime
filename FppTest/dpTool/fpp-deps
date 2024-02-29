@@ -1,0 +1,8 @@
+#!/bin/sh
+
+build_cache=..//build-fprime-automatic-native-ut
+# Generate newline-separated dependencies for command-line arguments
+fpp-depend $build_cache/locs.fpp *.fpp > fpp-deps.txt
+# Generate comma-separated dependencies for the argument to the -i option
+tr '\n' ',' < fpp-deps.txt | sed 's/,$//' > fpp-deps-comma.txt
+echo >> fpp-deps-comma.txt

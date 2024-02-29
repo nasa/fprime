@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+dir=`dirname $0`
+cd $dir
+
+# Force the build system to regenerate the code
+./clear-cache
+./build

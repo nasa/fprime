@@ -1,0 +1,311 @@
+{
+  "metadata": {
+    "deploymentName" : "MyDeployment",
+    "frameworkVersion" : "3.3.2",
+    "projectVersion": "1.0.0",
+    "libraryVersions" : [
+      "1.0meta"
+    ],
+    "dictionarySpecVersion" : "1.0.0"
+  },
+
+  "typeDefinitions": [
+        {
+            "kind": "array",
+            "qualifiedName": "FppTest.DpTool.U16Array",
+            "size": 10,
+            "elementType": {
+                "name": "U16",
+                "kind": "integer",
+                "signed": false,
+                "size": 16
+            },
+            "default": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        },
+
+        {
+            "kind": "enum",
+            "qualifiedName": "FppTest.DpTool.Status",
+            "representationType": {
+                "name": "I32",
+                "kind": "integer",
+                "signed": true,
+                "size": 32
+            },    
+            "identifiers": {
+                "YES": 0, 
+                "NO": 1,
+                "MAYBE": 2
+            },
+            "default": "M.Status.MAYBE"
+        },
+
+        {
+            "kind": "struct",
+            "qualifiedName": "FppTest.DpTool.EnumRecord",
+            "members": {
+                "status": {
+                    "type": {
+                        "name": "FppTest.DpTool.Status",
+                        "kind": "qualifiedIdentifier"
+                    },
+                    "index": 0
+                }
+            },
+            "default": {
+                "u16Field": 0
+            }
+        },
+
+        {
+            "kind": "struct",
+            "qualifiedName": "FppTest.DpTool.Data",
+            "members": {
+                "u16Field": {
+                    "type": {
+                        "name": "U16",
+                        "kind": "integer",
+                        "signed": false,
+                        "size": 16
+                    },
+                    "index": 0
+                }
+            },
+            "default": {
+                "u16Field": 0
+            }
+        },
+
+        {
+            "kind": "struct",
+            "qualifiedName": "FppTest.DpTool.ArrayData",
+            "members": {
+                "arrField": {
+                    "type": {
+                        "name": "FppTest.DpTool.U16Array",
+                        "kind": "qualifiedIdentifier"
+                    },
+                    "index": 0
+                }
+            },
+            "default": {
+                "u16Field": 0
+            }
+        },
+
+        {
+            "kind": "struct",
+            "qualifiedName": "FppTest.DpTool.Complex",
+            "members": {
+                "f1": {
+                    "type": {
+                        "name": "FppTest.DpTool.Data",
+                        "kind": "qualifiedIdentifier"
+                    },
+                    "index": 0
+                },
+
+                "f2": {
+                    "type": {
+                        "name": "U32",
+                        "kind": "integer",
+                        "signed": false,
+                        "size": 32
+                    },
+                    "index": 1
+                }
+            },
+            "default" : {
+                "f1" : {
+                "u16Field" : 0
+                },
+                "f2" : 0
+            }
+        }
+  ],
+
+  "records": [
+      {
+          "name": "FppTest.U32Record",
+          "description": "Record 1",
+          "type": {
+              "name": "U32",
+              "kind": "integer",
+              "signed": false,
+              "size": 32
+          },
+          "array": false,
+          "identifier": 200
+      },
+
+      {
+          "name": "FppTest.ComplexRecord",
+          "description": "Record 2",
+          "type": {
+              "name": "FppTest.DpTool.Complex",
+              "kind": "qualifiedIdentifier"
+          },
+          "array": false,
+          "identifier": 300
+      },
+
+      {
+          "name": "FppTest.U8ArrayRecord",
+          "description": "Record 3",
+          "type": {
+              "name": "U8",
+              "kind": "integer",
+              "signed": false,
+              "size": 8
+          },
+          "array": true,
+          "identifier": 400
+      },
+
+      {
+          "name": "FppTest.U32ArrayRecord",
+          "description": "Record 4",
+          "type": {
+              "name": "U32",
+              "kind": "integer",
+              "signed": false,
+              "size": 32
+          },
+          "array": true,
+          "identifier": 500
+      },
+
+      {
+        "name": "FppTest.DataArrayRecord",
+        "description": "Record 5",
+        "type": {
+            "name": "FppTest.DpTool.Data",
+            "kind": "qualifiedIdentifier"
+        },
+        "array": true,
+        "identifier": 600
+    },
+
+    {
+        "name": "FppTest.DataArrayRecord",
+        "description": "Record 6",
+        "type": {
+            "name": "FppTest.DpTool.EnumRecord",
+            "kind": "qualifiedIdentifier"
+        },
+        "array": false,
+        "identifier": 700
+    },
+
+    {
+        "name": "FppTest.F32Record",
+        "description": "Record 7",
+        "type": {
+            "name": "F32",
+            "kind": "float",
+            "size": 32
+        },
+        "array": false,
+        "identifier": 800
+    },
+
+    {
+        "name": "FppTest.F64Record",
+        "description": "Record 8",
+        "type": {
+            "name": "F64",
+            "kind": "float",
+            "size": 64
+        },
+        "array": false,
+        "identifier": 900
+    },
+
+    {
+        "name": "FppTest.BoolRecord",
+        "description": "Record 9",
+        "type": {
+            "name": "bool",
+            "kind": "bool",
+            "size": 8
+        },
+        "array": false,
+        "identifier": 1000
+    },
+
+    {
+        "name": "FppTest.I8Record",
+        "description": "Record 10",
+        "type": {
+            "name": "I8",
+            "kind": "integer",
+            "signed": true,
+            "size": 8
+        },
+        "array": false,
+        "identifier": 1100
+    },
+
+    {
+        "name": "FppTest.I16Record",
+        "description": "Record 11",
+        "type": {
+            "name": "I16",
+            "kind": "integer",
+            "signed": true,
+            "size": 16
+        },
+        "array": false,
+        "identifier": 1200
+    },
+
+    {
+        "name": "FppTest.I32Record",
+        "description": "Record 12",
+        "type": {
+            "name": "I32",
+            "kind": "integer",
+            "signed": true,
+            "size": 32
+        },
+        "array": false,
+        "identifier": 1300
+    },
+
+    {
+        "name": "FppTest.I64Record",
+        "description": "Record 13",
+        "type": {
+            "name": "I64",
+            "kind": "integer",
+            "signed": true,
+            "size": 64
+        },
+        "array": false,
+        "identifier": 1400
+    },
+
+    {
+        "name": "FppTest.FppArrayRecord",
+        "description": "Record 14",
+        "type": {
+            "name": "FppTest.DpTool.ArrayData",
+            "kind": "qualifiedIdentifier"
+        },
+        "array": false,
+        "identifier": 1500
+    }
+
+  ],
+
+  "containers": [
+      {
+          "name": "FppTest.Container1",
+          "description": "Container 1",
+          "identifier": 200,
+          "defaultPriority": 10
+      }
+
+  ]
+
+}

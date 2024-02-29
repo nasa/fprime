@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+dir=`dirname $0`
+cd $dir
+
+# Clear the build cache
+build_cache=../build-fprime-automatic-native-ut/FppTest/dp
+for file in `ls $build_cache/*.hpp $build_cache/*.cpp`
+do
+  rm $file
+done

@@ -1,0 +1,5 @@
+#!/bin/sh -e
+
+prefix=`cd ../..; echo $PWD`
+mkdir -p generated
+fpp-to-cpp -u -d generated -p $prefix -i `cat fpp-deps-comma.txt` DpTest.fpp
