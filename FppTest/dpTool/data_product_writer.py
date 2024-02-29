@@ -746,6 +746,8 @@ outputJsonFile = os.path.splitext(args.binFile)[0] + '.json'
 with open(outputJsonFile, 'w') as file:
     json.dump(recordList, file, indent=2)
 
+print(f'Output data generated in {outputJsonFile}')
+
 
 
 

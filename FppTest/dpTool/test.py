@@ -14,7 +14,7 @@ for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         
         # Construct the command to run
-        command = f"./dp.py {file_path}"
+        command = f"./data_product_writer.py {file_path}"
         
         # Execute the command
         process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -22,5 +22,4 @@ for filename in os.listdir(directory):
         # Output the result
         print(f"Running command: {command}")
         print("Output:", process.stdout.decode())
-        print("Errors:", process.stderr.decode())
 
