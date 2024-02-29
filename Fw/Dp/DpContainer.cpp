@@ -70,10 +70,9 @@ Fw::SerializeStatus DpContainer::deserializeHeader() {
     }
     // Deserialize the user data
     if (status == Fw::FW_SERIALIZE_OK) {
-        const bool omitLength = true;
         const FwSizeType requestedSize = sizeof this->m_userData;
         FwSizeType receivedSize = requestedSize;
-        status = serializeRepr.deserialize(this->m_userData, receivedSize, omitLength);
+        status = serializeRepr.deserialize(this->m_userData, receivedSize, Fw::Serialization::OMIT_LENGTH);
         if (receivedSize != requestedSize) {
             status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
         }
@@ -111,8 +110,8 @@ void DpContainer::serializeHeader() {
     status = serializeRepr.serialize(this->m_procTypes);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the user data
-    const bool omitLength = true;
-    status = serializeRepr.serialize(this->m_userData, sizeof this->m_userData, omitLength);
+    status = serializeRepr.serialize(this->m_userData, static_cast<FwSizeType>(sizeof this->m_userData),
+                                     Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the data product state
     status = serializeRepr.serialize(this->m_dpState);

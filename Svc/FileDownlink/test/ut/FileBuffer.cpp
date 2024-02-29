@@ -61,7 +61,7 @@ namespace Svc {
     FW_ASSERT(status == Os::File::OP_OK);
 
     const U32 size = this->index;
-    NATIVE_INT_TYPE intSize = size;
+    FwSignedSizeType intSize = size;
     status = file.write(this->data, intSize);
     FW_ASSERT(status == Os::File::OP_OK);
     FW_ASSERT(static_cast<U32>(intSize) == size);

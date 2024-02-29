@@ -35,12 +35,6 @@ function(generate_base_module_properties TARGET_TYPE TARGET_NAME SOURCE_FILES DE
         message(FATAL_ERROR "Module ${FPRIME_CURRENT_MODULE} cannot register object of type ${TARGET_TYPE}")
     endif()
 
-    # Handle updates when the types have diverged
-    if (NOT TARGET_NAME STREQUAL "${FPRIME_CURRENT_MODULE}")
-        # Update implementation choices
-        remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${TARGET_NAME}")
-    endif()
-
     # Modules properties for posterity
     set_target_properties("${TARGET_NAME}" PROPERTIES FP_TYPE "${TARGET_TYPE}")
     set_property(GLOBAL APPEND PROPERTY FPRIME_MODULES "${TARGET_NAME}")

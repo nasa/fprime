@@ -43,14 +43,14 @@ namespace Svc {
           //! Write a file
           void writeFile(
               Os::File& file, //!< The file
-              const void *const buffer, //!< The buffer
+              const U8 *buffer, //!< The buffer
               const U32 size //!< The number of bytes to write
           ) {
-            NATIVE_INT_TYPE sizeThenActualSize = size;
+            FwSignedSizeType sizeThenActualSize = size;
             const Os::File::Status status = file.write(
                 buffer,
                 sizeThenActualSize,
-                false
+                Os::File::WaitType::WAIT
             );
             ASSERT_EQ(Os::File::OP_OK, status);
             const U32 actualSize = sizeThenActualSize;

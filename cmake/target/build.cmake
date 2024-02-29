@@ -62,15 +62,6 @@ function(build_setup_build_module MODULE SOURCES GENERATED DEPENDENCIES)
             set_assert_flags("${SRC_FILE}")
         endforeach()
     endif()
-    # Includes the source, so that the Ac files can include source headers
-    #target_include_directories("${MODULE}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-
-    # Handle executable items' need for determined package implementation choices
-    is_target_library(IS_LIB "${MODULE}")
-    if (NOT IS_LIB)
-        setup_executable_implementations("${MODULE}")
-    endif ()
 
     # For every detected dependency, add them to the supplied module. This enforces build order.
     # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
@@ -88,11 +79,27 @@ function(build_setup_build_module MODULE SOURCES GENERATED DEPENDENCIES)
         #
         # 1. Targets that will exist, but do not exist at the time of this call will be assumed to be a library
         # 2. EXECUTABLE and UTILITY targets can only be added to MOD_DEPS when they are pre-defined
-        is_target_library(IS_LIB "${DEPENDENCY}")
-        if (LINKER_ONLY OR NOT TARGET "${DEPENDENCY}" OR IS_LIB)
+        is_target_library(IS_LIB_DEP "${DEPENDENCY}")
+        if (LINKER_ONLY OR NOT TARGET "${DEPENDENCY}" OR IS_LIB_DEP)
             target_link_libraries(${MODULE} PUBLIC "${DEPENDENCY}")
         endif()
     endforeach()
+
+
+    # Extra source files, dependencies, and link libraries need to be added to executables to account for the chosen
+    # implementations. First, for modules whose names differ from FPRIME_CURRENT_MODULE the chosen implementation is
+    # remapped to them. Then the implementation set are calculated and sources, link libraries and dependencies added.
+    is_target_library(IS_LIB "${MODULE}")
+    if (NOT IS_LIB)
+        # Handle updates when the types have diverged
+        if (NOT MODULE STREQUAL "${FPRIME_CURRENT_MODULE}")
+            # Update implementation choices
+            remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${MODULE}")
+        endif()
+        setup_executable_implementations("${MODULE}")
+    endif ()
+
+
     set_property(TARGET "${MODULE}" PROPERTY FPRIME_TARGET_DEPENDENCIES ${TARGET_DEPENDENCIES})
     # Special flags applied to modules when compiling with testing enabled
     if (BUILD_TESTING)

@@ -125,7 +125,7 @@ namespace Svc {
       ASSERT_EQ(512U, this->component.m_log_file.m_maxFileSize);
 
       // Test predicted size matches actual:
-      FwSizeType fileSize = 0;
+      FwSignedSizeType fileSize = 0;
       Os::FileSystem::getFileSize("test_file",fileSize);
       ASSERT_EQ(fileSize,this->component.m_log_file.m_currentFileSize);
 
@@ -164,7 +164,7 @@ namespace Svc {
   {
       // TODO file errors- use the Os/Stubs?
 
-      FwSizeType tmp;
+      FwSignedSizeType tmp;
 
       printf("Testing writing text that is larger than FW_INTERNAL_INTERFACE_STRING_MAX_SIZE\n");
       // Can't test this b/c max size of TextLogString is 256 and

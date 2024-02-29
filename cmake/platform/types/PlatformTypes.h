@@ -47,8 +47,11 @@ typedef unsigned int PlatformUIntType;
 typedef PlatformIntType PlatformIndexType;
 #define PRI_PlatformIndexType PRI_PlatformIntType
 
-typedef PlatformUIntType PlatformSizeType;
-#define PRI_PlatformSizeType PRI_PlatformUIntType
+typedef int64_t PlatformSignedSizeType;
+#define PRI_PlatformSignedSizeType PRId64
+
+typedef uint64_t PlatformSizeType;
+#define PRI_PlatformSizeType PRIu64
 
 typedef PlatformIntType PlatformAssertArgType;
 #define PRI_PlatformAssertArgType PRI_PlatformIntType
