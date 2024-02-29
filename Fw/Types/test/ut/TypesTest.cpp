@@ -395,8 +395,6 @@ TEST(SerializationTest,Serialization1) {
     FwSizeType size1 = std::numeric_limits<FwSizeStoreType>::max();
     FwSizeType size2 = 0;
 
-// Test ints
-
     buff.resetSer();
     stat1 = buff.serializeSize(size1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
