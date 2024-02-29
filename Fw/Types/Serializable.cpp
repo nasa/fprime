@@ -293,6 +293,17 @@ namespace Fw {
         return FW_SERIALIZE_OK;
     }
 
+    SerializeStatus SerializeBufferBase::serializeSize(const FwSizeType size) {
+        SerializeStatus status = FW_SERIALIZE_OK;
+        if ((size < std::numeric_limits<FwSizeStoreType>::min()) || (size > std::numeric_limits<FwSizeStoreType>::max())) {
+            status = FW_SERIALIZE_FORMAT_ERROR;
+        }
+        if (status == FW_SERIALIZE_OK) {
+            status = this->serialize(static_cast<FwSizeStoreType>(size));
+        }
+        return status;
+    }
+
     // deserialization routines
 
     SerializeStatus SerializeBufferBase::deserialize(U8 &val) {
@@ -592,6 +603,15 @@ namespace Fw {
         this->m_deserLoc += storedLength;
 
         return FW_SERIALIZE_OK;
+    }
+
+    SerializeStatus SerializeBufferBase::deserializeSize(FwSizeType& size) {
+        FwSizeStoreType storedSize = 0;
+        Fw::SerializeStatus status = this->deserialize(storedSize);
+        if (status == FW_SERIALIZE_OK) {
+            size = static_cast<FwSizeType>(storedSize);
+        }
+        return status;
     }
 
     void SerializeBufferBase::resetSer() {

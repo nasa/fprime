@@ -99,6 +99,8 @@ namespace Fw {
 
             SerializeStatus serialize(const Serializable &val); //!< serialize an object derived from serializable base class
 
+            SerializeStatus serializeSize(const FwSizeType size); //!< serialize a size value
+
             // Deserialization for built-in types
 
             SerializeStatus deserialize(U8 &val); //!< deserialize 8-bit unsigned int
@@ -146,6 +148,8 @@ namespace Fw {
             SerializeStatus deserialize(Serializable &val);  //!< deserialize an object derived from serializable base class
 
             SerializeStatus deserialize(SerializeBufferBase& val);  //!< serialize a serialized buffer
+
+            SerializeStatus deserializeSize(FwSizeType& size); //!< deserialize a size value
 
             void resetSer(); //!< reset to beginning of buffer to reuse for serialization
             void resetDeser(); //!< reset deserialization to beginning
