@@ -109,7 +109,7 @@ $(document).ready(function(){initNavTree('_file_uplink_2_warnings_8cpp_source.ht
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  {</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    this-&gt;m_fileUplink-&gt;log_WARNING_HI_InvalidReceiveMode(</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(packetType),</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(m_fileUplink-&gt;receiveMode)</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(m_fileUplink-&gt;m_receiveMode)</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    );</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    this-&gt;warning();</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  }</div>
@@ -161,7 +161,7 @@ $(document).ready(function(){initNavTree('_file_uplink_2_warnings_8cpp_source.ht
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    )</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  {</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    this-&gt;m_fileUplink-&gt;log_WARNING_HI_BadChecksum(</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        this-&gt;m_fileUplink-&gt;file.name,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        this-&gt;m_fileUplink-&gt;m_file.name,</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        computed,</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        read</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    );</div>
