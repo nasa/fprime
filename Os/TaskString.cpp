@@ -4,15 +4,15 @@
 namespace Os {
 
     TaskString::TaskString(const char* src) : StringBase()  {
-        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     TaskString::TaskString(const StringBase& src) : StringBase()  {
-        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     TaskString::TaskString(const TaskString& src) : StringBase()  {
-        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     TaskString::TaskString() {
@@ -24,7 +24,7 @@ namespace Os {
             return *this;
         }
 
-        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
@@ -33,12 +33,12 @@ namespace Os {
             return *this;
         }
 
-        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
     TaskString& TaskString::operator=(const char* other) {
-        Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
         return *this;
     }
 

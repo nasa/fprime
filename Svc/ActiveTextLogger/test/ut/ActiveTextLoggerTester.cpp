@@ -107,7 +107,7 @@ namespace Svc {
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_EQ(0,strcmp(textStr,buf));
-              Fw::StringUtils::string_copy(oldLine, buf, sizeof(oldLine));
+              (void) Fw::StringUtils::string_copy(oldLine, buf, sizeof(oldLine));
           }
       }
       stream1.close();
@@ -210,7 +210,7 @@ namespace Svc {
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_EQ(0,strcmp(textStr,buf));
-              Fw::StringUtils::string_copy(oldLine, buf, sizeof(oldLine));
+              (void) Fw::StringUtils::string_copy(oldLine, buf, sizeof(oldLine));
           }
       }
       stream1.close();
