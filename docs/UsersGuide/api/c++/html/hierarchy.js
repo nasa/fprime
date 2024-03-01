@@ -133,6 +133,9 @@ var hierarchy =
             [ "Svc::CommandDispatcherComponentBase", "class_svc_1_1_command_dispatcher_component_base.html", [
               [ "Svc::CommandDispatcherImpl", "class_svc_1_1_command_dispatcher_impl.html", null ]
             ] ],
+            [ "Svc::DpManagerComponentBase", "class_svc_1_1_dp_manager_component_base.html", [
+              [ "Svc::DpManager", "class_svc_1_1_dp_manager.html", null ]
+            ] ],
             [ "Svc::FileDownlinkComponentBase", "class_svc_1_1_file_downlink_component_base.html", [
               [ "Svc::FileDownlink", "class_svc_1_1_file_downlink.html", null ]
             ] ],
@@ -297,7 +300,9 @@ var hierarchy =
         ] ]
       ] ]
     ] ],
+    [ "TestUtils::OnChangeChannel< T >", "class_test_utils_1_1_on_change_channel.html", null ],
     [ "Svc::AMPCSSequence::Record::Opcode", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_opcode.html", null ],
+    [ "TestUtils::Option< T, noValue >", "class_test_utils_1_1_option.html", null ],
     [ "PassiveRateGroupImpl", "class_passive_rate_group_impl.html", null ],
     [ "Fw::FilePacket::PathName", "class_fw_1_1_file_packet_1_1_path_name.html", null ],
     [ "Svc::HealthImpl::PingEntry", "struct_svc_1_1_health_impl_1_1_ping_entry.html", null ],

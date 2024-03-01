@@ -239,6 +239,7 @@ var annotated_dup =
       [ "InputCyclePort", "class_svc_1_1_input_cycle_port.html", "class_svc_1_1_input_cycle_port" ],
       [ "OutputCyclePort", "class_svc_1_1_output_cycle_port.html", "class_svc_1_1_output_cycle_port" ],
       [ "DeframerComponentBase", "class_svc_1_1_deframer_component_base.html", "class_svc_1_1_deframer_component_base" ],
+      [ "DpManagerComponentBase", "class_svc_1_1_dp_manager_component_base.html", "class_svc_1_1_dp_manager_component_base" ],
       [ "InputFatalEventPort", "class_svc_1_1_input_fatal_event_port.html", "class_svc_1_1_input_fatal_event_port" ],
       [ "OutputFatalEventPort", "class_svc_1_1_output_fatal_event_port.html", "class_svc_1_1_output_fatal_event_port" ],
       [ "FatalHandlerComponentBase", "class_svc_1_1_fatal_handler_component_base.html", "class_svc_1_1_fatal_handler_component_base" ],
@@ -301,6 +302,7 @@ var annotated_dup =
       [ "ComStub", "class_svc_1_1_com_stub.html", "class_svc_1_1_com_stub" ],
       [ "TimerVal", "class_svc_1_1_timer_val.html", "class_svc_1_1_timer_val" ],
       [ "Deframer", "class_svc_1_1_deframer.html", "class_svc_1_1_deframer" ],
+      [ "DpManager", "class_svc_1_1_dp_manager.html", "class_svc_1_1_dp_manager" ],
       [ "FatalHandlerComponentImpl", "class_svc_1_1_fatal_handler_component_impl.html", "class_svc_1_1_fatal_handler_component_impl" ],
       [ "FileDownlink", "class_svc_1_1_file_downlink.html", "class_svc_1_1_file_downlink" ],
       [ "FileManager", "class_svc_1_1_file_manager.html", "class_svc_1_1_file_manager" ],
@@ -331,6 +333,10 @@ var annotated_dup =
       [ "TlmPacketizerPacketList", "struct_svc_1_1_tlm_packetizer_packet_list.html", "struct_svc_1_1_tlm_packetizer_packet_list" ],
       [ "UdpReceiverComponentImpl", "class_svc_1_1_udp_receiver_component_impl.html", "class_svc_1_1_udp_receiver_component_impl" ],
       [ "UdpSenderComponentImpl", "class_svc_1_1_udp_sender_component_impl.html", "class_svc_1_1_udp_sender_component_impl" ]
+    ] ],
+    [ "TestUtils", "namespace_test_utils.html", [
+      [ "OnChangeChannel", "class_test_utils_1_1_on_change_channel.html", "class_test_utils_1_1_on_change_channel" ],
+      [ "Option", "class_test_utils_1_1_option.html", "class_test_utils_1_1_option" ]
     ] ],
     [ "Types", "namespace_types.html", [
       [ "CircularBuffer", "class_types_1_1_circular_buffer.html", "class_types_1_1_circular_buffer" ],

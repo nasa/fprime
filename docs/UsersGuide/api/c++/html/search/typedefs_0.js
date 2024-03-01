@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['activelogger_6859',['ActiveLogger',['../namespace_svc.html#ac0e00075604e6b204b18163442910ec1',1,'Svc']]],
-  ['assertfataladapter_6860',['AssertFatalAdapter',['../namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08',1,'Svc']]]
+  ['activelogger_6993',['ActiveLogger',['../namespace_svc.html#ac0e00075604e6b204b18163442910ec1',1,'Svc']]],
+  ['assertfataladapter_6994',['AssertFatalAdapter',['../namespace_svc.html#a01c34f93d7c9cce33307ab43c5150d08',1,'Svc']]]
 ];

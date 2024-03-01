@@ -88,9 +88,9 @@ $(document).ready(function(){initNavTree('_svc_dp_writer_component.html',''); in
 <div class="title">Svc::DpWriter Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md664"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md665"></a>
 Svc::DpWriter (Active Component)</h1>
-<h2><a class="anchor" id="autotoc_md665"></a>
+<h2><a class="anchor" id="autotoc_md666"></a>
 1. Introduction</h2>
 <p><code>Svc::DpWriter</code> is an active component for writing data products to disk. It does the following:</p>
 <ol type="1">
@@ -105,7 +105,7 @@ Svc::DpWriter (Active Component)</h1>
 </ol>
 </li>
 </ol>
-<h2><a class="anchor" id="autotoc_md666"></a>
+<h2><a class="anchor" id="autotoc_md667"></a>
 2. Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -119,14 +119,14 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">SVC-DPWRITER-004   </td><td class="markdownTableBodyNone">On receiving an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>B</em>, and after performing any requested processing on <em>B</em>, <code>Svc::DpWriter</code> shall write <em>B</em> to disk.   </td><td class="markdownTableBodyNone">The purpose of <code>DpWriter</code> is to write data products to the disk.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">SVC-DPWRITER-005   </td><td class="markdownTableBodyNone"><code>Svc::DpManager</code> shall provide telemetry that reports the number of data products written and the number of bytes written.   </td><td class="markdownTableBodyNone">This requirement establishes the telemetry interface for the component.   </td><td class="markdownTableBodyNone">Unit test   </td></tr>
+<td class="markdownTableBodyNone">SVC-DPWRITER-005   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_dp_manager.html">Svc::DpManager</a></code> shall provide telemetry that reports the number of data products written and the number of bytes written.   </td><td class="markdownTableBodyNone">This requirement establishes the telemetry interface for the component.   </td><td class="markdownTableBodyNone">Unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md667"></a>
+<h2><a class="anchor" id="autotoc_md668"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md668"></a>
+<h3><a class="anchor" id="autotoc_md669"></a>
 3.1. Component Diagram</h3>
 <p>The diagram below shows the <code>DpWriter</code> component.</p>
-<div> <img src="img/DpWriter.png" alt="" width="700/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md669"></a>
+<div> <img src="img/DpWriter.png" alt="" width="700/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md670"></a>
 3.2. Ports</h3>
 <p><code>DpWriter</code> has the following ports:</p>
 <table class="markdownTable">
@@ -149,7 +149,7 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>text event</code>   </td><td class="markdownTableBodyNone"><code>textEventOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.LogText</code>   </td><td class="markdownTableBodyNone">Text event port   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md670"></a>
+<h3><a class="anchor" id="autotoc_md671"></a>
 3.3. State</h3>
 <p><code>DpWriter</code> maintains the following state:</p>
 <ol type="1">
@@ -158,10 +158,10 @@ Svc::DpWriter (Active Component)</h1>
 <ol type="1">
 <li><code>numBytes (U64)</code>: The number of bytes written.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md671"></a>
+<h3><a class="anchor" id="autotoc_md672"></a>
 3.4. Compile-Time Setup</h3>
 <p>The configuration constant <a href="../../../config/AcConstants.fpp"><code>DpWriterNumProcPorts</code></a> specifies the number of ports for connecting components that perform processing.</p>
-<h3><a class="anchor" id="autotoc_md672"></a>
+<h3><a class="anchor" id="autotoc_md673"></a>
 3.5. Runtime Setup</h3>
 <p>The <code>config</code> function specifies the following constants:</p>
 <ol type="1">
@@ -170,12 +170,12 @@ Svc::DpWriter (Active Component)</h1>
 <ol type="1">
 <li><code>fileNameSuffix (string)</code>: The suffix to use for file names.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md673"></a>
+<h3><a class="anchor" id="autotoc_md674"></a>
 3.6. Port Handlers</h3>
-<h4><a class="anchor" id="autotoc_md674"></a>
+<h4><a class="anchor" id="autotoc_md675"></a>
 3.6.1. schedIn</h4>
 <p>This handler sends out the state variables as telemetry.</p>
-<h4><a class="anchor" id="autotoc_md675"></a>
+<h4><a class="anchor" id="autotoc_md676"></a>
 3.6.2. bufferSendIn</h4>
 <p>This handler receives a mutable reference to a buffer <code>B</code>. It does the following:</p>
 <ol type="1">
@@ -194,19 +194,19 @@ Svc::DpWriter (Active Component)</h1>
 <li>Send <code>B</code> on <code>deallocBufferSendOut</code>.</li>
 </ol>
 <p><a class="anchor" id="file_format"></a> </p>
-<h2><a class="anchor" id="autotoc_md676"></a>
+<h2><a class="anchor" id="autotoc_md677"></a>
 4. File Format</h2>
-<h3><a class="anchor" id="autotoc_md677"></a>
+<h3><a class="anchor" id="autotoc_md678"></a>
 4.1. Data Format</h3>
 <p>Each file stores a serialized data product record, with the format described in the <a href="../../../Fw/Dp/docs/sdd.md#serial-format">data products documentation</a>.</p>
-<h3><a class="anchor" id="autotoc_md678"></a>
+<h3><a class="anchor" id="autotoc_md679"></a>
 4.2. File Name</h3>
 <p>The name of each file consists of <code>fileNamePrefix</code> followed by an ID, a time stamp, and <code>fileNameSuffix</code>. The ID consists of an underscore character <code>_</code> followed by the container ID. The time stamp consists of an underscore character <code>_</code> followed by a seconds value, an underscore character, and a microseconds value.</p>
 <p>For example, suppose that the file name prefix is <code>container_data</code> and the file name suffix is <code>.dat</code>. Suppose that container ID is 100, the seconds value is 100000, and the microseconds value is 1000. Then the file name is <code>container_data_100_100000_1000.dat</code>.</p>
 <p><a class="anchor" id="ground_interface"></a> </p>
-<h2><a class="anchor" id="autotoc_md679"></a>
+<h2><a class="anchor" id="autotoc_md680"></a>
 5. Ground Interface</h2>
-<h3><a class="anchor" id="autotoc_md680"></a>
+<h3><a class="anchor" id="autotoc_md681"></a>
 5.1. Telemetry</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -216,7 +216,7 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>NumBytes</code>   </td><td class="markdownTableBodyNone"><code>U64</code>   </td><td class="markdownTableBodyNone">The number of bytes handled   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md681"></a>
+<h3><a class="anchor" id="autotoc_md682"></a>
 5.2. Events</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -226,10 +226,10 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>InvalidPacketDescriptor</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">Incoming buffer had an invalid packet descriptor   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md682"></a>
+<h2><a class="anchor" id="autotoc_md683"></a>
 6. Example Uses</h2>
 <p><a class="anchor" id="top-diagrams"></a> </p>
-<h3><a class="anchor" id="autotoc_md683"></a>
+<h3><a class="anchor" id="autotoc_md684"></a>
 6.1. Topology Diagrams</h3>
 <p>The following topology diagram shows how to connect <code>Svc::DpWriter</code> to a <code>DpManager</code> component and a processor component. The diagrams use the following instances:</p>
 <ul>
@@ -238,7 +238,7 @@ Svc::DpWriter (Active Component)</h1>
 <li><code>dpWriter</code>: An instance of <code>Svc::DpWriter</code>.</li>
 <li><code>producer</code>: A component that produces data products.</li>
 </ul>
-<div> <img src="img/top/product-write.png" alt="" width="800/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md684"></a>
+<div> <img src="img/top/product-write.png" alt="" width="800/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md685"></a>
 6.2. Sequence Diagrams</h3>
 <p>The following diagram shows what happens when a buffer is sent to <code>DpWriter</code>, is processed, and is written to disk.</p>
 <div class="fragment"><div class="line">sequenceDiagram</div>
