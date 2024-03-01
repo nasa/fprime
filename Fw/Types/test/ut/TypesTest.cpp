@@ -390,6 +390,26 @@ TEST(SerializationTest,Serialization1) {
     printf("Skip deserialization Tests\n");
 #endif
 
+// Test sizes
+
+    FwSizeType size1 = std::numeric_limits<FwSizeStoreType>::max();
+    FwSizeType size2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serializeSize(size1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    stat2 = buff.deserializeSize(size2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(u64t1,u64t2);
+    ASSERT_EQ(sizeof(FwSizeStoreType),buff.m_deserLoc);
+
+#if DEBUG_VERBOSE
+    printf("Val: in: %" PRI_FwSizeType " out: %" PRI_FwSizeType " stat1: %d stat2: %d\n",
+        size1, size2, stat1, stat2);
+    printf("Size Test\n");
+#endif
+
+
 // Test skipping:
 
     buff.resetSer();

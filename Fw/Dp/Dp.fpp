@@ -7,6 +7,10 @@ module Fw {
   enum DpState: U8 {
     @ The untransmitted state
     UNTRANSMITTED
+    @ The partially transmitted state
+    @ A data product is in this state from the start of transmission
+    @ until transmission is complete.
+    PARTIAL
     @ The transmitted state
     TRANSMITTED
   } default UNTRANSMITTED

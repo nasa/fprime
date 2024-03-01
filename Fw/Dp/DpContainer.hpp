@@ -10,6 +10,7 @@
 #include "Fw/Buffer/Buffer.hpp"
 #include "Fw/Dp/DpStateEnumAc.hpp"
 #include "Fw/Time/Time.hpp"
+#include "Fw/Types/SuccessEnumAc.hpp"
 #include "Utils/Hash/Hash.hpp"
 #include "config/FppConstantsAc.hpp"
 #include "config/ProcTypeEnumAc.hpp"
@@ -44,7 +45,7 @@ class DpContainer {
         //! The offset for the data size field
         static constexpr FwSizeType DATA_SIZE_OFFSET = DP_STATE_OFFSET + DpState::SERIALIZED_SIZE;
         //! The header size
-        static constexpr FwSizeType SIZE = DATA_SIZE_OFFSET + sizeof(FwSizeType);
+        static constexpr FwSizeType SIZE = DATA_SIZE_OFFSET + sizeof(FwSizeStoreType);
     };
 
     //! The header hash offset
@@ -101,13 +102,18 @@ class DpContainer {
     //! \return The processing types
     DpCfg::ProcType::SerialType getProcTypes() const { return this->m_procTypes; }
 
+    //! Get the data product state
+    DpState getDpState() const { return this->m_dpState; }
+
     //! Deserialize the header from the packet buffer
-    //! Buffer must be valid and large enough to hold a DP container packet
+    //! Buffer must be valid, and its size must be at least MIN_PACKET_SIZE
+    //! Before calling this function, you should call checkHeaderHash() to
+    //! check the header hash
     //! \return The serialize status
     Fw::SerializeStatus deserializeHeader();
 
     //! Serialize the header into the packet buffer and update the header hash
-    //! Buffer must be valid and large enough to hold a DP container packet
+    //! Buffer must be valid, and its size must be at least MIN_PACKET_SIZE
     void serializeHeader();
 
     //! Set the id
@@ -150,8 +156,25 @@ class DpContainer {
     void setBuffer(const Buffer& buffer  //!< The packet buffer
     );
 
-    //! Update the header hash
+    //! Get the stored header hash
+    //! \return The hash
+    Utils::HashBuffer getHeaderHash() const;
+
+    //! Compute the header hash from the header data
+    //! \return The hash
+    Utils::HashBuffer computeHeaderHash() const;
+
+    //! Set the header hash
+    void setHeaderHash(const Utils::HashBuffer& hash  //!< The hash
+    );
+
+    //! Compute and set the header hash
     void updateHeaderHash();
+
+    //! Check the header hash
+    Success::T checkHeaderHash(Utils::HashBuffer& storedHash,   //!< The stored hash (output)
+                               Utils::HashBuffer& computedHash  //!< The computed hash (output)
+    ) const;
 
     //! Get the data hash offset
     FwSizeType getDataHashOffset() const {
@@ -159,8 +182,25 @@ class DpContainer {
         return Header::SIZE + HASH_DIGEST_LENGTH + this->m_dataSize;
     }
 
+    //! Get the stored data hash
+    //! \return The hash
+    Utils::HashBuffer getDataHash() const;
+
+    //! Compute the data hash from the data
+    //! \return The hash
+    Utils::HashBuffer computeDataHash() const;
+
+    //! Set the data hash
+    void setDataHash(Utils::HashBuffer hash  //!< The hash
+    );
+
     //! Update the data hash
     void updateDataHash();
+
+    //! Check the data hash
+    Success::T checkDataHash(Utils::HashBuffer& storedHash,   //!< The stored hash (output)
+                             Utils::HashBuffer& computedHash  //!< The computed hash (output)
+    ) const;
 
   public:
     // ----------------------------------------------------------------------
