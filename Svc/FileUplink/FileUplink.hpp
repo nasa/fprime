@@ -269,22 +269,22 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! The receive mode
-      ReceiveMode receiveMode;
+      ReceiveMode m_receiveMode;
 
       //! The sequence index of the last packet received
-      U32 lastSequenceIndex;
+      U32 m_lastSequenceIndex;
 
       //! The file being assembled
-      File file;
+      File m_file;
 
       //! The total number of files received
-      FilesReceived filesReceived;
+      FilesReceived m_filesReceived;
 
       //! The total number of cancel packets
-      PacketsReceived packetsReceived;
+      PacketsReceived m_packetsReceived;
 
       //! The total number of warnings
-      Warnings warnings;
+      Warnings m_warnings;
 
   };
 
