@@ -87,7 +87,7 @@ struct DpContainerHeader {
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the data size
         DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::DATA_SIZE_OFFSET);
-        status = serializeRepr.deserialize(this->m_dataSize);
+        status = serializeRepr.deserializeSize(this->m_dataSize);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // After deserializing time, the deserialization index should be at
         // the header hash offset
@@ -120,7 +120,7 @@ struct DpContainerHeader {
         Utils::HashBuffer computedHashBuffer;
         U8* const buffAddrBase = buffer.getData();
         U8* const dataAddr = &buffAddrBase[DpContainer::DATA_OFFSET];
-        Utils::Hash::hash(dataAddr, this->m_dataSize, computedHashBuffer);
+        Utils::Hash::hash(dataAddr, static_cast<U32>(this->m_dataSize), computedHashBuffer);
         DpContainer container(this->m_id, buffer);
         container.setDataSize(this->m_dataSize);
         const FwSizeType dataHashOffset = container.getDataHashOffset();
