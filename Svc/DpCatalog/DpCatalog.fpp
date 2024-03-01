@@ -146,7 +146,7 @@ module Svc {
 
     @ Catalog transmission completed
     event CatalogXmitCompleted (
-                            bytes: U32 @< data transmitted
+                            bytes: U64 @< data transmitted
                           ) \
       severity activity high \
       id 12 \
@@ -162,7 +162,7 @@ module Svc {
       id 13 \
       format "Sending product {} of size {} priority {}"
 
-    @ Sending product
+    @ Product send complete
     event ProductComplete (
                             file: string size 80 @< The file 
                           ) \
@@ -267,6 +267,16 @@ module Svc {
       severity warning low \
       id 30 \
       format "Cannot build new catalog while DPs are being transmitted" \
+      throttle 10
+
+    @ Error getting file size
+    event FileSizeError(
+                            file: string size 80 @< The file
+                            stat: I32
+                          ) \
+      severity warning high \
+      id 31 \
+      format "Error getting file {} size. stat: {}" \
       throttle 10
 
     # ----------------------------------------------------------------------

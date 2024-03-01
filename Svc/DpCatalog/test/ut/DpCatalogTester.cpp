@@ -166,7 +166,10 @@ namespace Svc {
     void DpCatalogTester::makeDpDir(
         const char* dir
     ) {
-        Os::FileSystem::createDirectory(dir);
+        Os::FileSystem::Status stat = Os::FileSystem::createDirectory(dir);
+        if (stat != Os::FileSystem::Status::OP_OK) {
+            printf("Couldn't create directory %s\n",dir);
+        }
     }
 
 
@@ -198,9 +201,10 @@ namespace Svc {
             U32 length
         )
     {
-
-
         return Svc::SendFileResponse();
+
+        this->invoke_to_fileDone(0,Svc::SendFileResponse());
+        this->component.doDispatch();
     }
 
     void DpCatalogTester ::

@@ -58,7 +58,7 @@ namespace Svc {
             Fw::Time time;
             FwSizeType dataSize;
             Fw::DpState state;
-            char* dir;
+            const char* dir;
         };
 
         //! Read a set of DPs

@@ -126,7 +126,7 @@ namespace Svc {
 
         struct DpStateEntry {
             bool entry; //!< entry exists
-            FwIndexType dir; //!< index to m_directories entry that has directory name
+            FwIndexType dir; //!< index to m_directories entry that has directory name where DP exists
             DpRecord record; //!< data product metadata
 
         };
@@ -186,6 +186,7 @@ namespace Svc {
 
         bool m_xmitInProgress; //!< set if DP files are in the process of being sent
         bool m_xmitCmdWait; //!< true if waiting for transmission complete to complete xmit command
+        U64 m_xmitBytes; //!< bytes transmitted for downlink session
         FwOpcodeType m_xmitOpCode; //!< stored xmit command opcode
         U32 m_xmitCmdSeq; //!< stored command sequence id
 

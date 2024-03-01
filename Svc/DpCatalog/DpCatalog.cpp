@@ -33,6 +33,7 @@ namespace Svc {
         m_allocator(nullptr),
         m_xmitInProgress(false),
         m_xmitCmdWait(false),
+        m_xmitBytes(0),
         m_xmitOpCode(0),
         m_xmitCmdSeq(0)
     {
@@ -158,6 +159,16 @@ namespace Svc {
                     listing[file].toChar()
                 );
                 this->log_ACTIVITY_LO_ProcessingFile(fullFile);
+
+                // get file size
+                FwSizeType fileSize = 0;
+                Os::FileSystem::Status sizeStat =
+                    Os::FileSystem::getFileSize(fullFile.toChar(),fileSize);
+                if (sizeStat != Os::FileSystem::OP_OK) {
+                    this->log_WARNING_HI_FileSizeError(fullFile, sizeStat);
+                    continue;
+                }
+
                 Os::File::Status stat = dpFile.open(fullFile.toChar(), Os::File::OPEN_READ);
                 if (stat != Os::File::OP_OK) {
                     this->log_WARNING_HI_FileOpenError(fullFile, stat);
@@ -201,7 +212,7 @@ namespace Svc {
                 entry.record.setstate(container.getState());
                 entry.record.settSec(container.getTimeTag().getSeconds());
                 entry.record.settSub(container.getTimeTag().getUSeconds());
-                entry.record.setsize(container.getDataSize() + Fw::DpContainer::DATA_OFFSET);
+                entry.record.setsize(fileSize);
                 entry.entry = true;
 
                 // assign the entry to the stored list
@@ -270,12 +281,28 @@ namespace Svc {
                         this->m_sortedDpList[record].recPtr->record.gettSec(),
                         this->m_sortedDpList[record].recPtr->record.gettSub()
                     );
-                    this->log_ACTIVITY_LO_SendingProduct(fileName,0,this->m_sortedDpList[record].recPtr->record.getpriority());
+                    this->log_ACTIVITY_LO_SendingProduct(
+                        fileName,
+                        this->m_sortedDpList[record].recPtr->record.getsize(),
+                        this->m_sortedDpList[record].recPtr->record.getpriority()
+                        );
                     this->fileOut_out(0, fileName, fileName, 0, 0);
+                    this->m_xmitBytes += this->m_sortedDpList[record].recPtr->record.getsize();
+                    // quit loop now that we found an entry
+                    break;
                 }
             }
         }
 
+        // if none were found, finish tranmission
+        this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
+        this->m_xmitInProgress = false;
+        this->m_xmitBytes = 0;
+        
+        if (this->m_xmitCmdWait) {
+            this->m_xmitCmdWait = false;
+            this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, Fw::CmdResponse::OK);
+        }
 
     }
 
@@ -313,7 +340,7 @@ namespace Svc {
             const Svc::SendFileResponse& resp
         )
     {
-        // TODO
+        this->sendNextEntry();
     }
 
     void DpCatalog ::
@@ -366,6 +393,7 @@ namespace Svc {
 
     Fw::CmdResponse DpCatalog::doCatalogXmit() {
 
+        this->m_xmitBytes = 0;
         this->sendNextEntry();
         return Fw::CmdResponse::OK;
 
