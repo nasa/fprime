@@ -4,6 +4,7 @@ var class_fw_1_1_dp_state =
     [ "t", "class_fw_1_1_dp_state.html#ae662714850ac43e5ed828a4d09be64d2", null ],
     [ "T", "class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70", [
       [ "UNTRANSMITTED", "class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70a51d04728aa37d098611bbb877fa00d81", null ],
+      [ "PARTIAL", "class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70a5060017698389ec10d2477008917c2de", null ],
       [ "TRANSMITTED", "class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70ad5107d8c3a9a8c40ec0f3a5b84f6ee39", null ]
     ] ],
     [ "DpState", "class_fw_1_1_dp_state.html#a5139d878d214e1a376f991e272f0bfe4", null ],

@@ -154,7 +154,7 @@ Framework Support for Data Products</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>DpState</code>   </td><td class="markdownTableBodyNone"><code>DpState</code>   </td><td class="markdownTableBodyNone"><code>DpState::SERIALIZED_SIZE</code>   </td><td class="markdownTableBodyNone">The data product state    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>DataSize</code>   </td><td class="markdownTableBodyNone"><code>FwSizeType</code>   </td><td class="markdownTableBodyNone"><code>sizeof(FwSizeType)</code>   </td><td class="markdownTableBodyNone">The size of the data payload in bytes   </td></tr>
+<td class="markdownTableBodyNone"><code>DataSize</code>   </td><td class="markdownTableBodyNone"><code>FwSizeType</code>   </td><td class="markdownTableBodyNone"><code>sizeof(FwSizeStoreType)</code>   </td><td class="markdownTableBodyNone">The size of the data payload in bytes   </td></tr>
 </table>
 <p><code>Header::UserData</code> is an array of <code>U8</code> of size <code><a class="el" href="namespace_fw_1_1_dp_cfg.html#a9ea816f1c2196b8ded72c6b2a709b40ba265dc0a37c075f1af68057c21e58a091">Fw::DpCfg::CONTAINER_USER_DATA_SIZE</a></code>.</p>
 <h4><a class="anchor" id="autotoc_md311"></a>
@@ -189,6 +189,7 @@ Framework Support for Data Products</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Data</code>   </td><td class="markdownTableBodyNone">Array of <em>n</em> <em>T</em>   </td><td class="markdownTableBodyNone"><em>n</em> * [<code>sizeof(</code>_T_<code>)</code> if <em>T</em> is a primitive type; otherwise <em>T</em><code>::SERIALIZED_SIZE</code>]   </td><td class="markdownTableBodyNone"><em>n</em> elements, each of type <em>T</em>   </td></tr>
 </table>
+<p><em>TODO: The array size should be serialized as <code>FwSizeStoreType</code>. This requires a change to the FPP code generation. See <a href="https://github.com/fprime-community/fpp/issues/393">https://github.com/fprime-community/fpp/issues/393</a>.</em></p>
 <h4><a class="anchor" id="autotoc_md313"></a>
 5.1.4. Data Hash</h4>
 <p>The data hash has the following format.</p>

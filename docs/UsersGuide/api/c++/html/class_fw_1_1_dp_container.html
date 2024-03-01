@@ -131,6 +131,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a306f7f8f3b1f10b265d22051dd35757f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37064aec9a35cc14d7dc536f61dba30e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_dp_cfg_1_1_proc_type.html#a88265a29a75441a1e9ecf3c6229b3d9c">DpCfg::ProcType::SerialType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#a37064aec9a35cc14d7dc536f61dba30e">getProcTypes</a> () const</td></tr>
 <tr class="separator:a37064aec9a35cc14d7dc536f61dba30e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7a2d232809aaa9f79dbad524569fbb1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_dp_state.html">DpState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#ac7a2d232809aaa9f79dbad524569fbb1">getDpState</a> () const</td></tr>
+<tr class="memdesc:ac7a2d232809aaa9f79dbad524569fbb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the data product state.  <a href="class_fw_1_1_dp_container.html#ac7a2d232809aaa9f79dbad524569fbb1">More...</a><br /></td></tr>
+<tr class="separator:ac7a2d232809aaa9f79dbad524569fbb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab76dcf7ae184b53e2ff68b6a2374ed7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#aab76dcf7ae184b53e2ff68b6a2374ed7">deserializeHeader</a> ()</td></tr>
 <tr class="separator:aab76dcf7ae184b53e2ff68b6a2374ed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad300bb54cb4f307cea8ce2b28459e4c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#ad300bb54cb4f307cea8ce2b28459e4c4">serializeHeader</a> ()</td></tr>
@@ -156,15 +159,35 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae57ff45be505cdf47e543df13f531bb4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#ae57ff45be505cdf47e543df13f531bb4">setBuffer</a> (const <a class="el" href="class_fw_1_1_buffer.html">Buffer</a> &amp;buffer)</td></tr>
 <tr class="memdesc:ae57ff45be505cdf47e543df13f531bb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the packet buffer.  <a href="class_fw_1_1_dp_container.html#ae57ff45be505cdf47e543df13f531bb4">More...</a><br /></td></tr>
 <tr class="separator:ae57ff45be505cdf47e543df13f531bb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab42e0869a701eb7e9825cf7dadb7e3c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#ab42e0869a701eb7e9825cf7dadb7e3c3">getHeaderHash</a> () const</td></tr>
+<tr class="separator:ab42e0869a701eb7e9825cf7dadb7e3c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cfe03d0669e1fa60a10b7ec0d60c944"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#a9cfe03d0669e1fa60a10b7ec0d60c944">computeHeaderHash</a> () const</td></tr>
+<tr class="separator:a9cfe03d0669e1fa60a10b7ec0d60c944"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae66de7d67aa9227f001570ca990d115e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#ae66de7d67aa9227f001570ca990d115e">setHeaderHash</a> (const <a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;hash)</td></tr>
+<tr class="memdesc:ae66de7d67aa9227f001570ca990d115e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the header hash.  <a href="class_fw_1_1_dp_container.html#ae66de7d67aa9227f001570ca990d115e">More...</a><br /></td></tr>
+<tr class="separator:ae66de7d67aa9227f001570ca990d115e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6de0064d6c1946c0632a579ef17a939f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#a6de0064d6c1946c0632a579ef17a939f">updateHeaderHash</a> ()</td></tr>
-<tr class="memdesc:a6de0064d6c1946c0632a579ef17a939f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the header hash.  <a href="class_fw_1_1_dp_container.html#a6de0064d6c1946c0632a579ef17a939f">More...</a><br /></td></tr>
+<tr class="memdesc:a6de0064d6c1946c0632a579ef17a939f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and set the header hash.  <a href="class_fw_1_1_dp_container.html#a6de0064d6c1946c0632a579ef17a939f">More...</a><br /></td></tr>
 <tr class="separator:a6de0064d6c1946c0632a579ef17a939f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1d6c0be6b7b791b4550807c34ba33b7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_success.html#a822be196df7ae60f2c09653d8a5b310d">Success::T</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#ad1d6c0be6b7b791b4550807c34ba33b7">checkHeaderHash</a> (<a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;storedHash, <a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;computedHash) const</td></tr>
+<tr class="memdesc:ad1d6c0be6b7b791b4550807c34ba33b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check the header hash.  <a href="class_fw_1_1_dp_container.html#ad1d6c0be6b7b791b4550807c34ba33b7">More...</a><br /></td></tr>
+<tr class="separator:ad1d6c0be6b7b791b4550807c34ba33b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae80120bc4dabc410e3c1dc51990ad224"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#ae80120bc4dabc410e3c1dc51990ad224">getDataHashOffset</a> () const</td></tr>
 <tr class="memdesc:ae80120bc4dabc410e3c1dc51990ad224"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the data hash offset.  <a href="class_fw_1_1_dp_container.html#ae80120bc4dabc410e3c1dc51990ad224">More...</a><br /></td></tr>
 <tr class="separator:ae80120bc4dabc410e3c1dc51990ad224"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a382cce2349495078912d1394f8f5b21e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#a382cce2349495078912d1394f8f5b21e">getDataHash</a> () const</td></tr>
+<tr class="separator:a382cce2349495078912d1394f8f5b21e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9393cc2975b517ca5283d38b4fcbda15"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#a9393cc2975b517ca5283d38b4fcbda15">computeDataHash</a> () const</td></tr>
+<tr class="separator:a9393cc2975b517ca5283d38b4fcbda15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad937ad78df2de5787b3f80533c9db8d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#ad937ad78df2de5787b3f80533c9db8d9">setDataHash</a> (<a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> hash)</td></tr>
+<tr class="memdesc:ad937ad78df2de5787b3f80533c9db8d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the data hash.  <a href="class_fw_1_1_dp_container.html#ad937ad78df2de5787b3f80533c9db8d9">More...</a><br /></td></tr>
+<tr class="separator:ad937ad78df2de5787b3f80533c9db8d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb8b62ccb6111a695f4a8632b16cc7da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#afb8b62ccb6111a695f4a8632b16cc7da">updateDataHash</a> ()</td></tr>
 <tr class="memdesc:afb8b62ccb6111a695f4a8632b16cc7da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the data hash.  <a href="class_fw_1_1_dp_container.html#afb8b62ccb6111a695f4a8632b16cc7da">More...</a><br /></td></tr>
 <tr class="separator:afb8b62ccb6111a695f4a8632b16cc7da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af71fc8c95486ca9d7b6bac2ee0ee8a50"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_success.html#a822be196df7ae60f2c09653d8a5b310d">Success::T</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_container.html#af71fc8c95486ca9d7b6bac2ee0ee8a50">checkDataHash</a> (<a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;storedHash, <a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;computedHash) const</td></tr>
+<tr class="memdesc:af71fc8c95486ca9d7b6bac2ee0ee8a50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check the data hash.  <a href="class_fw_1_1_dp_container.html#af71fc8c95486ca9d7b6bac2ee0ee8a50">More...</a><br /></td></tr>
+<tr class="separator:af71fc8c95486ca9d7b6bac2ee0ee8a50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -218,7 +241,7 @@ Protected Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A data product Container. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00020">20</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00021">21</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1cf1368970b009e6c3a9dbaa53726399"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1cf1368970b009e6c3a9dbaa53726399">&#9670;&nbsp;</a></span>DpContainer() <span class="overload">[1/2]</span></h2>
@@ -281,6 +304,124 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="af71fc8c95486ca9d7b6bac2ee0ee8a50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af71fc8c95486ca9d7b6bac2ee0ee8a50">&#9670;&nbsp;</a></span>checkDataHash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_success.html#a822be196df7ae60f2c09653d8a5b310d">Success::T</a> Fw::DpContainer::checkDataHash </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>storedHash</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>computedHash</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check the data hash. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">storedHash</td><td>The stored hash (output) </td></tr>
+    <tr><td class="paramname">computedHash</td><td>The computed hash (output) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00224">224</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad1d6c0be6b7b791b4550807c34ba33b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1d6c0be6b7b791b4550807c34ba33b7">&#9670;&nbsp;</a></span>checkHeaderHash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_success.html#a822be196df7ae60f2c09653d8a5b310d">Success::T</a> Fw::DpContainer::checkHeaderHash </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>storedHash</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>computedHash</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check the header hash. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">storedHash</td><td>The stored hash (output) </td></tr>
+    <tr><td class="paramname">computedHash</td><td>The computed hash (output) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00177">177</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9393cc2975b517ca5283d38b4fcbda15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9393cc2975b517ca5283d38b4fcbda15">&#9670;&nbsp;</a></span>computeDataHash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> Fw::DpContainer::computeDataHash </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Compute the data hash from the data </p><dl class="section return"><dt>Returns</dt><dd>The hash </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00194">194</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9cfe03d0669e1fa60a10b7ec0d60c944"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cfe03d0669e1fa60a10b7ec0d60c944">&#9670;&nbsp;</a></span>computeHeaderHash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> Fw::DpContainer::computeHeaderHash </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Compute the header hash from the header data </p><dl class="section return"><dt>Returns</dt><dd>The hash </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00154">154</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
+
+</div>
+</div>
 <a id="aab76dcf7ae184b53e2ff68b6a2374ed7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aab76dcf7ae184b53e2ff68b6a2374ed7">&#9670;&nbsp;</a></span>deserializeHeader()</h2>
 
@@ -295,7 +436,7 @@ Protected Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Deserialize the header from the packet buffer <a class="el" href="class_fw_1_1_buffer.html">Buffer</a> must be valid and large enough to hold a DP container packet </p><dl class="section return"><dt>Returns</dt><dd>The serialize status </dd></dl>
+<p>Deserialize the header from the packet buffer <a class="el" href="class_fw_1_1_buffer.html">Buffer</a> must be valid, and its size must be at least MIN_PACKET_SIZE Before calling this function, you should call <a class="el" href="class_fw_1_1_dp_container.html#ad1d6c0be6b7b791b4550807c34ba33b7" title="Check the header hash.">checkHeaderHash()</a> to check the header hash </p><dl class="section return"><dt>Returns</dt><dd>The serialize status </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00038">38</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
 
@@ -325,7 +466,27 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the packet buffer </p><dl class="section return"><dt>Returns</dt><dd>The buffer </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00087">87</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00088">88</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a382cce2349495078912d1394f8f5b21e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a382cce2349495078912d1394f8f5b21e">&#9670;&nbsp;</a></span>getDataHash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> Fw::DpContainer::getDataHash </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the stored data hash </p><dl class="section return"><dt>Returns</dt><dd>The hash </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00183">183</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
 
 </div>
 </div>
@@ -354,7 +515,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Get the data hash offset. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00157">157</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00180">180</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -382,7 +543,56 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the data size </p><dl class="section return"><dt>Returns</dt><dd>The data size </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00083">83</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00084">84</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac7a2d232809aaa9f79dbad524569fbb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7a2d232809aaa9f79dbad524569fbb1">&#9670;&nbsp;</a></span>getDpState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_dp_state.html">DpState</a> Fw::DpContainer::getDpState </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the data product state. </p>
+
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00106">106</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab42e0869a701eb7e9825cf7dadb7e3c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab42e0869a701eb7e9825cf7dadb7e3c3">&#9670;&nbsp;</a></span>getHeaderHash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> Fw::DpContainer::getHeaderHash </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the stored header hash </p><dl class="section return"><dt>Returns</dt><dd>The hash </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00145">145</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
 
 </div>
 </div>
@@ -410,7 +620,7 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the container id </p><dl class="section return"><dt>Returns</dt><dd>The id </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00079">79</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00080">80</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -439,7 +649,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Get the packet size corresponding to the data size. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00090">90</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00091">91</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -475,7 +685,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00171">171</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00211">211</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -503,7 +713,7 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the priority </p><dl class="section return"><dt>Returns</dt><dd>The priority </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00094">94</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00095">95</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -531,7 +741,7 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the processing types </p><dl class="section return"><dt>Returns</dt><dd>The processing types </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00102">102</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00103">103</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -559,7 +769,7 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the time tag </p><dl class="section return"><dt>Returns</dt><dd>The time tag </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00098">98</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00099">99</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -577,7 +787,7 @@ Protected Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Serialize the header into the packet buffer and update the header hash <a class="el" href="class_fw_1_1_buffer.html">Buffer</a> must be valid and large enough to hold a DP container packet </p>
+<p>Serialize the header into the packet buffer and update the header hash <a class="el" href="class_fw_1_1_buffer.html">Buffer</a> must be valid, and its size must be at least MIN_PACKET_SIZE </p>
 
 <p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00091">91</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
 
@@ -608,6 +818,34 @@ Protected Attributes</h2></td></tr>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00126">126</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad937ad78df2de5787b3f80533c9db8d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad937ad78df2de5787b3f80533c9db8d9">&#9670;&nbsp;</a></span>setDataHash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Fw::DpContainer::setDataHash </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a>&#160;</td>
+          <td class="paramname"><em>hash</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the data hash. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hash</td><td>The hash </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00206">206</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
 
 </div>
 </div>
@@ -643,7 +881,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00144">144</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00150">150</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -679,7 +917,35 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00138">138</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00144">144</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae66de7d67aa9227f001570ca990d115e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae66de7d67aa9227f001570ca990d115e">&#9670;&nbsp;</a></span>setHeaderHash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Fw::DpContainer::setHeaderHash </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>hash</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the header hash. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hash</td><td>The hash </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00164">164</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
 
 </div>
 </div>
@@ -715,7 +981,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00114">114</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00120">120</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -751,7 +1017,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00120">120</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00126">126</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -787,7 +1053,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00132">132</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00138">138</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -823,7 +1089,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00126">126</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00132">132</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -844,7 +1110,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Update the data hash. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00149">149</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00220">220</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
 
 </div>
 </div>
@@ -863,9 +1129,9 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Update the header hash. </p>
+<p>Compute and set the header hash. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00140">140</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8cpp_source.html#l00173">173</a> of file <a class="el" href="dp_container_8cpp_source.html">DpContainer.cpp</a>.</p>
 
 </div>
 </div>
@@ -892,7 +1158,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The data offset. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00053">53</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00054">54</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -918,7 +1184,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The header hash offset. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00051">51</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00052">52</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -944,7 +1210,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The packet buffer. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00217">217</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00257">257</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -970,7 +1236,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The data buffer. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00220">220</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00260">260</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -996,7 +1262,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The data size. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00214">214</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00254">254</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -1022,7 +1288,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The data product state. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00211">211</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00251">251</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -1047,7 +1313,7 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The container id This is a system-global id (component-local id + component base id) </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00199">199</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00239">239</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -1073,7 +1339,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The priority. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00202">202</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00242">242</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -1099,7 +1365,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The processing types. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00208">208</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00248">248</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -1125,7 +1391,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The time tag. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00205">205</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00245">245</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -1143,7 +1409,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The user data. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00190">190</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00230">230</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>
@@ -1168,7 +1434,7 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The minimum packet size Reserve space for the header, the header hash, and the data hash This is also the number of non-data bytes in the packet </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00057">57</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_container_8hpp_source.html#l00058">58</a> of file <a class="el" href="dp_container_8hpp_source.html">DpContainer.hpp</a>.</p>
 
 </div>
 </div>

@@ -108,12 +108,13 @@ Inheritance diagram for Fw::DpState:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a4ca06de5e6dd2ad0dc4b8059d1a83d70"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70">T</a> { <a class="el" href="class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70a51d04728aa37d098611bbb877fa00d81">UNTRANSMITTED</a> = 0
-, <a class="el" href="class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70ad5107d8c3a9a8c40ec0f3a5b84f6ee39">TRANSMITTED</a> = 1
+, <a class="el" href="class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70a5060017698389ec10d2477008917c2de">PARTIAL</a> = 1
+, <a class="el" href="class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70ad5107d8c3a9a8c40ec0f3a5b84f6ee39">TRANSMITTED</a> = 2
  }</td></tr>
 <tr class="memdesc:a4ca06de5e6dd2ad0dc4b8059d1a83d70"><td class="mdescLeft">&#160;</td><td class="mdescRight">The raw enum type.  <a href="class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70">More...</a><br /></td></tr>
 <tr class="separator:a4ca06de5e6dd2ad0dc4b8059d1a83d70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c16293979752c88d778adecfa8fae6d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_dp_state.html#a1c16293979752c88d778adecfa8fae6dac41f41243b0c794d64998e81ac38fe54">SERIALIZED_SIZE</a> = sizeof(SerialType)
-, <a class="el" href="class_fw_1_1_dp_state.html#a1c16293979752c88d778adecfa8fae6dab96e57c9a251d0f52badd73e5bc7e43c">NUM_CONSTANTS</a> = 2
+, <a class="el" href="class_fw_1_1_dp_state.html#a1c16293979752c88d778adecfa8fae6dab96e57c9a251d0f52badd73e5bc7e43c">NUM_CONSTANTS</a> = 3
  }</td></tr>
 <tr class="separator:a1c16293979752c88d778adecfa8fae6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af95376d7d434d3dcd50d2d589bb57c07"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_dp_state.html#af95376d7d434d3dcd50d2d589bb57c07">SerialType</a></td></tr>
@@ -211,7 +212,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>For backwards compatibility. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00038">38</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00042">42</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -234,7 +235,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00046">46</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00050">50</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -253,6 +254,8 @@ Additional Inherited Members</h2></td></tr>
 <p>The raw enum type. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4ca06de5e6dd2ad0dc4b8059d1a83d70a51d04728aa37d098611bbb877fa00d81"></a>UNTRANSMITTED&#160;</td><td class="fielddoc"><p>The untransmitted state. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a4ca06de5e6dd2ad0dc4b8059d1a83d70a5060017698389ec10d2477008917c2de"></a>PARTIAL&#160;</td><td class="fielddoc"><p>The partially transmitted state A data product is in this state from the start of transmission until transmission is complete. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a4ca06de5e6dd2ad0dc4b8059d1a83d70ad5107d8c3a9a8c40ec0f3a5b84f6ee39"></a>TRANSMITTED&#160;</td><td class="fielddoc"><p>The transmitted state. </p>
 </td></tr>
@@ -288,7 +291,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Constructor (default value of UNTRANSMITTED) </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00060">60</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00064">64</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -324,7 +327,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00066">66</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00070">70</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -360,7 +363,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00074">74</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00078">78</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -449,7 +452,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Conversion operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00098">98</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00102">102</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -479,7 +482,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Inequality operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00110">110</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00114">114</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -565,7 +568,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Equality operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00104">104</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00108">108</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -622,7 +625,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>The raw enum value. </p>
 
-<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00160">160</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dp_state_enum_ac_8hpp_source.html#l00164">164</a> of file <a class="el" href="dp_state_enum_ac_8hpp_source.html">DpStateEnumAc.hpp</a>.</p>
 
 </div>
 </div>
