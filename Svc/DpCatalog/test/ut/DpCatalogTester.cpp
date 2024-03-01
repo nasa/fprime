@@ -13,8 +13,6 @@
 
 namespace Svc {
 
-    static const char* DP_DIR = "./DpTest";
-
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -51,34 +49,40 @@ namespace Svc {
     }
 
     //! Read one DP test
-    void DpCatalogTester::readOneDp() {
-        Fw::Time time(1000,10000);
-
+    void DpCatalogTester::readDps(
+            Fw::String *dpDirs,
+            FwSizeType numDirs,
+            const DpSet *dpSet,
+            FwSizeType numDps
+        ) {
+ 
         // make a directory for the files
-        this->makeDpDir(DP_DIR);
+        for (FwSizeType dir = 0; dir < numDirs; dir++) {
+            this->makeDpDir(dpDirs[dir].toChar());
+        }
 
         // clean up last DP
-        this->delDp(
-            0x123,
-            time,
-            DP_DIR
-        );
-
-        this->genDP(
-            0x123,
-            10,
-            time,
-            100,
-            Fw::DpState::UNTRANSMITTED,
-            false,
-            DP_DIR
+        for (FwSizeType dp = 0; dp < numDps; dp++) {
+            this->delDp(
+                dpSet[dp].id,
+                dpSet[dp].time,
+                dpSet[dp].dir
             );
+
+            this->genDP(
+                dpSet[dp].id,
+                dpSet[dp].prio,
+                dpSet[dp].time,
+                dpSet[dp].dataSize,
+                dpSet[dp].state,
+                false,
+                dpSet[dp].dir
+                );
+        }
 
         Fw::MallocAllocator alloc;
 
-        Fw::String dirs[1];
-        dirs[0] = DP_DIR;
-        this->component.configure(10,dirs,FW_NUM_ARRAY_ELEMENTS(dirs),100,alloc);
+        this->component.configure(numDps,dpDirs,numDirs,100,alloc);
 
         this->sendCmd_BUILD_CATALOG(0,10);
         this->component.doDispatch();
@@ -93,7 +97,7 @@ namespace Svc {
     void DpCatalogTester::genDP(
         FwDpIdType id,
         FwDpPriorityType prio,
-        Fw::Time& time,
+        const Fw::Time& time,
         FwSizeType dataSize,
         Fw::DpState dpState,
         bool hdrHashError,
@@ -150,7 +154,7 @@ namespace Svc {
 
     void DpCatalogTester::delDp(
         FwDpIdType id,
-        Fw::Time& time,
+        const Fw::Time& time,
         const char* dir
     ) {
 

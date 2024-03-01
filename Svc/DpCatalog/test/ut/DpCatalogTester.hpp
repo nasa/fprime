@@ -52,14 +52,28 @@ namespace Svc {
         //! Initialization/teardown smoke test
         void doInit();
 
-        //! Read one DP
-        void readOneDp();
+        struct DpSet {
+            FwDpIdType id;
+            FwDpPriorityType prio;
+            Fw::Time time;
+            FwSizeType dataSize;
+            Fw::DpState state;
+            char* dir;
+        };
+
+        //! Read a set of DPs
+        void readDps(
+            Fw::String *dpDirs,
+            FwSizeType numDirs,
+            const DpSet* dpSet,
+            FwSizeType numDps
+        );
 
         //! Generate some data product files
         void genDP(
             FwDpIdType id,
             FwDpPriorityType prio,
-            Fw::Time& time,
+            const Fw::Time& time,
             FwSizeType dataSize,
             Fw::DpState dpState,
             bool hdrHashError,
@@ -68,7 +82,7 @@ namespace Svc {
 
         void delDp(
             FwDpIdType id,
-            Fw::Time& time,
+            const Fw::Time& time,
             const char* dir
         );
 
