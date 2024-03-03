@@ -89,6 +89,12 @@ namespace Svc {
         this->sendCmd_START_XMIT_CATALOG(0,0,Fw::Wait::NO_WAIT);
         this->component.doDispatch();
 
+        // dispatch messages
+        for (FwSizeType msg = 0; msg < numDps; msg++) {
+            // dispatch file done port call
+            this->component.doDispatch();
+        }
+
         this->component.shutdown();
 
     }
@@ -201,10 +207,9 @@ namespace Svc {
             U32 length
         )
     {
-        return Svc::SendFileResponse();
-
         this->invoke_to_fileDone(0,Svc::SendFileResponse());
-        this->component.doDispatch();
+
+        return Svc::SendFileResponse();
     }
 
     void DpCatalogTester ::

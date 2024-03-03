@@ -32,6 +32,7 @@ namespace Svc {
         m_allocatorId(0),
         m_allocator(nullptr),
         m_xmitInProgress(false),
+        m_currXmitRecord(nullptr),
         m_xmitCmdWait(false),
         m_xmitBytes(0),
         m_xmitOpCode(0),
@@ -133,6 +134,9 @@ namespace Svc {
             // read in each directory and keep track of total
             this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
             U32 filesRead = 0;
+            U32 pendingFiles = 0;
+            F64 pendingDpBytes = 0;
+
             Os::FileSystem::Status stat =
                 Os::FileSystem::readDirectory(
                     this->m_directories[dir].toChar(),
@@ -176,7 +180,7 @@ namespace Svc {
                 }
 
                 // Read DP header
-                FwNativeIntType size = Fw::DpContainer::DATA_OFFSET;
+                FwNativeIntType size = Fw::DpContainer::Header::SIZE;
 
                 stat = dpFile.read(dpBuff, size);
                 if (stat != Os::File::OP_OK) {
@@ -186,7 +190,7 @@ namespace Svc {
                 }
 
                 // if full header isn't read, something's wrong with the file, so skip
-                if (size != Fw::DpContainer::DATA_OFFSET) {
+                if (size != Fw::DpContainer::Header::SIZE) {
                     this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
                     dpFile.close();
                     continue; // maybe next file is fine
@@ -224,15 +228,28 @@ namespace Svc {
                     break;
                 }
 
+                filesRead++;
+                if (entry.record.getstate() == Fw::DpState::UNTRANSMITTED) {
+                    pendingFiles++;
+                    pendingDpBytes += entry.record.getsize();
+                }               
+
                 // make sure we haven't exceeded the limit
                 if (this->m_numDpRecords > this->m_numDpSlots) {
                     this->log_WARNING_HI_DpCatalogFull(entry.record);
                     break;
                 }
 
-            }
+            } // end for each file in a directory
 
             totalFiles += filesRead;
+
+            this->log_ACTIVITY_HI_ProcessingDirectoryComplete(
+                this->m_directories[dir],
+                totalFiles,
+                pendingFiles,
+                pendingDpBytes
+            );
 
             // check to see if catalog is full
             // that means generated products exceed the catalog size
@@ -240,9 +257,9 @@ namespace Svc {
                 this->log_WARNING_HI_CatalogFull(this->m_directories[dir]);
                 break;
             }
-        }
+        } // end for each directory
 
-
+        this->log_ACTIVITY_HI_CatalogBuildComplete();
 
         return Fw::CmdResponse::OK;
     }
@@ -267,30 +284,32 @@ namespace Svc {
         // Make sure that pointer is valid
         FW_ASSERT(this->m_sortedDpList);
 
-        Svc::SendFileRequestPortStrings::StringSize100 fileName;
-
         // Demo code: Walk through list and send first file
         for (FwSizeType record = 0; record < this->m_numDpRecords; record++) {
             if (not this->m_sortedDpList[record].sent) {
                 // make sure the entry is used
                 if (this->m_sortedDpList[record].recPtr != nullptr) {
+                    // store pointer to record for fileDone callback
+                    this->m_currXmitRecord = &this->m_sortedDpList[record];
                     // build file name
-                    fileName.format(DP_FILENAME_FORMAT,
+                    this->m_currXmitFileName.format(DP_FILENAME_FORMAT,
                         this->m_directories[this->m_sortedDpList[record].recPtr->dir].toChar(),
                         this->m_sortedDpList[record].recPtr->record.getid(),
                         this->m_sortedDpList[record].recPtr->record.gettSec(),
                         this->m_sortedDpList[record].recPtr->record.gettSub()
                     );
                     this->log_ACTIVITY_LO_SendingProduct(
-                        fileName,
+                        this->m_currXmitFileName,
                         this->m_sortedDpList[record].recPtr->record.getsize(),
                         this->m_sortedDpList[record].recPtr->record.getpriority()
                         );
-                    this->fileOut_out(0, fileName, fileName, 0, 0);
+                    this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
                     this->m_xmitBytes += this->m_sortedDpList[record].recPtr->record.getsize();
-                    // quit loop now that we found an entry
-                    break;
+                    // quit looking when we find an entry
+                    return;
                 }
+                // clean up record
+                this->m_sortedDpList[record].sent = true;
             }
         }
 
@@ -298,7 +317,8 @@ namespace Svc {
         this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
         this->m_xmitInProgress = false;
         this->m_xmitBytes = 0;
-        
+        this->m_currXmitRecord =  nullptr;
+
         if (this->m_xmitCmdWait) {
             this->m_xmitCmdWait = false;
             this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, Fw::CmdResponse::OK);
@@ -340,6 +360,11 @@ namespace Svc {
             const Svc::SendFileResponse& resp
         )
     {
+        if (this->m_currXmitRecord) {
+            this->m_currXmitRecord->sent = true;
+            this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
+        }   
+
         this->sendNextEntry();
     }
 

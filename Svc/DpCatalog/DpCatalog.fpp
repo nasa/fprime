@@ -112,23 +112,29 @@ module Svc {
 
     @ Processing directory
     event ProcessingFile (
-                            file: string size 80 @< The directory 
+                            file: string size 80 @< The file 
                           ) \
       severity activity low \
       id 2 \
       format "Processing file {}"
 
 
-    @ Processing complete
-    event ProcessingComplete (
+    @ Directory Processing complete
+    event ProcessingDirectoryComplete (
                             loc: string size 80 @< The directory 
                             total: U32 @< total data products
                             pending: U32 @< pending data products
-                            pending_bytes: U32 @< pending data product volume
+                            pending_bytes: U64 @< pending data product volume
                           ) \
       severity activity high \
       id 3 \
       format "Completed processing directory {}. Total products: {} Pending products: {} Pending bytes: {}"
+
+    @ Catalog processing complete
+    event CatalogBuildComplete \
+      severity activity high \
+      id 4 \
+      format "Catalog build complete"
 
     @ Catalog transmission started
     event CatalogXmitStarted \
