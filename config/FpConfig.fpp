@@ -12,4 +12,3 @@ type FwSizeType
 type FwTimeBaseStoreType
 type FwTimeContextStoreType
 type FwTlmPacketizeIdType
-type POINTER_CAST
