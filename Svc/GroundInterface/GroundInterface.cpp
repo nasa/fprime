@@ -82,7 +82,7 @@ namespace Svc {
   void GroundInterfaceComponentImpl ::
     schedIn_handler(
         const NATIVE_INT_TYPE portNum, /*!< The port number*/
-        NATIVE_UINT_TYPE context /*!< The call order*/
+        U32 context /*!< The call order*/
     )
   {
       // TODO: replace with a call to a buffer manager

@@ -4,15 +4,15 @@
 namespace Fw {
 
     LogStringArg::LogStringArg(const char* src) : StringBase() {
-        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     LogStringArg::LogStringArg(const StringBase& src) : StringBase() {
-        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     LogStringArg::LogStringArg(const LogStringArg& src) : StringBase() {
-        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     LogStringArg::LogStringArg()
@@ -25,7 +25,7 @@ namespace Fw {
             return *this;
         }
 
-        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
@@ -34,12 +34,12 @@ namespace Fw {
             return *this;
         }
 
-        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
     LogStringArg& LogStringArg::operator=(const char* other) {
-        Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
         return *this;
     }
 

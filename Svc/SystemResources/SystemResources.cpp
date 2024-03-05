@@ -68,7 +68,7 @@ SystemResources ::~SystemResources() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void SystemResources ::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE tick_time_hz) {
+void SystemResources ::run_handler(const NATIVE_INT_TYPE portNum, U32 tick_time_hz) {
     if (m_enable) {
         Cpu();
         Mem();

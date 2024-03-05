@@ -45,19 +45,15 @@ namespace Fw {
 #if FW_OBJECT_TO_STRING == 1 && FW_OBJECT_NAMES == 1
     void ActiveComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
         FW_ASSERT(size > 0);
-        if (snprintf(buffer, size, "ActComp: %s", this->m_objName) < 0) {
+        FW_ASSERT(buffer != nullptr);
+        PlatformIntType status = snprintf(buffer, size, "ActComp: %s", this->m_objName.toChar());
+        if (status < 0) {
             buffer[0] = 0;
         }
     }
 #endif
 
-    void ActiveComponentBase::start(NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity) {
-        this->start(static_cast<NATIVE_UINT_TYPE>(priority), static_cast<NATIVE_UINT_TYPE>(stackSize),
-                    ((cpuAffinity == -1) ? Os::Task::TASK_DEFAULT : static_cast<NATIVE_UINT_TYPE>(cpuAffinity)),
-                    static_cast<NATIVE_UINT_TYPE>(identifier));
-    }
-
-    void ActiveComponentBase::start(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
+    void ActiveComponentBase::start(Os::Task::ParamType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity, Os::Task::ParamType identifier) {
         Os::TaskString taskName;
 
 #if FW_OBJECT_NAMES == 1

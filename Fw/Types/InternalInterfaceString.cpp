@@ -4,15 +4,15 @@
 namespace Fw {
 
     InternalInterfaceString::InternalInterfaceString(const char* src) : StringBase()  {
-        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     InternalInterfaceString::InternalInterfaceString(const StringBase& src) : StringBase()  {
-        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     InternalInterfaceString::InternalInterfaceString(const InternalInterfaceString& src) : StringBase()  {
-        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     InternalInterfaceString::InternalInterfaceString() : StringBase()  {
@@ -24,7 +24,7 @@ namespace Fw {
             return *this;
         }
 
-        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
@@ -33,12 +33,12 @@ namespace Fw {
             return *this;
         }
 
-        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
     InternalInterfaceString& InternalInterfaceString::operator=(const char* other) {
-        Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
         return *this;
     }
 

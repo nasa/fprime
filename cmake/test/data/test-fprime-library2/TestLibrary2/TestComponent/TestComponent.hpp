@@ -12,7 +12,7 @@ class TestComponent : public TestComponentComponentBase
     void init(const NATIVE_INT_TYPE instance);
     ~TestComponent();
   private:
-    void schedIn_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context);
+    void schedIn_handler(NATIVE_INT_TYPE portNum, U32 context);
 };
 
 };

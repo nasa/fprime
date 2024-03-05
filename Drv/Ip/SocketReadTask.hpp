@@ -51,9 +51,9 @@ class SocketReadTask {
      */
     void startSocketTask(const Fw::StringBase &name,
                          const bool reconnect = true,
-                         const NATIVE_UINT_TYPE priority = Os::Task::TASK_DEFAULT,
-                         const NATIVE_UINT_TYPE stack = Os::Task::TASK_DEFAULT,
-                         const NATIVE_UINT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT);
+                         const Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
+                         const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
+                         const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
 
     /**
      * \brief startup the socket for communications

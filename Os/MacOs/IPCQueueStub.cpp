@@ -112,7 +112,7 @@ namespace Os {
     if(pushSucceeded) {
       // Push worked - wake up a thread that might be waiting on
       // the other end of the queue:
-      NATIVE_INT_TYPE ret = pthread_cond_signal(queueNotEmpty);
+      ret = pthread_cond_signal(queueNotEmpty);
       FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
     }
     else {
@@ -146,7 +146,7 @@ namespace Os {
 
     // If the queue is full, wait until a message is taken off the queue:
     while( queue->isFull() ) {
-      NATIVE_INT_TYPE ret = pthread_cond_wait(queueNotFull, queueLock);
+      ret = pthread_cond_wait(queueNotFull, queueLock);
       FW_ASSERT(ret == 0, errno);
     }
 
@@ -226,7 +226,7 @@ namespace Os {
 
         // Pop worked - wake up a thread that might be waiting on
         // the send end of the queue:
-        NATIVE_INT_TYPE ret = pthread_cond_signal(queueNotFull);
+        ret = pthread_cond_signal(queueNotFull);
         FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
       }
       else {
@@ -275,7 +275,7 @@ namespace Os {
 
       // If the queue is empty, wait until a message is put on the queue:
       while( queue->isEmpty() ) {
-        NATIVE_INT_TYPE ret = pthread_cond_wait(queueNotEmpty, queueLock);
+        ret = pthread_cond_wait(queueNotEmpty, queueLock);
         FW_ASSERT(ret == 0, errno);
       }
 
@@ -289,7 +289,7 @@ namespace Os {
 
         // Pop worked - wake up a thread that might be waiting on
         // the send end of the queue:
-        NATIVE_INT_TYPE ret = pthread_cond_signal(queueNotFull);
+        ret = pthread_cond_signal(queueNotFull);
         FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
       }
       else {

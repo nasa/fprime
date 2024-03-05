@@ -46,7 +46,7 @@ static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limit
 PosixFile::PosixFile(const PosixFile& other) {
     // Must properly duplicate the file handle
     this->m_handle.m_file_descriptor = ::dup(other.m_handle.m_file_descriptor);
-};
+}
 
 PosixFile& PosixFile::operator=(const PosixFile& other) {
     if (this != &other) {

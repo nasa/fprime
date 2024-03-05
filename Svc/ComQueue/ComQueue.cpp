@@ -155,7 +155,7 @@ void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& c
     }
 }
 
-void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     // Downlink the high-water marks for the Fw::ComBuffer array types
     ComQueueDepth comQueueDepth;
     for (FwSizeType i = 0; i < comQueueDepth.SIZE; i++) {

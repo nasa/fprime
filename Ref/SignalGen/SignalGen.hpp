@@ -30,7 +30,7 @@ namespace Ref {
 
         void schedIn_handler(
             NATIVE_INT_TYPE portNum, /*!< The port number*/
-            NATIVE_UINT_TYPE context /*!< The call order*/
+            U32 context /*!< The call order*/
         );
 
         void SignalGen_Settings_cmdHandler(

@@ -35,7 +35,7 @@ class TlmChan : public TlmChanComponentBase {
     // Port functions
     void TlmRecv_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val);
     void TlmGet_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val);
-    void Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context);
+    void Run_handler(NATIVE_INT_TYPE portNum, U32 context);
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/

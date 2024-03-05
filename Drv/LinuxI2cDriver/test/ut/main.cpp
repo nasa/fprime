@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
                 addr = strtoul(optarg,0,0);
                 break;
             case 'd':
-                Fw::StringUtils::string_copy(device, optarg, sizeof(device));
+                (void) Fw::StringUtils::string_copy(device, optarg, sizeof(device));
                 break;
             default:
                 printf("test_ut %s\n",argv[0],help);

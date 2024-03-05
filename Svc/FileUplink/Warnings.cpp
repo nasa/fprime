@@ -19,7 +19,7 @@ namespace Svc {
   {
     this->m_fileUplink->log_WARNING_HI_InvalidReceiveMode(
         static_cast<U32>(packetType),
-        static_cast<U32>(m_fileUplink->receiveMode)
+        static_cast<U32>(m_fileUplink->m_receiveMode)
     );
     this->warning();
   }
@@ -71,7 +71,7 @@ namespace Svc {
     )
   {
     this->m_fileUplink->log_WARNING_HI_BadChecksum(
-        this->m_fileUplink->file.name,
+        this->m_fileUplink->m_file.name,
         computed,
         read
     );
