@@ -134,14 +134,14 @@ namespace Svc {
             printf("Error opening file %s: status: %d\n",fileName.toChar(),stat);
             return;
         }
-        NATIVE_INT_TYPE size = Fw::DpContainer::Header::SIZE;
+        FwSignedSizeType size = Fw::DpContainer::Header::SIZE;
         stat = dpFile.write(hdrData,size);
         if (stat != Os::File::Status::OP_OK) {
             printf("Error writing DP file header %s: status: %d\n",fileName.toChar(),stat);
             return;
         }
         if (static_cast<FwSizeType>(size) != Fw::DpContainer::Header::SIZE) {
-            printf("Dp file header %s write size didn't match. Req: %d Act: %d\n",fileName.toChar(),Fw::DpContainer::Header::SIZE,size);
+            printf("Dp file header %s write size didn't match. Req: %lu Act: %lu\n",fileName.toChar(),Fw::DpContainer::Header::SIZE,size);
             return;
         }
         size = dataSize;
@@ -151,7 +151,7 @@ namespace Svc {
             return;
         }
         if (static_cast<FwSizeType>(size) != dataSize) {
-            printf("Dp file header %s write size didn't match. Req: %d Act: %d\n",fileName.toChar(),dataSize,size);
+            printf("Dp file header %s write size didn't match. Req: %lu Act: %lu\n",fileName.toChar(),dataSize,size);
             return;
         }
         dpFile.close();
