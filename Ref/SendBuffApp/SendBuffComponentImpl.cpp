@@ -93,7 +93,7 @@ namespace Ref {
 
     void SendBuffImpl::toString(char* str, I32 buffer_size) {
 #if FW_OBJECT_NAMES == 1
-        (void) snprintf(str, buffer_size, "Send Buff Component: %s: count: %d Buffs: %d", this->m_objName,
+        (void) snprintf(str, buffer_size, "Send Buff Component: %s: count: %d Buffs: %d", this->m_objName.toChar(),
                         (int) this->m_invocations, (int) this->m_buffsSent);
         str[buffer_size-1] = 0;
 #else
