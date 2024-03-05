@@ -74,12 +74,12 @@ TEST(NominalManual, FiveDp) {
     dpSet[4].dataSize = 2;
     dpSet[4].dir = dirs[0].toChar();
 
-    // tester.readDps(
-    //     dirs,
-    //     2,
-    //     dpSet,
-    //     5
-    // );
+    tester.readDps(
+        dirs,
+        2,
+        dpSet,
+        5
+    );
 }
 
 int main(int argc, char** argv) {

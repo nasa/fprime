@@ -228,7 +228,6 @@ namespace Svc {
                     break;
                 }
 
-                filesRead++;
                 if (entry.record.getstate() == Fw::DpState::UNTRANSMITTED) {
                     pendingFiles++;
                     pendingDpBytes += entry.record.getsize();
