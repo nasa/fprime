@@ -1,6 +1,7 @@
 var class_os_1_1_task =
 [
     [ "TaskRoutineWrapper", "struct_os_1_1_task_1_1_task_routine_wrapper.html", "struct_os_1_1_task_1_1_task_routine_wrapper" ],
+    [ "ParamType", "class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c", null ],
     [ "taskRoutine", "class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476", null ],
     [ "TaskStatus", "class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f", [
       [ "TASK_OK", "class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa38fdf68e513d964c543e6082ffde55b9", null ],
@@ -15,8 +16,7 @@ var class_os_1_1_task =
     ] ],
     [ "Task", "class_os_1_1_task.html#a2fc6a1e3384708525cbeea8cc3e83ee1", null ],
     [ "~Task", "class_os_1_1_task.html#a31afff91113af5f5eaab6fc26cdf7e98", null ],
-    [ "delay", "class_os_1_1_task.html#a215cf7a77e5b2d62b393456852943a31", null ],
-    [ "DEPRECATED", "class_os_1_1_task.html#acf0e254830e0fd2623085804399a4d76", null ],
+    [ "delay", "class_os_1_1_task.html#a53c32a17babf73d6cd8122101cea387f", null ],
     [ "getIdentifier", "class_os_1_1_task.html#a2e857d70bfe3348f9e45ca1d6f5f17f5", null ],
     [ "getNumTasks", "class_os_1_1_task.html#ae58720dc3a411ca708e1acd9ade67f94", null ],
     [ "getOsIdentifier", "class_os_1_1_task.html#a907c01c92a37d86787552e2c98eb235c", null ],
@@ -27,8 +27,8 @@ var class_os_1_1_task =
     [ "registerTaskRegistry", "class_os_1_1_task.html#ab83390a02f2e6732ee1a2cdd0efc9fcb", null ],
     [ "resume", "class_os_1_1_task.html#aa2c801dd8d206c643031b0d008e3eeb5", null ],
     [ "setStarted", "class_os_1_1_task.html#ac3717fd77faef05bdd148dc54baf2038", null ],
-    [ "start", "class_os_1_1_task.html#ad310818e9faa33e1a8f930b673aa7e45", null ],
+    [ "start", "class_os_1_1_task.html#aacd50ec68aa0c8d125de21e8ce0584ae", null ],
     [ "suspend", "class_os_1_1_task.html#a54275e1d4c04ce4a9d4a0248f90a37ca", null ],
     [ "wasSuspended", "class_os_1_1_task.html#a1d7bd874ef0b9428c62715905f592aba", null ],
-    [ "TASK_DEFAULT", "class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632", null ]
+    [ "TASK_DEFAULT", "class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd", null ]
 ];

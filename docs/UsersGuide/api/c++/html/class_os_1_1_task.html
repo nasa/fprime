@@ -123,6 +123,8 @@ Public Types</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:aa1922f0444b26ffce3526353e291af8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1075451d5147f714b5affbfbca530b4c"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> = <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></td></tr>
+<tr class="separator:a1075451d5147f714b5affbfbca530b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c2417f2053779690cfa1f0f1062d476"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">taskRoutine</a>) (void *ptr)</td></tr>
 <tr class="memdesc:a6c2417f2053779690cfa1f0f1062d476"><td class="mdescLeft">&#160;</td><td class="mdescRight">prototype for task routine started in task context  <a href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">More...</a><br /></td></tr>
 <tr class="separator:a6c2417f2053779690cfa1f0f1062d476"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -135,12 +137,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a31afff91113af5f5eaab6fc26cdf7e98"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a31afff91113af5f5eaab6fc26cdf7e98">~Task</a> ()</td></tr>
 <tr class="memdesc:a31afff91113af5f5eaab6fc26cdf7e98"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor  <a href="class_os_1_1_task.html#a31afff91113af5f5eaab6fc26cdf7e98">More...</a><br /></td></tr>
 <tr class="separator:a31afff91113af5f5eaab6fc26cdf7e98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad310818e9faa33e1a8f930b673aa7e45"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#ad310818e9faa33e1a8f930b673aa7e45">start</a> (const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, <a class="el" href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">taskRoutine</a> routine, void *arg, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> priority=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a>, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> stackSize=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a>, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> cpuAffinity=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a>, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> identifier=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a>)</td></tr>
-<tr class="memdesc:ad310818e9faa33e1a8f930b673aa7e45"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the task  <a href="class_os_1_1_task.html#ad310818e9faa33e1a8f930b673aa7e45">More...</a><br /></td></tr>
-<tr class="separator:ad310818e9faa33e1a8f930b673aa7e45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf0e254830e0fd2623085804399a4d76"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#acf0e254830e0fd2623085804399a4d76">DEPRECATED</a> (<a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a> <a class="el" href="class_os_1_1_task.html#ad310818e9faa33e1a8f930b673aa7e45">start</a>(const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> identifier, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> priority, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> stackSize, <a class="el" href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">taskRoutine</a> routine, void *arg, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> cpuAffinity=static_cast&lt; <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &gt;(<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a>)), &quot;Please switch to <a class="el" href="class_os_1_1_task.html#ad310818e9faa33e1a8f930b673aa7e45">start</a>(<a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, <a class="el" href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">taskRoutine</a> routine, void* arg, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> priority, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> stackSize, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> cpuAffinity, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> identifier)&quot;)</td></tr>
-<tr class="memdesc:acf0e254830e0fd2623085804399a4d76"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the task  <a href="class_os_1_1_task.html#acf0e254830e0fd2623085804399a4d76">More...</a><br /></td></tr>
-<tr class="separator:acf0e254830e0fd2623085804399a4d76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacd50ec68aa0c8d125de21e8ce0584ae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#aacd50ec68aa0c8d125de21e8ce0584ae">start</a> (const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, <a class="el" href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">taskRoutine</a> routine, void *arg, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> priority=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> stackSize=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> cpuAffinity=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> identifier=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a>)</td></tr>
+<tr class="memdesc:aacd50ec68aa0c8d125de21e8ce0584ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the task  <a href="class_os_1_1_task.html#aacd50ec68aa0c8d125de21e8ce0584ae">More...</a><br /></td></tr>
+<tr class="separator:aacd50ec68aa0c8d125de21e8ce0584ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e857d70bfe3348f9e45ca1d6f5f17f5"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a2e857d70bfe3348f9e45ca1d6f5f17f5">getIdentifier</a> ()</td></tr>
 <tr class="memdesc:a2e857d70bfe3348f9e45ca1d6f5f17f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the identifier for the task  <a href="class_os_1_1_task.html#a2e857d70bfe3348f9e45ca1d6f5f17f5">More...</a><br /></td></tr>
 <tr class="separator:a2e857d70bfe3348f9e45ca1d6f5f17f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,9 +171,9 @@ Public Member Functions</h2></td></tr>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a907c01c92a37d86787552e2c98eb235c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_task_id.html">TaskId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a907c01c92a37d86787552e2c98eb235c">getOsIdentifier</a> ()</td></tr>
 <tr class="separator:a907c01c92a37d86787552e2c98eb235c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a215cf7a77e5b2d62b393456852943a31"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a215cf7a77e5b2d62b393456852943a31">delay</a> (<a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> msecs)</td></tr>
-<tr class="memdesc:a215cf7a77e5b2d62b393456852943a31"><td class="mdescLeft">&#160;</td><td class="mdescRight">delay the task  <a href="class_os_1_1_task.html#a215cf7a77e5b2d62b393456852943a31">More...</a><br /></td></tr>
-<tr class="separator:a215cf7a77e5b2d62b393456852943a31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53c32a17babf73d6cd8122101cea387f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a53c32a17babf73d6cd8122101cea387f">delay</a> (<a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> msecs)</td></tr>
+<tr class="memdesc:a53c32a17babf73d6cd8122101cea387f"><td class="mdescLeft">&#160;</td><td class="mdescRight">delay the task  <a href="class_os_1_1_task.html#a53c32a17babf73d6cd8122101cea387f">More...</a><br /></td></tr>
+<tr class="separator:a53c32a17babf73d6cd8122101cea387f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae58720dc3a411ca708e1acd9ade67f94"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#ae58720dc3a411ca708e1acd9ade67f94">getNumTasks</a> ()</td></tr>
 <tr class="separator:ae58720dc3a411ca708e1acd9ade67f94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab83390a02f2e6732ee1a2cdd0efc9fcb"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#ab83390a02f2e6732ee1a2cdd0efc9fcb">registerTaskRegistry</a> (<a class="el" href="class_os_1_1_task_registry.html">TaskRegistry</a> *registry)</td></tr>
@@ -182,14 +181,30 @@ Static Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a5b35420ba0071c894814ca2441ee7632"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a> = std::numeric_limits&lt;<a class="el" href="default_types_8hpp.html#a45ae2bb211d747bffcf4d3071ecdceef">PlatformUIntType</a>&gt;::max()</td></tr>
-<tr class="separator:a5b35420ba0071c894814ca2441ee7632"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a534c529271f0d5501b28ca275b905ffd"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a> = std::numeric_limits&lt;<a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Task::ParamType</a>&gt;::max()</td></tr>
+<tr class="separator:a534c529271f0d5501b28ca275b905ffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>forward declaration </p>
 
 <p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00015">15</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a1075451d5147f714b5affbfbca530b4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1075451d5147f714b5affbfbca530b4c">&#9670;&nbsp;</a></span>ParamType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Os::Task::ParamType</a> =  <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00017">17</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a6c2417f2053779690cfa1f0f1062d476"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6c2417f2053779690cfa1f0f1062d476">&#9670;&nbsp;</a></span>taskRoutine</h2>
 
@@ -204,7 +219,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>prototype for task routine started in task context </p>
 
-<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00030">30</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00031">31</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
 
 </div>
 </div>
@@ -241,7 +256,7 @@ Static Public Attributes</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00018">18</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00019">19</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
 
 </div>
 </div>
@@ -297,8 +312,8 @@ Static Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a215cf7a77e5b2d62b393456852943a31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a215cf7a77e5b2d62b393456852943a31">&#9670;&nbsp;</a></span>delay()</h2>
+<a id="a53c32a17babf73d6cd8122101cea387f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53c32a17babf73d6cd8122101cea387f">&#9670;&nbsp;</a></span>delay()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -309,7 +324,7 @@ Static Public Attributes</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Task::TaskStatus</a> Os::Task::delay </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
           <td class="paramname"><em>msecs</em></td><td>)</td>
           <td></td>
         </tr>
@@ -324,36 +339,6 @@ Static Public Attributes</h2></td></tr>
 <p>delay the task </p>
 
 <p class="definition">Definition at line <a class="el" href="baremetal_2_task_8cpp_source.html#l00043">43</a> of file <a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a>.</p>
-
-</div>
-</div>
-<a id="acf0e254830e0fd2623085804399a4d76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf0e254830e0fd2623085804399a4d76">&#9670;&nbsp;</a></span>DEPRECATED()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Os::Task::DEPRECATED </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a> &#160;</td>
-          <td class="paramname"><em>start</em>const Fw::StringBase &amp;name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void *arg, NATIVE_INT_TYPE cpuAffinity=static_cast&lt; NATIVE_INT_TYPE &gt;(TASK_DEFAULT), </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&quot;Please switch to <a class="el" href="class_os_1_1_task.html#ad310818e9faa33e1a8f930b673aa7e45">start</a>(<a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, <a class="el" href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">taskRoutine</a> routine, void* arg, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> priority, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> stackSize, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> cpuAffinity, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> identifier)&quot;&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>start the task </p>
 
 </div>
 </div>
@@ -587,8 +572,8 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ad310818e9faa33e1a8f930b673aa7e45"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad310818e9faa33e1a8f930b673aa7e45">&#9670;&nbsp;</a></span>start()</h2>
+<a id="aacd50ec68aa0c8d125de21e8ce0584ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacd50ec68aa0c8d125de21e8ce0584ae">&#9670;&nbsp;</a></span>start()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -614,26 +599,26 @@ Static Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>priority</em> = <code><a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a></code>, </td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
+          <td class="paramname"><em>priority</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>stackSize</em> = <code><a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a></code>, </td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
+          <td class="paramname"><em>stackSize</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>cpuAffinity</em> = <code><a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a></code>, </td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
+          <td class="paramname"><em>cpuAffinity</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>identifier</em> = <code><a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">TASK_DEFAULT</a></code>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
+          <td class="paramname"><em>identifier</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -693,8 +678,8 @@ Static Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a5b35420ba0071c894814ca2441ee7632"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b35420ba0071c894814ca2441ee7632">&#9670;&nbsp;</a></span>TASK_DEFAULT</h2>
+<a id="a534c529271f0d5501b28ca275b905ffd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a534c529271f0d5501b28ca275b905ffd">&#9670;&nbsp;</a></span>TASK_DEFAULT</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -703,7 +688,7 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> Os::Task::TASK_DEFAULT = std::numeric_limits&lt;<a class="el" href="default_types_8hpp.html#a45ae2bb211d747bffcf4d3071ecdceef">PlatformUIntType</a>&gt;::max()</td>
+          <td class="memname">const <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Task::ParamType</a> Os::Task::TASK_DEFAULT = std::numeric_limits&lt;<a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Task::ParamType</a>&gt;::max()</td>
         </tr>
       </table>
   </td>
@@ -713,7 +698,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00017">17</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00018">18</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
 
 </div>
 </div>

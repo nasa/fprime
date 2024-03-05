@@ -147,6 +147,7 @@ var annotated_dup =
       [ "MallocAllocator", "class_fw_1_1_malloc_allocator.html", "class_fw_1_1_malloc_allocator" ],
       [ "MemAllocator", "class_fw_1_1_mem_allocator.html", "class_fw_1_1_mem_allocator" ],
       [ "MmapAllocator", "class_fw_1_1_mmap_allocator.html", "class_fw_1_1_mmap_allocator" ],
+      [ "ObjectName", "class_fw_1_1_object_name.html", "class_fw_1_1_object_name" ],
       [ "PolyType", "class_fw_1_1_poly_type.html", "class_fw_1_1_poly_type" ],
       [ "SerialBuffer", "class_fw_1_1_serial_buffer.html", "class_fw_1_1_serial_buffer" ],
       [ "Serializable", "class_fw_1_1_serializable.html", "class_fw_1_1_serializable" ],

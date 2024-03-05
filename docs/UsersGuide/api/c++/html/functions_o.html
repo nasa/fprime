@@ -90,6 +90,9 @@ $(document).ready(function(){initNavTree('functions_o.html',''); initResizable()
 <li>ObjBase()
 : <a class="el" href="class_fw_1_1_obj_base.html#a682b1144919c83039d4b8ef7e3a2dbb2">Fw::ObjBase</a>
 </li>
+<li>ObjectName()
+: <a class="el" href="class_fw_1_1_object_name.html#a4325b193d47b49058557724e1f0a1208">Fw::ObjectName</a>
+</li>
 <li>OFF
 : <a class="el" href="class_fw_1_1_on.html#a34995a573734057302e9b003d4f5f39fa6201ab1aa7dfa41b49f8112d3c791c1d">Fw::On</a>
 </li>
@@ -251,18 +254,15 @@ $(document).ready(function(){initNavTree('functions_o.html',''); initResizable()
 , <a class="el" href="class_drv_1_1_linux_uart_driver.html#a244a7d081a0bf1019784a00738467842">Drv::LinuxUartDriver</a>
 , <a class="el" href="class_drv_1_1_socket_read_task.html#abae0c4c62dbebd9c2e418b49c2760561">Drv::SocketReadTask</a>
 </li>
-<li>Open()
-: <a class="el" href="class_fw_1_1_open.html#a4eb4bfd36fb844a3f1bdc520220fe4e8">Fw::Open</a>
-</li>
 <li>OPEN
 : <a class="el" href="class_fw_1_1_open.html#a9b0d7924c48af3f4fe066b52432267b0a5d0e7368d13171a27d0f87fefa700912">Fw::Open</a>
 </li>
 <li>Open()
-: <a class="el" href="class_fw_1_1_open.html#a429769fd6e2b386cf0ea669722907920">Fw::Open</a>
+: <a class="el" href="class_fw_1_1_open.html#a2ebd120e1a7b44d87d2d01ab5b190a9e">Fw::Open</a>
 </li>
 <li>open()
 : <a class="el" href="class_os_1_1_directory.html#a9ad66477c3128adf4fb1b6275f63a947">Os::Directory</a>
-, <a class="el" href="class_os_1_1_file.html#a3b90f5bbc680d99affaeaf202a64fc6a">Os::File</a>
+, <a class="el" href="class_os_1_1_file.html#aa4e12e12643686ff6a4c0331a1b05440">Os::File</a>
 , <a class="el" href="class_os_1_1_file_interface.html#a8d81733421412e1b86b67e07c6ea93b2">Os::FileInterface</a>
 , <a class="el" href="class_os_1_1_posix_1_1_file_1_1_posix_file.html#ad3e2cc8e275fd16172b84b084bc47147">Os::Posix::File::PosixFile</a>
 , <a class="el" href="class_os_1_1_stub_1_1_file_1_1_stub_file.html#a66bfb59d78870e92785dccbe28652657">Os::Stub::File::StubFile</a>
@@ -419,14 +419,14 @@ $(document).ready(function(){initNavTree('functions_o.html',''); initResizable()
 : <a class="el" href="class_c_f_d_p_1_1_checksum.html#a0d2b908e566619d55d021d830ad8b8f6">CFDP::Checksum</a>
 , <a class="el" href="class_drv_1_1_data_buffer.html#a2c9f28fb02012fff74dbc627e246acf7">Drv::DataBuffer</a>
 , <a class="el" href="class_drv_1_1_i2c_status.html#a9a451f02c03ec4f88137be374168fe27">Drv::I2cStatus</a>
-, <a class="el" href="class_drv_1_1_poll_status.html#a956a14fade8ac51432552db129d7ad1a">Drv::PollStatus</a>
+, <a class="el" href="class_drv_1_1_poll_status.html#af8e02684fccb9a0e40f078517d7350a2">Drv::PollStatus</a>
 , <a class="el" href="class_drv_1_1_recv_status.html#aebdedd3eb0613886a61ad8b425c8fcf6">Drv::RecvStatus</a>
 , <a class="el" href="class_drv_1_1_send_status.html#a13f9e35dd5b0ac5cf43abd8eb5885cee">Drv::SendStatus</a>
 , <a class="el" href="class_fw_1_1_active.html#a9713813bce5a78b45024d10a2f29c6f5">Fw::Active</a>
 , <a class="el" href="class_fw_1_1_buffer.html#a930468c179a636be62d5e61e52e9ca2d">Fw::Buffer</a>
 , <a class="el" href="class_fw_1_1_cmd_arg_buffer.html#abc5985c427e979f8bfc3a8091a46e18a">Fw::CmdArgBuffer</a>
 , <a class="el" href="class_fw_1_1_cmd_response.html#a6f5d825d160f1c9ccedbc88951f13ec5">Fw::CmdResponse</a>
-, <a class="el" href="class_fw_1_1_cmd_string_arg.html#a3536df1439ec36eaec9852b4ac391f0c">Fw::CmdStringArg</a>
+, <a class="el" href="class_fw_1_1_cmd_string_arg.html#a6e506b6f349e6fef259224dba5b4e145">Fw::CmdStringArg</a>
 , <a class="el" href="class_fw_1_1_com_buffer.html#a28f1bff5009ec0c703fbce577b41751c">Fw::ComBuffer</a>
 , <a class="el" href="class_fw_1_1_deserial_status.html#a5871574830e662e1209557b1eef3de6d">Fw::DeserialStatus</a>
 , <a class="el" href="class_fw_1_1_direction.html#ab28dcacb061772eac4c3b6bca20d3dc8">Fw::Direction</a>
@@ -437,29 +437,30 @@ $(document).ready(function(){initNavTree('functions_o.html',''); initResizable()
 , <a class="el" href="class_fw_1_1_health.html#af187d5332c8226704525a082581dfc9a">Fw::Health</a>
 , <a class="el" href="class_fw_1_1_internal_interface_string.html#ac83cc28e72c4ef39f75cdb1dd0e1fa53">Fw::InternalInterfaceString</a>
 , <a class="el" href="class_fw_1_1_log_buffer.html#ad4b87c8a5edd855217819d3f5310dd67">Fw::LogBuffer</a>
-, <a class="el" href="class_fw_1_1_logic.html#a0ef44895d2eaf0e31343ba1951078c4a">Fw::Logic</a>
+, <a class="el" href="class_fw_1_1_logic.html#aeed1acc31037b3d467a5b63c90afbc61">Fw::Logic</a>
 , <a class="el" href="class_fw_1_1_log_severity.html#aeb9d5c823c4354b6f4a3096689a71fe1">Fw::LogSeverity</a>
 , <a class="el" href="class_fw_1_1_log_string_arg.html#a3119a2f3524ce3a71aa7f9e6eec6ccb7">Fw::LogStringArg</a>
+, <a class="el" href="class_fw_1_1_object_name.html#aa87c5ae32d62c7a4d3202cafd40be897">Fw::ObjectName</a>
 , <a class="el" href="class_fw_1_1_on.html#a123a28750baa2af30ca803b27b9914b8">Fw::On</a>
 , <a class="el" href="class_fw_1_1_open.html#aaaedece52d934ac0a2a70318e8cb7105">Fw::Open</a>
 , <a class="el" href="class_fw_1_1_param_buffer.html#a2f452f7f5884e3524cfaec5edb314bb8">Fw::ParamBuffer</a>
-, <a class="el" href="class_fw_1_1_param_string.html#ac6b9aa8328521cdb4b632f16705fa55f">Fw::ParamString</a>
+, <a class="el" href="class_fw_1_1_param_string.html#a374b80890adc2cbf7b7533bba488d731">Fw::ParamString</a>
 , <a class="el" href="class_fw_1_1_param_valid.html#a130f2413c2f69073932fb2cf3e8f4042">Fw::ParamValid</a>
-, <a class="el" href="class_fw_1_1_poly_type.html#aedcf927799431a69fa6b374d8234cfd5">Fw::PolyType</a>
+, <a class="el" href="class_fw_1_1_poly_type.html#a0234f510e9e4855b9032e7c1cb77ca7c">Fw::PolyType</a>
 , <a class="el" href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">Fw::SerializeBufferBase</a>
 , <a class="el" href="class_fw_1_1_serial_status.html#a32cd193ce6494615e44f40b1c101c363">Fw::SerialStatus</a>
-, <a class="el" href="class_fw_1_1_string.html#ae1f7088ed92ca381daf3c142b1c7bb72">Fw::String</a>
-, <a class="el" href="class_fw_1_1_string_base.html#a9eaeab9dd03e0c4487f87d9ee61da5ef">Fw::StringBase</a>
-, <a class="el" href="class_fw_1_1_success.html#ae761d53b0afd1b2b154b41534ca64f43">Fw::Success</a>
-, <a class="el" href="class_fw_1_1_text_log_string.html#ace984233a603d13fee48c7977999a14f">Fw::TextLogString</a>
+, <a class="el" href="class_fw_1_1_string.html#a339feb76ec2684d9200c7b9c791d90b9">Fw::String</a>
+, <a class="el" href="class_fw_1_1_string_base.html#ab51da11fe6593b0cf6a7ed36e4a9eece">Fw::StringBase</a>
+, <a class="el" href="class_fw_1_1_success.html#a37c6d5f6adbd78bd73efd9209f50ee71">Fw::Success</a>
+, <a class="el" href="class_fw_1_1_text_log_string.html#abade31e76b2953434b3831558ba1b5eb">Fw::TextLogString</a>
 , <a class="el" href="class_fw_1_1_time.html#a2f274b1a8ad1a7fe62131a0316750f24">Fw::Time</a>
 , <a class="el" href="class_fw_1_1_tlm_buffer.html#a5bb697b60c8f14b040746404593a4ec3">Fw::TlmBuffer</a>
-, <a class="el" href="class_fw_1_1_tlm_string.html#adc0a0f0aa3f92ca742c298681811e1ef">Fw::TlmString</a>
+, <a class="el" href="class_fw_1_1_tlm_string.html#ab060c551d006ad6fdb65767907fc22a7">Fw::TlmString</a>
 , <a class="el" href="class_os_1_1_file.html#af708a2bd74571b5cdf8a2e1bd6ab5ac0">Os::File</a>
-, <a class="el" href="class_os_1_1_file_mode.html#ae74430d931efc4a6df236865eb87b07d">Os::FileMode</a>
+, <a class="el" href="class_os_1_1_file_mode.html#a2c1577ca898f2e26e5c2f0769bc3808c">Os::FileMode</a>
 , <a class="el" href="class_os_1_1_file_status.html#a960d9c8a9d1b3f0bff9ffde8d4c6bc00">Os::FileStatus</a>
 , <a class="el" href="class_os_1_1_posix_1_1_file_1_1_posix_file.html#a8ff622bf5eb6e27d7cc4c7547329f03b">Os::Posix::File::PosixFile</a>
-, <a class="el" href="class_os_1_1_queue_string.html#a58afff0ffe0ab1d61abb90b878ce1fe3">Os::QueueString</a>
+, <a class="el" href="class_os_1_1_queue_string.html#a89c5b12064f3e5009c33a2a22eb8741c">Os::QueueString</a>
 , <a class="el" href="class_os_1_1_task_string.html#a1b9ee2de65b2f4d38049df17f0aa25c6">Os::TaskString</a>
 , <a class="el" href="class_svc_1_1_active_logger___enabled.html#abaf11211439780c95ffc43349144c371">Svc::ActiveLogger_Enabled</a>
 , <a class="el" href="class_svc_1_1_active_logger___filter_severity.html#aeddd89074d1525ba3e80c7ac604bbf91">Svc::ActiveLogger_FilterSeverity</a>

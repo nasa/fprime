@@ -357,6 +357,7 @@ var hierarchy =
         [ "Fw::EightyCharString", "class_fw_1_1_eighty_char_string.html", null ],
         [ "Fw::InternalInterfaceString", "class_fw_1_1_internal_interface_string.html", null ],
         [ "Fw::LogStringArg", "class_fw_1_1_log_string_arg.html", null ],
+        [ "Fw::ObjectName", "class_fw_1_1_object_name.html", null ],
         [ "Fw::ParamString", "class_fw_1_1_param_string.html", null ],
         [ "Fw::String", "class_fw_1_1_string.html", null ],
         [ "Fw::TextLogString", "class_fw_1_1_text_log_string.html", null ],

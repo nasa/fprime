@@ -1,5 +1,13 @@
 var NAVTREEINDEX7 =
 {
+"svc_active_logger_component.html#autotoc_md403":[12,1,0,2,4],
+"svc_active_logger_component.html#autotoc_md404":[12,1,0,3],
+"svc_active_logger_component.html#autotoc_md405":[12,1,0,4],
+"svc_active_logger_component.html#autotoc_md406":[12,1,0,5],
+"svc_active_logger_component.html#autotoc_md407":[12,1,0,6],
+"svc_active_rate_group_component.html":[12,2],
+"svc_active_rate_group_component.html#autotoc_md408":[12,2,0],
+"svc_active_rate_group_component.html#autotoc_md409":[12,2,0,0],
 "svc_active_rate_group_component.html#autotoc_md410":[12,2,0,1],
 "svc_active_rate_group_component.html#autotoc_md411":[12,2,0,2],
 "svc_active_rate_group_component.html#autotoc_md412":[12,2,0,2,0],
@@ -241,13 +249,5 @@ var NAVTREEINDEX7 =
 "svc_dp_manager_component.html#autotoc_md658":[17,0,4,0,0],
 "svc_dp_manager_component.html#autotoc_md659":[17,0,4,0,1],
 "svc_dp_manager_component.html#autotoc_md660":[17,0,4,0,2],
-"svc_dp_manager_component.html#autotoc_md661":[17,0,4,1],
-"svc_dp_manager_component.html#autotoc_md662":[17,0,4,1,0],
-"svc_dp_manager_component.html#autotoc_md663":[17,0,4,1,1],
-"svc_dp_manager_component.html#autotoc_md664":[17,0,4,1,2],
-"svc_dp_writer_component.html":[18],
-"svc_dp_writer_component.html#autotoc_md665":[18,0],
-"svc_dp_writer_component.html#autotoc_md666":[18,0,0],
-"svc_dp_writer_component.html#autotoc_md667":[18,0,1],
-"svc_dp_writer_component.html#autotoc_md668":[18,0,2]
+"svc_dp_manager_component.html#autotoc_md661":[17,0,4,1]
 };

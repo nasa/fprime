@@ -132,7 +132,7 @@ Svc::ActiveRateGroup Component</h1>
 <p>The <code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> component has one input port that is called to wake up the task to execute one cycle. <br  />
 </p>
 <p>A set of context values are passed in as an array to the configure function:</p>
-<div class="fragment"><div class="line">void configure(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts);</div>
+<div class="fragment"><div class="line">void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts);</div>
 </div><!-- fragment --><p>A context value can be used by a component to discriminate between more than one call in the rate group.</p>
 <p>The task of the component calls the output ports in order, passing the context from the context list as the port argument.</p>
 <p>The component sets a flag when the cycle port is invoked. At the beginning of the rate group execution, the component clears the flag. If it detects that it has been set again at the end of the rate group cycle, it will declare a cycle slip, send an event, and increase the cycle slip counters.</p>

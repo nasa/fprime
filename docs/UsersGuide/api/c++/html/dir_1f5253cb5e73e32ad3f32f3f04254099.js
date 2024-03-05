@@ -33,6 +33,10 @@ var dir_1f5253cb5e73e32ad3f32f3f04254099 =
     [ "MmapAllocator.hpp", "mmap_allocator_8hpp.html", [
       [ "MmapAllocator", "class_fw_1_1_mmap_allocator.html", "class_fw_1_1_mmap_allocator" ]
     ] ],
+    [ "ObjectName.cpp", "object_name_8cpp.html", null ],
+    [ "ObjectName.hpp", "object_name_8hpp.html", [
+      [ "ObjectName", "class_fw_1_1_object_name.html", "class_fw_1_1_object_name" ]
+    ] ],
     [ "PolyType.cpp", "poly_type_8cpp.html", "_poly_type_8cpp" ],
     [ "PolyType.hpp", "poly_type_8hpp.html", [
       [ "PolyType", "class_fw_1_1_poly_type.html", "class_fw_1_1_poly_type" ]

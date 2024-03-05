@@ -212,18 +212,18 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ab4b81bf7527d68c9fae942cf40e65448"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer_component_base.html#ab4b81bf7527d68c9fae942cf40e65448">framedIn_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;recvBuffer, const <a class="el" href="class_drv_1_1_recv_status.html">Drv::RecvStatus</a> &amp;recvStatus)=0</td></tr>
 <tr class="memdesc:ab4b81bf7527d68c9fae942cf40e65448"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port framedIn.  <a href="class_svc_1_1_deframer_component_base.html#ab4b81bf7527d68c9fae942cf40e65448">More...</a><br /></td></tr>
 <tr class="separator:ab4b81bf7527d68c9fae942cf40e65448"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70155d2c18e842e449ae937343c4fb96"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer_component_base.html#a70155d2c18e842e449ae937343c4fb96">schedIn_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> context)=0</td></tr>
-<tr class="memdesc:a70155d2c18e842e449ae937343c4fb96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port schedIn.  <a href="class_svc_1_1_deframer_component_base.html#a70155d2c18e842e449ae937343c4fb96">More...</a><br /></td></tr>
-<tr class="separator:a70155d2c18e842e449ae937343c4fb96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5ac49679f38540183154a49dda89c4e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer_component_base.html#af5ac49679f38540183154a49dda89c4e">schedIn_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context)=0</td></tr>
+<tr class="memdesc:af5ac49679f38540183154a49dda89c4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port schedIn.  <a href="class_svc_1_1_deframer_component_base.html#af5ac49679f38540183154a49dda89c4e">More...</a><br /></td></tr>
+<tr class="separator:af5ac49679f38540183154a49dda89c4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cc7fd7102b0a75da1e159b9f1197210"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer_component_base.html#a8cc7fd7102b0a75da1e159b9f1197210">cmdResponseIn_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, U32 cmdSeq, const <a class="el" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> &amp;response)</td></tr>
 <tr class="memdesc:a8cc7fd7102b0a75da1e159b9f1197210"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port cmdResponseIn.  <a href="class_svc_1_1_deframer_component_base.html#a8cc7fd7102b0a75da1e159b9f1197210">More...</a><br /></td></tr>
 <tr class="separator:a8cc7fd7102b0a75da1e159b9f1197210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a781e3071005cdcb9de678e7183b4d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer_component_base.html#a7a781e3071005cdcb9de678e7183b4d3">framedIn_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;recvBuffer, const <a class="el" href="class_drv_1_1_recv_status.html">Drv::RecvStatus</a> &amp;recvStatus)</td></tr>
 <tr class="memdesc:a7a781e3071005cdcb9de678e7183b4d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port framedIn.  <a href="class_svc_1_1_deframer_component_base.html#a7a781e3071005cdcb9de678e7183b4d3">More...</a><br /></td></tr>
 <tr class="separator:a7a781e3071005cdcb9de678e7183b4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31544ccb6a586dc22a331f122a7f67e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer_component_base.html#a31544ccb6a586dc22a331f122a7f67e5">schedIn_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> context)</td></tr>
-<tr class="memdesc:a31544ccb6a586dc22a331f122a7f67e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port schedIn.  <a href="class_svc_1_1_deframer_component_base.html#a31544ccb6a586dc22a331f122a7f67e5">More...</a><br /></td></tr>
-<tr class="separator:a31544ccb6a586dc22a331f122a7f67e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a563981458dca6a695866ec91ebec6a99"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer_component_base.html#a563981458dca6a695866ec91ebec6a99">schedIn_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context)</td></tr>
+<tr class="memdesc:a563981458dca6a695866ec91ebec6a99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port schedIn.  <a href="class_svc_1_1_deframer_component_base.html#a563981458dca6a695866ec91ebec6a99">More...</a><br /></td></tr>
+<tr class="separator:a563981458dca6a695866ec91ebec6a99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63137e0478fcacfaa161d652d5b092a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer_component_base.html#a63137e0478fcacfaa161d652d5b092a1">bufferAllocate_out</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 size)</td></tr>
 <tr class="memdesc:a63137e0478fcacfaa161d652d5b092a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port bufferAllocate.  <a href="class_svc_1_1_deframer_component_base.html#a63137e0478fcacfaa161d652d5b092a1">More...</a><br /></td></tr>
 <tr class="separator:a63137e0478fcacfaa161d652d5b092a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -381,7 +381,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00479">479</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00407">407</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -410,7 +410,7 @@ Friends</h2></td></tr>
 
 <p>Destroy <a class="el" href="class_svc_1_1_deframer_component_base.html" title="Auto-generated base for Deframer component.">DeframerComponentBase</a> object. </p>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00486">486</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00414">414</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -458,7 +458,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00709">709</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00637">637</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -505,7 +505,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00724">724</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00652">652</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -552,7 +552,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00739">739</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00667">667</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -672,7 +672,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00630">630</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00558">558</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -726,7 +726,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00754">754</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00682">682</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -773,7 +773,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00771">771</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00699">699</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -875,7 +875,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00653">653</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00581">581</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -921,7 +921,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00786">786</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00714">714</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -949,7 +949,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00290">290</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00218">218</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -977,7 +977,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00301">301</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00229">229</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1005,7 +1005,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00312">312</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00240">240</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1034,7 +1034,7 @@ Friends</h2></td></tr>
 <p>Get the number of bufferAllocate output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of bufferAllocate output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00518">518</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00446">446</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1063,7 +1063,7 @@ Friends</h2></td></tr>
 <p>Get the number of bufferDeallocate output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of bufferDeallocate output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00524">524</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00452">452</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1092,7 +1092,7 @@ Friends</h2></td></tr>
 <p>Get the number of bufferOut output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of bufferOut output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00530">530</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00458">458</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1121,7 +1121,7 @@ Friends</h2></td></tr>
 <p>Get the number of cmdResponseIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of cmdResponseIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00496">496</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00424">424</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1150,7 +1150,7 @@ Friends</h2></td></tr>
 <p>Get the number of comOut output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of comOut output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00536">536</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00464">464</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1179,7 +1179,7 @@ Friends</h2></td></tr>
 <p>Get the number of framedDeallocate output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of framedDeallocate output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00542">542</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00470">470</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1208,7 +1208,7 @@ Friends</h2></td></tr>
 <p>Get the number of framedIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of framedIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00502">502</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00430">430</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1237,7 +1237,7 @@ Friends</h2></td></tr>
 <p>Get the number of framedPoll output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of framedPoll output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00548">548</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00476">476</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1266,7 +1266,7 @@ Friends</h2></td></tr>
 <p>Get the number of schedIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of schedIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00508">508</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00436">436</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1330,7 +1330,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00558">558</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00486">486</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1366,7 +1366,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00569">569</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00497">497</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1402,7 +1402,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00580">580</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00508">508</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1438,7 +1438,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00591">591</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00519">519</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1474,7 +1474,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00602">602</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00530">530</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1510,7 +1510,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00613">613</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00541">541</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1539,12 +1539,12 @@ Friends</h2></td></tr>
 
 <p>Lock the guarded mutex. </p>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00808">808</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00736">736</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a70155d2c18e842e449ae937343c4fb96"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a70155d2c18e842e449ae937343c4fb96">&#9670;&nbsp;</a></span>schedIn_handler()</h2>
+<a id="af5ac49679f38540183154a49dda89c4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5ac49679f38540183154a49dda89c4e">&#9670;&nbsp;</a></span>schedIn_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1561,7 +1561,7 @@ Friends</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
+          <td class="paramtype">U32&#160;</td>
           <td class="paramname"><em>context</em>&#160;</td>
         </tr>
         <tr>
@@ -1588,8 +1588,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a31544ccb6a586dc22a331f122a7f67e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31544ccb6a586dc22a331f122a7f67e5">&#9670;&nbsp;</a></span>schedIn_handlerBase()</h2>
+<a id="a563981458dca6a695866ec91ebec6a99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a563981458dca6a695866ec91ebec6a99">&#9670;&nbsp;</a></span>schedIn_handlerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1606,7 +1606,7 @@ Friends</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
+          <td class="paramtype">U32&#160;</td>
           <td class="paramname"><em>context</em>&#160;</td>
         </tr>
         <tr>
@@ -1631,7 +1631,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00680">680</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00608">608</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1670,7 +1670,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00327">327</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00255">255</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1709,7 +1709,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00341">341</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00269">269</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1748,7 +1748,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00355">355</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00283">283</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1787,7 +1787,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00369">369</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00297">297</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1826,7 +1826,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00383">383</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00311">311</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1865,7 +1865,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00397">397</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00325">325</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1894,7 +1894,7 @@ Friends</h2></td></tr>
 
 <p>Unlock the guarded mutex. </p>
 
-<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00814">814</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframer_component_ac_8cpp_source.html#l00742">742</a> of file <a class="el" href="deframer_component_ac_8cpp_source.html">DeframerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
