@@ -317,19 +317,19 @@ Status initAndCheckFileStats(const char* filePath, struct stat* fileInfo = nullp
  * @param destination File to copy data to
  * @param size The number of bytes to copy
  */
-Status copyFileData(File source, File destination, FwSizeType size) {
+Status copyFileData(File& source, File& destination, FwSignedSizeType size) {
     static_assert(FILE_SYSTEM_CHUNK_SIZE != 0, "FILE_SYSTEM_CHUNK_SIZE must be >0");
     U8 fileBuffer[FILE_SYSTEM_CHUNK_SIZE];
     File::Status file_status;
 
     // Set loop limit
-    const FwSizeType copyLoopLimit = (size / FILE_SYSTEM_CHUNK_SIZE) + 2;
+    const FwSignedSizeType copyLoopLimit = (size / FILE_SYSTEM_CHUNK_SIZE) + 2;
 
-    FwSizeType loopCounter = 0;
-    NATIVE_INT_TYPE chunkSize;
+    FwSignedSizeType loopCounter = 0;
+    FwSignedSizeType chunkSize;
     while (loopCounter < copyLoopLimit) {
         chunkSize = FILE_SYSTEM_CHUNK_SIZE;
-        file_status = source.read(&fileBuffer, chunkSize, false);
+        file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::NO_WAIT);
         if (file_status != File::OP_OK) {
             return handleFileError(file_status);
         }
@@ -339,7 +339,7 @@ Status copyFileData(File source, File destination, FwSizeType size) {
             break;
         }
 
-        file_status = destination.write(fileBuffer, chunkSize, true);
+        file_status = destination.write(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
         if (file_status != File::OP_OK) {
             return handleFileError(file_status);
         }
@@ -354,7 +354,7 @@ Status copyFile(const char* originPath, const char* destPath) {
     FileSystem::Status fs_status;
     File::Status file_status;
 
-    FwSizeType fileSize = 0;
+    FwSignedSizeType fileSize = 0;
 
     File source;
     File destination;
@@ -392,7 +392,7 @@ Status copyFile(const char* originPath, const char* destPath) {
 Status appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
     FileSystem::Status fs_status;
     File::Status file_status;
-    FwSizeType fileSize = 0;
+    FwSignedSizeType fileSize = 0;
 
     File source;
     File destination;
@@ -435,7 +435,7 @@ Status appendFile(const char* originPath, const char* destPath, bool createMissi
     return fs_status;
 }  // end appendFile
 
-Status getFileSize(const char* path, FwSizeType& size) {
+Status getFileSize(const char* path, FwSignedSizeType& size) {
     Status fileStat = OP_OK;
     struct stat fileStatStruct;
 

@@ -82,7 +82,7 @@ namespace Svc {
 
     }
 
-    void HealthImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+    void HealthImpl::Run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
         //dispatch messages
         for (NATIVE_UINT_TYPE i = 0; i < this->queue_depth; i++) {
             MsgDispatchStatus stat = this->doDispatch();

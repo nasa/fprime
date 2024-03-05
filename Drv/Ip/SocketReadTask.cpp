@@ -25,9 +25,9 @@ SocketReadTask::~SocketReadTask() {}
 
 void SocketReadTask::startSocketTask(const Fw::StringBase &name,
                                      const bool reconnect,
-                                     const NATIVE_UINT_TYPE priority,
-                                     const NATIVE_UINT_TYPE stack,
-                                     const NATIVE_UINT_TYPE cpuAffinity) {
+                                     const Os::Task::ParamType priority,
+                                     const Os::Task::ParamType stack,
+                                     const Os::Task::ParamType cpuAffinity) {
     FW_ASSERT(not m_task.isStarted());  // It is a coding error to start this task multiple times
     FW_ASSERT(not this->m_stop);        // It is a coding error to stop the thread before it is started
     m_reconnect = reconnect;

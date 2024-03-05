@@ -33,8 +33,8 @@ typedef uint16_t U16;  //!< 16-bit unsigned integer
 #endif
 
 #if FW_HAS_32_BIT
-typedef uint32_t U32;  //!< 32-bit signed integer
-typedef int32_t I32;   //!< 32-bit unsigned integer
+typedef int32_t I32;   //!< 32-bit signed integer
+typedef uint32_t U32;  //!< 32-bit unsigned integer
 #endif
 
 #if FW_HAS_64_BIT

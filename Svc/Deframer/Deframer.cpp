@@ -90,7 +90,7 @@ void Deframer ::framedIn_handler(
 
 void Deframer ::schedIn_handler(
     const NATIVE_INT_TYPE portNum,
-    NATIVE_UINT_TYPE context
+    U32 context
 ) {
     // Check for data
     Fw::Buffer buffer(m_pollBuffer, sizeof(m_pollBuffer));

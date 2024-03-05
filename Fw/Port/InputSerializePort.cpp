@@ -40,7 +40,7 @@ namespace Fw {
     void InputSerializePort::toString(char* buffer, NATIVE_INT_TYPE size) {
 #if FW_OBJECT_NAMES == 1
         FW_ASSERT(size > 0);
-        if (snprintf(buffer, size, "Input Serial Port: %s %s->(%s)", this->m_objName, this->isConnected() ? "C" : "NC",
+        if (snprintf(buffer, size, "Input Serial Port: %s %s->(%s)", this->m_objName.toChar(), this->isConnected() ? "C" : "NC",
                      this->isConnected() ? this->m_connObj->getObjName() : "None") < 0) {
             buffer[0] = 0;
         }

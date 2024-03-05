@@ -6,6 +6,7 @@
 #endif
 
 #include <FpConfig.hpp>
+#include "Fw/Deprecate.hpp"
 
 namespace Fw {
 
@@ -23,6 +24,9 @@ namespace Fw {
 
     class Serializable {
         public:
+            // Size type for backwards compatibility
+            using SizeType = NATIVE_UINT_TYPE;
+        public:
             virtual SerializeStatus serialize(SerializeBufferBase& buffer) const = 0; //!< serialize contents
             virtual SerializeStatus deserialize(SerializeBufferBase& buffer) = 0; //!< deserialize to contents
 #if FW_SERIALIZABLE_TO_STRING || FW_ENABLE_TEXT_LOGGING || BUILD_UT
@@ -36,6 +40,14 @@ namespace Fw {
         protected:
             Serializable(); //!< Default constructor
             virtual ~Serializable(); //!< destructor
+    };
+
+    class Serialization {
+      public:
+        enum t {
+            INCLUDE_LENGTH, //!< Include length as first token in serialization
+            OMIT_LENGTH //!< Omit length from serialization
+        };
     };
 
     class SerializeBufferBase {
@@ -70,11 +82,27 @@ namespace Fw {
 
             SerializeStatus serialize(const void* val); //!< serialize pointer (careful, only pointer value, not contents are serialized)
 
-            SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length, bool noLength = false); //!< serialize data buffer
+            //! serialize data buffer
+            SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length, bool noLength);
+            //! serialize data buffer
+            SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length);
+
+            //! \brief serialize a byte buffer of a given length
+            //!
+            //! Serialize bytes from `buff` up to `length`.  If `serializationMode` is set to `INCLUDE_LENGTH` then the
+            //! length is included as the first token. Length may be omitted with `OMIT_LENGTH`.
+            //!
+            //! \param buff: buffer to serialize
+            //! \param length: length of data to serialize
+            //! \param mode: serialization type
+            //! \return status of serialization
+            SerializeStatus serialize(const U8* buff, FwSizeType length, Serialization::t mode);
 
             SerializeStatus serialize(const SerializeBufferBase& val); //!< serialize a serialized buffer
 
             SerializeStatus serialize(const Serializable &val); //!< serialize an object derived from serializable base class
+
+            SerializeStatus serializeSize(const FwSizeType size); //!< serialize a size value
 
             // Deserialization for built-in types
 
@@ -102,15 +130,29 @@ namespace Fw {
 
             SerializeStatus deserialize(void*& val); //!< deserialize point value (careful, pointer value only, not contents)
 
-            // length should be set to max, returned value is actual size stored. If noLength
-            // is true, use the length variable as the actual number of bytes to deserialize
-            SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length, bool noLength = false); //!< deserialize data buffer
-            // serialize/deserialize Serializable
+            //! deserialize data buffer
+            SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length, bool noLength);
 
+            //! deserialize data buffer
+            SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length);
+            //! \brief deserialize a byte buffer of a given length
+            //!
+            //! Deserialize bytes into `buff` of `length` bytes.  If `serializationMode` is set to `INCLUDE_LENGTH` then
+            //! the length is deserialized first followed by the bytes. Length may be omitted with `OMIT_LENGTH` and
+            //! in this case `length` bytes will be deserialized. `length` will be filled with the amount of data
+            //! deserialized.
+            //!
+            //! \param buff: buffer to hold deserialized data
+            //! \param length: length of data to deserialize length is filled with deserialized length
+            //! \param mode: deserialization type
+            //! \return status of serialization
+            SerializeStatus deserialize(U8* buff, FwSizeType& length, Serialization::t mode);
 
             SerializeStatus deserialize(Serializable &val);  //!< deserialize an object derived from serializable base class
 
             SerializeStatus deserialize(SerializeBufferBase& val);  //!< serialize a serialized buffer
+
+            SerializeStatus deserializeSize(FwSizeType& size); //!< deserialize a size value
 
             void resetSer(); //!< reset to beginning of buffer to reuse for serialization
             void resetDeser(); //!< reset deserialization to beginning
@@ -120,18 +162,18 @@ namespace Fw {
 
             SerializeStatus serializeSkip(FwSizeType numBytesToSkip); //!< Skips the number of specified bytes for serialization
             SerializeStatus deserializeSkip(FwSizeType numBytesToSkip); //!< Skips the number of specified bytes for deserialization
-            virtual NATIVE_UINT_TYPE getBuffCapacity() const = 0; //!< returns capacity, not current size, of buffer
-            NATIVE_UINT_TYPE getBuffLength() const; //!< returns current buffer size
-            NATIVE_UINT_TYPE getBuffLeft() const; //!< returns how much deserialization buffer is left
+            virtual Serializable::SizeType getBuffCapacity() const = 0; //!< returns capacity, not current size, of buffer
+            Serializable::SizeType getBuffLength() const; //!< returns current buffer size
+            Serializable::SizeType getBuffLeft() const; //!< returns how much deserialization buffer is left
             virtual U8* getBuffAddr() = 0; //!< gets buffer address for data filling
             virtual const U8* getBuffAddr() const = 0; //!< gets buffer address for data reading, const version
             const U8* getBuffAddrLeft() const; //!< gets address of remaining non-deserialized data.
             U8* getBuffAddrSer(); //!< gets address of end of serialization. DANGEROUS! Need to know max buffer size and adjust when done
-            SerializeStatus setBuff(const U8* src, NATIVE_UINT_TYPE length); //!< sets buffer contents and size
-            SerializeStatus setBuffLen(NATIVE_UINT_TYPE length); //!< sets buffer length manually after filling with data
-            SerializeStatus copyRaw(SerializeBufferBase& dest, NATIVE_UINT_TYPE size); //!< directly copies buffer without looking for a size in the stream.
+            SerializeStatus setBuff(const U8* src, Serializable::SizeType length); //!< sets buffer contents and size
+            SerializeStatus setBuffLen(Serializable::SizeType length); //!< sets buffer length manually after filling with data
+            SerializeStatus copyRaw(SerializeBufferBase& dest, Serializable::SizeType size); //!< directly copies buffer without looking for a size in the stream.
                                                                                       // Will increment deserialization pointer
-            SerializeStatus copyRawOffset(SerializeBufferBase& dest, NATIVE_UINT_TYPE size); //!< directly copies buffer without looking for a size in the stream.
+            SerializeStatus copyRawOffset(SerializeBufferBase& dest, Serializable::SizeType size); //!< directly copies buffer without looking for a size in the stream.
                                                                                     // Will increment deserialization pointer
 
 
@@ -149,21 +191,21 @@ namespace Fw {
             SerializeBufferBase(const SerializeBufferBase &src); //!< constructor with buffer as source
 
             void copyFrom(const SerializeBufferBase& src); //!< copy data from source buffer
-            NATIVE_UINT_TYPE m_serLoc; //!< current offset in buffer of serialized data
-            NATIVE_UINT_TYPE m_deserLoc; //!< current offset for deserialization
+            Serializable::SizeType m_serLoc; //!< current offset in buffer of serialized data
+            Serializable::SizeType m_deserLoc; //!< current offset for deserialization
     };
 
     // Helper class for building buffers with external storage
 
     class ExternalSerializeBuffer : public SerializeBufferBase {
         public:
-            ExternalSerializeBuffer(U8* buffPtr, NATIVE_UINT_TYPE size); //!< construct with external buffer
+            ExternalSerializeBuffer(U8* buffPtr, Serializable::SizeType size); //!< construct with external buffer
             ExternalSerializeBuffer(); //!< default constructor
-            void setExtBuffer(U8* buffPtr, NATIVE_UINT_TYPE size); //!< Set the external buffer
+            void setExtBuffer(U8* buffPtr, Serializable::SizeType size); //!< Set the external buffer
             void clear(); //!< clear external buffer
 
             // pure virtual functions
-            NATIVE_UINT_TYPE getBuffCapacity() const;
+            Serializable::SizeType getBuffCapacity() const;
             U8* getBuffAddr();
             const U8* getBuffAddr() const ;
 
@@ -175,7 +217,7 @@ namespace Fw {
 
             // private data
             U8* m_buff; //!< pointer to external buffer
-            NATIVE_UINT_TYPE m_buffSize; //!< size of external buffer
+            Serializable::SizeType m_buffSize; //!< size of external buffer
     };
 
 }

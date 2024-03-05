@@ -148,7 +148,13 @@ It does the following:
 <a name="ground_interface"></a>
 ## 4. Ground Interface
 
-### 4.1. Telemetry
+### 4.1. Commands
+
+| Kind | Name | Description |
+|------|------|-------------|
+| `async` | `CLEAR_EVENT_THROTTLE` | Clear event throttling |
+
+### 4.2. Telemetry
 
 | Name | Type | Description |
 |------|------|-------------|
@@ -157,7 +163,7 @@ It does the following:
 | `NumDataProds` | `U32` | Number of data products handled |
 | `NumBytes` | `U32` | Number of bytes handled |
 
-### 4.2. Events
+### 4.3. Events
 
 | Name | Severity | Description |
 |------|----------|-------------|

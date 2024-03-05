@@ -15,7 +15,7 @@ Task::Task() :
     m_suspendedOnPurpose(false)
 {}
 
-Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
+Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, ParamType priority, ParamType stackSize, ParamType cpuAffinity, ParamType identifier) {
     //Get a task handle, and set it up
     BareTaskHandle* handle = new(std::nothrow) BareTaskHandle();
     if (handle == nullptr) {

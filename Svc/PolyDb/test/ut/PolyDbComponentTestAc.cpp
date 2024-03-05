@@ -36,7 +36,7 @@ namespace Svc {
             this->m_getValue_OutputPort[port].init();
 #if FW_OBJECT_NAMES == 1
             char portName[120];
-            snprintf(portName, sizeof(portName), "%s_getValue_OutputPort[%d]", this->m_objName, port);
+            snprintf(portName, sizeof(portName), "%s_getValue_OutputPort[%d]", this->m_objName.toChar(), port);
             this->m_getValue_OutputPort[port].setObjName(portName);
 #endif
         }
@@ -45,7 +45,7 @@ namespace Svc {
             this->m_setValue_OutputPort[port].init();
 #if FW_OBJECT_NAMES == 1
             char portName[120];
-            snprintf(portName, sizeof(portName), "%s_setValue_OutputPort[%d]", this->m_objName, port);
+            snprintf(portName, sizeof(portName), "%s_setValue_OutputPort[%d]", this->m_objName.toChar(), port);
             this->m_setValue_OutputPort[port].setObjName(portName);
 #endif
         }

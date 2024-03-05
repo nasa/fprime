@@ -74,7 +74,7 @@ namespace Svc {
       //!
       void schedIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          NATIVE_UINT_TYPE context /*!< The call order*/
+          U32 context /*!< The call order*/
       );
       //! Frame and send some data
       //!

@@ -22,9 +22,10 @@
 namespace Fw {
     class StringBase : public Serializable {
         public:
+            using SizeType = NATIVE_UINT_TYPE;
             virtual const CHAR* toChar() const = 0; //<! Convert to a C-style char*
-            virtual NATIVE_UINT_TYPE getCapacity() const = 0; //!< return size of buffer
-            NATIVE_UINT_TYPE length() const;  //!< Get length of string
+            virtual SizeType getCapacity() const = 0; //!< return size of buffer
+            SizeType length() const;  //!< Get length of string
 
             const CHAR* operator+=(const CHAR* src); //!< Concatenate a CHAR*
             const StringBase& operator+=(const StringBase& src); //!< Concatenate a StringBase
@@ -38,7 +39,7 @@ namespace Fw {
             void format(const CHAR* formatString, ...); //!< write formatted string to buffer
 
             virtual SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialization function
-            virtual SerializeStatus serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLen) const; //!< serialization function
+            virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const; //!< serialization function
             virtual SerializeStatus deserialize(SerializeBufferBase& buffer); //!< deserialization function
 
 #ifdef BUILD_UT
@@ -53,7 +54,7 @@ namespace Fw {
             StringBase();
             virtual ~StringBase();
 
-            void appendBuff(const CHAR* buff, NATIVE_UINT_TYPE size);
+            void appendBuff(const CHAR* buff, SizeType size);
 
         private:
             // A no-implementation copy constructor here will prevent the default copy constructor from being called

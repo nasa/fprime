@@ -165,7 +165,7 @@ namespace Svc {
                 this->log_ACTIVITY_LO_ProcessingFile(fullFile);
 
                 // get file size
-                FwSizeType fileSize = 0;
+                FwSignedSizeType fileSize = 0;
                 Os::FileSystem::Status sizeStat =
                     Os::FileSystem::getFileSize(fullFile.toChar(),fileSize);
                 if (sizeStat != Os::FileSystem::OP_OK) {
@@ -180,7 +180,7 @@ namespace Svc {
                 }
 
                 // Read DP header
-                FwNativeIntType size = Fw::DpContainer::Header::SIZE;
+                FwSignedSizeType size = Fw::DpContainer::Header::SIZE;
 
                 stat = dpFile.read(dpBuff, size);
                 if (stat != Os::File::OP_OK) {

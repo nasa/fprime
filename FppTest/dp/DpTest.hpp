@@ -76,7 +76,7 @@ class DpTest : public DpTestComponentBase {
 
     //! Handler implementation for schedIn
     void schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
-                         NATIVE_UINT_TYPE context        //!< The call order
+                         U32 context                     //!< The call order
                          ) override;
 
   PRIVATE:

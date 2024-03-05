@@ -219,7 +219,7 @@ namespace Svc {
   void BufferManagerComponentImpl ::
     schedIn_handler(
         const NATIVE_INT_TYPE portNum,
-        NATIVE_UINT_TYPE context
+        U32 context
     )
   {
     // write telemetry values

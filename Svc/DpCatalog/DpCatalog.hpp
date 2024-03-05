@@ -179,7 +179,7 @@ namespace Svc {
         Fw::String m_directories[DP_MAX_DIRECTORIES]; //!< List of supplied DP directories
         FwSizeType m_numDirectories; //!< number of supplied directories
 
-        FwSizeType m_memSize; //!< size of allocated buffer
+        NATIVE_UINT_TYPE m_memSize; //!< size of allocated buffer
         void* m_memPtr; //!< stored for shutdown
         NATIVE_UINT_TYPE m_allocatorId; //!< stored for shutdown
         Fw::MemAllocator* m_allocator; //!< stored for shutdown

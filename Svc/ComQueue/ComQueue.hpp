@@ -148,7 +148,7 @@ class ComQueue : public ComQueueComponentBase {
     //! Schedules the transmission of telemetry
     //!
     void run_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                     NATIVE_UINT_TYPE context       /*!<The call order*/
+                     U32 context                    /*!<The call order*/
     );
 
     // ----------------------------------------------------------------------

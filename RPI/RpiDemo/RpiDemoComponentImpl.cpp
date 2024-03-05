@@ -81,7 +81,7 @@ namespace RPI {
   void RpiDemoComponentImpl ::
     Run_handler(
         const NATIVE_INT_TYPE portNum,
-        NATIVE_UINT_TYPE context
+        U32 context
     )
   {
       // check which rate group call it is

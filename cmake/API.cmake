@@ -560,6 +560,20 @@ macro(register_fprime_build_autocoder TARGET_FILE_PATH)
     register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
 endmacro(register_fprime_build_autocoder)
 
+####
+# Function `create_implementation_interface`:
+#
+# Helper function to create implementation interface library once and only once to ensure it exists.
+#
+# **IMPLEMENTATION**: implementation library name (resolved)
+####
+function (create_implementation_interface IMPLEMENTATION)
+    if (TARGET "${IMPLEMENTATION}")
+        return()
+    endif()
+    add_library("${IMPLEMENTATION}" INTERFACE)
+endfunction()
+
 
 ####
 # Function `require_fprime_implementation`:
@@ -569,11 +583,23 @@ endmacro(register_fprime_build_autocoder)
 # `choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
 #
 # **IMPLEMENTATION:** implementation module name that must be covered
+# **REQUESTER:** (optional) the requester of the implementation. Default: ${FPRIME_CURRENT_MODULE}
 ####
 function(require_fprime_implementation IMPLEMENTATION)
+    if (ARGC EQUAL 2)
+        set(REQUESTER "${ARGV1}")
+    elseif (FPRIME_CURRENT_MODULE)
+        set(REQUESTER "${FPRIME_CURRENT_MODULE}")
+    else ()
+        message(FATAL_ERROR "Cannot determine current module, please supply as second argument")
+    endif()
     resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
+    resolve_dependencies(REQUESTER "${REQUESTER}")
+
+    create_implementation_interface("${IMPLEMENTATION}")
     append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
-    append_list_property("${FPRIME_CURRENT_MODULE}" GLOBAL PROPERTY "${IMPLEMENTATION}_REQUESTERS")
+    append_list_property("${FPRIME_CURRENT_MODULE}" TARGET "${IMPLEMENTATION}" PROPERTY "REQUESTERS")
+    add_dependencies("${REQUESTER}" "${IMPLEMENTATION}")
 endfunction()
 
 ####
@@ -589,8 +615,12 @@ endfunction()
 function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
     resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
-    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
+    create_implementation_interface("${IMPLEMENTATION}")
+    append_list_property("${IMPLEMENTOR}" TARGET "${IMPLEMENTATION}" PROPERTY "IMPLEMENTORS")
+    append_list_property("${ARGN}" TARGET "${IMPLEMENTOR}" PROPERTY "REQUIRED_SOURCE_FILES")
+    add_dependencies("${IMPLEMENTATION}" "${IMPLEMENTOR}")
 endfunction()
+
 ####
 # Function `choose_fprime_implementation`:
 #
@@ -614,9 +644,10 @@ function(choose_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     else()
         message(FATAL_ERROR "Cannot call 'choose_fprime_implementation' outside an fprime module or platform CMake file")
     endif()
-    set_property(GLOBAL PROPERTY "${IMPLEMENTATION}_${ACTIVE_MODULE}" "${IMPLEMENTOR}")
+    create_implementation_interface("${IMPLEMENTATION}")
+    # Add this implementation in the case it has not been added
     append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
-    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
+    set_property(GLOBAL PROPERTY "${ACTIVE_MODULE}_${IMPLEMENTATION}" "${IMPLEMENTOR}")
 endfunction()
 
 #### Documentation links

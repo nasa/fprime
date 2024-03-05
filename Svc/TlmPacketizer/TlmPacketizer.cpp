@@ -236,7 +236,7 @@ void TlmPacketizer ::TlmRecv_handler(const NATIVE_INT_TYPE portNum,
     }
 }
 
-void TlmPacketizer ::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+void TlmPacketizer ::Run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     FW_ASSERT(this->m_configured);
 
     // Only write packets if connected

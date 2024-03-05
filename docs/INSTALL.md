@@ -159,7 +159,7 @@ cd /Applications/Python\ 3.X/
 ./Install\ Certificates.command
 ```
 
-After running above command, re-try installing `fprime-tools`.
+After running above command, re-try installing `fprime-bootstrap`.
 
 
 ### Recommended PIP Versions
