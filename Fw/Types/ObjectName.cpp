@@ -1,25 +1,25 @@
-#include <Os/TaskString.hpp>
+#include <Fw/Types/ObjectName.hpp>
 #include <Fw/Types/StringUtils.hpp>
 
-namespace Os {
+namespace Fw {
 
-    TaskString::TaskString(const char* src) : StringBase()  {
+    ObjectName::ObjectName(const CHAR* src) : StringBase() {
         (void) Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
-    TaskString::TaskString(const StringBase& src) : StringBase()  {
+    ObjectName::ObjectName(const StringBase& src) : StringBase() {
         (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    TaskString::TaskString(const TaskString& src) : StringBase()  {
+    ObjectName::ObjectName(const ObjectName& src) : StringBase() {
         (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    TaskString::TaskString() {
+    ObjectName::ObjectName() : StringBase() {
         this->m_buf[0] = 0;
     }
 
-    TaskString& TaskString::operator=(const TaskString& other) {
+    ObjectName& ObjectName::operator=(const ObjectName& other) {
         if(this == &other) {
             return *this;
         }
@@ -28,7 +28,7 @@ namespace Os {
         return *this;
     }
 
-    TaskString& TaskString::operator=(const StringBase& other) {
+    ObjectName& ObjectName::operator=(const StringBase& other) {
         if(this == &other) {
             return *this;
         }
@@ -37,19 +37,19 @@ namespace Os {
         return *this;
     }
 
-    TaskString& TaskString::operator=(const char* other) {
+    ObjectName& ObjectName::operator=(const CHAR* other) {
         (void) Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
         return *this;
     }
 
-    TaskString::~TaskString() {
+    ObjectName::~ObjectName() {
     }
 
-    const char* TaskString::toChar() const {
+    const CHAR* ObjectName::toChar() const {
         return this->m_buf;
     }
 
-    NATIVE_UINT_TYPE TaskString::getCapacity() const {
-        return FW_TASK_NAME_MAX_SIZE;
+    NATIVE_UINT_TYPE ObjectName::getCapacity() const {
+        return STRING_SIZE;
     }
 }

@@ -42,11 +42,11 @@ namespace Os {
             Fw::Logger::logMsg("[WARNING] Task priority set and permissions unavailable. Discarding priority.\n");
             priority = Task::TASK_DEFAULT; //Action: use constant
         }
-        if (priority != Task::TASK_DEFAULT and priority < static_cast<NATIVE_UINT_TYPE>(min_priority)) {
+        if (priority != Task::TASK_DEFAULT and priority < static_cast<Task::ParamType>(min_priority)) {
             Fw::Logger::logMsg("[WARNING] Low task priority of %d being clamped to %d\n", priority, min_priority);
             priority = min_priority;
         }
-        if (priority != Task::TASK_DEFAULT and priority > static_cast<NATIVE_UINT_TYPE>(max_priority)) {
+        if (priority != Task::TASK_DEFAULT and priority > static_cast<Task::ParamType>(max_priority)) {
             Fw::Logger::logMsg("[WARNING] High task priority of %d being clamped to %d\n", priority, max_priority);
             priority = max_priority;
         }
@@ -193,7 +193,7 @@ namespace Os {
     Task::Task() : m_handle(reinterpret_cast<POINTER_CAST>(nullptr)), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false), m_routineWrapper() {
     }
 
-    Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize,  NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
+    Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, ParamType priority, ParamType stackSize,  ParamType cpuAffinity, ParamType identifier) {
         FW_ASSERT(routine);
 
         this->m_name = "TP_";

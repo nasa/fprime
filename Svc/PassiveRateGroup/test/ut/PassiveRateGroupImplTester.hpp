@@ -27,11 +27,11 @@ namespace Svc {
 
             void init(NATIVE_INT_TYPE instance = 0);
 
-            void runNominal(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance);
+            void runNominal(U32 contexts[], U32 numContexts, NATIVE_INT_TYPE instance);
 
         private:
 
-            void from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context);
+            void from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, U32 context);
 
             Svc::PassiveRateGroup& m_impl;
 
@@ -39,7 +39,7 @@ namespace Svc {
 
             struct {
                 bool portCalled;
-                NATIVE_UINT_TYPE contextVal;
+                U32 contextVal;
                 NATIVE_UINT_TYPE order;
             } m_callLog[Svc::PassiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
 

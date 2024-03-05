@@ -4,15 +4,15 @@
 namespace Os {
 
     QueueString::QueueString(const char* src) : StringBase() {
-        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     QueueString::QueueString(const StringBase& src) : StringBase()  {
-        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     QueueString::QueueString(const QueueString& src)  : StringBase() {
-        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     QueueString::QueueString() : StringBase()  {
@@ -24,7 +24,7 @@ namespace Os {
             return *this;
         }
 
-        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
@@ -33,12 +33,12 @@ namespace Os {
             return *this;
         }
 
-        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
     QueueString& QueueString::operator=(const char* other) {
-        Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
+        (void) Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
         return *this;
     }
 

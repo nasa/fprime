@@ -5,6 +5,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
+#include <Fw/Types/ObjectName.hpp>
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 //
@@ -1212,6 +1213,36 @@ TEST(TypesTest,EightyCharTest) {
     // Make our own short string
 
 
+}
+
+TEST(TypesTest,ObjectNameTest) {
+    Fw::ObjectName str;
+    str = "foo";
+    Fw::ObjectName str2;
+    str2 = "foo";
+    ASSERT_EQ(str,str2);
+    ASSERT_EQ(str,"foo");
+    str2 = "_bar";
+    ASSERT_NE(str,str2);
+
+    Fw::ObjectName str3 = str;
+    str3 += str2;
+    ASSERT_EQ(str3,"foo_bar");
+
+    str3 += "_foo";
+    ASSERT_EQ(str3,"foo_bar_foo");
+
+
+    Fw::ObjectName copyStr("ASTRING");
+    ASSERT_EQ(copyStr,"ASTRING");
+    Fw::ObjectName copyStr2(copyStr);
+    ASSERT_EQ(copyStr2,"ASTRING");
+
+    Fw::InternalInterfaceString ifstr("IfString");
+    Fw::ObjectName if2(ifstr);
+
+    ASSERT_EQ(ifstr,if2);
+    ASSERT_EQ(if2,"IfString");
 }
 
 TEST(TypesTest,StringFormatTest) {

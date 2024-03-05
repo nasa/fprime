@@ -45,7 +45,7 @@ The `Svc::ActiveRateGroup` component has one input port that is called to wake u
 A set of context values are passed in as an array to the configure function:
 
 ```
-void configure(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts);
+void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts);
 ```
 
 A context value can be used by a component to discriminate between more than one call in the rate group.
