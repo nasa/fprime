@@ -34,7 +34,7 @@ namespace Svc {
 
         private:
 
-            void from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context);
+            void from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, U32 context);
 
             //! Handler for from_PingOut
             //!
@@ -49,7 +49,7 @@ namespace Svc {
 
             struct {
                 bool portCalled;
-                NATIVE_UINT_TYPE contextVal;
+                U32 contextVal;
                 NATIVE_UINT_TYPE order;
             } m_callLog[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
 

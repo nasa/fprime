@@ -92,7 +92,7 @@ namespace Svc {
   void FileDownlink ::
     Run_handler(
         const NATIVE_INT_TYPE portNum,
-        NATIVE_UINT_TYPE context
+        U32 context
     )
   {
     switch(this->m_mode.get())

@@ -39,7 +39,7 @@ DpTest ::~DpTest() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     // Request a buffer for Container 1
     this->dpRequest_Container1(CONTAINER_1_DATA_SIZE);
     // Request a buffer for Container 2

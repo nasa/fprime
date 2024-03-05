@@ -118,7 +118,7 @@ namespace Svc {
   void UdpReceiverComponentImpl ::
     Sched_handler(
         const NATIVE_INT_TYPE portNum,
-        NATIVE_UINT_TYPE context
+        U32 context
     )
   {
       this->tlmWrite_UR_BytesReceived(this->m_bytesReceived);

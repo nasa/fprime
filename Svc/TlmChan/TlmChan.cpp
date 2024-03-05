@@ -134,7 +134,7 @@ void TlmChan::TlmRecv_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time
     entryToUse->buffer = val;
 }
 
-void TlmChan::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+void TlmChan::Run_handler(NATIVE_INT_TYPE portNum, U32 context) {
     // Only write packets if connected
     if (not this->isConnected_PktSend_OutputPort(0)) {
         return;
