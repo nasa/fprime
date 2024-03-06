@@ -114,7 +114,13 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )
 register_fprime_ut()
-
+if (BUILD_TESTING)
+    foreach (TEST IN ITEMS StubFileTest PosixFileTest)
+       if (TARGET "${TEST}")
+           add_dependencies("Os_ut_exe" "${TEST}")
+       endif()
+    endforeach()
+endif()
 # Second UT Pthreads
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut/BufferQueueTest.cpp"
