@@ -14,7 +14,7 @@ runs:
     shell: bash
   - run: pip3 install setuptools_scm wheel urllib3
     shell: bash
-  - run: pip3 install -r ${{ inputs.location }}/requirements.txt
+  - run: pip3 install -U -r ${{ inputs.location }}/requirements.txt
     shell: bash
   - run: which fprime-util
     shell: bash
