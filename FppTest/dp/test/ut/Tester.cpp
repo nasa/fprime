@@ -129,7 +129,7 @@ void Tester::productRecvIn_Container2_FAILURE() {
 void Tester::productRecvIn_Container3_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
-    const FwSizeType dataEltSize = sizeof(FwSizeType) + this->u8ArrayRecordData.size();
+    const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + this->u8ArrayRecordData.size();
     // Invoke the port and check the header
     this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container3, dataEltSize,
                                              DpTest::ContainerPriority::Container3, this->container3Buffer, buffer,
@@ -145,7 +145,7 @@ void Tester::productRecvIn_Container3_SUCCESS() {
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::U8ArrayRecord;
         ASSERT_EQ(id, expectedId);
         FwSizeType size;
-        status = serialRepr.deserialize(size);
+        status = serialRepr.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, this->u8ArrayRecordData.size());
         const U8* const buffAddr = serialRepr.getBuffAddr();
@@ -165,7 +165,7 @@ void Tester::productRecvIn_Container3_FAILURE() {
 void Tester::productRecvIn_Container4_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
-    const FwSizeType dataEltSize = sizeof(FwSizeType) + this->u32ArrayRecordData.size() * sizeof(U32);
+    const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + this->u32ArrayRecordData.size() * sizeof(U32);
     // Invoke the port and check the header
     this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container4, dataEltSize,
                                              DpTest::ContainerPriority::Container4, this->container4Buffer, buffer,
@@ -181,7 +181,7 @@ void Tester::productRecvIn_Container4_SUCCESS() {
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::U32ArrayRecord;
         ASSERT_EQ(id, expectedId);
         FwSizeType size;
-        status = serialRepr.deserialize(size);
+        status = serialRepr.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, this->u32ArrayRecordData.size());
         const U8* const buffAddr = serialRepr.getBuffAddr();
@@ -201,7 +201,7 @@ void Tester::productRecvIn_Container4_FAILURE() {
 void Tester::productRecvIn_Container5_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
-    const FwSizeType dataEltSize = sizeof(FwSizeType) + this->dataArrayRecordData.size() * DpTest_Data::SERIALIZED_SIZE;
+    const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + this->dataArrayRecordData.size() * DpTest_Data::SERIALIZED_SIZE;
     // Invoke the port and check the header
     this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container5, dataEltSize,
                                              DpTest::ContainerPriority::Container5, this->container5Buffer, buffer,
@@ -217,7 +217,7 @@ void Tester::productRecvIn_Container5_SUCCESS() {
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::DataArrayRecord;
         ASSERT_EQ(id, expectedId);
         FwSizeType size;
-        status = serialRepr.deserialize(size);
+        status = serialRepr.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, this->dataArrayRecordData.size());
         const U8* const buffAddr = serialRepr.getBuffAddr();
