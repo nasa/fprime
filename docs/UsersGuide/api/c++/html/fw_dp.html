@@ -185,11 +185,10 @@ Framework Support for Data Products</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Id</code>   </td><td class="markdownTableBodyNone"><code>FwDpIdType</code>   </td><td class="markdownTableBodyNone"><code>sizeof(FwDpIdType)</code>   </td><td class="markdownTableBodyNone">The record ID    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Size</code>   </td><td class="markdownTableBodyNone"><code>FwSizeType</code>   </td><td class="markdownTableBodyNone"><code>sizeof(FwSizeType)</code>   </td><td class="markdownTableBodyNone">The number <em>n</em> of elements in the record    </td></tr>
+<td class="markdownTableBodyNone"><code>Size</code>   </td><td class="markdownTableBodyNone"><code>FwSizeType</code>   </td><td class="markdownTableBodyNone"><code>sizeof(FwSizeStoreType)</code>   </td><td class="markdownTableBodyNone">The number <em>n</em> of elements in the record    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Data</code>   </td><td class="markdownTableBodyNone">Array of <em>n</em> <em>T</em>   </td><td class="markdownTableBodyNone"><em>n</em> * [<code>sizeof(</code>_T_<code>)</code> if <em>T</em> is a primitive type; otherwise <em>T</em><code>::SERIALIZED_SIZE</code>]   </td><td class="markdownTableBodyNone"><em>n</em> elements, each of type <em>T</em>   </td></tr>
 </table>
-<p><em>TODO: The array size should be serialized as <code>FwSizeStoreType</code>. This requires a change to the FPP code generation. See <a href="https://github.com/fprime-community/fpp/issues/393">https://github.com/fprime-community/fpp/issues/393</a>.</em></p>
 <h4><a class="anchor" id="autotoc_md313"></a>
 5.1.4. Data Hash</h4>
 <p>The data hash has the following format.</p>
