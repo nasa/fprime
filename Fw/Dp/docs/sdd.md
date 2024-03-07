@@ -110,12 +110,8 @@ Array records with _type = T_ have the following format:
 |Field Name|Data Type|Serialized Size|Description|
 |----------|---------|---------------|-----------|
 |`Id`|`FwDpIdType`|`sizeof(FwDpIdType)`|The record ID|
-|`Size`|`FwSizeType`|`sizeof(FwSizeType)`|The number _n_ of elements in the record|
+|`Size`|`FwSizeType`|`sizeof(FwSizeStoreType)`|The number _n_ of elements in the record|
 |`Data`|Array of _n_ _T_|_n_ * [`sizeof(`_T_`)` if _T_ is a primitive type; otherwise _T_`::SERIALIZED_SIZE`]|_n_ elements, each of type _T_|
-
-_TODO: The array size should be serialized as `FwSizeStoreType`.
-This requires a change to the FPP code generation.
-See https://github.com/fprime-community/fpp/issues/393._
 
 #### 5.1.4. Data Hash
 
