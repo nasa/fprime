@@ -41,7 +41,7 @@ classes also define a properly decorated class method for the registration funct
 methods used for CLI interaction.
 
 A basic framing plugin skeleton would thus look like:
-**`src/myplugin.py`:**
+**`src/my_plugin.py`:**
 ```python
 from fprime_gds.common.communication.framing import FramerDeframer
 from fprime_gds.plugin.definitions import gds_plugin_implementation
@@ -79,7 +79,7 @@ the virtual class definition.
 [FramerDeframer virtual functions](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/communication/framing.py#L29-L51)
 consist of a `frame` and `deframe` method. This guide will use no-op functions.
 
-**`src/myplugin.py`:**
+**`src/my_plugin.py`:**
 ```python
 from fprime_gds.common.communication.framing import FramerDeframer
 from fprime_gds.plugin.definitions import gds_plugin_implementation
@@ -129,7 +129,7 @@ setup.py for backwards compatibility.
 
 The project structure should look like:
 ```
-    src/myplugin.py
+    src/my_plugin.py
     pyproject.toml
     setup.py
 ```
@@ -150,20 +150,13 @@ dependencies = [
 ]
 
 [project.entry_points."fprime_gds"]
-myplugin = "myplugin:MyPlugin"
+my_plugin = "my_plugin:MyPlugin"
 
-####
-# setuptools_scm dynamically generates version number from git, as well as automatically
-# include all data files tracked by git (e.g. flash/static/** files).
-# See https://setuptools.pypa.io/en/latest/userguide/datafiles.html
-####
 [tool.setuptools_scm]
 ```
 
 A sample `setup.py` would look like:
 ```python
-# setup.py is kept to support legacy builds
-# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
 from setuptools import setup
 
 # Configuration is in pyproject.toml
