@@ -1,4 +1,4 @@
-# How-To: Develop GDS Plugins
+# How-To: F´ GDS Plugin Development
 
 This guide will walk through the process of developing GDS plugins.  GDS plugins allow users to select an implementation
 for key functions within the GDS. These selections allow users to tailor the behavior of the GDS without affecting the
