@@ -63,11 +63,18 @@ namespace Svc {
             //!  supplied arguments status, time, and val.
             //!
             //!  \param portNum port number of request (always 0)
+            //!  \param entry entry to retrieve
             //!  \param status last status of retrieved measurement
             //!  \param time time tag of latest measurement
             //!  \param val value of latest measurement
 
-            void getValue_handler(NATIVE_INT_TYPE portNum, U32 entry, MeasurementStatus &status, Fw::Time &time, Fw::PolyType &val);
+            void getValue_handler(
+                NATIVE_INT_TYPE portNum, //!< The port number
+                const Svc::PolyDbCfg::PolyDbEntry& entry, //!< The entry to access
+                Svc::MeasurementStatus& status, //!< The command response argument
+                Fw::Time& time, //!< The time of the measurement
+                Fw::PolyType& val //!< The value to be passed
+            ) override;
 
             //!  \brief The value setter port handler
             //!
@@ -75,11 +82,18 @@ namespace Svc {
             //!  and updates the entry in the database
             //!
             //!  \param portNum port number of request (always 0)
+            //!  \param entry entry to retrieve
             //!  \param status status of new measurement
             //!  \param time time tag of new measurement
             //!  \param val value of new measurement
 
-            void setValue_handler(NATIVE_INT_TYPE portNum, U32 entry, MeasurementStatus &status, Fw::Time &time, Fw::PolyType &val);
+            void setValue_handler(
+                NATIVE_INT_TYPE portNum, //!< The port number
+                const Svc::PolyDbCfg::PolyDbEntry& entry, //!< The entry to access
+                Svc::MeasurementStatus& status, //!< The command response argument
+                Fw::Time& time, //!< The time of the measurement
+                Fw::PolyType& val //!< The value to be passed
+            ) override;
 
             //! \struct t_dbStruct
             //! \brief PolyDb database structure
@@ -92,7 +106,7 @@ namespace Svc {
                 MeasurementStatus status; //!< last status of measurement
                 Fw::PolyType val; //!< the last value of the measurement
                 Fw::Time time; //!< the timetag of the last measurement
-            } m_db[POLYDB_NUM_DB_ENTRIES];
+            } m_db[Svc::PolyDbCfg::PolyDbEntry::NUM_CONSTANTS];
 
     };
 }

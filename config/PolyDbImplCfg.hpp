@@ -10,9 +10,9 @@
 
 namespace {
 
-    enum {
-        POLYDB_NUM_DB_ENTRIES = 25
-    };
+    // enum {
+    //     POLYDB_NUM_DB_ENTRIES = 25
+    // };
 
 }
 
