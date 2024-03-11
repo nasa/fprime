@@ -55,6 +55,17 @@ namespace Ref {
         U32 cmdSeq /*!< The command sequence number*/
         );
 
+        // ----------------------------------------------------------------------
+        // Handler implementations for data products
+        // ----------------------------------------------------------------------
+
+        //! Receive a container of type DataContainer
+        void dpRecv_DataContainer_handler(
+            DpContainer& container, //!< The container
+            Fw::Success::T status //!< The container status
+        ) override;
+
+
     public:
         //! Construct a SignalGen
         SignalGen(

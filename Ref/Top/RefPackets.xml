@@ -159,6 +159,12 @@
         <channel name="typeDemo.FloatSet"/>
     </packet>
 
+    <packet name="DataProducts" id="21" level="3">
+        <channel name="dpCat.CatalogDps"/>
+        <channel name="dpCat.DpsSent"/>
+    </packet>
+
+
     <!-- Ignored packets -->
 
     <ignore>

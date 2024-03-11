@@ -54,6 +54,7 @@ module Ref {
     instance typeDemo
     instance uplink
     instance systemResources
+    instance dpCat
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -88,6 +89,8 @@ module Ref {
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
 
       comm.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
+
+      dpCat.fileOut -> fileDownlink.SendFile
 
     }
 

@@ -74,6 +74,7 @@ Svc::Health::PingEntry pingEntries[] = {
     {PingEntries::rateGroup1Comp::WARN, PingEntries::rateGroup1Comp::FATAL, "rateGroup1Comp"},
     {PingEntries::rateGroup2Comp::WARN, PingEntries::rateGroup2Comp::FATAL, "rateGroup2Comp"},
     {PingEntries::rateGroup3Comp::WARN, PingEntries::rateGroup3Comp::FATAL, "rateGroup3Comp"},
+    {PingEntries::dpCat::WARN, PingEntries::dpCat::FATAL, "rateGroup3Comp"},
 };
 
 /**
@@ -116,6 +117,12 @@ void configureTopology() {
     // Framer and Deframer components need to be passed a protocol handler
     downlink.setup(framing);
     uplink.setup(deframing);
+
+    // create the DP directory if it doesn't exist
+    Os::FileSystem::createDirectory("./DpCat");
+
+    Fw::String dpDir("./DpCat");
+    dpCat.configure(&dpDir,1,0,mallocator);
 
     // Note: Uncomment when using Svc:TlmPacketizer
     //tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);

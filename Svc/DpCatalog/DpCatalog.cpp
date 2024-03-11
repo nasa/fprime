@@ -46,7 +46,6 @@ namespace Svc {
     {}
 
     void DpCatalog::configure(
-        FwSizeType maxDpFiles,
         Fw::String directories[DP_MAX_DIRECTORIES],
         FwSizeType numDirs,
         NATIVE_UINT_TYPE memId,
@@ -57,7 +56,7 @@ namespace Svc {
         FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, numDirs);
 
         // request memory for catalog
-        this->m_memSize = maxDpFiles * (sizeof(DpStateEntry) + sizeof(DpSortedList));
+        this->m_memSize = DP_MAX_FILES * (sizeof(DpStateEntry) + sizeof(DpSortedList));
         bool notUsed; // we don't need to recover the catalog.
         // request memory
         this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
@@ -126,9 +125,6 @@ namespace Svc {
         Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff)); // buffer for container header decoding
         Fw::DpContainer container; // container object for extracting header fields
 
-        // array for directory listing. Max size would
-        // be the full number of supported data products
-        Fw::String listing[this->m_numDpSlots];
         // get file listings from file system
         for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
             // read in each directory and keep track of total
@@ -137,17 +133,17 @@ namespace Svc {
             U32 pendingFiles = 0;
             F64 pendingDpBytes = 0;
 
-            Os::FileSystem::Status stat =
+            Os::FileSystem::Status fsStat =
                 Os::FileSystem::readDirectory(
                     this->m_directories[dir].toChar(),
                     this->m_numDpSlots - totalFiles,
-                    listing,
+                    this->m_fileList,
                     filesRead
                 );
-            if (stat != Os::FileSystem::OP_OK) {
+            if (fsStat != Os::FileSystem::OP_OK) {
                 this->log_WARNING_HI_DirectoryOpenError(
                     this->m_directories[dir],
-                    stat
+                    fsStat
                 );
                 return Fw::CmdResponse::EXECUTION_ERROR;
             }
@@ -160,7 +156,7 @@ namespace Svc {
                 Fw::String fullFile;
                 fullFile.format("%s/%s",
                     this->m_directories[dir].toChar(),
-                    listing[file].toChar()
+                    this->m_fileList[file].toChar()
                 );
                 this->log_ACTIVITY_LO_ProcessingFile(fullFile);
 
@@ -312,7 +308,7 @@ namespace Svc {
             }
         }
 
-        // if none were found, finish tranmission
+        // if none were found, finish transmission
         this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
         this->m_xmitInProgress = false;
         this->m_xmitBytes = 0;

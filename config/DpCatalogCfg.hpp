@@ -13,7 +13,8 @@ namespace Svc {
     // data products can be stored. The array passed
     // to the initializer for DpCatalog cannot exceed
     // this size.
-    static const FwNativeUIntType DP_MAX_DIRECTORIES = 2;
-}
+    static const FwSizeType DP_MAX_DIRECTORIES = 2;
+    static const FwSizeType DP_MAX_FILES = 100;
+};
 
 #endif /* SVC_DPCATALOG_CONFIG_HPP_ */

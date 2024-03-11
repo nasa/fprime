@@ -45,7 +45,6 @@ namespace Svc {
         /// @param allocator Allocator to supply memory for catalog. 
         ///        Instance must survive for shutdown to use for reclaiming memory
         void configure(
-            FwSizeType maxDpFiles,
             Fw::String directories[DP_MAX_DIRECTORIES],
             FwSizeType numDirs,
             NATIVE_UINT_TYPE memId,
@@ -178,6 +177,7 @@ namespace Svc {
 
         Fw::String m_directories[DP_MAX_DIRECTORIES]; //!< List of supplied DP directories
         FwSizeType m_numDirectories; //!< number of supplied directories
+        Fw::String m_fileList[DP_MAX_FILES]; //!< working array of files/directory
 
         NATIVE_UINT_TYPE m_memSize; //!< size of allocated buffer
         void* m_memPtr; //!< stored for shutdown
@@ -186,7 +186,7 @@ namespace Svc {
 
         bool m_xmitInProgress; //!< set if DP files are in the process of being sent
         DpSortedList* m_currXmitRecord; //!< current record being transmitted
-        sourceFileNameString m_currXmitFileName; //!< current file being transmitted
+        Svc::sourceFileNameString m_currXmitFileName; //!< current file being transmitted
         bool m_xmitCmdWait; //!< true if waiting for transmission complete to complete xmit command
         U64 m_xmitBytes; //!< bytes transmitted for downlink session
 

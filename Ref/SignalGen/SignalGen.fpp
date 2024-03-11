@@ -35,6 +35,18 @@ module Ref {
     # Special ports
     # ----------------------------------------------------------------------
 
+    @ Data product get port
+    product get port productGetOut
+
+    @ Data product request port
+    product request port productRequestOut
+
+    @ Data product receive port
+    async product recv port productRecvIn
+
+    @ Data product send port
+    product send port productSendOut
+
     @ Time get port
     time get port timeCaller
 
@@ -55,6 +67,13 @@ module Ref {
 
     @ Telemetry port
     telemetry port tlmOut
+
+    @ Signal generation data product record
+    product record DataRecord: SignalInfo id 0
+
+    @ Data product container
+    product container DataContainer id 0 default priority 10
+
 
     # ----------------------------------------------------------------------
     # Commands

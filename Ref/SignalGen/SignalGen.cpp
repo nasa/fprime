@@ -187,4 +187,18 @@ namespace Ref {
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
+  // ----------------------------------------------------------------------
+  // Handler implementations for data products
+  // ----------------------------------------------------------------------
+
+  void SignalGen ::
+    dpRecv_DataContainer_handler(
+        DpContainer& container,
+        Fw::Success::T status
+    )
+  {
+    // TODO
+  }
+
+
 };

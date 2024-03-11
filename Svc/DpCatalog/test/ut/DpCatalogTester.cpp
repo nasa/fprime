@@ -44,7 +44,7 @@ namespace Svc {
         Fw::String dirs[2];
         dirs[0] = "dir0";
         dirs[1] = "dir1";
-        this->component.configure(10,dirs,FW_NUM_ARRAY_ELEMENTS(dirs),100,alloc);
+        this->component.configure(dirs,FW_NUM_ARRAY_ELEMENTS(dirs),100,alloc);
         this->component.shutdown();
     }
 
@@ -82,7 +82,7 @@ namespace Svc {
 
         Fw::MallocAllocator alloc;
 
-        this->component.configure(numDps,dpDirs,numDirs,100,alloc);
+        this->component.configure(dpDirs,numDirs,100,alloc);
 
         this->sendCmd_BUILD_CATALOG(0,10);
         this->component.doDispatch();
