@@ -8,7 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PolyDb.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/PolyDbImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/PolyDb.cpp"
 )
 
 register_fprime_module()
