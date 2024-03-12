@@ -29,7 +29,7 @@ namespace Svc {
             Fw::Time& time,
             Fw::PolyType& val)
     {
-        FW_ASSERT(entry < Svc::PolyDbCfg::PolyDbEntry::NUM_CONSTANTS, entry);
+        FW_ASSERT(entry.isValid(),entry.e);
         status = this->m_db[entry.e].status;
         time = this->m_db[entry.e].time;
         val = this->m_db[entry.e].val;
@@ -43,7 +43,7 @@ namespace Svc {
             Fw::Time& time,
             Fw::PolyType& val)
     {
-        FW_ASSERT(entry < Svc::PolyDbCfg::PolyDbEntry::NUM_CONSTANTS, entry);
+        FW_ASSERT(entry.isValid(),entry.e);
         this->m_db[entry.e].status = status;
         this->m_db[entry.e].time = time;
         this->m_db[entry.e].val = val;
