@@ -1,9 +1,9 @@
 This test can be run by executing the following:
 
-From Svc/PolyDb:
+Frome the root of the repository:
 
-"make ut run_ut"
+"fprime-util generate --ut"
 
-Note that the Ref application needs to be built first. 
-The test will return a pass/fail error code depending on the
-success of the test. 
+Then from Svc/PolyDb:
+
+"fprime-util check"

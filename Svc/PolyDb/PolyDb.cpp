@@ -21,9 +21,6 @@ namespace Svc {
         PolyDbComponentBase::init(instance);
     }
 
-    // If ports are no longer guarded, these accesses need to be protected from each other
-    // If there are a lot of accesses, perhaps an interrupt lock could be used instead of guarded ports
-
     void PolyDb ::
         getValue_handler(
             NATIVE_INT_TYPE portNum,
