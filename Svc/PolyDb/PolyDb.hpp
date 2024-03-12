@@ -14,7 +14,6 @@
 
 #include <Svc/PolyDb/PolyDbComponentAc.hpp>
 #include <Fw/Types/PolyType.hpp>
-#include <PolyDbImplCfg.hpp>
 
 namespace Svc {
 
@@ -37,15 +36,7 @@ namespace Svc {
         //!  update is received.
         //!
 
-        PolyDb(const char* name);
-
-        //!  \brief PolyDbImpl initialization
-        //!
-        //!  The PolyDbImpl initialization function calls the base
-        //!  class initializer.
-        //!
-
-        void init(NATIVE_INT_TYPE instance);
+        explicit PolyDb(const char* const name);
 
         //!  \brief PolyDbImpl destructor
         //!

@@ -18,10 +18,13 @@ register_fprime_module()
 #
 # This UT does not use auto-generate GTest files. DO NOT emulate.
 ####
+
+set(UT_AUTO_HELPERS ON)
+
 set(UT_SOURCE_FILES
     "${FPRIME_FRAMEWORK_PATH}/Svc/PolyDb/PolyDb.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTestMain.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTesterHelpers.cpp"
+#    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTesterHelpers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTester.cpp"
 )
 

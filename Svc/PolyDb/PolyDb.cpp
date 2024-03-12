@@ -10,15 +10,11 @@
 #include <FpConfig.hpp>
 
 namespace Svc {
-    PolyDb::PolyDb(const char* name) : PolyDbComponentBase(name) {
+    PolyDb::PolyDb(const char* const name) : PolyDbComponentBase(name) {
         // initialize all entries to stale
-        for (NATIVE_INT_TYPE entry = 0; entry < Svc::PolyDbCfg::PolyDbEntry::NUM_CONSTANTS; entry++) {
+        for (FwIndexType entry = 0; entry < Svc::PolyDbCfg::PolyDbEntry::NUM_CONSTANTS; entry++) {
             this->m_db[entry].status = MeasurementStatus::STALE;
         }
-    }
-
-    void PolyDb::init(NATIVE_INT_TYPE instance) {
-        PolyDbComponentBase::init(instance);
     }
 
     void PolyDb ::
