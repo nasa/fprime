@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['os_20components_20ports_20and_20classes_8142',['Os Components Ports and Classes',['../os.html',1,'']]],
-  ['os_3a_3aqueue_20_28pthreads_20implementation_29_8143',['Os::Queue (Pthreads implementation)',['../os_queue.html',1,'Os']]]
+  ['how_2dto_3a_20f´_20gds_20plugin_20development_8148',['How-To: F´ GDS Plugin Development',['../md_docs__how_to_develop_gds_plugins.html',1,'']]]
 ];

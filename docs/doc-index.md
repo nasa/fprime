@@ -16,6 +16,9 @@
 - [memory](Design/memory.md)
 - [numerical-types](Design/numerical-types.md)
 - [package-implementations](Design/package-implementations.md)
+## HowTo
+- [develop-gds-plugins](HowTo/develop-gds-plugins.md)
+- [general](HowTo/general.md)
 ## Tutorials
 - [README](Tutorials/README.md)
 ### Tutorials/CrossCompilationSetup
