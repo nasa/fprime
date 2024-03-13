@@ -74,7 +74,7 @@ class HashBuffer : public Fw::SerializeBufferBase {
 
     //! The buffer which stores the hash digest
     //!
-    U8 m_bufferData[HASH_DIGEST_LENGTH];  // packet data buffer
+    U8 m_bufferData[HASH_DIGEST_LENGTH] = {};  // packet data buffer
 };
 }  // namespace Utils
 

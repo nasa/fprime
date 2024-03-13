@@ -9,7 +9,7 @@ namespace Utils {
 
 HashBuffer::HashBuffer() {}
 
-HashBuffer::HashBuffer(const U8* args, NATIVE_UINT_TYPE size) {
+HashBuffer::HashBuffer(const U8* args, NATIVE_UINT_TYPE size) : Fw::SerializeBufferBase() {
     Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args, size);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
 }
@@ -61,8 +61,7 @@ U32 HashBuffer::asBigEndianU32() const {
     const FwSizeType numBytes = std::min(bufferSize, static_cast<FwSizeType>(sizeof(U32)));
     for (FwSizeType i = 0; i < numBytes; i++) {
         result <<= 8;
-        FW_ASSERT(i < bufferSize, static_cast<FwAssertArgType>(i),
-                  static_cast<FwAssertArgType>(bufferSize));
+        FW_ASSERT(i < bufferSize, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(bufferSize));
         result += this->m_bufferData[i];
     }
     return result;

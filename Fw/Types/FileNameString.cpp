@@ -4,15 +4,15 @@
 namespace Fw {
 
 FileNameString::FileNameString(const char* src) : StringBase() {
-    Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
+    (void)Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
 }
 
 FileNameString::FileNameString(const StringBase& src) : StringBase() {
-    Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+    (void)Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
 }
 
 FileNameString::FileNameString(const FileNameString& src) : StringBase() {
-    Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
+    (void)Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
 }
 
 FileNameString::FileNameString() : StringBase() {

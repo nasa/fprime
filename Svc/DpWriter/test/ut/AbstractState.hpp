@@ -121,10 +121,10 @@ class AbstractState {
     FwSizeType m_invalidHeaderEventCount = 0;
 
     //! Data for buffers
-    U8 m_bufferData[MAX_BUFFER_SIZE];
+    U8 m_bufferData[MAX_BUFFER_SIZE] = {};
 
     //! Data for write results
-    U8 m_writeResultData[MAX_BUFFER_SIZE];
+    U8 m_writeResultData[MAX_BUFFER_SIZE] = {};
 
     //! Bit mask for processing out port calls
     Fw::DpCfg::ProcType::SerialType m_procTypes;
