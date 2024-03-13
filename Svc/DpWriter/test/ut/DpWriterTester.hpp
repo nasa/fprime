@@ -78,7 +78,7 @@ class DpWriterTester : public DpWriterGTestBase {
     //! \return The status
     static Os::File::Status pickOsFileError();
 
-    //! Construct a DP file anme
+    //! Construct a DP file name
     static void constructDpFileName(FwDpIdType id,            //!< The container ID (input)
                                     const Fw::Time& timeTag,  //!< The time tag (input)
                                     Fw::StringBase& fileName  //!< The file name (output)
