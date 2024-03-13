@@ -24,7 +24,7 @@ FileNameString& FileNameString::operator=(const FileNameString& other) {
         return *this;
     }
 
-    Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+    (void)Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
     return *this;
 }
 
@@ -33,7 +33,7 @@ FileNameString& FileNameString::operator=(const StringBase& other) {
         return *this;
     }
 
-    Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+    (void)Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
     return *this;
 }
 
