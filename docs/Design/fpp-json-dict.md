@@ -561,7 +561,7 @@ telemetry Channel1: F64 \
         "name": "c1.Channel1",
         "description": "Telemetry channel 1",
         "type": {
-            "type": "F64",
+            "name": "F64",
             "kind": "float",
             "size": 64
         },
@@ -952,7 +952,7 @@ product container Container2 default priority 10
             "name": "c1.Channel1",
             "description": "Telemetry channel 1",
             "type": {
-                "type": "F64",
+                "name": "F64",
                 "kind": "float",
                 "size": 64
             },
