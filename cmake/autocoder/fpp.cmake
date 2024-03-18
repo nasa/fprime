@@ -240,17 +240,17 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     # Add in dictionary generation
     if (GENERATED_DICT)
         set(FPRIME_CURRENT_DICTIONARY_FILE_JSON "${GENERATED_DICT}" CACHE INTERNAL "" FORCE)
-        set(LIBRABRY_FLAG)
+        set(LIBRARY_FLAG)
         if (FPRIME_LIBRARY_LOCATIONS)
             # TODO: add version number
-            set(LIBRABRY_FLAG "-l" "${FPRIME_LIBRARY_LOCATIONS}")
+            set(LIBRARY_FLAG "-l" "${FPRIME_LIBRARY_LOCATIONS}")
         endif()
         add_custom_command(
             OUTPUT ${GENERATED_DICT}
             COMMAND ${FPP_TO_DICT} 
                 "-d" "${CMAKE_CURRENT_BINARY_DIR}" 
                 "-p" "${CMAKE_PROJECT_VERSION}" # cmake project version is not git version - should get that instead?
-                ${LIBRABRY_FLAG}
+                ${LIBRARY_FLAG}
                 ${IMPORTS} ${AC_INPUT_FILES}
             DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
