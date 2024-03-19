@@ -102,8 +102,11 @@ namespace Svc {
       // True size is supplied size plus sizeof(TOKEN_TYPE) if a packet_type other than "UNKNOWN" was supplied.
       // This is because if not UNKNOWN, the packet_type is serialized too.  Otherwise it is assumed the PACKET_TYPE is
       // already the first token in the UNKNOWN typed buffer.
-      U32 true_size = (packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? size + sizeof(TOKEN_TYPE) : size;
-      U32 total_size = sizeof(TOKEN_TYPE) + sizeof(TOKEN_TYPE) + true_size + sizeof(U32);
+      U32 true_size =
+        (packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ?
+        static_cast<U32>(size + sizeof(TOKEN_TYPE)) :
+        static_cast<U32>(size);
+      U32 total_size = static_cast<U32>(sizeof(TOKEN_TYPE) + sizeof(TOKEN_TYPE) + true_size + sizeof(U32));
       // Serialize data
       FW_ASSERT(GND_BUFFER_SIZE >= total_size, GND_BUFFER_SIZE, total_size);
       buffer_wrapper.serialize(START_WORD);
@@ -158,8 +161,13 @@ namespace Svc {
               if (isConnected_fileUplinkBufferGet_OutputPort(0) &&
                   isConnected_fileDownlinkBufferSendOut_OutputPort(0)) {
                   Fw::Buffer buffer = fileUplinkBufferGet_out(0, m_data_size);
-                  m_in_ring.peek(buffer.getData(), m_data_size - sizeof(packet_type), HEADER_SIZE + sizeof(packet_type));
-                  buffer.setSize(m_data_size - sizeof(packet_type));
+
+                  m_in_ring.peek(
+                    buffer.getData(),
+                    static_cast<NATIVE_UINT_TYPE>(m_data_size - sizeof(packet_type)),
+                    HEADER_SIZE + sizeof(packet_type));
+
+                  buffer.setSize(static_cast<U32>(m_data_size - sizeof(packet_type)));
                   fileUplinkBufferSendOut_out(0, buffer);
               }
               break;
@@ -193,11 +201,11 @@ namespace Svc {
               break;
           }
           // Continue with the data portion and checksum
-          m_in_ring.peek(checksum, HEADER_SIZE + m_data_size);
+          m_in_ring.peek(checksum, static_cast<NATIVE_UINT_TYPE>(HEADER_SIZE + m_data_size));
           // Check checksum
           if (checksum == END_WORD) {
               routeComData();
-              m_in_ring.rotate(HEADER_SIZE + m_data_size + sizeof(U32));
+              m_in_ring.rotate(static_cast<NATIVE_UINT_TYPE>(HEADER_SIZE + m_data_size + sizeof(U32)));
           }
           // Failed checksum, keep looking for valid message
           else {

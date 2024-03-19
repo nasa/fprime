@@ -70,7 +70,7 @@ namespace Svc {
                 // Only return a good status if the write was valid
                 status = (writeSize > 0);
 
-                this->m_currentFileSize += writeSize;
+                this->m_currentFileSize += static_cast<U32>(writeSize);
             }
         }
 

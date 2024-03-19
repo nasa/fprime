@@ -156,7 +156,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                     // The FileUplink component does not expect the packet
                     // type to be there.
                     packetBuffer.setData(packetData + sizeof(packetType));
-                    packetBuffer.setSize(packetSize - sizeof(packetType));
+                    packetBuffer.setSize(static_cast<U32>(packetSize - sizeof(packetType)));
                     // Send the packet buffer
                     bufferOut_out(0, packetBuffer);
                     // Transfer ownership of the buffer to the receiver

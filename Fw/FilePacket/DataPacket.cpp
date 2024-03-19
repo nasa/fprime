@@ -32,11 +32,11 @@ namespace Fw {
   U32 FilePacket::DataPacket ::
     bufferSize() const
   {
-    return
+    return static_cast<U32>(
       this->m_header.bufferSize() +
       sizeof(this->m_byteOffset) +
       sizeof(this->m_dataSize) +
-      this->m_dataSize;
+      this->m_dataSize);
   }
 
   SerializeStatus FilePacket::DataPacket ::
@@ -76,10 +76,10 @@ namespace Fw {
   U32 FilePacket::DataPacket ::
     fixedLengthSize() const
   {
-    return
+    return static_cast<U32>(
       this->m_header.bufferSize() +
       sizeof(this->m_byteOffset) +
-      sizeof(this->m_dataSize);
+      sizeof(this->m_dataSize));
   }
 
   SerializeStatus FilePacket::DataPacket ::

@@ -82,11 +82,11 @@ SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
 }
 
 I32 TcpClientSocket::sendProtocol(const U8* const data, const U32 size) {
-    return ::send(this->m_fd, data, size, SOCKET_IP_SEND_FLAGS);
+    return static_cast<I32>(::send(this->m_fd, data, size, SOCKET_IP_SEND_FLAGS));
 }
 
 I32 TcpClientSocket::recvProtocol(U8* const data, const U32 size) {
-    return ::recv(this->m_fd, data, size, SOCKET_IP_RECV_FLAGS);
+    return static_cast<I32>(::recv(this->m_fd, data, size, SOCKET_IP_RECV_FLAGS));
 }
 
 }  // namespace Drv

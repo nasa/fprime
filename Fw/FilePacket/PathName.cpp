@@ -29,7 +29,7 @@ namespace Fw {
   U32 FilePacket::PathName ::
     bufferSize() const
   {
-    return sizeof(this->m_length) + this->m_length;
+    return static_cast<U32>(sizeof(this->m_length) + this->m_length);
   }
 
   SerializeStatus FilePacket::PathName ::

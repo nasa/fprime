@@ -209,7 +209,8 @@ namespace Svc {
     U8* const CURR_PTR = bufferMem;
     U8* const END_PTR = static_cast<U8*>(memory) + memorySize;
     FW_ASSERT(CURR_PTR == END_PTR,
-        reinterpret_cast<POINTER_CAST>(CURR_PTR), reinterpret_cast<POINTER_CAST>(END_PTR));
+        static_cast<FwAssertArgType>(reinterpret_cast<POINTER_CAST>(CURR_PTR)),
+        static_cast<FwAssertArgType>(reinterpret_cast<POINTER_CAST>(END_PTR)));
     // secondary init verification
     FW_ASSERT(currStruct == this->m_numStructs,currStruct,this->m_numStructs);
     // indicate setup is done

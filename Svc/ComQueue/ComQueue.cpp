@@ -84,7 +84,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 // Message size is determined by the type of object being stored, which in turn is determined by the
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
                 entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
-                totalAllocation += entry.depth * entry.msgSize;
+                totalAllocation += static_cast<NATIVE_UINT_TYPE>(entry.depth * entry.msgSize);
                 currentPriorityIndex++;
             }
         }
@@ -102,8 +102,11 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
         FwSizeType allocationSize = this->m_prioritizedList[i].depth * this->m_prioritizedList[i].msgSize;
         FW_ASSERT(this->m_prioritizedList[i].index < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_queues)),
                   this->m_prioritizedList[i].index);
-        FW_ASSERT((allocationSize + allocationOffset) <= totalAllocation, allocationSize, allocationOffset,
-                  totalAllocation);
+        FW_ASSERT(
+            (allocationSize + allocationOffset) <= totalAllocation,
+            static_cast<FwAssertArgType>(allocationSize),
+            static_cast<FwAssertArgType>(allocationOffset),
+            static_cast<FwAssertArgType>(totalAllocation));
 
         // Setup queue's memory allocation, depth, and message size. Setup is skipped for a depth 0 queue
         if (allocationSize > 0) {
@@ -114,7 +117,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
         allocationOffset += allocationSize;
     }
     // Safety check that all memory was used as expected
-    FW_ASSERT(allocationOffset == totalAllocation, allocationOffset, totalAllocation);
+    FW_ASSERT(allocationOffset == totalAllocation, static_cast<FwAssertArgType>(allocationOffset), totalAllocation);
 }
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
@@ -158,7 +161,7 @@ void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& c
 void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     // Downlink the high-water marks for the Fw::ComBuffer array types
     ComQueueDepth comQueueDepth;
-    for (FwSizeType i = 0; i < comQueueDepth.SIZE; i++) {
+    for (U32 i = 0; i < comQueueDepth.SIZE; i++) {
         comQueueDepth[i] = this->m_queues[i].get_high_water_mark();
         this->m_queues[i].clear_high_water_mark();
     }
@@ -166,7 +169,7 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
 
     // Downlink the high-water marks for the Fw::Buffer array types
     BuffQueueDepth buffQueueDepth;
-    for (FwSizeType i = 0; i < buffQueueDepth.SIZE; i++) {
+    for (U32 i = 0; i < buffQueueDepth.SIZE; i++) {
         buffQueueDepth[i] = this->m_queues[i + COM_PORT_COUNT].get_high_water_mark();
         this->m_queues[i + COM_PORT_COUNT].clear_high_water_mark();
     }
@@ -182,7 +185,10 @@ void ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     // set the appropriate throttle, and move on. Will assert if passed a message for a depth 0 queue.
     const FwSizeType expectedSize = (queueType == QueueType::COM_QUEUE) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
     const FwIndexType portNum = queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT);
-    FW_ASSERT(expectedSize == size, size, expectedSize);
+    FW_ASSERT(
+        expectedSize == size,
+        static_cast<FwAssertArgType>(size),
+        static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, portNum);
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !this->m_throttle[queueNum]) {

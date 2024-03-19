@@ -52,7 +52,7 @@ namespace Svc {
         return status;
     }
 
-    FW_ASSERT(static_cast<U32>(intLength) == length, intLength);
+    FW_ASSERT(static_cast<U32>(intLength) == length, static_cast<FwAssertArgType>(intLength));
     this->m_checksum.update(data, byteOffset, length);
     return Os::File::OP_OK;
 

@@ -139,7 +139,7 @@ void DpContainer::setBuffer(const Buffer& buffer) {
     FW_ASSERT(bufferSize >= minBufferSize, static_cast<FwAssertArgType>(bufferSize),
               static_cast<FwAssertArgType>(minBufferSize));
     U8* const dataAddr = &buffAddr[DATA_OFFSET];
-    this->m_dataBuffer.setExtBuffer(dataAddr, dataCapacity);
+    this->m_dataBuffer.setExtBuffer(dataAddr, static_cast<Fw::Serializable::SizeType>(dataCapacity));
 }
 
 Utils::HashBuffer DpContainer::getHeaderHash() const {
@@ -199,7 +199,7 @@ Utils::HashBuffer DpContainer::computeDataHash() const {
     FW_ASSERT(DATA_OFFSET + dataSize <= bufferSize, static_cast<FwAssertArgType>(DATA_OFFSET + dataSize),
               static_cast<FwAssertArgType>(bufferSize));
     Utils::HashBuffer computedHash;
-    Utils::Hash::hash(dataAddr, dataSize, computedHash);
+    Utils::Hash::hash(dataAddr, static_cast<NATIVE_INT_TYPE>(dataSize), computedHash);
     return computedHash;
 }
 
