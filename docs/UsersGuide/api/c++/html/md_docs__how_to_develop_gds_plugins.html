@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('md_docs__how_to_develop_gds_plugins.ht
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>This guide will walk through the process of developing GDS plugins. GDS plugins allow users to select an implementation for key functions within the GDS. These selections allow users to tailor the behavior of the GDS without affecting the top-level flow of data throughout the system.</p>
-<h1><a class="anchor" id="autotoc_md230"></a>
+<h1><a class="anchor" id="autotoc_md231"></a>
 Plugin System Design</h1>
 <p>GDS plugins are built on top of the <a href="https://pluggy.readthedocs.io/en/stable/">pluggy</a>. This means that each implementor of a GDS plugin must define a function for behavior and mark that function with an implementation decorator.</p>
 <p>The GDS defines several categories of plugins that the user may implement:</p>
@@ -99,13 +99,13 @@ Plugin System Design</h1>
 </ol>
 <p>Plugins should define a function called <code>register_&lt;category&gt;_plugin</code> that would return a concrete subclass of the category's virtual-class that performs the work of the plugin. These classes may define <code>get_arguments</code>, <code>get_name</code>, and <code>check_arguments</code> functions used by the plugin system to provide and validate arguments from the CLI.</p>
 <p>This guide will walk through the development of a framing plugin.</p>
-<h1><a class="anchor" id="autotoc_md231"></a>
+<h1><a class="anchor" id="autotoc_md232"></a>
 Developing a Framing Plugin</h1>
 <p>The first step in developing a framing plugin is to determine the function that must be implemented and the class that must be derived to develop the plugin. This information is available in <a href="https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/plugin/definitions.py"><code>fprime_gds.plugin.definitions</code></a>.</p>
 <p>For the case of a <code>framing</code> plugin, the <code>register_framing_plugin</code> function contains the needed information: our function must be named <code>register_framing_plugin</code> and return a concrete subclass of <code>FramerDeframer</code>.</p>
 <div class="fragment"><div class="line">@gds_plugin_specification</div>
 <div class="line">def register_framing_plugin() -&gt; Type[&quot;FramerDeframer&quot;]:</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md232"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md233"></a>
 Basic Plugin Skeleton</h2>
 <p>Most GDS plugins define a class that inherits from the necessary virtual-class and implements virtual functions. These classes also define a properly decorated class method for the registration function, and may define the other class methods used for CLI interaction.</p>
 <p>A basic framing plugin skeleton would thus look like: **<code>src/my_plugin.py</code>:** </p><div class="fragment"><div class="line">from fprime_gds.common.communication.framing import FramerDeframer</div>
@@ -133,7 +133,7 @@ Basic Plugin Skeleton</h2>
 <div class="line">    def register_framing_plugin(cls):</div>
 <div class="line">        &quot;&quot;&quot; Register the MyPlugin plugin &quot;&quot;&quot;</div>
 <div class="line">        return cls</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md233"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md234"></a>
 Implementing Virtual Functions</h2>
 <p>Each plugin virtual-class (e.g. <code>FramerDeframer</code>) has a set of virtual methods that plugin implementors <em>must</em> implement in order to support the plugin implementation. These functions are marked as <code>@abc.abstractmethod</code> and can be found in the virtual class definition.</p>
 <p><a href="https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/communication/framing.py#L29-L51">FramerDeframer virtual functions</a> consist of a <code>frame</code> and <code>deframe</code> method. This guide will use no-op functions.</p>
@@ -173,7 +173,7 @@ Implementing Virtual Functions</h2>
 <div class="line">        &quot;&quot;&quot; Register the MyPlugin plugin &quot;&quot;&quot;</div>
 <div class="line">        return cls</div>
 </div><!-- fragment --><p>This is the basic implementation of a no-argument framing plugin. Next, this guide will cover how to integrate this plugin via python packaging. Then arguments will be covered.</p>
-<h2><a class="anchor" id="autotoc_md234"></a>
+<h2><a class="anchor" id="autotoc_md235"></a>
 Distributing Plugins</h2>
 <p>Plugins are supplied as python packages with an entrypoint used to load the plugin. In the root of the package a basic python package will need to be configured. This consists of two files: pyproject.toml representing the package, and setup.py for backwards compatibility.</p>
 <p>The project structure should look like: </p><div class="fragment"><div class="line">src/my_plugin.py</div>

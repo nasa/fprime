@@ -148,8 +148,8 @@ Contents</h1>
 </ul>
 </li>
 <li><a href="#data-products">Data Products</a><ul>
-<li><a href="#record">Record</a></li>
-<li><a href="#container">Container</a></li>
+<li><a href="#records">Records</a></li>
+<li><a href="#containers">Containers</a></li>
 </ul>
 </li>
 <li><a href="#dictionaries">Dictionaries</a><ul>
@@ -250,7 +250,9 @@ Boolean Type Name</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>name</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing the FPP type name   </td><td class="markdownTableBodyNone">bool   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>kind</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing the kind of type   </td><td class="markdownTableBodyNone">bool   </td><td class="markdownTableBodyNone">true   </td></tr>
+<td class="markdownTableBodyNone"><code>kind</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing the kind of type   </td><td class="markdownTableBodyNone">bool   </td><td class="markdownTableBodyNone">true    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>size</code>   </td><td class="markdownTableBodyNone"><b>Number</b> of bits supported by the data type   </td><td class="markdownTableBodyNone">8   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
 <h3><a class="anchor" id="autotoc_md39"></a>
 Boolean Types</h3>
@@ -261,6 +263,7 @@ Boolean Types</h3>
 <p>Example JSON of bool </p><div class="fragment"><div class="line">{</div>
 <div class="line">    &quot;name&quot;: &quot;bool&quot;,</div>
 <div class="line">    &quot;kind&quot;: &quot;bool&quot;,</div>
+<div class="line">    &quot;size&quot;: 8</div>
 <div class="line">}</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md40"></a>
 String Type Names</h2>
@@ -272,7 +275,7 @@ String Type Names</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>kind</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing the kind of type   </td><td class="markdownTableBodyNone">string   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>size</code>   </td><td class="markdownTableBodyNone"><b>Number</b> of bytes supported by the data type   </td><td class="markdownTableBodyNone"><b>Number</b> in the range [0, 2<sup>31</sup>)   </td><td class="markdownTableBodyNone">true   </td></tr>
+<td class="markdownTableBodyNone"><code>size</code>   </td><td class="markdownTableBodyNone"><b>Number</b> of bytes supported by the data type   </td><td class="markdownTableBodyNone"><b>Number</b> in the range [0, 2<sup>31</sup>)   </td><td class="markdownTableBodyNone">false   </td></tr>
 </table>
 <h3><a class="anchor" id="autotoc_md41"></a>
 String Types</h3>
@@ -312,7 +315,7 @@ Array Type Definition</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>elementType</code>   </td><td class="markdownTableBodyNone">A <b>JSON dictionary</b> representing the type of array   </td><td class="markdownTableBodyNone"><b>JSON Dictionary</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>default</code>   </td><td class="markdownTableBodyNone">Default array value   </td><td class="markdownTableBodyNone">Value of type specified in <code>elementType</code>   </td><td class="markdownTableBodyNone">false   </td></tr>
+<td class="markdownTableBodyNone"><code>default</code>   </td><td class="markdownTableBodyNone">Default array value   </td><td class="markdownTableBodyNone">Value of type specified in <code>elementType</code>   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
 <p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module M {</div>
 <div class="line">  array A = [3] U8</div>
@@ -343,7 +346,7 @@ Enumeration Type Definition</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>identifiers</code>   </td><td class="markdownTableBodyNone">Dictionary of identifiers (keys) and numeric values (values)   </td><td class="markdownTableBodyNone"><b>JSON Dictionary</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>default</code>   </td><td class="markdownTableBodyNone">String qualified name of the enumeration value   </td><td class="markdownTableBodyNone"><b>String</b> qualified name   </td><td class="markdownTableBodyNone">false   </td></tr>
+<td class="markdownTableBodyNone"><code>default</code>   </td><td class="markdownTableBodyNone">String qualified name of the enumeration value   </td><td class="markdownTableBodyNone"><b>String</b> qualified name   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
 <p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module M {</div>
 <div class="line">    enum Status {</div>
@@ -382,7 +385,7 @@ Struct Member</h3>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>size</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the size of the struct member   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">false    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>formatSpecifier</code>   </td><td class="markdownTableBodyNone"><b>String</b> format specifier   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">false   </td></tr>
+<td class="markdownTableBodyNone"><code>format</code>   </td><td class="markdownTableBodyNone"><b>String</b> format specifier   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">false   </td></tr>
 </table>
 <h3><a class="anchor" id="autotoc_md48"></a>
 Struct Type Definition</h3>
@@ -396,7 +399,7 @@ Struct Type Definition</h3>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>members</code>   </td><td class="markdownTableBodyNone">JSON dictionary consisting of <b>String</b> identifier (key) and <a href="#struct-member">Struct Member</a> (value)   </td><td class="markdownTableBodyNone">JSON dictionary   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>default</code>   </td><td class="markdownTableBodyNone">JSON dictionary consisting of <b>String</b> identifier (key) and default value (value)   </td><td class="markdownTableBodyNone">JSON dictionary   </td><td class="markdownTableBodyNone">false   </td></tr>
+<td class="markdownTableBodyNone"><code>default</code>   </td><td class="markdownTableBodyNone">JSON dictionary consisting of <b>String</b> identifier (key) and default value (value)   </td><td class="markdownTableBodyNone">JSON dictionary   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
 <p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module M {</div>
 <div class="line">    struct A {</div>
@@ -424,7 +427,7 @@ Struct Type Definition</h3>
 <div class="line">                &quot;signed&quot;: false,</div>
 <div class="line">                &quot;size&quot;: 32</div>
 <div class="line">            },</div>
-<div class="line">            &quot;formatSpecifier&quot;: &quot;the count is {}&quot;,</div>
+<div class="line">            &quot;format&quot;: &quot;the count is {}&quot;,</div>
 <div class="line">            &quot;index&quot;: 1</div>
 <div class="line">        },</div>
 <div class="line">        &quot;y&quot;: {</div>
@@ -519,16 +522,16 @@ Formal Parameters</h2>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Field   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Options   </th><th class="markdownTableHeadNone">Required    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>identifier</code>   </td><td class="markdownTableBodyNone"><b>String</b> identifier   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>name</code>   </td><td class="markdownTableBodyNone"><b>String</b> name   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>description</code>   </td><td class="markdownTableBodyNone"><b>String</b> annotation of parameter   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>type</code>   </td><td class="markdownTableBodyNone"><a href="#type-names">Type Name</a> of parameter   </td><td class="markdownTableBodyNone"><a href="#type-names">Type Name</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>ref</code>   </td><td class="markdownTableBodyNone"><b>Boolean</b> indicating whether the formal parameter is to be passed by referenced when it is used in a synchronous port invocation   </td><td class="markdownTableBodyNone"><b>Boolean</b>   </td><td class="markdownTableBodyNone">false   </td></tr>
+<td class="markdownTableBodyNone"><code>ref</code>   </td><td class="markdownTableBodyNone"><b>Boolean</b> indicating whether the formal parameter is to be passed by referenced when it is used in a synchronous port invocation   </td><td class="markdownTableBodyNone"><b>Boolean</b>   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
 <div class="fragment"><div class="line">{</div>
-<div class="line">    &quot;identifier&quot;: &quot;param1&quot;,</div>
+<div class="line">    &quot;name&quot;: &quot;param1&quot;,</div>
 <div class="line">    &quot;description&quot;: &quot;Param 1&quot;,</div>
 <div class="line">    &quot;type&quot;: {</div>
 <div class="line">        &quot;name&quot;: &quot;U32&quot;,</div>
@@ -544,7 +547,7 @@ Parameters</h2>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Field   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Options   </th><th class="markdownTableHeadNone">Required    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>identifier</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the parameter   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>name</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the parameter   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>description</code>   </td><td class="markdownTableBodyNone"><b>String</b> annotation of parameter   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -552,25 +555,15 @@ Parameters</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>default</code>   </td><td class="markdownTableBodyNone">Default value (of type specified in <code>type</code>) of the parameter   </td><td class="markdownTableBodyNone">Value of type specified in <code>type</code>   </td><td class="markdownTableBodyNone">false    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>numericIdentifier</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the numeric identifier of the parameter   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">false    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>setOpcode</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the opcode of the command for setting the parameter   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">false    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>saveOpcode</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the opcode of the command for saving the parameter   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">false   </td></tr>
+<td class="markdownTableBodyNone"><code>id</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the numeric identifier of the parameter   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
-<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module MyModule {</div>
-<div class="line">    active component FirstComponent {</div>
-<div class="line">        @ This is the annotation for Parameter 1</div>
-<div class="line">        param Parameter1: U32 \</div>
-<div class="line">            id 0x100 \</div>
-<div class="line">            set opcode 0x101 \</div>
-<div class="line">            save opcode 0x102</div>
-<div class="line"> </div>
-<div class="line">        ...</div>
-<div class="line">    }</div>
-<div class="line">}</div>
+<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">@ This is the annotation for Parameter 1</div>
+<div class="line">param Parameter1: U32 \</div>
+<div class="line">    id 0x100 \</div>
+<div class="line">    set opcode 0x101 \</div>
+<div class="line">    save opcode 0x102</div>
 </div><!-- fragment --><div class="fragment"><div class="line">{</div>
-<div class="line">    &quot;identifier&quot;: &quot;MyModule.FirstComponent.Parameter1&quot;,</div>
+<div class="line">    &quot;name&quot;: &quot;c1.Parameter1&quot;,</div>
 <div class="line">    &quot;description&quot;: &quot;This is the annotation for Parameter 1&quot;,</div>
 <div class="line">    &quot;type&quot;: {</div>
 <div class="line">        &quot;name&quot;: &quot;U32&quot;,</div>
@@ -579,9 +572,7 @@ Parameters</h2>
 <div class="line">        &quot;size&quot;: 32</div>
 <div class="line">    },</div>
 <div class="line">    &quot;default&quot;: 0,</div>
-<div class="line">    &quot;numericIdentifier&quot;: &quot;256&quot;,</div>
-<div class="line">    &quot;setOpcode&quot;: &quot;257&quot;,</div>
-<div class="line">    &quot;saveOpcode&quot;: &quot;258&quot;</div>
+<div class="line">    &quot;id&quot;: &quot;256&quot;</div>
 <div class="line">}</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md64"></a>
 Commands</h2>
@@ -589,7 +580,7 @@ Commands</h2>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Field   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Options   </th><th class="markdownTableHeadNone">Required    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>identifier</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the command   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>name</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the command   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>commandKind</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing the kind of command   </td><td class="markdownTableBodyNone">async, guarded, sync   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -599,29 +590,23 @@ Commands</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>formalParams</code>   </td><td class="markdownTableBodyNone">Array of <a href="#formal-parameters">Formal Parameters</a>   </td><td class="markdownTableBodyNone">Array of <a href="#formal-parameters">Formal Parameters</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>priority</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the priority for the command on the input queue   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">false    </td></tr>
+<td class="markdownTableBodyNone"><code>priority</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the priority for the command on the input queue   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">required for async command kinds    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>queueFullBehavior</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing the behavior of the command when the input full is queue   </td><td class="markdownTableBodyNone">assert, block, drop   </td><td class="markdownTableBodyNone">false   </td></tr>
+<td class="markdownTableBodyNone"><code>queueFullBehavior</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing the behavior of the command when the input full is queue   </td><td class="markdownTableBodyNone">assert, block, drop   </td><td class="markdownTableBodyNone">required for async command kinds   </td></tr>
 </table>
-<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module MyComponents {</div>
-<div class="line">    active component FirstComponent {</div>
-<div class="line">        @ A sync command with parameters</div>
-<div class="line">        sync command SyncParams(</div>
-<div class="line">            param1: U32 @&lt; Param 1</div>
-<div class="line">            param2: string @&lt; Param 2</div>
-<div class="line">        ) opcode 0x100</div>
-<div class="line">        </div>
-<div class="line">        ...</div>
-<div class="line">    }</div>
-<div class="line">}</div>
+<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">@ A sync command with parameters</div>
+<div class="line">sync command SyncParams(</div>
+<div class="line">    param1: U32 @&lt; Param 1</div>
+<div class="line">    param2: string @&lt; Param 2</div>
+<div class="line">) opcode 0x100</div>
 </div><!-- fragment --><div class="fragment"><div class="line">{</div>
-<div class="line">    &quot;identifier&quot;: &quot;MyComponents.FirstComponent.SyncParams&quot;,</div>
+<div class="line">    &quot;name&quot;: &quot;c1.SyncParams&quot;,</div>
 <div class="line">    &quot;commandKind&quot;: &quot;sync&quot;,</div>
 <div class="line">    &quot;opcode&quot;: 256,</div>
 <div class="line">    &quot;description&quot;: &quot;A sync command with parameters&quot;,</div>
 <div class="line">    &quot;formalParams&quot;: [</div>
 <div class="line">        {</div>
-<div class="line">            &quot;identifier&quot;: &quot;param1&quot;,</div>
+<div class="line">            &quot;name&quot;: &quot;param1&quot;,</div>
 <div class="line">            &quot;description&quot;: &quot;Param 1&quot;,</div>
 <div class="line">            &quot;type&quot;: {</div>
 <div class="line">                &quot;name&quot;: &quot;U32&quot;,</div>
@@ -632,7 +617,7 @@ Commands</h2>
 <div class="line">            &quot;ref&quot;: false</div>
 <div class="line">        },</div>
 <div class="line">         {</div>
-<div class="line">            &quot;identifier&quot;: &quot;param2&quot;,</div>
+<div class="line">            &quot;name&quot;: &quot;param2&quot;,</div>
 <div class="line">            &quot;description&quot;: &quot;Param 2&quot;,</div>
 <div class="line">            &quot;type&quot;: {</div>
 <div class="line">                &quot;name&quot;: &quot;string&quot;,</div>
@@ -649,42 +634,36 @@ Telemetry Channels</h2>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Field   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Options   </th><th class="markdownTableHeadNone">Required    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>identifier</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the telemetry channel   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>name</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the telemetry channel   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>description</code>   </td><td class="markdownTableBodyNone"><b>String</b> annotation of channel   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>type</code>   </td><td class="markdownTableBodyNone"><a href="#type-names">Type Name</a> the telemetry channel   </td><td class="markdownTableBodyNone"><a href="#type-names">Type Name</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>numericIdentifier</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing numeric identifier   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>id</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing numeric identifier   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>telemetryUpdate</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing when the telemetry channel can update   </td><td class="markdownTableBodyNone">always, on change   </td><td class="markdownTableBodyNone">false    </td></tr>
+<td class="markdownTableBodyNone"><code>telemetryUpdate</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing when the telemetry channel can update   </td><td class="markdownTableBodyNone">always, on change   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>formatString</code>   </td><td class="markdownTableBodyNone"><b>String</b> format with a single argument (the telemetry channel)   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">false    </td></tr>
+<td class="markdownTableBodyNone"><code>format</code>   </td><td class="markdownTableBodyNone"><b>String</b> format with a single argument (the telemetry channel)   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">false    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>limit</code>   </td><td class="markdownTableBodyNone"><b>JSON dictionary</b> consisting of low and high limits   </td><td class="markdownTableBodyNone"><b>JSON dictionary</b>   </td><td class="markdownTableBodyNone">false   </td></tr>
 </table>
-<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module MyModule {</div>
-<div class="line">    active component FirstComponent {</div>
-<div class="line">        @ Telemetry channel 1</div>
-<div class="line">        telemetry Channel1: F64 \</div>
-<div class="line">            id 0x100 \</div>
-<div class="line">            update on change \</div>
-<div class="line">            low { yellow -1, orange -2, red -3 } \</div>
-<div class="line">            high { yellow 1, orange 2, red 3 }</div>
-<div class="line">        </div>
-<div class="line">        ...</div>
-<div class="line">    }</div>
-<div class="line">}</div>
+<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">@ Telemetry channel 1</div>
+<div class="line">telemetry Channel1: F64 \</div>
+<div class="line">    id 0x100 \</div>
+<div class="line">    update on change \</div>
+<div class="line">    low { yellow -1, orange -2, red -3 } \</div>
+<div class="line">    high { yellow 1, orange 2, red 3 }</div>
 </div><!-- fragment --><div class="fragment"><div class="line">[</div>
 <div class="line">    {</div>
-<div class="line">        &quot;identifier&quot;: &quot;MyModule.FirstComponent.Channel1&quot;,</div>
+<div class="line">        &quot;name&quot;: &quot;c1.Channel1&quot;,</div>
 <div class="line">        &quot;description&quot;: &quot;Telemetry channel 1&quot;,</div>
 <div class="line">        &quot;type&quot;: {</div>
-<div class="line">            &quot;type&quot;: &quot;F64&quot;,</div>
+<div class="line">            &quot;name&quot;: &quot;F64&quot;,</div>
 <div class="line">            &quot;kind&quot;: &quot;float&quot;,</div>
 <div class="line">            &quot;size&quot;: 64</div>
 <div class="line">        },</div>
-<div class="line">        &quot;numericIdentifier&quot;: 256,</div>
+<div class="line">        &quot;id&quot;: 256,</div>
 <div class="line">        &quot;telemetryUpdate&quot;: &quot;on change&quot;,</div>
 <div class="line">        &quot;limit&quot;: {</div>
 <div class="line">            &quot;low&quot;: {</div>
@@ -706,60 +685,50 @@ Events</h2>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Field   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Options   </th><th class="markdownTableHeadNone">Required    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>identifier</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the event   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>name</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the event   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>description</code>   </td><td class="markdownTableBodyNone"><b>String</b> annotation of event   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>severity</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing severity of the event   </td><td class="markdownTableBodyNone">activity high, activity low, command, diagnostic, fatal, warning high, warning low   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>severity</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing severity of the event   </td><td class="markdownTableBodyNone">ACTIVITY_HIGH, ACTIVITY_LOW, COMMAND, DIAGNOSTIC, FATAL, WARNING_HIGH, WARNING_LOW   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>formalParams</code>   </td><td class="markdownTableBodyNone">Array of <a href="#formal-parameters">Formal Parameters</a>   </td><td class="markdownTableBodyNone">Array <a href="#formal-parameters">Formal Parameters</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>numericIdentifier</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the numeric identifier of the event   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>id</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the numeric identifier of the event   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>formatString</code>   </td><td class="markdownTableBodyNone"><b>String</b> format with event parameters as arguments   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">false    </td></tr>
+<td class="markdownTableBodyNone"><code>format</code>   </td><td class="markdownTableBodyNone"><b>String</b> format with event parameters as arguments   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">false    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>throttle</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the maximum number of times to emit the event before throttling it   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">false   </td></tr>
 </table>
-<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module MyModule {</div>
-<div class="line">    active component FirstComponent {</div>
-<div class="line">        @ This is the annotation for Event 0</div>
-<div class="line">        event Event0 \</div>
-<div class="line">            severity activity low \</div>
-<div class="line">            id 0x100 \</div>
-<div class="line">            format &quot;Event 0 occurred&quot;</div>
-<div class="line">        </div>
-<div class="line">        ...</div>
-<div class="line">    }</div>
-<div class="line">}</div>
+<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">@ This is the annotation for Event 0</div>
+<div class="line">event Event0 \</div>
+<div class="line">    severity activity low \</div>
+<div class="line">    id 0x100 \</div>
+<div class="line">    format &quot;Event 0 occurred&quot;</div>
+<div class="line"> </div>
+<div class="line">...</div>
 </div><!-- fragment --><div class="fragment"><div class="line">{</div>
-<div class="line">    &quot;identifier&quot;: &quot;MyModule.FirstComponent.Event0&quot;,</div>
+<div class="line">    &quot;name&quot;: &quot;c1.Event0&quot;,</div>
 <div class="line">    &quot;description&quot;: &quot;This is the annotation for Event 0&quot;,</div>
-<div class="line">    &quot;severity&quot;: &quot;activity low&quot;,</div>
+<div class="line">    &quot;severity&quot;: &quot;ACTIVITY_LOW&quot;,</div>
 <div class="line">    &quot;formalParams&quot;: [],</div>
-<div class="line">    &quot;numericIdentifier&quot;: 256,</div>
-<div class="line">    &quot;formatString&quot;: &quot;Event 0 occurred&quot;,</div>
+<div class="line">    &quot;id&quot;: 256,</div>
+<div class="line">    &quot;format&quot;: &quot;Event 0 occurred&quot;,</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module MyModule {</div>
-<div class="line">    active component FirstComponent {</div>
-<div class="line">        @ This is the annotation for Event 1</div>
-<div class="line">        @ Sample output: &quot;Event 1 occurred with argument 42&quot;</div>
-<div class="line">        event Event1(</div>
-<div class="line">            arg1: U32 @&lt; Argument 1</div>
-<div class="line">        ) \</div>
-<div class="line">            severity activity high \</div>
-<div class="line">            id 0x101 \</div>
-<div class="line">            format &quot;Event 1 occurred with argument {}&quot;</div>
-<div class="line">        </div>
-<div class="line">        ...</div>
-<div class="line">    }</div>
-<div class="line">}</div>
+</div><!-- fragment --><p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">@ This is the annotation for Event 1</div>
+<div class="line">@ Sample output: &quot;Event 1 occurred with argument 42&quot;</div>
+<div class="line">event Event1(</div>
+<div class="line">    arg1: U32 @&lt; Argument 1</div>
+<div class="line">) \</div>
+<div class="line">    severity activity high \</div>
+<div class="line">    id 0x101 \</div>
+<div class="line">    format &quot;Event 1 occurred with argument {}&quot;</div>
 </div><!-- fragment --> <div class="fragment"><div class="line">{</div>
-<div class="line">    &quot;identifier&quot;: &quot;MyModule.FirstComponent.Event1&quot;,</div>
+<div class="line">    &quot;name&quot;: &quot;c1.Event1&quot;,</div>
 <div class="line">    &quot;description&quot;: &quot;This is the annotation for Event 1&quot;,</div>
-<div class="line">    &quot;severity&quot;: &quot;activity high&quot;,</div>
+<div class="line">    &quot;severity&quot;: &quot;ACTIVITY_HIGH&quot;,</div>
 <div class="line">    &quot;formalParams&quot;: [</div>
 <div class="line">        {</div>
-<div class="line">           &quot;identifier&quot;: &quot;arg1&quot;,</div>
+<div class="line">           &quot;name&quot;: &quot;arg1&quot;,</div>
 <div class="line">            &quot;description&quot;: &quot;Argument 1&quot;,</div>
 <div class="line">            &quot;type&quot;: {</div>
 <div class="line">                &quot;name&quot;: &quot;U32&quot;,</div>
@@ -770,18 +739,18 @@ Events</h2>
 <div class="line">            &quot;ref&quot;: false  </div>
 <div class="line">        }</div>
 <div class="line">    ],</div>
-<div class="line">    &quot;numericIdentifier&quot;: 257,</div>
-<div class="line">    &quot;formatString&quot;: &quot;Event 1 occurred with argument {}&quot;,</div>
+<div class="line">    &quot;id&quot;: 257,</div>
+<div class="line">    &quot;format&quot;: &quot;Event 1 occurred with argument {}&quot;,</div>
 <div class="line">}</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md67"></a>
 Data Products</h1>
 <h2><a class="anchor" id="autotoc_md68"></a>
-Record</h2>
+Records</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Field   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Options   </th><th class="markdownTableHeadNone">Required    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>identifier</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the record   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>name</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the record   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>description</code>   </td><td class="markdownTableBodyNone"><b>String</b> annotation of record   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -789,23 +758,17 @@ Record</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>array</code>   </td><td class="markdownTableBodyNone"><b>Boolean</b> specifying whether the record stores a variable number of elements   </td><td class="markdownTableBodyNone"><b>Boolean</b>   </td><td class="markdownTableBodyNone">false    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>numericIdentifier</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the numeric identifier of the record   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">true   </td></tr>
+<td class="markdownTableBodyNone"><code>id</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the numeric identifier of the record   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
-<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module MyModule {</div>
-<div class="line">    active component FirstComponent {</div>
-<div class="line">        @ Record 0: A variable number of F32 values</div>
-<div class="line">        @ Implied id is 0x100</div>
-<div class="line">        product record Record0: F32 array</div>
+<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">@ Record 0: A variable number of F32 values</div>
+<div class="line">@ Implied id is 0x100</div>
+<div class="line">product record Record0: F32 array</div>
 <div class="line"> </div>
-<div class="line">        @ Record 1: A single U32 value</div>
-<div class="line">        product record Record1: U32 id 0x102</div>
-<div class="line">        </div>
-<div class="line">        ...</div>
-<div class="line">    }</div>
-<div class="line">}</div>
+<div class="line">@ Record 1: A single U32 value</div>
+<div class="line">product record Record1: U32 id 0x102</div>
 </div><!-- fragment --><div class="fragment"><div class="line">[</div>
 <div class="line">    {</div>
-<div class="line">        &quot;identifier&quot;: &quot;MyModule.FirstComponent.Record0&quot;,</div>
+<div class="line">        &quot;name&quot;: &quot;c1.Record0&quot;,</div>
 <div class="line">        &quot;description&quot;: &quot;Record 0: A variable number of F32 values&quot;,</div>
 <div class="line">        &quot;type&quot;: {</div>
 <div class="line">            &quot;name&quot;: &quot;F32&quot;,</div>
@@ -813,10 +776,10 @@ Record</h2>
 <div class="line">            &quot;size&quot;: 32</div>
 <div class="line">        },</div>
 <div class="line">        &quot;array&quot;: true,</div>
-<div class="line">        &quot;numericIdentifier&quot;: 256 </div>
+<div class="line">        &quot;id&quot;: 256 </div>
 <div class="line">    },</div>
 <div class="line">    {</div>
-<div class="line">        &quot;identifier&quot;: &quot;MyModule.FirstComponent.Record1&quot;,</div>
+<div class="line">        &quot;name&quot;: &quot;c1.Record1&quot;,</div>
 <div class="line">        &quot;description&quot;: &quot;Record 1: A single U32 value&quot;,</div>
 <div class="line">        &quot;type&quot;: {</div>
 <div class="line">            &quot;name&quot;: &quot;U32&quot;,</div>
@@ -825,54 +788,48 @@ Record</h2>
 <div class="line">            &quot;size&quot;: 32</div>
 <div class="line">        },</div>
 <div class="line">        &quot;array&quot;: false,</div>
-<div class="line">        &quot;numericIdentifier&quot;: 258</div>
+<div class="line">        &quot;id&quot;: 258</div>
 <div class="line">    }      </div>
 <div class="line">]</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md69"></a>
-Container</h2>
+Containers</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Field   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Options   </th><th class="markdownTableHeadNone">Required    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>identifier</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the container   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>name</code>   </td><td class="markdownTableBodyNone"><b>String</b> qualified name of the container   </td><td class="markdownTableBodyNone">Period separated <b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>description</code>   </td><td class="markdownTableBodyNone"><b>String</b> annotation of container   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>numericIdentifier</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the numeric identifier of the record   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>id</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the numeric identifier of the record   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>defaultPriority</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the downlink priority for the container   </td><td class="markdownTableBodyNone"><b>Number</b>   </td><td class="markdownTableBodyNone">false   </td></tr>
 </table>
-<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">module MyModule {</div>
-<div class="line">    active component FirstComponent {</div>
-<div class="line">        @ Container 0</div>
-<div class="line">        @ Implied id is 0x100</div>
-<div class="line">        product container Container0</div>
+<p>Example FPP model with JSON representation: </p><div class="fragment"><div class="line">@ Container 0</div>
+<div class="line">@ Implied id is 0x100</div>
+<div class="line">product container Container0</div>
 <div class="line"> </div>
-<div class="line">        @ Container 1</div>
-<div class="line">        product container Container1 id 0x102</div>
+<div class="line">@ Container 1</div>
+<div class="line">product container Container1 id 0x102</div>
 <div class="line"> </div>
-<div class="line">        @ Container 2</div>
-<div class="line">        @ Implied id is 0x103</div>
-<div class="line">        product container Container2 default priority 10</div>
-<div class="line"> </div>
-<div class="line">        ...</div>
-<div class="line">    }</div>
-<div class="line">}</div>
+<div class="line">@ Container 2</div>
+<div class="line">@ Implied id is 0x103</div>
+<div class="line">product container Container2 default priority 10</div>
 </div><!-- fragment --><div class="fragment"><div class="line">[</div>
 <div class="line">    {</div>
-<div class="line">       &quot;identifier&quot;: &quot;MyModule.FirstComponent.Container0&quot;,</div>
+<div class="line">       &quot;name&quot;: &quot;c1.Container0&quot;,</div>
 <div class="line">       &quot;description&quot;: &quot;Container 0\nImplied id is 0x100&quot;,</div>
-<div class="line">       &quot;numericIdentifier&quot;: 256,</div>
+<div class="line">       &quot;id&quot;: 256,</div>
 <div class="line">    },</div>
 <div class="line">    {</div>
-<div class="line">        &quot;identifier&quot;: &quot;MyModule.FirstComponent.Container1&quot;,</div>
+<div class="line">        &quot;name&quot;: &quot;c1.Container1&quot;,</div>
 <div class="line">        &quot;description&quot;: &quot;Container 1&quot;,</div>
-<div class="line">        &quot;numericIdentifier&quot;: 258,</div>
+<div class="line">        &quot;id&quot;: 258,</div>
 <div class="line">    },</div>
 <div class="line">    {</div>
-<div class="line">        &quot;identifier&quot;: &quot;MyModule.FirstComponent.Container2&quot;,</div>
+<div class="line">        &quot;name&quot;: &quot;c1.Container2&quot;,</div>
 <div class="line">        &quot;description&quot;: &quot;Container 2\nImplied id is 0x103&quot;,</div>
-<div class="line">        &quot;numericIdentifier&quot;: 3,</div>
+<div class="line">        &quot;id&quot;: 3,</div>
 <div class="line">        &quot;defaultPriority&quot;: 259</div>
 <div class="line">    }</div>
 <div class="line">]</div>
@@ -890,13 +847,16 @@ Dictionary Metadata</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>projectVersion</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing the project version (semantic versioning)   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>libraryVersions</code>   </td><td class="markdownTableBodyNone"><b>Array of Strings</b> corresponding to the version (semantic versioning) of libraries used by the F´ project   </td><td class="markdownTableBodyNone"><b>Array of Strings</b>   </td><td class="markdownTableBodyNone">true   </td></tr>
+<td class="markdownTableBodyNone"><code>libraryVersions</code>   </td><td class="markdownTableBodyNone"><b>Array of Strings</b> corresponding to the version (semantic versioning) of libraries used by the F´ project   </td><td class="markdownTableBodyNone"><b>Array of Strings</b>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>dictionarySpecVersion</code>   </td><td class="markdownTableBodyNone"><b>String</b> representing the JSON dictionary specification version   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
 <div class="fragment"><div class="line">{</div>
 <div class="line">    &quot;deploymentName&quot;: &quot;MyDeployment&quot;,</div>
 <div class="line">    &quot;frameworkVersion&quot;: &quot;3.3.2&quot;,</div>
 <div class="line">    &quot;projectVersion&quot;: &quot;1.0.0&quot;,</div>
-<div class="line">    &quot;libraryVersions&quot;: []</div>
+<div class="line">    &quot;libraryVersions&quot;: [],</div>
+<div class="line">    &quot;dictionarySpecVersion&quot;: &quot;1.0.0&quot;</div>
 <div class="line">}</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md72"></a>
 Dictionary Content</h2>
@@ -906,11 +866,7 @@ Dictionary Content</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>metadata</code>   </td><td class="markdownTableBodyNone"><a href="#dictionary-metadata">Dictionary Metadata</a>   </td><td class="markdownTableBodyNone"><a href="#dictionary-metadata">Dictionary Metadata</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>arrays</code>   </td><td class="markdownTableBodyNone">Array of <a href="#array-type-definition">Arrays</a>   </td><td class="markdownTableBodyNone">Array of <a href="#array-type-definition">Arrays</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>enums</code>   </td><td class="markdownTableBodyNone">Array of <a href="#enumeration-type-definition">Enums</a>   </td><td class="markdownTableBodyNone">Array of <a href="#enumeration-type-definition">Enums</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>structs</code>   </td><td class="markdownTableBodyNone">Array of <a href="#struct-type-definition-1">Structs</a>   </td><td class="markdownTableBodyNone">Array of <a href="#struct-type-definition-1">Structs</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<td class="markdownTableBodyNone"><code>typeDefinitions</code>   </td><td class="markdownTableBodyNone">Array of <a href="#array-type-definition">Arrays</a>, <a href="#enumeration-type-definition">Enums</a>, and <a href="#struct-type-definition-1">Structs</a>   </td><td class="markdownTableBodyNone">Array of <a href="#array-type-definition">Arrays</a>, <a href="#enumeration-type-definition">Enums</a>, and <a href="#struct-type-definition-1">Structs</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>commands</code>   </td><td class="markdownTableBodyNone">Array of <a href="#commands">Commands</a>   </td><td class="markdownTableBodyNone">Array of <a href="#commands">Commands</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
@@ -918,19 +874,24 @@ Dictionary Content</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>telemetryChannels</code>   </td><td class="markdownTableBodyNone">Array of <a href="#telemetry-channels">Telemetry Channels</a>   </td><td class="markdownTableBodyNone">Array of <a href="#telemetry-channels">Telemetry Channels</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>parameters</code>   </td><td class="markdownTableBodyNone">Array of <a href="#parameters">Parameters</a>   </td><td class="markdownTableBodyNone">Array of <a href="#parameters">Parameters</a>   </td><td class="markdownTableBodyNone">true   </td></tr>
+<td class="markdownTableBodyNone"><code>parameters</code>   </td><td class="markdownTableBodyNone">Array of <a href="#parameters">Parameters</a>   </td><td class="markdownTableBodyNone">Array of <a href="#parameters">Parameters</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>records</code>   </td><td class="markdownTableBodyNone">Array of <a href="#records">Records</a>   </td><td class="markdownTableBodyNone">Array of <a href="#records">Records</a>   </td><td class="markdownTableBodyNone">true    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>containers</code>   </td><td class="markdownTableBodyNone">Array of <a href="#containers">Containers</a>   </td><td class="markdownTableBodyNone">Array of <a href="#containers">Containers</a>   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
 <div class="fragment"><div class="line">{</div>
 <div class="line">    &quot;metadata&quot;: {</div>
 <div class="line">        &quot;deploymentName&quot;: &quot;MyDeployment&quot;,</div>
 <div class="line">        &quot;frameworkVersion&quot;: &quot;3.3.2&quot;,</div>
 <div class="line">        &quot;projectVersion&quot;: &quot;1.0.0&quot;,</div>
-<div class="line">        &quot;libraryVersions&quot;: []</div>
+<div class="line">        &quot;libraryVersions&quot;: [],</div>
+<div class="line">        &quot;dictionarySpecVersion&quot;: &quot;1.0.0&quot;</div>
 <div class="line">    },</div>
-<div class="line">    &quot;enums&quot;: [</div>
+<div class="line">    &quot;typeDefinitions&quot;: [</div>
 <div class="line">        {</div>
 <div class="line">            &quot;kind&quot;: &quot;enum&quot;,</div>
-<div class="line">            &quot;qualifiedName&quot;: &quot;MyDeployment.M.C1.Status&quot;,</div>
+<div class="line">            &quot;qualifiedName&quot;: &quot;M.C.Status&quot;,</div>
 <div class="line">            &quot;representationType&quot;: {</div>
 <div class="line">                &quot;name&quot;: &quot;I32&quot;,</div>
 <div class="line">                &quot;kind&quot;: &quot;integer&quot;,</div>
@@ -942,13 +903,11 @@ Dictionary Content</h2>
 <div class="line">                &quot;NO&quot;: 1,</div>
 <div class="line">                &quot;MAYBE&quot;: 2</div>
 <div class="line">            },</div>
-<div class="line">            &quot;default&quot;: &quot;MyDeployment.M.C1.Status.MAYBE&quot;</div>
-<div class="line">        }</div>
-<div class="line">    ],</div>
-<div class="line">    &quot;arrays&quot;: [</div>
+<div class="line">            &quot;default&quot;: &quot;M.C.Status.MAYBE&quot;</div>
+<div class="line">        },</div>
 <div class="line">        {</div>
 <div class="line">            &quot;kind&quot;: &quot;array&quot;,</div>
-<div class="line">            &quot;qualifiedName&quot;: &quot;MyDeployment.M.C1.A1&quot;,</div>
+<div class="line">            &quot;qualifiedName&quot;: &quot;M.C.A1&quot;,</div>
 <div class="line">            &quot;size&quot;: 3,</div>
 <div class="line">            &quot;elementType&quot;: {</div>
 <div class="line">                &quot;name&quot;: &quot;U8&quot;,</div>
@@ -960,23 +919,21 @@ Dictionary Content</h2>
 <div class="line">        },</div>
 <div class="line">        {</div>
 <div class="line">            &quot;kind&quot;: &quot;array&quot;,</div>
-<div class="line">            &quot;qualifiedName&quot;: &quot;MyDeployment.M.C1.A2&quot;,</div>
+<div class="line">            &quot;qualifiedName&quot;: &quot;M.C.A2&quot;,</div>
 <div class="line">            &quot;size&quot;: 5,</div>
 <div class="line">            &quot;elementType&quot;: {</div>
 <div class="line">                &quot;name&quot;: &quot;string&quot;,</div>
 <div class="line">                &quot;kind&quot;: &quot;string&quot;,</div>
 <div class="line">            },</div>
 <div class="line">            &quot;default&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;]</div>
-<div class="line">        }</div>
-<div class="line">    ],</div>
-<div class="line">    &quot;structs&quot;: [</div>
+<div class="line">        },</div>
 <div class="line">        {</div>
 <div class="line">            &quot;kind&quot;: &quot;struct&quot;,</div>
 <div class="line">            &quot;qualifiedName&quot;: &quot;M.S1&quot;,</div>
 <div class="line">            &quot;members&quot;: {</div>
 <div class="line">                &quot;w&quot;: {</div>
 <div class="line">                    &quot;type&quot;: {</div>
-<div class="line">                        &quot;name&quot;: &quot;MyDeployment.M.C1.S1.w&quot;,</div>
+<div class="line">                        &quot;name&quot;: &quot;M.C.A1&quot;,</div>
 <div class="line">                        &quot;kind&quot;: &quot;qualifiedIdentifier&quot;</div>
 <div class="line">                    },</div>
 <div class="line">                    &quot;index&quot;: 0,</div>
@@ -989,7 +946,7 @@ Dictionary Content</h2>
 <div class="line">                        &quot;signed&quot;: false,</div>
 <div class="line">                        &quot;size&quot;: 32</div>
 <div class="line">                    },</div>
-<div class="line">                    &quot;formatSpecifier&quot;: &quot;the count is {}&quot;,</div>
+<div class="line">                    &quot;format&quot;: &quot;the count is {}&quot;,</div>
 <div class="line">                    &quot;index&quot;: 1</div>
 <div class="line">                },</div>
 <div class="line">                &quot;y&quot;: {</div>
@@ -1009,14 +966,14 @@ Dictionary Content</h2>
 <div class="line">        },</div>
 <div class="line">        {</div>
 <div class="line">            &quot;kind&quot;: &quot;struct&quot;,</div>
-<div class="line">            &quot;qualifiedName&quot;: &quot;MyDeployment.M.C1.S2&quot;,</div>
+<div class="line">            &quot;qualifiedName&quot;: &quot;M.C.S2&quot;,</div>
 <div class="line">            &quot;members&quot;: {</div>
 <div class="line">                &quot;x&quot;: {</div>
 <div class="line">                    &quot;type&quot;: {</div>
 <div class="line">                        &quot;name&quot;: &quot;string&quot;,</div>
 <div class="line">                        &quot;kind&quot;: &quot;string&quot;,</div>
 <div class="line">                    },</div>
-<div class="line">                    &quot;formatSpecifier&quot;: &quot;the string is {}&quot;,</div>
+<div class="line">                    &quot;format&quot;: &quot;the string is {}&quot;,</div>
 <div class="line">                    &quot;index&quot;: 0</div>
 <div class="line">                },</div>
 <div class="line">            },</div>
@@ -1029,11 +986,11 @@ Dictionary Content</h2>
 <div class="line">        {</div>
 <div class="line">            &quot;commandKind&quot;: &quot;sync&quot;,</div>
 <div class="line">            &quot;opcode&quot;: 257,</div>
-<div class="line">            &quot;identifier&quot;: &quot;MyDeployment.MyModule.FirstComponent.SyncParams&quot;,</div>
+<div class="line">            &quot;name&quot;: &quot;c1.SyncParams&quot;,</div>
 <div class="line">            &quot;description&quot;: &quot;A sync command with parameters&quot;,</div>
 <div class="line">            &quot;formalParams&quot;: [</div>
 <div class="line">                {</div>
-<div class="line">                    &quot;identifier&quot;: &quot;param1&quot;,</div>
+<div class="line">                    &quot;name&quot;: &quot;param1&quot;,</div>
 <div class="line">                    &quot;description&quot;: &quot;Param 1&quot;,</div>
 <div class="line">                    &quot;type&quot;: {</div>
 <div class="line">                        &quot;name&quot;: &quot;U32&quot;,</div>
@@ -1044,7 +1001,7 @@ Dictionary Content</h2>
 <div class="line">                    &quot;ref&quot;: false</div>
 <div class="line">                },</div>
 <div class="line">                {</div>
-<div class="line">                    &quot;identifier&quot;: &quot;param2&quot;,</div>
+<div class="line">                    &quot;name&quot;: &quot;param2&quot;,</div>
 <div class="line">                    &quot;description&quot;: &quot;Param 2&quot;,</div>
 <div class="line">                    &quot;type&quot;: {</div>
 <div class="line">                        &quot;name&quot;: &quot;string&quot;,</div>
@@ -1058,28 +1015,28 @@ Dictionary Content</h2>
 <div class="line">    ],</div>
 <div class="line">    &quot;events&quot;: [</div>
 <div class="line">        {</div>
-<div class="line">            &quot;identifier&quot;: &quot;MyDeployment.MyModule.FirstComponent.Event0&quot;,</div>
+<div class="line">            &quot;name&quot;: &quot;c1.Event0&quot;,</div>
 <div class="line">            &quot;description&quot;: &quot;This is the annotation for Event 0&quot;,</div>
 <div class="line">            &quot;severity&quot;: &quot;activity low&quot;,</div>
 <div class="line">            &quot;formalParams&quot;: [</div>
 <div class="line">                {</div>
-<div class="line">                    &quot;identifier&quot;: &quot;&quot;,</div>
+<div class="line">                    &quot;name&quot;: &quot;&quot;,</div>
 <div class="line">                    &quot;description&quot;: &quot;&quot;,</div>
 <div class="line">                    &quot;type&quot;: {},</div>
 <div class="line">                    &quot;ref&quot;: false</div>
 <div class="line">                }</div>
 <div class="line">            ],</div>
-<div class="line">            &quot;numericIdentifier&quot;: 256,</div>
-<div class="line">            &quot;formatString&quot;: &quot;Event 0 occurred&quot;,</div>
+<div class="line">            &quot;id&quot;: 256,</div>
+<div class="line">            &quot;format&quot;: &quot;Event 0 occurred&quot;,</div>
 <div class="line">            &quot;throttle&quot;: &quot;&quot;</div>
 <div class="line">        },</div>
 <div class="line">        {</div>
-<div class="line">            &quot;identifier&quot;: &quot;MyDeployment.MyModule.FirstComponent.Event1&quot;,</div>
+<div class="line">            &quot;name&quot;: &quot;c1.Event1&quot;,</div>
 <div class="line">            &quot;description&quot;: &quot;This is the annotation for Event 1&quot;,</div>
 <div class="line">            &quot;severity&quot;: &quot;activity high&quot;,</div>
 <div class="line">            &quot;formalParams&quot;: [</div>
 <div class="line">                {</div>
-<div class="line">                &quot;identifier&quot;: &quot;arg1&quot;,</div>
+<div class="line">                &quot;name&quot;: &quot;arg1&quot;,</div>
 <div class="line">                    &quot;description&quot;: &quot;Argument 1&quot;,</div>
 <div class="line">                    &quot;type&quot;: {</div>
 <div class="line">                        &quot;name&quot;: &quot;U32&quot;,</div>
@@ -1090,21 +1047,21 @@ Dictionary Content</h2>
 <div class="line">                    &quot;ref&quot;: false  </div>
 <div class="line">                }</div>
 <div class="line">            ],</div>
-<div class="line">            &quot;numericIdentifier&quot;: 257,</div>
-<div class="line">            &quot;formatString&quot;: &quot;Event 1 occurred with argument {}&quot;,</div>
+<div class="line">            &quot;id&quot;: 257,</div>
+<div class="line">            &quot;format&quot;: &quot;Event 1 occurred with argument {}&quot;,</div>
 <div class="line">            &quot;throttle&quot;: &quot;&quot;</div>
 <div class="line">        }</div>
 <div class="line">    ],</div>
 <div class="line">    &quot;telemetryChannels&quot;: [</div>
 <div class="line">        {</div>
-<div class="line">            &quot;identifier&quot;: &quot;MyDeployment.MyModule.FirstComponent.Channel1&quot;,</div>
+<div class="line">            &quot;name&quot;: &quot;c1.Channel1&quot;,</div>
 <div class="line">            &quot;description&quot;: &quot;Telemetry channel 1&quot;,</div>
 <div class="line">            &quot;type&quot;: {</div>
-<div class="line">                &quot;type&quot;: &quot;F64&quot;,</div>
+<div class="line">                &quot;name&quot;: &quot;F64&quot;,</div>
 <div class="line">                &quot;kind&quot;: &quot;float&quot;,</div>
 <div class="line">                &quot;size&quot;: 64</div>
 <div class="line">            },</div>
-<div class="line">            &quot;numericIdentifier&quot;: 256,</div>
+<div class="line">            &quot;id&quot;: 256,</div>
 <div class="line">            &quot;telemetryUpdate&quot;: &quot;on change&quot;,</div>
 <div class="line">            &quot;limit&quot;: {</div>
 <div class="line">                &quot;low&quot;: {</div>
@@ -1122,7 +1079,7 @@ Dictionary Content</h2>
 <div class="line">    ],</div>
 <div class="line">    &quot;parameters&quot;: [</div>
 <div class="line">        {</div>
-<div class="line">            &quot;identifier&quot;: &quot;MyDeployment.MyModule.FirstComponent.Parameter1&quot;,</div>
+<div class="line">            &quot;name&quot;: &quot;c1.Parameter1&quot;,</div>
 <div class="line">            &quot;description&quot;: &quot;This is the annotation for Parameter 1&quot;,</div>
 <div class="line">            &quot;type&quot;: {</div>
 <div class="line">                &quot;name&quot;: &quot;U32&quot;,</div>
@@ -1131,9 +1088,28 @@ Dictionary Content</h2>
 <div class="line">                &quot;size&quot;: 32</div>
 <div class="line">            },</div>
 <div class="line">            &quot;default&quot;: 0,</div>
-<div class="line">            &quot;numericIdentifier&quot;: 256,</div>
-<div class="line">            &quot;setOpcode&quot;: 257,</div>
-<div class="line">            &quot;saveOpcode&quot;: 258</div>
+<div class="line">            &quot;id&quot;: 256</div>
+<div class="line">        }</div>
+<div class="line">    ],</div>
+<div class="line">    &quot;records&quot;: [    </div>
+<div class="line">        {</div>
+<div class="line">            &quot;name&quot;: &quot;c1.Record1&quot;,</div>
+<div class="line">            &quot;description&quot;: &quot;Record 1: A single U32 value&quot;,</div>
+<div class="line">            &quot;type&quot;: {</div>
+<div class="line">                &quot;name&quot;: &quot;U32&quot;,</div>
+<div class="line">                &quot;kind&quot;: &quot;integer&quot;,</div>
+<div class="line">                &quot;signed&quot;: false,</div>
+<div class="line">                &quot;size&quot;: 32</div>
+<div class="line">            },</div>
+<div class="line">            &quot;array&quot;: false,</div>
+<div class="line">            &quot;id&quot;: 258</div>
+<div class="line">        }      </div>
+<div class="line">    ],</div>
+<div class="line">    &quot;containers&quot;: [</div>
+<div class="line">        {</div>
+<div class="line">            &quot;name&quot;: &quot;c1.Container0&quot;,</div>
+<div class="line">            &quot;description&quot;: &quot;Container 0\nImplied id is 0x100&quot;,</div>
+<div class="line">            &quot;id&quot;: 256,</div>
 <div class="line">        }</div>
 <div class="line">    ]</div>
 <div class="line">}</div>
