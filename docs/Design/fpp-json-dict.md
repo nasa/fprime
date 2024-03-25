@@ -486,7 +486,7 @@ param Parameter1: U32 \
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | **String** qualified name of the command | Period separated **String** | true |
-| `commandKind` | **String** representing the kind of command | async, guarded, sync | true |
+| `commandKind` | **String** representing the kind of command | async, guarded, sync, set, save | true |
 | `opcode` | **Number** command opcode | **Number** | true |
 | `description` | **String** annotation of command | string | true |
 | `formalParams` | Array of [Formal Parameters](#formal-parameters) | Array of [Formal Parameters](#formal-parameters) | true |
