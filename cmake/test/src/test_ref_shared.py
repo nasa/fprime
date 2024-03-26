@@ -69,6 +69,19 @@ def test_ref_dictionary(REF_BUILD):
     assert output_path.exists(), "Failed to locate Ref in build output"
 
 
+def test_ref_dictionary_json(REF_BUILD):
+    """Run reference and assert reference targets exit"""
+    cmake.assert_process_success(REF_BUILD)
+    output_path = (
+        REF_BUILD["install"]
+        / platform.system()
+        / "Ref"
+        / "dict"
+        / "RefTopologyDictionary.json"
+    )
+    assert output_path.exists(), "Failed to locate Ref JSON Dictionary in build output"
+
+
 def test_ref_module_info(REF_BUILD):
     """Run reference and assert module-info.txt was created"""
     cmake.assert_process_success(REF_BUILD)
