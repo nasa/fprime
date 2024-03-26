@@ -18,7 +18,7 @@
 # This contains the basic project information. Specifically, a cmake version and
 # project definition.
 ##
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 cmake_policy(SET CMP0048 NEW)
 project(Ref VERSION 1.0.0 LANGUAGES C CXX)
 ##

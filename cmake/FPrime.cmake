@@ -141,7 +141,7 @@ macro(fprime_setup_override_targets)
 endmacro(fprime_setup_override_targets)
 
 macro(fprime_initialize_build_system)
-    cmake_minimum_required(VERSION 3.13)
+    cmake_minimum_required(VERSION 3.16)
     fprime_setup_global_includes()
     fprime_detect_libraries()
     fprime_setup_standard_targets()
