@@ -9,7 +9,7 @@ module Svc {
 
   @ Port for setting and getting PolyType values
   port Poly(
-             entry: U32 @< The entry to access
+             entry: PolyDbCfg.PolyDbEntry @< The entry to access
              ref status: MeasurementStatus @< The command response argument
              ref $time: Fw.Time @< The time of the measurement
              ref val: Fw.PolyType @< The value to be passed

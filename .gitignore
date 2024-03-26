@@ -46,7 +46,7 @@ coverity.out
 
 **/docs/*.html
 /docs/UsersGuide/api/*
-*-template
+*.template.*
 
 logs
 
