@@ -644,3 +644,28 @@ function(get_fprime_library_option_string OUTPUT_VAR LIBRARY_NAME)
     string(REGEX REPLACE "[^A-Z0-9_]" "_" LIBRARY_OPTION "${LIBRARY_NAME_UPPER}")
     set("${OUTPUT_VAR}" "${LIBRARY_OPTION}" PARENT_SCOPE)
 endfunction(get_fprime_library_option_string)
+
+####
+# Function `resolve_path_variables`:
+#
+# Resolve paths updating parent scope.  ARGN should contain a list of variables to update.
+#
+# ARGN: list of variables to update
+####
+function(resolve_path_variables)
+    # Loop through all variables
+    foreach (INPUT_NAME IN LISTS ARGN)
+        set(NEW_LIST)
+        # Loop through each item in INPUT_NAME
+        foreach(UNRESOLVED IN LISTS ${INPUT_NAME})
+            # If it is a path, resolve it
+            if (EXISTS ${UNRESOLVED})
+                get_filename_component(RESOLVED "${UNRESOLVED}" REALPATH)
+            else()
+                set(RESOLVED "${UNRESOLVED}")
+            endif()
+            list(APPEND NEW_LIST "${RESOLVED}")
+        endforeach()
+        set("${INPUT_NAME}" "${NEW_LIST}" PARENT_SCOPE)
+    endforeach()
+endfunction(resolve_path_variables)
