@@ -34,7 +34,7 @@ jobs:
           export CMAKE_TAR_FILE="https://cmake.org/files/v3.16/cmake-3.16.0-Linux-x86_64.tar.gz"
           export CMAKE_INSTALL_DIRECTORY="${GITHUB_WORKSPACE}/tools-override"
           mkdir -p "${GITHUB_WORKSPACE}/tools-override"
-          curl -Ls "${CMAKE_TAR_FILE}" | tar -JC "${CMAKE_INSTALL_DIRECTORY}"  --strip-components=1 -x
+          curl -Ls "${CMAKE_TAR_FILE}" | tar -zC "${CMAKE_INSTALL_DIRECTORY}"  --strip-components=1 -x
       - name: CMake Tests
         working-directory: ./cmake/test
         shell: bash
