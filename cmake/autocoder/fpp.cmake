@@ -41,14 +41,19 @@ function(locate_fpp_tools)
                     continue()
                 endif()
                 message(STATUS "[fpp-tools] ${${TOOL}} version ${CMAKE_MATCH_1} not expected version ${FPP_VERSION}")
+                set(FPP_REINSTALL_ERROR_MESSAGE
+                    "fpp-tools version incompatible. Found ${CMAKE_MATCH_1}, expected ${FPP_VERSION}." PARENT_SCOPE
+                )
+            elseif(OUTPUT_TEXT MATCHES "requires 'java'")
                 set(FPP_ERROR_MESSAGE
-                    "fpp-tools version incompatible. Found ${CMAKE_MATCH_1}, expected ${FPP_VERSION}" PARENT_SCOPE
+                        "fpp tools require 'java'. Please install 'java' and ensure it is on your PATH." PARENT_SCOPE
                 )
             else()
-                message(STATUS "[fpp-tools] ${PROGRAM} appears corrupt.")
+                message(STATUS "[fpp-tools] ${PROGRAM} installed incorrectly.")
+                set(FPP_REINSTALL_ERROR_MESSAGE "fpp tools installed incorrectly." PARENT_SCOPE)
             endif()
         else()
-            message(STATUS "[fpp-tools] Could not find ${PROGRAM}")
+            message(STATUS "[fpp-tools] Could not find ${PROGRAM}.")
         endif()
         set(FPP_FOUND FALSE PARENT_SCOPE)
         return()
