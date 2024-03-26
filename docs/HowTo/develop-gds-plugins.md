@@ -114,7 +114,7 @@ class MyPlugin(FramerDeframer):
         discarded = b""
         data = data if no_copy else b"" + data # Copy data if no_copy
         
-        # Deframing can deframe until data length isn't sufficent to provide start token
+        # Deframing can deframe until data length isn't enough to provide start token
         while len(data) > len(self.START_TOKEN):
             # Starts with start word and a second start word found
             if data[:len(self.START_TOKEN)] == self.START_TOKEN and self.START_TOKEN in data[1:]:
