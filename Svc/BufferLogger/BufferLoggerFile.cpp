@@ -212,7 +212,7 @@ namespace Svc {
     else {
       Fw::LogStringArg string(this->m_name.toChar());
 
-      this->m_bufferLogger.log_WARNING_HI_BL_LogFileWriteError(fileStatus, size, length, string);
+      this->m_bufferLogger.log_WARNING_HI_BL_LogFileWriteError(fileStatus, static_cast<U32>(size), length, string);
       status = false;
     }
     return status;

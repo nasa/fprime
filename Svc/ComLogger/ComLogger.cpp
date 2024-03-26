@@ -125,7 +125,7 @@ namespace Svc {
     if( OPEN == this->m_fileMode ) {
       U32 projectedByteCount = this->m_byteCount + size;
       if( this->m_storeBufferLength ) {
-        projectedByteCount += sizeof(size);
+        projectedByteCount += static_cast<U32>(sizeof(size));
       }
       if( projectedByteCount > this->m_maxFileSize ) {
         this->closeFile();
@@ -268,7 +268,7 @@ namespace Svc {
       if( !this->m_writeErrorOccurred ) { // throttle this event, otherwise a positive
                                         // feedback event loop can occur!
         Fw::LogStringArg logStringArg(this->m_fileName);
-        this->log_WARNING_HI_FileWriteError(ret, size, length, logStringArg);
+        this->log_WARNING_HI_FileWriteError(ret, static_cast<U32>(size), length, logStringArg);
       }
       this->m_writeErrorOccurred = true;
       return false;

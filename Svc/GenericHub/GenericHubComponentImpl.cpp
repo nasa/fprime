@@ -39,7 +39,7 @@ void GenericHubComponentImpl ::send_data(const HubType type,
     FW_ASSERT(data != nullptr);
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
-    Fw::Buffer outgoing = dataOutAllocate_out(0, size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType));
+    Fw::Buffer outgoing = dataOutAllocate_out(0, static_cast<U32>(size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
     Fw::SerializeBufferBase& serialize = outgoing.getSerializeRepr();
     // Write data to our buffer
     status = serialize.serialize(static_cast<U32>(type));
@@ -86,7 +86,7 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum, Fw:
 
     // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately
     U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType);
-    U32 rawSize = fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType);
+    U32 rawSize = static_cast<U32>(fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType));
     FW_ASSERT(rawSize == static_cast<U32>(size));
     if (type == HUB_TYPE_PORT) {
         // Com buffer representations should be copied before the call returns, so we need not "allocate" new data

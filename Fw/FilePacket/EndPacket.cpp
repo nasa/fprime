@@ -30,7 +30,7 @@ namespace Fw {
   U32 FilePacket::EndPacket ::
     bufferSize() const
   {
-    return this->m_header.bufferSize() + sizeof(this->m_checksumValue);
+    return static_cast<U32>(this->m_header.bufferSize() + sizeof(this->m_checksumValue));
   }
 
   SerializeStatus FilePacket::EndPacket ::

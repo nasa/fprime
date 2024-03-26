@@ -36,7 +36,7 @@ namespace Svc {
 
       while (true) {
           unsigned long long missed;
-          int ret = read (fd, &missed, sizeof (missed));
+          int ret = static_cast<int>(read (fd, &missed, sizeof (missed)));
           if (-1 == ret) {
               Fw::Logger::logMsg("timer read error: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
           }

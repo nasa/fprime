@@ -326,7 +326,7 @@ Drv::SendStatus LinuxUartDriver ::send_handler(const NATIVE_INT_TYPE portNum, Fw
         unsigned char *data = serBuffer.getData();
         NATIVE_INT_TYPE xferSize = serBuffer.getSize();
 
-        NATIVE_INT_TYPE stat = ::write(this->m_fd, data, xferSize);
+        NATIVE_INT_TYPE stat = static_cast<NATIVE_INT_TYPE>(::write(this->m_fd, data, xferSize));
 
         if (-1 == stat || stat != xferSize) {
           Fw::LogStringArg _arg = this->m_device;
@@ -368,7 +368,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         // Read until something is received or an error occurs. Only loop when
         // stat == 0 as this is the timeout condition and the read should spin
         while ((stat == 0) && !comp->m_quitReadThread) {
-            stat = ::read(comp->m_fd, buff.getData(), buff.getSize());
+            stat = static_cast<int>(::read(comp->m_fd, buff.getData(), buff.getSize()));
         }
         buff.setSize(0);
 

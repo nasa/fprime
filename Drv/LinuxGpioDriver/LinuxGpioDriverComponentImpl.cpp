@@ -114,7 +114,7 @@ namespace Drv {
         }
 
         const char *dir = out_flag ? "out" : "in";
-        len = strlen(dir);
+        len = static_cast<int>(strlen(dir));
 
         if (write(fd, dir, len) != len) {
             (void) close(fd);
@@ -157,8 +157,8 @@ namespace Drv {
 
         FW_ASSERT(fd != -1);
 
-        NATIVE_INT_TYPE stat1 = lseek(fd, 0, SEEK_SET); // Must seek back to the starting
-        NATIVE_INT_TYPE stat2 = read(fd, &ch, 1);
+        NATIVE_INT_TYPE stat1 = static_cast<NATIVE_INT_TYPE>(lseek(fd, 0, SEEK_SET)); // Must seek back to the starting
+        NATIVE_INT_TYPE stat2 = static_cast<NATIVE_INT_TYPE>(read(fd, &ch, 1));
 
         if (stat1 == -1 || stat2 != 1) {
             DEBUG_PRINT("GPIO read failure: %d %d!\n",stat1,stat2);
@@ -199,7 +199,7 @@ namespace Drv {
             return -1;
         }
 
-        len = strlen(edge) + 1;
+        len = static_cast<int>(strlen(edge) + 1);
         if(write(fd, edge, len) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/set-edge error!\n");

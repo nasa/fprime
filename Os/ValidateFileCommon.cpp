@@ -44,7 +44,7 @@ namespace Os {
               break;
             }
             // Add chunk to hash calculation:
-            hash.update(&buffer, size);
+            hash.update(&buffer, static_cast<NATIVE_INT_TYPE>(size));
             cnt++;
         }
         file.close();
@@ -85,7 +85,7 @@ namespace Os {
         hashFile.close();
 
         // Return the hash buffer:
-        Utils::HashBuffer savedHashBuffer(savedHash, size);
+        Utils::HashBuffer savedHashBuffer(savedHash, static_cast<NATIVE_UINT_TYPE>(size));
         hashBuffer = savedHashBuffer;
 
         return status;

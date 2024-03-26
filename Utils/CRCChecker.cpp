@@ -66,7 +66,7 @@ namespace Utils {
         return  FAILED_FILE_READ;
       }
 
-      hash.update(block_data, bytes_to_read);
+      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(bytes_to_read));
     }
 
     remaining_bytes = int_file_size % CRC_FILE_READ_BLOCK;
@@ -80,7 +80,7 @@ namespace Utils {
         return FAILED_FILE_READ;
       }
 
-      hash.update(block_data, remaining_bytes);
+      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(remaining_bytes));
     }
 
     // close file
@@ -192,10 +192,10 @@ namespace Utils {
         return  FAILED_FILE_READ;
       }
 
-      hash.update(block_data, bytes_to_read);
+      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(bytes_to_read));
     }
 
-    remaining_bytes = int_file_size % CRC_FILE_READ_BLOCK;
+    remaining_bytes = static_cast<PlatformIntType>(int_file_size % CRC_FILE_READ_BLOCK);
     bytes_to_read = remaining_bytes;
     if(remaining_bytes > 0)
     {

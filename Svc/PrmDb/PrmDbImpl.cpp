@@ -160,12 +160,15 @@ namespace Svc {
                 }
                 if (writeSize != sizeof(delim)) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER_SIZE,numRecords,writeSize);
+                    this->log_WARNING_HI_PrmFileWriteError(
+                        PrmWriteError::DELIMITER_SIZE,
+                        numRecords,
+                        static_cast<I32>(writeSize));
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 // serialize record size = id field + data
-                U32 recordSize = sizeof(FwPrmIdType) + this->m_db[entry].val.getBuffLength();
+                U32 recordSize = static_cast<U32>(sizeof(FwPrmIdType) + this->m_db[entry].val.getBuffLength());
 
                 // reset buffer
                 buff.resetSer();
@@ -184,7 +187,10 @@ namespace Svc {
                 }
                 if (writeSize != sizeof(recordSize)) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE_SIZE,numRecords,writeSize);
+                    this->log_WARNING_HI_PrmFileWriteError(
+                        PrmWriteError::RECORD_SIZE_SIZE,
+                        numRecords,
+                        static_cast<I32>(writeSize));
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
@@ -209,7 +215,10 @@ namespace Svc {
                 }
                 if (writeSize != static_cast<FwSignedSizeType>(buff.getBuffLength())) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID_SIZE,numRecords,writeSize);
+                    this->log_WARNING_HI_PrmFileWriteError(
+                        PrmWriteError::PARAMETER_ID_SIZE,
+                        numRecords,
+                        static_cast<I32>(writeSize));
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
@@ -226,7 +235,10 @@ namespace Svc {
                 }
                 if (writeSize != static_cast<FwSignedSizeType>(this->m_db[entry].val.getBuffLength())) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE_SIZE,numRecords,writeSize);
+                    this->log_WARNING_HI_PrmFileWriteError(
+                        PrmWriteError::PARAMETER_VALUE_SIZE,
+                        numRecords,
+                        static_cast<I32>(writeSize));
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
@@ -279,7 +291,7 @@ namespace Svc {
             }
 
             if (sizeof(delimiter) != readSize) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER_SIZE,recordNum,readSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER_SIZE,recordNum,static_cast<I32>(readSize));
                 return;
             }
 
@@ -298,11 +310,11 @@ namespace Svc {
                 return;
             }
             if (sizeof(recordSize) != readSize) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_SIZE,recordNum,readSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_SIZE,recordNum,static_cast<I32>(readSize));
                 return;
             }
             // set serialized size to read size
-            Fw::SerializeStatus desStat = buff.setBuffLen(readSize);
+            Fw::SerializeStatus desStat = buff.setBuffLen(static_cast<Fw::Serializable::SizeType>(readSize));
             // should never fail
             FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<NATIVE_INT_TYPE>(desStat));
             // reset deserialization
@@ -328,12 +340,12 @@ namespace Svc {
                 return;
             }
             if (sizeof(parameterId) != static_cast<FwSizeType>(readSize)) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID_SIZE,recordNum,readSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID_SIZE,recordNum,static_cast<I32>(readSize));
                 return;
             }
 
             // set serialized size to read parameter ID
-            desStat = buff.setBuffLen(readSize);
+            desStat = buff.setBuffLen(static_cast<Fw::Serializable::SizeType>(readSize));
             // should never fail
             FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<NATIVE_INT_TYPE>(desStat));
             // reset deserialization
@@ -354,12 +366,12 @@ namespace Svc {
                 return;
             }
             if (static_cast<U32>(readSize) != recordSize-sizeof(parameterId)) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_VALUE_SIZE,recordNum,readSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_VALUE_SIZE,recordNum,static_cast<I32>(readSize));
                 return;
             }
 
             // set serialized size to read size
-            desStat = this->m_db[entry].val.setBuffLen(readSize);
+            desStat = this->m_db[entry].val.setBuffLen(static_cast<Fw::Serializable::SizeType>(readSize));
             // should never fail
             FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<NATIVE_INT_TYPE>(desStat));
             recordNum++;
