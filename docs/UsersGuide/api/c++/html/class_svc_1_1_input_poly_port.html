@@ -111,9 +111,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:a345d85027f597ea07eff0b8e76b7091a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_svc_1_1_input_poly_port.html#a345d85027f597ea07eff0b8e76b7091aa6a3d3560625caa388e3d1b9b860e8ec8">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:a345d85027f597ea07eff0b8e76b7091a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accae3f78e4c4f9741bace2296d18ebda"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_poly_port.html#accae3f78e4c4f9741bace2296d18ebda">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 entry, <a class="el" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a> &amp;status, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val)</td></tr>
-<tr class="memdesc:accae3f78e4c4f9741bace2296d18ebda"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_poly_port.html#accae3f78e4c4f9741bace2296d18ebda">More...</a><br /></td></tr>
-<tr class="separator:accae3f78e4c4f9741bace2296d18ebda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaea71e2e8b5125cbc55248df793b56cb"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_poly_port.html#aaea71e2e8b5125cbc55248df793b56cb">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, const <a class="el" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a> &amp;entry, <a class="el" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a> &amp;status, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val)</td></tr>
+<tr class="memdesc:aaea71e2e8b5125cbc55248df793b56cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_poly_port.html#aaea71e2e8b5125cbc55248df793b56cb">More...</a><br /></td></tr>
+<tr class="separator:aaea71e2e8b5125cbc55248df793b56cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -123,12 +123,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3549c071de61fd7d6071a9fda136f848"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_poly_port.html#a3549c071de61fd7d6071a9fda136f848">init</a> ()</td></tr>
 <tr class="memdesc:a3549c071de61fd7d6071a9fda136f848"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_svc_1_1_input_poly_port.html#a3549c071de61fd7d6071a9fda136f848">More...</a><br /></td></tr>
 <tr class="separator:a3549c071de61fd7d6071a9fda136f848"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c38a42cd8499e65ffa1f5144422dd5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_poly_port.html#a1c38a42cd8499e65ffa1f5144422dd5a">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_poly_port.html#accae3f78e4c4f9741bace2296d18ebda">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:a1c38a42cd8499e65ffa1f5144422dd5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_poly_port.html#a1c38a42cd8499e65ffa1f5144422dd5a">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_poly_port.html#aaea71e2e8b5125cbc55248df793b56cb">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:a1c38a42cd8499e65ffa1f5144422dd5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_svc_1_1_input_poly_port.html#a1c38a42cd8499e65ffa1f5144422dd5a">More...</a><br /></td></tr>
 <tr class="separator:a1c38a42cd8499e65ffa1f5144422dd5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa34fcbc4861601ec060c8c79047d03cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_poly_port.html#aa34fcbc4861601ec060c8c79047d03cc">invoke</a> (U32 entry, <a class="el" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a> &amp;status, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val)</td></tr>
-<tr class="memdesc:aa34fcbc4861601ec060c8c79047d03cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke a port interface.  <a href="class_svc_1_1_input_poly_port.html#aa34fcbc4861601ec060c8c79047d03cc">More...</a><br /></td></tr>
-<tr class="separator:aa34fcbc4861601ec060c8c79047d03cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a999addf1d0b71d6b298b72dcc9dffa16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_poly_port.html#a999addf1d0b71d6b298b72dcc9dffa16">invoke</a> (const <a class="el" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a> &amp;entry, <a class="el" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a> &amp;status, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val)</td></tr>
+<tr class="memdesc:a999addf1d0b71d6b298b72dcc9dffa16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke a port interface.  <a href="class_svc_1_1_input_poly_port.html#a999addf1d0b71d6b298b72dcc9dffa16">More...</a><br /></td></tr>
+<tr class="separator:a999addf1d0b71d6b298b72dcc9dffa16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_input_port_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_input_port_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_input_port_base.html">Fw::InputPortBase</a></td></tr>
 <tr class="memitem:aabcb9bbd8f56dea8d3a03e08f76d0041 inherit pub_methods_class_fw_1_1_input_port_base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_port_base.html#aabcb9bbd8f56dea8d3a03e08f76d0041">setPortNum</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
 <tr class="separator:aabcb9bbd8f56dea8d3a03e08f76d0041 inherit pub_methods_class_fw_1_1_input_port_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,23 +170,23 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Input Poly port Port for setting and getting PolyType values </p>
 
-<p class="definition">Definition at line <a class="el" href="poly_port_ac_8hpp_source.html#l00027">27</a> of file <a class="el" href="poly_port_ac_8hpp_source.html">PolyPortAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poly_port_ac_8hpp_source.html#l00028">28</a> of file <a class="el" href="poly_port_ac_8hpp_source.html">PolyPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="accae3f78e4c4f9741bace2296d18ebda"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#accae3f78e4c4f9741bace2296d18ebda">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="aaea71e2e8b5125cbc55248df793b56cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaea71e2e8b5125cbc55248df793b56cb">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Svc::InputPolyPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 entry, <a class="el" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a> &amp;status, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val)</td>
+          <td class="memname">typedef void(* Svc::InputPolyPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, const <a class="el" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a> &amp;entry, <a class="el" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a> &amp;status, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;time, <a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> &amp;val)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>The port callback function type. </p>
 
-<p class="definition">Definition at line <a class="el" href="poly_port_ac_8hpp_source.html#l00053">53</a> of file <a class="el" href="poly_port_ac_8hpp_source.html">PolyPortAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poly_port_ac_8hpp_source.html#l00054">54</a> of file <a class="el" href="poly_port_ac_8hpp_source.html">PolyPortAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -207,7 +207,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="poly_port_ac_8hpp_source.html#l00037">37</a> of file <a class="el" href="poly_port_ac_8hpp_source.html">PolyPortAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poly_port_ac_8hpp_source.html#l00038">38</a> of file <a class="el" href="poly_port_ac_8hpp_source.html">PolyPortAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -249,7 +249,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_svc_1_1_input_poly_port.html#accae3f78e4c4f9741bace2296d18ebda">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_svc_1_1_input_poly_port.html#aaea71e2e8b5125cbc55248df793b56cb">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>
@@ -304,8 +304,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aa34fcbc4861601ec060c8c79047d03cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa34fcbc4861601ec060c8c79047d03cc">&#9670;&nbsp;</a></span>invoke()</h2>
+<a id="a999addf1d0b71d6b298b72dcc9dffa16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a999addf1d0b71d6b298b72dcc9dffa16">&#9670;&nbsp;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -313,7 +313,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::InputPolyPort::invoke </td>
           <td>(</td>
-          <td class="paramtype">U32&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a> &amp;&#160;</td>
           <td class="paramname"><em>entry</em>, </td>
         </tr>
         <tr>

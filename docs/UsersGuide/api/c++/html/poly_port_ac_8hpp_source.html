@@ -109,126 +109,128 @@ $(document).ready(function(){initNavTree('_poly_port_ac_8hpp_source.html',''); i
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="serializable_8hpp.html">Fw/Types/Serializable.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="string_type_8hpp.html">Fw/Types/StringType.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="measurement_status_enum_ac_8hpp.html">Svc/PolyIf/MeasurementStatusEnumAc.hpp</a>&quot;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="class_svc_1_1_input_poly_port.html">   27</a></span>&#160;  <span class="keyword">class </span><a class="code" href="class_svc_1_1_input_poly_port.html">InputPolyPort</a> :</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">public</span> <a class="code" href="class_fw_1_1_input_port_base.html">Fw::InputPortBase</a></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  {</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      <span class="comment">// Constants</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      <span class="keyword">enum</span> {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <a class="code" href="class_svc_1_1_input_poly_port.html#a345d85027f597ea07eff0b8e76b7091aa6a3d3560625caa388e3d1b9b860e8ec8">SERIALIZED_SIZE</a> =</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;          <span class="keyword">sizeof</span>(U32) +</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;          <a class="code" href="class_svc_1_1_measurement_status.html#aed161366ce9a9f1b796b362cf96f07b6acb76a816b64657f54959d54e3f469058">Svc::MeasurementStatus::SERIALIZED_SIZE</a> +</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;          <a class="code" href="class_fw_1_1_time.html#ab97c582bdd29d1f3afe9fb715177d223a0d5ec7f4184b1b686424b7aabe8e30e8">Fw::Time::SERIALIZED_SIZE</a> +</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;          <a class="code" href="class_fw_1_1_poly_type.html#a277e01b9da8957cf39b37e4cc58c10dba334a591ffeb346e9941dc3ad0a94cecd">Fw::PolyType::SERIALIZED_SIZE</a></div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="class_svc_1_1_input_poly_port.html#a345d85027f597ea07eff0b8e76b7091aa6a3d3560625caa388e3d1b9b860e8ec8">   44</a></span>&#160;      };</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="comment">// Types</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="class_svc_1_1_input_poly_port.html#accae3f78e4c4f9741bace2296d18ebda">   53</a></span>&#160;      <span class="keyword">typedef</span> void (*<a class="code" href="class_svc_1_1_input_poly_port.html#accae3f78e4c4f9741bace2296d18ebda">CompFuncPtr</a>)(</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <a class="code" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a>* callComp,</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        U32 entry,</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <a class="code" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a>&amp; status,</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; time,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a>&amp; val</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      );</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      <span class="comment">// Input Port Member functions</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <a class="code" href="class_svc_1_1_input_poly_port.html#a6d0dfcf54eea42ad63e820de0fc62a31">InputPolyPort</a>();</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_input_poly_port.html#a3549c071de61fd7d6071a9fda136f848">init</a>();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_input_poly_port.html#a1c38a42cd8499e65ffa1f5144422dd5a">addCallComp</a>(</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          <a class="code" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a>* callComp, </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          <a class="code" href="class_svc_1_1_input_poly_port.html#accae3f78e4c4f9741bace2296d18ebda">CompFuncPtr</a> funcPtr </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      );</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_input_poly_port.html#aa34fcbc4861601ec060c8c79047d03cc">invoke</a>(</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          U32 entry, </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          <a class="code" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a>&amp; status, </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;          <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; time, </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;          <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a>&amp; val </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      );</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">#if FW_PORT_SERIALIZATION == 1</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> invokeSerial(<a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; _buffer);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      <span class="comment">// Member variables</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      <a class="code" href="class_svc_1_1_input_poly_port.html#accae3f78e4c4f9741bace2296d18ebda">CompFuncPtr</a> m_func;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  };</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="class_svc_1_1_output_poly_port.html">  110</a></span>&#160;  <span class="keyword">class </span><a class="code" href="class_svc_1_1_output_poly_port.html">OutputPolyPort</a> :</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keyword">public</span> <a class="code" href="class_fw_1_1_output_port_base.html">Fw::OutputPortBase</a></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  {</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      <span class="comment">// Output Port Member functions</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      <a class="code" href="class_svc_1_1_output_poly_port.html#a30cacc290e521a09dc3d8276a4eccee3">OutputPolyPort</a>();</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_output_poly_port.html#aee64d12963c46ae29e52aa6cbe36a0f1">init</a>();</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_output_poly_port.html#a1d2e99a3b2fa0f678083f50017159294">addCallPort</a>(</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;          <a class="code" href="class_svc_1_1_input_poly_port.html">InputPolyPort</a>* callPort </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;      );</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_output_poly_port.html#adba37679d4947acc5607c59c7490854a">invoke</a>(</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;          U32 entry, </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;          <a class="code" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a>&amp; status, </div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;          <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; time, </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;          <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a>&amp; val </div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;      );</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;      <span class="comment">// Member variables</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      <a class="code" href="class_svc_1_1_input_poly_port.html">InputPolyPort</a>* m_port;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  };</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;}</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="poly_db_entry_enum_ac_8hpp.html">config/PolyDbEntryEnumAc.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="class_svc_1_1_input_poly_port.html">   28</a></span>&#160;  <span class="keyword">class </span><a class="code" href="class_svc_1_1_input_poly_port.html">InputPolyPort</a> :</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">public</span> <a class="code" href="class_fw_1_1_input_port_base.html">Fw::InputPortBase</a></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      <span class="comment">// Constants</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <span class="keyword">enum</span> {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <a class="code" href="class_svc_1_1_input_poly_port.html#a345d85027f597ea07eff0b8e76b7091aa6a3d3560625caa388e3d1b9b860e8ec8">SERIALIZED_SIZE</a> =</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;          <a class="code" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html#a8814f1ad6ac7d993684dd53b14159202a9904bec655ec673a416de46beb3342fe">Svc::PolyDbCfg::PolyDbEntry::SERIALIZED_SIZE</a> +</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;          <a class="code" href="class_svc_1_1_measurement_status.html#aed161366ce9a9f1b796b362cf96f07b6acb76a816b64657f54959d54e3f469058">Svc::MeasurementStatus::SERIALIZED_SIZE</a> +</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;          <a class="code" href="class_fw_1_1_time.html#ab97c582bdd29d1f3afe9fb715177d223a0d5ec7f4184b1b686424b7aabe8e30e8">Fw::Time::SERIALIZED_SIZE</a> +</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;          <a class="code" href="class_fw_1_1_poly_type.html#a277e01b9da8957cf39b37e4cc58c10dba334a591ffeb346e9941dc3ad0a94cecd">Fw::PolyType::SERIALIZED_SIZE</a></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="class_svc_1_1_input_poly_port.html#a345d85027f597ea07eff0b8e76b7091aa6a3d3560625caa388e3d1b9b860e8ec8">   45</a></span>&#160;      };</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      <span class="comment">// Types</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="class_svc_1_1_input_poly_port.html#aaea71e2e8b5125cbc55248df793b56cb">   54</a></span>&#160;      <span class="keyword">typedef</span> void (*<a class="code" href="class_svc_1_1_input_poly_port.html#aaea71e2e8b5125cbc55248df793b56cb">CompFuncPtr</a>)(</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <a class="code" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a>* callComp,</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a>&amp; entry,</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <a class="code" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a>&amp; status,</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; time,</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a>&amp; val</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      );</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      <span class="comment">// Input Port Member functions</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <a class="code" href="class_svc_1_1_input_poly_port.html#a6d0dfcf54eea42ad63e820de0fc62a31">InputPolyPort</a>();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_input_poly_port.html#a3549c071de61fd7d6071a9fda136f848">init</a>();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_input_poly_port.html#a1c38a42cd8499e65ffa1f5144422dd5a">addCallComp</a>(</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          <a class="code" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a>* callComp, </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;          <a class="code" href="class_svc_1_1_input_poly_port.html#aaea71e2e8b5125cbc55248df793b56cb">CompFuncPtr</a> funcPtr </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      );</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_input_poly_port.html#a999addf1d0b71d6b298b72dcc9dffa16">invoke</a>(</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a>&amp; entry, </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;          <a class="code" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a>&amp; status, </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;          <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; time, </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;          <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a>&amp; val </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      );</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#if FW_PORT_SERIALIZATION == 1</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> invokeSerial(<a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; _buffer);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      <span class="comment">// Member variables</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      <a class="code" href="class_svc_1_1_input_poly_port.html#aaea71e2e8b5125cbc55248df793b56cb">CompFuncPtr</a> m_func;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  };</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="class_svc_1_1_output_poly_port.html">  111</a></span>&#160;  <span class="keyword">class </span><a class="code" href="class_svc_1_1_output_poly_port.html">OutputPolyPort</a> :</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keyword">public</span> <a class="code" href="class_fw_1_1_output_port_base.html">Fw::OutputPortBase</a></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      <span class="comment">// Output Port Member functions</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <a class="code" href="class_svc_1_1_output_poly_port.html#a30cacc290e521a09dc3d8276a4eccee3">OutputPolyPort</a>();</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_output_poly_port.html#aee64d12963c46ae29e52aa6cbe36a0f1">init</a>();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_output_poly_port.html#a1d2e99a3b2fa0f678083f50017159294">addCallPort</a>(</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;          <a class="code" href="class_svc_1_1_input_poly_port.html">InputPolyPort</a>* callPort </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;      );</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_output_poly_port.html#af1c8f04742ada64484722e6674c5e335">invoke</a>(</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a>&amp; entry, </div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;          <a class="code" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a>&amp; status, </div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;          <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; time, </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;          <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a>&amp; val </div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      );</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;      <span class="comment">// Member variables</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;      <a class="code" href="class_svc_1_1_input_poly_port.html">InputPolyPort</a>* m_port;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  };</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;}</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
 <div class="ttc" id="a_input_port_base_8hpp_html"><div class="ttname"><a href="input_port_base_8hpp.html">InputPortBase.hpp</a></div></div>
 <div class="ttc" id="a_measurement_status_enum_ac_8hpp_html"><div class="ttname"><a href="measurement_status_enum_ac_8hpp.html">MeasurementStatusEnumAc.hpp</a></div></div>
 <div class="ttc" id="a_output_port_base_8hpp_html"><div class="ttname"><a href="output_port_base_8hpp.html">OutputPortBase.hpp</a></div></div>
 <div class="ttc" id="a_passive_component_base_8hpp_html"><div class="ttname"><a href="passive_component_base_8hpp.html">PassiveComponentBase.hpp</a></div></div>
+<div class="ttc" id="a_poly_db_entry_enum_ac_8hpp_html"><div class="ttname"><a href="poly_db_entry_enum_ac_8hpp.html">PolyDbEntryEnumAc.hpp</a></div></div>
 <div class="ttc" id="a_poly_type_8hpp_html"><div class="ttname"><a href="poly_type_8hpp.html">PolyType.hpp</a></div></div>
 <div class="ttc" id="a_serializable_8hpp_html"><div class="ttname"><a href="serializable_8hpp.html">Serializable.hpp</a></div></div>
 <div class="ttc" id="a_string_type_8hpp_html"><div class="ttname"><a href="string_type_8hpp.html">StringType.hpp</a></div><div class="ttdoc">Declares ISF string base class.</div></div>
@@ -241,20 +243,22 @@ $(document).ready(function(){initNavTree('_poly_port_ac_8hpp_source.html',''); i
 <div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a></div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00053">Serializable.hpp:53</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_time_html"><div class="ttname"><a href="class_fw_1_1_time.html">Fw::Time</a></div><div class="ttdef"><b>Definition:</b> <a href="time_8hpp_source.html#l00009">Time.hpp:9</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_time_html_ab97c582bdd29d1f3afe9fb715177d223a0d5ec7f4184b1b686424b7aabe8e30e8"><div class="ttname"><a href="class_fw_1_1_time.html#ab97c582bdd29d1f3afe9fb715177d223a0d5ec7f4184b1b686424b7aabe8e30e8">Fw::Time::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdef"><b>Definition:</b> <a href="time_8hpp_source.html#l00016">Time.hpp:13</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_input_poly_port_html"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html">Svc::InputPolyPort</a></div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8hpp_source.html#l00027">PolyPortAc.hpp:29</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_input_poly_port_html"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html">Svc::InputPolyPort</a></div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8hpp_source.html#l00028">PolyPortAc.hpp:30</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_input_poly_port_html_a1c38a42cd8499e65ffa1f5144422dd5a"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html#a1c38a42cd8499e65ffa1f5144422dd5a">Svc::InputPolyPort::addCallComp</a></div><div class="ttdeci">void addCallComp(Fw::PassiveComponentBase *callComp, CompFuncPtr funcPtr)</div><div class="ttdoc">Register a component.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00061">PolyPortAc.cpp:62</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_input_poly_port_html_a345d85027f597ea07eff0b8e76b7091aa6a3d3560625caa388e3d1b9b860e8ec8"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html#a345d85027f597ea07eff0b8e76b7091aa6a3d3560625caa388e3d1b9b860e8ec8">Svc::InputPolyPort::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdoc">The size of the serial representations of the port arguments.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8hpp_source.html#l00044">PolyPortAc.hpp:39</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_input_poly_port_html_a345d85027f597ea07eff0b8e76b7091aa6a3d3560625caa388e3d1b9b860e8ec8"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html#a345d85027f597ea07eff0b8e76b7091aa6a3d3560625caa388e3d1b9b860e8ec8">Svc::InputPolyPort::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdoc">The size of the serial representations of the port arguments.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8hpp_source.html#l00045">PolyPortAc.hpp:40</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_input_poly_port_html_a3549c071de61fd7d6071a9fda136f848"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html#a3549c071de61fd7d6071a9fda136f848">Svc::InputPolyPort::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialization function.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00055">PolyPortAc.cpp:56</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_input_poly_port_html_a6d0dfcf54eea42ad63e820de0fc62a31"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html#a6d0dfcf54eea42ad63e820de0fc62a31">Svc::InputPolyPort::InputPolyPort</a></div><div class="ttdeci">InputPolyPort()</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00047">PolyPortAc.cpp:48</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_input_poly_port_html_aa34fcbc4861601ec060c8c79047d03cc"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html#aa34fcbc4861601ec060c8c79047d03cc">Svc::InputPolyPort::invoke</a></div><div class="ttdeci">void invoke(U32 entry, Svc::MeasurementStatus &amp;status, Fw::Time &amp;time, Fw::PolyType &amp;val)</div><div class="ttdoc">Invoke a port interface.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00075">PolyPortAc.cpp:76</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_input_poly_port_html_accae3f78e4c4f9741bace2296d18ebda"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html#accae3f78e4c4f9741bace2296d18ebda">Svc::InputPolyPort::CompFuncPtr</a></div><div class="ttdeci">void(* CompFuncPtr)(Fw::PassiveComponentBase *callComp, NATIVE_INT_TYPE portNum, U32 entry, Svc::MeasurementStatus &amp;status, Fw::Time &amp;time, Fw::PolyType &amp;val)</div><div class="ttdoc">The port callback function type.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8hpp_source.html#l00053">PolyPortAc.hpp:53</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_input_poly_port_html_a999addf1d0b71d6b298b72dcc9dffa16"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html#a999addf1d0b71d6b298b72dcc9dffa16">Svc::InputPolyPort::invoke</a></div><div class="ttdeci">void invoke(const Svc::PolyDbCfg::PolyDbEntry &amp;entry, Svc::MeasurementStatus &amp;status, Fw::Time &amp;time, Fw::PolyType &amp;val)</div><div class="ttdoc">Invoke a port interface.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00075">PolyPortAc.cpp:76</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_input_poly_port_html_aaea71e2e8b5125cbc55248df793b56cb"><div class="ttname"><a href="class_svc_1_1_input_poly_port.html#aaea71e2e8b5125cbc55248df793b56cb">Svc::InputPolyPort::CompFuncPtr</a></div><div class="ttdeci">void(* CompFuncPtr)(Fw::PassiveComponentBase *callComp, NATIVE_INT_TYPE portNum, const Svc::PolyDbCfg::PolyDbEntry &amp;entry, Svc::MeasurementStatus &amp;status, Fw::Time &amp;time, Fw::PolyType &amp;val)</div><div class="ttdoc">The port callback function type.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8hpp_source.html#l00054">PolyPortAc.hpp:54</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_measurement_status_html"><div class="ttname"><a href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a></div><div class="ttdoc">An enumeration for measurement status.</div><div class="ttdef"><b>Definition:</b> <a href="measurement_status_enum_ac_8hpp_source.html#l00017">MeasurementStatusEnumAc.hpp:19</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_measurement_status_html_aed161366ce9a9f1b796b362cf96f07b6acb76a816b64657f54959d54e3f469058"><div class="ttname"><a href="class_svc_1_1_measurement_status.html#aed161366ce9a9f1b796b362cf96f07b6acb76a816b64657f54959d54e3f469058">Svc::MeasurementStatus::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdoc">The size of the serial representation.</div><div class="ttdef"><b>Definition:</b> <a href="measurement_status_enum_ac_8hpp_source.html#l00051">MeasurementStatusEnumAc.hpp:51</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_output_poly_port_html"><div class="ttname"><a href="class_svc_1_1_output_poly_port.html">Svc::OutputPolyPort</a></div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8hpp_source.html#l00110">PolyPortAc.hpp:112</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_output_poly_port_html"><div class="ttname"><a href="class_svc_1_1_output_poly_port.html">Svc::OutputPolyPort</a></div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8hpp_source.html#l00111">PolyPortAc.hpp:113</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_output_poly_port_html_a1d2e99a3b2fa0f678083f50017159294"><div class="ttname"><a href="class_svc_1_1_output_poly_port.html#a1d2e99a3b2fa0f678083f50017159294">Svc::OutputPolyPort::addCallPort</a></div><div class="ttdeci">void addCallPort(InputPolyPort *callPort)</div><div class="ttdoc">Register an input port.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00156">PolyPortAc.cpp:157</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_output_poly_port_html_a30cacc290e521a09dc3d8276a4eccee3"><div class="ttname"><a href="class_svc_1_1_output_poly_port.html#a30cacc290e521a09dc3d8276a4eccee3">Svc::OutputPolyPort::OutputPolyPort</a></div><div class="ttdeci">OutputPolyPort()</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00142">PolyPortAc.cpp:143</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_output_poly_port_html_adba37679d4947acc5607c59c7490854a"><div class="ttname"><a href="class_svc_1_1_output_poly_port.html#adba37679d4947acc5607c59c7490854a">Svc::OutputPolyPort::invoke</a></div><div class="ttdeci">void invoke(U32 entry, Svc::MeasurementStatus &amp;status, Fw::Time &amp;time, Fw::PolyType &amp;val)</div><div class="ttdoc">Invoke a port interface.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00169">PolyPortAc.cpp:170</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_output_poly_port_html_aee64d12963c46ae29e52aa6cbe36a0f1"><div class="ttname"><a href="class_svc_1_1_output_poly_port.html#aee64d12963c46ae29e52aa6cbe36a0f1">Svc::OutputPolyPort::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialization function.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00150">PolyPortAc.cpp:151</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_output_poly_port_html_af1c8f04742ada64484722e6674c5e335"><div class="ttname"><a href="class_svc_1_1_output_poly_port.html#af1c8f04742ada64484722e6674c5e335">Svc::OutputPolyPort::invoke</a></div><div class="ttdeci">void invoke(const Svc::PolyDbCfg::PolyDbEntry &amp;entry, Svc::MeasurementStatus &amp;status, Fw::Time &amp;time, Fw::PolyType &amp;val)</div><div class="ttdoc">Invoke a port interface.</div><div class="ttdef"><b>Definition:</b> <a href="poly_port_ac_8cpp_source.html#l00169">PolyPortAc.cpp:170</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_poly_db_cfg_1_1_poly_db_entry_html"><div class="ttname"><a href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a></div><div class="ttdef"><b>Definition:</b> <a href="poly_db_entry_enum_ac_8hpp_source.html#l00020">PolyDbEntryEnumAc.hpp:22</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_poly_db_cfg_1_1_poly_db_entry_html_a8814f1ad6ac7d993684dd53b14159202a9904bec655ec673a416de46beb3342fe"><div class="ttname"><a href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html#a8814f1ad6ac7d993684dd53b14159202a9904bec655ec673a416de46beb3342fe">Svc::PolyDbCfg::PolyDbEntry::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdoc">The size of the serial representation.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_entry_enum_ac_8hpp_source.html#l00066">PolyDbEntryEnumAc.hpp:66</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a></div><div class="ttdeci">SerializeStatus</div><div class="ttdoc">forward declaration for string</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00014">Serializable.hpp:14</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

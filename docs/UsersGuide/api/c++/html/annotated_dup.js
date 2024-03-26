@@ -208,6 +208,9 @@ var annotated_dup =
       [ "WatchdogTimer", "class_os_1_1_watchdog_timer.html", "class_os_1_1_watchdog_timer" ]
     ] ],
     [ "Svc", "namespace_svc.html", [
+      [ "PolyDbCfg", "namespace_svc_1_1_poly_db_cfg.html", [
+        [ "PolyDbEntry", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry" ]
+      ] ],
       [ "SendFileRequestPortStrings", "namespace_svc_1_1_send_file_request_port_strings.html", [
         [ "StringSize100", "class_svc_1_1_send_file_request_port_strings_1_1_string_size100.html", "class_svc_1_1_send_file_request_port_strings_1_1_string_size100" ]
       ] ],
@@ -321,7 +324,7 @@ var annotated_dup =
       [ "LinuxTimerComponentImpl", "class_svc_1_1_linux_timer_component_impl.html", "class_svc_1_1_linux_timer_component_impl" ],
       [ "ConsoleTextLoggerImpl", "class_svc_1_1_console_text_logger_impl.html", "class_svc_1_1_console_text_logger_impl" ],
       [ "PassiveRateGroup", "class_svc_1_1_passive_rate_group.html", "class_svc_1_1_passive_rate_group" ],
-      [ "PolyDbImpl", "class_svc_1_1_poly_db_impl.html", "class_svc_1_1_poly_db_impl" ],
+      [ "PolyDb", "class_svc_1_1_poly_db.html", "class_svc_1_1_poly_db" ],
       [ "PosixTime", "class_svc_1_1_posix_time.html", "class_svc_1_1_posix_time" ],
       [ "PrmDbImpl", "class_svc_1_1_prm_db_impl.html", "class_svc_1_1_prm_db_impl" ],
       [ "RateGroupDriver", "class_svc_1_1_rate_group_driver.html", "class_svc_1_1_rate_group_driver" ],

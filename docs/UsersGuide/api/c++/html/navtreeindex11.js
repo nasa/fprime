@@ -1,6 +1,5 @@
 var NAVTREEINDEX11 =
 {
-"class_drv_1_1_ip_socket.html#a1c937ae98faa3a8d2ce5cff0fd16aaca":[22,0,1,35,0],
 "class_drv_1_1_ip_socket.html#a1fba8f06e5712d505822b10ca343052b":[22,0,1,35,6],
 "class_drv_1_1_ip_socket.html#a234232a3c57b81feb4729c9e73601c74":[22,0,1,35,10],
 "class_drv_1_1_ip_socket.html#a35254851774fc34559a9f775de0b693a":[22,0,1,35,5],
@@ -249,5 +248,6 @@ var NAVTREEINDEX11 =
 "class_drv_1_1_poll_status.html#a5f4e9a6f8169a18556cdc0ed25a23948a38f55f63ed2274114cb74af1a42274d3":[22,0,1,9,2,0],
 "class_drv_1_1_poll_status.html#a5f4e9a6f8169a18556cdc0ed25a23948a6e12113c0f0793dc10c5ea10ab51d0f2":[22,0,1,9,2,2],
 "class_drv_1_1_poll_status.html#a5f4e9a6f8169a18556cdc0ed25a23948a95317ed4ed0a3cee248ddc5edcfca42c":[22,0,1,9,2,1],
-"class_drv_1_1_poll_status.html#a64b37f40c0bf06b5ed87b5ef7ff134f4":[22,0,1,9,4]
+"class_drv_1_1_poll_status.html#a64b37f40c0bf06b5ed87b5ef7ff134f4":[22,0,1,9,4],
+"class_drv_1_1_poll_status.html#a8469c9589b8c79dbcca6dacb0d179167":[22,0,1,9,5]
 };

@@ -88,27 +88,68 @@ $(document).ready(function(){initNavTree('_poly_db_8hpp_source.html',''); initRe
 <div class="title">PolyDb.hpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="poly_db_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ======================================================================</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// PolyDb.hpp</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">// Standardization header for PolyDb</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// ======================================================================</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef Svc_PolyDb_HPP</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define Svc_PolyDb_HPP</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="poly_db_impl_8hpp.html">Svc/PolyDb/PolyDbImpl.hpp</a>&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="namespace_svc.html#ae0c3e8020b515d3ed95be59a5e5df871">   13</a></span>&#160;  <span class="keyword">typedef</span> <a class="code" href="class_svc_1_1_poly_db_impl.html">PolyDbImpl</a> <a class="code" href="namespace_svc.html#ae0c3e8020b515d3ed95be59a5e5df871">PolyDb</a>;</div>
+<a href="poly_db_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifndef POLYDB_HPP_</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define POLYDB_HPP_</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;}</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="a_poly_db_impl_8hpp_html"><div class="ttname"><a href="poly_db_impl_8hpp.html">PolyDbImpl.hpp</a></div><div class="ttdoc">PolyDb is a database for storing telemetry for internal software use.</div></div>
-<div class="ttc" id="aclass_svc_1_1_poly_db_impl_html"><div class="ttname"><a href="class_svc_1_1_poly_db_impl.html">Svc::PolyDbImpl</a></div><div class="ttdoc">PolyDb Component Class.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_impl_8hpp_source.html#l00031">PolyDbImpl.hpp:31</a></div></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="poly_db_component_ac_8hpp.html">Svc/PolyDb/PolyDbComponentAc.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="poly_type_8hpp.html">Fw/Types/PolyType.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="class_svc_1_1_poly_db.html">   30</a></span>&#160;    <span class="keyword">class </span><a class="code" href="class_svc_1_1_poly_db.html">PolyDb</a> : <span class="keyword">public</span> <a class="code" href="class_svc_1_1_poly_db_component_base.html">PolyDbComponentBase</a> {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="class_svc_1_1_poly_db.html#aef1f0a27ccd323beb4ec5f3c2959f27b">PolyDb</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* <span class="keyword">const</span> name);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keyword">virtual</span> <a class="code" href="class_svc_1_1_poly_db.html#ac4171b17ab8bf8d4f41d6e6084e020b7">~PolyDb</a>();</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordtype">void</span> getValue_handler(</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <span class="keyword">const</span> <a class="code" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a>&amp; entry, </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <a class="code" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a>&amp; status, </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; time, </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a>&amp; val </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        ) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">void</span> setValue_handler(</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            <span class="keyword">const</span> <a class="code" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a>&amp; entry, </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <a class="code" href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a>&amp; status, </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; time, </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a>&amp; val </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        ) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keyword">struct </span>t_dbStruct {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            <a class="code" href="class_svc_1_1_measurement_status.html">MeasurementStatus</a> status; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <a class="code" href="class_fw_1_1_poly_type.html">Fw::PolyType</a> val; </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            <a class="code" href="class_fw_1_1_time.html">Fw::Time</a> time; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        } m_db[<a class="code" href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html#a8814f1ad6ac7d993684dd53b14159202a9974607258bead5d01db22f9cc955b3a">Svc::PolyDbCfg::PolyDbEntry::NUM_CONSTANTS</a>];</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    };</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* POLYDB_HPP_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
+<div class="ttc" id="a_poly_db_component_ac_8hpp_html"><div class="ttname"><a href="poly_db_component_ac_8hpp.html">PolyDbComponentAc.hpp</a></div></div>
+<div class="ttc" id="a_poly_type_8hpp_html"><div class="ttname"><a href="poly_type_8hpp.html">PolyType.hpp</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_poly_type_html"><div class="ttname"><a href="class_fw_1_1_poly_type.html">Fw::PolyType</a></div><div class="ttdef"><b>Definition:</b> <a href="poly_type_8hpp_source.html#l00011">PolyType.hpp:11</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_time_html"><div class="ttname"><a href="class_fw_1_1_time.html">Fw::Time</a></div><div class="ttdef"><b>Definition:</b> <a href="time_8hpp_source.html#l00009">Time.hpp:9</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_measurement_status_html"><div class="ttname"><a href="class_svc_1_1_measurement_status.html">Svc::MeasurementStatus</a></div><div class="ttdoc">An enumeration for measurement status.</div><div class="ttdef"><b>Definition:</b> <a href="measurement_status_enum_ac_8hpp_source.html#l00017">MeasurementStatusEnumAc.hpp:19</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_poly_db_cfg_1_1_poly_db_entry_html"><div class="ttname"><a href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html">Svc::PolyDbCfg::PolyDbEntry</a></div><div class="ttdef"><b>Definition:</b> <a href="poly_db_entry_enum_ac_8hpp_source.html#l00020">PolyDbEntryEnumAc.hpp:22</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_poly_db_cfg_1_1_poly_db_entry_html_a8814f1ad6ac7d993684dd53b14159202a9974607258bead5d01db22f9cc955b3a"><div class="ttname"><a href="class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html#a8814f1ad6ac7d993684dd53b14159202a9974607258bead5d01db22f9cc955b3a">Svc::PolyDbCfg::PolyDbEntry::NUM_CONSTANTS</a></div><div class="ttdeci">@ NUM_CONSTANTS</div><div class="ttdoc">The number of enumerated constants.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_entry_enum_ac_8hpp_source.html#l00068">PolyDbEntryEnumAc.hpp:68</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_poly_db_component_base_html"><div class="ttname"><a href="class_svc_1_1_poly_db_component_base.html">Svc::PolyDbComponentBase</a></div><div class="ttdoc">Auto-generated base for PolyDb component.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_component_ac_8hpp_source.html#l00023">PolyDbComponentAc.hpp:25</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_poly_db_html"><div class="ttname"><a href="class_svc_1_1_poly_db.html">Svc::PolyDb</a></div><div class="ttdoc">PolyDb Component Class.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_8hpp_source.html#l00030">PolyDb.hpp:30</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_poly_db_html_ac4171b17ab8bf8d4f41d6e6084e020b7"><div class="ttname"><a href="class_svc_1_1_poly_db.html#ac4171b17ab8bf8d4f41d6e6084e020b7">Svc::PolyDb::~PolyDb</a></div><div class="ttdeci">virtual ~PolyDb()</div><div class="ttdoc">PolyDbImpl destructor.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_8cpp_source.html#l00048">PolyDb.cpp:48</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_poly_db_html_aef1f0a27ccd323beb4ec5f3c2959f27b"><div class="ttname"><a href="class_svc_1_1_poly_db.html#aef1f0a27ccd323beb4ec5f3c2959f27b">Svc::PolyDb::PolyDb</a></div><div class="ttdeci">PolyDb(const char *const name)</div><div class="ttdoc">PolyDbImpl constructor.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_8cpp_source.html#l00013">PolyDb.cpp:13</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
-<div class="ttc" id="anamespace_svc_html_ae0c3e8020b515d3ed95be59a5e5df871"><div class="ttname"><a href="namespace_svc.html#ae0c3e8020b515d3ed95be59a5e5df871">Svc::PolyDb</a></div><div class="ttdeci">PolyDbImpl PolyDb</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_8hpp_source.html#l00013">PolyDb.hpp:13</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -202,7 +202,7 @@ var hierarchy =
           [ "Svc::ConsoleTextLoggerImpl", "class_svc_1_1_console_text_logger_impl.html", null ]
         ] ],
         [ "Svc::PolyDbComponentBase", "class_svc_1_1_poly_db_component_base.html", [
-          [ "Svc::PolyDbImpl", "class_svc_1_1_poly_db_impl.html", null ]
+          [ "Svc::PolyDb", "class_svc_1_1_poly_db.html", null ]
         ] ],
         [ "Svc::PosixTimeComponentBase", "class_svc_1_1_posix_time_component_base.html", [
           [ "Svc::PosixTime", "class_svc_1_1_posix_time.html", null ]
@@ -381,6 +381,7 @@ var hierarchy =
       [ "Svc::CmdSequencer_SeqMode", "class_svc_1_1_cmd_sequencer___seq_mode.html", null ],
       [ "Svc::ComQueueDepth", "class_svc_1_1_com_queue_depth.html", null ],
       [ "Svc::MeasurementStatus", "class_svc_1_1_measurement_status.html", null ],
+      [ "Svc::PolyDbCfg::PolyDbEntry", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html", null ],
       [ "Svc::PrmDb_PrmReadError", "class_svc_1_1_prm_db___prm_read_error.html", null ],
       [ "Svc::PrmDb_PrmWriteError", "class_svc_1_1_prm_db___prm_write_error.html", null ],
       [ "Svc::QueueType", "class_svc_1_1_queue_type.html", null ],
