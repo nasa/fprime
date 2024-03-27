@@ -43,10 +43,9 @@ jobs:
     - if: ${{ matrix.language == 'cpp' }}
       name: Build
       run: |
-          python3 -m venv ./fprime-venv
-          . ./fprime-venv/bin/activate
-          pip install -U setuptools setuptools_scm wheel pip
-          pip install -r ./requirements.txt
+          python -m venv /opt/venv && export PATH="/opt/venv/bin:$PATH"
+          python -m uv pip install -U setuptools setuptools_scm wheel pip uv
+          python -m uv pip install -r ./requirements.txt
           fprime-util generate
           fprime-util build --all
     - name: Perform CodeQL Analysis

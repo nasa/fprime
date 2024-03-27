@@ -59,7 +59,9 @@ jobs:
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |
-          pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+          python -m venv /opt/venv && export PATH="/opt/venv/bin:$PATH"
+          python -m pip install -U pip uv
+          python -m uv pip install -r ${{ inputs.fprime_location }}/requirements.txt
         shell: bash
       - name: "Generate build cache"
         working-directory: ${{ inputs.build_location }}
@@ -90,7 +92,9 @@ jobs:
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |
-          pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+          python -m venv /opt/venv && export PATH="/opt/venv/bin:$PATH"
+          python -m pip install -U pip uv
+          python -m uv pip install -r ${{ inputs.fprime_location }}/requirements.txt
         shell: bash
       - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}
