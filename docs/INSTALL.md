@@ -28,7 +28,9 @@ Requirements:
 4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
 5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
 
-> Latest versions of PIP are strongly recommended, as this will install native packages with improved performance and no dependency on Java. See [Recommended PIP Versions](#recommended-pip-versions)
+> Latest versions of PIP are strongly recommended. See [Recommended PIP Versions](#recommended-pip-versions)
+
+> For build host architectures other than x86_64 or aarch64, and systems with older PIP versions, Java is required
 
 > Ubuntu and Debian users should see notes on [Python installation](#ubuntu-debian-java-and-python-pip)
 
