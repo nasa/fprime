@@ -9,7 +9,14 @@ namespace Test {
 StaticData StaticData::data;
 
 void StaticData::setNextStatus(Os::File::Status status) {
-    StaticData::data.nextStatus = status;
+    StaticData::data.openStatus = status;
+    StaticData::data.sizeStatus = status;
+    StaticData::data.positionStatus = status;
+    StaticData::data.preallocateStatus = status;
+    StaticData::data.seekStatus = status;
+    StaticData::data.flushStatus = status;
+    StaticData::data.readStatus = status;
+    StaticData::data.writeStatus = status;
 }
 
 void StaticData::setSizeResult(FwSignedSizeType size) {
@@ -52,7 +59,7 @@ FileInterface::Status TestFile::open(const char *filepath, Mode open_mode, Overw
     StaticData::data.openOverwrite = overwrite;
     StaticData::data.lastCalled = StaticData::OPEN_FN;
     StaticData::data.pointer = 0;
-    return StaticData::data.nextStatus;
+    return StaticData::data.openStatus;
 }
 
 void TestFile::close() {
@@ -62,32 +69,32 @@ void TestFile::close() {
 FileInterface::Status TestFile::size(FwSignedSizeType& size_result) {
     StaticData::data.lastCalled = StaticData::SIZE_FN;
     size_result = StaticData::data.sizeResult;
-    return StaticData::data.nextStatus;
+    return StaticData::data.sizeStatus;
 }
 
 FileInterface::Status TestFile::position(FwSignedSizeType& position_result) {
     StaticData::data.lastCalled = StaticData::POSITION_FN;
     position_result = StaticData::data.positionResult;
-    return StaticData::data.nextStatus;
+    return StaticData::data.positionStatus;
 }
 
 FileInterface::Status TestFile::preallocate(FwSignedSizeType offset, FwSignedSizeType length) {
     StaticData::data.preallocateOffset = offset;
     StaticData::data.preallocateLength = length;
     StaticData::data.lastCalled = StaticData::PREALLOCATE_FN;
-    return StaticData::data.nextStatus;
+    return StaticData::data.preallocateStatus;
 }
 
 FileInterface::Status TestFile::seek(FwSignedSizeType offset, SeekType seekType) {
     StaticData::data.seekOffset = offset;
     StaticData::data.seekType = seekType;
     StaticData::data.lastCalled = StaticData::SEEK_FN;
-    return StaticData::data.nextStatus;
+    return StaticData::data.seekStatus;
 }
 
 FileInterface::Status TestFile::flush() {
     StaticData::data.lastCalled = StaticData::FLUSH_FN;
-    return StaticData::data.nextStatus;
+    return StaticData::data.flushStatus;
 }
 
 FileInterface::Status TestFile::read(U8 *buffer, FwSignedSizeType &size, WaitType wait) {
@@ -103,7 +110,7 @@ FileInterface::Status TestFile::read(U8 *buffer, FwSignedSizeType &size, WaitTyp
     } else {
         size = StaticData::data.readSizeResult;
     }
-    return StaticData::data.nextStatus;
+    return StaticData::data.readStatus;
 }
 
 FileInterface::Status TestFile::write(const U8* buffer, FwSignedSizeType &size, WaitType wait) {
@@ -119,7 +126,7 @@ FileInterface::Status TestFile::write(const U8* buffer, FwSignedSizeType &size, 
     } else {
         size = StaticData::data.writeSizeResult;
     }
-    return StaticData::data.nextStatus;
+    return StaticData::data.writeStatus;
 }
 
 FileHandle* TestFile::getHandle() {

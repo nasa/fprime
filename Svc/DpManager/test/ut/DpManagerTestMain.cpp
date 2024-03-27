@@ -1,5 +1,7 @@
 // ======================================================================
-// TestMain.cpp
+// \title  DpWriterTestMain.cpp
+// \author bocchino
+// \brief  cpp file for DpWriter component test main function
 // ======================================================================
 
 #include "Fw/Test/UnitTest.hpp"

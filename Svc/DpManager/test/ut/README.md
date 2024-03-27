@@ -315,6 +315,9 @@ This rule sends the `CLEAR_EVENT_THROTTLE` command.
 1. Apply rule `CLEAR_EVENT_THROTTLE::OK`.
 1. Apply rule `ProductRequestIn::BufferInvalid`
 
+**Requirements tested:**
+`SVC-DPMANAGER-006`
+
 ## 3. Implementation
 
 ### 3.1. DpManagerTester and TestState

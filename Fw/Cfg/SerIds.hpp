@@ -58,6 +58,7 @@ namespace Fw {
         FW_TYPEID_INTERNAL_INTERFACE_STRING =   51, //!< interface string Buffer type id
         FW_TYPEID_FIXED_LENGTH_STRING = 52, //!< 256 char string Buffer type id
         FW_TYPEID_OBJECT_NAME = 53, //!< ObjectName string Buffer type id
+        FW_TYPEID_FILE_NAME_STRING = 54, //!< FileName string Buffer type id
     };
 }
 
