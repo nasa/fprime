@@ -602,6 +602,7 @@ MML
 modbus
 MOSI
 MOVEFILE
+mozilla
 mqd
 mqueue
 Mrf
@@ -928,6 +929,7 @@ sloc
 smallsat
 Smath
 SNDTIMEO
+socio
 SOCKETHELPER
 SOCKETIPDRIVER
 SOCKETREADTASK
