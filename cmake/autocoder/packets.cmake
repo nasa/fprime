@@ -42,6 +42,9 @@ function(packets_setup_autocode AC_INPUT_FILE)
     determine_topology_files("${AC_INPUT_FILE}")
     get_filename_component(AC_INPUT_FILE_NO_PATH "${AC_INPUT_FILE}" NAME)
 
+
+    set(CMAKE_BINARY_DIR_RESOLVED "${CMAKE_BINARY_DIR}")
+    resolve_path_variables(FPRIME_BUILD_LOCATIONS PYTHON_AUTOCODER_DIR CMAKE_BINARY_DIR_RESOLVED AC_INPUT_FILE)
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     string(REPLACE "Packets.xml" "PacketsAc.cpp" CPP_FILE "${AC_INPUT_FILE_NO_PATH}")
     string(REPLACE "Packets.xml" "PacketsAc.hpp" HPP_FILE "${AC_INPUT_FILE_NO_PATH}")
@@ -54,7 +57,7 @@ function(packets_setup_autocode AC_INPUT_FILE)
         OUTPUT ${GENERATED_FILES}
         COMMAND
             PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils
-            BUILD_ROOT=${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime
+            BUILD_ROOT=${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR_RESOLVED}:${CMAKE_BINARY_DIR_RESOLVED}/F-Prime
             "${PYTHON}" "${PACKETS_AUTOCODER_SCRIPT}" "${AC_INPUT_FILE}"
         DEPENDS "${AC_INPUT_FILE}" "${FULL_TOPOLOGY_FILE}"
     )
