@@ -74,9 +74,9 @@ def main():
     ini_path = str(args_ns.settings)
     ini_real_path = str(args_ns.settings.resolve())
     common_suffix = os.path.commonprefix([ini_path[::-1], ini_real_path[::-1]])[::-1]
-    REMAPPING[ini_real_path[:-1*len(common_suffix)]] = ini_path[:-1*len(common_suffix)]
-
-
+    REMAPPING[ini_real_path[: -1 * len(common_suffix)]] = ini_path[
+        : -1 * len(common_suffix)
+    ]
 
     for setting, handler in CMAKE_NEEDED_SETTINGS.items():
         try:

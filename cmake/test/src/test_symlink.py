@@ -30,9 +30,10 @@ _ = cmake.get_build(
 
 @pytest.fixture(scope="session")
 def symlink_maker():
-    """ Fixture for symlinked builds """
+    """Fixture for symlinked builds"""
     yield None
     shutil.rmtree(SYMLINK_PATH, ignore_errors=True)
+
 
 def test_unittest_run(SYMLINKED_UT_BUILD, symlink_maker):
     """Basic run test for ref"""
