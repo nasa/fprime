@@ -29,7 +29,7 @@ class FileNameString : public Fw::StringBase {
     NATIVE_UINT_TYPE getCapacity() const;  //!< return buffer size
 
   private:
-    char m_buf[STRING_SIZE];  //!< storage for string data
+    char m_buf[FileNameString::STRING_SIZE];  //!< storage for string data
 };
 }  // namespace Fw
 
