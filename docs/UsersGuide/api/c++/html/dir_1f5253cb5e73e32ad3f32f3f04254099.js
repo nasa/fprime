@@ -17,6 +17,10 @@ var dir_1f5253cb5e73e32ad3f32f3f04254099 =
     [ "EightyCharString.hpp", "eighty_char_string_8hpp.html", [
       [ "EightyCharString", "class_fw_1_1_eighty_char_string.html", "class_fw_1_1_eighty_char_string" ]
     ] ],
+    [ "FileNameString.cpp", "file_name_string_8cpp.html", null ],
+    [ "FileNameString.hpp", "file_name_string_8hpp.html", [
+      [ "FileNameString", "class_fw_1_1_file_name_string.html", "class_fw_1_1_file_name_string" ]
+    ] ],
     [ "InternalInterfaceString.cpp", "internal_interface_string_8cpp.html", null ],
     [ "InternalInterfaceString.hpp", "internal_interface_string_8hpp.html", [
       [ "InternalInterfaceString", "class_fw_1_1_internal_interface_string.html", "class_fw_1_1_internal_interface_string" ]

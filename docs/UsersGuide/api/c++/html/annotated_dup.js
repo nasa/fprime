@@ -143,6 +143,7 @@ var annotated_dup =
       [ "ByteArray", "struct_fw_1_1_byte_array.html", "struct_fw_1_1_byte_array" ],
       [ "ConstByteArray", "struct_fw_1_1_const_byte_array.html", "struct_fw_1_1_const_byte_array" ],
       [ "EightyCharString", "class_fw_1_1_eighty_char_string.html", "class_fw_1_1_eighty_char_string" ],
+      [ "FileNameString", "class_fw_1_1_file_name_string.html", "class_fw_1_1_file_name_string" ],
       [ "InternalInterfaceString", "class_fw_1_1_internal_interface_string.html", "class_fw_1_1_internal_interface_string" ],
       [ "MallocAllocator", "class_fw_1_1_malloc_allocator.html", "class_fw_1_1_malloc_allocator" ],
       [ "MemAllocator", "class_fw_1_1_mem_allocator.html", "class_fw_1_1_mem_allocator" ],
@@ -208,6 +209,9 @@ var annotated_dup =
       [ "WatchdogTimer", "class_os_1_1_watchdog_timer.html", "class_os_1_1_watchdog_timer" ]
     ] ],
     [ "Svc", "namespace_svc.html", [
+      [ "DpWrittenPortStrings", "namespace_svc_1_1_dp_written_port_strings.html", [
+        [ "StringSize256", "class_svc_1_1_dp_written_port_strings_1_1_string_size256.html", "class_svc_1_1_dp_written_port_strings_1_1_string_size256" ]
+      ] ],
       [ "PolyDbCfg", "namespace_svc_1_1_poly_db_cfg.html", [
         [ "PolyDbEntry", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry" ]
       ] ],
@@ -244,6 +248,9 @@ var annotated_dup =
       [ "OutputCyclePort", "class_svc_1_1_output_cycle_port.html", "class_svc_1_1_output_cycle_port" ],
       [ "DeframerComponentBase", "class_svc_1_1_deframer_component_base.html", "class_svc_1_1_deframer_component_base" ],
       [ "DpManagerComponentBase", "class_svc_1_1_dp_manager_component_base.html", "class_svc_1_1_dp_manager_component_base" ],
+      [ "InputDpWrittenPort", "class_svc_1_1_input_dp_written_port.html", "class_svc_1_1_input_dp_written_port" ],
+      [ "OutputDpWrittenPort", "class_svc_1_1_output_dp_written_port.html", "class_svc_1_1_output_dp_written_port" ],
+      [ "DpWriterComponentBase", "class_svc_1_1_dp_writer_component_base.html", "class_svc_1_1_dp_writer_component_base" ],
       [ "InputFatalEventPort", "class_svc_1_1_input_fatal_event_port.html", "class_svc_1_1_input_fatal_event_port" ],
       [ "OutputFatalEventPort", "class_svc_1_1_output_fatal_event_port.html", "class_svc_1_1_output_fatal_event_port" ],
       [ "FatalHandlerComponentBase", "class_svc_1_1_fatal_handler_component_base.html", "class_svc_1_1_fatal_handler_component_base" ],
@@ -306,6 +313,7 @@ var annotated_dup =
       [ "TimerVal", "class_svc_1_1_timer_val.html", "class_svc_1_1_timer_val" ],
       [ "Deframer", "class_svc_1_1_deframer.html", "class_svc_1_1_deframer" ],
       [ "DpManager", "class_svc_1_1_dp_manager.html", "class_svc_1_1_dp_manager" ],
+      [ "DpWriter", "class_svc_1_1_dp_writer.html", "class_svc_1_1_dp_writer" ],
       [ "FatalHandlerComponentImpl", "class_svc_1_1_fatal_handler_component_impl.html", "class_svc_1_1_fatal_handler_component_impl" ],
       [ "FileDownlink", "class_svc_1_1_file_downlink.html", "class_svc_1_1_file_downlink" ],
       [ "FileManager", "class_svc_1_1_file_manager.html", "class_svc_1_1_file_manager" ],

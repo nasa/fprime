@@ -85,14 +85,14 @@ $(document).ready(function(){initNavTree('_svc_dp_writer_component.html',''); in
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">Svc::DpWriter Component </div>  </div>
+<div class="title"><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="autotoc_md673"></a>
 Svc::DpWriter (Active Component)</h1>
 <h2><a class="anchor" id="autotoc_md674"></a>
 1. Introduction</h2>
-<p><code>Svc::DpWriter</code> is an active component for writing data products to disk. It does the following:</p>
+<p><code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code> is an active component for writing data products to disk. It does the following:</p>
 <ol type="1">
 <li>Receive buffers containing filled data product containers. The buffers typically come from one or more components that produce data products. They typically pass through an instance of <a class="el" href="svc_2_dp_manager_2docs_2sdd_8md.html">`Svc::DpManager`</a>, and possibly through an instance of <a class="el" href="buffer_accumulator_8md.html">`Svc::BufferAccumulator`</a>, before reaching <code>DpWriter</code>.</li>
 </ol>
@@ -103,6 +103,9 @@ Svc::DpWriter (Active Component)</h1>
 <ol type="a">
 <li>Write <em>B</em> to disk.</li>
 </ol>
+<ol type="a">
+<li>If a notification port is connected, then send out a notification that the write occurred. An instance of <a class="el" href="svc_2_dp_catalog_2docs_2sdd_8md.html">`Svc::DpCatalog`</a> can receive this notification and use it to update the data product catalog.</li>
+</ol>
 </li>
 </ol>
 <h2><a class="anchor" id="autotoc_md675"></a>
@@ -111,15 +114,17 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Rationale   </th><th class="markdownTableHeadNone">Verification Method    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">SVC-DPWRITER-001   </td><td class="markdownTableBodyNone"><code>Svc::DpWriter</code> shall provide a port for receiving <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> objects pointing to filled data product containers.   </td><td class="markdownTableBodyNone">The purpose of <code>DpWriter</code> is to write the data products to disk.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
+<td class="markdownTableBodyNone">SVC-DPWRITER-001   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code> shall provide a port for receiving <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> objects pointing to filled data product containers.   </td><td class="markdownTableBodyNone">The purpose of <code>DpWriter</code> is to write the data products to disk.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">SVC-DPWRITER-002   </td><td class="markdownTableBodyNone"><code>Svc::DpWriter</code> shall provide an array of ports for sending <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> objects for processing.   </td><td class="markdownTableBodyNone">This requirement supports downstream processing of the data in the buffer.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
+<td class="markdownTableBodyNone">SVC-DPWRITER-002   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code> shall provide an array of ports for sending <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> objects for processing.   </td><td class="markdownTableBodyNone">This requirement supports downstream processing of the data in the buffer.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">SVC-DPWRITER-003   </td><td class="markdownTableBodyNone">On receiving a data product container <em>C</em>, <code>Svc::DpWriter</code> shall use the processing type field of the header of <em>C</em> to select zero or more processing ports to invoke, in port order.   </td><td class="markdownTableBodyNone">The processing type field is a bit mask. A one in bit <code>2^n</code> in the bit mask selects port index <code>n</code>.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
+<td class="markdownTableBodyNone">SVC-DPWRITER-003   </td><td class="markdownTableBodyNone">On receiving a data product container <em>C</em>, <code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code> shall use the processing type field of the header of <em>C</em> to select zero or more processing ports to invoke, in port order.   </td><td class="markdownTableBodyNone">The processing type field is a bit mask. A one in bit <code>2^n</code> in the bit mask selects port index <code>n</code>.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">SVC-DPWRITER-004   </td><td class="markdownTableBodyNone">On receiving an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>B</em>, and after performing any requested processing on <em>B</em>, <code>Svc::DpWriter</code> shall write <em>B</em> to disk.   </td><td class="markdownTableBodyNone">The purpose of <code>DpWriter</code> is to write data products to the disk.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
+<td class="markdownTableBodyNone">SVC-DPWRITER-004   </td><td class="markdownTableBodyNone">On receiving an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>B</em>, and after performing any requested processing on <em>B</em>, <code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code> shall write <em>B</em> to disk.   </td><td class="markdownTableBodyNone">The purpose of <code>DpWriter</code> is to write data products to the disk.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">SVC-DPWRITER-005   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_dp_manager.html">Svc::DpManager</a></code> shall provide telemetry that reports the number of data products written and the number of bytes written.   </td><td class="markdownTableBodyNone">This requirement establishes the telemetry interface for the component.   </td><td class="markdownTableBodyNone">Unit test   </td></tr>
+<td class="markdownTableBodyNone">SVC-DPWRITER-005   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code> shall provide a port for notifying other components that data products have been written.   </td><td class="markdownTableBodyNone">This requirement allows <code>Svc::DpCatalog</code> or a similar component to update its catalog in real time.   </td><td class="markdownTableBodyNone">Unit Test    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">SVC-DPWRITER-006   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_dp_manager.html">Svc::DpManager</a></code> shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors.   </td><td class="markdownTableBodyNone">This requirement establishes the telemetry interface for the component.   </td><td class="markdownTableBodyNone">Unit test   </td></tr>
 </table>
 <h2><a class="anchor" id="autotoc_md676"></a>
 3. Design</h2>
@@ -139,14 +144,16 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>output</code>   </td><td class="markdownTableBodyNone"><code>procBufferSendOut</code>   </td><td class="markdownTableBodyNone"><code>[DpWriterNumProcPorts] Fw.BufferSend</code>   </td><td class="markdownTableBodyNone">Port for processing data products    </td></tr>
 <tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>output</code>   </td><td class="markdownTableBodyNone"><code>dpWrittenOut</code>   </td><td class="markdownTableBodyNone"><code>DpWritten</code>   </td><td class="markdownTableBodyNone">Port for sending <code>DpWritten</code> notifications    </td></tr>
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>output</code>   </td><td class="markdownTableBodyNone"><code>deallocBufferSendOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.BufferSend</code>   </td><td class="markdownTableBodyNone">Port for deallocating data product buffers    </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>time get</code>   </td><td class="markdownTableBodyNone"><code>timeGetOut</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_fw_1_1_time.html">Fw.Time</a></code>   </td><td class="markdownTableBodyNone">Time get port    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>telemetry</code>   </td><td class="markdownTableBodyNone"><code>tlmOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.Tlm</code>   </td><td class="markdownTableBodyNone">Telemetry port    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>event</code>   </td><td class="markdownTableBodyNone"><code>eventOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.Log</code>   </td><td class="markdownTableBodyNone">Event port    </td></tr>
+<td class="markdownTableBodyNone"><code>telemetry</code>   </td><td class="markdownTableBodyNone"><code>tlmOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.Tlm</code>   </td><td class="markdownTableBodyNone">Telemetry port    </td></tr>
 <tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>event</code>   </td><td class="markdownTableBodyNone"><code>eventOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.Log</code>   </td><td class="markdownTableBodyNone">Event port    </td></tr>
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>text event</code>   </td><td class="markdownTableBodyNone"><code>textEventOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.LogText</code>   </td><td class="markdownTableBodyNone">Text event port   </td></tr>
 </table>
 <h3><a class="anchor" id="autotoc_md679"></a>
@@ -160,16 +167,15 @@ Svc::DpWriter (Active Component)</h1>
 </ol>
 <h3><a class="anchor" id="autotoc_md680"></a>
 3.4. Compile-Time Setup</h3>
-<p>The configuration constant <a href="../../../config/AcConstants.fpp"><code>DpWriterNumProcPorts</code></a> specifies the number of ports for connecting components that perform processing.</p>
+<ol type="1">
+<li>The configuration constant <a href="../../../config/AcConstants.fpp"><code>DpWriterNumProcPorts</code></a> specifies the number of ports for connecting components that perform processing.</li>
+</ol>
+<ol type="1">
+<li>The configuration <a href="../../../config/DpCfg.hpp"><code>DP_FILENAME_FORMAT</code></a> specifies the file name format.</li>
+</ol>
 <h3><a class="anchor" id="autotoc_md681"></a>
 3.5. Runtime Setup</h3>
-<p>The <code>config</code> function specifies the following constants:</p>
-<ol type="1">
-<li><code>fileNamePrefix (string)</code>: The prefix to use for file names.</li>
-</ol>
-<ol type="1">
-<li><code>fileNameSuffix (string)</code>: The suffix to use for file names.</li>
-</ol>
+<p>No special runtime setup is required.</p>
 <h3><a class="anchor" id="autotoc_md682"></a>
 3.6. Port Handlers</h3>
 <h4><a class="anchor" id="autotoc_md683"></a>
@@ -179,11 +185,26 @@ Svc::DpWriter (Active Component)</h1>
 3.6.2. bufferSendIn</h4>
 <p>This handler receives a mutable reference to a buffer <code>B</code>. It does the following:</p>
 <ol type="1">
-<li>Check that <code>B</code> is valid and that the first <code>sizeof(FwPacketDescriptorType)</code> bytes of the memory referred to by <code>B</code> hold the serialized value <a href="../../../Fw/Com/ComPacket.hpp"><code>Fw_PACKET_DP</code></a>. If not, emit a warning event.</li>
+<li>Check that <code>B</code> is valid. If not, emit a warning event.</li>
 </ol>
 <ol type="1">
-<li>If step 1 succeeded, then<ol type="a">
-<li>Read the <code>ProcType</code> field out of the container header stored in the memory pointed to by <code>B</code>. If the value is a valid port number <code>N</code> for <code>procBufferSendOut</code>, then invoke <code>procBufferSendOut</code> at port number <code>N</code>, passing in <code>B</code>. This step updates the memory pointed to by <code>B</code> in place.</li>
+<li>If the previous step succeeded, then check that the size of <code>B</code> is large enough to hold a data product container packet. If not, emit a warning event.</li>
+</ol>
+<ol type="1">
+<li>If the previous steps succeeded, then check that the packet header of <code>B</code> can be successfully deserialized. If not, emit a warning event.</li>
+</ol>
+<ol type="1">
+<li>If the previous steps succeeded, then check that the header hash of <code>B</code> is valid. If not, emit a warning event.</li>
+</ol>
+<ol type="1">
+<li>If the previous steps succeeded, then check that the data size recorded in the packet header fits within the buffer. If not, emit a warning event.</li>
+</ol>
+<ol type="1">
+<li>If the previous steps succeeded, then<ol type="a">
+<li>Read the <code>ProcType</code> field out of the container header stored in the memory pointed to by <code>B</code>. Let the resulting bit mask be <code>M</code>.</li>
+</ol>
+<ol type="a">
+<li>Visit the port numbers of <code>procBufferSendOut</code> in order. For each port number <code>N</code>, if <code>N</code> is set in <code>M</code>, then invoke <code>procBufferSendOut</code> at port number <code>N</code>, passing in <code>B</code>. This step updates the memory pointed to by <code>B</code> in place.</li>
 </ol>
 <ol type="a">
 <li>Write <code>B</code> to a file, using the format described in the <a href="#file_format"><b>File Format</b></a> section. For the time stamp, use the time provided by <code>timeGetOut</code>.</li>
@@ -191,7 +212,10 @@ Svc::DpWriter (Active Component)</h1>
 </li>
 </ol>
 <ol type="1">
-<li>Send <code>B</code> on <code>deallocBufferSendOut</code>.</li>
+<li>If the file write succeeded and <code>dpWrittenOut</code> is connected, then send the file name, priority, and file size out on <code>dpWrittenOut</code>.</li>
+</ol>
+<ol type="1">
+<li>If <code>B</code> is valid, then send <code>B</code> on <code>deallocBufferSendOut</code>.</li>
 </ol>
 <p><a class="anchor" id="file_format"></a> </p>
 <h2><a class="anchor" id="autotoc_md685"></a>
@@ -201,13 +225,30 @@ Svc::DpWriter (Active Component)</h1>
 <p>Each file stores a serialized data product record, with the format described in the <a href="../../../Fw/Dp/docs/sdd.md#serial-format">data products documentation</a>.</p>
 <h3><a class="anchor" id="autotoc_md687"></a>
 4.2. File Name</h3>
-<p>The name of each file consists of <code>fileNamePrefix</code> followed by an ID, a time stamp, and <code>fileNameSuffix</code>. The ID consists of an underscore character <code>_</code> followed by the container ID. The time stamp consists of an underscore character <code>_</code> followed by a seconds value, an underscore character, and a microseconds value.</p>
-<p>For example, suppose that the file name prefix is <code>container_data</code> and the file name suffix is <code>.dat</code>. Suppose that container ID is 100, the seconds value is 100000, and the microseconds value is 1000. Then the file name is <code>container_data_100_100000_1000.dat</code>.</p>
+<p>The name of each file is formatted with the configurable format string <a href="../../../config/DpCfg.hpp"><code>DP_FILENAME_FORMAT</code></a>. The format string must contain format specifications for the following arguments, in order.</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Format Specifier   </th><th class="markdownTableHeadNone">Type    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Container ID   </td><td class="markdownTableBodyNone"><code>PRI_FwDpIdType</code>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Time seconds   </td><td class="markdownTableBodyNone"><code>PRI_u32</code>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Time microseconds   </td><td class="markdownTableBodyNone"><code>PRI_u32</code>   </td></tr>
+</table>
 <p><a class="anchor" id="ground_interface"></a> </p>
 <h2><a class="anchor" id="autotoc_md688"></a>
 5. Ground Interface</h2>
 <h3><a class="anchor" id="autotoc_md689"></a>
-5.1. Telemetry</h3>
+5.1. Commands</h3>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Kind   </th><th class="markdownTableHeadNone">Name   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>async</code>   </td><td class="markdownTableBodyNone"><code>CLEAR_EVENT_THROTTLE</code>   </td><td class="markdownTableBodyNone">Clear event throttling   </td></tr>
+</table>
+<h3><a class="anchor" id="autotoc_md690"></a>
+5.2. Telemetry</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Name   </th><th class="markdownTableHeadNone">Type   </th><th class="markdownTableHeadNone">Description    </th></tr>
@@ -216,29 +257,35 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>NumBytes</code>   </td><td class="markdownTableBodyNone"><code>U64</code>   </td><td class="markdownTableBodyNone">The number of bytes handled   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md690"></a>
-5.2. Events</h3>
+<h3><a class="anchor" id="autotoc_md691"></a>
+5.3. Events</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Name   </th><th class="markdownTableHeadNone">Severity   </th><th class="markdownTableHeadNone">Description    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>BufferTooSmall</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">Incoming buffer is too small to hold a data product container    </td></tr>
+<td class="markdownTableBodyNone"><code>BufferInvalid</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">Incoming buffer is invalid    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>InvalidPacketDescriptor</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">Incoming buffer had an invalid packet descriptor   </td></tr>
+<td class="markdownTableBodyNone"><code>BufferTooSmall</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">Incoming buffer is too small to hold a data product container    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>InvalidPacketDescriptor</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">Incoming buffer has an invalid packet descriptor    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>FileOpenError</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">An error occurred when opening a file    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>FileWriteError</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">An error occurred when writing to a file   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md691"></a>
+<h2><a class="anchor" id="autotoc_md692"></a>
 6. Example Uses</h2>
 <p><a class="anchor" id="top-diagrams"></a> </p>
-<h3><a class="anchor" id="autotoc_md692"></a>
+<h3><a class="anchor" id="autotoc_md693"></a>
 6.1. Topology Diagrams</h3>
-<p>The following topology diagram shows how to connect <code>Svc::DpWriter</code> to a <code>DpManager</code> component and a processor component. The diagrams use the following instances:</p>
+<p>The following topology diagram shows how to connect <code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code> to a <code>DpManager</code> component and a processor component. The diagrams use the following instances:</p>
 <ul>
 <li><code>dpManager</code>: An instance of <a class="el" href="svc_2_dp_manager_2docs_2sdd_8md.html">`Svc::DpManager`</a>.</li>
 <li><code>dpProcessor</code>: A component that processes data product containers.</li>
-<li><code>dpWriter</code>: An instance of <code>Svc::DpWriter</code>.</li>
+<li><code>dpWriter</code>: An instance of <code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code>.</li>
 <li><code>producer</code>: A component that produces data products.</li>
 </ul>
-<div> <img src="img/top/product-write.png" alt="" width="800/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md693"></a>
+<div> <img src="img/top/product-write.png" alt="" width="800/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md694"></a>
 6.2. Sequence Diagrams</h3>
 <p>The following diagram shows what happens when a buffer is sent to <code>DpWriter</code>, is processed, and is written to disk.</p>
 <div class="fragment"><div class="line">sequenceDiagram</div>

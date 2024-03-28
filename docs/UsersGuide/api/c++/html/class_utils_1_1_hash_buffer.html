@@ -129,6 +129,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af5e487dc95cda4a121c399e8695f79c2"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_utils_1_1_hash_buffer.html#af5e487dc95cda4a121c399e8695f79c2">getBuffAddr</a> () const</td></tr>
 <tr class="memdesc:af5e487dc95cda4a121c399e8695f79c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets buffer address for data reading, const version  <a href="class_utils_1_1_hash_buffer.html#af5e487dc95cda4a121c399e8695f79c2">More...</a><br /></td></tr>
 <tr class="separator:af5e487dc95cda4a121c399e8695f79c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a0d3f32c0ca268c6edd5be68ab30ff3"><td class="memItemLeft" align="right" valign="top">U32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_utils_1_1_hash_buffer.html#a3a0d3f32c0ca268c6edd5be68ab30ff3">asBigEndianU32</a> () const</td></tr>
+<tr class="memdesc:a3a0d3f32c0ca268c6edd5be68ab30ff3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert bytes 0 through 3 of the hash data to a big-Endian U32 value.  <a href="class_utils_1_1_hash_buffer.html#a3a0d3f32c0ca268c6edd5be68ab30ff3">More...</a><br /></td></tr>
+<tr class="separator:a3a0d3f32c0ca268c6edd5be68ab30ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_serialize_buffer_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_serialize_buffer_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a></td></tr>
 <tr class="memitem:a80ecebd55c066e094018fbb17794566b inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">operator=</a> (const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;src)</td></tr>
 <tr class="memdesc:a80ecebd55c066e094018fbb17794566b inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">equal operator  <a href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">More...</a><br /></td></tr>
@@ -284,7 +287,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Construct a <a class="el" href="class_utils_1_1_hash_buffer.html" title="A container class for holding a hash buffer.">HashBuffer</a> object </p>
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00009">9</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00012">12</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>
@@ -304,7 +307,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00017">17</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00019">19</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>
@@ -323,7 +326,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00006">6</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00010">10</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>
@@ -351,11 +354,32 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Destroy a <a class="el" href="class_utils_1_1_hash_buffer.html" title="A container class for holding a hash buffer.">HashBuffer</a> object </p>
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00014">14</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00017">17</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a3a0d3f32c0ca268c6edd5be68ab30ff3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a0d3f32c0ca268c6edd5be68ab30ff3">&#9670;&nbsp;</a></span>asBigEndianU32()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">U32 Utils::HashBuffer::asBigEndianU32 </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert bytes 0 through 3 of the hash data to a big-Endian U32 value. </p>
+
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00058">58</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+
+</div>
+</div>
 <a id="abd7ab7173451360e6d0a5a7cc1fb3ecf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abd7ab7173451360e6d0a5a7cc1fb3ecf">&#9670;&nbsp;</a></span>getBuffAddr() <span class="overload">[1/2]</span></h2>
 
@@ -382,7 +406,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_fw_1_1_serialize_buffer_base.html#a0b5e0fdec08aa08e7eedd2e9bde10b7a">Fw::SerializeBufferBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00048">48</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00050">50</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>
@@ -413,7 +437,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_fw_1_1_serialize_buffer_base.html#acd6ea18045472e9090ec8823185cb676">Fw::SerializeBufferBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00044">44</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00046">46</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>
@@ -443,7 +467,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_fw_1_1_serialize_buffer_base.html#ad4f6528c0b66b00a59030e2182caa7b6">Fw::SerializeBufferBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00052">52</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00054">54</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>
@@ -464,7 +488,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Compare two hash buffers for inequality </p>
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00040">40</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00042">42</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>
@@ -485,7 +509,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Assign a hash buffer from another hash buffer </p>
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00022">22</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00024">24</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>
@@ -506,7 +530,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Compare two hash buffers for equality </p>
 
-<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00032">32</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="hash_buffer_common_8cpp_source.html#l00034">34</a> of file <a class="el" href="hash_buffer_common_8cpp_source.html">HashBufferCommon.cpp</a>.</p>
 
 </div>
 </div>

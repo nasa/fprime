@@ -33,6 +33,9 @@ var _fpp_constants_ac_8hpp =
     [ "FppConstant_FileDownCompletePorts", "fpp_constants_ac_8hpp.html#af11882352596900f352b053266d64db0", [
       [ "FileDownCompletePorts", "fpp_constants_ac_8hpp.html#af11882352596900f352b053266d64db0a06cfdea156f4ec048349bbf15a518912", null ]
     ] ],
+    [ "FppConstant_FileNameStringSize", "fpp_constants_ac_8hpp.html#a6a6a527fe6959881d681335f619bbe91", [
+      [ "FileNameStringSize", "fpp_constants_ac_8hpp.html#a6a6a527fe6959881d681335f619bbe91a482bc952e979041df837358f61d5c692", null ]
+    ] ],
     [ "FppConstant_GenericHubInputBuffers", "fpp_constants_ac_8hpp.html#abb41e5b146cee47aca272c9289e590af", [
       [ "GenericHubInputBuffers", "fpp_constants_ac_8hpp.html#abb41e5b146cee47aca272c9289e590afa118fef9921c548d741a9500dc8a85614", null ]
     ] ],

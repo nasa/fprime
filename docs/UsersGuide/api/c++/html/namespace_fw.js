@@ -90,6 +90,7 @@ var namespace_fw =
     [ "ByteArray", "struct_fw_1_1_byte_array.html", "struct_fw_1_1_byte_array" ],
     [ "ConstByteArray", "struct_fw_1_1_const_byte_array.html", "struct_fw_1_1_const_byte_array" ],
     [ "EightyCharString", "class_fw_1_1_eighty_char_string.html", "class_fw_1_1_eighty_char_string" ],
+    [ "FileNameString", "class_fw_1_1_file_name_string.html", "class_fw_1_1_file_name_string" ],
     [ "InternalInterfaceString", "class_fw_1_1_internal_interface_string.html", "class_fw_1_1_internal_interface_string" ],
     [ "MallocAllocator", "class_fw_1_1_malloc_allocator.html", "class_fw_1_1_malloc_allocator" ],
     [ "MemAllocator", "class_fw_1_1_mem_allocator.html", "class_fw_1_1_mem_allocator" ],

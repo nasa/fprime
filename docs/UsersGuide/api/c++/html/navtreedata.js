@@ -426,12 +426,13 @@ var NAVTREE =
           [ "4.2. File Name", "svc_dp_writer_component.html#autotoc_md687", null ]
         ] ],
         [ "5. Ground Interface", "svc_dp_writer_component.html#autotoc_md688", [
-          [ "5.1. Telemetry", "svc_dp_writer_component.html#autotoc_md689", null ],
-          [ "5.2. Events", "svc_dp_writer_component.html#autotoc_md690", null ]
+          [ "5.1. Commands", "svc_dp_writer_component.html#autotoc_md689", null ],
+          [ "5.2. Telemetry", "svc_dp_writer_component.html#autotoc_md690", null ],
+          [ "5.3. Events", "svc_dp_writer_component.html#autotoc_md691", null ]
         ] ],
-        [ "6. Example Uses", "svc_dp_writer_component.html#autotoc_md691", [
-          [ "6.1. Topology Diagrams", "svc_dp_writer_component.html#autotoc_md692", null ],
-          [ "6.2. Sequence Diagrams", "svc_dp_writer_component.html#autotoc_md693", null ]
+        [ "6. Example Uses", "svc_dp_writer_component.html#autotoc_md692", [
+          [ "6.1. Topology Diagrams", "svc_dp_writer_component.html#autotoc_md693", null ],
+          [ "6.2. Sequence Diagrams", "svc_dp_writer_component.html#autotoc_md694", null ]
         ] ]
       ] ]
     ] ],
@@ -480,36 +481,37 @@ var NAVTREEINDEX =
 "a_m_p_c_s_sequence_8cpp.html",
 "byte_stream_send_port_ac_8cpp.html",
 "deframing_protocol_8hpp.html",
-"fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1",
-"gpio_write_port_ac_8cpp_source.html",
-"log_severity_enum_ac_8cpp.html",
-"priority_buffer_queue_8cpp_source.html",
-"svc_active_rate_group_component.html#autotoc_md422",
-"svc_dp_writer_component.html#autotoc_md681",
-"svc_prm_db_component.html#autotoc_md915",
-"udp_sender_component_impl_8hpp_source.html",
-"class_drv_1_1_ip_socket.html#aa8d1af4464e74ec3d521ebf41af8dc32",
-"class_drv_1_1_recv_status.html#a25522c31c5b671460ff7c300051c08e9",
-"class_fw_1_1_ampcs_evr_log_packet.html#a7ab8a42ac543be914ecb89620cc23a9b",
-"class_fw_1_1_enabled.html#a72e892d78e86f7193cfd4e46b0b8918d",
-"class_fw_1_1_log_string_arg.html#a0ec7a94ca266951472c779117ca2ad14",
-"class_fw_1_1_poly_type.html#a184079711edacda12f39de1eddfd6d88",
-"class_fw_1_1_tlm_packet.html#a2793927f14d4ac500abcfc98dc1e8e3b",
-"class_os_1_1_mutex.html#a97a9cd599c7ed5f35c09f6acbb071a3f",
-"class_svc_1_1_active_logger_component_base.html#a6f984b49aa551ce12404c936e8454d5a",
-"class_svc_1_1_buffer_logger___log_state.html#a0c66831bad842e23ca7f06240b12d04b",
-"class_svc_1_1_cmd_sequencer_component_base.html#a221c633964624587385b5ce4ac1292a0",
-"class_svc_1_1_com_queue.html#a4f473c53f47e98ab7dc54571561a1b09",
-"class_svc_1_1_deframer_component_base.html#acde856f0fb87e73b027f52275cf1dea3",
-"class_svc_1_1_file_manager_component_base.html#aadabe06f6e1c0a9317862c9b08da1ddf",
-"class_svc_1_1_health_component_base.html#ac90c82caed0282b9e670573fbd9442d8",
-"class_svc_1_1_posix_time_component_base.html#ab5bb922fee111dd98912d5a0ca6317b3",
-"class_svc_1_1_system_resources_component_base.html#a2999115924b8a85b37b3d1921bb66d4c",
-"class_utils_1_1_token_bucket.html",
-"dir_f7899873501add4619712b66b1cc8508.html",
-"md_docs__design_fpp_json_dict.html#autotoc_md66",
-"namespace_os.html#a3eb3d757db517edadaed7443bda3f71c",
-"struct_fw_1_1_dp_container_1_1_header.html#aa37930aed31614c5a755a25539dfad20"
+"fp_config_8h.html#a09b3765868bfcaa47e2c13e366e85e94",
+"fw_type_classes.html#autotoc_md378",
+"log_assert_8hpp_source.html",
+"posix_2_mutex_8cpp_source.html",
+"svc_active_logger_component.html#autotoc_md401",
+"svc_dp_manager_component.html#autotoc_md660",
+"svc_posix_time.html#autotoc_md894",
+"udp_8hpp.html",
+"class_drv_1_1_input_i2c_write_read_port.html#add0eb1f692ad16f7c382a082e3a03d11",
+"class_drv_1_1_output_spi_read_write_port.html#abd88e71158557a50dbf657a31076e1d8",
+"class_fw_1_1_active_component_base.html#a68d5f148bd4f708e331946fa68164203",
+"class_fw_1_1_dp_state.html#adb970d1f6e40b065f6c7bf0bb1f243fd",
+"class_fw_1_1_log_packet.html#a3db18e1ef55a8866768196c929af4fc9",
+"class_fw_1_1_param_string.html#ae6eb3c0e0f34571f5cf12d1b971764df",
+"class_fw_1_1_time.html#a647afd9e2977fe83b0b8045b4dee1964",
+"class_os_1_1_interrupt_lock.html#abc3bebe442d543d2b011c43218d17fd2",
+"class_svc_1_1_active_logger___filter_severity.html#aad7edc28beddcc9c165621be0b87c87a",
+"class_svc_1_1_buffer_accumulator_component_base.html#a9480868709d2d67525c049dad786126a",
+"class_svc_1_1_cmd_sequencer___file_read_stage.html#afb70e289cf4af349c6a2c9b63595e136",
+"class_svc_1_1_com_logger_component_base.html#a69b68465e814aee4d2298681e5d0e331",
+"class_svc_1_1_deframer_component_base.html",
+"class_svc_1_1_file_downlink_component_base.html#a42473b1ad010e5771e9612c49292f909",
+"class_svc_1_1_framing_protocol_interface.html#ae3cd039486d04b715f59b88b44f57554",
+"class_svc_1_1_output_cycle_port.html#ae1234f9e7edf8cfd7081d1bc00d3af39",
+"class_svc_1_1_queue_type.html#a37b432e350cc9e1c0ad0affbc742d174",
+"class_svc_1_1_tlm_packetizer_component_base.html#a3ef0d6028ebc9051637b091d3b503c77",
+"dir_60e6d26d710b1c56cb70a6342a8f8ae8.html",
+"globals.html",
+"md_docs_doc_index.html#autotoc_md189",
+"namespace_svc.html#ad27f471a5a849fa12cbd97a3cecfa625a9e9672fa96e8a1d300d3756c6d5c1e24",
+"struct_svc_1_1_rate_group_driver_1_1_divider.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
