@@ -7,9 +7,9 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 
-set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
+set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Assert.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/String.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FileNameString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/InternalInterfaceString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MallocAllocator.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MemAllocator.cpp"
@@ -17,8 +17,10 @@ set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/PolyType.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SerialBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Serializable.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/String.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StringType.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StringUtils.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
 )
 set(MOD_DEPS
   Fw/Cfg

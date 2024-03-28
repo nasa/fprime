@@ -60,8 +60,23 @@ struct StaticData {
     //! File pointer
     FwSignedSizeType pointer = 0;
 
-    //! Next status to be returned
-    Os::File::Status nextStatus = Os::File::Status::OTHER_ERROR;
+    //! Status to return from open
+    Os::File::Status openStatus = Os::File::Status::OP_OK;
+    //! Status to return from size
+    Os::File::Status sizeStatus = Os::File::Status::OP_OK;
+    //! Status to return from position
+    Os::File::Status positionStatus = Os::File::Status::OP_OK;
+    //! Status to return from preallocate
+    Os::File::Status preallocateStatus = Os::File::Status::OP_OK;
+    //! Status to return from seek
+    Os::File::Status seekStatus = Os::File::Status::OP_OK;
+    //! Status to return from flush
+    Os::File::Status flushStatus = Os::File::Status::OP_OK;
+    //! Status to return from read
+    Os::File::Status readStatus = Os::File::Status::OP_OK;
+    //! Status to return from write
+    Os::File::Status writeStatus = Os::File::Status::OP_OK;
+
     //! Return of next size call
     FwSignedSizeType sizeResult = -1;
     //! Return of next position call
