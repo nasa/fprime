@@ -1,9 +1,10 @@
 #ifndef FW_FILENAMESTRING_HPP
 #define FW_FILENAMESTRING_HPP
 
+#include <FpConfig.hpp>
+
 #include "Fw/Cfg/SerIds.hpp"
 #include "Fw/Types/StringType.hpp"
-#include "config/FpConfig.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Fw {
