@@ -232,7 +232,7 @@ or_pred(50) # evaluates False
 
 Another pattern is to specify a collection and check if the value is a member of that collection.
 
-```ptthon
+```python
 from fprime_gds.common.testing_fw import predicates
 
 is_in_pred = predicates.is_a_member_of(["A", 2, False])
