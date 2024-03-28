@@ -189,9 +189,6 @@ var hierarchy =
         [ "Svc::GenericHubComponentBase", "class_svc_1_1_generic_hub_component_base.html", [
           [ "Svc::GenericHubComponentImpl", "class_svc_1_1_generic_hub_component_impl.html", null ]
         ] ],
-        [ "Svc::GroundInterfaceComponentBase", "class_svc_1_1_ground_interface_component_base.html", [
-          [ "Svc::GroundInterfaceComponentImpl", "class_svc_1_1_ground_interface_component_impl.html", null ]
-        ] ],
         [ "Svc::LinuxTimerComponentBase", "class_svc_1_1_linux_timer_component_base.html", [
           [ "Svc::LinuxTimerComponentImpl", "class_svc_1_1_linux_timer_component_impl.html", null ]
         ] ],
