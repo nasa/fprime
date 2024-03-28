@@ -71,13 +71,13 @@ function(build_setup_build_module MODULE SOURCES GENERATED DEPENDENCIES)
         linker_only(LINKER_ONLY "${DEPENDENCY}")
         # Add a cmake dependency as long as this is not to be supplied only to the linker
         if (NOT LINKER_ONLY)
-            # If the depedency was restricted, produce an error
+            # If the dependency was restricted, produce an error
             if (DEPENDENCY IN_LIST RESTRICTED_TARGETS)
                 set(EXTRA_DATA)
                 if (FPRIME_TOOLCHAIN)
                     set(EXTRA_DATA " nor toolchain ${FPRIME_TOOLCHAIN}")
                 endif()
-                message(FATAL_ERROR "${MODULE} depends on ${DEPENDENCY}, which is unavaiable for platform ${FPRIME_PLATFORM}${EXTRA_DATA}")
+                message(FATAL_ERROR "${MODULE} depends on ${DEPENDENCY}, which is unavailable for platform ${FPRIME_PLATFORM}${EXTRA_DATA}")
             endif()
             add_dependencies(${MODULE} "${DEPENDENCY}")
             list(APPEND TARGET_DEPENDENCIES "${DEPENDENCY}")
@@ -115,11 +115,6 @@ function(build_setup_build_module MODULE SOURCES GENERATED DEPENDENCIES)
         target_link_libraries("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_LINK_FLAGS})
     endif()
 endfunction()
-
-
-
-
-
 
 ####
 # Function `add_deployment_target`:
