@@ -11,7 +11,7 @@
 #include <climits>
 #include <Fw/Logger/Logger.hpp>
 
-#ifdef TGT_OS_TYPE_LINUX 
+#ifdef TGT_OS_TYPE_LINUX
 #include <features.h>
 #endif
 
@@ -53,7 +53,7 @@ namespace Os {
         // Check the stack
         if (stack != Task::TASK_DEFAULT and stack < PTHREAD_STACK_MIN) {
             Fw::Logger::logMsg("[WARNING] Stack size %d too small, setting to minimum of %d\n", stack, PTHREAD_STACK_MIN);
-            stack = PTHREAD_STACK_MIN;
+            stack = static_cast<NATIVE_UINT_TYPE>(PTHREAD_STACK_MIN);
         }
         // Check CPU affinity
         if (!expect_perm and affinity != Task::TASK_DEFAULT) {
