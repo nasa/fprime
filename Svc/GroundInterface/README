@@ -1,7 +1,0 @@
-A generic interface to ground that interacts with 3 data passing ports:
-
- 1. Read Callback: (input) called when data is available, if connected
- 2. Read Poll: (output) poll-able port for retrieving data, if connected
- 3. Write: (output) used to send out data
-
- Note: it is expected that only one of the read ports is hooked up.
