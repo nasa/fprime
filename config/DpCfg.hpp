@@ -13,7 +13,7 @@
 #ifndef DPCFG_HPP
 #define DPCFG_HPP
 
-#include "config/FpConfig.hpp"
+#include <FpConfig.hpp>
 
 // The format string for a file name
 // The format arguments are container ID, time seconds, and time microseconds
