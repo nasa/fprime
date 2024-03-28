@@ -74,6 +74,7 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
                 ${FPP_SOURCES}
             DEPENDS
                 fpp_locs
+                "${FPRIME_BINARY_DIR}/locs.fpp"
                 ${FPP_SOURCES}
         )
         add_custom_target("${TARGET}_${MODULE}" DEPENDS ${OUTPUT_FILES}
