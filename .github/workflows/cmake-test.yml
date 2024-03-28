@@ -1,0 +1,45 @@
+name: CMake Test
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    # Only run this test when CMake files and setup change
+    paths:
+      - 'cmake/**'
+      - '**/CMakeLists.txt'
+      - '**.cmake'
+      - 'requirements.txt'
+      - ".github/workflows/cmake-test.yml"
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  CMake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - uses: ./.github/actions/setup
+      # Specifically install CMake minimum version
+      - name: Minimum CMake Install
+        shell: bash
+        run: |
+          export CMAKE_TAR_FILE="https://cmake.org/files/v3.16/cmake-3.16.0-Linux-x86_64.tar.gz"
+          export CMAKE_INSTALL_DIRECTORY="${GITHUB_WORKSPACE}/tools-override"
+          mkdir -p "${GITHUB_WORKSPACE}/tools-override"
+          curl -Ls "${CMAKE_TAR_FILE}" | tar -zC "${CMAKE_INSTALL_DIRECTORY}"  --strip-components=1 -x
+      - name: CMake Tests
+        working-directory: ./cmake/test
+        shell: bash
+        run: |
+          export CMAKE_INSTALL_DIRECTORY="${GITHUB_WORKSPACE}/tools-override"
+          export PATH="${CMAKE_INSTALL_DIRECTORY}/bin:${PATH}"
+          cmake --version
+          pytest
