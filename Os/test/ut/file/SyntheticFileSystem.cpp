@@ -110,7 +110,7 @@ Os::File::Status SyntheticFile::read(U8* buffer, FwSignedSizeType& size, WaitTyp
     FwSignedSizeType i = 0;
     for (i = 0; i < size; i++, this->m_data->m_pointer++) {
         // End of file
-        if (this->m_data->m_pointer >= static_cast<std::vector::size_type>(this->m_data->m_data.size())) {
+        if (this->m_data->m_pointer >= static_cast<FwSignedSizeType>(this->m_data->m_data.size())) {
             break;
         }
         buffer[i] = this->m_data->m_data.at(static_cast<U8>(this->m_data->m_pointer));
@@ -164,7 +164,7 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSignedSizeType& size, 
     for (i = 0; i < size; i++, this->m_data->m_pointer++) {
         // Overwrite case
         if (static_cast<size_t>(this->m_data->m_pointer) < this->m_data->m_data.size()) {
-            this->m_data->m_data.at(static_cast<std::vector::size_type>(this->m_data->m_pointer)) = write_data[i];
+            this->m_data->m_data.at(static_cast<std::vector<U8>::size_type>(this->m_data->m_pointer)) = write_data[i];
         }
         // Append case
         else {
