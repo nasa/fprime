@@ -162,6 +162,20 @@
     <packet name="DataProducts" id="21" level="3">
         <channel name="dpCat.CatalogDps"/>
         <channel name="dpCat.DpsSent"/>
+        <channel name="dpMgr.NumSuccessfulAllocations"/>
+        <channel name="dpMgr.NumFailedAllocations"/>
+        <channel name="dpMgr.NumDataProducts"/>
+        <channel name="dpMgr.NumBytes"/>
+        <channel name="dpWriter.NumBuffersReceived"/>
+        <channel name="dpWriter.NumBytesWritten"/>
+        <channel name="dpWriter.NumSuccessfulWrites"/>
+        <channel name="dpWriter.NumFailedWrites"/>
+        <channel name="dpWriter.NumErrors"/>
+        <channel name="dpBufferManager.TotalBuffs"/>
+        <channel name="dpBufferManager.CurrBuffs"/>
+        <channel name="dpBufferManager.HiBuffs"/>
+        <channel name="dpBufferManager.NoBuffs"/>
+        <channel name="dpBufferManager.EmptyBuffs"/>
     </packet>
 
 

@@ -55,6 +55,9 @@ module Ref {
     instance uplink
     instance systemResources
     instance dpCat
+    instance dpMgr
+    instance dpWriter
+    instance dpBufferManager
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -124,6 +127,8 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
       rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
+      rateGroup3Comp.RateGroupMemberOut[4] -> dpBufferManager.schedIn
+
 
     }
 
@@ -151,6 +156,24 @@ module Ref {
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
+    }
+
+    connections DataProducts {
+      # DpMgr and DpWriter connections. Have explicit port indexes for demo
+      dpMgr.bufferGetOut[0] -> dpBufferManager.bufferGetCallee
+      dpMgr.productSendOut[0] -> dpWriter.bufferSendIn
+      dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
+
+      # Component DP connections
+      
+      # Synchronous request. Will have both request kinds for demo purposes, not typical
+      SG1.productGetOut -> dpMgr.productGetIn[0]
+      # Asynchronous request
+      SG1.productRequestOut -> dpMgr.productRequestIn[0]
+      dpMgr.productResponseOut[0] -> SG1.productRecvIn
+      # Send filled DP
+      SG1.productSendOut -> dpMgr.productSendIn[0]
+      
     }
 
   }
