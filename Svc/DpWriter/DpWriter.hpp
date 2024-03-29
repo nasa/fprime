@@ -32,6 +32,11 @@ class DpWriter : public DpWriterComponentBase {
     //!
     ~DpWriter();
 
+    //! configure writer
+    void configure(
+            const Fw::String& dir //!< directory for file writing
+        );
+
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
@@ -108,6 +113,9 @@ class DpWriter : public DpWriterComponentBase {
 
     //! The number of errors
     U32 m_numErrors = 0;
+
+    //! The base directory for writing DP files
+    Fw::String m_dpDir;
 };
 
 }  // end namespace Svc
