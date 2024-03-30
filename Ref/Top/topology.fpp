@@ -128,8 +128,8 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
       rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[4] -> dpBufferManager.schedIn
-
-
+      rateGroup3Comp.RateGroupMemberOut[5] -> dpWriter.schedIn
+      rateGroup3Comp.RateGroupMemberOut[6] -> dpMgr.schedIn
     }
 
     connections Ref {

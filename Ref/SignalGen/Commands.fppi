@@ -14,3 +14,10 @@ async command SignalGen_Toggle \
 @ Skip next sample
 async command SignalGen_Skip \
   opcode 2
+
+@ Signal Generator Settings
+async command SignalGen_Dp(
+                                  records: U32
+                                ) \
+  opcode 3
+
