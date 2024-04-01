@@ -58,7 +58,7 @@ function make_version
         echo "No version specified, updating local only"
     fi
 
-    sed -i 's/\(| \[Latest Documentation\](.\/latest.md)\)[^|]*|/'"$REPLACE"'\1 '"As of: $(date)"' |/' "${FPRIME}/docs/index.md"
+    sed -ibak 's/\(| \[Latest Documentation\](.\/latest.md)\)[^|]*|/'"$REPLACE"'\1 As of: '"$(date)"' |/' "${FPRIME}/docs/index.md"
 
 }
 
@@ -112,4 +112,7 @@ make_version "${VERSIONED_OUTPUT}"
 # Copy images so they're properly referenced
 IMG_DIR="${FPRIME}/docs/UsersGuide/api/c++/html/img"
 mkdir -p "${IMG_DIR}"
-find "${FPRIME}/Fw" "${FPRIME}/Svc" "${FPRIME}/Drv" \( -name '*.jpg' -o -name '*.png' -o -name '*.svg' \) -print0 | xargs -0 cp -t "${IMG_DIR}"
+for image in $(find "${FPRIME}/Fw" "${FPRIME}/Svc" "${FPRIME}/Drv" \( -name '*.jpg' -o -name '*.png' -o -name '*.svg' \))
+do
+    cp "${image}" "${IMG_DIR}"
+done
