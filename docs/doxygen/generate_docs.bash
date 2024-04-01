@@ -52,7 +52,7 @@ function make_version
     then
         mkdir "${FPRIME}/docs/${VERSION}"
         cp "${FPRIME}/docs/latest.md" "${FPRIME}/docs/${VERSION}/index.md"
-        cp -r "${FPRIME}/docs/INSTALL.md" "${FPRIME}/docs/Tutorials" "${FPRIME}/docs/UsersGuide" "${FPRIME}/docs/Design" "${FPRIME}/docs/${VERSION}"
+        cp -r "${FPRIME}/docs/INSTALL.md" "${FPRIME}/docs/Tutorials" "${FPRIME}/docs/UsersGuide" "${FPRIME}/docs/Design" "${FPRIME}/docs/Design/HowTo" "${FPRIME}/docs/${VERSION}"
         REPLACE='| ['$VERSION' Documentation](https:\/\/nasa.github.io\/fprime\/'$VERSION') |\n'
     else
         echo "No version specified, updating local only"
