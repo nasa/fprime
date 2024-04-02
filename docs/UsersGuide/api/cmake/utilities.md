@@ -262,3 +262,10 @@ OUTPUT_VAR: output variable to be set in parent scope
 LIBRARY_NAME: library name to convert to option
 
 
+## Function `resolve_path_variables`:
+
+Resolve paths updating parent scope.  ARGN should contain a list of variables to update.
+
+ARGN: list of variables to update
+
+
