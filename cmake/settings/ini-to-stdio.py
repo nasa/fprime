@@ -3,6 +3,7 @@
 Loads fprime style ini files into a format CMake can process.
 """
 import argparse
+import os.path
 import sys
 from functools import partial
 
@@ -10,6 +11,9 @@ from pathlib import Path
 from typing import List
 
 from fprime.fbuild.settings import IniSettings
+
+
+REMAPPING = {}
 
 
 def print_setting(setting: str, value: str = "", ending: str = ";"):
@@ -23,6 +27,8 @@ def print_setting(setting: str, value: str = "", ending: str = ";"):
          ending: ending of the print line
     """
     value = str(value).replace(";", "\\;")
+    for initial, final in REMAPPING.items():
+        value = value.replace(initial, final)
     print(f"{setting}={value}", end=ending)
 
 
@@ -58,7 +64,6 @@ def main():
         default=Path("native"),
         help="Path to toolchain file",
     )
-
     args_ns = parser.parse_args()
     loaded_settings = IniSettings.load(
         args_ns.settings, str(args_ns.toolchain.stem), False
@@ -66,6 +71,12 @@ def main():
     loaded_settings_ut = IniSettings.load(
         args_ns.settings, str(args_ns.toolchain.stem), True
     )
+    ini_path = str(args_ns.settings)
+    ini_real_path = str(args_ns.settings.resolve())
+    common_suffix = os.path.commonprefix([ini_path[::-1], ini_real_path[::-1]])[::-1]
+    REMAPPING[ini_real_path[: -1 * len(common_suffix)]] = ini_path[
+        : -1 * len(common_suffix)
+    ]
 
     for setting, handler in CMAKE_NEEDED_SETTINGS.items():
         try:
