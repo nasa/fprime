@@ -57,6 +57,7 @@ function(ini_to_cache)
         unset(CMAKE_INSTALL_PREFIX CACHE)
     endif()
     # Process line-by-line
+    STRING(REPLACE "\n" ";" INI_OUTPUT "${INI_OUTPUT}")
     foreach(LINE IN LISTS INI_OUTPUT)
         # Skip malformed lines
         if (NOT LINE MATCHES "^[A-Za-z0-9_]+=")
