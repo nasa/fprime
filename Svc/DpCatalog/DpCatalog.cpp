@@ -312,7 +312,7 @@ namespace Svc {
         this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
         this->m_xmitInProgress = false;
         this->m_xmitBytes = 0;
-        this->m_currXmitRecord =  nullptr;
+        this->m_currXmitRecord = nullptr;
 
         if (this->m_xmitCmdWait) {
             this->m_xmitCmdWait = false;

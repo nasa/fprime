@@ -143,18 +143,15 @@ namespace Ref {
         // if a Data product is being generated, store a record
         if (this->m_dpInProgress) {
             Fw::SerializeStatus stat = this->m_dpContainer.serializeRecord_DataRecord(sigInfo);
+            this->m_currDp++;
+            this->m_dpBytes += SignalInfo::SERIALIZED_SIZE;
             // check for full data product
             if (Fw::SerializeStatus::FW_SERIALIZE_NO_ROOM_LEFT == stat) {
                 this->log_WARNING_LO_SignalGen_DpRecordFull(this->m_currDp,this->m_dpBytes);
                 this->cleanupAndSendDp();
             } else if (this->m_currDp == this->m_numDps) { // if we reached the target number of DPs
-                this->m_currDp++;
-                this->m_dpBytes += SignalInfo::SERIALIZED_SIZE;
                 this->log_ACTIVITY_LO_SignalGen_DpComplete(this->m_numDps,this->m_dpBytes);
                 this->cleanupAndSendDp();
-            } else { // update numbers
-                this->m_currDp++;
-                this->m_dpBytes += SignalInfo::SERIALIZED_SIZE;
             }
 
             this->tlmWrite_DpBytes(this->m_dpBytes);
@@ -227,7 +224,7 @@ namespace Ref {
         }
 
         // get DP buffer
-        this->dpGet_DataContainer(records*SignalInfo::SERIALIZED_SIZE,this->m_dpContainer);
+        this->dpGet_DataContainer(records*(SignalInfo::SERIALIZED_SIZE + sizeof(FwDpIdType)),this->m_dpContainer);
         this->m_dpInProgress = true;
         this->m_numDps = records;
         this->m_currDp = 0;

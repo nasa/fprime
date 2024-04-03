@@ -94,6 +94,7 @@ module Ref {
       comm.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
 
       dpCat.fileOut -> fileDownlink.SendFile
+      fileDownlink.FileComplete -> dpCat.fileDone
 
     }
 
