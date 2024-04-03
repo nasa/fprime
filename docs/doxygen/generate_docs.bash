@@ -58,7 +58,7 @@ function make_version
         echo "No version specified, updating local only"
     fi
 
-    sed -ibak 's/\(| \[Latest Documentation\](.\/latest.md)\)[^|]*|/'"$REPLACE"'\1 As of: '"$(date)"' |/' "${FPRIME}/docs/index.md"
+    sed -i.backup 's/\(| \[Latest Documentation\](.\/latest.md)\)[^|]*|/'"$REPLACE"'\1 As of: '"$(date)"' |/' "${FPRIME}/docs/index.md"
 
 }
 
