@@ -121,6 +121,11 @@ void Task::resume() {
     this->m_delegate.resume();
 }
 
+bool Task::isCooperative() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.isCooperative();
+}
+
 TaskHandle* Task::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();

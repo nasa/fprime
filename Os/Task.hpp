@@ -180,7 +180,7 @@ namespace Os {
             //!
             //! This function indicates if the task requires cooperative support.
             //! \return true when the task expects cooperation, false otherwise
-            virtual bool isCooperative();
+            virtual bool isCooperative() = 0;
 
             //! \brief return the underlying task handle (implementation specific)
             //! \return internal task handle representation
@@ -283,6 +283,10 @@ namespace Os {
         //! Resumes this task. Not started, running, and exited tasks take no action.
         //!
         void resume() override;
+
+        //! \brief determine if the task is cooperative multitasking (implementation specific)
+        //! \return true if cooperative, false otherwise
+        bool isCooperative() override;
 
         //! \brief return the underlying task handle (implementation specific)
         //! \return internal task handle representation

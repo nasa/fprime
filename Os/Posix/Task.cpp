@@ -279,4 +279,12 @@ namespace Os {
         }
         return status;
     }
+
+    bool PosixTask::isCooperative() {
+        return false;
+    }
+    
+    TaskHandle* PosixTask::getHandle() {
+        return &this->m_handle;
+    }
 }
