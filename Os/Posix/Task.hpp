@@ -25,12 +25,21 @@ namespace Os {
         static constexpr PlatformIntType SUCCESS_RETURN_VALUE = 0;
 
         //! Posix task descriptor
-        pthread_t* m_task_descriptor = nullptr;
+        pthread_t m_task_descriptor;
+        //! Is the above descriptor valid
+        bool m_is_valid = false;
     };
 
     //! Posix task implementation as driven by pthreads implementation
     class PosixTask : public TaskInterface {
       public:
+
+        //! Enumeration of permission expectations
+        enum PermissionExpectation {
+            EXPECT_PERMISSION, //!< Expect that you hold necessary permissions
+            EXPECT_NO_PERMISSION //!< Expect that you do not hold necessary permissions
+        };
+
         //! \brief default constructor
         PosixTask() = default;
 
@@ -88,6 +97,16 @@ namespace Os {
         //! \return internal task handle representation
         TaskHandle* getHandle() override;
       PRIVATE:
+        //! \brief create a configured pthread
+        //!
+        //! Creates, and configures, but does not start a pthread. This may be called twice, once to try setting
+        //! permissions and once to fallback to no permissions.
+        //!
+        //! \param arguments: arguments used to set priority, affinity, etc
+        //! \param permissions: whether to expect permissions or not
+        //! \return OP_OK on success, or an error
+        Status create(const Task::Arguments& arguments, const PosixTask::PermissionExpectation permissions);
+
         static bool s_permissions_reported;
         PosixTaskHandle m_handle; //!< Posix task tracking
     };

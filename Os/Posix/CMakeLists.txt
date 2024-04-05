@@ -8,13 +8,22 @@
 restrict_platforms(Posix)
 add_custom_target("${FPRIME_CURRENT_MODULE}")
 set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/errno.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/error.cpp"
 )
 set(HEADER_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/errno.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/error.hpp"
+)
+register_fprime_module(Os_Posix_Shared)
+
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/error.cpp"
+)
+set(HEADER_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/error.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/File.hpp"
 )
+set(MOD_DEPS Os_Posix_shared)
 register_fprime_module(Os_File_Posix)
 register_fprime_implementation(Os/File Os_File_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp")
 

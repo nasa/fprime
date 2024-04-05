@@ -16,6 +16,7 @@
 #endif
 
 #include "Os/Posix/Task.hpp"
+#include "Os/Posix/error.hpp"
 
 static const NATIVE_INT_TYPE SCHED_POLICY = SCHED_RR;
 
@@ -164,117 +165,76 @@ namespace Os {
         return Task::TASK_OK;
     }
 
-    Task::TaskStatus create_pthread(Task::Arguments& arguments, bool try_permissions) {
+
+
+    Task::Status PosixTask::create(const Task::Arguments& arguments, const PosixTask::PermissionExpectation permissions) {
         Task::Status status = Task::OP_OK;
-        validate_arguments(arguments);
-        pthread_attr_t att;
-        memset(&att,0, sizeof(att));
+        PlatformIntType pthread_status = 0;
+        PosixTaskHandle& handle = this->m_handle;
 
+        // TODO: validate arguments???
 
-        I32 stat = pthread_attr_init(&att);
-        if (stat != 0) {
-            Fw::Logger::logMsg("pthread_attr_init: (%d): %s\n", static_cast<POINTER_CAST>(stat), reinterpret_cast<POINTER_CAST>(strerror(stat)));
-            return Task::TASK_INVALID_PARAMS;
+        // Initialize and clear pthread attributes
+        pthread_attr_t attributes;
+        memset(&attributes, 0, sizeof(attributes));
+        pthread_status = pthread_attr_init(&attributes);
+
+        // Check for valid status before continuing
+        if (pthread_status == 0) {
+            pthread_status = set_stack_size();
+            if (pthread_status == PosixTaskHandle::SUCCESS_RETURN_VALUE) {
+                pthread_status = set_priority_params();
+                if (pthread_status == PosixTaskHandle::SUCCESS_RETURN_VALUE) {
+                    pthread_status = set_cpu_affinity();
+                    if (pthread_status == PosixTaskHandle::SUCCESS_RETURN_VALUE) {
+                        pthread_status = pthread_create(handle.m_task_descriptor, &attributes, pthread_entry_wrapper,
+                                                        arg);
+                        if (pthread_status == PosixTaskHandle::SUCCESS_RETURN_VALUE) {
+                            handle.m_is_valid = true;
+                        }
+                    }
+                }
+            }
         }
+        (void) pthread_attr_destroy(&attributes);
+        return Posix::posix_status_to_task_status(pthread_status);
 
-        // Handle setting stack size
-        tStat = set_stack_size(att, stackSize);
-        if (tStat != Task::TASK_OK) {
-            return tStat;
-        }
-
-
-        // Handle non-zero priorities
-        tStat = set_priority_params(att, priority);
-        if (tStat != Task::TASK_OK) {
-            return tStat;
-        }
-
-        // Set affinity before creating thread:
-        tStat = set_cpu_affinity(att, cpuAffinity);
-        if (tStat != Task::TASK_OK) {
-            return tStat;
-        }
-
-        tid = new pthread_t;
-        const char* message = nullptr;
-
-        stat = pthread_create(tid, &att, pthread_entry_wrapper, arg);
-        switch (stat) {
-            // Success, do nothing
-            case 0:
-                break;
-            case EINVAL:
-                message = "Invalid thread attributes specified";
-                tStat = Task::TASK_INVALID_PARAMS;
-                break;
-            case EPERM:
-                message = "Insufficient permissions to create thread. May not set thread priority without permission";
-                tStat = Task::TASK_ERROR_PERMISSION;
-                break;
-            case EAGAIN:
-                message = "Unable to allocate thread. Increase thread ulimit.";
-                tStat = Task::TASK_ERROR_RESOURCES;
-                break;
-            default:
-                message = "Unknown error";
-                tStat = Task::TASK_UNKNOWN_ERROR;
-                break;
-        }
-        (void)pthread_attr_destroy(&att);
-        if (stat != 0) {
-            delete tid;
-            tid = nullptr;
-            Fw::Logger::logMsg("pthread_create: %s. %s\n", reinterpret_cast<POINTER_CAST>(message), reinterpret_cast<POINTER_CAST>(strerror(stat)));
-            return tStat;
-        }
-        return Task::TASK_OK;
     }
 
-    Task::Task() : m_handle(reinterpret_cast<POINTER_CAST>(nullptr)), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false), m_routineWrapper() {
-    }
 
     Task::Status PosixTask::start(const Arguments& arguments) {
         FW_ASSERT(arguments.m_routine != nullptr);
         pthread_t* thread_handle = nullptr;
 
         // Try to create thread with assuming permissions
-        Task::Status status = create_pthread(arguments, true);
+        Task::Status status = this->create(arguments, PermissionExpectation::EXPECT_PERMISSION);
         // Failure due to permission automatically retried
         if (status == Task::Status::ERROR_PERMISSION) {
             if (not PosixTask::s_permissions_reported) {
-                Fw::Logger::logMsg("[WARNING] Insufficient Task Permissions:\n");
-                Fw::Logger::logMsg("[WARNING] Insufficient permissions to set task priorities or CPU affinities on task %s. Creating task without priority nor affinity.\n");
-                Fw::Logger::logMsg("[WARNING] Please use no-argument <component>.start() calls, set priority/affinity to TASK_DEFAULT or ensure user has correct permissions.\n");
-                Fw::Logger::logMsg("[WARNING]      Note: tasks will be created but priority will not be respected \n");
+                Fw::Logger::logMsg("\n");
+                Fw::Logger::logMsg("[NOTE] Task Permissions:\n");
+                Fw::Logger::logMsg("[NOTE]\n");
+                Fw::Logger::logMsg("[NOTE] You have insufficient permissions to create a task with priority and/or cpu affinity.\n");
+                Fw::Logger::logMsg("[NOTE] A task without priority and affinity will be created.\n");
+                Fw::Logger::logMsg("[NOTE]\n");
+                Fw::Logger::logMsg("[NOTE] There are three possible resolutions:\n");
+                Fw::Logger::logMsg("[NOTE] 1. Use tasks without priority and affinity using parameterless start()\n");
+                Fw::Logger::logMsg("[NOTE] 2. Run this executable as a user with task priority permission\n");
+                Fw::Logger::logMsg("[NOTE] 3. Grant capability with \"setcap 'cap_sys_nice=eip'\" or equivalent\n");
                 Fw::Logger::logMsg("\n");
             }
-
-            status = create_pthread(arguments, false); // Fallback with no permission
-        } else if (status == Task::Status::OP_OK) {
-            FW_ASSERT(thread_handle != nullptr);
-            this->m_handle.m_task_descriptor = thread_handle;
+            // Fallback with no permission
+            status = this->create(arguments, PermissionExpectation::EXPECT_NO_PERMISSION);
         }
         return status;
     }
 
-    // Note: not implemented for Posix threads. Must be manually done using a mutex or other blocking construct as there
-    // is not top-level pthreads support for suspend and resume.
-
-    void PosixTask::suspend(Task::SuspensionType suspensionType) {
-        FW_ASSERT(0);
-    }
-
-    void PosixTask::resume() {
-        FW_ASSERT(0);
-    }
-
     Task::Status PosixTask::join() {
         Task::Status status = Task::Status::JOIN_ERROR;
-        if (this->m_handle.m_task_descriptor != PosixTaskHandle::INVALID_THREAD_DESCRIPTOR) {
+        if (not this->m_handle.m_is_valid) {
             status = Task::Status::INVALID_HANDLE;
         } else {
-            PlatformIntType stat = ::pthread_join(*this->m_handle.m_task_descriptor, nullptr);
+            PlatformIntType stat = ::pthread_join(this->m_handle.m_task_descriptor, nullptr);
             status = (stat == PosixTaskHandle::SUCCESS_RETURN_VALUE) ? Task::Status::OP_OK : Task::Status::JOIN_ERROR;
         }
         return status;
@@ -283,8 +243,18 @@ namespace Os {
     bool PosixTask::isCooperative() {
         return false;
     }
-    
+
     TaskHandle* PosixTask::getHandle() {
         return &this->m_handle;
+    }
+
+    // Note: not implemented for Posix threads. Must be manually done using a mutex or other blocking construct as there
+    // is no top-level pthreads support for suspend and resume.
+    void PosixTask::suspend(Task::SuspensionType suspensionType) {
+        FW_ASSERT(0);
+    }
+
+    void PosixTask::resume() {
+        FW_ASSERT(0);
     }
 }
