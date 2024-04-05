@@ -243,7 +243,7 @@ module M1 {
         "signed": true,
         "size": 32
     },
-    "enumaratedConstants": [
+    "enumeratedConstants": [
         {
             "name": "YES",
             "value" : 0
