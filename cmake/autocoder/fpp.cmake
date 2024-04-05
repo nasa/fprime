@@ -41,14 +41,19 @@ function(locate_fpp_tools)
                     continue()
                 endif()
                 message(STATUS "[fpp-tools] ${${TOOL}} version ${CMAKE_MATCH_1} not expected version ${FPP_VERSION}")
+                set(FPP_REINSTALL_ERROR_MESSAGE
+                    "fpp-tools version incompatible. Found ${CMAKE_MATCH_1}, expected ${FPP_VERSION}." PARENT_SCOPE
+                )
+            elseif(OUTPUT_TEXT MATCHES "requires 'java'")
                 set(FPP_ERROR_MESSAGE
-                    "fpp-tools version incompatible. Found ${CMAKE_MATCH_1}, expected ${FPP_VERSION}" PARENT_SCOPE
+                        "fpp tools require 'java'. Please install 'java' and ensure it is on your PATH." PARENT_SCOPE
                 )
             else()
-                message(STATUS "[fpp-tools] ${PROGRAM} appears corrupt.")
+                message(STATUS "[fpp-tools] ${PROGRAM} installed incorrectly.")
+                set(FPP_REINSTALL_ERROR_MESSAGE "fpp tools installed incorrectly." PARENT_SCOPE)
             endif()
         else()
-            message(STATUS "[fpp-tools] Could not find ${PROGRAM}")
+            message(STATUS "[fpp-tools] Could not find ${PROGRAM}.")
         endif()
         set(FPP_FOUND FALSE PARENT_SCOPE)
         return()
@@ -189,6 +194,10 @@ function(fpp_setup_autocode AC_INPUT_FILES)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
     fpp_info("${AC_INPUT_FILES}")
+    set(CMAKE_BINARY_DIR_RESOLVED "${CMAKE_BINARY_DIR}")
+    set(CMAKE_CURRENT_BINARY_DIR_RESOLVED "${CMAKE_CURRENT_BINARY_DIR}")
+    resolve_path_variables(
+            AC_INPUT_FILES FPRIME_BUILD_LOCATIONS FPP_IMPORTS CMAKE_BINARY_DIR_RESOLVED CMAKE_CURRENT_BINARY_DIR_RESOLVED)
     string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_COMMA_SEP "${FPRIME_BUILD_LOCATIONS}")
     string(REGEX REPLACE ";" ","  FPP_IMPORTS_COMMA_SEP "${FPP_IMPORTS}")
     set(IMPORTS)
@@ -211,7 +220,7 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     if (GENERATED_AI)
         add_custom_command(
                 OUTPUT  ${GENERATED_AI}
-                COMMAND ${FPP_TO_XML} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${IMPORTS} ${AC_INPUT_FILES}
+                COMMAND ${FPP_TO_XML} "-d" "${CMAKE_CURRENT_BINARY_DIR_RESOLVED}" ${IMPORTS} ${AC_INPUT_FILES}
                     "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP}"
                 DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
@@ -220,8 +229,8 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     if (GENERATED_CPP)
         add_custom_command(
                 OUTPUT ${GENERATED_CPP}
-                COMMAND ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${IMPORTS} ${AC_INPUT_FILES}
-                    "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP},${CMAKE_BINARY_DIR}"
+                COMMAND ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR_RESOLVED}" ${IMPORTS} ${AC_INPUT_FILES}
+                    "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP},${CMAKE_BINARY_DIR_RESOLVED}"
                 DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
