@@ -884,6 +884,7 @@ SBINDIR
 scatterometer
 schem
 schematron
+Schr
 sclk
 scm
 scons
@@ -1159,6 +1160,7 @@ worklist
 wrs
 wsl
 wxgui
+wxy
 Xabcdefx
 xapian
 xdf

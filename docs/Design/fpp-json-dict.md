@@ -211,7 +211,7 @@ module M1 {
 | `kind` | The kind of type | `enum` | true |
 | `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
 | `representationType` | Type of the enumerated values | **[Type Descriptor](#type-descriptors)** | true |
-| `enumaratedConstants` | The enumerated constants | JSON Dictionary of enumerated constants (keys) to [Enumerated Constant Descriptor](#enumerated-constant-descriptors) (values) | true |
+| `enumeratedConstants` | The enumerated constants | JSON Dictionary of enumerated constants (keys) to [Enumerated Constant Descriptor](#enumerated-constant-descriptors) (values) | true |
 | `default` | Qualified name of the enumeration's default value | **String** | false |
 | `annotation` | User-defined annotation | **String** | false |
 
@@ -278,7 +278,7 @@ module M1 {
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `type` | [Type Descriptor](#type-descriptors) of member | [Type Descriptor](#type-descriptors) | true |
-| `index` | ndex of the struct member | **Number** | true |
+| `index` | Index of the struct member | **Number** | true |
 | `size` | Size of the struct member | **Number** | false |
 | `format` | Format specifier | **String** | false |
 
@@ -429,7 +429,7 @@ Example JSON of a struct:
 
 ## Formal Parameters
 
-Formal Parameters are used in Commands and Events defintions
+Formal Parameters are used in Commands and Events definitions.
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
