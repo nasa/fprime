@@ -41,7 +41,10 @@ void DpWriter::bufferSendIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& b
     const FwSizeType bufferSize = buffer.getSize();
     if (status == Fw::Success::SUCCESS) {
         if (bufferSize < Fw::DpContainer::MIN_PACKET_SIZE) {
-            this->log_WARNING_HI_BufferTooSmallForPacket(bufferSize, Fw::DpContainer::MIN_PACKET_SIZE);
+            this->log_WARNING_HI_BufferTooSmallForPacket(
+                static_cast<U32>(bufferSize),
+                Fw::DpContainer::MIN_PACKET_SIZE);
+
             status = Fw::Success::FAILURE;
         }
     }
@@ -53,8 +56,10 @@ void DpWriter::bufferSendIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& b
         Utils::HashBuffer computedHash;
         status = container.checkHeaderHash(storedHash, computedHash);
         if (status != Fw::Success::SUCCESS) {
-            this->log_WARNING_HI_InvalidHeaderHash(bufferSize, storedHash.asBigEndianU32(),
-                                                   computedHash.asBigEndianU32());
+            this->log_WARNING_HI_InvalidHeaderHash(
+                static_cast<U32>(bufferSize),
+                storedHash.asBigEndianU32(),
+                computedHash.asBigEndianU32());
         }
     }
     // Deserialize the packet header
@@ -65,7 +70,9 @@ void DpWriter::bufferSendIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& b
     if (status == Fw::Success::SUCCESS) {
         const FwSizeType packetSize = container.getPacketSize();
         if (bufferSize < packetSize) {
-            this->log_WARNING_HI_BufferTooSmallForData(bufferSize, packetSize);
+            this->log_WARNING_HI_BufferTooSmallForData(
+                static_cast<U32>(bufferSize),
+                static_cast<U32>(packetSize));
             status = Fw::Success::FAILURE;
         }
     }
@@ -188,7 +195,9 @@ Fw::Success::T DpWriter::writeFile(const Fw::DpContainer& container,
         if ((fileStatus == Os::File::OP_OK) and (writeSize == static_cast<FwSignedSizeType>(fileSize))) {
             // If the write status is success, and the number of bytes written
             // is the expected number, then record the success
-            this->log_ACTIVITY_LO_FileWritten(writeSize, fileName.toChar());
+            this->log_ACTIVITY_LO_FileWritten(
+                static_cast<U32>(writeSize),
+                fileName.toChar());
         } else {
             // Otherwise record the failure
             this->log_WARNING_HI_FileWriteError(static_cast<U32>(fileStatus), static_cast<U32>(writeSize),

@@ -34,12 +34,17 @@ namespace Fw {
 
         switch (numArgs) {
             case 0:
-                (void) snprintf(destBuffer, buffSize, fileIdFs, file, lineNo);
+                (void) snprintf(
+                    destBuffer,
+                    static_cast<size_t>(buffSize),
+                    fileIdFs,
+                    file,
+                    lineNo);
                 break;
             case 1:
                 (void) snprintf(
                     destBuffer,
-                    buffSize,
+                    static_cast<size_t>(buffSize),
                     fileIdFs " %" PRI_FwAssertArgType,
                     file,
                     lineNo,
@@ -49,7 +54,7 @@ namespace Fw {
             case 2:
                 (void) snprintf(
                     destBuffer,
-                    buffSize,
+                    static_cast<size_t>(buffSize),
                     fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
                     file,
                     lineNo,
@@ -59,7 +64,7 @@ namespace Fw {
             case 3:
                 (void) snprintf(
                     destBuffer,
-                    buffSize,
+                    static_cast<size_t>(buffSize),
                     fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                       " %" PRI_FwAssertArgType,
                     file,
@@ -70,7 +75,7 @@ namespace Fw {
             case 4:
                 (void) snprintf(
                     destBuffer,
-                    buffSize,
+                    static_cast<size_t>(buffSize),
                     fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                       " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
                     file,
@@ -80,7 +85,7 @@ namespace Fw {
             case 5:
                 (void) snprintf(
                     destBuffer,
-                    buffSize,
+                    static_cast<size_t>(buffSize),
                     fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                       " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                       " %" PRI_FwAssertArgType,
@@ -92,7 +97,7 @@ namespace Fw {
             case 6:
                 (void) snprintf(
                     destBuffer,
-                    buffSize,
+                    static_cast<size_t>(buffSize),
                     fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                       " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                       " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
