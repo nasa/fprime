@@ -225,7 +225,7 @@ module M1 {
 Example FPP model with JSON representation:
 ```
 module M1 {
-    @ Schrödinger's status
+    @ Schroedinger's status
     enum Status {
         YES
         NO
@@ -259,7 +259,7 @@ module M1 {
         },
     ],
     "default": "M.Status.MAYBE",
-    "annotation": "Schrödinger's status"
+    "annotation": "Schroedinger's status"
 }
 ```
 

@@ -884,7 +884,6 @@ SBINDIR
 scatterometer
 schem
 schematron
-Schr
 sclk
 scm
 scons
