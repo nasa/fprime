@@ -777,236 +777,210 @@ product container Container2 default priority 10
 
 ```json
 {
-    "metadata": {
-        "deploymentName": "MyDeployment",
-        "frameworkVersion": "3.3.2",
-        "projectVersion": "1.0.0",
-        "libraryVersions": [],
-        "dictionarySpecVersion": "1.0.0"
+  "metadata": {
+    "deploymentName": "MyDeployment",
+    "frameworkVersion": "3.3.2",
+    "projectVersion": "1.0.0",
+    "libraryVersions": [],
+    "dictionarySpecVersion": "1.0.0"
+  },
+  "typeDefinitions" : [
+    {
+      "kind" : "array",
+      "qualifiedName" : "FppTest.StringArray",
+      "size" : 2,
+      "elementType" : {
+        "name" : "string",
+        "kind" : "string",
+        "size" : 80
+      },
+      "default" : [
+        "A",
+        "B"
+      ],
+      "annotation" : "An array of 2 String values"
     },
-    "typeDefinitions": [
+    {
+      "kind" : "enum",
+      "qualifiedName" : "FppTest.MyEnum",
+      "representationType" : {
+        "name" : "U8",
+        "kind" : "integer",
+        "size" : 8,
+        "signed" : false
+      },
+      "enumeratedConstants" : [
         {
-            "kind": "enum",
-            "qualifiedName": "M.C.Status",
-            "representationType": {
-                "name": "I32",
-                "kind": "integer",
-                "signed": true,
-                "size": 32
-            },    
-            "identifiers": {
-                "YES": 0, 
-                "NO": 1,
-                "MAYBE": 2
-            },
-            "default": "M.C.Status.MAYBE"
+          "name" : "YES",
+          "value" : 0
         },
         {
-            "kind": "array",
-            "qualifiedName": "M.C.A1",
-            "size": 3,
-            "elementType": {
-                "name": "U8",
-                "kind": "integer",
-                "signed": false,
-                "size": 8
-            },
-            "default": [0, 0, 0]
+          "name" : "NO",
+          "value" : 1
         },
         {
-            "kind": "array",
-            "qualifiedName": "M.C.A2",
-            "size": 5,
-            "elementType": {
-                "name": "string",
-                "kind": "string",
-            },
-            "default": ["a", "b", "c", "d", "e"]
+          "name" : "MAYBE",
+          "value" : 2,
+          "annotation" : "MAYBE is a maybe"
+        }
+      ],
+      "default" : "FppTest.MyEnum.YES"
+    },
+    {
+      "kind" : "struct",
+      "qualifiedName" : "FppTest.MyStruct",
+      "members" : {
+        "x" : {
+          "type" : {
+            "name" : "U64",
+            "kind" : "integer",
+            "size" : 64,
+            "signed" : false
+          },
+          "index" : 0,
+          "format" : "The value of x is {}"
+        },
+        "y" : {
+          "type" : {
+            "name" : "F32",
+            "kind" : "float",
+            "size" : 32
+          },
+          "index" : 1,
+          "format" : "The value of y is {.2f}",
+          "annotation" : "This is the y parameter"
+        }
+      },
+      "default" : {
+        "x" : 1,
+        "y" : 1.5
+      }
+    }
+  ],
+  "commands" : [
+    {
+      "name" : "c1.CommandString",
+      "commandKind" : "sync",
+      "opcode" : 5000,
+      "formalParams" : [
+        {
+          "name" : "a",
+          "type" : {
+            "name" : "FppTest.StringArray",
+            "kind" : "qualifiedIdentifier"
+          },
+          "ref" : false,
+          "annotation" : "description for argument a"
         },
         {
-            "kind": "struct",
-            "qualifiedName": "M.S1",
-            "members": {
-                "w": {
-                    "type": {
-                        "name": "M.C.A1",
-                        "kind": "qualifiedIdentifier"
-                    },
-                    "index": 0,
-                    "size": 3
-                },
-                "x": {
-                    "type": {
-                        "name": "U32",
-                        "kind": "integer",
-                        "signed": false,
-                        "size": 32
-                    },
-                    "format": "the count is {}",
-                    "index": 1
-                },
-                "y": {
-                    "type": {
-                        "name": "F32",
-                        "kind": "float",
-                        "size": 32
-                    },
-                    "index": 2
-                }
-            },
-            "default": {
-                "w": [0, 0, 0],
-                "x": 0,
-                "y": 0
-            },
-        },
-        {
-            "kind": "struct",
-            "qualifiedName": "M.C.S2",
-            "members": {
-                "x": {
-                    "type": {
-                        "name": "string",
-                        "kind": "string",
-                    },
-                    "format": "the string is {}",
-                    "index": 0
-                },
-            },
-            "default": {
-                "w": "hello world!"
-            },
+          "name" : "b",
+          "type" : {
+            "name" : "U32",
+            "kind" : "integer",
+            "size" : 32,
+            "signed" : false
+          },
+          "ref" : false,
+          "annotation" : "description for argument b"
         }
-    ],
-    "commands": [
+      ],
+      "annotation" : "Command with 2 args (array of strings and U32)"
+    },
+    {
+      "name" : "c1.PARAM1_PARAM_SET",
+      "commandKind" : "set",
+      "opcode" : 5001,
+      "formalParams" : [
         {
-            "commandKind": "sync",
-            "opcode": 257,
-            "name": "M1.SyncParams",
-            "annotation": "A sync command with parameters",
-            "formalParams": [
-                {
-                    "name": "param1",
-                    "annotation": "Param 1",
-                    "type": {
-                        "name": "U32",
-                        "kind": "integer",
-                        "size": 32,
-                        "signed": false,
-                    },
-                    "ref": false
-                },
-                {
-                    "name": "param2",
-                    "annotation": "Param 2",
-                    "type": {
-                        "name": "string",
-                        "kind": "string",
-                        "size": ""
-                    },
-                    "ref": false
-                }
-            ],
+          "name" : "val",
+          "type" : {
+            "name" : "FppTest.MyStruct",
+            "kind" : "qualifiedIdentifier"
+          },
+          "ref" : false
         }
-    ],
-    "events": [
+      ],
+      "annotation" : "Parameter (struct)"
+    },
+    {
+      "name" : "c1.PARAM1_PARAM_SAVE",
+      "commandKind" : "save",
+      "opcode" : 5002,
+      "formalParams" : [
+      ],
+      "annotation" : "Parameter (struct)"
+    }
+  ],
+  "parameters" : [
+    {
+      "name" : "c1.Param1",
+      "type" : {
+        "name" : "FppTest.MyStruct",
+        "kind" : "qualifiedIdentifier"
+      },
+      "id" : 5001,
+      "default" : {
+        "x" : 2,
+        "y" : 1.5
+      },
+      "annotation" : "Parameter (struct)"
+    }
+  ],
+  "events" : [
+    {
+      "name" : "c1.Event1",
+      "severity" : "ACTIVITY_HI",
+      "formalParams" : [
         {
-            "name": "M1.Event0",
-            "annotation": "This is the annotation for Event 0",
-            "severity": "activity low",
-            "formalParams": [
-                {
-                    "name": "",
-                    "annotation": "",
-                    "type": {},
-                    "ref": false
-                }
-            ],
-            "id": 256,
-            "format": "Event 0 occurred",
-            "throttle": ""
-        },
-        {
-            "name": "M1.Event1",
-            "annotation": "This is the annotation for Event 1",
-            "severity": "activity high",
-            "formalParams": [
-                {
-                "name": "arg1",
-                    "annotation": "Argument 1",
-                    "type": {
-                        "name": "U32",
-                        "kind": "integer",
-                        "size": 32,
-                        "signed": false,
-                    },
-                    "ref": false  
-                }
-            ],
-            "id": 257,
-            "format": "Event 1 occurred with argument {}",
-            "throttle": ""
+          "name" : "arg1",
+          "type" : {
+            "name" : "FppTest.MyEnum",
+            "kind" : "qualifiedIdentifier"
+          },
+          "ref" : false,
+          "annotation" : "description of arg1 formal param"
         }
-    ],
-    "telemetryChannels": [
-        {
-            "name": "M1.Channel1",
-            "annotation": "Telemetry channel 1",
-            "type": {
-                "name": "F64",
-                "kind": "float",
-                "size": 64
-            },
-            "id": 256,
-            "telemetryUpdate": "on change",
-            "limit": {
-                "low": {
-                    "yellow": -1,
-                    "orange": -2,
-                    "red": -3
-                },
-                "high": {
-                    "yellow": 1,
-                    "orange": 2,
-                    "red": 3
-                }
-            }
-        }
-    ],
-    "parameters": [
-        {
-            "name": "M1.Parameter1",
-            "annotation": "This is the annotation for Parameter 1",
-            "type": {
-                "name": "U32",
-                "kind": "integer",
-                "signed": false,
-                "size": 32
-            },
-            "default": 0,
-            "id": 256
-        }
-    ],
-    "records": [    
-        {
-            "name": "M1.Record1",
-            "annotation": "Record 1: A single U32 value",
-            "type": {
-                "name": "U32",
-                "kind": "integer",
-                "signed": false,
-                "size": 32
-            },
-            "array": false,
-            "id": 258
-        }      
-    ],
-    "containers": [
-        {
-            "name": "M1.Container0",
-            "annotation": "Container 0\nImplied id is 0x100",
-            "id": 256,
-        }
-    ]
+      ],
+      "id" : 5000,
+      "format" : "Arg one is {} and there is no arg 2",
+      "annotation" : "Event with array arg (containing 4 F32 values)"
+    }
+  ],
+  "telemetryChannels" : [
+    {
+      "name" : "c1.MyTlmChannel2",
+      "type" : {
+        "name" : "F32",
+        "kind" : "float",
+        "size" : 32
+      },
+      "id" : 5000,
+      "telemetryUpdate" : "always",
+      "annotation" : "Telemetry channel of type F32"
+    }
+  ],
+  "records" : [
+    {
+      "name" : "c1.U32Record",
+      "type" : {
+        "name" : "U32",
+        "kind" : "integer",
+        "size" : 32,
+        "signed" : false
+      },
+      "array" : false,
+      "id" : 5100,
+      "annotation" : "Record 1"
+    }
+  ],
+  "containers" : [
+    {
+      "name" : "c1.Container1",
+      "id" : 5100,
+      "defaultPriority" : 10,
+      "annotation" : "Container 1"
+    }
+  ]
 }
+
 ```
