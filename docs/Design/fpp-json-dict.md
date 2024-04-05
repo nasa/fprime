@@ -31,7 +31,7 @@ This document describes the format of FPP JSON dictionaries.
     - [Null Values](#null-values)
     - [Infinity Values](#infinity-values)
     - [Negative Infinity Values](#negative-infinity-values)
-- [Parameters, Commands, Telemetry Channels, and Events](#parameters-commands-telemetry-channels-and-events)
+- [Commands, Telemetry Channels, Events, and Parameters](#commands-telemetry-channels-events-and-parameters)
   - [Formal Parameters](#formal-parameters)
   - [Parameters](#parameters)
   - [Commands](#commands)
@@ -425,11 +425,12 @@ Example JSON of a struct:
 | `kind` | **String** indicating that the kind of value is invalid | invalid | true |
 
 
-# Parameters, Commands, Telemetry Channels, and Events
+# Commands, Telemetry Channels, Events, and Parameters
 
 ## Formal Parameters
 
 Formal Parameters are used in Commands and Events defintions
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | Name of parameter | **String** | true |
