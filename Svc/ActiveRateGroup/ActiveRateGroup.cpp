@@ -68,7 +68,7 @@ namespace Svc {
         // invoke any members of the rate group
         for (NATIVE_INT_TYPE port = 0; port < this->m_numContexts; port++) {
             if (this->isConnected_RateGroupMemberOut_OutputPort(port)) {
-                this->RateGroupMemberOut_out(port,this->m_contexts[port]);
+                this->RateGroupMemberOut_out(port, static_cast<U32>(this->m_contexts[port]));
             }
         }
 

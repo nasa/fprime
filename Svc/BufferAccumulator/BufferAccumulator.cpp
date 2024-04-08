@@ -59,7 +59,7 @@ void BufferAccumulator ::allocateQueue(
   NATIVE_UINT_TYPE memSize = static_cast<NATIVE_UINT_TYPE>(sizeof(Fw::Buffer) * maxNumBuffers);
   bool recoverable = false;
   this->m_bufferMemory = static_cast<Fw::Buffer*>(
-      allocator.allocate(identifier, memSize, recoverable));
+      allocator.allocate(static_cast<NATIVE_UINT_TYPE>(identifier), memSize, recoverable));
   //TODO: Fail gracefully here
   m_bufferQueue.init(this->m_bufferMemory, maxNumBuffers);
 }

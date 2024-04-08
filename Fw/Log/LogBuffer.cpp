@@ -5,7 +5,7 @@ namespace Fw {
 
     LogBuffer::LogBuffer(const U8 *args, NATIVE_UINT_TYPE size) {
         SerializeStatus stat = SerializeBufferBase::setBuff(args,size);
-        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_UINT_TYPE>(stat));
+        FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     }
 
     LogBuffer::LogBuffer() {
@@ -16,7 +16,7 @@ namespace Fw {
 
     LogBuffer::LogBuffer(const LogBuffer& other) : Fw::SerializeBufferBase() {
         SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
-        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     }
 
     LogBuffer& LogBuffer::operator=(const LogBuffer& other) {
@@ -25,7 +25,7 @@ namespace Fw {
         }
 
         SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
-        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
         return *this;
     }
 

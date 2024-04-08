@@ -48,7 +48,7 @@ namespace Fw {
     void ObjBase::toString(char* str, NATIVE_INT_TYPE size) {
         FW_ASSERT(size > 0);
         FW_ASSERT(str != nullptr);
-        PlatformIntType status = snprintf(str, size, "Obj: %s", this->m_objName.toChar());
+        PlatformIntType status = snprintf(str, static_cast<size_t>(size), "Obj: %s", this->m_objName.toChar());
         if (status < 0) {
             str[0] = 0;
         }

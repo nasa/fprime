@@ -211,7 +211,7 @@ namespace Fw {
 
     PolyType::PolyType(I64 val) {
         this->m_dataType = TYPE_I64;
-        this->m_val.u64Val = val;
+        this->m_val.i64Val = val;
     }
 
     PolyType::operator I64() {

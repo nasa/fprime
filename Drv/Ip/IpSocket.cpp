@@ -51,7 +51,7 @@ IpSocket::IpSocket() : m_fd(-1), m_timeoutSeconds(0), m_timeoutMicroseconds(0), 
 }
 
 SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
-    FW_ASSERT(timeout_microseconds < 1000000, timeout_microseconds);
+    FW_ASSERT(timeout_microseconds < 1000000, static_cast<FwAssertArgType>(timeout_microseconds));
     FW_ASSERT(port != 0, port);
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
@@ -182,13 +182,14 @@ SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
             return SOCK_SEND_ERROR;
         }
         FW_ASSERT(sent > 0, sent);
-        total += sent;
+        total += static_cast<U32>(sent);
     }
     // Failed to retry enough to send all data
     if (total < size) {
         return SOCK_INTERRUPTED_TRY_AGAIN;
     }
-    FW_ASSERT(total == size, total, size); // Ensure we sent everything
+    // Ensure we sent everything
+    FW_ASSERT(total == size, static_cast<FwAssertArgType>(total), static_cast<FwAssertArgType>(size));
     return SOCK_SUCCESS;
 }
 

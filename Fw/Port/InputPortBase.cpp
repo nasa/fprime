@@ -27,10 +27,10 @@ namespace Fw {
 
 #if FW_OBJECT_TO_STRING == 1
     void InputPortBase::toString(char* buffer, NATIVE_INT_TYPE size) {
-#if FW_OBJECT_NAMES == 1 
+#if FW_OBJECT_NAMES == 1
         FW_ASSERT(size > 0);
         FW_ASSERT(buffer != nullptr);
-        PlatformIntType status = snprintf(buffer, size, "InputPort: %s->%s", this->m_objName.toChar(),
+        PlatformIntType status = snprintf(buffer, static_cast<size_t>(size), "InputPort: %s->%s", this->m_objName.toChar(),
                                         this->isConnected() ? this->m_connObj->getObjName() : "None");
         if (status < 0) {
             buffer[0] = 0;

@@ -23,7 +23,7 @@ char proc_stat_line[LINE_SIZE];
 namespace Os {
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuCount(U32& cpuCount) {
-        cpuCount = get_nprocs();
+        cpuCount = static_cast<U32>(get_nprocs());
         return SYSTEM_RESOURCES_OK;
     }
 

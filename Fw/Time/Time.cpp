@@ -241,7 +241,7 @@ namespace Fw {
     void Time::add(U32 seconds, U32 useconds) {
         this->m_seconds += seconds;
         this->m_useconds += useconds;
-        FW_ASSERT(this->m_useconds < 1999999,this->m_useconds);
+        FW_ASSERT(this->m_useconds < 1999999, static_cast<FwAssertArgType>(this->m_useconds));
         if (this->m_useconds >= 1000000) {
           ++this->m_seconds;
           this->m_useconds -= 1000000;

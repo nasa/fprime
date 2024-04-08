@@ -52,7 +52,7 @@ namespace Fw {
         }
 
         const SizeType capacity = this->getCapacity();
-        const size_t result = strncmp(us, other, capacity);
+        const size_t result = static_cast<size_t>(strncmp(us, other, capacity));
         return (result == 0);
 
     }
@@ -110,13 +110,13 @@ namespace Fw {
     void StringBase::appendBuff(const CHAR* buff, SizeType size) {
         const SizeType capacity = this->getCapacity();
         const SizeType length = this->length();
-        FW_ASSERT(capacity > length, capacity, length);
+        FW_ASSERT(capacity > length, static_cast<FwAssertArgType>(capacity), static_cast<FwAssertArgType>(length));
         // Subtract 1 to leave space for null terminator
         SizeType remaining = capacity - length - 1;
         if(size < remaining) {
             remaining = size;
         }
-        FW_ASSERT(remaining < capacity, remaining, capacity);
+        FW_ASSERT(remaining < capacity, static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(capacity));
         (void) strncat(const_cast<CHAR*>(this->toChar()), buff, remaining);
     }
 
@@ -129,7 +129,7 @@ namespace Fw {
     }
 
     SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
-        SizeType len = FW_MIN(maxLength,this->length());
+        SizeType len = FW_MIN(maxLength, static_cast<SizeType>(this->length()));
         return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len);
     }
 

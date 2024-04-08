@@ -23,7 +23,7 @@ namespace Fw {
     m_buffer(static_cast<U8*>(this->m_allocator->allocate(0, m_actualSize, m_recoverable)), m_actualSize)
   {
     // assert if allocator returns smaller size
-    FW_ASSERT(maxSerializedSize == m_actualSize,maxSerializedSize,m_actualSize);
+    FW_ASSERT(maxSerializedSize == m_actualSize, static_cast<FwAssertArgType>(maxSerializedSize), static_cast<FwAssertArgType>(m_actualSize));
     FW_ASSERT(nullptr != m_buffer.getBuffAddr());
   }
 

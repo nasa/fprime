@@ -130,7 +130,14 @@ namespace Os {
             if (block == QUEUE_BLOCKING) {
                 wait.tv_sec += IPC_QUEUE_TIMEOUT_SEC;
             }
-            NATIVE_INT_TYPE stat = mq_timedsend(handle, reinterpret_cast<const char*>(buffer), size, priority, &wait);
+
+            NATIVE_INT_TYPE stat = mq_timedsend(
+                handle,
+                reinterpret_cast<const char*>(buffer),
+                static_cast<size_t>(size),
+                static_cast<unsigned int>(priority),
+                &wait);
+
             if (-1 == stat) {
                 switch (errno) {
                     case EINTR:
@@ -229,7 +236,7 @@ namespace Os {
         struct mq_attr attr;
         int status = mq_getattr(handle, &attr);
         FW_ASSERT(status == 0);
-        return static_cast<U32>(attr.mq_curmsgs);
+        return static_cast<NATIVE_INT_TYPE>(attr.mq_curmsgs);
     }
 
     NATIVE_INT_TYPE IPCQueue::getMaxMsgs() const {
@@ -244,7 +251,7 @@ namespace Os {
         struct mq_attr attr;
         int status = mq_getattr(handle, &attr);
         FW_ASSERT(status == 0);
-        return static_cast<U32>(attr.mq_maxmsg);
+        return static_cast<NATIVE_INT_TYPE>(attr.mq_maxmsg);
     }
 
     NATIVE_INT_TYPE IPCQueue::getMsgSize() const {
@@ -254,7 +261,7 @@ namespace Os {
         struct mq_attr attr;
         int status = mq_getattr(handle, &attr);
         FW_ASSERT(status == 0);
-        return static_cast<U32>(attr.mq_msgsize);
+        return static_cast<NATIVE_INT_TYPE>(attr.mq_msgsize);
     }
 
 }

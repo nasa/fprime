@@ -105,7 +105,7 @@ namespace Os {
         }
 
         // Copy the data into the buffer
-        memcpy(my_node->data, buffer, size);
+        memcpy(my_node->data, buffer, static_cast<size_t>(size));
         my_node->size = size;
         my_node->next = nullptr;
 
@@ -150,7 +150,7 @@ namespace Os {
         PushFree(old_node);
 
         // Copy the data from the buffer
-        memcpy(buffer, my_node->data, my_node->size);
+        memcpy(buffer, my_node->data, static_cast<size_t>(my_node->size));
         size = my_node->size;
 
         return Queue::QUEUE_OK;

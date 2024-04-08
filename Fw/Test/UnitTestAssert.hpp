@@ -63,7 +63,7 @@ namespace Test {
         private:
             File m_file;
             NATIVE_UINT_TYPE m_lineNo;
-            NATIVE_INT_TYPE m_numArgs;
+            NATIVE_UINT_TYPE m_numArgs;
             FwAssertArgType m_arg1;
             FwAssertArgType m_arg2;
             FwAssertArgType m_arg3;

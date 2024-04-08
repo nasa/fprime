@@ -59,7 +59,7 @@ namespace Fw {
     }
 
     SerializeStatus LogStringArg::serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLength) const {
-        NATIVE_INT_TYPE len = FW_MIN(maxLength,this->length());
+        NATIVE_UINT_TYPE len = FW_MIN(maxLength, static_cast<NATIVE_UINT_TYPE>(this->length()));
 #if FW_AMPCS_COMPATIBLE
         // serialize 8-bit size with null terminator removed
         U8 strSize = len - 1;

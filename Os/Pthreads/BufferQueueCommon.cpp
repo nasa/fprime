@@ -114,7 +114,7 @@ namespace Os {
   }
 
   NATIVE_UINT_TYPE BufferQueue::getBufferIndex(NATIVE_INT_TYPE index) {
-    return static_cast<NATIVE_UINT_TYPE>((index % this->m_depth) * (sizeof(NATIVE_INT_TYPE) + this->m_msgSize));
+    return static_cast<NATIVE_UINT_TYPE>((static_cast<NATIVE_UINT_TYPE>(index) % this->m_depth) * (sizeof(NATIVE_INT_TYPE) + this->m_msgSize));
   }
 
   void BufferQueue::enqueueBuffer(const U8* buffer, NATIVE_UINT_TYPE size, U8* data, NATIVE_UINT_TYPE index) {

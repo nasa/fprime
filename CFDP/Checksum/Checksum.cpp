@@ -136,7 +136,7 @@ namespace CFDP {
     )
   {
     FW_ASSERT(offset < 4);
-    const U32 addend = byte << (8*(3-offset));
+    const U32 addend = static_cast<U32>(byte) << (8*(3-offset));
     this->m_value += addend;
   }
 
