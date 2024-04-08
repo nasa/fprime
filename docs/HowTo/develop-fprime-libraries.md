@@ -2,6 +2,13 @@
 
 This guide will walk you through the structure and best practices in developing an F´ library.  F´ libraries are used to share modeules (components, ports, topologies, etc.), toolchains, and platforms between F´ projects.  These libraries help with code reuse between projects by enabling direct sharing of F´ software.
 
+*Contents:*
+1. [F´ Library Structure](#flibrary-structure)
+2. [Required: `library.cmake`](#required-librarycmake)
+3. [Optional: Toolchain Folder and Toolchain Files](#optional-toolchain-folder-and-toolchain-files)
+4. [Optional: Platform Folder and Platform Files](#optional-platform-folder-and-platform-files)
+5. [Optional: F´ Module Directories](#optional-fmodule-directories)
+
 ## F´ Library Structure
 
 In this section, you will learn about the expected strcture of an F´ library. An F´ library must have a `library.cmake` and may have any of the following items:
@@ -59,5 +66,10 @@ The example platform would thus need to inlcude `set(FPRIME_PLATFORM "my-platfor
 
 The `cmake/platform` folder may contain any number of platform files and must be placed in the root of the library's directory structure.
 
+## Optional: F´ Module Directories
 
+F´ libraries share F´ code through modules. These module directories are created by `fprime-util new --component` or by hand and may include any F´ code (Components, Ports, Topologies, Data Types, etc.).  These types are made available to users of the library by ensuring that they are added to the `library.cmake` file.  The only restriction is that these component should be placed under a namespacing directory for the library (e.g. `MyLibrary`) to avoid collisions with other libraries and F´ code.
 
+## Conclusion
+
+You should now understand the structure of an F´  library an know how to assemble one.
