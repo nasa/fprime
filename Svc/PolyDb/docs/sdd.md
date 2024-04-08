@@ -28,7 +28,7 @@ The `Svc::PolyDb` component has the following component diagram:
 
 #### 3.1.2 Ports
 
-The Svc::RateGroupDriver component uses the following port types:
+The Svc::PolyDb component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
@@ -37,15 +37,19 @@ Port Data Type | Name | Direction | Kind | Usage
 
 #### 3.2 Functional Description
 
-`Fw::PolyType` is different from binary telemetry in that it is not in a serialized form, but is stored as the native type. 
-The component stores a table of `Fw::PolyType' objects which are read and written by table index. 
+`Fw::PolyType` is different from binary telemetry in that it is not in a serialized form, but is stored as the native type.
+The component stores a table of `Fw::PolyType' objects which are read and written by a table index enumeration. 
 The table is protected by a mutex to prevent simultaneous access.
+
+Users can customize the index name by modifying the `config/PolyDbCfg.fpp` file in their own configuration directory.
+
+Note that users should understand how the `Fw::PolyType` works to avoid asserts when reading a different type than was written. To avoid asserts, user code can verify the expected type matches by calling the correct `isXX()` function before trying to read the value out. The `PolyDb` will not assert on the read or write of a `Fw::PolyType` if there is a type mismatch. This only happens when trying to read out the value stored in the `Fw::PolyType`.
 
 ### 3.3 Scenarios
 
 #### 3.3.1 Read and Write Values
 
-As described in the Functional Description section, the RateGroupDriver component accepts calls to the SchedIn and divides them down to the SchedOut ports:
+The following diagram shows how components can share a value by having one component write the value, and the other read it:
 
 ![Read and Write Values](img/PolyDbReadWriteScenario.jpg) 
 
