@@ -1,5 +1,7 @@
 # F´Continuous Integration
 
+> Note: The information below is historical. Modern F´ uses GitHub Action for all of its CI.
+
 F´continuous integration was developed to work with Jenkins. The continuous integration project is
 designed to checkout a new pull request that has been submitted to F´, merge it with the base 
 branch, and then build the merged construct. Then the unit tests are built and run against this
@@ -16,11 +18,9 @@ a given pull request. It does not build on a set interval, nor does it build a s
 
 The Jenkins CI is setup to be built inside a docker container. This docker container is used to
 encapsulate the exact build environment without needing to setup a specific Jenkins machine with
-this build environment. It needs to be run on a Docker capable Jenkins machine. The Docker setup
-that powers this is at: [mk/docker](../docker/).
+this build environment. It needs to be run on a Docker capable Jenkins machine.
 
-Once Jenkins CI builds the Docker container from the Dockerfile, it runs the Python Test Framework,
-[ptf](/ptf), which includes the following test suites:
+Once Jenkins CI builds the Docker container from the Dockerfile, it runs the Python Test Framework, which includes the following test suites:
 
  1. Reference Build and Unit Tests
  2. Autocoder Unit Tests
