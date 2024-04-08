@@ -597,6 +597,7 @@ Merewether
 methoddoc
 methodstub
 microcontrollers
+mlc
 mman
 MMAPALLOCATOR
 MML
@@ -1007,6 +1008,7 @@ tcgetattr
 TCIFLUSH
 tclist
 tcomp
+tcort
 TCPCLIENT
 TCPHELPER
 tcpserver
@@ -1153,6 +1155,7 @@ WAITALL
 watney
 Wdog
 whitebox
+wikipedia
 WLE
 Wno
 WORKDIR

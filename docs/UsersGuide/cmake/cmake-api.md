@@ -6,7 +6,7 @@ descriptions of module-level functions. Options describe the runtime options tha
 takes. Users wanting to alter the build should look here.
 
 - [API](../api/cmake/API.md): Module API function documentation
-- [Options](../api/cmake/Options.md): Runtime build options
+- [Options](../api/cmake/options.md): Runtime build options
 
 An index of all available documentation is available at [CMake API Index](../api/cmake/index.md). This documentation is generated from the source code available [here](https://github.com/nasa/fprime/tree/devel/cmake). Below is a description of some of the main API functionalities.
 
