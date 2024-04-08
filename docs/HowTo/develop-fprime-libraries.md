@@ -1,6 +1,6 @@
 # How-To: Develop and F´ Library
 
-This guide will walk you through the structure and best practices in developing an F´ library.  F´ libraries are used to share modeules (components, ports, topologies, etc.), toolchains, and platforms between F´ projects.  These libraries help with code reuse between projects by enabling direct sharing of F´ software.
+This guide will walk you through the structure and best practices in developing an F´ library.  F´ libraries are used to share modules (components, ports, topologies, etc.), toolchains, and platforms between F´ projects.  These libraries help with code reuse between projects by enabling direct sharing of F´ software.
 
 *Contents:*
 1. [F´ Library Structure](#flibrary-structure)
@@ -11,7 +11,7 @@ This guide will walk you through the structure and best practices in developing 
 
 ## F´ Library Structure
 
-In this section, you will learn about the expected strcture of an F´ library. An F´ library must have a `library.cmake` and may have any of the following items:
+In this section, you will learn about the expected structure of an F´ library. An F´ library must have a `library.cmake` and may have any of the following items:
 
 1. `cmake/toolchain` Folder and Toolchain Files
 2. `cmake/platform` Folder and Platform Files
@@ -62,7 +62,7 @@ The `cmake/toolchain` folder may contain any number of toolchains and must be pl
 
 In a similar manner to toolchains, platforms may be provided in the `cmake/platform` folder. Any file ending in `.cmake` and placed within the `cmake/platform` folder will be available to F´  to be loaded as a platform. Commonly, this means that a toolchain would include the line `set(FPRIME_PLATFORM <platform>)`.
 
-The example platform would thus need to inlcude `set(FPRIME_PLATFORM "my-platform")`.
+The example platform would thus need to include `set(FPRIME_PLATFORM "my-platform")`.
 
 The `cmake/platform` folder may contain any number of platform files and must be placed in the root of the library's directory structure.
 
