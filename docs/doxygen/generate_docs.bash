@@ -52,13 +52,13 @@ function make_version
     then
         mkdir "${FPRIME}/docs/${VERSION}"
         cp "${FPRIME}/docs/latest.md" "${FPRIME}/docs/${VERSION}/index.md"
-        cp -r "${FPRIME}/docs/INSTALL.md" "${FPRIME}/docs/Tutorials" "${FPRIME}/docs/UsersGuide" "${FPRIME}/docs/Design" "${FPRIME}/docs/${VERSION}"
+        cp -r "${FPRIME}/docs/INSTALL.md" "${FPRIME}/docs/Tutorials" "${FPRIME}/docs/UsersGuide" "${FPRIME}/docs/Design" "${FPRIME}/docs/Design/HowTo" "${FPRIME}/docs/${VERSION}"
         REPLACE='| ['$VERSION' Documentation](https:\/\/nasa.github.io\/fprime\/'$VERSION') |\n'
     else
         echo "No version specified, updating local only"
     fi
 
-    sed -i 's/\(| \[Latest Documentation\](.\/latest.md)\)[^|]*|/'"$REPLACE"'\1 '"As of: $(date)"' |/' "${FPRIME}/docs/index.md"
+    sed -i.backup 's/\(| \[Latest Documentation\](.\/latest.md)\)[^|]*|/'"$REPLACE"'\1 As of: '"$(date)"' |/' "${FPRIME}/docs/index.md"
 
 }
 
@@ -112,4 +112,7 @@ make_version "${VERSIONED_OUTPUT}"
 # Copy images so they're properly referenced
 IMG_DIR="${FPRIME}/docs/UsersGuide/api/c++/html/img"
 mkdir -p "${IMG_DIR}"
-find "${FPRIME}/Fw" "${FPRIME}/Svc" "${FPRIME}/Drv" \( -name '*.jpg' -o -name '*.png' -o -name '*.svg' \) -print0 | xargs -0 cp -t "${IMG_DIR}"
+for image in $(find "${FPRIME}/Fw" "${FPRIME}/Svc" "${FPRIME}/Drv" \( -name '*.jpg' -o -name '*.png' -o -name '*.svg' \))
+do
+    cp "${image}" "${IMG_DIR}"
+done

@@ -11,8 +11,7 @@ This installation guide is specifically designed to enable individuals and resea
 
 **Sections:**
 - [System Requirements](#system-requirements)
-- [Setting Up the Development Environment](#setting-up-the-development-environment)
-- [Creating a New Project](#creating-a-new-project)
+- [Creating a New Project](#creating-a-new-f´-project)
 - [Working With An Existing Project](#working-with-an-existing-project)
 - [Troubleshooting](#troubleshooting)
 
@@ -29,13 +28,15 @@ Requirements:
 4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
 5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
 
-> Latest versions of PIP are strongly recommended, as this will install native packages with improved performance and no dependency on Java. See [Recommended PIP Versions](#recommended-pip-versions)
+> Latest versions of PIP are strongly recommended. See [Recommended PIP Versions](#recommended-pip-versions)
+
+> For build host architectures other than x86_64 or aarch64, and systems with older PIP versions, Java is required
 
 > Ubuntu and Debian users should see notes on [Python installation](#ubuntu-debian-java-and-python-pip)
 
 > macOS users must ensure the [CMake command line utility is on their path](#mac-os-x-and-cmake-command-not-found)
 
-> Other OS-specific notes are in the [Troubleshooting](#Troubleshooting) section below.
+> Other OS-specific notes are in the [Troubleshooting](#troubleshooting) section below.
 
 
 ## Creating a new F´ Project
@@ -49,7 +50,7 @@ The F´ Bootstrap tool is responsible for creating a new F´ project and install
 pip install fprime-bootstrap
 ```
 
-> Some macOS users see an SSL error. [Correct the SSL error](#ssl-error-with-python-37-on-macos) and rerun the above command.
+> Some macOS users see an SSL error. [Correct the SSL error](#ssl-error-with-python-38-on-macos) and rerun the above command.
 
 ### 2. Create a new project
 
@@ -84,7 +85,7 @@ Next steps: [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tuto
 
 Sometimes users wish to work with existing F´ projects. Once the project has been acquired, users should install the tools associated with that project. This is done with:
 
-1. Ensure a virtual environment for this project has been created and [activated](#setting-up-the-development-environment)
+1. Ensure a virtual environment for this project has been [created and activated](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
 
 2. Download the project
 > When using `git` and submodules, remember to run `git submodule update --init --recursive`
