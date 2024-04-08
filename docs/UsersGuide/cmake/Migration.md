@@ -36,9 +36,9 @@ maintained. This is done on a per-module basis. These dependencies are then roll
 2. `register_fprime_module`: add library to the build. Done for **all** components and ports.
 3. `register_fprime_executable`: add an executable output to the build. Done for **all** Topologies.
 
-A guide to `CMakeLists.txt` for Modules is found here: [module](module.md)
+A guide to `CMakeLists.txt` for Modules is found here: [module](https://nasa.github.io/fprime/UsersGuide/api/cmake/module.html)
 
-A guide to the API function calls is found here: [API](API.md)
+A guide to the API function calls is found here: [API](cmake-api.md)
 
 ## Creating Deployments
 
@@ -55,9 +55,9 @@ done in the deployment `CMakeLists.txt` with the CMake `project` command.
 In one of the modules added in the Deployment with `add_fprime_subdirectory`, one or more executable
 should be added with `register_fprime_executable`.
 
-A guide to `CMakeLists.txt` for Deployments is found here: [deployment](deployment.md)
+A guide to `CMakeLists.txt` for Deployments is found here: [deployment](https://nasa.github.io/fprime/UsersGuide/api/cmake/deployment-CMakeLists.txt-template.html)
 
-A guide to the API function calls is found here: [API](API.md)
+A guide to the API function calls is found here: [API](cmake-api.md)
 
 ## Cross-Compiling
 
@@ -73,9 +73,9 @@ compilations. i.e. unit tests are treated as a separate platform.
 
 This is a **difference from the old make system**.
 
-A guide to toolchains can be found here: [toolchain](toolchain.md)
+A guide to toolchains can be found here: [toolchain](cmake-toolchains.md)
 
-A guide to platforms can be found here: [platform](platform.md)
+A guide to platforms can be found here: [platform](cmake-platforms.md)
 
 
 ## Building Deployments
@@ -139,5 +139,5 @@ cd ../build_ut
 make check
 ```
 ## Global Build Options:
- - Options: [Options](Options.md) describes the CMake system options
- - Targets: [Targets](targets/Targets.md) describes built in support targets like `dict`
+ - Options: [Options](https://nasa.github.io/fprime/UsersGuide/api/cmake/options.html) describes the CMake system options
+ - Targets: [Targets](Targets.md) describes built in support targets like `dict`

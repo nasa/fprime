@@ -1,6 +1,6 @@
 # GDS CLI - Developer's Guide
 
-This guide is for programmers who intend to maintain and develop code for the Ground Data System's command-line interface suite. For regular users who just want to use these CLI tools, please see the [user guide](../../docs/UsersGuide/gds/GDS_CLI_USER_GUIDE.md).
+This guide is for programmers who intend to maintain and develop code for the Ground Data System's command-line interface suite. For regular users who just want to use these CLI tools, please see the [user guide](../gds/gds-cli.md).
 
 - [CLI Requirements](#cli-requirements)
     - [Primary Requirements](#primary-requirements)

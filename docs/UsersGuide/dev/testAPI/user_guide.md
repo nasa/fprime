@@ -564,7 +564,7 @@ gt_pred("string") # evaluates False: String is not a value that is greater than 
 
 ***
 
-The following libraries were added to the [F´ pip requirements file](/requirements.txt).
+The following libraries were added to the [F´ pip requirements file](https://github.com/nasa/fprime/blob/devel/requirements.txt).
 
 | Library| Provides|
 | :--| :--|

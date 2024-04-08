@@ -61,7 +61,7 @@ this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 ```c++
 this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 ```
-[source](https://github.com/nasa/fprime/blob/release/v3.0.0/Ref/SignalGen/SignalGen.cpp)
+[source](https://github.com/nasa/fprime/blob/034216bc73ac91e78ba03fda25362050a695a960/Ref/SignalGen/SignalGen.cpp)
 
 The following user-facing enumeration types must be updated.
 

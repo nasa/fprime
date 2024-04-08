@@ -10,7 +10,7 @@ system unless otherwise noted. Included in this document:
     - [Enums](#enums)
     - [Arrays](#arrays)
     - [Serializables](#serializables)
-    - [C++ Classes](c-classes)
+    - [C++ Classes](#c-classes)
 - [Conclusion](#conclusion)
 
 # Primitive Types

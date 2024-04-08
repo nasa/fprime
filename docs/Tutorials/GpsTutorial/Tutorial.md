@@ -56,8 +56,8 @@ diagram captures the ports needed for our desired functionality.
 The F’ designs are specified by XML files that are processed by code generators to create C++ source and header files.
 An XML file represents a single entity in the F´ system (Component, Port, Serializable, or Deployment). Command, Event,
 and Telemetry Channel specifications are also written in XML.  Further information is in the full F´ user guide.
-[User Guide](../../UsersGuide/FprimeUserGuide.pdf). This application does not need any custom ports, as we are using the
-standard ports to create our GPS handler. Custom ports can be seen in the [Math Component Tutorial](../MathComponent/Tutorial.md).
+[User Guide](https://nasa.github.io/fprime/UsersGuide/guide.html). This application does not need any custom ports, as we are using the
+standard ports to create our GPS handler. Custom ports can be seen in the [Math Component Tutorial](../README.md).
 
 In this section, we will create a directory for our GPS component, and design the component through XML. The first step in making the component is to make a project directory to hold our project, and a component subdirectory for our GPS.
 

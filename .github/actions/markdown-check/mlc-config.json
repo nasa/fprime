@@ -5,6 +5,9 @@
       },
       {
         "pattern": "https://www.raspberrypi.com/documentation/computers/configuration.html"
+      },
+      {
+        "pattern": "https://en.wikipedia.org/wiki/"
       }
     ],
     "replacementPatterns": [

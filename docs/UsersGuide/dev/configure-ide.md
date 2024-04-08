@@ -75,7 +75,7 @@ the IDE as deliberate settings, but they can be set as part of the build setup.
 | **Custom Configuration**   | | |
 | -DFPRIME_CONFIG_DIR        | path/to/project/conf/dir    | **unneeded** |
 
-**Note:** See [CMake Settings](cmake-settings.md) for a further description of these and other settings.
+**Note:** See [CMake Settings](https://nasa.github.io/fprime/UsersGuide/api/cmake/options.html) for a further description of these and other settings.
 
 ## IDE Examples
 
