@@ -32,8 +32,8 @@ The `Svc::PrmDb` component uses the following port types:
 
 Port | Name | Direction | Type | Usage
 ---- | ---- | --------- | ---- | -----
-[`Fw::PrmGet`](../../../Fw/Prm/docs/sdd.html) | getPrm | Input | Synchronous | Get a parameter
-[`Fw::PrmSet`](../../../Fw/Prm/docs/sdd.html) | setPrm | Input | Asynchronous | Update a parameter
+[`Fw::PrmGet`](../../../Fw/Prm/docs/sdd.md) | getPrm | Input | Synchronous | Get a parameter
+[`Fw::PrmSet`](../../../Fw/Prm/docs/sdd.md) | setPrm | Input | Asynchronous | Update a parameter
 
 #### 3.2 Functional Description
 

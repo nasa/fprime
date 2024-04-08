@@ -32,8 +32,8 @@ The Svc::RateGroupDriver component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Cycle`](../Sched/docs/sdd.html) | CycleIn | Input | Synchronous | Receive the system tick
-[`Svc::Cycle`](../Sched/docs/sdd.html) | CycleOut| Output | n/a | Used to drive rate groups
+[`Svc::Cycle`](../Sched/docs/sdd.md) | CycleIn | Input | Synchronous | Receive the system tick
+[`Svc::Cycle`](../Sched/docs/sdd.md) | CycleOut| Output | n/a | Used to drive rate groups
 
 #### 3.2 Functional Description
 

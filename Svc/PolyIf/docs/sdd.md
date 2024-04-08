@@ -4,7 +4,7 @@
 ## 1. Introduction
 
 The `Svc::Poly` is used to pass the polymorphic `Fw::PolyType` between components. 
-See the [`Svc::PolyType`](../../../Fw/Types/docs/sdd.html) description for details on the class.
+See the [`Svc::PolyType`](../../../Fw/Types/docs/sdd.md) description for details on the class.
 
 The arguments are as follows:
 

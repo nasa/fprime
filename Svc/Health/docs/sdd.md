@@ -35,10 +35,10 @@ The Svc::Health component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Ping`](../../../Svc/Ping/docs/sdd.html) | PingSend | Output | n/a | Send ping requests from components
-[`Svc::Ping`](../../../Svc/Ping/docs/sdd.html) | PingReturn | Input | Asynchronous | Receive ping responses from components
-[`Svc::Sched`](../../../Svc/Sched/docs/sdd.html) | Run | Input | Synchronous | Execute periodic behavior
-[`Svc::WatchDog`](../../../Svc/WatchDog/docs/sdd.html) | Wdog | Output | n/a | Send ping requests from components
+[`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | PingSend | Output | n/a | Send ping requests from components
+[`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | PingReturn | Input | Asynchronous | Receive ping responses from components
+[`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | Run | Input | Synchronous | Execute periodic behavior
+[`Svc::WatchDog`](../../../Svc/WatchDog/docs/sdd.md) | Wdog | Output | n/a | Send ping requests from components
 
 ### 3.2 Functional Description
 

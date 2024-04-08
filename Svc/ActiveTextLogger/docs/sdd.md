@@ -35,7 +35,7 @@ The `Svc::ActiveTextLogger` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Fw::LogText`](../../../Fw/Log/docs/sdd.html) | TextLogger | Input | Synchronous | Logging port
+[`Fw::LogText`](../../../Fw/Log/docs/sdd.md) | TextLogger | Input | Synchronous | Logging port
 
 ### 3.2 Functional Description
 

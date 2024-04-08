@@ -19,7 +19,7 @@ ISF-FU-001 | `FileUplink` shall receive file packets, assemble them into files, 
 The design of `FileUplink` assumes the following:
 
 1. File uplink occurs by dividing files into packets
-of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.html).
+of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
 
 2. In the nominal case of file uplink
 
@@ -40,15 +40,15 @@ packets of the next file.
 Name | Type | Role
 -----| ---- | ----
 `timeCaller` | `Fw::Time` | TimeGet
-`tlmOut` | [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.html) | Telemetry
-`eventOut` | [`Fw::LogEvent`](../../../Fw/Log/docs/sdd.html) | LogEvent
+`tlmOut` | [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Telemetry
+`eventOut` | [`Fw::LogEvent`](../../../Fw/Log/docs/sdd.md) | LogEvent
 
 #### 3.3.2 Component-Specific Ports
 
 Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
-<a name="bufferSendIn">`bufferSendIn`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.html) | async input | Receives buffers containing file packets.
-<a name="bufferSendOut">`bufferSendOut`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.html) | output | Returns buffers for deallocation.
+<a name="bufferSendIn">`bufferSendIn`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | async input | Receives buffers containing file packets.
+<a name="bufferSendOut">`bufferSendOut`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | output | Returns buffers for deallocation.
 
 ### 3.4 State
 
@@ -99,7 +99,7 @@ to zero and go to DATA mode; otherwise issue a
 
 Upon receipt of a DATA packet *P*, `FileUplink` does the following,
 where *I* is the 
-[sequence index](../../../Fw/FilePacket/docs/sdd.html) 
+[sequence index](../../../Fw/FilePacket/docs/sdd.md) 
 of *P*:
 
 1. If 

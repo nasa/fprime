@@ -3,7 +3,7 @@
 
 ## 1. Introduction
 
-The `Ref::RecvBuffApp` is a demonstration component that receives data buffers from `Ref::SendBuffApp` [HTML](../../SendBuffApp/docs/sdd.html) [MD](../../SendBuffApp/docs/sdd.md)
+The `Ref::RecvBuffApp` is a demonstration component that receives data buffers from `Ref::SendBuffApp` [SDD](../../SendBuffApp/docs/sdd.md)
 
 ## 2. Requirements
 

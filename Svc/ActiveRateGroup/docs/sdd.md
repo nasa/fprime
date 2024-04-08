@@ -35,8 +35,8 @@ The `Svc::ActiveRateGroup` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Cycle`](../../Cycle/docs/sdd.html) | CycleIn | Input | Asynchronous | Receive a call to run one cycle of the rate group
-[`Svc::Sched`](../../Sched/docs/sdd.html) | RateGroupMemberOut | Output | n/a | Rate group ports
+[`Svc::Cycle`](../../Cycle/docs/sdd.md) | CycleIn | Input | Asynchronous | Receive a call to run one cycle of the rate group
+[`Svc::Sched`](../../Sched/docs/sdd.md) | RateGroupMemberOut | Output | n/a | Rate group ports
 
 #### 3.2 Functional Description
 

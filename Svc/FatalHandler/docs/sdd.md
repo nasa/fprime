@@ -31,7 +31,7 @@ The `Svc::FatalHandler` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Fatal`](../Fatal/docs/sdd.html) | FatalReceive | Input | Synch | Receive FATAL notifications
+[`Svc::Fatal`](../Fatal/docs/sdd.md) | FatalReceive | Input | Synch | Receive FATAL notifications
 
 ### 3.2 Functional Description
 

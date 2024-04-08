@@ -3,7 +3,7 @@
 
 ## 1. Introduction
 
-The `Ref::SignalGen` is a demonstration component that receives data buffers from `Ref::SignalGen` [HTML](../../SendBuffApp/docs/sdd.html) [MD](../../SendBuffApp/docs/sdd.md). It is a source for testing plots in the ground software.
+The `Ref::SignalGen` is a demonstration component that receives data buffers from `Ref::SignalGen` ([SDD](../../SendBuffApp/docs/sdd.md)). It is a source for testing plots in the ground software.
 
 ## 2. Requirements
 

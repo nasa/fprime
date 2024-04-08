@@ -34,9 +34,9 @@ The `Svc::TlmChan` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Sched`](../../Sched/docs/sdd.html) | Run | Input | Asynchronous | Execute a cycle to write changed telemetry channels
-[`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.html) | TlmRecv | Input | Synchronous Input | Update a telemetry channel
-[`Fw::Com`](../../../Fw/Com/docs/sdd.html) | PktSend | Output | n/a | Write a set of packets with updated telemetry
+[`Svc::Sched`](../../Sched/docs/sdd.md) | Run | Input | Asynchronous | Execute a cycle to write changed telemetry channels
+[`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | TlmRecv | Input | Synchronous Input | Update a telemetry channel
+[`Fw::Com`](../../../Fw/Com/docs/sdd.md) | PktSend | Output | n/a | Write a set of packets with updated telemetry
 
 #### 3.2 Functional Description
 
