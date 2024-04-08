@@ -85,7 +85,7 @@ design active components. It is impractical to assume that all projects can, at 
 use of the framework provided **Active Components**.  Thus F´ was augmented with the ability to virtualize threading, such
 that projects could use these components during development as they migrate to a fully passive-component system.
 
-To activate this feature see: [Configuring F´](../user/configuration.md). Continue reading for all the fancy details of
+To activate this feature see: [Configuring F´](../dev/configuring-fprime.md). Continue reading for all the fancy details of
 how this system is designed.  TODO: put a link to the thread scheduler API documentation.
 
 ### Defining Custom Tasks

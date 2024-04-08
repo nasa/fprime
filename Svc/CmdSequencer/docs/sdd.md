@@ -236,7 +236,7 @@ A utility is provided that will convert a text file listing of commands and thei
 
 It can be run by invoking:
 
-`Gse/bin/run_tinyseqgen.sh <input text file>`
+`fprime-seqgen --help`
 
 The syntax of the file is as follows:
 
@@ -296,7 +296,7 @@ where:
 
 Note that the time is encoded in UTC with an epoch of 1/1/1970.
 
-An example can be seen in [Gse/bin/simple_sequence.seq](../../../Gse/bin/simple_sequence.seq)
+An example can be seen in the F´ GDS repository under `examples/`: https://github.com/fprime-community/fprime-gds/tree/devel/examples
 
 ### 3.4 Component State
 

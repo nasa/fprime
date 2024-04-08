@@ -11,7 +11,7 @@ Presently there are several implementations of history within the GDS. They are 
 
 # History (superclass)
 
-[history.py](../../../../../src/fprime_gds/common/history/history.py)
+[history.py](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/history/history.py)
 
 An ordered history that defines what interfaces a history should have within the GDS
 
@@ -85,7 +85,7 @@ Accessor for the number of objects in the history
 
 ChronologicalHistory is the primary history of the Test API.
 
-[chrono.py](../../../../../src/fprime_gds/common/history/chrono.py)
+[chrono.py](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/history/chrono.py)
 
 A chronologically-ordered history that relies on predicates to provide filtering, searching, and
 retrieval operations. This history will re-order itself based on FSW time.
@@ -234,7 +234,7 @@ Returns:
 
 Test History is an optional history for the IntegrationTestAPI. It supports predicate searching and maintains the object order it was enqueued with.
 
-[test.py](../../../../../src/fprime_gds/common/history/test.py)
+[test.py](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/history/test.py)
 
 A receive-ordered history that relies on predicates to provide filtering, searching, and
 retrieval operations
@@ -351,7 +351,7 @@ Returns:
 
 Ram history is used by the Standard Pipeline making it the default history for several GDS Tools.
 
-[ram.py](../../../../../src/fprime_gds/common/history/ram.py)
+[ram.py](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/history/ram.py)
 
 A simple implementation of a history that maintains items in RAM. This is used for simplicity, but isn’t exactly
 robust nor persistent. Given that it is in the RAM, it is driven from the decoders object, which should run off the
@@ -413,7 +413,7 @@ Returns:
 
 |Quick Links|
 |:----------|
-|[Integration Test API User Guide](../../../user_guide.md)|
+|[Integration Test API User Guide](../user_guide.md)|
 |[GDS Overview](../../../../../README.md)|
 |[Integration Test API](integration_test_api.md)|
 |[Histories](histories.md)|

@@ -8,7 +8,7 @@ This integration test API was developed by Kevin Oran in the summer of 2019.
 
 ***
 
-To work with the integration test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet **DOES NOT** run the GDS TCP Server or run an F Prime deployment. An example script to run the Ref App deployment without a GDS Tool can be found [here](../../../../Ref/scripts/run_ref_for_int_test.sh).
+To work with the integration test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet **DOES NOT** run the GDS TCP Server or run an F Prime deployment.
 
 ~~~~{.python}
 from fprime_gds.common.pipeline.standard import StandardPipeline
@@ -90,9 +90,9 @@ if __name__ == "__main__":
 
 ***
 
-All usage patterns are written such that they would be compatible with the test framework example described above: each test case assumes that the histories were recently emptied and that the `self.api` field is a connected instance of the integration test API. For simplicity, usage examples will rely on mock flight software dictionaries that were used in the integration test API unit tests. This dictionary can be found [here](../../../../Gds/test/fprime_gds/common/testing_fw/UnitTestDictionary.xml).
+All usage patterns are written such that they would be compatible with the test framework example described above: each test case assumes that the histories were recently emptied and that the `self.api` field is a connected instance of the integration test API. For simplicity, usage examples will rely on mock flight software dictionaries that were used in the integration test API unit tests. This dictionary can be found [here](https://github.com/fprime-community/fprime-gds/blob/devel/test/fprime_gds/common/testing_fw/UnitTestDictionary.xml).
 
-If a user would like to play with the test API in a unit testing environment they could append their own test cases to the unit tests [here](../../../../Gds/test/fprime_gds/common/testing_fw/api_unit_test.py).
+If a user would like to play with the test API in a unit testing environment they could append their own test cases to the unit tests [here](https://github.com/fprime-community/fprime-gds/blob/devel/test/fprime_gds/common/testing_fw/api_unit_test.py).
 **NOTE**: there is no F Prime deployment in these unit tests so data objects need to be added manually.
 
 If a user would like to experiment with integration tests on an actual F Prime application, they could modify the Ref app [integration tests](../../../../Ref/test/int/ref_integration_test.py).
@@ -564,7 +564,7 @@ gt_pred("string") # evaluates False: String is not a value that is greater than 
 
 ***
 
-The following libraries were added to the [GDS pip requirements file](../../../../mk/python/pip_required_gds.txt).
+The following libraries were added to the [F´ pip requirements file](/requirements.txt).
 
 | Library| Provides|
 | :--| :--|
@@ -694,7 +694,7 @@ The following table summarizes the color meanings from API-generated messages.
 
 ### Predicates
 
-The integration test API uses predicates for filtering, searching and asserting. A predicate is a callable class that evaluates if an object/value satisfies a certain property. Predicates used by the API are defined [here](../../../../Gds/src/fprime_gds/common/testing_fw/predicates.py). The API uses Duck Typing to determine what can and cannot be used as a predicate; therefore, a user of the API can very easily create their own. Below is a table of how predicates are organized with a brief summary of each section:
+The integration test API uses predicates for filtering, searching and asserting. A predicate is a callable class that evaluates if an object/value satisfies a certain property. Predicates used by the API are defined [here](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/testing_fw/predicates.py). The API uses Duck Typing to determine what can and cannot be used as a predicate; therefore, a user of the API can very easily create their own. Below is a table of how predicates are organized with a brief summary of each section:
 
 | Predicate Section| Section Description| Functions/predicates|
 | :----| :----| :----|
@@ -719,7 +719,7 @@ I see two options to address this:
 
 ### The openpyxl library has thrown WorkbookAlreadySaved error
 
-While running unit tests on the API, there was an error thrown by openpyxl that caused the log to close early. The behavior wasn't able to be recreated, but the [Test Logger](../../../../Gds/src/fprime_gds/common/logger/test_logger.py) was updated to [catch the exception](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L124) to prevent tests from failing due to the logger.
+While running unit tests on the API, there was an error thrown by openpyxl that caused the log to close early. The behavior wasn't able to be recreated, but the [Test Logger](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/logger/test_logger.py) was updated to [catch the exception](https://github.com/nasa/fprime/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L124) to prevent tests from failing due to the logger.
 
 ~~~~
 ___________________________________ APITestCases.test_find_history_item _________________________________

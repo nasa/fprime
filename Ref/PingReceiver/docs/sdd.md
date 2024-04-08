@@ -26,8 +26,6 @@ The `Ref::PingReceiver` component has the following component diagram:
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](PingReceiver.html) [MD](PingReceiver.md)
-
 ## 5. Module Checklists
 
 ## 6. Unit Testing

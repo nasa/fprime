@@ -52,7 +52,7 @@ When a call to the `Run()` interface is called, the packet writes are locked and
 
 This diagram shows the scenario where telemetry channels are written to packets:
 
-![External User Scenario](img/ExternalUserScenario.jpg) 
+> TODO
 
 ### 3.4 State
 
@@ -65,23 +65,11 @@ A configuration value in `TlmPacketizerImplCfg.h` defines a set of hash buckets 
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](TlmPacketizer.html) [MD](TlmPacketizer.md)
-
 ## 5. Module Checklists
-
-Document | Link
--------- | ----
-Design Checklist | [Link](Checklist_Design.xlsx)
-Code Checklist  | [Link](Checklist_Code.xlsx)
-Unit Test Checklist  | [Link](Checklist_Unit_Test.xlsx)
 
 ## 6. Unit Testing
 
-File | Contents
----- | --------
-Unit Test Output | [Link](../test/ut/output/output.txt)
-Coverage - TlmPacketizerComponentImpl.cpp | [Link](../test/ut/output/TlmChanImpl.cpp.gcov)
-Coverage - TlmPacketizerComponentAc.cpp | [Link](../test/ut/output/TlmPacketizerComponentAc.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 

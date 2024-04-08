@@ -71,7 +71,7 @@ Document | Link
 -------- | ----
 Design Checklist | [Link](Checklist_Design.xlsx)
 Code Checklist | [Link](Checklist_Design.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xlsx)
+Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
 
 ## 5. Unit Testing
 

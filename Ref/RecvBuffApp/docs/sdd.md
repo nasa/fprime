@@ -26,8 +26,6 @@ The `Ref::RecvBuffApp` component has the following component diagram:
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](RecvBuff.html) [MD](RecvBuff.md)
-
 ## 5. Module Checklists
 
 ## 6. Unit Testing

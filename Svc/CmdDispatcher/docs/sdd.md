@@ -99,10 +99,6 @@ sequenceDiagram
 
 `Svc::CmdDispatcher` has no significant algorithms.
 
-## 4. Dictionary
-
-Dictionaries: [HTML](CmdDispatcher.html)
-
 ## 4. Module Checklists
 
 Document | Link

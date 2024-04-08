@@ -26,8 +26,6 @@ The `Ref::SendBuffApp` component has the following component diagram:
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](SendBuff.html) [MD](SendBuff.md)
-
 ## 5. Module Checklists
 
 ## 6. Unit Testing

@@ -11,7 +11,7 @@ The F´  team conducts a number of events to build familiarity with the product
 
 ## F´ Tutorial
 
-The F´ tutorial is intended to help new users familiarize themselves with the F´ framework and tool suite. Instructors will walk through the [LED Blinker Tutorial](https://fprime_community.github.io/fprime-workshop-led-blinker), covering the following:
+The F´ tutorial is intended to help new users familiarize themselves with the F´ framework and tool suite. Instructors will walk through the [LED Blinker Tutorial](https://fprime-community.github.io/fprime-workshop-led-blinker), covering the following:
 - Software Modeling using FPP, the domain specific language supporting F´
 - Component Implementation
 - Unit Testing
