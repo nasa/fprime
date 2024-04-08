@@ -1,0 +1,14 @@
+{
+    "projectBaseUrl":"https://nasa.github.io/fprime",
+    "ignorePatterns": [
+      {
+        "pattern": "^(https?://)?localhost"
+      }
+    ],
+    "replacementPatterns": [
+      {
+        "pattern": "^[./]+api/cmake/",
+        "replacement": "{{BASEURL}}/UsersGuide/api/cmake/"
+      }
+    ]
+}
