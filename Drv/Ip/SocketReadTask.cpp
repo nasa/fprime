@@ -109,7 +109,7 @@ void SocketReadTask::readTask(void* pointer) {
                 buffer.setSize(0);
             } else {
                 // Send out received data
-                buffer.setSize(size);
+                buffer.setSize(static_cast<U32>(size));
             }
             self->sendBuffer(buffer, status);
         }

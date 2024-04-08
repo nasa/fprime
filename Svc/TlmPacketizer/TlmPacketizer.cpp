@@ -58,14 +58,14 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
                                   const NATIVE_UINT_TYPE startLevel) {
     FW_ASSERT(packetList.list);
     FW_ASSERT(ignoreList.list);
-    FW_ASSERT(packetList.numEntries <= MAX_PACKETIZER_PACKETS, packetList.numEntries);
+    FW_ASSERT(packetList.numEntries <= MAX_PACKETIZER_PACKETS, static_cast<FwAssertArgType>(packetList.numEntries));
     // validate packet sizes against maximum com buffer size and populate hash
     // table
     for (NATIVE_UINT_TYPE pktEntry = 0; pktEntry < packetList.numEntries; pktEntry++) {
         // Initial size is packetized telemetry descriptor + size of time tag + sizeof packet ID
         NATIVE_UINT_TYPE packetLen =
             sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
-        FW_ASSERT(packetList.list[pktEntry]->list, pktEntry);
+        FW_ASSERT(packetList.list[pktEntry]->list, static_cast<FwAssertArgType>(pktEntry));
         // add up entries for each defined packet
         for (NATIVE_UINT_TYPE tlmEntry = 0; tlmEntry < packetList.list[pktEntry]->numEntries; tlmEntry++) {
             // get hash value for id
@@ -78,12 +78,12 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             entryToUse->ignored = false;
             entryToUse->id = id;
             // the offset into the buffer will be the current packet length
-            entryToUse->packetOffset[pktEntry] = packetLen;
+            entryToUse->packetOffset[pktEntry] = static_cast<NATIVE_INT_TYPE>(packetLen);
 
             packetLen += packetList.list[pktEntry]->list[tlmEntry].size;
 
         }  // end channel in packet
-        FW_ASSERT(packetLen <= FW_COM_BUFFER_MAX_SIZE, packetLen, pktEntry);
+        FW_ASSERT(packetLen <= FW_COM_BUFFER_MAX_SIZE, static_cast<FwAssertArgType>(packetLen), static_cast<FwAssertArgType>(pktEntry));
         // clear contents
         memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, packetLen);
         // serialize packet descriptor and packet ID now since it will always be the same
@@ -149,7 +149,7 @@ TlmPacketizer::TlmEntry* TlmPacketizer::findBucket(FwChanIdType id) {
                 }
             } else {
                 // Make sure that we haven't run out of buckets
-                FW_ASSERT(this->m_tlmEntries.free < TLMPACKETIZER_HASH_BUCKETS, this->m_tlmEntries.free);
+                FW_ASSERT(this->m_tlmEntries.free < TLMPACKETIZER_HASH_BUCKETS, static_cast<FwAssertArgType>(this->m_tlmEntries.free));
                 // add new bucket from free list
                 entryToUse = &this->m_tlmEntries.buckets[this->m_tlmEntries.free++];
                 // Coverity warning about null dereference - see if it happens
@@ -166,7 +166,7 @@ TlmPacketizer::TlmEntry* TlmPacketizer::findBucket(FwChanIdType id) {
         }
     } else {
         // Make sure that we haven't run out of buckets
-        FW_ASSERT(this->m_tlmEntries.free < TLMPACKETIZER_HASH_BUCKETS, this->m_tlmEntries.free);
+        FW_ASSERT(this->m_tlmEntries.free < TLMPACKETIZER_HASH_BUCKETS, static_cast<FwAssertArgType>(this->m_tlmEntries.free));
         // create new entry at slot head
         this->m_tlmEntries.slots[index] = &this->m_tlmEntries.buckets[this->m_tlmEntries.free++];
         entryToUse = this->m_tlmEntries.slots[index];

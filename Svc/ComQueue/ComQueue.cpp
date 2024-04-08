@@ -24,7 +24,7 @@ ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
 ComQueue ::ComQueue(const char* const compName)
     : ComQueueComponentBase(compName),
       m_state(WAITING),
-      m_allocationId(-1),
+      m_allocationId(static_cast<NATIVE_UINT_TYPE>(-1)),
       m_allocator(nullptr),
       m_allocation(nullptr) {
     // Initialize throttles to "off"
@@ -71,7 +71,9 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
         for (NATIVE_UINT_TYPE entryIndex = 0; entryIndex < FW_NUM_ARRAY_ELEMENTS(queueConfig.entries); entryIndex++) {
             // Check for valid configuration entry
             FW_ASSERT(queueConfig.entries[entryIndex].priority < TOTAL_PORT_COUNT,
-                      queueConfig.entries[entryIndex].priority, TOTAL_PORT_COUNT, entryIndex);
+                      queueConfig.entries[entryIndex].priority,
+                      TOTAL_PORT_COUNT,
+                      static_cast<FwAssertArgType>(entryIndex));
 
             if (currentPriority == queueConfig.entries[entryIndex].priority) {
                 // Set up the queue metadata object in order to track priority, depth, index into the queue list of the
@@ -80,7 +82,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 QueueMetadata& entry = this->m_prioritizedList[currentPriorityIndex];
                 entry.priority = queueConfig.entries[entryIndex].priority;
                 entry.depth = queueConfig.entries[entryIndex].depth;
-                entry.index = entryIndex;
+                entry.index = static_cast<FwIndexType>(entryIndex);
                 // Message size is determined by the type of object being stored, which in turn is determined by the
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
                 entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
@@ -117,7 +119,10 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
         allocationOffset += allocationSize;
     }
     // Safety check that all memory was used as expected
-    FW_ASSERT(allocationOffset == totalAllocation, static_cast<FwAssertArgType>(allocationOffset), totalAllocation);
+    FW_ASSERT(
+        allocationOffset == totalAllocation,
+        static_cast<FwAssertArgType>(allocationOffset),
+        static_cast<FwAssertArgType>(totalAllocation));
 }
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
@@ -192,7 +197,7 @@ void ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     FW_ASSERT(portNum >= 0, portNum);
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !this->m_throttle[queueNum]) {
-        this->log_WARNING_HI_QueueOverflow(queueType, portNum);
+        this->log_WARNING_HI_QueueOverflow(queueType, static_cast<U32>(portNum));
         this->m_throttle[queueNum] = true;
     }
     // When the component is already in READY state process the queue to send out the next available message immediately

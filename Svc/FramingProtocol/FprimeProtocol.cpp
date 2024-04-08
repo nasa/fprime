@@ -50,7 +50,7 @@ void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::C
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Calculate and add transmission hash
-    Utils::Hash::hash(buffer.getData(), total - HASH_DIGEST_LENGTH, hash);
+    Utils::Hash::hash(buffer.getData(), static_cast<NATIVE_INT_TYPE>(total - HASH_DIGEST_LENGTH), hash);
     status = serializer.serialize(hash.getBuffAddr(), HASH_DIGEST_LENGTH, true);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -73,7 +73,7 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
     hash.final(hashBuffer);
     // Now loop through the hash digest bytes and check for equality
     for (U32 i = 0; i < HASH_DIGEST_LENGTH; i++) {
-        U8 calc = static_cast<char>(hashBuffer.getBuffAddr()[i]);
+        U8 calc = static_cast<U8>(hashBuffer.getBuffAddr()[i]);
         U8 sent = 0;
         const Fw::SerializeStatus status = ring.peek(sent, size + i);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);

@@ -154,7 +154,7 @@ namespace Svc {
                 stat = paramFile.write(&delim,writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER,numRecords,stat);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER,static_cast<I32>(numRecords),stat);
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
@@ -162,7 +162,7 @@ namespace Svc {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(
                         PrmWriteError::DELIMITER_SIZE,
-                        numRecords,
+                        static_cast<I32>(numRecords),
                         static_cast<I32>(writeSize));
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
@@ -181,7 +181,7 @@ namespace Svc {
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE,numRecords,stat);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE,static_cast<I32>(numRecords),stat);
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
@@ -189,7 +189,7 @@ namespace Svc {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(
                         PrmWriteError::RECORD_SIZE_SIZE,
-                        numRecords,
+                        static_cast<I32>(numRecords),
                         static_cast<I32>(writeSize));
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
@@ -209,7 +209,7 @@ namespace Svc {
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID,numRecords,stat);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID,static_cast<I32>(numRecords),stat);
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
@@ -217,7 +217,7 @@ namespace Svc {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(
                         PrmWriteError::PARAMETER_ID_SIZE,
-                        numRecords,
+                        static_cast<I32>(numRecords),
                         static_cast<I32>(writeSize));
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
@@ -229,7 +229,7 @@ namespace Svc {
                 stat = paramFile.write(this->m_db[entry].val.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE,numRecords,stat);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE,static_cast<I32>(numRecords),stat);
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
@@ -237,7 +237,7 @@ namespace Svc {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(
                         PrmWriteError::PARAMETER_VALUE_SIZE,
-                        numRecords,
+                        static_cast<I32>(numRecords),
                         static_cast<I32>(writeSize));
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
@@ -286,17 +286,17 @@ namespace Svc {
             }
 
             if (fStat != Os::File::OP_OK) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER,recordNum,fStat);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER,static_cast<I32>(recordNum),fStat);
                 return;
             }
 
             if (sizeof(delimiter) != readSize) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER_SIZE,recordNum,static_cast<I32>(readSize));
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER_SIZE,static_cast<I32>(recordNum),static_cast<I32>(readSize));
                 return;
             }
 
             if (PRMDB_ENTRY_DELIMITER != delimiter) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER_VALUE,recordNum,delimiter);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER_VALUE,static_cast<I32>(recordNum),delimiter);
                 return;
             }
 
@@ -306,11 +306,11 @@ namespace Svc {
 
             fStat = paramFile.read(buff.getBuffAddr(),readSize,Os::File::WaitType::WAIT);
             if (fStat != Os::File::OP_OK) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE,recordNum,fStat);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE,static_cast<I32>(recordNum),fStat);
                 return;
             }
             if (sizeof(recordSize) != readSize) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_SIZE,recordNum,static_cast<I32>(readSize));
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_SIZE,static_cast<I32>(recordNum),static_cast<I32>(readSize));
                 return;
             }
             // set serialized size to read size
@@ -326,7 +326,7 @@ namespace Svc {
             // sanity check value. It can't be larger than the maximum parameter buffer size + id
             // or smaller than the record id
             if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32)) or (recordSize < sizeof(U32))) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_VALUE,recordNum,recordSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_VALUE,static_cast<I32>(recordNum),static_cast<I32>(recordSize));
                 return;
             }
 
@@ -336,11 +336,11 @@ namespace Svc {
 
             fStat = paramFile.read(buff.getBuffAddr(),readSize,Os::File::WaitType::WAIT);
             if (fStat != Os::File::OP_OK) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID,recordNum,fStat);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID,static_cast<I32>(recordNum),fStat);
                 return;
             }
             if (sizeof(parameterId) != static_cast<FwSizeType>(readSize)) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID_SIZE,recordNum,static_cast<I32>(readSize));
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID_SIZE,static_cast<I32>(recordNum),static_cast<I32>(readSize));
                 return;
             }
 
@@ -362,11 +362,11 @@ namespace Svc {
             fStat = paramFile.read(this->m_db[entry].val.getBuffAddr(),readSize);
 
             if (fStat != Os::File::OP_OK) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_VALUE,recordNum,fStat);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_VALUE,static_cast<I32>(recordNum),fStat);
                 return;
             }
             if (static_cast<U32>(readSize) != recordSize-sizeof(parameterId)) {
-                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_VALUE_SIZE,recordNum,static_cast<I32>(readSize));
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_VALUE_SIZE,static_cast<I32>(recordNum),static_cast<I32>(readSize));
                 return;
             }
 

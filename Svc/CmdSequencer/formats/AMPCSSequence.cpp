@@ -88,7 +88,8 @@ namespace Svc {
         fileStatus == Os::FileSystem::OP_OK and
         fileSize >= static_cast<FwSignedSizeType>(sizeof(this->m_sequenceHeader))
     ) {
-      this->m_header.m_fileSize = static_cast<U32>(fileSize - sizeof(this->m_sequenceHeader));
+      this->m_header.m_fileSize =
+        static_cast<U32>(fileSize - static_cast<FwSignedSizeType>(sizeof(this->m_sequenceHeader)));
     }
     else {
       this->m_events.fileInvalid(
@@ -256,8 +257,8 @@ namespace Svc {
       const NATIVE_UINT_TYPE buffLen = this->m_buffer.getBuffLength();
       FW_ASSERT(
           buffLen == this->m_header.m_fileSize,
-          buffLen,
-          this->m_header.m_fileSize
+          static_cast<FwAssertArgType>(buffLen),
+          static_cast<FwAssertArgType>(this->m_header.m_fileSize)
       );
       this->m_crc.update(buffAddr, buffLen);
       this->m_crc.finalize();
@@ -435,7 +436,7 @@ namespace Svc {
     const U32 fixedBuffLen = comBuffer.getBuffLength();
     FW_ASSERT(
         fixedBuffLen == sizeof(cmdDescriptor) + sizeof(zeros),
-        fixedBuffLen
+        static_cast<FwAssertArgType>(fixedBuffLen)
     );
     const U32 totalBuffLen = fixedBuffLen + cmdLength;
     status = comBuffer.setBuffLen(totalBuffLen);

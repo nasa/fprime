@@ -93,13 +93,13 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum, Fw:
         Fw::ExternalSerializeBuffer wrapper(rawData, rawSize);
         status = wrapper.setBuffLen(rawSize);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-        portOut_out(port, wrapper);
+        portOut_out(static_cast<FwIndexType>(port), wrapper);
         // Deallocate the existing buffer
         dataInDeallocate_out(0, fwBuffer);
     } else if (type == HUB_TYPE_BUFFER) {
         // Fw::Buffers can reuse the existing data buffer as the storage type!  No deallocation done.
         fwBuffer.set(rawData, rawSize, fwBuffer.getContext());
-        buffersOut_out(port, fwBuffer);
+        buffersOut_out(static_cast<FwIndexType>(port), fwBuffer);
     } else if (type == HUB_TYPE_EVENT) {
         FwEventIdType id;
         Fw::Time timeTag;
@@ -117,7 +117,7 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum, Fw:
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
 
         // Send it!
-        this->LogSend_out(port, id, timeTag, severity, args);
+        this->LogSend_out(static_cast<FwIndexType>(port), id, timeTag, severity, args);
 
         // Deallocate the existing buffer
         dataInDeallocate_out(0, fwBuffer);
@@ -135,7 +135,7 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum, Fw:
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
 
         // Send it!
-        this->TlmSend_out(port, id, timeTag, val);
+        this->TlmSend_out(static_cast<FwIndexType>(port), id, timeTag, val);
 
         // Deallocate the existing buffer
         dataInDeallocate_out(0, fwBuffer);

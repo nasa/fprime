@@ -38,7 +38,7 @@ namespace Svc {
 
     void HealthImpl::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
         HealthComponentBase::init(queueDepth, instance);
-        this->queue_depth = queueDepth;
+        this->queue_depth = static_cast<U32>(queueDepth);
 
     }
 
@@ -48,12 +48,15 @@ namespace Svc {
         // make sure not asking for more pings than ports
         FW_ASSERT(numPingEntries <= NUM_PINGSEND_OUTPUT_PORTS);
 
-        this->m_numPingEntries = numPingEntries;
+        this->m_numPingEntries = static_cast<U32>(numPingEntries);
         this->m_watchDogCode = watchDogCode;
 
         // copy entries to private data
         for (NATIVE_INT_TYPE entry = 0; entry < numPingEntries; entry++) {
-            FW_ASSERT(pingEntries[entry].warnCycles <= pingEntries[entry].fatalCycles, pingEntries[entry].warnCycles, pingEntries[entry].fatalCycles);
+            FW_ASSERT(
+                pingEntries[entry].warnCycles <= pingEntries[entry].fatalCycles,
+                static_cast<FwAssertArgType>(pingEntries[entry].warnCycles),
+                static_cast<FwAssertArgType>(pingEntries[entry].fatalCycles));
             this->m_pingTrackerEntries[entry].entry = pingEntries[entry];
             this->m_pingTrackerEntries[entry].cycleCount = 0;
             this->m_pingTrackerEntries[entry].enabled = Fw::Enabled::ENABLED;
@@ -104,7 +107,7 @@ namespace Svc {
                         // start a ping
                         this->m_pingTrackerEntries[entry].key = this->m_key;
                         // send ping
-                        this->PingSend_out(entry, this->m_pingTrackerEntries[entry].key);
+                        this->PingSend_out(static_cast<FwIndexType>(entry), this->m_pingTrackerEntries[entry].key);
                         // increment key
                         this->m_key++;
                         // increment cycles for the entry
@@ -205,7 +208,7 @@ namespace Svc {
         // walk through entries
         for (NATIVE_UINT_TYPE tableEntry = 0; tableEntry < NUM_PINGSEND_OUTPUT_PORTS; tableEntry++) {
             if (entry == this->m_pingTrackerEntries[tableEntry].entry.entryName) {
-                return tableEntry;
+                return static_cast<NATIVE_INT_TYPE>(tableEntry);
             }
         }
         Fw::LogStringArg arg = entry;

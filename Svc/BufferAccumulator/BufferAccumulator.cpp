@@ -65,7 +65,7 @@ void BufferAccumulator ::allocateQueue(
 }
 
 void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {
-  allocator.deallocate(this->m_allocatorId, this->m_bufferMemory);
+  allocator.deallocate(static_cast<NATIVE_UINT_TYPE>(this->m_allocatorId), this->m_bufferMemory);
 }
 
 // ----------------------------------------------------------------------

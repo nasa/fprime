@@ -63,7 +63,7 @@ namespace Svc {
       this->m_sizeOfSize = sizeOfSize;
 
       FW_ASSERT(sizeOfSize <= sizeof(U32), sizeOfSize);
-      FW_ASSERT(m_maxSize > sizeOfSize, m_maxSize);
+      FW_ASSERT(m_maxSize > sizeOfSize, static_cast<FwAssertArgType>(m_maxSize));
   }
 
   void BufferLogger::File ::
@@ -201,7 +201,7 @@ namespace Svc {
         const U32 length
     )
   {
-    FW_ASSERT(length > 0, length);
+    FW_ASSERT(length > 0, static_cast<FwAssertArgType>(length));
     FwSignedSizeType size = length;
     const Os::File::Status fileStatus = this->m_osFile.write(reinterpret_cast<const U8*>(data), size);
     bool status;

@@ -180,7 +180,7 @@ namespace Svc {
       );
     } else {
       this->log_WARNING_HI_ShellCommandFailed(
-          logStringCommand, status
+          logStringCommand, static_cast<U32>(status)
       );
     }
     this->emitTelemetry(

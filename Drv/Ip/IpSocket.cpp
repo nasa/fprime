@@ -203,7 +203,7 @@ SocketIpStatus IpSocket::recv(U8* data, I32& req_read) {
     // Try to read until we fail to receive data
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
         // Attempt to recv out data
-        size = this->recvProtocol(data, req_read);
+        size = this->recvProtocol(data, static_cast<U32>(req_read));
         // Error is EINTR, just try again
         if (size == -1 && ((errno == EINTR) || errno == EAGAIN)) {
             continue;
