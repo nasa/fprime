@@ -24,4 +24,40 @@ MyLibrary/MyTopology/...
 
 You will see how to develop each of these parts of the library in the following sections.
 
-## 
+##  Required: `library.cmake`
+
+The `library.cmake` file is the only required file for an F´ library.  It consists of a series of `add_fprime_subdirectory` calls that include the various modules that are part of the library.  For libraries that just contain toolchains and platforms, this file may be empty. 
+
+**Sample `library.cmake`**
+```cmake
+####
+# library.cmake for MyLibrary
+####
+add_fprime_subdirectory("${CURRENT_CMAKE_LIST_DIR}/MyLibrary/Components/MyComponent")
+add_fprime_subdirectory("${CURRENT_CMAKE_LIST_DIR}/MyLibrary/MyTopology")
+```
+
+`library.cmake` should exist at the root of the library's directory structure.
+
+## Optional: Toolchain Folder and Toolchain Files
+
+F´ libraries often need to supply new toolchain integrations with F´. These libraries must define a `cmake/toolchain` folder and place toolchain files within that folder.  Any file ending in `.cmake` and placed within the `cmake/toolchain` folder will be available as a toolchain via `fprime-util generate <toolchain>`.
+
+The example toolchain above (`cmake/toolchain/ny-toolchain`) would be found as `my-toolchain` in `fprime-util`.
+
+```bash
+fprime-util generate my-toolchain
+```
+
+The `cmake/toolchain` folder may contain any number of toolchains and must be placed in the root of the library's directory structure.
+
+## Optional: Platform Folder and Platform Files
+
+In a similar manner to toolchains, platforms may be provided in the `cmake/platform` folder. Any file ending in `.cmake` and placed within the `cmake/platform` folder will be available to F´  to be loaded as a platform. Commonly, this means that a toolchain would include the line `set(FPRIME_PLATFORM <platform>)`.
+
+The example platform would thus need to inlcude `set(FPRIME_PLATFORM "my-platform")`.
+
+The `cmake/platform` folder may contain any number of platform files and must be placed in the root of the library's directory structure.
+
+
+
