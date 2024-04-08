@@ -17,7 +17,7 @@ This demo was developed on a Raspberry Pi 2 model B. The following directions ar
  
 **Disable use of the UART for the Linux console:**
 
-[Disable UART](https://www.raspberrypi.org/documentation/configuration/uart.md)
+[Disable UART](https://www.raspberrypi.com/documentation/computers/configuration.html)
 
 If the UART port is not set up correctly, there will be a file open error.
  
@@ -52,7 +52,7 @@ sudo apt update && sudo apt install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnu
 
 **Crosscompiling using CMake:**
 
-The following commands are described at length in the getting started [tutorial](../docs/Tutorials/HelloWorld/Tutorial.md). These commands will
+The following commands are described at length in the getting started [tutorial](../docs/Tutorials/README.md). These commands will
 go to the RPI directory and generate a build directory for the RPI example. This step generates a CMake Cache, sets the toolchain use to build the
 code and does an initial scan of the source tree. Since the RPI example sets a default F´ toolchain file in its CMakeLists.txt, we do not need to 
 supply one on the command line when generating the build. This only needs to be done once to prepare for the build because CMake will detect

@@ -26,19 +26,13 @@ It interconnects those application components with reusable service components:
 |FileDownlink|Component to downlink files to ground system| [SDD](../../Svc/FileDownlink/docs/sdd.md)|
 |FileManager|Component to perform various file operations| [SDD](../../Svc/FileManager/docs/sdd.md)|
 |FileUplink|Component to receive uplinked files from ground system| [SDD](../../Svc/FileUplink/docs/sdd.md)|
-|FPManager|Component to handle fault events| [SDD](../../Svc/FPManager/docs/sdd.md)|
-|FPStateMgr|Component to exercise fault behaviors| [SDD](../../Svc/FPStateMgr/docs/sdd.md)|
+|FPManager|Component to handle fatal events| [SDD](../../Svc/FatalHandler/docs/sdd.md)|
 |Health|Pings active components in the topology to verify their aliveness| [SDD](../../Svc/Health/docs/sdd.md)|
 |PrmDb|Loads sets of parameters from storage at startup and provides them to components| [SDD](../../Svc/PrmDb/docs/sdd.md)|
 |RateGroupDriver|Sends messages to ActiveRateGroup instances to run a cycle| [SDD](../../Svc/RateGroupDriver/docs/sdd.md)|
 |TlmChan|Provides storage for telemetry channels and periodically sends them to the ground system| [SDD](../../Svc/TlmChan/docs/sdd.md)|
 |PolyDb|Manages a database of polymorphic data values| [SDD](../../Svc/PolyDb/docs/sdd.md)|
 
-There is a set of application-level components developed on previous projects that can be used:
-
-|Component|Description|Link
-|---|---|---|
-|ThermalControl|Provided PID loops for thermal monitor and control| [SDD](../../Apps/ThermalControl/docs/sdd.md)|
 
 There is a set of useful utility components that can be used on supported operating systems:
 
@@ -46,14 +40,11 @@ There is a set of useful utility components that can be used on supported operat
 |---|---|---|
 |PosixTime|Provides time stamps for telemetry on a posix systems| [SDD](../../Svc/PosixTime/docs/sdd.md)|
 |PassiveConsoleTextLogger|Prints the text form of events to standard output| [SDD](../../Svc/PassiveConsoleTextLogger/docs/sdd.md)|
-|SocketGndIf|Provides a socket for communicating with the ground system| [SDD](../../Svc/SocketGndIf/docs/sdd.md)|
-
-Each software module that has a Software Design Document written can be found here: [SDD](Ref.md)
 
 
 ## 2. Topology
 
-The topology of the reference example is the interconnection of all the components used in the reference deployment (a deployment is a set of components connected together and compiled into a binary). There are a large number of connections so it is not feasible to show them all in one diagram. The following sections have views of the topology that show the connections for a particular purpose. The topology diagrams will be broken down into the core set of Command and Data Handling (C&DH) connections that would be reused from project to project as well as the connections unique to the reference example. The diagrams were generated using MagicDraw, while the [XML](../Top/RefTopologyAppAi.xml) defining the topology connections was generated using the MagicDraw plug-in developed for ISF.
+The topology of the reference example is the interconnection of all the components used in the reference deployment (a deployment is a set of components connected together and compiled into a binary). There are a large number of connections so it is not feasible to show them all in one diagram. The following sections have views of the topology that show the connections for a particular purpose. The topology diagrams will be broken down into the core set of Command and Data Handling (C&DH) connections that would be reused from project to project as well as the connections unique to the reference example. The diagrams were generated using MagicDraw, while the XML defining the topology connections was generated using the MagicDraw plug-in developed for ISF.
 
 ### 2.1 Commanding
 

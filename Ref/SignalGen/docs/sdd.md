@@ -25,8 +25,6 @@ The `Ref::SignalGen` component has the following component diagram:
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](SignalGen.html) [MD](SignalGen.md)
-
 ## 5. Module Checklists
 
 ## 6. Unit Testing
