@@ -1,4 +1,4 @@
-# How-To: Develop and F´ Library
+# How-To: Develop an F´ Library
 
 This guide will walk you through the structure and best practices in developing an F´ library.  F´ libraries are used to share modules (components, ports, topologies, etc.), toolchains, and platforms between F´ projects.  These libraries help with code reuse between projects by enabling direct sharing of F´ software.
 
@@ -13,21 +13,27 @@ This guide will walk you through the structure and best practices in developing 
 
 In this section, you will learn about the expected structure of an F´ library. An F´ library must have a `library.cmake` and may have any of the following items:
 
-1. `cmake/toolchain` Folder and Toolchain Files
-2. `cmake/platform` Folder and Platform Files
-3. Module Directories and Modules (Components, Ports, Topologies, etc.)
+1. Module Directories and Modules (Components, Ports, Topologies, etc.)
+2. `cmake/toolchain` Folder and Toolchain Files
+3. `cmake/platform` Folder and Platform Files
 
 That means that a complete F´ library might look like the following:
 
 ```bash
-library.cmake
-cmake/toolchain/my-toolchain.cmake
-cmake/platform/my-platform.cmake
-MyLibrary/Components/MyComponent/...
-MyLibrary/MyTopology/...
+my-library/
+├── cmake
+│   ├── platform
+│   └── toolchain
+├── MyLibrary
+│   ├── Components
+│   │   └── MyComponent
+│   │       └── ...
+│   └── MyDeployment
+│       └── ...
+└── library.cmake
 ```
 
-> Module directories shall be namespaced (i.e. `MyLibrary` above) to ensure that modules do not collide with F´ and other libraries. Placing directories like `Svc` directly at the root of the repository is *strongly* discouraged.
+> Module directories shall be namespaced (i.e. `MyLibrary` above) to ensure that modules do not collide with F´ and other libraries. Placing container directories (e.g. `Components`, `Svc`, `Drv`, etc.) directly at the root of the repository is *strongly* forbidden.
 
 You will see how to develop each of these parts of the library in the following sections.
 
@@ -46,11 +52,19 @@ add_fprime_subdirectory("${CURRENT_CMAKE_LIST_DIR}/MyLibrary/MyTopology")
 
 `library.cmake` should exist at the root of the library's directory structure.
 
+
+## Optional: F´ Module Directories
+
+F´ libraries share F´ code through modules. These module directories are created by `fprime-util new --component` or by hand and may include any F´ code (Components, Ports, Topologies, Data Types, etc.).  These types are made available to users of the library by ensuring that they are added to the `library.cmake` file.  The only restriction is that these component should be placed under a namespacing directory for the library (e.g. `MyLibrary`) to avoid collisions with other libraries and F´ code.
+
+Developing component, ports, topologies, etc. are the subject of our [tutorials](../Tutorials/README.md).
+
+
 ## Optional: Toolchain Folder and Toolchain Files
 
 F´ libraries often need to supply new toolchain integrations with F´. These libraries must define a `cmake/toolchain` folder and place toolchain files within that folder.  Any file ending in `.cmake` and placed within the `cmake/toolchain` folder will be available as a toolchain via `fprime-util generate <toolchain>`.
 
-The example toolchain above (`cmake/toolchain/ny-toolchain`) would be found as `my-toolchain` in `fprime-util`.
+The example toolchain above (`cmake/toolchain/my-toolchain`) would be found as `my-toolchain` in `fprime-util`.
 
 ```bash
 fprime-util generate my-toolchain
@@ -65,10 +79,6 @@ In a similar manner to toolchains, platforms may be provided in the `cmake/platf
 The example platform would thus need to include `set(FPRIME_PLATFORM "my-platform")`.
 
 The `cmake/platform` folder may contain any number of platform files and must be placed in the root of the library's directory structure.
-
-## Optional: F´ Module Directories
-
-F´ libraries share F´ code through modules. These module directories are created by `fprime-util new --component` or by hand and may include any F´ code (Components, Ports, Topologies, Data Types, etc.).  These types are made available to users of the library by ensuring that they are added to the `library.cmake` file.  The only restriction is that these component should be placed under a namespacing directory for the library (e.g. `MyLibrary`) to avoid collisions with other libraries and F´ code.
 
 ## Conclusion
 
