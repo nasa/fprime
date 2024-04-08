@@ -15,4 +15,4 @@ jobs:
       with:
           use-quiet-mode: 'yes'
           use-verbose-mode: 'yes'
-          config-file: .github/markdown-check/mlc-config.json
+          config-file: ./.github/actions/markdown-check/mlc-config.json
