@@ -7,7 +7,7 @@
     ],
     "replacementPatterns": [
       {
-        "pattern": "^[./]+api/cmake/",
+        "pattern": "^[./]*api/cmake/",
         "replacement": "{{BASEURL}}/UsersGuide/api/cmake/"
       }
     ]
