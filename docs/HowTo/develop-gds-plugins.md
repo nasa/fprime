@@ -211,7 +211,7 @@ class MyApp(GdsApp):
 
 ### Plugin Arguments
 
-Plugins can source arguments from the command line. Although, all types of pluigns can source arguments using the pattern
+Plugins can source arguments from the command line. Although, all types of plugins can source arguments using the pattern
 described here, you will see them shown with our application plugin.
 
 It is time to add in plugin arguments. This plugin will take one argument `--message` and will inject this message into
@@ -368,7 +368,7 @@ We can add our application plugin with the following additional line in the `pro
 my_app = "my_app:MyApp"
 ```
 
-Once these files have been written, the plugin can be installed locally for testing with the following commmand:
+Once these files have been written, the plugin can be installed locally for testing with the following command:
 
 ```
 cd /path/to/plugin/directory
@@ -378,7 +378,7 @@ pip install -e .
 > Users must be in the same virtual environment that the `fprime-gds` package has been installed into
 > `-e` allows local changes to take effect without a reinstall
 
-The first step in testing a plugin is to run `fprime-gds --help`. This should show arguments assoicated with your plugin.
+The first step in testing a plugin is to run `fprime-gds --help`. This should show arguments associated with your plugin.
 The plugins implemented here would produce the following output:
 
 ```
@@ -416,7 +416,7 @@ Plugins are implemented as python packages.  Thus plugins may be distributed in 
 2. Binary Distribution: send users a wheel of your package to install with `pip install /path/to/wheel`
 3. PyPI: distribute your wheel via PyPI
 
-A tutorial on python packaging including building wheels and uploading them to PyPI is availble from packaging.python.org:
+A tutorial on python packaging including building wheels and uploading them to PyPI is available from packaging.python.org:
 [https://packaging.python.org/en/latest/tutorials/packaging-projects/](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
 
 ## Conclusion
