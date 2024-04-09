@@ -6,4 +6,5 @@ This section of the documentation captures how-to guides for various F´ develop
 | Table of Contents                          |
 |--------------------------------------------|
 | [F´ GDS Plugins](./develop-gds-plugins.md) |
+| [F´ Libraries](./develop-fprime-libraries.md) |
 
