@@ -17,6 +17,7 @@
 - [numerical-types](Design/numerical-types.md)
 - [package-implementations](Design/package-implementations.md)
 ## HowTo
+- [develop-fprime-libraries](HowTo/develop-fprime-libraries.md)
 - [develop-gds-plugins](HowTo/develop-gds-plugins.md)
 - [general](HowTo/general.md)
 ## Tutorials
