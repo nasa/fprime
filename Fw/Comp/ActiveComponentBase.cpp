@@ -83,6 +83,10 @@ namespace Fw {
         return this->m_task.join();
     }
 
+    Os::Task::Status ActiveComponentBase::join(void** pointer) {
+       return this->m_task.join();
+    }
+
     void ActiveComponentBase::s_taskStateMachine(void* component_pointer) {
         FW_ASSERT(component_pointer != nullptr);
         // cast void* back to active component

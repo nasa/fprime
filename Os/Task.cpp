@@ -9,7 +9,7 @@ namespace Os {
 
 TaskInterface::Arguments::Arguments(const Fw::StringBase &name, const Os::TaskInterface::taskRoutine routine,
                                     void * const routine_argument, const FwSizeType priority,
-                                    const FwSizeType stackSize, const FwIndexType cpuAffinity,
+                                    const FwSizeType stackSize, const FwSizeType cpuAffinity,
                                     const PlatformUIntType identifier) :
     m_name(name),
     m_routine(routine),
@@ -22,21 +22,42 @@ TaskInterface::Arguments::Arguments(const Fw::StringBase &name, const Os::TaskIn
     FW_ASSERT(routine != nullptr);
 }
 
+Task::TaskRoutineWrapper::TaskRoutineWrapper(Task& self) : m_task(self) {}
+
 void Task::TaskRoutineWrapper::run(void* wrapper_pointer) {
     FW_ASSERT(wrapper_pointer != nullptr);
-    Task& task = *reinterpret_cast<Task*>(wrapper_pointer);
-    FW_ASSERT(task.m_wrapper.m_user_function != nullptr);
-    task.setStarted();
-    task.m_wrapper.m_user_function(task.m_wrapper.m_user_argument);
+    TaskRoutineWrapper& wrapper = *reinterpret_cast<TaskRoutineWrapper*>(wrapper_pointer);
+    FW_ASSERT(wrapper.m_user_function != nullptr);
+
+    wrapper.m_task.m_lock.lock();
+    wrapper.m_task.m_state = Task::State::RUNNING;
+    wrapper.m_task.m_lock.unlock();
+
+    // Invoke start code
+    wrapper.m_task.onStart();
+
+    // Update running state
+    wrapper.m_task.m_lock.lock();
+    wrapper.m_task.m_state = Task::State::RUNNING;
+    wrapper.m_task.m_lock.unlock();
+
+    // Call user function supplying the user argument
+    wrapper.m_user_function(wrapper.m_user_argument);
 }
 
-Task::Task() : m_handle_storage(), m_delegate(*TaskInterface::getDelegate(m_handle_storage)) {}
+TaskRegistry* Task::s_taskRegistry = nullptr;
+FwSizeType Task::s_numTasks = 0;
+Mutex Task::s_taskMutex = Mutex();
+
+
+Task::Task() : m_wrapper(*this), m_handle_storage(), m_delegate(*TaskInterface::getDelegate(m_handle_storage)) {}
 
 Task::~Task() {
     // If a registry has been registered, remove task from it
     if (Task::s_taskRegistry) {
         Task::s_taskRegistry->removeTask(this);
     }
+    // TODO: should we stop/join or just bail?
 }
 
 void Task::suspend() {
@@ -58,7 +79,7 @@ Task::Status Task::start(const Fw::StringBase &name, const taskRoutine routine, 
     return this->start(Task::Arguments(name, routine, arg,
                                        priority,
                                        stackSize,
-                                       static_cast<FwIndexType>(cpuAffinity),
+                                       cpuAffinity,
                                        static_cast<PlatformUIntType>(identifier)));
 }
 
@@ -68,16 +89,16 @@ Task::Status Task::start(const Task::Arguments& arguments) {
     FW_ASSERT(arguments.m_routine != nullptr);
     this->m_name = arguments.m_name;
 
-    // Set up our wrapper data
-    this->m_wrapper.m_user_function = arguments.m_routine;
-    this->m_wrapper.m_user_argument = arguments.m_routine_argument;
 
     // TODO: should this be made more efficient?
     Arguments wrapped_arguments = arguments;
+    // Intercept routine and argument with the local wrapper
+    this->m_wrapper.m_user_function = arguments.m_routine;
+    this->m_wrapper.m_user_argument = arguments.m_routine_argument;
     wrapped_arguments.m_routine = Task::TaskRoutineWrapper::run;
-    wrapped_arguments.m_routine_argument = this;
+    wrapped_arguments.m_routine_argument = &this->m_wrapper;
 
-    Task::Status status = this->m_delegate.start(arguments);
+    Task::Status status = this->m_delegate.start(wrapped_arguments);
     if (status == Task::Status::OP_OK) {
         Task::s_taskMutex.lock();
         Task::s_numTasks++;
@@ -89,6 +110,11 @@ Task::Status Task::start(const Task::Arguments& arguments) {
         }
     }
     return status;
+}
+
+void Task::onStart() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
+    this->m_delegate.onStart();
 }
 
 Task::Status Task::join() {
@@ -129,12 +155,6 @@ bool Task::isCooperative() {
 TaskHandle* Task::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
-}
-
-void Task::setStarted() {
-    this->m_lock.lock();
-    this->m_state = Task::State::RUNNING;
-    this->m_lock.unlock();
 }
 
 FwSizeType Task::getNumTasks() {

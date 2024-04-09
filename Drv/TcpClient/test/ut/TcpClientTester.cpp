@@ -16,6 +16,7 @@
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 
 Os::Log logger;
+const U64 SOCKET_RETRY_INTERVAL_MS = (SOCKET_RETRY_INTERVAL.getSeconds() * 1000) + (SOCKET_RETRY_INTERVAL.getUSeconds()/1000);
 
 namespace Drv {
 

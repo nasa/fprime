@@ -1,177 +1,129 @@
-#include <Os/Task.hpp>
-#include <Fw/Types/Assert.hpp>
-
-#include <pthread.h>
-#include <cerrno>
+// ======================================================================
+// \title Os/Posix/Task.cpp
+// \brief implementation of Posix implementation of Os::Task
+// ======================================================================
 #include <cstring>
-#include <ctime>
-#include <cstdio>
-#include <new>
-#include <sched.h>
+#include <unistd.h>
 #include <climits>
-#include <Fw/Logger/Logger.hpp>
+#include <pthread.h>
 
-#ifdef TGT_OS_TYPE_LINUX
-#include <features.h>
-#endif
-
+#include "Fw/Logger/Logger.hpp"
+#include "Fw/Types/Assert.hpp"
+#include "Os/Task.hpp"
 #include "Os/Posix/Task.hpp"
 #include "Os/Posix/error.hpp"
 
-static const NATIVE_INT_TYPE SCHED_POLICY = SCHED_RR;
-
-typedef void* (*pthread_func_ptr)(void*);
-
-void* pthread_entry_wrapper(void* arg) {
-    FW_ASSERT(arg);
-    Os::Task::TaskRoutineWrapper *task = reinterpret_cast<Os::Task::TaskRoutineWrapper*>(arg);
-    FW_ASSERT(task->routine);
-    task->routine(task->arg);
-    return nullptr;
-}
-
-
-
-
-
 namespace Os {
+namespace Posix {
+namespace Task {
     bool PosixTask::s_permissions_reported = false;
-    struct PriorityBounds {
-        PriorityBounds() {
-            // Check the priority bounds once
-            if (s_bounds.m_min_priority < 0 or s_bounds.m_max_priority < 0) {
-                Fw::Logger::logMsg("[WARNING] Min/max thread priorities unavailable: %s. Discarding user priorities.\n",
-                                   reinterpret_cast<POINTER_CAST>(strerror(errno)));
-            }
-        }
-        const PlatformIntType m_min_priority = ::sched_get_priority_min(SCHED_POLICY);
-        const PlatformIntType m_max_priority = ::sched_get_priority_max(SCHED_POLICY);
-        static PriorityBounds s_bounds;
-    };
+    static const PlatformIntType SCHED_POLICY = SCHED_RR;
 
+    typedef void* (*pthread_func_ptr)(void*);
 
-    void validate_arguments(Task::Arguments& arguments, bool no_permissions) {
-        const PlatformIntType min_priority = sched_get_priority_min(SCHED_POLICY);
-        const PlatformIntType max_priority = sched_get_priority_max(SCHED_POLICY);
-        FwSizeType priority = arguments.m_priority;
-        FwIndexType affinity = arguments.m_cpuAffinity;
-        FwIndexType stack = arguments.m_cpuAffinity;
-        // Check to ensure that these calls worked.  -1 is an error
-        if (PriorityBounds::s_bounds::m_min_priority < 0 or PriorityBounds::s_bounds::m_max_priority < 0) {
-            priority = Os::Task::TASK_DEFAULT;
-        }
-        // Check priority attributes
-        if (!expect_perm and priority != Task::TASK_DEFAULT) {
-            Fw::Logger::logMsg("[WARNING] Task priority set and permissions unavailable. Discarding priority.\n");
-            priority = Task::TASK_DEFAULT; //Action: use constant
-        }
-        if (priority != Task::TASK_DEFAULT and priority < static_cast<Task::ParamType>(min_priority)) {
-            Fw::Logger::logMsg("[WARNING] Low task priority of %d being clamped to %d\n", priority, static_cast<POINTER_CAST>(min_priority));
-            priority = static_cast<NATIVE_UINT_TYPE>(min_priority);
-        }
-        if (priority != Task::TASK_DEFAULT and priority > static_cast<Task::ParamType>(max_priority)) {
-            Fw::Logger::logMsg("[WARNING] High task priority of %d being clamped to %d\n", priority, static_cast<NATIVE_UINT_TYPE>(max_priority));
-            priority = static_cast<NATIVE_UINT_TYPE>(max_priority);
-        }
-        // Check the stack
-        if (stack != Task::TASK_DEFAULT and stack < PTHREAD_STACK_MIN) {
-            Fw::Logger::logMsg("[WARNING] Stack size %d too small, setting to minimum of %d\n", stack, static_cast<NATIVE_UINT_TYPE>(PTHREAD_STACK_MIN));
-            stack = static_cast<NATIVE_UINT_TYPE>(PTHREAD_STACK_MIN);
-        }
-        // Check CPU affinity
-        if (!expect_perm and affinity != Task::TASK_DEFAULT) {
-            Fw::Logger::logMsg("[WARNING] Cpu affinity set and permissions unavailable. Discarding affinity.\n");
-            affinity = Task::TASK_DEFAULT;
-        }
-        else if (priority != static_cast<FwSizeType>(Task::TASK_DEFAULT)) {
-            if (priority < static_cast<FwSizeType>(min_priority)) {
-                Fw::Logger::logMsg("[WARNING] Low task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
-                                   priority, min_priority);
-                priority = min_priority;
-            } else if (priority < static_cast<FwSizeType>(min_priority)) {
-                Fw::Logger::logMsg("[WARNING] High task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
-                                   priority, max_priority);
-                priority = max_priority;
-            }
+    void* pthread_entry_wrapper(void* wrapper_pointer) {
+        FW_ASSERT(wrapper_pointer != nullptr);
+        Os::Task::TaskRoutineWrapper& wrapper = *reinterpret_cast<Os::Task::TaskRoutineWrapper*>(wrapper_pointer);
+        wrapper.run(&wrapper);
+        return nullptr;
+    }
+
+    PlatformIntType set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
+        PlatformIntType status = PosixTaskHandle::SUCCESS;
+        FwSizeType stack = arguments.m_stackSize;
+        // Check for stack size multiple of page size
+        long page_size = sysconf(_SC_PAGESIZE);
+        if (stack % page_size) {
+            // Round-down to nearest page size multiple
+            FwSizeType rounded = (stack / page_size) * page_size;
+            Fw::Logger::logMsg(
+                    "[WARNING] %s stack size of %" PRI_FwSizeType " is not multiple of page size %ld, rounding to %" PRI_FwSizeType "\n",
+                    reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
+                    stack,
+                    page_size,
+                    rounded
+            );
+            stack = rounded;
         }
 
-        // TODO: Change PTHREAD_STACK_MIN to constant
-        if ((arguments.m_stackSize != Task::TASK_DEFAULT) and (arguments.m_stackSize < PTHREAD_STACK_MIN)) {
-            Fw::Logger::logMsg("[WARNING] Stack size %" PRI_FwSizeType " too small, clamping to %" PRI_FwSizeType "\n",
-                               arguments.m_stackSize, PTHREAD_STACK_MIN);
+        // Clamp invalid stack sizes
+        if (stack <= PTHREAD_STACK_MIN) {
+            Fw::Logger::logMsg(
+                    "[WARNING] %s stack size of %" PRI_FwSizeType "  is too small, clamping to %" PRI_FwSizeType "\n",
+                    reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
+                    stack,
+                    static_cast<FwSizeType>(PTHREAD_STACK_MIN)
+            );
             stack = PTHREAD_STACK_MIN;
         }
+        status = pthread_attr_setstacksize(&attributes, static_cast<PlatformIntType>(stack));
+        return status;
     }
 
-    Task::Status set_stack_size(pthread_attr_t& att, FwSizeType stack) {
-        // Set the stack size, if it has been supplied
-        if (stack != Task::TASK_DEFAULT) {
-            I32 stat = pthread_attr_setstacksize(&att, static_cast<PlatformIntType>(stack));
-            if (stat != 0) {
-                Fw::Logger::logMsg("pthread_attr_setstacksize: %s\n",
-                                   reinterpret_cast<POINTER_CAST>(strerror(stat)));
-                return Task::INVALID_STACK;
-            }
+    PlatformIntType set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
+        const FwSizeType min_priority = static_cast<FwSizeType>(sched_get_priority_min(SCHED_POLICY));
+        const FwSizeType max_priority = static_cast<FwSizeType>(sched_get_priority_max(SCHED_POLICY));
+        PlatformIntType status = PosixTaskHandle::SUCCESS;
+        FwSizeType priority = arguments.m_priority;
+
+        // Clamp to minimum priority
+        if (priority < min_priority) {
+            Fw::Logger::logMsg("[WARNING] %s low task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
+                               reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
+                               static_cast<PlatformPointerCastType>(priority),
+                               static_cast<PlatformPointerCastType>(min_priority));
+            priority = min_priority;
         }
-        return Task::OP_OK;
-    }
+        // Clamp to maximum priority
+        else if (priority < min_priority) {
+            Fw::Logger::logMsg("[WARNING] %s high task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
+                               reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
+                               static_cast<PlatformPointerCastType>(priority),
+                               static_cast<PlatformPointerCastType>(max_priority));
+            priority = max_priority;
+        }
 
-    Task::Status set_priority_params(pthread_attr_t& att, FwSizeType priority) {
-        if (priority != Task::TASK_DEFAULT) {
-            I32 stat = pthread_attr_setschedpolicy(&att, SCHED_POLICY);
-            if (stat != 0) {
-                Fw::Logger::logMsg("pthread_attr_setschedpolicy: %s\n", reinterpret_cast<POINTER_CAST>(strerror(stat)));
-                return Task::TASK_INVALID_PARAMS;
-            }
-
-            stat = pthread_attr_setinheritsched(&att, PTHREAD_EXPLICIT_SCHED);
-            if (stat != 0) {
-                Fw::Logger::logMsg("pthread_attr_setinheritsched: %s\n",
-                                   reinterpret_cast<POINTER_CAST>(strerror(stat)));
-                return Task::TASK_INVALID_PARAMS;
-            }
-
+        // Set attributes required for priority
+        status = pthread_attr_setschedpolicy(&attributes, SCHED_POLICY);
+        if (status == PosixTaskHandle::SUCCESS) {
+            status = pthread_attr_setinheritsched(&attributes, PTHREAD_EXPLICIT_SCHED);
+        }
+        if (status == PosixTaskHandle::SUCCESS) {
             sched_param schedParam;
             memset(&schedParam, 0, sizeof(sched_param));
-            schedParam.sched_priority =static_cast<int>(priority);
-            stat = pthread_attr_setschedparam(&att, &schedParam);
-            if (stat != 0) {
-                Fw::Logger::logMsg("pthread_attr_setschedparam: %s\n", reinterpret_cast<POINTER_CAST>(strerror(stat)));
-                return Task::TASK_INVALID_PARAMS;
-            }
+            schedParam.sched_priority = priority;
+            status = pthread_attr_setschedparam(&attributes, &schedParam);
         }
-        return Task::TASK_OK;
+        return status;
     }
 
-    Task::TaskStatus set_cpu_affinity(pthread_attr_t& att, NATIVE_UINT_TYPE cpuAffinity) {
-        if (cpuAffinity != Task::TASK_DEFAULT) {
-#if TGT_OS_TYPE_LINUX && __GLIBC__
-            cpu_set_t cpuset;
-            CPU_ZERO(&cpuset);
-            CPU_SET(cpuAffinity, &cpuset);
+    PlatformIntType set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
+        PlatformIntType status = 0;
+        const FwIndexType affinity = arguments.m_cpuAffinity;
 
-            I32 stat = pthread_attr_setaffinity_np(&att, sizeof(cpu_set_t), &cpuset);
-            if (stat != 0) {
-                Fw::Logger::logMsg("pthread_setaffinity_np: %i %s\n", cpuAffinity,
-                                   reinterpret_cast<POINTER_CAST>(strerror(stat)));
-                return Task::TASK_INVALID_PARAMS;
-            }
-#elif TGT_OS_TYPE_LINUX
-            Fw::Logger::logMsg("[WARNING] Setting CPU affinity is only available on Linux with glibc\n");
+// Feature set check for _GNU_SOURCE before using GNU only features
+#ifdef _GNU_SOURCE
+        cpu_set_t cpu_set;
+        CPU_ZERO(&cpu_set);
+        CPU_SET(affinity, &cpu_set);
+
+        // According to the man-page this function sets errno rather than returning an error status like other functions
+        status = pthread_attr_setaffinity_np(&attributes, sizeof(cpu_set_t), &cpu_set);
+        status = (status == PosixTaskHandle::SUCCESS) ? status : errno;
 #else
-            Fw::Logger::logMsg("[WARNING] Setting CPU affinity is only available on Linux\n");
+            Fw::Logger::logMsg("[WARNING] %s setting CPU affinity is only available with GNU pthreads\n",
+                               reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())));
 #endif
-        }
-        return Task::TASK_OK;
+        return status;
     }
 
 
 
-    Task::Status PosixTask::create(const Task::Arguments& arguments, const PosixTask::PermissionExpectation permissions) {
-        Task::Status status = Task::OP_OK;
-        PlatformIntType pthread_status = 0;
+    Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments, const PosixTask::PermissionExpectation permissions) {
+        Os::Task::Status status = Os::Task::OP_OK;
+        PlatformIntType pthread_status = PosixTaskHandle::SUCCESS;
         PosixTaskHandle& handle = this->m_handle;
-
+        const bool expect_permission = (permissions == EXPECT_PERMISSION);
         // TODO: validate arguments???
 
         // Initialize and clear pthread attributes
@@ -179,37 +131,37 @@ namespace Os {
         memset(&attributes, 0, sizeof(attributes));
         pthread_status = pthread_attr_init(&attributes);
 
-        // Check for valid status before continuing
-        if (pthread_status == 0) {
-            pthread_status = set_stack_size();
-            if (pthread_status == PosixTaskHandle::SUCCESS_RETURN_VALUE) {
-                pthread_status = set_priority_params();
-                if (pthread_status == PosixTaskHandle::SUCCESS_RETURN_VALUE) {
-                    pthread_status = set_cpu_affinity();
-                    if (pthread_status == PosixTaskHandle::SUCCESS_RETURN_VALUE) {
-                        pthread_status = pthread_create(handle.m_task_descriptor, &attributes, pthread_entry_wrapper,
-                                                        arg);
-                        if (pthread_status == PosixTaskHandle::SUCCESS_RETURN_VALUE) {
-                            handle.m_is_valid = true;
-                        }
-                    }
-                }
-            }
+        if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {
+            pthread_status = set_stack_size(attributes, arguments);
         }
+        if ((arguments.m_priority != Os::Task::TASK_DEFAULT) && (expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {
+            pthread_status = set_priority_params(attributes, arguments);
+        }
+        if ((arguments.m_cpuAffinity != Os::Task::TASK_DEFAULT) && (expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {
+            pthread_status = set_cpu_affinity(attributes, arguments);
+        }
+        if (pthread_status == PosixTaskHandle::SUCCESS) {
+            pthread_status = pthread_create(&handle.m_task_descriptor, &attributes, pthread_entry_wrapper,
+                                            arguments.m_routine_argument);
+        }
+        // Successful execution of all precious steps will result in a valid task handle
+        if (pthread_status == PosixTaskHandle::SUCCESS) {
+            handle.m_is_valid = true;
+        }
+
         (void) pthread_attr_destroy(&attributes);
         return Posix::posix_status_to_task_status(pthread_status);
-
     }
 
+    void PosixTask::onStart() {}
 
-    Task::Status PosixTask::start(const Arguments& arguments) {
+    Os::Task::Status PosixTask::start(const Arguments& arguments) {
         FW_ASSERT(arguments.m_routine != nullptr);
-        pthread_t* thread_handle = nullptr;
 
         // Try to create thread with assuming permissions
-        Task::Status status = this->create(arguments, PermissionExpectation::EXPECT_PERMISSION);
+        Os::Task::Status status = this->create(arguments, PermissionExpectation::EXPECT_PERMISSION);
         // Failure due to permission automatically retried
-        if (status == Task::Status::ERROR_PERMISSION) {
+        if (status == Os::Task::Status::ERROR_PERMISSION) {
             if (not PosixTask::s_permissions_reported) {
                 Fw::Logger::logMsg("\n");
                 Fw::Logger::logMsg("[NOTE] Task Permissions:\n");
@@ -225,17 +177,19 @@ namespace Os {
             }
             // Fallback with no permission
             status = this->create(arguments, PermissionExpectation::EXPECT_NO_PERMISSION);
+        } else if (status != Os::Task::Status::OP_OK) {
+            Fw::Logger::logMsg("[ERROR] Failed to create task with status: %d", static_cast<PlatformIntType>(status));
         }
         return status;
     }
 
-    Task::Status PosixTask::join() {
-        Task::Status status = Task::Status::JOIN_ERROR;
+    Os::Task::Status PosixTask::join() {
+        Os::Task::Status status = Os::Task::Status::JOIN_ERROR;
         if (not this->m_handle.m_is_valid) {
-            status = Task::Status::INVALID_HANDLE;
+            status = Os::Task::Status::INVALID_HANDLE;
         } else {
             PlatformIntType stat = ::pthread_join(this->m_handle.m_task_descriptor, nullptr);
-            status = (stat == PosixTaskHandle::SUCCESS_RETURN_VALUE) ? Task::Status::OP_OK : Task::Status::JOIN_ERROR;
+            status = (stat == PosixTaskHandle::SUCCESS) ? Os::Task::Status::OP_OK : Os::Task::Status::JOIN_ERROR;
         }
         return status;
     }
@@ -250,11 +204,13 @@ namespace Os {
 
     // Note: not implemented for Posix threads. Must be manually done using a mutex or other blocking construct as there
     // is no top-level pthreads support for suspend and resume.
-    void PosixTask::suspend(Task::SuspensionType suspensionType) {
+    void PosixTask::suspend(Os::Task::SuspensionType suspensionType) {
         FW_ASSERT(0);
     }
 
     void PosixTask::resume() {
         FW_ASSERT(0);
     }
-}
+} // end namespace Task
+} // end namespace Posix
+} // end namespace Os

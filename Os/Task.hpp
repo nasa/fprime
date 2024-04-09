@@ -6,6 +6,7 @@
 #define Os_Task_hpp_
 
 #include <FpConfig.hpp>
+#include <Fw/Time/Time.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/TaskString.hpp>
 #include <Os/Mutex.hpp>
@@ -53,7 +54,7 @@ namespace Os {
                 UNKNOWN
             };
 
-            //! prototype for task routine started in task context
+            //! Prototype for task routine started in task context
             typedef void (*taskRoutine)(void* ptr);
 
             class Arguments {
@@ -74,7 +75,7 @@ namespace Os {
                           void* const routine_argument = nullptr,
                           const FwSizeType priority = TASK_DEFAULT,
                           const FwSizeType stackSize = TASK_DEFAULT,
-                          const FwIndexType cpuAffinity = static_cast<FwIndexType>(TASK_DEFAULT),
+                          const FwSizeType cpuAffinity = TASK_DEFAULT,
                           const PlatformUIntType identifier = static_cast<PlatformUIntType>(TASK_DEFAULT));
 
               public:
@@ -83,7 +84,7 @@ namespace Os {
                 void* m_routine_argument;
                 FwSizeType m_priority;
                 FwSizeType m_stackSize;
-                FwIndexType m_cpuAffinity;
+                FwSizeType m_cpuAffinity;
                 PlatformUIntType m_identifier;
             };
 
@@ -93,7 +94,7 @@ namespace Os {
             TaskInterface() = default;
 
             //! \brief default virtual destructor
-            virtual ~TaskInterface();
+            virtual ~TaskInterface() = default;
 
             //! \brief copy constructor is forbidden
             TaskInterface(const TaskInterface& other) = delete;
@@ -116,13 +117,12 @@ namespace Os {
 
             //! \brief delay the current task
             //!
-            //! Delays, or sleeps, the current task by the supplied number of milliseconds. In non-preempting
-            //! implementations the task will resume no earlier than expected but an exact wake-up time is not
-            //! guaranteed.
+            //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
+            //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
             //!
-            //! \param msecs delay time in milliseconds
+            //! \param interval: delay time
             //! \return status of the delay
-            static Status delay(NATIVE_UINT_TYPE msecs);
+            static Status delay(Fw::Time interval);
 
             //! \brief provide a pointer to a task delegate object
             //!
@@ -149,13 +149,16 @@ namespace Os {
             // Implementation functions (instance) to be supplied by the Os::TaskInterface children
             // =================
 
+            //! \brief perform required task start actions
+            virtual void onStart() = 0;
+
             //! \brief block until the task has ended
             //!
             //! Blocks the current (calling) task until this task execution has ended. Callers should ensure that any
             //! signals required to stop this task have already been emitted or will be emitted by another task.
             //!
             //! \return status of the block
-            virtual Status join() = 0; //!< Wait for task to finish
+            virtual Status join() = 0;
 
             //! \brief suspend the task given the suspension type
             //!
@@ -199,7 +202,28 @@ namespace Os {
     //! parent class. Instead it wraps a delegate provided by `TaskInterface::getDelegate()` to provide system specific
     //! behaviour.
     class Task final : public TaskInterface {
+        // Required for access to m_handle_storage for static assertions against actual storage
+        friend TaskInterface* TaskInterface::getDelegate(U8*);
       public:
+        static constexpr FwSizeType TASK_DEFAULT = std::numeric_limits<FwSizeType>::max();
+        //! Wrapper for task routine that ensures `onStart()` is called once the task actually begins
+        // TODO: does this belong here or in the parent class
+        class TaskRoutineWrapper {
+          public:
+            TaskRoutineWrapper(Task& self);
+
+            //! \brief run the task routine wrapper
+            //!
+            //! Sets the Os::Task to started via the setStarted method. Then runs the user function passing in the
+            //! user argument.
+            //! \param task_pointer: pointer to TaskRoutineWrapper being run
+            static void run(void* task_pointer);
+
+            Task& m_task; //!< Reference to owning task
+            taskRoutine m_user_function = nullptr; //!< User function to run once started
+            void* m_user_argument = nullptr; //!<  Argument to user function
+        };
+
         //! \brief backwards-compatible parameter type
         typedef FwSizeType ParamType;
 
@@ -261,6 +285,9 @@ namespace Os {
         //! \return status of the task start
         Status start(const Arguments& arguments) override;
 
+        //! \brief perform delegate's required task start actions
+        void onStart() override;
+
         //! \brief block until the task has ended
         //!
         //! Blocks the current (calling) task until this task execution has ended. Callers should ensure that any
@@ -301,25 +328,6 @@ namespace Os {
         static void registerTaskRegistry(TaskRegistry* registry);
 
       PRIVATE:
-        //! \brief set the task to started
-        //!
-        //! Used to indicate that the task is now fully started. This works around a VxWorks race condition.
-        void setStarted();
-
-        //! Wrapper for task routine that ensures `setStarted()` is called once the task actually begins
-        class TaskRoutineWrapper {
-          public:
-            //! \brief run the task routine wrapper
-            //!
-            //! Sets the Os::Task to started via the setStarted method. Then runs the user function passing in the
-            //! user argument.
-            //! \param wrapper_pointer: pointer to TaskRoutineWrapper being run
-            static void run(void* wrapper_pointer);
-
-            taskRoutine m_user_function = nullptr; //!< User function to run once started
-            void* m_user_argument = nullptr; //!<  Argument to user function
-        };
-
         static TaskRegistry* s_taskRegistry; //!< Pointer to registered task registry
         static FwSizeType s_numTasks; //!< Stores the number of tasks created.
         static Mutex s_taskMutex; //!< Guards s_numTasks
@@ -329,8 +337,7 @@ namespace Os {
         Mutex m_lock; //!< Guards state transitions
         TaskRoutineWrapper m_wrapper; //!< Concrete storage for task routine wrapper
 
-        NATIVE_INT_TYPE m_identifier = 0; //!< thread independent identifier
-        // TODO: put in thread handle            TaskRoutineWrapper m_routineWrapper; //! Contains task entrypoint and argument for task wrapper
+        PlatformIntType m_identifier = 0; //!< thread independent identifier
 
         // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
         // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in

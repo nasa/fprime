@@ -1,6 +1,6 @@
 // ======================================================================
-// \title Os/Task.hpp
-// \brief common function definitions for Os::Task
+// \title Os/Posix/Task.hpp
+// \brief definitions of Posix implementation of Os::Task
 // ======================================================================
 #ifndef Os_Posix_Task_hpp_
 #define Os_Posix_Task_hpp_
@@ -14,15 +14,15 @@
 
 #include <Os/TaskId.hpp>
 #include <Fw/Deprecate.hpp>
-#include <limits>
 
 namespace Os {
+namespace Posix {
+namespace Task {
 
     //! TaskHandle class definition for posix implementations.
     //!
     struct PosixTaskHandle : public TaskHandle {
-        static constexpr pthread_t* INVALID_THREAD_DESCRIPTOR = nullptr;
-        static constexpr PlatformIntType SUCCESS_RETURN_VALUE = 0;
+        static constexpr PlatformIntType SUCCESS = 0;
 
         //! Posix task descriptor
         pthread_t m_task_descriptor;
@@ -51,6 +51,10 @@ namespace Os {
 
         //! \brief assignment operator is forbidden
         PosixTask& operator=(const PosixTask& other) = delete;
+
+
+        //! \brief perform required task start actions
+        void onStart() override;
 
         //! \brief start the task
         //!
@@ -105,11 +109,12 @@ namespace Os {
         //! \param arguments: arguments used to set priority, affinity, etc
         //! \param permissions: whether to expect permissions or not
         //! \return OP_OK on success, or an error
-        Status create(const Task::Arguments& arguments, const PosixTask::PermissionExpectation permissions);
+        Status create(const Os::Task::Arguments& arguments, const PosixTask::PermissionExpectation permissions);
 
-        static bool s_permissions_reported;
         PosixTaskHandle m_handle; //!< Posix task tracking
+        static bool s_permissions_reported; //!< Permission errors have been reported
     };
-}
-
+} // end namespace Task
+} // end namespace Posix
+} // end namespace Os
 #endif

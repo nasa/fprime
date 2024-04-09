@@ -169,7 +169,7 @@ void setupTopology(const TopologyState& state) {
 Os::Mutex cycleLock;
 volatile bool cycleFlag = true;
 
-void startSimulatedCycle(U32 milliseconds) {
+void startSimulatedCycle(Fw::Time interval) {
     cycleLock.lock();
     bool cycling = cycleFlag;
     cycleLock.unLock();
@@ -177,7 +177,7 @@ void startSimulatedCycle(U32 milliseconds) {
     // Main loop
     while (cycling) {
         Ref::blockDrv.callIsr();
-        Os::Task::delay(milliseconds);
+        Os::Task::delay(interval);
 
         cycleLock.lock();
         cycling = cycleFlag;

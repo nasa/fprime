@@ -78,7 +78,7 @@ void teardownTopology(const TopologyState& state);
  *
  * \param milliseconds: milliseconds to delay for each cycle. Default: 1000 or 1Hz.
  */
-void startSimulatedCycle(U32 milliseconds = 1000);
+void startSimulatedCycle(Fw::Time interval);
 
 /**
  * \brief stop the simulated cycle started by startSimulatedCycle
