@@ -131,6 +131,7 @@ Example: Type Descriptor for booleans
 ```
 
 ## String Type Descriptors
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | **String** representing the FPP type name |  `string` | true |
@@ -206,6 +207,7 @@ module M1 {
 
 
 ## Enumeration Type Definition
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `kind` | The kind of type | `enum` | true |
@@ -216,6 +218,7 @@ module M1 {
 | `annotation` | User-defined annotation | **String** | false |
 
 #### Enumerated Constant Descriptors
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | Name of the enumerated constant | **String** | true |
@@ -266,6 +269,7 @@ module M1 {
 ## Struct Type Definition
 
 ### Struct Type Definition
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `kind` | The kind of type | `struct` | true |
@@ -275,6 +279,7 @@ module M1 {
 | `annotation` | User-defined annotation | **String** extracted from FPP model | false |
 
 ### Struct Member Descriptor
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `type` | [Type Descriptor](#type-descriptors) of member | [Type Descriptor](#type-descriptors) | true |
@@ -407,18 +412,21 @@ Example JSON of a struct:
 
 ## Invalid Values
 ### Null Values
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | **String** indicating that the value is null | null | true |
 | `kind` | **String** indicating that the kind of value is invalid | invalid | true |
 
 ### Infinity Values
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | **String** indicating that the value is infinity|  infinity | true |
 | `kind` | **String** indicating that the kind of value is invalid | invalid | true |
 
 ### Negative Infinity Values
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | **String** indicating that the value is negative infinity |  negativeInfinity | true |
@@ -453,6 +461,7 @@ Formal Parameters are used in Commands and Events definitions.
 ```
 
 ## Commands
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | Fully qualified name of the command | Period-separated **String** | true |
@@ -505,6 +514,7 @@ JSON representation:
 ```
 
 ## Telemetry Channels
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | Fully qualified name of the telemetry channel | Period-separated **String** | true |
@@ -554,6 +564,7 @@ telemetry Channel1: F64 \
 ```
 
 ## Events
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | Fully qualified name of the event | Period-separated **String** | true |
@@ -621,6 +632,7 @@ event Event1(
 ```
 
 ## Parameters
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | Fully qualified name of the parameter | Period-separated **String** | true |
@@ -655,6 +667,7 @@ param Parameter1: U32 \
 
 # Data Products
 ## Records
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | Fully qualified name of the record | Period-separated **String** | true |
@@ -702,6 +715,7 @@ product record Record1: U32 id 0x102
 ```
 
 ## Containers
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `name` | Fully qualified name of the container | Period-separated **String** | true |
@@ -746,6 +760,7 @@ product container Container2 default priority 10
 
 # Dictionaries
 ## Dictionary Metadata
+
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
 | `deploymentName` | **String** representing the deployment name | **String** | true |
@@ -764,6 +779,7 @@ product container Container2 default priority 10
 ```
 
 ## Dictionary Content
+
 | Field | Content | Required |
 | ----- | ------- | -------- |
 | `metadata` | [Dictionary Metadata](#dictionary-metadata) | true |
