@@ -43,7 +43,7 @@ namespace Os {
       (void) pthread_mutex_destroy(&this->queueLock);
     }
     bool create(NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
-      return queue.create(static_cast<NATIVE_UINT_TYPE>(depth), msgSize);
+      return queue.create(static_cast<NATIVE_UINT_TYPE>(depth), static_cast<NATIVE_UINT_TYPE>(msgSize));
     }
     BufferQueue queue;
     pthread_cond_t queueNotEmpty;
