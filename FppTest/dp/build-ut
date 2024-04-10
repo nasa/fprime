@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+dir=`dirname $0`
+cd $dir
+
+(cd ..; find . -name '*gcda' | xargs rm)
+fprime-util build --ut

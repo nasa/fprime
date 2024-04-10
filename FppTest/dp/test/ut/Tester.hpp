@@ -83,7 +83,7 @@ class Tester : public DpTestGTestBase {
     //! productRecvIn with Container 6 (FAILURE)
     void productRecvIn_Container6_FAILURE();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handlers for data product ports
     // ----------------------------------------------------------------------
@@ -93,7 +93,7 @@ class Tester : public DpTestGTestBase {
                                       Fw::Buffer& buffer  //!< The buffer
                                       ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------
@@ -111,7 +111,7 @@ class Tester : public DpTestGTestBase {
     Fw::Time randomizeTestTime();
 
     //! Generate a random string
-    void generateRandomString(Fw::StringBase& str //!< The string (output)
+    static void generateRandomString(Fw::StringBase& str //!< The string (output)
         );
 
     //! Invoke productRecvIn and check header
@@ -130,7 +130,7 @@ class Tester : public DpTestGTestBase {
                                     Fw::Buffer buffer  //!< The buffer
     );
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Variables
     // ----------------------------------------------------------------------

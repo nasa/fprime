@@ -167,7 +167,7 @@ class DpTest : public DpTestComponentBase {
     const DataArrayRecordData& dataArrayRecordData;
 
     //! StringRecord data
-    const Fw::String stringRecordData;
+    const Fw::StringBase& stringRecordData;
 
     //! StringArrayRecord data
     const StringArrayRecordData& stringArrayRecordData;

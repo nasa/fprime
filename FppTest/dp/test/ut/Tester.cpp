@@ -7,7 +7,9 @@
 #include <cstdio>
 #include <cstring>
 
+#include "FppTest/dp/FppConstantsAc.hpp"
 #include "FppTest/dp/test/ut/Tester.hpp"
+#include "Fw/Types/ExternalString.hpp"
 #include "STest/Pick/Pick.hpp"
 
 namespace FppTest {
@@ -41,7 +43,7 @@ Tester::Tester()
     this->initComponents();
     this->connectPorts();
     this->component.setIdBase(ID_BASE);
-    // Fill in arrays with random data
+    // Fill in arrays and strings with random data
     for (U8& elt : this->u8ArrayRecordData) {
         elt = static_cast<U8>(STest::Pick::any());
     }
@@ -51,8 +53,9 @@ Tester::Tester()
     for (DpTest_Data& elt : this->dataArrayRecordData) {
         elt.set(static_cast<U16>(STest::Pick::any()));
     }
+    generateRandomString(this->stringRecordData);
     for (Fw::String& elt : this->stringArrayRecordData) {
-        elt = "0123456789";
+        generateRandomString(elt);
     }
 }
 
@@ -246,8 +249,11 @@ void Tester::productRecvIn_Container5_FAILURE() {
 void Tester::productRecvIn_Container6_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Construct the possibly truncated string
+    char esData[DpTest_stringSize];
+    Fw::ExternalString es(esData, sizeof esData, this->stringRecordData);
     // Invoke the port and check the header
-    this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container6, this->stringRecordData.serializedSize(),
+    this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container6, es.serializedSize(),
                                              DpTest::ContainerPriority::Container6, this->container6Buffer, buffer,
                                              expectedNumElts);
     // Check the data
@@ -262,7 +268,7 @@ void Tester::productRecvIn_Container6_SUCCESS() {
         ASSERT_EQ(id, expectedId);
         status = serialRepr.deserialize(elt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-        ASSERT_EQ(elt, this->component.stringRecordData);
+        ASSERT_EQ(elt, es);
     }
 }
 
@@ -290,11 +296,11 @@ void Tester::generateRandomString(Fw::StringBase& str) {
     const FwSizeType length = STest::Pick::lowerUpper(0, MAX_STRING_LENGTH);
     // Fill buffer with a random null-terminated string with that length
     FwSizeType i = 0;
-    for ( ; i < length; i++) {
+    for (; i < length; i++) {
         U32 u32 = STest::Pick::lowerUpper(1, std::numeric_limits<char>::max());
         buffer[i] = static_cast<char>(u32);
     }
-    FW_ASSERT(i < MAX_STRING_LENGTH, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(MAX_STRING_LENGTH));
+    FW_ASSERT(i <= sizeof buffer, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(MAX_STRING_LENGTH));
     buffer[i] = 0;
     // Copy the contents of buffer into str
     str.format("%s", buffer);

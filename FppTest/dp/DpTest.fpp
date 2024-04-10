@@ -4,6 +4,12 @@ module FppTest {
   active component DpTest {
 
     # ----------------------------------------------------------------------
+    # Constants 
+    # ----------------------------------------------------------------------
+
+    constant stringSize = 80
+
+    # ----------------------------------------------------------------------
     # Types
     # ----------------------------------------------------------------------
 
@@ -59,10 +65,10 @@ module FppTest {
     product record DataArrayRecord: Data array id 500
 
     @ Record 6
-    product record StringRecord: string id 600
+    product record StringRecord: string size stringSize id 600
 
     @ Record 7
-    product record StringArrayRecord: string array id 700
+    product record StringArrayRecord: string size stringSize array id 700
 
     # ----------------------------------------------------------------------
     # Containers
