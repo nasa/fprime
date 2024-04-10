@@ -14,7 +14,7 @@ function(version_add_global_target TARGET)
     endif()
     add_custom_target("${TARGET}" ALL BYPRODUCTS "${OUTPUT_FILE}"
         COMMAND "${CMAKE_COMMAND}" -E env "PYTHONPATH=${PYTHONPATH}:${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/src"
-            "${FPRIME_VERSION_SCRIPT}" "${OUTPUT_FILE}.tmp" "${OPTIONAL_CHECK_ARG}"
+            "FPRIME_PROJECT_ROOT=${FPRIME_PROJECT_ROOT}" "FPRIME_FRAMEWORK_PATH=${FPRIME_FRAMEWORK_PATH}" "${FPRIME_VERSION_SCRIPT}" "${OUTPUT_FILE}.tmp" "${OPTIONAL_CHECK_ARG}"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_FILE}.tmp" "${OUTPUT_FILE}"
         WORKING_DIRECTORY "${FPRIME_PROJECT_ROOT}"
     )

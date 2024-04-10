@@ -47,7 +47,7 @@ def create_version_file(fid, framework_version, project_version):
     fid.write(
         'static const char* FRAMEWORK_VERSION = "{}";\n'.format(framework_version)
     )
-    fid.write('static const char* PROJECT_VERSION = "{}";\n'.format(framework_version))
+    fid.write('static const char* PROJECT_VERSION = "{}";\n'.format(project_version))
     fid.write("\n")
     fid.write("#endif\n")
     fid.write("\n")
@@ -76,6 +76,7 @@ def main():
     # Build the version output
     fprime_version = get_fprime_version()
     project_version = get_project_version()
+    #print("Project Version: ",project_version)
     create_version_file(args.output, fprime_version, project_version)
 
     # Check version if asked to do so
