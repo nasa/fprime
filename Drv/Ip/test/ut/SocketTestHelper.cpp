@@ -65,7 +65,7 @@ bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations) {
         if (open == socket.isOpened()) {
             return true;
         }
-        Os::Task::delay(10);
+        Os::Task::delay(Fw::Time(0, 10000));
     }
     return false;
 }
@@ -75,7 +75,7 @@ bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations) {
         if (open == socket.isStarted()) {
             return true;
         }
-        Os::Task::delay(10);
+        Os::Task::delay(Fw::Time(0, 10000));
     }
     return false;
 }

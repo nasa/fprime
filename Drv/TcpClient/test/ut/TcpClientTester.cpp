@@ -45,7 +45,7 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
-        this->component.startSocketTask(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.start(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
     }
 
     // Loop through a bunch of client disconnects
@@ -88,8 +88,8 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
         }
         // Properly stop the client on the last iteration
         if ((1 + i) == iterations && recv_thread) {
-            this->component.stopSocketTask();
-            this->component.joinSocketTask(nullptr);
+            this->component.stop();
+            this->component.join();
         } else {
             this->component.close();
         }
