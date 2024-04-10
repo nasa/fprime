@@ -103,13 +103,13 @@ namespace Svc {
             const Svc::SendFileRequestPortStrings::StringSize100& destFileName, //!< Path to store downlinked file at
             U32 offset, //!< Amount of data in bytes to downlink from file. 0 to read until end of file
             U32 length //!< Amount of data in bytes to downlink from file. 0 to read until end of file
-        );
+        ) override;
 
         //! Handler implementation for pingOut
         void from_pingOut_handler(
             NATIVE_INT_TYPE portNum, //!< The port number
             U32 key //!< Value to return to pinger
-        );
+        ) override;
 
         void textLogIn(
             FwEventIdType id, //!< The event ID
