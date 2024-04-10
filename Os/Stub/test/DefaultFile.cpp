@@ -7,7 +7,7 @@
 
 namespace Os {
 
-//! \brief get a delegate for FileInterface that intercepts calls for parameter database testing
+//! \brief get a delegate for FileInterface that intercepts calls for  for stub test file usage
 //! \param aligned_new_memory: aligned memory to fill
 //! \param to_copy: pointer to copy-constructor input
 //! \return: pointer to delegate
