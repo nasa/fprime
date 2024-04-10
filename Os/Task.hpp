@@ -8,10 +8,10 @@
 #include <FpConfig.hpp>
 #include <Fw/Time/Time.hpp>
 #include <Fw/Types/Serializable.hpp>
+#include <Os/Os.hpp>
 #include <Os/TaskString.hpp>
 #include <Os/Mutex.hpp>
 
-#include <Os/TaskId.hpp>
 #include <Fw/Deprecate.hpp>
 #include <limits>
 
@@ -143,7 +143,7 @@ namespace Os {
             //!
             //! \return result of placement new, must be equivalent to `aligned_placement_new_memory`
             //!
-            static TaskInterface* getDelegate(U8* aligned_placement_new_memory);
+            static TaskInterface* getDelegate(HandleStorage& aligned_placement_new_memory);
 
             // =================
             // Implementation functions (instance) to be supplied by the Os::TaskInterface children
@@ -202,8 +202,6 @@ namespace Os {
     //! parent class. Instead it wraps a delegate provided by `TaskInterface::getDelegate()` to provide system specific
     //! behaviour.
     class Task final : public TaskInterface {
-        // Required for access to m_handle_storage for static assertions against actual storage
-        friend TaskInterface* TaskInterface::getDelegate(U8*);
       public:
         static constexpr FwSizeType TASK_DEFAULT = std::numeric_limits<FwSizeType>::max();
         //! Wrapper for task routine that ensures `onStart()` is called once the task actually begins
@@ -343,7 +341,7 @@ namespace Os {
         // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
         // the byte-array here and set `handle` to that address for storage.
         //
-        alignas(FW_HANDLE_ALIGNMENT) U8 m_handle_storage[FW_HANDLE_MAX_SIZE]; //!< Storage for aligned FileHandle data
+        alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage; //!< Storage for aligned FileHandle data
         TaskInterface& m_delegate; //!< Delegate for the real implementation
     };
 

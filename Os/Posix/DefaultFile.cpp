@@ -7,7 +7,7 @@
 #include "Os/Delegate.hpp"
 
 namespace Os {
-FileInterface* FileInterface::getDelegate(U8* aligned_new_memory, const FileInterface* to_copy) {
+FileInterface* FileInterface::getDelegate(HandleStorage& aligned_new_memory, const FileInterface* to_copy) {
     return Os::Delegate::makeDelegate<FileInterface, Os::Posix::File::PosixFile>(aligned_new_memory, to_copy);
 }
 }

@@ -5,6 +5,7 @@
 #include <new>
 #include <type_traits>
 #include "Fw/Types/Assert.hpp"
+#include "Os/Os.hpp"
 #ifndef OS_DELEGATE_HPP_
 #define OS_DELEGATE_HPP_
 namespace Os {
@@ -42,7 +43,7 @@ namespace Delegate {
 //! \param aligned_new_memory: memory to be filled via placement new call
 //! \return pointer to implementation result of placement new
 template<class Interface, class Implementation>
-inline Interface *makeDelegate(U8 *aligned_new_memory) {
+inline Interface *makeDelegate(HandleStorage& aligned_new_memory) {
     FW_ASSERT(aligned_new_memory != nullptr);
     // Ensure prerequisites before performing placement new
     static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
@@ -86,12 +87,12 @@ inline Interface *makeDelegate(U8 *aligned_new_memory) {
 //! \param to_copy: pointer to Interface to be copied by copy constructor
 //! \return pointer to implementation result of placement new
 template<class Interface, class Implementation>
-inline Interface *makeDelegate(U8 *aligned_new_memory, const Interface *to_copy) {
+inline Interface *makeDelegate(HandleStorage& aligned_new_memory, const Interface *to_copy) {
     FW_ASSERT(aligned_new_memory != nullptr);
     const Implementation *copy_me = reinterpret_cast<const Implementation *>(to_copy);
     // Ensure prerequisites before performing placement new
     static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
-    static_assert(sizeof(Implementation) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
+    static_assert(sizeof(Implementation) <= sizeof(aligned_new_memory), "Handle size not large enough");
     static_assert((FW_HANDLE_ALIGNMENT % alignof(Implementation)) == 0, "Handle alignment invalid");
     // Placement new the object and ensure non-null result
     Implementation *interface = nullptr;

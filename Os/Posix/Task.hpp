@@ -5,14 +5,13 @@
 #ifndef Os_Posix_Task_hpp_
 #define Os_Posix_Task_hpp_
 
+#include <pthread.h>
 #include <Os/Task.hpp>
 
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/TaskString.hpp>
 #include <Os/Mutex.hpp>
-
-#include <Os/TaskId.hpp>
 #include <Fw/Deprecate.hpp>
 
 namespace Os {
