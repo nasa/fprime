@@ -58,12 +58,13 @@ Tester::~Tester() {}
 void Tester::schedIn_OK() {
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_PRODUCT_REQUEST_SIZE(5);
+    ASSERT_PRODUCT_REQUEST_SIZE(6);
     ASSERT_PRODUCT_REQUEST(0, ID_BASE + DpTest::ContainerId::Container1, FwSizeType(DpTest::CONTAINER_1_PACKET_SIZE));
     ASSERT_PRODUCT_REQUEST(1, ID_BASE + DpTest::ContainerId::Container2, FwSizeType(DpTest::CONTAINER_2_PACKET_SIZE));
     ASSERT_PRODUCT_REQUEST(2, ID_BASE + DpTest::ContainerId::Container3, FwSizeType(DpTest::CONTAINER_3_PACKET_SIZE));
     ASSERT_PRODUCT_REQUEST(3, ID_BASE + DpTest::ContainerId::Container4, FwSizeType(DpTest::CONTAINER_4_PACKET_SIZE));
     ASSERT_PRODUCT_REQUEST(4, ID_BASE + DpTest::ContainerId::Container5, FwSizeType(DpTest::CONTAINER_5_PACKET_SIZE));
+    ASSERT_PRODUCT_REQUEST(5, ID_BASE + DpTest::ContainerId::Container6, FwSizeType(DpTest::CONTAINER_6_PACKET_SIZE));
     ASSERT_PRODUCT_GET_SIZE(5);
     ASSERT_PRODUCT_GET(0, ID_BASE + DpTest::ContainerId::Container1, FwSizeType(DpTest::CONTAINER_1_PACKET_SIZE));
     ASSERT_PRODUCT_GET(1, ID_BASE + DpTest::ContainerId::Container2, FwSizeType(DpTest::CONTAINER_2_PACKET_SIZE));

@@ -50,6 +50,8 @@ void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     this->dpRequest_Container4(CONTAINER_4_DATA_SIZE);
     // Request a buffer for Container 5
     this->dpRequest_Container5(CONTAINER_5_DATA_SIZE);
+    // Request a buffer for Container 6
+    this->dpRequest_Container6(CONTAINER_6_DATA_SIZE);
     // Get a buffer for Container 1
     {
         DpContainer container;
@@ -172,6 +174,24 @@ void DpTest ::dpRecv_Container5_handler(DpContainer& container, Fw::Success::T s
                 break;
             }
             FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+        }
+        // Use the time stamp from the time get port
+        this->dpSend(container);
+    }
+}
+
+void DpTest ::dpRecv_Container6_handler(DpContainer& container, Fw::Success::T status) {
+    if (status == Fw::Success::SUCCESS) {
+        auto serializeStatus = Fw::FW_SERIALIZE_OK;
+        for (FwSizeType i = 0; i < CONTAINER_6_DATA_SIZE; ++i) {
+            // TODO
+#if 0
+            serializeStatus = container.serializeRecord_U32Record(this->u32RecordData);
+            if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+                break;
+            }
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+#endif
         }
         // Use the time stamp from the time get port
         this->dpSend(container);

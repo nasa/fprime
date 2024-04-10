@@ -59,7 +59,7 @@ module FppTest {
     product record DataArrayRecord: Data array id 500
 
     @ Record 6
-    product record StringRecord string id 600
+    product record StringRecord: string id 600
 
     # ----------------------------------------------------------------------
     # Containers
