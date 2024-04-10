@@ -124,6 +124,10 @@ namespace Fw {
         return static_cast<SizeType>(StringUtils::string_length(this->toChar(),this->getCapacity()));
     }
 
+    StringBase::SizeType StringBase::serializedSize() const {
+        return this->length() + static_cast<SizeType>(sizeof(FwSizeStoreType));
+    }
+
     SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
         return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()),this->length());
     }
