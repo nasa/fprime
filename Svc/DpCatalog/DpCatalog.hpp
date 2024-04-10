@@ -77,7 +77,7 @@ namespace Svc {
         void pingIn_handler(
             NATIVE_INT_TYPE portNum, //!< The port number
             U32 key //!< Value to return to pinger
-        );
+        ) override;
 
     PRIVATE:
 
@@ -91,7 +91,7 @@ namespace Svc {
         void BUILD_CATALOG_cmdHandler(
             FwOpcodeType opCode, //!< The opcode
             U32 cmdSeq //!< The command sequence number
-        );
+        ) override;
 
         //! Handler implementation for command START_XMIT_CATALOG
         //!
@@ -108,7 +108,7 @@ namespace Svc {
         void STOP_XMIT_CATALOG_cmdHandler(
             FwOpcodeType opCode, //!< The opcode
             U32 cmdSeq //!< The command sequence number
-        );
+        ) override;
 
         //! Handler implementation for command CLEAR_CATALOG
         //!
