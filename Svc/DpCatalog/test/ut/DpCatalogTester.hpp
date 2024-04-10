@@ -63,7 +63,7 @@ namespace Svc {
 
         //! Read a set of DPs
         void readDps(
-            Fw::String *dpDirs,
+            Fw::FileNameString *dpDirs,
             FwSizeType numDirs,
             const DpSet* dpSet,
             FwSizeType numDps

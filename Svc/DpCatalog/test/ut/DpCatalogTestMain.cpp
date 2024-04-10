@@ -14,7 +14,8 @@ TEST(NominalManual, initTest) {
 TEST(NominalManual, OneDp) {
 
     Svc::DpCatalogTester tester;
-    Fw::String dir = "./DpTest";
+    Fw::FileNameString dir;
+    dir = "./DpTest";
 
     Svc::DpCatalogTester::DpSet dpSet;
     dpSet.id = 0x123;
@@ -35,7 +36,9 @@ TEST(NominalManual, OneDp) {
 TEST(NominalManual, FiveDp) {
 
     Svc::DpCatalogTester tester;
-    Fw::String dirs[2] = { "./DpTest1","./DpTest2"};
+    Fw::FileNameString dirs[2];
+    dirs[0] = "./DpTest1";
+    dirs[1] = "./DpTest2";
 
     Svc::DpCatalogTester::DpSet dpSet[5];
     

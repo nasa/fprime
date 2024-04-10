@@ -10,7 +10,8 @@
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
 #include "Fw/Test/UnitTest.hpp"
-
+#include "Fw/Types/FileNameString.hpp"
+#include "config/DpCfg.hpp"
 namespace Svc {
 
     // ----------------------------------------------------------------------
@@ -41,7 +42,7 @@ namespace Svc {
     {
         Fw::MallocAllocator alloc;
 
-        Fw::String dirs[2];
+        Fw::FileNameString dirs[2];
         dirs[0] = "dir0";
         dirs[1] = "dir1";
         this->component.configure(dirs,FW_NUM_ARRAY_ELEMENTS(dirs),100,alloc);
@@ -50,7 +51,7 @@ namespace Svc {
 
     //! Read one DP test
     void DpCatalogTester::readDps(
-            Fw::String *dpDirs,
+            Fw::FileNameString *dpDirs,
             FwSizeType numDirs,
             const DpSet *dpSet,
             FwSizeType numDps
@@ -126,7 +127,7 @@ namespace Svc {
         }
         // open file to write data
         Fw::String fileName;
-        fileName.format(Svc::DP_FILENAME_FORMAT,dir,id,time.getSeconds(),time.getUSeconds());
+        fileName.format(DP_FILENAME_FORMAT,dir,id,time.getSeconds(),time.getUSeconds());
         COMMENT(fileName.toChar());
         Os::File dpFile;
         Os::File::Status stat = dpFile.open(fileName.toChar(),Os::File::Mode::OPEN_CREATE);
@@ -165,7 +166,7 @@ namespace Svc {
     ) {
 
         Fw::String fileName;
-        fileName.format(Svc::DP_FILENAME_FORMAT,dir,id,time.getSeconds(),time.getUSeconds());
+        fileName.format(DP_FILENAME_FORMAT,dir,id,time.getSeconds(),time.getUSeconds());
         Os::FileSystem::removeFile(fileName.toChar());
     }
 
