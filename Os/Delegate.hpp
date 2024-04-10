@@ -3,6 +3,7 @@
 // \brief helper functions to ease correct getDelegate implementations
 // ======================================================================
 #include <new>
+#include <type_traits>
 #include "Fw/Types/Assert.hpp"
 #ifndef OS_DELEGATE_HPP_
 #define OS_DELEGATE_HPP_
