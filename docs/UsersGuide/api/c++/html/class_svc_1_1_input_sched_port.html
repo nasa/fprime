@@ -111,9 +111,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:a4a213967a0853a1b15e93df6438092eb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_svc_1_1_input_sched_port.html#a4a213967a0853a1b15e93df6438092eba3e7e936c4ea501d33f581cd3ac68db0d">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:a4a213967a0853a1b15e93df6438092eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98eaf7c44ab87fb7021da8695d790db5"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_sched_port.html#a98eaf7c44ab87fb7021da8695d790db5">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context)</td></tr>
-<tr class="memdesc:a98eaf7c44ab87fb7021da8695d790db5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_sched_port.html#a98eaf7c44ab87fb7021da8695d790db5">More...</a><br /></td></tr>
-<tr class="separator:a98eaf7c44ab87fb7021da8695d790db5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0abfcc47b09dfd5aa5ee8363f4f185b"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_sched_port.html#af0abfcc47b09dfd5aa5ee8363f4f185b">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 context)</td></tr>
+<tr class="memdesc:af0abfcc47b09dfd5aa5ee8363f4f185b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_sched_port.html#af0abfcc47b09dfd5aa5ee8363f4f185b">More...</a><br /></td></tr>
+<tr class="separator:af0abfcc47b09dfd5aa5ee8363f4f185b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -123,7 +123,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ada194165cbb4293ff47f7c50433b2b99"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_sched_port.html#ada194165cbb4293ff47f7c50433b2b99">init</a> ()</td></tr>
 <tr class="memdesc:ada194165cbb4293ff47f7c50433b2b99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_svc_1_1_input_sched_port.html#ada194165cbb4293ff47f7c50433b2b99">More...</a><br /></td></tr>
 <tr class="separator:ada194165cbb4293ff47f7c50433b2b99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1e9f252d51e80cdab9db3194d8f6f9d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_sched_port.html#ad1e9f252d51e80cdab9db3194d8f6f9d">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_sched_port.html#a98eaf7c44ab87fb7021da8695d790db5">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:ad1e9f252d51e80cdab9db3194d8f6f9d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_sched_port.html#ad1e9f252d51e80cdab9db3194d8f6f9d">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_sched_port.html#af0abfcc47b09dfd5aa5ee8363f4f185b">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:ad1e9f252d51e80cdab9db3194d8f6f9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_svc_1_1_input_sched_port.html#ad1e9f252d51e80cdab9db3194d8f6f9d">More...</a><br /></td></tr>
 <tr class="separator:ad1e9f252d51e80cdab9db3194d8f6f9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5679db6e52779e985838e110b3a39adf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_sched_port.html#a5679db6e52779e985838e110b3a39adf">invoke</a> (U32 context)</td></tr>
@@ -172,14 +172,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="sched_port_ac_8hpp_source.html#l00024">24</a> of file <a class="el" href="sched_port_ac_8hpp_source.html">SchedPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a98eaf7c44ab87fb7021da8695d790db5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98eaf7c44ab87fb7021da8695d790db5">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="af0abfcc47b09dfd5aa5ee8363f4f185b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0abfcc47b09dfd5aa5ee8363f4f185b">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Svc::InputSchedPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context)</td>
+          <td class="memname">typedef void(* Svc::InputSchedPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 context)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -249,7 +249,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_svc_1_1_input_sched_port.html#a98eaf7c44ab87fb7021da8695d790db5">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_svc_1_1_input_sched_port.html#af0abfcc47b09dfd5aa5ee8363f4f185b">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>

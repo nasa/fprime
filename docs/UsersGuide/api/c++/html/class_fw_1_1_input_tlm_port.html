@@ -111,9 +111,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:a1bc51a92fe1b9b187b0a00559be77890"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_input_tlm_port.html#a1bc51a92fe1b9b187b0a00559be77890aed5734213ecaa1b25528bb785fbb2bc4">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:a1bc51a92fe1b9b187b0a00559be77890"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43bb005dfd0aae7a7580733bf68ed151"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_tlm_port.html#a43bb005dfd0aae7a7580733bf68ed151">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a> &amp;val)</td></tr>
-<tr class="memdesc:a43bb005dfd0aae7a7580733bf68ed151"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_fw_1_1_input_tlm_port.html#a43bb005dfd0aae7a7580733bf68ed151">More...</a><br /></td></tr>
-<tr class="separator:a43bb005dfd0aae7a7580733bf68ed151"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4f2968e6a1e5113fe7d0b90be143fcc"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_tlm_port.html#ae4f2968e6a1e5113fe7d0b90be143fcc">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a> &amp;val)</td></tr>
+<tr class="memdesc:ae4f2968e6a1e5113fe7d0b90be143fcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_fw_1_1_input_tlm_port.html#ae4f2968e6a1e5113fe7d0b90be143fcc">More...</a><br /></td></tr>
+<tr class="separator:ae4f2968e6a1e5113fe7d0b90be143fcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -123,7 +123,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a35dea31219cee4b22e4d4ab9988ebfee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_tlm_port.html#a35dea31219cee4b22e4d4ab9988ebfee">init</a> ()</td></tr>
 <tr class="memdesc:a35dea31219cee4b22e4d4ab9988ebfee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_fw_1_1_input_tlm_port.html#a35dea31219cee4b22e4d4ab9988ebfee">More...</a><br /></td></tr>
 <tr class="separator:a35dea31219cee4b22e4d4ab9988ebfee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad13b30f571a8012e8e92c942390a6cf5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_tlm_port.html#ad13b30f571a8012e8e92c942390a6cf5">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_fw_1_1_input_tlm_port.html#a43bb005dfd0aae7a7580733bf68ed151">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:ad13b30f571a8012e8e92c942390a6cf5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_tlm_port.html#ad13b30f571a8012e8e92c942390a6cf5">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_fw_1_1_input_tlm_port.html#ae4f2968e6a1e5113fe7d0b90be143fcc">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:ad13b30f571a8012e8e92c942390a6cf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_fw_1_1_input_tlm_port.html#ad13b30f571a8012e8e92c942390a6cf5">More...</a><br /></td></tr>
 <tr class="separator:ad13b30f571a8012e8e92c942390a6cf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cce5cf829c5e41184ffa97ab4d3e98d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_tlm_port.html#a5cce5cf829c5e41184ffa97ab4d3e98d">invoke</a> (<a class="el" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a> &amp;val)</td></tr>
@@ -172,14 +172,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="tlm_port_ac_8hpp_source.html#l00026">26</a> of file <a class="el" href="tlm_port_ac_8hpp_source.html">TlmPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a43bb005dfd0aae7a7580733bf68ed151"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43bb005dfd0aae7a7580733bf68ed151">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="ae4f2968e6a1e5113fe7d0b90be143fcc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4f2968e6a1e5113fe7d0b90be143fcc">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Fw::InputTlmPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a> &amp;val)</td>
+          <td class="memname">typedef void(* Fw::InputTlmPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a> &amp;val)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -249,7 +249,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_fw_1_1_input_tlm_port.html#a43bb005dfd0aae7a7580733bf68ed151">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_input_tlm_port.html#ae4f2968e6a1e5113fe7d0b90be143fcc">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>

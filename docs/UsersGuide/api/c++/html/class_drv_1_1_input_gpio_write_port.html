@@ -114,9 +114,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:afcc39bc00846c191daff472cd3674dcc"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_drv_1_1_input_gpio_write_port.html#afcc39bc00846c191daff472cd3674dccad3677ff3dd24a4ac6fc919178bb41676">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:afcc39bc00846c191daff472cd3674dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d94b6ac20262f2656e9634e52cad122"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_write_port.html#a7d94b6ac20262f2656e9634e52cad122">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, const <a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td></tr>
-<tr class="memdesc:a7d94b6ac20262f2656e9634e52cad122"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_gpio_write_port.html#a7d94b6ac20262f2656e9634e52cad122">More...</a><br /></td></tr>
-<tr class="separator:a7d94b6ac20262f2656e9634e52cad122"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7db333b904e5f70cd1c1450cf994d617"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_write_port.html#a7db333b904e5f70cd1c1450cf994d617">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, const <a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td></tr>
+<tr class="memdesc:a7db333b904e5f70cd1c1450cf994d617"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_gpio_write_port.html#a7db333b904e5f70cd1c1450cf994d617">More...</a><br /></td></tr>
+<tr class="separator:a7db333b904e5f70cd1c1450cf994d617"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -126,7 +126,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a22893fb0a46d3947cf907354a73e8c2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">init</a> ()</td></tr>
 <tr class="memdesc:a22893fb0a46d3947cf907354a73e8c2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">More...</a><br /></td></tr>
 <tr class="separator:a22893fb0a46d3947cf907354a73e8c2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae717923356b90730a739c9b2990620b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_gpio_write_port.html#a7d94b6ac20262f2656e9634e52cad122">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:ae717923356b90730a739c9b2990620b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_gpio_write_port.html#a7db333b904e5f70cd1c1450cf994d617">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:ae717923356b90730a739c9b2990620b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">More...</a><br /></td></tr>
 <tr class="separator:ae717923356b90730a739c9b2990620b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a978b615f1d3053bc82ac61351946a6db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_write_port.html#a978b615f1d3053bc82ac61351946a6db">invoke</a> (const <a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td></tr>
@@ -175,14 +175,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="gpio_write_port_ac_8hpp_source.html#l00024">24</a> of file <a class="el" href="gpio_write_port_ac_8hpp_source.html">GpioWritePortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a7d94b6ac20262f2656e9634e52cad122"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d94b6ac20262f2656e9634e52cad122">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="a7db333b904e5f70cd1c1450cf994d617"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7db333b904e5f70cd1c1450cf994d617">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Drv::InputGpioWritePort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, const <a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td>
+          <td class="memname">typedef void(* Drv::InputGpioWritePort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, const <a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -252,7 +252,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_drv_1_1_input_gpio_write_port.html#a7d94b6ac20262f2656e9634e52cad122">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_drv_1_1_input_gpio_write_port.html#a7db333b904e5f70cd1c1450cf994d617">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>

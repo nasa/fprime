@@ -114,9 +114,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:aba4bb1d3ac823cc18f2a06fd6956efa1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_drv_1_1_input_i2c_port.html#aba4bb1d3ac823cc18f2a06fd6956efa1a2ed15f238bfdc503bca014a2a2360454">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:aba4bb1d3ac823cc18f2a06fd6956efa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70a3a1c3586687c3415429f93d2f8e64"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="class_drv_1_1_i2c_status.html">Drv::I2cStatus</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_i2c_port.html#a70a3a1c3586687c3415429f93d2f8e64">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 addr, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;serBuffer)</td></tr>
-<tr class="memdesc:a70a3a1c3586687c3415429f93d2f8e64"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_i2c_port.html#a70a3a1c3586687c3415429f93d2f8e64">More...</a><br /></td></tr>
-<tr class="separator:a70a3a1c3586687c3415429f93d2f8e64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39900cf94db846b06dd8d87ff2e22a48"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="class_drv_1_1_i2c_status.html">Drv::I2cStatus</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_i2c_port.html#a39900cf94db846b06dd8d87ff2e22a48">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 addr, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;serBuffer)</td></tr>
+<tr class="memdesc:a39900cf94db846b06dd8d87ff2e22a48"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_i2c_port.html#a39900cf94db846b06dd8d87ff2e22a48">More...</a><br /></td></tr>
+<tr class="separator:a39900cf94db846b06dd8d87ff2e22a48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -126,7 +126,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae3b89c7ec89af8949b245c4ead849560"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_i2c_port.html#ae3b89c7ec89af8949b245c4ead849560">init</a> ()</td></tr>
 <tr class="memdesc:ae3b89c7ec89af8949b245c4ead849560"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_drv_1_1_input_i2c_port.html#ae3b89c7ec89af8949b245c4ead849560">More...</a><br /></td></tr>
 <tr class="separator:ae3b89c7ec89af8949b245c4ead849560"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a136048026992494a4b7df165ad9d134a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_i2c_port.html#a136048026992494a4b7df165ad9d134a">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_i2c_port.html#a70a3a1c3586687c3415429f93d2f8e64">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:a136048026992494a4b7df165ad9d134a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_i2c_port.html#a136048026992494a4b7df165ad9d134a">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_i2c_port.html#a39900cf94db846b06dd8d87ff2e22a48">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:a136048026992494a4b7df165ad9d134a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_drv_1_1_input_i2c_port.html#a136048026992494a4b7df165ad9d134a">More...</a><br /></td></tr>
 <tr class="separator:a136048026992494a4b7df165ad9d134a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad02bb9daaecefec5b8980715bc27ad77"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_drv_1_1_i2c_status.html">Drv::I2cStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_i2c_port.html#ad02bb9daaecefec5b8980715bc27ad77">invoke</a> (U32 addr, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;serBuffer)</td></tr>
@@ -175,14 +175,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="i2c_port_ac_8hpp_source.html#l00024">24</a> of file <a class="el" href="i2c_port_ac_8hpp_source.html">I2cPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a70a3a1c3586687c3415429f93d2f8e64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a70a3a1c3586687c3415429f93d2f8e64">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="a39900cf94db846b06dd8d87ff2e22a48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39900cf94db846b06dd8d87ff2e22a48">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="class_drv_1_1_i2c_status.html">Drv::I2cStatus</a>(* Drv::InputI2cPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 addr, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;serBuffer)</td>
+          <td class="memname">typedef <a class="el" href="class_drv_1_1_i2c_status.html">Drv::I2cStatus</a>(* Drv::InputI2cPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 addr, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;serBuffer)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -252,7 +252,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_drv_1_1_input_i2c_port.html#a70a3a1c3586687c3415429f93d2f8e64">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_drv_1_1_input_i2c_port.html#a39900cf94db846b06dd8d87ff2e22a48">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>

@@ -111,9 +111,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:a350592ada7f235828f6537cfcfc8c24c"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_input_cmd_reg_port.html#a350592ada7f235828f6537cfcfc8c24caba01d07a13559f6cef867c9352f0a646">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:a350592ada7f235828f6537cfcfc8c24c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafcabd7420f525bc75157ff2dca61359"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_cmd_reg_port.html#aafcabd7420f525bc75157ff2dca61359">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode)</td></tr>
-<tr class="memdesc:aafcabd7420f525bc75157ff2dca61359"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_fw_1_1_input_cmd_reg_port.html#aafcabd7420f525bc75157ff2dca61359">More...</a><br /></td></tr>
-<tr class="separator:aafcabd7420f525bc75157ff2dca61359"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2de715c988a8b9619779ab16c67af11a"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_cmd_reg_port.html#a2de715c988a8b9619779ab16c67af11a">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode)</td></tr>
+<tr class="memdesc:a2de715c988a8b9619779ab16c67af11a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_fw_1_1_input_cmd_reg_port.html#a2de715c988a8b9619779ab16c67af11a">More...</a><br /></td></tr>
+<tr class="separator:a2de715c988a8b9619779ab16c67af11a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -123,7 +123,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac1f8c4d46b2463464a4d38be7ccf9d86"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_cmd_reg_port.html#ac1f8c4d46b2463464a4d38be7ccf9d86">init</a> ()</td></tr>
 <tr class="memdesc:ac1f8c4d46b2463464a4d38be7ccf9d86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_fw_1_1_input_cmd_reg_port.html#ac1f8c4d46b2463464a4d38be7ccf9d86">More...</a><br /></td></tr>
 <tr class="separator:ac1f8c4d46b2463464a4d38be7ccf9d86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c8e445290adcb4aae80bbe653666be3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_cmd_reg_port.html#a8c8e445290adcb4aae80bbe653666be3">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_fw_1_1_input_cmd_reg_port.html#aafcabd7420f525bc75157ff2dca61359">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:a8c8e445290adcb4aae80bbe653666be3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_cmd_reg_port.html#a8c8e445290adcb4aae80bbe653666be3">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_fw_1_1_input_cmd_reg_port.html#a2de715c988a8b9619779ab16c67af11a">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:a8c8e445290adcb4aae80bbe653666be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_fw_1_1_input_cmd_reg_port.html#a8c8e445290adcb4aae80bbe653666be3">More...</a><br /></td></tr>
 <tr class="separator:a8c8e445290adcb4aae80bbe653666be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5cd160789e76bef52069657ccf56d68"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_cmd_reg_port.html#ab5cd160789e76bef52069657ccf56d68">invoke</a> (<a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode)</td></tr>
@@ -172,14 +172,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="cmd_reg_port_ac_8hpp_source.html#l00024">24</a> of file <a class="el" href="cmd_reg_port_ac_8hpp_source.html">CmdRegPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="aafcabd7420f525bc75157ff2dca61359"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aafcabd7420f525bc75157ff2dca61359">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="a2de715c988a8b9619779ab16c67af11a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2de715c988a8b9619779ab16c67af11a">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Fw::InputCmdRegPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode)</td>
+          <td class="memname">typedef void(* Fw::InputCmdRegPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -249,7 +249,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_fw_1_1_input_cmd_reg_port.html#aafcabd7420f525bc75157ff2dca61359">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_input_cmd_reg_port.html#a2de715c988a8b9619779ab16c67af11a">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>

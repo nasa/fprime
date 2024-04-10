@@ -115,41 +115,41 @@ Inheritance diagram for Svc::BufferAccumulatorComponentBase:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a866c2addfd2f12989d15aac1904b27e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a866c2addfd2f12989d15aac1904b27e5">init</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance=0)</td></tr>
-<tr class="memdesc:a866c2addfd2f12989d15aac1904b27e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html" title="Auto-generated base for BufferAccumulator component.">BufferAccumulatorComponentBase</a> object.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a866c2addfd2f12989d15aac1904b27e5">More...</a><br /></td></tr>
-<tr class="separator:a866c2addfd2f12989d15aac1904b27e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42ed9570a5af5460a45ccc342fc758d9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_input_cmd_port.html">Fw::InputCmdPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a42ed9570a5af5460a45ccc342fc758d9">get_cmdIn_InputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a42ed9570a5af5460a45ccc342fc758d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46fb02544a49214cbeb67d65b653510b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a46fb02544a49214cbeb67d65b653510b">get_bufferSendInFill_InputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a46fb02544a49214cbeb67d65b653510b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4cd230aca8f7f843a08d586152db9c86"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a4cd230aca8f7f843a08d586152db9c86">get_bufferSendInReturn_InputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a4cd230aca8f7f843a08d586152db9c86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d53bea0bcaf49aa7cba5005f4676af1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a1d53bea0bcaf49aa7cba5005f4676af1">get_pingIn_InputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a1d53bea0bcaf49aa7cba5005f4676af1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad24f3511e6d5a4033012f048c8b8da6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ad24f3511e6d5a4033012f048c8b8da6a">set_cmdRegOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_input_cmd_reg_port.html">Fw::InputCmdRegPort</a> *port)</td></tr>
-<tr class="memdesc:ad24f3511e6d5a4033012f048c8b8da6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to cmdRegOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#ad24f3511e6d5a4033012f048c8b8da6a">More...</a><br /></td></tr>
-<tr class="separator:ad24f3511e6d5a4033012f048c8b8da6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a847b8346c0d064a15d28ca83aac79e53"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a847b8346c0d064a15d28ca83aac79e53">set_cmdResponseOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_input_cmd_response_port.html">Fw::InputCmdResponsePort</a> *port)</td></tr>
-<tr class="memdesc:a847b8346c0d064a15d28ca83aac79e53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to cmdResponseOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a847b8346c0d064a15d28ca83aac79e53">More...</a><br /></td></tr>
-<tr class="separator:a847b8346c0d064a15d28ca83aac79e53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3c77ed34370c8f971349c9f5cc3b4b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#aa3c77ed34370c8f971349c9f5cc3b4b7">set_eventOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_input_log_port.html">Fw::InputLogPort</a> *port)</td></tr>
-<tr class="memdesc:aa3c77ed34370c8f971349c9f5cc3b4b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to eventOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#aa3c77ed34370c8f971349c9f5cc3b4b7">More...</a><br /></td></tr>
-<tr class="separator:aa3c77ed34370c8f971349c9f5cc3b4b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca66c266390e31422ef17087ccec43a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#aca66c266390e31422ef17087ccec43a3">set_timeCaller_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_input_time_port.html">Fw::InputTimePort</a> *port)</td></tr>
-<tr class="memdesc:aca66c266390e31422ef17087ccec43a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to timeCaller[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#aca66c266390e31422ef17087ccec43a3">More...</a><br /></td></tr>
-<tr class="separator:aca66c266390e31422ef17087ccec43a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b3d63f39e9480bc4d093f456519c359"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a3b3d63f39e9480bc4d093f456519c359">set_tlmOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_input_tlm_port.html">Fw::InputTlmPort</a> *port)</td></tr>
-<tr class="memdesc:a3b3d63f39e9480bc4d093f456519c359"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to tlmOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a3b3d63f39e9480bc4d093f456519c359">More...</a><br /></td></tr>
-<tr class="separator:a3b3d63f39e9480bc4d093f456519c359"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad95a6b2ceb9fabc35edfef44a25ef94a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ad95a6b2ceb9fabc35edfef44a25ef94a">set_bufferSendOutDrain_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *port)</td></tr>
-<tr class="memdesc:ad95a6b2ceb9fabc35edfef44a25ef94a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to bufferSendOutDrain[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#ad95a6b2ceb9fabc35edfef44a25ef94a">More...</a><br /></td></tr>
-<tr class="separator:ad95a6b2ceb9fabc35edfef44a25ef94a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd3a34cce8aa714d172dcc29ce33d502"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#abd3a34cce8aa714d172dcc29ce33d502">set_bufferSendOutReturn_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *port)</td></tr>
-<tr class="memdesc:abd3a34cce8aa714d172dcc29ce33d502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to bufferSendOutReturn[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#abd3a34cce8aa714d172dcc29ce33d502">More...</a><br /></td></tr>
-<tr class="separator:abd3a34cce8aa714d172dcc29ce33d502"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d6db931465907db681fd1a71c968fa2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a5d6db931465907db681fd1a71c968fa2">set_pingOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> *port)</td></tr>
-<tr class="memdesc:a5d6db931465907db681fd1a71c968fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to pingOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a5d6db931465907db681fd1a71c968fa2">More...</a><br /></td></tr>
-<tr class="separator:a5d6db931465907db681fd1a71c968fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ea30079789faf33406993429a87c1c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a4ea30079789faf33406993429a87c1c3">init</a> (<a class="el" href="fp_config_8h.html#a650109ee80570ce79189348fd28dc556">FwQueueSizeType</a> queueDepth, <a class="el" href="fp_config_8h.html#a02fd22e959ed6b754f408bbcf608fc53">FwEnumStoreType</a> instance=0)</td></tr>
+<tr class="memdesc:a4ea30079789faf33406993429a87c1c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html" title="Auto-generated base for BufferAccumulator component.">BufferAccumulatorComponentBase</a> object.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a4ea30079789faf33406993429a87c1c3">More...</a><br /></td></tr>
+<tr class="separator:a4ea30079789faf33406993429a87c1c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50f10fd4e84e541dfc661d3fa66bdb23"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_input_cmd_port.html">Fw::InputCmdPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a50f10fd4e84e541dfc661d3fa66bdb23">get_cmdIn_InputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a50f10fd4e84e541dfc661d3fa66bdb23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada226ff22327cf5843a467171507ce64"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ada226ff22327cf5843a467171507ce64">get_bufferSendInFill_InputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:ada226ff22327cf5843a467171507ce64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb08a5ab2824a00f91e9ad76bff2b2c1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#abb08a5ab2824a00f91e9ad76bff2b2c1">get_bufferSendInReturn_InputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:abb08a5ab2824a00f91e9ad76bff2b2c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfe782dd73bb0962dddf221e5e1e29fe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#abfe782dd73bb0962dddf221e5e1e29fe">get_pingIn_InputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:abfe782dd73bb0962dddf221e5e1e29fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a401cd30654b4a7af7d54aee16d4be3c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a401cd30654b4a7af7d54aee16d4be3c2">set_cmdRegOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_cmd_reg_port.html">Fw::InputCmdRegPort</a> *port)</td></tr>
+<tr class="memdesc:a401cd30654b4a7af7d54aee16d4be3c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to cmdRegOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a401cd30654b4a7af7d54aee16d4be3c2">More...</a><br /></td></tr>
+<tr class="separator:a401cd30654b4a7af7d54aee16d4be3c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49b938d7eb09edc1edc33995e1df19a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a49b938d7eb09edc1edc33995e1df19a2">set_cmdResponseOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_cmd_response_port.html">Fw::InputCmdResponsePort</a> *port)</td></tr>
+<tr class="memdesc:a49b938d7eb09edc1edc33995e1df19a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to cmdResponseOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a49b938d7eb09edc1edc33995e1df19a2">More...</a><br /></td></tr>
+<tr class="separator:a49b938d7eb09edc1edc33995e1df19a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81173a4059294ce72f4ddb0328337264"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a81173a4059294ce72f4ddb0328337264">set_eventOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_log_port.html">Fw::InputLogPort</a> *port)</td></tr>
+<tr class="memdesc:a81173a4059294ce72f4ddb0328337264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to eventOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a81173a4059294ce72f4ddb0328337264">More...</a><br /></td></tr>
+<tr class="separator:a81173a4059294ce72f4ddb0328337264"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96ec9d3f390a20200de10ec087c2b0fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a96ec9d3f390a20200de10ec087c2b0fb">set_timeCaller_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_time_port.html">Fw::InputTimePort</a> *port)</td></tr>
+<tr class="memdesc:a96ec9d3f390a20200de10ec087c2b0fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to timeCaller[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a96ec9d3f390a20200de10ec087c2b0fb">More...</a><br /></td></tr>
+<tr class="separator:a96ec9d3f390a20200de10ec087c2b0fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc68c352eb21b6b10805cad1c7b0cea3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#acc68c352eb21b6b10805cad1c7b0cea3">set_tlmOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_tlm_port.html">Fw::InputTlmPort</a> *port)</td></tr>
+<tr class="memdesc:acc68c352eb21b6b10805cad1c7b0cea3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to tlmOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#acc68c352eb21b6b10805cad1c7b0cea3">More...</a><br /></td></tr>
+<tr class="separator:acc68c352eb21b6b10805cad1c7b0cea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac43ee208fdf3e3183fac83de9bfa712b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ac43ee208fdf3e3183fac83de9bfa712b">set_bufferSendOutDrain_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *port)</td></tr>
+<tr class="memdesc:ac43ee208fdf3e3183fac83de9bfa712b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to bufferSendOutDrain[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#ac43ee208fdf3e3183fac83de9bfa712b">More...</a><br /></td></tr>
+<tr class="separator:ac43ee208fdf3e3183fac83de9bfa712b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcff5a714f5a4874158921ff49281d5b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#adcff5a714f5a4874158921ff49281d5b">set_bufferSendOutReturn_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *port)</td></tr>
+<tr class="memdesc:adcff5a714f5a4874158921ff49281d5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to bufferSendOutReturn[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#adcff5a714f5a4874158921ff49281d5b">More...</a><br /></td></tr>
+<tr class="separator:adcff5a714f5a4874158921ff49281d5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d308fabcbe42af5b48b97c7c6a22593"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a0d308fabcbe42af5b48b97c7c6a22593">set_pingOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> *port)</td></tr>
+<tr class="memdesc:a0d308fabcbe42af5b48b97c7c6a22593"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to pingOut[portNum].  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a0d308fabcbe42af5b48b97c7c6a22593">More...</a><br /></td></tr>
+<tr class="separator:a0d308fabcbe42af5b48b97c7c6a22593"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af187bd39a120e07cb83e7475f283fd65"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#af187bd39a120e07cb83e7475f283fd65">regCommands</a> ()</td></tr>
 <tr class="memdesc:af187bd39a120e07cb83e7475f283fd65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register commands with the Command Dispatcher.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#af187bd39a120e07cb83e7475f283fd65">More...</a><br /></td></tr>
 <tr class="separator:af187bd39a120e07cb83e7475f283fd65"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -231,82 +231,82 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a9b8f5148fcce4a98a3688aa579c43798"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a9b8f5148fcce4a98a3688aa579c43798">~BufferAccumulatorComponentBase</a> ()</td></tr>
 <tr class="memdesc:a9b8f5148fcce4a98a3688aa579c43798"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy <a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html" title="Auto-generated base for BufferAccumulator component.">BufferAccumulatorComponentBase</a> object.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a9b8f5148fcce4a98a3688aa579c43798">More...</a><br /></td></tr>
 <tr class="separator:a9b8f5148fcce4a98a3688aa579c43798"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9a8293283030f80510a7b5aa193aea8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ab9a8293283030f80510a7b5aa193aea8">getNum_cmdIn_InputPorts</a> () const</td></tr>
-<tr class="separator:ab9a8293283030f80510a7b5aa193aea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac94dc1c92e7097535f75e13c1ee32ef8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ac94dc1c92e7097535f75e13c1ee32ef8">getNum_bufferSendInFill_InputPorts</a> () const</td></tr>
-<tr class="separator:ac94dc1c92e7097535f75e13c1ee32ef8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9480868709d2d67525c049dad786126a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a9480868709d2d67525c049dad786126a">getNum_bufferSendInReturn_InputPorts</a> () const</td></tr>
-<tr class="separator:a9480868709d2d67525c049dad786126a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ab16f44d8f72345f85073d55ee47744"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a5ab16f44d8f72345f85073d55ee47744">getNum_pingIn_InputPorts</a> () const</td></tr>
-<tr class="separator:a5ab16f44d8f72345f85073d55ee47744"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7119a7c736ab527a037b793f5d909893"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a7119a7c736ab527a037b793f5d909893">getNum_cmdRegOut_OutputPorts</a> () const</td></tr>
-<tr class="separator:a7119a7c736ab527a037b793f5d909893"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf330cb4f560d2e1f83918fd11d94af5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#aaf330cb4f560d2e1f83918fd11d94af5">getNum_cmdResponseOut_OutputPorts</a> () const</td></tr>
-<tr class="separator:aaf330cb4f560d2e1f83918fd11d94af5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78561daf8a50859bdf510a751cb302dc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a78561daf8a50859bdf510a751cb302dc">getNum_eventOut_OutputPorts</a> () const</td></tr>
-<tr class="separator:a78561daf8a50859bdf510a751cb302dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a161026a7fb8a1df3dcca6d7ca6a1e895"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a161026a7fb8a1df3dcca6d7ca6a1e895">getNum_timeCaller_OutputPorts</a> () const</td></tr>
-<tr class="separator:a161026a7fb8a1df3dcca6d7ca6a1e895"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c1a6c26b50fa56dd7f118f19c64014e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a3c1a6c26b50fa56dd7f118f19c64014e">getNum_tlmOut_OutputPorts</a> () const</td></tr>
-<tr class="separator:a3c1a6c26b50fa56dd7f118f19c64014e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa36f2b22334a57049a30b78cf7454db7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#aa36f2b22334a57049a30b78cf7454db7">getNum_bufferSendOutDrain_OutputPorts</a> () const</td></tr>
-<tr class="separator:aa36f2b22334a57049a30b78cf7454db7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeaa38ebef6cf2e33173a1f5ce2ae8313"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#aeaa38ebef6cf2e33173a1f5ce2ae8313">getNum_bufferSendOutReturn_OutputPorts</a> () const</td></tr>
-<tr class="separator:aeaa38ebef6cf2e33173a1f5ce2ae8313"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7473169d6c0fd4fecbf2689e781feb6b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a7473169d6c0fd4fecbf2689e781feb6b">getNum_pingOut_OutputPorts</a> () const</td></tr>
-<tr class="separator:a7473169d6c0fd4fecbf2689e781feb6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4175891225a33c39c659fc12f208d850"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a4175891225a33c39c659fc12f208d850">isConnected_cmdRegOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a4175891225a33c39c659fc12f208d850"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95dce71cbf2e3741b7580a43c491ed07"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a95dce71cbf2e3741b7580a43c491ed07">isConnected_cmdResponseOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a95dce71cbf2e3741b7580a43c491ed07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4efd7735464701095a16a8a65ffa6d15"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a4efd7735464701095a16a8a65ffa6d15">isConnected_eventOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a4efd7735464701095a16a8a65ffa6d15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0408f989c61e4f9037f7859441de9d7c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a0408f989c61e4f9037f7859441de9d7c">isConnected_timeCaller_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a0408f989c61e4f9037f7859441de9d7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a286bf7f6ff575a8f23a453a604227ee4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a286bf7f6ff575a8f23a453a604227ee4">isConnected_tlmOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a286bf7f6ff575a8f23a453a604227ee4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af237aa0aeeb2cfc4eba825f69d74aa1c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#af237aa0aeeb2cfc4eba825f69d74aa1c">isConnected_bufferSendOutDrain_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:af237aa0aeeb2cfc4eba825f69d74aa1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4d43962803fa30fc2e3ec1f2e8961aa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ad4d43962803fa30fc2e3ec1f2e8961aa">isConnected_bufferSendOutReturn_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:ad4d43962803fa30fc2e3ec1f2e8961aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12d1d3eae5925c3ce6a6539315babf9a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a12d1d3eae5925c3ce6a6539315babf9a">isConnected_pingOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a12d1d3eae5925c3ce6a6539315babf9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd954a18c0b1b5e4c5f27985ccdbcc2a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#acd954a18c0b1b5e4c5f27985ccdbcc2a">bufferSendInFill_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)=0</td></tr>
-<tr class="memdesc:acd954a18c0b1b5e4c5f27985ccdbcc2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port bufferSendInFill.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#acd954a18c0b1b5e4c5f27985ccdbcc2a">More...</a><br /></td></tr>
-<tr class="separator:acd954a18c0b1b5e4c5f27985ccdbcc2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c0da15056af227797b778dc0019dc1d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a7c0da15056af227797b778dc0019dc1d">bufferSendInReturn_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)=0</td></tr>
-<tr class="memdesc:a7c0da15056af227797b778dc0019dc1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port bufferSendInReturn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a7c0da15056af227797b778dc0019dc1d">More...</a><br /></td></tr>
-<tr class="separator:a7c0da15056af227797b778dc0019dc1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c902c574fd3a4cd0b29758f7a7dcede"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a3c902c574fd3a4cd0b29758f7a7dcede">pingIn_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)=0</td></tr>
-<tr class="memdesc:a3c902c574fd3a4cd0b29758f7a7dcede"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port pingIn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a3c902c574fd3a4cd0b29758f7a7dcede">More...</a><br /></td></tr>
-<tr class="separator:a3c902c574fd3a4cd0b29758f7a7dcede"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab70edb585d11931a483564d2104ca2dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ab70edb585d11931a483564d2104ca2dc">bufferSendInFill_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
-<tr class="memdesc:ab70edb585d11931a483564d2104ca2dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port bufferSendInFill.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#ab70edb585d11931a483564d2104ca2dc">More...</a><br /></td></tr>
-<tr class="separator:ab70edb585d11931a483564d2104ca2dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad347f0f33cb1bd656c40a2402d23e82c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ad347f0f33cb1bd656c40a2402d23e82c">bufferSendInReturn_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
-<tr class="memdesc:ad347f0f33cb1bd656c40a2402d23e82c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port bufferSendInReturn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#ad347f0f33cb1bd656c40a2402d23e82c">More...</a><br /></td></tr>
-<tr class="separator:ad347f0f33cb1bd656c40a2402d23e82c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3845439f0009bf8d722ae0be4f29424c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a3845439f0009bf8d722ae0be4f29424c">pingIn_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)</td></tr>
-<tr class="memdesc:a3845439f0009bf8d722ae0be4f29424c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port pingIn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a3845439f0009bf8d722ae0be4f29424c">More...</a><br /></td></tr>
-<tr class="separator:a3845439f0009bf8d722ae0be4f29424c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d6af0f50570bfc576bcdd3b396ade18"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a2d6af0f50570bfc576bcdd3b396ade18">bufferSendInFill_preMsgHook</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
-<tr class="memdesc:a2d6af0f50570bfc576bcdd3b396ade18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port bufferSendInFill.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a2d6af0f50570bfc576bcdd3b396ade18">More...</a><br /></td></tr>
-<tr class="separator:a2d6af0f50570bfc576bcdd3b396ade18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af235a913064aecf1e5da46105684b993"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#af235a913064aecf1e5da46105684b993">bufferSendInReturn_preMsgHook</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
-<tr class="memdesc:af235a913064aecf1e5da46105684b993"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port bufferSendInReturn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#af235a913064aecf1e5da46105684b993">More...</a><br /></td></tr>
-<tr class="separator:af235a913064aecf1e5da46105684b993"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65595e35bedb52a746cec3323728dfc1"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a65595e35bedb52a746cec3323728dfc1">pingIn_preMsgHook</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)</td></tr>
-<tr class="memdesc:a65595e35bedb52a746cec3323728dfc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port pingIn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a65595e35bedb52a746cec3323728dfc1">More...</a><br /></td></tr>
-<tr class="separator:a65595e35bedb52a746cec3323728dfc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a476b52037946dabcb6e73398354f8623"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a476b52037946dabcb6e73398354f8623">bufferSendOutDrain_out</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
-<tr class="memdesc:a476b52037946dabcb6e73398354f8623"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port bufferSendOutDrain.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a476b52037946dabcb6e73398354f8623">More...</a><br /></td></tr>
-<tr class="separator:a476b52037946dabcb6e73398354f8623"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3af8c44004f7521dab5281956ddd1531"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a3af8c44004f7521dab5281956ddd1531">bufferSendOutReturn_out</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
-<tr class="memdesc:a3af8c44004f7521dab5281956ddd1531"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port bufferSendOutReturn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a3af8c44004f7521dab5281956ddd1531">More...</a><br /></td></tr>
-<tr class="separator:a3af8c44004f7521dab5281956ddd1531"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ddca80bbdc729d5799a92fd65fc1c5b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a7ddca80bbdc729d5799a92fd65fc1c5b">pingOut_out</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)</td></tr>
-<tr class="memdesc:a7ddca80bbdc729d5799a92fd65fc1c5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port pingOut.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a7ddca80bbdc729d5799a92fd65fc1c5b">More...</a><br /></td></tr>
-<tr class="separator:a7ddca80bbdc729d5799a92fd65fc1c5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac44c564660952011853234d06e7c098c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ac44c564660952011853234d06e7c098c">getNum_cmdIn_InputPorts</a> () const</td></tr>
+<tr class="separator:ac44c564660952011853234d06e7c098c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3dca03f7e49eb8625e4688f3510f43f4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a3dca03f7e49eb8625e4688f3510f43f4">getNum_bufferSendInFill_InputPorts</a> () const</td></tr>
+<tr class="separator:a3dca03f7e49eb8625e4688f3510f43f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a772bc84d719ce4ba686118c217c01268"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a772bc84d719ce4ba686118c217c01268">getNum_bufferSendInReturn_InputPorts</a> () const</td></tr>
+<tr class="separator:a772bc84d719ce4ba686118c217c01268"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74f5a1f8a255ebfe96bef1f10618c018"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a74f5a1f8a255ebfe96bef1f10618c018">getNum_pingIn_InputPorts</a> () const</td></tr>
+<tr class="separator:a74f5a1f8a255ebfe96bef1f10618c018"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e73d3ed22fa98bec29fcfd8fefa1cee"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a9e73d3ed22fa98bec29fcfd8fefa1cee">getNum_cmdRegOut_OutputPorts</a> () const</td></tr>
+<tr class="separator:a9e73d3ed22fa98bec29fcfd8fefa1cee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b40375606d8bfa406ec375b90e50187"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a0b40375606d8bfa406ec375b90e50187">getNum_cmdResponseOut_OutputPorts</a> () const</td></tr>
+<tr class="separator:a0b40375606d8bfa406ec375b90e50187"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab126bf13d52cc7479fcf341438eec1e4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ab126bf13d52cc7479fcf341438eec1e4">getNum_eventOut_OutputPorts</a> () const</td></tr>
+<tr class="separator:ab126bf13d52cc7479fcf341438eec1e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39e7a240323bc802b7e97bcd616f4bb7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a39e7a240323bc802b7e97bcd616f4bb7">getNum_timeCaller_OutputPorts</a> () const</td></tr>
+<tr class="separator:a39e7a240323bc802b7e97bcd616f4bb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a651d03d8b66e74e3da5e075708bf5739"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a651d03d8b66e74e3da5e075708bf5739">getNum_tlmOut_OutputPorts</a> () const</td></tr>
+<tr class="separator:a651d03d8b66e74e3da5e075708bf5739"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09161df2c6b3d8f513763170e26beb5c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a09161df2c6b3d8f513763170e26beb5c">getNum_bufferSendOutDrain_OutputPorts</a> () const</td></tr>
+<tr class="separator:a09161df2c6b3d8f513763170e26beb5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6c89d5a2d3f5cb4fff7576bfcfd0767"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ad6c89d5a2d3f5cb4fff7576bfcfd0767">getNum_bufferSendOutReturn_OutputPorts</a> () const</td></tr>
+<tr class="separator:ad6c89d5a2d3f5cb4fff7576bfcfd0767"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb3c20c40b9270689fc7984cc7bc870f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#afb3c20c40b9270689fc7984cc7bc870f">getNum_pingOut_OutputPorts</a> () const</td></tr>
+<tr class="separator:afb3c20c40b9270689fc7984cc7bc870f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f47f97d21e301792b10e465ca9b3086"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a2f47f97d21e301792b10e465ca9b3086">isConnected_cmdRegOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a2f47f97d21e301792b10e465ca9b3086"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada490fc4b9c215268dfa721c8d5ea526"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ada490fc4b9c215268dfa721c8d5ea526">isConnected_cmdResponseOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:ada490fc4b9c215268dfa721c8d5ea526"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c5d7654eaf60427184bc70f5571f4d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a6c5d7654eaf60427184bc70f5571f4d3">isConnected_eventOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a6c5d7654eaf60427184bc70f5571f4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a299a84d7959c5536d4686dbabacc25eb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a299a84d7959c5536d4686dbabacc25eb">isConnected_timeCaller_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a299a84d7959c5536d4686dbabacc25eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57a7d1e5175b73e3bdaadb967c280f0e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a57a7d1e5175b73e3bdaadb967c280f0e">isConnected_tlmOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a57a7d1e5175b73e3bdaadb967c280f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6544413f363d5ccc3719085d4d414e13"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a6544413f363d5ccc3719085d4d414e13">isConnected_bufferSendOutDrain_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a6544413f363d5ccc3719085d4d414e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ce0e95e418e3cc24a6869e3e3a8fc29"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a2ce0e95e418e3cc24a6869e3e3a8fc29">isConnected_bufferSendOutReturn_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a2ce0e95e418e3cc24a6869e3e3a8fc29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2145e865deb6f543c9e530792e0b63f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#aa2145e865deb6f543c9e530792e0b63f">isConnected_pingOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:aa2145e865deb6f543c9e530792e0b63f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f58431182bfbdbe21cdc4ccb0846831"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a2f58431182bfbdbe21cdc4ccb0846831">bufferSendInFill_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)=0</td></tr>
+<tr class="memdesc:a2f58431182bfbdbe21cdc4ccb0846831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port bufferSendInFill.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a2f58431182bfbdbe21cdc4ccb0846831">More...</a><br /></td></tr>
+<tr class="separator:a2f58431182bfbdbe21cdc4ccb0846831"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a52f03daf7dcadd375551f3dc552292"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a1a52f03daf7dcadd375551f3dc552292">bufferSendInReturn_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)=0</td></tr>
+<tr class="memdesc:a1a52f03daf7dcadd375551f3dc552292"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port bufferSendInReturn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a1a52f03daf7dcadd375551f3dc552292">More...</a><br /></td></tr>
+<tr class="separator:a1a52f03daf7dcadd375551f3dc552292"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70e4ebd330e80f40aae25444b1139a99"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a70e4ebd330e80f40aae25444b1139a99">pingIn_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)=0</td></tr>
+<tr class="memdesc:a70e4ebd330e80f40aae25444b1139a99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port pingIn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a70e4ebd330e80f40aae25444b1139a99">More...</a><br /></td></tr>
+<tr class="separator:a70e4ebd330e80f40aae25444b1139a99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a750bf28f0bf3d9e678c0c75a2e1a49da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a750bf28f0bf3d9e678c0c75a2e1a49da">bufferSendInFill_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
+<tr class="memdesc:a750bf28f0bf3d9e678c0c75a2e1a49da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port bufferSendInFill.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a750bf28f0bf3d9e678c0c75a2e1a49da">More...</a><br /></td></tr>
+<tr class="separator:a750bf28f0bf3d9e678c0c75a2e1a49da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afafc490c0655b99201f16361dc04842f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#afafc490c0655b99201f16361dc04842f">bufferSendInReturn_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
+<tr class="memdesc:afafc490c0655b99201f16361dc04842f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port bufferSendInReturn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#afafc490c0655b99201f16361dc04842f">More...</a><br /></td></tr>
+<tr class="separator:afafc490c0655b99201f16361dc04842f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf199ae4f6c3fd2d065c7ba0eaf7da70"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#aaf199ae4f6c3fd2d065c7ba0eaf7da70">pingIn_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)</td></tr>
+<tr class="memdesc:aaf199ae4f6c3fd2d065c7ba0eaf7da70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port pingIn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#aaf199ae4f6c3fd2d065c7ba0eaf7da70">More...</a><br /></td></tr>
+<tr class="separator:aaf199ae4f6c3fd2d065c7ba0eaf7da70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fb7b8964a9cc449c285ee7db07c5f11"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a5fb7b8964a9cc449c285ee7db07c5f11">bufferSendInFill_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
+<tr class="memdesc:a5fb7b8964a9cc449c285ee7db07c5f11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port bufferSendInFill.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a5fb7b8964a9cc449c285ee7db07c5f11">More...</a><br /></td></tr>
+<tr class="separator:a5fb7b8964a9cc449c285ee7db07c5f11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af351a87099689969e984d91d260081f0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#af351a87099689969e984d91d260081f0">bufferSendInReturn_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
+<tr class="memdesc:af351a87099689969e984d91d260081f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port bufferSendInReturn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#af351a87099689969e984d91d260081f0">More...</a><br /></td></tr>
+<tr class="separator:af351a87099689969e984d91d260081f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55ea87dbb297e96517943887cf5e84ef"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a55ea87dbb297e96517943887cf5e84ef">pingIn_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)</td></tr>
+<tr class="memdesc:a55ea87dbb297e96517943887cf5e84ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port pingIn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a55ea87dbb297e96517943887cf5e84ef">More...</a><br /></td></tr>
+<tr class="separator:a55ea87dbb297e96517943887cf5e84ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a0d39ae5d143e868002a13a0777023f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a9a0d39ae5d143e868002a13a0777023f">bufferSendOutDrain_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
+<tr class="memdesc:a9a0d39ae5d143e868002a13a0777023f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port bufferSendOutDrain.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a9a0d39ae5d143e868002a13a0777023f">More...</a><br /></td></tr>
+<tr class="separator:a9a0d39ae5d143e868002a13a0777023f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04fb6b7d45bb9564d72c0a2c70a1334d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#a04fb6b7d45bb9564d72c0a2c70a1334d">bufferSendOutReturn_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
+<tr class="memdesc:a04fb6b7d45bb9564d72c0a2c70a1334d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port bufferSendOutReturn.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#a04fb6b7d45bb9564d72c0a2c70a1334d">More...</a><br /></td></tr>
+<tr class="separator:a04fb6b7d45bb9564d72c0a2c70a1334d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac817d97c61337bb8ab6268493cd5fce4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#ac817d97c61337bb8ab6268493cd5fce4">pingOut_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)</td></tr>
+<tr class="memdesc:ac817d97c61337bb8ab6268493cd5fce4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port pingOut.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#ac817d97c61337bb8ab6268493cd5fce4">More...</a><br /></td></tr>
+<tr class="separator:ac817d97c61337bb8ab6268493cd5fce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aceef479610014c48b794700d1b97b756"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator_component_base.html#aceef479610014c48b794700d1b97b756">cmdResponse_out</a> (<a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, U32 cmdSeq, <a class="el" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> response)</td></tr>
 <tr class="memdesc:aceef479610014c48b794700d1b97b756"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit command response.  <a href="class_svc_1_1_buffer_accumulator_component_base.html#aceef479610014c48b794700d1b97b756">More...</a><br /></td></tr>
 <tr class="separator:aceef479610014c48b794700d1b97b756"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1041,8 +1041,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="acd954a18c0b1b5e4c5f27985ccdbcc2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd954a18c0b1b5e4c5f27985ccdbcc2a">&#9670;&nbsp;</a></span>bufferSendInFill_handler()</h2>
+<a id="a2f58431182bfbdbe21cdc4ccb0846831"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f58431182bfbdbe21cdc4ccb0846831">&#9670;&nbsp;</a></span>bufferSendInFill_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1053,7 +1053,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">virtual void Svc::BufferAccumulatorComponentBase::bufferSendInFill_handler </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1086,8 +1086,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ab70edb585d11931a483564d2104ca2dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab70edb585d11931a483564d2104ca2dc">&#9670;&nbsp;</a></span>bufferSendInFill_handlerBase()</h2>
+<a id="a750bf28f0bf3d9e678c0c75a2e1a49da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a750bf28f0bf3d9e678c0c75a2e1a49da">&#9670;&nbsp;</a></span>bufferSendInFill_handlerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1098,7 +1098,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::bufferSendInFill_handlerBase </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1133,8 +1133,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a2d6af0f50570bfc576bcdd3b396ade18"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d6af0f50570bfc576bcdd3b396ade18">&#9670;&nbsp;</a></span>bufferSendInFill_preMsgHook()</h2>
+<a id="a5fb7b8964a9cc449c285ee7db07c5f11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fb7b8964a9cc449c285ee7db07c5f11">&#9670;&nbsp;</a></span>bufferSendInFill_preMsgHook()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1145,7 +1145,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::bufferSendInFill_preMsgHook </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1180,8 +1180,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a7c0da15056af227797b778dc0019dc1d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c0da15056af227797b778dc0019dc1d">&#9670;&nbsp;</a></span>bufferSendInReturn_handler()</h2>
+<a id="a1a52f03daf7dcadd375551f3dc552292"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a52f03daf7dcadd375551f3dc552292">&#9670;&nbsp;</a></span>bufferSendInReturn_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1192,7 +1192,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">virtual void Svc::BufferAccumulatorComponentBase::bufferSendInReturn_handler </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1225,8 +1225,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ad347f0f33cb1bd656c40a2402d23e82c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad347f0f33cb1bd656c40a2402d23e82c">&#9670;&nbsp;</a></span>bufferSendInReturn_handlerBase()</h2>
+<a id="afafc490c0655b99201f16361dc04842f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afafc490c0655b99201f16361dc04842f">&#9670;&nbsp;</a></span>bufferSendInReturn_handlerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1237,7 +1237,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::bufferSendInReturn_handlerBase </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1272,8 +1272,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="af235a913064aecf1e5da46105684b993"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af235a913064aecf1e5da46105684b993">&#9670;&nbsp;</a></span>bufferSendInReturn_preMsgHook()</h2>
+<a id="af351a87099689969e984d91d260081f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af351a87099689969e984d91d260081f0">&#9670;&nbsp;</a></span>bufferSendInReturn_preMsgHook()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1284,7 +1284,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::bufferSendInReturn_preMsgHook </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1319,8 +1319,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a476b52037946dabcb6e73398354f8623"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a476b52037946dabcb6e73398354f8623">&#9670;&nbsp;</a></span>bufferSendOutDrain_out()</h2>
+<a id="a9a0d39ae5d143e868002a13a0777023f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a0d39ae5d143e868002a13a0777023f">&#9670;&nbsp;</a></span>bufferSendOutDrain_out()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1331,7 +1331,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::bufferSendOutDrain_out </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1366,8 +1366,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a3af8c44004f7521dab5281956ddd1531"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3af8c44004f7521dab5281956ddd1531">&#9670;&nbsp;</a></span>bufferSendOutReturn_out()</h2>
+<a id="a04fb6b7d45bb9564d72c0a2c70a1334d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04fb6b7d45bb9564d72c0a2c70a1334d">&#9670;&nbsp;</a></span>bufferSendOutReturn_out()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1378,7 +1378,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::bufferSendOutReturn_out </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1467,8 +1467,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a46fb02544a49214cbeb67d65b653510b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46fb02544a49214cbeb67d65b653510b">&#9670;&nbsp;</a></span>get_bufferSendInFill_InputPort()</h2>
+<a id="ada226ff22327cf5843a467171507ce64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada226ff22327cf5843a467171507ce64">&#9670;&nbsp;</a></span>get_bufferSendInFill_InputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1476,7 +1476,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> * Svc::BufferAccumulatorComponentBase::get_bufferSendInFill_InputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1495,8 +1495,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a4cd230aca8f7f843a08d586152db9c86"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4cd230aca8f7f843a08d586152db9c86">&#9670;&nbsp;</a></span>get_bufferSendInReturn_InputPort()</h2>
+<a id="abb08a5ab2824a00f91e9ad76bff2b2c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb08a5ab2824a00f91e9ad76bff2b2c1">&#9670;&nbsp;</a></span>get_bufferSendInReturn_InputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1504,7 +1504,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> * Svc::BufferAccumulatorComponentBase::get_bufferSendInReturn_InputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1523,8 +1523,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a42ed9570a5af5460a45ccc342fc758d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42ed9570a5af5460a45ccc342fc758d9">&#9670;&nbsp;</a></span>get_cmdIn_InputPort()</h2>
+<a id="a50f10fd4e84e541dfc661d3fa66bdb23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50f10fd4e84e541dfc661d3fa66bdb23">&#9670;&nbsp;</a></span>get_cmdIn_InputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1532,7 +1532,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_fw_1_1_input_cmd_port.html">Fw::InputCmdPort</a> * Svc::BufferAccumulatorComponentBase::get_cmdIn_InputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1551,8 +1551,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a1d53bea0bcaf49aa7cba5005f4676af1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d53bea0bcaf49aa7cba5005f4676af1">&#9670;&nbsp;</a></span>get_pingIn_InputPort()</h2>
+<a id="abfe782dd73bb0962dddf221e5e1e29fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfe782dd73bb0962dddf221e5e1e29fe">&#9670;&nbsp;</a></span>get_pingIn_InputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1560,7 +1560,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> * Svc::BufferAccumulatorComponentBase::get_pingIn_InputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1579,8 +1579,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ac94dc1c92e7097535f75e13c1ee32ef8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac94dc1c92e7097535f75e13c1ee32ef8">&#9670;&nbsp;</a></span>getNum_bufferSendInFill_InputPorts()</h2>
+<a id="a3dca03f7e49eb8625e4688f3510f43f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3dca03f7e49eb8625e4688f3510f43f4">&#9670;&nbsp;</a></span>getNum_bufferSendInFill_InputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1589,7 +1589,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_bufferSendInFill_InputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_bufferSendInFill_InputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1608,8 +1608,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a9480868709d2d67525c049dad786126a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9480868709d2d67525c049dad786126a">&#9670;&nbsp;</a></span>getNum_bufferSendInReturn_InputPorts()</h2>
+<a id="a772bc84d719ce4ba686118c217c01268"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a772bc84d719ce4ba686118c217c01268">&#9670;&nbsp;</a></span>getNum_bufferSendInReturn_InputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1618,7 +1618,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_bufferSendInReturn_InputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_bufferSendInReturn_InputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1637,8 +1637,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aa36f2b22334a57049a30b78cf7454db7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa36f2b22334a57049a30b78cf7454db7">&#9670;&nbsp;</a></span>getNum_bufferSendOutDrain_OutputPorts()</h2>
+<a id="a09161df2c6b3d8f513763170e26beb5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09161df2c6b3d8f513763170e26beb5c">&#9670;&nbsp;</a></span>getNum_bufferSendOutDrain_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1647,7 +1647,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_bufferSendOutDrain_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_bufferSendOutDrain_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1666,8 +1666,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aeaa38ebef6cf2e33173a1f5ce2ae8313"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeaa38ebef6cf2e33173a1f5ce2ae8313">&#9670;&nbsp;</a></span>getNum_bufferSendOutReturn_OutputPorts()</h2>
+<a id="ad6c89d5a2d3f5cb4fff7576bfcfd0767"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6c89d5a2d3f5cb4fff7576bfcfd0767">&#9670;&nbsp;</a></span>getNum_bufferSendOutReturn_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1676,7 +1676,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_bufferSendOutReturn_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_bufferSendOutReturn_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1695,8 +1695,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ab9a8293283030f80510a7b5aa193aea8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab9a8293283030f80510a7b5aa193aea8">&#9670;&nbsp;</a></span>getNum_cmdIn_InputPorts()</h2>
+<a id="ac44c564660952011853234d06e7c098c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac44c564660952011853234d06e7c098c">&#9670;&nbsp;</a></span>getNum_cmdIn_InputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1705,7 +1705,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_cmdIn_InputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_cmdIn_InputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1724,8 +1724,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a7119a7c736ab527a037b793f5d909893"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7119a7c736ab527a037b793f5d909893">&#9670;&nbsp;</a></span>getNum_cmdRegOut_OutputPorts()</h2>
+<a id="a9e73d3ed22fa98bec29fcfd8fefa1cee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e73d3ed22fa98bec29fcfd8fefa1cee">&#9670;&nbsp;</a></span>getNum_cmdRegOut_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1734,7 +1734,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_cmdRegOut_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_cmdRegOut_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1753,8 +1753,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aaf330cb4f560d2e1f83918fd11d94af5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf330cb4f560d2e1f83918fd11d94af5">&#9670;&nbsp;</a></span>getNum_cmdResponseOut_OutputPorts()</h2>
+<a id="a0b40375606d8bfa406ec375b90e50187"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b40375606d8bfa406ec375b90e50187">&#9670;&nbsp;</a></span>getNum_cmdResponseOut_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1763,7 +1763,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_cmdResponseOut_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_cmdResponseOut_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1782,8 +1782,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a78561daf8a50859bdf510a751cb302dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78561daf8a50859bdf510a751cb302dc">&#9670;&nbsp;</a></span>getNum_eventOut_OutputPorts()</h2>
+<a id="ab126bf13d52cc7479fcf341438eec1e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab126bf13d52cc7479fcf341438eec1e4">&#9670;&nbsp;</a></span>getNum_eventOut_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1792,7 +1792,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_eventOut_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_eventOut_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1811,8 +1811,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a5ab16f44d8f72345f85073d55ee47744"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ab16f44d8f72345f85073d55ee47744">&#9670;&nbsp;</a></span>getNum_pingIn_InputPorts()</h2>
+<a id="a74f5a1f8a255ebfe96bef1f10618c018"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74f5a1f8a255ebfe96bef1f10618c018">&#9670;&nbsp;</a></span>getNum_pingIn_InputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1821,7 +1821,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_pingIn_InputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_pingIn_InputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1840,8 +1840,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a7473169d6c0fd4fecbf2689e781feb6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7473169d6c0fd4fecbf2689e781feb6b">&#9670;&nbsp;</a></span>getNum_pingOut_OutputPorts()</h2>
+<a id="afb3c20c40b9270689fc7984cc7bc870f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb3c20c40b9270689fc7984cc7bc870f">&#9670;&nbsp;</a></span>getNum_pingOut_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1850,7 +1850,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_pingOut_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_pingOut_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1869,8 +1869,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a161026a7fb8a1df3dcca6d7ca6a1e895"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a161026a7fb8a1df3dcca6d7ca6a1e895">&#9670;&nbsp;</a></span>getNum_timeCaller_OutputPorts()</h2>
+<a id="a39e7a240323bc802b7e97bcd616f4bb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39e7a240323bc802b7e97bcd616f4bb7">&#9670;&nbsp;</a></span>getNum_timeCaller_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1879,7 +1879,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_timeCaller_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_timeCaller_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1898,8 +1898,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a3c1a6c26b50fa56dd7f118f19c64014e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c1a6c26b50fa56dd7f118f19c64014e">&#9670;&nbsp;</a></span>getNum_tlmOut_OutputPorts()</h2>
+<a id="a651d03d8b66e74e3da5e075708bf5739"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a651d03d8b66e74e3da5e075708bf5739">&#9670;&nbsp;</a></span>getNum_tlmOut_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1908,7 +1908,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Svc::BufferAccumulatorComponentBase::getNum_tlmOut_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::BufferAccumulatorComponentBase::getNum_tlmOut_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1956,8 +1956,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a866c2addfd2f12989d15aac1904b27e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a866c2addfd2f12989d15aac1904b27e5">&#9670;&nbsp;</a></span>init()</h2>
+<a id="a4ea30079789faf33406993429a87c1c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ea30079789faf33406993429a87c1c3">&#9670;&nbsp;</a></span>init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1965,13 +1965,13 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::init </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a650109ee80570ce79189348fd28dc556">FwQueueSizeType</a>&#160;</td>
           <td class="paramname"><em>queueDepth</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a02fd22e959ed6b754f408bbcf608fc53">FwEnumStoreType</a>&#160;</td>
           <td class="paramname"><em>instance</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
@@ -1995,8 +1995,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="af237aa0aeeb2cfc4eba825f69d74aa1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af237aa0aeeb2cfc4eba825f69d74aa1c">&#9670;&nbsp;</a></span>isConnected_bufferSendOutDrain_OutputPort()</h2>
+<a id="a6544413f363d5ccc3719085d4d414e13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6544413f363d5ccc3719085d4d414e13">&#9670;&nbsp;</a></span>isConnected_bufferSendOutDrain_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2007,7 +2007,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Svc::BufferAccumulatorComponentBase::isConnected_bufferSendOutDrain_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2031,8 +2031,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ad4d43962803fa30fc2e3ec1f2e8961aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4d43962803fa30fc2e3ec1f2e8961aa">&#9670;&nbsp;</a></span>isConnected_bufferSendOutReturn_OutputPort()</h2>
+<a id="a2ce0e95e418e3cc24a6869e3e3a8fc29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ce0e95e418e3cc24a6869e3e3a8fc29">&#9670;&nbsp;</a></span>isConnected_bufferSendOutReturn_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2043,7 +2043,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Svc::BufferAccumulatorComponentBase::isConnected_bufferSendOutReturn_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2067,8 +2067,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a4175891225a33c39c659fc12f208d850"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4175891225a33c39c659fc12f208d850">&#9670;&nbsp;</a></span>isConnected_cmdRegOut_OutputPort()</h2>
+<a id="a2f47f97d21e301792b10e465ca9b3086"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f47f97d21e301792b10e465ca9b3086">&#9670;&nbsp;</a></span>isConnected_cmdRegOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2079,7 +2079,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Svc::BufferAccumulatorComponentBase::isConnected_cmdRegOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2103,8 +2103,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a95dce71cbf2e3741b7580a43c491ed07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95dce71cbf2e3741b7580a43c491ed07">&#9670;&nbsp;</a></span>isConnected_cmdResponseOut_OutputPort()</h2>
+<a id="ada490fc4b9c215268dfa721c8d5ea526"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada490fc4b9c215268dfa721c8d5ea526">&#9670;&nbsp;</a></span>isConnected_cmdResponseOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2115,7 +2115,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Svc::BufferAccumulatorComponentBase::isConnected_cmdResponseOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2139,8 +2139,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a4efd7735464701095a16a8a65ffa6d15"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4efd7735464701095a16a8a65ffa6d15">&#9670;&nbsp;</a></span>isConnected_eventOut_OutputPort()</h2>
+<a id="a6c5d7654eaf60427184bc70f5571f4d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c5d7654eaf60427184bc70f5571f4d3">&#9670;&nbsp;</a></span>isConnected_eventOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2151,7 +2151,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Svc::BufferAccumulatorComponentBase::isConnected_eventOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2175,8 +2175,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a12d1d3eae5925c3ce6a6539315babf9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12d1d3eae5925c3ce6a6539315babf9a">&#9670;&nbsp;</a></span>isConnected_pingOut_OutputPort()</h2>
+<a id="aa2145e865deb6f543c9e530792e0b63f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2145e865deb6f543c9e530792e0b63f">&#9670;&nbsp;</a></span>isConnected_pingOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2187,7 +2187,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Svc::BufferAccumulatorComponentBase::isConnected_pingOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2211,8 +2211,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a0408f989c61e4f9037f7859441de9d7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0408f989c61e4f9037f7859441de9d7c">&#9670;&nbsp;</a></span>isConnected_timeCaller_OutputPort()</h2>
+<a id="a299a84d7959c5536d4686dbabacc25eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a299a84d7959c5536d4686dbabacc25eb">&#9670;&nbsp;</a></span>isConnected_timeCaller_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2223,7 +2223,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Svc::BufferAccumulatorComponentBase::isConnected_timeCaller_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2247,8 +2247,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a286bf7f6ff575a8f23a453a604227ee4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a286bf7f6ff575a8f23a453a604227ee4">&#9670;&nbsp;</a></span>isConnected_tlmOut_OutputPort()</h2>
+<a id="a57a7d1e5175b73e3bdaadb967c280f0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57a7d1e5175b73e3bdaadb967c280f0e">&#9670;&nbsp;</a></span>isConnected_tlmOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2259,7 +2259,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Svc::BufferAccumulatorComponentBase::isConnected_tlmOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2520,8 +2520,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a3c902c574fd3a4cd0b29758f7a7dcede"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c902c574fd3a4cd0b29758f7a7dcede">&#9670;&nbsp;</a></span>pingIn_handler()</h2>
+<a id="a70e4ebd330e80f40aae25444b1139a99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70e4ebd330e80f40aae25444b1139a99">&#9670;&nbsp;</a></span>pingIn_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2532,7 +2532,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">virtual void Svc::BufferAccumulatorComponentBase::pingIn_handler </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2565,8 +2565,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a3845439f0009bf8d722ae0be4f29424c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3845439f0009bf8d722ae0be4f29424c">&#9670;&nbsp;</a></span>pingIn_handlerBase()</h2>
+<a id="aaf199ae4f6c3fd2d065c7ba0eaf7da70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf199ae4f6c3fd2d065c7ba0eaf7da70">&#9670;&nbsp;</a></span>pingIn_handlerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2577,7 +2577,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::pingIn_handlerBase </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2612,8 +2612,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a65595e35bedb52a746cec3323728dfc1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65595e35bedb52a746cec3323728dfc1">&#9670;&nbsp;</a></span>pingIn_preMsgHook()</h2>
+<a id="a55ea87dbb297e96517943887cf5e84ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55ea87dbb297e96517943887cf5e84ef">&#9670;&nbsp;</a></span>pingIn_preMsgHook()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2624,7 +2624,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::pingIn_preMsgHook </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2659,8 +2659,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a7ddca80bbdc729d5799a92fd65fc1c5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ddca80bbdc729d5799a92fd65fc1c5b">&#9670;&nbsp;</a></span>pingOut_out()</h2>
+<a id="ac817d97c61337bb8ab6268493cd5fce4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac817d97c61337bb8ab6268493cd5fce4">&#9670;&nbsp;</a></span>pingOut_out()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2671,7 +2671,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::pingOut_out </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2728,8 +2728,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ad95a6b2ceb9fabc35edfef44a25ef94a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad95a6b2ceb9fabc35edfef44a25ef94a">&#9670;&nbsp;</a></span>set_bufferSendOutDrain_OutputPort()</h2>
+<a id="ac43ee208fdf3e3183fac83de9bfa712b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac43ee208fdf3e3183fac83de9bfa712b">&#9670;&nbsp;</a></span>set_bufferSendOutDrain_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2737,7 +2737,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::set_bufferSendOutDrain_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2767,8 +2767,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="abd3a34cce8aa714d172dcc29ce33d502"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abd3a34cce8aa714d172dcc29ce33d502">&#9670;&nbsp;</a></span>set_bufferSendOutReturn_OutputPort()</h2>
+<a id="adcff5a714f5a4874158921ff49281d5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcff5a714f5a4874158921ff49281d5b">&#9670;&nbsp;</a></span>set_bufferSendOutReturn_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2776,7 +2776,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::set_bufferSendOutReturn_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2806,8 +2806,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ad24f3511e6d5a4033012f048c8b8da6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad24f3511e6d5a4033012f048c8b8da6a">&#9670;&nbsp;</a></span>set_cmdRegOut_OutputPort()</h2>
+<a id="a401cd30654b4a7af7d54aee16d4be3c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a401cd30654b4a7af7d54aee16d4be3c2">&#9670;&nbsp;</a></span>set_cmdRegOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2815,7 +2815,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::set_cmdRegOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2845,8 +2845,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a847b8346c0d064a15d28ca83aac79e53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a847b8346c0d064a15d28ca83aac79e53">&#9670;&nbsp;</a></span>set_cmdResponseOut_OutputPort()</h2>
+<a id="a49b938d7eb09edc1edc33995e1df19a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49b938d7eb09edc1edc33995e1df19a2">&#9670;&nbsp;</a></span>set_cmdResponseOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2854,7 +2854,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::set_cmdResponseOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2884,8 +2884,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aa3c77ed34370c8f971349c9f5cc3b4b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3c77ed34370c8f971349c9f5cc3b4b7">&#9670;&nbsp;</a></span>set_eventOut_OutputPort()</h2>
+<a id="a81173a4059294ce72f4ddb0328337264"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81173a4059294ce72f4ddb0328337264">&#9670;&nbsp;</a></span>set_eventOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2893,7 +2893,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::set_eventOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2923,8 +2923,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a5d6db931465907db681fd1a71c968fa2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d6db931465907db681fd1a71c968fa2">&#9670;&nbsp;</a></span>set_pingOut_OutputPort()</h2>
+<a id="a0d308fabcbe42af5b48b97c7c6a22593"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d308fabcbe42af5b48b97c7c6a22593">&#9670;&nbsp;</a></span>set_pingOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2932,7 +2932,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::set_pingOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -2962,8 +2962,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aca66c266390e31422ef17087ccec43a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca66c266390e31422ef17087ccec43a3">&#9670;&nbsp;</a></span>set_timeCaller_OutputPort()</h2>
+<a id="a96ec9d3f390a20200de10ec087c2b0fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96ec9d3f390a20200de10ec087c2b0fb">&#9670;&nbsp;</a></span>set_timeCaller_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2971,7 +2971,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::set_timeCaller_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -3001,8 +3001,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a3b3d63f39e9480bc4d093f456519c359"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b3d63f39e9480bc4d093f456519c359">&#9670;&nbsp;</a></span>set_tlmOut_OutputPort()</h2>
+<a id="acc68c352eb21b6b10805cad1c7b0cea3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc68c352eb21b6b10805cad1c7b0cea3">&#9670;&nbsp;</a></span>set_tlmOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3010,7 +3010,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::BufferAccumulatorComponentBase::set_tlmOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>

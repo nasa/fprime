@@ -111,9 +111,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:a34653e5a5f1c7b3d374e7d3bd1e7a2b2"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_drv_1_1_input_data_buffer_port.html#a34653e5a5f1c7b3d374e7d3bd1e7a2b2af87c4345cc41473d1a61950540aa1b99">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:a34653e5a5f1c7b3d374e7d3bd1e7a2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d29750b05ffc7f8f23a4ed4171d6902"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_data_buffer_port.html#a2d29750b05ffc7f8f23a4ed4171d6902">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td></tr>
-<tr class="memdesc:a2d29750b05ffc7f8f23a4ed4171d6902"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_data_buffer_port.html#a2d29750b05ffc7f8f23a4ed4171d6902">More...</a><br /></td></tr>
-<tr class="separator:a2d29750b05ffc7f8f23a4ed4171d6902"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac628e5ad92ec9bc039bed531cf3ab0ce"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_data_buffer_port.html#ac628e5ad92ec9bc039bed531cf3ab0ce">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td></tr>
+<tr class="memdesc:ac628e5ad92ec9bc039bed531cf3ab0ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_data_buffer_port.html#ac628e5ad92ec9bc039bed531cf3ab0ce">More...</a><br /></td></tr>
+<tr class="separator:ac628e5ad92ec9bc039bed531cf3ab0ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -123,7 +123,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a44e43bf99157d4f3aeae1c59c131a10e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_data_buffer_port.html#a44e43bf99157d4f3aeae1c59c131a10e">init</a> ()</td></tr>
 <tr class="memdesc:a44e43bf99157d4f3aeae1c59c131a10e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_drv_1_1_input_data_buffer_port.html#a44e43bf99157d4f3aeae1c59c131a10e">More...</a><br /></td></tr>
 <tr class="separator:a44e43bf99157d4f3aeae1c59c131a10e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa870fb10f16bea0b846874a2a888480b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_data_buffer_port.html#aa870fb10f16bea0b846874a2a888480b">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_data_buffer_port.html#a2d29750b05ffc7f8f23a4ed4171d6902">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:aa870fb10f16bea0b846874a2a888480b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_data_buffer_port.html#aa870fb10f16bea0b846874a2a888480b">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_data_buffer_port.html#ac628e5ad92ec9bc039bed531cf3ab0ce">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:aa870fb10f16bea0b846874a2a888480b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_drv_1_1_input_data_buffer_port.html#aa870fb10f16bea0b846874a2a888480b">More...</a><br /></td></tr>
 <tr class="separator:aa870fb10f16bea0b846874a2a888480b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f9435def7c2cef15a0562348eab025c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_data_buffer_port.html#a2f9435def7c2cef15a0562348eab025c">invoke</a> (<a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td></tr>
@@ -172,14 +172,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="data_buffer_port_ac_8hpp_source.html#l00025">25</a> of file <a class="el" href="data_buffer_port_ac_8hpp_source.html">DataBufferPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a2d29750b05ffc7f8f23a4ed4171d6902"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d29750b05ffc7f8f23a4ed4171d6902">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="ac628e5ad92ec9bc039bed531cf3ab0ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac628e5ad92ec9bc039bed531cf3ab0ce">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Drv::InputDataBufferPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td>
+          <td class="memname">typedef void(* Drv::InputDataBufferPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -249,7 +249,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_drv_1_1_input_data_buffer_port.html#a2d29750b05ffc7f8f23a4ed4171d6902">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_drv_1_1_input_data_buffer_port.html#ac628e5ad92ec9bc039bed531cf3ab0ce">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>

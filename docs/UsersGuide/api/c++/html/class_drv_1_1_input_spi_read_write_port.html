@@ -114,9 +114,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:a21b917b9cc4fe05640ad98986a1e9228"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a21b917b9cc4fe05640ad98986a1e9228a85aa541d4e723695aee8e431e2c9d5ae">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:a21b917b9cc4fe05640ad98986a1e9228"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41f3e0e03c31e8a9e5722d8dc7d1f6ce"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a41f3e0e03c31e8a9e5722d8dc7d1f6ce">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;writeBuffer, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;readBuffer)</td></tr>
-<tr class="memdesc:a41f3e0e03c31e8a9e5722d8dc7d1f6ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_spi_read_write_port.html#a41f3e0e03c31e8a9e5722d8dc7d1f6ce">More...</a><br /></td></tr>
-<tr class="separator:a41f3e0e03c31e8a9e5722d8dc7d1f6ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ad734927b586182cb303d05e9f1990c"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a3ad734927b586182cb303d05e9f1990c">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;writeBuffer, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;readBuffer)</td></tr>
+<tr class="memdesc:a3ad734927b586182cb303d05e9f1990c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_spi_read_write_port.html#a3ad734927b586182cb303d05e9f1990c">More...</a><br /></td></tr>
+<tr class="separator:a3ad734927b586182cb303d05e9f1990c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -126,7 +126,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5ac79baf428730c652b17ada678af4d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a5ac79baf428730c652b17ada678af4d9">init</a> ()</td></tr>
 <tr class="memdesc:a5ac79baf428730c652b17ada678af4d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_drv_1_1_input_spi_read_write_port.html#a5ac79baf428730c652b17ada678af4d9">More...</a><br /></td></tr>
 <tr class="separator:a5ac79baf428730c652b17ada678af4d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bc3272ed6ef8d6d61de4c5989608d72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a1bc3272ed6ef8d6d61de4c5989608d72">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a41f3e0e03c31e8a9e5722d8dc7d1f6ce">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:a1bc3272ed6ef8d6d61de4c5989608d72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a1bc3272ed6ef8d6d61de4c5989608d72">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a3ad734927b586182cb303d05e9f1990c">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:a1bc3272ed6ef8d6d61de4c5989608d72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_drv_1_1_input_spi_read_write_port.html#a1bc3272ed6ef8d6d61de4c5989608d72">More...</a><br /></td></tr>
 <tr class="separator:a1bc3272ed6ef8d6d61de4c5989608d72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6bed5bcd4fcfb4fb3f8d630d07fefa9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_spi_read_write_port.html#ac6bed5bcd4fcfb4fb3f8d630d07fefa9">invoke</a> (<a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;writeBuffer, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;readBuffer)</td></tr>
@@ -175,14 +175,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="spi_read_write_port_ac_8hpp_source.html#l00024">24</a> of file <a class="el" href="spi_read_write_port_ac_8hpp_source.html">SpiReadWritePortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a41f3e0e03c31e8a9e5722d8dc7d1f6ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41f3e0e03c31e8a9e5722d8dc7d1f6ce">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="a3ad734927b586182cb303d05e9f1990c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ad734927b586182cb303d05e9f1990c">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Drv::InputSpiReadWritePort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;writeBuffer, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;readBuffer)</td>
+          <td class="memname">typedef void(* Drv::InputSpiReadWritePort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;writeBuffer, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;readBuffer)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -252,7 +252,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a41f3e0e03c31e8a9e5722d8dc7d1f6ce">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_drv_1_1_input_spi_read_write_port.html#a3ad734927b586182cb303d05e9f1990c">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>

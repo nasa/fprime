@@ -111,9 +111,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:a0c21e74a6c3d7723cff529d96ce35e84"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_svc_1_1_input_ping_port.html#a0c21e74a6c3d7723cff529d96ce35e84a5d386a9f77628537d5e5bcad1b9998d7">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:a0c21e74a6c3d7723cff529d96ce35e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abaab429ce60f5df4dc0e373dbd035a6b"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_ping_port.html#abaab429ce60f5df4dc0e373dbd035a6b">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)</td></tr>
-<tr class="memdesc:abaab429ce60f5df4dc0e373dbd035a6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_ping_port.html#abaab429ce60f5df4dc0e373dbd035a6b">More...</a><br /></td></tr>
-<tr class="separator:abaab429ce60f5df4dc0e373dbd035a6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c51d4c27acaf6bd4f8827242f84eefc"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_ping_port.html#a6c51d4c27acaf6bd4f8827242f84eefc">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)</td></tr>
+<tr class="memdesc:a6c51d4c27acaf6bd4f8827242f84eefc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_ping_port.html#a6c51d4c27acaf6bd4f8827242f84eefc">More...</a><br /></td></tr>
+<tr class="separator:a6c51d4c27acaf6bd4f8827242f84eefc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -123,7 +123,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a962f9926f2ec60dd1e96545712f74a77"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_ping_port.html#a962f9926f2ec60dd1e96545712f74a77">init</a> ()</td></tr>
 <tr class="memdesc:a962f9926f2ec60dd1e96545712f74a77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_svc_1_1_input_ping_port.html#a962f9926f2ec60dd1e96545712f74a77">More...</a><br /></td></tr>
 <tr class="separator:a962f9926f2ec60dd1e96545712f74a77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e1806b0a8e33f409809515093cd366b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_ping_port.html#a8e1806b0a8e33f409809515093cd366b">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_ping_port.html#abaab429ce60f5df4dc0e373dbd035a6b">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:a8e1806b0a8e33f409809515093cd366b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_ping_port.html#a8e1806b0a8e33f409809515093cd366b">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_ping_port.html#a6c51d4c27acaf6bd4f8827242f84eefc">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:a8e1806b0a8e33f409809515093cd366b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_svc_1_1_input_ping_port.html#a8e1806b0a8e33f409809515093cd366b">More...</a><br /></td></tr>
 <tr class="separator:a8e1806b0a8e33f409809515093cd366b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad32c544ce91e5fdf1560cf907eb49c13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_ping_port.html#ad32c544ce91e5fdf1560cf907eb49c13">invoke</a> (U32 key)</td></tr>
@@ -172,14 +172,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ping_port_ac_8hpp_source.html#l00024">24</a> of file <a class="el" href="ping_port_ac_8hpp_source.html">PingPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="abaab429ce60f5df4dc0e373dbd035a6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abaab429ce60f5df4dc0e373dbd035a6b">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="a6c51d4c27acaf6bd4f8827242f84eefc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c51d4c27acaf6bd4f8827242f84eefc">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Svc::InputPingPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)</td>
+          <td class="memname">typedef void(* Svc::InputPingPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -249,7 +249,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_svc_1_1_input_ping_port.html#abaab429ce60f5df4dc0e373dbd035a6b">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_svc_1_1_input_ping_port.html#a6c51d4c27acaf6bd4f8827242f84eefc">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>

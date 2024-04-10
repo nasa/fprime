@@ -115,30 +115,30 @@ Inheritance diagram for Drv::BlockDriverComponentBase:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0d6902411a39ce44d8b0651c27826139"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a0d6902411a39ce44d8b0651c27826139">init</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance=0)</td></tr>
-<tr class="memdesc:a0d6902411a39ce44d8b0651c27826139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="class_drv_1_1_block_driver_component_base.html" title="Auto-generated base for BlockDriver component.">BlockDriverComponentBase</a> object.  <a href="class_drv_1_1_block_driver_component_base.html#a0d6902411a39ce44d8b0651c27826139">More...</a><br /></td></tr>
-<tr class="separator:a0d6902411a39ce44d8b0651c27826139"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae77eee70d96d570339ad4234f31d4c65"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_drv_1_1_input_data_buffer_port.html">Drv::InputDataBufferPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ae77eee70d96d570339ad4234f31d4c65">get_BufferIn_InputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:ae77eee70d96d570339ad4234f31d4c65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf599d928e966ab35716acb6b0e7fc8e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#adf599d928e966ab35716acb6b0e7fc8e">get_PingIn_InputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:adf599d928e966ab35716acb6b0e7fc8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adaee78246fb4dad0b251c3f9eb37e04a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_input_sched_port.html">Svc::InputSchedPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#adaee78246fb4dad0b251c3f9eb37e04a">get_Sched_InputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:adaee78246fb4dad0b251c3f9eb37e04a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af06784abc64e1dfc9209b717a5b57c64"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#af06784abc64e1dfc9209b717a5b57c64">set_Time_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_input_time_port.html">Fw::InputTimePort</a> *port)</td></tr>
-<tr class="memdesc:af06784abc64e1dfc9209b717a5b57c64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to Time[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#af06784abc64e1dfc9209b717a5b57c64">More...</a><br /></td></tr>
-<tr class="separator:af06784abc64e1dfc9209b717a5b57c64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9459489bb3cd760884d1bca1a284d922"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a9459489bb3cd760884d1bca1a284d922">set_Tlm_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_input_tlm_port.html">Fw::InputTlmPort</a> *port)</td></tr>
-<tr class="memdesc:a9459489bb3cd760884d1bca1a284d922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to Tlm[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#a9459489bb3cd760884d1bca1a284d922">More...</a><br /></td></tr>
-<tr class="separator:a9459489bb3cd760884d1bca1a284d922"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9eff7a3d50a1cabb2a97004ea498e3b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a9eff7a3d50a1cabb2a97004ea498e3b9">set_BufferOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_drv_1_1_input_data_buffer_port.html">Drv::InputDataBufferPort</a> *port)</td></tr>
-<tr class="memdesc:a9eff7a3d50a1cabb2a97004ea498e3b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to BufferOut[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#a9eff7a3d50a1cabb2a97004ea498e3b9">More...</a><br /></td></tr>
-<tr class="separator:a9eff7a3d50a1cabb2a97004ea498e3b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21bb933049dc0217ec4d63cc34ae8727"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a21bb933049dc0217ec4d63cc34ae8727">set_CycleOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_svc_1_1_input_cycle_port.html">Svc::InputCyclePort</a> *port)</td></tr>
-<tr class="memdesc:a21bb933049dc0217ec4d63cc34ae8727"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to CycleOut[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#a21bb933049dc0217ec4d63cc34ae8727">More...</a><br /></td></tr>
-<tr class="separator:a21bb933049dc0217ec4d63cc34ae8727"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a075e850774bc8b9ca09ee4fd309c0219"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a075e850774bc8b9ca09ee4fd309c0219">set_PingOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> *port)</td></tr>
-<tr class="memdesc:a075e850774bc8b9ca09ee4fd309c0219"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to PingOut[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#a075e850774bc8b9ca09ee4fd309c0219">More...</a><br /></td></tr>
-<tr class="separator:a075e850774bc8b9ca09ee4fd309c0219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a266b1d773cc1b2a2e30f4cff5f7f4b07"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a266b1d773cc1b2a2e30f4cff5f7f4b07">init</a> (<a class="el" href="fp_config_8h.html#a650109ee80570ce79189348fd28dc556">FwQueueSizeType</a> queueDepth, <a class="el" href="fp_config_8h.html#a02fd22e959ed6b754f408bbcf608fc53">FwEnumStoreType</a> instance=0)</td></tr>
+<tr class="memdesc:a266b1d773cc1b2a2e30f4cff5f7f4b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="class_drv_1_1_block_driver_component_base.html" title="Auto-generated base for BlockDriver component.">BlockDriverComponentBase</a> object.  <a href="class_drv_1_1_block_driver_component_base.html#a266b1d773cc1b2a2e30f4cff5f7f4b07">More...</a><br /></td></tr>
+<tr class="separator:a266b1d773cc1b2a2e30f4cff5f7f4b07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b62b801e11194c57be60823a4ff71ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_drv_1_1_input_data_buffer_port.html">Drv::InputDataBufferPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a5b62b801e11194c57be60823a4ff71ff">get_BufferIn_InputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a5b62b801e11194c57be60823a4ff71ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bd8d0675ee1b18a9aba142b4d1946da"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a7bd8d0675ee1b18a9aba142b4d1946da">get_PingIn_InputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a7bd8d0675ee1b18a9aba142b4d1946da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada8c590464740a995efd8cc9a661ecd0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_input_sched_port.html">Svc::InputSchedPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ada8c590464740a995efd8cc9a661ecd0">get_Sched_InputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:ada8c590464740a995efd8cc9a661ecd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeab9c8cd2e28a0fa44f03728003f5f72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#aeab9c8cd2e28a0fa44f03728003f5f72">set_Time_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_time_port.html">Fw::InputTimePort</a> *port)</td></tr>
+<tr class="memdesc:aeab9c8cd2e28a0fa44f03728003f5f72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to Time[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#aeab9c8cd2e28a0fa44f03728003f5f72">More...</a><br /></td></tr>
+<tr class="separator:aeab9c8cd2e28a0fa44f03728003f5f72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac29cc14c3fb98efbf3af15fb3ca6a73f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ac29cc14c3fb98efbf3af15fb3ca6a73f">set_Tlm_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_tlm_port.html">Fw::InputTlmPort</a> *port)</td></tr>
+<tr class="memdesc:ac29cc14c3fb98efbf3af15fb3ca6a73f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to Tlm[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#ac29cc14c3fb98efbf3af15fb3ca6a73f">More...</a><br /></td></tr>
+<tr class="separator:ac29cc14c3fb98efbf3af15fb3ca6a73f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa19ea0f0b80390a7a6c977afe2e8d7c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#aa19ea0f0b80390a7a6c977afe2e8d7c7">set_BufferOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_drv_1_1_input_data_buffer_port.html">Drv::InputDataBufferPort</a> *port)</td></tr>
+<tr class="memdesc:aa19ea0f0b80390a7a6c977afe2e8d7c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to BufferOut[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#aa19ea0f0b80390a7a6c977afe2e8d7c7">More...</a><br /></td></tr>
+<tr class="separator:aa19ea0f0b80390a7a6c977afe2e8d7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae747ee7b6e46172d0ffa8998c95b1193"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ae747ee7b6e46172d0ffa8998c95b1193">set_CycleOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_svc_1_1_input_cycle_port.html">Svc::InputCyclePort</a> *port)</td></tr>
+<tr class="memdesc:ae747ee7b6e46172d0ffa8998c95b1193"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to CycleOut[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#ae747ee7b6e46172d0ffa8998c95b1193">More...</a><br /></td></tr>
+<tr class="separator:ae747ee7b6e46172d0ffa8998c95b1193"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21f5905ec474cf0a4f8b4d3c4b16cde0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a21f5905ec474cf0a4f8b4d3c4b16cde0">set_PingOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> *port)</td></tr>
+<tr class="memdesc:a21f5905ec474cf0a4f8b4d3c4b16cde0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to PingOut[portNum].  <a href="class_drv_1_1_block_driver_component_base.html#a21f5905ec474cf0a4f8b4d3c4b16cde0">More...</a><br /></td></tr>
+<tr class="separator:a21f5905ec474cf0a4f8b4d3c4b16cde0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_active_component_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_active_component_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_active_component_base.html">Fw::ActiveComponentBase</a></td></tr>
 <tr class="memitem:a6c8d55256efaa175fd0d5804e2b483c2 inherit pub_methods_class_fw_1_1_active_component_base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_active_component_base.html#a6c8d55256efaa175fd0d5804e2b483c2">start</a> (<a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Os::Task::ParamType</a> priority=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Os::Task::ParamType</a> stackSize=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Os::Task::ParamType</a> cpuAffinity=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Os::Task::ParamType</a> identifier=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a>)</td></tr>
 <tr class="memdesc:a6c8d55256efaa175fd0d5804e2b483c2 inherit pub_methods_class_fw_1_1_active_component_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">called by instantiator when task is to be started  <a href="class_fw_1_1_active_component_base.html#a6c8d55256efaa175fd0d5804e2b483c2">More...</a><br /></td></tr>
@@ -188,68 +188,68 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ac5e09a11ef1beed86c71c67a13d489fe"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ac5e09a11ef1beed86c71c67a13d489fe">~BlockDriverComponentBase</a> ()</td></tr>
 <tr class="memdesc:ac5e09a11ef1beed86c71c67a13d489fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy <a class="el" href="class_drv_1_1_block_driver_component_base.html" title="Auto-generated base for BlockDriver component.">BlockDriverComponentBase</a> object.  <a href="class_drv_1_1_block_driver_component_base.html#ac5e09a11ef1beed86c71c67a13d489fe">More...</a><br /></td></tr>
 <tr class="separator:ac5e09a11ef1beed86c71c67a13d489fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2454114575f5c7d8cb717a259e7cd1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ac2454114575f5c7d8cb717a259e7cd1c">getNum_BufferIn_InputPorts</a> () const</td></tr>
-<tr class="separator:ac2454114575f5c7d8cb717a259e7cd1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e41c501aea0d5820fd086b2972ea250"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a8e41c501aea0d5820fd086b2972ea250">getNum_PingIn_InputPorts</a> () const</td></tr>
-<tr class="separator:a8e41c501aea0d5820fd086b2972ea250"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6cdb0f97df81d0d5475c742fd9a5a3a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#aa6cdb0f97df81d0d5475c742fd9a5a3a">getNum_Sched_InputPorts</a> () const</td></tr>
-<tr class="separator:aa6cdb0f97df81d0d5475c742fd9a5a3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95db19233fca425bdc5d85ba52925164"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a95db19233fca425bdc5d85ba52925164">getNum_Time_OutputPorts</a> () const</td></tr>
-<tr class="separator:a95db19233fca425bdc5d85ba52925164"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a463e9213126c46e79b5a057ec53601ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a463e9213126c46e79b5a057ec53601ad">getNum_Tlm_OutputPorts</a> () const</td></tr>
-<tr class="separator:a463e9213126c46e79b5a057ec53601ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a82dcf21f65b254a8829a9e61433255"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a1a82dcf21f65b254a8829a9e61433255">getNum_BufferOut_OutputPorts</a> () const</td></tr>
-<tr class="separator:a1a82dcf21f65b254a8829a9e61433255"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65efda4851273b49639cee52684fe999"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a65efda4851273b49639cee52684fe999">getNum_CycleOut_OutputPorts</a> () const</td></tr>
-<tr class="separator:a65efda4851273b49639cee52684fe999"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ed306fbe09abbdb12ee6e3f7635837f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a8ed306fbe09abbdb12ee6e3f7635837f">getNum_PingOut_OutputPorts</a> () const</td></tr>
-<tr class="separator:a8ed306fbe09abbdb12ee6e3f7635837f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4497c097183ceee878a8f1d3578fa80b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a4497c097183ceee878a8f1d3578fa80b">isConnected_Time_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a4497c097183ceee878a8f1d3578fa80b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41640831004d9ccbb9387d2d97a5e7fc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a41640831004d9ccbb9387d2d97a5e7fc">isConnected_Tlm_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a41640831004d9ccbb9387d2d97a5e7fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a586e382ad4a6275f1f407a01a0ba1193"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a586e382ad4a6275f1f407a01a0ba1193">isConnected_BufferOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a586e382ad4a6275f1f407a01a0ba1193"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a196732572cb6cbbf685b2fa5041b4545"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a196732572cb6cbbf685b2fa5041b4545">isConnected_CycleOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:a196732572cb6cbbf685b2fa5041b4545"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2a5464d8589a7437c46eb154ad45abf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ad2a5464d8589a7437c46eb154ad45abf">isConnected_PingOut_OutputPort</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
-<tr class="separator:ad2a5464d8589a7437c46eb154ad45abf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6c80bbc9c5d9e8c1282d00505fbbf12"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ae6c80bbc9c5d9e8c1282d00505fbbf12">BufferIn_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)=0</td></tr>
-<tr class="memdesc:ae6c80bbc9c5d9e8c1282d00505fbbf12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port BufferIn.  <a href="class_drv_1_1_block_driver_component_base.html#ae6c80bbc9c5d9e8c1282d00505fbbf12">More...</a><br /></td></tr>
-<tr class="separator:ae6c80bbc9c5d9e8c1282d00505fbbf12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a709fe87a6a6564d931913fc6b4f1c4d7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a709fe87a6a6564d931913fc6b4f1c4d7">PingIn_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)=0</td></tr>
-<tr class="memdesc:a709fe87a6a6564d931913fc6b4f1c4d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port PingIn.  <a href="class_drv_1_1_block_driver_component_base.html#a709fe87a6a6564d931913fc6b4f1c4d7">More...</a><br /></td></tr>
-<tr class="separator:a709fe87a6a6564d931913fc6b4f1c4d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cda071b671753093ece47b6a3365a20"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a9cda071b671753093ece47b6a3365a20">Sched_handler</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context)=0</td></tr>
-<tr class="memdesc:a9cda071b671753093ece47b6a3365a20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port Sched.  <a href="class_drv_1_1_block_driver_component_base.html#a9cda071b671753093ece47b6a3365a20">More...</a><br /></td></tr>
-<tr class="separator:a9cda071b671753093ece47b6a3365a20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5d2e928bfbe0f659a96e7cc974e4b0b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ab5d2e928bfbe0f659a96e7cc974e4b0b">BufferIn_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td></tr>
-<tr class="memdesc:ab5d2e928bfbe0f659a96e7cc974e4b0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port BufferIn.  <a href="class_drv_1_1_block_driver_component_base.html#ab5d2e928bfbe0f659a96e7cc974e4b0b">More...</a><br /></td></tr>
-<tr class="separator:ab5d2e928bfbe0f659a96e7cc974e4b0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae25864e466ad0257fc61a7adbce7c973"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ae25864e466ad0257fc61a7adbce7c973">PingIn_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)</td></tr>
-<tr class="memdesc:ae25864e466ad0257fc61a7adbce7c973"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port PingIn.  <a href="class_drv_1_1_block_driver_component_base.html#ae25864e466ad0257fc61a7adbce7c973">More...</a><br /></td></tr>
-<tr class="separator:ae25864e466ad0257fc61a7adbce7c973"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7cc5e944cc25c55aca4e8fc7c7d5e6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ad7cc5e944cc25c55aca4e8fc7c7d5e6a">Sched_handlerBase</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context)</td></tr>
-<tr class="memdesc:ad7cc5e944cc25c55aca4e8fc7c7d5e6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port Sched.  <a href="class_drv_1_1_block_driver_component_base.html#ad7cc5e944cc25c55aca4e8fc7c7d5e6a">More...</a><br /></td></tr>
-<tr class="separator:ad7cc5e944cc25c55aca4e8fc7c7d5e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba59d07ddab9b4b199aded662d3cd024"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#aba59d07ddab9b4b199aded662d3cd024">BufferIn_preMsgHook</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td></tr>
-<tr class="memdesc:aba59d07ddab9b4b199aded662d3cd024"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port BufferIn.  <a href="class_drv_1_1_block_driver_component_base.html#aba59d07ddab9b4b199aded662d3cd024">More...</a><br /></td></tr>
-<tr class="separator:aba59d07ddab9b4b199aded662d3cd024"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a307cb95864af7b493312db088d02d9f6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a307cb95864af7b493312db088d02d9f6">PingIn_preMsgHook</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)</td></tr>
-<tr class="memdesc:a307cb95864af7b493312db088d02d9f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port PingIn.  <a href="class_drv_1_1_block_driver_component_base.html#a307cb95864af7b493312db088d02d9f6">More...</a><br /></td></tr>
-<tr class="separator:a307cb95864af7b493312db088d02d9f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26185fdc45625dab6b3d289754126d9e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a26185fdc45625dab6b3d289754126d9e">Sched_preMsgHook</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context)</td></tr>
-<tr class="memdesc:a26185fdc45625dab6b3d289754126d9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port Sched.  <a href="class_drv_1_1_block_driver_component_base.html#a26185fdc45625dab6b3d289754126d9e">More...</a><br /></td></tr>
-<tr class="separator:a26185fdc45625dab6b3d289754126d9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83a9d331ed2d537c33a979d57fbd4fd0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a83a9d331ed2d537c33a979d57fbd4fd0">BufferOut_out</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td></tr>
-<tr class="memdesc:a83a9d331ed2d537c33a979d57fbd4fd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port BufferOut.  <a href="class_drv_1_1_block_driver_component_base.html#a83a9d331ed2d537c33a979d57fbd4fd0">More...</a><br /></td></tr>
-<tr class="separator:a83a9d331ed2d537c33a979d57fbd4fd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e9112c3c60633eb9313b4100456f49f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a0e9112c3c60633eb9313b4100456f49f">CycleOut_out</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> &amp;cycleStart)</td></tr>
-<tr class="memdesc:a0e9112c3c60633eb9313b4100456f49f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port CycleOut.  <a href="class_drv_1_1_block_driver_component_base.html#a0e9112c3c60633eb9313b4100456f49f">More...</a><br /></td></tr>
-<tr class="separator:a0e9112c3c60633eb9313b4100456f49f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfe9e510a4839920f95454315dd6c51e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#adfe9e510a4839920f95454315dd6c51e">PingOut_out</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key)</td></tr>
-<tr class="memdesc:adfe9e510a4839920f95454315dd6c51e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port PingOut.  <a href="class_drv_1_1_block_driver_component_base.html#adfe9e510a4839920f95454315dd6c51e">More...</a><br /></td></tr>
-<tr class="separator:adfe9e510a4839920f95454315dd6c51e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc18166bff76c7d6ee2f06fc41c37b1e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#abc18166bff76c7d6ee2f06fc41c37b1e">getNum_BufferIn_InputPorts</a> () const</td></tr>
+<tr class="separator:abc18166bff76c7d6ee2f06fc41c37b1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6744814ff794b39fe517d116e778943"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ae6744814ff794b39fe517d116e778943">getNum_PingIn_InputPorts</a> () const</td></tr>
+<tr class="separator:ae6744814ff794b39fe517d116e778943"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47857595fe1983fb3a4ef6ef2b1f74ef"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a47857595fe1983fb3a4ef6ef2b1f74ef">getNum_Sched_InputPorts</a> () const</td></tr>
+<tr class="separator:a47857595fe1983fb3a4ef6ef2b1f74ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe21ae541f79026fc73d15fd260de231"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#abe21ae541f79026fc73d15fd260de231">getNum_Time_OutputPorts</a> () const</td></tr>
+<tr class="separator:abe21ae541f79026fc73d15fd260de231"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a7466225bbe6fd6e6995a1b824706dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a5a7466225bbe6fd6e6995a1b824706dd">getNum_Tlm_OutputPorts</a> () const</td></tr>
+<tr class="separator:a5a7466225bbe6fd6e6995a1b824706dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1b18b480ba3a2613ca2738aa59c484d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ae1b18b480ba3a2613ca2738aa59c484d">getNum_BufferOut_OutputPorts</a> () const</td></tr>
+<tr class="separator:ae1b18b480ba3a2613ca2738aa59c484d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dfbef85a674b7937438ce28f2ab66ba"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a2dfbef85a674b7937438ce28f2ab66ba">getNum_CycleOut_OutputPorts</a> () const</td></tr>
+<tr class="separator:a2dfbef85a674b7937438ce28f2ab66ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5fd7ad581323c924c21371228f41f44"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ac5fd7ad581323c924c21371228f41f44">getNum_PingOut_OutputPorts</a> () const</td></tr>
+<tr class="separator:ac5fd7ad581323c924c21371228f41f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd093fbd0db26cf6d04db1daad0b7228"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#acd093fbd0db26cf6d04db1daad0b7228">isConnected_Time_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:acd093fbd0db26cf6d04db1daad0b7228"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1210c1175c3b525d52298d17bfaa66c8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a1210c1175c3b525d52298d17bfaa66c8">isConnected_Tlm_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a1210c1175c3b525d52298d17bfaa66c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f5e5b61184535e641f7b9d661df41bc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a9f5e5b61184535e641f7b9d661df41bc">isConnected_BufferOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a9f5e5b61184535e641f7b9d661df41bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7d03516734b3539ef627acfabd8cec1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ad7d03516734b3539ef627acfabd8cec1">isConnected_CycleOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:ad7d03516734b3539ef627acfabd8cec1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af07870ee8f62613ee4cec6a73446b857"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#af07870ee8f62613ee4cec6a73446b857">isConnected_PingOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:af07870ee8f62613ee4cec6a73446b857"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09d3a00cb092c4ee73c5dc7abd8dc541"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a09d3a00cb092c4ee73c5dc7abd8dc541">BufferIn_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)=0</td></tr>
+<tr class="memdesc:a09d3a00cb092c4ee73c5dc7abd8dc541"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port BufferIn.  <a href="class_drv_1_1_block_driver_component_base.html#a09d3a00cb092c4ee73c5dc7abd8dc541">More...</a><br /></td></tr>
+<tr class="separator:a09d3a00cb092c4ee73c5dc7abd8dc541"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae80adea8b546b0f1da3a353c520de1a6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ae80adea8b546b0f1da3a353c520de1a6">PingIn_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)=0</td></tr>
+<tr class="memdesc:ae80adea8b546b0f1da3a353c520de1a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port PingIn.  <a href="class_drv_1_1_block_driver_component_base.html#ae80adea8b546b0f1da3a353c520de1a6">More...</a><br /></td></tr>
+<tr class="separator:ae80adea8b546b0f1da3a353c520de1a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17184f60a78ab95c14c6a7c22173cb61"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a17184f60a78ab95c14c6a7c22173cb61">Sched_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 context)=0</td></tr>
+<tr class="memdesc:a17184f60a78ab95c14c6a7c22173cb61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port Sched.  <a href="class_drv_1_1_block_driver_component_base.html#a17184f60a78ab95c14c6a7c22173cb61">More...</a><br /></td></tr>
+<tr class="separator:a17184f60a78ab95c14c6a7c22173cb61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48597fe5beaa945e6d34f05faa8d385c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a48597fe5beaa945e6d34f05faa8d385c">BufferIn_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td></tr>
+<tr class="memdesc:a48597fe5beaa945e6d34f05faa8d385c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port BufferIn.  <a href="class_drv_1_1_block_driver_component_base.html#a48597fe5beaa945e6d34f05faa8d385c">More...</a><br /></td></tr>
+<tr class="separator:a48597fe5beaa945e6d34f05faa8d385c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58a466fa69672843fb1dbfd0cb1fb623"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a58a466fa69672843fb1dbfd0cb1fb623">PingIn_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)</td></tr>
+<tr class="memdesc:a58a466fa69672843fb1dbfd0cb1fb623"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port PingIn.  <a href="class_drv_1_1_block_driver_component_base.html#a58a466fa69672843fb1dbfd0cb1fb623">More...</a><br /></td></tr>
+<tr class="separator:a58a466fa69672843fb1dbfd0cb1fb623"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aece02efcb05b7c4cb491c299159c67eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#aece02efcb05b7c4cb491c299159c67eb">Sched_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 context)</td></tr>
+<tr class="memdesc:aece02efcb05b7c4cb491c299159c67eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port Sched.  <a href="class_drv_1_1_block_driver_component_base.html#aece02efcb05b7c4cb491c299159c67eb">More...</a><br /></td></tr>
+<tr class="separator:aece02efcb05b7c4cb491c299159c67eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeaa4af18a9ee3774c4cb4478906d75b3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#aeaa4af18a9ee3774c4cb4478906d75b3">BufferIn_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td></tr>
+<tr class="memdesc:aeaa4af18a9ee3774c4cb4478906d75b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port BufferIn.  <a href="class_drv_1_1_block_driver_component_base.html#aeaa4af18a9ee3774c4cb4478906d75b3">More...</a><br /></td></tr>
+<tr class="separator:aeaa4af18a9ee3774c4cb4478906d75b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f17ca0b9f9296c686b96341ced4d565"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a4f17ca0b9f9296c686b96341ced4d565">PingIn_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)</td></tr>
+<tr class="memdesc:a4f17ca0b9f9296c686b96341ced4d565"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port PingIn.  <a href="class_drv_1_1_block_driver_component_base.html#a4f17ca0b9f9296c686b96341ced4d565">More...</a><br /></td></tr>
+<tr class="separator:a4f17ca0b9f9296c686b96341ced4d565"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af66f55e4d40b2690a9b0dd42c9084ea3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#af66f55e4d40b2690a9b0dd42c9084ea3">Sched_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 context)</td></tr>
+<tr class="memdesc:af66f55e4d40b2690a9b0dd42c9084ea3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port Sched.  <a href="class_drv_1_1_block_driver_component_base.html#af66f55e4d40b2690a9b0dd42c9084ea3">More...</a><br /></td></tr>
+<tr class="separator:af66f55e4d40b2690a9b0dd42c9084ea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50dd0deb634f5e6bab992fef6ba30f6f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a50dd0deb634f5e6bab992fef6ba30f6f">BufferOut_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a> &amp;buff)</td></tr>
+<tr class="memdesc:a50dd0deb634f5e6bab992fef6ba30f6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port BufferOut.  <a href="class_drv_1_1_block_driver_component_base.html#a50dd0deb634f5e6bab992fef6ba30f6f">More...</a><br /></td></tr>
+<tr class="separator:a50dd0deb634f5e6bab992fef6ba30f6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e48584561e41a9c4335ace6a268ffd0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#a2e48584561e41a9c4335ace6a268ffd0">CycleOut_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> &amp;cycleStart)</td></tr>
+<tr class="memdesc:a2e48584561e41a9c4335ace6a268ffd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port CycleOut.  <a href="class_drv_1_1_block_driver_component_base.html#a2e48584561e41a9c4335ace6a268ffd0">More...</a><br /></td></tr>
+<tr class="separator:a2e48584561e41a9c4335ace6a268ffd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad74b3fec8f6496afecb18f1e9733caa0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#ad74b3fec8f6496afecb18f1e9733caa0">PingOut_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 key)</td></tr>
+<tr class="memdesc:ad74b3fec8f6496afecb18f1e9733caa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port PingOut.  <a href="class_drv_1_1_block_driver_component_base.html#ad74b3fec8f6496afecb18f1e9733caa0">More...</a><br /></td></tr>
+<tr class="separator:ad74b3fec8f6496afecb18f1e9733caa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaadad035a3ee42b7f10e8f7dfeac6009"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_block_driver_component_base.html#aaadad035a3ee42b7f10e8f7dfeac6009">InterruptReport_internalInterfaceHandler</a> (U32 interrupt)=0</td></tr>
 <tr class="memdesc:aaadad035a3ee42b7f10e8f7dfeac6009"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal interface handler for InterruptReport.  <a href="class_drv_1_1_block_driver_component_base.html#aaadad035a3ee42b7f10e8f7dfeac6009">More...</a><br /></td></tr>
 <tr class="separator:aaadad035a3ee42b7f10e8f7dfeac6009"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -543,8 +543,8 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae6c80bbc9c5d9e8c1282d00505fbbf12"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae6c80bbc9c5d9e8c1282d00505fbbf12">&#9670;&nbsp;</a></span>BufferIn_handler()</h2>
+<a id="a09d3a00cb092c4ee73c5dc7abd8dc541"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09d3a00cb092c4ee73c5dc7abd8dc541">&#9670;&nbsp;</a></span>BufferIn_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -555,7 +555,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">virtual void Drv::BlockDriverComponentBase::BufferIn_handler </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -588,8 +588,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ab5d2e928bfbe0f659a96e7cc974e4b0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5d2e928bfbe0f659a96e7cc974e4b0b">&#9670;&nbsp;</a></span>BufferIn_handlerBase()</h2>
+<a id="a48597fe5beaa945e6d34f05faa8d385c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48597fe5beaa945e6d34f05faa8d385c">&#9670;&nbsp;</a></span>BufferIn_handlerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -600,7 +600,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::BufferIn_handlerBase </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -635,8 +635,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aba59d07ddab9b4b199aded662d3cd024"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aba59d07ddab9b4b199aded662d3cd024">&#9670;&nbsp;</a></span>BufferIn_preMsgHook()</h2>
+<a id="aeaa4af18a9ee3774c4cb4478906d75b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeaa4af18a9ee3774c4cb4478906d75b3">&#9670;&nbsp;</a></span>BufferIn_preMsgHook()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -647,7 +647,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::BufferIn_preMsgHook </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -682,8 +682,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a83a9d331ed2d537c33a979d57fbd4fd0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83a9d331ed2d537c33a979d57fbd4fd0">&#9670;&nbsp;</a></span>BufferOut_out()</h2>
+<a id="a50dd0deb634f5e6bab992fef6ba30f6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50dd0deb634f5e6bab992fef6ba30f6f">&#9670;&nbsp;</a></span>BufferOut_out()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -694,7 +694,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::BufferOut_out </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -729,8 +729,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a0e9112c3c60633eb9313b4100456f49f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e9112c3c60633eb9313b4100456f49f">&#9670;&nbsp;</a></span>CycleOut_out()</h2>
+<a id="a2e48584561e41a9c4335ace6a268ffd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e48584561e41a9c4335ace6a268ffd0">&#9670;&nbsp;</a></span>CycleOut_out()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -741,7 +741,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::CycleOut_out </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -776,8 +776,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ae77eee70d96d570339ad4234f31d4c65"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae77eee70d96d570339ad4234f31d4c65">&#9670;&nbsp;</a></span>get_BufferIn_InputPort()</h2>
+<a id="a5b62b801e11194c57be60823a4ff71ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b62b801e11194c57be60823a4ff71ff">&#9670;&nbsp;</a></span>get_BufferIn_InputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -785,7 +785,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_drv_1_1_input_data_buffer_port.html">Drv::InputDataBufferPort</a> * Drv::BlockDriverComponentBase::get_BufferIn_InputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -804,8 +804,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="adf599d928e966ab35716acb6b0e7fc8e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf599d928e966ab35716acb6b0e7fc8e">&#9670;&nbsp;</a></span>get_PingIn_InputPort()</h2>
+<a id="a7bd8d0675ee1b18a9aba142b4d1946da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bd8d0675ee1b18a9aba142b4d1946da">&#9670;&nbsp;</a></span>get_PingIn_InputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -813,7 +813,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_svc_1_1_input_ping_port.html">Svc::InputPingPort</a> * Drv::BlockDriverComponentBase::get_PingIn_InputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -832,8 +832,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="adaee78246fb4dad0b251c3f9eb37e04a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adaee78246fb4dad0b251c3f9eb37e04a">&#9670;&nbsp;</a></span>get_Sched_InputPort()</h2>
+<a id="ada8c590464740a995efd8cc9a661ecd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada8c590464740a995efd8cc9a661ecd0">&#9670;&nbsp;</a></span>get_Sched_InputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -841,7 +841,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_svc_1_1_input_sched_port.html">Svc::InputSchedPort</a> * Drv::BlockDriverComponentBase::get_Sched_InputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -860,8 +860,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ac2454114575f5c7d8cb717a259e7cd1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac2454114575f5c7d8cb717a259e7cd1c">&#9670;&nbsp;</a></span>getNum_BufferIn_InputPorts()</h2>
+<a id="abc18166bff76c7d6ee2f06fc41c37b1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc18166bff76c7d6ee2f06fc41c37b1e">&#9670;&nbsp;</a></span>getNum_BufferIn_InputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -870,7 +870,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Drv::BlockDriverComponentBase::getNum_BufferIn_InputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Drv::BlockDriverComponentBase::getNum_BufferIn_InputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -889,8 +889,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a1a82dcf21f65b254a8829a9e61433255"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a82dcf21f65b254a8829a9e61433255">&#9670;&nbsp;</a></span>getNum_BufferOut_OutputPorts()</h2>
+<a id="ae1b18b480ba3a2613ca2738aa59c484d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1b18b480ba3a2613ca2738aa59c484d">&#9670;&nbsp;</a></span>getNum_BufferOut_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -899,7 +899,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Drv::BlockDriverComponentBase::getNum_BufferOut_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Drv::BlockDriverComponentBase::getNum_BufferOut_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -918,8 +918,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a65efda4851273b49639cee52684fe999"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65efda4851273b49639cee52684fe999">&#9670;&nbsp;</a></span>getNum_CycleOut_OutputPorts()</h2>
+<a id="a2dfbef85a674b7937438ce28f2ab66ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dfbef85a674b7937438ce28f2ab66ba">&#9670;&nbsp;</a></span>getNum_CycleOut_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -928,7 +928,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Drv::BlockDriverComponentBase::getNum_CycleOut_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Drv::BlockDriverComponentBase::getNum_CycleOut_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -947,8 +947,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a8e41c501aea0d5820fd086b2972ea250"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e41c501aea0d5820fd086b2972ea250">&#9670;&nbsp;</a></span>getNum_PingIn_InputPorts()</h2>
+<a id="ae6744814ff794b39fe517d116e778943"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6744814ff794b39fe517d116e778943">&#9670;&nbsp;</a></span>getNum_PingIn_InputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -957,7 +957,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Drv::BlockDriverComponentBase::getNum_PingIn_InputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Drv::BlockDriverComponentBase::getNum_PingIn_InputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -976,8 +976,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a8ed306fbe09abbdb12ee6e3f7635837f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ed306fbe09abbdb12ee6e3f7635837f">&#9670;&nbsp;</a></span>getNum_PingOut_OutputPorts()</h2>
+<a id="ac5fd7ad581323c924c21371228f41f44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5fd7ad581323c924c21371228f41f44">&#9670;&nbsp;</a></span>getNum_PingOut_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -986,7 +986,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Drv::BlockDriverComponentBase::getNum_PingOut_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Drv::BlockDriverComponentBase::getNum_PingOut_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1005,8 +1005,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aa6cdb0f97df81d0d5475c742fd9a5a3a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa6cdb0f97df81d0d5475c742fd9a5a3a">&#9670;&nbsp;</a></span>getNum_Sched_InputPorts()</h2>
+<a id="a47857595fe1983fb3a4ef6ef2b1f74ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47857595fe1983fb3a4ef6ef2b1f74ef">&#9670;&nbsp;</a></span>getNum_Sched_InputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1015,7 +1015,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Drv::BlockDriverComponentBase::getNum_Sched_InputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Drv::BlockDriverComponentBase::getNum_Sched_InputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1034,8 +1034,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a95db19233fca425bdc5d85ba52925164"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95db19233fca425bdc5d85ba52925164">&#9670;&nbsp;</a></span>getNum_Time_OutputPorts()</h2>
+<a id="abe21ae541f79026fc73d15fd260de231"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe21ae541f79026fc73d15fd260de231">&#9670;&nbsp;</a></span>getNum_Time_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1044,7 +1044,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Drv::BlockDriverComponentBase::getNum_Time_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Drv::BlockDriverComponentBase::getNum_Time_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1063,8 +1063,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a463e9213126c46e79b5a057ec53601ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a463e9213126c46e79b5a057ec53601ad">&#9670;&nbsp;</a></span>getNum_Tlm_OutputPorts()</h2>
+<a id="a5a7466225bbe6fd6e6995a1b824706dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a7466225bbe6fd6e6995a1b824706dd">&#9670;&nbsp;</a></span>getNum_Tlm_OutputPorts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1073,7 +1073,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Drv::BlockDriverComponentBase::getNum_Tlm_OutputPorts </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Drv::BlockDriverComponentBase::getNum_Tlm_OutputPorts </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -1121,8 +1121,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a0d6902411a39ce44d8b0651c27826139"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d6902411a39ce44d8b0651c27826139">&#9670;&nbsp;</a></span>init()</h2>
+<a id="a266b1d773cc1b2a2e30f4cff5f7f4b07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a266b1d773cc1b2a2e30f4cff5f7f4b07">&#9670;&nbsp;</a></span>init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1130,13 +1130,13 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::init </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a650109ee80570ce79189348fd28dc556">FwQueueSizeType</a>&#160;</td>
           <td class="paramname"><em>queueDepth</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a02fd22e959ed6b754f408bbcf608fc53">FwEnumStoreType</a>&#160;</td>
           <td class="paramname"><em>instance</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
@@ -1230,8 +1230,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a586e382ad4a6275f1f407a01a0ba1193"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a586e382ad4a6275f1f407a01a0ba1193">&#9670;&nbsp;</a></span>isConnected_BufferOut_OutputPort()</h2>
+<a id="a9f5e5b61184535e641f7b9d661df41bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f5e5b61184535e641f7b9d661df41bc">&#9670;&nbsp;</a></span>isConnected_BufferOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1242,7 +1242,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Drv::BlockDriverComponentBase::isConnected_BufferOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1266,8 +1266,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a196732572cb6cbbf685b2fa5041b4545"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a196732572cb6cbbf685b2fa5041b4545">&#9670;&nbsp;</a></span>isConnected_CycleOut_OutputPort()</h2>
+<a id="ad7d03516734b3539ef627acfabd8cec1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7d03516734b3539ef627acfabd8cec1">&#9670;&nbsp;</a></span>isConnected_CycleOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1278,7 +1278,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Drv::BlockDriverComponentBase::isConnected_CycleOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1302,8 +1302,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ad2a5464d8589a7437c46eb154ad45abf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad2a5464d8589a7437c46eb154ad45abf">&#9670;&nbsp;</a></span>isConnected_PingOut_OutputPort()</h2>
+<a id="af07870ee8f62613ee4cec6a73446b857"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af07870ee8f62613ee4cec6a73446b857">&#9670;&nbsp;</a></span>isConnected_PingOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1314,7 +1314,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Drv::BlockDriverComponentBase::isConnected_PingOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1338,8 +1338,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a4497c097183ceee878a8f1d3578fa80b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4497c097183ceee878a8f1d3578fa80b">&#9670;&nbsp;</a></span>isConnected_Time_OutputPort()</h2>
+<a id="acd093fbd0db26cf6d04db1daad0b7228"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd093fbd0db26cf6d04db1daad0b7228">&#9670;&nbsp;</a></span>isConnected_Time_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1350,7 +1350,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Drv::BlockDriverComponentBase::isConnected_Time_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1374,8 +1374,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a41640831004d9ccbb9387d2d97a5e7fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41640831004d9ccbb9387d2d97a5e7fc">&#9670;&nbsp;</a></span>isConnected_Tlm_OutputPort()</h2>
+<a id="a1210c1175c3b525d52298d17bfaa66c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1210c1175c3b525d52298d17bfaa66c8">&#9670;&nbsp;</a></span>isConnected_Tlm_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1386,7 +1386,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool Drv::BlockDriverComponentBase::isConnected_Tlm_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1410,8 +1410,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a709fe87a6a6564d931913fc6b4f1c4d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a709fe87a6a6564d931913fc6b4f1c4d7">&#9670;&nbsp;</a></span>PingIn_handler()</h2>
+<a id="ae80adea8b546b0f1da3a353c520de1a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae80adea8b546b0f1da3a353c520de1a6">&#9670;&nbsp;</a></span>PingIn_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1422,7 +1422,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">virtual void Drv::BlockDriverComponentBase::PingIn_handler </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1455,8 +1455,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ae25864e466ad0257fc61a7adbce7c973"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae25864e466ad0257fc61a7adbce7c973">&#9670;&nbsp;</a></span>PingIn_handlerBase()</h2>
+<a id="a58a466fa69672843fb1dbfd0cb1fb623"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58a466fa69672843fb1dbfd0cb1fb623">&#9670;&nbsp;</a></span>PingIn_handlerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1467,7 +1467,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::PingIn_handlerBase </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1502,8 +1502,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a307cb95864af7b493312db088d02d9f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a307cb95864af7b493312db088d02d9f6">&#9670;&nbsp;</a></span>PingIn_preMsgHook()</h2>
+<a id="a4f17ca0b9f9296c686b96341ced4d565"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f17ca0b9f9296c686b96341ced4d565">&#9670;&nbsp;</a></span>PingIn_preMsgHook()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1514,7 +1514,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::PingIn_preMsgHook </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1549,8 +1549,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="adfe9e510a4839920f95454315dd6c51e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adfe9e510a4839920f95454315dd6c51e">&#9670;&nbsp;</a></span>PingOut_out()</h2>
+<a id="ad74b3fec8f6496afecb18f1e9733caa0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad74b3fec8f6496afecb18f1e9733caa0">&#9670;&nbsp;</a></span>PingOut_out()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1561,7 +1561,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::PingOut_out </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1596,8 +1596,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a9cda071b671753093ece47b6a3365a20"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9cda071b671753093ece47b6a3365a20">&#9670;&nbsp;</a></span>Sched_handler()</h2>
+<a id="a17184f60a78ab95c14c6a7c22173cb61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17184f60a78ab95c14c6a7c22173cb61">&#9670;&nbsp;</a></span>Sched_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1608,7 +1608,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">virtual void Drv::BlockDriverComponentBase::Sched_handler </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1641,8 +1641,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ad7cc5e944cc25c55aca4e8fc7c7d5e6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad7cc5e944cc25c55aca4e8fc7c7d5e6a">&#9670;&nbsp;</a></span>Sched_handlerBase()</h2>
+<a id="aece02efcb05b7c4cb491c299159c67eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aece02efcb05b7c4cb491c299159c67eb">&#9670;&nbsp;</a></span>Sched_handlerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1653,7 +1653,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::Sched_handlerBase </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1688,8 +1688,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a26185fdc45625dab6b3d289754126d9e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26185fdc45625dab6b3d289754126d9e">&#9670;&nbsp;</a></span>Sched_preMsgHook()</h2>
+<a id="af66f55e4d40b2690a9b0dd42c9084ea3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af66f55e4d40b2690a9b0dd42c9084ea3">&#9670;&nbsp;</a></span>Sched_preMsgHook()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1700,7 +1700,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::Sched_preMsgHook </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1735,8 +1735,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a9eff7a3d50a1cabb2a97004ea498e3b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9eff7a3d50a1cabb2a97004ea498e3b9">&#9670;&nbsp;</a></span>set_BufferOut_OutputPort()</h2>
+<a id="aa19ea0f0b80390a7a6c977afe2e8d7c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa19ea0f0b80390a7a6c977afe2e8d7c7">&#9670;&nbsp;</a></span>set_BufferOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1744,7 +1744,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::set_BufferOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1774,8 +1774,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a21bb933049dc0217ec4d63cc34ae8727"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21bb933049dc0217ec4d63cc34ae8727">&#9670;&nbsp;</a></span>set_CycleOut_OutputPort()</h2>
+<a id="ae747ee7b6e46172d0ffa8998c95b1193"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae747ee7b6e46172d0ffa8998c95b1193">&#9670;&nbsp;</a></span>set_CycleOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1783,7 +1783,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::set_CycleOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1813,8 +1813,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a075e850774bc8b9ca09ee4fd309c0219"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a075e850774bc8b9ca09ee4fd309c0219">&#9670;&nbsp;</a></span>set_PingOut_OutputPort()</h2>
+<a id="a21f5905ec474cf0a4f8b4d3c4b16cde0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21f5905ec474cf0a4f8b4d3c4b16cde0">&#9670;&nbsp;</a></span>set_PingOut_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1822,7 +1822,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::set_PingOut_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1852,8 +1852,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="af06784abc64e1dfc9209b717a5b57c64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af06784abc64e1dfc9209b717a5b57c64">&#9670;&nbsp;</a></span>set_Time_OutputPort()</h2>
+<a id="aeab9c8cd2e28a0fa44f03728003f5f72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeab9c8cd2e28a0fa44f03728003f5f72">&#9670;&nbsp;</a></span>set_Time_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1861,7 +1861,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::set_Time_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>
@@ -1891,8 +1891,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a9459489bb3cd760884d1bca1a284d922"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9459489bb3cd760884d1bca1a284d922">&#9670;&nbsp;</a></span>set_Tlm_OutputPort()</h2>
+<a id="ac29cc14c3fb98efbf3af15fb3ca6a73f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac29cc14c3fb98efbf3af15fb3ca6a73f">&#9670;&nbsp;</a></span>set_Tlm_OutputPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1900,7 +1900,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Drv::BlockDriverComponentBase::set_Tlm_OutputPort </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
           <td class="paramname"><em>portNum</em>, </td>
         </tr>
         <tr>

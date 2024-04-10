@@ -114,9 +114,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:ac30aa868c0f3948975bdc37c01c6e2c4"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#ac30aa868c0f3948975bdc37c01c6e2c4a9a70d4eba6eb31edf56fa3b1fb8e9811">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:ac30aa868c0f3948975bdc37c01c6e2c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b00d4ef04db3cec9ab07123aef2435f"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="class_drv_1_1_poll_status.html">Drv::PollStatus</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#a8b00d4ef04db3cec9ab07123aef2435f">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;pollBuffer)</td></tr>
-<tr class="memdesc:a8b00d4ef04db3cec9ab07123aef2435f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_byte_stream_poll_port.html#a8b00d4ef04db3cec9ab07123aef2435f">More...</a><br /></td></tr>
-<tr class="separator:a8b00d4ef04db3cec9ab07123aef2435f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3be1759da9a4d2a09afee7bc014bcd9f"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="class_drv_1_1_poll_status.html">Drv::PollStatus</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#a3be1759da9a4d2a09afee7bc014bcd9f">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;pollBuffer)</td></tr>
+<tr class="memdesc:a3be1759da9a4d2a09afee7bc014bcd9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_byte_stream_poll_port.html#a3be1759da9a4d2a09afee7bc014bcd9f">More...</a><br /></td></tr>
+<tr class="separator:a3be1759da9a4d2a09afee7bc014bcd9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -126,7 +126,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab68baf37d52bc8242ef206295fa49013"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#ab68baf37d52bc8242ef206295fa49013">init</a> ()</td></tr>
 <tr class="memdesc:ab68baf37d52bc8242ef206295fa49013"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_drv_1_1_input_byte_stream_poll_port.html#ab68baf37d52bc8242ef206295fa49013">More...</a><br /></td></tr>
 <tr class="separator:ab68baf37d52bc8242ef206295fa49013"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace49754ccb9d58f97dce145d727b8484"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#ace49754ccb9d58f97dce145d727b8484">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#a8b00d4ef04db3cec9ab07123aef2435f">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:ace49754ccb9d58f97dce145d727b8484"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#ace49754ccb9d58f97dce145d727b8484">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#a3be1759da9a4d2a09afee7bc014bcd9f">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:ace49754ccb9d58f97dce145d727b8484"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_drv_1_1_input_byte_stream_poll_port.html#ace49754ccb9d58f97dce145d727b8484">More...</a><br /></td></tr>
 <tr class="separator:ace49754ccb9d58f97dce145d727b8484"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad71959071cd8466b7609e75ef377cf0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_drv_1_1_poll_status.html">Drv::PollStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#aad71959071cd8466b7609e75ef377cf0">invoke</a> (<a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;pollBuffer)</td></tr>
@@ -175,14 +175,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="byte_stream_poll_port_ac_8hpp_source.html#l00024">24</a> of file <a class="el" href="byte_stream_poll_port_ac_8hpp_source.html">ByteStreamPollPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a8b00d4ef04db3cec9ab07123aef2435f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b00d4ef04db3cec9ab07123aef2435f">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="a3be1759da9a4d2a09afee7bc014bcd9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3be1759da9a4d2a09afee7bc014bcd9f">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="class_drv_1_1_poll_status.html">Drv::PollStatus</a>(* Drv::InputByteStreamPollPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;pollBuffer)</td>
+          <td class="memname">typedef <a class="el" href="class_drv_1_1_poll_status.html">Drv::PollStatus</a>(* Drv::InputByteStreamPollPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;pollBuffer)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -252,7 +252,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#a8b00d4ef04db3cec9ab07123aef2435f">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_drv_1_1_input_byte_stream_poll_port.html#a3be1759da9a4d2a09afee7bc014bcd9f">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>

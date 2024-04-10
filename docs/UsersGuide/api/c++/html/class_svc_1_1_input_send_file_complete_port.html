@@ -111,9 +111,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:ad65c9148c4cfab0e2ef6a9589d64f9d0"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_svc_1_1_input_send_file_complete_port.html#ad65c9148c4cfab0e2ef6a9589d64f9d0acb766078a5c1213fe991e0e5a8b2ff0b">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:ad65c9148c4cfab0e2ef6a9589d64f9d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a912ac123b4eb4c98d9a0afbcfed425b5"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_send_file_complete_port.html#a912ac123b4eb4c98d9a0afbcfed425b5">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, const <a class="el" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a> &amp;resp)</td></tr>
-<tr class="memdesc:a912ac123b4eb4c98d9a0afbcfed425b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_send_file_complete_port.html#a912ac123b4eb4c98d9a0afbcfed425b5">More...</a><br /></td></tr>
-<tr class="separator:a912ac123b4eb4c98d9a0afbcfed425b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a645f40a8eb2bbee7003fcc09a4d2a845"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_send_file_complete_port.html#a645f40a8eb2bbee7003fcc09a4d2a845">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, const <a class="el" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a> &amp;resp)</td></tr>
+<tr class="memdesc:a645f40a8eb2bbee7003fcc09a4d2a845"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_send_file_complete_port.html#a645f40a8eb2bbee7003fcc09a4d2a845">More...</a><br /></td></tr>
+<tr class="separator:a645f40a8eb2bbee7003fcc09a4d2a845"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -123,7 +123,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adcd329600c1586d1d0ab5851a62bba3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_send_file_complete_port.html#adcd329600c1586d1d0ab5851a62bba3a">init</a> ()</td></tr>
 <tr class="memdesc:adcd329600c1586d1d0ab5851a62bba3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_svc_1_1_input_send_file_complete_port.html#adcd329600c1586d1d0ab5851a62bba3a">More...</a><br /></td></tr>
 <tr class="separator:adcd329600c1586d1d0ab5851a62bba3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac87713c7cf2ce9c69ec8cc41b7445add"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_send_file_complete_port.html#ac87713c7cf2ce9c69ec8cc41b7445add">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_send_file_complete_port.html#a912ac123b4eb4c98d9a0afbcfed425b5">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:ac87713c7cf2ce9c69ec8cc41b7445add"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_send_file_complete_port.html#ac87713c7cf2ce9c69ec8cc41b7445add">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_send_file_complete_port.html#a645f40a8eb2bbee7003fcc09a4d2a845">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:ac87713c7cf2ce9c69ec8cc41b7445add"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_svc_1_1_input_send_file_complete_port.html#ac87713c7cf2ce9c69ec8cc41b7445add">More...</a><br /></td></tr>
 <tr class="separator:ac87713c7cf2ce9c69ec8cc41b7445add"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a426a478be31be4357ec0e332b7b499f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_send_file_complete_port.html#a426a478be31be4357ec0e332b7b499f9">invoke</a> (const <a class="el" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a> &amp;resp)</td></tr>
@@ -172,14 +172,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="send_file_complete_port_ac_8hpp_source.html#l00025">25</a> of file <a class="el" href="send_file_complete_port_ac_8hpp_source.html">SendFileCompletePortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a912ac123b4eb4c98d9a0afbcfed425b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a912ac123b4eb4c98d9a0afbcfed425b5">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="a645f40a8eb2bbee7003fcc09a4d2a845"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a645f40a8eb2bbee7003fcc09a4d2a845">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Svc::InputSendFileCompletePort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, const <a class="el" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a> &amp;resp)</td>
+          <td class="memname">typedef void(* Svc::InputSendFileCompletePort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, const <a class="el" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a> &amp;resp)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -249,7 +249,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_svc_1_1_input_send_file_complete_port.html#a912ac123b4eb4c98d9a0afbcfed425b5">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_svc_1_1_input_send_file_complete_port.html#a645f40a8eb2bbee7003fcc09a4d2a845">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>
