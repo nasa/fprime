@@ -178,7 +178,7 @@ Example JSON of qualified name
 | `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
 | `size` | Size of the data structure | **Number** | true |
 | `elementType` | The type of the array's elements | **[Type Descriptor](#type-descriptors)** | true
-| `default` | Default array value | Value of type specified in `elementType` | false |
+| `default` | Default array value | Value of type specified in `elementType` | true |
 | `annotation` | User-defined annotation | **String** | false |
 
 Example FPP model with JSON representation:
@@ -214,7 +214,7 @@ module M1 {
 | `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
 | `representationType` | Type of the enumerated values | **[Type Descriptor](#type-descriptors)** | true |
 | `enumeratedConstants` | The enumerated constants | JSON Dictionary of enumerated constants (keys) to [Enumerated Constant Descriptor](#enumerated-constant-descriptors) (values) | true |
-| `default` | Qualified name of the enumeration's default value | **String** | false |
+| `default` | Qualified name of the enumeration's default value | **String** | true |
 | `annotation` | User-defined annotation | **String** | false |
 
 #### Enumerated Constant Descriptors
@@ -275,7 +275,7 @@ module M1 {
 | `kind` | The kind of type | `struct` | true |
 | `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
 | `members` | The members of the struct | JSON dictionary of Member Name (key) to [Struct Member Descriptor](#struct-member-descriptor) (value) | true |
-| `default` | The default value of the struct | JSON dictionary of Member Name (key) to default value (value) | false |
+| `default` | The default value of the struct | JSON dictionary of Member Name (key) to default value (value) | true |
 | `annotation` | User-defined annotation | **String** extracted from FPP model | false |
 
 ### Struct Member Descriptor
