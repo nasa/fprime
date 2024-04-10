@@ -1,6 +1,6 @@
 var NAVTREEINDEX30 =
 {
-"globals.html":[24,1,0,0],
+"globals.html":[24,1,0],
 "globals_a.html":[24,1,0,1],
 "globals_b.html":[24,1,0,2],
 "globals_c.html":[24,1,0,3],
@@ -167,10 +167,11 @@ var NAVTREEINDEX30 =
 "md_docs__how_to_develop_gds_plugins.html#autotoc_md337":[16,2,0],
 "md_docs__how_to_develop_gds_plugins.html#autotoc_md338":[16,2,1],
 "md_docs__how_to_develop_gds_plugins.html#autotoc_md339":[16,3],
-"md_docs__how_to_develop_gds_plugins.html#autotoc_md340":[16,4],
-"md_docs__how_to_develop_gds_plugins.html#autotoc_md341":[16,4,0],
-"md_docs__how_to_develop_gds_plugins.html#autotoc_md342":[16,4,1],
+"md_docs__how_to_develop_gds_plugins.html#autotoc_md340":[16,3,0],
+"md_docs__how_to_develop_gds_plugins.html#autotoc_md341":[16,3,1],
+"md_docs__how_to_develop_gds_plugins.html#autotoc_md342":[16,4],
 "md_docs__how_to_develop_gds_plugins.html#autotoc_md343":[16,5],
+"md_docs__how_to_develop_gds_plugins.html#autotoc_md344":[16,6],
 "md_docs__how_to_general.html":[17],
 "md_docs_doc_index.html":[9],
 "md_docs_doc_index.html#autotoc_md100":[0,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX30 =
 "md_docs_doc_index.html#autotoc_md172":[9,8,0,2],
 "md_docs_doc_index.html#autotoc_md173":[9,8,0,3],
 "md_docs_doc_index.html#autotoc_md174":[9,8,0,3,0],
-"md_docs_doc_index.html#autotoc_md175":[9,8,1],
-"md_docs_doc_index.html#autotoc_md176":[0]
+"md_docs_doc_index.html#autotoc_md175":[9,8,1]
 };

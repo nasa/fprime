@@ -1,9 +1,9 @@
 var NAVTREEINDEX4 =
 {
-"fw_type_classes.html#autotoc_md486":[10,10,0,0],
-"fw_type_classes.html#autotoc_md487":[10,10,0,1],
-"fw_type_classes.html#autotoc_md488":[10,10,0,1,0],
-"fw_type_classes.html#autotoc_md489":[10,10,0,2],
+"fw_type_classes.html#autotoc_md487":[10,10,0,0],
+"fw_type_classes.html#autotoc_md488":[10,10,0,1],
+"fw_type_classes.html#autotoc_md489":[10,10,0,1,0],
+"fw_type_classes.html#autotoc_md490":[10,10,0,2],
 "generic_hub_8hpp.html":[24,0,13,27,1],
 "generic_hub_8hpp.html#a2726e21edb6ef5238cd546d94c01c0fa":[24,0,13,27,1,0],
 "generic_hub_8hpp_source.html":[24,0,13,27,1],

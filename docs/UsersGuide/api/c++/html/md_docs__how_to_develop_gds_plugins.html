@@ -93,7 +93,8 @@ $(document).ready(function(){initNavTree('md_docs__how_to_develop_gds_plugins.ht
 <li>Selection plugins: add another choice for key GDS functionality</li>
 <li>Functionality plugins: add functionality as an addition to the GDS.</li>
 </ol>
-<p>This guide will walk through the development of a <code>framing</code> implementation plugin and notes on start-up application plugins.</p>
+<p>This guide will walk through the development of a <code>framing</code> selection plugin to see the basic development of a plugin. Then the guide will walk you through the development of a start-up application functionality plugin, which will also discuss taking arguments to plugins. Finally the guide will close with a discussion of testing and distributing your plugins.</p>
+<p>Examples covered here are available at: <a href="https://github.com/fprime-community/fprime-gds-plugin-examples">https://github.com/fprime-community/fprime-gds-plugin-examples</a></p>
 <h1><a class="anchor" id="autotoc_md334"></a>
 Contents</h1>
 <ul>
@@ -103,12 +104,13 @@ Contents</h1>
 <li><a href="#implementing-virtual-functions">Implementing Virtual Functions</a></li>
 </ul>
 </li>
-<li><a href="#distributing-plugins">Distributing Plugins</a></li>
 <li><a href="#application-plugins">Application Plugins</a><ul>
 <li><a href="#application-plugin-skeleton">Application Plugin Skeleton</a></li>
 <li><a href="#plugin-arguments">Plugin Arguments</a></li>
 </ul>
 </li>
+<li><a href="#packaging-and-testing-plugins">Packaging and Testing Plugins</a></li>
+<li><a href="#distributing-plugins">Distributing Plugins</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
 </ul>
 <h1><a class="anchor" id="autotoc_md335"></a>
@@ -219,41 +221,15 @@ Implementing Virtual Functions</h2>
 <div class="line">        &quot;&quot;&quot; Register the MyPlugin plugin &quot;&quot;&quot;</div>
 <div class="line">        return cls</div>
 </div><!-- fragment --><p>This is the basic implementation of a no-argument framing plugin. The above plugin tracks a single start <code>MY-PLUGIN</code> string and deframes that as a packet. Next, this guide will cover how to integrate this plugin via python packaging. Following that, plugin arguments will be covered.</p>
+<p>You may now continue to read about "Application Plugins" that show the other type of plugin available for the <code>fprime-gds</code>. This section also covers how arguments to plugins work. Otherwise, jump to the <a href="#packaging-and-testing-plugins">Packaging and Testing Plugins</a> section to begin testing your plugin!</p>
 <h1><a class="anchor" id="autotoc_md339"></a>
-Distributing Plugins</h1>
-<p>Plugins are supplied as python packages with an entrypoint used to load the plugin. In the root of the package a basic python package will need to be configured. This consists of two files: pyproject.toml representing the package, and setup.py for backwards compatibility.</p>
-<p>The project structure should look like: </p><div class="fragment"><div class="line">src/my_plugin.py</div>
-<div class="line">pyproject.toml</div>
-<div class="line">setup.py</div>
-</div><!-- fragment --><p>A sample pyproject.toml file would look like:</p>
-<div class="fragment"><div class="line">[build-system]</div>
-<div class="line">requires = [&quot;setuptools&quot;, &quot;setuptools_scm[toml]&gt;=6.2&quot;, &quot;wheel&quot;]</div>
-<div class="line">build-backend = &quot;setuptools.build_meta&quot;</div>
-<div class="line"> </div>
-<div class="line">[project]</div>
-<div class="line">name = &quot;fprime-gds-my-plugin&quot;</div>
-<div class="line">dynamic = [&quot;version&quot;]</div>
-<div class="line">dependencies = [</div>
-<div class="line">    &quot;pluggy&gt;=1.3.0&quot;,</div>
-<div class="line">    &quot;fprime-gds&gt;=3.4.4&quot;</div>
-<div class="line">]</div>
-<div class="line"> </div>
-<div class="line">[project.entry_points.&quot;fprime_gds&quot;]</div>
-<div class="line">my_plugin = &quot;my_plugin:MyPlugin&quot;</div>
-<div class="line"> </div>
-<div class="line">[tool.setuptools_scm]</div>
-</div><!-- fragment --><p>A sample <code>setup.py</code> would look like: </p><div class="fragment"><div class="line">from setuptools import setup</div>
-<div class="line"> </div>
-<div class="line"># Configuration is in pyproject.toml</div>
-<div class="line">setup()</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md340"></a>
 Application Plugins</h1>
 <p>Unlike the example <code>framing</code> plugin, application plugins run in addition to the GDS. These plugins can be used to start new services that connect to the larger GDS network. Application plugins will be used to show how to solicit arguments from the command line.</p>
 <p>Our plugin ill run python to print a message supplied via arguments. This is the equivalent to running the following command line: </p><div class="fragment"><div class="line">python -c &quot;print(&#39;Hello World&#39;)&quot;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md341"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md340"></a>
 Application Plugin Skeleton</h2>
 <p>Here is the basic structure for a <code>gds-app</code> plugin. It prints "Hello World". gds-app plugins must implement the function <code>get_process_invocation</code> that returns command line arguments to be run as a separate process using the <code>subprocess</code> module.</p>
-<div class="fragment"><div class="line">import sys</div>
+<p>**<code>src/my_app.py</code>:** </p><div class="fragment"><div class="line">import sys</div>
 <div class="line">from fprime_gds.executables.apps import GdsApp</div>
 <div class="line"> </div>
 <div class="line">class MyApp(GdsApp):</div>
@@ -273,9 +249,10 @@ Application Plugin Skeleton</h2>
 <div class="line">    def register_gds_app_plugin(cls):</div>
 <div class="line">        &quot;&quot;&quot; Register a good plugin &quot;&quot;&quot;</div>
 <div class="line">        return cls</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md342"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md341"></a>
 Plugin Arguments</h2>
-<p>Now is time to add in plugin arguments. This plugin will take one argument <code>--message</code> and will inject this message into the printed message. To do this we return the argument using the <code>get_arguments</code> class method. Add this to your plugin <code>MyApp</code> class:</p>
+<p>Plugins can source arguments from the command line. Although, all types of plugins can source arguments using the pattern described here, you will see them shown with our application plugin.</p>
+<p>It is time to add in plugin arguments. This plugin will take one argument <code>--message</code> and will inject this message into the printed message. To do this we return the argument using the <code>get_arguments</code> class method. Add this to your plugin <code>MyApp</code> class:</p>
 <div class="fragment"><div class="line">@classmethod</div>
 <div class="line">def get_arguments(cls):</div>
 <div class="line">  &quot;&quot;&quot; Get arguments &quot;&quot;&quot;</div>
@@ -296,7 +273,7 @@ Plugin Arguments</h2>
 <div class="fragment"><div class="line">def get_process_invocation(self):</div>
 <div class="line">    &quot;&quot;&quot; Process invocation &quot;&quot;&quot;</div>
 <div class="line">    # Inject message into command line to print</div>
-<div class="line">    return [sys.executable, &quot;-c&quot;, &quot;print(f&#39;{self.message}&#39;)&quot;]</div>
+<div class="line">    return [sys.executable, &quot;-c&quot;, f&quot;print(f&#39;{self.message}&#39;)&quot;]</div>
 </div><!-- fragment --><p>Finally, security-minded developers will notice there is an injection vulnerability above. This can be check using the <code>check_arguments</code> class method. This method should raise a <code>ValueError</code> or <code>TypeError</code> when an argument value is malformed. Add this function to <code>MyApp</code> fix the injection:</p>
 <div class="fragment"><div class="line">@classmethod</div>
 <div class="line">def check_arguments(cls, message):</div>
@@ -305,11 +282,12 @@ Plugin Arguments</h2>
 <div class="line">        raise ValueError(&quot;--message must not include &#39; nor a newline&quot;)</div>
 </div><!-- fragment --><p>Now our plugin may be run. The GDS will automatically solicit the message argument as seen should the user run </p><div class="fragment"><div class="line">fprime-gds --help</div>
 </div><!-- fragment --><p>The complete plugin would look like:</p>
-<div class="fragment"><div class="line">import sys</div>
+<p>**<code>src/my_app.py</code>:** </p><div class="fragment"><div class="line">import sys</div>
+<div class="line">from fprime_gds.plugin.definitions import gds_plugin_implementation</div>
 <div class="line">from fprime_gds.executables.apps import GdsApp</div>
 <div class="line"> </div>
 <div class="line">class MyApp(GdsApp):</div>
-<div class="line">  &quot;&quot;&quot; An app for the GDS &quot;&quot;&quot;</div>
+<div class="line">    &quot;&quot;&quot; An app for the GDS &quot;&quot;&quot;</div>
 <div class="line"> </div>
 <div class="line">    def __init__(self, message):</div>
 <div class="line">        &quot;&quot;&quot; Constructor &quot;&quot;&quot;</div>
@@ -319,7 +297,7 @@ Plugin Arguments</h2>
 <div class="line">    def get_process_invocation(self):</div>
 <div class="line">        &quot;&quot;&quot; Process invocation &quot;&quot;&quot;</div>
 <div class="line">        # Inject message into command line to print</div>
-<div class="line">        return [sys.executable, &quot;-c&quot;, &quot;print(f&#39;{self.message}&#39;)&quot;]</div>
+<div class="line">        return [sys.executable, &quot;-c&quot;, f&quot;print(f&#39;{self.message}&#39;)&quot;]</div>
 <div class="line"> </div>
 <div class="line">    @classmethod</div>
 <div class="line">    def get_name(cls):</div>
@@ -348,7 +326,71 @@ Plugin Arguments</h2>
 <div class="line">    def register_gds_app_plugin(cls):</div>
 <div class="line">        &quot;&quot;&quot; Register a good plugin &quot;&quot;&quot;</div>
 <div class="line">        return cls</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md342"></a>
+Packaging and Testing Plugins</h1>
+<p>Plugins are supplied as python packages with an entrypoint used to load the plugin. In the root of the package a basic python package will need to be configured. This consists of two files: pyproject.toml representing the package, and setup.py for backwards compatibility.</p>
+<p>The project structure should look like: </p><div class="fragment"><div class="line">src/my_plugin.py</div>
+<div class="line">pyproject.toml</div>
+<div class="line">setup.py</div>
+</div><!-- fragment --><p>A sample pyproject.toml file would look like:</p>
+<div class="fragment"><div class="line">[build-system]</div>
+<div class="line">requires = [&quot;setuptools&quot;, &quot;wheel&quot;]</div>
+<div class="line">build-backend = &quot;setuptools.build_meta&quot;</div>
+<div class="line"> </div>
+<div class="line">[project]</div>
+<div class="line">name = &quot;fprime-gds-my-plugin&quot;</div>
+<div class="line">version = &quot;0.1.0&quot;</div>
+<div class="line">dependencies = [</div>
+<div class="line">    &quot;pluggy&gt;=1.3.0&quot;,</div>
+<div class="line">    &quot;fprime-gds&gt;=3.4.4&quot;</div>
+<div class="line">]</div>
+<div class="line"> </div>
+<div class="line">[project.entry-points.fprime_gds]</div>
+<div class="line">my_plugin = &quot;my_plugin:MyPlugin&quot;</div>
+<div class="line"> </div>
+<div class="line">[tool.setuptools_scm]</div>
+</div><!-- fragment --><p>A sample <code>setup.py</code> would look like: </p><div class="fragment"><div class="line">from setuptools import setup</div>
+<div class="line"> </div>
+<div class="line"># Configuration is in pyproject.toml</div>
+<div class="line">setup()</div>
+</div><!-- fragment --><p>We can add our application plugin with the following additional line in the <code>project.entry-points.fprime_gds</code> section:</p>
+<div class="fragment"><div class="line">my_app = &quot;my_app:MyApp&quot;</div>
+</div><!-- fragment --><p>Once these files have been written, the plugin can be installed locally for testing with the following command:</p>
+<div class="fragment"><div class="line">cd /path/to/plugin/directory</div>
+<div class="line">pip install -e .</div>
+</div><!-- fragment --><blockquote class="doxtable">
+<p>Users must be in the same virtual environment that the <code>fprime-gds</code> package has been installed into <code>-e</code> allows local changes to take effect without a reinstall </p>
+</blockquote>
+<p>The first step in testing a plugin is to run <code>fprime-gds --help</code>. This should show arguments associated with your plugin. The plugins implemented here would produce the following output:</p>
+<div class="fragment"><div class="line">usage: fprime-gds ...</div>
+<div class="line">...</div>
+<div class="line">Framing Plugin Options:</div>
+<div class="line">  --framing-selection {fprime,my-plugin}</div>
+<div class="line">                        Select framing implementer. (default: fprime)</div>
+<div class="line">...</div>
+<div class="line">Gds_App Plugin &#39;my-app&#39; Options:</div>
+<div class="line">  --disable-my-app      Disable the gds_app plugin &#39;my-app&#39; (default: False)</div>
+<div class="line">  --message MESSAGE     Message to print (default: None)</div>
+</div><!-- fragment --> <blockquote class="doxtable">
+<p>Syntax errors, indentation errors, and other exceptions can arise during this step. Resolving these errors will allow the help message to display properly. </p>
+</blockquote>
+<p>To test selection plugins, select them during a normal GDS run:</p>
+<div class="fragment"><div class="line">fprime-gds --framing-selection my-plugin</div>
+</div><!-- fragment --> <blockquote class="doxtable">
+<p>Remember to supply any arguments needed for your plugin! </p>
+</blockquote>
+<p>Application plugins run automatically at start-up. To test these plugins, just supply any desired arguments:</p>
+<div class="fragment"><div class="line">fprime-gds --message &quot;Hello Plugin</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md343"></a>
+Distributing Plugins</h1>
+<p>Plugins are implemented as python packages. Thus plugins may be distributed in the following ways:</p>
+<ol type="1">
+<li>Source Distribution: send users your source code and install with <code>pip install .</code> as shown above</li>
+<li>Binary Distribution: send users a wheel of your package to install with <code>pip install /path/to/wheel</code></li>
+<li>PyPI: distribute your wheel via PyPI</li>
+</ol>
+<p>A tutorial on python packaging including building wheels and uploading them to PyPI is available from packaging.python.org: <a href="https://packaging.python.org/en/latest/tutorials/packaging-projects/">https://packaging.python.org/en/latest/tutorials/packaging-projects/</a></p>
+<h1><a class="anchor" id="autotoc_md344"></a>
 Conclusion</h1>
 <p>This guide has covered how to develop GDS plugins, their design, and selection vs functionality plugins. You should now be capable of writing plugins and handling arguments. </p>
 </div></div><!-- contents -->
