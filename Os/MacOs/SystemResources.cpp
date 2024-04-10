@@ -88,7 +88,7 @@ kern_return_t cpu_by_index(U32 cpu_index, FwSizeType& used, FwSizeType& total) {
     if (cpu_count <= cpu_index) {
         stat = KERN_FAILURE;
     } else if (KERN_SUCCESS == stat) {
-        FW_ASSERT(cpu_count > cpu_index, cpu_count, cpu_index);  // Will fail if the CPU count changes while running
+        FW_ASSERT(cpu_count > cpu_index, static_cast<FwAssertArgType>(cpu_count), static_cast<FwAssertArgType>(cpu_index));  // Will fail if the CPU count changes while running
         processor_cpu_load_info per_cpu_info = cpu_load_info[(cpu_count > cpu_index) ? cpu_index : 0];
 
         // Total the ticks across the different states: idle, system, user, etc...
