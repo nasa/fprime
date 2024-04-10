@@ -14,7 +14,7 @@
 
 #include <DpCfg.hpp>
 #include <DpCatalogCfg.hpp>
-
+#include <Fw/Types/FileNameString.hpp>
 
 namespace Svc {
 
@@ -45,7 +45,7 @@ namespace Svc {
         /// @param allocator Allocator to supply memory for catalog. 
         ///        Instance must survive for shutdown to use for reclaiming memory
         void configure(
-            Fw::String directories[DP_MAX_DIRECTORIES],
+            Fw::FileNameString directories[DP_MAX_DIRECTORIES],
             FwSizeType numDirs,
             NATIVE_UINT_TYPE memId,
             Fw::MemAllocator& allocator
@@ -175,7 +175,7 @@ namespace Svc {
         FwSizeType m_numDpRecords; //!< Stores the actual number of records.
         FwSizeType m_numDpSlots; //!< Stores the available number of record slots.
 
-        Fw::String m_directories[DP_MAX_DIRECTORIES]; //!< List of supplied DP directories
+        Fw::FileNameString m_directories[DP_MAX_DIRECTORIES]; //!< List of supplied DP directories
         FwSizeType m_numDirectories; //!< number of supplied directories
         Fw::String m_fileList[DP_MAX_FILES]; //!< working array of files/directory
 

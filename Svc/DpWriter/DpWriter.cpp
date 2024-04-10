@@ -23,7 +23,7 @@ DpWriter::DpWriter(const char* const compName) : DpWriterComponentBase(compName)
 DpWriter::~DpWriter() {}
 
 void DpWriter::configure(
-        const Fw::String& dir //!< directory for file writing
+        const Fw::FileNameString& dir //!< directory for file writing
     ) {
         this->m_dpDir = dir;
     } 

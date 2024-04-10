@@ -127,7 +127,7 @@ void configureTopology() {
     downlink.setup(framing);
     uplink.setup(deframing);
 
-    Fw::String dpDir("./DpCat");
+    Fw::FileNameString dpDir("./DpCat");
 
     // create the DP directory if it doesn't exist
     Os::FileSystem::createDirectory(dpDir.toChar());

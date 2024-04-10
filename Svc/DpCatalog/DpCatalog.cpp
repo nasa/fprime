@@ -46,7 +46,7 @@ namespace Svc {
     {}
 
     void DpCatalog::configure(
-        Fw::String directories[DP_MAX_DIRECTORIES],
+        Fw::FileNameString directories[DP_MAX_DIRECTORIES],
         FwSizeType numDirs,
         NATIVE_UINT_TYPE memId,
         Fw::MemAllocator& allocator

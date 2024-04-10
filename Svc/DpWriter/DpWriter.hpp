@@ -34,7 +34,7 @@ class DpWriter : public DpWriterComponentBase {
 
     //! configure writer
     void configure(
-            const Fw::String& dir //!< directory for file writing
+            const Fw::FileNameString& dir //!< directory for file writing
         );
 
   PRIVATE:
@@ -115,7 +115,7 @@ class DpWriter : public DpWriterComponentBase {
     U32 m_numErrors = 0;
 
     //! The base directory for writing DP files
-    Fw::String m_dpDir;
+    Fw::FileNameString m_dpDir;
 };
 
 }  // end namespace Svc
