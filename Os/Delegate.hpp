@@ -33,7 +33,7 @@ namespace Delegate {
 //! #include "Os/Delegate.hpp"
 //!
 //! namespace Os {
-//! TaskInterface* TaskInterface::getDelegate(U8* aligned_new_memory) {
+//! TaskInterface* TaskInterface::getDelegate(HandleStorage& aligned_new_memory) {
 //!   return Os::Delegate::makeDelegate<TaskInterface, Os::Posix::Task::PosixTask>(aligned_new_memory);
 //! }
 //! }
@@ -42,15 +42,14 @@ namespace Delegate {
 //! \tparam Implementation: implementation class of the delegate (e.g. PosixTask)
 //! \param aligned_new_memory: memory to be filled via placement new call
 //! \return pointer to implementation result of placement new
-template<class Interface, class Implementation>
-inline Interface *makeDelegate(HandleStorage& aligned_new_memory) {
-    FW_ASSERT(aligned_new_memory != nullptr);
+template <class Interface, class Implementation>
+inline Interface* makeDelegate(HandleStorage& aligned_new_memory) {
     // Ensure prerequisites before performing placement new
     static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
     static_assert(sizeof(Implementation) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
     static_assert((FW_HANDLE_ALIGNMENT % alignof(Implementation)) == 0, "Handle alignment invalid");
     // Placement new the object and ensure non-null result
-    Implementation *interface = new(aligned_new_memory) Implementation;
+    Implementation* interface = new (aligned_new_memory) Implementation;
     FW_ASSERT(interface != nullptr);
     return interface;
 }
@@ -75,7 +74,7 @@ inline Interface *makeDelegate(HandleStorage& aligned_new_memory) {
 //! #include "Os/Delegate.hpp"
 //!
 //! namespace Os {
-//! FileInterface* FileInterface::getDelegate(U8* aligned_new_memory, const FileInterface* to_copy) {
+//! FileInterface* FileInterface::getDelegate(HandleStorage& aligned_new_memory, const FileInterface* to_copy) {
 //!   return Os::Delegate::makeDelegate<FileInterface, Os::Posix::File::PosixFile>(aligned_new_memory, to_copy);
 //! }
 //! }
@@ -86,24 +85,23 @@ inline Interface *makeDelegate(HandleStorage& aligned_new_memory) {
 //! \return pointer to implementation result of placement new
 //! \param to_copy: pointer to Interface to be copied by copy constructor
 //! \return pointer to implementation result of placement new
-template<class Interface, class Implementation>
-inline Interface *makeDelegate(HandleStorage& aligned_new_memory, const Interface *to_copy) {
-    FW_ASSERT(aligned_new_memory != nullptr);
-    const Implementation *copy_me = reinterpret_cast<const Implementation *>(to_copy);
+template <class Interface, class Implementation>
+inline Interface* makeDelegate(HandleStorage& aligned_new_memory, const Interface* to_copy) {
+    const Implementation* copy_me = reinterpret_cast<const Implementation*>(to_copy);
     // Ensure prerequisites before performing placement new
     static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
     static_assert(sizeof(Implementation) <= sizeof(aligned_new_memory), "Handle size not large enough");
     static_assert((FW_HANDLE_ALIGNMENT % alignof(Implementation)) == 0, "Handle alignment invalid");
     // Placement new the object and ensure non-null result
-    Implementation *interface = nullptr;
+    Implementation* interface = nullptr;
     if (to_copy == nullptr) {
-        interface = new(aligned_new_memory) Implementation;
+        interface = new (aligned_new_memory) Implementation;
     } else {
-        interface = new(aligned_new_memory) Implementation(*copy_me);
+        interface = new (aligned_new_memory) Implementation(*copy_me);
     }
     FW_ASSERT(interface != nullptr);
     return interface;
 }
-}
-}
+}  // namespace Delegate
+}  // namespace Os
 #endif
