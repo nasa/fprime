@@ -142,17 +142,17 @@ namespace Svc {
             return;
         }
         if (static_cast<FwSizeType>(size) != Fw::DpContainer::Header::SIZE) {
-            printf("Dp file header %s write size didn't match. Req: %lu Act: %lu\n",fileName.toChar(),Fw::DpContainer::Header::SIZE,size);
+            printf("Dp file header %s write size didn't match. Req: %" PRI_FwSignedSizeType "Act: %" PRI_FwSignedSizeType "\n",fileName.toChar(),Fw::DpContainer::Header::SIZE,size);
             return;
         }
         size = dataSize;
         stat = dpFile.write(dpData,size);
         if (stat != Os::File::Status::OP_OK) {
-            printf("Error writing DP file data %s: status: %d\n",fileName.toChar(),stat);
+            printf("Error writing DP file data %s: status: %" PRI_FwNativeIntType "\n",fileName.toChar(),stat);
             return;
         }
         if (static_cast<FwSizeType>(size) != dataSize) {
-            printf("Dp file header %s write size didn't match. Req: %lu Act: %lu\n",fileName.toChar(),dataSize,size);
+            printf("Dp file header %s write size didn't match. Req: %" PRI_FwSignedSizeType " Act: %" PRI_FwSignedSizeType "\n",fileName.toChar(),dataSize,size);
             return;
         }
         dpFile.close();
