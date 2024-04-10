@@ -28,6 +28,8 @@ class Tester : public DpTestGTestBase {
     static constexpr FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
     // The component id base
     static constexpr FwDpIdType ID_BASE = 100;
+    // The max string length for string data
+    static constexpr FwSizeType MAX_STRING_LENGTH = 100;
 
     //! Construct object Tester
     //!
@@ -108,6 +110,10 @@ class Tester : public DpTestGTestBase {
     //! \return The time
     Fw::Time randomizeTestTime();
 
+    //! Generate a random string
+    void generateRandomString(Fw::StringBase& str //!< The string (output)
+        );
+
     //! Invoke productRecvIn and check header
     //! This sets the output buffer to the received buffer and sets the
     //! deserialization pointer to the start of the data payload
@@ -176,6 +182,9 @@ class Tester : public DpTestGTestBase {
 
     //! Data for String record
     Fw::String stringRecordData = "0123456789";
+
+    //! Data for string array record
+    DpTest::StringArrayRecordData stringArrayRecordData;
 
     //! The component under test
     DpTest component;

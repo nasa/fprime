@@ -21,7 +21,8 @@ DpTest ::DpTest(const char* const compName,
                 const U8ArrayRecordData& u8ArrayRecordData,
                 const U32ArrayRecordData& u32ArrayRecordData,
                 const DataArrayRecordData& dataArrayRecordData,
-                const Fw::StringBase& stringRecordData)
+                const Fw::StringBase& stringRecordData,
+                const StringArrayRecordData& stringArrayRecordData)
     : DpTestComponentBase(compName),
       u32RecordData(u32RecordData),
       dataRecordData(dataRecordData),
@@ -29,6 +30,7 @@ DpTest ::DpTest(const char* const compName,
       u32ArrayRecordData(u32ArrayRecordData),
       dataArrayRecordData(dataArrayRecordData),
       stringRecordData(stringRecordData),
+      stringArrayRecordData(stringArrayRecordData),
       sendTime(Fw::ZERO_TIME) {}
 
 void DpTest ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
@@ -192,6 +194,25 @@ void DpTest ::dpRecv_Container6_handler(DpContainer& container, Fw::Success::T s
             }
             FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
         }
+        // Use the time stamp from the time get port
+        this->dpSend(container);
+    }
+}
+
+void DpTest ::dpRecv_Container7_handler(DpContainer& container, Fw::Success::T status) {
+    if (status == Fw::Success::SUCCESS) {
+        // TODO
+#if 0
+        auto serializeStatus = Fw::FW_SERIALIZE_OK;
+        for (FwSizeType i = 0; i < CONTAINER_7_DATA_SIZE; ++i) {
+            serializeStatus = container.serializeRecord_DataArrayRecord(this->dataArrayRecordData.data(),
+                                                                        this->dataArrayRecordData.size());
+            if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+                break;
+            }
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+        }
+#endif
         // Use the time stamp from the time get port
         this->dpSend(container);
     }

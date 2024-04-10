@@ -36,7 +36,8 @@ Tester::Tester()
                 this->u8ArrayRecordData,
                 this->u32ArrayRecordData,
                 this->dataArrayRecordData,
-                this->stringRecordData) {
+                this->stringRecordData,
+                this->stringArrayRecordData) {
     this->initComponents();
     this->connectPorts();
     this->component.setIdBase(ID_BASE);
@@ -49,6 +50,9 @@ Tester::Tester()
     }
     for (DpTest_Data& elt : this->dataArrayRecordData) {
         elt.set(static_cast<U16>(STest::Pick::any()));
+    }
+    for (Fw::String& elt : this->stringArrayRecordData) {
+        elt = "0123456789";
     }
 }
 
@@ -277,6 +281,23 @@ Fw::Time Tester::randomizeTestTime() {
     this->setTestTime(time);
     this->component.setSendTime(time);
     return time;
+}
+
+void Tester::generateRandomString(Fw::StringBase& str) {
+    // Reserve enough space for max length plus null terminator
+    char buffer[MAX_STRING_LENGTH + 1];
+    // Pick a random string length
+    const FwSizeType length = STest::Pick::lowerUpper(0, MAX_STRING_LENGTH);
+    // Fill buffer with a random null-terminated string with that length
+    FwSizeType i = 0;
+    for ( ; i < length; i++) {
+        U32 u32 = STest::Pick::lowerUpper(1, std::numeric_limits<char>::max());
+        buffer[i] = static_cast<char>(u32);
+    }
+    FW_ASSERT(i < MAX_STRING_LENGTH, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(MAX_STRING_LENGTH));
+    buffer[i] = 0;
+    // Copy the contents of buffer into str
+    str.format("%s", buffer);
 }
 
 void Tester::productRecvIn_InvokeAndCheckHeader(FwDpIdType id,

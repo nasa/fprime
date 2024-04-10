@@ -32,6 +32,8 @@ class DpTest : public DpTestComponentBase {
     static constexpr FwSizeType CONTAINER_5_PACKET_SIZE = DpContainer::getPacketSizeForDataSize(CONTAINER_5_DATA_SIZE);
     static constexpr FwSizeType CONTAINER_6_DATA_SIZE = 1000;
     static constexpr FwSizeType CONTAINER_6_PACKET_SIZE = DpContainer::getPacketSizeForDataSize(CONTAINER_6_DATA_SIZE);
+    static constexpr FwSizeType CONTAINER_7_DATA_SIZE = 1000;
+    static constexpr FwSizeType CONTAINER_7_PACKET_SIZE = DpContainer::getPacketSizeForDataSize(CONTAINER_7_DATA_SIZE);
 
   public:
     // ----------------------------------------------------------------------
@@ -41,6 +43,7 @@ class DpTest : public DpTestComponentBase {
     using U8ArrayRecordData = std::array<U8, 256>;
     using U32ArrayRecordData = std::array<U32, 100>;
     using DataArrayRecordData = std::array<DpTest_Data, 300>;
+    using StringArrayRecordData = std::array<Fw::String, 100>;
 
   public:
     // ----------------------------------------------------------------------
@@ -48,13 +51,14 @@ class DpTest : public DpTestComponentBase {
     // ----------------------------------------------------------------------
 
     //! Construct object DpTest
-    DpTest(const char* const compName,                      //!< The component name
-           U32 u32RecordData,                               //!< The U32Record data
-           U16 dataRecordData,                              //!< The DataRecord data
-           const U8ArrayRecordData& u8ArrayRecordData,      //!< The U8ArrayRecord data
-           const U32ArrayRecordData& u32ArrayRecordData,    //!< The U32ArrayRecord data
-           const DataArrayRecordData& dataArrayRecordData,  //!< The DataArrayRecord data
-           const Fw::StringBase& stringRecordData           //!< The StringRecord data
+    DpTest(const char* const compName,                         //!< The component name
+           U32 u32RecordData,                                  //!< The U32Record data
+           U16 dataRecordData,                                 //!< The DataRecord data
+           const U8ArrayRecordData& u8ArrayRecordData,         //!< The U8ArrayRecord data
+           const U32ArrayRecordData& u32ArrayRecordData,       //!< The U32ArrayRecord data
+           const DataArrayRecordData& dataArrayRecordData,     //!< The DataArrayRecord data
+           const Fw::StringBase& stringRecordData,             //!< The StringRecord data
+           const StringArrayRecordData& stringArrayRecordData  //!< The StringArrayRecord data
     );
 
     //! Initialize object DpTest
@@ -124,6 +128,12 @@ class DpTest : public DpTestComponentBase {
                                    Fw::Success::T           //!< The container status
                                    ) final;
 
+    //! Receive a data product container of type Container7
+    //! \return Serialize status
+    void dpRecv_Container7_handler(DpContainer& container,  //!< The container
+                                   Fw::Success::T           //!< The container status
+                                   ) final;
+
   PRIVATE:
     // ----------------------------------------------------------------------
     // Private helper functions
@@ -158,6 +168,9 @@ class DpTest : public DpTestComponentBase {
 
     //! StringRecord data
     const Fw::String stringRecordData;
+
+    //! StringArrayRecord data
+    const StringArrayRecordData& stringArrayRecordData;
 
     //! Send time for testing
     Fw::Time sendTime;
