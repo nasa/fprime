@@ -75,6 +75,12 @@ class Tester : public DpTestGTestBase {
     //! productRecvIn with Container 5 (FAILURE)
     void productRecvIn_Container5_FAILURE();
 
+    //! productRecvIn with Container 6 (SUCCESS)
+    void productRecvIn_Container6_SUCCESS();
+
+    //! productRecvIn with Container 6 (FAILURE)
+    void productRecvIn_Container6_FAILURE();
+
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handlers for data product ports
@@ -153,6 +159,12 @@ class Tester : public DpTestGTestBase {
     //! Buffer for Container 5
     const Fw::Buffer container5Buffer;
 
+    //! Buffer data for Container 6
+    U8 container6Data[DpTest::CONTAINER_6_PACKET_SIZE];
+
+    //! Buffer for Container 6
+    const Fw::Buffer container6Buffer;
+
     //! Data for U8 array record
     DpTest::U8ArrayRecordData u8ArrayRecordData;
 
@@ -161,6 +173,9 @@ class Tester : public DpTestGTestBase {
 
     //! Data for Data array record
     DpTest::DataArrayRecordData dataArrayRecordData;
+
+    //! Data for String record
+    Fw::String stringRecordData = "0123456789";
 
     //! The component under test
     DpTest component;

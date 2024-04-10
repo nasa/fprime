@@ -10,6 +10,7 @@
 #include <array>
 
 #include "FppTest/dp/DpTestComponentAc.hpp"
+#include "Fw/Types/String.hpp"
 
 namespace FppTest {
 
@@ -47,12 +48,13 @@ class DpTest : public DpTestComponentBase {
     // ----------------------------------------------------------------------
 
     //! Construct object DpTest
-    DpTest(const char* const compName,                     //!< The component name
-           U32 u32RecordData,                              //!< The U32Record data
-           U16 dataRecordData,                             //!< The DataRecord data
-           const U8ArrayRecordData& u8ArrayRecordData,     //!< The U8ArrayRecord data
-           const U32ArrayRecordData& u32ArrayRecordData,   //!< The U32ArrayRecord data
-           const DataArrayRecordData& dataArrayRecordData  //!< The DataArrayRecord data
+    DpTest(const char* const compName,                      //!< The component name
+           U32 u32RecordData,                               //!< The U32Record data
+           U16 dataRecordData,                              //!< The DataRecord data
+           const U8ArrayRecordData& u8ArrayRecordData,      //!< The U8ArrayRecord data
+           const U32ArrayRecordData& u32ArrayRecordData,    //!< The U32ArrayRecord data
+           const DataArrayRecordData& dataArrayRecordData,  //!< The DataArrayRecord data
+           const Fw::StringBase& stringRecordData           //!< The StringRecord data
     );
 
     //! Initialize object DpTest
@@ -153,6 +155,9 @@ class DpTest : public DpTestComponentBase {
 
     //! DataArrayRecord data
     const DataArrayRecordData& dataArrayRecordData;
+
+    //! StringRecord data
+    const Fw::String stringRecordData;
 
     //! Send time for testing
     Fw::Time sendTime;

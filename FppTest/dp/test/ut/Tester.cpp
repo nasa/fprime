@@ -28,12 +28,15 @@ Tester::Tester()
       container4Buffer(this->container4Data, sizeof this->container4Data),
       container5Data{},
       container5Buffer(this->container5Data, sizeof this->container5Data),
+      container6Data{},
+      container6Buffer(this->container6Data, sizeof this->container6Data),
       component("DpTest",
                 STest::Pick::any(),
                 STest::Pick::any(),
                 this->u8ArrayRecordData,
                 this->u32ArrayRecordData,
-                this->dataArrayRecordData) {
+                this->dataArrayRecordData,
+                this->stringRecordData) {
     this->initComponents();
     this->connectPorts();
     this->component.setIdBase(ID_BASE);
@@ -202,7 +205,8 @@ void Tester::productRecvIn_Container4_FAILURE() {
 void Tester::productRecvIn_Container5_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
-    const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + this->dataArrayRecordData.size() * DpTest_Data::SERIALIZED_SIZE;
+    const FwSizeType dataEltSize =
+        sizeof(FwSizeStoreType) + this->dataArrayRecordData.size() * DpTest_Data::SERIALIZED_SIZE;
     // Invoke the port and check the header
     this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container5, dataEltSize,
                                              DpTest::ContainerPriority::Container5, this->container5Buffer, buffer,
@@ -233,6 +237,33 @@ void Tester::productRecvIn_Container5_SUCCESS() {
 
 void Tester::productRecvIn_Container5_FAILURE() {
     productRecvIn_CheckFailure(DpTest::ContainerId::Container5, this->container5Buffer);
+}
+
+void Tester::productRecvIn_Container6_SUCCESS() {
+    Fw::Buffer buffer;
+    FwSizeType expectedNumElts;
+    // Invoke the port and check the header
+    this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container6, this->stringRecordData.serializedSize(),
+                                             DpTest::ContainerPriority::Container6, this->container6Buffer, buffer,
+                                             expectedNumElts);
+    // Check the data
+    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
+    for (FwSizeType i = 0; i < expectedNumElts; ++i) {
+        FwDpIdType id;
+        Fw::String elt;
+        auto status = serialRepr.deserialize(id);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+        const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::StringRecord;
+        ASSERT_EQ(id, expectedId);
+        status = serialRepr.deserialize(elt);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(elt, this->component.stringRecordData);
+    }
+}
+
+void Tester::productRecvIn_Container6_FAILURE() {
+    productRecvIn_CheckFailure(DpTest::ContainerId::Container6, this->container6Buffer);
 }
 
 // ----------------------------------------------------------------------
