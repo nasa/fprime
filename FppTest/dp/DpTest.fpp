@@ -58,6 +58,9 @@ module FppTest {
     @ Record 5
     product record DataArrayRecord: Data array id 500
 
+    @ Record 6
+    product record StringRecord string id 600
+
     # ----------------------------------------------------------------------
     # Containers
     # ----------------------------------------------------------------------
@@ -76,6 +79,9 @@ module FppTest {
 
     @ Container 5
     product container Container5 id 500 default priority 50
+
+    @ Container 6
+    product container Container6 id 600 default priority 60
 
   }
 
