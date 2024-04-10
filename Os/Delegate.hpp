@@ -103,5 +103,5 @@ inline Interface *makeDelegate(U8 *aligned_new_memory, const Interface *to_copy)
     return interface;
 }
 }
-};
+}
 #endif

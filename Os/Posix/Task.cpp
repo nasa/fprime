@@ -5,6 +5,7 @@
 #include <cstring>
 #include <unistd.h>
 #include <climits>
+#include <cerrno>
 #include <pthread.h>
 
 #include "Fw/Logger/Logger.hpp"
@@ -65,7 +66,6 @@ namespace Task {
         const FwSizeType max_priority = static_cast<FwSizeType>(sched_get_priority_max(SCHED_POLICY));
         PlatformIntType status = PosixTaskHandle::SUCCESS;
         FwSizeType priority = arguments.m_priority;
-
         // Clamp to minimum priority
         if (priority < min_priority) {
             Fw::Logger::logMsg("[WARNING] %s low task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
@@ -75,7 +75,7 @@ namespace Task {
             priority = min_priority;
         }
         // Clamp to maximum priority
-        else if (priority < min_priority) {
+        else if (priority > max_priority) {
             Fw::Logger::logMsg("[WARNING] %s high task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
                                reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
                                static_cast<PlatformPointerCastType>(priority),
@@ -124,13 +124,10 @@ namespace Task {
         PlatformIntType pthread_status = PosixTaskHandle::SUCCESS;
         PosixTaskHandle& handle = this->m_handle;
         const bool expect_permission = (permissions == EXPECT_PERMISSION);
-        // TODO: validate arguments???
-
         // Initialize and clear pthread attributes
         pthread_attr_t attributes;
         memset(&attributes, 0, sizeof(attributes));
         pthread_status = pthread_attr_init(&attributes);
-
         if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {
             pthread_status = set_stack_size(attributes, arguments);
         }
@@ -174,6 +171,7 @@ namespace Task {
                 Fw::Logger::logMsg("[NOTE] 2. Run this executable as a user with task priority permission\n");
                 Fw::Logger::logMsg("[NOTE] 3. Grant capability with \"setcap 'cap_sys_nice=eip'\" or equivalent\n");
                 Fw::Logger::logMsg("\n");
+		PosixTask::s_permissions_reported = true;
             }
             // Fallback with no permission
             status = this->create(arguments, PermissionExpectation::EXPECT_NO_PERMISSION);
