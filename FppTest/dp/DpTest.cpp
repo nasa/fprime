@@ -15,23 +15,23 @@ namespace FppTest {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-DpTest ::DpTest(const char* const compName,
+DpTest::DpTest(const char* const compName,
                 U32 u32RecordData,
                 U16 dataRecordData,
                 const U8ArrayRecordData& u8ArrayRecordData,
                 const U32ArrayRecordData& u32ArrayRecordData,
                 const DataArrayRecordData& dataArrayRecordData,
-                const Fw::StringBase& stringRecordData)
+                const Fw::StringBase& a_stringRecordData)
     : DpTestComponentBase(compName),
       u32RecordData(u32RecordData),
       dataRecordData(dataRecordData),
       u8ArrayRecordData(u8ArrayRecordData),
       u32ArrayRecordData(u32ArrayRecordData),
       dataArrayRecordData(dataArrayRecordData),
-      stringRecordData(stringRecordData),
+      stringRecordData(a_stringRecordData),
       sendTime(Fw::ZERO_TIME) {
-    for (auto elt : this->stringArrayRecordData) {
-        elt = &stringRecordData;
+    for (auto& elt : this->stringArrayRecordData) {
+        elt = &a_stringRecordData;
     }
 }
 
@@ -206,7 +206,7 @@ void DpTest ::dpRecv_Container7_handler(DpContainer& container, Fw::Success::T s
         auto serializeStatus = Fw::FW_SERIALIZE_OK;
         for (FwSizeType i = 0; i < CONTAINER_7_DATA_SIZE; ++i) {
             serializeStatus = container.serializeRecord_StringArrayRecord(
-                &(this->stringArrayRecordData)[0], FW_NUM_ARRAY_ELEMENTS(this->stringArrayRecordData));
+                this->stringArrayRecordData, FW_NUM_ARRAY_ELEMENTS(this->stringArrayRecordData));
             if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
                 break;
             }

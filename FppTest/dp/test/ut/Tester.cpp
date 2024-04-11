@@ -275,17 +275,18 @@ void Tester::productRecvIn_Container6_FAILURE() {
 }
 
 void Tester::productRecvIn_Container7_SUCCESS() {
-#if 0
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
     // Construct the possibly truncated string
     char esData[DpTest_stringSize];
     Fw::ExternalString es(esData, sizeof esData, this->stringRecordData);
-    const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + DpTester::STRING_ARRAY_RECORD_DATA_SIZE * es.serializedSize();
+    const FwSizeType dataEltSize =
+        sizeof(FwSizeStoreType) + DpTest::STRING_ARRAY_RECORD_DATA_SIZE * es.serializedSize();
     // Invoke the port and check the header
     this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container7, dataEltSize,
                                              DpTest::ContainerPriority::Container7, this->container7Buffer, buffer,
                                              expectedNumElts);
+#if 0
     // Check the data
     Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);

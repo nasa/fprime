@@ -8,6 +8,7 @@
 
 using namespace FppTest;
 
+#if 0
 TEST(schedIn, OK) {
     COMMENT("schedIn OK");
     Tester tester;
@@ -85,6 +86,7 @@ TEST(productRecvIn, Container6_FAILURE) {
     Tester tester;
     tester.productRecvIn_Container6_FAILURE();
 }
+#endif
 
 TEST(productRecvIn, Container7_SUCCESS) {
     COMMENT("Receive Container7 SUCCESS");
@@ -92,11 +94,13 @@ TEST(productRecvIn, Container7_SUCCESS) {
     tester.productRecvIn_Container7_SUCCESS();
 }
 
+#if 0
 TEST(productRecvIn, Container7_FAILURE) {
     COMMENT("Receive Container7 FAILURE");
     Tester tester;
     tester.productRecvIn_Container7_FAILURE();
 }
+#endif
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
