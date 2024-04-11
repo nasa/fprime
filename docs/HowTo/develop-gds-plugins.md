@@ -6,8 +6,11 @@ GDS in several ways. These include:
 1. Selection plugins: add another choice for key GDS functionality
 2. Functionality plugins: add functionality as an addition to the GDS.
 
-This guide will walk through the development of a `framing`  implementation plugin and notes on start-up application
-plugins.
+This guide will walk through the development of a `framing`  selection plugin to see the basic development of a plugin. Then
+the guide will walk you through the development of a start-up application functionality plugin, which will also discuss
+taking arguments to plugins. Finally the guide will close with a discussion of testing and distributing your plugins.
+
+Examples covered here are available at: [https://github.com/fprime-community/fprime-gds-plugin-examples](https://github.com/fprime-community/fprime-gds-plugin-examples)
 
 ## Contents
 
@@ -15,10 +18,11 @@ plugins.
 - [Developing a Plugin](#developing-a-plugin)
   - [Basic Plugin Skeleton](#basic-plugin-skeleton)
   - [Implementing Virtual Functions](#implementing-virtual-functions)
-- [Distributing Plugins](#distributing-plugins)
 - [Application Plugins](#application-plugins)
   - [Application Plugin Skeleton](#application-plugin-skeleton)
   - [Plugin Arguments](#plugin-arguments)
+- [Packaging and Testing Plugins](#packaging-and-testing-plugins)
+- [Distributing Plugins](#distributing-plugins)
 - [Conclusion](#conclusion)
 
 
@@ -159,47 +163,9 @@ This is the basic implementation of a no-argument framing plugin. The above plug
 string and deframes that as a packet.  Next, this guide will cover how to integrate this plugin via python packaging. 
 Following that, plugin arguments will be covered.
 
-## Distributing Plugins
-
-Plugins are supplied as python packages with an entrypoint used to load the plugin. In the root of the package a basic
-python package will need to be configured. This consists of two files: pyproject.toml representing the package, and
-setup.py for backwards compatibility.
-
-The project structure should look like:
-```
-    src/my_plugin.py
-    pyproject.toml
-    setup.py
-```
-
-A sample pyproject.toml file would look like:
-
-```toml
-[build-system]
-requires = ["setuptools", "setuptools_scm[toml]>=6.2", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "fprime-gds-my-plugin"
-dynamic = ["version"]
-dependencies = [
-    "pluggy>=1.3.0",
-    "fprime-gds>=3.4.4"
-]
-
-[project.entry_points."fprime_gds"]
-my_plugin = "my_plugin:MyPlugin"
-
-[tool.setuptools_scm]
-```
-
-A sample `setup.py` would look like:
-```python
-from setuptools import setup
-
-# Configuration is in pyproject.toml
-setup()
-```
+You may now continue to read about "Application Plugins" that show the other type of plugin available for the `fprime-gds`.
+This section also covers how arguments to plugins work.  Otherwise, jump to the
+[Packaging and Testing Plugins](#packaging-and-testing-plugins) section to begin testing your plugin!
 
 ## Application Plugins
 
@@ -219,6 +185,7 @@ Here is the basic structure for a `gds-app` plugin.  It prints "Hello World".  g
 function `get_process_invocation` that returns command line arguments to be run as a separate process using the
 `subprocess` module.
 
+**`src/my_app.py`:**
 ```python
 import sys
 from fprime_gds.executables.apps import GdsApp
@@ -244,7 +211,10 @@ class MyApp(GdsApp):
 
 ### Plugin Arguments
 
-Now is time to add in plugin arguments. This plugin will take one argument `--message` and will inject this message into
+Plugins can source arguments from the command line. Although, all types of plugins can source arguments using the pattern
+described here, you will see them shown with our application plugin.
+
+It is time to add in plugin arguments. This plugin will take one argument `--message` and will inject this message into
 the printed message.  To do this we return the argument using the `get_arguments` class method.  Add this to your plugin
 `MyApp` class:
 
@@ -280,7 +250,7 @@ Change the `get_process_invocation` to use the new member variable.
     def get_process_invocation(self):
         """ Process invocation """
         # Inject message into command line to print
-        return [sys.executable, "-c", "print(f'{self.message}')"]
+        return [sys.executable, "-c", f"print(f'{self.message}')"]
 ```
 
 Finally, security-minded developers will notice there is an injection vulnerability above. This can be check using the
@@ -302,12 +272,14 @@ fprime-gds --help
 
 The complete plugin would look like:
 
+**`src/my_app.py`:**
 ```python
 import sys
+from fprime_gds.plugin.definitions import gds_plugin_implementation
 from fprime_gds.executables.apps import GdsApp
 
 class MyApp(GdsApp):
-  """ An app for the GDS """
+    """ An app for the GDS """
 
     def __init__(self, message):
         """ Constructor """
@@ -317,7 +289,7 @@ class MyApp(GdsApp):
     def get_process_invocation(self):
         """ Process invocation """
         # Inject message into command line to print
-        return [sys.executable, "-c", "print(f'{self.message}')"]
+        return [sys.executable, "-c", f"print(f'{self.message}')"]
 
     @classmethod
     def get_name(cls):
@@ -347,6 +319,105 @@ class MyApp(GdsApp):
         """ Register a good plugin """
         return cls
 ```
+
+## Packaging and Testing Plugins
+
+Plugins are supplied as python packages with an entrypoint used to load the plugin. In the root of the package a basic
+python package will need to be configured. This consists of two files: pyproject.toml representing the package, and
+setup.py for backwards compatibility.
+
+The project structure should look like:
+```
+    src/my_plugin.py
+    pyproject.toml
+    setup.py
+```
+
+A sample pyproject.toml file would look like:
+
+```toml
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fprime-gds-my-plugin"
+version = "0.1.0"
+dependencies = [
+    "pluggy>=1.3.0",
+    "fprime-gds>=3.4.4"
+]
+
+[project.entry-points.fprime_gds]
+my_plugin = "my_plugin:MyPlugin"
+
+[tool.setuptools_scm]
+```
+
+A sample `setup.py` would look like:
+```python
+from setuptools import setup
+
+# Configuration is in pyproject.toml
+setup()
+```
+
+We can add our application plugin with the following additional line in the `project.entry-points.fprime_gds` section:
+
+```toml
+my_app = "my_app:MyApp"
+```
+
+Once these files have been written, the plugin can be installed locally for testing with the following command:
+
+```
+cd /path/to/plugin/directory
+pip install -e .
+```
+
+> Users must be in the same virtual environment that the `fprime-gds` package has been installed into
+> `-e` allows local changes to take effect without a reinstall
+
+The first step in testing a plugin is to run `fprime-gds --help`. This should show arguments associated with your plugin.
+The plugins implemented here would produce the following output:
+
+```
+usage: fprime-gds ...
+...
+Framing Plugin Options:
+  --framing-selection {fprime,my-plugin}
+                        Select framing implementer. (default: fprime)
+...
+Gds_App Plugin 'my-app' Options:
+  --disable-my-app      Disable the gds_app plugin 'my-app' (default: False)
+  --message MESSAGE     Message to print (default: None)
+```
+> Syntax errors, indentation errors, and other exceptions can arise during this step. Resolving these errors will allow the
+> help message to display properly.
+
+To test selection plugins, select them during a normal GDS run:
+
+```
+fprime-gds --framing-selection my-plugin
+```
+> Remember to supply any arguments needed for your plugin!
+
+Application plugins run automatically at start-up. To test these plugins, just supply any desired arguments:
+
+```
+fprime-gds --message "Hello Plugin
+```
+
+## Distributing Plugins
+
+Plugins are implemented as python packages.  Thus plugins may be distributed in the following ways:
+
+1. Source Distribution: send users your source code and install with `pip install .` as shown above
+2. Binary Distribution: send users a wheel of your package to install with `pip install /path/to/wheel`
+3. PyPI: distribute your wheel via PyPI
+
+A tutorial on python packaging including building wheels and uploading them to PyPI is available from packaging.python.org:
+[https://packaging.python.org/en/latest/tutorials/packaging-projects/](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
 
 ## Conclusion
 
