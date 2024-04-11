@@ -286,6 +286,7 @@ module M1 {
 | `index` | Index of the struct member | **Number** | true |
 | `size` | Size of the struct member | **Number** | false |
 | `format` | Format specifier | **String** | false |
+| `annotation` | User-defined annotation | **String** extracted from FPP model | false |
 
 Example FPP model with JSON representation:
 ```
