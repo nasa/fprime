@@ -21,8 +21,7 @@ DpTest ::DpTest(const char* const compName,
                 const U8ArrayRecordData& u8ArrayRecordData,
                 const U32ArrayRecordData& u32ArrayRecordData,
                 const DataArrayRecordData& dataArrayRecordData,
-                const Fw::StringBase& stringRecordData,
-                const StringArrayRecordData& stringArrayRecordData)
+                const Fw::StringBase& stringRecordData)
     : DpTestComponentBase(compName),
       u32RecordData(u32RecordData),
       dataRecordData(dataRecordData),
@@ -30,7 +29,6 @@ DpTest ::DpTest(const char* const compName,
       u32ArrayRecordData(u32ArrayRecordData),
       dataArrayRecordData(dataArrayRecordData),
       stringRecordData(stringRecordData),
-      stringArrayRecordData(stringArrayRecordData),
       sendTime(Fw::ZERO_TIME) {}
 
 void DpTest ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {

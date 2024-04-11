@@ -35,6 +35,8 @@ class DpTest : public DpTestComponentBase {
     static constexpr FwSizeType CONTAINER_7_DATA_SIZE = 1000;
     static constexpr FwSizeType CONTAINER_7_PACKET_SIZE = DpContainer::getPacketSizeForDataSize(CONTAINER_7_DATA_SIZE);
 
+    static constexpr FwSizeType STRING_ARRAY_RECORD_DATA_SIZE = 100;
+
   public:
     // ----------------------------------------------------------------------
     // Types
@@ -43,7 +45,6 @@ class DpTest : public DpTestComponentBase {
     using U8ArrayRecordData = std::array<U8, 256>;
     using U32ArrayRecordData = std::array<U32, 100>;
     using DataArrayRecordData = std::array<DpTest_Data, 300>;
-    using StringArrayRecordData = std::array<Fw::String, 100>;
 
   public:
     // ----------------------------------------------------------------------
@@ -51,14 +52,13 @@ class DpTest : public DpTestComponentBase {
     // ----------------------------------------------------------------------
 
     //! Construct object DpTest
-    DpTest(const char* const compName,                         //!< The component name
-           U32 u32RecordData,                                  //!< The U32Record data
-           U16 dataRecordData,                                 //!< The DataRecord data
-           const U8ArrayRecordData& u8ArrayRecordData,         //!< The U8ArrayRecord data
-           const U32ArrayRecordData& u32ArrayRecordData,       //!< The U32ArrayRecord data
-           const DataArrayRecordData& dataArrayRecordData,     //!< The DataArrayRecord data
-           const Fw::StringBase& stringRecordData,             //!< The StringRecord data
-           const StringArrayRecordData& stringArrayRecordData  //!< The StringArrayRecord data
+    DpTest(const char* const compName,                      //!< The component name
+           U32 u32RecordData,                               //!< The U32Record data
+           U16 dataRecordData,                              //!< The DataRecord data
+           const U8ArrayRecordData& u8ArrayRecordData,      //!< The U8ArrayRecord data
+           const U32ArrayRecordData& u32ArrayRecordData,    //!< The U32ArrayRecord data
+           const DataArrayRecordData& dataArrayRecordData,  //!< The DataArrayRecord data
+           const Fw::StringBase& stringRecordData           //!< The StringRecord data
     );
 
     //! Initialize object DpTest
@@ -77,26 +77,28 @@ class DpTest : public DpTestComponentBase {
     //! Set the send time
     void setSendTime(Fw::Time time) { this->sendTime = time; }
 
-  PRIVATE:
-    // ----------------------------------------------------------------------
-    // Handler implementations for user-defined typed input ports
-    // ----------------------------------------------------------------------
+    PRIVATE :
+        // ----------------------------------------------------------------------
+        // Handler implementations for user-defined typed input ports
+        // ----------------------------------------------------------------------
 
-    //! Handler implementation for schedIn
-    void schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
-                         U32 context                     //!< The call order
-                         ) final;
+        //! Handler implementation for schedIn
+        void
+        schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+                        U32 context                     //!< The call order
+                        ) final;
 
-  PRIVATE:
-    // ----------------------------------------------------------------------
-    // Data product handler implementations
-    // ----------------------------------------------------------------------
+    PRIVATE :
+        // ----------------------------------------------------------------------
+        // Data product handler implementations
+        // ----------------------------------------------------------------------
 
-    //! Receive a data product container of type Container1
-    //! \return Serialize status
-    void dpRecv_Container1_handler(DpContainer& container,  //!< The container
-                                   Fw::Success::T           //!< The container status
-                                   ) final;
+        //! Receive a data product container of type Container1
+        //! \return Serialize status
+        void
+        dpRecv_Container1_handler(DpContainer& container,  //!< The container
+                                  Fw::Success::T           //!< The container status
+                                  ) final;
 
     //! Receive a data product container of type Container2
     //! \return Serialize status
@@ -134,25 +136,26 @@ class DpTest : public DpTestComponentBase {
                                    Fw::Success::T           //!< The container status
                                    ) final;
 
-  PRIVATE:
-    // ----------------------------------------------------------------------
-    // Private helper functions
-    // ----------------------------------------------------------------------
+    PRIVATE :
+        // ----------------------------------------------------------------------
+        // Private helper functions
+        // ----------------------------------------------------------------------
 
-    //! Check a container for validity
-    void checkContainer(const DpContainer& container,  //!< The container
-                        FwDpIdType localId,            //!< The expected local id
-                        FwSizeType size,               //!< The expected size
-                        FwDpPriorityType priority      //!< The expected priority
-    ) const;
+        //! Check a container for validity
+        void
+        checkContainer(const DpContainer& container,  //!< The container
+                       FwDpIdType localId,            //!< The expected local id
+                       FwSizeType size,               //!< The expected size
+                       FwDpPriorityType priority      //!< The expected priority
+        ) const;
 
-  PRIVATE:
-    // ----------------------------------------------------------------------
-    // Private member variables
-    // ----------------------------------------------------------------------
+    PRIVATE :
+        // ----------------------------------------------------------------------
+        // Private member variables
+        // ----------------------------------------------------------------------
 
-    //! U32Record data
-    const U32 u32RecordData;
+        //! U32Record data
+        const U32 u32RecordData;
 
     //! DataRecord data
     const U16 dataRecordData;
@@ -168,9 +171,6 @@ class DpTest : public DpTestComponentBase {
 
     //! StringRecord data
     const Fw::StringBase& stringRecordData;
-
-    //! StringArrayRecord data
-    const StringArrayRecordData& stringArrayRecordData;
 
     //! Send time for testing
     Fw::Time sendTime;

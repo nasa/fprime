@@ -193,10 +193,7 @@ class Tester : public DpTestGTestBase {
     DpTest::DataArrayRecordData dataArrayRecordData;
 
     //! Data for String record
-    Fw::String stringRecordData = "0123456789";
-
-    //! Data for string array record
-    DpTest::StringArrayRecordData stringArrayRecordData;
+    Fw::String stringRecordData;
 
     //! The component under test
     DpTest component;

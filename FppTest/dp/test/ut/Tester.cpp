@@ -40,8 +40,7 @@ Tester::Tester()
                 this->u8ArrayRecordData,
                 this->u32ArrayRecordData,
                 this->dataArrayRecordData,
-                this->stringRecordData,
-                this->stringArrayRecordData) {
+                this->stringRecordData) {
     this->initComponents();
     this->connectPorts();
     this->component.setIdBase(ID_BASE);
@@ -56,9 +55,6 @@ Tester::Tester()
         elt.set(static_cast<U16>(STest::Pick::any()));
     }
     generateRandomString(this->stringRecordData);
-    for (Fw::String& elt : this->stringArrayRecordData) {
-        generateRandomString(elt);
-    }
 }
 
 Tester::~Tester() {}
@@ -285,8 +281,9 @@ void Tester::productRecvIn_Container7_SUCCESS() {
     // Construct the possibly truncated string
     char esData[DpTest_stringSize];
     Fw::ExternalString es(esData, sizeof esData, this->stringRecordData);
+    const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + DpTester::STRING_ARRAY_RECORD_DATA_SIZE * es.serializedSize();
     // Invoke the port and check the header
-    this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container7, es.serializedSize(),
+    this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container7, dataEltSize,
                                              DpTest::ContainerPriority::Container7, this->container7Buffer, buffer,
                                              expectedNumElts);
     // Check the data
