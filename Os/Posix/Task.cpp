@@ -99,10 +99,9 @@ namespace Task {
 
     PlatformIntType set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
         PlatformIntType status = 0;
-        const FwIndexType affinity = arguments.m_cpuAffinity;
-
 // Feature set check for _GNU_SOURCE before using GNU only features
 #ifdef _GNU_SOURCE
+        const FwIndexType affinity = arguments.m_cpuAffinity;
         cpu_set_t cpu_set;
         CPU_ZERO(&cpu_set);
         CPU_SET(affinity, &cpu_set);
@@ -117,10 +116,7 @@ namespace Task {
         return status;
     }
 
-
-
     Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments, const PosixTask::PermissionExpectation permissions) {
-        Os::Task::Status status = Os::Task::OP_OK;
         PlatformIntType pthread_status = PosixTaskHandle::SUCCESS;
         PosixTaskHandle& handle = this->m_handle;
         const bool expect_permission = (permissions == EXPECT_PERMISSION);
