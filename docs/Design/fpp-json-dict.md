@@ -468,8 +468,8 @@ Formal Parameters are used in Commands and Events definitions.
 | `name` | Fully qualified name of the command | Period-separated **String** | true |
 | `commandKind` | The kind of command | `async`, `guarded`, `sync`, `set`, `save` | true |
 | `opcode` | Command opcode | **Number** | true |
-| `annotation` | User-defined annotation of command | **String** | true |
 | `formalParams` | Parameters of the command | Array of [Formal Parameters](#formal-parameters) | true |
+| `annotation` | User-defined annotation of command | **String** | false |
 | `priority` | Priority for the command on the input queue | **Number** | required for async command kinds |
 | `queueFullBehavior` | Behavior of the command when the input full is queue | `assert`, `block`, `drop` | required for async command kinds |
 
