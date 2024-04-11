@@ -136,7 +136,7 @@ Example: Type Descriptor for booleans
 | ----- | ----------- | ------- | -------- |
 | `name` | **String** representing the FPP type name |  `string` | true |
 | `kind` | **String** representing the kind of type | `string` | true | 
-| `size` | Maximum string size in bytes | **Number** in the range [0, 2<sup>31</sup>) | true |
+| `size` | **Number** representing the maximum string size in bytes | **Number** in the range [1, 2<sup>31</sup>) | true |
 
 ### String Types
 Any sequence of characters
