@@ -32,6 +32,8 @@ Tester::Tester()
       container5Buffer(this->container5Data, sizeof this->container5Data),
       container6Data{},
       container6Buffer(this->container6Data, sizeof this->container6Data),
+      container7Data{},
+      container7Buffer(this->container7Data, sizeof this->container7Data),
       component("DpTest",
                 STest::Pick::any(),
                 STest::Pick::any(),
@@ -274,6 +276,38 @@ void Tester::productRecvIn_Container6_SUCCESS() {
 
 void Tester::productRecvIn_Container6_FAILURE() {
     productRecvIn_CheckFailure(DpTest::ContainerId::Container6, this->container6Buffer);
+}
+
+void Tester::productRecvIn_Container7_SUCCESS() {
+#if 0
+    Fw::Buffer buffer;
+    FwSizeType expectedNumElts;
+    // Construct the possibly truncated string
+    char esData[DpTest_stringSize];
+    Fw::ExternalString es(esData, sizeof esData, this->stringRecordData);
+    // Invoke the port and check the header
+    this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container7, es.serializedSize(),
+                                             DpTest::ContainerPriority::Container7, this->container7Buffer, buffer,
+                                             expectedNumElts);
+    // Check the data
+    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
+    for (FwSizeType i = 0; i < expectedNumElts; ++i) {
+        FwDpIdType id;
+        Fw::String elt;
+        auto status = serialRepr.deserialize(id);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+        const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::StringRecord;
+        ASSERT_EQ(id, expectedId);
+        status = serialRepr.deserialize(elt);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(elt, es);
+    }
+#endif
+}
+
+void Tester::productRecvIn_Container7_FAILURE() {
+    productRecvIn_CheckFailure(DpTest::ContainerId::Container7, this->container7Buffer);
 }
 
 // ----------------------------------------------------------------------
