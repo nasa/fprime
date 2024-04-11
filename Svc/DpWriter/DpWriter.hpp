@@ -33,9 +33,8 @@ class DpWriter : public DpWriterComponentBase {
     ~DpWriter();
 
     //! configure writer
-    void configure(
-            const Fw::FileNameString& dir //!< directory for file writing
-        );
+    void configure(const Fw::StringBase& dir  //!< Directory for file writing
+    );
 
   PRIVATE:
     // ----------------------------------------------------------------------

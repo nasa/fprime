@@ -22,12 +22,9 @@ DpWriter::DpWriter(const char* const compName) : DpWriterComponentBase(compName)
 
 DpWriter::~DpWriter() {}
 
-void DpWriter::configure(
-        const Fw::FileNameString& dir //!< directory for file writing
-    ) {
-        this->m_dpDir = dir;
-    } 
-
+void DpWriter::configure(const Fw::StringBase& dir) {
+    this->m_dpDir = dir;
+}
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
@@ -85,12 +82,8 @@ void DpWriter::bufferSendIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& b
     if (status == Fw::Success::SUCCESS) {
         const FwDpIdType containerId = container.getId();
         const Fw::Time timeTag = container.getTimeTag();
-        fileName.format(
-            DP_FILENAME_FORMAT, 
-            this->m_dpDir.toChar(),
-            containerId, 
-            timeTag.getSeconds(), 
-            timeTag.getUSeconds());
+        fileName.format(DP_FILENAME_FORMAT, this->m_dpDir.toChar(), containerId, timeTag.getSeconds(),
+                        timeTag.getUSeconds());
     }
     FwSizeType fileSize = 0;
     // Write the file
