@@ -74,7 +74,7 @@ Os::File::Status DpWriterTester::pickOsFileError() {
     }
 
 void DpWriterTester::constructDpFileName(FwDpIdType id, const Fw::Time& timeTag, Fw::StringBase& fileName) {
-    fileName.format(DP_FILENAME_FORMAT, this->component.m_dpDir.toChar(), id, timeTag.getSeconds(),
+    fileName.format(DP_FILENAME_FORMAT, this->component.m_dpFileNamePrefix.toChar(), id, timeTag.getSeconds(),
                     timeTag.getUSeconds());
 }
 

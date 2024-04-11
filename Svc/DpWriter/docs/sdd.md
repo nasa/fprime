@@ -149,6 +149,7 @@ in order.
 
 Format Specifier | Type |
 ---------------- | -----|
+The file name prefix | `%s`
 Container ID | `PRI_FwDpIdType`
 Time seconds | `PRI_u32`
 Time microseconds | `PRI_u32`

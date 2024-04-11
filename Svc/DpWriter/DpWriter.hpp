@@ -32,8 +32,8 @@ class DpWriter : public DpWriterComponentBase {
     //!
     ~DpWriter();
 
-    //! configure writer
-    void configure(const Fw::StringBase& dir  //!< Directory for file writing
+    //! Configure writer
+    void configure(const Fw::StringBase& dpFileNamePrefix  //!< The file name prefix for writing DP files
     );
 
   PRIVATE:
@@ -113,8 +113,10 @@ class DpWriter : public DpWriterComponentBase {
     //! The number of errors
     U32 m_numErrors = 0;
 
-    //! The base directory for writing DP files
-    Fw::FileNameString m_dpDir;
+    //! The file name prefix for writing DP files
+    //! The precise meaning depends on the DP format string
+    //! For example, this could be a directory path prefix
+    Fw::FileNameString m_dpFileNamePrefix;
 };
 
 }  // end namespace Svc
