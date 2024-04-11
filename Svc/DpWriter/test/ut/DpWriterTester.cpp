@@ -29,17 +29,6 @@ DpWriterTester ::~DpWriterTester() {}
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void DpWriterTester ::from_deallocBufferSendOut_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
-    this->pushFromPortEntry_deallocBufferSendOut(buffer);
-}
-
-void DpWriterTester ::from_dpWrittenOut_handler(NATIVE_INT_TYPE portNum,
-                                                const fileNameString& fileName,
-                                                FwDpPriorityType priority,
-                                                FwSizeType size) {
-    this->pushFromPortEntry_dpWrittenOut(fileName, priority, size);
-}
-
 void DpWriterTester::from_procBufferSendOut_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
     this->pushFromPortEntry_procBufferSendOut(buffer);
     this->abstractState.m_procTypes |= (1 << portNum);
