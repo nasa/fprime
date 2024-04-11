@@ -45,13 +45,13 @@ class DpWriter : public DpWriterComponentBase {
     //!
     void bufferSendIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
                               Fw::Buffer& fwBuffer            //!< The buffer
-                              ) override;
+                              ) final;
 
     //! Handler implementation for schedIn
     //!
     void schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
                          U32 context                     //!< The call order
-                         ) override;
+                         ) final;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -63,7 +63,7 @@ class DpWriter : public DpWriterComponentBase {
     //! Clear event throttling
     void CLEAR_EVENT_THROTTLE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                          U32 cmdSeq            //!< The command sequence number
-                                         ) override;
+                                         ) final;
 
   PRIVATE:
     // ----------------------------------------------------------------------

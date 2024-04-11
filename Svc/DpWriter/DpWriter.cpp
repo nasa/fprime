@@ -18,7 +18,7 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-DpWriter::DpWriter(const char* const compName) : DpWriterComponentBase(compName) {}
+DpWriter::DpWriter(const char* const compName) : DpWriterComponentBase(compName), m_dpFileNamePrefix() {}
 
 DpWriter::~DpWriter() {}
 
