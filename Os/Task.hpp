@@ -25,7 +25,7 @@ namespace Os {
 
     class TaskInterface {
         public:
-            static const FwSizeType TASK_DEFAULT;
+        static constexpr FwSizeType TASK_DEFAULT = std::numeric_limits<FwSizeType>::max();
             enum Status {
                 OP_OK, //!< message sent/received okay
                 INVALID_HANDLE, //!< Task handle invalid
@@ -203,7 +203,6 @@ namespace Os {
     //! behaviour.
     class Task final : public TaskInterface {
       public:
-        static constexpr FwSizeType TASK_DEFAULT = std::numeric_limits<FwSizeType>::max();
         //! Wrapper for task routine that ensures `onStart()` is called once the task actually begins
         // TODO: does this belong here or in the parent class
         class TaskRoutineWrapper {

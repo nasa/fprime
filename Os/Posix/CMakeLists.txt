@@ -55,3 +55,14 @@ register_fprime_module(Os_Task_Posix)
 register_fprime_implementation(Os/Task Os_Task_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultTask.cpp")
 
 #### Os/Task/Posix Unit Tests ####
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/CommonTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/TaskRules.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTaskTests.cpp"
+)
+set(UT_MOD_DEPS
+        Os
+        STest
+)
+choose_fprime_implementation(Os/Task Os_Task_Posix)
+register_fprime_ut(PosixTaskTest)

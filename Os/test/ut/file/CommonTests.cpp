@@ -1,5 +1,5 @@
 // ======================================================================
-// \title Os/test/ut/file/CommonFileTests.cpp
+// \title Os/test/ut/file/CommonTests.cpp
 // \brief common test implementations
 // ======================================================================
 #include "Os/test/ut/file/CommonTests.hpp"
