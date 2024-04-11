@@ -15,6 +15,10 @@
 namespace FppTest {
 
 class DpTest : public DpTestComponentBase {
+
+    // Friend class for testing
+    friend class Tester;
+
   public:
     // ----------------------------------------------------------------------
     // Constants
@@ -45,6 +49,7 @@ class DpTest : public DpTestComponentBase {
     using U8ArrayRecordData = std::array<U8, 256>;
     using U32ArrayRecordData = std::array<U32, 100>;
     using DataArrayRecordData = std::array<DpTest_Data, 300>;
+    using PtrToConstStringBase = const Fw::StringBase*;
 
   public:
     // ----------------------------------------------------------------------
@@ -77,28 +82,26 @@ class DpTest : public DpTestComponentBase {
     //! Set the send time
     void setSendTime(Fw::Time time) { this->sendTime = time; }
 
-    PRIVATE :
-        // ----------------------------------------------------------------------
-        // Handler implementations for user-defined typed input ports
-        // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Handler implementations for user-defined typed input ports
+    // ----------------------------------------------------------------------
 
-        //! Handler implementation for schedIn
-        void
-        schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
-                        U32 context                     //!< The call order
-                        ) final;
+    //! Handler implementation for schedIn
+    void schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+                         U32 context                     //!< The call order
+                         ) final;
 
-    PRIVATE :
-        // ----------------------------------------------------------------------
-        // Data product handler implementations
-        // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Data product handler implementations
+    // ----------------------------------------------------------------------
 
-        //! Receive a data product container of type Container1
-        //! \return Serialize status
-        void
-        dpRecv_Container1_handler(DpContainer& container,  //!< The container
-                                  Fw::Success::T           //!< The container status
-                                  ) final;
+    //! Receive a data product container of type Container1
+    //! \return Serialize status
+    void dpRecv_Container1_handler(DpContainer& container,  //!< The container
+                                   Fw::Success::T           //!< The container status
+                                   ) final;
 
     //! Receive a data product container of type Container2
     //! \return Serialize status
@@ -136,26 +139,25 @@ class DpTest : public DpTestComponentBase {
                                    Fw::Success::T           //!< The container status
                                    ) final;
 
-    PRIVATE :
-        // ----------------------------------------------------------------------
-        // Private helper functions
-        // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Private helper functions
+    // ----------------------------------------------------------------------
 
-        //! Check a container for validity
-        void
-        checkContainer(const DpContainer& container,  //!< The container
-                       FwDpIdType localId,            //!< The expected local id
-                       FwSizeType size,               //!< The expected size
-                       FwDpPriorityType priority      //!< The expected priority
-        ) const;
+    //! Check a container for validity
+    void checkContainer(const DpContainer& container,  //!< The container
+                        FwDpIdType localId,            //!< The expected local id
+                        FwSizeType size,               //!< The expected size
+                        FwDpPriorityType priority      //!< The expected priority
+    ) const;
 
-    PRIVATE :
-        // ----------------------------------------------------------------------
-        // Private member variables
-        // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Private member variables
+    // ----------------------------------------------------------------------
 
-        //! U32Record data
-        const U32 u32RecordData;
+    //! U32Record data
+    const U32 u32RecordData;
 
     //! DataRecord data
     const U16 dataRecordData;
@@ -171,6 +173,9 @@ class DpTest : public DpTestComponentBase {
 
     //! StringRecord data
     const Fw::StringBase& stringRecordData;
+
+    //! StringArrayRecord data
+    PtrToConstStringBase stringArrayRecordData[STRING_ARRAY_RECORD_DATA_SIZE];
 
     //! Send time for testing
     Fw::Time sendTime;
