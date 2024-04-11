@@ -55,6 +55,14 @@ class ExternalString : public Fw::StringBase {
     // Operators
     // ----------------------------------------------------------------------
 
+    // ExternalString assignment operator
+    ExternalString& operator=(const ExternalString& sb) {
+        if (this != &sb) {
+            (void)Fw::StringUtils::string_copy(this->m_data, sb.toChar(), this->m_capacity);
+        }
+        return *this;
+    }
+
     // StringBase assignment operator
     ExternalString& operator=(const StringBase& sb) {
         if (this != &sb) {
@@ -75,10 +83,10 @@ class ExternalString : public Fw::StringBase {
     // ----------------------------------------------------------------------
 
     //! Storage for string data
-    char* const m_data;
+    char* m_data;
 
     //! Size of string data
-    const StringBase::SizeType m_capacity;
+    StringBase::SizeType m_capacity;
 };
 }  // namespace Fw
 
