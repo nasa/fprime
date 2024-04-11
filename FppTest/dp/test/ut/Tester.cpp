@@ -4,7 +4,6 @@
 // \brief  cpp file for DpTest test harness implementation class
 // ======================================================================
 
-#include <cstdio>
 #include <cstring>
 
 #include "FppTest/dp/FppConstantsAc.hpp"
@@ -138,6 +137,7 @@ void Tester::productRecvIn_Container2_FAILURE() {
 void Tester::productRecvIn_Container3_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Compute the data element size
     const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + this->u8ArrayRecordData.size();
     // Invoke the port and check the header
     this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container3, dataEltSize,
@@ -174,6 +174,7 @@ void Tester::productRecvIn_Container3_FAILURE() {
 void Tester::productRecvIn_Container4_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Compute the data element size
     const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + this->u32ArrayRecordData.size() * sizeof(U32);
     // Invoke the port and check the header
     this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container4, dataEltSize,
@@ -210,6 +211,7 @@ void Tester::productRecvIn_Container4_FAILURE() {
 void Tester::productRecvIn_Container5_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Compute the data element size
     const FwSizeType dataEltSize =
         sizeof(FwSizeStoreType) + this->dataArrayRecordData.size() * DpTest_Data::SERIALIZED_SIZE;
     // Invoke the port and check the header
@@ -280,28 +282,33 @@ void Tester::productRecvIn_Container7_SUCCESS() {
     // Construct the possibly truncated string
     char esData[DpTest_stringSize];
     Fw::ExternalString es(esData, sizeof esData, this->stringRecordData);
-    const FwSizeType dataEltSize =
-        sizeof(FwSizeStoreType) + DpTest::STRING_ARRAY_RECORD_DATA_SIZE * es.serializedSize();
+    const FwSizeType arraySize = DpTest::STRING_ARRAY_RECORD_ARRAY_SIZE;
+    const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + arraySize * es.serializedSize();
     // Invoke the port and check the header
     this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container7, dataEltSize,
                                              DpTest::ContainerPriority::Container7, this->container7Buffer, buffer,
                                              expectedNumElts);
-#if 0
     // Check the data
     Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
-        Fw::String elt;
         auto status = serialRepr.deserialize(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-        const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::StringRecord;
+        const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::StringArrayRecord;
         ASSERT_EQ(id, expectedId);
-        status = serialRepr.deserialize(elt);
+        FwSizeType size;
+        status = serialRepr.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-        ASSERT_EQ(elt, es);
+        ASSERT_EQ(size, arraySize);
+        const U8* const buffAddr = serialRepr.getBuffAddr();
+        for (FwSizeType j = 0; j < size; ++j) {
+            Fw::String elt;
+            status = serialRepr.deserialize(elt);
+            ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+            ASSERT_EQ(elt, es);
+        }
     }
-#endif
 }
 
 void Tester::productRecvIn_Container7_FAILURE() {

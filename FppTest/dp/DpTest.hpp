@@ -39,7 +39,7 @@ class DpTest : public DpTestComponentBase {
     static constexpr FwSizeType CONTAINER_7_DATA_SIZE = 1000;
     static constexpr FwSizeType CONTAINER_7_PACKET_SIZE = DpContainer::getPacketSizeForDataSize(CONTAINER_7_DATA_SIZE);
 
-    static constexpr FwSizeType STRING_ARRAY_RECORD_DATA_SIZE = 100;
+    static constexpr FwSizeType STRING_ARRAY_RECORD_ARRAY_SIZE = 100;
 
   public:
     // ----------------------------------------------------------------------
@@ -175,7 +175,7 @@ class DpTest : public DpTestComponentBase {
     const Fw::StringBase& stringRecordData;
 
     //! StringArrayRecord data
-    PtrToConstStringBase stringArrayRecordData[STRING_ARRAY_RECORD_DATA_SIZE];
+    PtrToConstStringBase stringArrayRecordData[STRING_ARRAY_RECORD_ARRAY_SIZE];
 
     //! Send time for testing
     Fw::Time sendTime;
