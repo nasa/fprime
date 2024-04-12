@@ -16,12 +16,12 @@ namespace FppTest {
 // ----------------------------------------------------------------------
 
 DpTest::DpTest(const char* const compName,
-                U32 u32RecordData,
-                U16 dataRecordData,
-                const U8ArrayRecordData& u8ArrayRecordData,
-                const U32ArrayRecordData& u32ArrayRecordData,
-                const DataArrayRecordData& dataArrayRecordData,
-                const Fw::StringBase& a_stringRecordData)
+               U32 u32RecordData,
+               U16 dataRecordData,
+               const U8ArrayRecordData& u8ArrayRecordData,
+               const U32ArrayRecordData& u32ArrayRecordData,
+               const DataArrayRecordData& dataArrayRecordData,
+               const Fw::StringBase& a_stringRecordData)
     : DpTestComponentBase(compName),
       u32RecordData(u32RecordData),
       dataRecordData(dataRecordData),
