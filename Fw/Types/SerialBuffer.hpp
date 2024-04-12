@@ -18,73 +18,62 @@
 
 namespace Fw {
 
-  //! \class SerialBuffer
-  //! \brief A variable-length serializable buffer
-  //!
-  class SerialBuffer :
-    public SerializeBufferBase
-  {
+//! \class SerialBuffer
+//! \brief A variable-length serializable buffer
+//!
+class SerialBuffer : public SerializeBufferBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct a SerialBuffer
+    //!
+    SerialBuffer(U8* const data,     //!< Pointer to the data
+                 const U32 capacity  //!< The buffer capacity
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction
-      // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Pure virtual methods from SerializeBufferBase
+    // ----------------------------------------------------------------------
 
-      //! Construct a SerialBuffer
-      //!
-      SerialBuffer(
-          U8 *const data, //!< Pointer to the data
-          const U32 capacity //!< The buffer capacity
-      );
+    NATIVE_UINT_TYPE getBuffCapacity() const;
 
-    public:
+    U8* getBuffAddr();
 
-      // ----------------------------------------------------------------------
-      // Pure virtual methods from SerializeBufferBase
-      // ----------------------------------------------------------------------
+    const U8* getBuffAddr() const;
 
-      NATIVE_UINT_TYPE getBuffCapacity() const;
+  public:
+    // ----------------------------------------------------------------------
+    // Public instance methods
+    // ----------------------------------------------------------------------
 
-      U8* getBuffAddr();
+    //! Fill the buffer to capacity with preexisting data
+    void fill();
 
-      const U8* getBuffAddr() const;
+    //! Push n bytes onto the buffer
+    SerializeStatus pushBytes(const U8* const addr,     //!< Address of bytes to push
+                              const NATIVE_UINT_TYPE n  //!< Number of bytes
+    );
 
-    public:
+    //! Pop n bytes off the buffer
+    SerializeStatus popBytes(U8* const addr,     //!< Address of bytes to pop
+                             NATIVE_UINT_TYPE n  //!< Number of bytes to pop
+    );
 
-      // ----------------------------------------------------------------------
-      // Public instance methods
-      // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Data
+    // ----------------------------------------------------------------------
 
-      //! Fill the buffer to capacity with preexisting data
-      void fill();
+    //! The data
+    U8* const m_data;
 
-      //! Push n bytes onto the buffer
-      SerializeStatus pushBytes(
-          const U8 *const addr, //!< Address of bytes to push
-          const NATIVE_UINT_TYPE n //!< Number of bytes
-      );
+    //! The capacity
+    const U32 m_capacity;
+};
 
-      //! Pop n bytes off the buffer
-      SerializeStatus popBytes(
-          U8 *const addr, //!< Address of bytes to pop
-          NATIVE_UINT_TYPE n //!< Number of bytes to pop
-      );
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Data
-      // ----------------------------------------------------------------------
-
-      //! The data
-      U8 *const m_data;
-
-      //! The capacity
-      const U32 m_capacity;
-
-  };
-
-}
+}  // namespace Fw
 
 #endif
