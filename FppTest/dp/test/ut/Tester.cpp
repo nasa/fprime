@@ -250,7 +250,8 @@ void Tester::productRecvIn_Container6_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
     // Construct the possibly truncated string
-    char esData[DpTest_stringSize];
+    // Add one to the string size to accound for the null terminator
+    char esData[DpTest_stringSize+1];
     Fw::ExternalString es(esData, sizeof esData, this->stringRecordData);
     // Invoke the port and check the header
     this->productRecvIn_InvokeAndCheckHeader(DpTest::ContainerId::Container6, es.serializedSize(),
@@ -280,7 +281,8 @@ void Tester::productRecvIn_Container7_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
     // Construct the possibly truncated string
-    char esData[DpTest_stringSize];
+    // Add one to the string size to account for the null terminator
+    char esData[DpTest_stringSize+1];
     Fw::ExternalString es(esData, sizeof esData, this->stringRecordData);
     const FwSizeType arraySize = DpTest::STRING_ARRAY_RECORD_ARRAY_SIZE;
     const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + arraySize * es.serializedSize();
