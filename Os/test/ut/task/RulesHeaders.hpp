@@ -24,8 +24,8 @@ struct TestTaskInfo {
         MIDDLE = 1, //!< The task function has taken hold
         END = 2, //!< The task has been asked to exit
         UNSET = -1,
-        JOINED = -2, //!< Joining task has successfully joined
     };
+    static FwSizeType s_task_count;
 
     Lifecycle m_stage = Lifecycle::BEGINNING;
     Os::Mutex m_lock;
@@ -48,6 +48,8 @@ struct TestTaskInfo {
     //! Stop and join thread
     void stop();
 
+    //! Start the thread
+    void start(Os::Task::taskRoutine routine);
 
     //! Standard task implementation which waits at each lifecycle stage
     static void standard_task(void* argument);
@@ -58,7 +60,8 @@ struct TestTaskInfo {
 
 struct Tester {
   private:
-    static constexpr FwSizeType MAX_THREAD_COUNT = 100;
+    static constexpr U32 MAX_THREAD_COUNT = 100;
+    static constexpr U32 MAX_DELAY_MICRO_SECONDS = 10000;
 
     std::vector<std::shared_ptr<TestTaskInfo>> m_tasks;
 
