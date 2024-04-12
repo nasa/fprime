@@ -1,5 +1,5 @@
 // ======================================================================
-// @file   String.hpp
+// @file   ObjectName.hpp
 // @author F Prime
 // @brief  A string sized to store an object name
 // ======================================================================
@@ -17,7 +17,7 @@ namespace Fw {
 class ObjectName : public ExternalString {
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_OBJECT_NAME,  //!< typeid for Fw::ObjectName
+        SERIALIZED_TYPE_ID = FW_TYPEID_OBJECT_NAME,  //!< type id for Fw::ObjectName
         STRING_SIZE = FW_OBJ_NAME_MAX_SIZE,          //!< size of the buffer that stores the string
         SERIALIZED_SIZE =
             STRING_SIZE + sizeof(FwSizeStoreType)  //!< static serialized size is size of buffer + size of size field

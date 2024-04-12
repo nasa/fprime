@@ -1,33 +1,43 @@
-#ifndef FW_FILENAMESTRING_HPP
-#define FW_FILENAMESTRING_HPP
+// ======================================================================
+// @file   FileNameString.hpp
+// @author F Prime
+// @brief  A string sized to store a file name
+// ======================================================================
+
+#ifndef FW_FILE_NAME_STRING_HPP
+#define FW_FILE_NAME_STRING_HPP
 
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/StringType.hpp"
+#include "Fw/Types/ExternalString.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Fw {
 
-class FileNameString : public Fw::StringBase {
+class FileNameString : public ExternalString {
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,        //!< typeid for string type
-        STRING_SIZE = FileNameStringSize,                       //!< Storage for string
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwBuffSizeType)  //!< Serialized size is size of buffer + size field
+        SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,  //!< type id for Fw::String
+        STRING_SIZE = FileNameStringSize,                 //!< storage for string
+        SERIALIZED_SIZE =
+            STRING_SIZE + sizeof(FwSizeStoreType)  //!< static serialized size is size of buffer + size of size field
     };
 
-    explicit FileNameString(const char* src);                //!< char* source constructor
-    explicit FileNameString(const StringBase& src);          //!< other string constructor
-    explicit FileNameString(const FileNameString& src);      //!< String string constructor
-    FileNameString();                                        //!< default constructor
-    FileNameString& operator=(const FileNameString& other);  //!< assignment operator
-    FileNameString& operator=(const StringBase& other);      //!< other string assignment operator
-    FileNameString& operator=(const char* other);            //!< char* assignment operator
-    ~FileNameString();                                       //!< destructor
+    //!< zero-argument constructor
+    FileNameString() : ExternalString(this->m_buf, sizeof this->m_buf) {}
 
-    const char* toChar() const;            //!< gets char buffer
-    NATIVE_UINT_TYPE getCapacity() const;  //!< return buffer size
+    //! const FileNameString& constructor
+    FileNameString(const FileNameString& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+
+    //! const StringBase& constructor
+    FileNameString(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+
+    //!< const char* source constructor
+    FileNameString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+
+    //! destructor
+    ~FileNameString() {}
 
   private:
     char m_buf[FileNameString::STRING_SIZE];  //!< storage for string data
