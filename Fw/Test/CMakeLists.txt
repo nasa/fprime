@@ -6,7 +6,6 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/String.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/UnitTestAssert.cpp"
 )
 set(MOD_DEPS Fw_Types)
