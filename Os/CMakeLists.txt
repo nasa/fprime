@@ -29,7 +29,6 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/TaskString.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/QueueString.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/IPCQueueCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/SimpleQueueRegistry.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/MemCommon.cpp"

@@ -1,29 +1,38 @@
-#ifndef OS_QUEUE_STRING_TYPE_HPP
-#define OS_QUEUE_STRING_TYPE_HPP
+// ======================================================================
+// @file   QueueString.hpp
+// @author F Prime
+// @brief  A string sized for an OS queue name
+// ======================================================================
+
+#ifndef OS_QUEUE_STRING_HPP
+#define OS_QUEUE_STRING_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/StringType.hpp>
+
+#include "Fw/Types/ExternalString.hpp"
 
 namespace Os {
 
-    class QueueString : public Fw::StringBase {
-        public:
+class QueueString : public Fw::ExternalString {
+  public:
+    //!< zero-argument constructor
+    QueueString() : Fw::ExternalString(this->m_buf, sizeof this->m_buf) {}
 
-            QueueString(const char* src); //!< char buffer constructor
-            QueueString(const StringBase& src); //!< copy constructor
-            QueueString(const QueueString& src); //!< copy constructor
-            QueueString(); //!< default constructor
-            QueueString& operator=(const QueueString& other); //!< assignment operator
-            QueueString& operator=(const StringBase& other); //!< other string assignment operator
-            QueueString& operator=(const char* other); //!< char* assignment operator
-            ~QueueString(); //!< destructor
+    //! const QueueString& constructor
+    QueueString(const QueueString& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
-            const char* toChar() const; //!< get pointer to char buffer
-            NATIVE_UINT_TYPE getCapacity() const ;
+    //! const StringBase& constructor
+    QueueString(const Fw::StringBase& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
-        private:
-            char m_buf[FW_QUEUE_NAME_MAX_SIZE]; //!< buffer for string
-    };
-}
+    //!< const char* source constructor
+    QueueString(const char* src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+
+    //! destructor
+    ~QueueString() {}
+
+  private:
+    char m_buf[FW_QUEUE_NAME_MAX_SIZE];  //!< storage for string data
+};
+}  // namespace Os
 
 #endif
