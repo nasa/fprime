@@ -14,7 +14,7 @@
 
 namespace Test {
 
-class String : public ExternalString {
+class String : public Fw::ExternalString {
   public:
     enum {
         STRING_SIZE = 256,
@@ -22,16 +22,16 @@ class String : public ExternalString {
     };
 
     //!< zero-argument constructor
-    String() : ExternalString(this->m_buf, sizeof this->m_buf) {}
+    String() : Fw::ExternalString(this->m_buf, sizeof this->m_buf) {}
 
     //! const String& constructor
-    String(const String& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    String(const String& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
     //! const StringBase& constructor
-    String(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    String(const StringBase& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
     //!< const char* source constructor
-    String(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    String(const char* src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
     //! destructor
     ~String() {}
