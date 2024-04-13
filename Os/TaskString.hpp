@@ -27,6 +27,12 @@ class TaskString : public Fw::ExternalString {
     //!< const char* source constructor
     TaskString(const char* src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
+    //! Operator= (const String&)
+    TaskString& operator=(const TaskString& other) {
+        static_cast<StringBase*>(this)->operator=(other);
+        return *this;
+    }
+
     //! destructor
     ~TaskString() {}
 

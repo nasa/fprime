@@ -33,6 +33,12 @@ class TlmString : public ExternalString {
     //!< const char* source constructor
     TlmString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
+    //! Operator= (const String&)
+    TlmString& operator=(const TlmString& other) {
+        static_cast<StringBase*>(this)->operator=(other);
+        return *this;
+    }
+
     //! destructor
     ~TlmString() {}
 

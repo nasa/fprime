@@ -24,7 +24,7 @@ class InternalInterfaceString : public ExternalString {
             STRING_SIZE + sizeof(FwSizeStoreType)  //!< static serialized size is size of buffer + size of size field
     };
 
-    //!< zero-argument constructor
+    //! zero-argument constructor
     InternalInterfaceString() : ExternalString(this->m_buf, sizeof this->m_buf) {}
 
     //! const InternalInterfaceString& constructor
@@ -34,8 +34,14 @@ class InternalInterfaceString : public ExternalString {
     //! const StringBase& constructor
     InternalInterfaceString(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
-    //!< const char* source constructor
+    //! const char* source constructor
     InternalInterfaceString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+
+    //! Operator= (const String&)
+    InternalInterfaceString& operator=(const InternalInterfaceString& other) {
+        static_cast<StringBase*>(this)->operator=(other);
+        return *this;
+    }
 
     //! destructor
     ~InternalInterfaceString() {}

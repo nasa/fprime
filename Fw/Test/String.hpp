@@ -33,6 +33,12 @@ class String : public Fw::ExternalString {
     //!< const char* source constructor
     String(const char* src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
+    //! Operator= (const String&)
+    String& operator=(const String& other) {
+        static_cast<StringBase*>(this)->operator=(other);
+        return *this;
+    }
+
     //! destructor
     ~String() {}
 

@@ -35,6 +35,12 @@ class FileNameString : public ExternalString {
 
     //!< const char* source constructor
     FileNameString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+<
+    //! Operator= (const String&)
+    FileNameString& operator=(const FileNameString& other) {
+        static_cast<StringBase*>(this)->operator=(other);
+        return *this;
+    }
 
     //! destructor
     ~FileNameString() {}

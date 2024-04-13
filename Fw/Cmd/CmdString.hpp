@@ -33,6 +33,12 @@ class CmdStringArg : public ExternalString {
     //!< const char* source constructor
     CmdStringArg(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
+    //! Operator= (const String&)
+    CmdStringArg& operator=(const CmdStringArg& other) {
+        static_cast<StringBase*>(this)->operator=(other);
+        return *this;
+    }
+
     //! destructor
     ~CmdStringArg() {}
 

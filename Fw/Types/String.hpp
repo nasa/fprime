@@ -24,7 +24,7 @@ class String : public ExternalString {
             STRING_SIZE + sizeof(FwSizeStoreType)  //!< static serialized size is size of buffer + size of size field
     };
 
-    //!< zero-argument constructor
+    //! zero-argument constructor
     String() : ExternalString(this->m_buf, sizeof this->m_buf) {}
 
     //! const String& constructor
@@ -33,7 +33,7 @@ class String : public ExternalString {
     //! const StringBase& constructor
     String(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
-    //!< const char* source constructor
+    //! const char* source constructor
     String(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
     //! Operator= (const String&)

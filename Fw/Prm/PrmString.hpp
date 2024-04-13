@@ -33,6 +33,12 @@ class ParamString : public ExternalString {
     //!< const char* source constructor
     ParamString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
+    //! Operator= (const String&)
+    ParamString& operator=(const ParamString& other) {
+        static_cast<StringBase*>(this)->operator=(other);
+        return *this;
+    }
+
     //! destructor
     ~ParamString() {}
 

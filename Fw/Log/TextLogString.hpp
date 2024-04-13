@@ -33,6 +33,12 @@ class TextLogString : public ExternalString {
     //!< const char* source constructor
     TextLogString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
+    //! Operator= (const String&)
+    TextLogString& operator=(const TextLogString& other) {
+        static_cast<StringBase*>(this)->operator=(other);
+        return *this;
+    }
+
     //! destructor
     ~TextLogString() {}
 
