@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ByteArray.hpp
 // \author bocchino
 // \brief  hpp file for ByteArray type
@@ -7,8 +7,8 @@
 // Copyright (C) 2016 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Fw_ByteArray_HPP
 #define Fw_ByteArray_HPP
@@ -17,39 +17,32 @@
 
 namespace Fw {
 
-  //! \class ByteArray
-  //! \brief A variable-length byte array
-  //!
-  struct ByteArray {
+//! \class ByteArray
+//! \brief A variable-length byte array
+//!
+struct ByteArray {
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction 
-      // ----------------------------------------------------------------------
+    //! Construct a ByteArray
+    //!
+    ByteArray(U8* const bytes,  //!< Pointer to the bytes
+              const U32 size    //!< The array size
+              )
+        : bytes(bytes), size(size) {}
 
-      //! Construct a ByteArray
-      //!
-      ByteArray(
-          U8 *const bytes, //!< Pointer to the bytes
-          const U32 size //!< The array size
-      ) :
-        bytes(bytes),
-        size(size)
-      {
+    // ----------------------------------------------------------------------
+    // Data
+    // ----------------------------------------------------------------------
 
-      }
+    //! The bytes
+    U8* const bytes;
 
-      // ----------------------------------------------------------------------
-      // Data 
-      // ----------------------------------------------------------------------
+    //! The size
+    const U32 size;
+};
 
-      //! The bytes
-      U8 *const bytes;
-
-      //! The size
-      const U32 size;
-
-  };
-
-}
+}  // namespace Fw
 
 #endif
