@@ -13,12 +13,9 @@
 
 namespace Os {
 
-class TaskString : public Fw::StringBase {
+class TaskString final : public Fw::StringBase {
   public:
-    enum {
-        STRING_SIZE = FW_TASK_NAME_MAX_SIZE,
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
-    };
+    enum { STRING_SIZE = FW_TASK_NAME_MAX_SIZE, SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType) };
 
     TaskString() : StringBase() { *this = ""; }
 
@@ -27,6 +24,8 @@ class TaskString : public Fw::StringBase {
     TaskString(const StringBase& src) : StringBase() { *this = src; }
 
     TaskString(const char* src) : StringBase() { *this = src; }
+
+    ~TaskString() {}
 
     TaskString& operator=(const TaskString& src) {
         (void)StringBase::operator=(src);

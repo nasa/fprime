@@ -13,12 +13,9 @@
 
 namespace Os {
 
-class QueueString : public Fw::StringBase {
+class QueueString final : public Fw::StringBase {
   public:
-    enum {
-        STRING_SIZE = FW_QUEUE_NAME_MAX_SIZE,
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
-    };
+    enum { STRING_SIZE = FW_QUEUE_NAME_MAX_SIZE, SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType) };
 
     QueueString() : StringBase() { *this = ""; }
 
@@ -27,6 +24,8 @@ class QueueString : public Fw::StringBase {
     QueueString(const StringBase& src) : StringBase() { *this = src; }
 
     QueueString(const char* src) : StringBase() { *this = src; }
+
+    ~QueueString() {}
 
     QueueString& operator=(const QueueString& src) {
         (void)StringBase::operator=(src);
