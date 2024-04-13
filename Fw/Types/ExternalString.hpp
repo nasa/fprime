@@ -66,28 +66,21 @@ class ExternalString : public Fw::StringBase {
     // Operators
     // ----------------------------------------------------------------------
 
-    // ExternalString assignment operator
-    ExternalString& operator=(const ExternalString& sb  //!< The external string
-    ) {
-        if (this != &sb) {
-            (void)Fw::StringUtils::string_copy(this->m_bufferPtr, sb.toChar(), this->m_bufferSize);
-        }
+    // Operator= (const ExternalString&)
+    ExternalString& operator=(const ExternalString& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    // StringBase assignment operator
-    ExternalString& operator=(const StringBase& sb  //!< The StringBase
-    ) {
-        if (this != &sb) {
-            (void)Fw::StringUtils::string_copy(this->m_bufferPtr, sb.toChar(), this->m_bufferSize);
-        }
+    // Operator= (const StringBase&)
+    ExternalString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
     // const char* assignment operator
-    ExternalString& operator=(const char* str  //!< The C-style string
-    ) {
-        (void)Fw::StringUtils::string_copy(this->m_bufferPtr, str, this->m_bufferSize);
+    ExternalString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 

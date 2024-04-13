@@ -1,7 +1,7 @@
 /**
- * \file
+ * \file StringBase.hpp
  * \author T. Canham
- * \brief Declares ISF string base class
+ * \brief Declares F Prime string base class
  *
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef FW_STRING_TYPE_HPP
-#define FW_STRING_TYPE_HPP
+#ifndef FW_STRING_BASE_HPP
+#define FW_STRING_BASE_HPP
 
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>

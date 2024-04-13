@@ -37,8 +37,20 @@ class String : public ExternalString {
     String(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
     //! Operator= (const String&)
-    String& operator=(const String& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    String& operator=(const String& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    //! Operator= (const StringBase& src)
+    StringBase& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    //! Operator= (const char*)
+    StringBase& operator=(const char* src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 

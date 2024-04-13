@@ -14,7 +14,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PolyType.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SerialBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Serializable.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/StringType.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/StringBase.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StringUtils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
 )
