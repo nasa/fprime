@@ -14,7 +14,7 @@
 
 namespace Fw {
 
-class CmdStringArg : public StringBase {
+class CmdStringArg final : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_CMD_STR,
@@ -29,6 +29,8 @@ class CmdStringArg : public StringBase {
     CmdStringArg(const StringBase& src) : StringBase() { *this = src; }
 
     CmdStringArg(const char* src) : StringBase() { *this = src; }
+
+    ~CmdStringArg() {}
 
     CmdStringArg& operator=(const CmdStringArg& src) {
         (void)StringBase::operator=(src);

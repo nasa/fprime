@@ -14,7 +14,7 @@
 
 namespace Fw {
 
-class LogStringArg : public StringBase {
+class LogStringArg final : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_LOG_STR,
@@ -29,6 +29,8 @@ class LogStringArg : public StringBase {
     LogStringArg(const StringBase& src) : StringBase() { *this = src; }
 
     LogStringArg(const char* src) : StringBase() { *this = src; }
+
+    ~LogStringArg() {}
 
     LogStringArg& operator=(const LogStringArg& src) {
         (void)StringBase::operator=(src);

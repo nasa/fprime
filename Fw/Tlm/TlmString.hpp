@@ -14,7 +14,7 @@
 
 namespace Fw {
 
-class TlmString : public StringBase {
+class TlmString final : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_TLM_STR,
@@ -29,6 +29,8 @@ class TlmString : public StringBase {
     TlmString(const StringBase& src) : StringBase() { *this = src; }
 
     TlmString(const char* src) : StringBase() { *this = src; }
+
+    ~TlmString() {}
 
     TlmString& operator=(const TlmString& src) {
         (void)StringBase::operator=(src);

@@ -30,6 +30,8 @@ class ParamString : public StringBase {
 
     ParamString(const char* src) : StringBase() { *this = src; }
 
+    ~ParamString() {}
+
     ParamString& operator=(const ParamString& src) {
         (void)StringBase::operator=(src);
         return *this;
