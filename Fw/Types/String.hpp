@@ -11,6 +11,7 @@
 
 #include "Fw/Cfg/SerIds.hpp"
 #include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringUtils.hpp"
 
 namespace Fw {
 
@@ -35,8 +36,11 @@ class String : public ExternalString {
     //!< const char* source constructor
     String(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
 
-    //! destructor
-    ~String() {}
+    //! Operator= (const String&)
+    String& operator=(const String& other) {
+        static_cast<StringBase*>(this)->operator=(other);
+        return *this;
+    }
 
   private:
     char m_buf[String::STRING_SIZE];  //!< storage for string data
