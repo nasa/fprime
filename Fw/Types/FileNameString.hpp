@@ -18,35 +18,39 @@ namespace Fw {
 class FileNameString : public ExternalString {
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,  //!< type id for Fw::String
-        STRING_SIZE = FileNameStringSize,                 //!< storage for string
-        SERIALIZED_SIZE =
-            STRING_SIZE + sizeof(FwSizeStoreType)  //!< static serialized size is size of buffer + size of size field
+        SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,
+        SERIALIZED_SIZE = sizeof FileNameString::m_buf + sizeof(FwSizeStoreType)
     };
 
-    //!< zero-argument constructor
-    FileNameString() : ExternalString(this->m_buf, sizeof this->m_buf) {}
+    FileNameString() : StringBase() { *this = ""; }
 
-    //! const FileNameString& constructor
-    FileNameString(const FileNameString& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    FileNameString(const FileNameString& src) : StringBase() { *this = src; }
 
-    //! const StringBase& constructor
-    FileNameString(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    FileNameString(const StringBase& src) : StringBase() { *this = src; }
 
-    //!< const char* source constructor
-    FileNameString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    FileNameString(const char* src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    FileNameString& operator=(const FileNameString& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    FileNameString& operator=(const FileNameString& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~FileNameString() {}
+    FileNameString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    FileNameString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FileNameString::STRING_SIZE];  //!< storage for string data
+    char m_buf[FileNameStringSize];
 };
 }  // namespace Fw
 

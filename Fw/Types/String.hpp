@@ -50,7 +50,7 @@ class String : public StringBase {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[STRING_SIZE];
+    char m_buf[String::STRING_SIZE];
 };
 }  // namespace Fw
 
