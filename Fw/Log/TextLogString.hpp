@@ -4,46 +4,53 @@
 // @brief  A string sized for an event log entry
 // ======================================================================
 
-#ifndef FW_TEXT_LOG_STRING_TYPE_HPP
-#define FW_TEXT_LOG_STRING_TYPE_HPP
+#ifndef FW_TEXT_LOG_STRING_HPP
+#define FW_TEXT_LOG_STRING_HPP
 
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
-class TextLogString : public ExternalString {
+class TextLogString : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_LOG_STR,
-        SERIALIZED_SIZE = FW_LOG_TEXT_BUFFER_SIZE + sizeof(FwSizeStoreType)
+        STRING_SIZE = FW_LOG_TEXT_BUFFER_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-    //!< zero-argument constructor
-    TextLogString() : ExternalString(this->m_buf, sizeof this->m_buf) {}
+    TextLogString() : StringBase() { *this = ""; }
 
-    //! const TextLogString& constructor
-    TextLogString(const TextLogString& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    TextLogString(const TextLogString& src) : StringBase() { *this = src; }
 
-    //! const StringBase& constructor
-    TextLogString(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    TextLogString(const StringBase& src) : StringBase() { *this = src; }
 
-    //!< const char* source constructor
-    TextLogString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    TextLogString(const char* src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    TextLogString& operator=(const TextLogString& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    TextLogString& operator=(const TextLogString& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~TextLogString() {}
+    TextLogString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    TextLogString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FW_LOG_TEXT_BUFFER_SIZE];  //!< storage for string data
+    char m_buf[TextLogString::STRING_SIZE];
 };
 }  // namespace Fw
 

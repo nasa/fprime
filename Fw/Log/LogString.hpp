@@ -4,8 +4,8 @@
 // @brief  A string sized for an event log entry
 // ======================================================================
 
-#ifndef FW_LOG_STRING_TYPE_HPP
-#define FW_LOG_STRING_TYPE_HPP
+#ifndef FW_LOG_STRING_HPP
+#define FW_LOG_STRING_HPP
 
 #include <FpConfig.hpp>
 
