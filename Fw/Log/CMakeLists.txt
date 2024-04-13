@@ -12,8 +12,6 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/LogBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/LogPacket.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Log.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LogString.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TextLogString.cpp"
 
 )
 register_fprime_module()

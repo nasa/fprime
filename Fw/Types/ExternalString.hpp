@@ -1,7 +1,7 @@
 // ======================================================================
 // @file   ExternalString.hpp
 // @author Robert Bocchino
-// @brief  A string with an external buffer
+// @brief  A string backed by an external buffer
 // ======================================================================
 
 #ifndef FW_EXTERNAL_STRING_HPP
@@ -9,28 +9,43 @@
 
 #include <FpConfig.hpp>
 
-#include "Fw/Types/StringType.hpp"
-#include "Fw/Types/StringUtils.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
-class ExternalString : public Fw::StringBase {
+//! A string backed by an external buffer
+class ExternalString final : public Fw::StringBase {
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Constructor
-    ExternalString(char* data, StringBase::SizeType capacity) : m_data(data), m_capacity(capacity) {}
+    //! Constructor (uninitialized buffer)
+    ExternalString() : StringBase(), m_bufferPtr(nullptr), m_bufferSize(0) {}
 
-    //! Constructor (data, capacity, and StringBase)
-    ExternalString(char* data, StringBase::SizeType capacity, const StringBase& sb)
-        : m_data(data), m_capacity(capacity) {
+    //! Constructor (bufferPtr and bufferSize)
+    ExternalString(char* bufferPtr,                 //!< The buffer pointer
+                   StringBase::SizeType bufferSize  //!< The buffer size
+                   )
+        : StringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
+        *this = "";
+    }
+
+    //! Constructor (bufferPtr, bufferSize, and StringBase)
+    ExternalString(char* bufferPtr,                  //!< The buffer pointer
+                   StringBase::SizeType bufferSize,  //!< The buffer size
+                   const StringBase& sb              //!< The source string
+                   )
+        : StringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
         *this = sb;
     }
 
-    //! Constructor (data, capacity, and char*)
-    ExternalString(char* data, StringBase::SizeType capacity, const char* str) : m_data(data), m_capacity(capacity) {
+    //! Constructor (bufferPtr, bufferSize, and const char*)
+    ExternalString(char* bufferPtr,                  //!< The buffer pointer
+                   StringBase::SizeType bufferSize,  //!< The buffer size
+                   const char* str                   //!< The source string
+                   )
+        : StringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
         *this = str;
     }
 
@@ -44,49 +59,61 @@ class ExternalString : public Fw::StringBase {
 
     //! Gets the char buffer
     //! @return The char buffer
-    const char* toChar() const { return this->m_data; }
+    const char* toChar() const { return this->m_bufferPtr; }
 
     //! Returns the buffer size
     //! @return The buffer size
-    StringBase::SizeType getCapacity() const { return this->m_capacity; }
+    StringBase::SizeType getCapacity() const { return this->m_bufferSize; }
+
+  public:
+    // ----------------------------------------------------------------------
+    // Public interface
+    // ----------------------------------------------------------------------
+
+    //! Set the buffer and initialize it to the empty string
+    void setBuffer(char* bufferPtr,       //!< The buffer pointer
+                   FwSizeType bufferSize  //!< The buffer size
+    ) {
+        this->m_bufferPtr = bufferPtr;
+        this->m_bufferSize = bufferSize;
+        *this = "";
+    }
 
   public:
     // ----------------------------------------------------------------------
     // Operators
     // ----------------------------------------------------------------------
 
-    // ExternalString assignment operator
-    ExternalString& operator=(const ExternalString& sb) {
-        if (this != &sb) {
-            (void)Fw::StringUtils::string_copy(this->m_data, sb.toChar(), this->m_capacity);
-        }
+    // Operator= (const ExternalString&)
+    ExternalString& operator=(const ExternalString& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    // StringBase assignment operator
-    ExternalString& operator=(const StringBase& sb) {
-        if (this != &sb) {
-            (void)Fw::StringUtils::string_copy(this->m_data, sb.toChar(), this->m_capacity);
-        }
+    // Operator= (const StringBase&)
+    ExternalString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
     // const char* assignment operator
-    ExternalString& operator=(const char* str) {
-        (void)Fw::StringUtils::string_copy(this->m_data, str, this->m_capacity);
+    ExternalString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
   private:
     // ----------------------------------------------------------------------
-    // Member data
+    // Data members
     // ----------------------------------------------------------------------
 
-    //! Storage for string data
-    char* m_data;
+    //! Pointer to string buffer
+    char* m_bufferPtr;
 
-    //! Size of string data
-    StringBase::SizeType m_capacity;
+    //! Size of string buffer
+    //! F Prime strings are null-terminated, so this is one more than
+    //! the length of the largest string that the buffer can hold
+    StringBase::SizeType m_bufferSize;
 };
 }  // namespace Fw
 

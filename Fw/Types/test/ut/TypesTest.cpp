@@ -1,5 +1,6 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/ExternalString.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Fw/Types/ObjectName.hpp>
@@ -1116,7 +1117,7 @@ TEST(TypesTest, PolyTest) {
     ASSERT_EQ(outPtr, inPtr);
 }
 
-TEST(TypesTest, EightyCharTest) {
+TEST(TypesTest, StringTest) {
     Fw::String str;
     str = "foo";
     Fw::String str2;
@@ -1148,7 +1149,13 @@ TEST(TypesTest, EightyCharTest) {
 
     std::cout << "Stream: " << str2 << std::endl;
 
-    // Make our own short string
+    char buffer[Fw::String::STRING_SIZE];
+    Fw::ExternalString es(buffer, sizeof buffer, "ExternalString");
+    Fw::ObjectName es2(es);
+
+    ASSERT_EQ(es, es2);
+    ASSERT_EQ(es2, "ExternalString");
+
 }
 
 TEST(TypesTest, ObjectNameTest) {
@@ -1173,11 +1180,12 @@ TEST(TypesTest, ObjectNameTest) {
     Fw::ObjectName copyStr2(copyStr);
     ASSERT_EQ(copyStr2, "ASTRING");
 
-    Fw::InternalInterfaceString ifstr("IfString");
-    Fw::ObjectName if2(ifstr);
+    char buffer[Fw::ObjectName::STRING_SIZE];
+    Fw::ExternalString es(buffer, sizeof buffer, "ExternalString");
+    Fw::ObjectName es2(es);
 
-    ASSERT_EQ(ifstr, if2);
-    ASSERT_EQ(if2, "IfString");
+    ASSERT_EQ(es, es2);
+    ASSERT_EQ(es2, "ExternalString");
 }
 
 TEST(TypesTest, StringFormatTest) {

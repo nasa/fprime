@@ -1,36 +1,59 @@
-#ifndef FW_FILENAMESTRING_HPP
-#define FW_FILENAMESTRING_HPP
+// ======================================================================
+// @file   FileNameString.hpp
+// @author F Prime
+// @brief  A string sized to store a file name
+// ======================================================================
+
+#ifndef FW_FILE_NAME_STRING_HPP
+#define FW_FILE_NAME_STRING_HPP
 
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/StringType.hpp"
+#include "Fw/Types/StringBase.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Fw {
 
-class FileNameString : public Fw::StringBase {
+class FileNameString final : public StringBase {
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,        //!< typeid for string type
-        STRING_SIZE = FileNameStringSize,                       //!< Storage for string
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwBuffSizeType)  //!< Serialized size is size of buffer + size field
+        SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,
+        STRING_SIZE = FileNameStringSize,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-    explicit FileNameString(const char* src);                //!< char* source constructor
-    explicit FileNameString(const StringBase& src);          //!< other string constructor
-    explicit FileNameString(const FileNameString& src);      //!< String string constructor
-    FileNameString();                                        //!< default constructor
-    FileNameString& operator=(const FileNameString& other);  //!< assignment operator
-    FileNameString& operator=(const StringBase& other);      //!< other string assignment operator
-    FileNameString& operator=(const char* other);            //!< char* assignment operator
-    ~FileNameString();                                       //!< destructor
+    FileNameString() : StringBase() { *this = ""; }
 
-    const char* toChar() const;            //!< gets char buffer
-    NATIVE_UINT_TYPE getCapacity() const;  //!< return buffer size
+    FileNameString(const FileNameString& src) : StringBase() { *this = src; }
+
+    FileNameString(const StringBase& src) : StringBase() { *this = src; }
+
+    FileNameString(const char* src) : StringBase() { *this = src; }
+
+    ~FileNameString() {}
+
+    FileNameString& operator=(const FileNameString& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    FileNameString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    FileNameString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FileNameString::STRING_SIZE];  //!< storage for string data
+    char m_buf[FileNameString::STRING_SIZE];
 };
 }  // namespace Fw
 

@@ -1,37 +1,59 @@
-#ifndef FW_TEXT_LOG_STRING_TYPE_HPP
-#define FW_TEXT_LOG_STRING_TYPE_HPP
+// ======================================================================
+// @file   TextLogString.hpp
+// @author F Prime
+// @brief  A string sized for an event log entry
+// ======================================================================
+
+#ifndef FW_TEXT_LOG_STRING_HPP
+#define FW_TEXT_LOG_STRING_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/StringType.hpp>
-#include <Fw/Cfg/SerIds.hpp>
+
+#include "Fw/Cfg/SerIds.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
-    class TextLogString : public Fw::StringBase {
-        public:
-
-            enum {
-                SERIALIZED_TYPE_ID = FW_TYPEID_LOG_STR,
-                SERIALIZED_SIZE = FW_LOG_TEXT_BUFFER_SIZE + sizeof(FwBuffSizeType) // size of buffer + storage of two size words
-            };
-
-            TextLogString(const char* src);
-            TextLogString(const StringBase& src);
-            TextLogString(const TextLogString& src);
-            TextLogString();
-            TextLogString& operator=(const TextLogString& other);
-            TextLogString& operator=(const StringBase& other);
-            TextLogString& operator=(const char* other);
-            ~TextLogString();
-
-            const char* toChar() const;
-            NATIVE_UINT_TYPE getCapacity() const ;
-
-        private:
-
-            char m_buf[FW_LOG_TEXT_BUFFER_SIZE];
+class TextLogString final : public StringBase {
+  public:
+    enum {
+        SERIALIZED_TYPE_ID = FW_TYPEID_LOG_STR,
+        STRING_SIZE = FW_LOG_TEXT_BUFFER_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-}
+    TextLogString() : StringBase() { *this = ""; }
+
+    TextLogString(const TextLogString& src) : StringBase() { *this = src; }
+
+    TextLogString(const StringBase& src) : StringBase() { *this = src; }
+
+    TextLogString(const char* src) : StringBase() { *this = src; }
+
+    ~TextLogString() {}
+
+    TextLogString& operator=(const TextLogString& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    TextLogString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    TextLogString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
+
+  private:
+    char m_buf[TextLogString::STRING_SIZE];
+};
+}  // namespace Fw
 
 #endif

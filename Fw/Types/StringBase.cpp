@@ -1,7 +1,7 @@
 /**
- * \file
+ * \file StringBase.cpp
  * \author T. Canham
- * \brief Implements ISF string base class
+ * \brief Implements F Prime string base class
  *
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
@@ -87,11 +87,9 @@ std::ostream& operator<<(std::ostream& os, const StringBase& str) {
 #endif
 
 StringBase& StringBase::operator=(const StringBase& other) {
-    if (this == &other) {
-        return *this;
+    if (this != &other) {
+        (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), other.toChar(), this->getCapacity());
     }
-
-    (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), other.toChar(), this->getCapacity());
     return *this;
 }
 

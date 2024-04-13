@@ -12,7 +12,6 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Tlm.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/TlmBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TlmPacket.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TlmString.cpp"
 )
 register_fprime_module()
 ### UTs ###
