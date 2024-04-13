@@ -9,35 +9,46 @@
 
 #include <FpConfig.hpp>
 
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Os {
 
-class TaskString : public Fw::ExternalString {
+class TaskString : public Fw::StringBase {
   public:
-    //!< zero-argument constructor
-    TaskString() : Fw::ExternalString(this->m_buf, sizeof this->m_buf) {}
+    enum {
+        STRING_SIZE = FW_TASK_NAME_MAX_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
+    };
 
-    //! const TaskString& constructor
-    TaskString(const TaskString& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    TaskString() : StringBase() { *this = ""; }
 
-    //! const StringBase& constructor
-    TaskString(const Fw::StringBase& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    TaskString(const TaskString& src) : StringBase() { *this = src; }
 
-    //!< const char* source constructor
-    TaskString(const char* src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    TaskString(const StringBase& src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    TaskString& operator=(const TaskString& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    TaskString(const char* src) : StringBase() { *this = src; }
+
+    TaskString& operator=(const TaskString& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~TaskString() {}
+    TaskString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    TaskString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FW_TASK_NAME_MAX_SIZE];  //!< storage for string data
+    char m_buf[TaskString::STRING_SIZE];
 };
 }  // namespace Os
 

@@ -9,35 +9,46 @@
 
 #include <FpConfig.hpp>
 
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Os {
 
-class QueueString : public Fw::ExternalString {
+class QueueString : public Fw::StringBase {
   public:
-    //!< zero-argument constructor
-    QueueString() : Fw::ExternalString(this->m_buf, sizeof this->m_buf) {}
+    enum {
+        STRING_SIZE = FW_QUEUE_NAME_MAX_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
+    };
 
-    //! const QueueString& constructor
-    QueueString(const QueueString& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    QueueString() : StringBase() { *this = ""; }
 
-    //! const StringBase& constructor
-    QueueString(const Fw::StringBase& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    QueueString(const QueueString& src) : StringBase() { *this = src; }
 
-    //!< const char* source constructor
-    QueueString(const char* src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    QueueString(const StringBase& src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    QueueString& operator=(const QueueString& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    QueueString(const char* src) : StringBase() { *this = src; }
+
+    QueueString& operator=(const QueueString& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~QueueString() {}
+    QueueString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    QueueString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FW_QUEUE_NAME_MAX_SIZE];  //!< storage for string data
+    char m_buf[QueueString::STRING_SIZE];
 };
 }  // namespace Os
 
