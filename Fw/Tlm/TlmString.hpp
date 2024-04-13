@@ -4,46 +4,53 @@
 // @brief  A string sized for a telemetry channel
 // ======================================================================
 
-#ifndef FW_TLM_STRING_TYPE_HPP
-#define FW_TLM_STRING_TYPE_HPP
+#ifndef FW_TLM_STRING_HPP
+#define FW_TLM_STRING_HPP
 
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
-class TlmString : public ExternalString {
+class TlmString : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_TLM_STR,
-        SERIALIZED_SIZE = FW_TLM_STRING_MAX_SIZE + sizeof(FwSizeStoreType)
+        STRING_SIZE = FW_TLM_STRING_MAX_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-    //!< zero-argument constructor
-    TlmString() : ExternalString(this->m_buf, sizeof this->m_buf) {}
+    TlmString() : StringBase() { *this = ""; }
 
-    //! const TlmString& constructor
-    TlmString(const TlmString& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    TlmString(const TlmString& src) : StringBase() { *this = src; }
 
-    //! const StringBase& constructor
-    TlmString(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    TlmString(const StringBase& src) : StringBase() { *this = src; }
 
-    //!< const char* source constructor
-    TlmString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    TlmString(const char* src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    TlmString& operator=(const TlmString& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    TlmString& operator=(const TlmString& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~TlmString() {}
+    TlmString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    TlmString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FW_TLM_STRING_MAX_SIZE];  //!< storage for string data
+    char m_buf[TlmString::STRING_SIZE];
 };
 }  // namespace Fw
 
