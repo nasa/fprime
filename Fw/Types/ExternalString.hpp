@@ -70,7 +70,7 @@ class ExternalString final : public Fw::StringBase {
     // Public interface
     // ----------------------------------------------------------------------
 
-    //! Set the buffer
+    //! Set the buffer and initialize it to the empty string
     void setBuffer(char* bufferPtr,       //!< The buffer pointer
                    FwSizeType bufferSize  //!< The buffer size
     ) {
