@@ -14,7 +14,7 @@
 
 namespace Fw {
 
-class ObjectName : public StringBase {
+class ObjectName final : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_OBJECT_NAME,
@@ -29,6 +29,8 @@ class ObjectName : public StringBase {
     ObjectName(const StringBase& src) : StringBase() { *this = src; }
 
     ObjectName(const char* src) : StringBase() { *this = src; }
+
+    ~ObjectName() {}
 
     ObjectName& operator=(const ObjectName& src) {
         (void)StringBase::operator=(src);

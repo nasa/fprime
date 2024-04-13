@@ -14,7 +14,7 @@
 
 namespace Fw {
 
-class String : public StringBase {
+class String final : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_FIXED_LENGTH_STRING,
@@ -29,6 +29,8 @@ class String : public StringBase {
     String(const StringBase& src) : StringBase() { *this = src; }
 
     String(const char* src) : StringBase() { *this = src; }
+
+    ~String() {}
 
     String& operator=(const String& src) {
         (void)StringBase::operator=(src);

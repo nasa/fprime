@@ -15,7 +15,7 @@
 
 namespace Fw {
 
-class FileNameString : public StringBase {
+class FileNameString final : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,
@@ -30,6 +30,8 @@ class FileNameString : public StringBase {
     FileNameString(const StringBase& src) : StringBase() { *this = src; }
 
     FileNameString(const char* src) : StringBase() { *this = src; }
+
+    ~FileNameString() {}
 
     FileNameString& operator=(const FileNameString& src) {
         (void)StringBase::operator=(src);

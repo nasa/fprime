@@ -14,7 +14,7 @@
 namespace Fw {
 
 //! A string backed by an external buffer
-class ExternalString : public Fw::StringBase {
+class ExternalString final : public Fw::StringBase {
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction

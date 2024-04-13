@@ -15,7 +15,7 @@
 
 namespace Fw {
 
-class InternalInterfaceString : public StringBase {
+class InternalInterfaceString final : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_INTERNAL_INTERFACE_STRING,
@@ -30,6 +30,8 @@ class InternalInterfaceString : public StringBase {
     InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
 
     InternalInterfaceString(const char* src) : StringBase() { *this = src; }
+
+    ~InternalInterfaceString() {}
 
     InternalInterfaceString& operator=(const InternalInterfaceString& src) {
         (void)StringBase::operator=(src);
