@@ -10,40 +10,47 @@
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
-class ParamString : public ExternalString {
+class ParamString : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_PRM_STR,
-        SERIALIZED_SIZE = FW_PARAM_STRING_MAX_SIZE + sizeof(FwSizeStoreType)
+        STRING_SIZE = FW_PARAM_STRING_MAX_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-    //!< zero-argument constructor
-    ParamString() : ExternalString(this->m_buf, sizeof this->m_buf) {}
+    ParamString() : StringBase() { *this = ""; }
 
-    //! const ParamString& constructor
-    ParamString(const ParamString& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    ParamString(const ParamString& src) : StringBase() { *this = src; }
 
-    //! const StringBase& constructor
-    ParamString(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    ParamString(const StringBase& src) : StringBase() { *this = src; }
 
-    //!< const char* source constructor
-    ParamString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    ParamString(const char* src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    ParamString& operator=(const ParamString& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    ParamString& operator=(const ParamString& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~ParamString() {}
+    ParamString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    ParamString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FW_PARAM_STRING_MAX_SIZE];  //!< storage for string data
+    char m_buf[ParamString::STRING_SIZE];
 };
 }  // namespace Fw
 
