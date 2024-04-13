@@ -10,42 +10,47 @@
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
-class ObjectName : public ExternalString {
+class ObjectName : public StringBase {
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_OBJECT_NAME,  //!< type id for Fw::ObjectName
-        STRING_SIZE = FW_OBJ_NAME_MAX_SIZE,          //!< size of the buffer that stores the string
-        SERIALIZED_SIZE =
-            STRING_SIZE + sizeof(FwSizeStoreType)  //!< static serialized size is size of buffer + size of size field
+        SERIALIZED_TYPE_ID = FW_TYPEID_OBJECT_NAME,
+        STRING_SIZE = FW_OBJ_NAME_MAX_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-    //! zero-argument constructor
-    ObjectName() : ExternalString(this->m_buf, sizeof this->m_buf) {}
+    ObjectName() : StringBase() { *this = ""; }
 
-    //! const ObjectName& constructor
-    ObjectName(const ObjectName& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    ObjectName(const ObjectName& src) : StringBase() { *this = src; }
 
-    //! const StringBase& constructor
-    ObjectName(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    ObjectName(const StringBase& src) : StringBase() { *this = src; }
 
-    //! const char* source constructor
-    ObjectName(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    ObjectName(const char* src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    ObjectName& operator=(const ObjectName& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    ObjectName& operator=(const ObjectName& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~ObjectName() {}
+    ObjectName& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    ObjectName& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[ObjectName::STRING_SIZE];  //!< storage for string data
+    char m_buf[ObjectName::STRING_SIZE];
 };
 }  // namespace Fw
 

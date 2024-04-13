@@ -10,16 +10,17 @@
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Fw {
 
-class FileNameString : public ExternalString {
+class FileNameString : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,
-        SERIALIZED_SIZE = sizeof FileNameString::m_buf + sizeof(FwSizeStoreType)
+        STRING_SIZE = FileNameStringSize,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
     FileNameString() : StringBase() { *this = ""; }
@@ -50,7 +51,7 @@ class FileNameString : public ExternalString {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FileNameStringSize];
+    char m_buf[FileNameString::STRING_SIZE];
 };
 }  // namespace Fw
 
