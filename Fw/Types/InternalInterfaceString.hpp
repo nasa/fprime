@@ -10,44 +10,48 @@
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Fw {
 
-class InternalInterfaceString : public ExternalString {
+class InternalInterfaceString : public StringBase {
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_INTERNAL_INTERFACE_STRING,  //!< type id for Fw::String
-        STRING_SIZE = FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,       //!< storage for string
-        SERIALIZED_SIZE =
-            STRING_SIZE + sizeof(FwSizeStoreType)  //!< static serialized size is size of buffer + size of size field
+        SERIALIZED_TYPE_ID = FW_TYPEID_INTERNAL_INTERFACE_STRING,
+        STRING_SIZE = FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-    //! zero-argument constructor
-    InternalInterfaceString() : ExternalString(this->m_buf, sizeof this->m_buf) {}
+    InternalInterfaceString() : StringBase() { *this = ""; }
 
-    //! const InternalInterfaceString& constructor
-    InternalInterfaceString(const InternalInterfaceString& src)
-        : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    InternalInterfaceString(const InternalInterfaceString& src) : StringBase() { *this = src; }
 
-    //! const StringBase& constructor
-    InternalInterfaceString(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
 
-    //! const char* source constructor
-    InternalInterfaceString(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    InternalInterfaceString(const char* src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    InternalInterfaceString& operator=(const InternalInterfaceString& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    InternalInterfaceString& operator=(const InternalInterfaceString& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~InternalInterfaceString() {}
+    InternalInterfaceString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    InternalInterfaceString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[InternalInterfaceString::STRING_SIZE];  //!< storage for string data
+    char m_buf[InternalInterfaceString::STRING_SIZE];
 };
 }  // namespace Fw
 
