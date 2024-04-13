@@ -20,11 +20,16 @@ class ExternalString final : public Fw::StringBase {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
+    //! Constructor (uninitialized buffer)
+    ExternalString() : StringBase(), m_bufferPtr(nullptr), m_bufferSize(0) {}
+
     //! Constructor (bufferPtr and bufferSize)
     ExternalString(char* bufferPtr,                 //!< The buffer pointer
                    StringBase::SizeType bufferSize  //!< The buffer size
                    )
-        : StringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {}
+        : StringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
+        *this = "";
+    }
 
     //! Constructor (bufferPtr, bufferSize, and StringBase)
     ExternalString(char* bufferPtr,                  //!< The buffer pointer
@@ -59,6 +64,20 @@ class ExternalString final : public Fw::StringBase {
     //! Returns the buffer size
     //! @return The buffer size
     StringBase::SizeType getCapacity() const { return this->m_bufferSize; }
+
+  public:
+    // ----------------------------------------------------------------------
+    // Public interface
+    // ----------------------------------------------------------------------
+
+    //! Set the buffer
+    void setBuffer(char* bufferPtr,       //!< The buffer pointer
+                   FwSizeType bufferSize  //!< The buffer size
+    ) {
+        this->m_bufferPtr = bufferPtr;
+        this->m_bufferSize = bufferSize;
+        *this = "";
+    }
 
   public:
     // ----------------------------------------------------------------------
