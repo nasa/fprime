@@ -9,8 +9,7 @@
 
 #include <FpConfig.hpp>
 
-#include "Fw/Types/StringType.hpp"
-#include "Fw/Types/StringUtils.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
@@ -25,14 +24,14 @@ class ExternalString : public Fw::StringBase {
     ExternalString(char* bufferPtr,                 //!< The buffer pointer
                    StringBase::SizeType bufferSize  //!< The buffer size
                    )
-        : m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {}
+        : StringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {}
 
     //! Constructor (bufferPtr, bufferSize, and StringBase)
     ExternalString(char* bufferPtr,                  //!< The buffer pointer
                    StringBase::SizeType bufferSize,  //!< The buffer size
                    const StringBase& sb              //!< The source string
                    )
-        : m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
+        : StringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
         *this = sb;
     }
 
@@ -41,7 +40,7 @@ class ExternalString : public Fw::StringBase {
                    StringBase::SizeType bufferSize,  //!< The buffer size
                    const char* str                   //!< The source string
                    )
-        : m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
+        : StringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
         *this = str;
     }
 
