@@ -1,7 +1,7 @@
 // ======================================================================
 // @file   String.hpp
 // @author F Prime
-// @brief  A general purpose string backed by a fixed-length buffer
+// @brief  A general purpose string backed by a fixed-size buffer
 // ======================================================================
 
 #ifndef FW_STRING_HPP
