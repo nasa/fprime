@@ -10,40 +10,46 @@
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Test {
 
-class String : public Fw::ExternalString {
+class String : public Fw::StringBase {
   public:
     enum {
         STRING_SIZE = 256,
         SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-    //!< zero-argument constructor
-    String() : Fw::ExternalString(this->m_buf, sizeof this->m_buf) {}
+    String() : StringBase() { *this = ""; }
 
-    //! const String& constructor
-    String(const String& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    String(const String& src) : StringBase() { *this = src; }
 
-    //! const StringBase& constructor
-    String(const StringBase& src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    String(const StringBase& src) : StringBase() { *this = src; }
 
-    //!< const char* source constructor
-    String(const char* src) : Fw::ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    String(const char* src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    String& operator=(const String& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    String& operator=(const String& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~String() {}
+    String& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    String& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[String::STRING_SIZE];  //!< storage for string data
+    char m_buf[String::STRING_SIZE];
 };
 }  // namespace Fw
 

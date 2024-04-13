@@ -10,40 +10,47 @@
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
-class LogStringArg : public ExternalString {
+class LogStringArg : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_LOG_STR,
-        SERIALIZED_SIZE = FW_LOG_STRING_MAX_SIZE + sizeof(FwSizeStoreType)
+        STRING_SIZE = FW_LOG_STRING_MAX_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-    //!< zero-argument constructor
-    LogStringArg() : ExternalString(this->m_buf, sizeof this->m_buf) {}
+    LogStringArg() : StringBase() { *this = ""; }
 
-    //! const LogStringArg& constructor
-    LogStringArg(const LogStringArg& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    LogStringArg(const LogStringArg& src) : StringBase() { *this = src; }
 
-    //! const StringBase& constructor
-    LogStringArg(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    LogStringArg(const StringBase& src) : StringBase() { *this = src; }
 
-    //!< const char* source constructor
-    LogStringArg(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    LogStringArg(const char* src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    LogStringArg& operator=(const LogStringArg& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    LogStringArg& operator=(const LogStringArg& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~LogStringArg() {}
+    LogStringArg& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    LogStringArg& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FW_LOG_STRING_MAX_SIZE];  //!< storage for string data
+    char m_buf[LogStringArg::STRING_SIZE];
 };
 }  // namespace Fw
 

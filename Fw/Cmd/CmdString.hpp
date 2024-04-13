@@ -4,46 +4,53 @@
 // @brief  A string sized for a command argument
 // ======================================================================
 
-#ifndef FW_CMD_STRING_TYPE_HPP
-#define FW_CMD_STRING_TYPE_HPP
+#ifndef FW_CMD_STRING_HPP
+#define FW_CMD_STRING_HPP
 
 #include <FpConfig.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
-#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
-class CmdStringArg : public ExternalString {
+class CmdStringArg : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_CMD_STR,
-        SERIALIZED_SIZE = FW_CMD_STRING_MAX_SIZE + sizeof(FwSizeStoreType)
+        STRING_SIZE = FW_CMD_STRING_MAX_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
 
-    //!< zero-argument constructor
-    CmdStringArg() : ExternalString(this->m_buf, sizeof this->m_buf) {}
+    CmdStringArg() : StringBase() { *this = ""; }
 
-    //! const CmdStringArg& constructor
-    CmdStringArg(const CmdStringArg& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    CmdStringArg(const CmdStringArg& src) : StringBase() { *this = src; }
 
-    //! const StringBase& constructor
-    CmdStringArg(const StringBase& src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    CmdStringArg(const StringBase& src) : StringBase() { *this = src; }
 
-    //!< const char* source constructor
-    CmdStringArg(const char* src) : ExternalString(this->m_buf, sizeof this->m_buf, src) {}
+    CmdStringArg(const char* src) : StringBase() { *this = src; }
 
-    //! Operator= (const String&)
-    CmdStringArg& operator=(const CmdStringArg& other) {
-        static_cast<StringBase*>(this)->operator=(other);
+    CmdStringArg& operator=(const CmdStringArg& src) {
+        (void)StringBase::operator=(src);
         return *this;
     }
 
-    //! destructor
-    ~CmdStringArg() {}
+    CmdStringArg& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    CmdStringArg& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FW_CMD_STRING_MAX_SIZE];  //!< storage for string data
+    char m_buf[CmdStringArg::STRING_SIZE];
 };
 }  // namespace Fw
 
