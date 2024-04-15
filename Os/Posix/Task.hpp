@@ -90,12 +90,6 @@ namespace Task {
         //!
         void resume() override;
 
-        //! \brief determine that the task is not cooperative
-        //!
-        //! Posix tasks are not cooperative and as-such the function returns false
-        //! \return false
-        bool isCooperative() override;
-
         //! \brief return the underlying task handle (implementation specific)
         //! \return internal task handle representation
         TaskHandle* getHandle() override;

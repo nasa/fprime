@@ -151,3 +151,102 @@ struct CheckTaskCount : public STest::Rule<Os::Test::Task::Tester> {
 };
 
     
+
+
+
+    // ------------------------------------------------------------------------------------------------------
+    // Rule:  Registry
+    //
+    // ------------------------------------------------------------------------------------------------------
+    struct Registry : public STest::Rule<Os::Test::Task::Tester> {
+
+            // ----------------------------------------------------------------------
+            // Construction
+            // ----------------------------------------------------------------------
+
+            //! Constructor
+            Registry();
+
+            // ----------------------------------------------------------------------
+            // Public member functions
+            // ----------------------------------------------------------------------
+
+            //! Precondition
+            bool precondition(
+                const Os::Test::Task::Tester& state //!< The test state
+            );
+
+            //! Action
+            void action(
+                Os::Test::Task::Tester& state //!< The test state
+            );
+
+    };
+
+    
+
+
+
+    // ------------------------------------------------------------------------------------------------------
+    // Rule:  JoinInvalidState
+    //
+    // ------------------------------------------------------------------------------------------------------
+    struct JoinInvalidState : public STest::Rule<Os::Test::Task::Tester> {
+
+            // ----------------------------------------------------------------------
+            // Construction
+            // ----------------------------------------------------------------------
+
+            //! Constructor
+            JoinInvalidState();
+
+            // ----------------------------------------------------------------------
+            // Public member functions
+            // ----------------------------------------------------------------------
+
+            //! Precondition
+            bool precondition(
+                const Os::Test::Task::Tester& state //!< The test state
+            );
+
+            //! Action
+            void action(
+                Os::Test::Task::Tester& state //!< The test state
+            );
+
+    };
+
+    
+
+
+
+    // ------------------------------------------------------------------------------------------------------
+    // Rule:  StartIllegalRoutine
+    //
+    // ------------------------------------------------------------------------------------------------------
+    struct StartIllegalRoutine : public STest::Rule<Os::Test::Task::Tester> {
+
+            // ----------------------------------------------------------------------
+            // Construction
+            // ----------------------------------------------------------------------
+
+            //! Constructor
+            StartIllegalRoutine();
+
+            // ----------------------------------------------------------------------
+            // Public member functions
+            // ----------------------------------------------------------------------
+
+            //! Precondition
+            bool precondition(
+                const Os::Test::Task::Tester& state //!< The test state
+            );
+
+            //! Action
+            void action(
+                Os::Test::Task::Tester& state //!< The test state
+            );
+
+    };
+
+    

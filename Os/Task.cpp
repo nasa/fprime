@@ -30,34 +30,41 @@ void Task::TaskRoutineWrapper::run(void* wrapper_pointer) {
     FW_ASSERT(wrapper.m_user_function != nullptr);
 
     wrapper.m_task.m_lock.lock();
-    wrapper.m_task.m_state = Task::State::RUNNING;
+    Task::State state = wrapper.m_task.m_state;
     wrapper.m_task.m_lock.unlock();
 
-    // Invoke start code
-    wrapper.m_task.onStart();
-
-    // Update running state
-    wrapper.m_task.m_lock.lock();
-    wrapper.m_task.m_state = Task::State::RUNNING;
-    wrapper.m_task.m_lock.unlock();
+    // Run once start code
+    if (state == Task::State::NOT_STARTED) {
+        wrapper.m_task.m_lock.lock();
+        wrapper.m_task.m_state = Task::State::RUNNING;
+        wrapper.m_task.m_lock.unlock();
+        wrapper.m_task.onStart();
+    }
 
     // Call user function supplying the user argument
     wrapper.m_user_function(wrapper.m_user_argument);
+}
+
+void Task::TaskRoutineWrapper::invoke() {
+    TaskRoutineWrapper::run(this);
 }
 
 TaskRegistry* Task::s_taskRegistry = nullptr;
 FwSizeType Task::s_numTasks = 0;
 Mutex Task::s_taskMutex = Mutex();
 
+bool TaskInterface::isCooperative() {
+    return false;
+}
 
 Task::Task() : m_wrapper(*this), m_handle_storage(), m_delegate(*TaskInterface::getDelegate(m_handle_storage)) {}
 
 Task::~Task() {
-    // If a registry has been registered, remove task from it
-    if (Task::s_taskRegistry) {
+    // If a registry has been registered and the task has been started then remove task from the registry
+    if ((Task::s_taskRegistry != nullptr) && this->m_registered) {
         Task::s_taskRegistry->removeTask(this);
     }
-    // TODO: should we stop/join or just bail?
+    m_delegate.~TaskInterface();
 }
 
 void Task::suspend() {
@@ -89,8 +96,6 @@ Task::Status Task::start(const Task::Arguments& arguments) {
     FW_ASSERT(arguments.m_routine != nullptr);
     this->m_name = arguments.m_name;
 
-
-    // TODO: should this be made more efficient?
     Arguments wrapped_arguments = arguments;
     // Intercept routine and argument with the local wrapper
     this->m_wrapper.m_user_function = arguments.m_routine;
@@ -107,6 +112,7 @@ Task::Status Task::start(const Task::Arguments& arguments) {
         // If a registry has been registered, register task to it
         if (Task::s_taskRegistry) {
             Task::s_taskRegistry->addTask(this);
+            this->m_registered = true;
         }
     }
     return status;
@@ -115,6 +121,10 @@ Task::Status Task::start(const Task::Arguments& arguments) {
 void Task::onStart() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     this->m_delegate.onStart();
+}
+
+void Task::invokeRoutine() {
+    this->m_wrapper.invoke();
 }
 
 Task::Status Task::join() {

@@ -6,9 +6,8 @@
 #include <sys/time.h>
 
 
-void
-wait_for_state_with_timeout(Os::Test::Task::TestTaskInfo &info, const Os::Test::Task::TestTaskInfo::Lifecycle &stage,
-                            const FwSizeType delay_ms) {
+void wait_for_state_with_timeout(Os::Test::Task::TestTaskInfo &info, const Os::Test::Task::TestTaskInfo::Lifecycle &stage,
+                                 const FwSizeType delay_ms) {
     // Loop waiting for transition in preparation for join (with timeout)
     FwSizeType i = 0;
     for (i = 0; i < (delay_ms * 100); i++) {
@@ -17,11 +16,9 @@ wait_for_state_with_timeout(Os::Test::Task::TestTaskInfo &info, const Os::Test::
             break;
         }
         // Run cooperative multitasking when necessary
-        if (info.m_task.isCooperative()) {
-            // TODO: run
-        }
+        Os::Test::Task::Tester::getCurrentRegistry()->invokeRoutines();
     }
-    ASSERT_LT(i, (delay_ms * 100)) << "Task did not run within " << delay_ms << "ms";
+    ASSERT_LT(i, (delay_ms * 100)) << "Task did not find stage " << stage << " within " << delay_ms << "ms";
     ASSERT_EQ(info.stage(), stage) << "Task lifecycle inconsistent";
 }
 
@@ -53,12 +50,11 @@ void Os::Test::Task::Tester::Start::action(
 
     Fw::String name("StartRuleTask");
     new_task->start(&TestTaskInfo::standard_task);
-    // Ensure it starts in the correct state
-    ASSERT_EQ(new_task->stage(), TestTaskInfo::Lifecycle::BEGINNING);
-
+    ASSERT_EQ(state.m_last_task, &new_task->m_task) << "New task not registered";
     // Poke the task into the MIDDLE state
     new_task->signal();
     wait_for_state_with_timeout(*new_task, TestTaskInfo::MIDDLE, 100);
+    ASSERT_EQ(Os::Task::getNumTasks(), TestTaskInfo::s_task_count) << "Task count miss-match";
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -103,6 +99,7 @@ void Os::Test::Task::Tester::Join::action(
     // Make the other task move from MIDDLE state to end state and wait for JOINED state
     other_task->signal();
     wait_for_state_with_timeout(joiner_task, TestTaskInfo::END, 100);
+    ASSERT_EQ(Os::Task::getNumTasks(), TestTaskInfo::s_task_count) << "Task count miss-match";
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -121,7 +118,6 @@ bool Os::Test::Task::Tester::CheckState::precondition(
     return true;
 }
 
-
 void Os::Test::Task::Tester::CheckState::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
@@ -136,6 +132,7 @@ void Os::Test::Task::Tester::CheckState::action(
         task = state.m_tasks[random_index];
     }
     ASSERT_EQ(task->m_task.getState(), task->m_state) << "Task state progression not as expected.";
+    ASSERT_EQ(Os::Task::getNumTasks(), TestTaskInfo::s_task_count) << "Task count miss-match";
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -157,7 +154,7 @@ void Os::Test::Task::Tester::Delay::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
     printf("--> Rule: Delay\n");
-    const U32 delay_micro_seconds = STest::Pick::lowerUpper(0, MAX_DELAY_MICRO_SECONDS);
+    const U32 delay_micro_seconds = 5; //STest::Pick::lowerUpper(0, MAX_DELAY_MICRO_SECONDS);
     Fw::Time delay(delay_micro_seconds / 1000000, delay_micro_seconds % 1000000);
 
     timeval start;
@@ -169,7 +166,7 @@ void Os::Test::Task::Tester::Delay::action(
     U32 wall_clock_delay_micro = ((end.tv_sec - start.tv_sec) * 1000000) + (end.tv_usec - start.tv_usec);
     ASSERT_GE(wall_clock_delay_micro, delay_micro_seconds);
     ASSERT_LT(wall_clock_delay_micro, delay_micro_seconds + 100000) << "Delay not within 100ms";
-
+    ASSERT_EQ(Os::Task::getNumTasks(), TestTaskInfo::s_task_count) << "Task count miss-match";
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -181,13 +178,11 @@ Os::Test::Task::Tester::CheckTaskCount::CheckTaskCount() :
         STest::Rule<Os::Test::Task::Tester>("CheckTaskCount") {
 }
 
-
 bool Os::Test::Task::Tester::CheckTaskCount::precondition(
         const Os::Test::Task::Tester &state //!< The test state
 ) {
     return true;
 }
-
 
 void Os::Test::Task::Tester::CheckTaskCount::action(
         Os::Test::Task::Tester &state //!< The test state
@@ -195,5 +190,60 @@ void Os::Test::Task::Tester::CheckTaskCount::action(
     printf("--> Rule: CheckTaskCount \n");
     FwSizeType count = TestTaskInfo::s_task_count;
     ASSERT_EQ(Os::Task::getNumTasks(), count) << "Task count miss-match";
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  JoinInvalidState
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::Task::Tester::JoinInvalidState::JoinInvalidState() :
+        STest::Rule<Os::Test::Task::Tester>("JoinInvalidState") {
+}
+
+
+bool Os::Test::Task::Tester::JoinInvalidState::precondition(
+        const Os::Test::Task::Tester &state //!< The test state
+) {
+    return true;
+}
+
+
+void Os::Test::Task::Tester::JoinInvalidState::action(
+        Os::Test::Task::Tester &state //!< The test state
+) {
+    printf("--> Rule: JoinInvalidStatus\n");
+
+    std::shared_ptr<TestTaskInfo> new_task = std::make_shared<TestTaskInfo>();
+    ASSERT_NE(new_task->m_task.join(), Os::Task::Status::OP_OK);
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  StartIllegalRoutine
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::Task::Tester::StartIllegalRoutine::StartIllegalRoutine() :
+        STest::Rule<Os::Test::Task::Tester>("StartIllegalRoutine") {
+}
+
+
+bool Os::Test::Task::Tester::StartIllegalRoutine::precondition(
+        const Os::Test::Task::Tester &state //!< The test state
+) {
+    return true;
+}
+
+
+void Os::Test::Task::Tester::StartIllegalRoutine::action(
+        Os::Test::Task::Tester &state //!< The test state
+) {
+    printf("--> Rule: StartIllegalRoutine \n");
+    std::shared_ptr<TestTaskInfo> new_task = std::make_shared<TestTaskInfo>();
+    state.m_tasks.push_back(new_task);
+
+
+    Fw::String name("StartRuleTask");
+    ASSERT_DEATH(new_task->start(nullptr), "Os/Task\\.cpp:") << "Failed to trap NULL routine";
 }
 

@@ -79,7 +79,7 @@ namespace Os {
                           const PlatformUIntType identifier = static_cast<PlatformUIntType>(TASK_DEFAULT));
 
               public:
-                const Fw::StringBase& m_name;
+                const Os::TaskString m_name;
                 taskRoutine m_routine;
                 void* m_routine_argument;
                 FwSizeType m_priority;
@@ -87,8 +87,6 @@ namespace Os {
                 FwSizeType m_cpuAffinity;
                 PlatformUIntType m_identifier;
             };
-
-
 
             //! \brief default constructor
             TaskInterface() = default;
@@ -101,15 +99,6 @@ namespace Os {
 
             //! \brief assignment operator is forbidden
             TaskInterface& operator=(const TaskInterface& other) = delete;
-
-            //! \brief join calling thread to this thread
-            //!
-            //! Note: this function is deprecated as the value_ptr object is not used anyway and should always be set
-            //! to nullptr.
-            //!
-            //! \param value_ptr must be set to nullptr
-            //! \return status of the join
-            DEPRECATED(Status join(void** value_ptr), "Please switch to argument free join.");
 
             // =================
             // Implementation functions (static) to be supplied by the linker
@@ -182,8 +171,10 @@ namespace Os {
             //! multitask by doing one unit of work and return from the function.
             //!
             //! This function indicates if the task requires cooperative support.
+            //! The default implementation returns false.
+            //!
             //! \return true when the task expects cooperation, false otherwise
-            virtual bool isCooperative() = 0;
+            virtual bool isCooperative();
 
             //! \brief return the underlying task handle (implementation specific)
             //! \return internal task handle representation
@@ -204,10 +195,9 @@ namespace Os {
     class Task final : public TaskInterface {
       public:
         //! Wrapper for task routine that ensures `onStart()` is called once the task actually begins
-        // TODO: does this belong here or in the parent class
         class TaskRoutineWrapper {
           public:
-            TaskRoutineWrapper(Task& self);
+            explicit TaskRoutineWrapper(Task& self);
 
             //! \brief run the task routine wrapper
             //!
@@ -215,6 +205,9 @@ namespace Os {
             //! user argument.
             //! \param task_pointer: pointer to TaskRoutineWrapper being run
             static void run(void* task_pointer);
+
+            //! \brief invoke the run method with "self" as argument
+            void invoke();
 
             Task& m_task; //!< Reference to owning task
             taskRoutine m_user_function = nullptr; //!< User function to run once started
@@ -285,6 +278,18 @@ namespace Os {
         //! \brief perform delegate's required task start actions
         void onStart() override;
 
+        //! \brief invoke the task's routine
+        void invokeRoutine();
+
+        //! \brief join calling thread to this thread
+        //!
+        //! Note: this function is deprecated as the value_ptr object is not used anyway and should always be set
+        //! to nullptr.
+        //!
+        //! \param value_ptr must be set to nullptr
+        //! \return status of the join
+        DEPRECATED(Status join(void** value_ptr), "Please switch to argument free join.");
+
         //! \brief block until the task has ended
         //!
         //! Blocks the current (calling) task until this task execution has ended. Callers should ensure that any
@@ -335,6 +340,7 @@ namespace Os {
         TaskRoutineWrapper m_wrapper; //!< Concrete storage for task routine wrapper
 
         PlatformIntType m_identifier = 0; //!< thread independent identifier
+        bool m_registered = false; //!< Was this task registered
 
         // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
         // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
