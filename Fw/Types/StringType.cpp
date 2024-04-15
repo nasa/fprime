@@ -42,28 +42,14 @@ bool StringBase::operator==(const StringBase& other) const {
     }
 }
 
-<<<<<<< HEAD
-    bool StringBase::operator==(const CHAR* other) const {
-
-        const CHAR *const us = this->toChar();
-        if ((us == nullptr) or (other == nullptr)) {
-            return false;
-        }
-
-        const SizeType capacity = this->getCapacity();
-        const size_t result = static_cast<size_t>(strncmp(us, other, capacity));
-        return (result == 0);
-
-=======
 bool StringBase::operator==(const CHAR* other) const {
     const CHAR* const us = this->toChar();
     if ((us == nullptr) or (other == nullptr)) {
         return false;
->>>>>>> origin/devel
     }
 
     const SizeType capacity = this->getCapacity();
-    const size_t result = strncmp(us, other, capacity);
+    const size_t result = static_cast<size_t>(strncmp(us, other, capacity));
     return (result == 0);
 }
 
