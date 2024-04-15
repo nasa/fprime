@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('_byte_array_8hpp_source.html',''); ini
 <div class="title">ByteArray.hpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="byte_array_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ====================================================================== </span></div>
+<a href="byte_array_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// \title  ByteArray.hpp</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">// \author bocchino</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// \brief  hpp file for ByteArray type</span></div>
@@ -97,8 +97,8 @@ $(document).ready(function(){initNavTree('_byte_array_8hpp_source.html',''); ini
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">// Copyright (C) 2016 California Institute of Technology.</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">// ALL RIGHTS RESERVED.  United States Government Sponsorship</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// acknowledged.</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">// </span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// ====================================================================== </span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef Fw_ByteArray_HPP</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define Fw_ByteArray_HPP</span></div>
@@ -107,42 +107,35 @@ $(document).ready(function(){initNavTree('_byte_array_8hpp_source.html',''); ini
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_fw.html">Fw</a> {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="struct_fw_1_1_byte_array.html">   23</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="struct_fw_1_1_byte_array.html">ByteArray</a> {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;      <span class="comment">// Construction </span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="struct_fw_1_1_byte_array.html#aa8274e2f496b72bd8650e31c79c5912e">   31</a></span>&#160;      <a class="code" href="struct_fw_1_1_byte_array.html#aa8274e2f496b72bd8650e31c79c5912e">ByteArray</a>(</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;          <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> <a class="code" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">bytes</a>, </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;          <span class="keyword">const</span> U32 <a class="code" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">size</a> </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      ) :</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <a class="code" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">bytes</a>(<a class="code" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">bytes</a>),</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <a class="code" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">size</a>(<a class="code" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">size</a>)</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      {</div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="struct_fw_1_1_byte_array.html">   23</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_fw_1_1_byte_array.html">ByteArray</a> {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="comment">// Construction</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="struct_fw_1_1_byte_array.html#aa8274e2f496b72bd8650e31c79c5912e">   30</a></span>&#160;    <a class="code" href="struct_fw_1_1_byte_array.html#aa8274e2f496b72bd8650e31c79c5912e">ByteArray</a>(<a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* <span class="keyword">const</span> <a class="code" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">bytes</a>,  </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;              <span class="keyword">const</span> U32 <a class="code" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">size</a>    </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;              )</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        : <a class="code" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">bytes</a>(<a class="code" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">bytes</a>), <a class="code" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">size</a>(<a class="code" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">size</a>) {}</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">// Data</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      }</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      <span class="comment">// Data </span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">   46</a></span>&#160;      <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> <a class="code" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">bytes</a>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">   40</a></span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* <span class="keyword">const</span> <a class="code" href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">bytes</a>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">   43</a></span>&#160;    <span class="keyword">const</span> U32 <a class="code" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">size</a>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;};</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}  <span class="comment">// namespace Fw</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">   49</a></span>&#160;      <span class="keyword">const</span> U32 <a class="code" href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">size</a>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  };</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;}</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00026">BasicTypes.h:26</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
 <div class="ttc" id="anamespace_fw_html"><div class="ttname"><a href="namespace_fw.html">Fw</a></div><div class="ttdef"><b>Definition:</b> <a href="fpp_constants_ac_8hpp_source.html#l00103">FppConstantsAc.hpp:103</a></div></div>
 <div class="ttc" id="astruct_fw_1_1_byte_array_html"><div class="ttname"><a href="struct_fw_1_1_byte_array.html">Fw::ByteArray</a></div><div class="ttdoc">A variable-length byte array.</div><div class="ttdef"><b>Definition:</b> <a href="byte_array_8hpp_source.html#l00023">ByteArray.hpp:23</a></div></div>
-<div class="ttc" id="astruct_fw_1_1_byte_array_html_a82b76e66a551c6e51955aec07bdca3f5"><div class="ttname"><a href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">Fw::ByteArray::size</a></div><div class="ttdeci">const U32 size</div><div class="ttdoc">The size.</div><div class="ttdef"><b>Definition:</b> <a href="byte_array_8hpp_source.html#l00049">ByteArray.hpp:49</a></div></div>
-<div class="ttc" id="astruct_fw_1_1_byte_array_html_aa8274e2f496b72bd8650e31c79c5912e"><div class="ttname"><a href="struct_fw_1_1_byte_array.html#aa8274e2f496b72bd8650e31c79c5912e">Fw::ByteArray::ByteArray</a></div><div class="ttdeci">ByteArray(U8 *const bytes, const U32 size)</div><div class="ttdef"><b>Definition:</b> <a href="byte_array_8hpp_source.html#l00031">ByteArray.hpp:31</a></div></div>
-<div class="ttc" id="astruct_fw_1_1_byte_array_html_ac9f27b8e3556dd5ac169c0b2df6d8962"><div class="ttname"><a href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">Fw::ByteArray::bytes</a></div><div class="ttdeci">U8 *const bytes</div><div class="ttdoc">The bytes.</div><div class="ttdef"><b>Definition:</b> <a href="byte_array_8hpp_source.html#l00046">ByteArray.hpp:46</a></div></div>
+<div class="ttc" id="astruct_fw_1_1_byte_array_html_a82b76e66a551c6e51955aec07bdca3f5"><div class="ttname"><a href="struct_fw_1_1_byte_array.html#a82b76e66a551c6e51955aec07bdca3f5">Fw::ByteArray::size</a></div><div class="ttdeci">const U32 size</div><div class="ttdoc">The size.</div><div class="ttdef"><b>Definition:</b> <a href="byte_array_8hpp_source.html#l00043">ByteArray.hpp:43</a></div></div>
+<div class="ttc" id="astruct_fw_1_1_byte_array_html_aa8274e2f496b72bd8650e31c79c5912e"><div class="ttname"><a href="struct_fw_1_1_byte_array.html#aa8274e2f496b72bd8650e31c79c5912e">Fw::ByteArray::ByteArray</a></div><div class="ttdeci">ByteArray(U8 *const bytes, const U32 size)</div><div class="ttdef"><b>Definition:</b> <a href="byte_array_8hpp_source.html#l00030">ByteArray.hpp:30</a></div></div>
+<div class="ttc" id="astruct_fw_1_1_byte_array_html_ac9f27b8e3556dd5ac169c0b2df6d8962"><div class="ttname"><a href="struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962">Fw::ByteArray::bytes</a></div><div class="ttdeci">U8 *const bytes</div><div class="ttdoc">The bytes.</div><div class="ttdef"><b>Definition:</b> <a href="byte_array_8hpp_source.html#l00040">ByteArray.hpp:40</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
