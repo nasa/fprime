@@ -86,6 +86,15 @@ std::ostream& operator<<(std::ostream& os, const StringBase& str) {
 }
 #endif
 
+StringBase& StringBase::operator=(const StringBase& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), other.toChar(), this->getCapacity());
+    return *this;
+}
+
 // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
 // call the empty constructor and then call their own copy function
 StringBase& StringBase::operator=(const CHAR* other) {  // lgtm[cpp/rule-of-two]
