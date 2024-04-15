@@ -1,10 +1,10 @@
-#include "StringUtils.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <cstring>
+#include "StringUtils.hpp"
 
 char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 num) {
     // Handle self-copy and 0 bytes copy
-    if(destination == source || num == 0) {
+    if (destination == source || num == 0) {
         return destination;
     }
     FW_ASSERT(source != nullptr);
