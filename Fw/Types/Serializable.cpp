@@ -40,27 +40,6 @@ SerializeBufferBase::SerializeBufferBase() : m_serLoc(0), m_deserLoc(0) {}
 
 SerializeBufferBase::~SerializeBufferBase() {}
 
-<<<<<<< HEAD
-    void SerializeBufferBase::copyFrom(const SerializeBufferBase& src) {
-        this->m_serLoc = src.m_serLoc;
-        this->m_deserLoc = src.m_deserLoc;
-        FW_ASSERT(src.getBuffAddr());
-        FW_ASSERT(this->getBuffAddr());
-        // destination has to be same or bigger
-        FW_ASSERT(
-            src.getBuffLength() <= this->getBuffCapacity(),
-            static_cast<FwAssertArgType>(src.getBuffLength()),
-            static_cast<FwAssertArgType>(this->getBuffLength()));
-        (void) memcpy(this->getBuffAddr(),src.getBuffAddr(),this->m_serLoc);
-    }
-
-    // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
-    // call the empty constructor and then call their own copy function
-    SerializeBufferBase& SerializeBufferBase::operator=(const SerializeBufferBase &src) { // lgtm[cpp/rule-of-two]
-        this->copyFrom(src);
-        return *this;
-    }
-=======
 void SerializeBufferBase::copyFrom(const SerializeBufferBase& src) {
     this->m_serLoc = src.m_serLoc;
     this->m_deserLoc = src.m_deserLoc;
@@ -70,7 +49,6 @@ void SerializeBufferBase::copyFrom(const SerializeBufferBase& src) {
     FW_ASSERT(src.getBuffLength() <= this->getBuffCapacity(), src.getBuffLength(), this->getBuffLength());
     (void)memcpy(this->getBuffAddr(), src.getBuffAddr(), this->m_serLoc);
 }
->>>>>>> origin/devel
 
 // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
 // call the empty constructor and then call their own copy function
@@ -79,18 +57,7 @@ SerializeBufferBase& SerializeBufferBase::operator=(const SerializeBufferBase& s
     return *this;
 }
 
-<<<<<<< HEAD
-    SerializeStatus SerializeBufferBase::serialize(U8 val) {
-        if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-            return FW_SERIALIZE_NO_ROOM_LEFT;
-        }
-        FW_ASSERT(this->getBuffAddr());
-        this->getBuffAddr()[this->m_serLoc] = val;
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        this->m_deserLoc = 0;
-=======
 // serialization routines
->>>>>>> origin/devel
 
 SerializeStatus SerializeBufferBase::serialize(U8 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
@@ -101,38 +68,12 @@ SerializeStatus SerializeBufferBase::serialize(U8 val) {
     this->m_serLoc += sizeof(val);
     this->m_deserLoc = 0;
 
-<<<<<<< HEAD
-    SerializeStatus SerializeBufferBase::serialize(I8 val) {
-        if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-            return FW_SERIALIZE_NO_ROOM_LEFT;
-        }
-        FW_ASSERT(this->getBuffAddr());
-        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        this->m_deserLoc = 0;
-        return FW_SERIALIZE_OK;
-    }
-
-#if FW_HAS_16_BIT==1
-    SerializeStatus SerializeBufferBase::serialize(U16 val) {
-        if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-            return FW_SERIALIZE_NO_ROOM_LEFT;
-        }
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 8);
-        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val);
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        this->m_deserLoc = 0;
-        return FW_SERIALIZE_OK;
-=======
     return FW_SERIALIZE_OK;
 }
 
 SerializeStatus SerializeBufferBase::serialize(I8 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
->>>>>>> origin/devel
     }
     FW_ASSERT(this->getBuffAddr());
     this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
@@ -141,91 +82,6 @@ SerializeStatus SerializeBufferBase::serialize(I8 val) {
     return FW_SERIALIZE_OK;
 }
 
-<<<<<<< HEAD
-    SerializeStatus SerializeBufferBase::serialize(I16 val) {
-        if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-            return FW_SERIALIZE_NO_ROOM_LEFT;
-        }
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 8);
-        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val);
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        this->m_deserLoc = 0;
-        return FW_SERIALIZE_OK;
-    }
-#endif
-#if FW_HAS_32_BIT==1
-    SerializeStatus SerializeBufferBase::serialize(U32 val) {
-        if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-            return FW_SERIALIZE_NO_ROOM_LEFT;
-        }
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 24);
-        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 16);
-        this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 8);
-        this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val);
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        this->m_deserLoc = 0;
-        return FW_SERIALIZE_OK;
-    }
-
-    SerializeStatus SerializeBufferBase::serialize(I32 val) {
-        if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-            return FW_SERIALIZE_NO_ROOM_LEFT;
-        }
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 24);
-        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 16);
-        this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 8);
-        this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val);
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        this->m_deserLoc = 0;
-        return FW_SERIALIZE_OK;
-    }
-#endif
-
-#if FW_HAS_64_BIT==1
-    SerializeStatus SerializeBufferBase::serialize(U64 val) {
-        if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-            return FW_SERIALIZE_NO_ROOM_LEFT;
-        }
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 56);
-        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 48);
-        this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 40);
-        this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 32);
-        this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 24);
-        this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 16);
-        this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 8);
-        this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val);
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        this->m_deserLoc = 0;
-        return FW_SERIALIZE_OK;
-    }
-
-    SerializeStatus SerializeBufferBase::serialize(I64 val) {
-        if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-            return FW_SERIALIZE_NO_ROOM_LEFT;
-        }
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 56);
-        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 48);
-        this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 40);
-        this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 32);
-        this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 24);
-        this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 16);
-        this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 8);
-        this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val);
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        this->m_deserLoc = 0;
-        return FW_SERIALIZE_OK;
-    }
-=======
 #if FW_HAS_16_BIT == 1
 SerializeStatus SerializeBufferBase::serialize(U16 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
@@ -323,7 +179,6 @@ SerializeStatus SerializeBufferBase::serialize(I64 val) {
     this->m_deserLoc = 0;
     return FW_SERIALIZE_OK;
 }
->>>>>>> origin/devel
 #endif
 
 #if FW_HAS_F64 && FW_HAS_64_BIT
@@ -361,15 +216,9 @@ SerializeStatus SerializeBufferBase::serialize(bool val) {
     return FW_SERIALIZE_OK;
 }
 
-<<<<<<< HEAD
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(U8));
-        this->m_deserLoc = 0;
-        return FW_SERIALIZE_OK;
-=======
 SerializeStatus SerializeBufferBase::serialize(const void* val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(void*)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
->>>>>>> origin/devel
     }
 
     return this->serialize(reinterpret_cast<POINTER_CAST>(val));
@@ -407,16 +256,9 @@ SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length
     return FW_SERIALIZE_OK;
 }
 
-<<<<<<< HEAD
-        // copy buffer to our buffer
-        (void) memcpy(&this->getBuffAddr()[this->m_serLoc], buff, length);
-        this->m_serLoc += static_cast<NATIVE_UINT_TYPE>(length);
-        this->m_deserLoc = 0;
-=======
 SerializeStatus SerializeBufferBase::serialize(const Serializable& val) {
     return val.serialize(*this);
 }
->>>>>>> origin/devel
 
 SerializeStatus SerializeBufferBase::serialize(const SerializeBufferBase& val) {
     Serializable::SizeType size = val.getBuffLength();
@@ -454,27 +296,12 @@ SerializeStatus SerializeBufferBase::serializeSize(const FwSizeType size) {
 
 // deserialization routines
 
-<<<<<<< HEAD
-    SerializeStatus SerializeBufferBase::deserialize(U8 &val) {
-        // check for room
-        if (this->getBuffLength() == this->m_deserLoc) {
-            return FW_DESERIALIZE_BUFFER_EMPTY;
-        } else if (this->getBuffLength() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
-            return FW_DESERIALIZE_SIZE_MISMATCH;
-        }
-        // read from current location
-        FW_ASSERT(this->getBuffAddr());
-        val = this->getBuffAddr()[this->m_deserLoc + 0];
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        return FW_SERIALIZE_OK;
-=======
 SerializeStatus SerializeBufferBase::deserialize(U8& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
     } else if (this->getBuffLength() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
->>>>>>> origin/devel
     }
     // read from current location
     FW_ASSERT(this->getBuffAddr());
@@ -483,143 +310,6 @@ SerializeStatus SerializeBufferBase::deserialize(U8& val) {
     return FW_SERIALIZE_OK;
 }
 
-<<<<<<< HEAD
-    SerializeStatus SerializeBufferBase::deserialize(I8 &val) {
-        // check for room
-        if (this->getBuffLength() == this->m_deserLoc) {
-            return FW_DESERIALIZE_BUFFER_EMPTY;
-        } else if (this->getBuffLength() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
-            return FW_DESERIALIZE_SIZE_MISMATCH;
-        }
-        // read from current location
-        FW_ASSERT(this->getBuffAddr());
-        val = static_cast<I8>(this->getBuffAddr()[this->m_deserLoc + 0]);
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        return FW_SERIALIZE_OK;
-    }
-
-#if FW_HAS_16_BIT==1
-    SerializeStatus SerializeBufferBase::deserialize(U16 &val) {
-        // check for room
-        if (this->getBuffLength() == this->m_deserLoc) {
-            return FW_DESERIALIZE_BUFFER_EMPTY;
-        } else if (this->getBuffLength() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
-            return FW_DESERIALIZE_SIZE_MISMATCH;
-        }
-        // read from current location
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        val = static_cast<U16>(
-            ((this->getBuffAddr()[this->m_deserLoc + 1]) << 0) |
-            ((this->getBuffAddr()[this->m_deserLoc + 0]) << 8)
-        );
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        return FW_SERIALIZE_OK;
-    }
-
-    SerializeStatus SerializeBufferBase::deserialize(I16 &val) {
-        // check for room
-        if (this->getBuffLength() == this->m_deserLoc) {
-            return FW_DESERIALIZE_BUFFER_EMPTY;
-        } else if (this->getBuffLength() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
-            return FW_DESERIALIZE_SIZE_MISMATCH;
-        }
-        // read from current location
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        val = static_cast<I16>(
-            ((this->getBuffAddr()[this->m_deserLoc + 1]) << 0) |
-            ((this->getBuffAddr()[this->m_deserLoc + 0]) << 8)
-        );
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        return FW_SERIALIZE_OK;
-    }
-#endif
-#if FW_HAS_32_BIT==1
-    SerializeStatus SerializeBufferBase::deserialize(U32 &val) {
-        // check for room
-        if (this->getBuffLength() == this->m_deserLoc) {
-            return FW_DESERIALIZE_BUFFER_EMPTY;
-        } else if (this->getBuffLength() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
-            return FW_DESERIALIZE_SIZE_MISMATCH;
-        }
-        // read from current location
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        val = (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 3]) << 0)
-                | (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 2]) << 8)
-                | (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 1]) << 16)
-                | (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 0]) << 24);
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        return FW_SERIALIZE_OK;
-    }
-
-    SerializeStatus SerializeBufferBase::deserialize(I32 &val) {
-        // check for room
-        if (this->getBuffLength() == this->m_deserLoc) {
-            return FW_DESERIALIZE_BUFFER_EMPTY;
-        } else if (this->getBuffLength() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
-            return FW_DESERIALIZE_SIZE_MISMATCH;
-        }
-        // read from current location
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        val = (static_cast<I32>(this->getBuffAddr()[this->m_deserLoc + 3]) << 0)
-                | (static_cast<I32>(this->getBuffAddr()[this->m_deserLoc + 2]) << 8)
-                | (static_cast<I32>(this->getBuffAddr()[this->m_deserLoc + 1]) << 16)
-                | (static_cast<I32>(this->getBuffAddr()[this->m_deserLoc + 0]) << 24);
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        return FW_SERIALIZE_OK;
-    }
-#endif
-
-#if FW_HAS_64_BIT==1
-
-    SerializeStatus SerializeBufferBase::deserialize(U64 &val) {
-        // check for room
-        if (this->getBuffLength() == this->m_deserLoc) {
-            return FW_DESERIALIZE_BUFFER_EMPTY;
-        } else if (this->getBuffLength() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
-            return FW_DESERIALIZE_SIZE_MISMATCH;
-        }
-        // read from current location
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        val = (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 7]) << 0)
-                | (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 6]) << 8)
-                | (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 5]) << 16)
-                | (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 4]) << 24)
-                | (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 3]) << 32)
-                | (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 2]) << 40)
-                | (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 1]) << 48)
-                | (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 0]) << 56);
-
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        return FW_SERIALIZE_OK;
-    }
-
-    SerializeStatus SerializeBufferBase::deserialize(I64 &val) {
-        // check for room
-        if (this->getBuffLength() == this->m_deserLoc) {
-            return FW_DESERIALIZE_BUFFER_EMPTY;
-        } else if (this->getBuffLength() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
-            return FW_DESERIALIZE_SIZE_MISMATCH;
-        }
-        // read from current location
-        FW_ASSERT(this->getBuffAddr());
-        // MSB first
-        val = (static_cast<I64>(this->getBuffAddr()[this->m_deserLoc + 7]) << 0)
-                | (static_cast<I64>(this->getBuffAddr()[this->m_deserLoc + 6]) << 8)
-                | (static_cast<I64>(this->getBuffAddr()[this->m_deserLoc + 5]) << 16)
-                | (static_cast<I64>(this->getBuffAddr()[this->m_deserLoc + 4]) << 24)
-                | (static_cast<I64>(this->getBuffAddr()[this->m_deserLoc + 3]) << 32)
-                | (static_cast<I64>(this->getBuffAddr()[this->m_deserLoc + 2]) << 40)
-                | (static_cast<I64>(this->getBuffAddr()[this->m_deserLoc + 1]) << 48)
-                | (static_cast<I64>(this->getBuffAddr()[this->m_deserLoc + 0]) << 56);
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(val));
-        return FW_SERIALIZE_OK;
-    }
-=======
 SerializeStatus SerializeBufferBase::deserialize(I8& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
@@ -751,7 +441,6 @@ SerializeStatus SerializeBufferBase::deserialize(I64& val) {
     this->m_deserLoc += sizeof(val);
     return FW_SERIALIZE_OK;
 }
->>>>>>> origin/devel
 #endif
 
 #if FW_HAS_F64
@@ -792,17 +481,12 @@ SerializeStatus SerializeBufferBase::deserialize(bool& val) {
     return FW_SERIALIZE_OK;
 }
 
-<<<<<<< HEAD
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(sizeof(U8));
-        return FW_SERIALIZE_OK;
-=======
 SerializeStatus SerializeBufferBase::deserialize(void*& val) {
     // Deserialize as pointer cast, then convert to void*
     PlatformPointerCastType pointerCastVal = 0;
     const SerializeStatus stat = this->deserialize(pointerCastVal);
     if (stat == FW_SERIALIZE_OK) {
         val = reinterpret_cast<void*>(pointerCastVal);
->>>>>>> origin/devel
     }
     return stat;
 }
@@ -876,13 +560,7 @@ SerializeStatus SerializeBufferBase::deserialize(SerializeBufferBase& val) {
     FW_ASSERT(val.getBuffAddr());
     SerializeStatus stat = FW_SERIALIZE_OK;
 
-<<<<<<< HEAD
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(length);
-        return FW_SERIALIZE_OK;
-    }
-=======
     FwSizeStoreType storedLength;
->>>>>>> origin/devel
 
     stat = this->deserialize(storedLength);
 
@@ -984,41 +662,12 @@ SerializeStatus SerializeBufferBase::setBuff(const U8* src, Serializable::SizeTy
     }
 }
 
-<<<<<<< HEAD
-    SerializeStatus SerializeBufferBase::serializeSkip(FwSizeType numBytesToSkip)
-    {
-        Fw::SerializeStatus status = FW_SERIALIZE_OK;
-        // compute new deser loc
-        const FwSizeType newSerLoc = this->m_serLoc + numBytesToSkip;
-        // check for room
-        if (newSerLoc <= this->getBuffCapacity()) {
-            // update deser loc
-            this->m_serLoc = static_cast<NATIVE_UINT_TYPE>(newSerLoc);
-        }
-        else {
-            status = FW_SERIALIZE_NO_ROOM_LEFT;
-        }
-        return status;
-    }
-
-    SerializeStatus SerializeBufferBase::deserializeSkip(FwSizeType numBytesToSkip)
-    {
-        // check for room
-        if (this->getBuffLength() == this->m_deserLoc) {
-            return FW_DESERIALIZE_BUFFER_EMPTY;
-        } else if (this->getBuffLength() - this->m_deserLoc < numBytesToSkip) {
-            return FW_DESERIALIZE_SIZE_MISMATCH;
-        }
-        // update location in buffer to skip the value
-        this->m_deserLoc += static_cast<NATIVE_UINT_TYPE>(numBytesToSkip);
-=======
 SerializeStatus SerializeBufferBase::setBuffLen(Serializable::SizeType length) {
     if (this->getBuffCapacity() < length) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     } else {
         this->m_serLoc = length;
         this->m_deserLoc = 0;
->>>>>>> origin/devel
         return FW_SERIALIZE_OK;
     }
 }
