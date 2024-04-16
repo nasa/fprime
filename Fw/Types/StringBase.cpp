@@ -117,6 +117,14 @@ StringBase::SizeType StringBase::length() const {
     return static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
 }
 
+StringBase::SizeType StringBase::serializedSize() const {
+    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + this->length();
+}
+
+StringBase::SizeType StringBase::serializedTruncatedSize(FwSizeType maxLength) const {
+    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + FW_MIN(this->length(), maxLength);
+}
+
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
     return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), this->length());
 }

@@ -30,6 +30,9 @@ class StringBase : public Serializable {
     static constexpr FwSizeType staticSerializedSize(FwSizeType maxLength) {
       return sizeof(FwSizeStoreType) + maxLength;
     }
+    SizeType serializedSize() const;           //!< Get length of string plus size of stored size
+    SizeType serializedTruncatedSize(
+        FwSizeType maxLength) const;  //!< Get truncated length of string plus size of stored size
 
     const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*
     const StringBase& operator+=(const StringBase& src);  //!< Concatenate a StringBase
