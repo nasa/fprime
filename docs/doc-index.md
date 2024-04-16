@@ -13,6 +13,7 @@
 - [fpp-json-dict](Design/fpp-json-dict.md)
 - [fprime-architecture](Design/fprime-architecture.md)
 - [general](Design/general.md)
+- [integration-test-api](Design/integration-test-api.md)
 - [memory](Design/memory.md)
 - [numerical-types](Design/numerical-types.md)
 - [package-implementations](Design/package-implementations.md)
