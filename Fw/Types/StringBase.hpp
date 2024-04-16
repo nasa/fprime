@@ -26,20 +26,29 @@ class StringBase : public Serializable {
     virtual const CHAR* toChar() const = 0;    //<! Convert to a C-style char*
     virtual SizeType getCapacity() const = 0;  //!< return size of buffer
     SizeType length() const;                   //!< Get length of string
+
     //! Get the static serialized size of a string
-    static constexpr FwSizeType staticSerializedSize(FwSizeType maxLength  //!< The maximum string length
+    //! This is the max length of the string plus the size of the stored size
+    static constexpr FwSizeType STATIC_SERIALIZED_SIZE(FwSizeType maxLength  //!< The maximum string length
     ) {
         return sizeof(FwSizeStoreType) + maxLength;
     }
+
     //! Get the size of a null-terminated string buffer
-    static constexpr FwSizeType bufferSize(FwSizeType maxLength  //!< The maximum string length
+    static constexpr FwSizeType BUFFER_SIZE(FwSizeType maxLength  //!< The maximum string length
     ) {
         // Reserve one byte for each character plus one for the null terminator
         return maxLength + 1;
     }
-    SizeType serializedSize() const;  //!< Get length of string plus size of stored size
-    SizeType serializedTruncatedSize(
-        FwSizeType maxLength) const;  //!< Get truncated length of string plus size of stored size
+
+    //! Get the dynamic serialized size of a string
+    //! This is the length of the string plus the size of the stored size
+    SizeType serializedSize() const;
+
+    //! Get the serialized truncated size of a string
+    //! This is the minimum of the dynamic serialized size and the max length
+    SizeType serializedTruncatedSize(FwSizeType maxLength  //!< The max string length
+    ) const;
 
     const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*
     const StringBase& operator+=(const StringBase& src);  //!< Concatenate a StringBase
