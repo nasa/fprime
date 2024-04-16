@@ -19,7 +19,7 @@ class String final : public StringBase {
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_FIXED_LENGTH_STRING,
         STRING_SIZE = FW_FIXED_LENGTH_STRING_SIZE,
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
+        SERIALIZED_SIZE = StringBase::staticSerializedSize(STRING_SIZE)
     };
 
     String() : StringBase() { *this = ""; }

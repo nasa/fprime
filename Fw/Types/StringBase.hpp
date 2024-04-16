@@ -23,9 +23,13 @@ namespace Fw {
 class StringBase : public Serializable {
   public:
     using SizeType = NATIVE_UINT_TYPE;
-    virtual const CHAR* toChar() const = 0;    //<! Convert to a C-style char*
-    virtual SizeType getCapacity() const = 0;  //!< return size of buffer
-    SizeType length() const;                   //!< Get length of string
+    virtual const CHAR* toChar() const = 0;                              //<! Convert to a C-style char*
+    virtual SizeType getCapacity() const = 0;                            //!< return size of buffer
+    SizeType length() const;                                             //!< Get length of string
+    //! Get the static serialized size of a string
+    static constexpr FwSizeType staticSerializedSize(FwSizeType maxLength) {
+      return sizeof(FwSizeStoreType) + maxLength;
+    }
 
     const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*
     const StringBase& operator+=(const StringBase& src);  //!< Concatenate a StringBase
