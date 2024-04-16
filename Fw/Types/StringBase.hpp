@@ -23,14 +23,21 @@ namespace Fw {
 class StringBase : public Serializable {
   public:
     using SizeType = NATIVE_UINT_TYPE;
-    virtual const CHAR* toChar() const = 0;                              //<! Convert to a C-style char*
-    virtual SizeType getCapacity() const = 0;                            //!< return size of buffer
-    SizeType length() const;                                             //!< Get length of string
+    virtual const CHAR* toChar() const = 0;    //<! Convert to a C-style char*
+    virtual SizeType getCapacity() const = 0;  //!< return size of buffer
+    SizeType length() const;                   //!< Get length of string
     //! Get the static serialized size of a string
-    static constexpr FwSizeType staticSerializedSize(FwSizeType maxLength) {
-      return sizeof(FwSizeStoreType) + maxLength;
+    static constexpr FwSizeType staticSerializedSize(FwSizeType maxLength  //!< The maximum string length
+    ) {
+        return sizeof(FwSizeStoreType) + maxLength;
     }
-    SizeType serializedSize() const;           //!< Get length of string plus size of stored size
+    //! Get the size of a null-terminated string buffer
+    static constexpr FwSizeType bufferSize(FwSizeType maxLength  //!< The maximum string length
+    ) {
+        // Reserve one byte for each character plus one for the null terminator
+        return maxLength + 1;
+    }
+    SizeType serializedSize() const;  //!< Get length of string plus size of stored size
     SizeType serializedTruncatedSize(
         FwSizeType maxLength) const;  //!< Get truncated length of string plus size of stored size
 
