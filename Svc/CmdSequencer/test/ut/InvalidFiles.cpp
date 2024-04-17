@@ -43,10 +43,9 @@ namespace Svc {
       this->setTestTime(testTime);
       // Write the file
       SequenceFiles::BadCRCFile file(this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -62,7 +61,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileCrcFailure(
           0,
-          fileName,
+          file.getName().toChar(),
           crc.m_stored,
           crc.m_computed
       );
@@ -80,10 +79,9 @@ namespace Svc {
       // Write the file
       NATIVE_INT_TYPE numRecords = 1;
       SequenceFiles::BadDescriptorFile file(numRecords, this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Validate the file
-      this->sendCmd_CS_VALIDATE(0, 0, fileName);
+      this->sendCmd_CS_VALIDATE(0, 0, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -97,12 +95,12 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_RecordInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           0,
           Fw::FW_DESERIALIZE_FORMAT_ERROR
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -116,7 +114,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_RecordInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           0,
           Fw::FW_DESERIALIZE_FORMAT_ERROR
       );
@@ -131,10 +129,9 @@ namespace Svc {
       // Write the file
       const NATIVE_INT_TYPE numRecords = 5;
       SequenceFiles::BadTimeBaseFile file(numRecords, this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Validate the file
-      this->sendCmd_CS_VALIDATE(0, 0, fileName);
+      this->sendCmd_CS_VALIDATE(0, 0, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -149,7 +146,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_TimeBaseMismatch_SIZE(1);
       ASSERT_EVENTS_CS_TimeBaseMismatch(
           0,
-          fileName,
+          file.getName().toChar(),
           TB_WORKSTATION_TIME,
           TB_PROC_TIME
       );
@@ -164,10 +161,9 @@ namespace Svc {
       // Write the file
       const U32 numRecords = 5;
       SequenceFiles::BadTimeContextFile file(numRecords, this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Validate the file
-      this->sendCmd_CS_VALIDATE(0, 0, fileName);
+      this->sendCmd_CS_VALIDATE(0, 0, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -180,7 +176,7 @@ namespace Svc {
       // Assert events
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_TimeContextMismatch_SIZE(1);
-      ASSERT_EVENTS_CS_TimeContextMismatch(0, fileName, 0, 1);
+      ASSERT_EVENTS_CS_TimeContextMismatch(0, file.getName().toChar(), 0, 1);
     }
 
     void CmdSequencerTester ::
@@ -188,10 +184,9 @@ namespace Svc {
     {
       // Write the file
       SequenceFiles::EmptyFile file(this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -205,7 +200,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           CmdSequencer_FileReadStage::READ_HEADER_SIZE,
           Os::FileSystem::OP_OK
       );
@@ -226,10 +221,9 @@ namespace Svc {
       // Write the file
       const U32 numRecords = 5;
       SequenceFiles::DataAfterRecordsFile file(numRecords, this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Validate the file
-      this->sendCmd_CS_VALIDATE(0, 0, fileName);
+      this->sendCmd_CS_VALIDATE(0, 0, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -242,7 +236,7 @@ namespace Svc {
       // Assert events
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_RecordMismatch_SIZE(1);
-      ASSERT_EVENTS_CS_RecordMismatch(0, fileName, 5, 8);
+      ASSERT_EVENTS_CS_RecordMismatch(0, file.getName().toChar(), 5, 8);
 
     }
 
@@ -251,13 +245,12 @@ namespace Svc {
     {
       // Write the file
       SequenceFiles::TooLargeFile file(BUFFER_SIZE, this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 0, 0);
       this->setTestTime(testTime);
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -270,7 +263,7 @@ namespace Svc {
       // Assert events
       ASSERT_EVENTS_SIZE(1);
       const U32 dataSize = file.getDataSize();
-      ASSERT_EVENTS_CS_FileSizeError(0, fileName, dataSize);
+      ASSERT_EVENTS_CS_FileSizeError(0, file.getName().toChar(), dataSize);
       // Assert telemetry
       ASSERT_TLM_SIZE(1);
       ASSERT_TLM_CS_Errors(0, 1);
@@ -281,10 +274,9 @@ namespace Svc {
     {
       // Write the file
       SequenceFiles::MissingCRCFile file(this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert no response on seqDone
       ASSERT_from_seqDone_SIZE(0);
@@ -300,7 +292,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           CmdSequencer_FileReadStage::READ_SEQ_CRC,
           sizeof(U8)
       );
@@ -308,7 +300,7 @@ namespace Svc {
       ASSERT_TLM_SIZE(1);
       ASSERT_TLM_CS_Errors(0, 1);
       // Validate file
-      this->sendCmd_CS_VALIDATE(0, 0, fileName);
+      this->sendCmd_CS_VALIDATE(0, 0, file.getName());
       this->clearAndDispatch();
       // Assert no response on seqDone
       ASSERT_from_seqDone_SIZE(0);
@@ -324,7 +316,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           CmdSequencer_FileReadStage::READ_SEQ_CRC,
           sizeof(U8)
       );
@@ -332,7 +324,7 @@ namespace Svc {
       ASSERT_TLM_SIZE(1);
       ASSERT_TLM_CS_Errors(0, 2);
       // Run the sequence by port call
-      Fw::String fArg(fileName);
+      Fw::String fArg(file.getName());
       this->invoke_to_seqRunIn(0, fArg);
       this->clearAndDispatch();
       // Assert seqDone response
@@ -342,7 +334,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           CmdSequencer_FileReadStage::READ_SEQ_CRC,
           sizeof(U8)
       );
@@ -356,10 +348,9 @@ namespace Svc {
     {
       // Remove the file
       SequenceFiles::MissingFile file(this->format);
-      const char *const fileName = file.getName().toChar();
       file.remove();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -371,7 +362,7 @@ namespace Svc {
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_CS_FileNotFound(0, fileName);
+      ASSERT_EVENTS_CS_FileNotFound(0, file.getName().toChar());
       // Assert telemetry
       ASSERT_TLM_SIZE(1);
       ASSERT_TLM_CS_Errors(0, 1);
@@ -385,10 +376,9 @@ namespace Svc {
       this->setTestTime(testTime);
       // Write the file
       SequenceFiles::SizeFieldTooLargeFile file(BUFFER_SIZE, this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Validate the file
-      this->sendCmd_CS_VALIDATE(0, 0, fileName);
+      this->sendCmd_CS_VALIDATE(0, 0, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -402,12 +392,12 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_RecordInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           0,
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -421,7 +411,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_RecordInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           0,
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
@@ -435,10 +425,9 @@ namespace Svc {
       this->setTestTime(testTime);
       // Write the file
       SequenceFiles::SizeFieldTooSmallFile file(this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Validate the file
-      this->sendCmd_CS_VALIDATE(0, 0, fileName);
+      this->sendCmd_CS_VALIDATE(0, 0, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -453,12 +442,12 @@ namespace Svc {
       ASSERT_EVENTS_CS_RecordInvalid_SIZE(1);
       ASSERT_EVENTS_CS_RecordInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           0,
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -473,7 +462,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_RecordInvalid_SIZE(1);
       ASSERT_EVENTS_CS_RecordInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           0,
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
@@ -487,10 +476,9 @@ namespace Svc {
       this->setTestTime(testTime);
       // Write the file
       SequenceFiles::USecFieldTooShortFile file(this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Validate the file
-      this->sendCmd_CS_VALIDATE(0, 0, fileName);
+      this->sendCmd_CS_VALIDATE(0, 0, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -504,12 +492,12 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_RecordInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           0,
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -523,7 +511,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_RecordInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           0,
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );

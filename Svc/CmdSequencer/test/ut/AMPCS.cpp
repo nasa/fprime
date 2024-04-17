@@ -36,10 +36,9 @@ namespace Svc {
     {
       // Write the file
       SequenceFiles::MissingCRCFile file(this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert no response on seqDone
       ASSERT_from_seqDone_SIZE(0);
@@ -52,7 +51,7 @@ namespace Svc {
           Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
-      Fw::String crcFileName(fileName);
+      Fw::String crcFileName(file.getName());
       crcFileName += ".CRC32";
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileNotFound(0, crcFileName.toChar());
@@ -66,11 +65,10 @@ namespace Svc {
     {
       // Remove the file
       SequenceFiles::MissingFile file(this->format);
-      const char *const fileName = file.getName().toChar();
       file.write();
       file.remove();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -84,7 +82,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
           0,
-          fileName,
+          file.getName().toChar(),
           CmdSequencer_FileReadStage::READ_HEADER_SIZE,
           Os::FileSystem::INVALID_PATH
       );
