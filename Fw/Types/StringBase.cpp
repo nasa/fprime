@@ -130,16 +130,35 @@ SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
 }
 
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
-    SizeType len = FW_MIN(maxLength, this->length());
-    return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len);
+    FwSizeType len = FW_MIN(maxLength, this->length());
+    // serialize length and then bytes
+    return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
 SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
-    SizeType maxSize = this->getCapacity() - 1;
+    // Get the max size of the deserialized string
+    FW_ASSERT(this->getCapacity() > 0, static_cast<FwAssertArgType>(this->getCapacity()));
+    const FwSizeType maxSize = this->getCapacity() - 1;
+    // Initial estimate of actual size is max size
+    // This estimate is refined when calling the deserialize function below
+    SizeType actualSize = maxSize;
+    // Public interface returns const char*, but implementation needs char*
+    // So use const_cast
     CHAR* raw = const_cast<CHAR*>(this->toChar());
-    SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(raw), maxSize);
-    // Null terminate deserialized string
-    raw[maxSize] = 0;
+    // Read length and deserialize bytes up to max size (the initial value of actualSize)
+    // Fail if length exceeds this bound
+    // On success, set actualSize to actual size
+    SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(raw), actualSize, Serialization::INCLUDE_LENGTH);
+    if (stat == FW_SERIALIZE_OK) {
+        // Deserialization succeeded: null-terminate string at actual size
+        FW_ASSERT(actualSize <= maxSize, static_cast<FwAssertArgType>(actualSize),
+                  static_cast<FwAssertArgType>(maxSize));
+        raw[actualSize] = 0;
+    } else {
+        // Deserialization failed: leave string unmodified, but ensure that it
+        // is null-terminated
+        raw[0] = maxSize;
+    }
     return stat;
 }
 }  // namespace Fw
