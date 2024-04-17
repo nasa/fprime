@@ -19,7 +19,7 @@ namespace Svc {
 
   void LinuxTimerComponentImpl::startTimer(NATIVE_INT_TYPE interval) {
       while (true) {
-          Os::Task::delay(interval);
+          Os::Task::delay(static_cast<Os::Task::ParamType>(interval));
           this->m_mutex.lock();
           bool quit = this->m_quit;
           this->m_mutex.unLock();

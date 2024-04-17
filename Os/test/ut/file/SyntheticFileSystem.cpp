@@ -113,7 +113,7 @@ Os::File::Status SyntheticFile::read(U8* buffer, FwSignedSizeType& size, WaitTyp
         if (this->m_data->m_pointer >= static_cast<FwSignedSizeType>(this->m_data->m_data.size())) {
             break;
         }
-        buffer[i] = this->m_data->m_data.at(static_cast<U8>(this->m_data->m_pointer));
+        buffer[i] = this->m_data->m_data.at(static_cast<std::vector<U8>::size_type>(this->m_data->m_pointer));
     }
     size = i;
     // Checks on the shadow data to ensure consistency
