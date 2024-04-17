@@ -19,7 +19,7 @@ class LogStringArg final : public StringBase {
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_LOG_STR,
         STRING_SIZE = FW_LOG_STRING_MAX_SIZE,
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE),
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE)
     };
 
     LogStringArg() : StringBase() { *this = ""; }

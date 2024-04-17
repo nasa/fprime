@@ -19,7 +19,7 @@ class TlmString final : public StringBase {
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_TLM_STR,
         STRING_SIZE = FW_TLM_STRING_MAX_SIZE,
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE),
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE)
     };
 
     TlmString() : StringBase() { *this = ""; }
