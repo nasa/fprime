@@ -61,8 +61,8 @@ def get_library_versions(fallback=FALLBACK_VERSION):
     """Calculate the versions of each libraries.
     Return a dictionary with the library name as key and the version as value
     """
-    fprime_libraries = os.environ.get("FPRIME_LIBRARY_LOCATIONS", None)
-    if fprime_libraries is None:
+    fprime_libraries = os.environ.get("FPRIME_LIBRARY_LOCATIONS", "")
+    if fprime_libraries == "":
         return {}
 
     lib_versions = {}
