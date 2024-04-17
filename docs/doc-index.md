@@ -6,6 +6,7 @@
 - [index](index.md)
 - [latest](latest.md)
 - [projects](projects.md)
+- [troubleshooting](troubleshooting.md)
 - [upcoming](upcoming.md)
 ## Design
 - [communication-adapter-interface](Design/communication-adapter-interface.md)
