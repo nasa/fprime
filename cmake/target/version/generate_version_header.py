@@ -51,14 +51,18 @@ def create_version_file(output_dir, framework_version, project_version):
         fid.write(
             'static const char* FRAMEWORK_VERSION = "{}";\n'.format(framework_version)
         )
-        fid.write('static const char* PROJECT_VERSION = "{}";\n'.format(project_version))
+        fid.write(
+            'static const char* PROJECT_VERSION = "{}";\n'.format(project_version)
+        )
         fid.write("\n")
         fid.write("#endif\n")
         fid.write("\n")
         # TODO: add library versions to this file
 
 
-def create_version_files_raw_txt(output_dir, framework_version, project_version, lib_versions):
+def create_version_files_raw_txt(
+    output_dir, framework_version, project_version, lib_versions
+):
     """
     Create the version files using the provided name and path.
     """
@@ -100,7 +104,9 @@ def main():
     project_version = get_project_version()
     lib_versions = get_library_versions()
     create_version_file(args.output_dir, fprime_version, project_version)
-    create_version_files_raw_txt(args.output_dir, fprime_version, project_version, lib_versions)
+    create_version_files_raw_txt(
+        args.output_dir, fprime_version, project_version, lib_versions
+    )
 
     # Check version if asked to do so
     if args.check and not fprime_version.startswith(FALLBACK_VERSION):

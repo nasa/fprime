@@ -73,7 +73,7 @@ def main():
         libraries_version,
         "--imports",
         args.i,
-        *args.sources
+        *args.sources,
     ]
 
     subprocess.Popen(
