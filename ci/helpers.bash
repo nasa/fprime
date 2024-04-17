@@ -31,19 +31,24 @@ function fail_and_stop()
     echo -e "${RED}---------------- ERROR ----------------" 1>&2
     echo    "${1}" 1>&2
     echo -e "---------------------------------------${NOCOLOR}" 1>&2
+
+    # Look for an stderr log which is not empty
     LASTLOG_ERR=$(ls -td $(find "${LOG_DIR}" -name "*err.log" -type f) | head -1)
 
     if [ -f "${LASTLOG_ERR}" ]
     then
+        # Check if a related stdout log exist
         LASTLOG_OUT="${LASTLOG_ERR::-7}out.log" 1>&2
 
         if [ -f "${LASTLOG_OUT}" ]
         then
+            # Display stdout log
             echo -e "${RED}---------------- STDOUT ---------------${NOCOLOR}" 1>&2
             cat "${LASTLOG_OUT}" 1>&2
             echo -e "${RED}---------------------------------------${NOCOLOR}" 1>&2
         fi
 
+        # Display stderr log
         echo -e "${RED}---------------- STDOUT ---------------${NOCOLOR}" 1>&2
         cat "${LASTLOG_ERR}" 1>&2
         echo -e "${RED}---------------------------------------${NOCOLOR}" 1>&2
