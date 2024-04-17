@@ -13,15 +13,18 @@ find_program(FPUTIL NAMES fprime-util)
 
 locate_fpp_tools()
 
-set(TO_INSTALL_MESSAGE "Install with:\n  'pip install -r \"${FPRIME_FRAMEWORK_PATH}/requirements.txt\"'")
-
+set(FRAGMENT "pip install -r \"${FPRIME_FRAMEWORK_PATH}/requirements.txt\"")
+set(TO_INSTALL_MESSAGE "Install with:\n  '${FRAGMENT}'")
+set(TO_REINSTALL "Reinstall with:\n  '${FRAGMENT} -U --force-reinstall'")
 # Check python was found
 if (NOT FPUTIL)
     message(FATAL_ERROR " fprime-util was not found. ${TO_INSTALL_MESSAGE}")
 elseif (NOT PYTHON)
     message(FATAL_ERROR " python3 was not found. Please see: https://www.python.org/downloads/")
 elseif (DEFINED FPP_ERROR_MESSAGE)
-    message(FATAL_ERROR " ${FPP_ERROR_MESSAGE}. ${TO_INSTALL_MESSAGE}")
+    message(FATAL_ERROR " ${FPP_ERROR_MESSAGE}")
+elseif (DEFINED FPP_REINSTALL_ERROR_MESSAGE)
+    message(FATAL_ERROR " ${FPP_REINSTALL_ERROR_MESSAGE}. ${TO_REINSTALL}")
 elseif(NOT FPP_FOUND)
     message(FATAL_ERROR " fpp tools not found. ${TO_INSTALL_MESSAGE}")
 endif()
