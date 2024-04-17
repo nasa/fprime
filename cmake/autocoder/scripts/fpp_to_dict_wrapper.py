@@ -54,6 +54,7 @@ def main():
     )
     args = parser.parse_args()
 
+    # Read versions from files
     with open(args.projectVersionFile, "r") as file:
         project_version = file.read().strip()
     with open(args.frameworkVersionFile, "r") as file:
@@ -69,8 +70,7 @@ def main():
         project_version,
         "--frameworkVersion",
         framework_version,
-        "--libraryVersions",
-        libraries_version,
+        *(["--libraryVersions", libraries_version] if libraries_version else []),
         "--imports",
         args.i,
         *args.sources,
