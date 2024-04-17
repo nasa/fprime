@@ -49,7 +49,7 @@ function fail_and_stop()
         fi
 
         # Display stderr log
-        echo -e "${RED}---------------- STDOUT ---------------${NOCOLOR}" 1>&2
+        echo -e "${RED}---------------- STDERR ---------------${NOCOLOR}" 1>&2
         cat "${LASTLOG_ERR}" 1>&2
         echo -e "${RED}---------------------------------------${NOCOLOR}" 1>&2
 
