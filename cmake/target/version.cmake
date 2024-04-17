@@ -1,20 +1,28 @@
 ####
 # cmake/target/version.cmake:
 #
-# A basic versioning target which will produce the version.hpp file.
+# A basic versioning target which will produce the version files.
 ####
 set(FPRIME_VERSION_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/version/generate_version_header.py" CACHE PATH "Script used to generate version.hpp")
 
 function(version_add_global_target TARGET)
-    set(OUTPUT_FILE "${CMAKE_BINARY_DIR}/version.hpp")
+    set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/versions")
+    file(MAKE_DIRECTORY ${OUTPUT_DIR})
+    # TODO: change output file thing
+    set(OUTPUT_FILE "${OUTPUT_DIR}/version.hpp")
     # Add check argument when requested
     set(OPTIONAL_CHECK_ARG)
+    string(REGEX REPLACE ";" ":"  FPRIME_LIBRARY_LOCATIONS_CSV "${FPRIME_LIBRARY_LOCATIONS}")
     if (FPRIME_CHECK_FRAMEWORK_VERSION)
         set(OPTIONAL_CHECK_ARG "--check")
     endif()
     add_custom_target("${TARGET}" ALL BYPRODUCTS "${OUTPUT_FILE}"
-        COMMAND "${CMAKE_COMMAND}" -E env "PYTHONPATH=${PYTHONPATH}:${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/src"
-            "${FPRIME_VERSION_SCRIPT}" "${OUTPUT_FILE}.tmp" "${OPTIONAL_CHECK_ARG}"
+        COMMAND "${CMAKE_COMMAND}" 
+            -E env "PYTHONPATH=${PYTHONPATH}:${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/src" 
+                    "FPRIME_PROJECT_ROOT=${FPRIME_PROJECT_ROOT}"
+                    "FPRIME_FRAMEWORK_PATH=${FPRIME_FRAMEWORK_PATH}"
+                    "FPRIME_LIBRARY_LOCATIONS=${FPRIME_LIBRARY_LOCATIONS_CSV}"
+            "${FPRIME_VERSION_SCRIPT}" "${OUTPUT_DIR}" "${OPTIONAL_CHECK_ARG}"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_FILE}.tmp" "${OUTPUT_FILE}"
         WORKING_DIRECTORY "${FPRIME_PROJECT_ROOT}"
     )

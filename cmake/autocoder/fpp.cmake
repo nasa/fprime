@@ -7,6 +7,7 @@
 include_guard()
 include(utilities)
 include(autocoder/helpers)
+set(FPRIME_FPP_TO_DICT_WRAPPER "${CMAKE_CURRENT_LIST_DIR}/scripts/fpp_to_dict_wrapper.py" CACHE PATH "Wrapper script to call fpp-to-dict with complex inputs")
 
 autocoder_setup_for_multiple_sources()
 ####
@@ -241,16 +242,17 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     if (GENERATED_DICT)
         set(FPRIME_CURRENT_DICTIONARY_FILE_JSON "${GENERATED_DICT}" CACHE INTERNAL "" FORCE)
         set(LIBRARY_FLAG)
-        if (FPRIME_LIBRARY_LOCATIONS)
-            # TODO: add version number
-            set(LIBRARY_FLAG "-l" "${FPRIME_LIBRARY_LOCATIONS}")
-        endif()
+        set(FPRIME_PROJECT_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.project")
+        set(FPRIME_FRAMEWORK_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.framework")
+        set(FPRIME_LIBRARIES_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.libraries")
         add_custom_command(
             OUTPUT ${GENERATED_DICT}
-            COMMAND ${FPP_TO_DICT} 
-                "-d" "${CMAKE_CURRENT_BINARY_DIR}" 
-                "-p" "${CMAKE_PROJECT_VERSION}" # cmake project version is not git version - should get that instead?
-                ${LIBRARY_FLAG}
+            COMMAND ${FPRIME_FPP_TO_DICT_WRAPPER}
+                "--executable" "${FPP_TO_DICT}"
+                "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}" 
+                "--projectVersionFile" "${FPRIME_PROJECT_VERSION_FILE}"
+                "--frameworkVersionFile" "${FPRIME_FRAMEWORK_VERSION_FILE}"
+                "--libraryVersionFile" "${FPRIME_LIBRARIES_VERSION_FILE}"
                 ${IMPORTS} ${AC_INPUT_FILES}
             DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )

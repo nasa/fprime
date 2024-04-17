@@ -12,7 +12,7 @@
 
 #include <cmath>  //isnan()
 #include <Svc/SystemResources/SystemResources.hpp>
-#include <version.hpp>
+#include <versions/version.hpp>
 #include <FpConfig.hpp>
 
 namespace Svc {
