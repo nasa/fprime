@@ -7,9 +7,9 @@ set(FPRIME_VERSION_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/version/generate_version_he
 
 function(version_add_global_target TARGET)
     set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/versions")
+    set(OUTPUT_HPP "${OUTPUT_DIR}/version.hpp")
+    set(OUTPUT_FILES "${OUTPUT_HPP}" "${OUTPUT_DIR}/version.project" "${OUTPUT_DIR}/version.framework" "${OUTPUT_DIR}/version.libraries")
     file(MAKE_DIRECTORY ${OUTPUT_DIR})
-    # TODO: change output file thing
-    set(OUTPUT_FILE "${OUTPUT_DIR}/version.hpp")
     # Add check argument when requested
     set(OPTIONAL_CHECK_ARG)
     string(REGEX REPLACE ";" ":"  FPRIME_LIBRARY_LOCATIONS_CSV "${FPRIME_LIBRARY_LOCATIONS}")
@@ -23,7 +23,7 @@ function(version_add_global_target TARGET)
                     "FPRIME_FRAMEWORK_PATH=${FPRIME_FRAMEWORK_PATH}"
                     "FPRIME_LIBRARY_LOCATIONS=${FPRIME_LIBRARY_LOCATIONS_CSV}"
             "${FPRIME_VERSION_SCRIPT}" "${OUTPUT_DIR}" "${OPTIONAL_CHECK_ARG}"
-        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_FILE}.tmp" "${OUTPUT_FILE}"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_HPP}.tmp" "${OUTPUT_FILES}"
         WORKING_DIRECTORY "${FPRIME_PROJECT_ROOT}"
     )
 endfunction()
