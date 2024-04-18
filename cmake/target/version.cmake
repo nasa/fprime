@@ -16,14 +16,14 @@ function(version_add_global_target TARGET)
     if (FPRIME_CHECK_FRAMEWORK_VERSION)
         set(OPTIONAL_CHECK_ARG "--check")
     endif()
-    add_custom_target("${TARGET}" ALL BYPRODUCTS "${OUTPUT_FILE}"
+    add_custom_target("${TARGET}" ALL BYPRODUCTS "${OUTPUT_FILES}"
         COMMAND "${CMAKE_COMMAND}" 
             -E env "PYTHONPATH=${PYTHONPATH}:${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/src" 
                     "FPRIME_PROJECT_ROOT=${FPRIME_PROJECT_ROOT}"
                     "FPRIME_FRAMEWORK_PATH=${FPRIME_FRAMEWORK_PATH}"
                     "FPRIME_LIBRARY_LOCATIONS=${FPRIME_LIBRARY_LOCATIONS_CSV}"
             "${FPRIME_VERSION_SCRIPT}" "${OUTPUT_DIR}" "${OPTIONAL_CHECK_ARG}"
-        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_HPP}.tmp" "${OUTPUT_FILES}"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_HPP}.tmp" "${OUTPUT_HPP}"
         WORKING_DIRECTORY "${FPRIME_PROJECT_ROOT}"
     )
 endfunction()
