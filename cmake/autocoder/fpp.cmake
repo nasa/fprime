@@ -241,9 +241,6 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     # Add in dictionary generation
     if (GENERATED_DICT)
         set(FPRIME_CURRENT_DICTIONARY_FILE_JSON "${GENERATED_DICT}" CACHE INTERNAL "" FORCE)
-        message(STATUS "[DEBUG] Dictionary file: ${FPRIME_CURRENT_DICTIONARY_FILE_JSON}")
-        message(STATUS "[DEBUG] Install prefix : ${CMAKE_INSTALL_PREFIX}")
-        message(STATUS "[DEBUG] CMake bin dir: ${CMAKE_CURRENT_BINARY_DIR}")
         set(LIBRARY_FLAG)
         set(FPRIME_PROJECT_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.project")
         set(FPRIME_FRAMEWORK_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.framework")
@@ -257,7 +254,11 @@ function(fpp_setup_autocode AC_INPUT_FILES)
                 "--frameworkVersionFile" "${FPRIME_FRAMEWORK_VERSION_FILE}"
                 "--libraryVersionFile" "${FPRIME_LIBRARIES_VERSION_FILE}"
                 ${IMPORTS} ${AC_INPUT_FILES}
-            DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES} ${FPRIME_PROJECT_VERSION_FILE} ${FPRIME_FRAMEWORK_VERSION_FILE} ${FPRIME_LIBRARIES_VERSION_FILE}
+            DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES} 
+                    ${FPRIME_PROJECT_VERSION_FILE}
+                    ${FPRIME_FRAMEWORK_VERSION_FILE}
+                    ${FPRIME_LIBRARIES_VERSION_FILE}
+                    version
         )
 endif()
     set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP} ${GENERATED_DICT})

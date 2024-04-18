@@ -77,10 +77,7 @@ def main():
     ]
     print(cmd_args)
 
-    return subprocess.call(
-        args=cmd_args
-    )
-
+    return subprocess.call(args=cmd_args)
 
 
 if __name__ == "__main__":
