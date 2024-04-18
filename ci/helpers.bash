@@ -38,7 +38,7 @@ function fail_and_stop()
     if [ -f "${LASTLOG_ERR}" ]
     then
         # Check if a related stdout log exist
-        LASTLOG_OUT="${LASTLOG_ERR::-7}out.log" 1>&2
+        LASTLOG_OUT="${LASTLOG_ERR::-7}out.log"
 
         if [ -f "${LASTLOG_OUT}" ]
         then
