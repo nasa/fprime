@@ -77,11 +77,10 @@ def main():
     ]
     print(cmd_args)
 
-    subprocess.Popen(
+    return subprocess.call(
         args=cmd_args
     )
 
-    return 0
 
 
 if __name__ == "__main__":
