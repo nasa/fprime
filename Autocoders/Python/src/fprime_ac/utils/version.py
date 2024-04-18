@@ -71,5 +71,4 @@ def get_library_versions(fallback=FALLBACK_VERSION):
         lib_versions[library_name] = get_version_str(
             working_dir=library, fallback=fallback
         )
-
     return lib_versions

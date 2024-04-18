@@ -69,7 +69,6 @@ def create_version_files_raw_txt(
     framework_file = Path(output_dir) / "version.framework"
     project_file = Path(output_dir) / "version.project"
     lib_file = Path(output_dir) / "version.libraries"
-    print(str(framework_file))
 
     with open(framework_file, "w") as file:
         file.write(framework_version)
