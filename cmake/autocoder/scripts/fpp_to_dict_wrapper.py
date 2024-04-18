@@ -75,11 +75,10 @@ def main():
         args.i,
         *args.sources,
     ]
+    print(cmd_args)
 
     subprocess.Popen(
-        args=cmd_args,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        args=cmd_args
     )
 
     return 0
