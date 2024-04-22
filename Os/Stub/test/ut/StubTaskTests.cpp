@@ -29,6 +29,18 @@ public:
     }
 };
 
+struct QuickRegistry : Os::TaskRegistry {
+
+    void addTask(Os::Task* task) override {
+        this->m_task = task;
+    }
+
+    void removeTask(Os::Task* task) override {
+        this->m_task = nullptr;
+    }
+    Os::Task* m_task = nullptr;
+};
+
 
 // Ensure that Os::Task properly calls the implementation constructor
 TEST_F(Interface, Construction) {
@@ -63,9 +75,10 @@ TEST_F(Interface, StartOptionalArguments) {
 // Ensure that Os::Task properly calls the implementation onStart before calling start
 TEST_F(Interface, OnStart) {
     Os::Task task;
-
-    //TODO:
     StaticData::data.startStatus = Os::Task::Status::UNKNOWN_ERROR;
+    Os::Task::Arguments arguments(Fw::String("Task"), &testMethod, nullptr);
+    ASSERT_EQ(task.start(arguments), StaticData::data.startStatus);
+
 }
 
 // Ensure that Os::Task properly calls the implementation suspend
@@ -110,7 +123,14 @@ TEST_F(Interface, Delay) {
 
 // Ensure that Os::Task properly calls the registry removal function
 TEST_F(Interface, RegistryRemove) {
-    Os::Task task;
+    QuickRegistry registry;
+    Os::Task::registerTaskRegistry(&registry);
+    Os::Task* task = new Os::Task;
+    ASSERT_EQ(registry.m_task, task);
+    delete task;
+    ASSERT_EQ(registry.m_task, nullptr);
+
+
 }
 
 int main(int argc, char **argv) {
