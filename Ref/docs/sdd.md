@@ -26,7 +26,6 @@ It interconnects those application components with reusable service components:
 |FileDownlink|Component to downlink files to ground system| [SDD](../../Svc/FileDownlink/docs/sdd.md)|
 |FileManager|Component to perform various file operations| [SDD](../../Svc/FileManager/docs/sdd.md)|
 |FileUplink|Component to receive uplinked files from ground system| [SDD](../../Svc/FileUplink/docs/sdd.md)|
-|FPManager|Component to handle fatal events| [SDD](../../Svc/FatalHandler/docs/sdd.md)|
 |Health|Pings active components in the topology to verify their aliveness| [SDD](../../Svc/Health/docs/sdd.md)|
 |PrmDb|Loads sets of parameters from storage at startup and provides them to components| [SDD](../../Svc/PrmDb/docs/sdd.md)|
 |RateGroupDriver|Sends messages to ActiveRateGroup instances to run a cycle| [SDD](../../Svc/RateGroupDriver/docs/sdd.md)|
