@@ -27,6 +27,7 @@ fprime-fpp-locate-defs==2.1.0a9
 fprime-fpp-locate-uses==2.1.0a9
 fprime-fpp-syntax==2.1.0a9
 fprime-fpp-to-cpp==2.1.0a9
+fprime-fpp-to-dict==2.1.0a9
 fprime-fpp-to-json==2.1.0a9
 fprime-fpp-to-xml==2.1.0a9
 fprime-gds==3.4.3
