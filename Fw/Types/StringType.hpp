@@ -20,48 +20,48 @@
 #endif
 
 namespace Fw {
-    class StringBase : public Serializable {
-        public:
-            using SizeType = NATIVE_UINT_TYPE;
-            virtual const CHAR* toChar() const = 0; //<! Convert to a C-style char*
-            virtual SizeType getCapacity() const = 0; //!< return size of buffer
-            SizeType length() const;  //!< Get length of string
+class StringBase : public Serializable {
+  public:
+    using SizeType = NATIVE_UINT_TYPE;
+    virtual const CHAR* toChar() const = 0;    //<! Convert to a C-style char*
+    virtual SizeType getCapacity() const = 0;  //!< return size of buffer
+    SizeType length() const;                   //!< Get length of string
 
-            const CHAR* operator+=(const CHAR* src); //!< Concatenate a CHAR*
-            const StringBase& operator+=(const StringBase& src); //!< Concatenate a StringBase
-            bool operator==(const StringBase& other) const; //!< Check for equality with StringBase
-            bool operator==(const CHAR* other) const; //!< Check for equality with CHAR*
-            bool operator!=(const StringBase& other) const; //!< Inequality with StringBase
-            bool operator!=(const CHAR* other) const; //!< Inequality with CHAR*
-            StringBase& operator=(const CHAR* src); //!< Assign CHAR*
-            StringBase& operator=(const StringBase& src); //!< Assign another StringBase
+    const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*
+    const StringBase& operator+=(const StringBase& src);  //!< Concatenate a StringBase
+    bool operator==(const StringBase& other) const;       //!< Check for equality with StringBase
+    bool operator==(const CHAR* other) const;             //!< Check for equality with CHAR*
+    bool operator!=(const StringBase& other) const;       //!< Inequality with StringBase
+    bool operator!=(const CHAR* other) const;             //!< Inequality with CHAR*
+    StringBase& operator=(const CHAR* src);               //!< Assign CHAR*
+    StringBase& operator=(const StringBase& src);         //!< Assign another StringBase
 
-            void format(const CHAR* formatString, ...); //!< write formatted string to buffer
+    void format(const CHAR* formatString, ...);  //!< write formatted string to buffer
 
-            virtual SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialization function
-            virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const; //!< serialization function
-            virtual SerializeStatus deserialize(SerializeBufferBase& buffer); //!< deserialization function
+    virtual SerializeStatus serialize(SerializeBufferBase& buffer) const;                   //!< serialization function
+    virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;  //!< serialization function
+    virtual SerializeStatus deserialize(SerializeBufferBase& buffer);  //!< deserialization function
 
 #ifdef BUILD_UT
-            // to support GoogleTest framework in unit tests
-            friend std::ostream& operator<<(std::ostream& os, const StringBase& str);
+    // to support GoogleTest framework in unit tests
+    friend std::ostream& operator<<(std::ostream& os, const StringBase& str);
 #endif
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
-            void toString(StringBase& text) const; //!< write string with contents
+    void toString(StringBase& text) const;  //!< write string with contents
 #endif
 
-        protected:
-            StringBase();
-            virtual ~StringBase();
+  protected:
+    StringBase();
+    virtual ~StringBase();
 
-            void appendBuff(const CHAR* buff, SizeType size);
+    void appendBuff(const CHAR* buff, SizeType size);
 
-        private:
-            // A no-implementation copy constructor here will prevent the default copy constructor from being called
-            // accidentally, and without an implementation it will create an error for the developer instead.
-            StringBase(const StringBase &src); //!< constructor with buffer as source
-    };
+  private:
+    // A no-implementation copy constructor here will prevent the default copy constructor from being called
+    // accidentally, and without an implementation it will create an error for the developer instead.
+    StringBase(const StringBase& src);  //!< constructor with buffer as source
+};
 
-}
+}  // namespace Fw
 
 #endif

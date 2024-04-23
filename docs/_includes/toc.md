@@ -103,4 +103,5 @@
 <h4><a href="/fprime/Design/general.html">How-To Guides</a></h4>
   <ul>
     <li><a href="/fprime/HowTo/develop-gds-plugins.html">F´ GDS Plugin Development</a></li>
+    <li><a href="/fprime/HowTo/develop-fprime-libraries.html">F´ Library Development</a></li>
   </ul>

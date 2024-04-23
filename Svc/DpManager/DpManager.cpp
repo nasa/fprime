@@ -52,7 +52,7 @@ void DpManager::productSendIn_handler(const NATIVE_INT_TYPE portNum, FwDpIdType 
     this->productSendOut_out(portNum, sendBuffer);
 }
 
-void DpManager::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+void DpManager::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     // Emit telemetry
     this->tlmWrite_NumSuccessfulAllocations(this->numSuccessfulAllocations);
     this->tlmWrite_NumFailedAllocations(this->numFailedAllocations);

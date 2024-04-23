@@ -94,6 +94,7 @@ BUFFERALLOCATIONFAILED
 BUFFERGETOUT
 BUFFERMANAGERCOMPONENTIMPLCFG
 BUFFERMGR
+BUFFERTOOSMALLFORPACKET
 BUFFQUEUEIN
 buffsize
 BUGLIST
@@ -220,7 +221,7 @@ DDDTHH
 ddl
 ddmm
 dealloc
-Debian
+debian
 deconstructor
 Deerin
 defaultgen
@@ -267,6 +268,7 @@ doxyindexer
 doxyrules
 doxysearch
 Doxywizard
+DPCFG
 dpi
 DPMANAGER
 DPWRITER
@@ -330,6 +332,7 @@ fadvise
 FAKELOGGER
 fallocate
 fbuild
+fdp
 fdset
 FEEDNAME
 ffff
@@ -338,8 +341,11 @@ filedown
 FILEDOWNLINK
 FILEDOWNLINKCFG
 FILEID
+FILENAMESTRING
 fileopen
+FILEOPENERROR
 FILESTUBS
+FILEWRITEERROR
 fio
 Firefox
 FLDP
@@ -481,6 +487,9 @@ integertypename
 interoperate
 intlimits
 inttype
+INVALIDBUFFER
+INVALIDHEADER
+INVALIDHEADERHASH
 invisi
 ioc
 ioctl
@@ -604,6 +613,7 @@ MML
 modbus
 MOSI
 MOVEFILE
+mozilla
 mqd
 mqueue
 Mrf
@@ -776,6 +786,7 @@ PRMDBIMPLTESTER
 PRMDBLIMPLCFG
 prmname
 probs
+PROCBUFFERSENDOUT
 PRODUCTGETIN
 PRODUCTREQUESTIN
 PRODUCTRESPONSEOUT
@@ -930,6 +941,7 @@ sloc
 smallsat
 Smath
 SNDTIMEO
+socio
 SOCKETHELPER
 SOCKETIPDRIVER
 SOCKETREADTASK
@@ -1163,6 +1175,7 @@ worklist
 wrs
 wsl
 wxgui
+wxy
 Xabcdefx
 xapian
 xdf
