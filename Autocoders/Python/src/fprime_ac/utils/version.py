@@ -57,7 +57,7 @@ def get_project_version(fallback=FALLBACK_VERSION):
     return get_version_str(working_dir=fprime_directory, fallback=fallback)
 
 
-def get_library_versions(fallback=FALLBACK_VERSION):
+def get_library_versions(fallback=FALLBACK_VERSION) -> dict:
     """Calculate the versions of each libraries.
     Return a dictionary with the library name as key and the version as value
     """

@@ -241,23 +241,16 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     # Add in dictionary generation
     if (GENERATED_DICT)
         set(FPRIME_CURRENT_DICTIONARY_FILE_JSON "${GENERATED_DICT}" CACHE INTERNAL "" FORCE)
-        set(LIBRARY_FLAG)
-        set(FPRIME_PROJECT_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.project")
-        set(FPRIME_FRAMEWORK_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.framework")
-        set(FPRIME_LIBRARIES_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.libraries")
+        set(FPRIME_JSON_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.json")
         add_custom_command(
             OUTPUT ${GENERATED_DICT}
             COMMAND ${FPRIME_FPP_TO_DICT_WRAPPER}
                 "--executable" "${FPP_TO_DICT}"
                 "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}" 
-                "--projectVersionFile" "${FPRIME_PROJECT_VERSION_FILE}"
-                "--frameworkVersionFile" "${FPRIME_FRAMEWORK_VERSION_FILE}"
-                "--libraryVersionFile" "${FPRIME_LIBRARIES_VERSION_FILE}"
+                "--jsonVersionFile" "${FPRIME_JSON_VERSION_FILE}"
                 ${IMPORTS} ${AC_INPUT_FILES}
             DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES} 
-                    ${FPRIME_PROJECT_VERSION_FILE}
-                    ${FPRIME_FRAMEWORK_VERSION_FILE}
-                    ${FPRIME_LIBRARIES_VERSION_FILE}
+                    ${FPRIME_JSON_VERSION_FILE}
                     version
         )
 endif()

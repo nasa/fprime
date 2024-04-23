@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 """
 # ===============================================================================
-# NAME: generate_version_header.py
+# NAME: generate_version_info.py
 #
-# DESCRIPTION:  Creates a version header file of specified name.
-#               It takes as input a filename and creates a header file
-#               with a constant string which is the git hash of the current version
+# DESCRIPTION:  Creates a version.hpp and version.json file with version informations
 #
-# USAGE: ./generate_version_header.py /path/tofile/version.hpp
+# USAGE: ./generate_version_info.py /path/to/outdir/
 #
 # AUTHOR: sfregoso
 # EMAIL:  sfregoso@jpl.nasa.gov
@@ -20,6 +18,7 @@
 import argparse
 import os
 import sys
+import json
 from pathlib import Path
 
 from fprime_ac.utils.version import (
@@ -30,7 +29,7 @@ from fprime_ac.utils.version import (
 )
 
 
-def create_version_file(output_dir, framework_version, project_version):
+def create_version_file_hpp(output_dir, framework_version, project_version):
     """
     Create the version file using the provided name and path.
     """
@@ -54,29 +53,29 @@ def create_version_file(output_dir, framework_version, project_version):
         fid.write(
             'static const char* PROJECT_VERSION = "{}";\n'.format(project_version)
         )
+        fid.write("static const char* LIBRARY_VERSIONS[] = {\n")
+        for lib, version in get_library_versions().items():
+            fid.write(f'    "{lib}@{version}",\n')
+        fid.write("};\n")
         fid.write("\n")
         fid.write("#endif\n")
         fid.write("\n")
-        # TODO: add library versions to this file
 
 
-def create_version_files_raw_txt(
-    output_dir, framework_version, project_version, lib_versions
+def create_version_file_json(
+    output_dir: str, framework_version: str, project_version: str, lib_versions: dict
 ):
     """
     Create the version files using the provided name and path.
     """
-    framework_file = Path(output_dir) / "version.framework"
-    project_file = Path(output_dir) / "version.project"
-    lib_file = Path(output_dir) / "version.libraries"
-
-    with open(framework_file, "w") as file:
-        file.write(framework_version)
-    with open(project_file, "w") as file:
-        file.write(project_version)
-    with open(lib_file, "w") as file:
-        for lib, version in lib_versions.items():
-            file.write(f"{lib}@{version},")
+    json_file = Path(output_dir) / "version.json.tmp"
+    json_obj = {
+        "framework": framework_version,
+        "project": project_version,
+        "libraries": lib_versions,
+    }
+    with open(json_file, "w") as file:
+        json.dump(json_obj, file)
 
 
 def main():
@@ -102,8 +101,8 @@ def main():
     fprime_version = get_fprime_version()
     project_version = get_project_version()
     lib_versions = get_library_versions()
-    create_version_file(args.output_dir, fprime_version, project_version)
-    create_version_files_raw_txt(
+    create_version_file_hpp(args.output_dir, fprime_version, project_version)
+    create_version_file_json(
         args.output_dir, fprime_version, project_version, lib_versions
     )
 
