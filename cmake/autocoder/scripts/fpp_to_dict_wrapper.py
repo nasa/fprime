@@ -45,28 +45,34 @@ def main():
     )
     args = parser.parse_args()
 
-    # Read versions from file
     with open(args.jsonVersionFile, "r") as file:
-        json_version = json.load(file)
+        versions = json.load(file)
+
     # Parses library versions into a string to input to fpp-to-dict
     libs_str = ",".join(
-        f"{lib}@{version}" for lib, version in json_version.get("libraries", {}).items()
+        f"{lib}@{version}" for lib, version in versions.get("libraries", {}).items()
     )
+    if (
+        versions.get("framework_version", None) is None
+        or versions.get("project_version", None) is None
+    ):
+        raise ValueError(
+            f"{args.jsonVersionFile} is missing 'framework_version' or 'project_version'"
+        )
 
     cmd_args = [
         args.executable,
         "--directory",
         args.cmake_bin_dir,
         "--projectVersion",
-        json_version.get("project", "0.0.0"),
+        versions.get("project_version"),
         "--frameworkVersion",
-        json_version.get("framework", "0.0.0"),
+        versions.get("framework_version"),
         *(["--libraryVersions", libs_str] if libs_str else []),  # "" unpacks nothing
         "--imports",
         args.i,
         *args.sources,
     ]
-    print(cmd_args)
 
     return subprocess.call(args=cmd_args)
 
