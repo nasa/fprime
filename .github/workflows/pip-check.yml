@@ -4,10 +4,9 @@
 name: Python Dependency Check
 
 on:
-  push: 
-    branches: [ pr/** ]
-    # paths:
-    #   - 'requirements.txt'
+  push:
+    paths:
+      - 'requirements.txt'
   pull_request:
     paths:
       - 'requirements.txt'
