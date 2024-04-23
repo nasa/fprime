@@ -16,7 +16,7 @@ without needing to convert everything.
 
 `fpp-from-xml` is a tool included with the FPP tool suit to help convert from XML to FPP.  Further information on the
 FPP tool suite and FPP in general can be found at:
-[https://fprime-community.github.io/fpp/fpp-users-guide.html](https://fprime-community.github.io/fpp/fpp-users-guide.html)
+[https://nasa.github.io/fpp/fpp-users-guide.html](https://nasa.github.io/fpp/fpp-users-guide.html)
 
 ## Topology Changes
 
