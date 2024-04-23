@@ -50,10 +50,6 @@ When a call to the `Run()` interface is called, the packet writes are locked and
 
 #### 3.3.1 External User Option
 
-This diagram shows the scenario where telemetry channels are written to packets:
-
-> TODO
-
 ### 3.4 State
 
 `Svc::TlmPacketizer` has no state machines.
