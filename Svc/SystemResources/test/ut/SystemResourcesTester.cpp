@@ -116,6 +116,9 @@ void SystemResourcesTester ::test_tlm(bool enabled) {
                 if (enabled) {
                     ASSERT_TLM_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
                     ASSERT_TLM_PROJECT_VERSION(0, PROJECT_VERSION);
+                    if (LIBRARY_VERSIONS[0] != nullptr) {
+                        // TODO: test library versions tlm
+                    }
                 }
                 ASSERT_TLM_SIZE((enabled) ? (count + 3) : 0); // CPU count channels + avg + 2 ver
                 break;
