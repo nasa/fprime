@@ -22,8 +22,8 @@ for use as a demo or to help debug issues that come up when going through the tu
 
 ## Prerequisites
 
-This tutorial assumes the user has gone through and understood [Getting Started Tutorial](../HelloWorld/Tutorial.md)
-and [MathComponent Tutorial](../MathComponent/Tutorial.md)
+This tutorial assumes the user has gone through and understood [HelloWorld Tutorial](../README.md)
+and [MathComponent Tutorial](../README.md)
 
 This tutorial requires the user to have some basic software skills and have installed F´. The prerequisite skills to
 understand this tutorial are as follows:
@@ -35,7 +35,7 @@ understand this tutorial are as follows:
 
 Installation can be done by following the installation guide found at: [INSTALL.md](../../INSTALL.md). This guide
 will walk the user through the installation process and verify the installation. In addition, users may wish to
-follow the [Getting Started Tutorial](../HelloWorld/Tutorial.md) in order to get a feel for the F´ environment and
+follow the [HelloWorld Tutorial](../README.md) in order to get a feel for the F´ environment and
 tools.
 
 ## Creating a Custom F´ Component
@@ -56,8 +56,8 @@ diagram captures the ports needed for our desired functionality.
 The F’ designs are specified by XML files that are processed by code generators to create C++ source and header files.
 An XML file represents a single entity in the F´ system (Component, Port, Serializable, or Deployment). Command, Event,
 and Telemetry Channel specifications are also written in XML.  Further information is in the full F´ user guide.
-[User Guide](../../UsersGuide/FprimeUserGuide.pdf). This application does not need any custom ports, as we are using the
-standard ports to create our GPS handler. Custom ports can be seen in the [Math Component Tutorial](../MathComponent/Tutorial.md).
+[User Guide](https://nasa.github.io/fprime/UsersGuide/guide.html). This application does not need any custom ports, as we are using the
+standard ports to create our GPS handler. Custom ports can be seen in the [Math Component Tutorial](../README.md).
 
 In this section, we will create a directory for our GPS component, and design the component through XML. The first step in making the component is to make a project directory to hold our project, and a component subdirectory for our GPS.
 
@@ -853,12 +853,12 @@ which represents our software.
 Sample versions of these files are provided below and are annotated with comments representing the changes
 made to support the Gps Application. **Note:** These files are available in a working repository at:
 [https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application)
-in case the user prefers a direct checkout of working code.  The files are linked below:
+in case the user prefers a direct checkout of working code.  The files are listed below:
 
-1. [Top/GpsAppTopologyAi.xml](GpsApp/Top/GpsAppTopologyAppAi.xml)
-2. [Top/Components.hpp](GpsApp/Top/Components.hpp)
-3. [Top/Topology.cpp](GpsApp/Top/Topology.cpp)
-4. [Top/Main.cpp](GpsApp/Top/Main.cpp)
+1. `GpsApp/Top/GpsAppTopologyAi.xml`
+2. `GpsApp/Top/Components.hpp`
+3. `GpsApp/Top/Topology.cpp`
+4. `GpsApp/Top/Main.cpp`
 
 
 We will also need to update the `CMakeLists.txt` in the `Top` directory to change the name of "RefTopologyAppAi.xml" to
@@ -902,7 +902,7 @@ If you see output similar to the following, when running with the USB GPS you ha
 development of our tutorial. We'll discuss how to cross compile for the Raspberry PI and run on the Raspberry pi next.
 
 Once the ground system loads in the user's browser, the user can start seeing what the software is doing. If it doesn't
-load, then the user should go navigate to: https://localhost:5000.
+load, then the user should go navigate to: `https://localhost:5000`.
 
 First, click on the "Channels" tab at the top. The user should at least see the "rateGroup1Comp.RgMaxTime" channel. If
 the GPS is working and has lock, then the user should see the GPS channels as well. This is seen below.  Later we will

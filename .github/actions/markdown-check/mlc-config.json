@@ -1,0 +1,23 @@
+{
+    "ignorePatterns": [
+      {
+        "pattern": "^(https?://)?localhost"
+      },
+      {
+        "pattern": "https://www.raspberrypi.com/documentation/computers/configuration.html"
+      },
+      {
+        "pattern": "https://en.wikipedia.org/wiki/"
+      }
+    ],
+    "replacementPatterns": [
+      {
+        "pattern": "^[./]*api/cmake/",
+        "replacement": "https://nasa.github.io/fprime/UsersGuide/api/cmake/"
+      },
+      {
+        "pattern": "^[./]*api/c\\+\\+/",
+        "replacement": "https://nasa.github.io/fprime/UsersGuide/api/c++/"
+      }
+    ]
+}
