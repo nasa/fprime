@@ -48,16 +48,13 @@ def create_version_file_hpp(output_dir, framework_version, project_version):
         fid.write(f'static const char* FRAMEWORK_VERSION = "{framework_version}";\n')
         fid.write(f'static const char* PROJECT_VERSION = "{project_version}";\n')
         lib_versions = get_library_versions()
-        # TODO: LIBRARY_VERSIONS is unused for now - remove the unused attribute when used in Version component
-        fid.write("static const char* LIBRARY_VERSIONS[] __attribute__((unused)) = {")
+        fid.write("static const char* LIBRARY_VERSIONS[] = {\n")
         if len(lib_versions) == 0:
-            fid.write(' "" };\n')  # Empty string when no libraries are present
+            fid.write("    nullptr\n")  # nullptr when no libraries are present
         else:
-            fid.write("\n")
             for lib_name, version in lib_versions.items():
                 fid.write(f'    "{lib_name}@{version}",\n')
-            fid.write("};\n")
-        fid.write("\n")
+        fid.write("};\n")
         fid.write("#endif\n")
         fid.write("\n")
 
