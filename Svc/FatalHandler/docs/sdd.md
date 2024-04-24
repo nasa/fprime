@@ -23,7 +23,7 @@ FH-002 | The `Svc::FatalHandler` component shall suspend the thread calling FATA
 
 The `Svc::FatalHandler` component has the following component diagram:
 
-![`Svc::CmdDispatcher` Diagram](img/CommandDispatcherBDD.jpg "Svc::CmdDispatcher")
+> TODO
 
 #### 3.1.2 Ports
 
@@ -31,7 +31,7 @@ The `Svc::FatalHandler` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Fatal`](../Fatal/docs/sdd.html) | FatalReceive | Input | Synch | Receive FATAL notifications
+[`Svc::Fatal`](../../Fatal/docs/sdd.md) | FatalReceive | Input | Synch | Receive FATAL notifications
 
 ### 3.2 Functional Description
 
@@ -43,7 +43,7 @@ For Unix variants, it delays for one second before exiting with a segmentation f
 
 The `Svc::FatalHandler` handles FATAL notifications:
 
-![FATAL Notification](img/FatalNotification.jpg) 
+![FATAL Notification](../../Fatal/docs/img/FatalEvent.jpg) 
 
 ### 3.4 State
 
@@ -59,21 +59,9 @@ TBD
 
 ## 4. Module Checklists
 
-Document | Link
--------- | ----
-Design Checklist | [Link](Checklist_Design.xlsx)
-Code Checklist | [Link](Checklist_Code.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
-
 ## 5. Unit Testing
 
-[Unit Test Output](../test/ut/output/test.txt)
-
-[Coverage Summary](../test/ut/output/SvcCmdDispatcher_gcov.txt)
-
-[Coverage Output - `CommandDispatcherImpl.cpp`](../test/ut/output/CommandDispatcherImpl.cpp.gcov)
-
-[Coverage Output - `CommandDispatcherComponentAc.cpp`](../test/ut/output/CommandDispatcherComponentAc.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 6. Change Log
 

@@ -16,7 +16,7 @@ without needing to convert everything.
 
 `fpp-from-xml` is a tool included with the FPP tool suit to help convert from XML to FPP.  Further information on the
 FPP tool suite and FPP in general can be found at:
-[https://fprime-community.github.io/fpp/fpp-users-guide.html](https://fprime-community.github.io/fpp/fpp-users-guide.html)
+[https://nasa.github.io/fpp/fpp-users-guide.html](https://nasa.github.io/fpp/fpp-users-guide.html)
 
 ## Topology Changes
 
@@ -61,7 +61,7 @@ this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 ```c++
 this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 ```
-[source](https://github.com/nasa/fprime/blob/release/v3.0.0/Ref/SignalGen/SignalGen.cpp)
+[source](https://github.com/nasa/fprime/blob/034216bc73ac91e78ba03fda25362050a695a960/Ref/SignalGen/SignalGen.cpp)
 
 The following user-facing enumeration types must be updated.
 
