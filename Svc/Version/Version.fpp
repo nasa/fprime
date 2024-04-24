@@ -6,7 +6,20 @@ module Svc {
         DISABLED = 0
         ENABLED = 1
     }
+    
+    @ An enumeration for version status
+    enum VersionStatus {
+        OK = 0 @< Version was good
+        FAILURE = 1 @< Failure to get version
+    }
 
+    @ Port for setting and getting Versions
+    port Vers(
+             version_id: VersionCfg.VersionEnum @< The entry to access
+             ref version_string: string @< The value to be passed
+             ref status: VersionStatus @< The command response argument
+           )
+    
     passive component Version {
 
         ##############################################################################
@@ -15,6 +28,12 @@ module Svc {
         
         @ Run port
         guarded input port run: [1] Svc.Sched
+       
+        @ Mutexed Port to get values
+        guarded input port getVersion: Svc.Vers
+
+        @ Mutexed Port to set values
+        guarded input port setVersion: Svc.Vers
         
         @ A command to enable or disable Version telemetry
         guarded command ENABLE(
