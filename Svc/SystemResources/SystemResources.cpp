@@ -157,5 +157,9 @@ void SystemResources::Version() {
 
     version_string= PROJECT_VERSION;
     this->tlmWrite_PROJECT_VERSION(version_string);
+
+    if (LIBRARY_VERSIONS[0] != nullptr) {
+        // TODO: telemeter library versions down
+    }
 }
 }  // end namespace Svc
