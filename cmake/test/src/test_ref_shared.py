@@ -81,18 +81,14 @@ def test_ref_dictionary_json(REF_BUILD):
         / "RefTopologyDictionary.json"
     )
     assert output_path.exists(), "Failed to locate Ref JSON Dictionary in build output"
-
-
-def test_ref_version_info(REF_BUILD):
-    """Build Ref and assert version files exist"""
-    cmake.assert_process_success(REF_BUILD)
-    version_hpp = REF_BUILD["build"] / "versions" / "version.hpp"
-    version_json = REF_BUILD["build"] / "versions" / "version.json"
-    assert version_hpp.exists(), "Failed to locate version.hpp in build output"
-    assert version_json.exists(), "Failed to locate version.json in build output"
-    versions_dict = json.loads(version_json.read_text())
-    for key in ["framework_version", "project_version", "library_versions"]:
-        assert key in versions_dict, f"Failed to locate key: {key} in version.json"
+    dict_metadata = json.loads(output_path.read_text()).get("metadata")
+    assert (
+        dict_metadata.get("projectVersion") is not None
+    ), "Project version missing in JSON Dictionary"
+    # For Ref, versions should match since it's the same Git repo
+    assert dict_metadata.get("frameworkVersion") == dict_metadata.get(
+        "projectVersion"
+    ), "Version mismatch in JSON Dictionary"
 
 
 def test_ref_module_info(REF_BUILD):
