@@ -1,6 +1,5 @@
 var NAVTREEINDEX11 =
 {
-"class_drv_1_1_input_i2c_write_read_port.html#add0eb1f692ad16f7c382a082e3a03d11":[26,0,1,21,3],
 "class_drv_1_1_input_spi_read_write_port.html":[26,0,1,27],
 "class_drv_1_1_input_spi_read_write_port.html#a1bc3272ed6ef8d6d61de4c5989608d72":[26,0,1,27,2],
 "class_drv_1_1_input_spi_read_write_port.html#a3ad734927b586182cb303d05e9f1990c":[26,0,1,27,0],
@@ -249,5 +248,6 @@ var NAVTREEINDEX11 =
 "class_drv_1_1_output_spi_read_write_port.html":[26,0,1,28],
 "class_drv_1_1_output_spi_read_write_port.html#a1bad9f303b16c59ce11d15f2e0aa5666":[26,0,1,28,3],
 "class_drv_1_1_output_spi_read_write_port.html#aa1ae6269331be31bccbe73ca36f48958":[26,0,1,28,2],
-"class_drv_1_1_output_spi_read_write_port.html#aa5d65c6b70db43dc5ce3a58a54dbfd7f":[26,0,1,28,1]
+"class_drv_1_1_output_spi_read_write_port.html#aa5d65c6b70db43dc5ce3a58a54dbfd7f":[26,0,1,28,1],
+"class_drv_1_1_output_spi_read_write_port.html#abd88e71158557a50dbf657a31076e1d8":[26,0,1,28,0]
 };

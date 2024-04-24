@@ -88,13 +88,16 @@ $(document).ready(function(){initNavTree('md_ci__r_e_a_d_m_e.html',''); initResi
 <div class="title">F´Continuous Integration </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>F´continuous integration was developed to work with Jenkins. The continuous integration project is designed to checkout a new pull request that has been submitted to F´, merge it with the base branch, and then build the merged construct. Then the unit tests are built and run against this merge. This proves that the build is ready for review and merge.</p>
+<div class="textblock"><blockquote class="doxtable">
+<p>Note: The information below is historical. Modern F´ uses GitHub Action for all of its CI. </p>
+</blockquote>
+<p>F´continuous integration was developed to work with Jenkins. The continuous integration project is designed to checkout a new pull request that has been submitted to F´, merge it with the base branch, and then build the merged construct. Then the unit tests are built and run against this merge. This proves that the build is ready for review and merge.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Jenkins Description</h1>
 <p>The Jenkins setup exists in the <code>config.xml</code> file in this directory. It should be noted that the secrets (passwords, keys, etc.) have been stripped and should be replaced.</p>
 <p>The Jenkins CI is configured with the expressed purpose of checking the build and unit tests for a given pull request. It does not build on a set interval, nor does it build a specific branch (master, devel) but rather whatever branch the pull request was based on.</p>
-<p>The Jenkins CI is setup to be built inside a docker container. This docker container is used to encapsulate the exact build environment without needing to setup a specific Jenkins machine with this build environment. It needs to be run on a Docker capable Jenkins machine. The Docker setup that powers this is at: <a href="../docker/">mk/docker</a>.</p>
-<p>Once Jenkins CI builds the Docker container from the Dockerfile, it runs the Python Test Framework, <a href="/ptf">ptf</a>, which includes the following test suites:</p>
+<p>The Jenkins CI is setup to be built inside a docker container. This docker container is used to encapsulate the exact build environment without needing to setup a specific Jenkins machine with this build environment. It needs to be run on a Docker capable Jenkins machine.</p>
+<p>Once Jenkins CI builds the Docker container from the Dockerfile, it runs the Python Test Framework, which includes the following test suites:</p>
 <ol type="1">
 <li>Reference Build and Unit Tests</li>
 <li>Autocoder Unit Tests</li>

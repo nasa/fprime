@@ -88,13 +88,13 @@ $(document).ready(function(){initNavTree('_svc_cmd_splitter.html',''); initResiz
 <div class="title"><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md693"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md692"></a>
 Svc::CmdSplitter Component</h1>
-<h2><a class="anchor" id="autotoc_md694"></a>
+<h2><a class="anchor" id="autotoc_md693"></a>
 1. Introduction</h2>
 <p>The <code><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></code> splits an uplinked command execution to two separate <code>Svc::CmdDispatcher</code> components: one "local" and the other "remote". This splitting is done by opcode where local commands are commands whose opcode is less than a configured base and remote commands are those opcodes equal to or larger than that configurated base setting. <code><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></code> is intended to be used as part of the hub pattern to route command to a command dispatcher in the remote deployment.</p>
 <p>All input and output are done through port arrays that mirror the port array of input commands to the command dispatcher. In this way <code><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></code> may support multiple command sources in the same manner that <code>Svc::CmdDispatcher</code> does.</p>
-<h2><a class="anchor" id="autotoc_md695"></a>
+<h2><a class="anchor" id="autotoc_md694"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -113,9 +113,9 @@ Svc::CmdSplitter Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">SVC-CMD-SPLITTER-005   </td><td class="markdownTableBodyNone">The <code><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></code> component shall forward command status responses.   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md696"></a>
+<h2><a class="anchor" id="autotoc_md695"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md697"></a>
+<h3><a class="anchor" id="autotoc_md696"></a>
 3.1 Ports</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -134,19 +134,19 @@ Svc::CmdSplitter Component</h1>
 <blockquote class="doxtable">
 <p>Port arrays mirror those of the command dispatcher in order to support multiple sources in the same fashion that command dispatcher does. </p>
 </blockquote>
-<h3><a class="anchor" id="autotoc_md698"></a>
+<h3><a class="anchor" id="autotoc_md697"></a>
 3.2 Functional Description</h3>
 <p>The <code><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></code> routes an incoming command buffer of type <code><a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></code> to a local or remote command dispatcher. This is done by comparing the command's opcode to the configured base opcode value. All command responses are forwarded through.</p>
-<h3><a class="anchor" id="autotoc_md699"></a>
+<h3><a class="anchor" id="autotoc_md698"></a>
 3.1 State</h3>
 <p><code><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></code> has only one internal state variable: <code>m_remoteBase</code> the configured base opcode for remote opcodes. This is set by a call to the <code>configure()</code> method at system start-up.</p>
-<h3><a class="anchor" id="autotoc_md700"></a>
+<h3><a class="anchor" id="autotoc_md699"></a>
 3.2 Algorithms</h3>
 <p><code><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></code> has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md701"></a>
+<h2><a class="anchor" id="autotoc_md700"></a>
 4. Unit Testing</h2>
 <p>To see unit test coverage run <code>fprime-util check --coverage</code> in the <code><a class="el" href="class_svc_1_1_cmd_splitter.html">Svc::CmdSplitter</a></code> directory</p>
-<h2><a class="anchor" id="autotoc_md702"></a>
+<h2><a class="anchor" id="autotoc_md701"></a>
 5. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

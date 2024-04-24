@@ -88,16 +88,16 @@ $(document).ready(function(){initNavTree('_svc_generic_hub_component.html',''); 
 <div class="title"><a class="el" href="namespace_svc.html#a2726e21edb6ef5238cd546d94c01c0fa">Svc::GenericHub</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md938"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md937"></a>
 Svc::GenericHub Generic Hub Component</h1>
 <p>The Generic Hub component is an implementation of the F´ <a href="https://nasa.github.io/fprime/UsersGuide/best/hub-pattern.html">hub pattern</a>. This pattern (and component) is used to bridge across an address space barrier between F´ deployments and route F´ port calls to the remote deployment. It also receives incoming port calls from the remote component. Essentially, it is a port multiplexer/demultiplexer that serializes the port calls to an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> object and outputs this data to an implementation of the <code>Drv::ByteStreamDriverModel</code> for transport out of the current deployment's address space.</p>
 <p><b>Note:</b> At this time, the hub drops send/receive errors. Individual projects that need to monitor send/receive errors may need to add this functionality to the GenericHub <a href="#idiosyncrasies">see idiosyncrasies</a></p>
-<h2><a class="anchor" id="autotoc_md939"></a>
+<h2><a class="anchor" id="autotoc_md938"></a>
 Design</h2>
 <p>The generic hub accepts incoming port calls using an array of Serial input ports. This allows any port call to be bridged across the connection. There is also an incoming set of ports supporting <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> type allowing the generic hub to send generic byte data across (e.g. file packets) the connection. These connections are serialized into the outgoing connections to the driver. On the far side of the byte driver, another generic hub deserializes these port calls and buffer calls into normal F´ port calls on the new deployment as if they were made locally.</p>
 <p>Generic hub inputs on one hub should be parallel to the outputs on the other hub and vise-versa. It is also essential that users never pass a <b>pointer</b> into the generic hub, as pointer data will become invalid when it leaves the current address space. A sample configuration is shown below. Finally, the generic hub is bidirectional, so it can operate on inputs and produce outputs as long as its remote counterpart is hooked up in parallel.</p>
 <p>The hub also provides specific handlers for events and telemetry such that it can be used with telemetry and event pattern specifiers in the topology.</p>
-<h3><a class="anchor" id="autotoc_md940"></a>
+<h3><a class="anchor" id="autotoc_md939"></a>
 Example Formations</h3>
 <p>This section shows how to set up the generic hub component. It is broken into several separate views. This first shows the top level of the formation. Here we connect a component on the left (command dispatcher) to several components on the right (two signal generators). Both forward and reverse connections are shown. Notice the parallelism from the left port calls from the command dispatcher to the port outputs to the components being commanded.</p>
 <p><img src="./img/gh-top.png" alt="Top Level Generic Hub" class="inline"/></p>
@@ -107,7 +107,7 @@ Example Formations</h3>
 <p><img src="./img/gh-left.png" alt="Top Level Generic Hub" class="inline"/></p>
 <p>Finally, the following diagram shows the right side where the connections come out of the right side's driver and goes into the hub which expands the port to the various right-side components.</p>
 <p><img src="./img/gh-right.png" alt="Top Level Generic Hub" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md941"></a>
+<h2><a class="anchor" id="autotoc_md940"></a>
 Configuration</h2>
 <p>Generic hub maximum output and input ports are configured using <code>AcConstants.fpp</code> as shown below. Since hubs work in tandem with another hub, the input ports on the first must match the output ports on the second. Both the number of port and buffer inputs/outputs may be configured.</p>
 <div class="fragment"><div class="line">@ Hub connections. Connections on all deployments should mirror these settings.</div>
@@ -119,11 +119,11 @@ Configuration</h2>
 <p>To use the hub in a pattern specifier, include this in your topology:</p>
 <div class="fragment"><div class="line">event connections instance hub</div>
 <div class="line">telemetry connections instance hub</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md942"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md941"></a>
 Idiosyncrasies</h2>
 <p>Currently, the <code>Drv::ByteStreamDriverModel</code> can report errors and failures. This generic hub component drops these errors. Users who expect the driver to error should adapt this component to handle this issue. Future versions of this component may correct this issue by calling to a fault port on error.</p>
 <p>Connections are still required from the telemetry and event output ports to the system-wide event log and telemetry handling components as the hub is not designed to look like a telemetry nor event source.</p>
-<h2><a class="anchor" id="autotoc_md943"></a>
+<h2><a class="anchor" id="autotoc_md942"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -137,7 +137,7 @@ Requirements</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">GENHUB-004   </td><td class="markdownTableBodyNone">The generic hub shall work with another generic hub to send port and buffer calls   </td><td class="markdownTableBodyNone">unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md944"></a>
+<h2><a class="anchor" id="autotoc_md943"></a>
 Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

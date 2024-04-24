@@ -1,6 +1,5 @@
 var NAVTREEINDEX19 =
 {
-"class_svc_1_1_active_logger___filter_severity.html#aad7edc28beddcc9c165621be0b87c87a":[26,0,4,4,14],
 "class_svc_1_1_active_logger___filter_severity.html#ad9260bbb678ca9d7c9107f6bbb0243a2":[26,0,4,4,1],
 "class_svc_1_1_active_logger___filter_severity.html#aeddd89074d1525ba3e80c7ac604bbf91":[26,0,4,4,10],
 "class_svc_1_1_active_logger___filter_severity.html#af172b40ee29506b80687cae02a56522a":[26,0,4,4,2],
@@ -249,5 +248,6 @@ var NAVTREEINDEX19 =
 "class_svc_1_1_buffer_accumulator_component_base.html#a81173a4059294ce72f4ddb0328337264":[26,0,4,11,59],
 "class_svc_1_1_buffer_accumulator_component_base.html#a8f2e15307527509664b024ed277f0a7e":[26,0,4,11,5],
 "class_svc_1_1_buffer_accumulator_component_base.html#a923d58168b2704e5c297cf040acbc66c":[26,0,4,11,3],
-"class_svc_1_1_buffer_accumulator_component_base.html#a96ec9d3f390a20200de10ec087c2b0fb":[26,0,4,11,61]
+"class_svc_1_1_buffer_accumulator_component_base.html#a96ec9d3f390a20200de10ec087c2b0fb":[26,0,4,11,61],
+"class_svc_1_1_buffer_accumulator_component_base.html#a98f271a43734006a917c40df47a56ac7":[26,0,4,11,47]
 };
