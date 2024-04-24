@@ -47,10 +47,14 @@ def create_version_file_hpp(output_dir, framework_version, project_version):
         fid.write("\n")
         fid.write(f'static const char* FRAMEWORK_VERSION = "{framework_version}";\n')
         fid.write(f'static const char* PROJECT_VERSION = "{project_version}";\n')
-        if len(get_library_versions()) > 0:
-            fid.write("static const char* LIBRARY_VERSIONS[] = {\n")
-            for lib, version in get_library_versions().items():
-                fid.write(f'    "{lib}@{version}",\n')
+        lib_versions = get_library_versions()
+        fid.write("static const char* LIBRARY_VERSIONS[] = {")
+        if len(lib_versions) == 0:
+            fid.write(" \"\" };\n") # Empty string when no libraries are present
+        else:
+            fid.write("\n")
+            for lib_name, version in lib_versions.items():
+                fid.write(f'    "{lib_name}@{version}",\n')
             fid.write("};\n")
         fid.write("\n")
         fid.write("#endif\n")
