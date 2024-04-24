@@ -50,12 +50,12 @@ def main():
 
     # Parses library versions into a string to input to fpp-to-dict
     libs_str = ",".join(
-        f"{lib}@{version}" for lib, version in versions.get("libraries", {}).items()
+        f"{lib}@{version}"
+        for lib, version in versions.get("library_versions", {}).items()
     )
-    if (
-        versions.get("framework_version", None) is None
-        or versions.get("project_version", None) is None
-    ):
+    framework_version = versions.get("framework_version")
+    project_version = versions.get("project_version")
+    if framework_version is None or project_version is None:
         raise ValueError(
             f"{args.jsonVersionFile} is missing 'framework_version' or 'project_version'"
         )
@@ -65,9 +65,9 @@ def main():
         "--directory",
         args.cmake_bin_dir,
         "--projectVersion",
-        versions.get("project_version"),
+        project_version,
         "--frameworkVersion",
-        versions.get("framework_version"),
+        framework_version,
         *(["--libraryVersions", libs_str] if libs_str else []),  # "" unpacks nothing
         "--imports",
         args.i,
