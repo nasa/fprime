@@ -29,7 +29,7 @@ _ = cmake.get_build(
         "test",
         "TestDeployment_test",
         "TestLibrary_TestComponent_test",
-        "version"
+        "version",
     ],
 )
 
@@ -96,10 +96,20 @@ def test_feature_version_info(FEATURE_BUILD):
     versions_dict = json.loads(version_json.read_text())
     for key in ["framework_version", "project_version", "library_versions"]:
         assert key in versions_dict, f"Failed to locate key: {key} in version.json"
-    assert "test-fprime-library" in versions_dict["library_versions"], "Library version missing"
-    assert "test-fprime-library2" in versions_dict["library_versions"], "Library version missing"
-    assert versions_dict["library_versions"]["test-fprime-library"] == versions_dict["framework_version"], "Library version mismatch"
-    assert versions_dict["library_versions"]["test-fprime-library2"] == versions_dict["framework_version"], "Library version mismatch"
+    assert (
+        "test-fprime-library" in versions_dict["library_versions"]
+    ), "Library version missing "
+    assert (
+        "test-fprime-library2" in versions_dict["library_versions"]
+    ), "Library version missing"
+    assert (
+        versions_dict["library_versions"]["test-fprime-library"]
+        == versions_dict["framework_version"]
+    ), "Library version mismatch"
+    assert (
+        versions_dict["library_versions"]["test-fprime-library2"]
+        == versions_dict["framework_version"]
+    ), "Library version mismatch"
 
 
 def test_feature_installation(FEATURE_BUILD):
