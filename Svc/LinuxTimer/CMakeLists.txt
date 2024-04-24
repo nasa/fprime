@@ -5,6 +5,7 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+restrict_platforms(Linux Darwin)
 
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")

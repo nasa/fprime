@@ -31,7 +31,10 @@ set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST
 #####
 macro(restrict_platforms)
     set(__CHECKER ${ARGN})
-    if (NOT FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER AND NOT FPRIME_PLATFORM IN_LIST __CHECKER)
+    if (FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER)
+    elseif(FPRIME_PLATFORM IN_LIST __CHECKER)
+    elseif("Posix" IN_LIST __CHECKER AND FPRIME_USE_POSIX)
+    else()
         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
         message(STATUS "Neither toolchain ${FPRIME_TOOLCHAIN_NAME} nor platform ${FPRIME_PLATFORM} supported for module ${MODULE_NAME}")
         append_list_property("${MODULE_NAME}" GLOBAL PROPERTY RESTRICTED_TARGETS)
