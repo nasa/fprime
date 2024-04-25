@@ -4,6 +4,7 @@ var namespaces_dup =
     [ "Drv", "namespace_drv.html", "namespace_drv" ],
     [ "Fw", "namespace_fw.html", "namespace_fw" ],
     [ "Os", "namespace_os.html", "namespace_os" ],
+    [ "Project", "namespace_project.html", "namespace_project" ],
     [ "Svc", "namespace_svc.html", "namespace_svc" ],
     [ "TestUtils", "namespace_test_utils.html", "namespace_test_utils" ],
     [ "Types", "namespace_types.html", "namespace_types" ],

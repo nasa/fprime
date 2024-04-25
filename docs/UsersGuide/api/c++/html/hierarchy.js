@@ -439,5 +439,6 @@ var hierarchy =
       [ "Svc::UdpSenderComponentImpl", "class_svc_1_1_udp_sender_component_impl.html", null ]
     ] ],
     [ "Os::ValidatedFile", "class_os_1_1_validated_file.html", null ],
+    [ "Project::Version", "struct_project_1_1_version.html", null ],
     [ "Os::WatchdogTimer", "class_os_1_1_watchdog_timer.html", null ]
 ];

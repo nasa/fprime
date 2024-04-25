@@ -23,7 +23,7 @@ Ensures targets are real before installing them. Real targets are executables, l
             ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/lib/static
             COMPONENT ${MODULE}
     )
-    install(FILES ${FPRIME_CURRENT_DICTIONARY_FILE} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT ${MODULE})
+    install(FILES ${FPRIME_CURRENT_DICTIONARY_FILE} ${FPRIME_CURRENT_DICTIONARY_FILE_JSON} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT ${MODULE})
     add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
             -DCMAKE_INSTALL_COMPONENT=${MODULE} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake)
 endfunction()

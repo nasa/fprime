@@ -208,6 +208,9 @@ var annotated_dup =
       [ "ValidatedFile", "class_os_1_1_validated_file.html", "class_os_1_1_validated_file" ],
       [ "WatchdogTimer", "class_os_1_1_watchdog_timer.html", "class_os_1_1_watchdog_timer" ]
     ] ],
+    [ "Project", "namespace_project.html", [
+      [ "Version", "struct_project_1_1_version.html", "struct_project_1_1_version" ]
+    ] ],
     [ "Svc", "namespace_svc.html", [
       [ "DpWrittenPortStrings", "namespace_svc_1_1_dp_written_port_strings.html", [
         [ "StringSize256", "class_svc_1_1_dp_written_port_strings_1_1_string_size256.html", "class_svc_1_1_dp_written_port_strings_1_1_string_size256" ]
