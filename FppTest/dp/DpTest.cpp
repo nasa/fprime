@@ -56,7 +56,8 @@ void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
         Fw::Success status = this->dpGet_Container1(CONTAINER_1_DATA_SIZE, container);
         FW_ASSERT(status == Fw::Success::SUCCESS, status);
         // Check the container
-        this->checkContainer(container, ContainerId::Container1, CONTAINER_1_PACKET_SIZE);
+        this->checkContainer(container, ContainerId::Container1, CONTAINER_1_PACKET_SIZE,
+                             DpTest::ContainerPriority::Container1);
     }
     // Get a buffer for Container 2
     {
@@ -64,7 +65,8 @@ void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
         Fw::Success status = this->dpGet_Container2(CONTAINER_2_DATA_SIZE, container);
         FW_ASSERT(status == Fw::Success::SUCCESS);
         // Check the container
-        this->checkContainer(container, ContainerId::Container2, CONTAINER_2_PACKET_SIZE);
+        this->checkContainer(container, ContainerId::Container2, CONTAINER_2_PACKET_SIZE,
+                             DpTest::ContainerPriority::Container2);
     }
     // Get a buffer for Container 3
     {
@@ -79,7 +81,8 @@ void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
         Fw::Success status = this->dpGet_Container4(CONTAINER_4_DATA_SIZE, container);
         FW_ASSERT(status == Fw::Success::SUCCESS);
         // Check the container
-        this->checkContainer(container, ContainerId::Container4, CONTAINER_4_PACKET_SIZE);
+        this->checkContainer(container, ContainerId::Container4, CONTAINER_4_PACKET_SIZE,
+                             DpTest::ContainerPriority::Container4);
     }
     // Get a buffer for Container 5
     {
@@ -87,7 +90,8 @@ void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
         Fw::Success status = this->dpGet_Container5(CONTAINER_5_DATA_SIZE, container);
         FW_ASSERT(status == Fw::Success::SUCCESS);
         // Check the container
-        this->checkContainer(container, ContainerId::Container5, CONTAINER_5_PACKET_SIZE);
+        this->checkContainer(container, ContainerId::Container5, CONTAINER_5_PACKET_SIZE,
+                             DpTest::ContainerPriority::Container5);
     }
 }
 
@@ -178,11 +182,15 @@ void DpTest ::dpRecv_Container5_handler(DpContainer& container, Fw::Success::T s
 // Private helper functions
 // ----------------------------------------------------------------------
 
-void DpTest::checkContainer(const DpContainer& container, FwDpIdType localId, FwSizeType size) const {
+void DpTest::checkContainer(const DpContainer& container,
+                            FwDpIdType localId,
+                            FwSizeType size,
+                            FwDpPriorityType priority) const {
     FW_ASSERT(container.getBaseId() == this->getIdBase(), container.getBaseId(), this->getIdBase());
     FW_ASSERT(container.getId() == container.getBaseId() + localId, container.getId(), container.getBaseId(),
               ContainerId::Container1);
     FW_ASSERT(container.getBuffer().getSize() == size, container.getBuffer().getSize(), size);
+    FW_ASSERT(container.getPriority() == priority, container.getPriority(), priority);
 }
 
 }  // end namespace FppTest

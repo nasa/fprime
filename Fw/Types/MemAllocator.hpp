@@ -43,34 +43,31 @@
 
 namespace Fw {
 
-    class MemAllocator {
-        public:
-            //! Allocate memory
-            /*!
-             * \param identifier the memory segment identifier, each identifier is to be used in once single allocation
-             * \param size the requested size - changed to actual if different
-             * \param recoverable - flag to indicate the memory could be recoverable
-             * \return the pointer to memory. Zero if unable to allocate
-             */
-            virtual void *allocate(
-                    const NATIVE_UINT_TYPE identifier,
-                    NATIVE_UINT_TYPE &size,
-                    bool& recoverable)=0;
-            //! Deallocate memory
-            /*!
-             * \param identifier the memory segment identifier, each identifier is to be used in once single allocation
-             * \param ptr the pointer to memory returned by allocate()
-             */
-            virtual void deallocate(
-                    const NATIVE_UINT_TYPE identifier,
-                    void* ptr)=0;
-        protected:
-            MemAllocator();
-            virtual ~MemAllocator();
-        private:
-            MemAllocator(MemAllocator&); //!< disable
-            MemAllocator(MemAllocator*); //!< disable
-    };
+class MemAllocator {
+  public:
+    //! Allocate memory
+    /*!
+     * \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+     * \param size the requested size - changed to actual if different
+     * \param recoverable - flag to indicate the memory could be recoverable
+     * \return the pointer to memory. Zero if unable to allocate
+     */
+    virtual void* allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE& size, bool& recoverable) = 0;
+    //! Deallocate memory
+    /*!
+     * \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+     * \param ptr the pointer to memory returned by allocate()
+     */
+    virtual void deallocate(const NATIVE_UINT_TYPE identifier, void* ptr) = 0;
+
+  protected:
+    MemAllocator();
+    virtual ~MemAllocator();
+
+  private:
+    MemAllocator(MemAllocator&);  //!< disable
+    MemAllocator(MemAllocator*);  //!< disable
+};
 
 } /* namespace Fw */
 

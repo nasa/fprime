@@ -11,4 +11,5 @@ viewed through F´.
 | [Communication Adapter Interface](./communication-adapter-interface.md) |
 | [Package Implementations](./package-implementations.md)                 |
 | [FPP JSON Dictionary Specification](./fpp-json-dict.md)                 |
+| [Integration Test API Design](./integration-test-api.md)                |
 

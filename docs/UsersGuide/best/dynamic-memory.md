@@ -112,7 +112,7 @@ This component is designed for simplicity of implementation. System memory usage
 multiplied by the size of the memory regions. This memory is allocated as a large array on the stack. Valid memory 
 allocations will always be returned or a software error will be tripped.
 
-Svc.StaticMemory is described in more detail [here](../api/c++/html/svc_static_memory.html).
+Svc.StaticMemory is described in more detail [here](../api/c++/html/svc_static_memory_component.html).
 
 **When To Use Svc.StaticMemory**
 

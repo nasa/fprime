@@ -32,6 +32,6 @@ char* string_copy(char* destination, const char* source, U32 num);
  */
 U32 string_length(const CHAR* source, U32 max_len);
 
-}       // namespace StringUtils
-}       // namespace Fw
+}  // namespace StringUtils
+}  // namespace Fw
 #endif  // FW_STRINGUTILS_HPP

@@ -221,7 +221,7 @@ DDDTHH
 ddl
 ddmm
 dealloc
-Debian
+debian
 deconstructor
 Deerin
 defaultgen
@@ -381,6 +381,7 @@ fsw
 fus
 FWCASSERT
 Gangianpour
+gaurav
 gbl
 gcc
 gcda
@@ -610,12 +611,14 @@ Merewether
 methoddoc
 methodstub
 microcontrollers
+mlc
 mman
 MMAPALLOCATOR
 MML
 modbus
 MOSI
 MOVEFILE
+mozilla
 mqd
 mqueue
 Mrf
@@ -945,6 +948,7 @@ sloc
 smallsat
 Smath
 SNDTIMEO
+socio
 SOCKETHELPER
 SOCKETIPDRIVER
 SOCKETREADTASK
@@ -1023,6 +1027,7 @@ tcgetattr
 TCIFLUSH
 tclist
 tcomp
+tcort
 TCPCLIENT
 TCPHELPER
 tcpserver
@@ -1169,6 +1174,7 @@ WAITALL
 watney
 Wdog
 whitebox
+wikipedia
 WLE
 Wno
 WORKDIR
@@ -1176,6 +1182,7 @@ worklist
 wrs
 wsl
 wxgui
+wxy
 Xabcdefx
 xapian
 xdf
