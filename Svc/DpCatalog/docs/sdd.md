@@ -54,11 +54,11 @@ The design of `DpCatalog` assumes the following:
 Name | Type | Role
 -----| ---- | ----
 `timeCaller` | `Fw::Time` | TimeGet
-`cmdIn` | [`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.html) | Cmd
-`cmdRegOut` | [`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.html) | CmdReg
-`cmdResponseOut` | [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.html) | CmdResponse
-`tlmOut` | [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.html) | Telemetry
-`eventOut` | [`Fw::LogEvent`](../../../Fw/Log/docs/sdd.html) | LogEvent
+`cmdIn` | [`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.md) | Cmd
+`cmdRegOut` | [`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | CmdReg
+`cmdResponseOut` | [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | CmdResponse
+`tlmOut` | [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Telemetry
+`eventOut` | [`Fw::LogEvent`](../../../Fw/Log/docs/sdd.md) | LogEvent
 
 #### 3.3.2 Component-Specific Ports
 
@@ -88,68 +88,17 @@ During initialization, the initialization function takes a set of parameters:
 
 ### TODO From here
 
-`FileDownlink` has the following constants, initialized
-at component instantiation time:
-
-* *downlinkPacketSize*: The size of the packets to use on downlink.
-* *timeout*: Max amount of time in ms to wait for a buffer return before aborting downlink
-* *cooldown*: The amount of time in ms to wait in a cooldown state before starting next downlink.
-* *cycle time*: Frequency in ms of clock pulses sent to `Run` port, used for timing timeouts and
-  cooldown.
-* *file queue depth*: The maximum number of files that can be held in the internal file downlink
-  queue. Attempting to dispatch a SendFile command or port call while the queue is full will result
-  in a busy error response.
+#### Constants
 
 ### 3.6 State
 
-`FileDownlink` maintains a *mode* equal to
-one of the following values:
-
-* IDLE (0): `FileDownlink` is idle.
-
-* DOWNLINK (1): `FileDownlink` is performing a file downlink.
-
-* CANCEL (2): `FileDownlink` is canceling a file downlink.
-
-* WAIT (3): `FileDownlink` is waiting for a buffer to be returned before sending another packet.
-
-* COOLDOWN (4): `FileDownlink` is waiting in a cooldown period before downlinking the next file.
-
-The initial value is IDLE.
 
 ### 3.6 Commands
 
-`FileDownlink` recognizes the commands described in the following sections.
-
-#### 3.6.1 SendFile/SendPartial
-
-SendFile is an asynchronous command that adds a file to the file downlink queue.
-It has two arguments:
-
-1. *sourceFileName*: The name of the on-board file to send.
-2. *destFileName*: The name of the destination file on the ground.
-
-SendPartial also includes the following fields:
-
-3. *offset*: Position in file to start reading from.
-4. *length*: Amount of data to read. A length of 0 reads until the end of file.
-
-When the downlink completes or fails, a CmdResponse packet will be sent indicating success or
-failure.
-
-#### 3.6.2 Cancel
-
-Cancel is a synchronous command.
-If *mode* = DOWNLINK, it sets *mode* to CANCEL.
-Otherwise it does nothing.
 
 ## 4 Checklists
 
-Document | Link
--------- | ----
-Design | [Link](Checklist/design.xlsx)
-Code | [Link](Checklist/code.xlsx)
-Unit Test | [Link](Checklist/unit_test.xls)
+TODO
 
 ## 6 Unit Testing
 
