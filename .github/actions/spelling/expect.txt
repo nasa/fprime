@@ -270,8 +270,11 @@ doxysearch
 Doxywizard
 DPCFG
 dpi
+DPCAT
+DPCATALOG
 DPMANAGER
 DPWRITER
+dps
 DRAINBUFFERS
 drv
 dsdl
@@ -399,6 +402,7 @@ getinput
 getm
 getpid
 getquaternion
+gett
 gettime
 gettimeofday
 getty
@@ -430,6 +434,7 @@ handcoded
 hardtoaccess
 hashvalue
 HEADERSIZE
+hdr
 headlessly
 heapifying
 hexid
@@ -860,6 +865,7 @@ relaxng
 REMOVEDIRECTORY
 REMOVEFILE
 reparse
+reprioritize
 reserializing
 resname
 resultlist
@@ -912,6 +918,7 @@ serializables
 setaffinity
 setdata
 SETFL
+setid
 setinheritsched
 SETLOGGING
 setm
