@@ -48,14 +48,14 @@ namespace Task {
         }
 
         // Clamp invalid stack sizes
-        if (stack <= PTHREAD_STACK_MIN) {
+        if (stack <= static_cast<FwSizeType>(PTHREAD_STACK_MIN)) {
             Fw::Logger::logMsg(
                     "[WARNING] %s stack size of %" PRI_FwSizeType "  is too small, clamping to %" PRI_FwSizeType "\n",
                     reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
                     stack,
                     static_cast<FwSizeType>(PTHREAD_STACK_MIN)
             );
-            stack = PTHREAD_STACK_MIN;
+            stack = static_cast<FwSizeType>(PTHREAD_STACK_MIN);
         }
         status = pthread_attr_setstacksize(&attributes, static_cast<PlatformIntType>(stack));
         return status;
