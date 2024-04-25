@@ -248,5 +248,3 @@ struct CheckTaskCount : public STest::Rule<Os::Test::Task::Tester> {
             );
 
     };
-
-    

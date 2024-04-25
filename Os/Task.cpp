@@ -174,5 +174,4 @@ FwSizeType Task::getNumTasks() {
 void Task::registerTaskRegistry(TaskRegistry* registry) {
     Task::s_taskRegistry = registry;
 }
-
 }
