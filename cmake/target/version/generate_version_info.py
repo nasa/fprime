@@ -45,18 +45,26 @@ def create_version_file_hpp(output_dir, framework_version, project_version):
         fid.write("#ifndef _VERSION_HPP_\n")
         fid.write("#define _VERSION_HPP_\n")
         fid.write("\n")
-        fid.write(f'static const char* FRAMEWORK_VERSION = "{framework_version}";\n')
-        fid.write(f'static const char* PROJECT_VERSION = "{project_version}";\n')
+
+        fid.write("namespace Project {\n\n")
+        fid.write("struct Version {\n")
+        fid.write(
+            f'    static constexpr const char* const FRAMEWORK_VERSION = "{framework_version}";\n'
+        )
+        fid.write(
+            f'    static constexpr const char* const PROJECT_VERSION = "{project_version}";\n'
+        )
         lib_versions = get_library_versions()
-        fid.write("static const char* LIBRARY_VERSIONS[] = {\n")
+        fid.write("    static constexpr const char* const LIBRARY_VERSIONS[] = {\n")
         if len(lib_versions) == 0:
             fid.write("    nullptr\n")  # nullptr when no libraries are present
         else:
             for lib_name, version in lib_versions.items():
-                fid.write(f'    "{lib_name}@{version}",\n')
-        fid.write("};\n")
+                fid.write(f'        "{lib_name}@{version}",\n')
+        fid.write("    };\n")
+        fid.write("};\n\n")
+        fid.write("}  // namespace Project\n")
         fid.write("#endif\n")
-        fid.write("\n")
 
 
 def create_version_file_json(
