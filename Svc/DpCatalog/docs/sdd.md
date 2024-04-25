@@ -86,7 +86,7 @@ During initialization, the initialization function takes a set of parameters:
 |maxFiles|Specify the maximum number of files the catalog can track|
 |allocator|Memory allocator for catalog records
 
-### TODO From here
+### SDD work will continue from here
 
 #### Constants
 
