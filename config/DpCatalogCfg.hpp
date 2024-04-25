@@ -15,6 +15,6 @@ namespace Svc {
     // this size.
     static const FwSizeType DP_MAX_DIRECTORIES = 2;
     static const FwSizeType DP_MAX_FILES = 100;
-};
+}
 
 #endif /* SVC_DPCATALOG_CONFIG_HPP_ */
