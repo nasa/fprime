@@ -822,7 +822,7 @@ namespace Os {
 //! \param aligned_new_memory: aligned memory to fill
 //! \param to_copy: pointer to copy-constructor input
 //! \return: pointer to delegate
-FileInterface *FileInterface::getDelegate(U8 *aligned_placement_new_memory, const FileInterface* to_copy) {
+FileInterface *FileInterface::getDelegate(HandleStorage& aligned_placement_new_memory, const FileInterface* to_copy) {
     return Os::Delegate::makeDelegate<FileInterface, Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor>(
             aligned_placement_new_memory, to_copy
     );

@@ -389,13 +389,11 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     }
 }
 
-void LinuxUartDriver ::startReadThread(NATIVE_UINT_TYPE priority,
-                                       NATIVE_UINT_TYPE stackSize,
-                                       NATIVE_UINT_TYPE cpuAffinity) {
+void LinuxUartDriver ::start(Os::Task::ParamType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity) {
     Os::TaskString task("SerReader");
-    Os::Task::TaskStatus stat =
-        this->m_readTask.start(task, serialReadTaskEntry, this, priority, stackSize, cpuAffinity);
-    FW_ASSERT(stat == Os::Task::TASK_OK, stat);
+    Os::Task::Arguments arguments(task, serialReadTaskEntry, this, priority, stackSize, cpuAffinity);
+    Os::Task::TaskStatus stat = this->m_readTask.start(arguments);
+    FW_ASSERT(stat == Os::Task::OP_OK, stat);
 }
 
 void LinuxUartDriver ::quitReadThread() {

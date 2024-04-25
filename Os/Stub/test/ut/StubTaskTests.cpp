@@ -126,6 +126,10 @@ TEST_F(Interface, RegistryRemove) {
     QuickRegistry registry;
     Os::Task::registerTaskRegistry(&registry);
     Os::Task* task = new Os::Task;
+    StaticData::data.startStatus = Os::Task::Status::OP_OK;
+    Os::Task::Arguments arguments(Fw::String("Task"), &testMethod, nullptr);
+    ASSERT_EQ(task->start(arguments), StaticData::data.startStatus);
+    Os::Task::s_numTasks = 0; // Reset task count for rules-based testing
     ASSERT_EQ(registry.m_task, task);
     delete task;
     ASSERT_EQ(registry.m_task, nullptr);

@@ -32,7 +32,8 @@ void SocketReadTask::start(const Fw::StringBase &name,
     FW_ASSERT(not this->m_stop);        // It is a coding error to stop the thread before it is started
     m_reconnect = reconnect;
     // Note: the first step is for the IP socket to open the port
-    Os::Task::Status stat = m_task.start(name, SocketReadTask::readTask, this, priority, stack, cpuAffinity);
+    Os::Task::Arguments arguments(name, SocketReadTask::readTask, this, priority, stack, cpuAffinity);
+    Os::Task::Status stat = m_task.start(arguments);
     FW_ASSERT(Os::Task::OP_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
 }
 

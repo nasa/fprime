@@ -66,7 +66,8 @@ namespace Fw {
         // Cooperative threads tasks externalize the task loop, and as such use the state machine as their task function
         // Standard multithreading tasks use the task loop to respectively call the state machine
         Os::Task::taskRoutine routine = (m_task.isCooperative()) ? this->s_taskStateMachine : this->s_taskLoop;
-        Os::Task::Status status = this->m_task.start(taskName, routine, this, priority, stackSize, cpuAffinity, identifier);
+        Os::Task::Arguments arguments(taskName, routine, this, priority, stackSize, cpuAffinity, static_cast<PlatformIntType>(identifier));
+        Os::Task::Status status = this->m_task.start(arguments);
         FW_ASSERT(status == Os::Task::Status::OP_OK,static_cast<NATIVE_INT_TYPE>(status));
     }
 
