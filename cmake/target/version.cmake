@@ -3,7 +3,7 @@
 #
 # A basic versioning target which will produce the version files.
 ####
-set(FPRIME_VERSION_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/version/generate_version_info.py" CACHE PATH "Script used to generate version files")
+set(FPRIME_VERSION_INFO_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/version/generate_version_info.py")
 
 function(version_add_global_target TARGET)
     set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/versions")
@@ -22,7 +22,7 @@ function(version_add_global_target TARGET)
                     "FPRIME_PROJECT_ROOT=${FPRIME_PROJECT_ROOT}"
                     "FPRIME_FRAMEWORK_PATH=${FPRIME_FRAMEWORK_PATH}"
                     "FPRIME_LIBRARY_LOCATIONS=${FPRIME_LIBRARY_LOCATIONS_CSV}"
-            "${FPRIME_VERSION_SCRIPT}" "${OUTPUT_DIR}" "${OPTIONAL_CHECK_ARG}"
+            "${FPRIME_VERSION_INFO_SCRIPT}" "${OUTPUT_DIR}" "${OPTIONAL_CHECK_ARG}"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_HPP}.tmp" "${OUTPUT_HPP}"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_JSON}.tmp" "${OUTPUT_JSON}"
         WORKING_DIRECTORY "${FPRIME_PROJECT_ROOT}"
