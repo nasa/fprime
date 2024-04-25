@@ -26,6 +26,9 @@ class StringBase : public Serializable {
     virtual const CHAR* toChar() const = 0;    //<! Convert to a C-style char*
     virtual SizeType getCapacity() const = 0;  //!< return size of buffer
     SizeType length() const;                   //!< Get length of string
+    SizeType serializedSize() const;           //!< Get length of string plus size of stored size
+    SizeType serializedTruncatedSize(
+        FwSizeType maxLength) const;  //!< Get truncated length of string plus size of stored size
 
     const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*
     const StringBase& operator+=(const StringBase& src);  //!< Concatenate a StringBase
