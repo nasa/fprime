@@ -114,7 +114,16 @@ void StringBase::appendBuff(const CHAR* buff, SizeType size) {
 }
 
 StringBase::SizeType StringBase::length() const {
-    return static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
+    const SizeType length = static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
+    FW_ASSERT(length <= this->maxLength(), static_cast<FwAssertArgType>(length),
+              static_cast<FwAssertArgType>(this->maxLength()));
+    return length;
+}
+
+StringBase::SizeType StringBase::maxLength() const {
+    const SizeType capacity = this->getCapacity();
+    FW_ASSERT(capacity > 0, static_cast<FwAssertArgType>(capacity));
+    return capacity - 1;
 }
 
 StringBase::SizeType StringBase::serializedSize() const {
@@ -137,8 +146,7 @@ SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxL
 
 SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
     // Get the max size of the deserialized string
-    FW_ASSERT(this->getCapacity() > 0, static_cast<FwAssertArgType>(this->getCapacity()));
-    const FwSizeType maxSize = this->getCapacity() - 1;
+    const FwSizeType maxSize = this->maxLength();
     // Initial estimate of actual size is max size
     // This estimate is refined when calling the deserialize function below
     SizeType actualSize = maxSize;

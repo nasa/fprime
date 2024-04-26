@@ -27,6 +27,8 @@ class StringBase : public Serializable {
     virtual SizeType getCapacity() const = 0;  //!< return size of buffer
     SizeType length() const;                   //!< Get length of string
 
+    //! Get the maximum length of a string that the buffer can hold
+    SizeType maxLength() const;
     //! Get the static serialized size of a string
     //! This is the max length of the string plus the size of the stored size
     static constexpr FwSizeType STATIC_SERIALIZED_SIZE(FwSizeType maxLength  //!< The maximum string length
