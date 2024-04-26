@@ -42,3 +42,7 @@ event SignalGen_DpMemoryFail \
   id 5 \
   format "Failed to acquire a DP buffer"
 
+event SignalGen_InSufficientDpRecords \
+  severity warning high \
+  id 6 \
+  format "Need to request at least one record"

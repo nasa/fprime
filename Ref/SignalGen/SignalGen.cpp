@@ -214,6 +214,13 @@ namespace Ref {
         U32 records
     )
     {
+        // at least one record
+        if (0 == records) {
+            this->log_WARNING_HI_SignalGen_InSufficientDpRecords();
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+            return;
+        }
+
         // make sure DPs are available
         if (
             not this->isConnected_productGetOut_OutputPort(0)
@@ -226,6 +233,8 @@ namespace Ref {
         // get DP buffer. Use sync or async request depending on 
         // requested type
         FwSizeType dpSize = records*(SignalInfo::SERIALIZED_SIZE + sizeof(FwDpIdType));
+        this->m_numDps = records;
+        this->m_currDp = 0;
         if (Ref::SignalGen_DpReqType::IMMEDIATE ==  reqType) {
             Fw::Success stat = this->dpGet_DataContainer(dpSize,this->m_dpContainer);
             // make sure we got the memory we wanted
@@ -235,11 +244,9 @@ namespace Ref {
             } else {
                 this->m_dpInProgress = true;
                 this->log_ACTIVITY_LO_SignalGen_DpStarted(records);
-                this->m_numDps = records;
-                this->m_currDp = 0;
                 this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             }
-        } else if (Ref::SignalGen_DpReqType::ASYNC ==  reqType) {
+        } else if (Ref::SignalGen_DpReqType::ASYNC == reqType) {
             this->dpRequest_DataContainer(dpSize);
         } else {
             // should never get here
@@ -271,7 +278,9 @@ namespace Ref {
 
         // Make sure we got the buffer we wanted or quit
         if (Fw::Success::SUCCESS == status) {
+            printf("Reply\n");
             this->m_dpContainer = container;
+            printf("Reply2\n");
             this->m_dpInProgress = true;
             this->log_ACTIVITY_LO_SignalGen_DpStarted(this->m_numDps);
         } else {
