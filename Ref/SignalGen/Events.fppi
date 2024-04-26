@@ -36,3 +36,9 @@ event SignalGen_DpsNotConnected \
   severity warning high \
   id 4 \
   format "DP Ports not connected!"
+
+event SignalGen_DpMemoryFail \
+  severity warning high \
+  id 5 \
+  format "Failed to acquire a DP buffer"
+

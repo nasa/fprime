@@ -59,10 +59,11 @@ namespace Ref {
         //!
         //! Signal Generator Settings
         void SignalGen_Dp_cmdHandler(
-            FwOpcodeType opCode, //!< The opcode
-            U32 cmdSeq, //!< The command sequence number
-            U32 records
-        ) override;
+           FwOpcodeType opCode, //!< The opcode
+           U32 cmdSeq, //!< The command sequence number
+           Ref::SignalGen_DpReqType reqType,
+           U32 records
+       ) override;
 
         // ----------------------------------------------------------------------
         // Handler implementations for data products

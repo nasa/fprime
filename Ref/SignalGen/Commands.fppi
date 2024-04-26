@@ -15,9 +15,16 @@ async command SignalGen_Toggle \
 async command SignalGen_Skip \
   opcode 2
 
+enum DpReqType {
+    IMMEDIATE
+    ASYNC
+}
+
+
 @ Signal Generator Settings
 async command SignalGen_Dp(
-                                  records: U32
-                                ) \
+                   reqType: DpReqType
+                   records: U32
+                  ) \
   opcode 3
 

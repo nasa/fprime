@@ -207,12 +207,12 @@ namespace Ref {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void SignalGen ::
-        SignalGen_Dp_cmdHandler(
-            FwOpcodeType opCode,
-            U32 cmdSeq,
-            U32 records
-        )
+    void SignalGen::SignalGen_Dp_cmdHandler(
+        FwOpcodeType opCode,
+        U32 cmdSeq,
+        Ref::SignalGen_DpReqType reqType,
+        U32 records
+    )
     {
         // make sure DPs are available
         if (
@@ -223,18 +223,34 @@ namespace Ref {
             return;
         }
 
-        // get DP buffer
-        this->dpGet_DataContainer(records*(SignalInfo::SERIALIZED_SIZE + sizeof(FwDpIdType)),this->m_dpContainer);
-        this->m_dpInProgress = true;
-        this->m_numDps = records;
-        this->m_currDp = 0;
-        this->log_ACTIVITY_LO_SignalGen_DpStarted(records);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        // get DP buffer. Use sync or async request depending on 
+        // requested type
+        FwSizeType dpSize = records*(SignalInfo::SERIALIZED_SIZE + sizeof(FwDpIdType));
+        if (Ref::SignalGen_DpReqType::IMMEDIATE ==  reqType) {
+            Fw::Success stat = this->dpGet_DataContainer(dpSize,this->m_dpContainer);
+            // make sure we got the memory we wanted
+            if (Fw::Success::FAILURE == stat) {
+                this->log_WARNING_HI_SignalGen_DpMemoryFail();
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            } else {
+                this->m_dpInProgress = true;
+                this->log_ACTIVITY_LO_SignalGen_DpStarted(records);
+                this->m_numDps = records;
+                this->m_currDp = 0;
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+            }
+        } else if (Ref::SignalGen_DpReqType::ASYNC ==  reqType) {
+            this->dpRequest_DataContainer(dpSize);
+        } else {
+            // should never get here
+            FW_ASSERT(0,reqType.e);
+        }
+
     }
 
     void SignalGen::cleanupAndSendDp() {
         this->dpSend(this->m_dpContainer);
-        this->m_dpInProgress = 0;
+        this->m_dpInProgress = false;
         this->m_dpBytes = 0;
         this->m_numDps = 0;
         this->m_currDp = 0;
@@ -252,8 +268,20 @@ namespace Ref {
             Fw::Success::T status
         )
     {
-        // TODO
-    }
 
+        // Make sure we got the buffer we wanted or quit
+        if (Fw::Success::SUCCESS == status) {
+            this->m_dpContainer = container;
+            this->m_dpInProgress = true;
+            this->log_ACTIVITY_LO_SignalGen_DpStarted(this->m_numDps);
+        } else {
+            this->log_WARNING_HI_SignalGen_DpMemoryFail();
+            // cleanup
+            this->m_dpInProgress = false;
+            this->m_dpBytes = 0;
+            this->m_numDps = 0;
+            this->m_currDp = 0;
+        }
+    }
 
 };
