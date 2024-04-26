@@ -79,8 +79,8 @@ provide libraries and executables to the system.
 Top-level deployment directories (`Ref` folder) use the deployment templates. It is there to setup
 the entry point to the build system.
 
-For more on Modules, see: [module.md](module.md)
-For more on Deployments, see: [deployment.md](deployment.md)
+For more on Modules, see: [module.md](https://nasa.github.io/fprime/UsersGuide/api/cmake/module.html)
+For more on Deployments, see: [deployment.md](https://nasa.github.io/fprime/UsersGuide/api/cmake/deployment-CMakeLists.txt-template.html)
 
 
 ## Cross-Compiling With CMake
@@ -103,4 +103,4 @@ library/build system, adding custom make targets, building utilities, etc. These
 here: [Customization](Customization.md)
 
 
-Further documentation can be found in the SDD: [SDD.md](sdd.md)
+Further documentation can be found in the SDD: [SDD.md](https://github.com/nasa/fprime/blob/devel/cmake/docs/sdd.md)

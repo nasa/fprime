@@ -7,6 +7,7 @@
 include_guard()
 include(utilities)
 include(autocoder/helpers)
+set(FPRIME_FPP_TO_DICT_WRAPPER "${CMAKE_CURRENT_LIST_DIR}/scripts/fpp_to_dict_wrapper.py")
 
 autocoder_setup_for_multiple_sources()
 ####
@@ -17,7 +18,7 @@ autocoder_setup_for_multiple_sources()
 ####
 function(locate_fpp_tools)
     # Loop through each tool, looking if it was found and check the version
-    foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS)
+    foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS FPP_TO_DICT)
         # Skipped already defined tools
         if (${TOOL})
             continue()
@@ -207,8 +208,11 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     # Separate the source files into the CPP and XML steps
     set(GENERATED_AI)
     set(GENERATED_CPP)
+    set(GENERATED_DICT)
     foreach(GENERATED IN LISTS GENERATED_FILES)
-        if (GENERATED MATCHES ".*\\.xml")
+        if (GENERATED MATCHES ".*TopologyDictionary\.json")
+            list(APPEND GENERATED_DICT "${GENERATED}")
+        elseif (GENERATED MATCHES ".*\\.xml")
             list(APPEND GENERATED_AI "${GENERATED}")
         else()
             list(APPEND GENERATED_CPP "${GENERATED}")
@@ -234,7 +238,23 @@ function(fpp_setup_autocode AC_INPUT_FILES)
                 DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
-    set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP})
+    # Add in dictionary generation
+    if (GENERATED_DICT)
+        set(FPRIME_CURRENT_DICTIONARY_FILE_JSON "${GENERATED_DICT}" CACHE INTERNAL "" FORCE)
+        set(FPRIME_JSON_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.json")
+        add_custom_command(
+            OUTPUT ${GENERATED_DICT}
+            COMMAND ${FPRIME_FPP_TO_DICT_WRAPPER}
+                "--executable" "${FPP_TO_DICT}"
+                "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}" 
+                "--jsonVersionFile" "${FPRIME_JSON_VERSION_FILE}"
+                ${IMPORTS} ${AC_INPUT_FILES}
+            DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES} 
+                    ${FPRIME_JSON_VERSION_FILE}
+                    version
+        )
+endif()
+    set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP} ${GENERATED_DICT})
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)

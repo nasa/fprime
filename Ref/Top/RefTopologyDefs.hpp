@@ -92,6 +92,9 @@ enum { WARN = 3, FATAL = 5 };
 namespace rateGroup3Comp {
 enum { WARN = 3, FATAL = 5 };
 }
+namespace dpCat {
+enum { WARN = 3, FATAL = 5 };
+}
 }  // namespace PingEntries
 }  // namespace Ref
 #endif

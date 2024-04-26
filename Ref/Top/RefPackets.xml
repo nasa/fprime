@@ -121,30 +121,40 @@
         <channel name="SG1.PairOutput"/>
         <channel name="SG1.History"/>
         <channel name="SG1.PairHistory"/>
+        <channel name="SG1.DpBytes"/>
+        <channel name="SG1.DpRecords"/>
     </packet>
 
     <packet name="SigGen2" id="16" level="3">
         <channel name="SG2.PairOutput"/>
         <channel name="SG2.History"/>
         <channel name="SG2.PairHistory"/>
+        <channel name="SG2.DpBytes"/>
+        <channel name="SG2.DpRecords"/>
     </packet>
 
     <packet name="SigGen3" id="17" level="3">
         <channel name="SG3.PairOutput"/>
         <channel name="SG3.History"/>
         <channel name="SG3.PairHistory"/>
+        <channel name="SG3.DpBytes"/>
+        <channel name="SG3.DpRecords"/>
     </packet>
 
     <packet name="SigGen4" id="18" level="3">
         <channel name="SG4.PairOutput"/>
         <channel name="SG4.History"/>
         <channel name="SG4.PairHistory"/>
+        <channel name="SG4.DpBytes"/>
+        <channel name="SG4.DpRecords"/>
     </packet>
 
     <packet name="SigGen5" id="19" level="3">
         <channel name="SG5.PairOutput"/>
         <channel name="SG5.History"/>
         <channel name="SG5.PairHistory"/>
+        <channel name="SG5.DpBytes"/>
+        <channel name="SG5.DpRecords"/>
     </packet>
 
     <packet name="TypeDemo" id="20" level="3">
@@ -158,6 +168,26 @@
         <channel name="typeDemo.Float3Ch"/>
         <channel name="typeDemo.FloatSet"/>
     </packet>
+
+    <packet name="DataProducts" id="21" level="3">
+        <channel name="dpCat.CatalogDps"/>
+        <channel name="dpCat.DpsSent"/>
+        <channel name="dpMgr.NumSuccessfulAllocations"/>
+        <channel name="dpMgr.NumFailedAllocations"/>
+        <channel name="dpMgr.NumDataProducts"/>
+        <channel name="dpMgr.NumBytes"/>
+        <channel name="dpWriter.NumBuffersReceived"/>
+        <channel name="dpWriter.NumBytesWritten"/>
+        <channel name="dpWriter.NumSuccessfulWrites"/>
+        <channel name="dpWriter.NumFailedWrites"/>
+        <channel name="dpWriter.NumErrors"/>
+        <channel name="dpBufferManager.TotalBuffs"/>
+        <channel name="dpBufferManager.CurrBuffs"/>
+        <channel name="dpBufferManager.HiBuffs"/>
+        <channel name="dpBufferManager.NoBuffs"/>
+        <channel name="dpBufferManager.EmptyBuffs"/>
+    </packet>
+
 
     <!-- Ignored packets -->
 
