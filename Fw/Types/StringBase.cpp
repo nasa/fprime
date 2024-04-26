@@ -140,7 +140,7 @@ SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
 
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
     const FwSizeType len = FW_MIN(maxLength, this->length());
-    // serialize length and then bytes
+    // Serialize length and then bytes
     return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
