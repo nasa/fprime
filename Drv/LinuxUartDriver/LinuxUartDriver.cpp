@@ -355,7 +355,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
             status = RecvStatus::RECV_ERROR;
             comp->recv_out(0, buff, status);
             // to avoid spinning, wait 50 ms
-            Os::Task::delay(50);
+            Os::Task::delay(Fw::Time(0, 50));
             continue;
         }
 
@@ -392,7 +392,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
 void LinuxUartDriver ::start(Os::Task::ParamType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity) {
     Os::TaskString task("SerReader");
     Os::Task::Arguments arguments(task, serialReadTaskEntry, this, priority, stackSize, cpuAffinity);
-    Os::Task::TaskStatus stat = this->m_readTask.start(arguments);
+    Os::Task::Status stat = this->m_readTask.start(arguments);
     FW_ASSERT(stat == Os::Task::OP_OK, stat);
 }
 
@@ -400,8 +400,8 @@ void LinuxUartDriver ::quitReadThread() {
     this->m_quitReadThread = true;
 }
 
-Os::Task::TaskStatus LinuxUartDriver ::join(void** value_ptr) {
-    return m_readTask.join(value_ptr);
+Os::Task::Status LinuxUartDriver ::join() {
+    return m_readTask.join();
 }
 
 }  // end namespace Drv
