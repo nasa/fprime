@@ -153,9 +153,9 @@ SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
     // Public interface returns const char*, but implementation needs char*
     // So use const_cast
     CHAR* raw = const_cast<CHAR*>(this->toChar());
-    // Read length and deserialize bytes up to max size (the initial value of actualSize)
-    // Fail if length exceeds this bound
-    // On success, set actualSize to actual size
+    // Deserialize length
+    // Fail if length exceeds max size (the initial value of actualSize)
+    // Otherwise deserialize length bytes and set actualSize to length
     SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(raw), actualSize, Serialization::INCLUDE_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Deserialization succeeded: null-terminate string at actual size
