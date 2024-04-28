@@ -36,6 +36,11 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
     server.configure("127.0.0.1", port, 0, 100);
     this->component.configure("127.0.0.1", port, 0, 100);
     serverStat = server.startup();
+    if (serverStat != SOCK_SUCCESS)
+    {
+        perror("TCP server startup error");
+        printf("Port: %u\n", port);
+    }
     ASSERT_EQ(serverStat, SOCK_SUCCESS);
 
     // Start up a receive thread

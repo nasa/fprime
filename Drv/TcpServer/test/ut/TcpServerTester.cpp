@@ -41,7 +41,12 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         EXPECT_TRUE(Drv::Test::wait_on_started(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
     } else {
         serverStat = this->component.startup();
-        EXPECT_EQ(serverStat, SOCK_SUCCESS);
+        if (serverStat != SOCK_SUCCESS)
+        {
+            perror("TCP server startup error");
+            printf("Port: %u\n", port);
+        }
+        ASSERT_EQ(serverStat, SOCK_SUCCESS);
     }
     EXPECT_TRUE(component.getSocketHandler().isStarted());
 

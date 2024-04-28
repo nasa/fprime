@@ -59,7 +59,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
 
         udp2.configureSend("127.0.0.1", port2, 0, 100);
         udp2.configureRecv("127.0.0.1", port1);
-        status2 = udp2.open();;
+        status2 = udp2.open();
 
         EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
         EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
