@@ -69,6 +69,7 @@ build-fprime-automatic*
 /ci-venv/
 /ci-logs*
 /ci-Framework-logs*
+/ci-Ref-logs*
 TesterBase.*
 GTestBase.*
 **/DefaultDict/serializable/*
