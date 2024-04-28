@@ -29,10 +29,20 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    U16 port1 =  Drv::Test::get_free_port();
+    U16 port1 =  Drv::Test::get_free_port(true);
     ASSERT_NE(0, port1);
-    U16 port2 =  Drv::Test::get_free_port();
+    U16 port2 =  Drv::Test::get_free_port(true);
     ASSERT_NE(0, port2);
+
+    uint8_t attempt_to_find_available_port = 100;
+
+    while ((port1 == port2) && attempt_to_find_available_port > 0)
+    {
+        U16 port2 =  Drv::Test::get_free_port(true);
+        ASSERT_NE(0, port2);
+        --attempt_to_find_available_port;
+    }
+    ASSERT_NE(port1, port2);
 
     // Configure the component
     this->component.configureSend("127.0.0.1", port1, 0, 100);
@@ -52,6 +62,13 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {
             status1 = this->component.open();
+            if (status1 != Drv::SOCK_SUCCESS)
+            {
+                printf("UDP socket open error: %s\n", strerror(errno));
+                printf("Port1: %u\n", port1);
+                printf("Port2: %u\n", port2);
+            }
+            ASSERT_EQ(status1, Drv::SOCK_SUCCESS);
         } else {
             EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
         }
@@ -61,8 +78,13 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
         udp2.configureRecv("127.0.0.1", port1);
         status2 = udp2.open();
 
-        EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
-        EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
+        if (status2 != Drv::SOCK_SUCCESS)
+        {
+            printf("UDP socket open error: %s\n", strerror(errno));
+            printf("Port1: %u\n", port1);
+            printf("Port2: %u\n", port2);
+        }
+        ASSERT_EQ(status2, Drv::SOCK_SUCCESS);
 
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
