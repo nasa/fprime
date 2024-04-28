@@ -45,7 +45,7 @@ void StaticMemoryComponentImpl ::bufferDeallocate_handler(const NATIVE_INT_TYPE 
     FW_ASSERT(
         (fwBuffer.getData() + fwBuffer.getSize()) <= (m_static_memory[portNum] + sizeof(m_static_memory[0])),
         static_cast<FwAssertArgType>(fwBuffer.getSize()),
-        sizeof(m_static_memory[0]));
+        static_cast<FwAssertArgType>(sizeof(m_static_memory[0])));
     m_allocated[portNum] = false;
 }
 
