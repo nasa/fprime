@@ -68,7 +68,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
                 printf("Port1: %u\n", port1);
                 printf("Port2: %u\n", port2);
             }
-            ASSERT_EQ(status1, Drv::SOCK_SUCCESS);
+            EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
         } else {
             EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
         }
@@ -84,7 +84,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             printf("Port1: %u\n", port1);
             printf("Port2: %u\n", port2);
         }
-        ASSERT_EQ(status2, Drv::SOCK_SUCCESS);
+        EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
 
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
