@@ -82,7 +82,13 @@ The diagram below shows the `DpWriter` component.
 
 ### 3.5. Runtime Setup
 
-No special runtime setup is required.
+You can call the `configure` function to supply the DP file name
+prefix. This is the prefix used when constructing names of files to write.
+For more information about the file name format, see the [**File
+Format**](#file_format) section.
+
+If you do not call the `configure` function, then the default
+DP file name prefix is the empty string.
 
 ### 3.6. Port Handlers
 
@@ -149,9 +155,13 @@ in order.
 
 Format Specifier | Type |
 ---------------- | -----|
-Container ID | `PRI_FwDpIdType`
-Time seconds | `PRI_u32`
-Time microseconds | `PRI_u32`
+The DP file name prefix | `%s`
+Container ID | `%PRI_FwDpIdType`
+Time seconds | `%PRI_u32`
+Time microseconds | `%PRI_u32`
+
+The exact meaning of the DP file name prefix depends on the format string.
+Typically it is a directory path prefix.
 
 <a name="ground_interface"></a>
 ## 5. Ground Interface

@@ -22,9 +22,9 @@
 
 namespace Ref {
 
-  class SignalGen :
-    public SignalGenComponentBase
-  {
+    class SignalGen :
+        public SignalGenComponentBase
+    {
 
     private:
 
@@ -34,12 +34,12 @@ namespace Ref {
         );
 
         void SignalGen_Settings_cmdHandler(
-        FwOpcodeType opCode, /*!< The opcode*/
-        U32 cmdSeq, /*!< The command sequence number*/
-        U32 Frequency,
-        F32 Amplitude,
-        F32 Phase,
-        Ref::SignalType SigType
+            FwOpcodeType opCode, /*!< The opcode*/
+            U32 cmdSeq, /*!< The command sequence number*/
+            U32 Frequency,
+            F32 Amplitude,
+            F32 Phase,
+            Ref::SignalType SigType
         );
 
         void SignalGen_Toggle_cmdHandler(
@@ -47,13 +47,33 @@ namespace Ref {
             U32 cmdSeq /*!< The command sequence number*/
         );
         void SignalGen_Skip_cmdHandler(
-        FwOpcodeType opCode, /*!< The opcode*/
-        U32 cmdSeq /*!< The command sequence number*/
+            FwOpcodeType opCode, /*!< The opcode*/
+            U32 cmdSeq /*!< The command sequence number*/
         );
         void SignalGen_GenerateArray_cmdHandler(
-        FwOpcodeType opCode, /*!< The opcode*/
-        U32 cmdSeq /*!< The command sequence number*/
+            FwOpcodeType opCode, /*!< The opcode*/
+            U32 cmdSeq /*!< The command sequence number*/
         );
+
+        //! Handler implementation for command SignalGen_Dp
+        //!
+        //! Signal Generator Settings
+        void SignalGen_Dp_cmdHandler(
+            FwOpcodeType opCode, //!< The opcode
+            U32 cmdSeq, //!< The command sequence number
+            U32 records
+        ) override;
+
+        // ----------------------------------------------------------------------
+        // Handler implementations for data products
+        // ----------------------------------------------------------------------
+
+        //! Receive a container of type DataContainer
+        void dpRecv_DataContainer_handler(
+            DpContainer& container, //!< The container
+            Fw::Success::T status //!< The container status
+        ) override;
+
 
     public:
         //! Construct a SignalGen
@@ -76,6 +96,9 @@ namespace Ref {
         // Generate the next sample internal helper
         F32 generateSample(U32 ticks);
 
+        // DP cleanup helper
+        void cleanupAndSendDp();
+
         // Member variables
         U32 sampleFrequency;
         U32 signalFrequency;
@@ -87,7 +110,12 @@ namespace Ref {
         SignalPairSet sigPairHistory;
         bool running;
         bool skipOne;
+        DpContainer m_dpContainer;
+        bool m_dpInProgress; //!< flag to indicate data products are being generated
+        U32 m_numDps; //!< number of DPs to store
+        U32 m_currDp; //!< current DP number
+        U32 m_dpBytes; //!< currently serialized records
 
-  };
+    };
 };
 #endif

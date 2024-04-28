@@ -1,32 +1,54 @@
-#ifndef OS_TASK_STRING_TYPE_HPP
-#define OS_TASK_STRING_TYPE_HPP
+// ======================================================================
+// @file   TaskString.hpp
+// @author F Prime
+// @brief  A string sized for an OS task name
+// ======================================================================
+
+#ifndef OS_TASK_STRING_HPP
+#define OS_TASK_STRING_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/StringType.hpp>
+
+#include "Fw/Types/StringBase.hpp"
 
 namespace Os {
 
-    class TaskString : public Fw::StringBase {
-        public:
+class TaskString final : public Fw::StringBase {
+  public:
+    enum { STRING_SIZE = FW_TASK_NAME_MAX_SIZE, SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType) };
 
-            TaskString(const char* src); //!< char buffer constructor
-            TaskString(const StringBase& src); //!< Copy constructor
-            TaskString(const TaskString& src); //!< Copy constructor
-            TaskString(); //!< default constructor
-            TaskString& operator=(const TaskString& other); //!< assignment operator
-            TaskString& operator=(const StringBase& other); //!< other string assignment operator
-            TaskString& operator=(const char* other); //!< char* assignment operator
-            ~TaskString(); //!< destructor
+    TaskString() : StringBase() { *this = ""; }
 
-            const char* toChar() const; //!< get pointer to internal char buffer
-            NATIVE_UINT_TYPE getCapacity() const; //!< return buffer size
+    TaskString(const TaskString& src) : StringBase() { *this = src; }
 
-        private:
+    TaskString(const StringBase& src) : StringBase() { *this = src; }
 
-            char m_buf[FW_TASK_NAME_MAX_SIZE]; //!< buffer for string
+    TaskString(const char* src) : StringBase() { *this = src; }
 
-    };
+    ~TaskString() {}
 
-}
+    TaskString& operator=(const TaskString& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    TaskString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    TaskString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
+
+  private:
+    char m_buf[TaskString::STRING_SIZE];
+};
+}  // namespace Os
 
 #endif

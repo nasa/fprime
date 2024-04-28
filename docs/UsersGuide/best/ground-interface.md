@@ -84,10 +84,10 @@ nothing to retry.
 
 Uplink handles received data, unpacks F´ data types, and routes these to the greater F´ system. In a typical formation,
 these com buffers are sent to the command dispatcher and raw buffers are sent to the file uplink. Uplink is implemented with
-the [Svc.Deframer](../api/c++/html/svc_deframer.html) component. This component may be rate group driven in which case
+the [Svc.Deframer](../api/c++/html/svc_deframer_component.html) component. This component may be rate group driven in which case
 it polls for data or it may be driven by a driver's receive output port in which case it handles the data on that
 incoming port call. Svc.Deframer implements the
-[DeframingProtocolInterface](../api/c++/html/class_deframing_protocol_interface.html).
+[DeframingProtocolInterface](../api/c++/html/class_svc_1_1_deframing_protocol_interface.html).
 
 Svc.Deframer unpacks F´ data from the supplied buffer using a
 [Svc::DeframingProtocol](../api/c++/html/class_svc_1_1_deframing_protocol.html), which calls back through the
@@ -99,8 +99,8 @@ complete. This buffer is updated with the latest data and then processed for mes
 ### Downlink
 
 Downlink takes in F´ data and wraps the data with bytes supporting the necessary protocol. This assembled data is then
-sent to the driver for handling. Downlink is implemented with the [Svc.Framer](../api/c++/html/svc_framer.html)
-component, which implements the [FramingProtocolInterface](../api/c++/html/class_framing_protocol_interface.html).
+sent to the driver for handling. Downlink is implemented with the [Svc.Framer](../api/c++/html/svc_framer_component.html)
+component, which implements the [FramingProtocolInterface](../api/c++/html/class_svc_1_1_framing_protocol_interface.html).
 
 Svc.Framer packs F´ data using a [Svc::FramingProtocol](../api/c++/html/class_svc_1_1_framing_protocol.html), which
 calls back through the FramingProtocolInterface to send framed packets out to the driver.
@@ -113,7 +113,7 @@ To add a custom wire protocol an implementation needs to be written for two inte
 
 Svc::FramingProtocol implementors need to implement one function: frame, taking in a pointer to the data to frame, the
 size of the data, and a packet type for the data. The base class supplies a
-[FramingProtocolInterface](../api/c++/html/class_framing_protocol_interface.html) member variable, `m_interface`, that
+[FramingProtocolInterface](../api/c++/html/class_svc_1_1_framing_protocol_interface.html) member variable, `m_interface`, that
 allows implementors to call out for allocating data and sending the newly framed data. A minimal implementation is:
 
 ```c++
@@ -134,7 +134,7 @@ Here the protocol starts a frame with `0xdeadbeef`, followed by the data size, a
 
 Svc::DeframingProtocol implementors need to implement one function: deframe, taking in a circular buffer supplying data,
 filling the needed variable, and returning a status. The base class supplies a
-[DeframingProtocolInterface](../api/c++/html/class_deframing_protocol_interface.html) member variable, `m_interface`,
+[DeframingProtocolInterface](../api/c++/html/class_svc_1_1_deframing_protocol_interface.html) member variable, `m_interface`,
 that allows implementors to call out for allocating data and routing the deframed data. A minimal implementation is:
 
 ```c++

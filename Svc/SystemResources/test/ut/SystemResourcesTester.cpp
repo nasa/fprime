@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "SystemResourcesTester.hpp"
-#include "version.hpp"
+#include "versions/version.hpp"
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100
 
@@ -114,8 +114,8 @@ void SystemResourcesTester ::test_tlm(bool enabled) {
                 ASSERT_TLM_FRAMEWORK_VERSION_SIZE((enabled) ? 1 : 0);
                 ASSERT_TLM_PROJECT_VERSION_SIZE((enabled) ? 1 : 0);
                 if (enabled) {
-                    ASSERT_TLM_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
-                    ASSERT_TLM_PROJECT_VERSION(0, PROJECT_VERSION);
+                    ASSERT_TLM_FRAMEWORK_VERSION(0, Project::Version::FRAMEWORK_VERSION);
+                    ASSERT_TLM_PROJECT_VERSION(0, Project::Version::PROJECT_VERSION);
                 }
                 ASSERT_TLM_SIZE((enabled) ? (count + 3) : 0); // CPU count channels + avg + 2 ver
                 break;
@@ -133,9 +133,9 @@ void SystemResourcesTester ::test_disable_enable() {
 void SystemResourcesTester ::test_version_evr() {
     this->sendCmd_VERSION(0, 0);
     ASSERT_EVENTS_FRAMEWORK_VERSION_SIZE(1);
-    ASSERT_EVENTS_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
+    ASSERT_EVENTS_FRAMEWORK_VERSION(0, Project::Version::FRAMEWORK_VERSION);
     ASSERT_EVENTS_PROJECT_VERSION_SIZE(1);
-    ASSERT_EVENTS_PROJECT_VERSION(0, FRAMEWORK_VERSION);
+    ASSERT_EVENTS_PROJECT_VERSION(0, Project::Version::FRAMEWORK_VERSION);
 }
 
 // ----------------------------------------------------------------------
