@@ -268,13 +268,13 @@ doxyindexer
 doxyrules
 doxysearch
 Doxywizard
-DPCFG
-dpi
 DPCAT
 DPCATALOG
+DPCFG
+dpi
 DPMANAGER
-DPWRITER
 dps
+DPWRITER
 DRAINBUFFERS
 drv
 dsdl
@@ -433,8 +433,8 @@ Guire
 handcoded
 hardtoaccess
 hashvalue
-HEADERSIZE
 hdr
+HEADERSIZE
 headlessly
 heapifying
 hexid
@@ -900,6 +900,7 @@ saveop
 sbb
 SBF
 SBINDIR
+sbt
 scatterometer
 schem
 schematron
