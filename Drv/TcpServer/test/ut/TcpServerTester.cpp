@@ -43,7 +43,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         serverStat = this->component.startup();
         if (serverStat != SOCK_SUCCESS)
         {
-            perror("TCP server startup error");
+            printf("TCP server startup error: %s\n", strerror(errno));
             printf("Port: %u\n", port);
         }
         ASSERT_EQ(serverStat, SOCK_SUCCESS);
