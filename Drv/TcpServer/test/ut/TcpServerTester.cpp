@@ -41,7 +41,9 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         EXPECT_TRUE(Drv::Test::wait_on_started(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
     } else {
         serverStat = this->component.startup();
-        EXPECT_EQ(serverStat, SOCK_SUCCESS);
+        ASSERT_EQ(serverStat, SOCK_SUCCESS)
+            << "TCP server startup error: " << strerror(errno) << std::endl
+            << "Port: " << port << std::endl;
     }
     EXPECT_TRUE(component.getSocketHandler().isStarted());
 
