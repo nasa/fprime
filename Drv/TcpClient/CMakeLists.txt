@@ -5,6 +5,8 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+restrict_platforms(Posix)
+
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/TcpClient.fpp"
 	"${CMAKE_CURRENT_LIST_DIR}/TcpClientComponentImpl.cpp"

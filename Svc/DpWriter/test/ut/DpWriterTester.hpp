@@ -44,22 +44,10 @@ class DpWriterTester : public DpWriterGTestBase {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for deallocBufferSendOut
-    void from_deallocBufferSendOut_handler(NATIVE_INT_TYPE portNum,  //!< The port number
-                                           Fw::Buffer& fwBuffer      //!< The buffer
-    );
-
-    //! Handler implementation for dpWrittenOut
-    void from_dpWrittenOut_handler(NATIVE_INT_TYPE portNum,                                   //!< The port number
-                                   const Svc::DpWrittenPortStrings::StringSize256& fileName,  //!< The file name
-                                   FwDpPriorityType priority,                                 //!< The priority
-                                   FwSizeType size                                            //!< The file size
-    );
-
     //! Handler implementation for procBufferSendOut
     void from_procBufferSendOut_handler(NATIVE_INT_TYPE portNum,  //!< The port number
                                         Fw::Buffer& fwBuffer      //!< The buffer
-    );
+    ) final;
 
   public:
     // ----------------------------------------------------------------------
@@ -79,9 +67,9 @@ class DpWriterTester : public DpWriterGTestBase {
     static Os::File::Status pickOsFileError();
 
     //! Construct a DP file name
-    static void constructDpFileName(FwDpIdType id,            //!< The container ID (input)
-                                    const Fw::Time& timeTag,  //!< The time tag (input)
-                                    Fw::StringBase& fileName  //!< The file name (output)
+    void constructDpFileName(FwDpIdType id,            //!< The container ID (input)
+                             const Fw::Time& timeTag,  //!< The time tag (input)
+                             Fw::StringBase& fileName  //!< The file name (output)
     );
 
     //! Check processing types

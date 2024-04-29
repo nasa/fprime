@@ -16,5 +16,5 @@ ARINC 653 Channels, High-speed hardware buses between nodes, and UARTs between n
 
 ## Generic Hub
 
-There is now a standard implementation of the hub pattern. The [GenericHub](../api/c++/html/svc_generic_hub.html) is an
+There is now a standard implementation of the hub pattern. The [GenericHub](../api/c++/html/svc_generic_hub_component.html) is an
 implementation of the hub pattern that passes through F´ ports and `Fw::Buffer`s.

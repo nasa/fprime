@@ -48,14 +48,10 @@ link to all the other modules they use.
 
 `add_fprime_subdirectory`, `register_fprime_module`, `register_fprime_executable` docs are here: [API](./cmake-api.md).
 
-A template module `CMakeLists.txt` is documented: [module-CMakeLists.txt-template.md](../api/cmake/module-CMakeLists.txt-template.md)
-and the template is available here:
-[https://github.com/nasa/fprime/tree/master/cmake/module-CMakeLists.txt.template](https://github.com/nasa/fprime/tree/master/cmake/module-CMakeLists.txt.template).
+A template module `CMakeLists.txt` is documented: [module-CMakeLists.txt-template.md](https://nasa.github.io/fprime/UsersGuide/api/cmake/module-CMakeLists.txt-template.html)
 Remember it should be renamed to `CMakeLists.txt` in your module's folder.
 
-A template deployment `CMakeLists.txt` is documented: [deployment-CMakeLists.txt-template.md](../api/cmake/deployment-CMakeLists.txt-template.md)
-and available here:
-[https://github.com/nasa/fprime/tree/master/cmake/deployment-CMakeLists.txt.template]([https://github.com/nasa/fprime/tree/master/cmake/deployment-CMakeLists.txt.template]).
+A template deployment `CMakeLists.txt` is documented: [deployment-CMakeLists.txt-template.md](https://nasa.github.io/fprime/UsersGuide/api/cmake/deployment-CMakeLists.txt-template.html).
 Remember it should be renamed to `CMakeLists.txt` in your deployments folder.
 
 When building a module, ensure it at least calls `register_fprime_module`. Deployments may call

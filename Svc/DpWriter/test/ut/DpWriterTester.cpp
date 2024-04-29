@@ -29,17 +29,6 @@ DpWriterTester ::~DpWriterTester() {}
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void DpWriterTester ::from_deallocBufferSendOut_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
-    this->pushFromPortEntry_deallocBufferSendOut(buffer);
-}
-
-void DpWriterTester ::from_dpWrittenOut_handler(NATIVE_INT_TYPE portNum,
-                                                const fileNameString& fileName,
-                                                FwDpPriorityType priority,
-                                                FwSizeType size) {
-    this->pushFromPortEntry_dpWrittenOut(fileName, priority, size);
-}
-
 void DpWriterTester::from_procBufferSendOut_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
     this->pushFromPortEntry_procBufferSendOut(buffer);
     this->abstractState.m_procTypes |= (1 << portNum);
@@ -74,7 +63,8 @@ Os::File::Status DpWriterTester::pickOsFileError() {
     }
 
 void DpWriterTester::constructDpFileName(FwDpIdType id, const Fw::Time& timeTag, Fw::StringBase& fileName) {
-    fileName.format(DP_FILENAME_FORMAT, id, timeTag.getSeconds(), timeTag.getUSeconds());
+    fileName.format(DP_FILENAME_FORMAT, this->component.m_dpFileNamePrefix.toChar(), id, timeTag.getSeconds(),
+                    timeTag.getUSeconds());
 }
 
 void DpWriterTester::checkProcTypes(const Fw::DpContainer& container) {

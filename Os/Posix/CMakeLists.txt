@@ -5,7 +5,7 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-restrict_platforms(Linux Darwin)
+restrict_platforms(Posix)
 add_custom_target("${FPRIME_CURRENT_MODULE}")
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"

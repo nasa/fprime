@@ -98,6 +98,9 @@ class DpContainer {
     //! \return The time tag
     Fw::Time getTimeTag() const { return this->m_timeTag; }
 
+    //! Get the product state
+    Fw::DpState getState() const { return this->m_dpState; }
+
     //! Get the processing types
     //! \return The processing types
     DpCfg::ProcType::SerialType getProcTypes() const { return this->m_procTypes; }

@@ -1,36 +1,60 @@
-#ifndef FW_INTERNAL_INTERFACE_STRING_TYPE_HPP
-#define FW_INTERNAL_INTERFACE_STRING_TYPE_HPP
+// ======================================================================
+// @file   InternalInterfaceString.hpp
+// @author F Prime
+// @brief  A string sized for an internal port argument
+// ======================================================================
+
+#ifndef FW_INTERNAL_INTERFACE_STRING_HPP
+#define FW_INTERNAL_INTERFACE_STRING_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/StringType.hpp>
-#include <Fw/Cfg/SerIds.hpp>
+
+#include "Fw/Cfg/SerIds.hpp"
+#include "Fw/Types/StringBase.hpp"
+#include "config/FppConstantsAc.hpp"
 
 namespace Fw {
 
-    class InternalInterfaceString : public Fw::StringBase {
-        public:
-
-            enum {
-                SERIALIZED_TYPE_ID = FW_TYPEID_INTERNAL_INTERFACE_STRING, //!< typeid for string type
-                SERIALIZED_SIZE = FW_INTERNAL_INTERFACE_STRING_MAX_SIZE + sizeof(FwBuffSizeType) //!< Serialized size is size of buffer + size field
-            };
-
-            InternalInterfaceString(const char* src); //!< char* source constructor
-            InternalInterfaceString(const StringBase& src); //!< other string constructor
-            InternalInterfaceString(const InternalInterfaceString& src); //!< other string constructor
-            InternalInterfaceString(); //!< default constructor
-            InternalInterfaceString& operator=(const InternalInterfaceString& other); //!< assignment operator
-            InternalInterfaceString& operator=(const StringBase& other); //!< other string assignment operator
-            InternalInterfaceString& operator=(const char* other); //!< char* assignment operator
-            ~InternalInterfaceString(); //!< destructor
-
-            const char* toChar() const; //!< gets char buffer
-            NATIVE_UINT_TYPE getCapacity() const; //!< return buffer size
-
-        private:
-
-            char m_buf[FW_INTERNAL_INTERFACE_STRING_MAX_SIZE]; //!< storage for string data
+class InternalInterfaceString final : public StringBase {
+  public:
+    enum {
+        SERIALIZED_TYPE_ID = FW_TYPEID_INTERNAL_INTERFACE_STRING,
+        STRING_SIZE = FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
+        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
     };
-}
 
-#endif // FW_INTERNAL_INTERFACE_STRING_TYPE_HPP
+    InternalInterfaceString() : StringBase() { *this = ""; }
+
+    InternalInterfaceString(const InternalInterfaceString& src) : StringBase() { *this = src; }
+
+    InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
+
+    InternalInterfaceString(const char* src) : StringBase() { *this = src; }
+
+    ~InternalInterfaceString() {}
+
+    InternalInterfaceString& operator=(const InternalInterfaceString& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    InternalInterfaceString& operator=(const StringBase& src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    InternalInterfaceString& operator=(const char* src) {
+        (void)StringBase::operator=(src);
+        return *this;
+    }
+
+    const char* toChar() const { return this->m_buf; }
+
+    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
+
+  private:
+    char m_buf[InternalInterfaceString::STRING_SIZE];
+};
+}  // namespace Fw
+
+#endif

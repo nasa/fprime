@@ -221,7 +221,7 @@ DDDTHH
 ddl
 ddmm
 dealloc
-Debian
+debian
 deconstructor
 Deerin
 defaultgen
@@ -270,8 +270,11 @@ doxysearch
 Doxywizard
 DPCFG
 dpi
+DPCAT
+DPCATALOG
 DPMANAGER
 DPWRITER
+dps
 DRAINBUFFERS
 drv
 dsdl
@@ -378,6 +381,7 @@ fsw
 fus
 FWCASSERT
 Gangianpour
+gaurav
 gbl
 gcc
 gcda
@@ -398,6 +402,7 @@ getinput
 getm
 getpid
 getquaternion
+gett
 gettime
 gettimeofday
 getty
@@ -429,6 +434,7 @@ handcoded
 hardtoaccess
 hashvalue
 HEADERSIZE
+hdr
 headlessly
 heapifying
 hexid
@@ -605,12 +611,14 @@ Merewether
 methoddoc
 methodstub
 microcontrollers
+mlc
 mman
 MMAPALLOCATOR
 MML
 modbus
 MOSI
 MOVEFILE
+mozilla
 mqd
 mqueue
 Mrf
@@ -857,6 +865,7 @@ relaxng
 REMOVEDIRECTORY
 REMOVEFILE
 reparse
+reprioritize
 reserializing
 resname
 resultlist
@@ -909,6 +918,7 @@ serializables
 setaffinity
 setdata
 SETFL
+setid
 setinheritsched
 SETLOGGING
 setm
@@ -938,6 +948,7 @@ sloc
 smallsat
 Smath
 SNDTIMEO
+socio
 SOCKETHELPER
 SOCKETIPDRIVER
 SOCKETREADTASK
@@ -1016,6 +1027,7 @@ tcgetattr
 TCIFLUSH
 tclist
 tcomp
+tcort
 TCPCLIENT
 TCPHELPER
 tcpserver
@@ -1162,6 +1174,7 @@ WAITALL
 watney
 Wdog
 whitebox
+wikipedia
 WLE
 Wno
 WORKDIR
@@ -1169,6 +1182,7 @@ worklist
 wrs
 wsl
 wxgui
+wxy
 Xabcdefx
 xapian
 xdf

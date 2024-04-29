@@ -15,3 +15,9 @@ telemetry PairHistory: Ref.SignalPairSet id 4
 
 @ Composite field of signal information, containing histories, pairs etc
 telemetry Info: Ref.SignalInfo id 5
+
+@ DP bytes written
+telemetry DpBytes: U32 id 6
+
+@ DP records written
+telemetry DpRecords: U32 id 7
