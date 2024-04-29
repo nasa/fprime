@@ -4,6 +4,12 @@ module FppTest {
   active component DpTest {
 
     # ----------------------------------------------------------------------
+    # Constants
+    # ----------------------------------------------------------------------
+
+    constant stringSize = 80
+
+    # ----------------------------------------------------------------------
     # Types
     # ----------------------------------------------------------------------
 
@@ -58,6 +64,12 @@ module FppTest {
     @ Record 5
     product record DataArrayRecord: Data array id 500
 
+    @ Record 6
+    product record StringRecord: string size stringSize id 600
+
+    @ Record 7
+    product record StringArrayRecord: string size stringSize array id 700
+
     # ----------------------------------------------------------------------
     # Containers
     # ----------------------------------------------------------------------
@@ -76,6 +88,12 @@ module FppTest {
 
     @ Container 5
     product container Container5 id 500 default priority 50
+
+    @ Container 6
+    product container Container6 id 600 default priority 60
+
+    @ Container 7
+    product container Container7 id 700 default priority 70
 
   }
 

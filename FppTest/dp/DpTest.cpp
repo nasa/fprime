@@ -15,19 +15,25 @@ namespace FppTest {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-DpTest ::DpTest(const char* const compName,
-                U32 u32RecordData,
-                U16 dataRecordData,
-                const U8ArrayRecordData& u8ArrayRecordData,
-                const U32ArrayRecordData& u32ArrayRecordData,
-                const DataArrayRecordData& dataArrayRecordData)
+DpTest::DpTest(const char* const compName,
+               U32 u32RecordData,
+               U16 dataRecordData,
+               const U8ArrayRecordData& u8ArrayRecordData,
+               const U32ArrayRecordData& u32ArrayRecordData,
+               const DataArrayRecordData& dataArrayRecordData,
+               const Fw::StringBase& a_stringRecordData)
     : DpTestComponentBase(compName),
       u32RecordData(u32RecordData),
       dataRecordData(dataRecordData),
       u8ArrayRecordData(u8ArrayRecordData),
       u32ArrayRecordData(u32ArrayRecordData),
       dataArrayRecordData(dataArrayRecordData),
-      sendTime(Fw::ZERO_TIME) {}
+      stringRecordData(a_stringRecordData),
+      sendTime(Fw::ZERO_TIME) {
+    for (auto& elt : this->stringArrayRecordData) {
+        elt = &a_stringRecordData;
+    }
+}
 
 void DpTest ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
     DpTestComponentBase::init(queueDepth, instance);
@@ -50,6 +56,8 @@ void DpTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     this->dpRequest_Container4(CONTAINER_4_DATA_SIZE);
     // Request a buffer for Container 5
     this->dpRequest_Container5(CONTAINER_5_DATA_SIZE);
+    // Request a buffer for Container 6
+    this->dpRequest_Container6(CONTAINER_6_DATA_SIZE);
     // Get a buffer for Container 1
     {
         DpContainer container;
@@ -168,6 +176,37 @@ void DpTest ::dpRecv_Container5_handler(DpContainer& container, Fw::Success::T s
         for (FwSizeType i = 0; i < CONTAINER_5_DATA_SIZE; ++i) {
             serializeStatus = container.serializeRecord_DataArrayRecord(this->dataArrayRecordData.data(),
                                                                         this->dataArrayRecordData.size());
+            if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+                break;
+            }
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+        }
+        // Use the time stamp from the time get port
+        this->dpSend(container);
+    }
+}
+
+void DpTest ::dpRecv_Container6_handler(DpContainer& container, Fw::Success::T status) {
+    if (status == Fw::Success::SUCCESS) {
+        auto serializeStatus = Fw::FW_SERIALIZE_OK;
+        for (FwSizeType i = 0; i < CONTAINER_6_DATA_SIZE; ++i) {
+            serializeStatus = container.serializeRecord_StringRecord(this->stringRecordData);
+            if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+                break;
+            }
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+        }
+        // Use the time stamp from the time get port
+        this->dpSend(container);
+    }
+}
+
+void DpTest ::dpRecv_Container7_handler(DpContainer& container, Fw::Success::T status) {
+    if (status == Fw::Success::SUCCESS) {
+        auto serializeStatus = Fw::FW_SERIALIZE_OK;
+        for (FwSizeType i = 0; i < CONTAINER_7_DATA_SIZE; ++i) {
+            serializeStatus = container.serializeRecord_StringArrayRecord(
+                this->stringArrayRecordData, FW_NUM_ARRAY_ELEMENTS(this->stringArrayRecordData));
             if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
                 break;
             }

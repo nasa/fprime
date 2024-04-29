@@ -1,7 +1,7 @@
 /**
- * \file
+ * \file StringBase.cpp
  * \author T. Canham
- * \brief Implements ISF string base class
+ * \brief Implements F Prime string base class
  *
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
@@ -87,11 +87,9 @@ std::ostream& operator<<(std::ostream& os, const StringBase& str) {
 #endif
 
 StringBase& StringBase::operator=(const StringBase& other) {
-    if (this == &other) {
-        return *this;
+    if (this != &other) {
+        (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), other.toChar(), this->getCapacity());
     }
-
-    (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), other.toChar(), this->getCapacity());
     return *this;
 }
 
@@ -117,6 +115,14 @@ void StringBase::appendBuff(const CHAR* buff, SizeType size) {
 
 StringBase::SizeType StringBase::length() const {
     return static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
+}
+
+StringBase::SizeType StringBase::serializedSize() const {
+    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + this->length();
+}
+
+StringBase::SizeType StringBase::serializedTruncatedSize(FwSizeType maxLength) const {
+    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + static_cast<SizeType>(FW_MIN(this->length(), maxLength));
 }
 
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {

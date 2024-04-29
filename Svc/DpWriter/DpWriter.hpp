@@ -32,6 +32,10 @@ class DpWriter : public DpWriterComponentBase {
     //!
     ~DpWriter();
 
+    //! Configure writer
+    void configure(const Fw::StringBase& dpFileNamePrefix  //!< The file name prefix for writing DP files
+    );
+
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
@@ -41,13 +45,13 @@ class DpWriter : public DpWriterComponentBase {
     //!
     void bufferSendIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
                               Fw::Buffer& fwBuffer            //!< The buffer
-                              ) override;
+                              ) final;
 
     //! Handler implementation for schedIn
     //!
     void schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
                          U32 context                     //!< The call order
-                         ) override;
+                         ) final;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -59,7 +63,7 @@ class DpWriter : public DpWriterComponentBase {
     //! Clear event throttling
     void CLEAR_EVENT_THROTTLE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                          U32 cmdSeq            //!< The command sequence number
-                                         ) override;
+                                         ) final;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -108,6 +112,11 @@ class DpWriter : public DpWriterComponentBase {
 
     //! The number of errors
     U32 m_numErrors = 0;
+
+    //! The file name prefix for writing DP files
+    //! The precise meaning depends on the DP format string
+    //! For example, this could be a directory path prefix
+    Fw::FileNameString m_dpFileNamePrefix;
 };
 
 }  // end namespace Svc

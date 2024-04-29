@@ -41,16 +41,16 @@ This fixed size is never exceeded by the outstanding allocations.
 Name | Type | Role
 -----| ---- | ----
 `timeCaller` | `Fw::Time` | TimeGet
-`tlmOut` | [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.html) | Telemetry
-`eventOut` | [`Fw::LogEvent`](../../../Fw/Log/docs/sdd.html) | LogEvent
+`tlmOut` | [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Telemetry
+`eventOut` | [`Fw::LogEvent`](../../../Fw/Log/docs/sdd.md) | LogEvent
 
 #### 3.3.2 Component-Specific Ports
 
 Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
-`bufferSendIn` | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.html) | guarded input | Receives buffers for deallocation
-`bufferGetCallee` | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.html) | guarded input (callee) | Receives requests for allocated buffers and returns the buffers
-`schedIn` | [`Svc::Sched`](../../../Svc/Sched/docs/sdd.html) | sync input (callee) | writes telemetry values (optional, if the user doesn't need BufferManager telemetry)
+`bufferSendIn` | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | guarded input | Receives buffers for deallocation
+`bufferGetCallee` | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.md) | guarded input (callee) | Receives requests for allocated buffers and returns the buffers
+`schedIn` | [`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | sync input (callee) | writes telemetry values (optional, if the user doesn't need BufferManager telemetry)
 
 ### 3.4 Constants
 

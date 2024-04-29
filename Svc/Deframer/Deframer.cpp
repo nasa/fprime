@@ -211,7 +211,7 @@ void Deframer ::processBuffer(Fw::Buffer& buffer) {
         // If data does not fit, there is a coding error
         FW_ASSERT(
             status == Fw::FW_SERIALIZE_OK,
-            status,
+            static_cast<FwAssertArgType>(status),
             static_cast<FwAssertArgType>(offset),
             static_cast<FwAssertArgType>(serSize));
         // Process the data

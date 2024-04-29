@@ -34,9 +34,9 @@ The `Svc::TlmChan` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Sched`](../../Sched/docs/sdd.html) | Run | Input | Asynchronous | Execute a cycle to write changed telemetry channels
-[`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.html) | TlmRecv | Input | Synchronous Input | Update a telemetry channel
-[`Fw::Com`](../../../Fw/Com/docs/sdd.html) | PktSend | Output | n/a | Write a set of packets with updated telemetry
+[`Svc::Sched`](../../Sched/docs/sdd.md) | Run | Input | Asynchronous | Execute a cycle to write changed telemetry channels
+[`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | TlmRecv | Input | Synchronous Input | Update a telemetry channel
+[`Fw::Com`](../../../Fw/Com/docs/sdd.md) | PktSend | Output | n/a | Write a set of packets with updated telemetry
 
 #### 3.2 Functional Description
 
@@ -50,10 +50,6 @@ When a call to the `Run()` interface is called, the packet writes are locked and
 
 #### 3.3.1 External User Option
 
-This diagram shows the scenario where telemetry channels are written to packets:
-
-![External User Scenario](img/ExternalUserScenario.jpg) 
-
 ### 3.4 State
 
 `Svc::TlmPacketizer` has no state machines.
@@ -65,23 +61,11 @@ A configuration value in `TlmPacketizerImplCfg.h` defines a set of hash buckets 
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](TlmPacketizer.html) [MD](TlmPacketizer.md)
-
 ## 5. Module Checklists
-
-Document | Link
--------- | ----
-Design Checklist | [Link](Checklist_Design.xlsx)
-Code Checklist  | [Link](Checklist_Code.xlsx)
-Unit Test Checklist  | [Link](Checklist_Unit_Test.xlsx)
 
 ## 6. Unit Testing
 
-File | Contents
----- | --------
-Unit Test Output | [Link](../test/ut/output/output.txt)
-Coverage - TlmPacketizerComponentImpl.cpp | [Link](../test/ut/output/TlmChanImpl.cpp.gcov)
-Coverage - TlmPacketizerComponentAc.cpp | [Link](../test/ut/output/TlmPacketizerComponentAc.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 
