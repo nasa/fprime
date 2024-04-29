@@ -542,8 +542,8 @@ namespace Svc {
 	  TEST_CASE(900.1.8,"Nominal Command");
 	  COMMENT("Process command during quiescent (no telemetry readout) period.");
 
-	  Fw::LogStringArg arg = "task0";
-	  Fw::CmdStringArg carg = arg;
+	  Fw::LogStringArg arg("task0");
+	  Fw::CmdStringArg carg(arg);
 
 	  ASSERT_EVENTS_SIZE(0);
 	  ASSERT_TLM_SIZE(0);

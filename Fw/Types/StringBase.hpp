@@ -82,9 +82,7 @@ class StringBase : public Serializable {
     void appendBuff(const CHAR* buff, SizeType size);
 
   private:
-    // A no-implementation copy constructor here will prevent the default copy constructor from being called
-    // accidentally, and without an implementation it will create an error for the developer instead.
-    StringBase(const StringBase& src);  //!< constructor with buffer as source
+    StringBase(const StringBase& src) = delete;  //!< constructor with buffer as source
 };
 
 }  // namespace Fw

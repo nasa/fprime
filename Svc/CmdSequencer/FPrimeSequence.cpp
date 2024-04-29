@@ -67,7 +67,7 @@ namespace Svc {
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    loadFile(const Fw::CmdStringArg& fileName)
+    loadFile(const Fw::StringBase& fileName)
   {
 
     // make sure there is a buffer allocated

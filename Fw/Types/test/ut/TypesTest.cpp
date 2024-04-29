@@ -1168,7 +1168,7 @@ TEST(TypesTest, ObjectNameTest) {
     str2 = "_bar";
     ASSERT_NE(str, str2);
 
-    Fw::ObjectName str3 = str;
+    Fw::ObjectName str3(str);
     str3 += str2;
     ASSERT_EQ(str3, "foo_bar");
 

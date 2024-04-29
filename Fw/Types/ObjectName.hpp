@@ -24,11 +24,11 @@ class ObjectName final : public StringBase {
 
     ObjectName() : StringBase() { *this = ""; }
 
-    ObjectName(const ObjectName& src) : StringBase() { *this = src; }
+    explicit ObjectName(const ObjectName& src) : StringBase() { *this = src; }
 
-    ObjectName(const StringBase& src) : StringBase() { *this = src; }
+    explicit ObjectName(const StringBase& src) : StringBase() { *this = src; }
 
-    ObjectName(const char* src) : StringBase() { *this = src; }
+    explicit ObjectName(const char* src) : StringBase() { *this = src; }
 
     ~ObjectName() {}
 

@@ -25,11 +25,11 @@ class InternalInterfaceString final : public StringBase {
 
     InternalInterfaceString() : StringBase() { *this = ""; }
 
-    InternalInterfaceString(const InternalInterfaceString& src) : StringBase() { *this = src; }
+    explicit InternalInterfaceString(const InternalInterfaceString& src) : StringBase() { *this = src; }
 
-    InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
+    explicit InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
 
-    InternalInterfaceString(const char* src) : StringBase() { *this = src; }
+    explicit InternalInterfaceString(const char* src) : StringBase() { *this = src; }
 
     ~InternalInterfaceString() {}
 

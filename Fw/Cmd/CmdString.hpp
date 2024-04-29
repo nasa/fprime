@@ -24,11 +24,11 @@ class CmdStringArg final : public StringBase {
 
     CmdStringArg() : StringBase() { *this = ""; }
 
-    CmdStringArg(const CmdStringArg& src) : StringBase() { *this = src; }
+    explicit CmdStringArg(const CmdStringArg& src) : StringBase() { *this = src; }
 
-    CmdStringArg(const StringBase& src) : StringBase() { *this = src; }
+    explicit CmdStringArg(const StringBase& src) : StringBase() { *this = src; }
 
-    CmdStringArg(const char* src) : StringBase() { *this = src; }
+    explicit CmdStringArg(const char* src) : StringBase() { *this = src; }
 
     ~CmdStringArg() {}
 

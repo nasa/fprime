@@ -190,7 +190,7 @@ namespace Svc {
       ComIn()
     {
       ComInTester tester;
-      tester.test(3, "ComIn");
+      tester.test(3, Fw::CmdStringArg("ComIn"));
     }
 
     class BufferSendInTester :
@@ -207,7 +207,7 @@ namespace Svc {
       BufferSendIn()
     {
       BufferSendInTester tester;
-      tester.test(3, "BufferSendIn");
+      tester.test(3, Fw::CmdStringArg("BufferSendIn"));
     }
 
     class OnOffTester :
