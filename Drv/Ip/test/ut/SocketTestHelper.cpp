@@ -48,7 +48,7 @@ void fill_random_buffer(Fw::Buffer &buffer) {
 }
 
 void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver) {
-    I32 size = MAX_DRV_TEST_MESSAGE_SIZE;
+    U32 size = MAX_DRV_TEST_MESSAGE_SIZE;
     U8 buffer_out[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
     U8 buffer_in[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
 
@@ -56,7 +56,7 @@ void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver) {
     Drv::Test::fill_random_data(buffer_out, MAX_DRV_TEST_MESSAGE_SIZE);
     EXPECT_EQ(sender.send(buffer_out, MAX_DRV_TEST_MESSAGE_SIZE), Drv::SOCK_SUCCESS);
     EXPECT_EQ(receiver.recv(buffer_in, size), Drv::SOCK_SUCCESS);
-    EXPECT_EQ(size, static_cast<I32>(MAX_DRV_TEST_MESSAGE_SIZE));
+    EXPECT_EQ(size, static_cast<U32>(MAX_DRV_TEST_MESSAGE_SIZE));
     Drv::Test::validate_random_data(buffer_out, buffer_in, MAX_DRV_TEST_MESSAGE_SIZE);
 }
 

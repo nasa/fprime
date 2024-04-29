@@ -99,7 +99,6 @@ void SocketReadTask::readTask(void* pointer) {
             U8* data = buffer.getData();
             FW_ASSERT(data);
             U32 size = buffer.getSize();
-            size = (size >= 0) ? size : MAXIMUM_SIZE; // Handle max U32 edge case
             status = self->getSocketHandler().recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
                 Fw::Logger::logMsg("[WARNING] Failed to recv from port with status %d and errno %d\n",
