@@ -55,6 +55,12 @@ SocketIpStatus TcpServerSocket::startup() {
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
+    // Enable Address reuse to avoid binding to the socket that still might be in TIME_WAIT state.
+    // Can happen if a function like get_free_port() is called to determine an available port by binding to port 0.
+    const int enable = 1;
+    if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) < 0)
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+
     // First IP address to socket sin_addr
     if (IpSocket::addressToIp4(m_hostname, &(address.sin_addr)) != SOCK_SUCCESS) {
         ::close(serverFd);
