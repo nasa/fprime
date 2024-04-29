@@ -19,11 +19,11 @@ class QueueString final : public Fw::StringBase {
 
     QueueString() : StringBase() { *this = ""; }
 
-    QueueString(const QueueString& src) : StringBase() { *this = src; }
+    explicit QueueString(const QueueString& src) : StringBase() { *this = src; }
 
-    QueueString(const StringBase& src) : StringBase() { *this = src; }
+    explicit QueueString(const StringBase& src) : StringBase() { *this = src; }
 
-    QueueString(const char* src) : StringBase() { *this = src; }
+    explicit QueueString(const char* src) : StringBase() { *this = src; }
 
     ~QueueString() {}
 
