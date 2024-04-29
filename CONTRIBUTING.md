@@ -154,8 +154,8 @@ automatic checks as a safety net.
 The tests can be run using the following commands:
 
 ```bash
-# Go into your FPP directory
-cd MY_FPP_DIRECTORY
+# Go into the fprime directory
+cp MY_FPRIME_DIRECTORY
 
 # Run CI tests on fprime
 ./ci/tests/Framework.bash
