@@ -24,11 +24,11 @@ class String final : public StringBase {
 
     String() : StringBase() { *this = ""; }
 
-    String(const String& src) : StringBase() { *this = src; }
+    explicit String(const String& src) : StringBase() { *this = src; }
 
-    String(const StringBase& src) : StringBase() { *this = src; }
+    explicit String(const StringBase& src) : StringBase() { *this = src; }
 
-    String(const char* src) : StringBase() { *this = src; }
+    explicit String(const char* src) : StringBase() { *this = src; }
 
     ~String() {}
 

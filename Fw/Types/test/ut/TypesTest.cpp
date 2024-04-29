@@ -1127,7 +1127,7 @@ TEST(TypesTest, StringTest) {
     str2 = "doodie";
     ASSERT_NE(str, str2);
 
-    Fw::String str3 = str;
+    Fw::String str3(str);
     str3 += str2;
     ASSERT_EQ(str3, "foodoodie");
 
@@ -1136,7 +1136,7 @@ TEST(TypesTest, StringTest) {
 
     Fw::String copyStr("ASTRING");
     ASSERT_EQ(copyStr, "ASTRING");
-    Fw::String copyStr2 = "ASTRING";
+    Fw::String copyStr2("ASTRING");
     ASSERT_EQ(copyStr2, "ASTRING");
     Fw::String copyStr3(copyStr2);
     ASSERT_EQ(copyStr3, "ASTRING");

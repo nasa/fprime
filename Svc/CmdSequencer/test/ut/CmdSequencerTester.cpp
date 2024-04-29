@@ -623,7 +623,7 @@ namespace Svc {
     // Invoke the port
     Fw::String fArg(fileName);
     this->clearHistory();
-    this->component.loadSequence(fileName);
+    this->component.loadSequence(fArg);
     // Assert events
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_SequenceLoaded(0, fileName);
