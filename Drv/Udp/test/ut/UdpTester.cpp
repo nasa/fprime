@@ -62,13 +62,12 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {
             status1 = this->component.open();
-            if (status1 != Drv::SOCK_SUCCESS)
-            {
-                printf("UDP socket open error: %s\n", strerror(errno));
-                printf("Port1: %u\n", port1);
-                printf("Port2: %u\n", port2);
-            }
-            EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
+
+            EXPECT_EQ(status1, Drv::SOCK_SUCCESS)
+                << "UDP socket open error: " << strerror(errno)
+                << "Port1: " << port1
+                << "Port2: " << port2;
+
         } else {
             EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
         }
@@ -78,13 +77,10 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
         udp2.configureRecv("127.0.0.1", port1);
         status2 = udp2.open();
 
-        if (status2 != Drv::SOCK_SUCCESS)
-        {
-            printf("UDP socket open error: %s\n", strerror(errno));
-            printf("Port1: %u\n", port1);
-            printf("Port2: %u\n", port2);
-        }
-        EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
+        EXPECT_EQ(status2, Drv::SOCK_SUCCESS)
+            << "UDP socket open error: " << strerror(errno) << std::endl
+            << "Port1: " << port1 << std::endl
+            << "Port2: " << port2 << std::endl;
 
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
