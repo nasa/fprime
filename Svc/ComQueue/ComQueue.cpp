@@ -71,8 +71,8 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
         for (NATIVE_UINT_TYPE entryIndex = 0; entryIndex < FW_NUM_ARRAY_ELEMENTS(queueConfig.entries); entryIndex++) {
             // Check for valid configuration entry
             FW_ASSERT(queueConfig.entries[entryIndex].priority < TOTAL_PORT_COUNT,
-                      queueConfig.entries[entryIndex].priority,
-                      TOTAL_PORT_COUNT,
+                      static_cast<FwAssertArgType>(queueConfig.entries[entryIndex].priority),
+                      static_cast<FwAssertArgType>(TOTAL_PORT_COUNT),
                       static_cast<FwAssertArgType>(entryIndex));
 
             if (currentPriority == queueConfig.entries[entryIndex].priority) {

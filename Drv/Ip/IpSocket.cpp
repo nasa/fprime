@@ -193,7 +193,7 @@ SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::recv(U8* data, I32& req_read) {
+SocketIpStatus IpSocket::recv(U8* data, U32& req_read) {
     I32 size = 0;
     // Check for previously disconnected socket
     if (m_fd == -1) {
@@ -203,7 +203,7 @@ SocketIpStatus IpSocket::recv(U8* data, I32& req_read) {
     // Try to read until we fail to receive data
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
         // Attempt to recv out data
-        size = this->recvProtocol(data, static_cast<U32>(req_read));
+        size = this->recvProtocol(data, req_read);
         // Error is EINTR, just try again
         if (size == -1 && ((errno == EINTR) || errno == EAGAIN)) {
             continue;
@@ -211,16 +211,16 @@ SocketIpStatus IpSocket::recv(U8* data, I32& req_read) {
         // Zero bytes read reset or bad ef means we've disconnected
         else if (size == 0 || ((size == -1) && ((errno == ECONNRESET) || (errno == EBADF)))) {
             this->close();
-            req_read = size;
+            req_read = static_cast<U32>(size);
             return SOCK_DISCONNECTED;
         }
         // Error returned, and it wasn't an interrupt, nor a disconnect
         else if (size == -1) {
-            req_read = size;
+            req_read = static_cast<U32>(size);
             return SOCK_READ_ERROR;  // Stop recv task on error
         }
     }
-    req_read = size;
+    req_read = static_cast<U32>(size);
     // Prevent interrupted socket being viewed as success
     if (size == -1) {
         return SOCK_INTERRUPTED_TRY_AGAIN;

@@ -98,7 +98,7 @@ void SocketReadTask::readTask(void* pointer) {
             Fw::Buffer buffer = self->getBuffer();
             U8* data = buffer.getData();
             FW_ASSERT(data);
-            I32 size = static_cast<I32>(buffer.getSize());
+            U32 size = buffer.getSize();
             size = (size >= 0) ? size : MAXIMUM_SIZE; // Handle max U32 edge case
             status = self->getSocketHandler().recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
@@ -109,7 +109,7 @@ void SocketReadTask::readTask(void* pointer) {
                 buffer.setSize(0);
             } else {
                 // Send out received data
-                buffer.setSize(static_cast<U32>(size));
+                buffer.setSize(size);
             }
             self->sendBuffer(buffer, status);
         }

@@ -32,7 +32,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 LinuxUartDriver ::LinuxUartDriver(const char* const compName)
-    : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(-1),  m_device("NOT_EXIST"), m_quitReadThread(false) {
+    : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(0),  m_device("NOT_EXIST"), m_quitReadThread(false) {
 }
 
 void LinuxUartDriver ::init(const NATIVE_INT_TYPE instance) {
@@ -43,7 +43,7 @@ bool LinuxUartDriver::open(const char* const device,
                            UartBaudRate baud,
                            UartFlowControl fc,
                            UartParity parity,
-                           NATIVE_INT_TYPE allocationSize) {
+                           U32 allocationSize) {
     FW_ASSERT(device != nullptr);
     NATIVE_INT_TYPE fd = -1;
     NATIVE_INT_TYPE stat = -1;
@@ -346,7 +346,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     Drv::RecvStatus status = RecvStatus::RECV_ERROR;  // added by m.chase 03.06.2017
     LinuxUartDriver* comp = reinterpret_cast<LinuxUartDriver*>(ptr);
     while (!comp->m_quitReadThread) {
-        Fw::Buffer buff = comp->allocate_out(0, static_cast<U32>(comp->m_allocationSize));
+        Fw::Buffer buff = comp->allocate_out(0,comp->m_allocationSize);
 
         // On failed allocation, error and deallocate
         if (buff.getData() == nullptr) {
