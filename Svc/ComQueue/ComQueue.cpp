@@ -68,7 +68,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
     for (FwIndexType currentPriority = 0; currentPriority < TOTAL_PORT_COUNT; currentPriority++) {
         // Walk each queue configuration entry and add them into the prioritized metadata list when matching the current
         // priority value
-        for (NATIVE_UINT_TYPE entryIndex = 0; entryIndex < FW_NUM_ARRAY_ELEMENTS(queueConfig.entries); entryIndex++) {
+        for (FwIndexType entryIndex = 0; entryIndex < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(queueConfig.entries)); entryIndex++) {
             // Check for valid configuration entry
             FW_ASSERT(queueConfig.entries[entryIndex].priority < TOTAL_PORT_COUNT,
                       static_cast<FwAssertArgType>(queueConfig.entries[entryIndex].priority),
@@ -82,7 +82,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 QueueMetadata& entry = this->m_prioritizedList[currentPriorityIndex];
                 entry.priority = queueConfig.entries[entryIndex].priority;
                 entry.depth = queueConfig.entries[entryIndex].depth;
-                entry.index = static_cast<FwIndexType>(entryIndex);
+                entry.index = entryIndex;
                 // Message size is determined by the type of object being stored, which in turn is determined by the
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
                 entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);

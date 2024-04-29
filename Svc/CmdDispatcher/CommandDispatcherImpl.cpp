@@ -123,7 +123,7 @@ namespace Svc {
                         pendingFound = true;
                         this->m_sequenceTracker[pending].used = true;
                         this->m_sequenceTracker[pending].opCode = cmdPkt.getOpCode();
-                        this->m_sequenceTracker[pending].seq = static_cast<U32>(this->m_seq);
+                        this->m_sequenceTracker[pending].seq = this->m_seq;
                         this->m_sequenceTracker[pending].context = context;
                         this->m_sequenceTracker[pending].callerPort = portNum;
                         break;
@@ -143,7 +143,7 @@ namespace Svc {
             this->compCmdSend_out(
                 this->m_entryTable[entry].port,
                 cmdPkt.getOpCode(),
-                static_cast<U32>(this->m_seq),
+                this->m_seq,
                 cmdPkt.getArgBuffer());
             // log dispatched command
             this->log_COMMAND_OpCodeDispatched(cmdPkt.getOpCode(),this->m_entryTable[entry].port);
