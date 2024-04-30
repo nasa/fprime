@@ -1,5 +1,0 @@
-Checks: >
-    -*,
-    misc-no-recursion,
-    readability-braces-around-statements
-WarningsAsErrors: '*'
