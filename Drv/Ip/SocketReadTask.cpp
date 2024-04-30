@@ -25,23 +25,25 @@ SocketReadTask::~SocketReadTask() {}
 
 void SocketReadTask::startSocketTask(const Fw::StringBase &name,
                                      const bool reconnect,
+                                     const bool reuse_address,
                                      const Os::Task::ParamType priority,
                                      const Os::Task::ParamType stack,
                                      const Os::Task::ParamType cpuAffinity) {
     FW_ASSERT(not m_task.isStarted());  // It is a coding error to start this task multiple times
     FW_ASSERT(not this->m_stop);        // It is a coding error to stop the thread before it is started
     m_reconnect = reconnect;
+    m_reuse_address = reuse_address;
     // Note: the first step is for the IP socket to open the port
     Os::Task::TaskStatus stat = m_task.start(name, SocketReadTask::readTask, this, priority, stack, cpuAffinity);
     FW_ASSERT(Os::Task::TASK_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
 }
 
-SocketIpStatus SocketReadTask::startup() {
-    return this->getSocketHandler().startup();
+SocketIpStatus SocketReadTask::startup(const bool reuse_address) {
+    return this->getSocketHandler().startup(reuse_address);
 }
 
-SocketIpStatus SocketReadTask::open() {
-    SocketIpStatus status = this->getSocketHandler().open();
+SocketIpStatus SocketReadTask::open(const bool reuse_address) {
+    SocketIpStatus status = this->getSocketHandler().open(reuse_address);
     // Call connected any time the open is successful
     if (Drv::SOCK_SUCCESS == status) {
         this->connected();
@@ -73,7 +75,7 @@ void SocketReadTask::readTask(void* pointer) {
     do {
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isStarted()) and (not self->m_stop) and
-            ((status = self->startup()) != SOCK_SUCCESS)) {
+            ((status = self->startup(self->m_reuse_address)) != SOCK_SUCCESS)) {
             Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
             (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
             continue;
@@ -81,7 +83,7 @@ void SocketReadTask::readTask(void* pointer) {
 
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isOpened()) and (not self->m_stop) and
-            ((status = self->open()) != SOCK_SUCCESS)) {
+            ((status = self->open(self->m_reuse_address)) != SOCK_SUCCESS)) {
             Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
             (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
             continue;

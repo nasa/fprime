@@ -33,9 +33,10 @@ class TcpClientSocket : public IpSocket {
     /**
      * \brief Tcp specific implementation for opening a client socket.
      * \param fd: (output) file descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
+     * \param reuse_address: (input) when set to true, set the socket option REUSEADDR to true. Set by default to false
      * \return status of open
      */
-    SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd) override;
+    SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd, const bool reuse_address) override;
     /**
      * \brief Protocol specific implementation of send.  Called directly with retry from send.
      * \param data: data to send

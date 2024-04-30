@@ -97,7 +97,10 @@ SocketIpStatus UdpSocket::bind(NATIVE_INT_TYPE fd) {
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
+SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd, const bool reuse_address) {
+    // reuse_address is not applicable for the UDP socket
+    (void)(reuse_address);
+
     SocketIpStatus status = SOCK_SUCCESS;
     NATIVE_INT_TYPE socketFd = -1;
     struct sockaddr_in address;

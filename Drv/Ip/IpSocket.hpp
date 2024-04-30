@@ -91,10 +91,13 @@ class IpSocket {
      *
      * This will start-up the socket. In the case of most sockets, this is a no-op. On server sockets this binds to the
      * server address and progresses through the `listen` step such that on `open` new clients may be accepted.
+     * \param reuse_address: (input) when set to true, set the socket option REUSEADDR to true.
+     *                       Applicable only for TCP server.
+     *                       Default: false
      *
      * \return status of startup
      */
-    virtual SocketIpStatus startup();
+    virtual SocketIpStatus startup(const bool reuse_address);
 
     /**
      * \brief open the IP socket for communications
@@ -110,10 +113,13 @@ class IpSocket {
      * In the case of server components (TcpServer) this function will block until a client has connected.
      *
      * Note: delegates to openProtocol for protocol specific implementation
+     * \param reuse_address: (input) when set to true, set the socket option REUSEADDR to true.
+     *                       Applicable only for TCP client.
+     *                       Default: false
      *
      * \return status of open
      */
-    SocketIpStatus open();
+    SocketIpStatus open(const bool reuse_address=false);
     /**
      * \brief send data out the IP socket from the given buffer
      *
@@ -181,9 +187,12 @@ class IpSocket {
     /**
      * \brief Protocol specific open implementation, called from open.
      * \param fd: (output) file descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
+     * \param reuse_address: (input) when set to true, set the socket option REUSEADDR to true.
+     *                       Applicable only for TCP client.
+     *                       Default: false
      * \return status of open
      */
-    virtual SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd) = 0;
+    virtual SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd, bool reuse_address=false) = 0;
     /**
      * \brief Protocol specific implementation of send.  Called directly with retry from send.
      * \param data: data to send

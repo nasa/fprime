@@ -45,12 +45,14 @@ class SocketReadTask {
      *
      * \param name: name of the task
      * \param reconnect: automatically reconnect socket when closed. Default: true.
+     * \param reuse_address: for TCP connexion, set the REUSEADDR option. Default: false.
      * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_DEFAULT, not prioritized
      * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
      * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
      */
     void startSocketTask(const Fw::StringBase &name,
                          const bool reconnect = true,
+                         const bool reuse_address = false,
                          const Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
                          const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
                          const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
@@ -61,10 +63,13 @@ class SocketReadTask {
      * Status of the socket handler.
      *
      * Note: this just delegates to the handler
+     * \param reuse_address: (input) when set to true, set the socket option REUSEADDR to true.
+     *                       Applicable only for TCP server.
+     *                       Default: false
      *
      * \return status of open, SOCK_SUCCESS for success, something else on error
      */
-    SocketIpStatus startup();
+    SocketIpStatus startup(const bool reuse_address=false);
 
     /**
      * \brief open the socket for communications
@@ -73,10 +78,13 @@ class SocketReadTask {
      * will not be started, this function may be used to open the socket.
      *
      * Note: this just delegates to the handler
+     * \param reuse_address: (input) when set to true, set the socket option REUSEADDR to true.
+     *                       Applicable only for TCP server/client.
+     *                       Default: false
      *
      * \return status of open, SOCK_SUCCESS for success, something else on error
      */
-    SocketIpStatus open();
+    SocketIpStatus open(const bool reuse_address=false);
 
     /**
      * \brief close the socket communications
@@ -170,6 +178,7 @@ class SocketReadTask {
 
     Os::Task m_task;
     bool m_reconnect; //!< Force reconnection
+    bool m_reuse_address; //!< Set REUSEADDR option, only for startSocketTask and readTask
     bool m_stop; //!< Stops the task when set to true
 
 };

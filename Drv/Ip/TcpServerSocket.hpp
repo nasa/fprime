@@ -36,9 +36,10 @@ class TcpServerSocket : public IpSocket {
      * Opens the server's listening socket such that this server can listen for incoming client requests. Given the
      * nature of this component, only one (1) client can be handled at a time. After this call succeeds, clients may
      * connect. This call does not block, block occurs on `open` while waiting to accept incoming clients.
+     * \param reuse_address: (input) when set to true, set the socket option REUSEADDR to true. Set by default to false
      * \return status of the server socket setup.
      */
-    SocketIpStatus startup() override;
+    SocketIpStatus startup(const bool reuse_address=false) override;
 
     /**
      * \brief Shutdown and close the server socket followed by the open client
@@ -52,9 +53,10 @@ class TcpServerSocket : public IpSocket {
     /**
      * \brief Tcp specific implementation for opening a client socket connected to this server.
      * \param fd: (output) file descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
+     * \param reuse_address: (input) when set to true, set the socket option REUSEADDR to true. Set by default to false
      * \return status of open
      */
-    SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd) override;
+    SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd, const bool reuse_address=false) override;
     /**
      * \brief Protocol specific implementation of send.  Called directly with retry from send.
      * \param data: data to send

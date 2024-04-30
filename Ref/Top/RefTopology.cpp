@@ -161,7 +161,7 @@ void setupTopology(const TopologyState& state) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(state.hostname, state.port);
-        comm.startSocketTask(name, true, COMM_PRIORITY, Default::STACK_SIZE);
+        comm.startSocketTask(name, true, false, COMM_PRIORITY, Default::STACK_SIZE);
     }
 }
 

@@ -41,7 +41,7 @@ namespace Drv {
 
 TcpClientSocket::TcpClientSocket() : IpSocket() {}
 
-SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
+SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd, const bool reuse_address) {
     NATIVE_INT_TYPE socketFd = -1;
     struct sockaddr_in address;
 
@@ -57,17 +57,22 @@ SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
-    // Enable Address reuse to avoid binding to the socket that still might be in TIME_WAIT state.
-    // Can happen if a function like get_free_port() is called to determine an available port by binding to port 0.
-    const int enable = 1;
-    if (setsockopt(socketFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) < 0)
-        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    if (reuse_address)
+    {
+        // Enable Address reuse to avoid binding to the socket that still might be in TIME_WAIT state.
+        // Can happen if a function like get_free_port() is called to determine an available port by binding to port 0.
+        const int enable = 1;
+        if (setsockopt(socketFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) < 0) {
+            ::close(socketFd);
+            return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+        }
+    }
 
     // First IP address to socket sin_addr
     if (IpSocket::addressToIp4(m_hostname, &(address.sin_addr)) != SOCK_SUCCESS) {
         ::close(socketFd);
         return SOCK_INVALID_IP_ADDRESS;
-    };
+    }
 
     // Now apply timeouts
     if (IpSocket::setupTimeouts(socketFd) != SOCK_SUCCESS) {

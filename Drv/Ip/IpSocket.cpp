@@ -132,19 +132,19 @@ void IpSocket::shutdown() {
     this->m_lock.unLock();
 }
 
-SocketIpStatus IpSocket::startup() {
+SocketIpStatus IpSocket::startup(const bool reuse_address) {
     this->m_lock.lock();
     this->m_started = true;
     this->m_lock.unLock();
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::open() {
+SocketIpStatus IpSocket::open(const bool reuse_address) {
     NATIVE_INT_TYPE fd = -1;
     SocketIpStatus status = SOCK_SUCCESS;
     FW_ASSERT(m_fd == -1 and not m_open); // Ensure we are not opening an opened socket
     // Open a TCP socket for incoming commands, and outgoing data if not using UDP
-    status = this->openProtocol(fd);
+    status = this->openProtocol(fd, reuse_address);
     if (status != SOCK_SUCCESS) {
         FW_ASSERT(m_fd == -1); // Ensure we properly kept closed on error
         return status;

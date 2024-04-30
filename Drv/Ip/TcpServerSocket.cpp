@@ -12,6 +12,7 @@
 #include <Drv/Ip/TcpServerSocket.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <FpConfig.hpp>
+#include <cstdio>
 
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <socket.h>
@@ -39,7 +40,7 @@ namespace Drv {
 
 TcpServerSocket::TcpServerSocket() : IpSocket(), m_base_fd(-1) {}
 
-SocketIpStatus TcpServerSocket::startup() {
+SocketIpStatus TcpServerSocket::startup(const bool reuse_address) {
     NATIVE_INT_TYPE serverFd = -1;
     struct sockaddr_in address;
     this->close();
@@ -55,11 +56,16 @@ SocketIpStatus TcpServerSocket::startup() {
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
-    // Enable Address reuse to avoid binding to the socket that still might be in TIME_WAIT state.
-    // Can happen if a function like get_free_port() is called to determine an available port by binding to port 0.
-    const int enable = 1;
-    if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) < 0)
-        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    if (reuse_address)
+    {
+        // Enable Address reuse to avoid binding to the socket that still might be in TIME_WAIT state.
+        // Can happen if a function like get_free_port() is called to determine an available port by binding to port 0.
+        const int enable = 1;
+        if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) < 0) {
+            ::close(serverFd);
+            return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+        }
+    }
 
     // First IP address to socket sin_addr
     if (IpSocket::addressToIp4(m_hostname, &(address.sin_addr)) != SOCK_SUCCESS) {
@@ -82,7 +88,7 @@ SocketIpStatus TcpServerSocket::startup() {
     m_base_fd = serverFd;
     this->m_lock.unLock();
 
-    return this->IpSocket::startup();
+    return this->IpSocket::startup(reuse_address);
 }
 
 void TcpServerSocket::shutdown() {
@@ -96,7 +102,10 @@ void TcpServerSocket::shutdown() {
     this->IpSocket::shutdown();
 }
 
-SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
+SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd, const bool reuse_address) {
+    // reuse_address is not applicable for the TCP server socket
+    (void)(reuse_address);
+
     NATIVE_INT_TYPE clientFd = -1;
     NATIVE_INT_TYPE serverFd = -1;
 
