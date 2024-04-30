@@ -22,6 +22,7 @@ add_compile_options(
     -Werror
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
     -Wno-unused-parameter
+    -Wno-format-truncation
 )
 
 # Add -Wshadow and -pedantic only for framework code, not the unit tests
