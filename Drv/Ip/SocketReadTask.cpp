@@ -75,32 +75,22 @@ void SocketReadTask::readTask(void* pointer) {
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isStarted()) and (not self->m_stop) and
             ((status = self->startup()) != SOCK_SUCCESS)) {
-<<<<<<< HEAD
             Fw::Logger::logMsg(
                 "[WARNING] Failed to open port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
-            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
-=======
-            Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
             (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
->>>>>>> 4a459f286 (Initial Os::Posix::Task implementaion)
             continue;
         }
 
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isOpened()) and (not self->m_stop) and
             ((status = self->open()) != SOCK_SUCCESS)) {
-<<<<<<< HEAD
             Fw::Logger::logMsg(
                 "[WARNING] Failed to open port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
-            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
-=======
-            Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
             (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
->>>>>>> 4a459f286 (Initial Os::Posix::Task implementaion)
             continue;
         }
 

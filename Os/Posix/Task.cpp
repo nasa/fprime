@@ -34,15 +34,22 @@ namespace Task {
         FwSizeType stack = arguments.m_stackSize;
         // Check for stack size multiple of page size
         long page_size = sysconf(_SC_PAGESIZE);
-        if (stack % page_size) {
+        if (page_size <= 0) {
+            Fw::Logger::logMsg(
+                    "[WARNING] %s could not determine page size %s. Skipping stack-size check.\n",
+                    reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
+                    reinterpret_cast<PlatformPointerCastType>(strerror(errno))
+            );
+        }
+        else if ((stack % static_cast<FwSizeType>(page_size)) != 0) {
             // Round-down to nearest page size multiple
-            FwSizeType rounded = (stack / page_size) * page_size;
+            FwSizeType rounded = (stack / static_cast<FwSizeType>(page_size)) * static_cast<FwSizeType>(page_size);
             Fw::Logger::logMsg(
                     "[WARNING] %s stack size of %" PRI_FwSizeType " is not multiple of page size %ld, rounding to %" PRI_FwSizeType "\n",
                     reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
-                    stack,
-                    page_size,
-                    rounded
+                    static_cast<PlatformPointerCastType>(stack),
+                    static_cast<PlatformPointerCastType>(page_size),
+                    static_cast<PlatformPointerCastType>(rounded)
             );
             stack = rounded;
         }
@@ -52,12 +59,12 @@ namespace Task {
             Fw::Logger::logMsg(
                     "[WARNING] %s stack size of %" PRI_FwSizeType "  is too small, clamping to %" PRI_FwSizeType "\n",
                     reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
-                    stack,
-                    static_cast<FwSizeType>(PTHREAD_STACK_MIN)
+                    static_cast<PlatformPointerCastType>(stack),
+                    static_cast<PlatformPointerCastType>(static_cast<FwSizeType>(PTHREAD_STACK_MIN))
             );
             stack = static_cast<FwSizeType>(PTHREAD_STACK_MIN);
         }
-        status = pthread_attr_setstacksize(&attributes, static_cast<PlatformIntType>(stack));
+        status = pthread_attr_setstacksize(&attributes, static_cast<size_t>(stack));
         return status;
     }
 
@@ -91,7 +98,7 @@ namespace Task {
         if (status == PosixTaskHandle::SUCCESS) {
             sched_param schedParam;
             memset(&schedParam, 0, sizeof(sched_param));
-            schedParam.sched_priority = priority;
+            schedParam.sched_priority = static_cast<PlatformIntType>(priority);
             status = pthread_attr_setschedparam(&attributes, &schedParam);
         }
         return status;
@@ -167,12 +174,13 @@ namespace Task {
                 Fw::Logger::logMsg("[NOTE] 2. Run this executable as a user with task priority permission\n");
                 Fw::Logger::logMsg("[NOTE] 3. Grant capability with \"setcap 'cap_sys_nice=eip'\" or equivalent\n");
                 Fw::Logger::logMsg("\n");
-		PosixTask::s_permissions_reported = true;
+                PosixTask::s_permissions_reported = true;
             }
             // Fallback with no permission
             status = this->create(arguments, PermissionExpectation::EXPECT_NO_PERMISSION);
         } else if (status != Os::Task::Status::OP_OK) {
-            Fw::Logger::logMsg("[ERROR] Failed to create task with status: %d", static_cast<PlatformIntType>(status));
+            Fw::Logger::logMsg("[ERROR] Failed to create task with status: %d",
+                               static_cast<PlatformPointerCastType>(static_cast<PlatformIntType>(status)));
         }
         return status;
     }

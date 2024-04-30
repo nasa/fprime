@@ -334,7 +334,7 @@ namespace Os {
         static FwSizeType s_numTasks; //!< Stores the number of tasks created.
         static Mutex s_taskMutex; //!< Guards s_numTasks
 
-        TaskString m_name = ""; //!< Task object name TODO: can we change this to a more generic type?
+        TaskString m_name; //!< Task object name
         TaskInterface::State m_state = Task::NOT_STARTED;
         Mutex m_lock; //!< Guards state transitions
         TaskRoutineWrapper m_wrapper; //!< Concrete storage for task routine wrapper
