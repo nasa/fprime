@@ -46,7 +46,7 @@ namespace Fw {
     void ActiveComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
         FW_ASSERT(size > 0);
         FW_ASSERT(buffer != nullptr);
-        PlatformIntType status = snprintf(buffer, size, "ActComp: %s", this->m_objName.toChar());
+        PlatformIntType status = snprintf(buffer, static_cast<size_t>(size), "ActComp: %s", this->m_objName.toChar());
         if (status < 0) {
             buffer[0] = 0;
         }

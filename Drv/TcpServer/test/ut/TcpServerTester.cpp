@@ -53,7 +53,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         client.configure("127.0.0.1", port, 0, 100);
         status2 = client.open();
 
-        I32 size = sizeof(m_data_storage);
+        U32 size = sizeof(m_data_storage);
 
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {

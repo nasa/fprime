@@ -30,6 +30,7 @@ if (NOT BUILD_TESTING)
     add_compile_options(
         -Wshadow
         -pedantic
+        -Wconversion
     )
 endif()
 

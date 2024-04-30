@@ -216,7 +216,10 @@ File::Status File::incrementalCrc(FwSignedSizeType &size) {
         status = this->read(this->m_crc_buffer, size, File::WaitType::NO_WAIT);
         if (OP_OK == status) {
             for (FwSignedSizeType i = 0; i < size && i < FW_FILE_CHUNK_SIZE; i++) {
-                this->m_crc = update_crc_32(this->m_crc, static_cast<CHAR>(this->m_crc_buffer[i]));
+                this->m_crc =
+                    static_cast<U32>(
+                        update_crc_32(this->m_crc, static_cast<CHAR>(this->m_crc_buffer[i]))
+                        );
             }
         }
     }

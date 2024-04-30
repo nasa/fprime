@@ -105,7 +105,7 @@ Os::File::Status SyntheticFile::read(U8* buffer, FwSignedSizeType& size, WaitTyp
     }
     std::vector<U8> output;
     FwSignedSizeType original_pointer = this->m_data->m_pointer;
-    FwSignedSizeType original_size = this->m_data->m_data.size();
+    FwSignedSizeType original_size = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
     // Check expected read bytes
     FwSignedSizeType i = 0;
     for (i = 0; i < size; i++, this->m_data->m_pointer++) {
@@ -113,7 +113,7 @@ Os::File::Status SyntheticFile::read(U8* buffer, FwSignedSizeType& size, WaitTyp
         if (this->m_data->m_pointer >= static_cast<FwSignedSizeType>(this->m_data->m_data.size())) {
             break;
         }
-        buffer[i] = this->m_data->m_data.at(this->m_data->m_pointer);
+        buffer[i] = this->m_data->m_data.at(static_cast<std::vector<U8>::size_type>(this->m_data->m_pointer));
     }
     size = i;
     // Checks on the shadow data to ensure consistency
@@ -138,12 +138,12 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSignedSizeType& size, 
         return Os::File::Status::INVALID_MODE;
     }
     FwSignedSizeType original_position = this->m_data->m_pointer;
-    FwSignedSizeType original_size = this->m_data->m_data.size();
+    FwSignedSizeType original_size = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
     const U8* write_data = reinterpret_cast<const U8*>(buffer);
 
     // Appends seek to end before writing
     if (Os::File::Mode::OPEN_APPEND == this->m_data->m_mode) {
-        this->m_data->m_pointer = this->m_data->m_data.size();
+        this->m_data->m_pointer = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
     }
 
     // First add in zeros to account for a pointer past the end of the file
@@ -157,14 +157,14 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSignedSizeType& size, 
               static_cast<size_t>((Os::File::Mode::OPEN_APPEND == this->m_data->m_mode) ? original_size : FW_MAX(original_position, original_size)));
 
     FwSignedSizeType pre_write_position = this->m_data->m_pointer;
-    FwSignedSizeType pre_write_size = this->m_data->m_data.size();
+    FwSignedSizeType pre_write_size = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
 
     // Next write data
     FwSignedSizeType i = 0;
     for (i = 0; i < size; i++, this->m_data->m_pointer++) {
         // Overwrite case
         if (static_cast<size_t>(this->m_data->m_pointer) < this->m_data->m_data.size()) {
-            this->m_data->m_data.at(this->m_data->m_pointer) = write_data[i];
+            this->m_data->m_data.at(static_cast<std::vector<U8>::size_type>(this->m_data->m_pointer)) = write_data[i];
         }
         // Append case
         else {
@@ -212,7 +212,7 @@ Os::File::Status SyntheticFile::preallocate(const FwSignedSizeType offset, const
     } else if (Os::File::Mode::OPEN_READ == this->m_data->m_mode) {
         status = Os::File::Status::INVALID_MODE;
     } else {
-        const FwSignedSizeType original_size = this->m_data->m_data.size();
+        const FwSignedSizeType original_size = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
         const FwSignedSizeType new_length = offset + length;
         // Loop from existing size to new size adding zeros
         for (FwSignedSizeType i = static_cast<FwSignedSizeType>(this->m_data->m_data.size()); i < new_length; i++) {

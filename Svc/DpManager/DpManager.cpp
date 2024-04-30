@@ -77,7 +77,7 @@ Fw::Success DpManager::getBuffer(FwIndexType portNum, FwDpIdType id, FwSizeType 
     // Set status
     Fw::Success status(Fw::Success::FAILURE);
     // Get a buffer
-    buffer = this->bufferGetOut_out(portNum, size);
+    buffer = this->bufferGetOut_out(portNum, static_cast<U32>(size));
     if (buffer.isValid()) {
         // Buffer is valid
         ++this->numSuccessfulAllocations;

@@ -50,7 +50,7 @@ namespace Drv {
 
         // TODO check value of len
         len = snprintf(buf, sizeof(buf), "%u", gpio);
-        if(write(fd, buf, len) != len) {
+        if(write(fd, buf, static_cast<size_t>(len)) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/export error!\n");
             return -1;
@@ -81,7 +81,7 @@ namespace Drv {
 
         // TODO check value of len
         len = snprintf(buf, sizeof(buf), "%u", gpio);
-        if(write(fd, buf, len) != len) {
+        if(write(fd, buf, static_cast<size_t>(len)) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/unexport error!\n");
             return -1;
@@ -114,9 +114,9 @@ namespace Drv {
         }
 
         const char *dir = out_flag ? "out" : "in";
-        len = strlen(dir);
+        len = static_cast<int>(strlen(dir));
 
-        if (write(fd, dir, len) != len) {
+        if (write(fd, dir, static_cast<size_t>(len)) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/direction error!\n");
             return -1;
@@ -157,8 +157,8 @@ namespace Drv {
 
         FW_ASSERT(fd != -1);
 
-        NATIVE_INT_TYPE stat1 = lseek(fd, 0, SEEK_SET); // Must seek back to the starting
-        NATIVE_INT_TYPE stat2 = read(fd, &ch, 1);
+        NATIVE_INT_TYPE stat1 = static_cast<NATIVE_INT_TYPE>(lseek(fd, 0, SEEK_SET)); // Must seek back to the starting
+        NATIVE_INT_TYPE stat2 = static_cast<NATIVE_INT_TYPE>(read(fd, &ch, 1));
 
         if (stat1 == -1 || stat2 != 1) {
             DEBUG_PRINT("GPIO read failure: %d %d!\n",stat1,stat2);
@@ -199,8 +199,8 @@ namespace Drv {
             return -1;
         }
 
-        len = strlen(edge) + 1;
-        if(write(fd, edge, len) != len) {
+        len = static_cast<int>(strlen(edge) + 1);
+        if(write(fd, edge, static_cast<size_t>(len)) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/set-edge error!\n");
             return -1;
@@ -292,13 +292,13 @@ namespace Drv {
       NATIVE_INT_TYPE stat;
 
       // Configure:
-      stat = gpio_export(gpio);
+      stat = gpio_export(static_cast<unsigned int>(gpio));
       if (-1 == stat) {
           Fw::LogStringArg arg = strerror(errno);
           this->log_WARNING_HI_GP_OpenError(gpio,stat,arg);
           return false;
       }
-      stat = gpio_set_dir(gpio, direction == GPIO_OUT ? 1 : 0);
+      stat = gpio_set_dir(static_cast<unsigned int>(gpio), direction == GPIO_OUT ? 1 : 0);
       if (-1 == stat) {
           Fw::LogStringArg arg = strerror(errno);
           this->log_WARNING_HI_GP_OpenError(gpio,stat,arg);
@@ -308,7 +308,7 @@ namespace Drv {
       // If needed, set edge to rising in intTaskEntry()
 
       // Open:
-      this->m_fd = gpio_fd_open(gpio);
+      this->m_fd = gpio_fd_open(static_cast<unsigned int>(gpio));
       if (-1 == this->m_fd) {
           Fw::LogStringArg arg = strerror(errno);
           this->log_WARNING_HI_GP_OpenError(gpio,errno,arg);
@@ -330,7 +330,7 @@ namespace Drv {
 
     // start GPIO interrupt
     NATIVE_INT_TYPE stat;
-    stat = gpio_set_edge(compPtr->m_gpio, "rising");
+    stat = gpio_set_edge(static_cast<unsigned int>(compPtr->m_gpio), "rising");
     if (-1 == stat) {
       compPtr->log_WARNING_HI_GP_IntStartError(compPtr->m_gpio);
       return;
@@ -346,7 +346,7 @@ namespace Drv {
 
         fdset[0].fd = compPtr->m_fd;
         fdset[0].events = POLLPRI;
-        stat = poll(fdset, nfds, timeout);
+        stat = poll(fdset, static_cast<nfds_t>(nfds), timeout);
 
         /*
         * According to this link, poll will always have POLLERR set for the sys/class/gpio subsystem
@@ -422,7 +422,7 @@ namespace Drv {
   {
       if (this->m_fd != -1) {
           DEBUG_PRINT("Closing GPIO %d fd %d\n",this->m_gpio, this->m_fd);
-          (void) gpio_fd_close(this->m_fd, this->m_gpio);
+          (void) gpio_fd_close(this->m_fd, static_cast<unsigned int>(this->m_gpio));
       }
 
   }
