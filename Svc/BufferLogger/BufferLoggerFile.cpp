@@ -225,7 +225,7 @@ namespace Svc {
     const Os::ValidateFile::Status status =
       validatedFile.createHashFile();
     if (status !=  Os::ValidateFile::VALIDATION_OK) {
-      const Fw::String &hashFileName = validatedFile.getHashFileName();
+      const Fw::StringBase &hashFileName = validatedFile.getHashFileName();
       Fw::LogStringArg logStringArg(hashFileName.toChar());
       this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(
           logStringArg,

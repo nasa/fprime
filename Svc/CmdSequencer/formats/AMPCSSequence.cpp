@@ -27,12 +27,12 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    loadFile(const Fw::CmdStringArg& fileName)
+    loadFile(const Fw::StringBase& fileName)
   {
     // Make sure there is a buffer allocated
     FW_ASSERT(this->m_buffer.getBuffAddr());
 
-    Fw::CmdStringArg crcFileName = fileName;
+    Fw::CmdStringArg crcFileName(fileName);
     crcFileName += ".CRC32";
 
     this->m_header.m_timeBase = TB_DONT_CARE;
@@ -77,7 +77,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    getFileSize(const Fw::CmdStringArg& seqFileName)
+    getFileSize(const Fw::StringBase& seqFileName)
   {
     bool status = true;
     FwSignedSizeType fileSize;
@@ -101,7 +101,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    readSequenceFile(const Fw::CmdStringArg& seqFileName)
+    readSequenceFile(const Fw::StringBase& seqFileName)
   {
 
     bool result;

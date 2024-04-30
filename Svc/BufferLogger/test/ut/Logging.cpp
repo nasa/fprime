@@ -96,7 +96,7 @@ namespace Svc {
         //! Run a test
         void test(
             const U32 numFiles, //!< The number of files to create
-            const char *const baseName //!< The baseName to use
+            const Fw::CmdStringArg& baseName //!< The baseName to use
         ) {
           this->sendCmd_BL_OpenFile(0, 0, baseName);
           this->dispatchOne();
@@ -105,7 +105,7 @@ namespace Svc {
           currentFileName.format(
               "%s%s%s",
               this->component.m_file.m_prefix.toChar(),
-              baseName,
+              baseName.toChar(),
               this->component.m_file.m_suffix.toChar()
           );
           this->sendBuffers(1);
@@ -123,7 +123,7 @@ namespace Svc {
             currentFileName.format(
                 "%s%s%d%s",
                 this->component.m_file.m_prefix.toChar(),
-                baseName,
+                baseName.toChar(),
                 i,
                 this->component.m_file.m_suffix.toChar()
             );
@@ -147,7 +147,7 @@ namespace Svc {
                 fileName.format(
                     "%s%s%s",
                     this->component.m_file.m_prefix.toChar(),
-                    baseName,
+                    baseName.toChar(),
                     this->component.m_file.m_suffix.toChar()
                 );
             }
@@ -155,7 +155,7 @@ namespace Svc {
                 fileName.format(
                     "%s%s%d%s",
                     this->component.m_file.m_prefix.toChar(),
-                    baseName,
+                    baseName.toChar(),
                     i,
                     this->component.m_file.m_suffix.toChar()
                 );
@@ -190,7 +190,7 @@ namespace Svc {
       ComIn()
     {
       ComInTester tester;
-      tester.test(3, "ComIn");
+      tester.test(3, Fw::CmdStringArg("ComIn"));
     }
 
     class BufferSendInTester :
@@ -207,7 +207,7 @@ namespace Svc {
       BufferSendIn()
     {
       BufferSendInTester tester;
-      tester.test(3, "BufferSendIn");
+      tester.test(3, Fw::CmdStringArg("BufferSendIn"));
     }
 
     class OnOffTester :

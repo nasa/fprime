@@ -183,7 +183,7 @@ Fw::Success::T DpWriter::writeFile(const Fw::DpContainer& container,
     Os::File file;
     Os::File::Status fileStatus = file.open(fileName.toChar(), Os::File::OPEN_CREATE);
     if (fileStatus != Os::File::OP_OK) {
-        this->log_WARNING_HI_FileOpenError(static_cast<U32>(fileStatus), fileName.toChar());
+        this->log_WARNING_HI_FileOpenError(static_cast<U32>(fileStatus), fileName);
         status = Fw::Success::FAILURE;
     }
     // Write the file
@@ -202,11 +202,11 @@ Fw::Success::T DpWriter::writeFile(const Fw::DpContainer& container,
             // is the expected number, then record the success
             this->log_ACTIVITY_LO_FileWritten(
                 static_cast<U32>(writeSize),
-                fileName.toChar());
+                fileName);
         } else {
             // Otherwise record the failure
             this->log_WARNING_HI_FileWriteError(static_cast<U32>(fileStatus), static_cast<U32>(writeSize),
-                                                static_cast<U32>(fileSize), fileName.toChar());
+                                                static_cast<U32>(fileSize), fileName);
             status = Fw::Success::FAILURE;
         }
     }

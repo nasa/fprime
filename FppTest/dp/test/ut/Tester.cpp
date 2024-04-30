@@ -331,8 +331,7 @@ Fw::Time Tester::randomizeTestTime() {
 }
 
 void Tester::generateRandomString(Fw::StringBase& str) {
-    // Reserve enough space for max length plus null terminator
-    char buffer[MAX_STRING_LENGTH + 1];
+    char buffer[Fw::StringBase::BUFFER_SIZE(MAX_STRING_LENGTH)];
     // Pick a random string length
     const FwSizeType length = STest::Pick::lowerUpper(0, MAX_STRING_LENGTH);
     // Fill buffer with a random null-terminated string with that length

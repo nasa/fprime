@@ -204,7 +204,6 @@ namespace Svc {
     Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
-    const char *const fileName = file.getName().toChar();
     file.write();
     // Get error info
     SequenceFiles::File::ErrorInfo errorInfo;
@@ -216,7 +215,7 @@ namespace Svc {
     {
       this->interceptor.fileStatus = Os::File::Status::DOESNT_EXIST;
       // Validate the file
-      this->sendCmd_CS_VALIDATE(0, 0, fileName);
+      this->sendCmd_CS_VALIDATE(0, 0, file.getName());
       this->clearAndDispatch();
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -228,7 +227,7 @@ namespace Svc {
       this->interceptor.fileStatus = Os::File::NO_PERMISSION;
       // Validate the file
       const U32 validateCmdSeq = 14;
-      this->sendCmd_CS_VALIDATE(0, validateCmdSeq, fileName);
+      this->sendCmd_CS_VALIDATE(0, validateCmdSeq, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -254,7 +253,6 @@ namespace Svc {
     Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
-    const char *const fileName = file.getName().toChar();
     file.write();
     // Get error info
     SequenceFiles::File::ErrorInfo errorInfo;
@@ -271,7 +269,7 @@ namespace Svc {
       //TODO: fix me Os::setLastError(Os::File::NO_SPACE);
       // Validate file
       const U32 validateCmdSeq = 14;
-      this->sendCmd_CS_VALIDATE(0, validateCmdSeq, fileName);
+      this->sendCmd_CS_VALIDATE(0, validateCmdSeq, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -301,7 +299,6 @@ namespace Svc {
     Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
-    const char *const fileName = file.getName().toChar();
     file.write();
     // Get error info
     SequenceFiles::File::ErrorInfo errorInfo;
@@ -318,7 +315,7 @@ namespace Svc {
 
       // Validate file
       const U32 validateCmdSeq = 14;
-      this->sendCmd_CS_VALIDATE(0, validateCmdSeq, fileName);
+      this->sendCmd_CS_VALIDATE(0, validateCmdSeq, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -347,7 +344,7 @@ namespace Svc {
       this->interceptor.size = 2;
       // Validate file
       const U32 validateCmdSeq = 14;
-      this->sendCmd_CS_VALIDATE(0, validateCmdSeq, fileName);
+      this->sendCmd_CS_VALIDATE(0, validateCmdSeq, file.getName());
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -604,7 +601,7 @@ namespace Svc {
     validateFile(const U32 cmdSeq, const char* const fileName)
   {
     // Validate the file
-    this->sendCmd_CS_VALIDATE(0, cmdSeq, fileName);
+    this->sendCmd_CS_VALIDATE(0, cmdSeq, Fw::CmdStringArg(fileName));
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -626,7 +623,7 @@ namespace Svc {
     // Invoke the port
     Fw::String fArg(fileName);
     this->clearHistory();
-    this->component.loadSequence(fileName);
+    this->component.loadSequence(fArg);
     // Assert events
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_SequenceLoaded(0, fileName);
@@ -636,7 +633,7 @@ namespace Svc {
     runSequence(const U32 cmdSeq, const char* const fileName)
   {
     // Send run command
-    this->sendCmd_CS_RUN(0, cmdSeq, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, cmdSeq, Fw::CmdStringArg(fileName), Svc::CmdSequencer_BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -686,7 +683,7 @@ namespace Svc {
     startNewSequence(const char *const fileName)
   {
     // Start the sequence
-    this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, Fw::CmdStringArg(fileName), Svc::CmdSequencer_BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -699,7 +696,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
     // Validate the file
-    this->sendCmd_CS_VALIDATE(0, 0, fileName);
+    this->sendCmd_CS_VALIDATE(0, 0, Fw::CmdStringArg(fileName));
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);

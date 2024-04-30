@@ -19,16 +19,16 @@ class CmdStringArg final : public StringBase {
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_CMD_STR,
         STRING_SIZE = FW_CMD_STRING_MAX_SIZE,
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE),
     };
 
     CmdStringArg() : StringBase() { *this = ""; }
 
-    CmdStringArg(const CmdStringArg& src) : StringBase() { *this = src; }
+    explicit CmdStringArg(const CmdStringArg& src) : StringBase() { *this = src; }
 
-    CmdStringArg(const StringBase& src) : StringBase() { *this = src; }
+    explicit CmdStringArg(const StringBase& src) : StringBase() { *this = src; }
 
-    CmdStringArg(const char* src) : StringBase() { *this = src; }
+    explicit CmdStringArg(const char* src) : StringBase() { *this = src; }
 
     ~CmdStringArg() {}
 
@@ -52,7 +52,7 @@ class CmdStringArg final : public StringBase {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[CmdStringArg::STRING_SIZE];
+    char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
 }  // namespace Fw
 

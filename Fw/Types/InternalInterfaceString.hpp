@@ -20,16 +20,16 @@ class InternalInterfaceString final : public StringBase {
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_INTERNAL_INTERFACE_STRING,
         STRING_SIZE = FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE)
     };
 
     InternalInterfaceString() : StringBase() { *this = ""; }
 
-    InternalInterfaceString(const InternalInterfaceString& src) : StringBase() { *this = src; }
+    explicit InternalInterfaceString(const InternalInterfaceString& src) : StringBase() { *this = src; }
 
-    InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
+    explicit InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
 
-    InternalInterfaceString(const char* src) : StringBase() { *this = src; }
+    explicit InternalInterfaceString(const char* src) : StringBase() { *this = src; }
 
     ~InternalInterfaceString() {}
 
@@ -53,7 +53,7 @@ class InternalInterfaceString final : public StringBase {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[InternalInterfaceString::STRING_SIZE];
+    char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
 }  // namespace Fw
 

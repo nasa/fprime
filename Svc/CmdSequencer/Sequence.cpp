@@ -108,7 +108,7 @@ namespace Svc {
     }
 
     void CmdSequencerComponentImpl::Sequence ::
-      setFileName(const Fw::CmdStringArg& fileName)
+      setFileName(const Fw::StringBase& fileName)
     {
         this->m_fileName = fileName;
         this->m_logFileName = fileName;

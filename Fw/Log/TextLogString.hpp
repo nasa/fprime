@@ -19,7 +19,7 @@ class TextLogString final : public StringBase {
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_LOG_STR,
         STRING_SIZE = FW_LOG_TEXT_BUFFER_SIZE,
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE)
     };
 
     TextLogString() : StringBase() { *this = ""; }
@@ -52,7 +52,7 @@ class TextLogString final : public StringBase {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[TextLogString::STRING_SIZE];
+    char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
 }  // namespace Fw
 
