@@ -31,13 +31,13 @@ class StringBase : public Serializable {
     SizeType maxLength() const;
     //! Get the static serialized size of a string
     //! This is the max length of the string plus the size of the stored size
-    static constexpr FwSizeType STATIC_SERIALIZED_SIZE(FwSizeType maxLength  //!< The maximum string length
+    static constexpr SizeType STATIC_SERIALIZED_SIZE(SizeType maxLength  //!< The maximum string length
     ) {
         return sizeof(FwSizeStoreType) + maxLength;
     }
 
     //! Get the size of a null-terminated string buffer
-    static constexpr FwSizeType BUFFER_SIZE(FwSizeType maxLength  //!< The maximum string length
+    static constexpr SizeType BUFFER_SIZE(SizeType maxLength  //!< The maximum string length
     ) {
         // Reserve one byte for each character plus one for the null terminator
         return maxLength + 1;

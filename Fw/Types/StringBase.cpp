@@ -146,7 +146,7 @@ SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxL
 
 SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
     // Get the max size of the deserialized string
-    const FwSizeType maxSize = this->maxLength();
+    const SizeType maxSize = this->maxLength();
     // Initial estimate of actual size is max size
     // This estimate is refined when calling the deserialize function below
     SizeType actualSize = maxSize;
