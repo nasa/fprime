@@ -13,7 +13,7 @@ namespace Fw {
     void PassiveComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
         FW_ASSERT(size > 0);
         FW_ASSERT(buffer != nullptr);
-        PlatformIntType status = snprintf(buffer, size, "Comp: %s", this->m_objName.toChar());
+        PlatformIntType status = snprintf(buffer, static_cast<size_t>(size), "Comp: %s", this->m_objName.toChar());
         if (status < 0) {
             buffer[0] = 0;
         }

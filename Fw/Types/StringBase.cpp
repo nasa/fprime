@@ -49,7 +49,7 @@ bool StringBase::operator==(const CHAR* other) const {
     }
 
     const SizeType capacity = this->getCapacity();
-    const size_t result = strncmp(us, other, capacity);
+    const size_t result = static_cast<size_t>(strncmp(us, other, capacity));
     return (result == 0);
 }
 
@@ -103,13 +103,13 @@ StringBase& StringBase::operator=(const CHAR* other) {  // lgtm[cpp/rule-of-two]
 void StringBase::appendBuff(const CHAR* buff, SizeType size) {
     const SizeType capacity = this->getCapacity();
     const SizeType length = this->length();
-    FW_ASSERT(capacity > length, capacity, length);
+    FW_ASSERT(capacity > length, static_cast<FwAssertArgType>(capacity), static_cast<FwAssertArgType>(length));
     // Subtract 1 to leave space for null terminator
     SizeType remaining = capacity - length - 1;
     if (size < remaining) {
         remaining = size;
     }
-    FW_ASSERT(remaining < capacity, remaining, capacity);
+    FW_ASSERT(remaining < capacity, static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(capacity));
     (void)strncat(const_cast<CHAR*>(this->toChar()), buff, remaining);
 }
 
@@ -131,7 +131,7 @@ StringBase::SizeType StringBase::serializedSize() const {
 }
 
 StringBase::SizeType StringBase::serializedTruncatedSize(FwSizeType maxLength) const {
-    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + FW_MIN(this->length(), maxLength);
+    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + static_cast<SizeType>(FW_MIN(this->length(), maxLength));
 }
 
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {

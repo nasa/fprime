@@ -31,10 +31,11 @@ namespace Fw {
   U32 FilePacket::StartPacket ::
     bufferSize() const
   {
-    return this->m_header.bufferSize() +
+    return static_cast<U32>(
+      this->m_header.bufferSize() +
       sizeof(this->m_fileSize) +
       this->m_sourcePath.bufferSize() +
-      this->m_destinationPath.bufferSize();
+      this->m_destinationPath.bufferSize());
   }
 
   SerializeStatus FilePacket::StartPacket ::
