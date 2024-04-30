@@ -165,7 +165,7 @@ SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
     } else {
         // Deserialization failed: leave string unmodified, but ensure that it
         // is null-terminated
-        raw[0] = maxSize;
+        raw[maxSize] = 0;
     }
     return stat;
 }
