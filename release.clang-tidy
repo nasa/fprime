@@ -1,4 +1,5 @@
 Checks: >
     -*,
-    misc-no-recursion
+    misc-no-recursion,
+    readability-braces-around-statements
 WarningsAsErrors: '*'

@@ -33,7 +33,7 @@ class StringBase : public Serializable {
     //! This is the max length of the string plus the size of the stored size
     static constexpr SizeType STATIC_SERIALIZED_SIZE(SizeType maxLength  //!< The maximum string length
     ) {
-        return sizeof(FwSizeStoreType) + maxLength;
+        return static_cast<SizeType>(sizeof(FwSizeStoreType)) + maxLength;
     }
 
     //! Get the size of a null-terminated string buffer

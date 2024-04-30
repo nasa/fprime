@@ -58,12 +58,14 @@ namespace Fw {
     SerializeStatus status;
 
     status = serialBuffer.serialize(type_casted);
-    if (status != FW_SERIALIZE_OK)
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
 
     status = serialBuffer.serialize(this->m_sequenceIndex);
-    if (status != FW_SERIALIZE_OK)
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
 
     return FW_SERIALIZE_OK;
 
