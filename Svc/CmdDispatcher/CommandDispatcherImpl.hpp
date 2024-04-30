@@ -167,7 +167,7 @@ namespace Svc {
                     NATIVE_INT_TYPE callerPort; //!< port command source port
             } m_sequenceTracker[CMD_DISPATCHER_SEQUENCER_TABLE_SIZE]; //!< sequence tracking port for command completions;
 
-            I32 m_seq; //!< current command sequence number
+            U32 m_seq; //!< current command sequence number
 
             U32 m_numCmdsDispatched; //!< number of commands dispatched
             U32 m_numCmdErrors; //!< number of commands with an error

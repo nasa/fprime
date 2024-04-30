@@ -56,16 +56,16 @@ void BufferAccumulator ::allocateQueue(
 ) {
 
   this->m_allocatorId = identifier;
-  NATIVE_UINT_TYPE memSize = sizeof(Fw::Buffer) * maxNumBuffers;
+  NATIVE_UINT_TYPE memSize = static_cast<NATIVE_UINT_TYPE>(sizeof(Fw::Buffer) * maxNumBuffers);
   bool recoverable = false;
   this->m_bufferMemory = static_cast<Fw::Buffer*>(
-      allocator.allocate(identifier, memSize, recoverable));
+      allocator.allocate(static_cast<NATIVE_UINT_TYPE>(identifier), memSize, recoverable));
   //TODO: Fail gracefully here
   m_bufferQueue.init(this->m_bufferMemory, maxNumBuffers);
 }
 
 void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {
-  allocator.deallocate(this->m_allocatorId, this->m_bufferMemory);
+  allocator.deallocate(static_cast<NATIVE_UINT_TYPE>(this->m_allocatorId), this->m_bufferMemory);
 }
 
 // ----------------------------------------------------------------------

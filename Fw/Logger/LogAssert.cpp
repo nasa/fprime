@@ -46,22 +46,59 @@ namespace Fw {
         // Assumption is that file (when string) goes back to static macro in the code and will persist
         switch (numArgs) {
             case 0:
-                Fw::Logger::logMsg(fileIdFs,ASSERT_CAST(file),lineNo,0,0,0,0);
+                Fw::Logger::logMsg(
+                    fileIdFs,
+                    ASSERT_CAST(file),
+                    lineNo,
+                    0,
+                    0,
+                    0,
+                    0);
                 break;
             case 1:
-                Fw::Logger::logMsg(fileIdFs " %d\n",ASSERT_CAST(file),lineNo,arg1,0,0,0);
+                Fw::Logger::logMsg(
+                    fileIdFs " %d\n",
+                    ASSERT_CAST(file),lineNo,
+                    static_cast<POINTER_CAST>(arg1),
+                    0,
+                    0,
+                    0);
                 break;
             case 2:
-                Fw::Logger::logMsg(fileIdFs " %d %d\n",ASSERT_CAST(file),lineNo,arg1,arg2,0,0);
+                Fw::Logger::logMsg(
+                    fileIdFs " %d %d\n",
+                    ASSERT_CAST(file),lineNo,
+                    static_cast<POINTER_CAST>(arg1),
+                    static_cast<POINTER_CAST>(arg2),
+                    0,
+                    0);
                 break;
             case 3:
-                Fw::Logger::logMsg(fileIdFs " %d %d %d\n",ASSERT_CAST(file),lineNo,arg1,arg2,arg3,0);
+                Fw::Logger::logMsg(
+                    fileIdFs " %d %d %d\n",
+                    ASSERT_CAST(file),lineNo,
+                    static_cast<POINTER_CAST>(arg1),
+                    static_cast<POINTER_CAST>(arg2),
+                    static_cast<POINTER_CAST>(arg3),
+                    0);
                 break;
             case 4:
-                Fw::Logger::logMsg(fileIdFs " %d %d %d %d\n",ASSERT_CAST(file),lineNo,arg1,arg2,arg3,arg4);
+                Fw::Logger::logMsg(
+                    fileIdFs " %d %d %d %d\n",
+                    ASSERT_CAST(file),lineNo,
+                    static_cast<POINTER_CAST>(arg1),
+                    static_cast<POINTER_CAST>(arg2),
+                    static_cast<POINTER_CAST>(arg3),
+                    static_cast<POINTER_CAST>(arg4));
                 break;
             default: // can't fit remainder of arguments in log message
-                Fw::Logger::logMsg(fileIdFs " %d %d %d %d +\n",ASSERT_CAST(file),lineNo,arg1,arg2,arg3,arg4);
+                Fw::Logger::logMsg(
+                    fileIdFs " %d %d %d %d +\n",
+                    ASSERT_CAST(file),lineNo,
+                    static_cast<POINTER_CAST>(arg1),
+                    static_cast<POINTER_CAST>(arg2),
+                    static_cast<POINTER_CAST>(arg3),
+                    static_cast<POINTER_CAST>(arg4));
                 break;
         }
 
