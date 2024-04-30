@@ -29,10 +29,20 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    U16 port1 =  Drv::Test::get_free_port();
+    U16 port1 =  Drv::Test::get_free_port(true);
     ASSERT_NE(0, port1);
-    U16 port2 =  Drv::Test::get_free_port();
+    U16 port2 =  Drv::Test::get_free_port(true);
     ASSERT_NE(0, port2);
+
+    uint8_t attempt_to_find_available_port = 100;
+
+    while ((port1 == port2) && attempt_to_find_available_port > 0)
+    {
+        U16 port2 =  Drv::Test::get_free_port(true);
+        ASSERT_NE(0, port2);
+        --attempt_to_find_available_port;
+    }
+    ASSERT_NE(port1, port2);
 
     // Configure the component
     this->component.configureSend("127.0.0.1", port1, 0, 100);
@@ -47,11 +57,17 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations; i++) {
         Drv::UdpSocket udp2;
-        I32 size = sizeof(m_data_storage);
+        U32 size = sizeof(m_data_storage);
 
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {
             status1 = this->component.open();
+
+            EXPECT_EQ(status1, Drv::SOCK_SUCCESS)
+                << "UDP socket open error: " << strerror(errno)
+                << "Port1: " << port1
+                << "Port2: " << port2;
+
         } else {
             EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
         }
@@ -59,10 +75,12 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
 
         udp2.configureSend("127.0.0.1", port2, 0, 100);
         udp2.configureRecv("127.0.0.1", port1);
-        status2 = udp2.open();;
+        status2 = udp2.open();
 
-        EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
-        EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
+        EXPECT_EQ(status2, Drv::SOCK_SUCCESS)
+            << "UDP socket open error: " << strerror(errno) << std::endl
+            << "Port1: " << port1 << std::endl
+            << "Port2: " << port2 << std::endl;
 
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&

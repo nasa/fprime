@@ -20,16 +20,16 @@ class FileNameString final : public StringBase {
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,
         STRING_SIZE = FileNameStringSize,
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE)
     };
 
     FileNameString() : StringBase() { *this = ""; }
 
-    FileNameString(const FileNameString& src) : StringBase() { *this = src; }
+    explicit FileNameString(const FileNameString& src) : StringBase() { *this = src; }
 
-    FileNameString(const StringBase& src) : StringBase() { *this = src; }
+    explicit FileNameString(const StringBase& src) : StringBase() { *this = src; }
 
-    FileNameString(const char* src) : StringBase() { *this = src; }
+    explicit FileNameString(const char* src) : StringBase() { *this = src; }
 
     ~FileNameString() {}
 
@@ -53,7 +53,7 @@ class FileNameString final : public StringBase {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[FileNameString::STRING_SIZE];
+    char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
 }  // namespace Fw
 

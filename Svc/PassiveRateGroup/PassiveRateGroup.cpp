@@ -33,7 +33,7 @@ void PassiveRateGroup::configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE num
     this->m_numContexts = numContexts;
     // copy context values
     for (NATIVE_INT_TYPE entry = 0; entry < this->m_numContexts; entry++) {
-        this->m_contexts[entry] = contexts[entry];
+        this->m_contexts[entry] = static_cast<U32>(contexts[entry]);
     }
 }
 

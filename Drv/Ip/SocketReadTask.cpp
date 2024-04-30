@@ -76,7 +76,10 @@ void SocketReadTask::readTask(void* pointer) {
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isStarted()) and (not self->m_stop) and
             ((status = self->startup(self->m_reuse_address)) != SOCK_SUCCESS)) {
-            Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
+            Fw::Logger::logMsg(
+                "[WARNING] Failed to open port with status %d and errno %d\n",
+                static_cast<POINTER_CAST>(status),
+                static_cast<POINTER_CAST>(errno));
             (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
             continue;
         }
@@ -84,7 +87,10 @@ void SocketReadTask::readTask(void* pointer) {
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isOpened()) and (not self->m_stop) and
             ((status = self->open(self->m_reuse_address)) != SOCK_SUCCESS)) {
-            Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
+            Fw::Logger::logMsg(
+                "[WARNING] Failed to open port with status %d and errno %d\n",
+                static_cast<POINTER_CAST>(status),
+                static_cast<POINTER_CAST>(errno));
             (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
             continue;
         }
@@ -94,11 +100,12 @@ void SocketReadTask::readTask(void* pointer) {
             Fw::Buffer buffer = self->getBuffer();
             U8* data = buffer.getData();
             FW_ASSERT(data);
-            I32 size = static_cast<I32>(buffer.getSize());
-            size = (size >= 0) ? size : MAXIMUM_SIZE; // Handle max U32 edge case
+            U32 size = buffer.getSize();
             status = self->getSocketHandler().recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
-                Fw::Logger::logMsg("[WARNING] Failed to recv from port with status %d and errno %d\n", status, errno);
+                Fw::Logger::logMsg("[WARNING] Failed to recv from port with status %d and errno %d\n",
+                static_cast<POINTER_CAST>(status),
+                static_cast<POINTER_CAST>(errno));
                 self->getSocketHandler().close();
                 buffer.setSize(0);
             } else {

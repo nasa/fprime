@@ -79,7 +79,7 @@ namespace Fw {
 #if FW_OBJECT_TO_STRING == 1
     void PortBase::toString(char* buffer, NATIVE_INT_TYPE size) {
         FW_ASSERT(size > 0);
-        if (snprintf(buffer, size, "Port: %s %s->(%s)", this->m_objName.toChar(), this->m_connObj ? "C" : "NC",
+        if (snprintf(buffer, static_cast<size_t>(size), "Port: %s %s->(%s)", this->m_objName.toChar(), this->m_connObj ? "C" : "NC",
                      this->m_connObj ? this->m_connObj->getObjName() : "None") < 0) {
             buffer[0] = 0;
         }

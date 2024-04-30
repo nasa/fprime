@@ -23,7 +23,10 @@ void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::C
     FW_ASSERT(data != nullptr);
     FW_ASSERT(m_interface != nullptr);
     // Use of I32 size is explicit as ComPacketType will be specifically serialized as an I32
-    FpFrameHeader::TokenType real_data_size = size + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
+    FpFrameHeader::TokenType real_data_size =
+        size + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ?
+        static_cast<Svc::FpFrameHeader::TokenType>(sizeof(I32)) :
+        0);
     FpFrameHeader::TokenType total = real_data_size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
     Fw::Buffer buffer = m_interface->allocate(total);
     Fw::SerializeBufferBase& serializer = buffer.getSerializeRepr();
@@ -33,7 +36,7 @@ void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::C
     Fw::SerializeStatus status;
     status = serializer.serialize(FpFrameHeader::START_WORD);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    
+
     status = serializer.serialize(real_data_size);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -42,12 +45,12 @@ void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::C
         status = serializer.serialize(static_cast<I32>(packet_type)); // I32 used for enum storage
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     }
-    
+
     status = serializer.serialize(data, size, true);  // Serialize without length
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Calculate and add transmission hash
-    Utils::Hash::hash(buffer.getData(), total - HASH_DIGEST_LENGTH, hash);
+    Utils::Hash::hash(buffer.getData(), static_cast<NATIVE_INT_TYPE>(total - HASH_DIGEST_LENGTH), hash);
     status = serializer.serialize(hash.getBuffAddr(), HASH_DIGEST_LENGTH, true);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -70,7 +73,7 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
     hash.final(hashBuffer);
     // Now loop through the hash digest bytes and check for equality
     for (U32 i = 0; i < HASH_DIGEST_LENGTH; i++) {
-        U8 calc = static_cast<char>(hashBuffer.getBuffAddr()[i]);
+        U8 calc = static_cast<U8>(hashBuffer.getBuffAddr()[i]);
         U8 sent = 0;
         const Fw::SerializeStatus status = ring.peek(sent, size + i);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);

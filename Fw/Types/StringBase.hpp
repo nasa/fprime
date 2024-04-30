@@ -26,9 +26,31 @@ class StringBase : public Serializable {
     virtual const CHAR* toChar() const = 0;    //<! Convert to a C-style char*
     virtual SizeType getCapacity() const = 0;  //!< return size of buffer
     SizeType length() const;                   //!< Get length of string
-    SizeType serializedSize() const;           //!< Get length of string plus size of stored size
-    SizeType serializedTruncatedSize(
-        FwSizeType maxLength) const;  //!< Get truncated length of string plus size of stored size
+
+    //! Get the maximum length of a string that the buffer can hold
+    SizeType maxLength() const;
+    //! Get the static serialized size of a string
+    //! This is the max length of the string plus the size of the stored size
+    static constexpr SizeType STATIC_SERIALIZED_SIZE(SizeType maxLength  //!< The maximum string length
+    ) {
+        return sizeof(FwSizeStoreType) + maxLength;
+    }
+
+    //! Get the size of a null-terminated string buffer
+    static constexpr SizeType BUFFER_SIZE(SizeType maxLength  //!< The maximum string length
+    ) {
+        // Reserve one byte for each character plus one for the null terminator
+        return maxLength + 1;
+    }
+
+    //! Get the dynamic serialized size of a string
+    //! This is the length of the string plus the size of the stored size
+    SizeType serializedSize() const;
+
+    //! Get the serialized truncated size of a string
+    //! This is the minimum of the dynamic serialized size and the max length
+    SizeType serializedTruncatedSize(FwSizeType maxLength  //!< The max string length
+    ) const;
 
     const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*
     const StringBase& operator+=(const StringBase& src);  //!< Concatenate a StringBase
@@ -60,9 +82,7 @@ class StringBase : public Serializable {
     void appendBuff(const CHAR* buff, SizeType size);
 
   private:
-    // A no-implementation copy constructor here will prevent the default copy constructor from being called
-    // accidentally, and without an implementation it will create an error for the developer instead.
-    StringBase(const StringBase& src);  //!< constructor with buffer as source
+    StringBase(const StringBase& src) = delete;  //!< constructor with buffer as source
 };
 
 }  // namespace Fw

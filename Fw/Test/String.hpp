@@ -18,7 +18,7 @@ class String : public Fw::StringBase {
   public:
     enum {
         STRING_SIZE = 256,
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE),
     };
 
     String() : StringBase() { *this = ""; }
@@ -49,7 +49,7 @@ class String : public Fw::StringBase {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[String::STRING_SIZE];
+    char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
 }  // namespace Fw
 
