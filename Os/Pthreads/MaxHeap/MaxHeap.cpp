@@ -81,7 +81,7 @@ namespace Os {
         parent = PARENT(index);
         // The parent index should ALWAYS be less than the
         // current index. Let's verify that.
-        FW_ASSERT(parent < index, parent, index);
+        FW_ASSERT(parent < index, static_cast<FwAssertArgType>(parent), static_cast<FwAssertArgType>(index));
         // If the current value is less than the parent,
         // then the current index is in the correct place,
         // so break out of the loop:
@@ -95,8 +95,8 @@ namespace Os {
       }
 
       // Check for programming errors or bit flips:
-      FW_ASSERT(maxCount < maxIter, maxCount, maxIter);
-      FW_ASSERT(index <= this->m_size, index);
+      FW_ASSERT(maxCount < maxIter, static_cast<FwAssertArgType>(maxCount), static_cast<FwAssertArgType>(maxIter));
+      FW_ASSERT(index <= this->m_size, static_cast<FwAssertArgType>(index));
 
       // Set the values of the new element:
       this->m_heap[index].value = value;
@@ -169,8 +169,8 @@ namespace Os {
         // Get the children indexes for this node:
         left = LCHILD(index);
         right = RCHILD(index);
-        FW_ASSERT(left > index, left, index);
-        FW_ASSERT(right > left, right, left);
+        FW_ASSERT(left > index, static_cast<FwAssertArgType>(left), static_cast<FwAssertArgType>(index));
+        FW_ASSERT(right > left, static_cast<FwAssertArgType>(right), static_cast<FwAssertArgType>(left));
 
         // If the left node is bigger than the heap
         // size, we have reached the end of the heap
@@ -212,15 +212,15 @@ namespace Os {
       }
 
       // Check for programming errors or bit flips:
-      FW_ASSERT(maxCount < maxIter, maxCount, maxIter);
-      FW_ASSERT(index <= this->m_size, index);
+      FW_ASSERT(maxCount < maxIter, static_cast<FwAssertArgType>(maxCount), static_cast<FwAssertArgType>(maxIter));
+      FW_ASSERT(index <= this->m_size, static_cast<FwAssertArgType>(index));
     }
 
     // Return the maximum priority index between two nodes. If their
     // priorities are equal, return the oldest to keep the heap stable
     NATIVE_UINT_TYPE MaxHeap::max(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b) {
-      FW_ASSERT(a < this->m_size, a, this->m_size);
-      FW_ASSERT(b < this->m_size, b, this->m_size);
+      FW_ASSERT(a < this->m_size, static_cast<FwAssertArgType>(a), static_cast<FwAssertArgType>(this->m_size));
+      FW_ASSERT(b < this->m_size, static_cast<FwAssertArgType>(b), static_cast<FwAssertArgType>(this->m_size));
 
       // Extract the priorities:
       NATIVE_INT_TYPE aValue = this->m_heap[a].value;
@@ -251,8 +251,8 @@ namespace Os {
 
     // Swap two nodes in the heap:
     void MaxHeap::swap(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b) {
-      FW_ASSERT(a < this->m_size, a, this->m_size);
-      FW_ASSERT(b < this->m_size, b, this->m_size);
+      FW_ASSERT(a < this->m_size, static_cast<FwAssertArgType>(a), static_cast<FwAssertArgType>(this->m_size));
+      FW_ASSERT(b < this->m_size, static_cast<FwAssertArgType>(b), static_cast<FwAssertArgType>(this->m_size));
       Node temp = this->m_heap[a];
       this->m_heap[a] = this->m_heap[b];
       this->m_heap[b] = temp;
@@ -270,18 +270,18 @@ namespace Os {
 
         if( left >= m_size && index == 0) {
           Fw::Logger::logMsg("i: %u v: %d d: %u -> (NULL, NULL)\n",
-            index, this->m_heap[index].value, this->m_heap[index].id);
+            index, static_cast<POINTER_CAST>(this->m_heap[index].value), this->m_heap[index].id);
         }
         else if( right >= m_size && left < m_size ) {
           Fw::Logger::logMsg("i: %u v: %d d: %u -> (i: %u v: %d d: %u, NULL)\n",
-            index, this->m_heap[index].value, this->m_heap[index].id,
-            left, this->m_heap[left].value, this->m_heap[left].id);
+            index, static_cast<POINTER_CAST>(this->m_heap[index].value), this->m_heap[index].id,
+            left, static_cast<POINTER_CAST>(this->m_heap[left].value), this->m_heap[left].id);
         }
         else if( right < m_size && left < m_size ) {
           Fw::Logger::logMsg("i: %u v: %d d: %u -> (i: %u v: %d d: %u, i: %u v: %d d: %u)\n",
-            index, this->m_heap[index].value, this->m_heap[index].id,
-            left, this->m_heap[left].value,this->m_heap[left].id,
-            right, this->m_heap[right].value, this->m_heap[right].id);
+            index, static_cast<POINTER_CAST>(this->m_heap[index].value), this->m_heap[index].id,
+            left, static_cast<POINTER_CAST>(this->m_heap[left].value),this->m_heap[left].id,
+            right, static_cast<POINTER_CAST>(this->m_heap[right].value), this->m_heap[right].id);
         }
 
         ++index;

@@ -35,7 +35,7 @@ namespace Svc {
   {
     FW_ASSERT(buffer);
     for(NATIVE_UINT_TYPE index = 0; index < bufferSize; index++) {
-      this->m_computed = update_crc_32(this->m_computed, buffer[index]);
+      this->m_computed = static_cast<U32>(update_crc_32(this->m_computed, static_cast<char>(buffer[index])));
     }
   }
 
@@ -67,7 +67,7 @@ namespace Svc {
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    loadFile(const Fw::CmdStringArg& fileName)
+    loadFile(const Fw::StringBase& fileName)
   {
 
     // make sure there is a buffer allocated
@@ -164,13 +164,13 @@ namespace Svc {
     bool status = true;
 
     FwSignedSizeType readLen = Sequence::Header::SERIALIZED_SIZE;
-    FW_ASSERT(readLen >= 0, readLen);
+    FW_ASSERT(readLen >= 0, static_cast<FwAssertArgType>(readLen));
 
     const NATIVE_UINT_TYPE capacity = buffer.getBuffCapacity();
     FW_ASSERT(
         capacity >= static_cast<NATIVE_UINT_TYPE>(readLen),
-        capacity,
-        readLen
+        static_cast<FwAssertArgType>(capacity),
+        static_cast<FwAssertArgType>(readLen)
     );
     Os::File::Status fileStatus = file.read(
         buffer.getBuffAddr(),
@@ -188,14 +188,14 @@ namespace Svc {
     if (status and readLen != Sequence::Header::SERIALIZED_SIZE) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_HEADER_SIZE,
-          readLen
+          static_cast<I32>(readLen)
       );
       status = false;
     }
 
     if (status) {
       const Fw::SerializeStatus serializeStatus =
-        buffer.setBuffLen(readLen);
+        buffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(readLen));
       FW_ASSERT(
           serializeStatus == Fw::FW_SERIALIZE_OK,
           serializeStatus
@@ -280,7 +280,7 @@ namespace Svc {
     if (static_cast<NATIVE_INT_TYPE>(size) != readLen) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_SEQ_DATA_SIZE,
-          readLen
+          static_cast<I32>(readLen)
       );
       return false;
     }
@@ -304,11 +304,11 @@ namespace Svc {
     if (buffSize < crcSize) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_SEQ_CRC,
-          buffSize
+          static_cast<I32>(buffSize)
       );
       return false;
     }
-    FW_ASSERT(buffSize >= crcSize, buffSize, crcSize);
+    FW_ASSERT(buffSize >= crcSize, static_cast<FwAssertArgType>(buffSize), crcSize);
     const NATIVE_UINT_TYPE dataSize = buffSize - crcSize;
     // Create a CRC buffer pointing at the CRC in the main buffer, after the data
     Fw::ExternalSerializeBuffer crcBuff(&buffAddr[dataSize], crcSize);

@@ -31,7 +31,7 @@ namespace Ref {
         void schedIn_handler(
             NATIVE_INT_TYPE portNum, /*!< The port number*/
             U32 context /*!< The call order*/
-        );
+        ) final;
 
         void SignalGen_Settings_cmdHandler(
             FwOpcodeType opCode, /*!< The opcode*/
@@ -40,20 +40,22 @@ namespace Ref {
             F32 Amplitude,
             F32 Phase,
             Ref::SignalType SigType
-        );
+        ) final;
 
         void SignalGen_Toggle_cmdHandler(
             FwOpcodeType opCode, /*!< The opcode*/
             U32 cmdSeq /*!< The command sequence number*/
-        );
+        ) final;
+
         void SignalGen_Skip_cmdHandler(
             FwOpcodeType opCode, /*!< The opcode*/
             U32 cmdSeq /*!< The command sequence number*/
-        );
-        void SignalGen_GenerateArray_cmdHandler(
-            FwOpcodeType opCode, /*!< The opcode*/
-            U32 cmdSeq /*!< The command sequence number*/
-        );
+        ) final;
+
+        // void SignalGen_GenerateArray_cmdHandler(
+        //     FwOpcodeType opCode, /*!< The opcode*/
+        //     U32 cmdSeq /*!< The command sequence number*/
+        // ) final;
 
         //! Handler implementation for command SignalGen_Dp
         //!
@@ -63,7 +65,7 @@ namespace Ref {
            U32 cmdSeq, //!< The command sequence number
            Ref::SignalGen_DpReqType reqType,
            U32 records
-       ) override;
+       ) final;
 
         // ----------------------------------------------------------------------
         // Handler implementations for data products
@@ -73,7 +75,7 @@ namespace Ref {
         void dpRecv_DataContainer_handler(
             DpContainer& container, //!< The container
             Fw::Success::T status //!< The container status
-        ) override;
+        ) final;
 
 
     public:

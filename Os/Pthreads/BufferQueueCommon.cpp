@@ -40,7 +40,7 @@ namespace Os {
     if (nullptr != this->m_queue) {
       this->finalize();
     }
-    FW_ASSERT(nullptr == this->m_queue, reinterpret_cast<POINTER_CAST>(this->m_queue));
+    FW_ASSERT(nullptr == this->m_queue, static_cast<FwAssertArgType>(reinterpret_cast<POINTER_CAST>(this->m_queue)));
 
     // Set member variables:
     this->m_msgSize = msgSize;
@@ -114,7 +114,7 @@ namespace Os {
   }
 
   NATIVE_UINT_TYPE BufferQueue::getBufferIndex(NATIVE_INT_TYPE index) {
-    return (index % this->m_depth) * (sizeof(NATIVE_INT_TYPE) + this->m_msgSize);
+    return static_cast<NATIVE_UINT_TYPE>((static_cast<NATIVE_UINT_TYPE>(index) % this->m_depth) * (sizeof(NATIVE_INT_TYPE) + this->m_msgSize));
   }
 
   void BufferQueue::enqueueBuffer(const U8* buffer, NATIVE_UINT_TYPE size, U8* data, NATIVE_UINT_TYPE index) {
@@ -124,7 +124,7 @@ namespace Os {
     FW_ASSERT(ptr == dest);
 
     // Copy buffer onto queue:
-    index += sizeof(size);
+    index += static_cast<NATIVE_UINT_TYPE>(sizeof(size));
     dest = &data[index];
     ptr = memcpy(dest, buffer, size);
     FW_ASSERT(ptr == dest);
@@ -147,7 +147,7 @@ namespace Os {
     size = storedSize;
 
     // Copy buffer from queue:
-    index += sizeof(size);
+    index += static_cast<NATIVE_UINT_TYPE>(sizeof(size));
     source = &data[index];
     ptr = memcpy(buffer, source, storedSize);
     FW_ASSERT(ptr == buffer);

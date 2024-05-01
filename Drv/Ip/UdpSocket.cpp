@@ -155,13 +155,13 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
 
 I32 UdpSocket::sendProtocol(const U8* const data, const U32 size) {
     FW_ASSERT(this->m_state->m_addr_send.sin_family != 0); // Make sure the address was previously setup
-    return ::sendto(this->m_fd, data, size, SOCKET_IP_SEND_FLAGS,
-                    reinterpret_cast<struct sockaddr *>(&this->m_state->m_addr_send), sizeof(this->m_state->m_addr_send));
+    return static_cast<I32>(::sendto(this->m_fd, data, size, SOCKET_IP_SEND_FLAGS,
+                    reinterpret_cast<struct sockaddr *>(&this->m_state->m_addr_send), sizeof(this->m_state->m_addr_send)));
 }
 
 I32 UdpSocket::recvProtocol(U8* const data, const U32 size) {
     FW_ASSERT(this->m_state->m_addr_recv.sin_family != 0); // Make sure the address was previously setup
-    return ::recvfrom(this->m_fd, data, size, SOCKET_IP_RECV_FLAGS, nullptr, nullptr);
+    return static_cast<I32>(::recvfrom(this->m_fd, data, size, SOCKET_IP_RECV_FLAGS, nullptr, nullptr));
 }
 
 }  // namespace Drv
