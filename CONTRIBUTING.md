@@ -163,27 +163,27 @@ cp MY_FPRIME_DIRECTORY
 # Run CI tests on the reference application
 ./ci/tests/Ref.bash
 
-# Run the static analyzer
-# Purge all directory
-fprime-util purge -f
+# Run the static analyzer with the basic configuration
+# Purge unit test directory
+fprime-util purge
+# Generate the build files for clang-tidy. Make sure clang-tidy is installed.
+fprime-util generate --ut -DCMAKE_CXX_CLANG_TIDY=clang-tidy-12
+# Build fprime with the static analyzer
+fprime-util build --all --ut -j16
+
+# Run the static analyzer with additional flight code checks
+# Purge release directory
+fprime-util purge
 # Generate the build files for clang-tidy. Make sure clang-tidy is installed.
 fprime-util generate -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
 # Build fprime with the static analyzer
-fprime-util build -j4
+fprime-util build --all -j16
 ```
 
 ## Development with modified FPP version
 
-In case FPP needs to be locally changed, FPP first needs to be installed:
-
-```bash
-# Go into your FPP directory
-cd MY_FPP_DIRECTORY
-# Install FPP. Make sure to have sbt installed.
-./compiler/install
-# Copy
-cp ./compiler/bin/* /usr/local/bin/ -r
-```
+In case FPP needs to be locally changed, FPP first needs to be installed
+following [the FPP readme](https://github.com/nasa/fpp/blob/main/compiler/README.adoc).
 
 Then, `fprime-util generate` needs to be run using `-DFPRIME_SKIP_TOOLS_VERSION_CHECK=1`
 
