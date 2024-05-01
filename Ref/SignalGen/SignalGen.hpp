@@ -52,11 +52,6 @@ namespace Ref {
             U32 cmdSeq /*!< The command sequence number*/
         ) final;
 
-        // void SignalGen_GenerateArray_cmdHandler(
-        //     FwOpcodeType opCode, /*!< The opcode*/
-        //     U32 cmdSeq /*!< The command sequence number*/
-        // ) final;
-
         //! Handler implementation for command SignalGen_Dp
         //!
         //! Signal Generator Settings
