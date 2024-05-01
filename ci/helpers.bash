@@ -37,9 +37,8 @@ function fail_and_stop()
 
     if [ -f "${LASTLOG_ERR}" ]
     then
-        # Check if a related stdout log exist
-        # MacOS does not support negative length
-        # so LASTLOG_ERR::-7 can not be used here
+        # Check if a related stdout log exist.
+        # macOS does not support negative length so LASTLOG_ERR::-7 cannot be used here.
         LASTLOG_ERR_LENGTH=${#LASTLOG_ERR}
         LASTLOG_OUT="${LASTLOG_ERR:0:LASTLOG_ERR_LENGTH-7}out.log"
 
