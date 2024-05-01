@@ -194,9 +194,8 @@ class SerializeBufferBase {
     SerializeBufferBase();  //!< default constructor
 
   PRIVATE:
-    // A no-implementation copy constructor here will prevent the default copy constructor from being called
-    // accidentally, and without an implementation it will create an error for the developer instead.
-    SerializeBufferBase(const SerializeBufferBase& src);  //!< constructor with buffer as source
+    //! deleted copy constructor
+    SerializeBufferBase(const SerializeBufferBase& src) = delete;
 
     void copyFrom(const SerializeBufferBase& src);  //!< copy data from source buffer
     Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
@@ -239,9 +238,7 @@ class ExternalSerializeBufferWithDataCopy final : public ExternalSerializeBuffer
         : ExternalSerializeBuffer(buffPtr, size) {}
     ExternalSerializeBufferWithDataCopy() : ExternalSerializeBuffer() {}
     ~ExternalSerializeBufferWithDataCopy() {}
-    explicit ExternalSerializeBufferWithDataCopy(const SerializeBufferBase& src) {
-        (void)SerializeBufferBase::operator=(src);
-    }
+    ExternalSerializeBufferWithDataCopy(const SerializeBufferBase& src) = delete;
     ExternalSerializeBufferWithDataCopy& operator=(SerializeBufferBase& src) {
         (void)SerializeBufferBase::operator=(src);
         return *this;
