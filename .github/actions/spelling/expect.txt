@@ -268,13 +268,14 @@ doxyindexer
 doxyrules
 doxysearch
 Doxywizard
-DPCFG
-dpi
+dpc
 DPCAT
 DPCATALOG
+DPCFG
+dpi
 DPMANAGER
-DPWRITER
 dps
+DPWRITER
 DRAINBUFFERS
 drv
 dsdl
@@ -314,6 +315,7 @@ errmsg
 ERRORCHECK
 errornum
 ert
+esb
 ethanchee
 etime
 eturn
@@ -433,8 +435,8 @@ Guire
 handcoded
 hardtoaccess
 hashvalue
-HEADERSIZE
 hdr
+HEADERSIZE
 headlessly
 heapifying
 hexid
@@ -1000,10 +1002,10 @@ subgrouping
 subhist
 subhistory
 subpage
-suseconds
 subseconds
 subtargets
 suppr
+suseconds
 SVCLOGFILE
 SVCLOGFILEL
 svipc
