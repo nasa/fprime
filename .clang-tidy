@@ -1,6 +1,7 @@
+# Clang-tidy configuration used on the whole code base, including tests and flight code
+
 Checks: >
     bugprone-unhandled-self-assignment,
-    misc-no-recursion,
     modernize-deprecated-headers,
     modernize-redundant-void-arg,
     modernize-use-bool-literals,
