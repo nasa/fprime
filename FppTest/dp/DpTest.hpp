@@ -156,6 +156,9 @@ class DpTest : public DpTestComponentBase {
     // Private member variables
     // ----------------------------------------------------------------------
 
+    //! Stored container
+    DpContainer m_container;
+
     //! U32Record data
     const U32 u32RecordData;
 
