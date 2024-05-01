@@ -194,8 +194,9 @@ class SerializeBufferBase {
     SerializeBufferBase();  //!< default constructor
 
   PRIVATE:
-    //! deleted copy constructor
-    SerializeBufferBase(const SerializeBufferBase& src) = delete;
+    // Copy constructor can be used only by the implementation
+    SerializeBufferBase(const SerializeBufferBase& src);  //!< constructor with buffer as source
+
 
     void copyFrom(const SerializeBufferBase& src);  //!< copy data from source buffer
     Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
