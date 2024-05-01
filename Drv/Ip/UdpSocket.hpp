@@ -88,7 +88,7 @@ class UdpSocket : public IpSocket {
      * \param fd: (output) file descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
      * \return status of open
      */
-    SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd, const bool reuse_address=false) override;
+    SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd, const bool reuse_address=false);
     /**
      * \brief Protocol specific implementation of send.  Called directly with retry from send.
      * \param data: data to send
