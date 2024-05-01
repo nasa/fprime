@@ -108,10 +108,10 @@ namespace Task {
         PlatformIntType status = 0;
 // Feature set check for _GNU_SOURCE before using GNU only features
 #ifdef _GNU_SOURCE
-        const FwIndexType affinity = arguments.m_cpuAffinity;
+        const FwSizeType affinity = arguments.m_cpuAffinity;
         cpu_set_t cpu_set;
         CPU_ZERO(&cpu_set);
-        CPU_SET(affinity, &cpu_set);
+        CPU_SET(static_cast<PlatformIntType>(affinity), &cpu_set);
 
         // According to the man-page this function sets errno rather than returning an error status like other functions
         status = pthread_attr_setaffinity_np(&attributes, sizeof(cpu_set_t), &cpu_set);
