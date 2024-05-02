@@ -140,8 +140,10 @@ namespace Fw {
   {
     SerializeStatus status;
     status = this->m_header.fromSerialBuffer(serialBuffer);
-    if (status != FW_SERIALIZE_OK)
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
+
     switch (this->m_header.m_type) {
       case T_START:
         status = this->m_startPacket.fromSerialBuffer(serialBuffer);
