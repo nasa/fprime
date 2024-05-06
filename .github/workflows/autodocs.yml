@@ -2,7 +2,7 @@ name: Autodocs
 
 on:
   push:
-    branches: [ devel, release/**, test/autodocs-fix ]
+    branches: [ devel, release/** ]
   pull_request:
     branches: [ devel, release/** ]
     paths-ignore:
