@@ -73,11 +73,11 @@ This section is divided into four sub-sections:
     - [OS Layer Description](./dev/os-docs.md)
     - [v3 Migration Guide](./user/v3-migration-guide.md)
 - Design and Philosophy
-    - [Software Architecture](../Design/fprime-architecture.html)
-    - [Numerical Types Design](../Design/numerical-types.html)
-    - [Communication Adapter Interface](../Design/communication-adapter-interface.html)
-    - [Package Implementations](../Design/package-implementations.html)
-    - [FPP JSON Dictionary Specification](../Design/fpp-json-dict.html)
+    - [Software Architecture](../Design/fprime-architecture.md)
+    - [Numerical Types Design](../Design/numerical-types.md)
+    - [Communication Adapter Interface](../Design/communication-adapter-interface.md)
+    - [Package Implementations](../Design/package-implementations.md)
+    - [FPP JSON Dictionary Specification](../Design/fpp-json-dict.md)
 
 
 ## F´ Source Tree F´ Out of the Box Items
