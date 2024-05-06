@@ -22,7 +22,6 @@ add_compile_options(
     -Werror
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
     -Wno-unused-parameter
-    -Wno-format-truncation
 )
 
 # Add -Wshadow and -pedantic only for framework code, not the unit tests
@@ -56,6 +55,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         -Wno-gnu-zero-variadic-macro-arguments
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-zero-length-array>
+    )
+else()
+    add_compile_options(
+        -Wno-format-truncation
     )
 endif()
 
