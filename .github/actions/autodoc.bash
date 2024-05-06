@@ -15,6 +15,13 @@ GIT_EDITOR=true git merge "${REMOTE}"/devel
 ${GITHUB_WORKSPACE}/docs/doxygen/generate_docs.bash
 git add -Af "${GITHUB_WORKSPACE}/docs"
 
-
-git commit -m "Autodoc on $(date)" || echo "No new commits, pushing merge"
-git push "${REMOTE}"
+# Only attempt to push if we are on the devel branch in GitHub Actions
+# see https://docs.github.com/en/actions/learn-github-actions/variables
+if [ "${GITHUB_REF_NAME}" == "devel" ]; then
+    git commit -m "Autodoc on $(date)" || echo "No new commits, pushing merge"
+    git push "${REMOTE}"
+    exit 0
+else
+    echo "Not on devel branch, skipping push."
+    exit 0
+fi
