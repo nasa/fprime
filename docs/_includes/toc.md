@@ -90,10 +90,9 @@
     <li><a href="/fprime/HowTo/develop-gds-plugins.html">F´ GDS Plugin Development</a></li>
     <li><a href="/fprime/HowTo/develop-fprime-libraries.html">F´ Library Development</a></li>
   </ul>
-<h4><a href="/fprime/Reference/README.html">Reference</a>      
+<h4><a href="/fprime/Reference/README.html">Reference</a></h4>      
   <ul>
     <li><a href="/fprime/UsersGuide/dev/gds-cli-dev.html">GDS CLI Design</a></li>
     <li><a href="/fprime/UsersGuide/api/c++/html/index.html">C++ Documentation</a></li>
     <li><a href="/fprime/UsersGuide/cmake/cmake-api.html">CMake User API</a></li>
   </ul>
-</h4>
