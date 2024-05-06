@@ -5,16 +5,11 @@ goal is simple: make the development of flight-quality embedded software simple,
 and overhead to develop such systems.
 
 This guide is intended to expose the features of F´ and seek to allow users and developers to take advantage of all F´
-has to offer. It is broken down into five documentation sections:
-- Getting Started
+has to offer. It is broken down into four documentation sections:
 - User's Manual 
 - Best Practices
 - Developer Documentation
-- API
 
-**The Getting Started** section points initiates to all the items needed to get up and running with F´. Since these are
-often needed before a user searches for a user's guide, this section merely links to the stand-alone version of those
-items.
 
 **The User's Manual** section helps users of this framework understand the concepts of F´ and build more complex projects
 using the Framework. It is where users should go to understand more about what is possible in F´.
@@ -26,23 +21,18 @@ techniques.
 **The Developer Documentation** is intended for developers who want to use some of the advanced features of F´, understand
 how the framework is organized internally, and otherwise dig deep into F´ concepts and implementation. Anyone who wishes
 to extend or change F´ should consult this section.
-This section is divided into three sub-sections:
+This section is divided into four sub-sections:
 - Ground Data System Tools (GDS)
 - Full Development Guides: technical details for full F´ implementations
 - Advanced F´ Topics
+- Design and Philosophy
 
 
-**The API documentation** section contains the automatically generated documentation on F´.
 
 **Note:** currently this documentation is being assembled. Please feel free to contribute!
 
 ## Table of Contents
 
-- Getting Started with F´
-    - [What is F´: a brief introduction](../index.md)
-    - [Installing F´](../INSTALL.md)
-    - [Installing F´ Console Autocomplete](./user/autocomplete.md)
-    - [Tutorials: A Hands On Guide to F´](../Tutorials/README.md)
 - F´ Users Manual: an in-depth description of F´ concepts
     - [A More Complete Introduction to F´](user/full-intro.md)
     - [Projects and Deployments](user/proj-dep.md)
@@ -82,11 +72,12 @@ This section is divided into three sub-sections:
     - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
     - [OS Layer Description](./dev/os-docs.md)
     - [v3 Migration Guide](./user/v3-migration-guide.md)
-- API Documentation
-    - [GDS CLI Design](./dev/gds-cli-dev.md)
-    - [C++ Documentation](./api/c++/html/index.html)
-    - [CMake User API](./cmake/cmake-api.md)
-
+- Design and Philosophy
+    - [Software Architecture](./fprime/Design/fprime-architecture.html)
+    - [Numerical Types Design](./fprime/Design/numerical-types.html)
+    - [Communication Adapter Interface](./fprime/Design/communication-adapter-interface.html)
+    - [Package Implementations](./fprime/Design/package-implementations.html)
+    - [FPP JSON Dictionary Specification](./fprime/Design/fpp-json-dict.html)
 
 
 ## F´ Source Tree F´ Out of the Box Items
