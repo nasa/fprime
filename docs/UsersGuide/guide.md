@@ -5,7 +5,7 @@ goal is simple: make the development of flight-quality embedded software simple,
 and overhead to develop such systems.
 
 This guide is intended to expose the features of F´ and seek to allow users and developers to take advantage of all F´
-has to offer. It is broken down into four documentation sections:
+has to offer. It is broken down into three documentation sections:
 - User's Manual 
 - Best Practices
 - Developer Documentation
