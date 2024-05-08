@@ -37,21 +37,16 @@ I32 Fw::StringUtils::substring_find(const CHAR* source_string, U32 source_size, 
 
     for (U32 source_index = 0; source_index < source_size; source_index++) {
         // if the current character matches
-        U32 dest_index = 0;
-        if (source_string[source_index] == sub_string[dest_index]) {
+        if (source_string[source_index] == sub_string[0]) {
             for (U32 sub_index = 0; sub_index < sub_size; sub_index++) {
                 // if there is a mismatch, go to next character
                 if (source_string[source_index + sub_index] != sub_string[sub_index]) {
-                    // if we have reached the end of the source buffer, return match not found
-                    if (source_index + sub_index == source_size-1) {
-                        return -1;
-                    }
-                    // otherwise move to next character in source
-                    continue;
+                    break;
+                } else if (sub_index == sub_size - 1) {
+                    // if we matched all the way to the end of the substring
+                    return source_index;
                 }
             }
-            // if we got here, that means we matched all the way to the end of the substring
-            return source_index;
         }
     }
     
