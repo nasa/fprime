@@ -32,6 +32,16 @@ char* string_copy(char* destination, const char* source, U32 num);
  */
 U32 string_length(const CHAR* source, U32 max_len);
 
+/**
+ * \brief find the first occurence of a substring
+ *
+ * \param substring: string to search for
+ * \param max_len: the maximum length of the source string
+ * \return index of substring, -1 if not found
+ */
+I32 substring_find(const CHAR* source_string, U32 source_size, const CHAR* sub_string, U32 sub_size);
+
+
 }  // namespace StringUtils
 }  // namespace Fw
 #endif  // FW_STRINGUTILS_HPP

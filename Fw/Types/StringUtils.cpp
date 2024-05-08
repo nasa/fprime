@@ -29,3 +29,32 @@ U32 Fw::StringUtils::string_length(const CHAR* source, U32 max_len) {
     }
     return length;
 }
+
+I32 Fw::StringUtils::substring_find(const CHAR* source_string, U32 source_size, const CHAR* sub_string, U32 sub_size) {
+
+    FW_ASSERT(source_string != nullptr);
+    FW_ASSERT(sub_string != nullptr);
+
+    for (U32 source_index = 0; source_index < source_size; source_index++) {
+        // if the current character matches
+        U32 dest_index = 0;
+        if (source_string[source_index] == sub_string[dest_index]) {
+            for (U32 sub_index = 0; sub_index < sub_size; sub_index++) {
+                // if there is a mismatch, go to next character
+                if (source_string[source_index + sub_index] != sub_string[sub_index]) {
+                    // if we have reached the end of the source buffer, return match not found
+                    if (source_index + sub_index == source_size-1) {
+                        return -1;
+                    }
+                    // otherwise move to next character in source
+                    continue;
+                }
+            }
+            // if we got here, that means we matched all the way to the end of the substring
+            return source_index;
+        }
+    }
+    
+    // if we make it here, no matches were found
+    return -1;
+}
