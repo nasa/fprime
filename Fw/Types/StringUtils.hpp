@@ -35,8 +35,10 @@ U32 string_length(const CHAR* source, U32 max_len);
 /**
  * \brief find the first occurrence of a substring
  *
+ * \param source_string: string to search for the substring
+ * \param source_size: the size of the source string
  * \param substring: string to search for
- * \param max_len: the maximum length of the source string
+ * \param sub_size: the size of the string to search for
  * \return index of substring, -1 if not found
  */
 I32 substring_find(const CHAR* source_string, U32 source_size, const CHAR* sub_string, U32 sub_size);
