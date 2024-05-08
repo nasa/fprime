@@ -41,7 +41,7 @@ U32 string_length(const CHAR* source, U32 max_len);
  * \param sub_size: the size of the string to search for
  * \return index of substring, -1 if not found
  */
-I32 substring_find(const CHAR* source_string, U32 source_size, const CHAR* sub_string, U32 sub_size);
+FwSignedSizeType substring_find(const CHAR* source_string, FwSizeType source_size, const CHAR* sub_string, FwSizeType sub_size);
 
 
 }  // namespace StringUtils
