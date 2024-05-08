@@ -182,8 +182,8 @@ fprime-util build --all -j16
 
 ## Development with modified FPP version
 
-In case FPP needs to be locally changed, FPP first needs to be installed
-following [the FPP readme](https://github.com/nasa/fpp/blob/main/compiler/README.adoc).
+In case FPP needs to be locally changed, first uninstall all `fprime-fpp-*` `pip` packages, and install FPP
+using the procedure mentioned in the [FPP readme](https://github.com/nasa/fpp/blob/main/compiler/README.adoc).
 
 Then, `fprime-util generate` needs to be run using `-DFPRIME_SKIP_TOOLS_VERSION_CHECK=1`
 
