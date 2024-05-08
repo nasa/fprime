@@ -33,7 +33,7 @@ char* string_copy(char* destination, const char* source, U32 num);
 U32 string_length(const CHAR* source, U32 max_len);
 
 /**
- * \brief find the first occurence of a substring
+ * \brief find the first occurrence of a substring
  *
  * \param substring: string to search for
  * \param max_len: the maximum length of the source string
