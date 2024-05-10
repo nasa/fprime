@@ -52,9 +52,10 @@ class Serialization {
 };
 
 class SerializeBufferBase {
-  public:
-    SerializeBufferBase& operator=(const SerializeBufferBase& src);  //!< equal operator
+  protected:
+    SerializeBufferBase& operator=(const SerializeBufferBase& src);  //!< copy assignment operator
 
+  public:
     virtual ~SerializeBufferBase();  //!< destructor
 
     // Serialization for built-in types
@@ -188,41 +189,84 @@ class SerializeBufferBase {
     bool operator==(const SerializeBufferBase& other) const;
     friend std::ostream& operator<<(std::ostream& os, const SerializeBufferBase& buff);
 #endif
+
   PROTECTED:
     SerializeBufferBase();  //!< default constructor
 
   PRIVATE:
-    // A no-implementation copy constructor here will prevent the default copy constructor from being called
-    // accidentally, and without an implementation it will create an error for the developer instead.
+    // Copy constructor can be used only by the implementation
     SerializeBufferBase(const SerializeBufferBase& src);  //!< constructor with buffer as source
+
 
     void copyFrom(const SerializeBufferBase& src);  //!< copy data from source buffer
     Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
     Serializable::SizeType m_deserLoc;              //!< current offset for deserialization
 };
 
-// Helper class for building buffers with external storage
+// Helper classes for building buffers with external storage
 
+//! External serialize buffer with no copy semantics
 class ExternalSerializeBuffer : public SerializeBufferBase {
   public:
-    ExternalSerializeBuffer(U8* buffPtr, Serializable::SizeType size);  //!< construct with external buffer
-    ExternalSerializeBuffer();                                          //!< default constructor
-    void setExtBuffer(U8* buffPtr, Serializable::SizeType size);        //!< Set the external buffer
-    void clear();                                                       //!< clear external buffer
+    ExternalSerializeBuffer(U8* buffPtr, Serializable::SizeType size);     //!< construct with external buffer
+    ExternalSerializeBuffer();                                             //!< default constructor
+    ~ExternalSerializeBuffer() {}                                          //!< destructor
+    void setExtBuffer(U8* buffPtr, Serializable::SizeType size);           //!< Set the external buffer
+    void clear();                                                          //!< clear external buffer
+    ExternalSerializeBuffer(const ExternalSerializeBuffer& src) = delete;  //!< deleted copy constructor
 
     // pure virtual functions
     Serializable::SizeType getBuffCapacity() const;
     U8* getBuffAddr();
     const U8* getBuffAddr() const;
 
-  PRIVATE:
-    // no copying
-    ExternalSerializeBuffer(ExternalSerializeBuffer& other);
-    ExternalSerializeBuffer(ExternalSerializeBuffer* other);
+    //! deleted copy assignment operator
+    ExternalSerializeBuffer& operator=(const SerializeBufferBase& src) = delete;
 
-    // private data
+  PROTECTED:
+    // data members
     U8* m_buff;                         //!< pointer to external buffer
     Serializable::SizeType m_buffSize;  //!< size of external buffer
+};
+
+//! External serialize buffer with data copy semantics
+//!
+//! Use this when the object esb on the left-hand side of an assignment esb = sbb
+//! is guaranteed to have a valid buffer
+class ExternalSerializeBufferWithDataCopy final : public ExternalSerializeBuffer {
+  public:
+    ExternalSerializeBufferWithDataCopy(U8* buffPtr, Serializable::SizeType size)
+        : ExternalSerializeBuffer(buffPtr, size) {}
+    ExternalSerializeBufferWithDataCopy() : ExternalSerializeBuffer() {}
+    ~ExternalSerializeBufferWithDataCopy() {}
+    ExternalSerializeBufferWithDataCopy(const SerializeBufferBase& src) = delete;
+    ExternalSerializeBufferWithDataCopy& operator=(SerializeBufferBase& src) {
+        (void)SerializeBufferBase::operator=(src);
+        return *this;
+    }
+};
+
+//! External serialize buffer with member copy semantics
+//!
+//! Use this when the object esb1 on the left-hand side of an assignment esb1 = esb2
+//! has an invalid buffer, and you want to move the buffer of esb2 into it.
+//! In this case there should usually be no more uses of esb2 after the assignment.
+class ExternalSerializeBufferWithMemberCopy final : public ExternalSerializeBuffer {
+  public:
+    ExternalSerializeBufferWithMemberCopy(U8* buffPtr, Serializable::SizeType size)
+        : ExternalSerializeBuffer(buffPtr, size) {}
+    ExternalSerializeBufferWithMemberCopy() : ExternalSerializeBuffer() {}
+    ~ExternalSerializeBufferWithMemberCopy() {}
+    explicit ExternalSerializeBufferWithMemberCopy(const ExternalSerializeBufferWithMemberCopy& src)
+        : ExternalSerializeBuffer(src.m_buff, src.m_buffSize) {}
+    ExternalSerializeBufferWithMemberCopy& operator=(const ExternalSerializeBufferWithMemberCopy& src) {
+        // Ward against self-assignment
+        if (this != &src) {
+            this->m_buff = src.m_buff;
+            this->m_buffSize = src.m_buffSize;
+        }
+        return *this;
+    }
 };
 
 }  // namespace Fw

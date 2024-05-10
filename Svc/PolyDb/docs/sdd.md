@@ -32,8 +32,8 @@ The Svc::PolyDb component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Poly`](../../PolyIf/docs/sdd.html) | getValue | Input | Guarded | Write `Fw::PolyType` values
-[`Svc::Poly`](../../PolyIf/docs/sdd.html) | setValue | Input | Guarded | Write `Fw::PolyType` values
+[`Svc::Poly`](../../PolyIf/docs/sdd.md) | getValue | Input | Guarded | Write `Fw::PolyType` values
+[`Svc::Poly`](../../PolyIf/docs/sdd.md) | setValue | Input | Guarded | Write `Fw::PolyType` values
 
 #### 3.2 Functional Description
 
@@ -71,7 +71,7 @@ Document | Link
 -------- | ----
 Design Checklist | [Link](Checklist_Design.xlsx)
 Code Checklist | [Link](Checklist_Design.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xlsx)
+Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
 
 ## 5. Unit Testing
 

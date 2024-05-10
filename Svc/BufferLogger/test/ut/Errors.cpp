@@ -187,7 +187,7 @@ namespace Svc {
           fileName.toChar()
       );
       Os::ValidatedFile validatedFile(fileName.toChar());
-      const Fw::String& hashFileName = validatedFile.getHashFileName();
+      const Fw::StringBase& hashFileName = validatedFile.getHashFileName();
       ASSERT_EVENTS_BL_LogFileValidationError(
           0,
           hashFileName.toChar(),

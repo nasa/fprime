@@ -30,34 +30,34 @@ void defaultReportAssert(FILE_NAME_ARG file,
                          NATIVE_INT_TYPE buffSize) {
     switch (numArgs) {
         case 0:
-            (void)snprintf(destBuffer, buffSize, fileIdFs, file, lineNo);
+            (void)snprintf(destBuffer, static_cast<size_t>(buffSize), fileIdFs, file, lineNo);
             break;
         case 1:
-            (void)snprintf(destBuffer, buffSize, fileIdFs " %" PRI_FwAssertArgType, file, lineNo, arg1);
+            (void)snprintf(destBuffer, static_cast<size_t>(buffSize), fileIdFs " %" PRI_FwAssertArgType, file, lineNo, arg1);
             break;
         case 2:
-            (void)snprintf(destBuffer, buffSize, fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType, file,
+            (void)snprintf(destBuffer, static_cast<size_t>(buffSize), fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType, file,
                            lineNo, arg1, arg2);
             break;
         case 3:
-            (void)snprintf(destBuffer, buffSize,
+            (void)snprintf(destBuffer, static_cast<size_t>(buffSize),
                            fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType, file,
                            lineNo, arg1, arg2, arg3);
             break;
         case 4:
-            (void)snprintf(destBuffer, buffSize,
+            (void)snprintf(destBuffer, static_cast<size_t>(buffSize),
                            fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                                     " %" PRI_FwAssertArgType,
                            file, lineNo, arg1, arg2, arg3, arg4);
             break;
         case 5:
-            (void)snprintf(destBuffer, buffSize,
+            (void)snprintf(destBuffer, static_cast<size_t>(buffSize),
                            fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                                     " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
                            file, lineNo, arg1, arg2, arg3, arg4, arg5);
             break;
         case 6:
-            (void)snprintf(destBuffer, buffSize,
+            (void)snprintf(destBuffer, static_cast<size_t>(buffSize),
                            fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                                     " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
                            file, lineNo, arg1, arg2, arg3, arg4, arg5, arg6);

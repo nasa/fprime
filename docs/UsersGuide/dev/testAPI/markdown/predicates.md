@@ -36,7 +36,7 @@ Args:
 |Quick Links|
 |:----------|
 |[Integration Test API User Guide](../user_guide.md)|
-|[GDS Overview](../../../../../Gds/README.md)|
+|[GDS Overview](https://github.com/fprime-community/fprime-gds)|
 |[Integration Test API](integration_test_api.md)|
 |[Histories](histories.md)|
 |[Predicates](predicates.md)|

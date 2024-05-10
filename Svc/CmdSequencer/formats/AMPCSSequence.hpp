@@ -100,7 +100,7 @@ namespace Svc {
       //! Load a sequence file
       //! \return Success or failure
       bool loadFile(
-          const Fw::CmdStringArg& fileName //!< The file name
+          const Fw::StringBase& fileName //!< The file name
       );
 
       //! Query whether the sequence has any more records
@@ -141,13 +141,13 @@ namespace Svc {
       //! Get the aggregate size of the command records
       //! \return Success or failure
       bool getFileSize(
-          const Fw::CmdStringArg& seqFileName //!< The sequence file name
+          const Fw::StringBase& seqFileName //!< The sequence file name
       );
 
       //! Read a sequence file
       //! \return Success or failure
       bool readSequenceFile(
-          const Fw::CmdStringArg& seqFileName //!< The sequence file name
+          const Fw::StringBase& seqFileName //!< The sequence file name
       );
 
       //! Read an open sequence file

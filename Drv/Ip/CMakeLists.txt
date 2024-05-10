@@ -5,6 +5,8 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+restrict_platforms(Posix)
+
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/IpSocket.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/TcpClientSocket.cpp"
