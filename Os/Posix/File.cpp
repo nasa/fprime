@@ -206,7 +206,10 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSignedSizeType &size, PosixFile:
 
     for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
-        ssize_t read_size = ::read(this->m_handle.m_file_descriptor, reinterpret_cast<CHAR*>(&buffer[accumulated]), size - accumulated);
+        ssize_t read_size = ::read(
+            this->m_handle.m_file_descriptor,
+            reinterpret_cast<CHAR*>(&buffer[accumulated]),
+            static_cast<size_t>(size - accumulated));
         // Non-interrupt error
         if (PosixFileHandle::ERROR_RETURN_VALUE == read_size) {
             PlatformIntType errno_store = errno;
@@ -239,7 +242,7 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSignedSizeType &size, Pos
 
     for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
-        ssize_t write_size = ::write(this->m_handle.m_file_descriptor, reinterpret_cast<const CHAR*>(&buffer[accumulated]), size - accumulated);
+        ssize_t write_size = ::write(this->m_handle.m_file_descriptor, reinterpret_cast<const CHAR*>(&buffer[accumulated]), static_cast<size_t>(size - accumulated));
         // Non-interrupt error
         if (PosixFileHandle::ERROR_RETURN_VALUE == write_size) {
             PlatformIntType errno_store = errno;

@@ -41,7 +41,9 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         EXPECT_TRUE(Drv::Test::wait_on_started(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
     } else {
         serverStat = this->component.startup();
-        EXPECT_EQ(serverStat, SOCK_SUCCESS);
+        ASSERT_EQ(serverStat, SOCK_SUCCESS)
+            << "TCP server startup error: " << strerror(errno) << std::endl
+            << "Port: " << port << std::endl;
     }
     EXPECT_TRUE(component.getSocketHandler().isStarted());
 
@@ -51,7 +53,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         client.configure("127.0.0.1", port, 0, 100);
         status2 = client.open();
 
-        I32 size = sizeof(m_data_storage);
+        U32 size = sizeof(m_data_storage);
 
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {

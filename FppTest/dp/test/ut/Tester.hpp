@@ -28,6 +28,8 @@ class Tester : public DpTestGTestBase {
     static constexpr FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
     // The component id base
     static constexpr FwDpIdType ID_BASE = 100;
+    // The max string length for string data
+    static constexpr FwSizeType MAX_STRING_LENGTH = 100;
 
     //! Construct object Tester
     //!
@@ -75,7 +77,19 @@ class Tester : public DpTestGTestBase {
     //! productRecvIn with Container 5 (FAILURE)
     void productRecvIn_Container5_FAILURE();
 
-  PRIVATE:
+    //! productRecvIn with Container 6 (SUCCESS)
+    void productRecvIn_Container6_SUCCESS();
+
+    //! productRecvIn with Container 6 (FAILURE)
+    void productRecvIn_Container6_FAILURE();
+
+    //! productRecvIn with Container 7 (SUCCESS)
+    void productRecvIn_Container7_SUCCESS();
+
+    //! productRecvIn with Container 7 (FAILURE)
+    void productRecvIn_Container7_FAILURE();
+
+  private:
     // ----------------------------------------------------------------------
     // Handlers for data product ports
     // ----------------------------------------------------------------------
@@ -85,7 +99,7 @@ class Tester : public DpTestGTestBase {
                                       Fw::Buffer& buffer  //!< The buffer
                                       ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------
@@ -101,6 +115,10 @@ class Tester : public DpTestGTestBase {
     //! Set and return a random time
     //! \return The time
     Fw::Time randomizeTestTime();
+
+    //! Generate a random string
+    static void generateRandomString(Fw::StringBase& str //!< The string (output)
+        );
 
     //! Invoke productRecvIn and check header
     //! This sets the output buffer to the received buffer and sets the
@@ -118,7 +136,7 @@ class Tester : public DpTestGTestBase {
                                     Fw::Buffer buffer  //!< The buffer
     );
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Variables
     // ----------------------------------------------------------------------
@@ -153,6 +171,18 @@ class Tester : public DpTestGTestBase {
     //! Buffer for Container 5
     const Fw::Buffer container5Buffer;
 
+    //! Buffer data for Container 6
+    U8 container6Data[DpTest::CONTAINER_6_PACKET_SIZE];
+
+    //! Buffer for Container 6
+    const Fw::Buffer container6Buffer;
+
+    //! Buffer data for Container 7
+    U8 container7Data[DpTest::CONTAINER_7_PACKET_SIZE];
+
+    //! Buffer for Container 7
+    const Fw::Buffer container7Buffer;
+
     //! Data for U8 array record
     DpTest::U8ArrayRecordData u8ArrayRecordData;
 
@@ -161,6 +191,9 @@ class Tester : public DpTestGTestBase {
 
     //! Data for Data array record
     DpTest::DataArrayRecordData dataArrayRecordData;
+
+    //! Data for String record
+    Fw::String stringRecordData;
 
     //! The component under test
     DpTest component;

@@ -16,8 +16,8 @@ namespace Os {
         timespec t;
         PlatformIntType status = clock_gettime(CLOCK_REALTIME,&t);
         FW_ASSERT(status == 0,errno);
-        time.upper = t.tv_sec;
-        time.lower = t.tv_nsec;
+        time.upper = static_cast<U32>(t.tv_sec);
+        time.lower = static_cast<U32>(t.tv_nsec);
     }
 
     // Adapted from: http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html

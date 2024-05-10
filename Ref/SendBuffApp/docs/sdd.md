@@ -3,7 +3,7 @@
 
 ## 1. Introduction
 
-The `Ref::SendBuffApp` is a demonstration component that sends data buffers to `Ref::RecvBuffApp` [HTML](../../RecvBuffApp/docs/sdd.html) [MD](../../RecvBuffApp/docs/sdd.md)
+The `Ref::SendBuffApp` is a demonstration component that sends data buffers to `Ref::RecvBuffApp` ([SDD](../../RecvBuffApp/docs/sdd.md))
 
 ## 2. Requirements
 
@@ -25,8 +25,6 @@ The `Ref::SendBuffApp` component has the following component diagram:
 ![`Ref::SendBuffApp` Diagram](img/SendBuffBDD.jpg "Ref::SendBuffApp")
 
 ## 4. Dictionaries
-
-Dictionaries: [HTML](SendBuff.html) [MD](SendBuff.md)
 
 ## 5. Module Checklists
 

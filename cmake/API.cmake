@@ -31,7 +31,17 @@ set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST
 #####
 macro(restrict_platforms)
     set(__CHECKER ${ARGN})
-    if (NOT FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER AND NOT FPRIME_PLATFORM IN_LIST __CHECKER)
+
+    # Each of these empty if blocks are the valid-case, that is, the platform is supported.
+    # However, the reason why this is necessary is that this function is a macro and not a function.
+    # Macros copy-paste the code into the calling context. Thus, all these valid cases want to avoid calling return.
+    # The return call  in the else block returns from the calling context (i.e. a restricted CMakeList.txt will
+    # return and not process the component setup). We do not want this return when the platform is allowed.
+
+    if (FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER)
+    elseif(FPRIME_PLATFORM IN_LIST __CHECKER)
+    elseif("Posix" IN_LIST __CHECKER AND FPRIME_USE_POSIX)
+    else()
         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
         message(STATUS "Neither toolchain ${FPRIME_TOOLCHAIN_NAME} nor platform ${FPRIME_PLATFORM} supported for module ${MODULE_NAME}")
         append_list_property("${MODULE_NAME}" GLOBAL PROPERTY RESTRICTED_TARGETS)

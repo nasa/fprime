@@ -34,10 +34,11 @@ namespace Svc {
 
     // Set size
     FwSignedSizeType file_size;
-    const Os::FileSystem::Status status = 
+    const Os::FileSystem::Status status =
       Os::FileSystem::getFileSize(sourceFileName, file_size);
-    if (status != Os::FileSystem::OP_OK)
+    if (status != Os::FileSystem::OP_OK) {
       return Os::File::BAD_SIZE;
+    }
     // If the size does not cast cleanly to the desired U32 type, return size error
     if (static_cast<FwSignedSizeType>(static_cast<U32>(file_size)) != file_size) {
         return Os::File::BAD_SIZE;

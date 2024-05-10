@@ -251,7 +251,7 @@ namespace Svc {
     checkHashFileExists(const Fw::StringBase& fileName)
   {
     Os::ValidatedFile validatedFile(fileName.toChar());
-    const Fw::String& hashFileName = validatedFile.getHashFileName();
+    const Fw::StringBase& hashFileName = validatedFile.getHashFileName();
     this->checkFileExists(hashFileName);
   }
 

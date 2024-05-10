@@ -70,7 +70,7 @@ namespace Svc {
     }
 
     void CmdSequencerComponentImpl ::
-      loadSequence(const Fw::String& fileName)
+      loadSequence(const Fw::StringBase& fileName)
     {
       FW_ASSERT(this->m_runMode == STOPPED, this->m_runMode);
       if (not this->loadFile(fileName)) {
@@ -245,7 +245,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     bool CmdSequencerComponentImpl ::
-      loadFile(const Fw::CmdStringArg& fileName)
+      loadFile(const Fw::StringBase& fileName)
     {
       const bool status = this->m_sequence->loadFile(fileName);
       if (status) {

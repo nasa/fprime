@@ -7,14 +7,13 @@ module Drv {
     # General ports
     # ----------------------------------------------------------------------
 
+    include "../Interfaces/TickInterface.fppi"
+
     @ The rate group scheduler input
     async input port Sched: Svc.Sched
 
     @ The input data buffer port
     async input port BufferIn: Drv.DataBuffer
-
-    @ The cycle outputs. Meant to be connected to rate group driver
-    output port CycleOut: Svc.Cycle
 
     @ The output data buffer port
     output port BufferOut: Drv.DataBuffer

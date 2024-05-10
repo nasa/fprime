@@ -56,7 +56,10 @@ enum TopologyConstants {
     COMM_PRIORITY = 100,
     UPLINK_BUFFER_MANAGER_STORE_SIZE = 3000,
     UPLINK_BUFFER_MANAGER_QUEUE_SIZE = 30,
-    UPLINK_BUFFER_MANAGER_ID = 200
+    UPLINK_BUFFER_MANAGER_ID = 200,
+    DP_BUFFER_MANAGER_STORE_SIZE = 10000,
+    DP_BUFFER_MANAGER_QUEUE_SIZE = 10,
+    DP_BUFFER_MANAGER_ID = 300
 };
 
 // Ping entries are autocoded, however; this code is not properly exported. Thus, it is copied here.
@@ -74,6 +77,7 @@ Svc::Health::PingEntry pingEntries[] = {
     {PingEntries::rateGroup1Comp::WARN, PingEntries::rateGroup1Comp::FATAL, "rateGroup1Comp"},
     {PingEntries::rateGroup2Comp::WARN, PingEntries::rateGroup2Comp::FATAL, "rateGroup2Comp"},
     {PingEntries::rateGroup3Comp::WARN, PingEntries::rateGroup3Comp::FATAL, "rateGroup3Comp"},
+    {PingEntries::dpCat::WARN, PingEntries::dpCat::FATAL, "rateGroup3Comp"},
 };
 
 /**
@@ -113,9 +117,23 @@ void configureTopology() {
     upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
     fileUplinkBufferManager.setup(UPLINK_BUFFER_MANAGER_ID, 0, mallocator, upBuffMgrBins);
 
+    Svc::BufferManager::BufferBins dpBuffMgrBins;
+    memset(&dpBuffMgrBins, 0, sizeof(dpBuffMgrBins));
+    dpBuffMgrBins.bins[0].bufferSize = DP_BUFFER_MANAGER_STORE_SIZE;
+    dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_QUEUE_SIZE;
+    dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
+
     // Framer and Deframer components need to be passed a protocol handler
     downlink.setup(framing);
     uplink.setup(deframing);
+
+    Fw::FileNameString dpDir("./DpCat");
+
+    // create the DP directory if it doesn't exist
+    Os::FileSystem::createDirectory(dpDir.toChar());
+
+    dpCat.configure(&dpDir,1,0,mallocator);
+    dpWriter.configure(dpDir);
 
     // Note: Uncomment when using Svc:TlmPacketizer
     //tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
