@@ -14,6 +14,8 @@ module Svc {
       @ Entry 1
       PROJECT_VERSION_01
       @ Entry 2
+      PROJECT_VERSION_02
+      @ Entry 3
       PROJECT_VERSION_03
       @ Entry 4
       PROJECT_VERSION_04
