@@ -122,6 +122,9 @@ namespace Svc {
         // Check the step mode. If it is auto, start the sequence
         if (AUTO == this->m_stepMode) {
             this->m_runMode = RUNNING;
+            if(this->isConnected_seqStartOut_OutputPort(0)) {
+                this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+            }
             this->performCmd_Step();
         }
 
@@ -190,6 +193,9 @@ namespace Svc {
         // Check the step mode. If it is auto, start the sequence
         if (AUTO == this->m_stepMode) {
             this->m_runMode = RUNNING;
+            if(this->isConnected_seqStartOut_OutputPort(0)) {
+                this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+            }
             this->performCmd_Step();
         }
 
@@ -359,6 +365,9 @@ namespace Svc {
         this->m_runMode = RUNNING;
         this->performCmd_Step();
         this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
+        if(this->isConnected_seqStartOut_OutputPort(0)) {
+            this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+        }
         this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
     }
 
