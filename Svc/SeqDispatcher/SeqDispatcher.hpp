@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  SeqDispatcher.hpp
-// \author root
+// \author zimri.leisher
 // \brief  hpp file for SeqDispatcher component implementation class
 // ======================================================================
 
@@ -9,7 +9,7 @@
 
 #include "common/types/CmdSequencerStateEnumAc.hpp"
 #include "common/types/FppConstantsAc.hpp"
-#include "components/fsw/SeqDispatcher/SeqDispatcherComponentAc.hpp"
+#include "Svc/SeqDispatcher/SeqDispatcherComponentAc.hpp"
 
 namespace components {
 

@@ -1,11 +1,11 @@
 // ======================================================================
 // \title  SeqDispatcher.cpp
-// \author root
+// \author zimri.leisher
 // \brief  cpp file for SeqDispatcher component implementation class
 // ======================================================================
 
 #include <FpConfig.hpp>
-#include <components/fsw/SeqDispatcher/SeqDispatcher.hpp>
+#include <Svc/SeqDispatcher/SeqDispatcher.hpp>
 
 namespace components {
 
