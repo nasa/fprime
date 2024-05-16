@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <arpa/inet.h>
+#include <IpCfg.hpp>
 
 namespace Drv {
 namespace Test {
@@ -78,6 +79,12 @@ bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations) {
         Os::Task::delay(Fw::Time(0, 10000));
     }
     return false;
+}
+
+U64 get_configured_delay_ms() {
+    printf("%llu %llu\n", static_cast<U64>(SOCKET_RETRY_INTERVAL.getSeconds()), static_cast<U64>(SOCKET_RETRY_INTERVAL.getUSeconds()));
+    return (static_cast<U64>(SOCKET_RETRY_INTERVAL.getSeconds()) * 1000) +
+           (static_cast<U64>(SOCKET_RETRY_INTERVAL.getUSeconds()) / 1000);
 }
 
 };

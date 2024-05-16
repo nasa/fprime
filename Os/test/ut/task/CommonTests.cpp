@@ -8,7 +8,7 @@
 #include "Os/test/ut/task/RulesHeaders.hpp"
 #include "Fw/Types/String.hpp"
 
-static const U32 RANDOM_BOUND = 1000;
+static constexpr U32 RANDOM_BOUND = 1000;
 
 namespace Os {
 namespace Test {

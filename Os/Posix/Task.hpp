@@ -5,6 +5,7 @@
 #ifndef Os_Posix_Task_hpp_
 #define Os_Posix_Task_hpp_
 
+#include <atomic>
 #include <pthread.h>
 #include <Os/Task.hpp>
 
@@ -105,7 +106,7 @@ namespace Task {
         Status create(const Os::Task::Arguments& arguments, const PosixTask::PermissionExpectation permissions);
 
         PosixTaskHandle m_handle; //!< Posix task tracking
-        static bool s_permissions_reported; //!< Permission errors have been reported
+        static std::atomic<bool> s_permissions_reported; //!< Permission errors have been reported
     };
 } // end namespace Task
 } // end namespace Posix

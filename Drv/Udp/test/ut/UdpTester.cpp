@@ -17,7 +17,6 @@
 #include <sys/socket.h>
 
 Os::Log logger;
-const U64 SOCKET_RETRY_INTERVAL_MS = (SOCKET_RETRY_INTERVAL.getSeconds() * 1000) + (SOCKET_RETRY_INTERVAL.getUSeconds()/1000);
 
 namespace Drv {
 
@@ -70,7 +69,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
                 << "Port2: " << port2;
 
         } else {
-            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
+            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
         }
         EXPECT_TRUE(this->component.getSocketHandler().isOpened());
 

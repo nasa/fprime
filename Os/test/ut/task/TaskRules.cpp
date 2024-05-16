@@ -42,8 +42,6 @@ bool Os::Test::Task::Tester::Start::precondition(
 void Os::Test::Task::Tester::Start::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
-    printf("--> Rule: Start \n");
-
     std::shared_ptr<TestTaskInfo> new_task = std::make_shared<TestTaskInfo>();
     state.m_tasks.push_back(new_task);
 
@@ -76,7 +74,6 @@ bool Os::Test::Task::Tester::Join::precondition(
 void Os::Test::Task::Tester::Join::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
-    printf("--> Rule: Join\n");
     TestTaskInfo joiner_task;
     const U32 random_index = STest::Pick::lowerUpper(0, state.m_tasks.size() - 1);
 
@@ -121,7 +118,6 @@ bool Os::Test::Task::Tester::CheckState::precondition(
 void Os::Test::Task::Tester::CheckState::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
-    printf("--> Rule: Check State\n");
     std::shared_ptr<TestTaskInfo> task;
     const U32 random_index = STest::Pick::lowerUpper(0, state.m_tasks.size());
 
@@ -153,7 +149,6 @@ bool Os::Test::Task::Tester::Delay::precondition(
 void Os::Test::Task::Tester::Delay::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
-    printf("--> Rule: Delay\n");
     const U32 delay_micro_seconds = 5; //STest::Pick::lowerUpper(0, MAX_DELAY_MICRO_SECONDS);
     Fw::Time delay(delay_micro_seconds / 1000000, delay_micro_seconds % 1000000);
 
@@ -187,7 +182,6 @@ bool Os::Test::Task::Tester::CheckTaskCount::precondition(
 void Os::Test::Task::Tester::CheckTaskCount::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
-    printf("--> Rule: CheckTaskCount \n");
     FwSizeType count = TestTaskInfo::s_task_count;
     ASSERT_EQ(Os::Task::getNumTasks(), count) << "Task count miss-match";
 }
@@ -212,8 +206,6 @@ bool Os::Test::Task::Tester::JoinInvalidState::precondition(
 void Os::Test::Task::Tester::JoinInvalidState::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
-    printf("--> Rule: JoinInvalidStatus\n");
-
     std::shared_ptr<TestTaskInfo> new_task = std::make_shared<TestTaskInfo>();
     ASSERT_NE(new_task->m_task.join(), Os::Task::Status::OP_OK);
 }
@@ -238,7 +230,6 @@ bool Os::Test::Task::Tester::StartIllegalRoutine::precondition(
 void Os::Test::Task::Tester::StartIllegalRoutine::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
-    printf("--> Rule: StartIllegalRoutine \n");
     std::shared_ptr<TestTaskInfo> new_task = std::make_shared<TestTaskInfo>();
     state.m_tasks.push_back(new_task);
 

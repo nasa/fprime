@@ -17,8 +17,6 @@
 
 Os::Log logger;
 
-const U64 SOCKET_RETRY_INTERVAL_MS = (SOCKET_RETRY_INTERVAL.getSeconds() * 1000) + (SOCKET_RETRY_INTERVAL.getUSeconds()/1000);
-
 namespace Drv {
 
 // ----------------------------------------------------------------------
@@ -40,7 +38,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
     if (recv_thread) {
         Os::TaskString name("receiver thread");
         this->component.start(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
-        EXPECT_TRUE(Drv::Test::wait_on_started(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
+        EXPECT_TRUE(Drv::Test::wait_on_started(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
     } else {
         serverStat = this->component.startup();
         ASSERT_EQ(serverStat, SOCK_SUCCESS)
@@ -61,7 +59,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         if (not recv_thread) {
             status1 = this->component.open();
         } else {
-            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
+            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
         }
         EXPECT_TRUE(this->component.getSocketHandler().isOpened());
 

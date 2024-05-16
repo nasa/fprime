@@ -1,6 +1,6 @@
 // ======================================================================
-// \title Os/Posix/DefaultTask.cpp
-// \brief sets default Os::Task to posix implementation via linker
+// \title Os/Stub/test/DefaultTask.cpp
+// \brief sets default Os::Task to test stub implementation via linker
 // ======================================================================
 #include <cerrno>
 #include "Os/Task.hpp"
@@ -13,6 +13,8 @@ namespace Os {
         Os::Stub::Task::Test::StaticData::data.lastCalled = Os::Stub::Task::Test::StaticData::LastFn::DELAY_FN;
         Os::Stub::Task::Test::StaticData::data.delay = interval;
 
+        // For testing stub, the default implementation of delay for a "task" is a busy wait. This acts as a synthetic
+        // albeit inefficient implementation.
         timeval start;
         timeval end;
         if (gettimeofday(&start, nullptr) == 0) {
