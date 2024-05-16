@@ -34,7 +34,7 @@ namespace Utils {
         char c;
         for(int index = 0; index < len; index++) {
             c = static_cast<const char*>(data)[index];
-            local_hash_handle = update_crc_32(local_hash_handle, c);
+            local_hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(local_hash_handle, c));
         }
         HashBuffer bufferOut;
         // For CRC32 we need to return the one's complement of the result:
@@ -56,7 +56,7 @@ namespace Utils {
         char c;
         for(int index = 0; index < len; index++) {
             c = static_cast<const char*>(data)[index];
-            this->hash_handle = update_crc_32(this->hash_handle, c);
+            this->hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(this->hash_handle, c));
         }
     }
 

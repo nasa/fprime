@@ -63,7 +63,7 @@ namespace Svc {
       this->m_sizeOfSize = sizeOfSize;
 
       FW_ASSERT(sizeOfSize <= sizeof(U32), sizeOfSize);
-      FW_ASSERT(m_maxSize > sizeOfSize, m_maxSize);
+      FW_ASSERT(m_maxSize > sizeOfSize, static_cast<FwAssertArgType>(m_maxSize));
   }
 
   void BufferLogger::File ::
@@ -201,7 +201,7 @@ namespace Svc {
         const U32 length
     )
   {
-    FW_ASSERT(length > 0, length);
+    FW_ASSERT(length > 0, static_cast<FwAssertArgType>(length));
     FwSignedSizeType size = length;
     const Os::File::Status fileStatus = this->m_osFile.write(reinterpret_cast<const U8*>(data), size);
     bool status;
@@ -212,7 +212,7 @@ namespace Svc {
     else {
       Fw::LogStringArg string(this->m_name.toChar());
 
-      this->m_bufferLogger.log_WARNING_HI_BL_LogFileWriteError(fileStatus, size, length, string);
+      this->m_bufferLogger.log_WARNING_HI_BL_LogFileWriteError(fileStatus, static_cast<U32>(size), length, string);
       status = false;
     }
     return status;
@@ -225,7 +225,7 @@ namespace Svc {
     const Os::ValidateFile::Status status =
       validatedFile.createHashFile();
     if (status !=  Os::ValidateFile::VALIDATION_OK) {
-      const Fw::String &hashFileName = validatedFile.getHashFileName();
+      const Fw::StringBase &hashFileName = validatedFile.getHashFileName();
       Fw::LogStringArg logStringArg(hashFileName.toChar());
       this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(
           logStringArg,

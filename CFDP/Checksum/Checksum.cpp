@@ -90,8 +90,9 @@ namespace CFDP {
     }
 
     // Add the middle words aligned
-    for ( ; index + 4 <= length; index += 4)
+    for ( ; index + 4 <= length; index += 4) {
       addWordAligned(&data[index]);
+    }
 
     // Add the last word unaligned if necessary
     if (index < length) {
@@ -108,8 +109,9 @@ namespace CFDP {
   void Checksum ::
     addWordAligned(const U8 *const word)
   {
-    for (U8 i = 0; i < 4; ++i)
+    for (U8 i = 0; i < 4; ++i) {
       addByteAtOffset(word[i], i);
+    }
   }
 
   void Checksum ::
@@ -124,8 +126,9 @@ namespace CFDP {
     for (U8 i = 0; i < length; ++i) {
       addByteAtOffset(word[i], offset);
       ++offset;
-      if (offset == 4)
+      if (offset == 4) {
         offset = 0;
+      }
     }
   }
 
@@ -136,7 +139,7 @@ namespace CFDP {
     )
   {
     FW_ASSERT(offset < 4);
-    const U32 addend = byte << (8*(3-offset));
+    const U32 addend = static_cast<U32>(byte) << (8*(3-offset));
     this->m_value += addend;
   }
 

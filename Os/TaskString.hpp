@@ -15,15 +15,15 @@ namespace Os {
 
 class TaskString final : public Fw::StringBase {
   public:
-    enum { STRING_SIZE = FW_TASK_NAME_MAX_SIZE, SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType) };
+    enum { STRING_SIZE = FW_TASK_NAME_MAX_SIZE, SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE) };
 
     TaskString() : StringBase() { *this = ""; }
 
-    TaskString(const TaskString& src) : StringBase() { *this = src; }
+    explicit TaskString(const TaskString& src) : StringBase() { *this = src; }
 
-    TaskString(const StringBase& src) : StringBase() { *this = src; }
+    explicit TaskString(const StringBase& src) : StringBase() { *this = src; }
 
-    TaskString(const char* src) : StringBase() { *this = src; }
+    explicit TaskString(const char* src) : StringBase() { *this = src; }
 
     ~TaskString() {}
 
@@ -47,7 +47,7 @@ class TaskString final : public Fw::StringBase {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[TaskString::STRING_SIZE];
+    char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
 }  // namespace Os
 

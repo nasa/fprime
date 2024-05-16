@@ -29,7 +29,7 @@ implemented using a stable maximum binary heap with *O(log(n))* enqueue and dequ
 has the property that items pulled off the queue are in order of decreasing priority. Items of equal priority are pulled off 
 in FIFO order.
 
-NOTE: [POSIX queues](https://elixir.bootlin.com/linux/latest/source/ipc/mqueue.c) use a dynamically sized [red-black tree](https://en.wikipedia.org/wiki/Red%E2%80%93black_tree) for the message queue data structure. This data structure also has an *O(log(n))* enqueue and dequeue time.
+NOTE: POSIX queues use a dynamically sized [red-black tree](https://en.wikipedia.org/wiki/Red%E2%80%93black_tree) for the message queue data structure. This data structure also has an *O(log(n))* enqueue and dequeue time.
 
 ## 2 Requirements
 

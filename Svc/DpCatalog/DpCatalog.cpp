@@ -53,7 +53,7 @@ namespace Svc {
     ) {
 
         // Do some assertion checks
-        FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, numDirs);
+        FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
 
         // request memory for catalog
         this->m_memSize = DP_MAX_FILES * (sizeof(DpStateEntry) + sizeof(DpSortedList));
@@ -61,7 +61,7 @@ namespace Svc {
         // request memory
         this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
         // adjust to actual size if less allocated and only initialize
-        // if there is enough room for at least one record and memory 
+        // if there is enough room for at least one record and memory
         // was allocated
         if (
             (this->m_memSize >= (sizeof(DpSortedList) + sizeof(DpStateEntry))) and
@@ -85,7 +85,7 @@ namespace Svc {
             }
         }
         else {
-            // if we don't have enough memory, set the number of records 
+            // if we don't have enough memory, set the number of records
             // to zero for later detection
             this->m_numDpSlots = 0;
         }
@@ -131,12 +131,12 @@ namespace Svc {
             this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
             U32 filesRead = 0;
             U32 pendingFiles = 0;
-            F64 pendingDpBytes = 0;
+            U64 pendingDpBytes = 0;
 
             Os::FileSystem::Status fsStat =
                 Os::FileSystem::readDirectory(
                     this->m_directories[dir].toChar(),
-                    this->m_numDpSlots - totalFiles,
+                    static_cast<U32>(this->m_numDpSlots - totalFiles),
                     this->m_fileList,
                     filesRead
                 );
@@ -149,7 +149,10 @@ namespace Svc {
             }
 
             // Assert number of files isn't more than asked
-            FW_ASSERT(filesRead <= this->m_numDpSlots - totalFiles, filesRead, this->m_numDpSlots - totalFiles);
+            FW_ASSERT(
+                filesRead <= this->m_numDpSlots - totalFiles,
+                static_cast<FwAssertArgType>(filesRead),
+                static_cast<FwAssertArgType>(this->m_numDpSlots - totalFiles));
 
             // extract metadata for each file
             for (FwNativeUIntType file = 0; file < filesRead; file++) {
@@ -204,15 +207,15 @@ namespace Svc {
                     this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
                 }
 
-                // add entry to catalog. 
+                // add entry to catalog.
                 DpStateEntry entry;
-                entry.dir = dir;
+                entry.dir = static_cast<FwIndexType>(dir);
                 entry.record.setid(container.getId());
                 entry.record.setpriority(container.getPriority());
                 entry.record.setstate(container.getState());
                 entry.record.settSec(container.getTimeTag().getSeconds());
                 entry.record.settSub(container.getTimeTag().getUSeconds());
-                entry.record.setsize(fileSize);
+                entry.record.setsize(static_cast<U64>(fileSize));
                 entry.entry = true;
 
                 // assign the entry to the stored list
@@ -227,7 +230,7 @@ namespace Svc {
                 if (entry.record.getstate() == Fw::DpState::UNTRANSMITTED) {
                     pendingFiles++;
                     pendingDpBytes += entry.record.getsize();
-                }               
+                }
 
                 // make sure we haven't exceeded the limit
                 if (this->m_numDpRecords > this->m_numDpSlots) {
@@ -241,7 +244,7 @@ namespace Svc {
 
             this->log_ACTIVITY_HI_ProcessingDirectoryComplete(
                 this->m_directories[dir],
-                totalFiles,
+                static_cast<U32>(totalFiles),
                 pendingFiles,
                 pendingDpBytes
             );
@@ -295,7 +298,7 @@ namespace Svc {
                     );
                     this->log_ACTIVITY_LO_SendingProduct(
                         this->m_currXmitFileName,
-                        this->m_sortedDpList[record].recPtr->record.getsize(),
+                        static_cast<U32>(this->m_sortedDpList[record].recPtr->record.getsize()),
                         this->m_sortedDpList[record].recPtr->record.getpriority()
                         );
                     this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
@@ -358,7 +361,7 @@ namespace Svc {
         if (this->m_currXmitRecord) {
             this->m_currXmitRecord->sent = true;
             this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
-        }   
+        }
 
         this->sendNextEntry();
     }
@@ -369,7 +372,7 @@ namespace Svc {
             U32 key
         )
     {
-        // return code for health ping    
+        // return code for health ping
         this->pingOut_out(0, key);
     }
 

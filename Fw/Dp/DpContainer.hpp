@@ -59,7 +59,7 @@ class DpContainer {
 
   public:
     // ----------------------------------------------------------------------
-    // Constructor
+    // Constructors and destructors
     // ----------------------------------------------------------------------
 
     //! Constructor for initialized container
@@ -69,6 +69,17 @@ class DpContainer {
 
     //! Constructor for container with default initialization
     DpContainer();
+
+    //! Destructor
+    virtual ~DpContainer() {}
+
+  protected:
+    // ----------------------------------------------------------------------
+    // Protected operators
+    // ----------------------------------------------------------------------
+
+    //! Copy assignment operator
+    DpContainer& operator=(const DpContainer& src) = default;
 
   public:
     // ----------------------------------------------------------------------
@@ -260,7 +271,9 @@ class DpContainer {
     Buffer m_buffer;
 
     //! The data buffer
-    Fw::ExternalSerializeBuffer m_dataBuffer;
+    //! We use member copy semantics because m_dataBuffer points into m_buffer,
+    //! which is owned by this object
+    Fw::ExternalSerializeBufferWithMemberCopy m_dataBuffer;
 };
 
 }  // end namespace Fw

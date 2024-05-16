@@ -15,15 +15,15 @@ namespace Os {
 
 class QueueString final : public Fw::StringBase {
   public:
-    enum { STRING_SIZE = FW_QUEUE_NAME_MAX_SIZE, SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType) };
+    enum { STRING_SIZE = FW_QUEUE_NAME_MAX_SIZE, SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE) };
 
     QueueString() : StringBase() { *this = ""; }
 
-    QueueString(const QueueString& src) : StringBase() { *this = src; }
+    explicit QueueString(const QueueString& src) : StringBase() { *this = src; }
 
-    QueueString(const StringBase& src) : StringBase() { *this = src; }
+    explicit QueueString(const StringBase& src) : StringBase() { *this = src; }
 
-    QueueString(const char* src) : StringBase() { *this = src; }
+    explicit QueueString(const char* src) : StringBase() { *this = src; }
 
     ~QueueString() {}
 
@@ -47,7 +47,7 @@ class QueueString final : public Fw::StringBase {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[QueueString::STRING_SIZE];
+    char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
 }  // namespace Os
 

@@ -43,8 +43,9 @@ namespace Fw {
 
     FW_ASSERT(this->m_header.m_type == T_CANCEL);
 
-    if (serialBuffer.getBuffLeft() != 0)
+    if (serialBuffer.getBuffLeft() != 0) {
       return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
 
     return FW_SERIALIZE_OK;
 

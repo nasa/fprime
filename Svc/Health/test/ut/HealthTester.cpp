@@ -437,7 +437,7 @@ namespace Svc {
           char name[80];
           snprintf(name, sizeof(name), "task%d",entry);
           Fw::CmdStringArg task(name);
-          this->sendCmd_HLTH_PING_ENABLE(0,10,name,Fw::Enabled::DISABLED);
+          this->sendCmd_HLTH_PING_ENABLE(0,10,task,Fw::Enabled::DISABLED);
           this->dispatchAll();
           ASSERT_CMD_RESPONSE_SIZE(1);
           ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
@@ -466,7 +466,7 @@ namespace Svc {
           this->clearEvents();
           this->clearHistory();
 
-          this->sendCmd_HLTH_PING_ENABLE(0,10,name,Fw::Enabled::ENABLED);
+          this->sendCmd_HLTH_PING_ENABLE(0,10,task,Fw::Enabled::ENABLED);
           this->dispatchAll();
           ASSERT_CMD_RESPONSE_SIZE(1);
           ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
@@ -542,8 +542,8 @@ namespace Svc {
 	  TEST_CASE(900.1.8,"Nominal Command");
 	  COMMENT("Process command during quiescent (no telemetry readout) period.");
 
-	  Fw::LogStringArg arg = "task0";
-	  Fw::CmdStringArg carg = arg;
+	  Fw::LogStringArg arg("task0");
+	  Fw::CmdStringArg carg(arg);
 
 	  ASSERT_EVENTS_SIZE(0);
 	  ASSERT_TLM_SIZE(0);
@@ -671,14 +671,14 @@ namespace Svc {
 
       //send command with bad value
       Fw::Enabled badValue = static_cast<Fw::Enabled::t>(Fw::Enabled::NUM_CONSTANTS);
-      sendCmd_HLTH_PING_ENABLE(0,0,"task0",badValue);
+      sendCmd_HLTH_PING_ENABLE(0,0,Fw::CmdStringArg("task0"),badValue);
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
       ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::FORMAT_ERROR);
 
       //send command with bad ping entry
-      sendCmd_HLTH_PING_ENABLE(0,0,"notask",Fw::Enabled::ENABLED);
+      sendCmd_HLTH_PING_ENABLE(0,0,Fw::CmdStringArg("notask"),Fw::Enabled::ENABLED);
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(2);
@@ -690,7 +690,7 @@ namespace Svc {
       this->clearHistory();
 
       //send update timeout command with bad thresholds
-      sendCmd_HLTH_CHNG_PING(0, 0,"task0", 10, 9);
+      sendCmd_HLTH_CHNG_PING(0, 0,Fw::CmdStringArg("task0"), 10, 9);
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -703,7 +703,7 @@ namespace Svc {
       this->clearHistory();
 
       //send update timeout command with ping entry
-      sendCmd_HLTH_CHNG_PING(0, 0, "sometask", 1, 2);
+      sendCmd_HLTH_CHNG_PING(0, 0, Fw::CmdStringArg("sometask"), 1, 2);
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);

@@ -19,14 +19,14 @@ class String final : public StringBase {
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_FIXED_LENGTH_STRING,
         STRING_SIZE = FW_FIXED_LENGTH_STRING_SIZE,
-        SERIALIZED_SIZE = STRING_SIZE + sizeof(FwSizeStoreType)
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE),
     };
 
     String() : StringBase() { *this = ""; }
 
-    String(const String& src) : StringBase() { *this = src; }
+    explicit String(const String& src) : StringBase() { *this = src; }
 
-    String(const StringBase& src) : StringBase() { *this = src; }
+    explicit String(const StringBase& src) : StringBase() { *this = src; }
 
     String(const char* src) : StringBase() { *this = src; }
 
@@ -52,7 +52,7 @@ class String final : public StringBase {
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
 
   private:
-    char m_buf[String::STRING_SIZE];
+    char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
 }  // namespace Fw
 

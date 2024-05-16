@@ -268,6 +268,7 @@ doxyindexer
 doxyrules
 doxysearch
 Doxywizard
+dpc
 DPCAT
 DPCATALOG
 DPCFG
@@ -314,6 +315,7 @@ errmsg
 ERRORCHECK
 errornum
 ert
+esb
 ethanchee
 etime
 eturn
@@ -1004,6 +1006,7 @@ subpage
 subseconds
 subtargets
 suppr
+suseconds
 SVCLOGFILE
 SVCLOGFILEL
 svipc
