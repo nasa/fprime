@@ -82,7 +82,6 @@ bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations) {
 }
 
 U64 get_configured_delay_ms() {
-    printf("%llu %llu\n", static_cast<U64>(SOCKET_RETRY_INTERVAL.getSeconds()), static_cast<U64>(SOCKET_RETRY_INTERVAL.getUSeconds()));
     return (static_cast<U64>(SOCKET_RETRY_INTERVAL.getSeconds()) * 1000) +
            (static_cast<U64>(SOCKET_RETRY_INTERVAL.getUSeconds()) / 1000);
 }
