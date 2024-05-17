@@ -902,6 +902,7 @@ saveop
 sbb
 SBF
 SBINDIR
+sbt
 scatterometer
 schem
 schematron
