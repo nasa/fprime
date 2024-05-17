@@ -265,7 +265,8 @@ void Os::Test::File::Tester::OpenBaseRule::action(Os::Test::File::Tester &state 
 
     // Perform action and shadow action asserting the results are the same
     Os::File::Status status = state.m_file.open(filename->c_str(), m_mode, this->m_overwrite);
-    ASSERT_EQ(status, state.shadow_open(*filename, m_mode, this->m_overwrite));
+    Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
+    ASSERT_EQ(status, s2);
 
     // Extra check to ensure file is consistently open
     if (Os::File::Status::OP_OK == status) {
