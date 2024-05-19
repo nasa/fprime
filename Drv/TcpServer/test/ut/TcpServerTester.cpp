@@ -37,7 +37,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
-        this->component.startSocketTask(name, true, /*true*/, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.startSocketTask(name, true, false/*true*/, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
         EXPECT_TRUE(Drv::Test::wait_on_started(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
     } else {
         serverStat = this->component.startup(/*true*/);
