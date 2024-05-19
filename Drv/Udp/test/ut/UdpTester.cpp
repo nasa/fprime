@@ -33,15 +33,6 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     ASSERT_NE(0, port1);
     U16 port2 =  Drv::Test::get_free_port(true);
     ASSERT_NE(0, port2);
-
-    uint8_t attempt_to_find_available_port = 100;
-
-    while ((port1 == port2) && attempt_to_find_available_port > 0)
-    {
-        U16 port2 =  Drv::Test::get_free_port(true);
-        ASSERT_NE(0, port2);
-        --attempt_to_find_available_port;
-    }
     ASSERT_NE(port1, port2);
 
     // Configure the component
