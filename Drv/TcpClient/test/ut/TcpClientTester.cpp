@@ -35,7 +35,7 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::TcpServerSocket server;
     server.configure("127.0.0.1", port, 0, 100);
     this->component.configure("127.0.0.1", port, 0, 100);
-    serverStat = server.startup(true);
+    serverStat = server.startup(/*true*/);
 
     ASSERT_EQ(serverStat, SOCK_SUCCESS)
         << "TCP server startup error: " << strerror(errno) << std::endl
@@ -44,7 +44,7 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
-        this->component.startSocketTask(name, true, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.startSocketTask(name, true, /*true*/false, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
     }
 
     // Loop through a bunch of client disconnects
@@ -53,12 +53,12 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
 
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {
-            status1 = this->component.open(true);
+            status1 = this->component.open(/*true*/);
         } else {
             EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
         }
         EXPECT_TRUE(this->component.getSocketHandler().isOpened());
-        status2 = server.open(true);
+        status2 = server.open(/*true*/);
 
         EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
         EXPECT_EQ(status2, Drv::SOCK_SUCCESS);

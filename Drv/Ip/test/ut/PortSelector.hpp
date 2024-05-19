@@ -20,9 +20,10 @@ namespace Test {
  * recipient binds it again.
  *
  * \param is_udp: is this a UDP port
+ * \param not_this_port: is not this port
  * \return 0 on error, or a free port on success
  */
-U16 get_free_port(bool is_udp = false);
+U16 get_free_port(bool is_udp = false, const U16 not_this_port = 0);
 };
 };
 #endif  // DRV_TEST_PORTSELECTOR_HPP

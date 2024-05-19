@@ -11,7 +11,7 @@
 namespace Drv {
 namespace Test {
 
-U16 get_free_port(bool udp) {
+U16 get_free_port(bool udp, const U16 not_this_port) {
     struct sockaddr_in address;
     NATIVE_INT_TYPE socketFd = -1;
     // Acquire a socket, or return error
@@ -28,6 +28,14 @@ U16 get_free_port(bool udp) {
         return 0;
     };
 
+    struct linger so_linger;
+    so_linger.l_onoff = 1;
+    so_linger.l_linger = 0;
+    if (setsockopt(socketFd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger))) {
+        ::close(socketFd);
+        return 0;
+    }
+
     // When we are setting up for receiving as well, then we must bind to a port
     if (::bind(socketFd, reinterpret_cast<struct sockaddr *>(&address), sizeof(address)) == -1) {
         ::close(socketFd);
@@ -40,8 +48,8 @@ U16 get_free_port(bool udp) {
     }
     U16 port = address.sin_port;
     // Check for root-only-port.  If so, recursively try again.
-    if (port < 1024) {
-        port = get_free_port(udp);
+    if ((port < 1024) || (not_this_port == port)) {
+        port = get_free_port(udp, not_this_port);
     }
     ::close(socketFd); // Close this recursion's port again, such that we don't infinitely loop
     return port;
