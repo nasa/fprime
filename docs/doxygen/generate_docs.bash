@@ -62,12 +62,6 @@ function make_version
 
 }
 
-echo `which gcc-10`
-echo `gcc-10 --version`
-echo `which g++-10`
-echo `g++-10 --version`
-echo `g++-10 --help`
-
 # Doxygen generation
 (
     cd "${FPRIME}"

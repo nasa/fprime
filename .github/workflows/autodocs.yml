@@ -1,12 +1,8 @@
 name: Autodocs
-
 on:
   push:
-    branches: [ devel, release/** ]
-  pull_request:
-    branches: [ devel, release/** ]
-    paths-ignore:
-      - '.github/actions/spelling/**'
+    branches:
+      - "devel"
 
 jobs:
   build:
