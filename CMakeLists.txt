@@ -56,7 +56,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-zero-length-array>
     )
-else()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     add_compile_options(
         -Wno-format-truncation
     )
