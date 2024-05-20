@@ -697,6 +697,7 @@ oldeol
 OLDINCLUDEDIR
 OMG
 onlinepubs
+onoff
 OPCODEBASE
 opengroup
 openmct

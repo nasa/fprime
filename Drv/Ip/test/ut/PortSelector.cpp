@@ -30,7 +30,7 @@ U16 get_free_port(bool udp, const U16 not_this_port) {
 
     struct linger so_linger;
     so_linger.l_onoff = 1;
-    so_linger.l_linger = 0;
+    so_linger.l_linger = 30;
     if (setsockopt(socketFd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger))) {
         ::close(socketFd);
         return 0;
