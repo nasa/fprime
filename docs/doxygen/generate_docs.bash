@@ -62,6 +62,12 @@ function make_version
 
 }
 
+echo `which gcc-10`
+echo `gcc-10 --version`
+echo `which g++-10`
+echo `g++-10 --version`
+echo `g++-10 --help`
+
 # Doxygen generation
 (
     cd "${FPRIME}"
@@ -69,12 +75,6 @@ function make_version
     clobber "${DOXY_OUTPUT}"
     echo "[INFO] Building fprime"
     rm -rf "${DOCS_CACHE}"
-
-    which gcc-10
-    gcc-10 --version
-    which g++-10
-    g++-10 --version
-    g++-10 --help
 
     fprime-util generate --build-cache ${DOCS_CACHE} -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 1>/dev/null
     fprime-util build --build-cache ${DOCS_CACHE} --all -j32 1> /dev/null
