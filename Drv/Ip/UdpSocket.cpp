@@ -126,7 +126,6 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     struct sockaddr_in address;
 
     this->m_lock.lock();
-    U16 recv_port = this->m_recv_port;
     U16 port = this->m_port;
     this->m_lock.unlock();
 
@@ -172,7 +171,7 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
         return status; // Not closing FD as it is still a valid send FD
     }
     this->m_lock.lock();
-    recv_port = this->m_recv_port;
+    U16 recv_port = this->m_recv_port;
     this->m_lock.unlock();
     // Log message for UDP
     if (port == 0) {
