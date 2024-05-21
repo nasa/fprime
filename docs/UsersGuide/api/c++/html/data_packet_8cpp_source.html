@@ -122,11 +122,11 @@ $(document).ready(function(){initNavTree('_data_packet_8cpp_source.html',''); in
 <div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="class_fw_1_1_file_packet_1_1_data_packet.html#af74edc92a8ad795aedcc9d7ea1550d05">   32</a></span>&#160;  U32 <a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html#af74edc92a8ad795aedcc9d7ea1550d05">FilePacket::DataPacket ::</a></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html#af74edc92a8ad795aedcc9d7ea1550d05">    bufferSize</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordflow">return</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      this-&gt;m_header.bufferSize() +</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      <span class="keyword">sizeof</span>(this-&gt;m_byteOffset) +</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <span class="keyword">sizeof</span>(this-&gt;m_dataSize) +</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      this-&gt;m_dataSize;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      this-&gt;m_dataSize);</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  }</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
 <div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="class_fw_1_1_file_packet_1_1_data_packet.html#a3e80f1b17135813a054583e2d7c569a0">   42</a></span>&#160;  <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> <a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html#a3e80f1b17135813a054583e2d7c569a0">FilePacket::DataPacket ::</a></div>
@@ -146,59 +146,65 @@ $(document).ready(function(){initNavTree('_data_packet_8cpp_source.html',''); in
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_header.m_type == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501baf654296d05201bd78e4fefa39e74e51f">T_DATA</a>);</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> status = serialBuffer.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">deserialize</a>(this-&gt;m_byteOffset);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>)</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>) {</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      <span class="keywordflow">return</span> status;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    status = serialBuffer.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">deserialize</a>(this-&gt;m_dataSize);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>)</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      <span class="keywordflow">return</span> status;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">if</span> (serialBuffer.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a2f6c8218c082357bcea2305d1f736946">getBuffLeft</a>() != this-&gt;m_dataSize)</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32aad4b2c76b207502b423c84e40e518874">FW_DESERIALIZE_SIZE_MISMATCH</a>;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> addr = serialBuffer.<a class="code" href="class_fw_1_1_serial_buffer.html#adf31a85e069f95836634b808bb8a2195">getBuffAddr</a>();</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    this-&gt;m_data = &amp;addr[this-&gt;fixedLengthSize()];</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    }</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    status = serialBuffer.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">deserialize</a>(this-&gt;m_dataSize);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>) {</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      <span class="keywordflow">return</span> status;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">if</span> (serialBuffer.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a2f6c8218c082357bcea2305d1f736946">getBuffLeft</a>() != this-&gt;m_dataSize) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32aad4b2c76b207502b423c84e40e518874">FW_DESERIALIZE_SIZE_MISMATCH</a>;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  U32 FilePacket::DataPacket ::</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    fixedLengthSize()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">return</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      this-&gt;m_header.bufferSize() +</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <span class="keyword">sizeof</span>(this-&gt;m_byteOffset) +</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      <span class="keyword">sizeof</span>(this-&gt;m_dataSize);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> FilePacket::DataPacket ::</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    toSerialBuffer(SerialBuffer&amp; serialBuffer)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_header.m_type == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501baf654296d05201bd78e4fefa39e74e51f">T_DATA</a>);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> status;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    status = this-&gt;m_header.toSerialBuffer(serialBuffer);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>)</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      <span class="keywordflow">return</span> status;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    status = serialBuffer.serialize(this-&gt;m_byteOffset);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>)</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      <span class="keywordflow">return</span> status;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *<span class="keyword">const</span> addr = serialBuffer.<a class="code" href="class_fw_1_1_serial_buffer.html#adf31a85e069f95836634b808bb8a2195">getBuffAddr</a>();</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    this-&gt;m_data = &amp;addr[this-&gt;fixedLengthSize()];</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  }</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  U32 FilePacket::DataPacket ::</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    fixedLengthSize()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      this-&gt;m_header.bufferSize() +</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      <span class="keyword">sizeof</span>(this-&gt;m_byteOffset) +</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      <span class="keyword">sizeof</span>(this-&gt;m_dataSize));</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> FilePacket::DataPacket ::</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    toSerialBuffer(SerialBuffer&amp; serialBuffer)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_header.m_type == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501baf654296d05201bd78e4fefa39e74e51f">T_DATA</a>);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> status;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    status = this-&gt;m_header.toSerialBuffer(serialBuffer);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>) {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keywordflow">return</span> status;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    }</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    status = serialBuffer.serialize(this-&gt;m_dataSize);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>)</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    status = serialBuffer.serialize(this-&gt;m_byteOffset);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>) {</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      <span class="keywordflow">return</span> status;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    status = serialBuffer.pushBytes(this-&gt;m_data, this-&gt;m_dataSize);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">return</span> status;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    status = serialBuffer.serialize(this-&gt;m_dataSize);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">FW_SERIALIZE_OK</a>) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <span class="keywordflow">return</span> status;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    }</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;}</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    status = serialBuffer.pushBytes(this-&gt;m_data, this-&gt;m_dataSize);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">return</span> status;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;}</div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00026">BasicTypes.h:26</a></div></div>
@@ -211,8 +217,8 @@ $(document).ready(function(){initNavTree('_data_packet_8cpp_source.html',''); in
 <div class="ttc" id="aclass_fw_1_1_file_packet_1_1_data_packet_html_af74edc92a8ad795aedcc9d7ea1550d05"><div class="ttname"><a href="class_fw_1_1_file_packet_1_1_data_packet.html#af74edc92a8ad795aedcc9d7ea1550d05">Fw::FilePacket::DataPacket::bufferSize</a></div><div class="ttdeci">U32 bufferSize() const</div><div class="ttdoc">Compute the buffer size needed to hold this DataPacket.</div><div class="ttdef"><b>Definition:</b> <a href="data_packet_8cpp_source.html#l00032">DataPacket.cpp:33</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_serial_buffer_html"><div class="ttname"><a href="class_fw_1_1_serial_buffer.html">Fw::SerialBuffer</a></div><div class="ttdoc">A variable-length serializable buffer.</div><div class="ttdef"><b>Definition:</b> <a href="serial_buffer_8hpp_source.html#l00024">SerialBuffer.hpp:24</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_serial_buffer_html_adf31a85e069f95836634b808bb8a2195"><div class="ttname"><a href="class_fw_1_1_serial_buffer.html#adf31a85e069f95836634b808bb8a2195">Fw::SerialBuffer::getBuffAddr</a></div><div class="ttdeci">U8 * getBuffAddr()</div><div class="ttdoc">gets buffer address for data filling</div><div class="ttdef"><b>Definition:</b> <a href="serial_buffer_8cpp_source.html#l00024">SerialBuffer.cpp:24</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a2f6c8218c082357bcea2305d1f736946"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a2f6c8218c082357bcea2305d1f736946">Fw::SerializeBufferBase::getBuffLeft</a></div><div class="ttdeci">Serializable::SizeType getBuffLeft() const</div><div class="ttdoc">returns how much deserialization buffer is left</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00675">Serializable.cpp:675</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a99f6c704e514620bf8e26dc28a6f698a"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">Fw::SerializeBufferBase::deserialize</a></div><div class="ttdeci">SerializeStatus deserialize(U8 &amp;val)</div><div class="ttdoc">deserialize 8-bit unsigned int</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00299">Serializable.cpp:299</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a2f6c8218c082357bcea2305d1f736946"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a2f6c8218c082357bcea2305d1f736946">Fw::SerializeBufferBase::getBuffLeft</a></div><div class="ttdeci">Serializable::SizeType getBuffLeft() const</div><div class="ttdoc">returns how much deserialization buffer is left</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00678">Serializable.cpp:678</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a99f6c704e514620bf8e26dc28a6f698a"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">Fw::SerializeBufferBase::deserialize</a></div><div class="ttdeci">SerializeStatus deserialize(U8 &amp;val)</div><div class="ttdoc">deserialize 8-bit unsigned int</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00302">Serializable.cpp:302</a></div></div>
 <div class="ttc" id="anamespace_fw_html"><div class="ttname"><a href="namespace_fw.html">Fw</a></div><div class="ttdef"><b>Definition:</b> <a href="fpp_constants_ac_8hpp_source.html#l00103">FppConstantsAc.hpp:103</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a></div><div class="ttdeci">SerializeStatus</div><div class="ttdoc">forward declaration for string</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00014">Serializable.hpp:14</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a></div><div class="ttdeci">@ FW_SERIALIZE_OK</div><div class="ttdoc">Serialization/Deserialization operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00015">Serializable.hpp:15</a></div></div>

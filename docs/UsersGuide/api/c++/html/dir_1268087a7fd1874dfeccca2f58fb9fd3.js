@@ -39,5 +39,9 @@ var dir_1268087a7fd1874dfeccca2f58fb9fd3 =
     [ "SuccessEnumAc.cpp", "success_enum_ac_8cpp.html", null ],
     [ "SuccessEnumAc.hpp", "success_enum_ac_8hpp.html", [
       [ "Success", "class_fw_1_1_success.html", "class_fw_1_1_success" ]
+    ] ],
+    [ "WaitEnumAc.cpp", "wait_enum_ac_8cpp.html", null ],
+    [ "WaitEnumAc.hpp", "wait_enum_ac_8hpp.html", [
+      [ "Wait", "class_fw_1_1_wait.html", "class_fw_1_1_wait" ]
     ] ]
 ];

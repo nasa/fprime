@@ -53,7 +53,6 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
       [ "QueueRegistry", "class_os_1_1_queue_registry.html", "class_os_1_1_queue_registry" ]
     ] ],
     [ "QueueCommon.cpp", "queue_common_8cpp.html", null ],
-    [ "QueueString.cpp", "queue_string_8cpp.html", null ],
     [ "QueueString.hpp", "queue_string_8hpp.html", [
       [ "QueueString", "class_os_1_1_queue_string.html", "class_os_1_1_queue_string" ]
     ] ],
@@ -73,7 +72,6 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "TaskLock.hpp", "task_lock_8hpp.html", [
       [ "TaskLock", "class_os_1_1_task_lock.html", "class_os_1_1_task_lock" ]
     ] ],
-    [ "TaskString.cpp", "task_string_8cpp.html", null ],
     [ "TaskString.hpp", "task_string_8hpp.html", [
       [ "TaskString", "class_os_1_1_task_string.html", "class_os_1_1_task_string" ]
     ] ],

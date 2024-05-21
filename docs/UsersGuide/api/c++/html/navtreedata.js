@@ -517,86 +517,93 @@ var NAVTREE =
       ] ]
     ] ],
     [ "Svc::DpCatalog Component", "svc_dp_catalog_component.html", [
-      [ "Svc::DpCatalog (Active Component)", "svc_dp_catalog_component.html#autotoc_md767", [
-        [ "1. Introduction", "svc_dp_catalog_component.html#autotoc_md768", null ],
-        [ "2. Requirements", "svc_dp_catalog_component.html#autotoc_md769", null ],
-        [ "3. Design", "svc_dp_catalog_component.html#autotoc_md770", [
-          [ "3.1. Component Diagram", "svc_dp_catalog_component.html#autotoc_md771", null ],
-          [ "3.2. Ports", "svc_dp_catalog_component.html#autotoc_md772", null ],
-          [ "3.3. State", "svc_dp_catalog_component.html#autotoc_md773", null ],
-          [ "3.4. Runtime Setup", "svc_dp_catalog_component.html#autotoc_md774", null ],
-          [ "3.5. Port Handlers", "svc_dp_catalog_component.html#autotoc_md775", null ]
+      [ "Svc::DpCatalog Component", "svc_dp_catalog_component.html#autotoc_md767", [
+        [ "1 Introduction", "svc_dp_catalog_component.html#autotoc_md768", null ],
+        [ "2 Requirements", "svc_dp_catalog_component.html#autotoc_md769", null ],
+        [ "3 Design", "svc_dp_catalog_component.html#autotoc_md770", [
+          [ "3.1 Assumptions", "svc_dp_catalog_component.html#autotoc_md771", null ],
+          [ "3.3 Ports", "svc_dp_catalog_component.html#autotoc_md772", [
+            [ "3.3.1 Role Ports", "svc_dp_catalog_component.html#autotoc_md773", null ],
+            [ "3.3.2 Component-Specific Ports", "svc_dp_catalog_component.html#autotoc_md774", null ]
+          ] ],
+          [ "3.4 Constants", "svc_dp_catalog_component.html#autotoc_md775", null ],
+          [ "3.5 Configuration", "svc_dp_catalog_component.html#autotoc_md776", null ],
+          [ "SDD work will continue from here", "svc_dp_catalog_component.html#autotoc_md777", [
+            [ "Constants", "svc_dp_catalog_component.html#autotoc_md778", null ]
+          ] ],
+          [ "3.6 State", "svc_dp_catalog_component.html#autotoc_md779", null ],
+          [ "3.6 Commands", "svc_dp_catalog_component.html#autotoc_md780", null ]
         ] ],
-        [ "4. Ground Interface", "svc_dp_catalog_component.html#autotoc_md776", null ],
-        [ "5. Example Uses", "svc_dp_catalog_component.html#autotoc_md777", null ]
+        [ "4 Checklists", "svc_dp_catalog_component.html#autotoc_md781", null ],
+        [ "6 Unit Testing", "svc_dp_catalog_component.html#autotoc_md782", null ]
       ] ]
     ] ],
     [ "Svc::DpManager Component", "svc_dp_manager_component.html", [
-      [ "Svc::DpManager (Active Component)", "svc_dp_manager_component.html#autotoc_md778", [
-        [ "1. Introduction", "svc_dp_manager_component.html#autotoc_md779", null ],
-        [ "2. Requirements", "svc_dp_manager_component.html#autotoc_md780", null ],
-        [ "3. Design", "svc_dp_manager_component.html#autotoc_md781", [
-          [ "3.1. Component Diagram", "svc_dp_manager_component.html#autotoc_md782", null ],
-          [ "3.2. Ports", "svc_dp_manager_component.html#autotoc_md783", null ],
-          [ "3.3. State", "svc_dp_manager_component.html#autotoc_md784", null ],
-          [ "3.4. Compile-Time Setup", "svc_dp_manager_component.html#autotoc_md785", null ],
-          [ "3.5. Runtime Setup", "svc_dp_manager_component.html#autotoc_md786", null ],
-          [ "3.6. Port Handlers", "svc_dp_manager_component.html#autotoc_md787", [
-            [ "3.6.1. schedIn", "svc_dp_manager_component.html#autotoc_md788", null ],
-            [ "3.6.2. productGetIn", "svc_dp_manager_component.html#autotoc_md789", null ],
-            [ "3.6.3. productRequestIn", "svc_dp_manager_component.html#autotoc_md790", null ],
-            [ "3.6.4. productSendIn", "svc_dp_manager_component.html#autotoc_md791", null ]
+      [ "Svc::DpManager (Active Component)", "svc_dp_manager_component.html#autotoc_md783", [
+        [ "1. Introduction", "svc_dp_manager_component.html#autotoc_md784", null ],
+        [ "2. Requirements", "svc_dp_manager_component.html#autotoc_md785", null ],
+        [ "3. Design", "svc_dp_manager_component.html#autotoc_md786", [
+          [ "3.1. Component Diagram", "svc_dp_manager_component.html#autotoc_md787", null ],
+          [ "3.2. Ports", "svc_dp_manager_component.html#autotoc_md788", null ],
+          [ "3.3. State", "svc_dp_manager_component.html#autotoc_md789", null ],
+          [ "3.4. Compile-Time Setup", "svc_dp_manager_component.html#autotoc_md790", null ],
+          [ "3.5. Runtime Setup", "svc_dp_manager_component.html#autotoc_md791", null ],
+          [ "3.6. Port Handlers", "svc_dp_manager_component.html#autotoc_md792", [
+            [ "3.6.1. schedIn", "svc_dp_manager_component.html#autotoc_md793", null ],
+            [ "3.6.2. productGetIn", "svc_dp_manager_component.html#autotoc_md794", null ],
+            [ "3.6.3. productRequestIn", "svc_dp_manager_component.html#autotoc_md795", null ],
+            [ "3.6.4. productSendIn", "svc_dp_manager_component.html#autotoc_md796", null ]
           ] ],
-          [ "3.7. Helper Methods", "svc_dp_manager_component.html#autotoc_md792", [
-            [ "3.7.1. getBuffer", "svc_dp_manager_component.html#autotoc_md793", null ]
+          [ "3.7. Helper Methods", "svc_dp_manager_component.html#autotoc_md797", [
+            [ "3.7.1. getBuffer", "svc_dp_manager_component.html#autotoc_md798", null ]
           ] ]
         ] ],
-        [ "4. Ground Interface", "svc_dp_manager_component.html#autotoc_md794", [
-          [ "4.1. Commands", "svc_dp_manager_component.html#autotoc_md795", null ],
-          [ "4.2. Telemetry", "svc_dp_manager_component.html#autotoc_md796", null ],
-          [ "4.3. Events", "svc_dp_manager_component.html#autotoc_md797", null ]
+        [ "4. Ground Interface", "svc_dp_manager_component.html#autotoc_md799", [
+          [ "4.1. Commands", "svc_dp_manager_component.html#autotoc_md800", null ],
+          [ "4.2. Telemetry", "svc_dp_manager_component.html#autotoc_md801", null ],
+          [ "4.3. Events", "svc_dp_manager_component.html#autotoc_md802", null ]
         ] ],
-        [ "5. Example Uses", "svc_dp_manager_component.html#autotoc_md798", [
-          [ "5.1. Topology Diagrams", "svc_dp_manager_component.html#autotoc_md799", [
-            [ "5.1.1. Synchronously Getting Data Product Buffers", "svc_dp_manager_component.html#autotoc_md800", null ],
-            [ "5.1.2. Asynchronously Requesting Data Product Buffers", "svc_dp_manager_component.html#autotoc_md801", null ],
-            [ "5.1.3. Sending Data Products", "svc_dp_manager_component.html#autotoc_md802", null ]
+        [ "5. Example Uses", "svc_dp_manager_component.html#autotoc_md803", [
+          [ "5.1. Topology Diagrams", "svc_dp_manager_component.html#autotoc_md804", [
+            [ "5.1.1. Synchronously Getting Data Product Buffers", "svc_dp_manager_component.html#autotoc_md805", null ],
+            [ "5.1.2. Asynchronously Requesting Data Product Buffers", "svc_dp_manager_component.html#autotoc_md806", null ],
+            [ "5.1.3. Sending Data Products", "svc_dp_manager_component.html#autotoc_md807", null ]
           ] ],
-          [ "5.2. Sequence Diagrams", "svc_dp_manager_component.html#autotoc_md803", [
-            [ "5.2.1. Synchronously Getting a Data Product Buffer", "svc_dp_manager_component.html#autotoc_md804", null ],
-            [ "5.2.2. Asynchronously Requesting a Data Product Buffer", "svc_dp_manager_component.html#autotoc_md805", null ],
-            [ "5.2.3. Sending a Data Product", "svc_dp_manager_component.html#autotoc_md806", null ]
+          [ "5.2. Sequence Diagrams", "svc_dp_manager_component.html#autotoc_md808", [
+            [ "5.2.1. Synchronously Getting a Data Product Buffer", "svc_dp_manager_component.html#autotoc_md809", null ],
+            [ "5.2.2. Asynchronously Requesting a Data Product Buffer", "svc_dp_manager_component.html#autotoc_md810", null ],
+            [ "5.2.3. Sending a Data Product", "svc_dp_manager_component.html#autotoc_md811", null ]
           ] ]
         ] ]
       ] ]
     ] ],
     [ "Svc::DpWriter Component", "svc_dp_writer_component.html", [
-      [ "Svc::DpWriter (Active Component)", "svc_dp_writer_component.html#autotoc_md807", [
-        [ "1. Introduction", "svc_dp_writer_component.html#autotoc_md808", null ],
-        [ "2. Requirements", "svc_dp_writer_component.html#autotoc_md809", null ],
-        [ "3. Design", "svc_dp_writer_component.html#autotoc_md810", [
-          [ "3.1. Component Diagram", "svc_dp_writer_component.html#autotoc_md811", null ],
-          [ "3.2. Ports", "svc_dp_writer_component.html#autotoc_md812", null ],
-          [ "3.3. State", "svc_dp_writer_component.html#autotoc_md813", null ],
-          [ "3.4. Compile-Time Setup", "svc_dp_writer_component.html#autotoc_md814", null ],
-          [ "3.5. Runtime Setup", "svc_dp_writer_component.html#autotoc_md815", null ],
-          [ "3.6. Port Handlers", "svc_dp_writer_component.html#autotoc_md816", [
-            [ "3.6.1. schedIn", "svc_dp_writer_component.html#autotoc_md817", null ],
-            [ "3.6.2. bufferSendIn", "svc_dp_writer_component.html#autotoc_md818", null ]
+      [ "Svc::DpWriter (Active Component)", "svc_dp_writer_component.html#autotoc_md812", [
+        [ "1. Introduction", "svc_dp_writer_component.html#autotoc_md813", null ],
+        [ "2. Requirements", "svc_dp_writer_component.html#autotoc_md814", null ],
+        [ "3. Design", "svc_dp_writer_component.html#autotoc_md815", [
+          [ "3.1. Component Diagram", "svc_dp_writer_component.html#autotoc_md816", null ],
+          [ "3.2. Ports", "svc_dp_writer_component.html#autotoc_md817", null ],
+          [ "3.3. State", "svc_dp_writer_component.html#autotoc_md818", null ],
+          [ "3.4. Compile-Time Setup", "svc_dp_writer_component.html#autotoc_md819", null ],
+          [ "3.5. Runtime Setup", "svc_dp_writer_component.html#autotoc_md820", null ],
+          [ "3.6. Port Handlers", "svc_dp_writer_component.html#autotoc_md821", [
+            [ "3.6.1. schedIn", "svc_dp_writer_component.html#autotoc_md822", null ],
+            [ "3.6.2. bufferSendIn", "svc_dp_writer_component.html#autotoc_md823", null ]
           ] ]
         ] ],
-        [ "4. File Format", "svc_dp_writer_component.html#autotoc_md819", [
-          [ "4.1. Data Format", "svc_dp_writer_component.html#autotoc_md820", null ],
-          [ "4.2. File Name", "svc_dp_writer_component.html#autotoc_md821", null ]
+        [ "4. File Format", "svc_dp_writer_component.html#autotoc_md824", [
+          [ "4.1. Data Format", "svc_dp_writer_component.html#autotoc_md825", null ],
+          [ "4.2. File Name", "svc_dp_writer_component.html#autotoc_md826", null ]
         ] ],
-        [ "5. Ground Interface", "svc_dp_writer_component.html#autotoc_md822", [
-          [ "5.1. Commands", "svc_dp_writer_component.html#autotoc_md823", null ],
-          [ "5.2. Telemetry", "svc_dp_writer_component.html#autotoc_md824", null ],
-          [ "5.3. Events", "svc_dp_writer_component.html#autotoc_md825", null ]
+        [ "5. Ground Interface", "svc_dp_writer_component.html#autotoc_md827", [
+          [ "5.1. Commands", "svc_dp_writer_component.html#autotoc_md828", null ],
+          [ "5.2. Telemetry", "svc_dp_writer_component.html#autotoc_md829", null ],
+          [ "5.3. Events", "svc_dp_writer_component.html#autotoc_md830", null ]
         ] ],
-        [ "6. Example Uses", "svc_dp_writer_component.html#autotoc_md826", [
-          [ "6.1. Topology Diagrams", "svc_dp_writer_component.html#autotoc_md827", null ],
-          [ "6.2. Sequence Diagrams", "svc_dp_writer_component.html#autotoc_md828", null ]
+        [ "6. Example Uses", "svc_dp_writer_component.html#autotoc_md831", [
+          [ "6.1. Topology Diagrams", "svc_dp_writer_component.html#autotoc_md832", null ],
+          [ "6.2. Sequence Diagrams", "svc_dp_writer_component.html#autotoc_md833", null ]
         ] ]
       ] ]
     ] ],
@@ -644,38 +651,39 @@ var NAVTREEINDEX =
 [
 "a_m_p_c_s_sequence_8cpp.html",
 "byte_stream_send_port_ac_8cpp.html",
-"deframing_protocol_8hpp.html",
-"fp_config_8h.html#a09b3765868bfcaa47e2c13e366e85e94",
-"fw_type_classes.html#autotoc_md513",
-"log_assert_8hpp_source.html",
-"posix_2_mutex_8cpp_source.html",
-"svc_active_logger_component.html#autotoc_md536",
-"svc_dp_manager_component.html#autotoc_md795",
-"svc_posix_time.html#autotoc_md1029",
-"udp_8hpp.html#ae83b9190a2be5aab32812527d0bd3643",
-"class_drv_1_1_input_spi_read_write_port.html",
-"class_drv_1_1_poll_status.html",
-"class_fw_1_1_active_component_base.html#a6c8d55256efaa175fd0d5804e2b483c2",
-"class_fw_1_1_dp_state.html#ae662714850ac43e5ed828a4d09be64d2",
-"class_fw_1_1_log_packet.html#a6af9ef409080f8b6fc50dd6656fb7955",
-"class_fw_1_1_param_valid.html",
-"class_fw_1_1_time.html#a705c0c0dbac1bb96e734a37526a35040",
-"class_os_1_1_interrupt_lock.html#afcb403d4f12bf3b99e60ef3bd08bfd41",
-"class_svc_1_1_active_logger___filter_severity.html#ad9260bbb678ca9d7c9107f6bbb0243a2",
-"class_svc_1_1_buffer_accumulator_component_base.html#a9a0d39ae5d143e868002a13a0777023f",
-"class_svc_1_1_cmd_sequencer___seq_mode.html",
-"class_svc_1_1_com_logger_component_base.html#a70880c7b5b9be3e0a75ea532dd830922",
-"class_svc_1_1_deframer_component_base.html#a01172c8a2b20fa4be1a2bd6fc92ebe92",
-"class_svc_1_1_file_downlink_component_base.html#a32da83d21f1d6897c83fb7dc07fd4e7b",
-"class_svc_1_1_framing_protocol_interface.html#af0b618002ffc335b35e9e8be2de885bf",
-"class_svc_1_1_output_dp_written_port.html",
-"class_svc_1_1_queue_type.html#a398b6f688ab146636629167e49c92fc7",
-"class_svc_1_1_tlm_packetizer_component_base.html#a5ada81c5ba512400657cc2b4a47bf561",
-"dir_618d7795118739559b27356cd2668752.html",
-"globals.html",
-"md_docs_doc_index.html#autotoc_md164",
-"namespace_fw.html#ae7290197550e6e0757514692ad4260ea",
-"sha_8h_source.html"
+"deframing_protocol_interface_8hpp.html",
+"file_uplink_8hpp_source.html",
+"fw_time_port.html#autotoc_md498",
+"lock_guard_8hpp.html",
+"port_base_8hpp_source.html",
+"svc_active_logger_component.html",
+"svc_dp_manager_component.html#autotoc_md791",
+"svc_poly_port.html#autotoc_md1026",
+"trap_handler_8hpp.html",
+"class_drv_1_1_input_i2c_port.html#ae3b89c7ec89af8949b245c4ead849560",
+"class_drv_1_1_output_i2c_write_read_port.html#ad1e71399afdfcf00d74fafaa25788cf7",
+"class_fw_1_1_active.html#a9713813bce5a78b45024d10a2f29c6f5",
+"class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70a51d04728aa37d098611bbb877fa00d81",
+"class_fw_1_1_internal_interface_string.html#a4b1259276be0e326597ddc8cbd14fdfa",
+"class_fw_1_1_output_tlm_port.html",
+"class_fw_1_1_success.html#ac73cb03d903aec91c16a71229cae97ac",
+"class_os_1_1_file_mode.html#af44caba593d20c19da1d18f8f67b4f29",
+"class_os_1_1_watchdog_timer.html#aa9acb4aeff7e668c1fbf562eb6555938ad7c9b41eb3e216cb9ea4d84b35962a3c",
+"class_svc_1_1_buffer_accumulator___op_state.html#a815dff392262c9475e248d0f33df65f9",
+"class_svc_1_1_buffer_repeater_component_base.html#ad609109582f296e7b6ffdd6155541974",
+"class_svc_1_1_cmd_splitter_component_base.html#a5f461638ebc3334a8a42f8f6ef08638e",
+"class_svc_1_1_command_dispatcher_component_base.html#aa64496130be263424fb462f3f08112db",
+"class_svc_1_1_dp_manager_component_base.html#a6397a4e52de98541b0cab01ca40b065d",
+"class_svc_1_1_file_manager.html#a2b7d3db39927b54981c0f000fdc92867",
+"class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6a7641a3a7a264deb9da7b55c3dec32d7f",
+"class_svc_1_1_passive_rate_group_component_base.html#aa9320058ac8fcf40e019f71bc5ab3d26",
+"class_svc_1_1_send_file_status.html#a205ac4775c35a13e151317861b491cdf",
+"class_test_utils_1_1_option.html#a6aa12aff621212311809b95e0bbf1adb",
+"dir_a1f7361c94a8ea0a042cabc98d083f6c.html",
+"lib__crc_8h.html#a50bb3734936f451cb9a4b791a970ffa4",
+"md_docs_doc_index.html#autotoc_md223",
+"namespace_os_1_1_file_system.html#a7dc1cda7708fe268195a1bb34579af12",
+"struct_os_1_1_task_1_1_task_routine_wrapper.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

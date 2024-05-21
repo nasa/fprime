@@ -167,7 +167,7 @@ $(document).ready(function(){initNavTree('_dp_manager_8cpp_source.html',''); ini
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="comment">// Set status</span></div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <a class="code" href="class_fw_1_1_success.html">Fw::Success</a> status(<a class="code" href="class_fw_1_1_success.html#a822be196df7ae60f2c09653d8a5b310da4a9ba7065baa554f3972ef21805c75e7">Fw::Success::FAILURE</a>);</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="comment">// Get a buffer</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    buffer = this-&gt;<a class="code" href="class_svc_1_1_dp_manager_component_base.html#a8bd206472e8c76b78c253acf873deebb">bufferGetOut_out</a>(portNum, size);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    buffer = this-&gt;<a class="code" href="class_svc_1_1_dp_manager_component_base.html#a8bd206472e8c76b78c253acf873deebb">bufferGetOut_out</a>(portNum, <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(size));</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">if</span> (buffer.<a class="code" href="class_fw_1_1_buffer.html#a3780e27338ae4fb92d0ec11f21646d51">isValid</a>()) {</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="comment">// Buffer is valid</span></div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        ++this-&gt;numSuccessfulAllocations;</div>

@@ -13,15 +13,12 @@ var dir_1f5253cb5e73e32ad3f32f3f04254099 =
     [ "ConstByteArray.hpp", "const_byte_array_8hpp.html", [
       [ "ConstByteArray", "struct_fw_1_1_const_byte_array.html", "struct_fw_1_1_const_byte_array" ]
     ] ],
-    [ "EightyCharString.cpp", "eighty_char_string_8cpp.html", null ],
-    [ "EightyCharString.hpp", "eighty_char_string_8hpp.html", [
-      [ "EightyCharString", "class_fw_1_1_eighty_char_string.html", "class_fw_1_1_eighty_char_string" ]
+    [ "ExternalString.hpp", "external_string_8hpp.html", [
+      [ "ExternalString", "class_fw_1_1_external_string.html", "class_fw_1_1_external_string" ]
     ] ],
-    [ "FileNameString.cpp", "file_name_string_8cpp.html", null ],
     [ "FileNameString.hpp", "file_name_string_8hpp.html", [
       [ "FileNameString", "class_fw_1_1_file_name_string.html", "class_fw_1_1_file_name_string" ]
     ] ],
-    [ "InternalInterfaceString.cpp", "internal_interface_string_8cpp.html", null ],
     [ "InternalInterfaceString.hpp", "internal_interface_string_8hpp.html", [
       [ "InternalInterfaceString", "class_fw_1_1_internal_interface_string.html", "class_fw_1_1_internal_interface_string" ]
     ] ],
@@ -37,7 +34,6 @@ var dir_1f5253cb5e73e32ad3f32f3f04254099 =
     [ "MmapAllocator.hpp", "mmap_allocator_8hpp.html", [
       [ "MmapAllocator", "class_fw_1_1_mmap_allocator.html", "class_fw_1_1_mmap_allocator" ]
     ] ],
-    [ "ObjectName.cpp", "object_name_8cpp.html", null ],
     [ "ObjectName.hpp", "object_name_8hpp.html", [
       [ "ObjectName", "class_fw_1_1_object_name.html", "class_fw_1_1_object_name" ]
     ] ],
@@ -51,14 +47,14 @@ var dir_1f5253cb5e73e32ad3f32f3f04254099 =
     ] ],
     [ "Serializable.cpp", "serializable_8cpp.html", null ],
     [ "Serializable.hpp", "serializable_8hpp.html", "_serializable_8hpp" ],
-    [ "String.cpp", "string_8cpp.html", null ],
     [ "String.hpp", "string_8hpp.html", [
       [ "String", "class_fw_1_1_string.html", "class_fw_1_1_string" ]
     ] ],
-    [ "StringType.cpp", "string_type_8cpp.html", null ],
-    [ "StringType.hpp", "string_type_8hpp.html", [
+    [ "StringBase.cpp", "string_base_8cpp.html", null ],
+    [ "StringBase.hpp", "string_base_8hpp.html", [
       [ "StringBase", "class_fw_1_1_string_base.html", "class_fw_1_1_string_base" ]
     ] ],
+    [ "StringType.hpp", "string_type_8hpp.html", null ],
     [ "StringUtils.cpp", "string_utils_8cpp.html", null ],
     [ "StringUtils.hpp", "string_utils_8hpp.html", "_string_utils_8hpp" ]
 ];

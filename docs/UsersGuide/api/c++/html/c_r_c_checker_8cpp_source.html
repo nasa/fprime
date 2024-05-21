@@ -156,7 +156,7 @@ $(document).ready(function(){initNavTree('_c_r_c_checker_8cpp_source.html',''); 
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keywordflow">return</span>  <a class="code" href="namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a036ab3bc0b41da0adbfd3d843db87e86">FAILED_FILE_READ</a>;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      }</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      hash.<a class="code" href="class_utils_1_1_hash.html#ada43e8e904b794cd552a419476e66812">update</a>(block_data, bytes_to_read);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      hash.<a class="code" href="class_utils_1_1_hash.html#ada43e8e904b794cd552a419476e66812">update</a>(block_data, <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a><span class="keyword">&gt;</span>(bytes_to_read));</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    remaining_bytes = int_file_size % <a class="code" href="namespace_utils.html#aa770ad15435067b253e2d7325ca1c331">CRC_FILE_READ_BLOCK</a>;</div>
@@ -170,7 +170,7 @@ $(document).ready(function(){initNavTree('_c_r_c_checker_8cpp_source.html',''); 
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a036ab3bc0b41da0adbfd3d843db87e86">FAILED_FILE_READ</a>;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      }</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      hash.<a class="code" href="class_utils_1_1_hash.html#ada43e8e904b794cd552a419476e66812">update</a>(block_data, remaining_bytes);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      hash.<a class="code" href="class_utils_1_1_hash.html#ada43e8e904b794cd552a419476e66812">update</a>(block_data, <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a><span class="keyword">&gt;</span>(remaining_bytes));</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="comment">// close file</span></div>
@@ -282,10 +282,10 @@ $(document).ready(function(){initNavTree('_c_r_c_checker_8cpp_source.html',''); 
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keywordflow">return</span>  <a class="code" href="namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a036ab3bc0b41da0adbfd3d843db87e86">FAILED_FILE_READ</a>;</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;      }</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      hash.<a class="code" href="class_utils_1_1_hash.html#ada43e8e904b794cd552a419476e66812">update</a>(block_data, bytes_to_read);</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      hash.<a class="code" href="class_utils_1_1_hash.html#ada43e8e904b794cd552a419476e66812">update</a>(block_data, <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a><span class="keyword">&gt;</span>(bytes_to_read));</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    }</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    remaining_bytes = int_file_size % <a class="code" href="namespace_utils.html#aa770ad15435067b253e2d7325ca1c331">CRC_FILE_READ_BLOCK</a>;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    remaining_bytes = <span class="keyword">static_cast&lt;</span><a class="code" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a><span class="keyword">&gt;</span>(int_file_size % <a class="code" href="namespace_utils.html#aa770ad15435067b253e2d7325ca1c331">CRC_FILE_READ_BLOCK</a>);</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    bytes_to_read = remaining_bytes;</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordflow">if</span>(remaining_bytes &gt; 0)</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    {</div>

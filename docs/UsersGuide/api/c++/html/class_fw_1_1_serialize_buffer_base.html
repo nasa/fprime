@@ -104,7 +104,7 @@ Inheritance diagram for Fw::SerializeBufferBase:</div>
 <area href="class_fw_1_1_active_component_exit_serializable_buffer.html" alt="Fw::ActiveComponentExitSerializableBuffer" shape="rect" coords="265,112,520,136"/>
 <area href="class_fw_1_1_cmd_arg_buffer.html" alt="Fw::CmdArgBuffer" shape="rect" coords="265,168,520,192"/>
 <area href="class_fw_1_1_com_buffer.html" alt="Fw::ComBuffer" shape="rect" coords="265,224,520,248"/>
-<area href="class_fw_1_1_external_serialize_buffer.html" alt="Fw::ExternalSerializeBuffer" shape="rect" coords="265,280,520,304"/>
+<area href="class_fw_1_1_external_serialize_buffer.html" title="External serialize buffer with no copy semantics." alt="Fw::ExternalSerializeBuffer" shape="rect" coords="265,280,520,304"/>
 <area href="class_fw_1_1_log_buffer.html" alt="Fw::LogBuffer" shape="rect" coords="265,336,520,360"/>
 <area href="class_fw_1_1_param_buffer.html" alt="Fw::ParamBuffer" shape="rect" coords="265,392,520,416"/>
 <area href="class_fw_1_1_serial_buffer.html" title="A variable-length serializable buffer." alt="Fw::SerialBuffer" shape="rect" coords="265,448,520,472"/>
@@ -115,9 +115,6 @@ Inheritance diagram for Fw::SerializeBufferBase:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a80ecebd55c066e094018fbb17794566b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">operator=</a> (const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;src)</td></tr>
-<tr class="memdesc:a80ecebd55c066e094018fbb17794566b"><td class="mdescLeft">&#160;</td><td class="mdescRight">equal operator  <a href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">More...</a><br /></td></tr>
-<tr class="separator:a80ecebd55c066e094018fbb17794566b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad49ab86d32d754efe7b53d9d9109df8"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serialize_buffer_base.html#aad49ab86d32d754efe7b53d9d9109df8">~SerializeBufferBase</a> ()</td></tr>
 <tr class="memdesc:aad49ab86d32d754efe7b53d9d9109df8"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor  <a href="class_fw_1_1_serialize_buffer_base.html#aad49ab86d32d754efe7b53d9d9109df8">More...</a><br /></td></tr>
 <tr class="separator:aad49ab86d32d754efe7b53d9d9109df8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -240,6 +237,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
+<tr class="memitem:a80ecebd55c066e094018fbb17794566b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">operator=</a> (const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;src)</td></tr>
+<tr class="memdesc:a80ecebd55c066e094018fbb17794566b"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy assignment operator  <a href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">More...</a><br /></td></tr>
+<tr class="separator:a80ecebd55c066e094018fbb17794566b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59fe12829375cec3c99b320f6e395bbb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serialize_buffer_base.html#a59fe12829375cec3c99b320f6e395bbb">SerializeBufferBase</a> ()</td></tr>
 <tr class="memdesc:a59fe12829375cec3c99b320f6e395bbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor  <a href="class_fw_1_1_serialize_buffer_base.html#a59fe12829375cec3c99b320f6e395bbb">More...</a><br /></td></tr>
 <tr class="separator:a59fe12829375cec3c99b320f6e395bbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -335,7 +335,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>directly copies buffer without looking for a size in the stream. </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00679">679</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00682">682</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -367,7 +367,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>directly copies buffer without looking for a size in the stream. </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00692">692</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00695">695</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -389,7 +389,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize boolean </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00463">463</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00466">466</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -411,7 +411,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize 32-bit floating point </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00494">494</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00497">497</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -433,7 +433,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize 8-bit signed int </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00313">313</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00316">316</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -455,7 +455,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize an object derived from serializable base class </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00555">555</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00558">558</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -477,7 +477,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize a serialized buffer </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00559">559</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00562">562</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -499,7 +499,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize 8-bit unsigned int </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00299">299</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00302">302</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -547,7 +547,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of serialization </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00521">521</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00524">524</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -579,7 +579,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize data buffer </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00506">506</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00509">509</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -617,7 +617,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize data buffer </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00513">513</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00516">516</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -639,7 +639,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize point value (careful, pointer value only, not contents) </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00484">484</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00487">487</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -661,7 +661,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize a size value </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00591">591</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00594">594</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -683,7 +683,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Skips the number of specified bytes for deserialization. </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00623">623</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00626">626</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -763,7 +763,7 @@ Protected Member Functions</h2></td></tr>
 <p>gets address of remaining non-deserialized data. </p>
 <p>gets address of end of serialization. Used to manually place data at the end </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00712">712</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00715">715</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -783,7 +783,7 @@ Protected Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>gets address of end of serialization. DANGEROUS! Need to know max buffer size and adjust when done </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00717">717</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00720">720</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -833,7 +833,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>returns how much deserialization buffer is left </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00675">675</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00678">678</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -854,7 +854,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>returns current buffer size </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00648">648</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00651">651</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -876,7 +876,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Moves deserialization to the specified offset. </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00641">641</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00644">644</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -898,7 +898,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Moves serialization to the specified offset. </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00635">635</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00638">638</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -907,6 +907,9 @@ Protected Member Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp; Fw::SerializeBufferBase::operator= </td>
@@ -916,11 +919,16 @@ Protected Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>equal operator </p>
+<p>copy assignment operator </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00055">55</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00058">58</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -941,7 +949,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>reset deserialization to beginning </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00605">605</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00608">608</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -962,7 +970,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>reset to beginning of buffer to reuse for serialization </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00600">600</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00603">603</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -984,7 +992,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize boolean </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00202">202</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00205">205</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1006,7 +1014,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize an object derived from serializable base class </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00259">259</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00262">262</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1028,7 +1036,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize a serialized buffer </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00263">263</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00266">266</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1076,7 +1084,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of serialization </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00236">236</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00239">239</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1108,7 +1116,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize data buffer </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00227">227</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00230">230</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1146,7 +1154,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize data buffer </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00231">231</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00234">234</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1168,7 +1176,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize pointer (careful, only pointer value, not contents are serialized) </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00219">219</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00222">222</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1190,7 +1198,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize 32-bit floating point </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00195">195</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00198">198</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1212,7 +1220,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize 8-bit signed int </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00074">74</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00077">77</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1234,7 +1242,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize 8-bit unsigned int </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00062">62</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00065">65</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1256,7 +1264,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize a size value </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00286">286</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00289">289</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1278,7 +1286,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Skips the number of specified bytes for serialization. </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00609">609</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00612">612</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1310,7 +1318,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>sets buffer contents and size </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00652">652</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00655">655</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -1332,7 +1340,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>sets buffer length manually after filling with data </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00665">665</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00668">668</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>

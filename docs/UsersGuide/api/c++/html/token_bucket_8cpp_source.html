@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('_token_bucket_8cpp_source.html',''); i
 <div class="title">TokenBucket.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="token_bucket_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ====================================================================== </span></div>
+<a href="token_bucket_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// \title  TokenBucket.cpp</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">// \author vwong</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// \brief  cpp file for a rate limiter utility class</span></div>
@@ -99,7 +99,7 @@ $(document).ready(function(){initNavTree('_token_bucket_8cpp_source.html',''); i
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">//</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">// ALL RIGHTS RESERVED. United States Government Sponsorship</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// acknowledged.</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">// ====================================================================== </span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="token_bucket_8hpp.html">Utils/TokenBucket.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
@@ -132,7 +132,7 @@ $(document).ready(function(){initNavTree('_token_bucket_8cpp_source.html',''); i
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      m_tokens(maxTokens),</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      m_time(0, 0)</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_maxTokens &lt;= MAX_TOKEN_BUCKET_TOKENS, this-&gt;m_maxTokens);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_maxTokens &lt;= <a class="code" href="token_bucket_8hpp.html#a8989e1931a56f7f3c08ac5c9ffbce499">MAX_TOKEN_BUCKET_TOKENS</a>, <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(this-&gt;m_maxTokens));</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  }</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
 <div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="class_utils_1_1_token_bucket.html#afd76a523e503a381fec739261aabac5d">   48</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_utils_1_1_token_bucket.html#afd76a523e503a381fec739261aabac5d">TokenBucket ::</a></div>
@@ -224,7 +224,9 @@ $(document).ready(function(){initNavTree('_token_bucket_8cpp_source.html',''); i
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;} <span class="comment">// end namespace Utils</span></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_aa15003c81ae77d50e6806f6c7d7f7cc3"><div class="ttname"><a href="basic_types_8h.html#aa15003c81ae77d50e6806f6c7d7f7cc3">FW_MIN</a></div><div class="ttdeci">#define FW_MIN(a, b)</div><div class="ttdoc">MIN macro.</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00068">BasicTypes.h:68</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a088216dbd07b926d5234aeaf1a18cd7d"><div class="ttname"><a href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a></div><div class="ttdeci">PlatformAssertArgType FwAssertArgType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00034">FpConfig.h:34</a></div></div>
 <div class="ttc" id="a_token_bucket_8hpp_html"><div class="ttname"><a href="token_bucket_8hpp.html">TokenBucket.hpp</a></div></div>
+<div class="ttc" id="a_token_bucket_8hpp_html_a8989e1931a56f7f3c08ac5c9ffbce499"><div class="ttname"><a href="token_bucket_8hpp.html#a8989e1931a56f7f3c08ac5c9ffbce499">MAX_TOKEN_BUCKET_TOKENS</a></div><div class="ttdeci">#define MAX_TOKEN_BUCKET_TOKENS</div><div class="ttdef"><b>Definition:</b> <a href="token_bucket_8hpp_source.html#l00020">TokenBucket.hpp:20</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_time_html"><div class="ttname"><a href="class_fw_1_1_time.html">Fw::Time</a></div><div class="ttdef"><b>Definition:</b> <a href="time_8hpp_source.html#l00009">Time.hpp:9</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_time_html_a04bb5855a5c1a2ea0253f43eb0cc0cc3"><div class="ttname"><a href="class_fw_1_1_time.html#a04bb5855a5c1a2ea0253f43eb0cc0cc3">Fw::Time::add</a></div><div class="ttdeci">static Time add(const Time &amp;a, const Time &amp;b)</div><div class="ttdef"><b>Definition:</b> <a href="time_8cpp_source.html#l00192">Time.cpp:193</a></div></div>
 <div class="ttc" id="aclass_utils_1_1_token_bucket_html_a0ea50c376749752fffd3b135d8f73f86"><div class="ttname"><a href="class_utils_1_1_token_bucket.html#a0ea50c376749752fffd3b135d8f73f86">Utils::TokenBucket::setMaxTokens</a></div><div class="ttdeci">void setMaxTokens(U32 maxTokens)</div><div class="ttdef"><b>Definition:</b> <a href="token_bucket_8cpp_source.html#l00056">TokenBucket.cpp:57</a></div></div>

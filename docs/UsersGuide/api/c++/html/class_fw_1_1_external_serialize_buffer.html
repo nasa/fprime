@@ -86,11 +86,15 @@ $(document).ready(function(){initNavTree('class_fw_1_1_external_serialize_buffer
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_fw_1_1_external_serialize_buffer-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Fw::ExternalSerializeBuffer Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>External serialize buffer with no copy semantics.  
+ <a href="class_fw_1_1_external_serialize_buffer.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="serializable_8hpp_source.html">Fw/Types/Serializable.hpp</a>&gt;</code></p>
 <div class="dynheader">
@@ -99,7 +103,9 @@ Inheritance diagram for Fw::ExternalSerializeBuffer:</div>
  <div class="center">
   <img src="class_fw_1_1_external_serialize_buffer.png" usemap="#Fw::ExternalSerializeBuffer_map" alt=""/>
   <map id="Fw::ExternalSerializeBuffer_map" name="Fw::ExternalSerializeBuffer_map">
-<area href="class_fw_1_1_serialize_buffer_base.html" alt="Fw::SerializeBufferBase" shape="rect" coords="0,0,165,24"/>
+<area href="class_fw_1_1_serialize_buffer_base.html" alt="Fw::SerializeBufferBase" shape="rect" coords="137,0,402,24"/>
+<area href="class_fw_1_1_external_serialize_buffer_with_data_copy.html" alt="Fw::ExternalSerializeBufferWithDataCopy" shape="rect" coords="0,112,265,136"/>
+<area href="class_fw_1_1_external_serialize_buffer_with_member_copy.html" alt="Fw::ExternalSerializeBufferWithMemberCopy" shape="rect" coords="275,112,540,136"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -111,12 +117,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa1065cda0158398485f4c12225c6e39e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#aa1065cda0158398485f4c12225c6e39e">ExternalSerializeBuffer</a> ()</td></tr>
 <tr class="memdesc:aa1065cda0158398485f4c12225c6e39e"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor  <a href="class_fw_1_1_external_serialize_buffer.html#aa1065cda0158398485f4c12225c6e39e">More...</a><br /></td></tr>
 <tr class="separator:aa1065cda0158398485f4c12225c6e39e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11da10cf65c23361bdc7d68abedebd43"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#a11da10cf65c23361bdc7d68abedebd43">~ExternalSerializeBuffer</a> ()</td></tr>
+<tr class="memdesc:a11da10cf65c23361bdc7d68abedebd43"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor  <a href="class_fw_1_1_external_serialize_buffer.html#a11da10cf65c23361bdc7d68abedebd43">More...</a><br /></td></tr>
+<tr class="separator:a11da10cf65c23361bdc7d68abedebd43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82737ce7c90d9a3a0fb982ab4802cdb7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#a82737ce7c90d9a3a0fb982ab4802cdb7">setExtBuffer</a> (<a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffPtr, <a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">Serializable::SizeType</a> size)</td></tr>
 <tr class="memdesc:a82737ce7c90d9a3a0fb982ab4802cdb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the external buffer.  <a href="class_fw_1_1_external_serialize_buffer.html#a82737ce7c90d9a3a0fb982ab4802cdb7">More...</a><br /></td></tr>
 <tr class="separator:a82737ce7c90d9a3a0fb982ab4802cdb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99610a36b33594674f03a8ab8160ee6c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#a99610a36b33594674f03a8ab8160ee6c">clear</a> ()</td></tr>
 <tr class="memdesc:a99610a36b33594674f03a8ab8160ee6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">clear external buffer  <a href="class_fw_1_1_external_serialize_buffer.html#a99610a36b33594674f03a8ab8160ee6c">More...</a><br /></td></tr>
 <tr class="separator:a99610a36b33594674f03a8ab8160ee6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40b6de569442a7c356bccb784b54f569"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#a40b6de569442a7c356bccb784b54f569">ExternalSerializeBuffer</a> (const <a class="el" href="class_fw_1_1_external_serialize_buffer.html">ExternalSerializeBuffer</a> &amp;src)=delete</td></tr>
+<tr class="memdesc:a40b6de569442a7c356bccb784b54f569"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleted copy constructor  <a href="class_fw_1_1_external_serialize_buffer.html#a40b6de569442a7c356bccb784b54f569">More...</a><br /></td></tr>
+<tr class="separator:a40b6de569442a7c356bccb784b54f569"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6da2462ad1a75df99278fe3233c49902"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">Serializable::SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#a6da2462ad1a75df99278fe3233c49902">getBuffCapacity</a> () const</td></tr>
 <tr class="memdesc:a6da2462ad1a75df99278fe3233c49902"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns capacity, not current size, of buffer  <a href="class_fw_1_1_external_serialize_buffer.html#a6da2462ad1a75df99278fe3233c49902">More...</a><br /></td></tr>
 <tr class="separator:a6da2462ad1a75df99278fe3233c49902"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -126,10 +138,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae4486c1f6a1007e1b4e2dc881485f3de"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#ae4486c1f6a1007e1b4e2dc881485f3de">getBuffAddr</a> () const</td></tr>
 <tr class="memdesc:ae4486c1f6a1007e1b4e2dc881485f3de"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets buffer address for data reading, const version  <a href="class_fw_1_1_external_serialize_buffer.html#ae4486c1f6a1007e1b4e2dc881485f3de">More...</a><br /></td></tr>
 <tr class="separator:ae4486c1f6a1007e1b4e2dc881485f3de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9853746d6f8b0ec83a44a1b2147b3c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_external_serialize_buffer.html">ExternalSerializeBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#ab9853746d6f8b0ec83a44a1b2147b3c3">operator=</a> (const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;src)=delete</td></tr>
+<tr class="memdesc:ab9853746d6f8b0ec83a44a1b2147b3c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleted copy assignment operator  <a href="class_fw_1_1_external_serialize_buffer.html#ab9853746d6f8b0ec83a44a1b2147b3c3">More...</a><br /></td></tr>
+<tr class="separator:ab9853746d6f8b0ec83a44a1b2147b3c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_serialize_buffer_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_serialize_buffer_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a></td></tr>
-<tr class="memitem:a80ecebd55c066e094018fbb17794566b inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">operator=</a> (const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;src)</td></tr>
-<tr class="memdesc:a80ecebd55c066e094018fbb17794566b inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">equal operator  <a href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">More...</a><br /></td></tr>
-<tr class="separator:a80ecebd55c066e094018fbb17794566b inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad49ab86d32d754efe7b53d9d9109df8 inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serialize_buffer_base.html#aad49ab86d32d754efe7b53d9d9109df8">~SerializeBufferBase</a> ()</td></tr>
 <tr class="memdesc:aad49ab86d32d754efe7b53d9d9109df8 inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor  <a href="class_fw_1_1_serialize_buffer_base.html#aad49ab86d32d754efe7b53d9d9109df8">More...</a><br /></td></tr>
 <tr class="separator:aad49ab86d32d754efe7b53d9d9109df8 inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -241,19 +253,32 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ad119837a7fa95ff9ea9a0b5a967dd435 inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">directly copies buffer without looking for a size in the stream.  <a href="class_fw_1_1_serialize_buffer_base.html#ad119837a7fa95ff9ea9a0b5a967dd435">More...</a><br /></td></tr>
 <tr class="separator:ad119837a7fa95ff9ea9a0b5a967dd435 inherit pub_methods_class_fw_1_1_serialize_buffer_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a72a99f2ea76a7c0dfeaeb0ceccedb74e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#a72a99f2ea76a7c0dfeaeb0ceccedb74e">m_buff</a></td></tr>
+<tr class="memdesc:a72a99f2ea76a7c0dfeaeb0ceccedb74e"><td class="mdescLeft">&#160;</td><td class="mdescRight">pointer to external buffer  <a href="class_fw_1_1_external_serialize_buffer.html#a72a99f2ea76a7c0dfeaeb0ceccedb74e">More...</a><br /></td></tr>
+<tr class="separator:a72a99f2ea76a7c0dfeaeb0ceccedb74e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb73d11a5268f472c3223ee76048e6d7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">Serializable::SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_external_serialize_buffer.html#adb73d11a5268f472c3223ee76048e6d7">m_buffSize</a></td></tr>
+<tr class="memdesc:adb73d11a5268f472c3223ee76048e6d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">size of external buffer  <a href="class_fw_1_1_external_serialize_buffer.html#adb73d11a5268f472c3223ee76048e6d7">More...</a><br /></td></tr>
+<tr class="separator:adb73d11a5268f472c3223ee76048e6d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_fw_1_1_serialize_buffer_base"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_fw_1_1_serialize_buffer_base')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a></td></tr>
+<tr class="memitem:a80ecebd55c066e094018fbb17794566b inherit pro_methods_class_fw_1_1_serialize_buffer_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">operator=</a> (const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;src)</td></tr>
+<tr class="memdesc:a80ecebd55c066e094018fbb17794566b inherit pro_methods_class_fw_1_1_serialize_buffer_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy assignment operator  <a href="class_fw_1_1_serialize_buffer_base.html#a80ecebd55c066e094018fbb17794566b">More...</a><br /></td></tr>
+<tr class="separator:a80ecebd55c066e094018fbb17794566b inherit pro_methods_class_fw_1_1_serialize_buffer_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59fe12829375cec3c99b320f6e395bbb inherit pro_methods_class_fw_1_1_serialize_buffer_base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serialize_buffer_base.html#a59fe12829375cec3c99b320f6e395bbb">SerializeBufferBase</a> ()</td></tr>
 <tr class="memdesc:a59fe12829375cec3c99b320f6e395bbb inherit pro_methods_class_fw_1_1_serialize_buffer_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor  <a href="class_fw_1_1_serialize_buffer_base.html#a59fe12829375cec3c99b320f6e395bbb">More...</a><br /></td></tr>
 <tr class="separator:a59fe12829375cec3c99b320f6e395bbb inherit pro_methods_class_fw_1_1_serialize_buffer_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="serializable_8hpp_source.html#l00206">206</a> of file <a class="el" href="serializable_8hpp_source.html">Serializable.hpp</a>.</p>
+<div class="textblock"><p>External serialize buffer with no copy semantics. </p>
+
+<p class="definition">Definition at line <a class="el" href="serializable_8hpp_source.html#l00209">209</a> of file <a class="el" href="serializable_8hpp_source.html">Serializable.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab254aeedb310fd725c53e1287be91983"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab254aeedb310fd725c53e1287be91983">&#9670;&nbsp;</a></span>ExternalSerializeBuffer() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab254aeedb310fd725c53e1287be91983">&#9670;&nbsp;</a></span>ExternalSerializeBuffer() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -280,12 +305,12 @@ Additional Inherited Members</h2></td></tr>
 
 <p>construct with external buffer </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00755">755</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00758">758</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
 <a id="aa1065cda0158398485f4c12225c6e39e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1065cda0158398485f4c12225c6e39e">&#9670;&nbsp;</a></span>ExternalSerializeBuffer() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1065cda0158398485f4c12225c6e39e">&#9670;&nbsp;</a></span>ExternalSerializeBuffer() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -301,7 +326,64 @@ Additional Inherited Members</h2></td></tr>
 
 <p>default constructor </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00759">759</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00762">762</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a11da10cf65c23361bdc7d68abedebd43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11da10cf65c23361bdc7d68abedebd43">&#9670;&nbsp;</a></span>~ExternalSerializeBuffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Fw::ExternalSerializeBuffer::~ExternalSerializeBuffer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>destructor </p>
+
+<p class="definition">Definition at line <a class="el" href="serializable_8hpp_source.html#l00213">213</a> of file <a class="el" href="serializable_8hpp_source.html">Serializable.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a40b6de569442a7c356bccb784b54f569"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40b6de569442a7c356bccb784b54f569">&#9670;&nbsp;</a></span>ExternalSerializeBuffer() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Fw::ExternalSerializeBuffer::ExternalSerializeBuffer </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_external_serialize_buffer.html">ExternalSerializeBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>deleted copy constructor </p>
 
 </div>
 </div>
@@ -323,7 +405,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>clear external buffer </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00769">769</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00772">772</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -354,7 +436,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_fw_1_1_serialize_buffer_base.html#a0b5e0fdec08aa08e7eedd2e9bde10b7a">Fw::SerializeBufferBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00778">778</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00781">781</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -385,7 +467,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_fw_1_1_serialize_buffer_base.html#acd6ea18045472e9090ec8823185cb676">Fw::SerializeBufferBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00782">782</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00785">785</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
 
 </div>
 </div>
@@ -416,7 +498,35 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_fw_1_1_serialize_buffer_base.html#ad4f6528c0b66b00a59030e2182caa7b6">Fw::SerializeBufferBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00774">774</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00777">777</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab9853746d6f8b0ec83a44a1b2147b3c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9853746d6f8b0ec83a44a1b2147b3c3">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_external_serialize_buffer.html">ExternalSerializeBuffer</a>&amp; Fw::ExternalSerializeBuffer::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">SerializeBufferBase</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>deleted copy assignment operator </p>
 
 </div>
 </div>
@@ -448,7 +558,60 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Set the external buffer. </p>
 
-<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00763">763</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="serializable_8cpp_source.html#l00766">766</a> of file <a class="el" href="serializable_8cpp_source.html">Serializable.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a72a99f2ea76a7c0dfeaeb0ceccedb74e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72a99f2ea76a7c0dfeaeb0ceccedb74e">&#9670;&nbsp;</a></span>m_buff</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* Fw::ExternalSerializeBuffer::m_buff</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>pointer to external buffer </p>
+
+<p class="definition">Definition at line <a class="el" href="serializable_8hpp_source.html#l00228">228</a> of file <a class="el" href="serializable_8hpp_source.html">Serializable.hpp</a>.</p>
+
+</div>
+</div>
+<a id="adb73d11a5268f472c3223ee76048e6d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb73d11a5268f472c3223ee76048e6d7">&#9670;&nbsp;</a></span>m_buffSize</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">Serializable::SizeType</a> Fw::ExternalSerializeBuffer::m_buffSize</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>size of external buffer </p>
+
+<p class="definition">Definition at line <a class="el" href="serializable_8hpp_source.html#l00229">229</a> of file <a class="el" href="serializable_8hpp_source.html">Serializable.hpp</a>.</p>
 
 </div>
 </div>

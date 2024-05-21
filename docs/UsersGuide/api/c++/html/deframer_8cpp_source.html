@@ -246,7 +246,7 @@ $(document).ready(function(){initNavTree('_deframer_8cpp_source.html',''); initR
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                    <span class="comment">// The FileUplink component does not expect the packet</span></div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                    <span class="comment">// type to be there.</span></div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                    packetBuffer.<a class="code" href="class_fw_1_1_buffer.html#a8e22fb1466a971f05b264a4dbee6f789">setData</a>(packetData + <span class="keyword">sizeof</span>(packetType));</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                    packetBuffer.<a class="code" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">setSize</a>(packetSize - <span class="keyword">sizeof</span>(packetType));</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                    packetBuffer.<a class="code" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">setSize</a>(<span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(packetSize - <span class="keyword">sizeof</span>(packetType)));</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                    <span class="comment">// Send the packet buffer</span></div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                    <a class="code" href="class_svc_1_1_deframer_component_base.html#a45e1d4048744954d63cea992124dc5e9">bufferOut_out</a>(0, packetBuffer);</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                    <span class="comment">// Transfer ownership of the buffer to the receiver</span></div>
@@ -299,107 +299,118 @@ $(document).ready(function(){initNavTree('_deframer_8cpp_source.html',''); initR
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        <span class="keyword">const</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> status =</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;            m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a1b3d376fb8924ef1905b5403ec398aad">serialize</a>(&amp;bufferData[offset], serSize);</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        <span class="comment">// If data does not fit, there is a coding error</span></div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(status == <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>, status, offset, serSize);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        <span class="comment">// Process the data</span></div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        processRing();</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="comment">// Update buffer offset and remaining</span></div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        offset += serSize;</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        remaining -= serSize;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    }</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="comment">// In every iteration, either remaining == 0 and we break out</span></div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    <span class="comment">// of the loop, or we consume at least one byte from the buffer.</span></div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="comment">// So there should be no data left in the buffer.</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(remaining == 0, remaining);</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;}</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="keywordtype">void</span> Deframer ::processRing() {</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            status == <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>,</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(status),</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(offset),</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;            <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(serSize));</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="comment">// Process the data</span></div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        processRing();</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        <span class="comment">// Update buffer offset and remaining</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        offset += serSize;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        remaining -= serSize;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    }</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <span class="comment">// In every iteration, either remaining == 0 and we break out</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="comment">// of the loop, or we consume at least one byte from the buffer.</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <span class="comment">// So there should be no data left in the buffer.</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(remaining == 0, <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(remaining));</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(m_protocol != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;}</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="comment">// The number of remaining bytes in the ring buffer</span></div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    U32 remaining = 0;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="comment">// The protocol status</span></div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741a">DeframingProtocol::DeframingStatus</a> status =</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa47094b747397c2416a7984c4b998fcde">DeframingProtocol::DEFRAMING_STATUS_SUCCESS</a>;</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="comment">// The ring buffer capacity</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> ringCapacity = m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#acdc7acfe86eb8d63b3b3d96c7dbc3bf8">get_capacity</a>();</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="comment">// Process the ring buffer looking for at least the header</span></div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordflow">for</span> (U32 i = 0; i &lt; ringCapacity; i++) {</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        <span class="comment">// Get the number of bytes remaining in the ring buffer</span></div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        remaining = m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>();</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        <span class="comment">// If there are none, we are done</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        <span class="keywordflow">if</span> (remaining == 0) {</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        }</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        <span class="comment">// Needed is an out-only variable</span></div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        <span class="comment">// Initialize it to zero</span></div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        U32 needed = 0;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="comment">// Call the deframe method of the protocol, getting</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        <span class="comment">// needed and status</span></div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        status = m_protocol-&gt;<a class="code" href="class_svc_1_1_deframing_protocol.html#a1dea66ee21da29ad814e44d1fd497e5e">deframe</a>(m_inRing, needed);</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        <span class="comment">// Deframing protocol must not consume data in the ring buffer</span></div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>() == remaining,</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>(),</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            remaining</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        );</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <span class="comment">// On successful deframing, consume data from the ring buffer now</span></div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="keywordflow">if</span> (status == <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa47094b747397c2416a7984c4b998fcde">DeframingProtocol::DEFRAMING_STATUS_SUCCESS</a>) {</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            <span class="comment">// If deframing succeeded, protocol should set needed</span></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;            <span class="comment">// to a non-zero value</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(needed != 0);</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(needed &lt;= remaining, needed, remaining);</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#af0569c4160d2f1b95cc383c1c4f69875">rotate</a>(needed);</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>() == remaining - needed,</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>(),</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                remaining,</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                needed</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;            );</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        }</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        <span class="comment">// More data needed</span></div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (status == <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa6962545ca45259369c50fb04ceb387e0">DeframingProtocol::DEFRAMING_MORE_NEEDED</a>) {</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;            <span class="comment">// Deframing protocol should not report &quot;more is needed&quot;</span></div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            <span class="comment">// unless more is needed</span></div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(needed &gt; remaining, needed, remaining);</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;            <span class="comment">// Break out of loop: suspend deframing until we receive</span></div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;            <span class="comment">// another buffer</span></div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        }</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        <span class="comment">// Error occurred</span></div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            <span class="comment">// Skip one byte of bad data</span></div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;            m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#af0569c4160d2f1b95cc383c1c4f69875">rotate</a>(1);</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>() == remaining - 1,</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>(),</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                remaining</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            );</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            <span class="comment">// Log checksum errors</span></div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;            <span class="comment">// This is likely a real error, not an artifact of other data corruption</span></div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            <span class="keywordflow">if</span> (status == <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aaf684feb120fae5ba252f4189dfae7d50">DeframingProtocol::DEFRAMING_INVALID_CHECKSUM</a>) {</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                <a class="code" href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a>(<span class="stringliteral">&quot;[ERROR] Deframing checksum validation failed\n&quot;</span>);</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            }</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        }</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    }</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="comment">// If more not needed, circular buffer should be empty</span></div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa6962545ca45259369c50fb04ceb387e0">DeframingProtocol::DEFRAMING_MORE_NEEDED</a>) {</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(remaining == 0, remaining);</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    }</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;}</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160; </div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;}  <span class="comment">// end namespace Svc</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="keywordtype">void</span> Deframer ::processRing() {</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(m_protocol != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="comment">// The number of remaining bytes in the ring buffer</span></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    U32 remaining = 0;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="comment">// The protocol status</span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741a">DeframingProtocol::DeframingStatus</a> status =</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa47094b747397c2416a7984c4b998fcde">DeframingProtocol::DEFRAMING_STATUS_SUCCESS</a>;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="comment">// The ring buffer capacity</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> ringCapacity = m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#acdc7acfe86eb8d63b3b3d96c7dbc3bf8">get_capacity</a>();</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="comment">// Process the ring buffer looking for at least the header</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="keywordflow">for</span> (U32 i = 0; i &lt; ringCapacity; i++) {</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        <span class="comment">// Get the number of bytes remaining in the ring buffer</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        remaining = m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>();</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        <span class="comment">// If there are none, we are done</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        <span class="keywordflow">if</span> (remaining == 0) {</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        }</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        <span class="comment">// Needed is an out-only variable</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        <span class="comment">// Initialize it to zero</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        U32 needed = 0;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        <span class="comment">// Call the deframe method of the protocol, getting</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="comment">// needed and status</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        status = m_protocol-&gt;<a class="code" href="class_svc_1_1_deframing_protocol.html#a1dea66ee21da29ad814e44d1fd497e5e">deframe</a>(m_inRing, needed);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="comment">// Deframing protocol must not consume data in the ring buffer</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>() == remaining,</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;            <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>()),</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(remaining)</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        );</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        <span class="comment">// On successful deframing, consume data from the ring buffer now</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="keywordflow">if</span> (status == <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa47094b747397c2416a7984c4b998fcde">DeframingProtocol::DEFRAMING_STATUS_SUCCESS</a>) {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            <span class="comment">// If deframing succeeded, protocol should set needed</span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="comment">// to a non-zero value</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(needed != 0);</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                needed &lt;= remaining,</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(needed),</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(remaining));</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#af0569c4160d2f1b95cc383c1c4f69875">rotate</a>(needed);</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>() == remaining - needed,</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>()),</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(remaining),</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(needed)</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;            );</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        }</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        <span class="comment">// More data needed</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (status == <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa6962545ca45259369c50fb04ceb387e0">DeframingProtocol::DEFRAMING_MORE_NEEDED</a>) {</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;            <span class="comment">// Deframing protocol should not report &quot;more is needed&quot;</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            <span class="comment">// unless more is needed</span></div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                needed &gt; remaining,</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(needed),</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(remaining));</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            <span class="comment">// Break out of loop: suspend deframing until we receive</span></div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="comment">// another buffer</span></div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        }</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        <span class="comment">// Error occurred</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            <span class="comment">// Skip one byte of bad data</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#af0569c4160d2f1b95cc383c1c4f69875">rotate</a>(1);</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>() == remaining - 1,</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(m_inRing.<a class="code" href="class_types_1_1_circular_buffer.html#a310d9d107de4b2555559f3fa159d4b3b">get_allocated_size</a>()),</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(remaining)</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;            );</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;            <span class="comment">// Log checksum errors</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;            <span class="comment">// This is likely a real error, not an artifact of other data corruption</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            <span class="keywordflow">if</span> (status == <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aaf684feb120fae5ba252f4189dfae7d50">DeframingProtocol::DEFRAMING_INVALID_CHECKSUM</a>) {</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                <a class="code" href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a>(<span class="stringliteral">&quot;[ERROR] Deframing checksum validation failed\n&quot;</span>);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            }</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        }</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    }</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="comment">// If more not needed, circular buffer should be empty</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa6962545ca45259369c50fb04ceb387e0">DeframingProtocol::DEFRAMING_MORE_NEEDED</a>) {</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(remaining == 0, <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(remaining));</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    }</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;}</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160; </div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;}  <span class="comment">// end namespace Svc</span></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00026">BasicTypes.h:26</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00052">BasicTypes.h:52</a></div></div>
 <div class="ttc" id="a_com_packet_8hpp_html"><div class="ttname"><a href="com_packet_8hpp.html">ComPacket.hpp</a></div></div>
 <div class="ttc" id="a_deframer_8hpp_html"><div class="ttname"><a href="deframer_8hpp.html">Deframer.hpp</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a088216dbd07b926d5234aeaf1a18cd7d"><div class="ttname"><a href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a></div><div class="ttdeci">PlatformAssertArgType FwAssertArgType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00034">FpConfig.h:34</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a6ee2232cd0b3ee9ef2a0523f7a6d7bbf"><div class="ttname"><a href="fp_config_8h.html#a6ee2232cd0b3ee9ef2a0523f7a6d7bbf">FwPacketDescriptorType</a></div><div class="ttdeci">U32 FwPacketDescriptorType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00074">FpConfig.h:74</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00078">FpConfig.h:78</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
@@ -424,9 +435,9 @@ $(document).ready(function(){initNavTree('_deframer_8cpp_source.html',''); initR
 <div class="ttc" id="aclass_fw_1_1_logger_html_a0a68fd1aef48f608252dd3e84013035a"><div class="ttname"><a href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a></div><div class="ttdeci">static void logMsg(const char *fmt, POINTER_CAST a0=0, POINTER_CAST a1=0, POINTER_CAST a2=0, POINTER_CAST a3=0, POINTER_CAST a4=0, POINTER_CAST a5=0, POINTER_CAST a6=0, POINTER_CAST a7=0, POINTER_CAST a8=0, POINTER_CAST a9=0)</div><div class="ttdef"><b>Definition:</b> <a href="logger_8cpp_source.html#l00018">Logger.cpp:18</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a></div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00054">Serializable.hpp:54</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a17f8017490c120fed6b647aa5d871274"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a17f8017490c120fed6b647aa5d871274">Fw::SerializeBufferBase::setBuffLen</a></div><div class="ttdeci">SerializeStatus setBuffLen(Serializable::SizeType length)</div><div class="ttdoc">sets buffer length manually after filling with data</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00665">Serializable.cpp:665</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a881cac371d232822801e799936ad533e"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a881cac371d232822801e799936ad533e">Fw::SerializeBufferBase::setBuff</a></div><div class="ttdeci">SerializeStatus setBuff(const U8 *src, Serializable::SizeType length)</div><div class="ttdoc">sets buffer contents and size</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00652">Serializable.cpp:652</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a99f6c704e514620bf8e26dc28a6f698a"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">Fw::SerializeBufferBase::deserialize</a></div><div class="ttdeci">SerializeStatus deserialize(U8 &amp;val)</div><div class="ttdoc">deserialize 8-bit unsigned int</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00299">Serializable.cpp:299</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a17f8017490c120fed6b647aa5d871274"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a17f8017490c120fed6b647aa5d871274">Fw::SerializeBufferBase::setBuffLen</a></div><div class="ttdeci">SerializeStatus setBuffLen(Serializable::SizeType length)</div><div class="ttdoc">sets buffer length manually after filling with data</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00668">Serializable.cpp:668</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a881cac371d232822801e799936ad533e"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a881cac371d232822801e799936ad533e">Fw::SerializeBufferBase::setBuff</a></div><div class="ttdeci">SerializeStatus setBuff(const U8 *src, Serializable::SizeType length)</div><div class="ttdoc">sets buffer contents and size</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00655">Serializable.cpp:655</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a99f6c704e514620bf8e26dc28a6f698a"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">Fw::SerializeBufferBase::deserialize</a></div><div class="ttdeci">SerializeStatus deserialize(U8 &amp;val)</div><div class="ttdoc">deserialize 8-bit unsigned int</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00302">Serializable.cpp:302</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_deframer_component_base_html"><div class="ttname"><a href="class_svc_1_1_deframer_component_base.html">Svc::DeframerComponentBase</a></div><div class="ttdoc">Auto-generated base for Deframer component.</div><div class="ttdef"><b>Definition:</b> <a href="deframer_component_ac_8hpp_source.html#l00030">DeframerComponentAc.hpp:32</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_deframer_component_base_html_a061e2248e6fc884b437fff1643fd2cd6"><div class="ttname"><a href="class_svc_1_1_deframer_component_base.html#a061e2248e6fc884b437fff1643fd2cd6">Svc::DeframerComponentBase::bufferDeallocate_out</a></div><div class="ttdeci">void bufferDeallocate_out(FwIndexType portNum, Fw::Buffer &amp;fwBuffer)</div><div class="ttdoc">Invoke output port bufferDeallocate.</div><div class="ttdef"><b>Definition:</b> <a href="deframer_component_ac_8cpp_source.html#l00652">DeframerComponentAc.cpp:653</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_deframer_component_base_html_a1719b06bde3e6d9bb321522c8c552a1d"><div class="ttname"><a href="class_svc_1_1_deframer_component_base.html#a1719b06bde3e6d9bb321522c8c552a1d">Svc::DeframerComponentBase::framedDeallocate_out</a></div><div class="ttdeci">void framedDeallocate_out(FwIndexType portNum, Fw::Buffer &amp;fwBuffer)</div><div class="ttdoc">Invoke output port framedDeallocate.</div><div class="ttdef"><b>Definition:</b> <a href="deframer_component_ac_8cpp_source.html#l00699">DeframerComponentAc.cpp:700</a></div></div>

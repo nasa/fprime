@@ -195,7 +195,7 @@ $(document).ready(function(){initNavTree('_lockless_queue_8cpp_source.html','');
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        }</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="comment">// Copy the data into the buffer</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        memcpy(my_node-&gt;data, buffer, size);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        memcpy(my_node-&gt;data, buffer, <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(size));</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        my_node-&gt;size = size;</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        my_node-&gt;next = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
@@ -240,7 +240,7 @@ $(document).ready(function(){initNavTree('_lockless_queue_8cpp_source.html','');
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        PushFree(old_node);</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        <span class="comment">// Copy the data from the buffer</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        memcpy(buffer, my_node-&gt;data, my_node-&gt;size);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        memcpy(buffer, my_node-&gt;data, <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(my_node-&gt;size));</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        size = my_node-&gt;size;</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Queue::QUEUE_OK</a>;</div>

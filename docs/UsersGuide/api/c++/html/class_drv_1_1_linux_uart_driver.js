@@ -21,7 +21,7 @@ var class_drv_1_1_linux_uart_driver =
     [ "~LinuxUartDriver", "class_drv_1_1_linux_uart_driver.html#a823e807b3ec996fd56037a2f0a32e814", null ],
     [ "init", "class_drv_1_1_linux_uart_driver.html#a79f927992c95978a05fccff022fabc5b", null ],
     [ "join", "class_drv_1_1_linux_uart_driver.html#aa0b23ab08df1356b4815598b036a596f", null ],
-    [ "open", "class_drv_1_1_linux_uart_driver.html#a244a7d081a0bf1019784a00738467842", null ],
+    [ "open", "class_drv_1_1_linux_uart_driver.html#ab9010bed494907559e283121f039a651", null ],
     [ "quitReadThread", "class_drv_1_1_linux_uart_driver.html#a11267c2c96cd891099b18f1e054b6277", null ],
     [ "startReadThread", "class_drv_1_1_linux_uart_driver.html#af0309c295728c8c37562bd3112706b18", null ]
 ];

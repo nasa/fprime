@@ -17,6 +17,7 @@ var dir_b74cccf55867ed6e332b9e2e329e0c6d =
     [ "ComStub", "dir_7a72fb94edf3f4082cdd765c082a0763.html", "dir_7a72fb94edf3f4082cdd765c082a0763" ],
     [ "Cycle", "dir_82a40762a6b1495067c1eba2b93d7726.html", "dir_82a40762a6b1495067c1eba2b93d7726" ],
     [ "Deframer", "dir_6bf02b039b70c2f6351dfc80571f0b3f.html", "dir_6bf02b039b70c2f6351dfc80571f0b3f" ],
+    [ "DpCatalog", "dir_e7b671e3e4cbf09b68380c8bb6293275.html", "dir_e7b671e3e4cbf09b68380c8bb6293275" ],
     [ "DpManager", "dir_4bf948d1bad8f805ff77a427d3924898.html", "dir_4bf948d1bad8f805ff77a427d3924898" ],
     [ "DpPorts", "dir_4cd09b8f88e30faca124475a1c7fe43e.html", "dir_4cd09b8f88e30faca124475a1c7fe43e" ],
     [ "DpWriter", "dir_9eafafda2c633f76fd18ff64c2538edc.html", "dir_9eafafda2c633f76fd18ff64c2538edc" ],

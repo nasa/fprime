@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('class_fw_1_1_file_name_string.html',''
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_fw_1_1_file_name_string-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Fw::FileNameString Class Reference</div>  </div>
+<div class="title">Fw::FileNameString Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -107,11 +107,11 @@ Inheritance diagram for Fw::FileNameString:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:af5ebd969bcd75df76da9ef78999a61e2"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_file_name_string.html#af5ebd969bcd75df76da9ef78999a61e2ae54580586e4dbf905ac8bc55c53f5a89">SERIALIZED_TYPE_ID</a> = FW_TYPEID_FILE_NAME_STRING
-, <a class="el" href="class_fw_1_1_file_name_string.html#af5ebd969bcd75df76da9ef78999a61e2ae7313df658e606465dacbfdd7899069e">STRING_SIZE</a> = FileNameStringSize
-, <a class="el" href="class_fw_1_1_file_name_string.html#af5ebd969bcd75df76da9ef78999a61e2ada26a0f7c17b7ee5d52bbc080d67a595">SERIALIZED_SIZE</a> = STRING_SIZE + sizeof(FwBuffSizeType)
+<tr class="memitem:a21a4e7cee33d8daaf6028a27d4afb319"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_file_name_string.html#a21a4e7cee33d8daaf6028a27d4afb319ae54580586e4dbf905ac8bc55c53f5a89">SERIALIZED_TYPE_ID</a> = FW_TYPEID_FILE_NAME_STRING
+, <a class="el" href="class_fw_1_1_file_name_string.html#a21a4e7cee33d8daaf6028a27d4afb319ae7313df658e606465dacbfdd7899069e">STRING_SIZE</a> = FileNameStringSize
+, <a class="el" href="class_fw_1_1_file_name_string.html#a21a4e7cee33d8daaf6028a27d4afb319ada26a0f7c17b7ee5d52bbc080d67a595">SERIALIZED_SIZE</a> = STATIC_SERIALIZED_SIZE(STRING_SIZE)
  }</td></tr>
-<tr class="separator:af5ebd969bcd75df76da9ef78999a61e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a21a4e7cee33d8daaf6028a27d4afb319"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_class_fw_1_1_string_base"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_fw_1_1_string_base')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a></td></tr>
 <tr class="memitem:a49485a27dc8eb73975a5169109b33881 inherit pub_types_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a49485a27dc8eb73975a5169109b33881">SizeType</a> = <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></td></tr>
 <tr class="separator:a49485a27dc8eb73975a5169109b33881 inherit pub_types_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -121,40 +121,38 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5b6a5aaa83e3b5afc4eda462ab6fd632"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a5b6a5aaa83e3b5afc4eda462ab6fd632">FileNameString</a> (const char *src)</td></tr>
-<tr class="memdesc:a5b6a5aaa83e3b5afc4eda462ab6fd632"><td class="mdescLeft">&#160;</td><td class="mdescRight">char* source constructor  <a href="class_fw_1_1_file_name_string.html#a5b6a5aaa83e3b5afc4eda462ab6fd632">More...</a><br /></td></tr>
-<tr class="separator:a5b6a5aaa83e3b5afc4eda462ab6fd632"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace35cb019c346bc252a4cd4c376085f9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#ace35cb019c346bc252a4cd4c376085f9">FileNameString</a> (const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;src)</td></tr>
-<tr class="memdesc:ace35cb019c346bc252a4cd4c376085f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">other string constructor  <a href="class_fw_1_1_file_name_string.html#ace35cb019c346bc252a4cd4c376085f9">More...</a><br /></td></tr>
-<tr class="separator:ace35cb019c346bc252a4cd4c376085f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e687ffe98a1aadee65fab88157f572f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a6e687ffe98a1aadee65fab88157f572f">FileNameString</a> (const <a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;src)</td></tr>
-<tr class="memdesc:a6e687ffe98a1aadee65fab88157f572f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_fw_1_1_string.html">String</a> string constructor.  <a href="class_fw_1_1_file_name_string.html#a6e687ffe98a1aadee65fab88157f572f">More...</a><br /></td></tr>
-<tr class="separator:a6e687ffe98a1aadee65fab88157f572f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48521fb3e5c963b0ff04e91b02156ef9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a48521fb3e5c963b0ff04e91b02156ef9">FileNameString</a> ()</td></tr>
-<tr class="memdesc:a48521fb3e5c963b0ff04e91b02156ef9"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor  <a href="class_fw_1_1_file_name_string.html#a48521fb3e5c963b0ff04e91b02156ef9">More...</a><br /></td></tr>
 <tr class="separator:a48521fb3e5c963b0ff04e91b02156ef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a470e1fb2c8fcb16cdf70e69b5971761d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a470e1fb2c8fcb16cdf70e69b5971761d">operator=</a> (const <a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;other)</td></tr>
-<tr class="memdesc:a470e1fb2c8fcb16cdf70e69b5971761d"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignment operator  <a href="class_fw_1_1_file_name_string.html#a470e1fb2c8fcb16cdf70e69b5971761d">More...</a><br /></td></tr>
-<tr class="separator:a470e1fb2c8fcb16cdf70e69b5971761d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a490386556b141809a5d2eec464ca060e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a490386556b141809a5d2eec464ca060e">operator=</a> (const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;other)</td></tr>
-<tr class="memdesc:a490386556b141809a5d2eec464ca060e"><td class="mdescLeft">&#160;</td><td class="mdescRight">other string assignment operator  <a href="class_fw_1_1_file_name_string.html#a490386556b141809a5d2eec464ca060e">More...</a><br /></td></tr>
-<tr class="separator:a490386556b141809a5d2eec464ca060e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af70a834513997d909f395543804fc4a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#af70a834513997d909f395543804fc4a1">operator=</a> (const char *other)</td></tr>
-<tr class="memdesc:af70a834513997d909f395543804fc4a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">char* assignment operator  <a href="class_fw_1_1_file_name_string.html#af70a834513997d909f395543804fc4a1">More...</a><br /></td></tr>
-<tr class="separator:af70a834513997d909f395543804fc4a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e687ffe98a1aadee65fab88157f572f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a6e687ffe98a1aadee65fab88157f572f">FileNameString</a> (const <a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;src)</td></tr>
+<tr class="separator:a6e687ffe98a1aadee65fab88157f572f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace35cb019c346bc252a4cd4c376085f9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#ace35cb019c346bc252a4cd4c376085f9">FileNameString</a> (const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;src)</td></tr>
+<tr class="separator:ace35cb019c346bc252a4cd4c376085f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b6a5aaa83e3b5afc4eda462ab6fd632"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a5b6a5aaa83e3b5afc4eda462ab6fd632">FileNameString</a> (const char *src)</td></tr>
+<tr class="separator:a5b6a5aaa83e3b5afc4eda462ab6fd632"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a219c075b7cbaceb29b3ba010731a5851"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a219c075b7cbaceb29b3ba010731a5851">~FileNameString</a> ()</td></tr>
-<tr class="memdesc:a219c075b7cbaceb29b3ba010731a5851"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor  <a href="class_fw_1_1_file_name_string.html#a219c075b7cbaceb29b3ba010731a5851">More...</a><br /></td></tr>
 <tr class="separator:a219c075b7cbaceb29b3ba010731a5851"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35278faed9faae78a1b9f234533ad467"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a35278faed9faae78a1b9f234533ad467">toChar</a> () const</td></tr>
-<tr class="memdesc:a35278faed9faae78a1b9f234533ad467"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets char buffer  <a href="class_fw_1_1_file_name_string.html#a35278faed9faae78a1b9f234533ad467">More...</a><br /></td></tr>
-<tr class="separator:a35278faed9faae78a1b9f234533ad467"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78eda314bce7ce60fb9c5c81eb2b8f72"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a78eda314bce7ce60fb9c5c81eb2b8f72">getCapacity</a> () const</td></tr>
-<tr class="memdesc:a78eda314bce7ce60fb9c5c81eb2b8f72"><td class="mdescLeft">&#160;</td><td class="mdescRight">return buffer size  <a href="class_fw_1_1_file_name_string.html#a78eda314bce7ce60fb9c5c81eb2b8f72">More...</a><br /></td></tr>
-<tr class="separator:a78eda314bce7ce60fb9c5c81eb2b8f72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad03ffeddee779ae8dd962aaa3087c50d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#ad03ffeddee779ae8dd962aaa3087c50d">operator=</a> (const <a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;src)</td></tr>
+<tr class="separator:ad03ffeddee779ae8dd962aaa3087c50d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d297e296866f39f4147abf15bbe6058"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a9d297e296866f39f4147abf15bbe6058">operator=</a> (const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;src)</td></tr>
+<tr class="separator:a9d297e296866f39f4147abf15bbe6058"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17d701a9d1c09289f099e910d62a2d35"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a17d701a9d1c09289f099e910d62a2d35">operator=</a> (const char *src)</td></tr>
+<tr class="separator:a17d701a9d1c09289f099e910d62a2d35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b04c86d64a4ac77f10266df27df6272"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#a7b04c86d64a4ac77f10266df27df6272">toChar</a> () const</td></tr>
+<tr class="separator:a7b04c86d64a4ac77f10266df27df6272"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5764cd57b8fedef4e647450b38e79da"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string_base.html#a49485a27dc8eb73975a5169109b33881">StringBase::SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_file_name_string.html#ae5764cd57b8fedef4e647450b38e79da">getCapacity</a> () const</td></tr>
+<tr class="memdesc:ae5764cd57b8fedef4e647450b38e79da"><td class="mdescLeft">&#160;</td><td class="mdescRight">return size of buffer  <a href="class_fw_1_1_file_name_string.html#ae5764cd57b8fedef4e647450b38e79da">More...</a><br /></td></tr>
+<tr class="separator:ae5764cd57b8fedef4e647450b38e79da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_string_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_string_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a></td></tr>
 <tr class="memitem:a7a0538b972f986fce4d2fb8f89b1299f inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a> () const</td></tr>
 <tr class="memdesc:a7a0538b972f986fce4d2fb8f89b1299f inherit pub_methods_class_fw_1_1_string_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get length of string.  <a href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">More...</a><br /></td></tr>
 <tr class="separator:a7a0538b972f986fce4d2fb8f89b1299f inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87c030b553aa304b54f8623834493d74 inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">maxLength</a> () const</td></tr>
+<tr class="memdesc:a87c030b553aa304b54f8623834493d74 inherit pub_methods_class_fw_1_1_string_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum length of a string that the buffer can hold.  <a href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">More...</a><br /></td></tr>
+<tr class="separator:a87c030b553aa304b54f8623834493d74 inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9515a592f2ef420666a60c44b570509 inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#ab9515a592f2ef420666a60c44b570509">serializedSize</a> () const</td></tr>
+<tr class="separator:ab9515a592f2ef420666a60c44b570509 inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a684f7057151f47069c718af8a8211114 inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a684f7057151f47069c718af8a8211114">serializedTruncatedSize</a> (<a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> <a class="el" href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">maxLength</a>) const</td></tr>
+<tr class="separator:a684f7057151f47069c718af8a8211114 inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4df27b3404861d614a6305d589afcc5 inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#ab4df27b3404861d614a6305d589afcc5">operator+=</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *src)</td></tr>
 <tr class="memdesc:ab4df27b3404861d614a6305d589afcc5 inherit pub_methods_class_fw_1_1_string_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenate a CHAR*.  <a href="class_fw_1_1_string_base.html#ab4df27b3404861d614a6305d589afcc5">More...</a><br /></td></tr>
 <tr class="separator:ab4df27b3404861d614a6305d589afcc5 inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -194,6 +192,12 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_static_methods_class_fw_1_1_string_base"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_fw_1_1_string_base')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a></td></tr>
+<tr class="memitem:a5841fb8058bbdb123f988e589fa096b8 inherit pub_static_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">static constexpr <a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a5841fb8058bbdb123f988e589fa096b8">STATIC_SERIALIZED_SIZE</a> (<a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a> <a class="el" href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">maxLength</a>)</td></tr>
+<tr class="separator:a5841fb8058bbdb123f988e589fa096b8 inherit pub_static_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7893bef5f97e69be947789d7e0bbf6a inherit pub_static_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">static constexpr <a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#ae7893bef5f97e69be947789d7e0bbf6a">BUFFER_SIZE</a> (<a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a> <a class="el" href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">maxLength</a>)</td></tr>
+<tr class="memdesc:ae7893bef5f97e69be947789d7e0bbf6a inherit pub_static_methods_class_fw_1_1_string_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the size of a null-terminated string buffer.  <a href="class_fw_1_1_string_base.html#ae7893bef5f97e69be947789d7e0bbf6a">More...</a><br /></td></tr>
+<tr class="separator:ae7893bef5f97e69be947789d7e0bbf6a inherit pub_static_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_fw_1_1_string_base"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_fw_1_1_string_base')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a></td></tr>
 <tr class="memitem:afd4919db5d4c46af8c6a729fe9eba674 inherit pro_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#afd4919db5d4c46af8c6a729fe9eba674">StringBase</a> ()</td></tr>
 <tr class="separator:afd4919db5d4c46af8c6a729fe9eba674 inherit pro_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -211,10 +215,10 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00012">12</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00018">18</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="af5ebd969bcd75df76da9ef78999a61e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af5ebd969bcd75df76da9ef78999a61e2">&#9670;&nbsp;</a></span>anonymous enum</h2>
+<a id="a21a4e7cee33d8daaf6028a27d4afb319"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21a4e7cee33d8daaf6028a27d4afb319">&#9670;&nbsp;</a></span>anonymous enum</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -225,21 +229,18 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="af5ebd969bcd75df76da9ef78999a61e2ae54580586e4dbf905ac8bc55c53f5a89"></a>SERIALIZED_TYPE_ID&#160;</td><td class="fielddoc"><p>typeid for string type </p>
-</td></tr>
-<tr><td class="fieldname"><a id="af5ebd969bcd75df76da9ef78999a61e2ae7313df658e606465dacbfdd7899069e"></a>STRING_SIZE&#160;</td><td class="fielddoc"><p>Storage for string. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="af5ebd969bcd75df76da9ef78999a61e2ada26a0f7c17b7ee5d52bbc080d67a595"></a>SERIALIZED_SIZE&#160;</td><td class="fielddoc"><p>Serialized size is size of buffer + size field. </p>
-</td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a21a4e7cee33d8daaf6028a27d4afb319ae54580586e4dbf905ac8bc55c53f5a89"></a>SERIALIZED_TYPE_ID&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a21a4e7cee33d8daaf6028a27d4afb319ae7313df658e606465dacbfdd7899069e"></a>STRING_SIZE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a21a4e7cee33d8daaf6028a27d4afb319ada26a0f7c17b7ee5d52bbc080d67a595"></a>SERIALIZED_SIZE&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00014">14</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00020">20</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5b6a5aaa83e3b5afc4eda462ab6fd632"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b6a5aaa83e3b5afc4eda462ab6fd632">&#9670;&nbsp;</a></span>FileNameString() <span class="overload">[1/4]</span></h2>
+<a id="a48521fb3e5c963b0ff04e91b02156ef9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48521fb3e5c963b0ff04e91b02156ef9">&#9670;&nbsp;</a></span>FileNameString() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -250,56 +251,23 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">Fw::FileNameString::FileNameString </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>src</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>char* source constructor </p>
-
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00006">6</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ace35cb019c346bc252a4cd4c376085f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace35cb019c346bc252a4cd4c376085f9">&#9670;&nbsp;</a></span>FileNameString() <span class="overload">[2/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Fw::FileNameString::FileNameString </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;&#160;</td>
-          <td class="paramname"><em>src</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>other string constructor </p>
-
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00010">10</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00026">26</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a6e687ffe98a1aadee65fab88157f572f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e687ffe98a1aadee65fab88157f572f">&#9670;&nbsp;</a></span>FileNameString() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e687ffe98a1aadee65fab88157f572f">&#9670;&nbsp;</a></span>FileNameString() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -317,35 +285,68 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="class_fw_1_1_string.html">String</a> string constructor. </p>
-
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00014">14</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00028">28</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a48521fb3e5c963b0ff04e91b02156ef9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48521fb3e5c963b0ff04e91b02156ef9">&#9670;&nbsp;</a></span>FileNameString() <span class="overload">[4/4]</span></h2>
+<a id="ace35cb019c346bc252a4cd4c376085f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace35cb019c346bc252a4cd4c376085f9">&#9670;&nbsp;</a></span>FileNameString() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Fw::FileNameString::FileNameString </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>default constructor </p>
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00030">30</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00018">18</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
+</div>
+</div>
+<a id="a5b6a5aaa83e3b5afc4eda462ab6fd632"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b6a5aaa83e3b5afc4eda462ab6fd632">&#9670;&nbsp;</a></span>FileNameString() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Fw::FileNameString::FileNameString </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00032">32</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
 
 </div>
 </div>
@@ -354,6 +355,9 @@ Additional Inherited Members</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Fw::FileNameString::~FileNameString </td>
@@ -362,17 +366,20 @@ Additional Inherited Members</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>destructor </p>
-
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00045">45</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00034">34</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a78eda314bce7ce60fb9c5c81eb2b8f72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78eda314bce7ce60fb9c5c81eb2b8f72">&#9670;&nbsp;</a></span>getCapacity()</h2>
+<a id="ae5764cd57b8fedef4e647450b38e79da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5764cd57b8fedef4e647450b38e79da">&#9670;&nbsp;</a></span>getCapacity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -381,7 +388,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> Fw::FileNameString::getCapacity </td>
+          <td class="memname"><a class="el" href="class_fw_1_1_string_base.html#a49485a27dc8eb73975a5169109b33881">StringBase::SizeType</a> Fw::FileNameString::getCapacity </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -389,87 +396,21 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>return buffer size </p>
+<p>return size of buffer </p>
 
 <p>Implements <a class="el" href="class_fw_1_1_string_base.html#aac5516b8f453d7fe68e9d4f8cb900a66">Fw::StringBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00051">51</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00053">53</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
 
 </div>
 </div>
-<a id="af70a834513997d909f395543804fc4a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af70a834513997d909f395543804fc4a1">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp; Fw::FileNameString::operator= </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>char* assignment operator </p>
-
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00040">40</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a470e1fb2c8fcb16cdf70e69b5971761d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a470e1fb2c8fcb16cdf70e69b5971761d">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp; Fw::FileNameString::operator= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>assignment operator </p>
-
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00022">22</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a490386556b141809a5d2eec464ca060e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a490386556b141809a5d2eec464ca060e">&#9670;&nbsp;</a></span>operator=() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp; Fw::FileNameString::operator= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>other string assignment operator </p>
-
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00031">31</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a35278faed9faae78a1b9f234533ad467"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a35278faed9faae78a1b9f234533ad467">&#9670;&nbsp;</a></span>toChar()</h2>
+<a id="a17d701a9d1c09289f099e910d62a2d35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17d701a9d1c09289f099e910d62a2d35">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -478,7 +419,91 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const char * Fw::FileNameString::toChar </td>
+          <td class="memname"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a>&amp; Fw::FileNameString::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00046">46</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad03ffeddee779ae8dd962aaa3087c50d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad03ffeddee779ae8dd962aaa3087c50d">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a>&amp; Fw::FileNameString::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00036">36</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9d297e296866f39f4147abf15bbe6058"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d297e296866f39f4147abf15bbe6058">&#9670;&nbsp;</a></span>operator=() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_file_name_string.html">FileNameString</a>&amp; Fw::FileNameString::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00041">41</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7b04c86d64a4ac77f10266df27df6272"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b04c86d64a4ac77f10266df27df6272">&#9670;&nbsp;</a></span>toChar()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* Fw::FileNameString::toChar </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -486,22 +511,19 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>gets char buffer </p>
-
 <p>Implements <a class="el" href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">Fw::StringBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="file_name_string_8cpp_source.html#l00047">47</a> of file <a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_name_string_8hpp_source.html#l00051">51</a> of file <a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>Fw/Types/<a class="el" href="file_name_string_8hpp_source.html">FileNameString.hpp</a></li>
-<li>Fw/Types/<a class="el" href="file_name_string_8cpp_source.html">FileNameString.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

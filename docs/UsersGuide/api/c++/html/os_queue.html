@@ -99,7 +99,7 @@ Os::Queue (Pthreads implementation)</h1>
 <li>Since the Pthreads implementation is handwritten, ISF developers can change the interface and add new features to support mission needs. In particular, queue usage statistics can be built in, such as high water marking, message counts, etc.</li>
 </ul>
 <p>The Pthread queues can be configured in one of two ways depending on mission needs: first-in-first-out (FIFO) or priority. The FIFO queue is implemented using a circular buffer with <em>O(log(1))</em> enqueue and dequeue time. The priority queue is implemented using a stable maximum binary heap with <em>O(log(n))</em> enqueue and dequeue time. Note: A <em>stable</em> maximum binary heap has the property that items pulled off the queue are in order of decreasing priority. Items of equal priority are pulled off in FIFO order.</p>
-<p>NOTE: <a href="https://elixir.bootlin.com/linux/latest/source/ipc/mqueue.c">POSIX queues</a> use a dynamically sized <a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">red-black tree</a> for the message queue data structure. This data structure also has an <em>O(log(n))</em> enqueue and dequeue time.</p>
+<p>NOTE: POSIX queues use a dynamically sized <a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">red-black tree</a> for the message queue data structure. This data structure also has an <em>O(log(n))</em> enqueue and dequeue time.</p>
 <h2><a class="anchor" id="autotoc_md519"></a>
 2 Requirements</h2>
 <table class="markdownTable">

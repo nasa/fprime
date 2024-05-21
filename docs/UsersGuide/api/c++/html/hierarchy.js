@@ -133,6 +133,9 @@ var hierarchy =
             [ "Svc::CommandDispatcherComponentBase", "class_svc_1_1_command_dispatcher_component_base.html", [
               [ "Svc::CommandDispatcherImpl", "class_svc_1_1_command_dispatcher_impl.html", null ]
             ] ],
+            [ "Svc::DpCatalogComponentBase", "class_svc_1_1_dp_catalog_component_base.html", [
+              [ "Svc::DpCatalog", "class_svc_1_1_dp_catalog.html", null ]
+            ] ],
             [ "Svc::DpManagerComponentBase", "class_svc_1_1_dp_manager_component_base.html", [
               [ "Svc::DpManager", "class_svc_1_1_dp_manager.html", null ]
             ] ],
@@ -356,7 +359,7 @@ var hierarchy =
       [ "Fw::SerialStatus", "class_fw_1_1_serial_status.html", null ],
       [ "Fw::StringBase", "class_fw_1_1_string_base.html", [
         [ "Fw::CmdStringArg", "class_fw_1_1_cmd_string_arg.html", null ],
-        [ "Fw::EightyCharString", "class_fw_1_1_eighty_char_string.html", null ],
+        [ "Fw::ExternalString", "class_fw_1_1_external_string.html", null ],
         [ "Fw::FileNameString", "class_fw_1_1_file_name_string.html", null ],
         [ "Fw::InternalInterfaceString", "class_fw_1_1_internal_interface_string.html", null ],
         [ "Fw::LogStringArg", "class_fw_1_1_log_string_arg.html", null ],
@@ -372,6 +375,7 @@ var hierarchy =
       ] ],
       [ "Fw::Success", "class_fw_1_1_success.html", null ],
       [ "Fw::Time", "class_fw_1_1_time.html", null ],
+      [ "Fw::Wait", "class_fw_1_1_wait.html", null ],
       [ "Os::FileMode", "class_os_1_1_file_mode.html", null ],
       [ "Os::FileStatus", "class_os_1_1_file_status.html", null ],
       [ "Svc::ActiveLogger_Enabled", "class_svc_1_1_active_logger___enabled.html", null ],
@@ -384,6 +388,8 @@ var hierarchy =
       [ "Svc::CmdSequencer_FileReadStage", "class_svc_1_1_cmd_sequencer___file_read_stage.html", null ],
       [ "Svc::CmdSequencer_SeqMode", "class_svc_1_1_cmd_sequencer___seq_mode.html", null ],
       [ "Svc::ComQueueDepth", "class_svc_1_1_com_queue_depth.html", null ],
+      [ "Svc::DpHdrField", "class_svc_1_1_dp_hdr_field.html", null ],
+      [ "Svc::DpRecord", "class_svc_1_1_dp_record.html", null ],
       [ "Svc::MeasurementStatus", "class_svc_1_1_measurement_status.html", null ],
       [ "Svc::PolyDbCfg::PolyDbEntry", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html", null ],
       [ "Svc::PrmDb_PrmReadError", "class_svc_1_1_prm_db___prm_read_error.html", null ],
@@ -401,7 +407,10 @@ var hierarchy =
       [ "Fw::ActiveComponentExitSerializableBuffer", "class_fw_1_1_active_component_exit_serializable_buffer.html", null ],
       [ "Fw::CmdArgBuffer", "class_fw_1_1_cmd_arg_buffer.html", null ],
       [ "Fw::ComBuffer", "class_fw_1_1_com_buffer.html", null ],
-      [ "Fw::ExternalSerializeBuffer", "class_fw_1_1_external_serialize_buffer.html", null ],
+      [ "Fw::ExternalSerializeBuffer", "class_fw_1_1_external_serialize_buffer.html", [
+        [ "Fw::ExternalSerializeBufferWithDataCopy", "class_fw_1_1_external_serialize_buffer_with_data_copy.html", null ],
+        [ "Fw::ExternalSerializeBufferWithMemberCopy", "class_fw_1_1_external_serialize_buffer_with_member_copy.html", null ]
+      ] ],
       [ "Fw::LogBuffer", "class_fw_1_1_log_buffer.html", null ],
       [ "Fw::ParamBuffer", "class_fw_1_1_param_buffer.html", null ],
       [ "Fw::SerialBuffer", "class_fw_1_1_serial_buffer.html", null ],

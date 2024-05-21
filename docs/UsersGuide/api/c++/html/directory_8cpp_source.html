@@ -182,7 +182,7 @@ $(document).ready(function(){initNavTree('_directory_8cpp_source.html',''); init
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            <span class="comment">// Skip hidden files</span></div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            <span class="keywordflow">if</span> (direntData-&gt;d_name[0] != <span class="charliteral">&#39;.&#39;</span>) {</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                strncpy(fileNameBuffer, direntData-&gt;d_name, bufSize);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                inode = direntData-&gt;d_ino;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                inode = <span class="keyword">static_cast&lt;</span>I64<span class="keyword">&gt;</span>(direntData-&gt;d_ino);</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            }</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        }</div>

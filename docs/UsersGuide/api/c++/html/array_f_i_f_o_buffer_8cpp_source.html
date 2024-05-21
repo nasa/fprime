@@ -146,7 +146,7 @@ $(document).ready(function(){initNavTree('_array_f_i_f_o_buffer_8cpp_source.html
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keywordtype">bool</span> status;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keywordflow">if</span> (this-&gt;m_size &lt; this-&gt;m_capacity) {</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="comment">// enqueueIndex is unsigned, no need to compare with 0</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(m_enqueueIndex &lt; this-&gt;m_capacity, m_enqueueIndex);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(m_enqueueIndex &lt; this-&gt;m_capacity, <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(m_enqueueIndex));</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    this-&gt;m_elements[this-&gt;m_enqueueIndex] = e;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    this-&gt;m_enqueueIndex = (this-&gt;m_enqueueIndex + 1) % this-&gt;m_capacity;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    status = <span class="keyword">true</span>;</div>
@@ -169,7 +169,7 @@ $(document).ready(function(){initNavTree('_array_f_i_f_o_buffer_8cpp_source.html
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="keywordflow">if</span> (this-&gt;m_size &gt; 0) {</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="comment">// dequeueIndex is unsigned, no need to compare with 0</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(m_dequeueIndex &lt; this-&gt;m_capacity, m_dequeueIndex);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(m_dequeueIndex &lt; this-&gt;m_capacity, <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(m_dequeueIndex));</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    e = this-&gt;m_elements[this-&gt;m_dequeueIndex];</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    this-&gt;m_dequeueIndex = (this-&gt;m_dequeueIndex + 1) % this-&gt;m_capacity;</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    this-&gt;m_size--;</div>
@@ -195,6 +195,7 @@ $(document).ready(function(){initNavTree('_array_f_i_f_o_buffer_8cpp_source.html
 <div class="ttc" id="a_basic_types_8h_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00052">BasicTypes.h:52</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html"><div class="ttname"><a href="basic_types_8hpp.html">BasicTypes.hpp</a></div><div class="ttdoc">C++ header for working with basic fprime types.</div></div>
 <div class="ttc" id="a_buffer_accumulator_8hpp_html"><div class="ttname"><a href="buffer_accumulator_8hpp.html">BufferAccumulator.hpp</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a088216dbd07b926d5234aeaf1a18cd7d"><div class="ttname"><a href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a></div><div class="ttdeci">PlatformAssertArgType FwAssertArgType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00034">FpConfig.h:34</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_buffer_html"><div class="ttname"><a href="class_fw_1_1_buffer.html">Fw::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8hpp_source.html#l00043">Buffer.hpp:43</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

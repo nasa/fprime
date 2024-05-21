@@ -158,7 +158,7 @@ $(document).ready(function(){initNavTree('_active_rate_group_8cpp_source.html','
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="comment">// invoke any members of the rate group</span></div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">for</span> (<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> port = 0; port &lt; this-&gt;m_numContexts; port++) {</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordflow">if</span> (this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#abd8b2cc3014c12d728085354d05527d3">isConnected_RateGroupMemberOut_OutputPort</a>(port)) {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a4a58569fbe4333facd6f26529cb373df">RateGroupMemberOut_out</a>(port,this-&gt;m_contexts[port]);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a4a58569fbe4333facd6f26529cb373df">RateGroupMemberOut_out</a>(port, <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(this-&gt;m_contexts[port]));</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            }</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>

@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('class_fw_1_1_string.html',''); initRes
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_fw_1_1_string-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Fw::String Class Reference</div>  </div>
+<div class="title">Fw::String Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -107,11 +107,11 @@ Inheritance diagram for Fw::String:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a50c97d4db8a01030dfb7b515cdb3ae25"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_string.html#a50c97d4db8a01030dfb7b515cdb3ae25a4f2a3e272fccaf9af1d5f516c40deef3">SERIALIZED_TYPE_ID</a> = FW_TYPEID_FIXED_LENGTH_STRING
-, <a class="el" href="class_fw_1_1_string.html#a50c97d4db8a01030dfb7b515cdb3ae25a145105155822867c0404f7066747cc33">STRING_SIZE</a> = FW_FIXED_LENGTH_STRING_SIZE
-, <a class="el" href="class_fw_1_1_string.html#a50c97d4db8a01030dfb7b515cdb3ae25ac139f7e0dc00ae55734f23d6083134bb">SERIALIZED_SIZE</a> = STRING_SIZE + sizeof(FwBuffSizeType)
+<tr class="memitem:a1b9125179eb86601c635903a84000799"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_string.html#a1b9125179eb86601c635903a84000799a4f2a3e272fccaf9af1d5f516c40deef3">SERIALIZED_TYPE_ID</a> = FW_TYPEID_FIXED_LENGTH_STRING
+, <a class="el" href="class_fw_1_1_string.html#a1b9125179eb86601c635903a84000799a145105155822867c0404f7066747cc33">STRING_SIZE</a> = FW_FIXED_LENGTH_STRING_SIZE
+, <a class="el" href="class_fw_1_1_string.html#a1b9125179eb86601c635903a84000799ac139f7e0dc00ae55734f23d6083134bb">SERIALIZED_SIZE</a> = STATIC_SERIALIZED_SIZE(STRING_SIZE)
  }</td></tr>
-<tr class="separator:a50c97d4db8a01030dfb7b515cdb3ae25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a1b9125179eb86601c635903a84000799"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_class_fw_1_1_string_base"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_fw_1_1_string_base')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a></td></tr>
 <tr class="memitem:a49485a27dc8eb73975a5169109b33881 inherit pub_types_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a49485a27dc8eb73975a5169109b33881">SizeType</a> = <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></td></tr>
 <tr class="separator:a49485a27dc8eb73975a5169109b33881 inherit pub_types_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -121,40 +121,38 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab3df3bb2ebcda0ca444db32dd4f6ca2a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#ab3df3bb2ebcda0ca444db32dd4f6ca2a">String</a> (const char *src)</td></tr>
-<tr class="memdesc:ab3df3bb2ebcda0ca444db32dd4f6ca2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">char* source constructor  <a href="class_fw_1_1_string.html#ab3df3bb2ebcda0ca444db32dd4f6ca2a">More...</a><br /></td></tr>
-<tr class="separator:ab3df3bb2ebcda0ca444db32dd4f6ca2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f2d22093256c555bc9ce48296095651"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#a8f2d22093256c555bc9ce48296095651">String</a> (const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;src)</td></tr>
-<tr class="memdesc:a8f2d22093256c555bc9ce48296095651"><td class="mdescLeft">&#160;</td><td class="mdescRight">other string constructor  <a href="class_fw_1_1_string.html#a8f2d22093256c555bc9ce48296095651">More...</a><br /></td></tr>
-<tr class="separator:a8f2d22093256c555bc9ce48296095651"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab32f3d7b466521b6629d45735e7f5d92"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#ab32f3d7b466521b6629d45735e7f5d92">String</a> (const <a class="el" href="class_fw_1_1_string.html">String</a> &amp;src)</td></tr>
-<tr class="memdesc:ab32f3d7b466521b6629d45735e7f5d92"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_fw_1_1_string.html">String</a> string constructor.  <a href="class_fw_1_1_string.html#ab32f3d7b466521b6629d45735e7f5d92">More...</a><br /></td></tr>
-<tr class="separator:ab32f3d7b466521b6629d45735e7f5d92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af887bf21a4654dca38f18b1c0e2a4227"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#af887bf21a4654dca38f18b1c0e2a4227">String</a> ()</td></tr>
-<tr class="memdesc:af887bf21a4654dca38f18b1c0e2a4227"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor  <a href="class_fw_1_1_string.html#af887bf21a4654dca38f18b1c0e2a4227">More...</a><br /></td></tr>
 <tr class="separator:af887bf21a4654dca38f18b1c0e2a4227"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1f7088ed92ca381daf3c142b1c7bb72"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string.html">String</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#ae1f7088ed92ca381daf3c142b1c7bb72">operator=</a> (const <a class="el" href="class_fw_1_1_string.html">String</a> &amp;other)</td></tr>
-<tr class="memdesc:ae1f7088ed92ca381daf3c142b1c7bb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignment operator  <a href="class_fw_1_1_string.html#ae1f7088ed92ca381daf3c142b1c7bb72">More...</a><br /></td></tr>
-<tr class="separator:ae1f7088ed92ca381daf3c142b1c7bb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad679c92aa2b9eb3b3d56c1640cdf30f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string.html">String</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#ad679c92aa2b9eb3b3d56c1640cdf30f6">operator=</a> (const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;other)</td></tr>
-<tr class="memdesc:ad679c92aa2b9eb3b3d56c1640cdf30f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">other string assignment operator  <a href="class_fw_1_1_string.html#ad679c92aa2b9eb3b3d56c1640cdf30f6">More...</a><br /></td></tr>
-<tr class="separator:ad679c92aa2b9eb3b3d56c1640cdf30f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a339feb76ec2684d9200c7b9c791d90b9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string.html">String</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#a339feb76ec2684d9200c7b9c791d90b9">operator=</a> (const char *other)</td></tr>
-<tr class="memdesc:a339feb76ec2684d9200c7b9c791d90b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">char* assignment operator  <a href="class_fw_1_1_string.html#a339feb76ec2684d9200c7b9c791d90b9">More...</a><br /></td></tr>
-<tr class="separator:a339feb76ec2684d9200c7b9c791d90b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab32f3d7b466521b6629d45735e7f5d92"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#ab32f3d7b466521b6629d45735e7f5d92">String</a> (const <a class="el" href="class_fw_1_1_string.html">String</a> &amp;src)</td></tr>
+<tr class="separator:ab32f3d7b466521b6629d45735e7f5d92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f2d22093256c555bc9ce48296095651"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#a8f2d22093256c555bc9ce48296095651">String</a> (const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;src)</td></tr>
+<tr class="separator:a8f2d22093256c555bc9ce48296095651"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3df3bb2ebcda0ca444db32dd4f6ca2a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#ab3df3bb2ebcda0ca444db32dd4f6ca2a">String</a> (const char *src)</td></tr>
+<tr class="separator:ab3df3bb2ebcda0ca444db32dd4f6ca2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad77534b0e8f82c6c4d77f8e44ec08d19"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#ad77534b0e8f82c6c4d77f8e44ec08d19">~String</a> ()</td></tr>
-<tr class="memdesc:ad77534b0e8f82c6c4d77f8e44ec08d19"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor  <a href="class_fw_1_1_string.html#ad77534b0e8f82c6c4d77f8e44ec08d19">More...</a><br /></td></tr>
 <tr class="separator:ad77534b0e8f82c6c4d77f8e44ec08d19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a957e8e902c4ecfad57524047ff95ad35"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">toChar</a> () const</td></tr>
-<tr class="memdesc:a957e8e902c4ecfad57524047ff95ad35"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets char buffer  <a href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">More...</a><br /></td></tr>
-<tr class="separator:a957e8e902c4ecfad57524047ff95ad35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b8883540ac79a1bf32096d0b734fa64"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#a1b8883540ac79a1bf32096d0b734fa64">getCapacity</a> () const</td></tr>
-<tr class="memdesc:a1b8883540ac79a1bf32096d0b734fa64"><td class="mdescLeft">&#160;</td><td class="mdescRight">return buffer size  <a href="class_fw_1_1_string.html#a1b8883540ac79a1bf32096d0b734fa64">More...</a><br /></td></tr>
-<tr class="separator:a1b8883540ac79a1bf32096d0b734fa64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78a5195bc7c3031410ae6d61da0c823d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string.html">String</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#a78a5195bc7c3031410ae6d61da0c823d">operator=</a> (const <a class="el" href="class_fw_1_1_string.html">String</a> &amp;src)</td></tr>
+<tr class="separator:a78a5195bc7c3031410ae6d61da0c823d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a422f4b158e921b1825295daf7d6df41a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string.html">String</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#a422f4b158e921b1825295daf7d6df41a">operator=</a> (const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;src)</td></tr>
+<tr class="separator:a422f4b158e921b1825295daf7d6df41a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a320fa1acdc26199626d90071490a212b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string.html">String</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#a320fa1acdc26199626d90071490a212b">operator=</a> (const char *src)</td></tr>
+<tr class="separator:a320fa1acdc26199626d90071490a212b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f752f24c39afc3348b60f75977f6416"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#a9f752f24c39afc3348b60f75977f6416">toChar</a> () const</td></tr>
+<tr class="separator:a9f752f24c39afc3348b60f75977f6416"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0072319c27db9990a8dbf92266ad151"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string_base.html#a49485a27dc8eb73975a5169109b33881">StringBase::SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string.html#ae0072319c27db9990a8dbf92266ad151">getCapacity</a> () const</td></tr>
+<tr class="memdesc:ae0072319c27db9990a8dbf92266ad151"><td class="mdescLeft">&#160;</td><td class="mdescRight">return size of buffer  <a href="class_fw_1_1_string.html#ae0072319c27db9990a8dbf92266ad151">More...</a><br /></td></tr>
+<tr class="separator:ae0072319c27db9990a8dbf92266ad151"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_string_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_string_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a></td></tr>
 <tr class="memitem:a7a0538b972f986fce4d2fb8f89b1299f inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a> () const</td></tr>
 <tr class="memdesc:a7a0538b972f986fce4d2fb8f89b1299f inherit pub_methods_class_fw_1_1_string_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get length of string.  <a href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">More...</a><br /></td></tr>
 <tr class="separator:a7a0538b972f986fce4d2fb8f89b1299f inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87c030b553aa304b54f8623834493d74 inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">maxLength</a> () const</td></tr>
+<tr class="memdesc:a87c030b553aa304b54f8623834493d74 inherit pub_methods_class_fw_1_1_string_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum length of a string that the buffer can hold.  <a href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">More...</a><br /></td></tr>
+<tr class="separator:a87c030b553aa304b54f8623834493d74 inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9515a592f2ef420666a60c44b570509 inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#ab9515a592f2ef420666a60c44b570509">serializedSize</a> () const</td></tr>
+<tr class="separator:ab9515a592f2ef420666a60c44b570509 inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a684f7057151f47069c718af8a8211114 inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a684f7057151f47069c718af8a8211114">serializedTruncatedSize</a> (<a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> <a class="el" href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">maxLength</a>) const</td></tr>
+<tr class="separator:a684f7057151f47069c718af8a8211114 inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4df27b3404861d614a6305d589afcc5 inherit pub_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#ab4df27b3404861d614a6305d589afcc5">operator+=</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *src)</td></tr>
 <tr class="memdesc:ab4df27b3404861d614a6305d589afcc5 inherit pub_methods_class_fw_1_1_string_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenate a CHAR*.  <a href="class_fw_1_1_string_base.html#ab4df27b3404861d614a6305d589afcc5">More...</a><br /></td></tr>
 <tr class="separator:ab4df27b3404861d614a6305d589afcc5 inherit pub_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -194,6 +192,12 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_static_methods_class_fw_1_1_string_base"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_fw_1_1_string_base')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a></td></tr>
+<tr class="memitem:a5841fb8058bbdb123f988e589fa096b8 inherit pub_static_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">static constexpr <a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#a5841fb8058bbdb123f988e589fa096b8">STATIC_SERIALIZED_SIZE</a> (<a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a> <a class="el" href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">maxLength</a>)</td></tr>
+<tr class="separator:a5841fb8058bbdb123f988e589fa096b8 inherit pub_static_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7893bef5f97e69be947789d7e0bbf6a inherit pub_static_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">static constexpr <a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#ae7893bef5f97e69be947789d7e0bbf6a">BUFFER_SIZE</a> (<a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a> <a class="el" href="class_fw_1_1_string_base.html#a87c030b553aa304b54f8623834493d74">maxLength</a>)</td></tr>
+<tr class="memdesc:ae7893bef5f97e69be947789d7e0bbf6a inherit pub_static_methods_class_fw_1_1_string_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the size of a null-terminated string buffer.  <a href="class_fw_1_1_string_base.html#ae7893bef5f97e69be947789d7e0bbf6a">More...</a><br /></td></tr>
+<tr class="separator:ae7893bef5f97e69be947789d7e0bbf6a inherit pub_static_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_fw_1_1_string_base"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_fw_1_1_string_base')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a></td></tr>
 <tr class="memitem:afd4919db5d4c46af8c6a729fe9eba674 inherit pro_methods_class_fw_1_1_string_base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_string_base.html#afd4919db5d4c46af8c6a729fe9eba674">StringBase</a> ()</td></tr>
 <tr class="separator:afd4919db5d4c46af8c6a729fe9eba674 inherit pro_methods_class_fw_1_1_string_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -211,10 +215,10 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00010">10</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00017">17</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a50c97d4db8a01030dfb7b515cdb3ae25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50c97d4db8a01030dfb7b515cdb3ae25">&#9670;&nbsp;</a></span>anonymous enum</h2>
+<a id="a1b9125179eb86601c635903a84000799"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b9125179eb86601c635903a84000799">&#9670;&nbsp;</a></span>anonymous enum</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -225,68 +229,51 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a50c97d4db8a01030dfb7b515cdb3ae25a4f2a3e272fccaf9af1d5f516c40deef3"></a>SERIALIZED_TYPE_ID&#160;</td><td class="fielddoc"><p>typeid for string type </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a50c97d4db8a01030dfb7b515cdb3ae25a145105155822867c0404f7066747cc33"></a>STRING_SIZE&#160;</td><td class="fielddoc"><p>Storage for string. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a50c97d4db8a01030dfb7b515cdb3ae25ac139f7e0dc00ae55734f23d6083134bb"></a>SERIALIZED_SIZE&#160;</td><td class="fielddoc"><p>Serialized size is size of buffer + size field. </p>
-</td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1b9125179eb86601c635903a84000799a4f2a3e272fccaf9af1d5f516c40deef3"></a>SERIALIZED_TYPE_ID&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1b9125179eb86601c635903a84000799a145105155822867c0404f7066747cc33"></a>STRING_SIZE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1b9125179eb86601c635903a84000799ac139f7e0dc00ae55734f23d6083134bb"></a>SERIALIZED_SIZE&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00012">12</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00019">19</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab3df3bb2ebcda0ca444db32dd4f6ca2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3df3bb2ebcda0ca444db32dd4f6ca2a">&#9670;&nbsp;</a></span>String() <span class="overload">[1/4]</span></h2>
+<a id="af887bf21a4654dca38f18b1c0e2a4227"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af887bf21a4654dca38f18b1c0e2a4227">&#9670;&nbsp;</a></span>String() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Fw::String::String </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>src</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>char* source constructor </p>
-
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00006">6</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a8f2d22093256c555bc9ce48296095651"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f2d22093256c555bc9ce48296095651">&#9670;&nbsp;</a></span>String() <span class="overload">[2/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Fw::String::String </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;&#160;</td>
-          <td class="paramname"><em>src</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>other string constructor </p>
-
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00010">10</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00025">25</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
 
 </div>
 </div>
 <a id="ab32f3d7b466521b6629d45735e7f5d92"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab32f3d7b466521b6629d45735e7f5d92">&#9670;&nbsp;</a></span>String() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab32f3d7b466521b6629d45735e7f5d92">&#9670;&nbsp;</a></span>String() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Fw::String::String </td>
@@ -296,32 +283,70 @@ Additional Inherited Members</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p><a class="el" href="class_fw_1_1_string.html">String</a> string constructor. </p>
-
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00014">14</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00027">27</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
 
 </div>
 </div>
-<a id="af887bf21a4654dca38f18b1c0e2a4227"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af887bf21a4654dca38f18b1c0e2a4227">&#9670;&nbsp;</a></span>String() <span class="overload">[4/4]</span></h2>
+<a id="a8f2d22093256c555bc9ce48296095651"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f2d22093256c555bc9ce48296095651">&#9670;&nbsp;</a></span>String() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Fw::String::String </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>default constructor </p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00029">29</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00018">18</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
+</div>
+</div>
+<a id="ab3df3bb2ebcda0ca444db32dd4f6ca2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3df3bb2ebcda0ca444db32dd4f6ca2a">&#9670;&nbsp;</a></span>String() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Fw::String::String </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00031">31</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
 
 </div>
 </div>
@@ -330,6 +355,9 @@ Additional Inherited Members</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Fw::String::~String </td>
@@ -338,17 +366,20 @@ Additional Inherited Members</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>destructor </p>
-
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00045">45</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00033">33</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a1b8883540ac79a1bf32096d0b734fa64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b8883540ac79a1bf32096d0b734fa64">&#9670;&nbsp;</a></span>getCapacity()</h2>
+<a id="ae0072319c27db9990a8dbf92266ad151"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0072319c27db9990a8dbf92266ad151">&#9670;&nbsp;</a></span>getCapacity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -357,7 +388,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> Fw::String::getCapacity </td>
+          <td class="memname"><a class="el" href="class_fw_1_1_string_base.html#a49485a27dc8eb73975a5169109b33881">StringBase::SizeType</a> Fw::String::getCapacity </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -365,87 +396,21 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>return buffer size </p>
+<p>return size of buffer </p>
 
 <p>Implements <a class="el" href="class_fw_1_1_string_base.html#aac5516b8f453d7fe68e9d4f8cb900a66">Fw::StringBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00051">51</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00052">52</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a339feb76ec2684d9200c7b9c791d90b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a339feb76ec2684d9200c7b9c791d90b9">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_string.html">String</a> &amp; Fw::String::operator= </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>char* assignment operator </p>
-
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00040">40</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ae1f7088ed92ca381daf3c142b1c7bb72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1f7088ed92ca381daf3c142b1c7bb72">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_string.html">String</a> &amp; Fw::String::operator= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_fw_1_1_string.html">String</a> &amp;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>assignment operator </p>
-
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00022">22</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ad679c92aa2b9eb3b3d56c1640cdf30f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad679c92aa2b9eb3b3d56c1640cdf30f6">&#9670;&nbsp;</a></span>operator=() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_fw_1_1_string.html">String</a> &amp; Fw::String::operator= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>other string assignment operator </p>
-
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00031">31</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a957e8e902c4ecfad57524047ff95ad35"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a957e8e902c4ecfad57524047ff95ad35">&#9670;&nbsp;</a></span>toChar()</h2>
+<a id="a320fa1acdc26199626d90071490a212b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a320fa1acdc26199626d90071490a212b">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -454,7 +419,91 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const char * Fw::String::toChar </td>
+          <td class="memname"><a class="el" href="class_fw_1_1_string.html">String</a>&amp; Fw::String::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00045">45</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a78a5195bc7c3031410ae6d61da0c823d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78a5195bc7c3031410ae6d61da0c823d">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_string.html">String</a>&amp; Fw::String::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_string.html">String</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00035">35</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a422f4b158e921b1825295daf7d6df41a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a422f4b158e921b1825295daf7d6df41a">&#9670;&nbsp;</a></span>operator=() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_string.html">String</a>&amp; Fw::String::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">StringBase</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00040">40</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9f752f24c39afc3348b60f75977f6416"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f752f24c39afc3348b60f75977f6416">&#9670;&nbsp;</a></span>toChar()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* Fw::String::toChar </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -462,22 +511,19 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>gets char buffer </p>
-
 <p>Implements <a class="el" href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">Fw::StringBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="string_8cpp_source.html#l00047">47</a> of file <a class="el" href="string_8cpp_source.html">String.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00050">50</a> of file <a class="el" href="string_8hpp_source.html">String.hpp</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>Fw/Types/<a class="el" href="string_8hpp_source.html">String.hpp</a></li>
-<li>Fw/Types/<a class="el" href="string_8cpp_source.html">String.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

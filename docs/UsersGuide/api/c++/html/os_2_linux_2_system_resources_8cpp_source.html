@@ -113,7 +113,7 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_os.html">Os</a> {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> <a class="code" href="namespace_os_1_1_system_resources.html#abde26d1d560b6470f5bbf2d4ad69a16f">SystemResources::getCpuCount</a>(U32&amp; cpuCount) {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        cpuCount = get_nprocs();</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        cpuCount = <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(get_nprocs());</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6a171dc463c15af6483fc367e8342522af">SYSTEM_RESOURCES_OK</a>;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    }</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>

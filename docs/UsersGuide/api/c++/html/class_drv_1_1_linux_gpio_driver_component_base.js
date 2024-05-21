@@ -23,7 +23,7 @@ var class_drv_1_1_linux_gpio_driver_component_base =
     [ "log_WARNING_HI_GP_ConfigError", "class_drv_1_1_linux_gpio_driver_component_base.html#adaad0ee9306fdf6b507dc02c9cc9d788", null ],
     [ "log_WARNING_HI_GP_IntStartError", "class_drv_1_1_linux_gpio_driver_component_base.html#a29734b08b82f949ed89f496f23e5574b", null ],
     [ "log_WARNING_HI_GP_IntWaitError", "class_drv_1_1_linux_gpio_driver_component_base.html#a75a200b7b148c1cf252bc139303ae61c", null ],
-    [ "log_WARNING_HI_GP_OpenError", "class_drv_1_1_linux_gpio_driver_component_base.html#ad3b032c924947da267f195bbd4c9a9f0", null ],
+    [ "log_WARNING_HI_GP_OpenError", "class_drv_1_1_linux_gpio_driver_component_base.html#a9a18f178aaffdf2129a9e613006179a2", null ],
     [ "log_WARNING_HI_GP_ReadError", "class_drv_1_1_linux_gpio_driver_component_base.html#a6b67a0fef87b8c8bfd4faaa64d5336dd", null ],
     [ "log_WARNING_HI_GP_ReadError_ThrottleClear", "class_drv_1_1_linux_gpio_driver_component_base.html#a8ae16b3e570e35300ad0c58a1b58dfc7", null ],
     [ "log_WARNING_HI_GP_WriteError", "class_drv_1_1_linux_gpio_driver_component_base.html#aa813b6ffb5b0043ffebdb1aa40d36ad7", null ],

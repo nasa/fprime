@@ -11,11 +11,9 @@ var dir_95a9d37f9a71c16a3d684a9937019602 =
     [ "LogPacket.hpp", "log_packet_8hpp.html", [
       [ "LogPacket", "class_fw_1_1_log_packet.html", "class_fw_1_1_log_packet" ]
     ] ],
-    [ "LogString.cpp", "log_string_8cpp.html", null ],
     [ "LogString.hpp", "log_string_8hpp.html", [
       [ "LogStringArg", "class_fw_1_1_log_string_arg.html", "class_fw_1_1_log_string_arg" ]
     ] ],
-    [ "TextLogString.cpp", "text_log_string_8cpp.html", null ],
     [ "TextLogString.hpp", "text_log_string_8hpp.html", [
       [ "TextLogString", "class_fw_1_1_text_log_string.html", "class_fw_1_1_text_log_string" ]
     ] ]

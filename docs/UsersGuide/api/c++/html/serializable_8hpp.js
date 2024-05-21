@@ -4,6 +4,8 @@ var _serializable_8hpp =
     [ "Serialization", "class_fw_1_1_serialization.html", "class_fw_1_1_serialization" ],
     [ "SerializeBufferBase", "class_fw_1_1_serialize_buffer_base.html", "class_fw_1_1_serialize_buffer_base" ],
     [ "ExternalSerializeBuffer", "class_fw_1_1_external_serialize_buffer.html", "class_fw_1_1_external_serialize_buffer" ],
+    [ "ExternalSerializeBufferWithDataCopy", "class_fw_1_1_external_serialize_buffer_with_data_copy.html", "class_fw_1_1_external_serialize_buffer_with_data_copy" ],
+    [ "ExternalSerializeBufferWithMemberCopy", "class_fw_1_1_external_serialize_buffer_with_member_copy.html", "class_fw_1_1_external_serialize_buffer_with_member_copy" ],
     [ "SerializeStatus", "serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32", [
       [ "FW_SERIALIZE_OK", "serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020", null ],
       [ "FW_SERIALIZE_FORMAT_ERROR", "serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32a8c20f1ae2805eec3b09bef0102b40f44", null ],
