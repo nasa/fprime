@@ -15,8 +15,8 @@ void test_with_loop(U32 iterations, bool duplex) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    U16 port1 =  Drv::Test::get_free_port();
-    ASSERT_NE(0, port1);
+    // When not duplex, we can allow the OS to choose a port
+    U16 port1 =  (duplex) ? Drv::Test::get_free_port() : 0;
     U16 port2 =  Drv::Test::get_free_port();
     ASSERT_NE(0, port2);
 
@@ -24,22 +24,18 @@ void test_with_loop(U32 iterations, bool duplex) {
     for (U32 i = 0; i < iterations; i++) {
         Drv::UdpSocket udp1;
         Drv::UdpSocket udp2;
-        udp1.configureSend("127.0.0.1", port1, 0, 100);
-        // If simplex, test only half the channel
-        if (duplex) {
-            udp1.configureRecv("127.0.0.1", port2);
-        }
-        status1 = udp1.open();
+        udp2.configureRecv("127.0.0.1", port1);
         // If simplex, test only half the channel
         if (duplex) {
             udp2.configureSend("127.0.0.1", port2, 0, 100);
         }
-        udp2.configureRecv("127.0.0.1", port1);
-        status2 = udp2.open();;
+        status2 = udp2.open();
+        ASSERT_EQ(status2, Drv::SOCK_SUCCESS);
 
-        EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
-        EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
-
+        udp1.configureSend("127.0.0.1", udp2.getRecvPort(), 0, 100);
+        udp1.configureRecv("127.0.0.1", port2);
+        status1 = udp1.open();
+        ASSERT_EQ(status1, Drv::SOCK_SUCCESS);
 
         // If all the opens worked, then run this
         if (Drv::SOCK_SUCCESS == status1 && Drv::SOCK_SUCCESS == status2) {

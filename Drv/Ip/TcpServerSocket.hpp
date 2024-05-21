@@ -49,7 +49,7 @@ class TcpServerSocket : public IpSocket {
     void shutdown() override;
 
     /**
-     * \breif get the port being listened on
+     * \brief get the port being listened on
      *
      * Most useful when listen was configured to use port "0", this will return the port used for listening after a port
      * has been determined. Will return 0 if the connection has not been setup.

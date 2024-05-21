@@ -69,9 +69,8 @@ SocketIpStatus UdpSocket::configureRecv(const char* hostname, const U16 port) {
     FW_ASSERT(this->isValidPort(port));
     this->m_lock.lock();
     this->m_recv_port = port;
-    this->m_lock.unlock();
-
     (void) Fw::StringUtils::string_copy(this->m_recv_hostname, hostname, SOCKET_MAX_HOSTNAME_SIZE);
+    this->m_lock.unlock();
     return SOCK_SUCCESS;
 }
 
@@ -90,7 +89,6 @@ SocketIpStatus UdpSocket::bind(NATIVE_INT_TYPE fd) {
     // Set up the address port and name
     address.sin_family = AF_INET;
     this->m_lock.lock();
-    FW_ASSERT(0 != m_recv_port);
     address.sin_port = htons(m_recv_port);
     this->m_lock.unlock();
     // OS specific settings
@@ -127,10 +125,10 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     NATIVE_INT_TYPE socketFd = -1;
     struct sockaddr_in address;
 
-    // Ensure configured for at least send or receive
-    if (m_port == 0 && m_recv_port == 0) {
-        return SOCK_INVALID_IP_ADDRESS; // Consistent with port = 0 behavior in TCP
-    }
+    this->m_lock.lock();
+    U16 recv_port = this->m_recv_port;
+    U16 port = this->m_port;
+    this->m_lock.unlock();
 
     // Acquire a socket, or return error
     if ((socketFd = ::socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
@@ -138,7 +136,7 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     }
 
     // May not be sending in all cases
-    if (this->m_port != 0) {
+    if (port != 0) {
         // Set up the address port and name
         address.sin_family = AF_INET;
         this->m_lock.lock();
@@ -169,13 +167,24 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     }
 
     // When we are setting up for receiving as well, then we must bind to a port
-    if ((m_recv_port != 0)  && ((status = this->bind(socketFd)) != SOCK_SUCCESS)) {
+    if ((status = this->bind(socketFd)) != SOCK_SUCCESS) {
         ::close(socketFd);
         return status; // Not closing FD as it is still a valid send FD
     }
-    const char* actions = (m_recv_port != 0 && m_port != 0) ? "send and receive" : ((m_port != 0) ? "send": "receive");
-    Fw::Logger::logMsg("Setup to %s udp to %s:%hu\n", reinterpret_cast<POINTER_CAST>(actions),
-                       reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
+    this->m_lock.lock();
+    recv_port = this->m_recv_port;
+    this->m_lock.unlock();
+    // Log message for UDP
+    if (port == 0) {
+        Fw::Logger::logMsg("Setup to receive udp at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_recv_hostname),
+                           recv_port);
+    } else {
+        Fw::Logger::logMsg("Setup to receive udp at %s:%hu and send to %s:%hu\n",
+                           reinterpret_cast<POINTER_CAST>(m_recv_hostname),
+                           recv_port,
+                           reinterpret_cast<POINTER_CAST>(m_hostname),
+                           port);
+    }
     FW_ASSERT(status == SOCK_SUCCESS, status);
     fd = socketFd;
     return status;
