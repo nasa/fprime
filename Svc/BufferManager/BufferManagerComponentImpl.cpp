@@ -102,13 +102,32 @@ namespace Svc {
       U32 id = context & 0xFFFF;
       U32 mgrId = context >> 16;
       // check some things
-      FW_ASSERT(id < this->m_numStructs,id,this->m_numStructs);
-      FW_ASSERT(mgrId == this->m_mgrId,mgrId,id,this->m_mgrId);
-      FW_ASSERT(true == this->m_buffers[id].allocated,id,this->m_mgrId);
-      FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) >= this->m_buffers[id].memory,id,this->m_mgrId);
-      FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) < (this->m_buffers[id].memory + this->m_buffers[id].size),id,this->m_mgrId);
+      FW_ASSERT(
+        id < this->m_numStructs,
+        static_cast<FwAssertArgType>(id),
+        static_cast<FwAssertArgType>(this->m_numStructs));
+      FW_ASSERT(
+        mgrId == this->m_mgrId,
+        static_cast<FwAssertArgType>(mgrId),
+        static_cast<FwAssertArgType>(id),
+        static_cast<FwAssertArgType>(this->m_mgrId));
+      FW_ASSERT(
+        true == this->m_buffers[id].allocated,
+        static_cast<FwAssertArgType>(id),
+        static_cast<FwAssertArgType>(this->m_mgrId));
+      FW_ASSERT(
+        reinterpret_cast<U8*>(fwBuffer.getData()) >= this->m_buffers[id].memory,
+        static_cast<FwAssertArgType>(id),
+        static_cast<FwAssertArgType>(this->m_mgrId));
+      FW_ASSERT(
+        reinterpret_cast<U8*>(fwBuffer.getData()) < (this->m_buffers[id].memory + this->m_buffers[id].size),
+        static_cast<FwAssertArgType>(id),
+        static_cast<FwAssertArgType>(this->m_mgrId));
       // user can make smaller for their own purposes, but it shouldn't be bigger
-      FW_ASSERT(fwBuffer.getSize() <= this->m_buffers[id].size,id,this->m_mgrId);
+      FW_ASSERT(
+        fwBuffer.getSize() <= this->m_buffers[id].size,
+        static_cast<FwAssertArgType>(id),
+        static_cast<FwAssertArgType>(this->m_mgrId));
       // clear the allocated flag
       this->m_buffers[id].allocated = false;
       this->m_currBuffs--;
@@ -180,7 +199,10 @@ namespace Svc {
     void *memory = allocator.allocate(memId,allocatedSize,recoverable);
     // make sure the memory returns was non-zero and the size requested
     FW_ASSERT(memory);
-    FW_ASSERT(memorySize == allocatedSize,memorySize,allocatedSize);
+    FW_ASSERT(
+      memorySize == allocatedSize,
+      static_cast<FwAssertArgType>(memorySize),
+      static_cast<FwAssertArgType>(allocatedSize));
     // structs will be at beginning of memory
     this->m_buffers = static_cast<AllocatedBuffer*>(memory);
     // memory buffers will be at end of structs in memory, so compute that memory as the beginning of the
@@ -209,9 +231,13 @@ namespace Svc {
     U8* const CURR_PTR = bufferMem;
     U8* const END_PTR = static_cast<U8*>(memory) + memorySize;
     FW_ASSERT(CURR_PTR == END_PTR,
-        reinterpret_cast<POINTER_CAST>(CURR_PTR), reinterpret_cast<POINTER_CAST>(END_PTR));
+        static_cast<FwAssertArgType>(reinterpret_cast<POINTER_CAST>(CURR_PTR)),
+        static_cast<FwAssertArgType>(reinterpret_cast<POINTER_CAST>(END_PTR)));
     // secondary init verification
-    FW_ASSERT(currStruct == this->m_numStructs,currStruct,this->m_numStructs);
+    FW_ASSERT(
+      currStruct == this->m_numStructs,
+      static_cast<FwAssertArgType>(currStruct),
+      static_cast<FwAssertArgType>(this->m_numStructs));
     // indicate setup is done
     this->m_setup = true;
   }

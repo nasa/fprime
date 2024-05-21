@@ -268,9 +268,13 @@ doxyindexer
 doxyrules
 doxysearch
 Doxywizard
+dpc
+DPCAT
+DPCATALOG
 DPCFG
 dpi
 DPMANAGER
+dps
 DPWRITER
 DRAINBUFFERS
 drv
@@ -311,6 +315,7 @@ errmsg
 ERRORCHECK
 errornum
 ert
+esb
 ethanchee
 etime
 eturn
@@ -399,6 +404,7 @@ getinput
 getm
 getpid
 getquaternion
+gett
 gettime
 gettimeofday
 getty
@@ -429,6 +435,7 @@ Guire
 handcoded
 hardtoaccess
 hashvalue
+hdr
 HEADERSIZE
 headlessly
 heapifying
@@ -860,6 +867,7 @@ relaxng
 REMOVEDIRECTORY
 REMOVEFILE
 reparse
+reprioritize
 reserializing
 resname
 resultlist
@@ -894,6 +902,7 @@ saveop
 sbb
 SBF
 SBINDIR
+sbt
 scatterometer
 schem
 schematron
@@ -912,6 +921,7 @@ serializables
 setaffinity
 setdata
 SETFL
+setid
 setinheritsched
 SETLOGGING
 setm
@@ -996,6 +1006,7 @@ subpage
 subseconds
 subtargets
 suppr
+suseconds
 SVCLOGFILE
 SVCLOGFILEL
 svipc

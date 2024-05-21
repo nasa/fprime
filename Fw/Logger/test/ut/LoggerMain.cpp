@@ -25,9 +25,9 @@ TEST(LoggerTests, RandomLoggerTests) {
     MockLogging::FakeLogger logger;
 
     // Create rules, and assign them into the array
-    LoggerRules::Register reg("Register");
-    LoggerRules::LogGood log("Log Successfully");
-    LoggerRules::LogBad nolog("Log unsuccessfully");
+    LoggerRules::Register reg(Fw::String("Register"));
+    LoggerRules::LogGood log(Fw::String("Log Successfully"));
+    LoggerRules::LogBad nolog(Fw::String("Log unsuccessfully"));
 
     // Setup a list of rules to choose from
     STest::Rule<MockLogging::FakeLogger>* rules[] = {
@@ -55,7 +55,7 @@ TEST(LoggerTests, BasicGoodLogger) {
     Fw::Logger::registerLogger(&logger);
     logger.s_current = &logger;
     // Basic logging
-    LoggerRules::LogGood log("Log Successfully");
+    LoggerRules::LogGood log(Fw::String("Log Successfully"));
     log.apply(logger);
 }
 /**
@@ -66,7 +66,7 @@ TEST(LoggerTests, BasicBadLogger) {
     MockLogging::FakeLogger logger;
     Fw::Logger::registerLogger(nullptr);
     logger.s_current = nullptr;
-    LoggerRules::LogBad log("Log Discarded");
+    LoggerRules::LogBad log(Fw::String("Log Discarded"));
     log.apply(logger);
 }
 
@@ -76,7 +76,7 @@ TEST(LoggerTests, BasicBadLogger) {
 TEST(LoggerTests, BasicRegLogger) {
     // Basic discard logging
     MockLogging::FakeLogger logger;
-    LoggerRules::Register reg("Register");
+    LoggerRules::Register reg(Fw::String("Register"));
     reg.apply(logger);
     reg.apply(logger);
     reg.apply(logger);

@@ -29,6 +29,7 @@ if (NOT BUILD_TESTING)
     add_compile_options(
         -Wshadow
         -pedantic
+        -Wconversion
     )
 endif()
 
@@ -54,6 +55,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         -Wno-gnu-zero-variadic-macro-arguments
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-zero-length-array>
+    )
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND NOT DEFINED CMAKE_CXX_CLANG_TIDY)
+    # The following is not supported by clang, which also causes issues when using clang-tidy
+    add_compile_options(
+        -Wno-format-truncation
     )
 endif()
 

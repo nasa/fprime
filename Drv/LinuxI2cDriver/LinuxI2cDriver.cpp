@@ -99,7 +99,7 @@ namespace Drv {
       // make sure it isn't a null pointer
       FW_ASSERT(serBuffer.getData());
       // write data
-      stat = write(this->m_fd, serBuffer.getData(), serBuffer.getSize());
+      stat = static_cast<int>(write(this->m_fd, serBuffer.getData(), serBuffer.getSize()));
       if (stat == -1) {
 #if DEBUG_PRINT
           Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
@@ -135,7 +135,7 @@ namespace Drv {
       // make sure it isn't a null pointer
       FW_ASSERT(serBuffer.getData());
       // read data
-      stat = read(this->m_fd, serBuffer.getData(), serBuffer.getSize());
+      stat = static_cast<int>(read(this->m_fd, serBuffer.getData(), serBuffer.getSize()));
       if (stat == -1) {
 #if DEBUG_PRINT
           Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);

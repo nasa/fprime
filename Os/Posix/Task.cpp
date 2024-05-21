@@ -11,7 +11,7 @@
 #include <climits>
 #include <Fw/Logger/Logger.hpp>
 
-#ifdef TGT_OS_TYPE_LINUX 
+#ifdef TGT_OS_TYPE_LINUX
 #include <features.h>
 #endif
 
@@ -43,17 +43,17 @@ namespace Os {
             priority = Task::TASK_DEFAULT; //Action: use constant
         }
         if (priority != Task::TASK_DEFAULT and priority < static_cast<Task::ParamType>(min_priority)) {
-            Fw::Logger::logMsg("[WARNING] Low task priority of %d being clamped to %d\n", priority, min_priority);
-            priority = min_priority;
+            Fw::Logger::logMsg("[WARNING] Low task priority of %d being clamped to %d\n", priority, static_cast<POINTER_CAST>(min_priority));
+            priority = static_cast<NATIVE_UINT_TYPE>(min_priority);
         }
         if (priority != Task::TASK_DEFAULT and priority > static_cast<Task::ParamType>(max_priority)) {
-            Fw::Logger::logMsg("[WARNING] High task priority of %d being clamped to %d\n", priority, max_priority);
-            priority = max_priority;
+            Fw::Logger::logMsg("[WARNING] High task priority of %d being clamped to %d\n", priority, static_cast<NATIVE_UINT_TYPE>(max_priority));
+            priority = static_cast<NATIVE_UINT_TYPE>(max_priority);
         }
         // Check the stack
         if (stack != Task::TASK_DEFAULT and stack < PTHREAD_STACK_MIN) {
-            Fw::Logger::logMsg("[WARNING] Stack size %d too small, setting to minimum of %d\n", stack, PTHREAD_STACK_MIN);
-            stack = PTHREAD_STACK_MIN;
+            Fw::Logger::logMsg("[WARNING] Stack size %d too small, setting to minimum of %d\n", stack, static_cast<NATIVE_UINT_TYPE>(PTHREAD_STACK_MIN));
+            stack = static_cast<NATIVE_UINT_TYPE>(PTHREAD_STACK_MIN);
         }
         // Check CPU affinity
         if (!expect_perm and affinity != Task::TASK_DEFAULT) {
@@ -91,7 +91,7 @@ namespace Os {
 
             sched_param schedParam;
             memset(&schedParam, 0, sizeof(sched_param));
-            schedParam.sched_priority = priority;
+            schedParam.sched_priority =static_cast<int>(priority);
             stat = pthread_attr_setschedparam(&att, &schedParam);
             if (stat != 0) {
                 Fw::Logger::logMsg("pthread_attr_setschedparam: %s\n", reinterpret_cast<POINTER_CAST>(strerror(stat)));
@@ -132,7 +132,7 @@ namespace Os {
 
         I32 stat = pthread_attr_init(&att);
         if (stat != 0) {
-            Fw::Logger::logMsg("pthread_attr_init: (%d): %s\n", stat, reinterpret_cast<POINTER_CAST>(strerror(stat)));
+            Fw::Logger::logMsg("pthread_attr_init: (%d): %s\n", static_cast<POINTER_CAST>(stat), reinterpret_cast<POINTER_CAST>(strerror(stat)));
             return Task::TASK_INVALID_PARAMS;
         }
 
@@ -198,7 +198,7 @@ namespace Os {
 
         this->m_name = "TP_";
         this->m_name += name;
-        this->m_identifier = identifier;
+        this->m_identifier = static_cast<NATIVE_INT_TYPE>(identifier);
         // Setup functor wrapper parameters
         this->m_routineWrapper.routine = routine;
         this->m_routineWrapper.arg = arg;

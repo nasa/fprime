@@ -1,7 +1,7 @@
 /**
- * \file
+ * \file StringBase.cpp
  * \author T. Canham
- * \brief Implements ISF string base class
+ * \brief Implements F Prime string base class
  *
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
@@ -49,7 +49,7 @@ bool StringBase::operator==(const CHAR* other) const {
     }
 
     const SizeType capacity = this->getCapacity();
-    const size_t result = strncmp(us, other, capacity);
+    const size_t result = static_cast<size_t>(strncmp(us, other, capacity));
     return (result == 0);
 }
 
@@ -87,11 +87,9 @@ std::ostream& operator<<(std::ostream& os, const StringBase& str) {
 #endif
 
 StringBase& StringBase::operator=(const StringBase& other) {
-    if (this == &other) {
-        return *this;
+    if (this != &other) {
+        (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), other.toChar(), this->getCapacity());
     }
-
-    (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), other.toChar(), this->getCapacity());
     return *this;
 }
 
@@ -105,18 +103,35 @@ StringBase& StringBase::operator=(const CHAR* other) {  // lgtm[cpp/rule-of-two]
 void StringBase::appendBuff(const CHAR* buff, SizeType size) {
     const SizeType capacity = this->getCapacity();
     const SizeType length = this->length();
-    FW_ASSERT(capacity > length, capacity, length);
+    FW_ASSERT(capacity > length, static_cast<FwAssertArgType>(capacity), static_cast<FwAssertArgType>(length));
     // Subtract 1 to leave space for null terminator
     SizeType remaining = capacity - length - 1;
     if (size < remaining) {
         remaining = size;
     }
-    FW_ASSERT(remaining < capacity, remaining, capacity);
+    FW_ASSERT(remaining < capacity, static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(capacity));
     (void)strncat(const_cast<CHAR*>(this->toChar()), buff, remaining);
 }
 
 StringBase::SizeType StringBase::length() const {
-    return static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
+    const SizeType length = static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
+    FW_ASSERT(length <= this->maxLength(), static_cast<FwAssertArgType>(length),
+              static_cast<FwAssertArgType>(this->maxLength()));
+    return length;
+}
+
+StringBase::SizeType StringBase::maxLength() const {
+    const SizeType capacity = this->getCapacity();
+    FW_ASSERT(capacity > 0, static_cast<FwAssertArgType>(capacity));
+    return capacity - 1;
+}
+
+StringBase::SizeType StringBase::serializedSize() const {
+    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + this->length();
+}
+
+StringBase::SizeType StringBase::serializedTruncatedSize(FwSizeType maxLength) const {
+    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + static_cast<SizeType>(FW_MIN(this->length(), maxLength));
 }
 
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
@@ -124,16 +139,34 @@ SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
 }
 
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
-    SizeType len = FW_MIN(maxLength, this->length());
-    return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len);
+    const FwSizeType len = FW_MIN(maxLength, this->length());
+    // Serialize length and then bytes
+    return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
 SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
-    SizeType maxSize = this->getCapacity() - 1;
+    // Get the max size of the deserialized string
+    const SizeType maxSize = this->maxLength();
+    // Initial estimate of actual size is max size
+    // This estimate is refined when calling the deserialize function below
+    SizeType actualSize = maxSize;
+    // Public interface returns const char*, but implementation needs char*
+    // So use const_cast
     CHAR* raw = const_cast<CHAR*>(this->toChar());
-    SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(raw), maxSize);
-    // Null terminate deserialized string
-    raw[maxSize] = 0;
+    // Deserialize length
+    // Fail if length exceeds max size (the initial value of actualSize)
+    // Otherwise deserialize length bytes and set actualSize to length
+    SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(raw), actualSize, Serialization::INCLUDE_LENGTH);
+    if (stat == FW_SERIALIZE_OK) {
+        // Deserialization succeeded: null-terminate string at actual size
+        FW_ASSERT(actualSize <= maxSize, static_cast<FwAssertArgType>(actualSize),
+                  static_cast<FwAssertArgType>(maxSize));
+        raw[actualSize] = 0;
+    } else {
+        // Deserialization failed: leave string unmodified, but ensure that it
+        // is null-terminated
+        raw[maxSize] = 0;
+    }
     return stat;
 }
 }  // namespace Fw
