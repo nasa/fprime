@@ -12,7 +12,6 @@
 #include "TcpClientTester.hpp"
 #include "STest/Pick/Pick.hpp"
 #include <Os/Log.hpp>
-#include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 
 Os::Log logger;
@@ -29,13 +28,12 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus serverStat = Drv::SOCK_SUCCESS;
 
-    U16 port =  Drv::Test::get_free_port();
-    ASSERT_NE(0, port);
+    U16 port =  0;
 
     Drv::TcpServerSocket server;
     server.configure("127.0.0.1", port, 0, 100);
-    this->component.configure("127.0.0.1", port, 0, 100);
     serverStat = server.startup();
+    this->component.configure("127.0.0.1", server.getListenPort(), 0, 100);
 
     ASSERT_EQ(serverStat, SOCK_SUCCESS)
         << "TCP server startup error: " << strerror(errno) << std::endl
