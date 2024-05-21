@@ -16,14 +16,17 @@ namespace Svc {
 
   Version ::
     Version(const char* const compName) :
-      VersionComponentBase(compName), m_enable(true)
+      VersionComponentBase(compName)
   {
         startup_done = false;
+        num_lib_elem = 0;
+        num_cus_elem = 0;
         Svc::VersPortStrings::StringSize80 ver_str = "no_ver";
-        // initialize all entries to stale
+        // initialize all entries
         for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
-            this->verId_db[id].val = ver_str;
-            this->verId_db[id].status = VersionStatus::FAILURE;
+            //setver_enum is by default set to the first enum value, so not setting it here
+            verId_db[id].setver_val(ver_str);
+            verId_db[id].setver_status(VersionStatus::FAILURE);
         }
   }
 
@@ -32,11 +35,22 @@ namespace Svc {
   {
 
   }
+ 
+  void Version::Config(bool enable) {
 
+    //Set Verbosity for custom versions 
+    m_enable = enable;
+
+    //Setup and send startup TLM
+    this->proc_libver();
+    this->FwVer_tlm();
+    this->ProjVer_tlm();
+    this->LibVer_tlm();
+  }
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
-
+/*
 void Version ::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     if(m_enable) {
         Version_tlm();
@@ -47,6 +61,7 @@ void Version ::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
         }
     }
 }
+*/
 
 void Version ::
     getVersion_handler(
@@ -57,9 +72,9 @@ void Version ::
     )
   {
         FW_ASSERT(version_id.isValid(),version_id.e);
-        version_string = this->verId_db[version_id.e].val;
-        status = this->verId_db[version_id.e].status ;
-
+        version_string = this->verId_db[version_id.e].getver_val();
+        status = this->verId_db[version_id.e].getver_status() ;
+        this->CusVer_tlm();
   }
 
   void Version ::
@@ -71,9 +86,11 @@ void Version ::
     )
   {
         FW_ASSERT(version_id.isValid(),version_id.e);
-        this->verId_db[version_id.e].val = version_string;
-        this->verId_db[version_id.e].status = status;
-    
+        this->verId_db[version_id.e].setver_enum(version_id);
+        this->verId_db[version_id.e].setver_val(version_string);
+        this->verId_db[version_id.e].setver_status(status);
+        this->proc_cusver();
+        this->CusVer_tlm();
   }
   // ----------------------------------------------------------------------
   // Handler implementations for commands
@@ -94,25 +111,174 @@ void Version ::
   void Version ::
     VERSION_cmdHandler(
         FwOpcodeType opCode,
-        U32 cmdSeq
+        U32 cmdSeq,
+        Svc::VersionType version_type
     )
   {
-    Fw::LogStringArg version_string(Project::Version::FRAMEWORK_VERSION);
-    this->log_ACTIVITY_LO_FRAMEWORK_VERSION(version_string);
-     
-     version_string = Project::Version::PROJECT_VERSION;
-     this->log_ACTIVITY_LO_PROJECT_VERSION(version_string);
+    //FW_ASSERT(version_type <= Svc::VersionType::ALL);
+    switch(version_type) {
+        case (Svc::VersionType::PROJECT):
+            this->ProjVer_tlm();
+            break;
+        
+        case (Svc::VersionType::FRAMEWORK):
+            this->FwVer_tlm();
+            break;
+        
+        case (Svc::VersionType::LIBRARY):
+            this->LibVer_tlm();
+            break;
+        
+        case (Svc::VersionType::CUSTOM):
+            this->CusVer_tlm();
+            break;
+        
+        case (Svc::VersionType::ALL):
+            this->ProjVer_tlm();
+            this->FwVer_tlm();
+            this->LibVer_tlm();
+            this->CusVer_tlm();
+            break;
+        default:
+            FW_ASSERT(0,version_type);
+            break; 
+    }
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
+  // ----------------------------------------------------------------------
+  // implementations for internal functions 
+  // ----------------------------------------------------------------------
+  //Process libs
+  void Version :: proc_libver() {
+   num_lib_elem = sizeof(Project::Version::LIBRARY_VERSIONS)/sizeof(Project::Version::LIBRARY_VERSIONS[0]);
+  /*
+   //Store lib array locally
+   for(U8 i = 0; i < num_lib_elem ; i++) {
+    lib_ver_arr[i] = Project::Version::LIBRARY_VERSIONS[i]; 
+   } 
+   */
+  }
+  
+  //Process Custom Versions
+  void Version :: proc_cusver() {
+   num_cus_elem = sizeof(this->verId_db)/sizeof(this->verId_db[0]); 
+  }
 
-  //function to log tlm on versions
-  void Version :: Version_tlm() {
-    Fw::TlmString version_string(Project::Version::FRAMEWORK_VERSION);
-    this->tlmWrite_FRAMEWORK_VERSION(version_string);
+  //functions to log tlm on versions
+  void Version :: FwVer_tlm() {
+    Fw::LogStringArg fw_evr = (Project::Version::FRAMEWORK_VERSION);
+    this->log_ACTIVITY_LO_FRAMEWORK_VERSION(fw_evr);
+    Fw::TlmString fw_eha = (Project::Version::FRAMEWORK_VERSION);
+    this->tlmWrite_FRAMEWORK_VERSION(fw_eha);
+  }
 
-    version_string = Project::Version::PROJECT_VERSION;
-    this->tlmWrite_PROJECT_VERSION(version_string);
+  void Version :: ProjVer_tlm() {
+    Fw::LogStringArg proj_evr = Project::Version::PROJECT_VERSION;
+    this->log_ACTIVITY_LO_PROJECT_VERSION(proj_evr);
+    Fw::TlmString proj_eha= Project::Version::PROJECT_VERSION;
+    this->tlmWrite_PROJECT_VERSION(proj_eha);
+  }
+
+  void Version :: LibVer_tlm() {
+
+    for (U8 i = 0; i < num_lib_elem; i++) {
+        //Emit EVR TLM on library versions
+        this->log_ACTIVITY_LO_LIBRARY_VERSIONS(Fw::LogStringArg(Project::Version::LIBRARY_VERSIONS[i]));
+
+        //Write to EHAs
+        switch(i) {
+            case VER_SLOT_00:
+                this->tlmWrite_LIBRARY_VERSION_01(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            case VER_SLOT_01:
+                this->tlmWrite_LIBRARY_VERSION_02(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            case VER_SLOT_02:
+                this->tlmWrite_LIBRARY_VERSION_03(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            case VER_SLOT_03:
+                this->tlmWrite_LIBRARY_VERSION_04(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            case VER_SLOT_04:
+                this->tlmWrite_LIBRARY_VERSION_05(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            case VER_SLOT_05:
+                this->tlmWrite_LIBRARY_VERSION_06(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            case VER_SLOT_06:
+                this->tlmWrite_LIBRARY_VERSION_07(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            case VER_SLOT_07:
+                this->tlmWrite_LIBRARY_VERSION_08(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            case VER_SLOT_08:
+                this->tlmWrite_LIBRARY_VERSION_09(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            case VER_SLOT_09:
+                this->tlmWrite_LIBRARY_VERSION_10(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
+                break;
+            default:
+                //It is possible to have more than 10 library versions; however design agreed to only 
+                // provide 10 TLM channels for it
+                break;
+        }
+    }
+
+  }
+
+  void Version :: CusVer_tlm() {
+    
+    //Process custom version TLM only if verbosity is enabled and there are any valid writes to it; 
+    // it doesn't necessarily have to be consecutive
+    for ( U8 i = 0; 
+          (m_enable == true) && (num_cus_elem != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS);
+          i++) {
+        
+        if(this->verId_db[i].getver_val() != "no_ver") { //Write TLM for valid writes
+            
+            //Emit EVR TLM on library versions
+            this->log_ACTIVITY_LO_CUSTOM_VERSIONS(this->verId_db[i].getver_enum(), this->verId_db[i].getver_val());
+
+            //Write to EHAs
+            switch(i) {
+                case VER_SLOT_00:
+                    this->tlmWrite_CUSTOM_VERSION_01(verId_db[i]);
+                    break;
+                case VER_SLOT_01:
+                    this->tlmWrite_CUSTOM_VERSION_02(verId_db[i]);
+                    break;
+                case VER_SLOT_02:
+                    this->tlmWrite_CUSTOM_VERSION_03(verId_db[i]);
+                    break;
+                case VER_SLOT_03:
+                    this->tlmWrite_CUSTOM_VERSION_04(verId_db[i]);
+                    break;
+                case VER_SLOT_04:
+                    this->tlmWrite_CUSTOM_VERSION_05(verId_db[i]);
+                    break;
+                case VER_SLOT_05:
+                    this->tlmWrite_CUSTOM_VERSION_06(verId_db[i]);
+                    break;
+                case VER_SLOT_06:
+                    this->tlmWrite_CUSTOM_VERSION_07(verId_db[i]);
+                    break;
+                case VER_SLOT_07:
+                    this->tlmWrite_CUSTOM_VERSION_08(verId_db[i]);
+                    break;
+                case VER_SLOT_08:
+                    this->tlmWrite_CUSTOM_VERSION_09(verId_db[i]);
+                    break;
+                case VER_SLOT_09:
+                    this->tlmWrite_CUSTOM_VERSION_10(verId_db[i]);
+                    break;
+                default:
+                    //There are only 10 enum slots available, so can assert here
+                    FW_ASSERT(0,i);
+                    break;
+            }
+        }
+    }
   }
 
 }
