@@ -16,7 +16,7 @@ void test_with_loop(U32 iterations) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    U16 port =  0; // Choose a port
+    U16 port = 0; // Choose a port
     Drv::TcpServerSocket server;
     server.configure("127.0.0.1", port, 0, 100);
     EXPECT_EQ(server.startup(), Drv::SOCK_SUCCESS);
