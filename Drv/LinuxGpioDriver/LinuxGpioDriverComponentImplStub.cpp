@@ -43,9 +43,9 @@ namespace Drv {
       return false;
   }
 
-  Os::Task::TaskStatus LinuxGpioDriverComponentImpl ::
-    startIntTask(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity) {
-     return Os::Task::TASK_OK;
+  Os::Task::Status LinuxGpioDriverComponentImpl ::
+    startIntTask(Os::Task::ParamType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity) {
+     return Os::Task::OP_OK;
    }
 
   LinuxGpioDriverComponentImpl ::

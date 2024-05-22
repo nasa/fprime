@@ -23,17 +23,18 @@ SocketReadTask::SocketReadTask() : m_reconnect(false), m_stop(false) {}
 
 SocketReadTask::~SocketReadTask() {}
 
-void SocketReadTask::startSocketTask(const Fw::StringBase &name,
+void SocketReadTask::start(const Fw::StringBase &name,
                                      const bool reconnect,
                                      const Os::Task::ParamType priority,
                                      const Os::Task::ParamType stack,
                                      const Os::Task::ParamType cpuAffinity) {
-    FW_ASSERT(not m_task.isStarted());  // It is a coding error to start this task multiple times
+    FW_ASSERT(m_task.getState() == Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     FW_ASSERT(not this->m_stop);        // It is a coding error to stop the thread before it is started
     m_reconnect = reconnect;
     // Note: the first step is for the IP socket to open the port
-    Os::Task::TaskStatus stat = m_task.start(name, SocketReadTask::readTask, this, priority, stack, cpuAffinity);
-    FW_ASSERT(Os::Task::TASK_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+    Os::Task::Arguments arguments(name, SocketReadTask::readTask, this, priority, stack, cpuAffinity);
+    Os::Task::Status stat = m_task.start(arguments);
+    FW_ASSERT(Os::Task::OP_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
 }
 
 SocketIpStatus SocketReadTask::startup() {
@@ -57,11 +58,11 @@ void SocketReadTask::close() {
     this->getSocketHandler().close();
 }
 
-Os::Task::TaskStatus SocketReadTask::joinSocketTask(void** value_ptr) {
-    return m_task.join(value_ptr);
+Os::Task::Status SocketReadTask::join() {
+    return m_task.join();
 }
 
-void SocketReadTask::stopSocketTask() {
+void SocketReadTask::stop() {
     this->m_stop = true;
     this->getSocketHandler().shutdown();  // Break out of any receives and fully shutdown
 }
@@ -78,7 +79,7 @@ void SocketReadTask::readTask(void* pointer) {
                 "[WARNING] Failed to open port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
-            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
+            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
             continue;
         }
 
@@ -89,7 +90,7 @@ void SocketReadTask::readTask(void* pointer) {
                 "[WARNING] Failed to open port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
-            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
+            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
             continue;
         }
 
