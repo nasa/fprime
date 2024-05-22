@@ -49,7 +49,7 @@ class SocketReadTask {
      * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
      * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
      */
-    void startSocketTask(const Fw::StringBase &name,
+    void start(const Fw::StringBase &name,
                          const bool reconnect = true,
                          const Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
                          const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
@@ -106,7 +106,7 @@ class SocketReadTask {
      * Called to stop the socket read task. It is an error to call this before the thread has been started using the
      * startSocketTask call. This will stop the read task and close the client socket.
      */
-    void stopSocketTask();
+    void stop();
 
     /**
      * \brief joins to the stopping read task to wait for it to close
@@ -114,9 +114,9 @@ class SocketReadTask {
      * Called to join with the read socket task. This will block and return after the task has been stopped with a call
      * to the stopSocketTask method.
      * \param value_ptr: a pointer to fill with data. Passed to the Os::Task::join call. NULL to ignore.
-     * \return: Os::Task::TaskStatus passed back from the Os::Task::join call.
+     * \return: Os::Task::Status passed back from the Os::Task::join call.
      */
-    Os::Task::TaskStatus joinSocketTask(void** value_ptr);
+    Os::Task::Status join();
 
 
   PROTECTED:

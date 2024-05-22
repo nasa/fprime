@@ -294,6 +294,7 @@ ect
 edu
 EGB
 EHAs
+eip
 elist
 ELOG
 Elts
@@ -1013,6 +1014,7 @@ svipc
 swcaegitadmin
 synchronicity
 synopsys
+sysconf
 SYSCONFDIR
 SYSFS
 sysinfo
@@ -1111,6 +1113,7 @@ toolset
 topologyapp
 Torvalds
 totalram
+tparam
 treeview
 trimwhitespace
 trinomials
