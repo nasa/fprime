@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['queueblocking_7412',['QueueBlocking',['../class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff',1,'Os::Queue']]],
-  ['queuestatus_7413',['QueueStatus',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b',1,'Os::Queue']]]
+  ['packetupdatemode_7434',['PacketUpdateMode',['../namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79e',1,'Svc']]],
+  ['permissionexpectation_7435',['PermissionExpectation',['../class_os_1_1_posix_1_1_task_1_1_posix_task.html#a135f408bae040a24ed94676b67fc85d9',1,'Os::Posix::Task::PosixTask']]]
 ];

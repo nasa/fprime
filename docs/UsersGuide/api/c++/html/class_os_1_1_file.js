@@ -20,6 +20,5 @@ var class_os_1_1_file =
     [ "seek", "class_os_1_1_file.html#a094fb47ea8c6d286dbd1f07501c3966d", null ],
     [ "size", "class_os_1_1_file.html#a661f0906817529668c7dd45d10c11971", null ],
     [ "write", "class_os_1_1_file.html#affee3e205412e0adaf2fd8c94041a6e4", null ],
-    [ "write", "class_os_1_1_file.html#a0bb3c0dc85dc49d61ea9c1e682e71992", null ],
-    [ "FileInterface::getDelegate", "class_os_1_1_file.html#a10c18c205971988a6b1c60603d0dffd1", null ]
+    [ "write", "class_os_1_1_file.html#a0bb3c0dc85dc49d61ea9c1e682e71992", null ]
 ];

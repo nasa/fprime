@@ -2,6 +2,10 @@ var NAVTREEINDEX2 =
 {
 "deframing_protocol_interface_8hpp.html":[27,0,13,26,3],
 "deframing_protocol_interface_8hpp_source.html":[27,0,13,26,3],
+"delegate_8hpp.html":[27,0,10,8],
+"delegate_8hpp.html#a9ad44ca2fde8dfcac755a9f92681a84d":[27,0,10,8,0],
+"delegate_8hpp.html#ac63daeb47d5fee5a7fef6a3a2eb49e25":[27,0,10,8,1],
+"delegate_8hpp_source.html":[27,0,10,8],
 "deprecate_8hpp.html":[27,0,8,17],
 "deprecate_8hpp.html#aaf225a2b96038de3a42d61a1fa63654b":[27,0,8,17,0],
 "deprecate_8hpp_source.html":[27,0,8,17],
@@ -15,8 +19,8 @@ var NAVTREEINDEX2 =
 "direction_enum_ac_8hpp_source.html":[27,0,9,9,5],
 "directory_8cpp.html":[27,0,10,1,0],
 "directory_8cpp_source.html":[27,0,10,1,0],
-"directory_8hpp.html":[27,0,10,8],
-"directory_8hpp_source.html":[27,0,10,8],
+"directory_8hpp.html":[27,0,10,9],
+"directory_8hpp_source.html":[27,0,10,9],
 "dp_catalog_8cpp.html":[27,0,13,17,1],
 "dp_catalog_8cpp_source.html":[27,0,13,17,1],
 "dp_catalog_8hpp.html":[27,0,13,17,2],
@@ -148,8 +152,6 @@ var NAVTREEINDEX2 =
 "enabled_enum_ac_8hpp_source.html":[27,0,9,9,7],
 "end_packet_8cpp.html":[27,0,8,6,3],
 "end_packet_8cpp_source.html":[27,0,8,6,3],
-"event_8hpp.html":[27,0,10,9],
-"event_8hpp_source.html":[27,0,10,9],
 "events_8cpp.html":[27,0,13,9,5],
 "events_8cpp_source.html":[27,0,13,9,5],
 "external_string_8hpp.html":[27,0,8,16,9],
@@ -247,7 +249,5 @@ var NAVTREEINDEX2 =
 "file_system_8hpp_source.html":[27,0,10,12],
 "file_uplink_2_warnings_8cpp.html":[27,0,13,24,4],
 "file_uplink_2_warnings_8cpp_source.html":[27,0,13,24,4],
-"file_uplink_8cpp.html":[27,0,13,24,2],
-"file_uplink_8cpp_source.html":[27,0,13,24,2],
-"file_uplink_8hpp.html":[27,0,13,24,3]
+"file_uplink_8cpp.html":[27,0,13,24,2]
 };

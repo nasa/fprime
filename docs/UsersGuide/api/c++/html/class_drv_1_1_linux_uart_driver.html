@@ -138,14 +138,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a79f927992c95978a05fccff022fabc5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9010bed494907559e283121f039a651"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#ab9010bed494907559e283121f039a651">open</a> (const char *const device, <a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5a">UartBaudRate</a> baud, <a class="el" href="class_drv_1_1_linux_uart_driver.html#a0fba14f12df587cc24548e441a4c4d00">UartFlowControl</a> fc, <a class="el" href="class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601af">UartParity</a> parity, U32 allocationSize)</td></tr>
 <tr class="separator:ab9010bed494907559e283121f039a651"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0309c295728c8c37562bd3112706b18"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#af0309c295728c8c37562bd3112706b18">startReadThread</a> (<a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> priority=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a>, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> stackSize=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a>, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> cpuAffinity=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a>)</td></tr>
-<tr class="separator:af0309c295728c8c37562bd3112706b18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa91f0cb66c39007388d5c1e0d6373ce1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#aa91f0cb66c39007388d5c1e0d6373ce1">start</a> (<a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a> priority=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a> stackSize=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a> cpuAffinity=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a>)</td></tr>
+<tr class="separator:aa91f0cb66c39007388d5c1e0d6373ce1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11267c2c96cd891099b18f1e054b6277"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#a11267c2c96cd891099b18f1e054b6277">quitReadThread</a> ()</td></tr>
 <tr class="memdesc:a11267c2c96cd891099b18f1e054b6277"><td class="mdescLeft">&#160;</td><td class="mdescRight">Quit thread.  <a href="class_drv_1_1_linux_uart_driver.html#a11267c2c96cd891099b18f1e054b6277">More...</a><br /></td></tr>
 <tr class="separator:a11267c2c96cd891099b18f1e054b6277"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0b23ab08df1356b4815598b036a596f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Os::Task::TaskStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#aa0b23ab08df1356b4815598b036a596f">join</a> (void **value_ptr)</td></tr>
-<tr class="memdesc:aa0b23ab08df1356b4815598b036a596f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Join thread.  <a href="class_drv_1_1_linux_uart_driver.html#aa0b23ab08df1356b4815598b036a596f">More...</a><br /></td></tr>
-<tr class="separator:aa0b23ab08df1356b4815598b036a596f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e7c2208c7f2c0129d2c504c01369253"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Os::Task::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#a2e7c2208c7f2c0129d2c504c01369253">join</a> ()</td></tr>
+<tr class="memdesc:a2e7c2208c7f2c0129d2c504c01369253"><td class="mdescLeft">&#160;</td><td class="mdescRight">Join thread.  <a href="class_drv_1_1_linux_uart_driver.html#a2e7c2208c7f2c0129d2c504c01369253">More...</a><br /></td></tr>
+<tr class="separator:a2e7c2208c7f2c0129d2c504c01369253"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a823e807b3ec996fd56037a2f0a32e814"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#a823e807b3ec996fd56037a2f0a32e814">~LinuxUartDriver</a> ()</td></tr>
 <tr class="separator:a823e807b3ec996fd56037a2f0a32e814"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_drv_1_1_linux_uart_driver_component_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_drv_1_1_linux_uart_driver_component_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html">Drv::LinuxUartDriverComponentBase</a></td></tr>
@@ -484,17 +484,16 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aa0b23ab08df1356b4815598b036a596f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa0b23ab08df1356b4815598b036a596f">&#9670;&nbsp;</a></span>join()</h2>
+<a id="a2e7c2208c7f2c0129d2c504c01369253"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e7c2208c7f2c0129d2c504c01369253">&#9670;&nbsp;</a></span>join()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Os::Task::TaskStatus</a> Drv::LinuxUartDriver::join </td>
+          <td class="memname"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Os::Task::Status</a> Drv::LinuxUartDriver::join </td>
           <td>(</td>
-          <td class="paramtype">void **&#160;</td>
-          <td class="paramname"><em>value_ptr</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -502,7 +501,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Join thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00405">405</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00403">403</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
 
 </div>
 </div>
@@ -571,33 +570,33 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Quit thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00401">401</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00399">399</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
 
 </div>
 </div>
-<a id="af0309c295728c8c37562bd3112706b18"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0309c295728c8c37562bd3112706b18">&#9670;&nbsp;</a></span>startReadThread()</h2>
+<a id="aa91f0cb66c39007388d5c1e0d6373ce1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa91f0cb66c39007388d5c1e0d6373ce1">&#9670;&nbsp;</a></span>start()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Drv::LinuxUartDriver::startReadThread </td>
+          <td class="memname">void Drv::LinuxUartDriver::start </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>priority</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a></code>, </td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a>&#160;</td>
+          <td class="paramname"><em>priority</em> = <code><a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>stackSize</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a></code>, </td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a>&#160;</td>
+          <td class="paramname"><em>stackSize</em> = <code><a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>cpuAffinity</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">Os::Task::TASK_DEFAULT</a></code>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a>&#160;</td>
+          <td class="paramname"><em>cpuAffinity</em> = <code><a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>

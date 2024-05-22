@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['logging_5foff_7895',['LOGGING_OFF',['../class_svc_1_1_buffer_logger___log_state.html#a2932d04a30e8f77c4d5d9bb2215466e7afb063d8b2a342782d173148f684ac660',1,'Svc::BufferLogger_LogState']]],
-  ['logging_5fon_7896',['LOGGING_ON',['../class_svc_1_1_buffer_logger___log_state.html#a2932d04a30e8f77c4d5d9bb2215466e7ace1fed0df3843e6a7f8c86b07d405b87',1,'Svc::BufferLogger_LogState']]],
-  ['low_7897',['LOW',['../class_fw_1_1_logic.html#a04e8da637daffb3ab99bd6b4c26c9f92a54b8f11a24d87a023173b8934ea26901',1,'Fw::Logic']]],
-  ['lt_7898',['LT',['../class_fw_1_1_time.html#a84869d06d1fdfb1050ff43da9c95abeca98927fbaa0fb506ac8256971af41aeb6',1,'Fw::Time']]]
+  ['join_5ferror_7926',['JOIN_ERROR',['../class_os_1_1_task_status.html#aea4d944d05bdd2976addb0ac53b3fd15aa4bd84b002c1f30de4e9793eaeb97b76',1,'Os::TaskStatus::JOIN_ERROR()'],['../class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1ac7e08d7ef1b488dbac44f034f225d6ba',1,'Os::TaskInterface::JOIN_ERROR()']]]
 ];

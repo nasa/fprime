@@ -166,6 +166,10 @@ var annotated_dup =
         [ "File", "namespace_os_1_1_posix_1_1_file.html", [
           [ "PosixFileHandle", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle.html", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle" ],
           [ "PosixFile", "class_os_1_1_posix_1_1_file_1_1_posix_file.html", "class_os_1_1_posix_1_1_file_1_1_posix_file" ]
+        ] ],
+        [ "Task", "namespace_os_1_1_posix_1_1_task.html", [
+          [ "PosixTaskHandle", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle.html", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle" ],
+          [ "PosixTask", "class_os_1_1_posix_1_1_task_1_1_posix_task.html", "class_os_1_1_posix_1_1_task_1_1_posix_task" ]
         ] ]
       ] ],
       [ "Stub", "namespace_os_1_1_stub.html", [
@@ -180,11 +184,11 @@ var annotated_dup =
       ] ],
       [ "FileMode", "class_os_1_1_file_mode.html", "class_os_1_1_file_mode" ],
       [ "FileStatus", "class_os_1_1_file_status.html", "class_os_1_1_file_status" ],
+      [ "TaskStatus", "class_os_1_1_task_status.html", "class_os_1_1_task_status" ],
       [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
       [ "BareTaskHandle", "class_os_1_1_bare_task_handle.html", "class_os_1_1_bare_task_handle" ],
       [ "TaskRunner", "class_os_1_1_task_runner.html", "class_os_1_1_task_runner" ],
       [ "Directory", "class_os_1_1_directory.html", "class_os_1_1_directory" ],
-      [ "Event", "class_os_1_1_event.html", "class_os_1_1_event" ],
       [ "FileHandle", "struct_os_1_1_file_handle.html", null ],
       [ "FileInterface", "class_os_1_1_file_interface.html", "class_os_1_1_file_interface" ],
       [ "File", "class_os_1_1_file.html", "class_os_1_1_file" ],
@@ -203,9 +207,10 @@ var annotated_dup =
       [ "Queue", "class_os_1_1_queue.html", "class_os_1_1_queue" ],
       [ "QueueRegistry", "class_os_1_1_queue_registry.html", "class_os_1_1_queue_registry" ],
       [ "QueueString", "class_os_1_1_queue_string.html", "class_os_1_1_queue_string" ],
+      [ "TaskHandle", "class_os_1_1_task_handle.html", null ],
+      [ "TaskInterface", "class_os_1_1_task_interface.html", "class_os_1_1_task_interface" ],
       [ "Task", "class_os_1_1_task.html", "class_os_1_1_task" ],
       [ "TaskRegistry", "class_os_1_1_task_registry.html", "class_os_1_1_task_registry" ],
-      [ "TaskId", "class_os_1_1_task_id.html", "class_os_1_1_task_id" ],
       [ "TaskLock", "class_os_1_1_task_lock.html", "class_os_1_1_task_lock" ],
       [ "TaskString", "class_os_1_1_task_string.html", "class_os_1_1_task_string" ],
       [ "ValidatedFile", "class_os_1_1_validated_file.html", "class_os_1_1_validated_file" ],

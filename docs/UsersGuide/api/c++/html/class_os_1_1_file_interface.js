@@ -41,7 +41,7 @@ var class_os_1_1_file_interface =
     [ "~FileInterface", "class_os_1_1_file_interface.html#afe635543530526e7f6bebb109cc2ed68", null ],
     [ "close", "class_os_1_1_file_interface.html#a03df5846d062e10c67c884619948ef54", null ],
     [ "flush", "class_os_1_1_file_interface.html#a2e13986d4b67d94d668f832f64850928", null ],
-    [ "getDelegate", "class_os_1_1_file_interface.html#a1a9699572df72eb9fd4caed118dfd690", null ],
+    [ "getDelegate", "class_os_1_1_file_interface.html#a3a3a068bde8cb7fde4742d5da8ea12ed", null ],
     [ "getHandle", "class_os_1_1_file_interface.html#aead3477ecdc16477ef8d22874222a870", null ],
     [ "open", "class_os_1_1_file_interface.html#a8d81733421412e1b86b67e07c6ea93b2", null ],
     [ "position", "class_os_1_1_file_interface.html#a846c33e144684bc3688eb5677b9823f0", null ],

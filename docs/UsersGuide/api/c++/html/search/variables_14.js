@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['value_7297',['value',['../class_test_utils_1_1_on_change_channel.html#a98e9cec1af02bf41f161ba9f6cd49e08',1,'TestUtils::OnChangeChannel']]]
+  ['warncycles_7320',['warnCycles',['../struct_svc_1_1_health_impl_1_1_ping_entry.html#ac8d085ff0eb80337f5a1a0616cadf7db',1,'Svc::HealthImpl::PingEntry']]]
 ];

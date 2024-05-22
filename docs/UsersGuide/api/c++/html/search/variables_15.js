@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['warncycles_7298',['warnCycles',['../struct_svc_1_1_health_impl_1_1_ping_entry.html#ac8d085ff0eb80337f5a1a0616cadf7db',1,'Svc::HealthImpl::PingEntry']]]
+  ['zero_5ftime_7321',['ZERO_TIME',['../namespace_fw.html#ab159b7685b88bad9925b9d9a2e24cda7',1,'Fw']]]
 ];

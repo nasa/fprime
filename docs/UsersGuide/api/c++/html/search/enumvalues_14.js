@@ -1,11 +1,10 @@
 var searchData=
 [
-  ['wait_8250',['WAIT',['../class_fw_1_1_wait.html#aebe51ea50c491faf1062c6b1ed6fdb35a038519ecccd29c54979c3c95e038ab07',1,'Fw::Wait::WAIT()'],['../class_os_1_1_file_interface.html#a2c96a8d16d51ea0f487228e19bc137b5a5f1eb42d6f6cf820a164ea9c5eb2bb5f',1,'Os::FileInterface::WAIT()']]],
-  ['warning_5fhi_8251',['WARNING_HI',['../class_fw_1_1_log_severity.html#ae5c107363aa3509f44bf467740a6abe8a0887f329863a4c579fa77856dd745378',1,'Fw::LogSeverity::WARNING_HI()'],['../class_svc_1_1_active_logger___filter_severity.html#af172b40ee29506b80687cae02a56522aa33b84de08dc0caa8735b6c700d0d6bb4',1,'Svc::ActiveLogger_FilterSeverity::WARNING_HI()']]],
-  ['warning_5flo_8252',['WARNING_LO',['../class_fw_1_1_log_severity.html#ae5c107363aa3509f44bf467740a6abe8a9f432c07f5c32c567babd992233b92dc',1,'Fw::LogSeverity::WARNING_LO()'],['../class_svc_1_1_active_logger___filter_severity.html#af172b40ee29506b80687cae02a56522aa571965b0b14ead0feea5a9c743abfe5a',1,'Svc::ActiveLogger_FilterSeverity::WARNING_LO()']]],
-  ['warning_5fon_5fout_5fof_5fmemory_8253',['WARNING_ON_OUT_OF_MEMORY',['../class_svc_1_1_buffer_repeater.html#a56f281f770455430c635b21162c429fea51238c3709cb9e43208bffedd44eaa30',1,'Svc::BufferRepeater']]],
-  ['watchdog_5fcancel_5ferror_8254',['WATCHDOG_CANCEL_ERROR',['../class_os_1_1_watchdog_timer.html#aa9acb4aeff7e668c1fbf562eb6555938ad7c9b41eb3e216cb9ea4d84b35962a3c',1,'Os::WatchdogTimer']]],
-  ['watchdog_5finit_5ferror_8255',['WATCHDOG_INIT_ERROR',['../class_os_1_1_watchdog_timer.html#aa9acb4aeff7e668c1fbf562eb6555938a5084c2059ac4f9044abf8a6602176bd6',1,'Os::WatchdogTimer']]],
-  ['watchdog_5fok_8256',['WATCHDOG_OK',['../class_os_1_1_watchdog_timer.html#aa9acb4aeff7e668c1fbf562eb6555938a7a6dfc697f781c14899705926bfcbadd',1,'Os::WatchdogTimer']]],
-  ['watchdog_5fstart_5ferror_8257',['WATCHDOG_START_ERROR',['../class_os_1_1_watchdog_timer.html#aa9acb4aeff7e668c1fbf562eb6555938ae6c0fc3c977b394bc08571821b84355b',1,'Os::WatchdogTimer']]]
+  ['valid_8272',['VALID',['../class_fw_1_1_param_valid.html#a767a2d17cee5ab06b31064cfa3965aaba7a4202d501be7003e6e693192f7a52f8',1,'Fw::ParamValid']]],
+  ['validation_5ferror_8273',['VALIDATION_ERROR',['../class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa80543452c7e41f2262fb9ce2e8a1862b',1,'Fw::CmdResponse']]],
+  ['validation_5ffail_8274',['VALIDATION_FAIL',['../namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1a60f553cc9a588ee6b1a70fa56d55a88c',1,'Os::ValidateFile']]],
+  ['validation_5ffile_5fbad_5fsize_8275',['VALIDATION_FILE_BAD_SIZE',['../namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1af86262392ee5e8e496b418b6698dae10',1,'Os::ValidateFile']]],
+  ['validation_5ffile_5fdoesnt_5fexist_8276',['VALIDATION_FILE_DOESNT_EXIST',['../namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1a4435d316a9c7cf7a8f9ce14e035a6192',1,'Os::ValidateFile']]],
+  ['validation_5ffile_5fno_5fpermission_8277',['VALIDATION_FILE_NO_PERMISSION',['../namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1afa1f7b10e9161f632490636919e5ac19',1,'Os::ValidateFile']]],
+  ['validation_5fok_8278',['VALIDATION_OK',['../namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1a3719714fd40be1af2ad0813ff9267085',1,'Os::ValidateFile']]]
 ];

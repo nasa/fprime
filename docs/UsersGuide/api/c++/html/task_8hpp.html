@@ -92,20 +92,29 @@ $(document).ready(function(){initNavTree('_task_8hpp.html',''); initResizable();
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="time_8hpp_source.html">Fw/Time/Time.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="serializable_8hpp_source.html">Fw/Types/Serializable.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="os_8hpp_source.html">Os/Os.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="task_string_8hpp_source.html">Os/TaskString.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="mutex_8hpp_source.html">Os/Mutex.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="deprecate_8hpp_source.html">Fw/Deprecate.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="task_id_8hpp_source.html">Os/TaskId.hpp</a>&gt;</code><br />
 <code>#include &lt;limits&gt;</code><br />
 </div>
 <p><a href="task_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html">Os::Task</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">forward declaration  <a href="class_os_1_1_task.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_handle.html">Os::TaskHandle</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_os_1_1_task.html">Task</a> handle representation.  <a href="class_os_1_1_task_handle.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_os_1_1_task_1_1_task_routine_wrapper.html">Os::Task::TaskRoutineWrapper</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html">Os::TaskInterface</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface_1_1_arguments.html">Os::TaskInterface::Arguments</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html">Os::Task</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_1_1_task_routine_wrapper.html">Os::Task::TaskRoutineWrapper</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper for task routine that ensures <code><a class="el" href="class_os_1_1_task.html#a803747012409eb9cb6c216b5b53eb120" title="perform delegate&#39;s required task start actions">onStart()</a></code> is called once the task actually begins.  <a href="class_os_1_1_task_1_1_task_routine_wrapper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_registry.html">Os::TaskRegistry</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>

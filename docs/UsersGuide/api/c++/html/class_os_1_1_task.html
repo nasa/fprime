@@ -89,180 +89,183 @@ $(document).ready(function(){initNavTree('class_os_1_1_task.html',''); initResiz
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="class_os_1_1_task-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Os::Task Class Reference</div>  </div>
+<div class="title">Os::Task Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>forward declaration  
- <a href="class_os_1_1_task.html#details">More...</a></p>
-
 <p><code>#include &lt;<a class="el" href="task_8hpp_source.html">Os/Task.hpp</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for Os::Task:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_os_1_1_task.png" usemap="#Os::Task_map" alt=""/>
+  <map id="Os::Task_map" name="Os::Task_map">
+<area href="class_os_1_1_task_interface.html" alt="Os::TaskInterface" shape="rect" coords="0,0,110,24"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_os_1_1_task_1_1_task_routine_wrapper.html">TaskRoutineWrapper</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_1_1_task_routine_wrapper.html">TaskRoutineWrapper</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper for task routine that ensures <code><a class="el" href="class_os_1_1_task.html#a803747012409eb9cb6c216b5b53eb120" title="perform delegate&#39;s required task start actions">onStart()</a></code> is called once the task actually begins.  <a href="class_os_1_1_task_1_1_task_routine_wrapper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:aa1922f0444b26ffce3526353e291af8f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a> { <br />
-&#160;&#160;<a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa38fdf68e513d964c543e6082ffde55b9">TASK_OK</a>
-, <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa816e9f0caa0d8103375ab8c469fb3917">TASK_INVALID_PARAMS</a>
-, <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa58087784eefc3f65bc5d76e8c966c69e">TASK_INVALID_STACK</a>
-, <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fafc3eb1444aa61ad5b95145552afdedf2">TASK_UNKNOWN_ERROR</a>
+<tr class="memitem:a5de20f33a8a6e1c4a3bf2e2de6a1db22"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">ParamType</a></td></tr>
+<tr class="memdesc:a5de20f33a8a6e1c4a3bf2e2de6a1db22"><td class="mdescLeft">&#160;</td><td class="mdescRight">backwards-compatible parameter type  <a href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">More...</a><br /></td></tr>
+<tr class="separator:a5de20f33a8a6e1c4a3bf2e2de6a1db22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_types_class_os_1_1_task_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_os_1_1_task_interface')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_os_1_1_task_interface.html">Os::TaskInterface</a></td></tr>
+<tr class="memitem:ad9d263c769aa2ac35bb8a38e9447fca1 inherit pub_types_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a> { <br />
+&#160;&#160;<a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1a3ef40519c54942d36ce3c804e49ff8e4">OP_OK</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1ab3c94de634bcfadb3f47eb5cf3f7c60b">INVALID_HANDLE</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1a8aea8ca78a92c2db8c3759141039b63f">INVALID_PARAMS</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1aacdd963209408529fba7fd8f8c3920c1">INVALID_STACK</a>
 , <br />
-&#160;&#160;<a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa903b4f0c70a23d75509657cc870fa0ad">TASK_INVALID_AFFINITY</a>
-, <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa63b452dd7a0f8b811eeab1d2f49ce0f3">TASK_DELAY_ERROR</a>
-, <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fafeec1286cadd0fba583120011a372036">TASK_JOIN_ERROR</a>
-, <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fad382342a76eef81b0c369664b9b6c87e">TASK_ERROR_RESOURCES</a>
+&#160;&#160;<a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1a67abf59c020b05a70ac11d10ef201e2f">UNKNOWN_ERROR</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1ab582f7cd2ebcba501aebaf8ca3d7330b">INVALID_AFFINITY</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1aaae9ed5a48a9fa84524a20f202f89ef7">DELAY_ERROR</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1ac7e08d7ef1b488dbac44f034f225d6ba">JOIN_ERROR</a>
 , <br />
-&#160;&#160;<a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa11ea38e8e3db712aad27e1cc8d81c895">TASK_ERROR_PERMISSION</a>
+&#160;&#160;<a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1aa56516976c83796597cb0af5512488a2">ERROR_RESOURCES</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1a7fa3bca5b11cf8a3b3081ae4f1636895">ERROR_PERMISSION</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1a2b140c15236734a31651a3871fad7389">INVALID_STATE</a>
 <br />
  }</td></tr>
-<tr class="separator:aa1922f0444b26ffce3526353e291af8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1075451d5147f714b5affbfbca530b4c"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> = <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></td></tr>
-<tr class="separator:a1075451d5147f714b5affbfbca530b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c2417f2053779690cfa1f0f1062d476"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">taskRoutine</a>) (void *ptr)</td></tr>
-<tr class="memdesc:a6c2417f2053779690cfa1f0f1062d476"><td class="mdescLeft">&#160;</td><td class="mdescRight">prototype for task routine started in task context  <a href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">More...</a><br /></td></tr>
-<tr class="separator:a6c2417f2053779690cfa1f0f1062d476"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ad9d263c769aa2ac35bb8a38e9447fca1 inherit pub_types_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a174e2213dad7034b44cfddf7a16729f4 inherit pub_types_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#a174e2213dad7034b44cfddf7a16729f4">SuspensionType</a> { <a class="el" href="class_os_1_1_task_interface.html#a174e2213dad7034b44cfddf7a16729f4a29de9f91d184d2bffef660109476b61b">INTENTIONAL</a>
+, <a class="el" href="class_os_1_1_task_interface.html#a174e2213dad7034b44cfddf7a16729f4a879c3b49a28161d2a1cbd0bdbb73cdb7">UNINTENTIONAL</a>
+ }</td></tr>
+<tr class="separator:a174e2213dad7034b44cfddf7a16729f4 inherit pub_types_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3dbca325ee42772311eb9a542144a45 inherit pub_types_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45">State</a> { <br />
+&#160;&#160;<a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45ae8964b1cd6d6c6c4e72ac5f4740a8737">NOT_STARTED</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a48b9025fb8820cf2ae735ed6769c03ca">RUNNING</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a54c8a8fd65462bb9bd52df1188e3e0bc">SUSPENDED_INTENTIONALLY</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45aceb80d595a1a01f763f54997aa7b54f4">SUSPENDED_UNINTENTIONALLY</a>
+, <br />
+&#160;&#160;<a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a1b35d2df650e5f288b53352155a8373a">EXITED</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a76930a6ef5dc15a9816c0f526f138701">UNKNOWN</a>
+<br />
+ }</td></tr>
+<tr class="separator:ab3dbca325ee42772311eb9a542144a45 inherit pub_types_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad309f951c51b85a885f8bfa218bace6e inherit pub_types_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#ad309f951c51b85a885f8bfa218bace6e">taskRoutine</a>) (void *ptr)</td></tr>
+<tr class="memdesc:ad309f951c51b85a885f8bfa218bace6e inherit pub_types_class_os_1_1_task_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prototype for task routine started in task context.  <a href="class_os_1_1_task_interface.html#ad309f951c51b85a885f8bfa218bace6e">More...</a><br /></td></tr>
+<tr class="separator:ad309f951c51b85a885f8bfa218bace6e inherit pub_types_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a2fc6a1e3384708525cbeea8cc3e83ee1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a2fc6a1e3384708525cbeea8cc3e83ee1">Task</a> ()</td></tr>
-<tr class="memdesc:a2fc6a1e3384708525cbeea8cc3e83ee1"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="class_os_1_1_task.html#a2fc6a1e3384708525cbeea8cc3e83ee1">More...</a><br /></td></tr>
+<tr class="memdesc:a2fc6a1e3384708525cbeea8cc3e83ee1"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor  <a href="class_os_1_1_task.html#a2fc6a1e3384708525cbeea8cc3e83ee1">More...</a><br /></td></tr>
 <tr class="separator:a2fc6a1e3384708525cbeea8cc3e83ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31afff91113af5f5eaab6fc26cdf7e98"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a31afff91113af5f5eaab6fc26cdf7e98">~Task</a> ()</td></tr>
-<tr class="memdesc:a31afff91113af5f5eaab6fc26cdf7e98"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor  <a href="class_os_1_1_task.html#a31afff91113af5f5eaab6fc26cdf7e98">More...</a><br /></td></tr>
-<tr class="separator:a31afff91113af5f5eaab6fc26cdf7e98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aacd50ec68aa0c8d125de21e8ce0584ae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#aacd50ec68aa0c8d125de21e8ce0584ae">start</a> (const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, <a class="el" href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">taskRoutine</a> routine, void *arg, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> priority=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> stackSize=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> cpuAffinity=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> identifier=<a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a>)</td></tr>
-<tr class="memdesc:aacd50ec68aa0c8d125de21e8ce0584ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the task  <a href="class_os_1_1_task.html#aacd50ec68aa0c8d125de21e8ce0584ae">More...</a><br /></td></tr>
-<tr class="separator:aacd50ec68aa0c8d125de21e8ce0584ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e857d70bfe3348f9e45ca1d6f5f17f5"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a2e857d70bfe3348f9e45ca1d6f5f17f5">getIdentifier</a> ()</td></tr>
-<tr class="memdesc:a2e857d70bfe3348f9e45ca1d6f5f17f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the identifier for the task  <a href="class_os_1_1_task.html#a2e857d70bfe3348f9e45ca1d6f5f17f5">More...</a><br /></td></tr>
-<tr class="separator:a2e857d70bfe3348f9e45ca1d6f5f17f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c1ef3f82767ad505098eba28b79c4c0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a9c1ef3f82767ad505098eba28b79c4c0">join</a> (void **value_ptr)</td></tr>
-<tr class="memdesc:a9c1ef3f82767ad505098eba28b79c4c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for task to finish.  <a href="class_os_1_1_task.html#a9c1ef3f82767ad505098eba28b79c4c0">More...</a><br /></td></tr>
-<tr class="separator:a9c1ef3f82767ad505098eba28b79c4c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54275e1d4c04ce4a9d4a0248f90a37ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a54275e1d4c04ce4a9d4a0248f90a37ca">suspend</a> (bool onPurpose=false)</td></tr>
-<tr class="memdesc:a54275e1d4c04ce4a9d4a0248f90a37ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">suspend task  <a href="class_os_1_1_task.html#a54275e1d4c04ce4a9d4a0248f90a37ca">More...</a><br /></td></tr>
-<tr class="separator:a54275e1d4c04ce4a9d4a0248f90a37ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2c801dd8d206c643031b0d008e3eeb5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#aa2c801dd8d206c643031b0d008e3eeb5">resume</a> ()</td></tr>
-<tr class="memdesc:aa2c801dd8d206c643031b0d008e3eeb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">resume execution of task  <a href="class_os_1_1_task.html#aa2c801dd8d206c643031b0d008e3eeb5">More...</a><br /></td></tr>
-<tr class="separator:aa2c801dd8d206c643031b0d008e3eeb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d7bd874ef0b9428c62715905f592aba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a1d7bd874ef0b9428c62715905f592aba">wasSuspended</a> ()</td></tr>
-<tr class="memdesc:a1d7bd874ef0b9428c62715905f592aba"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns whether or not task was suspended on purpose  <a href="class_os_1_1_task.html#a1d7bd874ef0b9428c62715905f592aba">More...</a><br /></td></tr>
-<tr class="separator:a1d7bd874ef0b9428c62715905f592aba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e68dc4657179f8fcbdb3b0e4646c775"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a4e68dc4657179f8fcbdb3b0e4646c775">isSuspended</a> ()</td></tr>
-<tr class="memdesc:a4e68dc4657179f8fcbdb3b0e4646c775"><td class="mdescLeft">&#160;</td><td class="mdescRight">check with OS to see if it is suspended already  <a href="class_os_1_1_task.html#a4e68dc4657179f8fcbdb3b0e4646c775">More...</a><br /></td></tr>
-<tr class="separator:a4e68dc4657179f8fcbdb3b0e4646c775"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabdb7be3331314b966ea63947752250f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#aabdb7be3331314b966ea63947752250f">isStarted</a> ()</td></tr>
-<tr class="memdesc:aabdb7be3331314b966ea63947752250f"><td class="mdescLeft">&#160;</td><td class="mdescRight">check to see if task is started  <a href="class_os_1_1_task.html#aabdb7be3331314b966ea63947752250f">More...</a><br /></td></tr>
-<tr class="separator:aabdb7be3331314b966ea63947752250f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3717fd77faef05bdd148dc54baf2038"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#ac3717fd77faef05bdd148dc54baf2038">setStarted</a> (bool started)</td></tr>
-<tr class="memdesc:ac3717fd77faef05bdd148dc54baf2038"><td class="mdescLeft">&#160;</td><td class="mdescRight">set task to started when thread is fully up. Avoids a VxWorks race condition.  <a href="class_os_1_1_task.html#ac3717fd77faef05bdd148dc54baf2038">More...</a><br /></td></tr>
-<tr class="separator:ac3717fd77faef05bdd148dc54baf2038"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac80e4d320f3ce35458a3c2f4c2b8b169"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#ac80e4d320f3ce35458a3c2f4c2b8b169">getRawHandle</a> ()</td></tr>
-<tr class="separator:ac80e4d320f3ce35458a3c2f4c2b8b169"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae57fa7e18cb3eb81c34e082e98cc7932"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#ae57fa7e18cb3eb81c34e082e98cc7932">~Task</a> () final</td></tr>
+<tr class="memdesc:ae57fa7e18cb3eb81c34e082e98cc7932"><td class="mdescLeft">&#160;</td><td class="mdescRight">default virtual destructor  <a href="class_os_1_1_task.html#ae57fa7e18cb3eb81c34e082e98cc7932">More...</a><br /></td></tr>
+<tr class="separator:ae57fa7e18cb3eb81c34e082e98cc7932"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abedc0b6708b96f0e04320c9c4af3c0c0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#abedc0b6708b96f0e04320c9c4af3c0c0">Task</a> (const <a class="el" href="class_os_1_1_task.html">Task</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:abedc0b6708b96f0e04320c9c4af3c0c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor is forbidden  <a href="class_os_1_1_task.html#abedc0b6708b96f0e04320c9c4af3c0c0">More...</a><br /></td></tr>
+<tr class="separator:abedc0b6708b96f0e04320c9c4af3c0c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96ec05bae26bf40dec5a47fd1ec012db"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task.html">Task</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a96ec05bae26bf40dec5a47fd1ec012db">operator=</a> (const <a class="el" href="class_os_1_1_task.html">Task</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:a96ec05bae26bf40dec5a47fd1ec012db"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignment operator is forbidden  <a href="class_os_1_1_task.html#a96ec05bae26bf40dec5a47fd1ec012db">More...</a><br /></td></tr>
+<tr class="separator:a96ec05bae26bf40dec5a47fd1ec012db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab63e062581343528b10a810c13ca639d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#ab63e062581343528b10a810c13ca639d">suspend</a> ()</td></tr>
+<tr class="memdesc:ab63e062581343528b10a810c13ca639d"><td class="mdescLeft">&#160;</td><td class="mdescRight">suspend the current task  <a href="class_os_1_1_task.html#ab63e062581343528b10a810c13ca639d">More...</a><br /></td></tr>
+<tr class="separator:ab63e062581343528b10a810c13ca639d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e0f8dda9e0ea14212733696bd63dc0b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45">State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a4e0f8dda9e0ea14212733696bd63dc0b">getState</a> ()</td></tr>
+<tr class="memdesc:a4e0f8dda9e0ea14212733696bd63dc0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the task's state  <a href="class_os_1_1_task.html#a4e0f8dda9e0ea14212733696bd63dc0b">More...</a><br /></td></tr>
+<tr class="separator:a4e0f8dda9e0ea14212733696bd63dc0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25c99a4e84847caba16f138e3a45fa5d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a25c99a4e84847caba16f138e3a45fa5d">DEPRECATED</a> (<a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a> <a class="el" href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">start</a>(const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, const <a class="el" href="class_os_1_1_task_interface.html#ad309f951c51b85a885f8bfa218bace6e">taskRoutine</a> routine, void *const arg=nullptr, const <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">ParamType</a> priority=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">TASK_DEFAULT</a>, const <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">ParamType</a> stackSize=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">TASK_DEFAULT</a>, const <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">ParamType</a> cpuAffinity=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">TASK_DEFAULT</a>, const <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">ParamType</a> identifier=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">TASK_DEFAULT</a>), &quot;Switch to <a class="el" href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">Task::start</a>(<a class="el" href="class_os_1_1_task_interface_1_1_arguments.html">Arguments</a>&amp;)&quot;)</td></tr>
+<tr class="memdesc:a25c99a4e84847caba16f138e3a45fa5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">start this task  <a href="class_os_1_1_task.html#a25c99a4e84847caba16f138e3a45fa5d">More...</a><br /></td></tr>
+<tr class="separator:a25c99a4e84847caba16f138e3a45fa5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf42d4bb8ec737eb1755607e8919912c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">start</a> (const <a class="el" href="class_os_1_1_task_interface_1_1_arguments.html">Arguments</a> &amp;arguments) override</td></tr>
+<tr class="memdesc:adf42d4bb8ec737eb1755607e8919912c"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the task  <a href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">More...</a><br /></td></tr>
+<tr class="separator:adf42d4bb8ec737eb1755607e8919912c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a803747012409eb9cb6c216b5b53eb120"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a803747012409eb9cb6c216b5b53eb120">onStart</a> () override</td></tr>
+<tr class="memdesc:a803747012409eb9cb6c216b5b53eb120"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform delegate's required task start actions  <a href="class_os_1_1_task.html#a803747012409eb9cb6c216b5b53eb120">More...</a><br /></td></tr>
+<tr class="separator:a803747012409eb9cb6c216b5b53eb120"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a983807460f73fd74c86a84a281aab190"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a983807460f73fd74c86a84a281aab190">invokeRoutine</a> ()</td></tr>
+<tr class="memdesc:a983807460f73fd74c86a84a281aab190"><td class="mdescLeft">&#160;</td><td class="mdescRight">invoke the task's routine  <a href="class_os_1_1_task.html#a983807460f73fd74c86a84a281aab190">More...</a><br /></td></tr>
+<tr class="separator:a983807460f73fd74c86a84a281aab190"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6b68de2f47fcc94ef86523a0bcfc6cd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#af6b68de2f47fcc94ef86523a0bcfc6cd">DEPRECATED</a> (<a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a> <a class="el" href="class_os_1_1_task.html#af8a83a2eb930b2575cd207c08a46c245">join</a>(void **value_ptr), &quot;Please switch to argument free join.&quot;)</td></tr>
+<tr class="memdesc:af6b68de2f47fcc94ef86523a0bcfc6cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">join calling thread to this thread  <a href="class_os_1_1_task.html#af6b68de2f47fcc94ef86523a0bcfc6cd">More...</a><br /></td></tr>
+<tr class="separator:af6b68de2f47fcc94ef86523a0bcfc6cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8a83a2eb930b2575cd207c08a46c245"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#af8a83a2eb930b2575cd207c08a46c245">join</a> () override</td></tr>
+<tr class="memdesc:af8a83a2eb930b2575cd207c08a46c245"><td class="mdescLeft">&#160;</td><td class="mdescRight">block until the task has ended  <a href="class_os_1_1_task.html#af8a83a2eb930b2575cd207c08a46c245">More...</a><br /></td></tr>
+<tr class="separator:af8a83a2eb930b2575cd207c08a46c245"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adeea5159dfd228cc0e330008e7cba91c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#adeea5159dfd228cc0e330008e7cba91c">suspend</a> (<a class="el" href="class_os_1_1_task_interface.html#a174e2213dad7034b44cfddf7a16729f4">SuspensionType</a> suspensionType) override</td></tr>
+<tr class="memdesc:adeea5159dfd228cc0e330008e7cba91c"><td class="mdescLeft">&#160;</td><td class="mdescRight">suspend the task given the suspension type  <a href="class_os_1_1_task.html#adeea5159dfd228cc0e330008e7cba91c">More...</a><br /></td></tr>
+<tr class="separator:adeea5159dfd228cc0e330008e7cba91c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e924e56d124d23dc6e6a1cef1f66977"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a7e924e56d124d23dc6e6a1cef1f66977">resume</a> () override</td></tr>
+<tr class="memdesc:a7e924e56d124d23dc6e6a1cef1f66977"><td class="mdescLeft">&#160;</td><td class="mdescRight">resume a suspended task  <a href="class_os_1_1_task.html#a7e924e56d124d23dc6e6a1cef1f66977">More...</a><br /></td></tr>
+<tr class="separator:a7e924e56d124d23dc6e6a1cef1f66977"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10dbcb7452d13b3979ab63f19ef7baf6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a10dbcb7452d13b3979ab63f19ef7baf6">isCooperative</a> () override</td></tr>
+<tr class="memdesc:a10dbcb7452d13b3979ab63f19ef7baf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">determine if the task is cooperative multitasking (implementation specific)  <a href="class_os_1_1_task.html#a10dbcb7452d13b3979ab63f19ef7baf6">More...</a><br /></td></tr>
+<tr class="separator:a10dbcb7452d13b3979ab63f19ef7baf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b4bb4dc238f53a683f1a396765a9827"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_handle.html">TaskHandle</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a4b4bb4dc238f53a683f1a396765a9827">getHandle</a> () override</td></tr>
+<tr class="memdesc:a4b4bb4dc238f53a683f1a396765a9827"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the underlying task handle (implementation specific)  <a href="class_os_1_1_task.html#a4b4bb4dc238f53a683f1a396765a9827">More...</a><br /></td></tr>
+<tr class="separator:a4b4bb4dc238f53a683f1a396765a9827"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_os_1_1_task_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_os_1_1_task_interface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_os_1_1_task_interface.html">Os::TaskInterface</a></td></tr>
+<tr class="memitem:a9d28d2d2b5016574c61fdea6664eb7d0 inherit pub_methods_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#a9d28d2d2b5016574c61fdea6664eb7d0">TaskInterface</a> ()=default</td></tr>
+<tr class="memdesc:a9d28d2d2b5016574c61fdea6664eb7d0 inherit pub_methods_class_os_1_1_task_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor  <a href="class_os_1_1_task_interface.html#a9d28d2d2b5016574c61fdea6664eb7d0">More...</a><br /></td></tr>
+<tr class="separator:a9d28d2d2b5016574c61fdea6664eb7d0 inherit pub_methods_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac009412e20cbeaaacb0a94f09e9b216a inherit pub_methods_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#ac009412e20cbeaaacb0a94f09e9b216a">~TaskInterface</a> ()=default</td></tr>
+<tr class="memdesc:ac009412e20cbeaaacb0a94f09e9b216a inherit pub_methods_class_os_1_1_task_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">default virtual destructor  <a href="class_os_1_1_task_interface.html#ac009412e20cbeaaacb0a94f09e9b216a">More...</a><br /></td></tr>
+<tr class="separator:ac009412e20cbeaaacb0a94f09e9b216a inherit pub_methods_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30f23455db67c86fbcee5ab20a213451 inherit pub_methods_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#a30f23455db67c86fbcee5ab20a213451">TaskInterface</a> (const <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:a30f23455db67c86fbcee5ab20a213451 inherit pub_methods_class_os_1_1_task_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor is forbidden  <a href="class_os_1_1_task_interface.html#a30f23455db67c86fbcee5ab20a213451">More...</a><br /></td></tr>
+<tr class="separator:a30f23455db67c86fbcee5ab20a213451 inherit pub_methods_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad56ce918a0574599ef2d805933583fb1 inherit pub_methods_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#ad56ce918a0574599ef2d805933583fb1">operator=</a> (const <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:ad56ce918a0574599ef2d805933583fb1 inherit pub_methods_class_os_1_1_task_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignment operator is forbidden  <a href="class_os_1_1_task_interface.html#ad56ce918a0574599ef2d805933583fb1">More...</a><br /></td></tr>
+<tr class="separator:ad56ce918a0574599ef2d805933583fb1 inherit pub_methods_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a907c01c92a37d86787552e2c98eb235c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_task_id.html">TaskId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a907c01c92a37d86787552e2c98eb235c">getOsIdentifier</a> ()</td></tr>
-<tr class="separator:a907c01c92a37d86787552e2c98eb235c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53c32a17babf73d6cd8122101cea387f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">TaskStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a53c32a17babf73d6cd8122101cea387f">delay</a> (<a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a> msecs)</td></tr>
-<tr class="memdesc:a53c32a17babf73d6cd8122101cea387f"><td class="mdescLeft">&#160;</td><td class="mdescRight">delay the task  <a href="class_os_1_1_task.html#a53c32a17babf73d6cd8122101cea387f">More...</a><br /></td></tr>
-<tr class="separator:a53c32a17babf73d6cd8122101cea387f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae58720dc3a411ca708e1acd9ade67f94"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#ae58720dc3a411ca708e1acd9ade67f94">getNumTasks</a> ()</td></tr>
-<tr class="separator:ae58720dc3a411ca708e1acd9ade67f94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b73c8de056bad14c2e0226d5ce4abc1"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a0b73c8de056bad14c2e0226d5ce4abc1">getNumTasks</a> ()</td></tr>
+<tr class="memdesc:a0b73c8de056bad14c2e0226d5ce4abc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the current number of tasks  <a href="class_os_1_1_task.html#a0b73c8de056bad14c2e0226d5ce4abc1">More...</a><br /></td></tr>
+<tr class="separator:a0b73c8de056bad14c2e0226d5ce4abc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab83390a02f2e6732ee1a2cdd0efc9fcb"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#ab83390a02f2e6732ee1a2cdd0efc9fcb">registerTaskRegistry</a> (<a class="el" href="class_os_1_1_task_registry.html">TaskRegistry</a> *registry)</td></tr>
+<tr class="memdesc:ab83390a02f2e6732ee1a2cdd0efc9fcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">register a task registry to track Threads  <a href="class_os_1_1_task.html#ab83390a02f2e6732ee1a2cdd0efc9fcb">More...</a><br /></td></tr>
 <tr class="separator:ab83390a02f2e6732ee1a2cdd0efc9fcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_methods_class_os_1_1_task_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_os_1_1_task_interface')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_os_1_1_task_interface.html">Os::TaskInterface</a></td></tr>
+<tr class="memitem:af5f1ddc384b1985c550458f643d72316 inherit pub_static_methods_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#af5f1ddc384b1985c550458f643d72316">delay</a> (<a class="el" href="class_fw_1_1_time.html">Fw::Time</a> interval)</td></tr>
+<tr class="memdesc:af5f1ddc384b1985c550458f643d72316 inherit pub_static_methods_class_os_1_1_task_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">delay the current task  <a href="class_os_1_1_task_interface.html#af5f1ddc384b1985c550458f643d72316">More...</a><br /></td></tr>
+<tr class="separator:af5f1ddc384b1985c550458f643d72316 inherit pub_static_methods_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a231451057c560f5466b30099928040e0 inherit pub_static_methods_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#a231451057c560f5466b30099928040e0">getDelegate</a> (<a class="el" href="os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da">HandleStorage</a> &amp;aligned_placement_new_memory)</td></tr>
+<tr class="memdesc:a231451057c560f5466b30099928040e0 inherit pub_static_methods_class_os_1_1_task_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">provide a pointer to a task delegate object  <a href="class_os_1_1_task_interface.html#a231451057c560f5466b30099928040e0">More...</a><br /></td></tr>
+<tr class="separator:a231451057c560f5466b30099928040e0 inherit pub_static_methods_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a534c529271f0d5501b28ca275b905ffd"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a> = std::numeric_limits&lt;<a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Task::ParamType</a>&gt;::max()</td></tr>
-<tr class="separator:a534c529271f0d5501b28ca275b905ffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_static_attribs_class_os_1_1_task_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_class_os_1_1_task_interface')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="class_os_1_1_task_interface.html">Os::TaskInterface</a></td></tr>
+<tr class="memitem:ab33554510a55456c7eaf81829eb2fa9c inherit pub_static_attribs_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">static constexpr <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">TASK_DEFAULT</a> = std::numeric_limits&lt;<a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&gt;::max()</td></tr>
+<tr class="separator:ab33554510a55456c7eaf81829eb2fa9c inherit pub_static_attribs_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>forward declaration </p>
+<div class="textblock"><p><a class="el" href="class_os_1_1_task.html">Task</a> class intended to be used by the rest of the fprime system. This is final as it is not intended to be a parent class. Instead it wraps a delegate provided by <code><a class="el" href="class_os_1_1_task_interface.html#a231451057c560f5466b30099928040e0" title="provide a pointer to a task delegate object">TaskInterface::getDelegate()</a></code> to provide system specific behaviour. </p>
 
-<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00015">15</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00195">195</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a1075451d5147f714b5affbfbca530b4c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1075451d5147f714b5affbfbca530b4c">&#9670;&nbsp;</a></span>ParamType</h2>
+<a id="a5de20f33a8a6e1c4a3bf2e2de6a1db22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5de20f33a8a6e1c4a3bf2e2de6a1db22">&#9670;&nbsp;</a></span>ParamType</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Os::Task::ParamType</a> =  <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></td>
+          <td class="memname">typedef <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00017">17</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
+<p>backwards-compatible parameter type </p>
 
-</div>
-</div>
-<a id="a6c2417f2053779690cfa1f0f1062d476"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c2417f2053779690cfa1f0f1062d476">&#9670;&nbsp;</a></span>taskRoutine</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef void(* Os::Task::taskRoutine) (void *ptr)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>prototype for task routine started in task context </p>
-
-<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00031">31</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="aa1922f0444b26ffce3526353e291af8f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1922f0444b26ffce3526353e291af8f">&#9670;&nbsp;</a></span>TaskStatus</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Os::Task::TaskStatus</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa1922f0444b26ffce3526353e291af8fa38fdf68e513d964c543e6082ffde55b9"></a>TASK_OK&#160;</td><td class="fielddoc"><p>message sent/received okay </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa1922f0444b26ffce3526353e291af8fa816e9f0caa0d8103375ab8c469fb3917"></a>TASK_INVALID_PARAMS&#160;</td><td class="fielddoc"><p>started task with invalid parameters </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa1922f0444b26ffce3526353e291af8fa58087784eefc3f65bc5d76e8c966c69e"></a>TASK_INVALID_STACK&#160;</td><td class="fielddoc"><p>started with invalid stack size </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa1922f0444b26ffce3526353e291af8fafc3eb1444aa61ad5b95145552afdedf2"></a>TASK_UNKNOWN_ERROR&#160;</td><td class="fielddoc"><p>unexpected error return value </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa1922f0444b26ffce3526353e291af8fa903b4f0c70a23d75509657cc870fa0ad"></a>TASK_INVALID_AFFINITY&#160;</td><td class="fielddoc"><p>unable to set the task affinity </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa1922f0444b26ffce3526353e291af8fa63b452dd7a0f8b811eeab1d2f49ce0f3"></a>TASK_DELAY_ERROR&#160;</td><td class="fielddoc"><p>error trying to delay the task </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa1922f0444b26ffce3526353e291af8fafeec1286cadd0fba583120011a372036"></a>TASK_JOIN_ERROR&#160;</td><td class="fielddoc"><p>error trying to join the task </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa1922f0444b26ffce3526353e291af8fad382342a76eef81b0c369664b9b6c87e"></a>TASK_ERROR_RESOURCES&#160;</td><td class="fielddoc"><p>unable to allocate more tasks </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa1922f0444b26ffce3526353e291af8fa11ea38e8e3db712aad27e1cc8d81c895"></a>TASK_ERROR_PERMISSION&#160;</td><td class="fielddoc"><p>permissions error setting-up tasks </p>
-</td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00019">19</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00218">218</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2fc6a1e3384708525cbeea8cc3e83ee1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2fc6a1e3384708525cbeea8cc3e83ee1">&#9670;&nbsp;</a></span>Task()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fc6a1e3384708525cbeea8cc3e83ee1">&#9670;&nbsp;</a></span>Task() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -276,14 +279,14 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>constructor </p>
+<p>default constructor </p>
 
-<p class="definition">Definition at line <a class="el" href="baremetal_2_task_8cpp_source.html#l00010">10</a> of file <a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00060">60</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a31afff91113af5f5eaab6fc26cdf7e98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31afff91113af5f5eaab6fc26cdf7e98">&#9670;&nbsp;</a></span>~Task()</h2>
+<a id="ae57fa7e18cb3eb81c34e082e98cc7932"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae57fa7e18cb3eb81c34e082e98cc7932">&#9670;&nbsp;</a></span>~Task()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -300,20 +303,130 @@ Static Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>destructor </p>
+<p>default virtual destructor </p>
 
-<p class="definition">Definition at line <a class="el" href="baremetal_2_task_8cpp_source.html#l00049">49</a> of file <a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00062">62</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+
+</div>
+</div>
+<a id="abedc0b6708b96f0e04320c9c4af3c0c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abedc0b6708b96f0e04320c9c4af3c0c0">&#9670;&nbsp;</a></span>Task() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Os::Task::Task </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_os_1_1_task.html">Task</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>copy constructor is forbidden </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a53c32a17babf73d6cd8122101cea387f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53c32a17babf73d6cd8122101cea387f">&#9670;&nbsp;</a></span>delay()</h2>
+<a id="af6b68de2f47fcc94ef86523a0bcfc6cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6b68de2f47fcc94ef86523a0bcfc6cd">&#9670;&nbsp;</a></span>DEPRECATED() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Os::Task::DEPRECATED </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a> &#160;</td>
+          <td class="paramname"><em>join</em>void **value_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;Please switch to argument free join.&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>join calling thread to this thread </p>
+<p>Note: this function is deprecated as the value_ptr object is not used anyway and should always be set to nullptr.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value_ptr</td><td>must be set to nullptr </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>status of the join </dd></dl>
+
+</div>
+</div>
+<a id="a25c99a4e84847caba16f138e3a45fa5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25c99a4e84847caba16f138e3a45fa5d">&#9670;&nbsp;</a></span>DEPRECATED() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Os::Task::DEPRECATED </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a> &#160;</td>
+          <td class="paramname"><em>start</em>const Fw::StringBase &amp;name, const taskRoutine routine, void *const arg=nullptr, const ParamType priority=TASK_DEFAULT, const ParamType stackSize=TASK_DEFAULT, const ParamType cpuAffinity=TASK_DEFAULT, const ParamType identifier=TASK_DEFAULT, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;Switch to <a class="el" href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">Task::start</a>(<a class="el" href="class_os_1_1_task_interface_1_1_arguments.html">Arguments</a>&amp;)&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>start this task </p>
+<p>Start this task with supplied name, task routine (run function), priority, stack, affinity, and task identifier. These arguments are supplied into an Arguments class and that version of the function is called. It is illegal to supply a nullptr as routine.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>name of the task to start </td></tr>
+    <tr><td class="paramname">routine</td><td>user routine to run </td></tr>
+    <tr><td class="paramname">arg</td><td>(optional) user argument to supply to task routine </td></tr>
+    <tr><td class="paramname">priority</td><td>(optional) priority of this task </td></tr>
+    <tr><td class="paramname">stackSize</td><td>(optional) stack size of this task </td></tr>
+    <tr><td class="paramname">cpuAffinity</td><td>(optional) affinity of this task. Use <code>Task::start(Arguments&amp;)</code> to supply affinity set. </td></tr>
+    <tr><td class="paramname">identifier</td><td>(optional) identifier of this task </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>: status of the start call </dd></dl>
+
+</div>
+</div>
+<a id="a4b4bb4dc238f53a683f1a396765a9827"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b4bb4dc238f53a683f1a396765a9827">&#9670;&nbsp;</a></span>getHandle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -322,10 +435,41 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Task::TaskStatus</a> Os::Task::delay </td>
+          <td class="memname"><a class="el" href="class_os_1_1_task_handle.html">TaskHandle</a> * Os::Task::getHandle </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
-          <td class="paramname"><em>msecs</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>return the underlying task handle (implementation specific) </p>
+<dl class="section return"><dt>Returns</dt><dd>internal task handle representation </dd></dl>
+
+<p>Implements <a class="el" href="class_os_1_1_task_interface.html#a12afb1c82d1a2131cea2df6d1e509466">Os::TaskInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00165">165</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a0b73c8de056bad14c2e0226d5ce4abc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b73c8de056bad14c2e0226d5ce4abc1">&#9670;&nbsp;</a></span>getNumTasks()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> Os::Task::getNumTasks </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -336,20 +480,21 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>delay the task </p>
+<p>get the current number of tasks </p>
+<dl class="section return"><dt>Returns</dt><dd>current number of tasks </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="baremetal_2_task_8cpp_source.html#l00043">43</a> of file <a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00170">170</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a2e857d70bfe3348f9e45ca1d6f5f17f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e857d70bfe3348f9e45ca1d6f5f17f5">&#9670;&nbsp;</a></span>getIdentifier()</h2>
+<a id="a4e0f8dda9e0ea14212733696bd63dc0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e0f8dda9e0ea14212733696bd63dc0b">&#9670;&nbsp;</a></span>getState()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">I32 Os::Task::getIdentifier </td>
+          <td class="memname"><a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45">Task::State</a> Os::Task::getState </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -357,14 +502,38 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>get the identifier for the task </p>
+<p>get the task's state </p>
+<p>Returns the task state: not started, running, suspended (intentionally), suspended (unintentionally), and exited.</p>
+<dl class="section return"><dt>Returns</dt><dd>task state </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="task_common_8cpp_source.html#l00017">17</a> of file <a class="el" href="task_common_8cpp_source.html">TaskCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00074">74</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ae58720dc3a411ca708e1acd9ade67f94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae58720dc3a411ca708e1acd9ade67f94">&#9670;&nbsp;</a></span>getNumTasks()</h2>
+<a id="a983807460f73fd74c86a84a281aab190"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a983807460f73fd74c86a84a281aab190">&#9670;&nbsp;</a></span>invokeRoutine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Os::Task::invokeRoutine </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>invoke the task's routine </p>
+<p>This will invoke the task's routine passing this as the argument to that call. This is used as a helper when running this task (e.g. repetitive cooperative calls). </p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00126">126</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a10dbcb7452d13b3979ab63f19ef7baf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10dbcb7452d13b3979ab63f19ef7baf6">&#9670;&nbsp;</a></span>isCooperative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -373,7 +542,7 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Os::Task::getNumTasks </td>
+          <td class="memname">bool Os::Task::isCooperative </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -381,17 +550,22 @@ Static Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="task_common_8cpp_source.html#l00012">12</a> of file <a class="el" href="task_common_8cpp_source.html">TaskCommon.cpp</a>.</p>
+<p>determine if the task is cooperative multitasking (implementation specific) </p>
+<dl class="section return"><dt>Returns</dt><dd>true if cooperative, false otherwise </dd></dl>
+
+<p>Reimplemented from <a class="el" href="class_os_1_1_task_interface.html#adae636c8e6c92c0ecfe60f743b1e0452">Os::TaskInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00160">160</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a907c01c92a37d86787552e2c98eb235c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a907c01c92a37d86787552e2c98eb235c">&#9670;&nbsp;</a></span>getOsIdentifier()</h2>
+<a id="af8a83a2eb930b2575cd207c08a46c245"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8a83a2eb930b2575cd207c08a46c245">&#9670;&nbsp;</a></span>join()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -400,7 +574,7 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_task_id.html">TaskId</a> Os::Task::getOsIdentifier </td>
+          <td class="memname"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Task::Status</a> Os::Task::join </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -408,96 +582,77 @@ Static Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="posix_2_task_8cpp_source.html#l00294">294</a> of file <a class="el" href="posix_2_task_8cpp_source.html">Task.cpp</a>.</p>
+<p>block until the task has ended </p>
+<p>Blocks the current (calling) task until this task execution has ended. Callers should ensure that any signals required to stop this task have already been emitted or will be emitted by another task.</p>
+<dl class="section return"><dt>Returns</dt><dd>status of the block Wait for task to finish </dd></dl>
+
+<p>Implements <a class="el" href="class_os_1_1_task_interface.html#a74a4ca3cd03099e4325ac92449d7d6f4">Os::TaskInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00130">130</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ac80e4d320f3ce35458a3c2f4c2b8b169"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac80e4d320f3ce35458a3c2f4c2b8b169">&#9670;&nbsp;</a></span>getRawHandle()</h2>
+<a id="a803747012409eb9cb6c216b5b53eb120"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a803747012409eb9cb6c216b5b53eb120">&#9670;&nbsp;</a></span>onStart()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a> Os::Task::getRawHandle </td>
+          <td class="memname">void Os::Task::onStart </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
-<p>Returns the task-handle owned by this task </p>
 
-<p class="definition">Definition at line <a class="el" href="task_common_8cpp_source.html#l00033">33</a> of file <a class="el" href="task_common_8cpp_source.html">TaskCommon.cpp</a>.</p>
+<p>perform delegate's required task start actions </p>
+
+<p>Implements <a class="el" href="class_os_1_1_task_interface.html#ad80734df88ead1571b6830521d5d3b4c">Os::TaskInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00121">121</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
-<a id="aabdb7be3331314b966ea63947752250f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aabdb7be3331314b966ea63947752250f">&#9670;&nbsp;</a></span>isStarted()</h2>
+<a id="a96ec05bae26bf40dec5a47fd1ec012db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96ec05bae26bf40dec5a47fd1ec012db">&#9670;&nbsp;</a></span>operator=()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool Os::Task::isStarted </td>
+          <td class="memname"><a class="el" href="class_os_1_1_task.html">Task</a>&amp; Os::Task::operator= </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="class_os_1_1_task.html">Task</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>check to see if task is started </p>
-
-<p class="definition">Definition at line <a class="el" href="task_common_8cpp_source.html#l00021">21</a> of file <a class="el" href="task_common_8cpp_source.html">TaskCommon.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4e68dc4657179f8fcbdb3b0e4646c775"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e68dc4657179f8fcbdb3b0e4646c775">&#9670;&nbsp;</a></span>isSuspended()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Os::Task::isSuspended </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>check with OS to see if it is suspended already </p>
-
-<p class="definition">Definition at line <a class="el" href="baremetal_2_task_8cpp_source.html#l00069">69</a> of file <a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9c1ef3f82767ad505098eba28b79c4c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9c1ef3f82767ad505098eba28b79c4c0">&#9670;&nbsp;</a></span>join()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Task::TaskStatus</a> Os::Task::join </td>
-          <td>(</td>
-          <td class="paramtype">void **&#160;</td>
-          <td class="paramname"><em>value_ptr</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Wait for task to finish. </p>
-
-<p class="definition">Definition at line <a class="el" href="baremetal_2_task_8cpp_source.html#l00074">74</a> of file <a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a>.</p>
+<p>assignment operator is forbidden </p>
 
 </div>
 </div>
@@ -525,161 +680,14 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="task_common_8cpp_source.html#l00037">37</a> of file <a class="el" href="task_common_8cpp_source.html">TaskCommon.cpp</a>.</p>
+<p>register a task registry to track Threads </p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00177">177</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
-<a id="aa2c801dd8d206c643031b0d008e3eeb5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2c801dd8d206c643031b0d008e3eeb5">&#9670;&nbsp;</a></span>resume()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Os::Task::resume </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>resume execution of task </p>
-
-<p class="definition">Definition at line <a class="el" href="baremetal_2_task_8cpp_source.html#l00064">64</a> of file <a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac3717fd77faef05bdd148dc54baf2038"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3717fd77faef05bdd148dc54baf2038">&#9670;&nbsp;</a></span>setStarted()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Os::Task::setStarted </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>started</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>set task to started when thread is fully up. Avoids a VxWorks race condition. </p>
-
-<p class="definition">Definition at line <a class="el" href="task_common_8cpp_source.html#l00025">25</a> of file <a class="el" href="task_common_8cpp_source.html">TaskCommon.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aacd50ec68aa0c8d125de21e8ce0584ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aacd50ec68aa0c8d125de21e8ce0584ae">&#9670;&nbsp;</a></span>start()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Task::TaskStatus</a> Os::Task::start </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476">taskRoutine</a>&#160;</td>
-          <td class="paramname"><em>routine</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>arg</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
-          <td class="paramname"><em>priority</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a></code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
-          <td class="paramname"><em>stackSize</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a></code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
-          <td class="paramname"><em>cpuAffinity</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a></code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">ParamType</a>&#160;</td>
-          <td class="paramname"><em>identifier</em> = <code><a class="el" href="class_os_1_1_task.html#a534c529271f0d5501b28ca275b905ffd">TASK_DEFAULT</a></code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>start the task </p>
-
-<p class="definition">Definition at line <a class="el" href="baremetal_2_task_8cpp_source.html#l00018">18</a> of file <a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a54275e1d4c04ce4a9d4a0248f90a37ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54275e1d4c04ce4a9d4a0248f90a37ca">&#9670;&nbsp;</a></span>suspend()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Os::Task::suspend </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>onPurpose</em> = <code>false</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>suspend task </p>
-
-<p class="definition">Definition at line <a class="el" href="baremetal_2_task_8cpp_source.html#l00059">59</a> of file <a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a1d7bd874ef0b9428c62715905f592aba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d7bd874ef0b9428c62715905f592aba">&#9670;&nbsp;</a></span>wasSuspended()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Os::Task::wasSuspended </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>returns whether or not task was suspended on purpose </p>
-
-<p class="definition">Definition at line <a class="el" href="task_common_8cpp_source.html#l00029">29</a> of file <a class="el" href="task_common_8cpp_source.html">TaskCommon.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a534c529271f0d5501b28ca275b905ffd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a534c529271f0d5501b28ca275b905ffd">&#9670;&nbsp;</a></span>TASK_DEFAULT</h2>
+<a id="a7e924e56d124d23dc6e6a1cef1f66977"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e924e56d124d23dc6e6a1cef1f66977">&#9670;&nbsp;</a></span>resume()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -688,24 +696,132 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Task::ParamType</a> Os::Task::TASK_DEFAULT = std::numeric_limits&lt;<a class="el" href="class_os_1_1_task.html#a1075451d5147f714b5affbfbca530b4c">Task::ParamType</a>&gt;::max()</td>
+          <td class="memname">void Os::Task::resume </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00018">18</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
+<p>resume a suspended task </p>
+<p>Resumes this task. Not started, running, and exited tasks take no action. </p>
+
+<p>Implements <a class="el" href="class_os_1_1_task_interface.html#a86946c50ecb92d72c04cb5b78bed26b2">Os::TaskInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00155">155</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+
+</div>
+</div>
+<a id="adf42d4bb8ec737eb1755607e8919912c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf42d4bb8ec737eb1755607e8919912c">&#9670;&nbsp;</a></span>start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Task::Status</a> Os::Task::start </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_os_1_1_task_interface_1_1_arguments.html">Arguments</a> &amp;&#160;</td>
+          <td class="paramname"><em>arguments</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>start the task </p>
+<p>Starts the task given the supplied arguments. This is done via the a task routine wrapper intermediary that ensures that <code>setStarted</code> is called once the task has actually started to run. The task then runs the user routine. This function may return before the new task begins to run. It is illegal for arguments.m_routine to be null.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">arguments</td><td>arguments supplied to the task start call </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>status of the task start </dd></dl>
+
+<p>Implements <a class="el" href="class_os_1_1_task_interface.html#a302cb96e3dabde0f7a0b6ebf607f971e">Os::TaskInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00082">82</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab63e062581343528b10a810c13ca639d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab63e062581343528b10a810c13ca639d">&#9670;&nbsp;</a></span>suspend() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Os::Task::suspend </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>suspend the current task </p>
+<p>Suspend the current task unintentionally. If the user needs to indicate that the task was suspended intentionally then a call to <code>suspend(SuspensionType::INTENTIONAL)</code> should be used. </p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00070">70</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+
+</div>
+</div>
+<a id="adeea5159dfd228cc0e330008e7cba91c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adeea5159dfd228cc0e330008e7cba91c">&#9670;&nbsp;</a></span>suspend() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Os::Task::suspend </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_task_interface.html#a174e2213dad7034b44cfddf7a16729f4">Task::SuspensionType</a>&#160;</td>
+          <td class="paramname"><em>suspensionType</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>suspend the task given the suspension type </p>
+<p>Suspends the task. Some implementations track if the suspension of a task was intentional or unintentional. The supplied <code>suspensionType</code> parameter indicates that this was intentional or unintentional. The type of suspension is also returned when calling <code>isSuspended</code>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">suspensionType</td><td>intentionality of the suspension </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="class_os_1_1_task_interface.html#a478454244337c10daaf2c0811b82ac6a">Os::TaskInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00147">147</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>Os/<a class="el" href="task_8hpp_source.html">Task.hpp</a></li>
-<li>Os/Baremetal/<a class="el" href="baremetal_2_task_8cpp_source.html">Task.cpp</a></li>
-<li>Os/<a class="el" href="task_common_8cpp_source.html">TaskCommon.cpp</a></li>
+<li>Os/<a class="el" href="task_8cpp_source.html">Task.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

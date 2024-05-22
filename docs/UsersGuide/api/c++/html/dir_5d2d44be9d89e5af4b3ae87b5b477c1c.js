@@ -1,8 +1,9 @@
 var dir_5d2d44be9d89e5af4b3ae87b5b477c1c =
 [
     [ "DefaultFile.cpp", "posix_2_default_file_8cpp.html", null ],
-    [ "errno.cpp", "errno_8cpp.html", "errno_8cpp" ],
-    [ "errno.hpp", "errno_8hpp.html", "errno_8hpp" ],
+    [ "DefaultTask.cpp", "default_task_8cpp.html", null ],
+    [ "error.cpp", "error_8cpp.html", "error_8cpp" ],
+    [ "error.hpp", "error_8hpp.html", "error_8hpp" ],
     [ "File.cpp", "os_2_posix_2_file_8cpp.html", "_os_2_posix_2_file_8cpp" ],
     [ "File.hpp", "posix_2_file_8hpp.html", [
       [ "PosixFileHandle", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle.html", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle" ],
@@ -16,5 +17,8 @@ var dir_5d2d44be9d89e5af4b3ae87b5b477c1c =
       [ "QueueHandle", "class_os_1_1_queue_handle.html", "class_os_1_1_queue_handle" ]
     ] ],
     [ "Task.cpp", "posix_2_task_8cpp.html", "_posix_2_task_8cpp" ],
-    [ "TaskId.cpp", "task_id_8cpp.html", null ]
+    [ "Task.hpp", "posix_2_task_8hpp.html", [
+      [ "PosixTaskHandle", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle.html", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle" ],
+      [ "PosixTask", "class_os_1_1_posix_1_1_task_1_1_posix_task.html", "class_os_1_1_posix_1_1_task_1_1_posix_task" ]
+    ] ]
 ];

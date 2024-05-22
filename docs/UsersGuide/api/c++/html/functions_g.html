@@ -463,7 +463,8 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 , <a class="el" href="class_fw_1_1_file_packet_1_1_data_packet.html#acaab7d42155312f76e5190c0ca7a68f3">Fw::FilePacket::DataPacket</a>
 </li>
 <li>getDelegate()
-: <a class="el" href="class_os_1_1_file_interface.html#a1a9699572df72eb9fd4caed118dfd690">Os::FileInterface</a>
+: <a class="el" href="class_os_1_1_file_interface.html#a3a3a068bde8cb7fde4742d5da8ea12ed">Os::FileInterface</a>
+, <a class="el" href="class_os_1_1_task_interface.html#a231451057c560f5466b30099928040e0">Os::TaskInterface</a>
 </li>
 <li>getDepth()
 : <a class="el" href="class_os_1_1_buffer_queue.html#a4c560b468e1b33b3562d27d7c7e05fd8">Os::BufferQueue</a>
@@ -472,7 +473,7 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 : <a class="el" href="struct_fw_1_1_file_packet_1_1_start_packet.html#a6c95ae3849dbff1ce61ca1ffeb9d2cc2">Fw::FilePacket::StartPacket</a>
 </li>
 <li>getDiffUsec()
-: <a class="el" href="class_os_1_1_interval_timer.html#a790a12883eae7cfa3562ea5db0716711">Os::IntervalTimer</a>
+: <a class="el" href="class_os_1_1_interval_timer.html#ade211557f1e423ea385628382f201913">Os::IntervalTimer</a>
 </li>
 <li>getDpState()
 : <a class="el" href="class_fw_1_1_dp_container.html#ac7a2d232809aaa9f79dbad524569fbb1">Fw::DpContainer</a>
@@ -494,7 +495,10 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 : <a class="el" href="class_os_1_1_file.html#a9235b64551f4c726501d6983b52d5f4b">Os::File</a>
 , <a class="el" href="class_os_1_1_file_interface.html#aead3477ecdc16477ef8d22874222a870">Os::FileInterface</a>
 , <a class="el" href="class_os_1_1_posix_1_1_file_1_1_posix_file.html#a5edea1d5178e3c79a2a296c157eee765">Os::Posix::File::PosixFile</a>
+, <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#acfc105b4194df7bb931afafe92b38e2e">Os::Posix::Task::PosixTask</a>
 , <a class="el" href="class_os_1_1_stub_1_1_file_1_1_stub_file.html#a8c4839feba245f9f6f67641466d1f937">Os::Stub::File::StubFile</a>
+, <a class="el" href="class_os_1_1_task.html#a4b4bb4dc238f53a683f1a396765a9827">Os::Task</a>
+, <a class="el" href="class_os_1_1_task_interface.html#a12afb1c82d1a2131cea2df6d1e509466">Os::TaskInterface</a>
 </li>
 <li>getHashBuffer()
 : <a class="el" href="class_os_1_1_validated_file.html#adb8644d102d76b4d6c7997f3576f1a11">Os::ValidatedFile</a>
@@ -518,9 +522,6 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 </li>
 <li>getIdBase()
 : <a class="el" href="class_fw_1_1_passive_component_base.html#a1fa560402612940cb21db40678fe693d">Fw::PassiveComponentBase</a>
-</li>
-<li>getIdentifier()
-: <a class="el" href="class_os_1_1_task.html#a2e857d70bfe3348f9e45ca1d6f5f17f5">Os::Task</a>
 </li>
 <li>getInstance()
 : <a class="el" href="class_fw_1_1_passive_component_base.html#a82a20656e9b3e7896e6f22e1246b76a7">Fw::PassiveComponentBase</a>
@@ -1155,16 +1156,13 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 : <a class="el" href="class_os_1_1_queue.html#aa83197459303b98738f7147776080ed3">Os::Queue</a>
 </li>
 <li>getNumTasks()
-: <a class="el" href="class_os_1_1_task.html#ae58720dc3a411ca708e1acd9ade67f94">Os::Task</a>
+: <a class="el" href="class_os_1_1_task.html#a0b73c8de056bad14c2e0226d5ce4abc1">Os::Task</a>
 </li>
 <li>getOpCode()
 : <a class="el" href="class_fw_1_1_cmd_packet.html#a735b2c3794da04c93e5fea7e9435aff4">Fw::CmdPacket</a>
 </li>
 <li>getOrElse()
 : <a class="el" href="class_test_utils_1_1_option.html#a2e725451f1364158a16c4a870bb1783d">TestUtils::Option&lt; T, noValue &gt;</a>
-</li>
-<li>getOsIdentifier()
-: <a class="el" href="class_os_1_1_task.html#a907c01c92a37d86787552e2c98eb235c">Os::Task</a>
 </li>
 <li>getOverSeqNum()
 : <a class="el" href="class_fw_1_1_ampcs_evr_log_packet.html#ac0db615897128c6d2eeb2cfcbb42d25e">Fw::AmpcsEvrLogPacket</a>
@@ -1195,9 +1193,6 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 , <a class="el" href="class_os_1_1_queue.html#a61f50369eb3f56c9b104670c105666aa">Os::Queue</a>
 , <a class="el" href="class_types_1_1_queue.html#a0ea0540d9cdb021601978acb32c8fab8">Types::Queue</a>
 </li>
-<li>getRawHandle()
-: <a class="el" href="class_os_1_1_task.html#ac80e4d320f3ce35458a3c2f4c2b8b169">Os::Task</a>
-</li>
 <li>getRawTime()
 : <a class="el" href="class_os_1_1_interval_timer.html#a066d0d7b78803cfdaf7cf5f9a50ccdd9">Os::IntervalTimer</a>
 </li>
@@ -1206,9 +1201,6 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 </li>
 <li>getReplenishRate()
 : <a class="el" href="class_utils_1_1_token_bucket.html#aeb3e477258168f783252d3b177e5c25e">Utils::TokenBucket</a>
-</li>
-<li>getRepr()
-: <a class="el" href="class_os_1_1_task_id.html#a197b024e6c580a14c21db834acc2b71e">Os::TaskId</a>
 </li>
 <li>getSeconds()
 : <a class="el" href="class_fw_1_1_time.html#aa7c80702961e97df1f66d6107f2aba3d">Fw::Time</a>
@@ -1237,6 +1229,7 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 </li>
 <li>getState()
 : <a class="el" href="class_fw_1_1_dp_container.html#aa6759dce4b216e6dd8221cff80e2dfd7">Fw::DpContainer</a>
+, <a class="el" href="class_os_1_1_task.html#a4e0f8dda9e0ea14212733696bd63dc0b">Os::Task</a>
 </li>
 <li>getstate()
 : <a class="el" href="class_svc_1_1_dp_record.html#a69affe94071d26ac8e4bff578cbb9d69">Svc::DpRecord</a>

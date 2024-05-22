@@ -1,26 +1,7 @@
 var searchData=
 [
-  ['p_7241',['p',['../struct_s_h_a512state__st.html#ac374088935867ed28c9210a4ce44e754',1,'SHA512state_st']]],
-  ['packet_5fdescriptor_5foffset_7242',['PACKET_DESCRIPTOR_OFFSET',['../struct_fw_1_1_dp_container_1_1_header.html#a54c2077d929721bc83c570c6711b146d',1,'Fw::DpContainer::Header']]],
-  ['packet_5fupdate_5fmode_7243',['PACKET_UPDATE_MODE',['../namespace_svc.html#ac2edd2bdea80d07c0c3c5a479d30df24',1,'Svc']]],
-  ['pinginportsize_7244',['PingInPortSize',['../block_driver_component_ac_8cpp.html#a0c19b96618879c7870314c93b1de7dd0',1,'BlockDriverComponentAc.cpp']]],
-  ['platformassertargtype_5fmax_7245',['PlatformAssertArgType_MAX',['../default_types_8hpp.html#a6eb456a7055f22831617c1bbbffdfde4',1,'DefaultTypes.hpp']]],
-  ['platformassertargtype_5fmin_7246',['PlatformAssertArgType_MIN',['../default_types_8hpp.html#a8f7ee79a6a356d323b2a4462b41bbd68',1,'DefaultTypes.hpp']]],
-  ['platformindextype_5fmax_7247',['PlatformIndexType_MAX',['../default_types_8hpp.html#a741c7dd6fdf3ee2d25f7ca995c152d54',1,'DefaultTypes.hpp']]],
-  ['platformindextype_5fmin_7248',['PlatformIndexType_MIN',['../default_types_8hpp.html#a1624879ca7235da02c93533a2fd0cb3e',1,'DefaultTypes.hpp']]],
-  ['platforminttype_5fmax_7249',['PlatformIntType_MAX',['../default_types_8hpp.html#a48c41668208a95574d7d10e706be90b2',1,'DefaultTypes.hpp']]],
-  ['platforminttype_5fmin_7250',['PlatformIntType_MIN',['../default_types_8hpp.html#a3748bb1ba081ac3ed76fe40fef6d5f73',1,'DefaultTypes.hpp']]],
-  ['platformpointercasttype_5fmax_7251',['PlatformPointerCastType_MAX',['../default_types_8hpp.html#a1c8df5b4ec40ec18542edf5e609e0324',1,'DefaultTypes.hpp']]],
-  ['platformpointercasttype_5fmin_7252',['PlatformPointerCastType_MIN',['../default_types_8hpp.html#ac7b192351a22044ab0860749be0c8a20',1,'DefaultTypes.hpp']]],
-  ['platformsizetype_5fmax_7253',['PlatformSizeType_MAX',['../default_types_8hpp.html#ab2dfa39b926e2681177429ddc08f71b9',1,'DefaultTypes.hpp']]],
-  ['platformsizetype_5fmin_7254',['PlatformSizeType_MIN',['../default_types_8hpp.html#ad3309f130c439d0d01cddc98aa1e1a1f',1,'DefaultTypes.hpp']]],
-  ['platformuinttype_5fmax_7255',['PlatformUIntType_MAX',['../default_types_8hpp.html#a03d3ca63bb7506ee4d423cc0a4b98505',1,'DefaultTypes.hpp']]],
-  ['platformuinttype_5fmin_7256',['PlatformUIntType_MIN',['../default_types_8hpp.html#abae54f5e49731a7b258469961a3b64ce',1,'DefaultTypes.hpp']]],
-  ['poll_5fbuffer_5fsize_7257',['POLL_BUFFER_SIZE',['../namespace_svc_1_1_deframer_cfg.html#a6e6d0e22bc288a2626720a3bb8d32ee2',1,'Svc::DeframerCfg']]],
-  ['priority_7258',['priority',['../struct_svc_1_1_com_queue_1_1_queue_configuration_entry.html#a103139747641f940610df8fc48b6ed31',1,'Svc::ComQueue::QueueConfigurationEntry']]],
-  ['priority_5foffset_7259',['PRIORITY_OFFSET',['../struct_fw_1_1_dp_container_1_1_header.html#adf6450c85e9c2cc6c3e977535b5f0483',1,'Fw::DpContainer::Header']]],
-  ['proc_5fstat_5fline_7260',['proc_stat_line',['../os_2_linux_2_system_resources_8cpp.html#aecd90cbcb2e5e44bdf0da4a4cd422706',1,'SystemResources.cpp']]],
-  ['proc_5fstat_5fpath_7261',['PROC_STAT_PATH',['../os_2_linux_2_system_resources_8cpp.html#a1ddd82aeb2941f6d94600e1a69b0e3d0',1,'SystemResources.cpp']]],
-  ['proc_5ftypes_5foffset_7262',['PROC_TYPES_OFFSET',['../struct_fw_1_1_dp_container_1_1_header.html#a62697d46c55dc7f012799d060d0d5c7a',1,'Fw::DpContainer::Header']]],
-  ['project_5fversion_7263',['PROJECT_VERSION',['../struct_project_1_1_version.html#a48bb8278d948ac9820479d7afd24eaa0',1,'Project::Version']]]
+  ['queue_7285',['queue',['../class_os_1_1_queue_handle.html#aaec4cf27f8641c474164f96e22434033',1,'Os::QueueHandle']]],
+  ['queuelock_7286',['queueLock',['../class_os_1_1_queue_handle.html#a908bcca196ccf16d9ae4bba386f4292e',1,'Os::QueueHandle']]],
+  ['queuenotempty_7287',['queueNotEmpty',['../class_os_1_1_queue_handle.html#a1ac4eaffe9a7a1f550c5515ed47f23e2',1,'Os::QueueHandle']]],
+  ['queuenotfull_7288',['queueNotFull',['../class_os_1_1_queue_handle.html#ae195753a519fa765ac1176e05e1ba299',1,'Os::QueueHandle']]]
 ];

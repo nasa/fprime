@@ -1,6 +1,7 @@
 var hierarchy =
 [
     [ "ActiveTextLoggerComponent", "class_active_text_logger_component.html", null ],
+    [ "Os::TaskInterface::Arguments", "class_os_1_1_task_interface_1_1_arguments.html", null ],
     [ "Fw::AssertHook", "class_fw_1_1_assert_hook.html", [
       [ "Fw::LogAssertHook", "class_fw_1_1_log_assert_hook.html", null ]
     ] ],
@@ -30,7 +31,6 @@ var hierarchy =
     [ "Svc::RateGroupDriver::DividerSet", "struct_svc_1_1_rate_group_driver_1_1_divider_set.html", null ],
     [ "Fw::DpContainer", "class_fw_1_1_dp_container.html", null ],
     [ "Fw::FilePacket::EndPacket", "class_fw_1_1_file_packet_1_1_end_packet.html", null ],
-    [ "Os::Event", "class_os_1_1_event.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence::Events", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_events.html", null ],
     [ "Os::FIFOQueue", "struct_os_1_1_f_i_f_o_queue.html", null ],
     [ "Os::FileHandle", "struct_os_1_1_file_handle.html", [
@@ -378,6 +378,7 @@ var hierarchy =
       [ "Fw::Wait", "class_fw_1_1_wait.html", null ],
       [ "Os::FileMode", "class_os_1_1_file_mode.html", null ],
       [ "Os::FileStatus", "class_os_1_1_file_status.html", null ],
+      [ "Os::TaskStatus", "class_os_1_1_task_status.html", null ],
       [ "Svc::ActiveLogger_Enabled", "class_svc_1_1_active_logger___enabled.html", null ],
       [ "Svc::ActiveLogger_FilterSeverity", "class_svc_1_1_active_logger___filter_severity.html", null ],
       [ "Svc::BuffQueueDepth", "class_svc_1_1_buff_queue_depth.html", null ],
@@ -427,13 +428,18 @@ var hierarchy =
     ] ],
     [ "Drv::SocketState", "struct_drv_1_1_socket_state.html", null ],
     [ "Fw::FilePacket::StartPacket", "struct_fw_1_1_file_packet_1_1_start_packet.html", null ],
-    [ "Os::Task", "class_os_1_1_task.html", null ],
-    [ "Os::TaskId", "class_os_1_1_task_id.html", null ],
+    [ "Os::TaskHandle", "class_os_1_1_task_handle.html", [
+      [ "Os::Posix::Task::PosixTaskHandle", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle.html", null ]
+    ] ],
+    [ "Os::TaskInterface", "class_os_1_1_task_interface.html", [
+      [ "Os::Posix::Task::PosixTask", "class_os_1_1_posix_1_1_task_1_1_posix_task.html", null ],
+      [ "Os::Task", "class_os_1_1_task.html", null ]
+    ] ],
     [ "Os::TaskLock", "class_os_1_1_task_lock.html", null ],
     [ "Os::TaskRegistry", "class_os_1_1_task_registry.html", [
       [ "Os::TaskRunner", "class_os_1_1_task_runner.html", null ]
     ] ],
-    [ "Os::Task::TaskRoutineWrapper", "struct_os_1_1_task_1_1_task_routine_wrapper.html", null ],
+    [ "Os::Task::TaskRoutineWrapper", "class_os_1_1_task_1_1_task_routine_wrapper.html", null ],
     [ "Svc::AMPCSSequence::Record::Time", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time.html", null ],
     [ "Svc::AMPCSSequence::Record::TimeFlag", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time_flag.html", null ],
     [ "Svc::TlmPacketizerChannelEntry", "struct_svc_1_1_tlm_packetizer_channel_entry.html", null ],

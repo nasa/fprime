@@ -1,7 +1,5 @@
 var NAVTREEINDEX1 =
 {
-"byte_stream_send_port_ac_8cpp.html":[27,0,6,1,6],
-"byte_stream_send_port_ac_8cpp_source.html":[27,0,6,1,6],
 "byte_stream_send_port_ac_8hpp.html":[27,0,6,1,7],
 "byte_stream_send_port_ac_8hpp_source.html":[27,0,6,1,7],
 "c_assert_8h.html":[27,0,8,16,7],
@@ -203,6 +201,8 @@ var NAVTREEINDEX1 =
 "data_buffer_port_ac_8hpp_source.html":[27,0,6,2,1],
 "data_packet_8cpp.html":[27,0,8,6,2],
 "data_packet_8cpp_source.html":[27,0,8,6,2],
+"default_task_8cpp.html":[27,0,10,4,1],
+"default_task_8cpp_source.html":[27,0,10,4,1],
 "default_types_8hpp.html":[27,0,8,16,0,0],
 "default_types_8hpp.html#a03d3ca63bb7506ee4d423cc0a4b98505":[27,0,8,16,0,0,27],
 "default_types_8hpp.html#a0d5749f9cd7bdca743d9393939e69251":[27,0,8,16,0,0,14],

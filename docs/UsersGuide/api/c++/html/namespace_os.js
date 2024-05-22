@@ -1,5 +1,9 @@
 var namespace_os =
 [
+    [ "Delegate", "namespace_os_1_1_delegate.html", [
+      [ "makeDelegate", "namespace_os_1_1_delegate.html#a9ad44ca2fde8dfcac755a9f92681a84d", null ],
+      [ "makeDelegate", "namespace_os_1_1_delegate.html#ac63daeb47d5fee5a7fef6a3a2eb49e25", null ]
+    ] ],
     [ "FileSystem", "namespace_os_1_1_file_system.html", [
       [ "Status", "namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f", [
         [ "OP_OK", "namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d", null ],
@@ -53,11 +57,11 @@ var namespace_os =
     ] ],
     [ "FileMode", "class_os_1_1_file_mode.html", "class_os_1_1_file_mode" ],
     [ "FileStatus", "class_os_1_1_file_status.html", "class_os_1_1_file_status" ],
+    [ "TaskStatus", "class_os_1_1_task_status.html", "class_os_1_1_task_status" ],
     [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
     [ "BareTaskHandle", "class_os_1_1_bare_task_handle.html", "class_os_1_1_bare_task_handle" ],
     [ "TaskRunner", "class_os_1_1_task_runner.html", "class_os_1_1_task_runner" ],
     [ "Directory", "class_os_1_1_directory.html", "class_os_1_1_directory" ],
-    [ "Event", "class_os_1_1_event.html", "class_os_1_1_event" ],
     [ "FileHandle", "struct_os_1_1_file_handle.html", null ],
     [ "FileInterface", "class_os_1_1_file_interface.html", "class_os_1_1_file_interface" ],
     [ "File", "class_os_1_1_file.html", "class_os_1_1_file" ],
@@ -76,9 +80,10 @@ var namespace_os =
     [ "Queue", "class_os_1_1_queue.html", "class_os_1_1_queue" ],
     [ "QueueRegistry", "class_os_1_1_queue_registry.html", "class_os_1_1_queue_registry" ],
     [ "QueueString", "class_os_1_1_queue_string.html", "class_os_1_1_queue_string" ],
+    [ "TaskHandle", "class_os_1_1_task_handle.html", null ],
+    [ "TaskInterface", "class_os_1_1_task_interface.html", "class_os_1_1_task_interface" ],
     [ "Task", "class_os_1_1_task.html", "class_os_1_1_task" ],
     [ "TaskRegistry", "class_os_1_1_task_registry.html", "class_os_1_1_task_registry" ],
-    [ "TaskId", "class_os_1_1_task_id.html", "class_os_1_1_task_id" ],
     [ "TaskLock", "class_os_1_1_task_lock.html", "class_os_1_1_task_lock" ],
     [ "TaskString", "class_os_1_1_task_string.html", "class_os_1_1_task_string" ],
     [ "ValidatedFile", "class_os_1_1_validated_file.html", "class_os_1_1_validated_file" ],
@@ -98,7 +103,6 @@ var namespace_os =
     [ "computeHash", "namespace_os.html#aaa40afab1b180436effc480719027ab5", null ],
     [ "cpu_by_index", "namespace_os.html#aa47464161517d969186019a87ec1587d", null ],
     [ "cpu_data_helper", "namespace_os.html#a0840df4b7f40767a6f67c85902c202fb", null ],
-    [ "create_pthread", "namespace_os.html#af5015c885104e6315a5272c1b503f8b5", null ],
     [ "getCpuData", "namespace_os.html#a3c6b273aaa572ea6dde51277efc41153", null ],
     [ "getCpuDataLine", "namespace_os.html#a9f6bed23eeeea5e92ecc76aa74976074", null ],
     [ "getCpuTotal", "namespace_os.html#a7526c68901b96898e2ac03f398c72c2b", null ],
@@ -118,11 +122,7 @@ var namespace_os =
     [ "sendBlockIPCStub", "namespace_os.html#af2afb9ad5128a418c707ceedf7c7edf0", null ],
     [ "sendNonBlock", "namespace_os.html#ade232d357c570e9c795dbcbd7a328ea1", null ],
     [ "sendNonBlockIPCStub", "namespace_os.html#a36f040b9ded50da1a045b0a10faf4960", null ],
-    [ "set_cpu_affinity", "namespace_os.html#a82ba76fa2b13397cf26e05bb97f7c2a1", null ],
-    [ "set_priority_params", "namespace_os.html#ab7caf78f7674f047b09c9bd2b9f4b243", null ],
-    [ "set_stack_size", "namespace_os.html#ab57d10e8aacca76527b6d688bdd5e6e9", null ],
     [ "translateStatus", "namespace_os.html#ae9637ba59aad4e05a029a538f1e50a2c", null ],
-    [ "validate_arguments", "namespace_os.html#a3183ea3984b4f98888372df6f409bf48", null ],
     [ "vm_stat_helper", "namespace_os.html#adb0cc6586f03b4d6e7107d6e8736be7d", null ],
     [ "writeHash", "namespace_os.html#ac8ca2101117d8aff1fe5774f94d1a8d7", null ]
 ];

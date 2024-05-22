@@ -85,14 +85,22 @@ $(document).ready(function(){initNavTree('_ip_cfg_8hpp.html',''); initResizable(
 
 <div class="header">
   <div class="summary">
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#define-members">Macros</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">IpCfg.hpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
+<div class="textblock"><code>#include &lt;<a class="el" href="time_8hpp_source.html">Fw/Time/Time.hpp</a>&gt;</code><br />
+</div>
 <p><a href="ip_cfg_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a52ae0c9b18b26ccb9bb98de25419176e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip_cfg_8hpp.html#a52ae0c9b18b26ccb9bb98de25419176e">REF_IPCFG_HPP</a></td></tr>
+<tr class="separator:a52ae0c9b18b26ccb9bb98de25419176e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a71b2b0b2f0742bd012e1a8e16ee1ee74"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74">IpCfg</a> { <br />
@@ -102,12 +110,33 @@ Enumerations</h2></td></tr>
 , <a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74a7ffa7ab23cdd48ecde30f3e328a13e6c">SOCKET_IP_RECV_FLAGS</a> = 0
 , <br />
 &#160;&#160;<a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74af88a2c7e963d596e700c3a0a933abd79">SOCKET_MAX_ITERATIONS</a> = 0xFFFF
-, <a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74a437eaf61862c6a6ccacad8a5cee5d51a">SOCKET_RETRY_INTERVAL_MS</a> = 1000
 , <a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74a7aeda4b8b71dde2ec8930c45caa6da96">SOCKET_MAX_HOSTNAME_SIZE</a> = 256
 <br />
  }</td></tr>
 <tr class="separator:a71b2b0b2f0742bd012e1a8e16ee1ee74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a8799feaa1732bdef89c1cbedf7c6480e"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="class_fw_1_1_time.html">Fw::Time</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip_cfg_8hpp.html#a8799feaa1732bdef89c1cbedf7c6480e">SOCKET_RETRY_INTERVAL</a> = <a class="el" href="class_fw_1_1_time.html">Fw::Time</a>(1, 0)</td></tr>
+<tr class="separator:a8799feaa1732bdef89c1cbedf7c6480e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a52ae0c9b18b26ccb9bb98de25419176e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52ae0c9b18b26ccb9bb98de25419176e">&#9670;&nbsp;</a></span>REF_IPCFG_HPP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define REF_IPCFG_HPP</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ip_cfg_8hpp_source.html#l00014">14</a> of file <a class="el" href="ip_cfg_8hpp_source.html">IpCfg.hpp</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a71b2b0b2f0742bd012e1a8e16ee1ee74"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a71b2b0b2f0742bd012e1a8e16ee1ee74">&#9670;&nbsp;</a></span>IpCfg</h2>
@@ -126,11 +155,35 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="a71b2b0b2f0742bd012e1a8e16ee1ee74acd4e8fb5781ae8605f731c15c3e80984"></a>SOCKET_IP_SEND_FLAGS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a71b2b0b2f0742bd012e1a8e16ee1ee74a7ffa7ab23cdd48ecde30f3e328a13e6c"></a>SOCKET_IP_RECV_FLAGS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a71b2b0b2f0742bd012e1a8e16ee1ee74af88a2c7e963d596e700c3a0a933abd79"></a>SOCKET_MAX_ITERATIONS&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a71b2b0b2f0742bd012e1a8e16ee1ee74a437eaf61862c6a6ccacad8a5cee5d51a"></a>SOCKET_RETRY_INTERVAL_MS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a71b2b0b2f0742bd012e1a8e16ee1ee74a7aeda4b8b71dde2ec8930c45caa6da96"></a>SOCKET_MAX_HOSTNAME_SIZE&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="ip_cfg_8hpp_source.html#l00016">16</a> of file <a class="el" href="ip_cfg_8hpp_source.html">IpCfg.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a8799feaa1732bdef89c1cbedf7c6480e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8799feaa1732bdef89c1cbedf7c6480e">&#9670;&nbsp;</a></span>SOCKET_RETRY_INTERVAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> SOCKET_RETRY_INTERVAL = <a class="el" href="class_fw_1_1_time.html">Fw::Time</a>(1, 0)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ip_cfg_8hpp_source.html#l00024">24</a> of file <a class="el" href="ip_cfg_8hpp_source.html">IpCfg.hpp</a>.</p>
 
 </div>
 </div>

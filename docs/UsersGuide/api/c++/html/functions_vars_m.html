@@ -133,6 +133,9 @@ $(document).ready(function(){initNavTree('functions_vars_m.html',''); initResiza
 <li>m_context
 : <a class="el" href="class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b">Svc::SendFileResponse</a>
 </li>
+<li>m_cpuAffinity
+: <a class="el" href="class_os_1_1_task_interface_1_1_arguments.html#a9c4ce960c4157f9aa5d9511d76cf3b71">Os::TaskInterface::Arguments</a>
+</li>
 <li>m_currentFileSize
 : <a class="el" href="struct_svc_1_1_log_file.html#a4fdbd453b9f74ac754936bf9ad671327">Svc::LogFile</a>
 </li>
@@ -187,12 +190,18 @@ $(document).ready(function(){initNavTree('functions_vars_m.html',''); initResiza
 , <a class="el" href="class_fw_1_1_log_packet.html#a1a13dce3c55df05ae29b8ac7f7de98f4">Fw::LogPacket</a>
 , <a class="el" href="class_svc_1_1_dp_record.html#a8b82d6980bb5219e1b163aac70bd00c6">Svc::DpRecord</a>
 </li>
+<li>m_identifier
+: <a class="el" href="class_os_1_1_task_interface_1_1_arguments.html#aad8151944dd86be702459450032882cf">Os::TaskInterface::Arguments</a>
+</li>
 <li>m_init
 : <a class="el" href="class_os_1_1_bare_queue_handle.html#a125bada83f13fafa841a9e337ed109e6">Os::BareQueueHandle</a>
 </li>
 <li>m_interface
 : <a class="el" href="class_svc_1_1_deframing_protocol.html#a421fb063aa32302cf8c09739daa5e52d">Svc::DeframingProtocol</a>
 , <a class="el" href="class_svc_1_1_framing_protocol.html#ab51610526c1b2a24d4c6f5fa80ac1ad3">Svc::FramingProtocol</a>
+</li>
+<li>m_is_valid
+: <a class="el" href="struct_os_1_1_posix_1_1_task_1_1_posix_task_handle.html#aec88df3fcca0c37c519a6b9344c3e947">Os::Posix::Task::PosixTaskHandle</a>
 </li>
 <li>m_lock
 : <a class="el" href="class_drv_1_1_ip_socket.html#aa8e470ec56366a56d5a89a406886bfcc">Drv::IpSocket</a>
@@ -209,6 +218,7 @@ $(document).ready(function(){initNavTree('functions_vars_m.html',''); initResiza
 </li>
 <li>m_name
 : <a class="el" href="class_os_1_1_queue.html#a020737d93d1e1e1cdbdf269050f126f1">Os::Queue</a>
+, <a class="el" href="class_os_1_1_task_interface_1_1_arguments.html#a7f944cf9dbefaa9e9e20d64ee755e93c">Os::TaskInterface::Arguments</a>
 </li>
 <li>m_numRecords
 : <a class="el" href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_header.html#ac19194b5967bf96797c6f7dfae487ef3">Svc::CmdSequencerComponentImpl::Sequence::Header</a>
@@ -234,6 +244,7 @@ $(document).ready(function(){initNavTree('functions_vars_m.html',''); initResiza
 <li>m_priority
 : <a class="el" href="class_fw_1_1_dp_container.html#a3ba4ebd04e228426786191bb45877fa0">Fw::DpContainer</a>
 , <a class="el" href="class_os_1_1_bare_task_handle.html#ac274e928f92d69ef86eda133e7dbb6ed">Os::BareTaskHandle</a>
+, <a class="el" href="class_os_1_1_task_interface_1_1_arguments.html#ae5a8860128518ac59e15312ec0777b50">Os::TaskInterface::Arguments</a>
 , <a class="el" href="class_svc_1_1_dp_record.html#a64f287402c775b98533778b017e31f2a">Svc::DpRecord</a>
 </li>
 <li>m_procTypes
@@ -248,9 +259,16 @@ $(document).ready(function(){initNavTree('functions_vars_m.html',''); initResiza
 </li>
 <li>m_routine
 : <a class="el" href="class_os_1_1_bare_task_handle.html#aa5b512f0d26ef3ba3d01472af8fdd00c">Os::BareTaskHandle</a>
+, <a class="el" href="class_os_1_1_task_interface_1_1_arguments.html#a6a2a88e244e5e5e792b44b960a195478">Os::TaskInterface::Arguments</a>
+</li>
+<li>m_routine_argument
+: <a class="el" href="class_os_1_1_task_interface_1_1_arguments.html#a2a91f09181025d30f713d6554ca90dbf">Os::TaskInterface::Arguments</a>
 </li>
 <li>m_size
 : <a class="el" href="class_svc_1_1_dp_record.html#a9e0677d26f937181fb0ad18bceb8510d">Svc::DpRecord</a>
+</li>
+<li>m_stackSize
+: <a class="el" href="class_os_1_1_task_interface_1_1_arguments.html#a31fa014dfeab2108319bb05292f7cb98">Os::TaskInterface::Arguments</a>
 </li>
 <li>m_started
 : <a class="el" href="class_drv_1_1_ip_socket.html#a541cfbfee7366e523dfccd94c6d0eef8">Drv::IpSocket</a>
@@ -270,6 +288,10 @@ $(document).ready(function(){initNavTree('functions_vars_m.html',''); initResiza
 <li>m_task
 : <a class="el" href="class_drv_1_1_socket_read_task.html#a521c9a82dcb84f4725b85610556e0ff8">Drv::SocketReadTask</a>
 , <a class="el" href="class_fw_1_1_active_component_base.html#a52a1da4389fc28099aca6cce61563670">Fw::ActiveComponentBase</a>
+, <a class="el" href="class_os_1_1_task_1_1_task_routine_wrapper.html#ac1f73a64c1291ecc1dfc374f7bd684cb">Os::Task::TaskRoutineWrapper</a>
+</li>
+<li>m_task_descriptor
+: <a class="el" href="struct_os_1_1_posix_1_1_task_1_1_posix_task_handle.html#a84403d894c2a68501a45c5755aa67d74">Os::Posix::Task::PosixTaskHandle</a>
 </li>
 <li>m_taskName
 : <a class="el" href="class_fw_1_1_ampcs_evr_log_packet.html#ad2dfbe9d2ad85d5d2ea223138bcee875">Fw::AmpcsEvrLogPacket</a>
@@ -299,6 +321,12 @@ $(document).ready(function(){initNavTree('functions_vars_m.html',''); initResiza
 </li>
 <li>m_type
 : <a class="el" href="class_fw_1_1_com_packet.html#a32fe5d832448462e293b6b7ad2c80264">Fw::ComPacket</a>
+</li>
+<li>m_user_argument
+: <a class="el" href="class_os_1_1_task_1_1_task_routine_wrapper.html#aa3d7a205a321d1c8e4a6cb9512e248a3">Os::Task::TaskRoutineWrapper</a>
+</li>
+<li>m_user_function
+: <a class="el" href="class_os_1_1_task_1_1_task_routine_wrapper.html#afd6047279f3a834f07181e055702af88">Os::Task::TaskRoutineWrapper</a>
 </li>
 <li>m_userData
 : <a class="el" href="class_fw_1_1_dp_container.html#a46ab7ea18b7b37405f606d15e836a311">Fw::DpContainer</a>
