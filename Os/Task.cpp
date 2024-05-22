@@ -168,7 +168,10 @@ TaskHandle* Task::getHandle() {
 }
 
 FwSizeType Task::getNumTasks() {
-    return Task::s_numTasks;
+    Task::s_taskMutex.lock();
+    FwSizeType num_tasks = Task::s_numTasks;
+    Task::s_taskMutex.unlock();
+    return num_tasks;
 }
 
 void Task::registerTaskRegistry(TaskRegistry* registry) {

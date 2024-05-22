@@ -25,7 +25,7 @@ namespace Task {
     void* pthread_entry_wrapper(void* wrapper_pointer) {
         FW_ASSERT(wrapper_pointer != nullptr);
         Os::Task::TaskRoutineWrapper& wrapper = *reinterpret_cast<Os::Task::TaskRoutineWrapper*>(wrapper_pointer);
-            wrapper.run(&wrapper);
+        wrapper.run(&wrapper);
         return nullptr;
     }
 

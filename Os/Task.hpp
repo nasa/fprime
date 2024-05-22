@@ -279,6 +279,9 @@ namespace Os {
         void onStart() override;
 
         //! \brief invoke the task's routine
+        //~
+        //! This will invoke the task's routine passing this as the argument to that call. This is used as a helper when
+        //! running this task (e.g. repetitive cooperative calls).
         void invokeRoutine();
 
         //! \brief join calling thread to this thread
@@ -339,7 +342,6 @@ namespace Os {
         Mutex m_lock; //!< Guards state transitions
         TaskRoutineWrapper m_wrapper; //!< Concrete storage for task routine wrapper
 
-        PlatformIntType m_identifier = 0; //!< thread independent identifier
         bool m_registered = false; //!< Was this task registered
 
         // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is

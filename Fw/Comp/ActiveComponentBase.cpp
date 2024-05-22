@@ -93,7 +93,9 @@ namespace Fw {
         // cast void* back to active component
         ActiveComponentBase* component = static_cast<ActiveComponentBase*>(component_pointer);
 
-        // Each invocation of this function runs a single stage of the thread lifecycle.
+        // Each invocation of this function runs a single stage of the thread lifecycle. This has moved the thread
+        // while loop to the top level such that it can be replaced by something else (e.g. cooperative thread
+        // dispatcher) and is not intrinsic to this code.
         switch (component->m_stage) {
             // The first stage the active component triggers the "preamble" call before moving into the dispatching
             // stage of the component thread.
@@ -126,6 +128,8 @@ namespace Fw {
     void ActiveComponentBase::s_taskLoop(void* component_pointer) {
         FW_ASSERT(component_pointer != nullptr);
         ActiveComponentBase* component = static_cast<ActiveComponentBase*>(component_pointer);
+        // A non-cooperative task switching implementation is just a while-loop around the active component
+        // state-machine. Here the while loop is at top-level.
         while (component->m_stage != ActiveComponentBase::Lifecycle::DONE) {
             ActiveComponentBase::s_taskStateMachine(component);
         }
