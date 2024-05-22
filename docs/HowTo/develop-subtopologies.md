@@ -102,3 +102,47 @@ module MySubtopology {
         }
     } // end topology
 } // end MySubtopology
+```
+
+## MySubtopology.cpp and MySubtopology.hpp
+
+This file is the bread and butter of developing your topology, as it runs any functions necessary to configure the topology, and also includes start and teardown functions for when the topology is started and after the topology is stopped respectively.
+
+As such, this file requires three implemented functions. The stubs of these functions should go in the `MySubtopology.hpp` file:
+
+```cpp
+void configureTopology(const TopologyState& state) {
+    // ... your code here ...
+}
+
+void startTopology(const TopologyState& state) {
+    // ... your code here ...
+}
+
+void teardownTopology(const TopologyState& state) {
+    // ... your code here ...
+}
+```
+
+You may notice that all three functions take in the argument `state`, which is a struct that is passed in when the subtopology is called. `TopologyState` is that struct, which can include any variables you would like a developer to be able to modify. This provides dynamic-ness to your subtopology.
+
+In our example, we may want to allow the user to customize the clock that runs the RNG component, from 1Hz to 2Hz or otherwise. Thus, our struct may look something like:
+
+```cpp
+struct TopologyState {
+    // ...
+    U32 clockRate;
+    // ...
+}
+```
+
+This struct definition is included within `MySubtopologyDefs.hpp`, and is included into `MySubtopology.cpp` at build time. In addition to this, we may notice that we need to include global definitions in our `Def.hpp` file; however depending on your subtopology, you may find this part optional. Since we use F Prime's rate group driver, we should include "WARN" and "ERROR" flags that are tied to the status of the driver.
+
+```cpp
+namespace GlobalDefs {
+    namespace PingEntries {
+        MySubtopology_rateGroup {
+            enum { WARN = 3, ERROR = 5 }
+        }
+    } // end PingEntries
+} // GlobalDefs
