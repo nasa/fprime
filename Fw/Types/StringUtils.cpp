@@ -34,8 +34,6 @@ U32 Fw::StringUtils::string_length(const CHAR* source, U32 max_len) {
 FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string, FwSizeType source_size, const CHAR* sub_string, FwSizeType sub_size) {
     FW_ASSERT(source_string != nullptr);
     FW_ASSERT(sub_string != nullptr);
-    // Confirm that the output type can hold the range of valid results
-    FW_ASSERT((source_size - sub_size) <= std::numeric_limits<FwSignedSizeType>::max());
 
     // zero size sub-strings should always match
     if ((source_size > 0) && (0 == sub_size)) {
@@ -46,6 +44,8 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string, FwSi
     if (source_size < sub_size) {
         return -1;
     }
+    // Confirm that the output type can hold the range of valid results
+    FW_ASSERT((source_size - sub_size) <= std::numeric_limits<FwSignedSizeType>::max());
 
     // Loop from zero to source_size - sub_size (inclusive)
     for (FwSizeType source_index = 0; source_index < (source_size - sub_size + 1); source_index++) {
