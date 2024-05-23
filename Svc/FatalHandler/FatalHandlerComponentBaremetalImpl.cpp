@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include <cstdlib>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <FpConfig.hpp>
 

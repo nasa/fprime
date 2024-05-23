@@ -5,7 +5,7 @@
 #include <Drv/Ip/TcpClientSocket.hpp>
 #include <Drv/Ip/TcpServerSocket.hpp>
 #include <Drv/Ip/IpSocket.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 

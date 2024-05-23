@@ -11,7 +11,8 @@
 // ======================================================================
 #include "TcpClientTester.hpp"
 #include "STest/Pick/Pick.hpp"
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
+#include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 
 Os::Log logger;

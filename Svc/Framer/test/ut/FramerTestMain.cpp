@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "Fw/Test/UnitTest.hpp"
-#include "Os/Log.hpp"
+#include "Os/Console.hpp"
 #include "FramerTester.hpp"
 
 // Enable the console logging provided by Os::Log

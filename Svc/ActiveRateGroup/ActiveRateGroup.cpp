@@ -16,7 +16,7 @@
 #include <ActiveRateGroupCfg.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 
 namespace Svc {
 

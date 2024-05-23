@@ -14,7 +14,7 @@
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
 
 // Used for 1Hz synthetic cycling
