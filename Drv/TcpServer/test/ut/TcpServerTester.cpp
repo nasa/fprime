@@ -12,7 +12,6 @@
 #include "TcpServerTester.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "Os/Log.hpp"
-#include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 
 Os::Log logger;
@@ -29,8 +28,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus serverStat = Drv::SOCK_SUCCESS;
 
-    U16 port =  Drv::Test::get_free_port();
-    ASSERT_NE(0, port);
+    U16 port =  0;
 
     this->component.configure("127.0.0.1", port, 0, 100);
 
@@ -50,7 +48,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations && serverStat == SOCK_SUCCESS; i++) {
         Drv::TcpClientSocket client;
-        client.configure("127.0.0.1", port, 0, 100);
+        client.configure("127.0.0.1", this->component.getListenPort(), 0, 100);
         status2 = client.open();
 
         U32 size = sizeof(m_data_storage);
