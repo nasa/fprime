@@ -99,6 +99,9 @@ Functions</h2></td></tr>
 <tr class="memitem:afcf5c356fc8ac545dc89b54abe0baa4f"><td class="memItemLeft" align="right" valign="top">U32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#afcf5c356fc8ac545dc89b54abe0baa4f">string_length</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *source, U32 max_len)</td></tr>
 <tr class="memdesc:afcf5c356fc8ac545dc89b54abe0baa4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the length of the source string or max_len if the string is longer than max_len.  <a href="namespace_fw_1_1_string_utils.html#afcf5c356fc8ac545dc89b54abe0baa4f">More...</a><br /></td></tr>
 <tr class="separator:afcf5c356fc8ac545dc89b54abe0baa4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf12f8d48f9fc00e2ddeecdf0c3ce3b0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0">substring_find</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *source_string, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> source_size, const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *sub_string, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> sub_size)</td></tr>
+<tr class="memdesc:abf12f8d48f9fc00e2ddeecdf0c3ce3b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the first occurrence of a substring  <a href="namespace_fw_1_1_string_utils.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0">More...</a><br /></td></tr>
+<tr class="separator:abf12f8d48f9fc00e2ddeecdf0c3ce3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a9eea8b0b384612042a665c4eb6bb684e"></a>
@@ -145,7 +148,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>destination buffer </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00005">5</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00006">6</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
 
 </div>
 </div>
@@ -185,7 +188,61 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>length of the source string or max_len </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00022">22</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00023">23</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
+
+</div>
+</div>
+<a id="abf12f8d48f9fc00e2ddeecdf0c3ce3b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf12f8d48f9fc00e2ddeecdf0c3ce3b0">&#9670;&nbsp;</a></span>substring_find()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> Fw::StringUtils::substring_find </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *&#160;</td>
+          <td class="paramname"><em>source_string</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>source_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *&#160;</td>
+          <td class="paramname"><em>sub_string</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>sub_size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>find the first occurrence of a substring </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source_string</td><td>string to search for the substring </td></tr>
+    <tr><td class="paramname">source_size</td><td>the size of the source string </td></tr>
+    <tr><td class="paramname">substring</td><td>string to search for </td></tr>
+    <tr><td class="paramname">sub_size</td><td>the size of the string to search for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>index of substring, -1 if not found </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00034">34</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
 
 </div>
 </div>

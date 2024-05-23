@@ -1,5 +1,6 @@
 var NAVTREEINDEX19 =
 {
+"class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1ab3c94de634bcfadb3f47eb5cf3f7c60b":[26,0,3,29,3,1],
 "class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1ab582f7cd2ebcba501aebaf8ca3d7330b":[26,0,3,29,3,5],
 "class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1ac7e08d7ef1b488dbac44f034f225d6ba":[26,0,3,29,3,7],
 "class_os_1_1_task_interface.html#adae636c8e6c92c0ecfe60f743b1e0452":[26,0,3,29,11],
@@ -248,6 +249,5 @@ var NAVTREEINDEX19 =
 "class_svc_1_1_active_text_logger_component_base.html":[26,0,5,7],
 "class_svc_1_1_active_text_logger_component_base.html#a23f8aa9ac1b95fa5439e16880044d298":[26,0,5,7,0],
 "class_svc_1_1_active_text_logger_component_base.html#a2615c0a1158f7ad2f32a9ed70395366c":[26,0,5,7,2],
-"class_svc_1_1_active_text_logger_component_base.html#a3c4823d65b4d35045efc1dc96f2ac231":[26,0,5,7,8],
-"class_svc_1_1_active_text_logger_component_base.html#a4aea3fa1ab47eb18465ea314cb910bff":[26,0,5,7,4]
+"class_svc_1_1_active_text_logger_component_base.html#a3c4823d65b4d35045efc1dc96f2ac231":[26,0,5,7,8]
 };

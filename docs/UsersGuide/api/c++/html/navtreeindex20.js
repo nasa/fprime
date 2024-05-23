@@ -1,5 +1,6 @@
 var NAVTREEINDEX20 =
 {
+"class_svc_1_1_active_text_logger_component_base.html#a4aea3fa1ab47eb18465ea314cb910bff":[26,0,5,7,4],
 "class_svc_1_1_active_text_logger_component_base.html#a60f127b150dfe25a679836ef0fccd204":[26,0,5,7,5],
 "class_svc_1_1_active_text_logger_component_base.html#a6867247a7af8a47949eb389afbd981b9":[26,0,5,7,3],
 "class_svc_1_1_active_text_logger_component_base.html#a7786ae658f0155318273776d80734309":[26,0,5,7,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX20 =
 "class_svc_1_1_buffer_logger_component_base.html#af2c408476ae8a7f9a19f51f9f14995aa":[26,0,5,13,44],
 "class_svc_1_1_buffer_logger_component_base.html#af5b2e6efcf270c53144844d552ef651e":[26,0,5,13,48],
 "class_svc_1_1_buffer_logger_component_base.html#afc68f9d8d2b524633f271436712d2cd2":[26,0,5,13,18],
-"class_svc_1_1_buffer_logger_component_base.html#aff775fff43206982e6750672670ede0c":[26,0,5,13,14],
-"class_svc_1_1_buffer_manager_component_base.html":[26,0,5,14]
+"class_svc_1_1_buffer_logger_component_base.html#aff775fff43206982e6750672670ede0c":[26,0,5,13,14]
 };
