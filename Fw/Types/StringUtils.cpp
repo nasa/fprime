@@ -48,7 +48,7 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string, FwSi
     FW_ASSERT((source_size - sub_size) <= std::numeric_limits<FwSignedSizeType>::max());
 
     // Loop from zero to source_size - sub_size (inclusive)
-    for (FwSizeType source_index = 0; source_index < (source_size - sub_size + 1); source_index++) {
+    for (FwSizeType source_index = 0; source_index < (source_size - sub_size + 1) && source_index < static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()); source_index++) {
         // if the current character matches
         for (FwSizeType sub_index = 0; sub_index < sub_size; sub_index++) {
             // Prevent read overrun
