@@ -464,7 +464,7 @@ is a data product producer.
 
 **Cataloging and downlinking data products:**
 For a preliminary implementation of the data product catalog,
-see [`Svc::DpCatalog`](../../Svc/Catalog/docs/sdd.md).
+see [`Svc::DpCatalog`](../../Svc/DpCatalog/docs/sdd.md).
 
 **Processing data products:**
 TODO
