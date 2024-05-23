@@ -171,7 +171,7 @@ class SocketReadTask {
     Os::Task m_task;
     bool m_reconnect; //!< Force reconnection
     bool m_stop; //!< Stops the task when set to true
-
+    Os::Mutex m_task_lock;
 };
 }
 #endif  // DRV_SOCKETREADTASK_HPP

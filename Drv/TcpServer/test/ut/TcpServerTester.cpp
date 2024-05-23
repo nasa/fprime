@@ -87,13 +87,29 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
                 while (not m_spinner) {}
             }
         }
+        if (recv_thread) {
+            this->component.m_task_lock.lock();
+        }
         client.close(); // Client must be closed first or the server risks binding to an existing address
+
         // Properly stop the client on the last iteration
-        if ((1 + i) == iterations && recv_thread) {
-            this->component.shutdown();
-            this->component.stop();
-            this->component.join();
+        if (recv_thread) {
+            //this->component.close();
+            if ((1 + i) == iterations)
+            {
+                this->component.stop();
+                this->component.m_task_lock.unlock();
+                this->component.join();
+            }
+            else
+            {
+                printf("Tester mutex lock\n");
+                printf("Tester mutex locked\n");
+                this->component.close();
+                this->component.m_task_lock.unlock();
+            }
         } else {
+            printf("this->component.close()\n");
             this->component.close();
         }
     }

@@ -72,6 +72,7 @@ void SocketReadTask::readTask(void* pointer) {
     SocketIpStatus status = SOCK_SUCCESS;
     SocketReadTask* self = reinterpret_cast<SocketReadTask*>(pointer);
     do {
+        self->m_task_lock.lock();
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isStarted()) and (not self->m_stop) and
             ((status = self->startup()) != SOCK_SUCCESS)) {
@@ -79,6 +80,7 @@ void SocketReadTask::readTask(void* pointer) {
                 "[WARNING] Failed to open port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
+            self->m_task_lock.unlock();
             (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
             continue;
         }
@@ -90,6 +92,7 @@ void SocketReadTask::readTask(void* pointer) {
                 "[WARNING] Failed to open port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
+            self->m_task_lock.unlock();
             (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
             continue;
         }
@@ -113,6 +116,7 @@ void SocketReadTask::readTask(void* pointer) {
             }
             self->sendBuffer(buffer, status);
         }
+        self->m_task_lock.unlock();
     }
     // As long as not told to stop, and we are successful interrupted or ordered to retry, keep receiving
     while (not self->m_stop &&

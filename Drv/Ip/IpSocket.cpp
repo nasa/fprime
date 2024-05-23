@@ -218,8 +218,13 @@ SocketIpStatus IpSocket::recv(U8* data, U32& req_read) {
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
         // Attempt to recv out data
         size = this->recvProtocol(data, req_read);
+
+        if ((size == -1) && (errno == EAGAIN)) {
+            req_read = 0;
+            return SOCK_SUCCESS;
+        }
         // Error is EINTR, just try again
-        if (size == -1 && ((errno == EINTR) || errno == EAGAIN)) {
+        if ((size == -1) && (errno == EINTR)) {
             continue;
         }
         // Zero bytes read reset or bad ef means we've disconnected

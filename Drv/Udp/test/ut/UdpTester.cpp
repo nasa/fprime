@@ -106,9 +106,19 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             }
         }
         // Properly stop the client on the last iteration
-        if ((1 + i) == iterations && recv_thread) {
-            this->component.stop();
-            this->component.join();
+        if (recv_thread) {
+            this->component.m_task_lock.lock();
+            if ((1 + i) == iterations)
+            {
+                this->component.stop();
+                this->component.m_task_lock.unlock();
+                this->component.join();
+            }
+            else
+            {
+                this->component.close();
+                this->component.m_task_lock.unlock();
+            }
         } else {
             this->component.close();
         }

@@ -84,11 +84,32 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
             }
         }
         // Properly stop the client on the last iteration
-        if ((1 + i) == iterations && recv_thread) {
-            this->component.stop();
-            this->component.join();
+        if (recv_thread) {
+            //this->component.close();
+            if ((1 + i) == iterations)
+            {
+                this->component.m_task_lock.lock();
+                this->component.stop();
+                this->component.m_task_lock.unlock();
+                this->component.join();
+            }
         } else {
+            printf("this->component.close()\n");
             this->component.close();
+        }
+
+        if (recv_thread) {
+            printf("Tester mutex lock\n");
+            this->component.m_task_lock.lock();
+            printf("Tester mutex locked\n");
+            this->component.close();
+        }
+        printf("server.close()\n");
+        server.close();
+        printf("server.close() Done\n");
+
+        if (recv_thread) {
+            this->component.m_task_lock.unlock();
         }
         server.close();
     }
