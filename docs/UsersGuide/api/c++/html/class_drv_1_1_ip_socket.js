@@ -7,6 +7,7 @@ var class_drv_1_1_ip_socket =
     [ "configure", "class_drv_1_1_ip_socket.html#a98a57bf24cdeb8673be4780a8be2db55", null ],
     [ "isOpened", "class_drv_1_1_ip_socket.html#a35254851774fc34559a9f775de0b693a", null ],
     [ "isStarted", "class_drv_1_1_ip_socket.html#a1fba8f06e5712d505822b10ca343052b", null ],
+    [ "isValidPort", "class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39", null ],
     [ "open", "class_drv_1_1_ip_socket.html#aeed642d83d6e65344cc6e4db43f2bc5a", null ],
     [ "openProtocol", "class_drv_1_1_ip_socket.html#ae6f952adfdc30acabeb055b16a01c46c", null ],
     [ "recv", "class_drv_1_1_ip_socket.html#ad7e8fbe0b5779b35548173c6fd62fdae", null ],

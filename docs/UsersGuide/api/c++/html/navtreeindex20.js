@@ -1,5 +1,12 @@
 var NAVTREEINDEX20 =
 {
+"class_svc_1_1_active_text_logger_component_base.html#a60f127b150dfe25a679836ef0fccd204":[26,0,5,7,5],
+"class_svc_1_1_active_text_logger_component_base.html#a6867247a7af8a47949eb389afbd981b9":[26,0,5,7,3],
+"class_svc_1_1_active_text_logger_component_base.html#a7786ae658f0155318273776d80734309":[26,0,5,7,1],
+"class_svc_1_1_active_text_logger_component_base.html#a877ba5c38766abf00d3e27c55da88ce6":[26,0,5,7,9],
+"class_svc_1_1_active_text_logger_component_base.html#ab06a45058063f0be5d1bb75a16076390":[26,0,5,7,6],
+"class_svc_1_1_active_text_logger_component_base.html#ae9e9a0ac04f25444779ce58561f20e03":[26,0,5,7,7],
+"class_svc_1_1_assert_fatal_adapter_component_base.html":[26,0,5,8],
 "class_svc_1_1_assert_fatal_adapter_component_base.html#a012e61ba39003147e5ad2e2b6db22314":[26,0,5,8,10],
 "class_svc_1_1_assert_fatal_adapter_component_base.html#a1233c15576fd99e3cc14ece9faff29e3":[26,0,5,8,0],
 "class_svc_1_1_assert_fatal_adapter_component_base.html#a199db8856d4e2f0dbbd31dc15851528e":[26,0,5,8,4],
@@ -242,12 +249,5 @@ var NAVTREEINDEX20 =
 "class_svc_1_1_buffer_logger_component_base.html#af5b2e6efcf270c53144844d552ef651e":[26,0,5,13,48],
 "class_svc_1_1_buffer_logger_component_base.html#afc68f9d8d2b524633f271436712d2cd2":[26,0,5,13,18],
 "class_svc_1_1_buffer_logger_component_base.html#aff775fff43206982e6750672670ede0c":[26,0,5,13,14],
-"class_svc_1_1_buffer_manager_component_base.html":[26,0,5,14],
-"class_svc_1_1_buffer_manager_component_base.html#a12ad1f154463651e1efe18ec2ceec4c5":[26,0,5,14,4],
-"class_svc_1_1_buffer_manager_component_base.html#a13eec9fb926f470889c8bfbe57b2fe0f":[26,0,5,14,35],
-"class_svc_1_1_buffer_manager_component_base.html#a15d36ee460d4f97f3fa9ff9832b86eda":[26,0,5,14,8],
-"class_svc_1_1_buffer_manager_component_base.html#a190d8c6c07c5a76719dfa5d61706dd5f":[26,0,5,14,15],
-"class_svc_1_1_buffer_manager_component_base.html#a1913e23914a2d2a393fc6534b42e01cf":[26,0,5,14,12],
-"class_svc_1_1_buffer_manager_component_base.html#a1bba5edde265fca027968be9c34486d4":[26,0,5,14,11],
-"class_svc_1_1_buffer_manager_component_base.html#a1cc76892275250124ce9fc036a537def":[26,0,5,14,7]
+"class_svc_1_1_buffer_manager_component_base.html":[26,0,5,14]
 };

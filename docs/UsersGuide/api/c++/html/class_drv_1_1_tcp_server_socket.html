@@ -118,6 +118,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a64041db311adb6592590d996741da6c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_socket.html#a64041db311adb6592590d996741da6c6">shutdown</a> () override</td></tr>
 <tr class="memdesc:a64041db311adb6592590d996741da6c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shutdown and close the server socket followed by the open client.  <a href="class_drv_1_1_tcp_server_socket.html#a64041db311adb6592590d996741da6c6">More...</a><br /></td></tr>
 <tr class="separator:a64041db311adb6592590d996741da6c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecd7b1621e5518ecdddd97394b16d345"><td class="memItemLeft" align="right" valign="top">U16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_socket.html#aecd7b1621e5518ecdddd97394b16d345">getListenPort</a> ()</td></tr>
+<tr class="memdesc:aecd7b1621e5518ecdddd97394b16d345"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the port being listened on  <a href="class_drv_1_1_tcp_server_socket.html#aecd7b1621e5518ecdddd97394b16d345">More...</a><br /></td></tr>
+<tr class="separator:aecd7b1621e5518ecdddd97394b16d345"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_drv_1_1_ip_socket"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_drv_1_1_ip_socket')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_drv_1_1_ip_socket.html">Drv::IpSocket</a></td></tr>
 <tr class="memitem:a1c937ae98faa3a8d2ce5cff0fd16aaca inherit pub_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a1c937ae98faa3a8d2ce5cff0fd16aaca">IpSocket</a> ()</td></tr>
 <tr class="separator:a1c937ae98faa3a8d2ce5cff0fd16aaca inherit pub_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,6 +160,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memdesc:aa7cf9d0c4cc74428b96cb05f9338b62b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of recv. Called directly with error handling from recv.  <a href="class_drv_1_1_tcp_server_socket.html#aa7cf9d0c4cc74428b96cb05f9338b62b">More...</a><br /></td></tr>
 <tr class="separator:aa7cf9d0c4cc74428b96cb05f9338b62b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_drv_1_1_ip_socket"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_drv_1_1_ip_socket')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_drv_1_1_ip_socket.html">Drv::IpSocket</a></td></tr>
+<tr class="memitem:ab8c04eda20550ecf79bc50b5f3f9ea39 inherit pro_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39">isValidPort</a> (U16 port)</td></tr>
+<tr class="memdesc:ab8c04eda20550ecf79bc50b5f3f9ea39 inherit pro_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given port is valid for the socket.  <a href="class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39">More...</a><br /></td></tr>
+<tr class="separator:ab8c04eda20550ecf79bc50b5f3f9ea39 inherit pro_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9129e203803f3a0229fdfd7cf832180 inherit pro_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">setupTimeouts</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> socketFd)</td></tr>
 <tr class="memdesc:ad9129e203803f3a0229fdfd7cf832180 inherit pro_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup the socket timeout properties of the opened outgoing socket  <a href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">More...</a><br /></td></tr>
 <tr class="separator:ad9129e203803f3a0229fdfd7cf832180 inherit pro_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -212,11 +218,34 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Constructor for client socket tcp implementation. </p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00040">40</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00041">41</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="aecd7b1621e5518ecdddd97394b16d345"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecd7b1621e5518ecdddd97394b16d345">&#9670;&nbsp;</a></span>getListenPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">U16 Drv::TcpServerSocket::getListenPort </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the port being listened on </p>
+<p>Most useful when listen was configured to use port "0", this will return the port used for listening after a port has been determined. Will return 0 if the connection has not been setup.</p>
+<dl class="section return"><dt>Returns</dt><dd>receive port </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00043">43</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a5ca78d2c1f67e12b2546151e18645571"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5ca78d2c1f67e12b2546151e18645571">&#9670;&nbsp;</a></span>openProtocol()</h2>
 
@@ -252,7 +281,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_ip_socket.html#ae6f952adfdc30acabeb055b16a01c46c">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00093">93</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00112">112</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -302,7 +331,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_ip_socket.html#a234232a3c57b81feb4729c9e73601c74">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00126">126</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00145">145</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -352,7 +381,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_ip_socket.html#a0533261bf9e492ac0563dfa3dd09641f">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00122">122</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00141">141</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -384,7 +413,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_drv_1_1_ip_socket.html#adbc9a65b96aeddc37660e114c3ca9434">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00082">82</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00101">101</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -416,7 +445,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_drv_1_1_ip_socket.html#af267d5989af0035804eee9f2950d96ed">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00042">42</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_socket_8cpp_source.html#l00050">50</a> of file <a class="el" href="tcp_server_socket_8cpp_source.html">TcpServerSocket.cpp</a>.</p>
 
 </div>
 </div>

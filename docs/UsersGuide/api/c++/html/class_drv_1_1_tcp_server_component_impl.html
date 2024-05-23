@@ -118,6 +118,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab569a3a4a1ae9468f080b33d7748d5bd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_component_impl.html#ab569a3a4a1ae9468f080b33d7748d5bd">configure</a> (const char *hostname, const U16 port, const U32 send_timeout_seconds=<a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74a13c2974f4bb646b1b469e1cc4ff7fcdf">SOCKET_SEND_TIMEOUT_SECONDS</a>, const U32 send_timeout_microseconds=<a class="el" href="ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74a9bf9b8ed768b479725c43505b7282640">SOCKET_SEND_TIMEOUT_MICROSECONDS</a>)</td></tr>
 <tr class="memdesc:ab569a3a4a1ae9468f080b33d7748d5bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configures the TcpClient settings but does not open the connection.  <a href="class_drv_1_1_tcp_server_component_impl.html#ab569a3a4a1ae9468f080b33d7748d5bd">More...</a><br /></td></tr>
 <tr class="separator:ab569a3a4a1ae9468f080b33d7748d5bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44389dbc74e7b2a80f0d44dcbd279f8f"><td class="memItemLeft" align="right" valign="top">U16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_component_impl.html#a44389dbc74e7b2a80f0d44dcbd279f8f">getListenPort</a> ()</td></tr>
+<tr class="memdesc:a44389dbc74e7b2a80f0d44dcbd279f8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the port being listened on  <a href="class_drv_1_1_tcp_server_component_impl.html#a44389dbc74e7b2a80f0d44dcbd279f8f">More...</a><br /></td></tr>
+<tr class="separator:a44389dbc74e7b2a80f0d44dcbd279f8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_drv_1_1_tcp_server_component_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_drv_1_1_tcp_server_component_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_drv_1_1_tcp_server_component_base.html">Drv::TcpServerComponentBase</a></td></tr>
 <tr class="memitem:accfbd791faef52f9beed7d2f12e8da6d inherit pub_methods_class_drv_1_1_tcp_server_component_base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_component_base.html#accfbd791faef52f9beed7d2f12e8da6d">init</a> (<a class="el" href="fp_config_8h.html#a02fd22e959ed6b754f408bbcf608fc53">FwEnumStoreType</a> instance=0)</td></tr>
 <tr class="memdesc:accfbd791faef52f9beed7d2f12e8da6d inherit pub_methods_class_drv_1_1_tcp_server_component_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="class_drv_1_1_tcp_server_component_base.html" title="Auto-generated base for TcpServer component.">TcpServerComponentBase</a> object.  <a href="class_drv_1_1_tcp_server_component_base.html#accfbd791faef52f9beed7d2f12e8da6d">More...</a><br /></td></tr>
@@ -418,7 +421,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_socket_read_task.html#a01f23457f3c50c166ec4960fd5b53a11">Drv::SocketReadTask</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00053">53</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00057">57</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
 
 </div>
 </div>
@@ -451,7 +454,30 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_socket_read_task.html#a3a74bde5c804e6816d3d015cef74f31d">Drv::SocketReadTask</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00044">44</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00048">48</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a44389dbc74e7b2a80f0d44dcbd279f8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44389dbc74e7b2a80f0d44dcbd279f8f">&#9670;&nbsp;</a></span>getListenPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">U16 Drv::TcpServerComponentImpl::getListenPort </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the port being listened on </p>
+<p>Most useful when listen was configured to use port "0", this will return the port used for listening after a port has been determined. Will return 0 if the connection has not been setup.</p>
+<dl class="section return"><dt>Returns</dt><dd>receive port </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00040">40</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
 
 </div>
 </div>
@@ -484,7 +510,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_socket_read_task.html#a45ad2655c7da2d8d6d893a3f984788d5">Drv::SocketReadTask</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00040">40</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00044">44</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
 
 </div>
 </div>
@@ -528,7 +554,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_socket_read_task.html#abc94a3b38263cbc7bb5339166e547bc7">Drv::SocketReadTask</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00048">48</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_server_component_impl_8cpp_source.html#l00052">52</a> of file <a class="el" href="tcp_server_component_impl_8cpp_source.html">TcpServerComponentImpl.cpp</a>.</p>
 
 </div>
 </div>

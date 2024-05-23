@@ -147,6 +147,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
+<tr class="memitem:aee6fa310f8b7093193baf2faf57676f3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_client_socket.html#aee6fa310f8b7093193baf2faf57676f3">isValidPort</a> (U16 port) override</td></tr>
+<tr class="memdesc:aee6fa310f8b7093193baf2faf57676f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given port is valid for the socket.  <a href="class_drv_1_1_tcp_client_socket.html#aee6fa310f8b7093193baf2faf57676f3">More...</a><br /></td></tr>
+<tr class="separator:aee6fa310f8b7093193baf2faf57676f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3e7fe8328f36f7c10ec7994ccd3940f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_client_socket.html#ac3e7fe8328f36f7c10ec7994ccd3940f">openProtocol</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;fd) override</td></tr>
 <tr class="memdesc:ac3e7fe8328f36f7c10ec7994ccd3940f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tcp specific implementation for opening a client socket.  <a href="class_drv_1_1_tcp_client_socket.html#ac3e7fe8328f36f7c10ec7994ccd3940f">More...</a><br /></td></tr>
 <tr class="separator:ac3e7fe8328f36f7c10ec7994ccd3940f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -212,11 +215,51 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Constructor for client socket tcp implementation. </p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_client_socket_8cpp_source.html#l00042">42</a> of file <a class="el" href="tcp_client_socket_8cpp_source.html">TcpClientSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_client_socket_8cpp_source.html#l00043">43</a> of file <a class="el" href="tcp_client_socket_8cpp_source.html">TcpClientSocket.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="aee6fa310f8b7093193baf2faf57676f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee6fa310f8b7093193baf2faf57676f3">&#9670;&nbsp;</a></span>isValidPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Drv::TcpClientSocket::isValidPort </td>
+          <td>(</td>
+          <td class="paramtype">U16&#160;</td>
+          <td class="paramname"><em>port</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if the given port is valid for the socket. </p>
+<p>Some ports should be allowed for sockets and disabled on others (e.g. port 0 is a valid tcp server port but not a client. This will check the port and return "true" if the port is valid, or "false" otherwise. In the tcp client implementation, all ports are considered valid except for "0".</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">port</td><td>port to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if valid, false otherwise </dd></dl>
+
+<p>Reimplemented from <a class="el" href="class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39">Drv::IpSocket</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="tcp_client_socket_8cpp_source.html#l00045">45</a> of file <a class="el" href="tcp_client_socket_8cpp_source.html">TcpClientSocket.cpp</a>.</p>
+
+</div>
+</div>
 <a id="ac3e7fe8328f36f7c10ec7994ccd3940f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac3e7fe8328f36f7c10ec7994ccd3940f">&#9670;&nbsp;</a></span>openProtocol()</h2>
 
@@ -252,7 +295,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_ip_socket.html#ae6f952adfdc30acabeb055b16a01c46c">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_client_socket_8cpp_source.html#l00044">44</a> of file <a class="el" href="tcp_client_socket_8cpp_source.html">TcpClientSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_client_socket_8cpp_source.html#l00050">50</a> of file <a class="el" href="tcp_client_socket_8cpp_source.html">TcpClientSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -302,7 +345,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_ip_socket.html#a234232a3c57b81feb4729c9e73601c74">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_client_socket_8cpp_source.html#l00088">88</a> of file <a class="el" href="tcp_client_socket_8cpp_source.html">TcpClientSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_client_socket_8cpp_source.html#l00095">95</a> of file <a class="el" href="tcp_client_socket_8cpp_source.html">TcpClientSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -352,7 +395,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_ip_socket.html#a0533261bf9e492ac0563dfa3dd09641f">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tcp_client_socket_8cpp_source.html#l00084">84</a> of file <a class="el" href="tcp_client_socket_8cpp_source.html">TcpClientSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tcp_client_socket_8cpp_source.html#l00091">91</a> of file <a class="el" href="tcp_client_socket_8cpp_source.html">TcpClientSocket.cpp</a>.</p>
 
 </div>
 </div>

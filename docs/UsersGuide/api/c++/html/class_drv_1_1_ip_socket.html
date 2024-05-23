@@ -147,6 +147,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
+<tr class="memitem:ab8c04eda20550ecf79bc50b5f3f9ea39"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39">isValidPort</a> (U16 port)</td></tr>
+<tr class="memdesc:ab8c04eda20550ecf79bc50b5f3f9ea39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given port is valid for the socket.  <a href="class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39">More...</a><br /></td></tr>
+<tr class="separator:ab8c04eda20550ecf79bc50b5f3f9ea39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9129e203803f3a0229fdfd7cf832180"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">setupTimeouts</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> socketFd)</td></tr>
 <tr class="memdesc:ad9129e203803f3a0229fdfd7cf832180"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup the socket timeout properties of the opened outgoing socket  <a href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">More...</a><br /></td></tr>
 <tr class="separator:ad9129e203803f3a0229fdfd7cf832180"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -193,7 +196,7 @@ Protected Attributes</h2></td></tr>
 <div class="textblock"><p>Helper base-class for setting up Berkeley sockets. </p>
 <p>Certain IP headers have conflicting definitions with the m_data member of various types in fprime. TcpHelper separates the ip setup from the incoming <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> in the primary component class preventing this collision. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00046">46</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00047">47</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1c937ae98faa3a8d2ce5cff0fd16aaca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1c937ae98faa3a8d2ce5cff0fd16aaca">&#9670;&nbsp;</a></span>IpSocket()</h2>
@@ -237,7 +240,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00049">49</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00050">50</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -286,7 +289,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>: status of conversion </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00080">80</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00086">86</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -308,7 +311,7 @@ Protected Attributes</h2></td></tr>
 <p>closes the socket </p>
 <p>Closes the socket opened by the open call. In this case of the TcpServer, this does NOT close server's listening port (call <code>shutdown</code>) but will close the active client connection. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00117">117</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00123">123</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -387,7 +390,7 @@ Protected Attributes</h2></td></tr>
 <p>Check if this <a class="el" href="class_drv_1_1_ip_socket.html" title="Helper base-class for setting up Berkeley sockets.">IpSocket</a> has previously been opened. In the case of Udp this will check for outgoing transmissions and (if configured) incoming transmissions as well. This does not guarantee errors will not occur when using this socket as the remote component may have disconnected.</p>
 <dl class="section return"><dt>Returns</dt><dd>true if socket is open, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00109">109</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00115">115</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -409,7 +412,47 @@ Protected Attributes</h2></td></tr>
 <p>Returns true when the socket is started. </p>
 <p>Returns true when the socket is started up sufficiently to be actively listening to clients. Returns false otherwise. This means <code><a class="el" href="class_drv_1_1_ip_socket.html#af267d5989af0035804eee9f2950d96ed" title="startup the socket, a no-op on unless this is server">startup()</a></code> was called and returned success. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00101">101</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00107">107</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab8c04eda20550ecf79bc50b5f3f9ea39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8c04eda20550ecf79bc50b5f3f9ea39">&#9670;&nbsp;</a></span>isValidPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Drv::IpSocket::isValidPort </td>
+          <td>(</td>
+          <td class="paramtype">U16&#160;</td>
+          <td class="paramname"><em>port</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if the given port is valid for the socket. </p>
+<p>Some ports should be allowed for sockets and disabled on others (e.g. port 0 is a valid tcp server port but not a client. This will check the port and return "true" if the port is valid, or "false" otherwise. In the default implementation, all ports are considered valid.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">port</td><td>port to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if valid, false otherwise </dd></dl>
+
+<p>Reimplemented in <a class="el" href="class_drv_1_1_tcp_client_socket.html#aee6fa310f8b7093193baf2faf57676f3">Drv::TcpClientSocket</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00065">65</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -434,7 +477,7 @@ Protected Attributes</h2></td></tr>
 <p>Note: delegates to openProtocol for protocol specific implementation</p>
 <dl class="section return"><dt>Returns</dt><dd>status of open </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00142">142</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00148">148</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -471,7 +514,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of open </dd></dl>
 
-<p>Implemented in <a class="el" href="class_drv_1_1_tcp_server_socket.html#a5ca78d2c1f67e12b2546151e18645571">Drv::TcpServerSocket</a>, <a class="el" href="class_drv_1_1_tcp_client_socket.html#ac3e7fe8328f36f7c10ec7994ccd3940f">Drv::TcpClientSocket</a>, and <a class="el" href="class_drv_1_1_udp_socket.html#a8c8355ffe74771f33ba9092f62d16839">Drv::UdpSocket</a>.</p>
+<p>Implemented in <a class="el" href="class_drv_1_1_udp_socket.html#a65bb9391980f451c723eff1c4662eb38">Drv::UdpSocket</a>, <a class="el" href="class_drv_1_1_tcp_server_socket.html#a5ca78d2c1f67e12b2546151e18645571">Drv::TcpServerSocket</a>, and <a class="el" href="class_drv_1_1_tcp_client_socket.html#ac3e7fe8328f36f7c10ec7994ccd3940f">Drv::TcpClientSocket</a>.</p>
 
 </div>
 </div>
@@ -513,7 +556,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00196">196</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00207">207</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -561,7 +604,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>: size of data received, or -1 on error. </dd></dl>
 
-<p>Implemented in <a class="el" href="class_drv_1_1_tcp_server_socket.html#aa7cf9d0c4cc74428b96cb05f9338b62b">Drv::TcpServerSocket</a>, <a class="el" href="class_drv_1_1_tcp_client_socket.html#a18804fe002020eb34435b13a38299c3a">Drv::TcpClientSocket</a>, and <a class="el" href="class_drv_1_1_udp_socket.html#a76499141054fcdd718773fffffbc7867">Drv::UdpSocket</a>.</p>
+<p>Implemented in <a class="el" href="class_drv_1_1_udp_socket.html#acc60b9ecd438229355cd28d91178229e">Drv::UdpSocket</a>, <a class="el" href="class_drv_1_1_tcp_server_socket.html#aa7cf9d0c4cc74428b96cb05f9338b62b">Drv::TcpServerSocket</a>, and <a class="el" href="class_drv_1_1_tcp_client_socket.html#a18804fe002020eb34435b13a38299c3a">Drv::TcpClientSocket</a>.</p>
 
 </div>
 </div>
@@ -603,7 +646,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00160">160</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00168">168</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -651,7 +694,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>: size of data sent, or -1 on error. </dd></dl>
 
-<p>Implemented in <a class="el" href="class_drv_1_1_tcp_server_socket.html#a3e4dbc32ebe62ce3c67b7c21dc98e99c">Drv::TcpServerSocket</a>, <a class="el" href="class_drv_1_1_tcp_client_socket.html#a0c32788f8356c0a7e94e77ddb540f0f3">Drv::TcpClientSocket</a>, and <a class="el" href="class_drv_1_1_udp_socket.html#a18fdd2683ee9e1a20c41d0fbe0c264ca">Drv::UdpSocket</a>.</p>
+<p>Implemented in <a class="el" href="class_drv_1_1_udp_socket.html#a6df2923cd485202025ca33885ae5e563">Drv::UdpSocket</a>, <a class="el" href="class_drv_1_1_tcp_server_socket.html#a3e4dbc32ebe62ce3c67b7c21dc98e99c">Drv::TcpServerSocket</a>, and <a class="el" href="class_drv_1_1_tcp_client_socket.html#a0c32788f8356c0a7e94e77ddb540f0f3">Drv::TcpClientSocket</a>.</p>
 
 </div>
 </div>
@@ -688,7 +731,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of timeout setup </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00063">63</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00069">69</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -720,7 +763,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="class_drv_1_1_tcp_server_socket.html#a64041db311adb6592590d996741da6c6">Drv::TcpServerSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00128">128</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00134">134</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -753,7 +796,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="class_drv_1_1_tcp_server_socket.html#afecec02b937dab1023598aa8e49a204b">Drv::TcpServerSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00135">135</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00141">141</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -778,7 +821,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00204">204</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00216">216</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -804,7 +847,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Hostname to supply. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00210">210</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00222">222</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -828,7 +871,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00203">203</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00215">215</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -854,7 +897,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Have we successfully opened. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00208">208</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00220">220</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -880,7 +923,7 @@ Protected Attributes</h2></td></tr>
 
 <p>IP address port used. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00207">207</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00219">219</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -906,7 +949,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Have we successfully started the socket. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00209">209</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00221">221</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -930,7 +973,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00206">206</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00218">218</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -954,7 +997,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00205">205</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00217">217</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>

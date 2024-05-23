@@ -5,7 +5,8 @@ var class_drv_1_1_udp_socket =
     [ "bind", "class_drv_1_1_udp_socket.html#a1560afcf978f6f8c80a38df568d7c263", null ],
     [ "configureRecv", "class_drv_1_1_udp_socket.html#a8f47149416063e23b273c94009920ed3", null ],
     [ "configureSend", "class_drv_1_1_udp_socket.html#ac4fb848a78dfcdaced8a064b11d27332", null ],
-    [ "openProtocol", "class_drv_1_1_udp_socket.html#a8c8355ffe74771f33ba9092f62d16839", null ],
-    [ "recvProtocol", "class_drv_1_1_udp_socket.html#a76499141054fcdd718773fffffbc7867", null ],
-    [ "sendProtocol", "class_drv_1_1_udp_socket.html#a18fdd2683ee9e1a20c41d0fbe0c264ca", null ]
+    [ "getRecvPort", "class_drv_1_1_udp_socket.html#a0c9b8b40398e1b0f5af589d91efcc79a", null ],
+    [ "openProtocol", "class_drv_1_1_udp_socket.html#a65bb9391980f451c723eff1c4662eb38", null ],
+    [ "recvProtocol", "class_drv_1_1_udp_socket.html#acc60b9ecd438229355cd28d91178229e", null ],
+    [ "sendProtocol", "class_drv_1_1_udp_socket.html#a6df2923cd485202025ca33885ae5e563", null ]
 ];

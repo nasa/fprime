@@ -121,6 +121,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8f47149416063e23b273c94009920ed3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html#a8f47149416063e23b273c94009920ed3">configureRecv</a> (const char *hostname, const U16 port)</td></tr>
 <tr class="memdesc:a8f47149416063e23b273c94009920ed3"><td class="mdescLeft">&#160;</td><td class="mdescRight">configure the udp socket for incoming transmissions  <a href="class_drv_1_1_udp_socket.html#a8f47149416063e23b273c94009920ed3">More...</a><br /></td></tr>
 <tr class="separator:a8f47149416063e23b273c94009920ed3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c9b8b40398e1b0f5af589d91efcc79a"><td class="memItemLeft" align="right" valign="top">U16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html#a0c9b8b40398e1b0f5af589d91efcc79a">getRecvPort</a> ()</td></tr>
+<tr class="memdesc:a0c9b8b40398e1b0f5af589d91efcc79a"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the port being received on  <a href="class_drv_1_1_udp_socket.html#a0c9b8b40398e1b0f5af589d91efcc79a">More...</a><br /></td></tr>
+<tr class="separator:a0c9b8b40398e1b0f5af589d91efcc79a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_drv_1_1_ip_socket"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_drv_1_1_ip_socket')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_drv_1_1_ip_socket.html">Drv::IpSocket</a></td></tr>
 <tr class="memitem:a1c937ae98faa3a8d2ce5cff0fd16aaca inherit pub_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a1c937ae98faa3a8d2ce5cff0fd16aaca">IpSocket</a> ()</td></tr>
 <tr class="separator:a1c937ae98faa3a8d2ce5cff0fd16aaca inherit pub_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,16 +162,19 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a1560afcf978f6f8c80a38df568d7c263"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html#a1560afcf978f6f8c80a38df568d7c263">bind</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> fd)</td></tr>
 <tr class="memdesc:a1560afcf978f6f8c80a38df568d7c263"><td class="mdescLeft">&#160;</td><td class="mdescRight">bind the UDP to a port such that it can receive packets at the previously configured port  <a href="class_drv_1_1_udp_socket.html#a1560afcf978f6f8c80a38df568d7c263">More...</a><br /></td></tr>
 <tr class="separator:a1560afcf978f6f8c80a38df568d7c263"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c8355ffe74771f33ba9092f62d16839"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html#a8c8355ffe74771f33ba9092f62d16839">openProtocol</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;fd)</td></tr>
-<tr class="memdesc:a8c8355ffe74771f33ba9092f62d16839"><td class="mdescLeft">&#160;</td><td class="mdescRight">udp specific implementation for opening a socket.  <a href="class_drv_1_1_udp_socket.html#a8c8355ffe74771f33ba9092f62d16839">More...</a><br /></td></tr>
-<tr class="separator:a8c8355ffe74771f33ba9092f62d16839"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18fdd2683ee9e1a20c41d0fbe0c264ca"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html#a18fdd2683ee9e1a20c41d0fbe0c264ca">sendProtocol</a> (const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)</td></tr>
-<tr class="memdesc:a18fdd2683ee9e1a20c41d0fbe0c264ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of send. Called directly with retry from send.  <a href="class_drv_1_1_udp_socket.html#a18fdd2683ee9e1a20c41d0fbe0c264ca">More...</a><br /></td></tr>
-<tr class="separator:a18fdd2683ee9e1a20c41d0fbe0c264ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76499141054fcdd718773fffffbc7867"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html#a76499141054fcdd718773fffffbc7867">recvProtocol</a> (<a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)</td></tr>
-<tr class="memdesc:a76499141054fcdd718773fffffbc7867"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of recv. Called directly with error handling from recv.  <a href="class_drv_1_1_udp_socket.html#a76499141054fcdd718773fffffbc7867">More...</a><br /></td></tr>
-<tr class="separator:a76499141054fcdd718773fffffbc7867"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65bb9391980f451c723eff1c4662eb38"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html#a65bb9391980f451c723eff1c4662eb38">openProtocol</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;fd) override</td></tr>
+<tr class="memdesc:a65bb9391980f451c723eff1c4662eb38"><td class="mdescLeft">&#160;</td><td class="mdescRight">udp specific implementation for opening a socket.  <a href="class_drv_1_1_udp_socket.html#a65bb9391980f451c723eff1c4662eb38">More...</a><br /></td></tr>
+<tr class="separator:a65bb9391980f451c723eff1c4662eb38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6df2923cd485202025ca33885ae5e563"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html#a6df2923cd485202025ca33885ae5e563">sendProtocol</a> (const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size) override</td></tr>
+<tr class="memdesc:a6df2923cd485202025ca33885ae5e563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of send. Called directly with retry from send.  <a href="class_drv_1_1_udp_socket.html#a6df2923cd485202025ca33885ae5e563">More...</a><br /></td></tr>
+<tr class="separator:a6df2923cd485202025ca33885ae5e563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc60b9ecd438229355cd28d91178229e"><td class="memItemLeft" align="right" valign="top">I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html#acc60b9ecd438229355cd28d91178229e">recvProtocol</a> (<a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size) override</td></tr>
+<tr class="memdesc:acc60b9ecd438229355cd28d91178229e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of recv. Called directly with error handling from recv.  <a href="class_drv_1_1_udp_socket.html#acc60b9ecd438229355cd28d91178229e">More...</a><br /></td></tr>
+<tr class="separator:acc60b9ecd438229355cd28d91178229e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_drv_1_1_ip_socket"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_drv_1_1_ip_socket')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_drv_1_1_ip_socket.html">Drv::IpSocket</a></td></tr>
+<tr class="memitem:ab8c04eda20550ecf79bc50b5f3f9ea39 inherit pro_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39">isValidPort</a> (U16 port)</td></tr>
+<tr class="memdesc:ab8c04eda20550ecf79bc50b5f3f9ea39 inherit pro_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given port is valid for the socket.  <a href="class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39">More...</a><br /></td></tr>
+<tr class="separator:ab8c04eda20550ecf79bc50b5f3f9ea39 inherit pro_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9129e203803f3a0229fdfd7cf832180 inherit pro_methods_class_drv_1_1_ip_socket"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">setupTimeouts</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> socketFd)</td></tr>
 <tr class="memdesc:ad9129e203803f3a0229fdfd7cf832180 inherit pro_methods_class_drv_1_1_ip_socket"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup the socket timeout properties of the opened outgoing socket  <a href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">More...</a><br /></td></tr>
 <tr class="separator:ad9129e203803f3a0229fdfd7cf832180 inherit pro_methods_class_drv_1_1_ip_socket"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -291,7 +297,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of the bind </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00074">74</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00085">85</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -322,17 +328,17 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>configure the udp socket for incoming transmissions </p>
-<p>Configures the UDP handler to use the given hostname and port for incoming transmissions. Outgoing hostname and port are configured using the <code>configureSend</code> function call for UDP as it requires separate host/port pairs for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not supported. It is possible to configure the UDP port as a single-direction receive port only.</p>
+<p>Configures the UDP handler to use the given hostname and port for incoming transmissions. Outgoing hostname and port are configured using the <code>configureSend</code> function call for UDP as it requires separate host/port pairs for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". It is possible to configure the UDP port as a single-direction receive port only.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hostname</td><td>socket uses for incoming transmissions. Must be of form x.x.x.x </td></tr>
-    <tr><td class="paramname">port</td><td>port socket uses for incoming transmissions. Must NOT be 0. </td></tr>
+    <tr><td class="paramname">port</td><td>port socket uses for incoming transmissions. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of configure </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00067">67</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00068">68</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -375,7 +381,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>configure the udp socket for outgoing transmissions </p>
-<p>Configures the UDP handler to use the given hostname and port for outgoing transmissions. Incoming hostname and port are configured using the <code>configureRecv</code> function call for UDP as it requires separate host/port pairs for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not supported. It is possible to configure the UDP port as a single-direction send port only.</p>
+<p>Configures the UDP handler to use the given hostname and port for outgoing transmissions. Incoming hostname and port are configured using the <code>configureRecv</code> function call for UDP as it requires separate host/port pairs for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not supported on remote ports. It is possible to configure the UDP port as a single-direction send port only.</p>
 <p>Note: delegates to <code><a class="el" href="class_drv_1_1_ip_socket.html#a98a57bf24cdeb8673be4780a8be2db55" title="configure the ip socket with host and transmission timeouts">IpSocket::configure</a></code></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -392,8 +398,31 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a8c8355ffe74771f33ba9092f62d16839"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c8355ffe74771f33ba9092f62d16839">&#9670;&nbsp;</a></span>openProtocol()</h2>
+<a id="a0c9b8b40398e1b0f5af589d91efcc79a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c9b8b40398e1b0f5af589d91efcc79a">&#9670;&nbsp;</a></span>getRecvPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">U16 Drv::UdpSocket::getRecvPort </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the port being received on </p>
+<p>Most useful when receive was configured to use port "0", this will return the port used for receiving data after a port has been determined. Will return 0 if the connection has not been setup.</p>
+<dl class="section return"><dt>Returns</dt><dd>receive port </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00077">77</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a65bb9391980f451c723eff1c4662eb38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65bb9391980f451c723eff1c4662eb38">&#9670;&nbsp;</a></span>openProtocol()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -411,7 +440,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -427,12 +456,12 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_ip_socket.html#ae6f952adfdc30acabeb055b16a01c46c">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00100">100</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00123">123</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a76499141054fcdd718773fffffbc7867"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76499141054fcdd718773fffffbc7867">&#9670;&nbsp;</a></span>recvProtocol()</h2>
+<a id="acc60b9ecd438229355cd28d91178229e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc60b9ecd438229355cd28d91178229e">&#9670;&nbsp;</a></span>recvProtocol()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -460,7 +489,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -477,12 +506,12 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_ip_socket.html#a234232a3c57b81feb4729c9e73601c74">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00162">162</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00198">198</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a18fdd2683ee9e1a20c41d0fbe0c264ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a18fdd2683ee9e1a20c41d0fbe0c264ca">&#9670;&nbsp;</a></span>sendProtocol()</h2>
+<a id="a6df2923cd485202025ca33885ae5e563"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6df2923cd485202025ca33885ae5e563">&#9670;&nbsp;</a></span>sendProtocol()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -510,7 +539,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -527,7 +556,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_drv_1_1_ip_socket.html#a0533261bf9e492ac0563dfa3dd09641f">Drv::IpSocket</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00156">156</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udp_socket_8cpp_source.html#l00192">192</a> of file <a class="el" href="udp_socket_8cpp_source.html">UdpSocket.cpp</a>.</p>
 
 </div>
 </div>
