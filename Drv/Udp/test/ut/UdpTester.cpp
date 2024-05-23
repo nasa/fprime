@@ -29,18 +29,19 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    U16 port1 =  Drv::Test::get_free_port(true);
+    U16 port1 = Drv::Test::get_free_port(true);
     ASSERT_NE(0, port1);
-    U16 port2 =  Drv::Test::get_free_port(true);
-    ASSERT_NE(0, port2);
-
-    uint8_t attempt_to_find_available_port = 100;
+    U16 port2 = port1;
+    uint8_t attempt_to_find_available_port = std::numeric_limits<uint8_t>::max();
 
     while ((port1 == port2) && attempt_to_find_available_port > 0)
     {
-        U16 port2 =  Drv::Test::get_free_port(true);
+        port2 = Drv::Test::get_free_port(true);
         ASSERT_NE(0, port2);
         --attempt_to_find_available_port;
+    }
+    if (port2 == port1) {
+        GTEST_SKIP() << "Could not find two unique and available UDP ports. SKipping test.";
     }
     ASSERT_NE(port1, port2);
 

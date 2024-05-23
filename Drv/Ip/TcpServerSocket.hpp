@@ -48,6 +48,16 @@ class TcpServerSocket : public IpSocket {
      */
     void shutdown() override;
 
+    /**
+     * \brief get the port being listened on
+     *
+     * Most useful when listen was configured to use port "0", this will return the port used for listening after a port
+     * has been determined. Will return 0 if the connection has not been setup.
+     *
+     * \return receive port
+     */
+    U16 getListenPort();
+
   PROTECTED:
     /**
      * \brief Tcp specific implementation for opening a client socket connected to this server.
