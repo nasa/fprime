@@ -60,12 +60,12 @@ namespace Svc {
       0,
       this->component.get_getVersion_InputPort(0)
     );
-
+/*
     this->connect_to_run(
       0,
       this->component.get_run_InputPort(0)
     );
-
+*/
     this->connect_to_setVersion(
       0,
       this->component.get_setVersion_InputPort(0)

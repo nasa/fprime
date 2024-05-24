@@ -11,14 +11,14 @@ TEST(Nominal, test_startup) {
   tester.test_startup();
 }
 
-TEST(Nominal, test_ports) {
-  Svc::VersionTester tester;
-  tester.test_ports();
-}
-
 TEST(Nominal, test_cmds) {
   Svc::VersionTester tester;
   tester.test_commands();
+}
+
+TEST(Nominal, test_ports) {
+  Svc::VersionTester tester;
+  tester.test_ports();
 }
 
 int main(int argc, char** argv) {
