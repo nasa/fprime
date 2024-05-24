@@ -17,6 +17,7 @@ Thus, the required structure for your subtopology should be:
 ```bash
 MySubtopology/
 ├─ CMakeLists.txt
+├─ intentionally-empty.hpp
 ├─ MySubtopology.cmake
 ├─ MySubtopology.fpp
 ├─ MySubtopologyTopology.cpp
@@ -24,7 +25,7 @@ MySubtopology/
 └─ MySubtopologyTopologyDefs.hpp
 ```
 
-These files will be discussed in more detail in later sections of this guide. Additionally, note that there are optional files that can be included in your subtopology to extend its capability.
+You may notice that there is a suspicious file called `intentionally-empty.cpp`. This is intentional! That file and the rest will be discussed in more detail in later sections of this guide. Additionally, note that there are optional files that can be included in your subtopology to extend its capability.
 
 - It is highly recommended to include a `docs` folder to document your subtopology. Simple markdown files work well in this case.
 - `.fppi` files can be included as config files to your subtopology. They can include useful constants or structures that allow users to modify your subtoplogy.
@@ -47,7 +48,6 @@ Based on our example, we may have the following instance declarations:
 ```cpp
 instance rng // RNG component instance
 instance rateGroup // rate group instance
-instance rateGroupDriver // driving the rate group
 ``` 
 
 and thus the following instance definitions:
@@ -70,7 +70,7 @@ and also the following wiring:
 
 ```cpp
 connections MyWiring {
-    rateGroupDriver.CycleOut[0] -> rateGroup.CycleIn // to send the 1Hz configurable signal to our rate group
+    // we will hook up the cycle for our rate group later on
     rateGroup.RateGroupMemberOut[0] -> rng.run
 }
 ```
@@ -89,46 +89,58 @@ module MySubtopology {
         stack size DEFAULTS.STACK_SIZE \
         priority 150
 
-    instance rateGroupDriver: Svc.RateGroupDriver base id 0xFF8FF // to drive the 1Hz rate group
-
     topology MySubtopology {
         instance rng // RNG component instance
         instance rateGroup // rate group instance
-        instance rateGroupDriver // driving the rate group
 
         connections MyWiring {
-            rateGroupDriver.CycleOut[0] -> rateGroup.CycleIn // to send the 1Hz configurable signal to our rate group
             rateGroup.RateGroupMemberOut[0] -> rng.run
         }
     } // end topology
 } // end MySubtopology
 ```
 
-## MySubtopology.cpp and MySubtopology.hpp (pt1)
+## MySubtopologyTopology.cpp and MySubtopologyTopology.hpp (pt1)
 
 This file is the bread and butter of developing your topology, as it runs any functions necessary to configure the topology, and also includes start and teardown functions for when the topology is started and after the topology is stopped respectively.
 
-As such, this file requires three implemented functions. The stubs of these functions should go in the `MySubtopology.hpp` file:
+As such, this file requires three implemented functions. The stubs of these functions should go in the `MySubtopologyTopology.hpp` file:
 
 ```cpp
-void configureTopology(const TopologyState& state) {
-    // ... your code here ...
-}
+namespace MySubtopology{
+    void configureTopology(const TopologyState& state) {
+        // ... your code here ...
+    }
 
-void startTopology(const TopologyState& state) {
-    // ... your code here ...
-}
+    void startTopology(const TopologyState& state) {
+        // ... your code here ...
+    }
 
-void teardownTopology(const TopologyState& state) {
-    // ... your code here ...
+    void teardownTopology(const TopologyState& state) {
+        // ... your code here ...
+    }
 }
+```
+
+Additionally, the `hpp` file will need to include a file called `TopologyConfig.hpp`. The purpose of this is to include our main deployment's namespace, and to also include its autocoded `topology.cpp` file. Our subtopology will reference it, and will require access to the namespace *after* the autocoder has built it.
+
+In `fprime/config`, create a file called `TopologyConfig.hpp` and include:
+
+```cpp
+#ifndef TOPOLOGYCONFIG_HPP
+#define TOPOLOGYCONFIG_HPP
+
+#include <MainDeployment/Top/MainDeploymentTopologyAc.hpp> // replace with name of your main deployment
+using namespace MainDeployment; // replace with namespace of your main deployment
+
+#endif
 ```
 
 You may notice that all three functions take in the argument `state`, which is a struct that is passed in when the subtopology is called. `TopologyState` is that struct, which can include any variables you would like a developer to be able to modify. This provides dynamic-ness to your subtopology.
 
-We're now going to interject information about `MySubtopologyDefs.hpp`, because it is more relevant to the current topic.
+We're now going to interject information about `MySubtopologyTopologyDefs.hpp`, because it is more relevant to the current topic.
 
-## MySubtopologyDefs.hpp
+## MySubtopologyTopologyDefs.hpp
 
 In our example, we may want to allow the user to customize the clock that runs the RNG component, from 1Hz to 2Hz or otherwise. Thus, our struct may look something like:
 
@@ -152,6 +164,8 @@ namespace GlobalDefs {
 } // GlobalDefs
 ```
 
+Notice that we wrap `PingEntries` in a namespace called `GlobalDefs`. This is important, as it allows us to use the namespace `GlobalDefs` across multiple topologies, and then link them all together in the main deployment. This will become more clear in the [next section](#integration-into-a-main-deployment).
+
 This brings us to a unique naming scheme for variable names for subtopologies. On the development-end of the subtopology, we see names like `configureTopology`. However, on the build end when these subtopologies are folded into a bigger project, these functions are added to namespaces via their names. Inherently this makes sense, so that we don't confuse a function, or especially a component instance, with each other. So:
 
 ```cpp
@@ -161,7 +175,7 @@ MySubtopology -> rateGroup ==> MySubtopology_rateGroup // example for rateGroup 
 // ... etc
 ```
 
-We will encounter this structure later on in this guide. At the moment, know that `MySubtopology_rateGroup` is not a foreign concept!
+We will encounter this structure later on in this guide. The existence of this naming structure is actually the reason behind the suspicious `intentionally-empty.cpp` file. However, since the reason lies more in the build steps, it will be discussed in the [CMake](#cmake-and-buildstep-files) section.
 
 ## MySubtopology.cpp and MySubtopology.hpp (pt2)
 
@@ -169,7 +183,7 @@ Back to the `.cpp` and `.hpp` files. Let's go through each of the functions that
 
 ### `configureTopology()`
 
-This function contains any setup that needs to be done for your topology. This will depend on the components you instantiate. It can range from setting up your rate group (which we will do) to defining your framing/deframing protocol for a custom (or F Prime's) communication engine. In our situation, we need to set up the rate group driver.
+This function contains any setup that needs to be done for your topology. This will depend on the components you instantiate. It can range from setting up your rate group (which we will do) to defining your framing/deframing protocol for a custom (or F Prime's) communication engine. In our situation, we need to pass in the context to our rate group (even though it is empty for the sake of our example).
 
 ```cpp
 // Rate groups may supply a context token to each of the attached children whose purpose is set by the project. The
@@ -177,16 +191,9 @@ This function contains any setup that needs to be done for your topology. This w
 NATIVE_INT_TYPE rateGroupContext[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 
 void configureTopology(const TopologyState& state){
-    U32 clockDivisor = 10; // default 1Hz
-    if(state.clockRate){
-        // ... do some verification of the input
-        clockDivisor = 10/state.clockRate; // assuming the input frequency is 10Hz
-    }
-
-    // The reference topology divides the incoming clock signal (10Hz) into sub-signals: 1Hz
-    Svc::RateGroupDriver::DividerSet rateGroupDivisors = {{{clockDivisor, 0}}};
-    MySubtopology_rateGroupDriver.configure(rateGroupDivisors);
+    // you may also take this time to reference the clockRate variable from state
     MySubtopology_rateGroup.configure(rateGroupContext, Fw_NUM_ARRAY_ELEMENTS(rateGroupContext));
+    Fw::Logger::logMsg("[RNG Topology] Topology has been configured")
 }
 ```
 
@@ -218,13 +225,22 @@ In `CMakeLists.txt`:
 
 ```cmake
 set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/MySubtopology.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/MySubtopology.fpp",
+    "${CMAKE_CURRENT_LIST_DIR}/intentionally-empty.cpp"
 )
 
 register_fprime_modules()
+
+set_target_properties(
+    ${FPRIME_CURRENT_MODULE}
+    PROPERTIES
+    SOURCES "${CMAKE_CURRENT_LIST_DIR}/intentionally-empty.cpp"
+)
 ```
 
-and in `MySubtopology.cmake`:
+We now get to see where `intentionally-empty.cpp` comes into play. As the name suggests, the file is completely empty. However, we include it in the CMake build so that we can have our naming structure (as described earlier) work. When our main deployment that includes our subtopology builds, the autocoder will write the function stubs and variable names in its own topology file. We don't want it to do this, and so we tell the compiler to reference the empty file whenever the main deployment tries to access our subtopology. Inherently, this is currently a solution to a bug that exists; we don't want to have to include an empty file to get the behavior we want. This issue is being tracked, and we hope to have a solution for it soon.
+
+In `MySubtopology.cmake`, we want to include:
 
 ```cmake
 list(APPEND MOD_DEPS
@@ -255,24 +271,49 @@ register_fprime_module()
 ...
 ```
 
-Then, we want to tell our MainDeployment's topology to import and use our unified topology file from our subtopology. We head over to the `topology.fpp` file, and include:
+Head over to `MainDeplomentTopologyDefs.hpp`. We want to not only include our subtopology's definitions header, but also modify `PingEntires` to use `GlobalDefs::PingEntires`. At the end of `namespace MainDeployment`, include:
+
+```cpp
+namespace PingEntries = GlobalDefs::PingEntries;
+```
+
+Then modify the current `PingEntires` namespace call to be surrounded by GlobalDefs:
+
+```cpp
+namespace GlobalDefs {
+    namespace PingEntries {
+        namespace blockDrv {
+            enum { WARN = 3, FATAL = 5 };
+        }
+...
+```
+
+Then, we want to tell our MainDeployment's topology to import and use our unified topology file from our subtopology. While we're here, we should also hook up the `CycleOut` port of our main deployment's rate group driver to the `CycleIn` port of our subtopology's rate group. Ensure that the rate group driver can have enough output wires going from the output port. We head over to the `topology.fpp` file, and include:
 
 ```cpp
 ...
 topology MainDeployment {
     import MySubtopology.MySubtopology
     ...
+
+    connections RateGroups{
+        ...
+        rateGroupDriver.CycleOut[3] -> MySubtopology.rateGroup.CycleIn // you'll notice that the syntax here is <Namespace>.<instance>
+        ...
+    }
 }
 ...
 ```
 
-At this point, we want to now call our subtopology's configure/start/teardown functions within the corresponding functions of our `MainDeployment` topology. So, in `MainDeployment.cpp`:
+At this point, we want to now call our subtopology's configure/start/teardown functions within the corresponding functions of our `MainDeployment` topology. So, in `MainDeploymentTopology.cpp`:
 
 ```cpp
 // at the top, include our topology.hpp
-#include <MySubtopology/MySubtopology.hpp>
+#include <MySubtopology/MySubtopologyTopology.hpp>
 
 ...
+// MODIFY this line to include the 4th divider
+// Svc::RateGroupDriver::DividerSet rateGroupDivisorsSet{{{1, 0}, {2, 0}, {4, 0}, {1, 0}}};
 
 void configureTopology() {
     ...
@@ -308,4 +349,4 @@ Now go ahead and run and build your deployment, and you should see that you have
 
 This how-to guide has walked through the development of a subtopology. Deployments can include multiple different subtopologies, and thus this feature truly paves the way for making F Prime more accessible to quick prototyping. 
 
-If you'd like to see an example of how subtopologies are used within an actual project, please reference this repository: [mosa11aei/fprime-rngLibrary](https://github.com/mosa11aei/fprime-rngLibrary).
+If you'd like to see an example of how subtopologies are used within an actual project, please reference this repository: [mosa11aei/fprime-rngLibrary](https://github.com/mosa11aei/fprime-rngLibrary). This project uses the [example scenario](#example-scenario) from this guide.
