@@ -610,8 +610,8 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(str1, str2);
 
     // serialize string template
-    Fw::StringTemplate<80> strTmpl1;
-    Fw::StringTemplate<40> strTmpl2;
+    Fw::StringTemplate<80> strTmpl1("Foo");
+    Fw::StringTemplate<80> strTmpl2("Bar");
     buff.resetSer();
     strTmpl1.serialize(buff);
     strTmpl2.deserialize(buff);
