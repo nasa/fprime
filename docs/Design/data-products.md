@@ -5,7 +5,7 @@
 A **data product** is any data that is produced by an embedded
 system, stored on board the system, and transmitted to the ground,
 typically in priority order.
-F' provides several features for managing the generation, storage,
+F Prime provides several features for managing the generation, storage,
 and downlink of data products.
 In this section, we document those features.
 
@@ -15,7 +15,7 @@ First we explain some basic concepts.
 
 ### 2.1. Records, Containers, and Dictionaries
 
-F' data products are based on **records** and **containers**.
+F Prime data products are based on **records** and **containers**.
 A record is a basic unit of data.
 For example, it may be a struct, an array of typed objects of
 statically known size, or an array of bytes of statically unknown size.
@@ -42,16 +42,16 @@ might be 0x1000, 0x1001, 0x1002, ... .
 3. For any topology _T_, the global identifiers _I.c_ for all the component
 instances of _T_ form the data product dictionary for _T_.
 
-### 2.2. F' Components
+### 2.2. F Prime Components
 
-Typically a data product system in an F' application consists of the following
+Typically a data product system in an F Prime application consists of the following
 components:
 
 1. One or more **data product producers**.
    These components produce data products and are typically mission-specific.
    For example, they may produce science data.
 
-1. Standard F' components for managing data products.
+1. Standard F Prime components for managing data products.
 
    1. A **data product manager**.
       This component allocates memory for empty containers.
@@ -74,7 +74,7 @@ components:
       product containers.
 
 Note that when using data products, you need to develop only the
-producer components. The other components are provided by F'.
+producer components. The other components are provided by F Prime.
 
 ## 3. Producer Components
 
