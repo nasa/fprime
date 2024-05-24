@@ -55,20 +55,24 @@ void FppTest::Array::setTestVals<Enum>(E (&a)[Enum::SIZE]) {
     }
 }
 
+static char stringDefaultValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
+
 template<>
 void FppTest::Array::setDefaultVals<String>
     (Fw::ExternalString (&a)[::String::SIZE]) {
     for (U32 i = 0; i < ::String::SIZE; i++) {
-        char *const buffer = new char[::String::ELEMENT_BUFFER_SIZE];
+        char *const buffer = &stringDefaultValsBuffer[i][0];
         a[i].setBuffer(buffer, ::String::ELEMENT_BUFFER_SIZE);
     }
 }
+
+static char stringTestValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
 
 template<>
 void FppTest::Array::setTestVals<String>
     (Fw::ExternalString (&a)[::String::SIZE]) {
     for (U32 i = 0; i < ::String::SIZE; i++) {
-        char *const buffer = new char[::String::ELEMENT_BUFFER_SIZE];
+        char *const buffer = &stringTestValsBuffer[i][0];
         a[i].setBuffer(buffer, ::String::ELEMENT_BUFFER_SIZE);
         FppTest::Utils::setString(buffer, ::String::ELEMENT_BUFFER_SIZE, 1);
     }
