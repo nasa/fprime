@@ -74,7 +74,18 @@ class UdpComponentImpl : public UdpComponentBase, public SocketReadTask {
      */
     SocketIpStatus configureRecv(const char* hostname, const U16 port);
 
-  PROTECTED:
+    /**
+     * \brief get the port being received on
+     *
+     * Most useful when receive was configured to use port "0", this will return the port used for receiving data after
+     * a port has been determined. Will return 0 if the connection has not been setup.
+     *
+     * \return receive port
+     */
+    U16 getRecvPort();
+
+
+PROTECTED:
     // ----------------------------------------------------------------------
     // Implementations for socket read task virtual methods
     // ----------------------------------------------------------------------

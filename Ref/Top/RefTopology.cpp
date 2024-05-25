@@ -161,7 +161,7 @@ void setupTopology(const TopologyState& state) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(state.hostname, state.port);
-        comm.startSocketTask(name, true, COMM_PRIORITY, Default::STACK_SIZE);
+        comm.start(name, true, COMM_PRIORITY, Default::STACK_SIZE);
     }
 }
 
@@ -169,7 +169,7 @@ void setupTopology(const TopologyState& state) {
 Os::Mutex cycleLock;
 volatile bool cycleFlag = true;
 
-void startSimulatedCycle(U32 milliseconds) {
+void startSimulatedCycle(Fw::Time interval) {
     cycleLock.lock();
     bool cycling = cycleFlag;
     cycleLock.unLock();
@@ -177,7 +177,7 @@ void startSimulatedCycle(U32 milliseconds) {
     // Main loop
     while (cycling) {
         Ref::blockDrv.callIsr();
-        Os::Task::delay(milliseconds);
+        Os::Task::delay(interval);
 
         cycleLock.lock();
         cycling = cycleFlag;
@@ -197,8 +197,8 @@ void teardownTopology(const TopologyState& state) {
     freeThreads(state);
 
     // Other task clean-up.
-    comm.stopSocketTask();
-    (void)comm.joinSocketTask(nullptr);
+    comm.stop();
+    (void)comm.join();
 
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);

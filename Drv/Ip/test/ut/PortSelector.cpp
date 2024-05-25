@@ -38,11 +38,7 @@ U16 get_free_port(bool udp) {
         ::close(socketFd);
         return 0;
     }
-    U16 port = address.sin_port;
-    // Check for root-only-port.  If so, recursively try again.
-    if (port < 1024) {
-        port = get_free_port(udp);
-    }
+    U16 port = ntohs(address.sin_port);
     ::close(socketFd); // Close this recursion's port again, such that we don't infinitely loop
     return port;
 
