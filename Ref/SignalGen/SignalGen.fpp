@@ -59,12 +59,6 @@ module Ref {
     @ Command response port
     command resp port cmdResponseOut
 
-    @ Text event port
-    text event port logTextOut
-
-    @ Event port
-    event port logOut
-
     @ Telemetry port
     telemetry port tlmOut
 
@@ -92,6 +86,8 @@ module Ref {
     # ----------------------------------------------------------------------
 
     include "Events.fppi"
+    include "../Interfaces/EventsInterface.fppi"
+
 
   }
 
