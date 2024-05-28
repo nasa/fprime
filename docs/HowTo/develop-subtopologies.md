@@ -17,7 +17,6 @@ Thus, the required structure for your subtopology should be:
 ```bash
 MySubtopology/
 ├─ CMakeLists.txt
-├─ intentionally-empty.hpp
 ├─ MySubtopology.cmake
 ├─ MySubtopology.fpp
 ├─ MySubtopologyTopology.cpp
@@ -25,7 +24,7 @@ MySubtopology/
 └─ MySubtopologyTopologyDefs.hpp
 ```
 
-You may notice that there is a suspicious file called `intentionally-empty.cpp`. This is intentional! That file and the rest will be discussed in more detail in later sections of this guide. Additionally, note that there are optional files that can be included in your subtopology to extend its capability.
+All files will be discussed in more detail in later sections of this guide. Additionally, note that there are optional files that can be included in your subtopology to extend its capability.
 
 - It is highly recommended to include a `docs` folder to document your subtopology. Simple markdown files work well in this case.
 - `.fppi` files can be included as config files to your subtopology. They can include useful constants or structures that allow users to modify your subtoplogy.
@@ -175,7 +174,7 @@ MySubtopology -> rateGroup ==> MySubtopology_rateGroup // example for rateGroup 
 // ... etc
 ```
 
-We will encounter this structure later on in this guide. The existence of this naming structure is actually the reason behind the suspicious `intentionally-empty.cpp` file. However, since the reason lies more in the build steps, it will be discussed in the [CMake](#cmake-and-buildstep-files) section.
+We will encounter this structure later on in this guide.
 
 ## MySubtopology.cpp and MySubtopology.hpp (pt2)
 
@@ -226,19 +225,10 @@ In `CMakeLists.txt`:
 ```cmake
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/MySubtopology.fpp",
-    "${CMAKE_CURRENT_LIST_DIR}/intentionally-empty.cpp"
 )
 
 register_fprime_modules()
-
-set_target_properties(
-    ${FPRIME_CURRENT_MODULE}
-    PROPERTIES
-    SOURCES "${CMAKE_CURRENT_LIST_DIR}/intentionally-empty.cpp"
-)
 ```
-
-We now get to see where `intentionally-empty.cpp` comes into play. As the name suggests, the file is completely empty. However, we include it in the CMake build so that we can have our naming structure (as described earlier) work. When our main deployment that includes our subtopology builds, the autocoder will write the function stubs and variable names in its own topology file. We don't want it to do this, and so we tell the compiler to reference the empty file whenever the main deployment tries to access our subtopology. Inherently, this is currently a solution to a bug that exists; we don't want to have to include an empty file to get the behavior we want. This issue is being tracked, and we hope to have a solution for it soon.
 
 In `MySubtopology.cmake`, we want to include:
 
