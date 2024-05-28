@@ -128,8 +128,8 @@ namespace Svc {
     void CusVer_tlm_all();
     bool m_enable;       /*!<Send TLM when true>*/
     bool startup_done;
-    U32 num_lib_elem; //number of library versions
-    U32 num_cus_elem; //number of custom versions
+    U8 num_lib_elem; //number of library versions
+    U8 num_cus_elem; //number of custom versions
     //const char* lib_ver_arr[]; // Store library versions internally
 
 
