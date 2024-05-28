@@ -244,7 +244,7 @@ list(APPEND SOURCE_FILES
 
 # Integration into a "Main" Deployment
 
-At this point, we're ready to integrate our subtopology into the topology of our main deplopyment (you can think of this being our deliverable, with `MySubtopology` being a portion of it). We will assume, given our example, that you have the RNG component developed alongside the topology. Additionally, we assume that you have created an F Prime project and an associated deployment for it. Let's call this deployment "MainDeployment", and the project "MainProject".
+At this point, we're ready to integrate our subtopology into the topology of our main deployment (you can think of this being our deliverable, with `MySubtopology` being a portion of it). We will assume, given our example, that you have the RNG component developed alongside the topology. Additionally, we assume that you have created an F Prime project and an associated deployment for it. Let's call this deployment "MainDeployment", and the project "MainProject".
 
 First step is to ensure that our subtopology is linked to our project; within `project.cmake` add:
 

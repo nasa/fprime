@@ -101,6 +101,7 @@ BUGLIST
 bugprone
 builddir
 buildroot
+buildstep
 bysource
 BYTEDRV
 calcu
@@ -1005,6 +1006,10 @@ subhistory
 subpage
 subseconds
 subtargets
+Subtopology
+Subtopologies
+subtopology
+subtopologies
 suppr
 suseconds
 SVCLOGFILE
