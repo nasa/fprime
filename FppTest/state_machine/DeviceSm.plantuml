@@ -1,0 +1,15 @@
+
+@startuml
+
+[*] --> OFF
+
+state OFF {
+}
+
+state ON {
+
+}
+
+OFF --> ON : RTI
+ON --> OFF : RTI
+@enduml

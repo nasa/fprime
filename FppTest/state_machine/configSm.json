@@ -1,0 +1,16 @@
+{
+    "nameSpace": "FppTest",
+    "component": "SmTest",
+    "componentPath": "FppTest/state_machine",
+    "autoHeaderFile": "SmTestComponentAc.hpp",
+    "componentBase": "SmTestComponentBase",
+    "state_machines": [
+        {
+            "stateName": "DeviceSm",
+            "stateMachineInstance": ["device1", "device2"]
+        }
+    ]
+}
+
+
+

@@ -1,0 +1,24 @@
+module FppTest {
+
+  @ A component for testing data product code gen
+  active component SmTest {
+
+   
+    # ----------------------------------------------------------------------
+    # Types
+    # ----------------------------------------------------------------------
+
+
+    # ----------------------------------------------------------------------
+    # General ports
+    # ----------------------------------------------------------------------
+
+    @ A schedIn port to run the data product generation
+    async input port schedIn: Svc.Sched
+
+    include "state-machine.fppi"
+   
+
+  }
+
+}

@@ -1,0 +1,2 @@
+InitialState = OFF, Event = RTI, guard = None, action = None, TargetState = ON
+InitialState = ON, Event = RTI, guard = None, action = None, TargetState = OFF
