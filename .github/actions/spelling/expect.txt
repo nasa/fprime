@@ -1114,6 +1114,7 @@ toklist
 toolchains
 toolset
 topologyapp
+TOPOLOGYCONFIG
 Torvalds
 totalram
 treeview

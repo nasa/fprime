@@ -27,7 +27,7 @@ MySubtopology/
 All files will be discussed in more detail in later sections of this guide. Additionally, note that there are optional files that can be included in your subtopology to extend its capability.
 
 - It is highly recommended to include a `docs` folder to document your subtopology. Simple markdown files work well in this case.
-- `.fppi` files can be included as config files to your subtopology. They can include useful constants or structures that allow users to modify your subtoplogy.
+- `.fppi` files can be included as config files to your subtopology. They can include useful constants or structures that allow users to modify your subtopology.
 - Unit tests can also be added to your subtopology, using a similar structure to unit tests for components.
 
 ## Individual File Contents
