@@ -26,8 +26,9 @@ namespace Svc {
         startup_done = false;
         num_lib_elem = 0;
         num_cus_elem = 0;
+        m_enable = false;
         Svc::VersPortStrings::StringSize80 ver_str = "no_ver";
-        // initialize all entries
+        // initialize all custom entries
         for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
             //setver_enum is by default set to the first enum value, so not setting it here
             verId_db[id].setver_val(ver_str);
@@ -78,7 +79,7 @@ void Version ::
         FW_ASSERT(version_id.isValid(),version_id.e);
         U8 ver_slot = VerSlot(version_id.e);
         version_string = this->verId_db[ver_slot].getver_val();
-        status = this->verId_db[ver_slot].getver_status() ;
+        status = this->verId_db[ver_slot].getver_status();
   }
 
   void Version ::
