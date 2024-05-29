@@ -389,15 +389,6 @@ namespace FppTest {
     );
   }
 
-  void SmTestComponentBase ::
-    sendEvent(U32 eventSignal, StateMachine::SmId id) 
-  {                                
-      Svc::SMEvents event;
-      event.seteventSignal(eventSignal);
-      event.setsmId(id);
-      sendEvents_internalInterfaceInvoke(event);
-  }
-
 void SmTestComponentBase :: 
   sendEvents_internalInterfaceHandler(const Svc::SMEvents& ev)
 {

@@ -42,9 +42,6 @@ namespace FppTest {
 
     PROTECTED:
 
-      // Interface to send an event to the state-machine
-      void sendEvent(U32 eventSignal, StateMachine::SmId id);
-
       // Instantiate the state machines
       DeviceSm device1;
       DeviceSm device2;
