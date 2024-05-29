@@ -35,7 +35,7 @@ module Ref {
     # Special ports
     # ----------------------------------------------------------------------
 
-    include "../Interfaces/CommandInterface.fppi"
+    include "../../Fw/Interfaces/CommandInterface.fppi"
 
     @ Data product get port
     product get port productGetOut
