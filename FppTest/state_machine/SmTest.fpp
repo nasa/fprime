@@ -1,3 +1,4 @@
+locate port Svc.Sched at "../../Svc/Sched/Sched.fpp"
 module FppTest {
 
   @ A component for testing data product code gen
