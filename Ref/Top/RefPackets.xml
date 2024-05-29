@@ -187,6 +187,64 @@
         <channel name="dpBufferManager.NoBuffs"/>
         <channel name="dpBufferManager.EmptyBuffs"/>
     </packet>
+    
+    <packet name="Version1" id="22" level="2">
+        <channel name="version.FRAMEWORK_VERSION"/>
+        <channel name="version.PROJECT_VERSION"/>
+    </packet>
+
+    <packet name="Version_Library1" id="23" level="2">
+        <channel name="version.LIBRARY_VERSION_01"/>
+        <channel name="version.LIBRARY_VERSION_02"/>
+    </packet>
+    <packet name="Version_Library2" id="24" level="2">
+        <channel name="version.LIBRARY_VERSION_03"/>
+        <channel name="version.LIBRARY_VERSION_04"/>
+    </packet>
+    <packet name="Version_Library3" id="25" level="2">
+        <channel name="version.LIBRARY_VERSION_05"/>
+        <channel name="version.LIBRARY_VERSION_06"/>
+    </packet>
+    <packet name="Version_Library4" id="26" level="2">
+        <channel name="version.LIBRARY_VERSION_07"/>
+        <channel name="version.LIBRARY_VERSION_08"/>
+    </packet>
+    <packet name="Version_Library5" id="27" level="2">
+        <channel name="version.LIBRARY_VERSION_09"/>
+        <channel name="version.LIBRARY_VERSION_10"/>
+    </packet>
+
+    <packet name="Version_Custom1" id="28" level="2">
+        <channel name="version.CUSTOM_VERSION_01"/>
+    </packet>
+    <packet name="Version_Custom2" id="29" level="2">
+        <channel name="version.CUSTOM_VERSION_02"/>
+    </packet>
+    <packet name="Version_Custom3" id="30" level="2">
+        <channel name="version.CUSTOM_VERSION_03"/>
+    </packet>
+    <packet name="Version_Custom4" id="31" level="2">
+        <channel name="version.CUSTOM_VERSION_04"/>
+    </packet>
+    <packet name="Version_Custom5" id="32" level="2">
+        <channel name="version.CUSTOM_VERSION_05"/>
+    </packet>
+    <packet name="Version_Custom6" id="33" level="2">
+        <channel name="version.CUSTOM_VERSION_06"/>
+    </packet>
+    <packet name="Version_Custom7" id="34" level="2">
+        <channel name="version.CUSTOM_VERSION_07"/>
+    </packet>
+    <packet name="Version_Custom8" id="35" level="2">
+        <channel name="version.CUSTOM_VERSION_08"/>
+    </packet>
+    <packet name="Version_Custom9" id="36" level="2">
+        <channel name="version.CUSTOM_VERSION_09"/>
+    </packet>
+    <packet name="Version_Custom10" id="37" level="2">
+        <channel name="version.CUSTOM_VERSION_10"/>
+    </packet>
+
 
 
     <!-- Ignored packets -->

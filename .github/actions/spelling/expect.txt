@@ -976,6 +976,7 @@ spidev
 srandom
 srange
 SRCS
+sreddy
 sss
 Ssymbols
 STAMEM

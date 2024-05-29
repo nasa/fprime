@@ -42,7 +42,7 @@ namespace Svc {
 
   }
  
-  void Version::Config(bool enable) {
+  void Version::config(bool enable) {
     //Set Verbosity for custom versions 
     m_enable = enable;
 

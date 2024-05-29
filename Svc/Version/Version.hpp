@@ -30,7 +30,7 @@ namespace Svc {
       ~Version();
 
       //! configure version's verbosity and startup
-      void Config (bool enable);
+      void config (bool enable);
 
     PRIVATE:
         // ----------------------------------------------------------------------
