@@ -36,8 +36,8 @@ def get_fprime_version():
         Version of fprime framework
     """
     fprime_directory = os.environ.get(
-        "FPRIME_FRAMEWORK_PATH", os.path.dirname(__file__))
-
+        "FPRIME_FRAMEWORK_PATH", os.path.dirname(__file__)
+    )
     return get_version_str(working_dir=fprime_directory, fallback=FALLBACK_VERSION)
 
 
