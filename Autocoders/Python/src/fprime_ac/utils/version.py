@@ -21,8 +21,6 @@ def get_version_str(working_dir, fallback=FALLBACK_VERSION):
         output = subprocess.check_output(
             ["git", "describe", "--tags", "--always"], cwd=working_dir
         )
-        #print ("Msg3: output string : ",output)
-        #print ("Msg4: output string reformatted: ",output.strip().decode("ascii"))
         return output.strip().decode("ascii")
     except Exception:
         return fallback
@@ -39,7 +37,6 @@ def get_fprime_version():
     """
     fprime_directory = os.environ.get(
         "FPRIME_FRAMEWORK_PATH", os.path.dirname(__file__))
-    #print("Msg1: fprime_directory for version: ", fprime_directory)
 
     return get_version_str(working_dir=fprime_directory, fallback=FALLBACK_VERSION)
 
@@ -57,7 +54,6 @@ def get_project_version(fallback=FALLBACK_VERSION):
         Version of fprime framework
     """
     fprime_directory = os.environ.get("FPRIME_PROJECT_ROOT", os.path.dirname(__file__))
-    #print("Msg1: fprime_directory for project : ", fprime_directory, "and _file_ : ",__file__)
     return get_version_str(working_dir=fprime_directory, fallback=fallback)
 
 
