@@ -10,14 +10,12 @@
 #include <array>
 
 #include "FppTest/state_machine/SmTestComponentAc.hpp"
-#include "FppTest/state_machine/SmTestSmBase.hpp"
 #include "Fw/Types/String.hpp"
-#include "FppTest/state_machine/SmTestSmBase.hpp"
 
 namespace FppTest {
 
 class SmTest : 
-  public SmTestSmBase 
+  public SmTestComponentBase 
 {
 
     // Friend class for testing
