@@ -16,7 +16,10 @@ module FppTest {
     @ A schedIn port to run the data product generation
     async input port schedIn: Svc.Sched
 
-    include "state-machine.fppi"
+    state machine DeviceSm
+    
+    state machine instance device1: DeviceSm
+    state machine instance device2: DeviceSm
    
 
   }
