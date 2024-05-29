@@ -69,7 +69,7 @@ namespace Svc {
         //this->invoke_to_run(0,0); //No longer running version on a scheduler but invoked after starttask() in RefTopology.cpp
         //ASSERT_EVENTS_STARTUP_EVR_SIZE(1);
         //ASSERT_EVENTS_STARTUP_EVR(0,Project::Version::FRAMEWORK_VERSION,Project::Version::PROJECT_VERSION);
-        this->component.Config(true);
+        this->component.config(true);
         ASSERT_TLM_FRAMEWORK_VERSION(0, Project::Version::FRAMEWORK_VERSION);
         ASSERT_TLM_PROJECT_VERSION(0, Project::Version::PROJECT_VERSION);
         ASSERT_EVENTS_FRAMEWORK_VERSION_SIZE(1);
