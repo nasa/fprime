@@ -29,6 +29,7 @@ All files will be discussed in more detail in later sections of this guide. Addi
 - It is highly recommended to include a `docs` folder to document your subtopology. Simple markdown files work well in this case.
 - `.fppi` files can be included as config files to your subtopology. They can include useful constants or structures that allow users to modify your subtopology.
 - Unit tests can also be added to your subtopology, using a similar structure to unit tests for components.
+- Note that it is possible to write your subtopology with [phases](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers_Execution-Phases). The example repository in the [last section](#conclusion) includes an example of this in the "example/phases" branch.
 
 ## Individual File Contents
 
