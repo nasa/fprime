@@ -35,6 +35,8 @@ module Ref {
     # Special ports
     # ----------------------------------------------------------------------
 
+    include "../../Fw/Interfaces/CommandInterface.fppi"
+
     @ Data product get port
     product get port productGetOut
 
@@ -49,15 +51,6 @@ module Ref {
 
     @ Time get port
     time get port timeCaller
-
-    @ Command registration port
-    command reg port cmdRegOut
-
-    @ Command received port
-    command recv port cmdIn
-
-    @ Command response port
-    command resp port cmdResponseOut
 
     @ Text event port
     text event port logTextOut
