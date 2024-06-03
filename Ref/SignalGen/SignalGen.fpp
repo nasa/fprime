@@ -35,8 +35,6 @@ module Ref {
     # Special ports
     # ----------------------------------------------------------------------
 
-    include "../../Fw/Interfaces/CommandInterface.fppi"
-
     @ Data product get port
     product get port productGetOut
 
@@ -51,12 +49,6 @@ module Ref {
 
     @ Time get port
     time get port timeCaller
-
-    @ Text event port
-    text event port logTextOut
-
-    @ Event port
-    event port logOut
 
     @ Telemetry port
     telemetry port tlmOut
@@ -85,6 +77,12 @@ module Ref {
     # ----------------------------------------------------------------------
 
     include "Events.fppi"
+
+    # ----------------------------------------------------------------------
+    # Interfaces
+    # ----------------------------------------------------------------------
+    include "../../Fw/Interfaces/EventsInterface.fppi"
+    include "../../Fw/Interfaces/CommandInterface.fppi"
 
   }
 
