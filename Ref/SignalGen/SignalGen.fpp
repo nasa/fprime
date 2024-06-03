@@ -65,9 +65,6 @@ module Ref {
     @ Event port
     event port logOut
 
-    @ Telemetry port
-    telemetry port tlmOut
-
     @ Signal generation data product record
     product record DataRecord: SignalInfo id 0
 
@@ -97,7 +94,7 @@ module Ref {
     # Interfaces
     # ----------------------------------------------------------------------
 
-    include "../../Fw\Interfaces\ChannelInterfaces.fppi"
+    include "../../Fw/Interfaces/ChannelInterfaces.fppi"
 
   }
 
