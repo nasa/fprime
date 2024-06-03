@@ -58,8 +58,6 @@ void StringBase::format(const CHAR* formatString, ...) {
     va_start(args, formatString);
     this->vformat(formatString, args);
     va_end(args);
-    // null terminate
-    us[cap - 1] = 0;
 }
 
 void StringBase::vformat(const CHAR* formatString, va_list args) {
@@ -67,6 +65,7 @@ void StringBase::vformat(const CHAR* formatString, va_list args) {
     SizeType cap = this->getCapacity();
     FW_ASSERT(us != nullptr);
     (void) vsnprintf(us, cap, formatString, args);
+    // Force null terminate
     us[cap - 1] = 0;
 }
 

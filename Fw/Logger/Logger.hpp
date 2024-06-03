@@ -22,13 +22,13 @@ namespace Fw {
             //! the supplied format string. The format string uses C-style (printf function family) formatting.
             //! \param format: format string
             //! \param ...: var-args list of arguments to inject into format string.
-            void log(const char* format, ...);
+            static void log(const char* format, ...);
 
             //! \brief log a string message directly
             //!
             //! Logs the string directly to the backing store without any formatting changes.
             //! \param message: message to log
-            void log(const Fw::StringBase& message);
+            static void log(const Fw::StringBase& message);
 
             /**
              * Logs a message using the currently specified static logger. If a logger is not
@@ -66,7 +66,7 @@ namespace Fw {
             static void registerLogger(Logger* logger);
 
             //! Virtual destructor
-            virtual ~Logger();
+            virtual ~Logger() = default;
 
       protected:
         //! \brief write the output of the log message
