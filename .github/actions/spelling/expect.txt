@@ -15,6 +15,7 @@ actools
 acxz
 addoffset
 adminlist
+aei
 aeiouy
 afterstatinfo
 agg
@@ -619,6 +620,7 @@ mman
 MMAPALLOCATOR
 MML
 modbus
+mosa
 MOSI
 MOVEFILE
 mozilla
