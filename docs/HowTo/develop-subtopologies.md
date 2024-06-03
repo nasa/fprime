@@ -31,6 +31,8 @@ All files will be discussed in more detail in later sections of this guide. Addi
 - Unit tests can also be added to your subtopology, using a similar structure to unit tests for components.
 - Note that it is possible to write your subtopology with [phases](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers_Execution-Phases). The example repository in the [last section](#conclusion) includes an example of this in the "example/phases" branch.
 
+> Note that with the latest release of `fprime-tools`, you can run `fprime-util new --subtopology` to generate the subtopology structure.
+
 ## Individual File Contents
 
 This section will provide an overview to the contents of the individual files that make up a subtopology. We will use the names of the required files structure as shown in the [above](#subtopology-structure) section. However, note that the file names shown are not required to be duplicated within your own custom subtopologies.
@@ -340,4 +342,4 @@ Now go ahead and run and build your deployment, and you should see that you have
 
 This how-to guide has walked through the development of a subtopology. Deployments can include multiple different subtopologies, and thus this feature truly paves the way for making F Prime more accessible to quick prototyping. 
 
-If you'd like to see an example of how subtopologies are used within an actual project, please reference this repository: [mosa11aei/fprime-rngLibrary](https://github.com/mosa11aei/fprime-rngLibrary). This project uses the [example scenario](#example-scenario) from this guide.
+If you'd like to see an example of how subtopologies are used within an actual project, please reference this repository: [RNG Library - An Example of Subtopologies within F'](https://github.com/mosa11aei/fprime-rngLibrary). This project uses the [example scenario](#example-scenario) from this guide.
