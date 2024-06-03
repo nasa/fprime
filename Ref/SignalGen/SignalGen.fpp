@@ -50,15 +50,6 @@ module Ref {
     @ Time get port
     time get port timeCaller
 
-    @ Command registration port
-    command reg port cmdRegOut
-
-    @ Command received port
-    command recv port cmdIn
-
-    @ Command response port
-    command resp port cmdResponseOut
-
     @ Telemetry port
     telemetry port tlmOut
 
@@ -90,8 +81,8 @@ module Ref {
     # ----------------------------------------------------------------------
     # Interfaces
     # ----------------------------------------------------------------------
-
     include "../../Fw/Interfaces/EventsInterface.fppi"
+    include "../../Fw/Interfaces/CommandInterface.fppi"
 
   }
 
