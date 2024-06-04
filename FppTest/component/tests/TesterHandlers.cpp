@@ -72,14 +72,6 @@ U32 Tester ::from_primitiveReturnOut_handler(const NATIVE_INT_TYPE portNum,
     return primitiveReturnVal.val;
 }
 
-void Tester ::from_stringArgsOut_handler(const NATIVE_INT_TYPE portNum,
-                                         const str80String& str80,
-                                         str80RefString& str80Ref,
-                                         const str100String& str100,
-                                         str100RefString& str100Ref) {
-    this->pushFromPortEntry_stringArgsOut(str80, str80Ref, str100, str100Ref);
-}
-
 void Tester ::from_structArgsOut_handler(const NATIVE_INT_TYPE portNum,
                                          const FormalParamStruct& s,
                                          FormalParamStruct& sRef) {

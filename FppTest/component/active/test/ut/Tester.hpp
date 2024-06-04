@@ -76,7 +76,7 @@ class Tester : public ActiveTestGTestBase {
                                    FormalParamArray& aRef         /*!<
                                        An array ref
                                        */
-    );
+    ) final;
 
     //! Handler for from_arrayReturnOut
     //!
@@ -87,7 +87,7 @@ class Tester : public ActiveTestGTestBase {
                                                  FormalParamArray& aRef         /*!<
                                                      An array ref
                                                      */
-    );
+    ) final;
 
     //! Handler for from_enumArgsOut
     //!
@@ -98,7 +98,7 @@ class Tester : public ActiveTestGTestBase {
                                   FormalParamEnum& enRef         /*!<
                                       An enum ref
                                       */
-    );
+    ) final;
 
     //! Handler for from_enumReturnOut
     //!
@@ -109,17 +109,17 @@ class Tester : public ActiveTestGTestBase {
                                                FormalParamEnum& enRef         /*!<
                                                    An enum ref
                                                    */
-    );
+    ) final;
 
     //! Handler for from_noArgsOut
     //!
     void from_noArgsOut_handler(const NATIVE_INT_TYPE portNum /*!< The port number*/
-    );
+    ) final;
 
     //! Handler for from_noArgsReturnOut
     //!
     bool from_noArgsReturnOut_handler(const NATIVE_INT_TYPE portNum /*!< The port number*/
-    );
+    ) final;
 
     //! Handler for from_primitiveArgsOut
     //!
@@ -129,7 +129,7 @@ class Tester : public ActiveTestGTestBase {
                                        F32 f32,
                                        F32& f32Ref,
                                        bool b,
-                                       bool& bRef);
+                                       bool& bRef) final;
 
     //! Handler for from_primitiveReturnOut
     //!
@@ -139,7 +139,7 @@ class Tester : public ActiveTestGTestBase {
                                         F32 f32,
                                         F32& f32Ref,
                                         bool b,
-                                        bool& bRef);
+                                        bool& bRef) final;
 
     //! Handler for from_prmGetIn
     //!
@@ -150,7 +150,7 @@ class Tester : public ActiveTestGTestBase {
                                          Fw::ParamBuffer& val           /*!<
                                                Buffer containing serialized parameter value
                                                */
-    );
+    ) final;
 
     //! Handler for from_prmGetIn
     //!
@@ -161,19 +161,7 @@ class Tester : public ActiveTestGTestBase {
                                Fw::ParamBuffer& val           /*!<
                                      Buffer containing serialized parameter value
                                      */
-    );
-
-    //! Handler for from_stringArgsOut
-    //!
-    void from_stringArgsOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                    const str80String& str80,      /*!<
-                                     A string of size 80
-                                     */
-                                    str80RefString& str80Ref,
-                                    const str100String& str100, /*!<
-                                A string of size 100
-                                */
-                                    str100RefString& str100Ref);
+    ) final;
 
     //! Handler for from_structArgsOut
     //!
@@ -184,7 +172,7 @@ class Tester : public ActiveTestGTestBase {
                                     FormalParamStruct& sRef        /*!<
                                        A struct ref
                                        */
-    );
+    ) final;
 
     //! Handler for from_structReturnOut
     //!
@@ -195,7 +183,7 @@ class Tester : public ActiveTestGTestBase {
                                                    FormalParamStruct& sRef        /*!<
                                                       A struct ref
                                                       */
-    );
+    ) final;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -206,7 +194,7 @@ class Tester : public ActiveTestGTestBase {
     //!
     void from_serialOut_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
                                 Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
-    );
+    ) final;
 
   public:
     // ----------------------------------------------------------------------

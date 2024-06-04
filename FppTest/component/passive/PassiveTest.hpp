@@ -171,19 +171,19 @@ class PassiveTest :
     //! Handler implementation for stringArgsGuarded
     void stringArgsGuarded_handler(
         NATIVE_INT_TYPE portNum, //!< The port number
-        const StringArgsPortStrings::StringSize80& str80, //!< A string of size 80
-        StringArgsPortStrings::StringSize80& str80Ref,
-        const StringArgsPortStrings::StringSize100& str100, //!< A string of size 100
-        StringArgsPortStrings::StringSize100& str100Ref
+        const Fw::StringBase& str80, //!< A string of size 80
+        Fw::StringBase& str80Ref,
+        const Fw::StringBase& str100, //!< A string of size 100
+        Fw::StringBase& str100Ref
     );
 
     //! Handler implementation for stringArgsSync
     void stringArgsSync_handler(
         NATIVE_INT_TYPE portNum, //!< The port number
-        const StringArgsPortStrings::StringSize80& str80, //!< A string of size 80
-        StringArgsPortStrings::StringSize80& str80Ref,
-        const StringArgsPortStrings::StringSize100& str100, //!< A string of size 100
-        StringArgsPortStrings::StringSize100& str100Ref
+        const Fw::StringBase& str80, //!< A string of size 80
+        Fw::StringBase& str80Ref,
+        const Fw::StringBase& str100, //!< A string of size 100
+        Fw::StringBase& str100Ref
     );
 
     //! Handler implementation for structArgsGuarded

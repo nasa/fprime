@@ -11,19 +11,19 @@
 // ======================================================================
 
 #include "FppTest/array/FormatBoolArrayAc.hpp"
-#include "FppTest/array/FormatU8ArrayAc.hpp"
-#include "FppTest/array/FormatU16DecArrayAc.hpp"
-#include "FppTest/array/FormatU32OctArrayAc.hpp"
-#include "FppTest/array/FormatU64HexArrayAc.hpp"
-#include "FppTest/array/FormatI8ArrayAc.hpp"
-#include "FppTest/array/FormatI16DecArrayAc.hpp"
-#include "FppTest/array/FormatI32OctArrayAc.hpp"
-#include "FppTest/array/FormatI64HexArrayAc.hpp"
+#include "FppTest/array/FormatCharArrayAc.hpp"
 #include "FppTest/array/FormatF32eArrayAc.hpp"
 #include "FppTest/array/FormatF32fArrayAc.hpp"
 #include "FppTest/array/FormatF64gArrayAc.hpp"
+#include "FppTest/array/FormatI16DecArrayAc.hpp"
+#include "FppTest/array/FormatI32OctArrayAc.hpp"
+#include "FppTest/array/FormatI64HexArrayAc.hpp"
+#include "FppTest/array/FormatI8ArrayAc.hpp"
 #include "FppTest/array/FormatStringArrayAc.hpp"
-#include "FppTest/array/FormatCharArrayAc.hpp"
+#include "FppTest/array/FormatU16DecArrayAc.hpp"
+#include "FppTest/array/FormatU32OctArrayAc.hpp"
+#include "FppTest/array/FormatU64HexArrayAc.hpp"
+#include "FppTest/array/FormatU8ArrayAc.hpp"
 #include "FppTest/utils/Utils.hpp"
 
 #include "gtest/gtest.h"
@@ -243,11 +243,11 @@ TEST_F(FormatTest, F64G) {
 }
 
 TEST_F(FormatTest, String) {
-    FormatString::StringSize80 testVals[FormatString::SIZE];
-    char buf[80];
+    Fw::ExternalString testVals[FormatString::SIZE];
+    char buf[FormatString::SIZE][FormatString::ELEMENT_BUFFER_SIZE];
     for (U32 i = 0; i < FormatString::SIZE; i++) {
-        FppTest::Utils::setString(buf, sizeof(buf));
-        testVals[i] = buf;   
+        testVals[i].setBuffer(&buf[i][0], sizeof buf[i]);
+        FppTest::Utils::setString(&buf[i][0], sizeof buf[i]);
     }
 
     FormatString a(testVals);

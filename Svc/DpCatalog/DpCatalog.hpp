@@ -186,7 +186,7 @@ namespace Svc {
 
         bool m_xmitInProgress; //!< set if DP files are in the process of being sent
         DpSortedList* m_currXmitRecord; //!< current record being transmitted
-        Svc::sourceFileNameString m_currXmitFileName; //!< current file being transmitted
+        Fw::FileNameString m_currXmitFileName; //!< current file being transmitted
         bool m_xmitCmdWait; //!< true if waiting for transmission complete to complete xmit command
         U64 m_xmitBytes; //!< bytes transmitted for downlink session
 
