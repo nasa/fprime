@@ -51,11 +51,15 @@ SocketIpStatus SocketReadTask::open() {
 }
 
 void SocketReadTask::shutdown() {
+    this->m_task_lock.lock();
     this->getSocketHandler().shutdown();
+    this->m_task_lock.unlock();
 }
 
 void SocketReadTask::close() {
+    this->m_task_lock.lock();
     this->getSocketHandler().close();
+    this->m_task_lock.unlock();
 }
 
 Os::Task::Status SocketReadTask::join() {
@@ -63,8 +67,10 @@ Os::Task::Status SocketReadTask::join() {
 }
 
 void SocketReadTask::stop() {
+    this->m_task_lock.lock();
     this->m_stop = true;
     this->getSocketHandler().shutdown();  // Break out of any receives and fully shutdown
+    this->m_task_lock.unlock();
 }
 
 void SocketReadTask::readTask(void* pointer) {
