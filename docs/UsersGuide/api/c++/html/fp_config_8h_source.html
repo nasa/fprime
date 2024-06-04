@@ -307,9 +307,9 @@ $(document).ready(function(){initNavTree('_fp_config_8h_source.html',''); initRe
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment">// The size of the object name stored in the object base class. Larger names will be truncated.</span></div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="preprocessor">#if FW_OBJECT_NAMES</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="preprocessor">#ifndef FW_OBJ_NAME_MAX_SIZE</span></div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="preprocessor">#define FW_OBJ_NAME_MAX_SIZE \</span></div>
-<div class="line"><a name="l00232"></a><span class="lineno"><a class="line" href="fp_config_8h.html#af81ccbdb473a2c02890d5a055e60d62c">  232</a></span>&#160;<span class="preprocessor">    80  </span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="preprocessor">#ifndef FW_OBJ_NAME_BUFFER_SIZE</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="preprocessor">#define FW_OBJ_NAME_BUFFER_SIZE \</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno"><a class="line" href="fp_config_8h.html#ae19768b57fa03cf5820941b337c4b595">  232</a></span>&#160;<span class="preprocessor">    80  </span></div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
@@ -327,7 +327,7 @@ $(document).ready(function(){initNavTree('_fp_config_8h_source.html',''); initRe
 <div class="line"><a name="l00247"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a17883cf4a18601e144b58aad2946ed6c">  247</a></span>&#160;<span class="preprocessor">#define FW_OBJ_SIMPLE_REG_ENTRIES 500  </span></div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="comment">// When dumping the contents of the registry, this specifies the size of the buffer used to store object names. Should</span></div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="comment">// be &gt;= FW_OBJ_NAME_MAX_SIZE.</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="comment">// be &gt;= FW_OBJ_NAME_BUFFER_SIZE.</span></div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="preprocessor">#ifndef FW_OBJ_SIMPLE_REG_BUFF_SIZE</span></div>
 <div class="line"><a name="l00252"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a15039612a531e1f616a68e604eaeb814">  252</a></span>&#160;<span class="preprocessor">#define FW_OBJ_SIMPLE_REG_BUFF_SIZE 255  </span></div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="preprocessor">#endif</span></div>
@@ -341,13 +341,13 @@ $(document).ready(function(){initNavTree('_fp_config_8h_source.html',''); initRe
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment">// Specifies the size of the string holding the queue name for queues</span></div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="preprocessor">#ifndef FW_QUEUE_NAME_MAX_SIZE</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno"><a class="line" href="fp_config_8h.html#aeca480c2a7c2d15beec606e82bf16bac">  265</a></span>&#160;<span class="preprocessor">#define FW_QUEUE_NAME_MAX_SIZE 80  </span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="preprocessor">#ifndef FW_QUEUE_NAME_BUFFER_SIZE</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno"><a class="line" href="fp_config_8h.html#ae94a17578e6762b48044dee2a5ed3c9b">  265</a></span>&#160;<span class="preprocessor">#define FW_QUEUE_NAME_BUFFER_SIZE 80  </span></div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment">// Specifies the size of the string holding the task name for active components and tasks</span></div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="preprocessor">#ifndef FW_TASK_NAME_MAX_SIZE</span></div>
-<div class="line"><a name="l00270"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a390c1bdc0f093c7bf814558336ff0c57">  270</a></span>&#160;<span class="preprocessor">#define FW_TASK_NAME_MAX_SIZE 80  </span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="preprocessor">#ifndef FW_TASK_NAME_BUFFER_SIZE</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a9412511cf935290ed543bf9679adacb7">  270</a></span>&#160;<span class="preprocessor">#define FW_TASK_NAME_BUFFER_SIZE 80  </span></div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">// Specifies the size of the buffer that contains a communications packet.</span></div>
