@@ -464,33 +464,34 @@ $(document).ready(function(){initNavTree('_fp_config_8h_source.html',''); initRe
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="preprocessor">#ifndef FW_USE_TIME_CONTEXT</span></div>
 <div class="line"><a name="l00385"></a><span class="lineno"><a class="line" href="fp_config_8h.html#aa10cb7bfb6cb98e72cacffe5160375da">  385</a></span>&#160;<span class="preprocessor">#define FW_USE_TIME_CONTEXT 1  </span></div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="comment">// These defines used for the FilepathCharString type</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160; </div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="comment">// Configuration for Fw::String</span></div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160; </div>
 <div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="preprocessor">#ifndef FW_FIXED_LENGTH_STRING_SIZE</span></div>
 <div class="line"><a name="l00391"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a44ddaed88a42bd904b544827a0a1c1e7">  391</a></span>&#160;<span class="preprocessor">#define FW_FIXED_LENGTH_STRING_SIZE 256  </span></div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160; </div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="preprocessor">#ifndef FW_HANDLE_MAX_SIZE</span></div>
-<div class="line"><a name="l00395"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a1e5974c602b7be9168db69abffcc2b9d">  395</a></span>&#160;<span class="preprocessor">#define FW_HANDLE_MAX_SIZE 24  </span></div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160; </div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;<span class="preprocessor">#ifndef FW_HANDLE_ALIGNMENT</span></div>
-<div class="line"><a name="l00399"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a0991d35577aa21e5c3ba57bfaef9515a">  399</a></span>&#160;<span class="preprocessor">#define FW_HANDLE_ALIGNMENT 16  </span></div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160; </div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<span class="preprocessor">#ifndef FW_FILE_CHUNK_SIZE</span></div>
-<div class="line"><a name="l00403"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a51737d10b6b29ef0e0261037ac2da525">  403</a></span>&#160;<span class="preprocessor">#define FW_FILE_CHUNK_SIZE 512  </span></div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160; </div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160; </div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="comment">// *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have</span></div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="comment">// the type definitions in Fw/Types/BasicTypes available.</span></div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160; </div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;<span class="comment">// DO NOT TOUCH.  These types are specified for backwards naming compatibility.</span></div>
-<div class="line"><a name="l00411"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">  411</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="fp_config_8h.html#a699119a97bc67cac08bff6ad8caeb879">FwSizeStoreType</a> <a class="code" href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">FwBuffSizeType</a>;</div>
-<div class="line"><a name="l00412"></a><span class="lineno"><a class="line" href="fp_config_8h.html#aa202cfaac52b137bae623c7c8954dd25">  412</a></span>&#160;<span class="preprocessor">#define PRI_FwBuffSizeType PRI_FwSizeStoreType</span></div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment">// OS configuration</span></div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160; </div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;<span class="preprocessor">#ifndef FW_HANDLE_MAX_SIZE</span></div>
+<div class="line"><a name="l00397"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a1e5974c602b7be9168db69abffcc2b9d">  397</a></span>&#160;<span class="preprocessor">#define FW_HANDLE_MAX_SIZE 24  </span></div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160; </div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<span class="preprocessor">#ifndef FW_HANDLE_ALIGNMENT</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a0991d35577aa21e5c3ba57bfaef9515a">  401</a></span>&#160;<span class="preprocessor">#define FW_HANDLE_ALIGNMENT 16  </span></div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160; </div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="preprocessor">#ifndef FW_FILE_CHUNK_SIZE</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a51737d10b6b29ef0e0261037ac2da525">  405</a></span>&#160;<span class="preprocessor">#define FW_FILE_CHUNK_SIZE 512  </span></div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160; </div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="comment">// *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have</span></div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="comment">// the type definitions in Fw/Types/BasicTypes available.</span></div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160; </div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;<span class="comment">// DO NOT TOUCH.  These types are specified for backwards naming compatibility.</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">  412</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="fp_config_8h.html#a699119a97bc67cac08bff6ad8caeb879">FwSizeStoreType</a> <a class="code" href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">FwBuffSizeType</a>;</div>
+<div class="line"><a name="l00413"></a><span class="lineno"><a class="line" href="fp_config_8h.html#aa202cfaac52b137bae623c7c8954dd25">  413</a></span>&#160;<span class="preprocessor">#define PRI_FwBuffSizeType PRI_FwSizeStoreType</span></div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="a_basic_types_8h_html"><div class="ttname"><a href="basic_types_8h.html">BasicTypes.h</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00026">BasicTypes.h:26</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_a2f8688930d2dbc9e45ddaca180a4ebe3"><div class="ttname"><a href="default_types_8hpp.html#a2f8688930d2dbc9e45ddaca180a4ebe3">PlatformIndexType</a></div><div class="ttdeci">PlatformIntType PlatformIndexType</div><div class="ttdef"><b>Definition:</b> <a href="default_types_8hpp_source.html#l00035">DefaultTypes.hpp:35</a></div></div>
@@ -512,7 +513,7 @@ $(document).ready(function(){initNavTree('_fp_config_8h_source.html',''); initRe
 <div class="ttc" id="a_fp_config_8h_html_a35ac17e31b824c0c8bacc06d6489b2f1"><div class="ttname"><a href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a></div><div class="ttdeci">PlatformSignedSizeType FwSignedSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00025">FpConfig.h:25</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a3cf649086b37430f3aa561942a64f431"><div class="ttname"><a href="fp_config_8h.html#a3cf649086b37430f3aa561942a64f431">FwEventIdType</a></div><div class="ttdeci">U32 FwEventIdType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00086">FpConfig.h:86</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a49e403ea22d2480c5aa7e1aa228640ec"><div class="ttname"><a href="fp_config_8h.html#a49e403ea22d2480c5aa7e1aa228640ec">FwDpIdType</a></div><div class="ttdeci">U32 FwDpIdType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00102">FpConfig.h:102</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_a4c10b04ec1757ad10025f026f46094af"><div class="ttname"><a href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">FwBuffSizeType</a></div><div class="ttdeci">FwSizeStoreType FwBuffSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00411">FpConfig.h:411</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a4c10b04ec1757ad10025f026f46094af"><div class="ttname"><a href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">FwBuffSizeType</a></div><div class="ttdeci">FwSizeStoreType FwBuffSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00412">FpConfig.h:412</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a650109ee80570ce79189348fd28dc556"><div class="ttname"><a href="fp_config_8h.html#a650109ee80570ce79189348fd28dc556">FwQueueSizeType</a></div><div class="ttdeci">FwIndexType FwQueueSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00117">FpConfig.h:117</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a699119a97bc67cac08bff6ad8caeb879"><div class="ttname"><a href="fp_config_8h.html#a699119a97bc67cac08bff6ad8caeb879">FwSizeStoreType</a></div><div class="ttdeci">U16 FwSizeStoreType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00046">FpConfig.h:46</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a6ee2232cd0b3ee9ef2a0523f7a6d7bbf"><div class="ttname"><a href="fp_config_8h.html#a6ee2232cd0b3ee9ef2a0523f7a6d7bbf">FwPacketDescriptorType</a></div><div class="ttdeci">U32 FwPacketDescriptorType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00074">FpConfig.h:74</a></div></div>

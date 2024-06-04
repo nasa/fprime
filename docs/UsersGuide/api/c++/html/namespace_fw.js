@@ -108,6 +108,7 @@ var namespace_fw =
     [ "ExternalSerializeBufferWithMemberCopy", "class_fw_1_1_external_serialize_buffer_with_member_copy.html", "class_fw_1_1_external_serialize_buffer_with_member_copy" ],
     [ "String", "class_fw_1_1_string.html", "class_fw_1_1_string" ],
     [ "StringBase", "class_fw_1_1_string_base.html", "class_fw_1_1_string_base" ],
+    [ "StringTemplate", "class_fw_1_1_string_template.html", "class_fw_1_1_string_template" ],
     [ "SerializeStatus", "namespace_fw.html#aa232625e63c0c60a1fced2933334fc32", [
       [ "FW_SERIALIZE_OK", "namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020", null ],
       [ "FW_SERIALIZE_FORMAT_ERROR", "namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a8c20f1ae2805eec3b09bef0102b40f44", null ],

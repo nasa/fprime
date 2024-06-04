@@ -22,6 +22,7 @@ var class_fw_1_1_dp_container =
     [ "getProcTypes", "class_fw_1_1_dp_container.html#a37064aec9a35cc14d7dc536f61dba30e", null ],
     [ "getState", "class_fw_1_1_dp_container.html#aa6759dce4b216e6dd8221cff80e2dfd7", null ],
     [ "getTimeTag", "class_fw_1_1_dp_container.html#a306f7f8f3b1f10b265d22051dd35757f", null ],
+    [ "invalidateBuffer", "class_fw_1_1_dp_container.html#a70cf9f190a47f5d611871ae17948647c", null ],
     [ "operator=", "class_fw_1_1_dp_container.html#a6df9c76b580a23ec9bdcb6ab8e278b5f", null ],
     [ "serializeHeader", "class_fw_1_1_dp_container.html#ad300bb54cb4f307cea8ce2b28459e4c4", null ],
     [ "setBuffer", "class_fw_1_1_dp_container.html#ae57ff45be505cdf47e543df13f531bb4", null ],

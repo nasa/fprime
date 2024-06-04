@@ -159,7 +159,8 @@ var annotated_dup =
       [ "ExternalSerializeBufferWithDataCopy", "class_fw_1_1_external_serialize_buffer_with_data_copy.html", "class_fw_1_1_external_serialize_buffer_with_data_copy" ],
       [ "ExternalSerializeBufferWithMemberCopy", "class_fw_1_1_external_serialize_buffer_with_member_copy.html", "class_fw_1_1_external_serialize_buffer_with_member_copy" ],
       [ "String", "class_fw_1_1_string.html", "class_fw_1_1_string" ],
-      [ "StringBase", "class_fw_1_1_string_base.html", "class_fw_1_1_string_base" ]
+      [ "StringBase", "class_fw_1_1_string_base.html", "class_fw_1_1_string_base" ],
+      [ "StringTemplate", "class_fw_1_1_string_template.html", "class_fw_1_1_string_template" ]
     ] ],
     [ "Os", "namespace_os.html", [
       [ "Posix", "namespace_os_1_1_posix.html", [
@@ -220,14 +221,8 @@ var annotated_dup =
       [ "Version", "struct_project_1_1_version.html", "struct_project_1_1_version" ]
     ] ],
     [ "Svc", "namespace_svc.html", [
-      [ "DpWrittenPortStrings", "namespace_svc_1_1_dp_written_port_strings.html", [
-        [ "StringSize256", "class_svc_1_1_dp_written_port_strings_1_1_string_size256.html", "class_svc_1_1_dp_written_port_strings_1_1_string_size256" ]
-      ] ],
       [ "PolyDbCfg", "namespace_svc_1_1_poly_db_cfg.html", [
         [ "PolyDbEntry", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry" ]
-      ] ],
-      [ "SendFileRequestPortStrings", "namespace_svc_1_1_send_file_request_port_strings.html", [
-        [ "StringSize100", "class_svc_1_1_send_file_request_port_strings_1_1_string_size100.html", "class_svc_1_1_send_file_request_port_strings_1_1_string_size100" ]
       ] ],
       [ "ActiveLogger_Enabled", "class_svc_1_1_active_logger___enabled.html", "class_svc_1_1_active_logger___enabled" ],
       [ "ActiveLogger_FilterSeverity", "class_svc_1_1_active_logger___filter_severity.html", "class_svc_1_1_active_logger___filter_severity" ],

@@ -366,12 +366,11 @@ var hierarchy =
         [ "Fw::ObjectName", "class_fw_1_1_object_name.html", null ],
         [ "Fw::ParamString", "class_fw_1_1_param_string.html", null ],
         [ "Fw::String", "class_fw_1_1_string.html", null ],
+        [ "Fw::StringTemplate< size >", "class_fw_1_1_string_template.html", null ],
         [ "Fw::TextLogString", "class_fw_1_1_text_log_string.html", null ],
         [ "Fw::TlmString", "class_fw_1_1_tlm_string.html", null ],
         [ "Os::QueueString", "class_os_1_1_queue_string.html", null ],
-        [ "Os::TaskString", "class_os_1_1_task_string.html", null ],
-        [ "Svc::DpWrittenPortStrings::StringSize256", "class_svc_1_1_dp_written_port_strings_1_1_string_size256.html", null ],
-        [ "Svc::SendFileRequestPortStrings::StringSize100", "class_svc_1_1_send_file_request_port_strings_1_1_string_size100.html", null ]
+        [ "Os::TaskString", "class_os_1_1_task_string.html", null ]
       ] ],
       [ "Fw::Success", "class_fw_1_1_success.html", null ],
       [ "Fw::Time", "class_fw_1_1_time.html", null ],

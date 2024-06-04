@@ -1,6 +1,5 @@
 var NAVTREEINDEX11 =
 {
-"class_drv_1_1_input_i2c_port.html#a136048026992494a4b7df165ad9d134a":[26,0,1,18,2],
 "class_drv_1_1_input_i2c_port.html#a39900cf94db846b06dd8d87ff2e22a48":[26,0,1,18,0],
 "class_drv_1_1_input_i2c_port.html#acdba18072f26b61a7a549c89fa8058f5":[26,0,1,18,1],
 "class_drv_1_1_input_i2c_port.html#ad02bb9daaecefec5b8980715bc27ad77":[26,0,1,18,4],
@@ -249,5 +248,6 @@ var NAVTREEINDEX11 =
 "class_drv_1_1_output_gpio_write_port.html#a9d41c6a2fb32184db66cc25b2855bfc1":[26,0,1,17,3],
 "class_drv_1_1_output_i2c_port.html":[26,0,1,19],
 "class_drv_1_1_output_i2c_port.html#a1d8336bba11dbab2ab73247ecf332d59":[26,0,1,19,2],
-"class_drv_1_1_output_i2c_port.html#a66d870d8a0aef835558488ab14552a2b":[26,0,1,19,0]
+"class_drv_1_1_output_i2c_port.html#a66d870d8a0aef835558488ab14552a2b":[26,0,1,19,0],
+"class_drv_1_1_output_i2c_port.html#aad5433cbefd3a72e2c3aabfd99c32465":[26,0,1,19,1]
 };

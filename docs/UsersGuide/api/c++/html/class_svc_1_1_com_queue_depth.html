@@ -110,12 +110,13 @@ Inheritance diagram for Svc::ComQueueDepth:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:ae7b4257bd747a5a3fbaf4f569acd226d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_svc_1_1_com_queue_depth.html#ae7b4257bd747a5a3fbaf4f569acd226daf0ba88b5651479006a4b3e16ceab5294">SIZE</a> = 2
-, <a class="el" href="class_svc_1_1_com_queue_depth.html#ae7b4257bd747a5a3fbaf4f569acd226da42641c40b13ca1821d02207c106429d0">SERIALIZED_SIZE</a> = SIZE * sizeof(U32)
+, <a class="el" href="class_svc_1_1_com_queue_depth.html#ae7b4257bd747a5a3fbaf4f569acd226daa8e7784290270dba58d6b4a0e035d3b8">ELEMENT_SERIALIZED_SIZE</a> = sizeof(U32)
+, <a class="el" href="class_svc_1_1_com_queue_depth.html#ae7b4257bd747a5a3fbaf4f569acd226da42641c40b13ca1821d02207c106429d0">SERIALIZED_SIZE</a> = SIZE * ELEMENT_SERIALIZED_SIZE
  }</td></tr>
 <tr class="separator:ae7b4257bd747a5a3fbaf4f569acd226d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45d026f12afbc1e7045fc7b7f9222142"><td class="memItemLeft" align="right" valign="top">typedef U32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a></td></tr>
-<tr class="memdesc:a45d026f12afbc1e7045fc7b7f9222142"><td class="mdescLeft">&#160;</td><td class="mdescRight">The element type.  <a href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">More...</a><br /></td></tr>
-<tr class="separator:a45d026f12afbc1e7045fc7b7f9222142"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9f4306b6def648559b2578e84e601bf"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> = U32</td></tr>
+<tr class="memdesc:ac9f4306b6def648559b2578e84e601bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">The element type.  <a href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">More...</a><br /></td></tr>
+<tr class="separator:ac9f4306b6def648559b2578e84e601bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_class_fw_1_1_serializable"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_fw_1_1_serializable')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_fw_1_1_serializable.html">Fw::Serializable</a></td></tr>
 <tr class="memitem:a03b442ef8e12a5c3ddadd764adbfd652 inherit pub_types_class_fw_1_1_serializable"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">SizeType</a> = <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></td></tr>
 <tr class="separator:a03b442ef8e12a5c3ddadd764adbfd652 inherit pub_types_class_fw_1_1_serializable"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -125,31 +126,31 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa7a95b71391499c09fa54498c8c9d02b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#aa7a95b71391499c09fa54498c8c9d02b">ComQueueDepth</a> ()</td></tr>
 <tr class="memdesc:aa7a95b71391499c09fa54498c8c9d02b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor (default value)  <a href="class_svc_1_1_com_queue_depth.html#aa7a95b71391499c09fa54498c8c9d02b">More...</a><br /></td></tr>
 <tr class="separator:aa7a95b71391499c09fa54498c8c9d02b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72c3e20d08f58b8686de7cb74dbc348e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a72c3e20d08f58b8686de7cb74dbc348e">ComQueueDepth</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a>(&amp;a)[<a class="el" href="class_svc_1_1_com_queue_depth.html#ae7b4257bd747a5a3fbaf4f569acd226daf0ba88b5651479006a4b3e16ceab5294">SIZE</a>])</td></tr>
+<tr class="memitem:a72c3e20d08f58b8686de7cb74dbc348e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a72c3e20d08f58b8686de7cb74dbc348e">ComQueueDepth</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a>(&amp;a)[<a class="el" href="class_svc_1_1_com_queue_depth.html#ae7b4257bd747a5a3fbaf4f569acd226daf0ba88b5651479006a4b3e16ceab5294">SIZE</a>])</td></tr>
 <tr class="memdesc:a72c3e20d08f58b8686de7cb74dbc348e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor (user-provided value)  <a href="class_svc_1_1_com_queue_depth.html#a72c3e20d08f58b8686de7cb74dbc348e">More...</a><br /></td></tr>
 <tr class="separator:a72c3e20d08f58b8686de7cb74dbc348e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e3e98f9306821a4536147b8a32dc118"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a8e3e98f9306821a4536147b8a32dc118">ComQueueDepth</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;e)</td></tr>
+<tr class="memitem:a8e3e98f9306821a4536147b8a32dc118"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a8e3e98f9306821a4536147b8a32dc118">ComQueueDepth</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;e)</td></tr>
 <tr class="memdesc:a8e3e98f9306821a4536147b8a32dc118"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor (single element)  <a href="class_svc_1_1_com_queue_depth.html#a8e3e98f9306821a4536147b8a32dc118">More...</a><br /></td></tr>
 <tr class="separator:a8e3e98f9306821a4536147b8a32dc118"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6e930de9cbab5685150fc9d90178a1e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#af6e930de9cbab5685150fc9d90178a1e">ComQueueDepth</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;e1, const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;e2)</td></tr>
+<tr class="memitem:af6e930de9cbab5685150fc9d90178a1e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#af6e930de9cbab5685150fc9d90178a1e">ComQueueDepth</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;e1, const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;e2)</td></tr>
 <tr class="memdesc:af6e930de9cbab5685150fc9d90178a1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor (multiple elements)  <a href="class_svc_1_1_com_queue_depth.html#af6e930de9cbab5685150fc9d90178a1e">More...</a><br /></td></tr>
 <tr class="separator:af6e930de9cbab5685150fc9d90178a1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e174a5009d5b32bebe1746bde131a71"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a4e174a5009d5b32bebe1746bde131a71">ComQueueDepth</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp;obj)</td></tr>
 <tr class="memdesc:a4e174a5009d5b32bebe1746bde131a71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy Constructor.  <a href="class_svc_1_1_com_queue_depth.html#a4e174a5009d5b32bebe1746bde131a71">More...</a><br /></td></tr>
 <tr class="separator:a4e174a5009d5b32bebe1746bde131a71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a082afd7bce7adf911aaed5996d39f072"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a082afd7bce7adf911aaed5996d39f072">operator[]</a> (const U32 i)</td></tr>
+<tr class="memitem:a082afd7bce7adf911aaed5996d39f072"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a082afd7bce7adf911aaed5996d39f072">operator[]</a> (const U32 i)</td></tr>
 <tr class="memdesc:a082afd7bce7adf911aaed5996d39f072"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscript operator.  <a href="class_svc_1_1_com_queue_depth.html#a082afd7bce7adf911aaed5996d39f072">More...</a><br /></td></tr>
 <tr class="separator:a082afd7bce7adf911aaed5996d39f072"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5830eefd30c8d2a8ae5f73303afb464"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#af5830eefd30c8d2a8ae5f73303afb464">operator[]</a> (const U32 i) const</td></tr>
+<tr class="memitem:af5830eefd30c8d2a8ae5f73303afb464"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#af5830eefd30c8d2a8ae5f73303afb464">operator[]</a> (const U32 i) const</td></tr>
 <tr class="memdesc:af5830eefd30c8d2a8ae5f73303afb464"><td class="mdescLeft">&#160;</td><td class="mdescRight">Const subscript operator.  <a href="class_svc_1_1_com_queue_depth.html#af5830eefd30c8d2a8ae5f73303afb464">More...</a><br /></td></tr>
 <tr class="separator:af5830eefd30c8d2a8ae5f73303afb464"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7eb4ee5ef628f0042fe38c84e7b494ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a7eb4ee5ef628f0042fe38c84e7b494ea">operator=</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp;obj)</td></tr>
 <tr class="memdesc:a7eb4ee5ef628f0042fe38c84e7b494ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator (object)  <a href="class_svc_1_1_com_queue_depth.html#a7eb4ee5ef628f0042fe38c84e7b494ea">More...</a><br /></td></tr>
 <tr class="separator:a7eb4ee5ef628f0042fe38c84e7b494ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae08b12dba14286eebe24bf59f015d8be"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#ae08b12dba14286eebe24bf59f015d8be">operator=</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a>(&amp;a)[<a class="el" href="class_svc_1_1_com_queue_depth.html#ae7b4257bd747a5a3fbaf4f569acd226daf0ba88b5651479006a4b3e16ceab5294">SIZE</a>])</td></tr>
+<tr class="memitem:ae08b12dba14286eebe24bf59f015d8be"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#ae08b12dba14286eebe24bf59f015d8be">operator=</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a>(&amp;a)[<a class="el" href="class_svc_1_1_com_queue_depth.html#ae7b4257bd747a5a3fbaf4f569acd226daf0ba88b5651479006a4b3e16ceab5294">SIZE</a>])</td></tr>
 <tr class="memdesc:ae08b12dba14286eebe24bf59f015d8be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator (raw array)  <a href="class_svc_1_1_com_queue_depth.html#ae08b12dba14286eebe24bf59f015d8be">More...</a><br /></td></tr>
 <tr class="separator:ae08b12dba14286eebe24bf59f015d8be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bf6c4cc358ec52e5c54b845894468dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a1bf6c4cc358ec52e5c54b845894468dd">operator=</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;e)</td></tr>
+<tr class="memitem:a1bf6c4cc358ec52e5c54b845894468dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a1bf6c4cc358ec52e5c54b845894468dd">operator=</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;e)</td></tr>
 <tr class="memdesc:a1bf6c4cc358ec52e5c54b845894468dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator (single element)  <a href="class_svc_1_1_com_queue_depth.html#a1bf6c4cc358ec52e5c54b845894468dd">More...</a><br /></td></tr>
 <tr class="separator:a1bf6c4cc358ec52e5c54b845894468dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a212e5f9ee9bfb2980662d7e07da15ad6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_depth.html#a212e5f9ee9bfb2980662d7e07da15ad6">operator==</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp;obj) const</td></tr>
@@ -178,23 +179,23 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Array of queue depths for Fw::Com types. </p>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8hpp_source.html#l00017">17</a> of file <a class="el" href="com_queue_depth_array_ac_8hpp_source.html">ComQueueDepthArrayAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8hpp_source.html#l00018">18</a> of file <a class="el" href="com_queue_depth_array_ac_8hpp_source.html">ComQueueDepthArrayAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a45d026f12afbc1e7045fc7b7f9222142"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45d026f12afbc1e7045fc7b7f9222142">&#9670;&nbsp;</a></span>ElementType</h2>
+<a id="ac9f4306b6def648559b2578e84e601bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9f4306b6def648559b2578e84e601bf">&#9670;&nbsp;</a></span>ElementType</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef U32 <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">Svc::ComQueueDepth::ElementType</a></td>
+          <td class="memname">using <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">Svc::ComQueueDepth::ElementType</a> =  U32</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>The element type. </p>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8hpp_source.html#l00028">28</a> of file <a class="el" href="com_queue_depth_array_ac_8hpp_source.html">ComQueueDepthArrayAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8hpp_source.html#l00029">29</a> of file <a class="el" href="com_queue_depth_array_ac_8hpp_source.html">ComQueueDepthArrayAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -213,11 +214,13 @@ Additional Inherited Members</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ae7b4257bd747a5a3fbaf4f569acd226daf0ba88b5651479006a4b3e16ceab5294"></a>SIZE&#160;</td><td class="fielddoc"><p>The size of the array. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="ae7b4257bd747a5a3fbaf4f569acd226daa8e7784290270dba58d6b4a0e035d3b8"></a>ELEMENT_SERIALIZED_SIZE&#160;</td><td class="fielddoc"><p>The serialized size of each element. </p>
+</td></tr>
 <tr><td class="fieldname"><a id="ae7b4257bd747a5a3fbaf4f569acd226da42641c40b13ca1821d02207c106429d0"></a>SERIALIZED_SIZE&#160;</td><td class="fielddoc"><p>The size of the serial representation. </p>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8hpp_source.html#l00036">36</a> of file <a class="el" href="com_queue_depth_array_ac_8hpp_source.html">ComQueueDepthArrayAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8hpp_source.html#l00037">37</a> of file <a class="el" href="com_queue_depth_array_ac_8hpp_source.html">ComQueueDepthArrayAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -239,7 +242,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Constructor (default value) </p>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00020">20</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00016">16</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -252,7 +255,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">Svc::ComQueueDepth::ComQueueDepth </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a>(&amp;)&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a>(&amp;)&#160;</td>
           <td class="paramname"><em>a</em>[SIZE]</td><td>)</td>
           <td></td>
         </tr>
@@ -267,7 +270,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00031">31</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00027">27</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -280,7 +283,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">Svc::ComQueueDepth::ComQueueDepth </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;&#160;</td>
           <td class="paramname"><em>e</em></td><td>)</td>
           <td></td>
         </tr>
@@ -295,7 +298,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00040">40</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00036">36</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -308,13 +311,13 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">Svc::ComQueueDepth::ComQueueDepth </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;&#160;</td>
           <td class="paramname"><em>e1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;&#160;</td>
           <td class="paramname"><em>e2</em>&#160;</td>
         </tr>
         <tr>
@@ -334,7 +337,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00049">49</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00045">45</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -362,7 +365,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00060">60</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00056">56</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -401,7 +404,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_fw_1_1_serializable.html#a8d365b0a0de15e9f41741a1830b49a1f">Fw::Serializable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00163">163</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00159">159</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -429,7 +432,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00129">129</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00125">125</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -457,7 +460,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00087">87</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00083">83</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -470,7 +473,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp; Svc::ComQueueDepth::operator= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a> &amp;&#160;</td>
           <td class="paramname"><em>e</em></td><td>)</td>
           <td></td>
         </tr>
@@ -485,7 +488,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00109">109</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00105">105</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -498,7 +501,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="class_svc_1_1_com_queue_depth.html">ComQueueDepth</a> &amp; Svc::ComQueueDepth::operator= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ElementType</a>(&amp;)&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ElementType</a>(&amp;)&#160;</td>
           <td class="paramname"><em>a</em>[SIZE]</td><td>)</td>
           <td></td>
         </tr>
@@ -513,7 +516,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00100">100</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00096">96</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -541,7 +544,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00118">118</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00114">114</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -552,7 +555,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ComQueueDepth::ElementType</a> &amp; Svc::ComQueueDepth::operator[] </td>
+          <td class="memname"><a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ComQueueDepth::ElementType</a> &amp; Svc::ComQueueDepth::operator[] </td>
           <td>(</td>
           <td class="paramtype">const U32&#160;</td>
           <td class="paramname"><em>i</em></td><td>)</td>
@@ -569,7 +572,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00073">73</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00069">69</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -580,7 +583,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="class_svc_1_1_com_queue_depth.html#a45d026f12afbc1e7045fc7b7f9222142">ComQueueDepth::ElementType</a> &amp; Svc::ComQueueDepth::operator[] </td>
+          <td class="memname">const <a class="el" href="class_svc_1_1_com_queue_depth.html#ac9f4306b6def648559b2578e84e601bf">ComQueueDepth::ElementType</a> &amp; Svc::ComQueueDepth::operator[] </td>
           <td>(</td>
           <td class="paramtype">const U32&#160;</td>
           <td class="paramname"><em>i</em></td><td>)</td>
@@ -597,7 +600,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00080">80</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00076">76</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -635,7 +638,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_fw_1_1_serializable.html#af5477c76e509ddfb7a60895d0437ffe5">Fw::Serializable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00150">150</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_depth_array_ac_8cpp_source.html#l00146">146</a> of file <a class="el" href="com_queue_depth_array_ac_8cpp_source.html">ComQueueDepthArrayAc.cpp</a>.</p>
 
 </div>
 </div>

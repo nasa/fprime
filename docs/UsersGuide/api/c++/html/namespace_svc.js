@@ -4,13 +4,11 @@ var namespace_svc =
       [ "POLL_BUFFER_SIZE", "namespace_svc_1_1_deframer_cfg.html#a6e6d0e22bc288a2626720a3bb8d32ee2", null ],
       [ "RING_BUFFER_SIZE", "namespace_svc_1_1_deframer_cfg.html#aa41d20749b0c744ee634f37c656e7ea6", null ]
     ] ],
-    [ "DpWrittenPortStrings", "namespace_svc_1_1_dp_written_port_strings.html", "namespace_svc_1_1_dp_written_port_strings" ],
     [ "FpFrameHeader", "namespace_svc_1_1_fp_frame_header.html", [
       [ "TokenType", "namespace_svc_1_1_fp_frame_header.html#a089b7638cf3b5d0b0e1f23b2b5da4e8b", null ],
       [ "START_WORD", "namespace_svc_1_1_fp_frame_header.html#af25d04f646ce66abe9751ad5a9fb574f", null ]
     ] ],
     [ "PolyDbCfg", "namespace_svc_1_1_poly_db_cfg.html", "namespace_svc_1_1_poly_db_cfg" ],
-    [ "SendFileRequestPortStrings", "namespace_svc_1_1_send_file_request_port_strings.html", "namespace_svc_1_1_send_file_request_port_strings" ],
     [ "ActiveLogger_Enabled", "class_svc_1_1_active_logger___enabled.html", "class_svc_1_1_active_logger___enabled" ],
     [ "ActiveLogger_FilterSeverity", "class_svc_1_1_active_logger___filter_severity.html", "class_svc_1_1_active_logger___filter_severity" ],
     [ "ActiveLoggerComponentBase", "class_svc_1_1_active_logger_component_base.html", "class_svc_1_1_active_logger_component_base" ],
@@ -145,10 +143,8 @@ var namespace_svc =
     [ "BufferManager", "namespace_svc.html#a3cd251693b4a0d77eb953f6dd9c049e9", null ],
     [ "CmdSequencer", "namespace_svc.html#a3882aff73e9796ed7b550aeb9f360f48", null ],
     [ "CommandDispatcher", "namespace_svc.html#a37fd952fb3d9eb282aa3e879f7571726", null ],
-    [ "destFileNameString", "namespace_svc.html#a6940450f391ffc9034c0735b795e05bc", null ],
     [ "Enabled", "namespace_svc.html#a14f6e569ad21be01e3912ae9263d3ba5", null ],
     [ "FatalHandler", "namespace_svc.html#a00b3d46edce973d74a87135301ed3fbf", null ],
-    [ "fileNameString", "namespace_svc.html#a00a3bee743dd2acd9fa6bf0103070a94", null ],
     [ "FilterSeverity", "namespace_svc.html#a3ce064afd89ebeec2cf1d076b2b2611c", null ],
     [ "GenericHub", "namespace_svc.html#a2726e21edb6ef5238cd546d94c01c0fa", null ],
     [ "Health", "namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb", null ],
@@ -158,7 +154,6 @@ var namespace_svc =
     [ "PrmDb", "namespace_svc.html#ac4fe15c5a44df4ac62d4ceb2fcf6fa3e", null ],
     [ "PrmReadError", "namespace_svc.html#a5607b42c25cba93543db62ebac53b3a7", null ],
     [ "PrmWriteError", "namespace_svc.html#ae32ed15852da9573a1f1b3fe5580e939", null ],
-    [ "sourceFileNameString", "namespace_svc.html#a4ef11045f69ceefa0480862f7f7c63fd", null ],
     [ "StaticMemory", "namespace_svc.html#ae0dd31d08e2d4a55709aff6caa18ace6", null ],
     [ "PacketUpdateMode", "namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79e", [
       [ "PACKET_UPDATE_ALWAYS", "namespace_svc.html#a11ca74bd00da6f5f3779fe980110f79eadbc35cb86a4a2cb3ba61924533572c50", null ],

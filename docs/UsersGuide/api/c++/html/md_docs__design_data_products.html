@@ -90,22 +90,22 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="autotoc_md27"></a>
 1. Introduction</h1>
-<p>F' provides several features for managing the generation, storage, and downlink of data products. In this section, we document those features.</p>
+<p>A <b>data product</b> is any data that is produced by an embedded system, stored on board the system, and transmitted to the ground, typically in priority order. F Prime provides several features for managing the generation, storage, and downlink of data products. In this section, we document those features.</p>
 <h1><a class="anchor" id="autotoc_md28"></a>
 2. Basic Concepts</h1>
 <p>First we explain some basic concepts.</p>
 <h2><a class="anchor" id="autotoc_md29"></a>
 2.1. Records, Containers, and Dictionaries</h2>
-<p>F' data products are based on <b>records</b> and <b>containers</b>. A record is a basic unit of data. For example, it may be a struct, an array of typed objects of statically known size, or an array of bytes of statically unknown size. A container has an identifier and a priority and stores records. In C++, a container is represented as a class object with member fields that (1) store header data and (2) store an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> object pointing to the memory that stores the records.</p>
-<p>The set of all containers forms the <b>data product dictionary</b>. To manage the data product dictionary, F Prime uses the same general approach as for commands, telemetry, events, and parameters:</p>
+<p>F Prime data products are based on <b>records</b> and <b>containers</b>. A record is a basic unit of data. For example, it may be a struct, an array of typed objects of statically known size, or an array of bytes of statically unknown size. A container has an identifier and a priority and stores records. In C++, a container is represented as a class object with member fields that (1) store header data and (2) store an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> object pointing to the memory that stores the records.</p>
+<p>The set of all container specifications forms the <b>data product dictionary</b>. To manage the data product dictionary, F Prime uses the same general approach as for commands, telemetry, events, and parameters:</p>
 <ol type="1">
-<li>Each component <em>C</em> defines records and containers. The container IDs are local to <em>C</em>. Typically they have the values 0, 1, 2, ... .</li>
+<li>Each component <em>C</em> specifies records and containers. The container IDs are local to <em>C</em>. Typically they have the values 0, 1, 2, ... .</li>
 <li>Each instance <em>I</em> of <em>C</em> contributes one container <em>I.c</em> to the dictionary for each container <em>c</em> defined in <em>C</em>. The global identifier for <em>I.c</em> is the base identifier of <em>I</em> plus the local identifier for <em>c</em>. For example, if the base identifier is 0x1000, then the global identifiers might be 0x1000, 0x1001, 0x1002, ... .</li>
-<li>For any topology <em>T</em>, the global identifiers <em>I.c</em> for all the instances <em>T</em> form the data product dictionary for <em>T</em>.</li>
+<li>For any topology <em>T</em>, the global identifiers <em>I.c</em> for all the component instances of <em>T</em> form the data product dictionary for <em>T</em>.</li>
 </ol>
 <h2><a class="anchor" id="autotoc_md30"></a>
-2.2. F' Components</h2>
-<p>Typically a data product system in an F' application consists of the following components:</p>
+2.2. F Prime Components</h2>
+<p>Typically a data product system in an F Prime application consists of the following components:</p>
 <ol type="1">
 <li>One or more <b>data product producers</b>. These components produce data products and are typically mission-specific. For example, they may produce science data.</li>
 </ol>
@@ -117,14 +117,14 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <li>A <b>data product writer</b>. This component receives filled containers from data product producers. It writes the contents of the containers to non-volatile storage. See <a class="el" href="svc_2_dp_writer_2docs_2sdd_8md.html">`Svc::DpWriter`</a>.</li>
 </ol>
 <ol type="a">
-<li>A <b>data product catalog</b>. This component maintains a database of available data products. By command, it downlinks and deletes data products. See TODO.</li>
+<li>A <b>data product catalog</b>. This component maintains a database of available data products. By command, it downlinks and deletes data products. See <a class="el" href="svc_2_dp_catalog_2docs_2sdd_8md.html">`Svc::DpCatalog`</a>.</li>
 </ol>
 <ol type="a">
-<li>A <b>data product processor</b>. This component performs in-memory processing on data product containers. See TODO.</li>
+<li>A <b>data product processor</b>. This component is not yet developed. When it is developed, it will perform in-memory processing on data product containers.</li>
 </ol>
 </li>
 </ol>
-<p>Note that when using data products, you need to develop only the producer components. The other components are provided by F'.</p>
+<p>Note that when using data products, you need to develop only the producer components. The other components are provided by F Prime.</p>
 <h1><a class="anchor" id="autotoc_md31"></a>
 3. Producer Components</h1>
 <p>In this section we provide more detail about producer components.</p>
@@ -133,13 +133,13 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <p>A producer component typically repeats the following activities, as often as necessary:</p>
 <ol type="1">
 <li>Request a container from a data manager component.</li>
-<li>When the container is received, fill the container with data by serializing records into the container.</li>
+<li>When the container is received, serialize records into the container. This action fills the container with data.</li>
 <li>When the container is full, send the container to the data product manager, which forwards it to the data product writer.</li>
 </ol>
 <p>The FPP model and the autocoded C++ have several features that support these activities. We discuss these features in the following sections.</p>
 <h2><a class="anchor" id="autotoc_md33"></a>
 3.2. FPP Modeling</h2>
-<p>In this section we summarize the features of the FPP modeling language used in constructing data product producer components. Each of these features is fully documented in <em>The FPP User's Guide</em> and <em>The FPP Language Specification</em>.</p>
+<p>In this section we summarize the features of the FPP modeling language used in constructing data product producer components. Each of these features is fully documented in <a href="https://nasa.github.io/fpp/fpp-users-guide.html"><em>The FPP User's Guide</em></a> and <a href="https://nasa.github.io/fpp/fpp-spec.html"><em>The FPP Language Specification</em></a>.</p>
 <h3><a class="anchor" id="autotoc_md34"></a>
 3.2.1. Ports</h3>
 <p>FPP provides the following special ports for managing data products:</p>
@@ -201,10 +201,10 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <li>A member class <em>C</em> <code>::DpContainer</code>. This class is derived from <a class="el" href="fw_2_dp_2docs_2sdd_8md.html">`Fw::DpContainer`</a> and represents a container specialized to the data products defined in <em>C</em>. Each instance of <em>C</em> <code>::DpContainer</code> is a wrapper for an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>B</em>, which points to allocated memory. The class provides operations for serializing the records defined in <em>C</em> into the memory pointed to by <em>B</em>. There is one operation <em>C</em> <code>::DpContainer::serialize_</code> <em>R</em> for each record <em>R</em> defined in <em>C</em>. For the serialized format of each record, see the documentation for <a class="el" href="fw_2_dp_2docs_2sdd_8md.html">`Fw::DpContainer`</a>.</li>
 </ol>
 <ol type="1">
-<li>If <em>C</em> has a <code>product</code> <code>get</code> port, a member function <code>dpGet_</code> <em>c</em> for each container defined in <em>C</em>. This function takes a container ID, a data size, and a reference to a data product container <em>D</em>. It invokes <code>productGetOut</code>, which is typically connected to a data product manager component. In the nominal case, the invocation returns an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>B</em> large enough to store a data product packet with the requested data size. The <code>dpGet</code> function then uses the ID and <em>B</em> to initialize <em>D</em>. It returns a status value indicating whether the buffer allocation succeeded.</li>
+<li>If <em>C</em> has a <code>product</code> <code>get</code> port, a member function <code>dpGet_</code> <em>c</em> for each container <em>c</em> defined in <em>C</em>. This function takes a data size and a reference to a data product container <em>D</em>. It invokes <code>productGetOut</code>, which is typically connected to a data product manager component. In the nominal case, the invocation returns an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> <em>B</em> large enough to store a data product packet with the requested data size. The <code>dpGet</code> function then uses the ID and <em>B</em> to initialize <em>D</em>. It returns a status value indicating whether the buffer allocation succeeded.</li>
 </ol>
 <ol type="1">
-<li>If <em>C</em> has a <code>product</code> <code>request</code> port, a member function <code>dpRequest_</code> <em>c</em> for each container defined in <em>C</em>. This function takes a container ID and a data size. It sends out a request on <code>productRequestOut</code>, which is typically connected to a data product manager component. The request is for a buffer large enough to store a data product packet with the requested data size.</li>
+<li>If <em>C</em> has a <code>product</code> <code>request</code> port, a member function <code>dpRequest_</code> <em>c</em> for each container <em>c</em> defined in <em>C</em>. This function takes a data size. It sends out a request on <code>productRequestOut</code>, which is typically connected to a data product manager component. The request is for a buffer large enough to store a data product packet with the requested data size.</li>
 </ol>
 <ol type="1">
 <li>If <em>C</em> has a <code>product</code> <code>recv</code> port, a pure virtual member function <code>dpRecv_</code> <em>c</em> <code>_handler</code> for each container <em>c</em> defined in <em>C</em>. When a fresh container arrives in response to a <code>dpRequest</code> invocation, the autocoded C++ uses the container ID to select and invoke the appropriate <code>dpRecv</code> handler. The implementation of <em>C</em> must override each handler to provide the mission-specific behavior for filling in the corresponding container. The arguments to <code>dpRecv_</code> <em>c</em> <code>_handler</code> provide (1) a reference to the container, which the implementation can fill in; and (2) a status value indicating whether the container is valid. An invalid container can result if the buffer allocation fails.</li>
@@ -219,6 +219,16 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <ol type="a">
 <li>Send <em>c</em> on <code>productSendOut</code>.</li>
 </ol>
+</li>
+</ol>
+<ol type="1">
+<li><p class="startli">Constant expressions representing the sizes of the records.</p><ol type="a">
+<li>If a record <em>R</em> holds a single value, then the expression <code>SIZE_OF_</code> <em>R</em> <code>_RECORD</code> evaluates to the size of that record.</li>
+</ol>
+<ol type="a">
+<li>Otherwise <em>R</em> is an array record. In this case the expression <code>SIZE_OF_</code> <em>R</em> <code>_RECORD(</code> <em>size</em> <code>)</code> evaluates to the size of an array record <em>R</em> with <em>size</em> array elements.</li>
+</ol>
+<p class="startli">You can use these expressions to compute data sizes when requesting data product buffers. For example, if a component specifies a record <code>Image</code>, then inside the component implementation the expression <code>10 * SIZE_OF_Image_RECORD</code> represents the size of the storage necessary to hold 10 <code>Image</code> records.</p>
 </li>
 </ol>
 <h2><a class="anchor" id="autotoc_md38"></a>
@@ -315,7 +325,7 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <p>In this section we discuss several common use cases involving data products.</p>
 <p><b>Requesting and sending data products:</b> See the example uses in the documentation for <a href="../../Svc/DpManager/docs/sdd.md#5-example-uses"><code>Svc::DpManager</code></a>. The component referred to as <code>producer</code> in that document is a data product producer.</p>
 <p><b>Writing data products to non-volatile storage:</b> See the example uses in the documentation for <a href="../../Svc/DpWriter/docs/sdd.md#6-example-uses"><code>Svc::DpWriter</code></a>. The component referred to as <code>producer</code> in that document is a data product producer.</p>
-<p><b>Cataloging and downlinking data products:</b> TODO</p>
+<p><b>Cataloging and downlinking data products:</b> For a preliminary implementation of the data product catalog, see <a class="el" href="svc_2_dp_catalog_2docs_2sdd_8md.html">`Svc::DpCatalog`</a>.</p>
 <p><b>Processing data products:</b> TODO </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

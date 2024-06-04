@@ -98,135 +98,137 @@ $(document).ready(function(){initNavTree('_send_file_response_serializable_ac_8h
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#define Svc_SendFileResponseSerializableAc_HPP</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="fp_config_8hpp.html">FpConfig.hpp</a>&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="serializable_8hpp.html">Fw/Types/Serializable.hpp</a>&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="string_8hpp.html">Fw/Types/String.hpp</a>&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="send_file_status_enum_ac_8hpp.html">Svc/FileDownlinkPorts/SendFileStatusEnumAc.hpp</a>&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html">   18</a></span>&#160;  <span class="keyword">class </span><a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a> :</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">public</span> <a class="code" href="class_fw_1_1_serializable.html">Fw::Serializable</a></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;      <span class="comment">// Constants</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      <span class="keyword">enum</span> {</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <a class="code" href="class_svc_1_1_send_file_response.html#aa260a2a375d9b441b98cc2d5ba9f4ae1a2da1e324c48bb9956869ec0caf490f85">SERIALIZED_SIZE</a> =</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;          <a class="code" href="class_svc_1_1_send_file_status.html#a3ca618943361d4fd0468ab75958675fea738e8135abeb5a9c9db2a331a6e0c1da">Svc::SendFileStatus::SERIALIZED_SIZE</a> +</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;          <span class="keyword">sizeof</span>(U32)</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#aa260a2a375d9b441b98cc2d5ba9f4ae1a2da1e324c48bb9956869ec0caf490f85">   33</a></span>&#160;      };</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <span class="comment">// Constructors</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      <a class="code" href="class_svc_1_1_send_file_response.html#ab34b6d32f84743c274b0d79c2e5f37ab">SendFileResponse</a>();</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <a class="code" href="class_svc_1_1_send_file_response.html#ab34b6d32f84743c274b0d79c2e5f37ab">SendFileResponse</a>(</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;          <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36">Svc::SendFileStatus::T</a> status,</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;          U32 context</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      );</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      <a class="code" href="class_svc_1_1_send_file_response.html#ab34b6d32f84743c274b0d79c2e5f37ab">SendFileResponse</a>(</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      );</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      <span class="comment">// Operators</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; <a class="code" href="class_svc_1_1_send_file_response.html#afd9da27b16b268fdfd2b115ed5c49490">operator=</a>(</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      );</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      <span class="keywordtype">bool</span> <a class="code" href="class_svc_1_1_send_file_response.html#ad3f69b2e80a6b6af38271d50903823eb">operator==</a>(</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      ) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordtype">bool</span> <a class="code" href="class_svc_1_1_send_file_response.html#ae3e83027b22730f49c789ae262f57f32">operator!=</a>(</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      ) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">#ifdef BUILD_UT</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;          std::ostream&amp; os, </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      );</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="comment">// Member functions</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> <a class="code" href="class_svc_1_1_send_file_response.html#a070e06b4c3b91411342e9bc6a62e304a">serialize</a>(</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;          <a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; buffer </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      ) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> <a class="code" href="class_svc_1_1_send_file_response.html#a50966745bd93dc16f83b5326ea5890fc">deserialize</a>(</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;          <a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; buffer </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      );</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      <span class="keywordtype">void</span> toString(</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;          <a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; sb </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      ) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      <span class="comment">// Getter functions</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#ad57e6d206120d7727ed22eb9e0712b9c">  116</a></span>&#160;      <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36">Svc::SendFileStatus::T</a> <a class="code" href="class_svc_1_1_send_file_response.html#ad57e6d206120d7727ed22eb9e0712b9c">getstatus</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keyword">      </span>{</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_svc_1_1_send_file_response.html#ad9b78945ad750d669721e059d7c60fc1">m_status</a>.<a class="code" href="class_svc_1_1_send_file_status.html#a9e2e76c617cac247704b1530eee8d2fd">e</a>;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      }</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#a099d1099513852f1d6f6d04149f23701">  122</a></span>&#160;      U32 <a class="code" href="class_svc_1_1_send_file_response.html#a099d1099513852f1d6f6d04149f23701">getcontext</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="keyword">      </span>{</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b">m_context</a>;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      }</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;      <span class="comment">// Setter functions</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_send_file_response.html#ac04a5aafd8eedb91300c1cb1e408084f">set</a>(</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;          <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36">Svc::SendFileStatus::T</a> status,</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;          U32 context</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      );</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_send_file_response.html#a3444c8376d42838b0264e1c69e5498df">setstatus</a>(<a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36">Svc::SendFileStatus::T</a> status);</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_send_file_response.html#a3e19b21e5d150c5618ed4a086d13f60a">setcontext</a>(U32 context);</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      <span class="comment">// Member variables</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#ad9b78945ad750d669721e059d7c60fc1">  149</a></span>&#160;      <a class="code" href="class_svc_1_1_send_file_status.html">Svc::SendFileStatus</a> <a class="code" href="class_svc_1_1_send_file_response.html#ad9b78945ad750d669721e059d7c60fc1">m_status</a>;</div>
-<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b">  150</a></span>&#160;      U32 <a class="code" href="class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b">m_context</a>;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  };</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;}</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="external_string_8hpp.html">Fw/Types/ExternalString.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="serializable_8hpp.html">Fw/Types/Serializable.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="string_8hpp.html">Fw/Types/String.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="send_file_status_enum_ac_8hpp.html">Svc/FileDownlinkPorts/SendFileStatusEnumAc.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html">   19</a></span>&#160;  <span class="keyword">class </span><a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a> :</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">public</span> <a class="code" href="class_fw_1_1_serializable.html">Fw::Serializable</a></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;      <span class="comment">// Constants</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;      <span class="keyword">enum</span> {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <a class="code" href="class_svc_1_1_send_file_response.html#ab1c9828a8d96aa48ee99a204c1096ea8a2da1e324c48bb9956869ec0caf490f85">SERIALIZED_SIZE</a> =</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;          <a class="code" href="class_svc_1_1_send_file_status.html#a9ba7a3a7602d5fc4f7963ad7ab81612aa738e8135abeb5a9c9db2a331a6e0c1da">Svc::SendFileStatus::SERIALIZED_SIZE</a> +</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;          <span class="keyword">sizeof</span>(U32)</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#ab1c9828a8d96aa48ee99a204c1096ea8a2da1e324c48bb9956869ec0caf490f85">   34</a></span>&#160;      };</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      <span class="comment">// Constructors</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <a class="code" href="class_svc_1_1_send_file_response.html#ab34b6d32f84743c274b0d79c2e5f37ab">SendFileResponse</a>();</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <a class="code" href="class_svc_1_1_send_file_response.html#ab34b6d32f84743c274b0d79c2e5f37ab">SendFileResponse</a>(</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;          <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36">Svc::SendFileStatus::T</a> status,</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;          U32 context</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      );</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <a class="code" href="class_svc_1_1_send_file_response.html#ab34b6d32f84743c274b0d79c2e5f37ab">SendFileResponse</a>(</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      );</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <span class="comment">// Operators</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; <a class="code" href="class_svc_1_1_send_file_response.html#afd9da27b16b268fdfd2b115ed5c49490">operator=</a>(</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      );</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      <span class="keywordtype">bool</span> <a class="code" href="class_svc_1_1_send_file_response.html#ad3f69b2e80a6b6af38271d50903823eb">operator==</a>(</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      ) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      <span class="keywordtype">bool</span> <a class="code" href="class_svc_1_1_send_file_response.html#ae3e83027b22730f49c789ae262f57f32">operator!=</a>(</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      ) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">#ifdef BUILD_UT</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;          std::ostream&amp; os, </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">SendFileResponse</a>&amp; obj </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      );</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      <span class="comment">// Member functions</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> <a class="code" href="class_svc_1_1_send_file_response.html#a070e06b4c3b91411342e9bc6a62e304a">serialize</a>(</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;          <a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; buffer </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      ) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> <a class="code" href="class_svc_1_1_send_file_response.html#a50966745bd93dc16f83b5326ea5890fc">deserialize</a>(</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;          <a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; buffer </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      );</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      <span class="keywordtype">void</span> toString(</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;          <a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; sb </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      ) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;      <span class="comment">// Getter functions</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#ad57e6d206120d7727ed22eb9e0712b9c">  117</a></span>&#160;      <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36">Svc::SendFileStatus::T</a> <a class="code" href="class_svc_1_1_send_file_response.html#ad57e6d206120d7727ed22eb9e0712b9c">getstatus</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="keyword">      </span>{</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_svc_1_1_send_file_response.html#ad9b78945ad750d669721e059d7c60fc1">m_status</a>.<a class="code" href="class_svc_1_1_send_file_status.html#a9e2e76c617cac247704b1530eee8d2fd">e</a>;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      }</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#a099d1099513852f1d6f6d04149f23701">  123</a></span>&#160;      U32 <a class="code" href="class_svc_1_1_send_file_response.html#a099d1099513852f1d6f6d04149f23701">getcontext</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="keyword">      </span>{</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b">m_context</a>;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;      <span class="comment">// Setter functions</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_send_file_response.html#ac04a5aafd8eedb91300c1cb1e408084f">set</a>(</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;          <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36">Svc::SendFileStatus::T</a> status,</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;          U32 context</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;      );</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_send_file_response.html#a3444c8376d42838b0264e1c69e5498df">setstatus</a>(<a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36">Svc::SendFileStatus::T</a> status);</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_send_file_response.html#a3e19b21e5d150c5618ed4a086d13f60a">setcontext</a>(U32 context);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;      <span class="comment">// Member variables</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;      <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#ad9b78945ad750d669721e059d7c60fc1">  150</a></span>&#160;      <a class="code" href="class_svc_1_1_send_file_status.html">Svc::SendFileStatus</a> <a class="code" href="class_svc_1_1_send_file_response.html#ad9b78945ad750d669721e059d7c60fc1">m_status</a>;</div>
+<div class="line"><a name="l00151"></a><span class="lineno"><a class="line" href="class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b">  151</a></span>&#160;      U32 <a class="code" href="class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b">m_context</a>;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  };</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;}</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="a_external_string_8hpp_html"><div class="ttname"><a href="external_string_8hpp.html">ExternalString.hpp</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
 <div class="ttc" id="a_send_file_status_enum_ac_8hpp_html"><div class="ttname"><a href="send_file_status_enum_ac_8hpp.html">SendFileStatusEnumAc.hpp</a></div></div>
 <div class="ttc" id="a_serializable_8hpp_html"><div class="ttname"><a href="serializable_8hpp.html">Serializable.hpp</a></div></div>
@@ -234,24 +236,24 @@ $(document).ready(function(){initNavTree('_send_file_response_serializable_ac_8h
 <div class="ttc" id="aclass_fw_1_1_serializable_html"><div class="ttname"><a href="class_fw_1_1_serializable.html">Fw::Serializable</a></div><div class="ttdoc">forward declaration</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00025">Serializable.hpp:25</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a></div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00054">Serializable.hpp:54</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_string_base_html"><div class="ttname"><a href="class_fw_1_1_string_base.html">Fw::StringBase</a></div><div class="ttdef"><b>Definition:</b> <a href="string_base_8hpp_source.html#l00023">StringBase.hpp:23</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html"><div class="ttname"><a href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a></div><div class="ttdoc">Send file response struct.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00018">SendFileResponseSerializableAc.hpp:20</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a070e06b4c3b91411342e9bc6a62e304a"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a070e06b4c3b91411342e9bc6a62e304a">Svc::SendFileResponse::serialize</a></div><div class="ttdeci">Fw::SerializeStatus serialize(Fw::SerializeBufferBase &amp;buffer) const</div><div class="ttdoc">Serialization.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00095">SendFileResponseSerializableAc.cpp:96</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a099d1099513852f1d6f6d04149f23701"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a099d1099513852f1d6f6d04149f23701">Svc::SendFileResponse::getcontext</a></div><div class="ttdeci">U32 getcontext() const</div><div class="ttdoc">Get member context.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00122">SendFileResponseSerializableAc.hpp:122</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a3444c8376d42838b0264e1c69e5498df"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a3444c8376d42838b0264e1c69e5498df">Svc::SendFileResponse::setstatus</a></div><div class="ttdeci">void setstatus(Svc::SendFileStatus::T status)</div><div class="ttdoc">Set member status.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00175">SendFileResponseSerializableAc.cpp:176</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a3e19b21e5d150c5618ed4a086d13f60a"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a3e19b21e5d150c5618ed4a086d13f60a">Svc::SendFileResponse::setcontext</a></div><div class="ttdeci">void setcontext(U32 context)</div><div class="ttdoc">Set member context.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00181">SendFileResponseSerializableAc.cpp:182</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a50966745bd93dc16f83b5326ea5890fc"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a50966745bd93dc16f83b5326ea5890fc">Svc::SendFileResponse::deserialize</a></div><div class="ttdeci">Fw::SerializeStatus deserialize(Fw::SerializeBufferBase &amp;buffer)</div><div class="ttdoc">Deserialization.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00112">SendFileResponseSerializableAc.cpp:113</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_aa260a2a375d9b441b98cc2d5ba9f4ae1a2da1e324c48bb9956869ec0caf490f85"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#aa260a2a375d9b441b98cc2d5ba9f4ae1a2da1e324c48bb9956869ec0caf490f85">Svc::SendFileResponse::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdoc">The size of the serial representation.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00033">SendFileResponseSerializableAc.hpp:30</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ab34b6d32f84743c274b0d79c2e5f37ab"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ab34b6d32f84743c274b0d79c2e5f37ab">Svc::SendFileResponse::SendFileResponse</a></div><div class="ttdeci">SendFileResponse()</div><div class="ttdoc">Constructor (default value)</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00020">SendFileResponseSerializableAc.cpp:21</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ac04a5aafd8eedb91300c1cb1e408084f"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ac04a5aafd8eedb91300c1cb1e408084f">Svc::SendFileResponse::set</a></div><div class="ttdeci">void set(Svc::SendFileStatus::T status, U32 context)</div><div class="ttdoc">Set all members.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00165">SendFileResponseSerializableAc.cpp:166</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ad3f69b2e80a6b6af38271d50903823eb"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ad3f69b2e80a6b6af38271d50903823eb">Svc::SendFileResponse::operator==</a></div><div class="ttdeci">bool operator==(const SendFileResponse &amp;obj) const</div><div class="ttdoc">Equality operator.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00065">SendFileResponseSerializableAc.cpp:66</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ad57e6d206120d7727ed22eb9e0712b9c"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ad57e6d206120d7727ed22eb9e0712b9c">Svc::SendFileResponse::getstatus</a></div><div class="ttdeci">Svc::SendFileStatus::T getstatus() const</div><div class="ttdoc">Get member status.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00116">SendFileResponseSerializableAc.hpp:116</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ad9b78945ad750d669721e059d7c60fc1"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ad9b78945ad750d669721e059d7c60fc1">Svc::SendFileResponse::m_status</a></div><div class="ttdeci">Svc::SendFileStatus m_status</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00149">SendFileResponseSerializableAc.hpp:149</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ae3e83027b22730f49c789ae262f57f32"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ae3e83027b22730f49c789ae262f57f32">Svc::SendFileResponse::operator!=</a></div><div class="ttdeci">bool operator!=(const SendFileResponse &amp;obj) const</div><div class="ttdoc">Inequality operator.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00074">SendFileResponseSerializableAc.cpp:75</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_af7bb21d65d27b183a42e6ac4e28fa17b"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b">Svc::SendFileResponse::m_context</a></div><div class="ttdeci">U32 m_context</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00150">SendFileResponseSerializableAc.hpp:150</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_response_html_afd9da27b16b268fdfd2b115ed5c49490"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#afd9da27b16b268fdfd2b115ed5c49490">Svc::SendFileResponse::operator=</a></div><div class="ttdeci">SendFileResponse &amp; operator=(const SendFileResponse &amp;obj)</div><div class="ttdoc">Copy assignment operator.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00054">SendFileResponseSerializableAc.cpp:55</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html"><div class="ttname"><a href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a></div><div class="ttdoc">Send file response struct.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00019">SendFileResponseSerializableAc.hpp:21</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a070e06b4c3b91411342e9bc6a62e304a"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a070e06b4c3b91411342e9bc6a62e304a">Svc::SendFileResponse::serialize</a></div><div class="ttdeci">Fw::SerializeStatus serialize(Fw::SerializeBufferBase &amp;buffer) const</div><div class="ttdoc">Serialization.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00091">SendFileResponseSerializableAc.cpp:92</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a099d1099513852f1d6f6d04149f23701"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a099d1099513852f1d6f6d04149f23701">Svc::SendFileResponse::getcontext</a></div><div class="ttdeci">U32 getcontext() const</div><div class="ttdoc">Get member context.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00123">SendFileResponseSerializableAc.hpp:123</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a3444c8376d42838b0264e1c69e5498df"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a3444c8376d42838b0264e1c69e5498df">Svc::SendFileResponse::setstatus</a></div><div class="ttdeci">void setstatus(Svc::SendFileStatus::T status)</div><div class="ttdoc">Set member status.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00165">SendFileResponseSerializableAc.cpp:166</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a3e19b21e5d150c5618ed4a086d13f60a"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a3e19b21e5d150c5618ed4a086d13f60a">Svc::SendFileResponse::setcontext</a></div><div class="ttdeci">void setcontext(U32 context)</div><div class="ttdoc">Set member context.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00171">SendFileResponseSerializableAc.cpp:172</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_a50966745bd93dc16f83b5326ea5890fc"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#a50966745bd93dc16f83b5326ea5890fc">Svc::SendFileResponse::deserialize</a></div><div class="ttdeci">Fw::SerializeStatus deserialize(Fw::SerializeBufferBase &amp;buffer)</div><div class="ttdoc">Deserialization.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00108">SendFileResponseSerializableAc.cpp:109</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ab1c9828a8d96aa48ee99a204c1096ea8a2da1e324c48bb9956869ec0caf490f85"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ab1c9828a8d96aa48ee99a204c1096ea8a2da1e324c48bb9956869ec0caf490f85">Svc::SendFileResponse::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdoc">The size of the serial representation.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00034">SendFileResponseSerializableAc.hpp:31</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ab34b6d32f84743c274b0d79c2e5f37ab"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ab34b6d32f84743c274b0d79c2e5f37ab">Svc::SendFileResponse::SendFileResponse</a></div><div class="ttdeci">SendFileResponse()</div><div class="ttdoc">Constructor (default value)</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00016">SendFileResponseSerializableAc.cpp:17</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ac04a5aafd8eedb91300c1cb1e408084f"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ac04a5aafd8eedb91300c1cb1e408084f">Svc::SendFileResponse::set</a></div><div class="ttdeci">void set(Svc::SendFileStatus::T status, U32 context)</div><div class="ttdoc">Set all members.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00155">SendFileResponseSerializableAc.cpp:156</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ad3f69b2e80a6b6af38271d50903823eb"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ad3f69b2e80a6b6af38271d50903823eb">Svc::SendFileResponse::operator==</a></div><div class="ttdeci">bool operator==(const SendFileResponse &amp;obj) const</div><div class="ttdoc">Equality operator.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00061">SendFileResponseSerializableAc.cpp:62</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ad57e6d206120d7727ed22eb9e0712b9c"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ad57e6d206120d7727ed22eb9e0712b9c">Svc::SendFileResponse::getstatus</a></div><div class="ttdeci">Svc::SendFileStatus::T getstatus() const</div><div class="ttdoc">Get member status.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00117">SendFileResponseSerializableAc.hpp:117</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ad9b78945ad750d669721e059d7c60fc1"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ad9b78945ad750d669721e059d7c60fc1">Svc::SendFileResponse::m_status</a></div><div class="ttdeci">Svc::SendFileStatus m_status</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00150">SendFileResponseSerializableAc.hpp:150</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_ae3e83027b22730f49c789ae262f57f32"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#ae3e83027b22730f49c789ae262f57f32">Svc::SendFileResponse::operator!=</a></div><div class="ttdeci">bool operator!=(const SendFileResponse &amp;obj) const</div><div class="ttdoc">Inequality operator.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00070">SendFileResponseSerializableAc.cpp:71</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_af7bb21d65d27b183a42e6ac4e28fa17b"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#af7bb21d65d27b183a42e6ac4e28fa17b">Svc::SendFileResponse::m_context</a></div><div class="ttdeci">U32 m_context</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00151">SendFileResponseSerializableAc.hpp:151</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_response_html_afd9da27b16b268fdfd2b115ed5c49490"><div class="ttname"><a href="class_svc_1_1_send_file_response.html#afd9da27b16b268fdfd2b115ed5c49490">Svc::SendFileResponse::operator=</a></div><div class="ttdeci">SendFileResponse &amp; operator=(const SendFileResponse &amp;obj)</div><div class="ttdoc">Copy assignment operator.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8cpp_source.html#l00050">SendFileResponseSerializableAc.cpp:51</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_send_file_status_html"><div class="ttname"><a href="class_svc_1_1_send_file_status.html">Svc::SendFileStatus</a></div><div class="ttdoc">Send file status enum.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_status_enum_ac_8hpp_source.html#l00017">SendFileStatusEnumAc.hpp:19</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_send_file_status_html_a3ca618943361d4fd0468ab75958675fea738e8135abeb5a9c9db2a331a6e0c1da"><div class="ttname"><a href="class_svc_1_1_send_file_status.html#a3ca618943361d4fd0468ab75958675fea738e8135abeb5a9c9db2a331a6e0c1da">Svc::SendFileStatus::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdoc">The size of the serial representation.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_status_enum_ac_8hpp_source.html#l00049">SendFileStatusEnumAc.hpp:49</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_send_file_status_html_a3dbd18c492c7e7a70c3ccaf7c0c02b36"><div class="ttname"><a href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36">Svc::SendFileStatus::T</a></div><div class="ttdeci">T</div><div class="ttdoc">The raw enum type.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_status_enum_ac_8hpp_source.html#l00031">SendFileStatusEnumAc.hpp:31</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_send_file_status_html_a9ba7a3a7602d5fc4f7963ad7ab81612aa738e8135abeb5a9c9db2a331a6e0c1da"><div class="ttname"><a href="class_svc_1_1_send_file_status.html#a9ba7a3a7602d5fc4f7963ad7ab81612aa738e8135abeb5a9c9db2a331a6e0c1da">Svc::SendFileStatus::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdoc">The size of the serial representation.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_status_enum_ac_8hpp_source.html#l00049">SendFileStatusEnumAc.hpp:49</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_send_file_status_html_a9e2e76c617cac247704b1530eee8d2fd"><div class="ttname"><a href="class_svc_1_1_send_file_status.html#a9e2e76c617cac247704b1530eee8d2fd">Svc::SendFileStatus::e</a></div><div class="ttdeci">T e</div><div class="ttdoc">The raw enum value.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_status_enum_ac_8hpp_source.html#l00161">SendFileStatusEnumAc.hpp:161</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a></div><div class="ttdeci">SerializeStatus</div><div class="ttdoc">forward declaration for string</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00014">Serializable.hpp:14</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>

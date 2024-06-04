@@ -54,6 +54,9 @@ var dir_1f5253cb5e73e32ad3f32f3f04254099 =
     [ "StringBase.hpp", "string_base_8hpp.html", [
       [ "StringBase", "class_fw_1_1_string_base.html", "class_fw_1_1_string_base" ]
     ] ],
+    [ "StringTemplate.hpp", "string_template_8hpp.html", [
+      [ "StringTemplate", "class_fw_1_1_string_template.html", "class_fw_1_1_string_template" ]
+    ] ],
     [ "StringType.hpp", "string_type_8hpp.html", null ],
     [ "StringUtils.cpp", "string_utils_8cpp.html", null ],
     [ "StringUtils.hpp", "string_utils_8hpp.html", "_string_utils_8hpp" ]

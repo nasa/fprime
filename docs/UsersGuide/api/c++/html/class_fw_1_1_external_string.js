@@ -1,5 +1,6 @@
 var class_fw_1_1_external_string =
 [
+    [ "ExternalString", "class_fw_1_1_external_string.html#a79d9b01ba6885710ae2b2417208f789e", null ],
     [ "ExternalString", "class_fw_1_1_external_string.html#a7c4ab5e4dc92e5adc15292e0bc1bffe7", null ],
     [ "ExternalString", "class_fw_1_1_external_string.html#a2c7a840961b8293343b99dcfca9e6df0", null ],
     [ "ExternalString", "class_fw_1_1_external_string.html#aff3b8e6455ef8967c68c5949f3ed88d3", null ],
@@ -9,6 +10,6 @@ var class_fw_1_1_external_string =
     [ "operator=", "class_fw_1_1_external_string.html#acf2d7a9846971b75e4c546c468e0fda7", null ],
     [ "operator=", "class_fw_1_1_external_string.html#a9bad4c854ec2de7fbab0d2a0c96438b2", null ],
     [ "operator=", "class_fw_1_1_external_string.html#a144f4425bb463b11f35bc0381dd2b259", null ],
-    [ "setBuffer", "class_fw_1_1_external_string.html#a45b3612990c408bac8cd1e9dc4ca1b73", null ],
+    [ "setBuffer", "class_fw_1_1_external_string.html#ad6c46e2f3a3428add7b08286446cddb6", null ],
     [ "toChar", "class_fw_1_1_external_string.html#abb390eeb9152929a6397f1f17fea3fc0", null ]
 ];
