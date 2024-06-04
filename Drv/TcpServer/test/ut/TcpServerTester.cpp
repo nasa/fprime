@@ -89,7 +89,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         }
 
         // Properly stop the client on the last iteration
-        if (recv_thread && ((1 + i) == iterations)) {
+        if (((1 + i) == iterations) && recv_thread) {
             this->component.stop();
             this->component.join();
         } else {
