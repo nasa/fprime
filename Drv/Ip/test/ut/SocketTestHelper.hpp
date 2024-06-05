@@ -65,6 +65,12 @@ bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations);
 */
 bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations);
 
+/**
+ * Get the configured delay, converted to milliseconds
+ * @return SOCKET_RETRY_INTERVAL converted to milliseconds
+ */
+U64 get_configured_delay_ms();
+
 };
 };
 #endif

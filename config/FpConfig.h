@@ -227,8 +227,8 @@ typedef FwIndexType FwQueueSizeType;
 
 // The size of the object name stored in the object base class. Larger names will be truncated.
 #if FW_OBJECT_NAMES
-#ifndef FW_OBJ_NAME_MAX_SIZE
-#define FW_OBJ_NAME_MAX_SIZE \
+#ifndef FW_OBJ_NAME_BUFFER_SIZE
+#define FW_OBJ_NAME_BUFFER_SIZE \
     80  //!< Size of object name (if object names enabled). AC Limits to 80, truncation occurs above 80.
 #endif
 #endif
@@ -247,7 +247,7 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_OBJ_SIMPLE_REG_ENTRIES 500  //!< Number of objects stored in simple object registry
 #endif
 // When dumping the contents of the registry, this specifies the size of the buffer used to store object names. Should
-// be >= FW_OBJ_NAME_MAX_SIZE.
+// be >= FW_OBJ_NAME_BUFFER_SIZE.
 #ifndef FW_OBJ_SIMPLE_REG_BUFF_SIZE
 #define FW_OBJ_SIMPLE_REG_BUFF_SIZE 255  //!< Size of object registry dump string
 #endif
@@ -261,13 +261,13 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Specifies the size of the string holding the queue name for queues
-#ifndef FW_QUEUE_NAME_MAX_SIZE
-#define FW_QUEUE_NAME_MAX_SIZE 80  //!< Max size of message queue name
+#ifndef FW_QUEUE_NAME_BUFFER_SIZE
+#define FW_QUEUE_NAME_BUFFER_SIZE 80  //!< Max size of message queue name
 #endif
 
 // Specifies the size of the string holding the task name for active components and tasks
-#ifndef FW_TASK_NAME_MAX_SIZE
-#define FW_TASK_NAME_MAX_SIZE 80  //!< Max size of task name
+#ifndef FW_TASK_NAME_BUFFER_SIZE
+#define FW_TASK_NAME_BUFFER_SIZE 80  //!< Max size of task name
 #endif
 
 // Specifies the size of the buffer that contains a communications packet.
@@ -384,15 +384,17 @@ typedef FwIndexType FwQueueSizeType;
 #ifndef FW_USE_TIME_CONTEXT
 #define FW_USE_TIME_CONTEXT 1  //!< Whether or not to serialize the time context
 #endif
-//
-// These defines used for the FilepathCharString type
+
+// Configuration for Fw::String
 
 #ifndef FW_FIXED_LENGTH_STRING_SIZE
-#define FW_FIXED_LENGTH_STRING_SIZE 256  //!< Character array size for the filepath character type
+#define FW_FIXED_LENGTH_STRING_SIZE 256  //!< Character array size for Fw::String
 #endif
 
+// OS configuration
+
 #ifndef FW_HANDLE_MAX_SIZE
-#define FW_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
 #ifndef FW_HANDLE_ALIGNMENT
@@ -402,7 +404,6 @@ typedef FwIndexType FwQueueSizeType;
 #ifndef FW_FILE_CHUNK_SIZE
 #define FW_FILE_CHUNK_SIZE 512  //!< Chunk size for working with files
 #endif
-
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.

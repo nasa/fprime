@@ -37,6 +37,10 @@ TcpServerComponentImpl::~TcpServerComponentImpl() {}
 // Implementations for socket read task virtual methods
 // ----------------------------------------------------------------------
 
+U16 TcpServerComponentImpl::getListenPort() {
+    return m_socket.getListenPort();
+}
+
 IpSocket& TcpServerComponentImpl::getSocketHandler() {
     return m_socket;
 }
@@ -54,7 +58,6 @@ void TcpServerComponentImpl::connected() {
     if (isConnected_ready_OutputPort(0)) {
         this->ready_out(0);
     }
-
 }
 
 // ----------------------------------------------------------------------

@@ -117,6 +117,8 @@ void DpTest ::dpRecv_Container1_handler(DpContainer& container, Fw::Success::T s
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
+        // Check that buffer is no longer valid
+        FW_ASSERT(!this->m_container.getBuffer().isValid());
     }
 }
 
@@ -135,6 +137,8 @@ void DpTest ::dpRecv_Container2_handler(DpContainer& container, Fw::Success::T s
         }
         // Provide an explicit time stamp
         this->dpSend(this->m_container, this->sendTime);
+        // Check that buffer is no longer valid
+        FW_ASSERT(!this->m_container.getBuffer().isValid());
     }
 }
 
@@ -153,6 +157,8 @@ void DpTest ::dpRecv_Container3_handler(DpContainer& container, Fw::Success::T s
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
+        // Check that buffer is no longer valid
+        FW_ASSERT(!this->m_container.getBuffer().isValid());
     }
 }
 
@@ -171,6 +177,8 @@ void DpTest ::dpRecv_Container4_handler(DpContainer& container, Fw::Success::T s
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
+        // Check that buffer is no longer valid
+        FW_ASSERT(!this->m_container.getBuffer().isValid());
     }
 }
 
@@ -189,6 +197,8 @@ void DpTest ::dpRecv_Container5_handler(DpContainer& container, Fw::Success::T s
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
+        // Check that buffer is no longer valid
+        FW_ASSERT(!this->m_container.getBuffer().isValid());
     }
 }
 
@@ -206,6 +216,8 @@ void DpTest ::dpRecv_Container6_handler(DpContainer& container, Fw::Success::T s
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
+        // Check that buffer is no longer valid
+        FW_ASSERT(!this->m_container.getBuffer().isValid());
     }
 }
 
@@ -224,6 +236,8 @@ void DpTest ::dpRecv_Container7_handler(DpContainer& container, Fw::Success::T s
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
+        // Check that buffer is no longer valid
+        FW_ASSERT(!this->m_container.getBuffer().isValid());
     }
 }
 

@@ -10,7 +10,7 @@
 #include <Os/File.hpp>
 #include <Os/Posix/File.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/Posix/errno.hpp>
+#include <Os/Posix/error.hpp>
 
 namespace Os {
 namespace Posix {

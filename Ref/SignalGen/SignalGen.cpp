@@ -224,7 +224,7 @@ namespace Ref {
         }
 
         // get DP buffer
-        this->dpGet_DataContainer(records*(SignalInfo::SERIALIZED_SIZE + sizeof(FwDpIdType)),this->m_dpContainer);
+        this->dpGet_DataContainer(records*SIZE_OF_DataRecord_RECORD,this->m_dpContainer);
         this->m_dpInProgress = true;
         this->m_numDps = records;
         this->m_currDp = 0;
