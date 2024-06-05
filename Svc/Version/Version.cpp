@@ -21,11 +21,11 @@ namespace Svc {
 
 Version ::Version(const char* const compName)
     : VersionComponentBase(compName), m_enable(false), m_startup_done(false), m_num_library_elements(0), m_num_custom_elements(0)  {
-    Svc::VersionPortStrings::StringSize80 ver_str = "no_ver";
+    Fw::String version_string = "no_ver";
     // initialize all custom entries
     for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
         // setVersion_enum is by default set to the first enum value, so not setting it here
-        verId_db[id].setversion_value(ver_str);
+        verId_db[id].setversion_value(version_string);
         verId_db[id].setversion_status(VersionStatus::FAILURE);
     }
 }
@@ -47,7 +47,7 @@ void Version::config(bool enable) {
 
 void Version ::getVersion_handler(FwIndexType portNum,
                                   const Svc::VersionCfg::VersionEnum& version_id,
-                                  Svc::VersionPortStrings::StringSize80& version_string,
+                                  Fw::StringBase& version_string, 
                                   Svc::VersionStatus& status) {
     FW_ASSERT(version_id.isValid(), version_id.e);
     U8 version_slot = VersionSlot(version_id.e);
@@ -57,7 +57,7 @@ void Version ::getVersion_handler(FwIndexType portNum,
 
 void Version ::setVersion_handler(FwIndexType portNum,
                                   const Svc::VersionCfg::VersionEnum& version_id,
-                                  Svc::VersionPortStrings::StringSize80& version_string,
+                                  Fw::StringBase& version_string,
                                   Svc::VersionStatus& status) {
     FW_ASSERT(version_id.isValid(), version_id.e);
     VersionSlot ver_slot = VersionSlot(version_id.e);

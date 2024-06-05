@@ -170,22 +170,22 @@ void VersionTester ::test_versions() {
     ASSERT_EVENTS_CustomVersions_SIZE(10);
 
     ASSERT_EVENTS_CustomVersions(2, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, "ver_2");
-    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, "ver_2", Svc::VersionStatus::OK);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, Fw::String("ver_2"), Svc::VersionStatus::OK);
     ASSERT_TLM_CustomVersion03(0, custom_data_struct);
     ASSERT_TLM_CustomVersion03_SIZE(1);
 
     ASSERT_EVENTS_CustomVersions(3, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, "ver_3");
-    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, "ver_3", Svc::VersionStatus::FAILURE);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, Fw::String("ver_3"), Svc::VersionStatus::FAILURE);
     ASSERT_TLM_CustomVersion04(0, custom_data_struct);
     ASSERT_TLM_CustomVersion04_SIZE(1);
 
     ASSERT_EVENTS_CustomVersions(6, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, "ver_6");
-    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, "ver_6", Svc::VersionStatus::FAILURE);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, Fw::String("ver_6"), Svc::VersionStatus::FAILURE);
     ASSERT_TLM_CustomVersion07(0, custom_data_struct);
     ASSERT_TLM_CustomVersion07_SIZE(1);
 
     ASSERT_EVENTS_CustomVersions(9, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, "ver_9");
-    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, "ver_9", Svc::VersionStatus::OK);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, Fw::String("ver_9"), Svc::VersionStatus::OK);
     ASSERT_TLM_CustomVersion10(0, custom_data_struct);
     ASSERT_TLM_CustomVersion10_SIZE(1);
 
@@ -213,7 +213,7 @@ void VersionTester ::test_commands() {
 
 void VersionTester ::test_setVer(bool is_enabled) {
     Svc::VersionStatus status = Svc::VersionStatus::OK;
-    Svc::VersionPortStrings::StringSize80 set_ver = "ver_2";
+    Fw::String set_ver = "ver_2";
 
     // Create a db to compare against set values
     Svc::CustomVersionDb custom_data_struct;
@@ -320,7 +320,7 @@ void VersionTester ::test_setVer(bool is_enabled) {
 
 void VersionTester ::test_getVer() {
     Svc::VersionStatus status;
-    Svc::VersionPortStrings::StringSize80 get_ver;
+    Fw::String get_ver;
 
     this->invoke_to_getVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, get_ver, status);
     ASSERT_EQ(get_ver, "ver_2");

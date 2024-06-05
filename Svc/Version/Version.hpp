@@ -37,7 +37,7 @@ class Version : public VersionComponentBase {
     //! Mutexed Port to get values
     void getVersion_handler(FwIndexType portNum,                                    //!< The port number
                             const Svc::VersionCfg::VersionEnum& version_id,         //!< The entry to access
-                            Svc::VersionPortStrings::StringSize80& version_string,  //!< The value to be passed
+                            Fw::StringBase& version_string,                         //!< The value to be passed
                             Svc::VersionStatus& status                              //!< The command response argument
                             ) override;
 
@@ -46,7 +46,7 @@ class Version : public VersionComponentBase {
     //! Mutexed Port to set values
     void setVersion_handler(FwIndexType portNum,                                    //!< The port number
                             const Svc::VersionCfg::VersionEnum& version_id,         //!< The entry to access
-                            Svc::VersionPortStrings::StringSize80& version_string,  //!< The value to be passed
+                            Fw::StringBase& version_string,                         //!< The value to be passed
                             Svc::VersionStatus& status                              //!< The command response argument
                             ) override;
 
