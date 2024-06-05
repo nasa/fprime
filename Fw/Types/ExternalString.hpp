@@ -20,6 +20,9 @@ class ExternalString final : public Fw::StringBase {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
+    //! Deleted copy constructor
+    ExternalString(const ExternalString&) = delete;
+
     //! Constructor (uninitialized buffer)
     ExternalString() : StringBase(), m_bufferPtr(nullptr), m_bufferSize(0) {}
 
@@ -71,8 +74,8 @@ class ExternalString final : public Fw::StringBase {
     // ----------------------------------------------------------------------
 
     //! Set the buffer and initialize it to the empty string
-    void setBuffer(char* bufferPtr,       //!< The buffer pointer
-                   FwSizeType bufferSize  //!< The buffer size
+    void setBuffer(char* bufferPtr,                 //!< The buffer pointer
+                   StringBase::SizeType bufferSize  //!< The buffer size
     ) {
         this->m_bufferPtr = bufferPtr;
         this->m_bufferSize = bufferSize;

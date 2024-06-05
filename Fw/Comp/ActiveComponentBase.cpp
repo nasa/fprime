@@ -59,7 +59,7 @@ namespace Fw {
 #if FW_OBJECT_NAMES == 1
         taskName = this->getObjName();
 #else
-        char taskNameChar[FW_TASK_NAME_MAX_SIZE];
+        char taskNameChar[FW_TASK_NAME_BUFFER_SIZE];
         (void)snprintf(taskNameChar,sizeof(taskNameChar),"ActComp_%d",Os::Task::getNumTasks());
         taskName = taskNameChar;
 #endif
