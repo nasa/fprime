@@ -131,12 +131,12 @@ def test_unittest_module_ut_info(UT_BUILD):
         [Path(source).name for source in sources]
     ), "Did not find expected sources"
     expected_ac = [
-        "SignalGen.fpp", 
-        "Commands.fppi", 
-        "Events.fppi", 
-        "Telemetry.fppi", 
-        "CommandInterface.fppi", 
-        "ChannelInterface.fppi", 
+        "SignalGen.fpp",
+        "Commands.fppi",
+        "Events.fppi",
+        "Telemetry.fppi",
+        "CommandInterface.fppi",
+        "ChannelInterface.fppi",
         "EventsInterface.fppi",
     ]
     actual_ac = [Path(source).name for source in ac_sources]
