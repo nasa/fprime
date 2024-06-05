@@ -20,11 +20,11 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 Version ::Version(const char* const compName)
-    : VersionComponentBase(compName), m_enable(false), m_startup_done(false), m_num_lib_elem(0), m_num_cus_elem(0)  {
+    : VersionComponentBase(compName), m_enable(false), m_startup_done(false), m_num_library_elements(0), m_num_custom_elements(0)  {
     Svc::VersionPortStrings::StringSize80 ver_str = "no_ver";
     // initialize all custom entries
     for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
-        // setver_enum is by default set to the first enum value, so not setting it here
+        // setVersion_enum is by default set to the first enum value, so not setting it here
         verId_db[id].setversion_value(ver_str);
         verId_db[id].setversion_status(VersionStatus::FAILURE);
     }
@@ -64,7 +64,7 @@ void Version ::setVersion_handler(FwIndexType portNum,
     this->verId_db[ver_slot].setversion_enum(version_id);
     this->verId_db[ver_slot].setversion_value(version_string);
     this->verId_db[ver_slot].setversion_status(status);
-    this->m_num_cus_elem++;
+    this->m_num_custom_elements++;
     this->customVersion_tlm(ver_slot);
 }
 
@@ -114,12 +114,12 @@ void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionT
 // ----------------------------------------------------------------------
 // implementations for internal functions
 // ----------------------------------------------------------------------
-// Process libsv
+// Process library version
 void Version ::process_libraryVersion() {
-    m_num_lib_elem = static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(Project::Version::LIBRARY_VERSIONS));
+    m_num_library_elements = static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(Project::Version::LIBRARY_VERSIONS));
     // m_num_lib_elem = sizeof(Project::Version::LIBRARY_VERSIONS)/sizeof(Project::Version::LIBRARY_VERSIONS[0]);
     if (Project::Version::LIBRARY_VERSIONS[0] == nullptr) {
-        m_num_lib_elem = 0;
+        m_num_library_elements = 0;
     }
 }
 
@@ -142,7 +142,7 @@ void Version ::libraryVersion_tlm() {
     // Process libraries array
     this->process_libraryVersion();
 
-    for (U8 i = 0; i < m_num_lib_elem; i++) {
+    for (U8 i = 0; i < m_num_library_elements; i++) {
         // Emit Event/TLM on library versions
         this->log_ACTIVITY_LO_LibraryVersions(Fw::LogStringArg(Project::Version::LIBRARY_VERSIONS[i]));
         // Write to Events
@@ -186,7 +186,7 @@ void Version ::libraryVersion_tlm() {
 }
 
 void Version ::customVersion_tlm_all() {
-    for (U8 i = 0; (m_enable == true) && (m_num_cus_elem != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS);
+    for (U8 i = 0; (m_enable == true) && (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS);
          i++) {
         Version::customVersion_tlm(VersionSlot(i));
     }
@@ -196,7 +196,7 @@ void Version ::customVersion_tlm(VersionSlot custom_slot) {
     // Process custom version TLM only if verbosity is enabled and there are any valid writes to it;
     //  it doesn't necessarily have to be consecutive
     if ((this->verId_db[custom_slot].getversion_value() != "no_ver") && m_enable == true &&
-        (m_num_cus_elem > 0)) {  // Write TLM for valid writes
+        (m_num_custom_elements > 0)) {  // Write TLM for valid writes
 
         // Emit Events/TLM on library versions
         this->log_ACTIVITY_LO_CustomVersions(this->verId_db[custom_slot].getversion_enum(),

@@ -32,14 +32,6 @@ class Version : public VersionComponentBase {
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-    // No longer using a scheduler but driven by command only
-    //! Handler implementation for run
-    //!
-    // void
-    // run_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-    //             U32 context                    /*!< The call order*/
-    //) override;
-
     //! Handler implementation for getVersion
     //!
     //! Mutexed Port to get values
@@ -111,8 +103,8 @@ class Version : public VersionComponentBase {
     void customVersion_tlm_all();
     bool m_enable; /*!<Send TLM when true>*/
     bool m_startup_done;
-    U8 m_num_lib_elem;  // number of library versions
-    U8 m_num_cus_elem;  // number of custom versions
+    U8 m_num_library_elements;  // number of library versions
+    U8 m_num_custom_elements;  // number of custom versions
 };
 
 }  // namespace Svc

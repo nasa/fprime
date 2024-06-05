@@ -70,7 +70,7 @@ module Svc {
                  ) \
         severity activity low \
         id 2 \
-        format "Libary Versions: [{}]"
+        format "Library Versions: [{}]"
         
         @ Version of the git repository.
         event CustomVersions(
