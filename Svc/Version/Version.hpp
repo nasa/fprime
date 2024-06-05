@@ -99,7 +99,7 @@ class Version : public VersionComponentBase {
     void fwVersion_tlm();
     void projectVersion_tlm();
     void libraryVersion_tlm();
-    void customVersion_tlm(VersionSlot cus_slot);
+    void customVersion_tlm(VersionSlot custom_slot);
     void customVersion_tlm_all();
     bool m_enable; /*!<Send TLM when true>*/
     bool m_startup_done;

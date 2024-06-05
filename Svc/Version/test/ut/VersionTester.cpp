@@ -161,7 +161,7 @@ void VersionTester ::test_versions() {
     ASSERT_EVENTS_LibraryVersions(11, "blah11 @ blah11");
 
     this->clear_all();
-    Svc::CustomVersionDb cus_data_struct;
+    Svc::CustomVersionDb custom_data_struct;
     this->test_setVer(false);
     this->clear_all();
     this->sendCmd_VERSION(0, cmd_seq, Svc::VersionType::CUSTOM);
@@ -170,23 +170,23 @@ void VersionTester ::test_versions() {
     ASSERT_EVENTS_CustomVersions_SIZE(10);
 
     ASSERT_EVENTS_CustomVersions(2, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, "ver_2");
-    cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, "ver_2", Svc::VersionStatus::OK);
-    ASSERT_TLM_CustomVersion03(0, cus_data_struct);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, "ver_2", Svc::VersionStatus::OK);
+    ASSERT_TLM_CustomVersion03(0, custom_data_struct);
     ASSERT_TLM_CustomVersion03_SIZE(1);
 
     ASSERT_EVENTS_CustomVersions(3, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, "ver_3");
-    cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, "ver_3", Svc::VersionStatus::FAILURE);
-    ASSERT_TLM_CustomVersion04(0, cus_data_struct);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, "ver_3", Svc::VersionStatus::FAILURE);
+    ASSERT_TLM_CustomVersion04(0, custom_data_struct);
     ASSERT_TLM_CustomVersion04_SIZE(1);
 
     ASSERT_EVENTS_CustomVersions(6, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, "ver_6");
-    cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, "ver_6", Svc::VersionStatus::FAILURE);
-    ASSERT_TLM_CustomVersion07(0, cus_data_struct);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, "ver_6", Svc::VersionStatus::FAILURE);
+    ASSERT_TLM_CustomVersion07(0, custom_data_struct);
     ASSERT_TLM_CustomVersion07_SIZE(1);
 
     ASSERT_EVENTS_CustomVersions(9, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, "ver_9");
-    cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, "ver_9", Svc::VersionStatus::OK);
-    ASSERT_TLM_CustomVersion10(0, cus_data_struct);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, "ver_9", Svc::VersionStatus::OK);
+    ASSERT_TLM_CustomVersion10(0, custom_data_struct);
     ASSERT_TLM_CustomVersion10_SIZE(1);
 
     this->clear_all();
