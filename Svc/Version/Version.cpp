@@ -80,7 +80,9 @@ void Version ::ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionEn
 
 // Command handler to event versions
 void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionType version_type) {
-    // FW_ASSERT(version_type <= Svc::VersionType::ALL);
+    
+    FW_ASSERT(version_type.isValid(),version_type.e);
+
     switch (version_type) {
         case (Svc::VersionType::PROJECT):
             this->projectVersion_tlm();
