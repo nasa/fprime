@@ -216,7 +216,7 @@ void VersionTester ::test_setVer(bool is_enabled) {
     Svc::VersionPortStrings::StringSize80 set_ver = "ver_2";
 
     // Create a db to compare against set values
-    Svc::CustomVersionDb cus_data_struct;
+    Svc::CustomVersionDb custom_data_struct;
     // printf("\nTesting the very first port invocation\n");
 
     // Start Clean
@@ -228,8 +228,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(1);
         ASSERT_EVENTS_CustomVersions(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, "ver_0");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, set_ver, Svc::VersionStatus::OK);
-        ASSERT_TLM_CustomVersion01(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, set_ver, Svc::VersionStatus::OK);
+        ASSERT_TLM_CustomVersion01(0, custom_data_struct);
     }
 
     set_ver = "ver_1";
@@ -237,8 +237,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(2);
         ASSERT_EVENTS_CustomVersions(1, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_01, "ver_1");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_01, set_ver, Svc::VersionStatus::OK);
-        ASSERT_TLM_CustomVersion02(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_01, set_ver, Svc::VersionStatus::OK);
+        ASSERT_TLM_CustomVersion02(0, custom_data_struct);
     }
 
     set_ver = "ver_2";
@@ -246,8 +246,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(3);
         ASSERT_EVENTS_CustomVersions(2, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, "ver_2");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, set_ver, Svc::VersionStatus::OK);
-        ASSERT_TLM_CustomVersion03(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, set_ver, Svc::VersionStatus::OK);
+        ASSERT_TLM_CustomVersion03(0, custom_data_struct);
     }
 
     status = Svc::VersionStatus::FAILURE;
@@ -257,8 +257,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(4);
         ASSERT_EVENTS_CustomVersions(3, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, "ver_3");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, set_ver, Svc::VersionStatus::FAILURE);
-        ASSERT_TLM_CustomVersion04(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, set_ver, Svc::VersionStatus::FAILURE);
+        ASSERT_TLM_CustomVersion04(0, custom_data_struct);
     }
 
     set_ver = "ver_4";
@@ -266,8 +266,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(5);
         ASSERT_EVENTS_CustomVersions(4, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_04, "ver_4");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_04, set_ver, Svc::VersionStatus::FAILURE);
-        ASSERT_TLM_CustomVersion05(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_04, set_ver, Svc::VersionStatus::FAILURE);
+        ASSERT_TLM_CustomVersion05(0, custom_data_struct);
     }
 
     set_ver = "ver_5";
@@ -275,8 +275,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(6);
         ASSERT_EVENTS_CustomVersions(5, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, "ver_5");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, set_ver, Svc::VersionStatus::FAILURE);
-        ASSERT_TLM_CustomVersion06(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, set_ver, Svc::VersionStatus::FAILURE);
+        ASSERT_TLM_CustomVersion06(0, custom_data_struct);
     }
 
     set_ver = "ver_6";
@@ -284,8 +284,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(7);
         ASSERT_EVENTS_CustomVersions(6, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, "ver_6");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, set_ver, Svc::VersionStatus::FAILURE);
-        ASSERT_TLM_CustomVersion07(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, set_ver, Svc::VersionStatus::FAILURE);
+        ASSERT_TLM_CustomVersion07(0, custom_data_struct);
     }
 
     status = Svc::VersionStatus::OK;
@@ -295,8 +295,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(8);
         ASSERT_EVENTS_CustomVersions(7, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_07, "ver_7");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_07, set_ver, Svc::VersionStatus::OK);
-        ASSERT_TLM_CustomVersion08(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_07, set_ver, Svc::VersionStatus::OK);
+        ASSERT_TLM_CustomVersion08(0, custom_data_struct);
     }
 
     set_ver = "ver_8";
@@ -304,8 +304,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(9);
         ASSERT_EVENTS_CustomVersions(8, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_08, "ver_8");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_08, set_ver, Svc::VersionStatus::OK);
-        ASSERT_TLM_CustomVersion09(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_08, set_ver, Svc::VersionStatus::OK);
+        ASSERT_TLM_CustomVersion09(0, custom_data_struct);
     }
 
     set_ver = "ver_9";
@@ -313,8 +313,8 @@ void VersionTester ::test_setVer(bool is_enabled) {
     if (is_enabled == true) {
         ASSERT_EVENTS_CustomVersions_SIZE(10);
         ASSERT_EVENTS_CustomVersions(9, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, "ver_9");
-        cus_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, set_ver, Svc::VersionStatus::OK);
-        ASSERT_TLM_CustomVersion10(0, cus_data_struct);
+        custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, set_ver, Svc::VersionStatus::OK);
+        ASSERT_TLM_CustomVersion10(0, custom_data_struct);
     }
 }
 

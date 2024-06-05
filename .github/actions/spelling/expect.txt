@@ -932,6 +932,7 @@ setschedpolicy
 setstacksize
 settime
 settype
+setversion
 sev
 sface
 sfregoso
