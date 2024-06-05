@@ -6,8 +6,8 @@ module Drv {
     # General ports
     # ----------------------------------------------------------------------
 
-    sync input port SpiReadWrite: Drv.SpiReadWrite
-
+    sync input port SpiReadWrite: Drv.SpiReadWrite 
+    
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------
