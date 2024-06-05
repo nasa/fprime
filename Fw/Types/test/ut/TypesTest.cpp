@@ -7,6 +7,7 @@
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/String.hpp>
+#include <Fw/Types/StringTemplate.hpp>
 #include <Os/InterruptLock.hpp>
 #include <Os/IntervalTimer.hpp>
 //
@@ -607,6 +608,14 @@ TEST(SerializationTest, Serialization1) {
     str1.serialize(buff);
     str2.deserialize(buff);
     ASSERT_EQ(str1, str2);
+
+    // serialize string template
+    Fw::StringTemplate<80> strTmpl1("Foo");
+    Fw::StringTemplate<80> strTmpl2("Bar");
+    buff.resetSer();
+    strTmpl1.serialize(buff);
+    strTmpl2.deserialize(buff);
+    ASSERT_EQ(strTmpl1, strTmpl2);
 }
 
 struct TestStruct {

@@ -151,6 +151,10 @@ TEST(Header, BufferSet) {
     checkHeader(id, buffer, container);
     // Check the buffers
     checkBuffers(container, sizeof bufferData);
+    // Invalidate the buffer
+    container.invalidateBuffer();
+    // Check that the buffer is invalid
+    ASSERT_EQ(container.getBuffer(), Fw::Buffer());
 }
 
 TEST(Header, BadPacketDescriptor) {

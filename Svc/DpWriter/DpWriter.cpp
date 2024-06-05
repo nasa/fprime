@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Fw/Com/ComPacket.hpp"
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/Serializable.hpp"
 #include "Os/File.hpp"
 #include "Svc/DpWriter/DpWriter.hpp"
@@ -224,11 +225,9 @@ void DpWriter::sendNotification(const Fw::DpContainer& container,
                                 const Fw::FileNameString& fileName,
                                 FwSizeType fileSize) {
     if (isConnected_dpWrittenOut_OutputPort(0)) {
-        // Construct the file name
-        fileNameString portFileName(fileName.toChar());
         // Get the priority
         const FwDpPriorityType priority = container.getPriority();
-        this->dpWrittenOut_out(0, portFileName, priority, fileSize);
+        this->dpWrittenOut_out(0, fileName, priority, fileSize);
     }
 }
 

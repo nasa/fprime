@@ -14,6 +14,7 @@
 #include "FppTest/utils/Utils.hpp"
 
 #include "Fw/Types/SerialBuffer.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 #include "Fw/Types/StringUtils.hpp"
 #include "STest/Pick/Pick.hpp"
 
@@ -88,7 +89,7 @@ protected:
         ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
     }
 
-    NonPrimitive::StringSize80 testString;
+    Fw::StringTemplate<80> testString;
     StructEnum testEnum;
     StructArray testArray;
     Primitive testStruct;
@@ -107,7 +108,7 @@ TEST_F(NonPrimitiveStructTest, Default) {
     // Constants
     ASSERT_EQ(
         NonPrimitive::SERIALIZED_SIZE,
-        NonPrimitive::StringSize80::SERIALIZED_SIZE
+        Fw::StringBase::STATIC_SERIALIZED_SIZE(80)
             + StructEnum::SERIALIZED_SIZE
             + StructArray::SERIALIZED_SIZE
             + Primitive::SERIALIZED_SIZE
@@ -266,7 +267,7 @@ TEST_F(NonPrimitiveStructTest, Serialization) {
 
     U32 stringSerializedSize = testString.length() + sizeof(FwBuffSizeType);
     U32 serializedSize = NonPrimitive::SERIALIZED_SIZE
-                         - NonPrimitive::StringSize80::SERIALIZED_SIZE
+                         - Fw::StringBase::STATIC_SERIALIZED_SIZE(80)
                          + stringSerializedSize;
     Fw::SerializeStatus status;
 
@@ -325,9 +326,7 @@ TEST_F(NonPrimitiveStructTest, ToString) {
          << " )";
 
     // Truncate string output
-    char buf2Str[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE];
-    Fw::StringUtils::string_copy(buf2Str, buf2.str().c_str(),
-                                 FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE);
+    Fw::String s2(buf2.str().c_str());
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2Str);
+    ASSERT_STREQ(buf1.str().c_str(), s2.toChar());
 }
