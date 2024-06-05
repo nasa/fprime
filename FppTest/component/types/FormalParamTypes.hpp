@@ -19,6 +19,7 @@
 #include "Fw/Tlm/TlmString.hpp"
 #include "Fw/Types/InternalInterfaceString.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 
 #include "FppTest/component/active/FormalParamArrayArrayAc.hpp"
 #include "FppTest/component/active/FormalParamEnumEnumAc.hpp"
@@ -123,19 +124,22 @@ struct StructTypes {
 // String types
 // ----------------------------------------------------------------------
 
+using String1 = Fw::StringTemplate<80>;
+using String2 = Fw::StringTemplate<100>;
+
 struct PortStringType {
     PortStringType();
 
-    StringArgsPortStrings::StringSize80 val;
+    String1 val;
 };
 
 struct PortStringTypes {
     PortStringTypes();
 
-    StringArgsPortStrings::StringSize80 val1;
-    StringArgsPortStrings::StringSize80 val2;
-    StringArgsPortStrings::StringSize100 val3;
-    StringArgsPortStrings::StringSize100 val4;
+    String1 val1;
+    String1 val2;
+    String2 val3;
+    String2 val4;
 };
 
 struct InternalInterfaceStringType {

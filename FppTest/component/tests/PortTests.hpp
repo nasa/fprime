@@ -375,7 +375,7 @@
         this->checkSerializeStatusBufferEmpty();                                                                       \
                                                                                                                        \
         /* Check unsuccessful deserialization of second parameter */                                                   \
-        U8 invalidData2[StringArgsPortStrings::StringSize80::SERIALIZED_SIZE];                                         \
+        U8 invalidData2[FppTest::Types::String1::SERIALIZED_SIZE];                                                     \
         Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                              \
                                                                                                                        \
         status = invalidBuf2.serialize(port.args.val1);                                                                \
@@ -386,7 +386,7 @@
         this->checkSerializeStatusBufferEmpty();                                                                       \
                                                                                                                        \
         /* Check unsuccessful deserialization of third parameter */                                                    \
-        U8 invalidData3[StringArgsPortStrings::StringSize80::SERIALIZED_SIZE * 2];                                     \
+        U8 invalidData3[FppTest::Types::String1::SERIALIZED_SIZE * 2];                                                 \
         Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));                                              \
                                                                                                                        \
         status = invalidBuf3.serialize(port.args.val1);                                                                \
@@ -400,8 +400,7 @@
         this->checkSerializeStatusBufferEmpty();                                                                       \
                                                                                                                        \
         /* Check unsuccessful deserialization of fourth parameter */                                                   \
-        U8 invalidData4[(StringArgsPortStrings::StringSize80::SERIALIZED_SIZE * 2) +                                   \
-                        StringArgsPortStrings::StringSize100::SERIALIZED_SIZE];                                        \
+        U8 invalidData4[(FppTest::Types::String1::SERIALIZED_SIZE * 2) + FppTest::Types::String2::SERIALIZED_SIZE];    \
         Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));                                              \
                                                                                                                        \
         status = invalidBuf4.serialize(port.args.val1);                                                                \
@@ -666,8 +665,8 @@
                                                                                              \
     void Tester ::test##PORT_KIND##PortCheckSerial(FppTest::Types::PortStringParams& port) { \
         Fw::SerializeStatus status;                                                          \
-        StringArgsPortStrings::StringSize80 str80, str80Ref;                                 \
-        StringArgsPortStrings::StringSize100 str100, str100Ref;                              \
+        FppTest::Types::String1 str80, str80Ref;                                             \
+        FppTest::Types::String2 str100, str100Ref;                                           \
                                                                                              \
         status = this->stringBuf.deserialize(str80);                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \

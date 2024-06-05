@@ -15,7 +15,7 @@ namespace Os {
 
 class QueueString final : public Fw::StringBase {
   public:
-    enum { STRING_SIZE = FW_QUEUE_NAME_MAX_SIZE, SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE) };
+    enum { STRING_SIZE = FW_QUEUE_NAME_BUFFER_SIZE, SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE) };
 
     QueueString() : StringBase() { *this = ""; }
 
