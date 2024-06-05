@@ -56,6 +56,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-zero-length-array>
     )
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND NOT DEFINED CMAKE_CXX_CLANG_TIDY)
+    # The following is not supported by clang, which also causes issues when using clang-tidy
+    add_compile_options(
+        -Wno-format-truncation
+    )
 endif()
 
 find_program(VALGRIND valgrind) # Find valgrind, and use it instead of leak check

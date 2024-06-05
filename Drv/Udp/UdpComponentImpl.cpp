@@ -39,6 +39,10 @@ SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 p
 
 UdpComponentImpl::~UdpComponentImpl() {}
 
+U16 UdpComponentImpl::getRecvPort() {
+    return this->m_socket.getRecvPort();
+}
+
 // ----------------------------------------------------------------------
 // Implementations for socket read task virtual methods
 // ----------------------------------------------------------------------

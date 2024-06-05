@@ -4,7 +4,6 @@
 #include <cstdio>
 
 extern "C" {
-  void startTestTask();
   void qtest_block_receive();
   void qtest_nonblock_receive();
   void qtest_nonblock_send();
@@ -18,9 +17,6 @@ extern "C" {
   void mutexBasicLockableTest();
 }
 const char* filename;
-TEST(Nominal, StartTestTask) {
-   startTestTask();
-}
 TEST(Nominal, QTestBlockRecv) {
    qtest_block_receive();
 }

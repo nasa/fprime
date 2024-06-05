@@ -6,6 +6,7 @@
 #define Os_File_hpp_
 
 #include <FpConfig.hpp>
+#include <Os/Os.hpp>
 
 namespace Os {
     //! \brief base implementation of FileHandle
@@ -206,14 +207,12 @@ namespace Os {
             //!
             //! \return result of placement new, must be equivalent to `aligned_placement_new_memory`
             //!
-            static FileInterface* getDelegate(U8* aligned_placement_new_memory, const FileInterface* to_copy=nullptr);
+            static FileInterface* getDelegate(HandleStorage& aligned_placement_new_memory, const FileInterface* to_copy=nullptr);
     };
 
 
     class File final : public FileInterface {
       public:
-        // Required for access to m_handle_storage for static assertions against actual storage
-        friend FileInterface* FileInterface::getDelegate(U8*, const FileInterface*);
         //! \brief constructor
         //!
         File();
@@ -485,7 +484,7 @@ namespace Os {
         // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
         // the byte-array here and set `handle` to that address for storage.
         //
-        alignas(FW_HANDLE_ALIGNMENT) U8 m_handle_storage[FW_HANDLE_MAX_SIZE]; //!< Storage for aligned FileHandle data
+        alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage; //!< Storage for aligned FileHandle data
         FileInterface& m_delegate; //!< Delegate for the real implementation
     };
 }
