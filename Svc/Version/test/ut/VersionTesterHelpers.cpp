@@ -8,75 +8,44 @@
 
 namespace Svc {
 
-  // ----------------------------------------------------------------------
-  // Helper functions
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Helper functions
+// ----------------------------------------------------------------------
 
-  void VersionTester ::
-    connectPorts()
-  {
+void VersionTester ::connectPorts() {
     // Connect special input ports
 
-    this->connect_to_cmdIn(
-      0,
-      this->component.get_cmdIn_InputPort(0)
-    );
+    this->connect_to_cmdIn(0, this->component.get_cmdIn_InputPort(0));
 
     // Connect special output ports
 
-    this->component.set_cmdRegOut_OutputPort(
-      0,
-      this->get_from_cmdRegOut(0)
-    );
+    this->component.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
 
-    this->component.set_cmdResponseOut_OutputPort(
-      0,
-      this->get_from_cmdResponseOut(0)
-    );
+    this->component.set_cmdResponseOut_OutputPort(0, this->get_from_cmdResponseOut(0));
 
-    this->component.set_logOut_OutputPort(
-      0,
-      this->get_from_logOut(0)
-    );
+    this->component.set_logOut_OutputPort(0, this->get_from_logOut(0));
 
-    this->component.set_logTextOut_OutputPort(
-      0,
-      this->get_from_logTextOut(0)
-    );
+    this->component.set_logTextOut_OutputPort(0, this->get_from_logTextOut(0));
 
-    this->component.set_timeCaller_OutputPort(
-      0,
-      this->get_from_timeCaller(0)
-    );
+    this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
 
-    this->component.set_tlmOut_OutputPort(
-      0,
-      this->get_from_tlmOut(0)
-    );
+    this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
 
     // Connect typed input ports
 
-    this->connect_to_getVersion(
-      0,
-      this->component.get_getVersion_InputPort(0)
-    );
-/*
-    this->connect_to_run(
-      0,
-      this->component.get_run_InputPort(0)
-    );
-*/
-    this->connect_to_setVersion(
-      0,
-      this->component.get_setVersion_InputPort(0)
-    );
-  }
+    this->connect_to_getVersion(0, this->component.get_getVersion_InputPort(0));
+    /*
+        this->connect_to_run(
+          0,
+          this->component.get_run_InputPort(0)
+        );
+    */
+    this->connect_to_setVersion(0, this->component.get_setVersion_InputPort(0));
+}
 
-  void VersionTester ::
-    initComponents()
-  {
+void VersionTester ::initComponents() {
     this->init();
     this->component.init(VersionTester::TEST_INSTANCE_ID);
-  }
-
 }
+
+}  // namespace Svc

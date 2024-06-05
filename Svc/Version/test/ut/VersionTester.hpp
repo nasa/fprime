@@ -7,87 +7,79 @@
 #ifndef Svc_VersionTester_HPP
 #define Svc_VersionTester_HPP
 
-#include "Svc/Version/VersionGTestBase.hpp"
 #include "Svc/Version/Version.hpp"
+#include "Svc/Version/VersionGTestBase.hpp"
 
 namespace Svc {
 
-  class VersionTester :
-    public VersionGTestBase
-  {
+class VersionTester : public VersionGTestBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
 
-    public:
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const FwSizeType MAX_HISTORY_SIZE = 100;
 
-      // ----------------------------------------------------------------------
-      // Constants
-      // ----------------------------------------------------------------------
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
-      // Maximum size of histories storing events, telemetry, and port outputs
-      static const FwSizeType MAX_HISTORY_SIZE = 100;
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // Instance ID supplied to the component instance under test
-      static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+    //! Construct object VersionTester
+    VersionTester();
 
-    public:
+    //! Destroy object VersionTester
+    ~VersionTester();
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Construct object VersionTester
-      VersionTester();
+    //! test startup EVR
+    void test_startup();
 
-      //! Destroy object VersionTester
-      ~VersionTester();
+    //! test enable command
+    void test_enable();
 
-    public:
+    //! test version command
+    void test_versions();
+    //! test all commands
+    void test_commands();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! test get version
+    void test_getVer();
+    //! test set version
+    void test_setVer(bool is_enabled);
+    //! test all ports
+    void test_ports();
+    // clear history
+    void clear_all();
 
-      //! test startup EVR
-      void test_startup();
-      
-      //! test enable command
-      void test_enable();
+  private:
+    // ----------------------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------------------
 
-      //! test version command
-      void test_versions();
-      //! test all commands
-      void test_commands();
+    //! Connect ports
+    void connectPorts();
 
-      //! test get version
-      void test_getVer();
-      //! test set version
-      void test_setVer(bool is_enabled);
-      //!test all ports
-      void test_ports();
-      //clear history
-      void clear_all();
-    private:
+    //! Initialize components
+    void initComponents();
 
-      // ----------------------------------------------------------------------
-      // Helper functions
-      // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
 
-      //! Connect ports
-      void connectPorts();
+    //! The component under test
+    Version component;
+};
 
-      //! Initialize components
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Member variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      Version component;
-
-  };
-
-}
+}  // namespace Svc
 
 #endif

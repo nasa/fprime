@@ -7,12 +7,7 @@ module Svc {
         ENABLED = 1 @< verbosity enabled
     }
     
-    @ An enumeration for version status
-    enum VersionStatus {
-        OK = 0 @< Version was good
-        FAILURE = 1 @< Failure to get version
-    }
-
+   
     @ An enumeration for Version Type
     enum VersionType {
         PROJECT = 0 @< project version
@@ -22,19 +17,11 @@ module Svc {
         ALL = 4 @< all above versions
     }
 
-   
-    @ Port for setting and getting Versions
-    port Version(
-             version_id: VersionCfg.VersionEnum @< The entry to access
-             ref version_string: string @< The value to be passed
-             ref status: VersionStatus @< The command response argument
-             )
-    
     @Data Structure for custom version Tlm
     struct CustomVersionDb {
         version_enum: VersionCfg.VersionEnum @<enumeration/name of the custom version
         version_value: string size 80  @< string containing custom version
-        version_status : VersionStatus @< status of the custom version
+        version_status : Svc.VersionStatus @< status of the custom version
     }
 
     passive component Version {
