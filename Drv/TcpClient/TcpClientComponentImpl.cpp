@@ -42,8 +42,13 @@ IpSocket& TcpClientComponentImpl::getSocketHandler() {
     return m_socket;
 }
 
-Fw::Buffer TcpClientComponentImpl::getBuffer() {
-    return allocate_out(0, 1024);
+// Define a constant for the default buffer size
+static const size_t DEFAULT_BUFFER_SIZE = 1024;
+
+// Modify the function signature to accept the buffer size as an argument
+Fw::Buffer TcpClientComponentImpl::getBuffer(size_t bufferSize = DEFAULT_BUFFER_SIZE) {
+    // Allocate the buffer with the specified size
+    return allocate_out(0, bufferSize);
 }
 
 void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
