@@ -6,6 +6,8 @@
 #
 ####
 add_custom_target("${FPRIME_CURRENT_MODULE}")
+
+######## File Stub ########
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp"
@@ -39,6 +41,16 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/File Os_File_Test_Stub)
 register_fprime_ut(StubFileTest)
+
+######## Mutex Stub ########
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp"
+)
+register_fprime_module(Os_Mutex_Stub)
+register_fprime_implementation(Os/Mutex Os_Mutex_Stub)
+
+#### Mutex Stub Testing ####
 
 
 #### Task Stub Testing ####
