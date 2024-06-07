@@ -202,8 +202,8 @@ namespace Svc {
     Svc::SendFileResponse DpCatalogTester ::
         from_fileOut_handler(
             NATIVE_INT_TYPE portNum,
-            const Svc::SendFileRequestPortStrings::StringSize100& sourceFileName,
-            const Svc::SendFileRequestPortStrings::StringSize100& destFileName,
+            const Fw::StringBase& sourceFileName,
+            const Fw::StringBase& destFileName,
             U32 offset,
             U32 length
         )

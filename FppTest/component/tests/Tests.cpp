@@ -48,14 +48,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, SerialPortTest, SerialPortTestImplementa
 
 // String tests
 using StringTestImplementations =
-    ::testing::Types<StringArgsPortStrings::StringSize80, StringArgsPortStrings::StringSize100>;
+    ::testing::Types<FppTest::Types::String1, FppTest::Types::String2>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(Array, StringTest, StringTestImplementations);
-
-template <>
-U32 FppTest::String::getSize<StringArgsPortStrings::StringSize100>() {
-    return 100;
-}
 
 // Command tests
 using CommandTestImplementations = ::testing::Types<FppTest::Types::NoParams,

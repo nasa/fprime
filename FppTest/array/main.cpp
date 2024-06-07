@@ -14,12 +14,11 @@
 #include "FppTest/array/StringArrayAc.hpp"
 #include "FppTest/array/StructArrayAc.hpp"
 #include "FppTest/array/Uint32ArrayArrayAc.hpp"
-#include "FppTest/array/String100ArrayAc.hpp"
-
 #include "FppTest/typed_tests/ArrayTest.hpp"
 #include "FppTest/typed_tests/StringTest.hpp"
 #include "FppTest/utils/Utils.hpp"
-
+#include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 #include "STest/Random/Random.hpp"
 #include "gtest/gtest.h"
 
@@ -56,13 +55,26 @@ void FppTest::Array::setTestVals<Enum>(E (&a)[Enum::SIZE]) {
     }
 }
 
+static char stringDefaultValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
+
+template<>
+void FppTest::Array::setDefaultVals<String>
+    (Fw::ExternalString (&a)[::String::SIZE]) {
+    for (U32 i = 0; i < ::String::SIZE; i++) {
+        char *const buffer = &stringDefaultValsBuffer[i][0];
+        a[i].setBuffer(buffer, ::String::ELEMENT_BUFFER_SIZE);
+    }
+}
+
+static char stringTestValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
+
 template<>
 void FppTest::Array::setTestVals<String>
-    (::String::StringSize80 (&a)[::String::SIZE]) {
-    char buf[80];
+    (Fw::ExternalString (&a)[::String::SIZE]) {
     for (U32 i = 0; i < ::String::SIZE; i++) {
-        FppTest::Utils::setString(buf, sizeof(buf));
-        a[i] = buf;
+        char *const buffer = &stringTestValsBuffer[i][0];
+        a[i].setBuffer(buffer, ::String::ELEMENT_BUFFER_SIZE);
+        FppTest::Utils::setString(buffer, ::String::ELEMENT_BUFFER_SIZE, 1);
     }
 }
 
@@ -97,7 +109,7 @@ Enum FppTest::Array::getMultiElementConstructedArray<Enum>
 
 template<>
 ::String FppTest::Array::getMultiElementConstructedArray<::String>
-    (::String::StringSize80 (&a)[::String::SIZE]) {
+    (Fw::ExternalString (&a)[::String::SIZE]) {
         return ::String(a[0], a[1], a[2]);
 }
 
@@ -116,11 +128,11 @@ Uint32Array FppTest::Array::getMultiElementConstructedArray<Uint32Array>
 // Specializations for serialized size
 template <>
 U32 FppTest::Array::getSerializedSize<::String>
-    (::String::StringSize80 (&a)[::String::SIZE]) {
+    (Fw::ExternalString (&a)[::String::SIZE]) {
     U32 serializedSize = 0;
 
     for (U32 i = 0; i < ::String::SIZE; i++) {
-        serializedSize += a[i].length() + sizeof(FwBuffSizeType);   
+        serializedSize += a[i].serializedSize();
     }
 
     return serializedSize;
@@ -128,15 +140,10 @@ U32 FppTest::Array::getSerializedSize<::String>
 
 // Instantiate string tests for arrays
 using StringTestImplementations = ::testing::Types<
-    String::StringSize80,
-    String100::StringSize100
+    Fw::StringTemplate<80>,
+    Fw::StringTemplate<100>
 >;
 INSTANTIATE_TYPED_TEST_SUITE_P(Array, StringTest, StringTestImplementations);
-
-template<>
-U32 FppTest::String::getSize<String100::StringSize100>() {
-    return 100;
-}
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
