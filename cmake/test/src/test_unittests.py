@@ -137,7 +137,7 @@ def test_unittest_module_ut_info(UT_BUILD):
         "Telemetry.fppi",
         "CommandInterface.fppi",
         "ChannelInterface.fppi",
-        "EventsInterface.fppi"
+        "EventsInterface.fppi",
     ]
     actual_ac = [Path(source).name for source in ac_sources]
     assert sorted(expected_ac) == sorted(
