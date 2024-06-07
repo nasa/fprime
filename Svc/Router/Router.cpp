@@ -4,10 +4,10 @@
 // \brief  cpp file for Router component implementation class
 // ======================================================================
 
-#include "Fw/Logger/Logger.hpp"
-#include "Fw/Com/ComPacket.hpp"
 #include "Svc/Router/Router.hpp"
 #include "FpConfig.hpp"
+#include "Fw/Com/ComPacket.hpp"
+#include "Fw/Logger/Logger.hpp"
 
 namespace Svc {
 
@@ -39,7 +39,7 @@ void Router ::bufferIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer
 
     // Process the packet
     if (status == Fw::FW_SERIALIZE_OK) {
-        U8 *const packetData = packetBuffer.getData();
+        U8* const packetData = packetBuffer.getData();
         const U32 packetSize = packetBuffer.getSize();
         switch (packetType) {
             // Handle a command packet
@@ -49,15 +49,11 @@ void Router ::bufferIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer
                 // Copy the contents of the packet buffer into the com buffer
                 status = com.setBuff(packetData, packetSize);
                 if (status == Fw::FW_SERIALIZE_OK) {
-                    // Review Note: Deframer did not check if the output port was connected, should it?
                     // Send the com buffer
                     commandOut_out(0, com, 0);
-                }
-                else {
-                    Fw::Logger::logMsg(
-                        "[ERROR] Serializing com buffer failed with status %d\n",
-                        status
-                    );
+                    // REVIEW NOTE: Deframer did not check if the output port was connected, should it?
+                } else {
+                    Fw::Logger::logMsg("[ERROR] Serializing com buffer failed with status %d\n", status);
                 }
                 break;
             }
@@ -82,27 +78,20 @@ void Router ::bufferIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer
             default:
                 break;
         }
-    }
-    else {
-        Fw::Logger::logMsg(
-            "[ERROR] Deserializing packet type failed with status %d\n",
-            status
-        );
+    } else {
+        Fw::Logger::logMsg("[ERROR] Deserializing packet type failed with status %d\n", status);
     }
 
     if (deallocate) {
         // Deallocate the packet buffer
         bufferDeallocate_out(0, packetBuffer);
     }
-
 }
 
-void Router ::cmdResponseIn_handler(
-    NATIVE_INT_TYPE portNum,
-    FwOpcodeType opcode,
-    U32 cmdSeq,
-    const Fw::CmdResponse& response
-) {
+void Router ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
+                                    FwOpcodeType opcode,
+                                    U32 cmdSeq,
+                                    const Fw::CmdResponse& response) {
     // Nothing to do
 }
 }  // namespace Svc

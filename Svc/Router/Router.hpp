@@ -32,18 +32,17 @@ class Router : public RouterComponentBase {
     //! Handler implementation for bufferIn
     //! Receiving Fw::Buffer from Deframer
     void bufferIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
-                          Fw::Buffer& packetBuffer      //!< The packet buffer
+                          Fw::Buffer& packetBuffer  //!< The packet buffer
                           ) override;
 
     // ! Handler for input port cmdResponseIn
     // ! This is a no-op because Router does not need to handle command responses
     // ! but the port must be connected
-    void cmdResponseIn_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
-        FwOpcodeType opcode, //!< The command opcode
-        U32 cmdSeq, //!< The command sequence number
-        const Fw::CmdResponse& response //!< The command response
-    ) override;
+    void cmdResponseIn_handler(NATIVE_INT_TYPE portNum,         //!< The port number
+                               FwOpcodeType opcode,             //!< The command opcode
+                               U32 cmdSeq,                      //!< The command sequence number
+                               const Fw::CmdResponse& response  //!< The command response
+                               ) override;
 };
 }  // namespace Svc
 
