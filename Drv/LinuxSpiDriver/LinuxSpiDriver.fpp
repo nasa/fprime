@@ -3,7 +3,7 @@ module Drv {
   passive component LinuxSpiDriver {
 
     # ----------------------------------------------------------------------
-    # General ports
+    # Interfaces
     # ----------------------------------------------------------------------
     
     include "../../Drv/Interfaces/SpiInterface.fppi"
