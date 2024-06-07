@@ -69,14 +69,6 @@ class Deframer :
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler for input port cmdResponseIn
-    void cmdResponseIn_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
-        FwOpcodeType opcode, //!< The command opcode
-        U32 cmdSeq, //!< The command sequence number
-        const Fw::CmdResponse& response //!< The command response
-    );
-
     //! Handler implementation for framedIn
     void framedIn_handler(
         const NATIVE_INT_TYPE portNum, //!< The port number

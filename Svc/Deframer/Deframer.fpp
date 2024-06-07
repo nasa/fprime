@@ -31,44 +31,21 @@ module Svc {
     output port framedPoll: Drv.ByteStreamPoll
 
     # ----------------------------------------------------------------------
-    # Memory management for deframing and for sending file packets
+    # Memory management for deframing
     # ----------------------------------------------------------------------
 
     @ Port for allocating Fw::Buffer objects from a buffer manager.
     @ When Deframer invokes this port, it receives a packet buffer PB and
-    @ takes ownership of it. It uses PB internally for deframing.
-    @ Then one of two things happens:
-    @
-    @ 1. PB contains a file packet, which Deframer sends on bufferOut.
-    @    In this case ownership of PB passes to the receiver.
-    @
-    @ 2. PB does not contain a file packet, or bufferOut is unconnected.
-    @    In this case Deframer deallocates PB on bufferDeallocate.
+    @ takes ownership of it. Ownership is then delegated to the Router
     output port bufferAllocate: Fw.BufferGet
 
-    @ Port for sending file packets (case 1 above).
-    @ The file packets are wrapped in Fw::Buffer objects allocated with
-    @ bufferAllocate.
-    @ Ownership of the Fw::Buffer passes to the receiver, which is
-    @ responsible for the deallocation.
+    # ----------------------------------------------------------------------
+    # Sending packets to Router or subsequent Deframer
+    # ----------------------------------------------------------------------
+
+    @ Port for sending deframed buffers out to a router, or another deframer
+    @ for chained deframing
     output port bufferOut: Fw.BufferSend
-
-    @ Port for deallocating temporary buffers allocated with
-    @ bufferAllocate (case 2 above). Deallocation occurs here
-    @ when there is nothing to send on bufferOut.
-    output port bufferDeallocate: Fw.BufferSend
-
-    # ----------------------------------------------------------------------
-    # Sending command packets and receiving command responses
-    # ----------------------------------------------------------------------
-
-    @ Port for sending command packets as Com buffers.
-    output port comOut: Fw.Com
-
-    @ Port for receiving command responses from a command dispatcher.
-    @ Invoking this port does nothing. The port exists to allow the matching
-    @ connection in the topology.
-    sync input port cmdResponseIn: Fw.CmdResponse
 
   }
 
