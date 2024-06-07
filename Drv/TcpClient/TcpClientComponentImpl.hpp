@@ -130,7 +130,7 @@ class TcpClientComponentImpl : public TcpClientComponentBase, public SocketReadT
     Drv::TcpClientSocket m_socket; //!< Socket implementation
 
     // Member variable to store the buffer size
-    size_t m_allocation_size;
+    FwSizeType m_allocation_size;
 };
 
 }  // end namespace Drv
