@@ -4,6 +4,22 @@
 #include <limits>
 
 char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 num) {
+    // Check for size support
+    FW_ASSERT(std::numeric_limits<U32>::max() <= std::numeric_limits<FwSizeType>::max());
+    char* returned = Fw::StringUtils::string_copy(destination, source, static_cast<FwSizeType>(num));
+    return returned;
+}
+
+U32 Fw::StringUtils::string_length(const CHAR* source, U32 max_len) {
+    // Check for size support
+    FW_ASSERT(std::numeric_limits<U32>::max() <= std::numeric_limits<FwSizeType>::max());
+    FwSizeType returned = Fw::StringUtils::string_length(source, static_cast<FwSizeType>(max_len));
+    // Range checking for type remapping
+    FW_ASSERT(returned <= static_cast<FwSizeType>(std::numeric_limits<U32>::max()));
+    return returned;
+}
+
+char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSizeType num) {
     // Handle self-copy and 0 bytes copy
     if (destination == source || num == 0) {
         return destination;
@@ -20,7 +36,7 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 nu
     return returned;
 }
 
-U32 Fw::StringUtils::string_length(const CHAR* source, U32 max_len) {
+FwSizeType Fw::StringUtils::string_length(const CHAR* source, FwSizeType max_len) {
     U32 length = 0;
     FW_ASSERT(source != nullptr);
     for (length = 0; length < max_len; length++) {

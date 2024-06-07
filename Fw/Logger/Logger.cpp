@@ -6,10 +6,11 @@
  * This file adds in support to the core 'Fw' package, to separate it from Os and other loggers, and
  * allow the architect of the system to select which core framework logging should be used. 
  */
-
+#include <limits>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Fw/Types/Assert.hpp>
 
 namespace Fw {
 
@@ -46,8 +47,8 @@ void Logger::logMsg(const char* fmt, POINTER_CAST a0, POINTER_CAST a1,
     );
 
     // Check that there are no use of floats
-    FW_ASSERT(Fw::StringUtils::substring_find(fmt, Fw::StringUtils::string_length(fmt, std::numeric_limits<FwSignedSizeType>::max()), "%f", sizeof "%f") == -1);
-    FW_ASSERT(Fw::StringUtils::substring_find(fmt, Fw::StringUtils::string_length(fmt, std::numeric_limits<FwSignedSizeType>::max()), "%g", sizeof "%g") == -1);
+    FW_ASSERT(Fw::StringUtils::substring_find(fmt, Fw::StringUtils::string_length(fmt, std::numeric_limits<FwSizeType>::max()), "%f", sizeof "%f") == -1);
+    FW_ASSERT(Fw::StringUtils::substring_find(fmt, Fw::StringUtils::string_length(fmt, std::numeric_limits<FwSizeType>::max()), "%g", sizeof "%g") == -1);
     Logger::log(fmt, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
 }
 
