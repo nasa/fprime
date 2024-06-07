@@ -6,7 +6,7 @@ module Drv {
     # General ports
     # ----------------------------------------------------------------------
     
-    include "../../Svc/Interfaces/SpiInterface.fppi"
+    include "../../Drv/Interfaces/SpiInterface.fppi"
 
     # ----------------------------------------------------------------------
     # Special ports
