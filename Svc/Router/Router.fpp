@@ -5,19 +5,13 @@ module Svc {
         @ Receiving Fw::Buffer from Deframer
         guarded input port bufferIn: Fw.BufferSend
 
-        @ Port for sending file packets.
-        @ The file packets are wrapped in Fw::Buffer objects allocated with
-        @ bufferAllocate.
-        @ Ownership of the Fw::Buffer passes to the receiver, which is
-        @ responsible for the deallocation.
+        @ Port for sending file packets as Fw::Buffer (ownership passed to receiver)
         output port fileOut: Fw.BufferSend
 
-        @ Port for sending command packets as Com buffers.
+        @ Port for sending command packets as Fw::ComBuffers
         output port commandOut: Fw.Com
 
-        @ Port for deallocating temporary buffers allocated with
-        @ bufferAllocate. Deallocation occurs here
-        @ when there is nothing to send on bufferOut.
+        @ Port for deallocating buffers
         output port bufferDeallocate: Fw.BufferSend
 
         @ Port for receiving command responses from a command dispatcher.
