@@ -32,7 +32,7 @@ class Router : public RouterComponentBase {
     //! Handler implementation for bufferIn
     //! Receiving Fw::Buffer from Deframer
     void bufferIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
-                          Fw::Buffer& fwBuffer      //!< The buffer
+                          Fw::Buffer& packetBuffer      //!< The packet buffer
                           ) override;
 
     // ! Handler for input port cmdResponseIn

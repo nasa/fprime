@@ -23,13 +23,13 @@ Router ::~Router() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void Router ::bufferIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void Router ::bufferIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer) {
     // Read the packet type from the packet buffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     {
-        Fw::SerializeBufferBase& serial = fwBuffer.getSerializeRepr();
-        status = serial.setBuffLen(fwBuffer.getSize());
+        Fw::SerializeBufferBase& serial = packetBuffer.getSerializeRepr();
+        status = serial.setBuffLen(packetBuffer.getSize());
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         status = serial.deserialize(packetType);
     }
@@ -39,8 +39,8 @@ void Router ::bufferIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
 
     // Process the packet
     if (status == Fw::FW_SERIALIZE_OK) {
-        U8 *const packetData = fwBuffer.getData();
-        const U32 packetSize = fwBuffer.getSize();
+        U8 *const packetData = packetBuffer.getData();
+        const U32 packetSize = packetBuffer.getSize();
         switch (packetType) {
             // Handle a command packet
             case Fw::ComPacket::FW_PACKET_COMMAND: {
@@ -69,10 +69,10 @@ void Router ::bufferIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
                     // Shift the packet buffer to skip the packet type
                     // The FileUplink component does not expect the packet
                     // type to be there.
-                    fwBuffer.setData(packetData + sizeof(packetType));
-                    fwBuffer.setSize(packetSize - sizeof(packetType));
+                    packetBuffer.setData(packetData + sizeof(packetType));
+                    packetBuffer.setSize(static_cast<U32>(packetSize - sizeof(packetType)));
                     // Send the packet buffer
-                    fileOut_out(0, fwBuffer);
+                    fileOut_out(0, packetBuffer);
                     // Transfer ownership of the buffer to the receiver
                     deallocate = false;
                 }
@@ -92,7 +92,7 @@ void Router ::bufferIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
 
     if (deallocate) {
         // Deallocate the packet buffer
-        bufferDeallocate_out(0, fwBuffer);
+        bufferDeallocate_out(0, packetBuffer);
     }
 
 }
