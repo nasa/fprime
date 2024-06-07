@@ -33,7 +33,7 @@ SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
                                                  FwSizeType buffer_size) {
 
     // Check that ensures the configured buffer size fits within the limits fixed-width type, U32                                                
-    FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), buffer_size);                                                   
+    FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(buffer_size));                                                   
     m_allocation_size = buffer_size; // Store the buffer size
     return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
