@@ -29,7 +29,7 @@ SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
                                                  const U16 port,
                                                  const U32 send_timeout_seconds,
                                                  const U32 send_timeout_microseconds,
-                                                 size_t buffer_size) {
+                                                 FwSizeType buffer_size) {
 
     m_allocation_size = buffer_size; // Store the buffer size
     return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
