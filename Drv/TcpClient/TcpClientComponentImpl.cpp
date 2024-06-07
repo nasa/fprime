@@ -28,7 +28,10 @@ TcpClientComponentImpl::TcpClientComponentImpl(const char* const compName)
 SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
                                                  const U16 port,
                                                  const U32 send_timeout_seconds,
-                                                 const U32 send_timeout_microseconds) {
+                                                 const U32 send_timeout_microseconds,
+                                                 size_t buffer_size) {
+
+    m_allocation_size = buffer_size; // Store the buffer size
     return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
@@ -42,13 +45,8 @@ IpSocket& TcpClientComponentImpl::getSocketHandler() {
     return m_socket;
 }
 
-// Define a constant for the default buffer size
-static const size_t DEFAULT_BUFFER_SIZE = 1024;
-
-// Modify the function signature to accept the buffer size as an argument
-Fw::Buffer TcpClientComponentImpl::getBuffer(size_t bufferSize = DEFAULT_BUFFER_SIZE) {
-    // Allocate the buffer with the specified size
-    return allocate_out(0, bufferSize);
+Fw::Buffer TcpClientComponentImpl::getBuffer() {
+    return allocate_out(0, m_allocation_size);
 }
 
 void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
