@@ -124,8 +124,8 @@ void configureTopology() {
     dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
 
     // Framer and Deframer components need to be passed a protocol handler
-    downlink.setup(framing);
-    uplink.setup(deframing);
+    framer.setup(framing);
+    deframer.setup(deframing);
 
     Fw::FileNameString dpDir("./DpCat");
 

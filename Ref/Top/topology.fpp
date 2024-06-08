@@ -32,7 +32,7 @@ module Ref {
     instance cmdDisp
     instance cmdSeq
     instance comm
-    instance downlink
+    instance deframer
     instance eventLogger
     instance fatalAdapter
     instance fatalHandler
@@ -40,6 +40,7 @@ module Ref {
     instance fileManager
     instance fileUplink
     instance fileUplinkBufferManager
+    instance framer
     instance posixTime
     instance pingRcvr
     instance prmDb
@@ -52,7 +53,7 @@ module Ref {
     instance staticMemory
     instance textLogger
     instance typeDemo
-    instance uplink
+    instance router
     instance systemResources
     instance dpCat
     instance dpMgr
@@ -83,13 +84,13 @@ module Ref {
 
     connections Downlink {
 
-      tlmSend.PktSend -> downlink.comIn
-      eventLogger.PktSend -> downlink.comIn
-      fileDownlink.bufferSendOut -> downlink.bufferIn
+      tlmSend.PktSend -> framer.comIn
+      eventLogger.PktSend -> framer.comIn
+      fileDownlink.bufferSendOut -> framer.bufferIn
 
-      downlink.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
-      downlink.framedOut -> comm.$send
-      downlink.bufferDeallocate -> fileDownlink.bufferReturn
+      framer.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
+      framer.framedOut -> comm.$send
+      framer.bufferDeallocate -> fileDownlink.bufferReturn
 
       comm.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
 
@@ -146,15 +147,18 @@ module Ref {
     connections Uplink {
 
       comm.allocate -> staticMemory.bufferAllocate[Ports_StaticMemory.uplink]
-      comm.$recv -> uplink.framedIn
-      uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
+      comm.$recv -> deframer.framedIn
+      deframer.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
 
-      uplink.comOut -> cmdDisp.seqCmdBuff
-      cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
+      deframer.bufferOut -> router.bufferIn
 
-      uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      uplink.bufferOut -> fileUplink.bufferSendIn
-      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+      router.commandOut -> cmdDisp.seqCmdBuff
+      router.fileOut -> fileUplink.bufferSendIn
+      router.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+
+      cmdDisp.seqCmdStatus -> router.cmdResponseIn
+
+      deframer.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
     }
