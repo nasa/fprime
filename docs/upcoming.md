@@ -12,11 +12,9 @@ The F´  team conducts a number of events to build familiarity with the product
 IEEE SMC-IT/SCC Conference in Mountain View, CA, July 16-17
  
 The F´ tutorial is intended to help new users familiarize themselves with the F´ framework and tool suite. Instructors will walk through the [LED Blinker Tutorial](https://fprime-community.github.io/fprime-workshop-led-blinker), covering the following:
-- Software Modeling using FPP, the domain specific language supporting F´
+- Software Modeling using the F Prime Prime (FPP) Domain Specific Language
 - Component Implementation
-- Unit Testing
-- Cross-compiling onto a small single board computer provided in class
-- System Integration and Test using the F Prime Ground Data System
+- Deploying to hardware and using the F Prime ground system
 
 The tutorial itself is free, however; conference registration is required to attend the tutorial. Advance enrollment is requested to confirm a seat. If you are interested in participating or have any questions, please email [fprime@jpl.nasa.gov](mailto:fprime@jpl.nasa.gov).
  
