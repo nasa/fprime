@@ -19,10 +19,10 @@
 namespace FppTest {
 
    namespace StateMachine {
-        typedef enum {
+        enum SmId {
             DEVICE1,
             DEVICE2,
-        } SmId;                           
+        };                          
     };
 
   //! \class SmTestComponentBase

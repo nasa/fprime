@@ -1,10 +1,9 @@
-locate port Svc.Sched at "../../Svc/Sched/Sched.fpp"
+
 module FppTest {
 
   @ A component for testing data product code gen
   active component SmTest {
 
-   
     # ----------------------------------------------------------------------
     # Types
     # ----------------------------------------------------------------------
@@ -18,11 +17,10 @@ module FppTest {
     async input port schedIn: Svc.Sched
 
     state machine DeviceSm
-    
+
     state machine instance device1: DeviceSm
     state machine instance device2: DeviceSm
-   
-
+  
   }
 
 }

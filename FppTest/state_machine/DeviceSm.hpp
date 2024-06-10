@@ -9,8 +9,8 @@
 #ifndef DEVICESM_H_
 #define DEVICESM_H_
 
-namespace Svc {
-  class SMEvents;
+namespace Fw {
+    class SMEvents;
 }
 
 namespace FppTest {
@@ -43,7 +43,7 @@ class DeviceSm {
     void * extension;
 
     void init();
-    void update(const Svc::SMEvents *e);
+    void update(const Fw::SMEvents *e);
 
 };
 

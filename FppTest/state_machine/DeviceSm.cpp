@@ -9,7 +9,7 @@
 #include "stdio.h"
 #include "assert.h"
 #include "SMEvents.hpp"
-#include "DeviceSm.h"
+#include "DeviceSm.hpp"
 
 
 void FppTest::DeviceSm::init()
@@ -19,7 +19,7 @@ void FppTest::DeviceSm::init()
 }
 
 
-void FppTest::DeviceSm::update(const Svc::SMEvents *e)
+void FppTest::DeviceSm::update(const Fw::SMEvents *e)
 {
     switch (this->state) {
     

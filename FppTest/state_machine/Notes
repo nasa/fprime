@@ -1,0 +1,3 @@
+fprime-util purge
+fprime-util generate --ut -DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON
+fprime-util check

@@ -29,14 +29,14 @@ SmTest ::~SmTest() {}
 // ----------------------------------------------------------------------
 
 void SmTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
-    Svc::SMEvents event;
+    Fw::SMEvents event;
     event.seteventSignal(DeviceSm::RTI_SIG);
 
-    event.setsmId(StateMachine::DEVICE1);
-    sendEvents_internalInterfaceInvoke(event);
+    event.setsmId(DEVICE1);
+    stateMachineInvoke(event);
 
-    event.setsmId(StateMachine::DEVICE2);
-    sendEvents_internalInterfaceInvoke(event);
+    event.setsmId(DEVICE2);
+    stateMachineInvoke(event);
 
 }
 
