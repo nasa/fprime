@@ -4,37 +4,39 @@ The F´  team conducts a number of events to build familiarity with the product
 
 | Date                  | Event                                                                          | Location                                         |
 |-----------------------|--------------------------------------------------------------------------------|--------------------------------------------------|
-| September 12-13, 2023 | [F´ Tutorial](#f-tutorial)                                                     | Georgia Tech, Atlanta Georgia                    |
-| October 16-18, 2023   | [JPL Flight Software/F´ Workshop](#flight-softwaref-developer-workshop-at-jpl) | NASA Jet Propulsion Laboratory, Pasadena, CA     |
-| April 23-25, 2024     | [F´ Tutorial](#f-tutorial)                                                     | CubeSat Developers Workshop, San Luis Obispo, CA |
+| July 16-17, 2024 | [F´ Tutorial](#f-tutorial)                                                     | IEEE SMC-IT/SCC Conference                    |
+| October 21-23, 2024   | [JPL Flight Software/F´ Workshop](#flight-softwaref-developer-workshop-at-jpl) | NASA Jet Propulsion Laboratory, Pasadena, CA     |
 
 
 ## F´ Tutorial
-
-The F´ tutorial is intended to help new users familiarize themselves with the F´ framework and tool suite. Instructors will walk through the [LED Blinker Tutorial](https://fprime-community.github.io/fprime-workshop-led-blinker), covering the following:
-- Software Modeling using FPP, the domain specific language supporting F´
-- Component Implementation
-- Unit Testing
-- Cross-compiling onto a small single board computer provided in class
-- System Integration and Test using the F Prime Ground Data System
-
-The tutorial itself is free, however registration is required when offered as part of a conference.
+IEEE SMC-IT/SCC Conference in Mountain View, CA, July 16-17
  
+F Prime is a free, open-source and flight-proven flight software development ecosystem developed at the NASA Jet Propulsion Laboratory that is tailored for small-scale systems such as CubeSats, SmallSats, and instruments. F Prime comprises several elements: (1) an architectural approach that decomposes flight software into discrete components with well-defined interfaces that communicate over ports; (2) a C++ framework providing core capabilities such as message queues and an OS abstraction layer; (3) a growing collection of generic components for basic features such as command dispatch, event logging, and memory management that can be incorporated without modification into new flight software projects; and (4) a suite of tools that streamline key phases of flight software development from design through integrated testing.
+Software Modeling using the F Prime Prime (FPP) Domain Specific Language
+Component Implementation
+
+Deploying to hardware and using the F Prime ground system
+
+Conference registration is required to attend the tutorial. Advance enrollment is requested to confirm a seat. If you are interested in participating or have any questions, please email [fprime@jpl.nasa.gov](mailto:fprime@jpl.nasa.gov).
+
  
 ## Flight Software/F´ Developer Workshop at JPL
  
-This concentrated 3-day workshop covers fundamentals of flight software architecture, design, general programming practices and verification. The workshop also includes a tutorial on the F´ open source flight software product line, which serves as the basis for a hands-on coding exercise emphasizing key concepts discussed in the workshop.
+Flight Software/F Prime Developer Workshop at JPL, October 21 – 23
  
-**Topics Covered:**
-- Flight Software System Engineering
-- Flight Software Architecture Principles
-- Flight Software Design
-- Coding Style
-- Basic Data Structures
-- Unit Testing
-- Integrated Testing with a Ground Data System
-- Software Development Process
-- Lab assignments featuring the F Prime Flight Software Product Line
+This concentrated 3-day workshop covers fundamentals of flight software architecture, design, general programming practices and verification. The workshop also includes a tutorial on the F Prime open source flight software product line, which serves as the basis for a hands-on coding exercise emphasizing key concepts discussed in the workshop.
  
-The workshop is free, however seating is limited and by invitation only.
+Topics Covered:
+    - Flight Software System Engineering
+    - Flight Software Architecture Principles
+    - Flight Software Design
+    - Coding Style
+    - Basic Data Structures
+    - Unit Testing
+    - Integrated Testing with a Ground Data System
+    - Software Development Process
+    - Lab assignments featuring the F Prime Flight Software Product Line
  
+The workshop is free, however seating is limited and by invitation only. To be considered for an invitation, please complete this [questionnaire](https://forms.gle/C74oBJ1ZcmzeXgbL7).
+ 
+Invitations will be issued based on availability and the information provided in the questionnaire. An initial set of invitations are expected to be issued late summer, with additional invitations issued later based on the number of participants confirmed at that point.
