@@ -104,7 +104,10 @@ def create_version_file_json(output_dir: str, framework_version: str, project_ve
     Create the version files using the provided name and path.
     """
     json_file = Path(output_dir) / "version.json.tmp"
-    json_obj = { "framework_version": framework_version, "project_version": project_version, "library_versions": lib_versions}
+    json_obj = {"framework_version": framework_version, 
+                "project_version": project_version, 
+                "library_versions": lib_versions
+                }
     with open(json_file, "w") as file:
         json.dump(json_obj, file)
 
