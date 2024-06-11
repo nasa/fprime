@@ -54,6 +54,29 @@ function(get_target_name TARGET_FILE_PATH)
 endfunction(get_target_name)
 
 ####
+# Function `setup_global_targets`:
+#
+# Loops through all targets registered and sets up the global target.
+####
+function(setup_global_targets)
+    # Get both normal and ut target lists
+    get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
+    get_property(UT_TARGETS GLOBAL PROPERTY FPRIME_UT_TARGET_LIST)
+
+    # Register targets
+    foreach(TARGET IN LISTS TARGETS)
+        setup_global_target("${TARGET}")
+    endforeach()
+    # Register targets specific to UT build
+    if (BUILD_TESTING)
+        foreach(TARGET IN LISTS UT_TARGETS)
+            setup_global_target("${TARGET}")
+        endforeach()
+    endif ()
+endfunction(setup_global_targets)
+
+
+####
 # Function `setup_global_target`:
 #
 # Setup a given target file in global scope. This also includes the target file once and thus must be called regardless

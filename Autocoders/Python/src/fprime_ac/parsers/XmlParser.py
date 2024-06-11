@@ -36,7 +36,7 @@ class XmlParser:
     def __init__(self, xml_file=None):
         self.__root = None
         #
-        if os.path.isfile(xml_file) == False:
+        if not os.path.isfile(xml_file):
             stri = "ERROR: Could not find specified XML file {}.".format(xml_file)
             raise OSError(stri)
 

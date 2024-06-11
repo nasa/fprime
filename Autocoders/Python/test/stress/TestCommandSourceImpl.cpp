@@ -8,12 +8,7 @@
 #include <Autocoders/Python/test/stress/TestCommandSourceImpl.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestCommandSourceImpl::TestCommandSourceImpl(const char* name) : Cmd::CommandTesterComponentBase(name)
-#else
-TestCommandSourceImpl::TestCommandSourceImpl() :
-        Cmd::CommandTesterComponentBase()
-#endif
 {
 }
 

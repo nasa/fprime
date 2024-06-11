@@ -16,7 +16,8 @@ module Drv {
     I2C_ADDRESS_ERR = 1 @< I2C address invalid
     I2C_WRITE_ERR = 2 @< I2C write failed
     I2C_READ_ERR = 3 @< I2C read failed
-    I2C_OTHER_ERR = 4 @< Other errors that don't fit
+    I2C_OPEN_ERR = 4 @< I2C driver failed to open device
+    I2C_OTHER_ERR = 5 @< Other errors that don't fit
   }
 
 }

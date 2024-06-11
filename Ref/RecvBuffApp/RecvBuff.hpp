@@ -10,7 +10,7 @@
 
 namespace Ref {
 
-  using RecvBuff = RecvBuffImpl;
+  typedef RecvBuffImpl RecvBuff;
 
 }
 

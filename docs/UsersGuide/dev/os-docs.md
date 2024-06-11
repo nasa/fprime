@@ -1,9 +1,21 @@
-# Operating Abstraction Layer
+# Operating System Abstraction Layer (OSAL)
 
-The framework provides OS services abstraction classes to allow developers to write code in a more portable fashion.
-Implementations of these classes are provided for Unix variants (POSIX), and Mac OS. Additional ports can be done by
-providing additional implementations as a new OS is added. This guide will walk through the critical files in this
-layer to enable developer understanding and give an overview for individuals seeking to port to a new OS.
+The framework incorporates an OSAL providing service abstraction classes of a fictitious operating system that can perform all the operations of a real operating system.
+This layer shows the user an abstraction of the common functionality provided by all real-time operating systems (RTEMS, VxWorks, Azure ThreadX, QNX, FreeRTOS, Zephyr,...) or not (Linux, macOS, WinCE,...). We find the following services:
+
+1. multitasking management with prioritization ;
+2. synchronization ;
+3. file management;
+4. message queues;
+5. communication; and
+6. timeout.
+
+OSAL provides each of these services by wrapping the concrete operating system entities it encapsulates in thin wrappers.
+This layer enables the development and testing of adaptable software systems that do not depend on any particular operating system, allowing development to be performed at the development workstation. It reduces the time and effort required for developers to migrate a software system from one operating system to another.
+
+Implementations of these classes are provided for Unix (POSIX) and Mac OS variants. Additional ports can be realized by
+providing additional implementations when a new operating system is added. This guide will walk through the critical files in this layer
+to allow developers to understand and provide an overview for those looking to port to a new operating system.
 
 This guide discusses the following:
 - [Tasks](#tasks)
@@ -23,7 +35,7 @@ Tasks are called threads under Unix variants, and tasks under other OSes. A
 developer may wish to start tasks to wait on an event or a resource that
 is not a port invocation. The Os task class definition can be found in
 **Os/OsTask.hpp**. The OS implementations are found in various
-subdirectories. Active components require use of tasks to implement their
+subdirectories. Active components require the use of tasks to implement their
 features. Table 23 describes the methods of the class.
 
 **Table 23.** Task method descriptions.
@@ -38,7 +50,7 @@ features. Table 23 describes the methods of the class.
 |                        | stackSize                                                                                                                                                                         | The size of the stack, in bytes.                                                                                                               |
 |                        | routine                                                                                                                                                                           | The function that will be called in the new task context.                                                                                      |
 |                        | arg                                                                                                                                                                               | An argument passed to the thread. The arg argument to the routine will be set to this value.                                                   |
-|                        | cpuAffinity                                                                                                                                                                       | In SMP systems, specify a processor core to run task. A value of -1 means no preference.                                                       |
+|                        | cpuAffinity                                                                                                                                                                       | In SMP systems, specify a processor core to run the task. A value of -1 means no preference.                                                       |
 | getIdentifier()        | Returns the task identifier passed in the start() function. Useful when you have a collection of tasks to iterate over.                                                           |                                                                                                                                                |
 | getOsIdentifier()      | Gets the Os Task ID. Useful for passive components.                                                                                                                               |                                                                                                                                                |
 | getRawHandle()         | Returns the task-handle owned by this task                                                                                                                                        |                                                                                                                                                |
@@ -106,7 +118,7 @@ message queues. Table 24 describes the methods.
 ## Interval Timer
 
 The class definition can be found in Os/IntervalTimer.hpp. An interval
-timer is a facility that starts and stops the measurement of passage of
+timer is a facility that starts and stops the measurement of the passage of
 time in the system. It is not an expiration timer that signals when it
 is complete. It is used to measure execution times of, or to timestamp,
 software activities. Table 25 provides the methods and their
@@ -125,7 +137,7 @@ descriptions.
 
 ## Watchdog Timer
 
-**Note:** this file implementation is not required for all OS adaptations.  Only those needing watchdog functionality.
+**Note:** This file implementation is not required for all OS adaptations.  Only those needing watchdog functionality.
 
 The class definition can be found in **Os/WatchdogTimer.hpp** A watchdog
 timer schedules a callback at the specified time in the future. It is a
@@ -154,7 +166,7 @@ the methods and their descriptions.
 The class definition can be found in Os/InterruptLock.hpp*.* An
 interrupt lock prevents interrupts from preempting code execution. It
 can be used as a very lightweight mutex on platforms that support
-interrupt locking, but should be used carefully as it is not subject to
+interrupt locking but should be used carefully as it is not subject to
 priorities like a conventional mutex. In addition, it defers interrupts
 that could be time critical, so the code executed between the locking
 and unlocking should be very short in duration. This is a portable
@@ -201,10 +213,9 @@ the methods and their descriptions.
 
 ## File System
 
-The file system OS classes found in **Os/FileSystem.hpp** contains the file system helper calls to create directories
-remove  directories etc.
+The file system OS classes found in **Os/FileSystem.hpp** contain the file system helper calls to create directories, remove directories, etc.
 
-**Note:** there is also the **Os/Directory.hpp** classes that allows users to stream directories.
+**Note:** There are also the **Os/Directory.hpp** classes that allow users to stream directories.
 
 ## Log
 

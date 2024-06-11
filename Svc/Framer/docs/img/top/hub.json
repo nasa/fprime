@@ -1,0 +1,63 @@
+{
+  "columns" : [
+    [
+      {
+        "instanceName" : "hub",
+        "inputPorts" : [],
+        "outputPorts" : [
+          {
+            "name" : "portOut",
+            "portNumbers" : [
+              0,
+              1
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "framer",
+        "inputPorts" : [
+          {
+            "name" : "comIn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : []
+      }
+    ]
+  ],
+  "connections" : [
+    [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ]
+  ]
+}

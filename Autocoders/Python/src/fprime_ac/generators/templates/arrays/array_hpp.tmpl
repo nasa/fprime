@@ -7,25 +7,16 @@
 // \author Auto-generated
 // \brief  hpp file for ${name}
 //
-// \copyright
-// Copyright (C) 2020 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// NOTE: this file was automatically generated
 //
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ======================================================================
 
-\#ifndef ${namespace}_${name}_HPP
-\#define ${namespace}_${name}_HPP
+
+\#ifndef ${namespace.upper().replace("::", "_")}_${name.upper()}_HPP_
+\#define ${namespace.upper().replace("::", "_")}_${name.upper()}_HPP_
 
 \#include "Fw/Types/String.hpp"
-\#include "Fw/Types/BasicTypes.hpp"
+\#include <FpConfig.hpp>
 \#include "Fw/Types/Serializable.hpp"
 #for $t in $include_headers:
 \#include <${t}>
@@ -40,8 +31,10 @@
 \#include <${t}>
 #end for
 
-#if $namespace
+#if $namespace_list != None
+ #for $namespace in $namespace_list
 namespace ${namespace} {
+ #end for
 #end if
 #if $comment
   //! $re.sub("\n *", "\n  //! ", $comment)
@@ -224,8 +217,10 @@ namespace ${namespace} {
 
   };
 
-#if $namespace
-}
+#if $namespace_list != None
+ #for $namespace in $reversed($namespace_list)
+} // end namespace $namespace
+ #end for
 #end if
 
 #endif

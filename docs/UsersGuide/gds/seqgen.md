@@ -1,7 +1,7 @@
 # Sequencing In F´
 
 F´ supports a very basic sequence format that allows for executing F´ commands at absolute times and at times relative
-to previous commands. The sequence uses the F´ dictionary to translate the human readable sequence file into a minimized
+to previous commands. The sequence uses the F´ dictionary to translate the human-readable sequence file into a minimized
 binary format for upload and running using the command sequencer.
 
 Compiling this sequence is done with the `fprime-seqgen` utility and can be run once uploaded by issuing the `*.CS_RUN`
@@ -16,7 +16,7 @@ file found here: [simple_sequence.seq](https://github.com/fprime-community/fprim
 ```
 A2015-075T22:32:40.123 cmdDisp.CMD_NO_OP
 ```
-**Note:** see [Time Details](#time-details) for more on time formats and time bases.
+**Note:** See [Time Details](#time-details) for more on time formats and time bases.
 
 Here an absolute command was chosen.  Times can be specified in an absolute or relative time format.  An absolute time
 starts with an `A` and specifies a calendar time. A relative command is specified starting with an `R`, which runs
@@ -27,13 +27,13 @@ R01:00:01.050 CMD_NO_OP_STRING "Awesome string!" ; And a nice comment too
 ```
 
 A list of these commands can be specified in a text file typically ending with the `.seq` extension.  Comments start
-with a ;. The example file above goes into greater explanation of the sample commands.
+with a ;. The example file above goes into a greater explanation of the sample commands.
 
 ## Compiling A Sample Sequence
 
 The `fprime-seqgen` command can compile the sequence into a binary format that F´ flight software can execute. To do
 this the user should provide a path to the flight software dictionary and a path to the text file discussed above.
-Below is an example on how to run the sample example sequence with the Ref dictionary. Remember to build first or the
+Below is an example of how to run the sample example sequence with the Ref dictionary. Remember to build first or the
 dictionary will not be generated.
 
 ```
@@ -43,7 +43,7 @@ fprime-seqgen fprime/Gds/examples/simple_sequence.seq -d fprime/Ref/build-artifa
 Here the output file is not specified, so it will be a new file in the same directory as the sequence but ending with
 the `.bin` extension.
 
-This binary file should be uploaded to the flight software.  Given limitations on file path length, it should be copied
+This binary file should be uploaded to the flight software. Given limitations on file path length, it should be copied
 to `/tmp` when running locally.
 
 ## Running The Binary Sequence
@@ -56,7 +56,7 @@ application.
 cmdSeq.CS_RUN	"/tmp/sample_sequence.bin"
 ```
 
-**Note:** the sample sequence will run for multiple hours due to the specification of the relative commands.
+**Note:** The sample sequence will run for multiple hours due to the specification of the relative commands.
 
 ## Time Details
 
@@ -69,16 +69,16 @@ only subseconds being optional, see table below. Absolute times are represented 
 | Relative Times | RHH:MM:SS[.sss] | 'R' followed by ISO_8601 hour minute section and optional subseconds | R23:02:01.010 |
 | Absolute Times | AYYYY-DDDTHH:MM:SS[.sss] | 'A' followed by ISO_8601 ordinal datetime format with optional subseconds | A2020-192T23:02:01.010 |
 
-**Note:** relative times cannot exceed 24 hours.
+**Note:** Relative times cannot exceed 24 hours.
 
-Since sequences can specify absolute time it may be dangerous to run a sequence should the flight software time not be
+Since sequences can specify the absolute time it may be dangerous to run a sequence should the flight software time not be
 synchronized with a known source. For example, it may be dangerous to run a sequence near system boot before time has
 been polled from a hardware clock or system time source.
 
 A sequence can be built with an expected time base and said sequence will not run should the flight software report time
 system in a different time base. For example, a sequence using TB_SC_TIME (spacecraft time) could be prevented from
 running if the flight software is currently using raw processor time and has not synchronized time with a known time
-source.  Available time sources are below:
+source. The available time sources are listed below:
 
 | Timebase | Value | Explanation |
 |---|---|---|
@@ -88,5 +88,5 @@ source.  Available time sources are below:
 | TB_FPGA_TIME | 4 | Sequence will run when time is synchronized with FPGA/hardware clock |
 | TB_DONT_CARE | 0xFFFF | Sequence will run regardless of flight software timebase |
 
-**Note:** the above descriptions represent typically usages of these time bases but are project specific i.e.
+**Note:** The above descriptions represent typically usages of these time bases but are project specific i.e.
 TB_SC_TIME might derive time from an internet time source.

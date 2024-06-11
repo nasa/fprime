@@ -2,7 +2,7 @@
 #define EXAMPLE_TYPE_HPP
 
 // A hand-coded serializable
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Autocoders/Python/test/interface1/SomeStruct.hpp>
 #if FW_SERIALIZABLE_TO_STRING

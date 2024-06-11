@@ -12,7 +12,7 @@
 
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <cassert>
@@ -24,12 +24,12 @@ namespace Fw {
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
             NATIVE_UINT_TYPE numArgs,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6,
             CHAR* destBuffer,
             NATIVE_INT_TYPE buffSize
             );
@@ -72,12 +72,12 @@ namespace Svc {
           FILE_NAME_ARG file,
           NATIVE_UINT_TYPE lineNo,
           NATIVE_UINT_TYPE numArgs,
-          AssertArg arg1,
-          AssertArg arg2,
-          AssertArg arg3,
-          AssertArg arg4,
-          AssertArg arg5,
-          AssertArg arg6
+          FwAssertArgType arg1,
+          FwAssertArgType arg2,
+          FwAssertArgType arg3,
+          FwAssertArgType arg4,
+          FwAssertArgType arg5,
+          FwAssertArgType arg6
           ) {
 
       if (m_compPtr) {
@@ -108,47 +108,90 @@ namespace Svc {
           FILE_NAME_ARG file,
           NATIVE_UINT_TYPE lineNo,
           NATIVE_UINT_TYPE numArgs,
-          AssertArg arg1,
-          AssertArg arg2,
-          AssertArg arg3,
-          AssertArg arg4,
-          AssertArg arg5,
-          AssertArg arg6
+          FwAssertArgType arg1,
+          FwAssertArgType arg2,
+          FwAssertArgType arg3,
+          FwAssertArgType arg4,
+          FwAssertArgType arg5,
+          FwAssertArgType arg6
           ) {
 
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
       Fw::LogStringArg fileArg;
-      fileArg.format("0x%08X",file);
+      fileArg.format("0x%08" PRIX32,file);
 #else
       Fw::LogStringArg fileArg(file);
 #endif
 
       CHAR msg[FW_ASSERT_TEXT_SIZE] = {0};
       Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
-      fprintf(stderr, "%s\n", msg);
+      // fprintf(stderr... allocates large buffers on stack as stderr is unbuffered by the OS
+      // and this can conflict with the traditionally smaller stack sizes.
+      printf("%s\n", msg);
+
+      // Handle the case where the ports aren't connected yet
+      if (not this->isConnected_Log_OutputPort(0)) {
+          assert(0);
+          return;
+      }
 
       switch (numArgs) {
           case 0:
-              this->log_FATAL_AF_ASSERT_0(fileArg,lineNo);
+              this->log_FATAL_AF_ASSERT_0(
+                fileArg,
+                lineNo);
               break;
           case 1:
-              this->log_FATAL_AF_ASSERT_1(fileArg,lineNo,arg1);
+              this->log_FATAL_AF_ASSERT_1(
+                fileArg,
+                lineNo,
+                static_cast<U32>(arg1));
               break;
           case 2:
-              this->log_FATAL_AF_ASSERT_2(fileArg,lineNo,arg1,arg2);
+              this->log_FATAL_AF_ASSERT_2(
+                fileArg,
+                lineNo,
+                static_cast<U32>(arg1),
+                static_cast<U32>(arg2));
               break;
           case 3:
-              this->log_FATAL_AF_ASSERT_3(fileArg,lineNo,arg1,arg2,arg3);
+              this->log_FATAL_AF_ASSERT_3(
+                fileArg,
+                lineNo,
+                static_cast<U32>(arg1),
+                static_cast<U32>(arg2),
+                static_cast<U32>(arg3));
               break;
           case 4:
-              this->log_FATAL_AF_ASSERT_4(fileArg,lineNo,arg1,arg2,arg3,arg4);
+              this->log_FATAL_AF_ASSERT_4(
+                fileArg,
+                lineNo,
+                static_cast<U32>(arg1),
+                static_cast<U32>(arg2),
+                static_cast<U32>(arg3),
+                static_cast<U32>(arg4));
               break;
           case 5:
-              this->log_FATAL_AF_ASSERT_5(fileArg,lineNo,arg1,arg2,arg3,arg4,arg5);
+              this->log_FATAL_AF_ASSERT_5(
+                fileArg,
+                lineNo,
+                static_cast<U32>(arg1),
+                static_cast<U32>(arg2),
+                static_cast<U32>(arg3),
+                static_cast<U32>(arg4),
+                static_cast<U32>(arg5));
               break;
           case 6:
-              this->log_FATAL_AF_ASSERT_6(fileArg,lineNo,arg1,arg2,arg3,arg4,arg5,arg6);
+              this->log_FATAL_AF_ASSERT_6(
+                fileArg,
+                lineNo,
+                static_cast<U32>(arg1),
+                static_cast<U32>(arg2),
+                static_cast<U32>(arg3),
+                static_cast<U32>(arg4),
+                static_cast<U32>(arg5),
+                static_cast<U32>(arg6));
               break;
           default:
               this->log_FATAL_AF_UNEXPECTED_ASSERT(fileArg,lineNo,numArgs);

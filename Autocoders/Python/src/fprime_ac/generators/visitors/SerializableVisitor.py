@@ -36,9 +36,11 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.serialize import SerialHeader
-    from fprime_ac.generators.templates.serialize import SerialImport
-    from fprime_ac.generators.templates.serialize import SerialBody
+    from fprime_ac.generators.templates.serialize import (
+        SerialBody,
+        SerialHeader,
+        SerialImport,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -105,7 +107,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a list of port argument tuples
         """
-        arg_list = list()
+        arg_list = []
 
         for (name, mtype, size, format, comment) in obj.get_members():
             typeinfo = None
@@ -185,10 +187,8 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         open("{}/{}".format(output_dir, "__init__.py"), "w").close()
 
         # Open file for writing here...
-        DEBUG.info("Open file: %s" % pyfile)
+        DEBUG.info(f"Open file: {pyfile}")
         self.__fp = open(pyfile, "w")
-        if self.__fp is None:
-            raise Exception("Could not open %s file.") % pyfile
         DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):
@@ -225,7 +225,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = SerialBody.SerialBody()
         c.name = obj.get_name()
-        c.mem_list = list()
+        c.mem_list = []
         for (n, t, s, f, comment) in obj.get_members():
             # convert XML types to Python classes
             (

@@ -18,7 +18,6 @@
 #define TYPES_CIRCULAR_BUFFER_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 //#define CIRCULAR_DEBUG
@@ -31,12 +30,32 @@ class CircularBuffer {
          * Circular buffer constructor. Wraps the supplied buffer as the new data store. Buffer
          * size is supplied in the 'size' argument.
          *
+         * Note: specification of storage buffer must be done using `setup` before use.
+         */
+        CircularBuffer();
+
+        /**
+         * Circular buffer constructor. Wraps the supplied buffer as the new data store. Buffer
+         * size is supplied in the 'size' argument. This is equivalent to calling the no-argument constructor followed
+         * by setup(buffer, size).
+         *
          * Note: ownership of the supplied buffer is held until the circular buffer is deallocated
          *
          * \param buffer: supplied buffer used as a data store.
          * \param size: the of the supplied data store.
          */
         CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size);
+
+        /**
+         * Wraps the supplied buffer as the new data store. Buffer size is supplied in the 'size' argument. Cannot be
+         * called after successful setup.
+         *
+         * Note: ownership of the supplied buffer is held until the circular buffer is deallocated
+         *
+         * \param buffer: supplied buffer used as a data store.
+         * \param size: the of the supplied data store.
+         */
+        void setup(U8* const buffer, const NATIVE_UINT_TYPE size);
 
         /**
          * Serialize a given buffer into this circular buffer. Will not accept more data than
@@ -105,6 +124,16 @@ class CircularBuffer {
          */
         NATIVE_UINT_TYPE get_capacity() const;
 
+        /**
+         * Return the largest tracked allocated size
+         */
+        NATIVE_UINT_TYPE get_high_water_mark() const;
+
+        /**
+         * Clear tracking of the largest allocated size
+         */
+        void clear_high_water_mark();
+
 #ifdef CIRCULAR_DEBUG
         void print();
 #endif
@@ -117,14 +146,16 @@ class CircularBuffer {
          */
         NATIVE_UINT_TYPE advance_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount = 1) const;
         //! Physical store backing this circular buffer
-        U8* const m_store;
+        U8* m_store;
         //! Size of the physical store
-        const NATIVE_UINT_TYPE m_store_size;
+        NATIVE_UINT_TYPE m_store_size;
         //! Index into m_store of byte zero in the logical store.
         //! When memory is deallocated, this index moves forward and wraps around.
         NATIVE_UINT_TYPE m_head_idx;
         //! Allocated size (size of the logical store)
         NATIVE_UINT_TYPE m_allocated_size;
+        //! Maximum allocated size
+        NATIVE_UINT_TYPE m_high_water_mark;
 };
 } //End Namespace Types
 #endif

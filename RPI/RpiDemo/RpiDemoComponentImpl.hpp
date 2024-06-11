@@ -43,11 +43,7 @@ namespace RPI {
       //! Construct object RpiDemo
       //!
       RpiDemoComponentImpl(
-#if FW_OBJECT_NAMES == 1
           const char *const compName /*!< The component name*/
-#else
-          void
-#endif
       );
 
       //! Initialize object RpiDemo
@@ -71,7 +67,7 @@ namespace RPI {
       //!
       void Run_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          NATIVE_UINT_TYPE context /*!< The call order*/
+          U32 context /*!< The call order*/
       ) override;
 
       //! Handler implementation for UartRead
@@ -79,7 +75,7 @@ namespace RPI {
       void UartRead_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &serBuffer, /*!< Buffer containing data*/
-          Drv::SerialReadStatus &status /*!< Status of read*/
+          const Drv::RecvStatus &status /*!< Status of read*/
       ) override;
 
     PRIVATE:
@@ -102,7 +98,7 @@ namespace RPI {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           RpiDemo_GpioOutNum output, /*!< Output GPIO*/
-          RpiDemo_GpioVal value /*!< GPIO value*/
+          Fw::Logic value /*!< GPIO value*/
       ) override;
 
       //! Implementation for RD_GetGpio command handler
@@ -146,7 +142,7 @@ namespace RPI {
       U32 m_uartReadBytes;
       U32 m_spiBytes;
       Fw::TlmString m_lastUartMsg;
-      RpiDemo_GpioVal m_currLedVal;
+      Fw::Logic m_currLedVal;
       // serial buffers
       Fw::Buffer m_recvBuffers[NUM_RPI_UART_BUFFERS];
       BYTE m_uartBuffers[NUM_RPI_UART_BUFFERS][RPI_UART_READ_BUFF_SIZE];

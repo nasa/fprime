@@ -2,17 +2,17 @@
 // Main.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "LinuxSpiDriverTester.hpp"
 #include <cstdlib>
 
 //TEST(Test, NominalTlm) {
-//  Svc::Tester tester;
+//  Svc::LinuxSpiDriverTester tester;
 //  tester.nominalTlm();
 //}
 
 int main(int argc, char **argv) {
 
-    Drv::Tester tester;
+    Drv::LinuxSpiDriverTester tester;
 
     U8 buffer[argc-1];
 

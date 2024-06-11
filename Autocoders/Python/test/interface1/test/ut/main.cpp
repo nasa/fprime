@@ -1,18 +1,14 @@
 #ifdef FPRIME_CMAKE
 #include "Autocoder/GTestBase.hpp"
 #else
-#include <GTestBase.hpp>
+#include <interface1GTestBase.hpp>
 #endif
 
 // Very minimal to test autocoder. Some day they'll be actual unit test code
 
 class ATester : public Cmd::TestGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : Cmd::TestGTestBase("comp",10) {
-#else
-        ATester() : Cmd::TestGTestBase(10)  {
-#endif
     }
 };
 

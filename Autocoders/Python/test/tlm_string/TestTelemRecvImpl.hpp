@@ -12,11 +12,7 @@
 
 class TestTelemRecvImpl: public Tlm::TelemTesterComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestTelemRecvImpl(const char* compName);
-#else
-        TestTelemRecvImpl();
-#endif
         virtual ~TestTelemRecvImpl();
         void init();
     protected:

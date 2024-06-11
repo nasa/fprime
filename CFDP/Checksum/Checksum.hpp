@@ -13,7 +13,7 @@
 #ifndef CFDP_Checksum_HPP
 #define CFDP_Checksum_HPP
 
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace CFDP {
 
@@ -102,7 +102,7 @@ namespace CFDP {
       // ----------------------------------------------------------------------
 
       //! The accumulated checksum value
-      U32 value;
+      U32 m_value;
 
     };
 

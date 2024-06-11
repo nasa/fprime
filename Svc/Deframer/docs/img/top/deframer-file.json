@@ -1,0 +1,129 @@
+{
+  "columns" : [
+    [
+      {
+        "instanceName" : "deframer",
+        "inputPorts" : [],
+        "outputPorts" : [
+          {
+            "name" : "bufferOut",
+            "portNumbers" : [
+              0
+            ]
+          },
+          {
+            "name" : "bufferDeallocate",
+            "portNumbers" : [
+              0
+            ]
+          },
+          {
+            "name" : "bufferAllocate",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "fileUplink",
+        "inputPorts" : [
+          {
+            "name" : "bufferSendIn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : [
+          {
+            "name" : "bufferSendOut",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "buffMgr",
+        "inputPorts" : [
+          {
+            "name" : "bufferSendIn",
+            "portNumbers" : [
+              0
+            ]
+          },
+          {
+            "name" : "bufferGetCallee",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : []
+      }
+    ]
+  ],
+  "connections" : [
+    [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        1,
+        0
+      ]
+    ],
+    [
+      [
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0
+      ]
+    ]
+  ]
+}

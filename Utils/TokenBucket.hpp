@@ -14,7 +14,7 @@
 #ifndef TokenBucket_HPP
 #define TokenBucket_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Time/Time.hpp>
 
 #define MAX_TOKEN_BUCKET_TOKENS 1000

@@ -16,6 +16,14 @@
 # the `-D` option there.
 #
 ####
+include_guard()
+# Remap changed settings
+if (DEFINED FPRIME_INSTALL_DEST)
+    set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
+endif()
+include("settings/ini")
+ini_to_cache()
+
 
 ####
 # `CMAKE_TOOLCHAIN_FILE:`
@@ -85,8 +93,8 @@ endif()
 ####
 # `FPRIME_ENABLE_UTIL_TARGETS`:
 #
-# Enables the targets required to run using `fprime-util`.  These include: check, check-leak, coverage, impl, and
-# testimpl targets. This switch defaults to "ON" providing those targets, but may be set to off when running within an
+# Enables the targets required to run using `fprime-util`.  These include: check and refresh_cache.
+# This switch defaults to "ON" providing those targets, but may be set to off when running within an
 # IDE where limiting the number of targets is desirable. Note: unit test targets are still only generated when running
 # with -DBUILD_TESTING=ON.
 #
@@ -124,7 +132,7 @@ option(FPRIME_ENABLE_FRAMEWORK_UTS "Enable framework UT generation" ON)
 #
 # e.g. `-DFPRIME_ENABLE_AUTOCODER_UTS=OFF`
 ####
-option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
+option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" OFF)
 
 ####
 # `FPRIME_ENABLE_UT_COVERAGE`:
@@ -181,6 +189,70 @@ option(FPRIME_SKIP_TOOLS_VERSION_CHECK "Skip the version checking of tools" OFF)
 ####
 option(FPRIME_CHECK_FRAMEWORK_VERSION "(Internal) Check framework version when building." OFF)
 
+####
+# `ENABLE_SANITIZER_ADDRESS:`
+#
+# Enables Google's AddressSanitizer. AddressSanitizer is a memory error detector for C/C++.
+# More information: https://github.com/google/sanitizers/wiki/AddressSanitizer
+# Practically, this adds the -fsanitizers=address flag to both the compiler and linker for the whole build.
+#
+# **Values:**
+# - ON: enables AddressSanitizer.
+# - OFF: (default) does not enable AddressSanitizer.
+#
+# e.g. `-DENABLE_SANITIZER_ADDRESS=ON`
+####
+option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
+
+####
+# `ENABLE_SANITIZER_LEAK:`
+#
+# Enables Google's LeakSanitizer. LeakSanitizer is a memory leak detector which is integrated into AddressSanitizer.
+# More information: https://github.com/google/sanitizers/wiki/AddressSanitizerLeakSanitizer
+# Practically, this adds the -fsanitizers=leak flag to both the compiler and linker for the whole build.
+# 
+# Note: LeakSanitizer is not available on macOS. Use AddressSanitizer instead.
+#
+# **Values:**
+# - ON: enables LeakSanitizer.
+# - OFF: (default) does not enable LeakSanitizer.
+#
+# e.g. `-DENABLE_SANITIZER_LEAK=ON`
+####
+option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
+
+####
+# `ENABLE_SANITIZER_UNDEFINED_BEHAVIOR:`
+#
+# Enables Google's UndefinedBehaviorSanitizer. UndefinedBehaviorSanitizer is an undefined behavior detector.
+# More information: https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+# Practically, this adds the -fsanitizers=undefined flag to both the compiler and linker for the whole build.
+#
+# **Values:**
+# - ON: enables UndefinedBehaviorSanitizer.
+# - OFF: (default) does not enable UndefinedBehaviorSanitizer.
+#
+# e.g. `-DENABLE_SANITIZER_UNDEFINED_BEHAVIOR=ON`
+####
+option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" OFF)
+
+####
+# `ENABLE_SANITIZER_THREAD:`
+#
+# Enables Google's ThreadSanitizer. ThreadSanitizer is a tool that detects data races.
+# More information: https://clang.llvm.org/docs/ThreadSanitizer.html
+# Practically, this adds the -fsanitizers=thread flag to both the compiler and linker for the whole build.
+# 
+# Note: ThreadSanitizer does not work with Address or Leak sanitizer enabled
+#
+# **Values:**
+# - ON: enables ThreadSanitizer.
+# - OFF: (default) does not enable ThreadSanitizer.
+#
+# e.g. `-DENABLE_SANITIZER_THREAD=ON`
+####
+option(ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
+
 # Backwards compatibility, when build type=TESTING BUILD_TESTING is on
 string(TOUPPER "${CMAKE_BUILD_TYPE}" FPRIME_BUILD_TYPE)
 if (FPRIME_BUILD_TYPE STREQUAL "TESTING")
@@ -189,16 +261,8 @@ else()
 endif()
 include(CTest)
 
-# Global settings for coverage
-if (FPRIME_ENABLE_UT_COVERAGE AND BUILD_TESTING)
-    # Note: this is to prevent filenames of the form file.cpp.<extension> and instead use file.<extension> instead to appease gcov
-    set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
-    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-endif()
-
 ####
-# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
-# `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
+# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`, and `FPRIME_CONFIG_DIR`:
 #
 # Note: these settings are supplied by `fprime-util` and need not be provided unless running CMake directly or through
 # any way bypassing that utility (e.g. inside your beloved IDE).
@@ -272,13 +336,19 @@ if (DEFINED FPRIME_ENVIRONMENT_FILE)
     set(FPRIME_ENVIRONMENT_FILE "${FPRIME_ENVIRONMENT_FILE}" CACHE PATH "F prime environment file" FORCE)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${FPRIME_ENVIRONMENT_FILE}")
 endif()
-# Override the AC constants file when specified
-if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
-    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/config/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
-endif()
 
 # Settings for F config directory
 if (NOT DEFINED FPRIME_CONFIG_DIR)
     set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
 endif()
 set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
+
+
+# Set FPRIME_TOOLCHAIN_NAME when not set by toolchain directly
+if (NOT DEFINED FPRIME_TOOLCHAIN_NAME)
+    if (DEFINED CMAKE_TOOLCHAIN_FILE)
+        get_filename_component(FPRIME_TOOLCHAIN_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME_WE CACHE)
+    else()
+        set(FPRIME_TOOLCHAIN_NAME "native" CACHE INTERNAL "Name of toolchain used" FORCE)
+    endif()
+endif()

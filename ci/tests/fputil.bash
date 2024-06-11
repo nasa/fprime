@@ -69,7 +69,7 @@ function integration_test_run {
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
         echo "[INFO] Starting headless GDS layer"
-        fprime-gds -n --dictionary "${ROOTDIR}/"*"/dict/${BINARY}TopologyAppDictionary.xml" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
+        fprime-gds -n --dictionary "${ROOTDIR}/"*"/${BINARY}/dict/${BINARY}TopologyAppDictionary.xml" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
         GDS_PID=$!
         # run the app with valgrind in the background
         if command -v valgrind &> /dev/null
@@ -82,9 +82,9 @@ function integration_test_run {
                 --show-leak-kinds=all \
                 --track-origins=yes \
                 --log-file=${LOG_DIR}/gds-logs/valgrind.log \
-            ${ROOTDIR}/*/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
+            ${ROOTDIR}/*/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
         else
-            ${ROOTDIR}/*/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
+            ${ROOTDIR}/*/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
         fi
         VALGRIND_PID=$!
 
@@ -95,14 +95,18 @@ function integration_test_run {
         ps -p ${VALGRIND_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to start ${BINARY} with Valgrind"
         # Run integration tests
         (
-            cd "${WORKDIR}/test"
+            cd "${WORKDIR}"
+            if [[ "${DICTIONARY_PATH}" != "" ]]
+            then
+                DICTIONARY_ARGS="--dictionary ${WORKDIR}/${DICTIONARY_PATH}"
+            fi
             echo "[INFO] Running ${WORKDIR}/test's pytest integration tests"
             TIMEOUT="timeout"
             if ! command -v ${TIMEOUT} &> /dev/null
             then
                 TIMEOUT="gtimeout" # macOS homebrew "coreutils"
             fi
-            ${TIMEOUT} --kill-after=10s 180s pytest
+            ${TIMEOUT} --kill-after=10s 180s pytest ${DICTIONARY_ARGS}
         )
         RET_PYTEST=$?
         pkill -P $GDS_PID

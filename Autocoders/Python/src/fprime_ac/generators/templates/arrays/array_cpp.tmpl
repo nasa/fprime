@@ -6,18 +6,8 @@
 // \author Auto-generated
 // \brief  cpp file for ${name}
 //
-// \copyright
-// Copyright 2020 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// NOTE: this file was automatically generated
 //
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ======================================================================
 
 \#include <cstring>
@@ -28,8 +18,10 @@
 
 \#include "${name}ArrayAc.hpp"
 
-#if $namespace
+#if $namespace_list != None
+ #for $namespace in $namespace_list
 namespace ${namespace} {
+ #end for
 #end if
 
 #if $type == "string":
@@ -309,6 +301,8 @@ void ${name}::toString(Fw::StringBase& text) const {
     return status;
   }
 
-#if $namespace
-}
+#if $namespace_list != None
+ #for $namespace in $reversed($namespace_list)
+} // end namespace $namespace
+ #end for
 #end if

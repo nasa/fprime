@@ -28,10 +28,10 @@ namespace Fw {
 #if FW_OBJECT_TO_STRING == 1
             char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];
             this->m_objPtrArray[obj]->toString(objDump,sizeof(objDump));
-            Fw::Logger::logMsg("Entry: %d Ptr: %p Str: %s\n", obj,
+            Fw::Logger::logMsg("Entry: %d Ptr: %p Str: %s\n", static_cast<POINTER_CAST>(obj),
                     reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]), reinterpret_cast<POINTER_CAST>(objDump));
 #else
-            Fw::Logger::logMsg("Entry: %d Ptr: %p Name: %s\n",obj,
+            Fw::Logger::logMsg("Entry: %d Ptr: %p Name: %s\n",static_cast<POINTER_CAST>(obj),
                     reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]),
                     reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]->getObjName()));
 #endif // FW_OBJECT_TO_STRING
@@ -48,10 +48,10 @@ namespace Fw {
             if (strncmp(objName,this->m_objPtrArray[obj]->getObjName(),sizeof(objDump)) == 0) {
 #if FW_OBJECT_TO_STRING == 1
                 this->m_objPtrArray[obj]->toString(objDump,sizeof(objDump));
-                Fw::Logger::logMsg("Entry: %d Ptr: %p Str: %s\n", obj,
+                Fw::Logger::logMsg("Entry: %d Ptr: %p Str: %s\n", static_cast<POINTER_CAST>(obj),
                         reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]), reinterpret_cast<POINTER_CAST>(objDump));
 #else
-                Fw::Logger::logMsg("Entry: %d Ptr: %p Name: %s\n",obj,
+                Fw::Logger::logMsg("Entry: %d Ptr: %p Name: %s\n",static_cast<POINTER_CAST>(obj),
                         reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]),
                         reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]->getObjName()));
 #endif

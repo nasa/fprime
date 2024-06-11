@@ -21,8 +21,6 @@ import logging
 import os
 import sys
 
-from lxml import etree
-
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.buildroot import (
     BuildRootCollisionException,
@@ -30,6 +28,7 @@ from fprime_ac.utils.buildroot import (
     locate_build_root,
 )
 from fprime_ac.utils.exceptions import FprimeXmlException
+from lxml import etree
 
 #
 # Python extension modules and custom interfaces
@@ -89,7 +88,7 @@ class XmlSerializeParser:
         # Type ID for serialized type
         self.__type_id = None
         #
-        if os.path.isfile(xml_file) == False:
+        if not os.path.isfile(xml_file):
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(stri)
         fd = open(xml_file)
@@ -321,6 +320,6 @@ class XmlSerializeParser:
 
     def get_members(self):
         """
-        Returns a list of member (name, type, optional size, optional format, optional comment) needed.
+        Returns a list of member (name, type, optional array size, optional size, optional format, optional comment) needed.
         """
         return self.__members

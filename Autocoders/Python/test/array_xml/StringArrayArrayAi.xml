@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<array name="StringArray">
+<array namespace="Example" name="StringArray">
     <type size="256">string</type>
     <size>3</size>
     <format>%s</format>

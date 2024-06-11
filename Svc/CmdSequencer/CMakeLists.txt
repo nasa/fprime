@@ -1,7 +1,7 @@
 ####
 # F prime CMakeLists.txt:
 #
-# SOURCE_FILES: combined list of source and autocoding diles
+# SOURCE_FILES: combined list of source and autocoding files
 # MOD_DEPS: (optional) module dependencies
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
@@ -56,8 +56,12 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/TooLargeFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/USecFieldTooShortFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/JoinWait.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSequencerMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdSequencerTester.cpp"
 )
-set(UT_MOD_DEPS "Os_Stubs")
+
+set(UT_MOD_DEPS
+    Os_File_Posix
+)
+choose_fprime_implementation(Os/File Os_File_None)
 register_fprime_ut()

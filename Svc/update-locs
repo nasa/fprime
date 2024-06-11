@@ -1,3 +1,0 @@
-#!/bin/sh
-
-fpp-locate-defs `find . -name '*.fpp'` > locs.fpp

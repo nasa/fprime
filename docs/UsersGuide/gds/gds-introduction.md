@@ -5,16 +5,17 @@ systems. It was designed for projects that have not already chosen a GDS, for de
 project's GDS is fully online, and for integration testers who wish to automate tests against F´ software. This guide
 will give you a quick introduction to what the F´ GDS is and how you can use it.
 
-- [What is the GDS?](#what-is-the-gds)
-- [Getting Started](#getting-started)
+- [A Brief Guide to the F´ Ground Data System](#a-brief-guide-to-the-f-ground-data-system)
+  - [What is the GDS?](#what-is-the-gds)
+  - [Getting Started](#getting-started)
     - [Running the GDS](#running-the-gds)
-- [GDS Options](#gds-options)
+  - [GDS Options](#gds-options)
     - [Specify the Deployment or Dictionary](#specify-the-deployment-or-dictionary)
     - [Disable Automatic Flight Software Execution](#disable-automatic-flight-software-execution)
     - [Specify GDS Addresses and Ports](#specify-gds-addresses-and-ports)
     - [Run the GDS Without a UI](#run-the-gds-without-a-ui)
     - [Help and Other Options](#help-and-other-options)
-- [Navigating the GDS GUI](#navigating-the-gds-gui)
+  - [Navigating the GDS GUI](#navigating-the-gds-gui)
     - [Commanding](#commanding)
     - [Events](#events)
     - [Channels](#channels)
@@ -22,7 +23,7 @@ will give you a quick introduction to what the F´ GDS is and how you can use it
     - [Downlink](#downlink)
     - [Logs](#logs)
     - [Dashboard](#dashboard)
-- [Conclusion](#conclusion)
+  - [Conclusion](#conclusion)
 
 ![GDS Image](../media/gds_gui_events.png)
 
@@ -30,8 +31,7 @@ will give you a quick introduction to what the F´ GDS is and how you can use it
 
 A GDS is the "Ground Data System" that supports large-scale embedded systems by allowing operators to interact with the
 embedded system. This system is typically used with spacecraft to facilitate control and monitoring of those systems'
-flight software. Any data being sent from a ground computer to the spacecraft, or vice versa, has to passes through a
-GDS.
+flight software. Any data being sent from a ground computer to the spacecraft, or vice versa, has to pass through a GDS.
 
 The F´ GDS provides this capability out-of-the-box to developers and projects using F´. This means that functions
 traditionally performed through the GDS like systems testing, operation testing, and developer debugging can happen
@@ -40,7 +40,7 @@ the project even if a different GDS will eventually be used.
 
 The rest of this guide will talk about how to use the built-in F´ GDS. Let's take a look!
 
-**Note:** the `Ref` application will be used as the flight software for exploring the GDS.  It will work with your
+**Note:** The `Ref` application will be used as the flight software for exploring the GDS.  It will work with your
 project too!
 
 ## Getting Started
@@ -53,15 +53,14 @@ the GDS, setting options, and letting the user loose to run the system.
 ### Running the GDS
 
 To start the GDS with the default settings (IP adapter, default ports, loading the default dictionary for the project),
-navigate to the project directory and run `fprime-gds`. This will launch both the `Ref` flight software, the GDS layer,
-and launches the browser pointed at the GDS.
+navigate to the project directory and run `fprime-gds`. This will launch both the `Ref` flight software and the GDS layer along with the browser pointed at the GDS.
 
 ```bash
 $ cd fprime/Ref
 $ fprime-gds
 ```
 
-**Note:** ensure the virtual environment has been activated.  Consult the installation guide for more information.
+**Note:** Ensure the virtual environment has been activated.  Consult the installation guide for more information.
 
 `Ref` is just an example application that comes with F´; you can run `fprime-gds` in any deployment project folder. For
 this to work properly, the user must build and install the `Ref` application using `fprime-util`.
@@ -75,7 +74,7 @@ In the following sections, we will explore various options for using the GDS.
 ## GDS Options
 
 While fine for basic testing, you may want to change the operation of the GDS to meet project needs. Here are a few
-common scenarios where most users will want to modify operation.
+common scenarios where most users will want to modify the operation.
 
 To learn the F´ GDS UI, [skip to this section](#navigating-the-gds-gui).
 
@@ -91,7 +90,7 @@ $ fprime-gds -d path/to/deployment
 
 The GDS does not need to automatically run flight software (see next section) and thus doesn't strictly need a full
 deployment directory.  The user can simply specify the `--dictionary` for basic operations. **Note:** the GDS logs will
-be placed in the user's home director when the `-d`/`--deploy` flag isn't set.
+be placed in the user's home directory when the `-d`/`--deploy` flag isn't set.
 
 ```bash
 $ fprime-gds -n --dictionary path/to/dictionary/xml
@@ -112,14 +111,14 @@ $ fprime-gds -n
 
 ### Specify GDS Addresses and Ports
 
-By default, the GDS runs on the local machine at address `0.0.0.0` and uses the following local ports:
+By default, the GDS runs on the local machine and uses the following local addresses and ports:
 
-- 5000: hosts the HTML frontend. The browser connects here.
-- 50000: the default communication interface is a port. The embedded system connects here.
-- 50050: an internal port used for hosting GDS data.
+- **127.0.0.1:5000**: Hosts the HTML frontend. The browser connects here to access the GUI.
+- **0.0.0.0:50000**: The default communication interface port. The embedded system connects here.
+- **0.0.0.0:50050**: An internal port used for transporting GDS data. Communication and HTML endpoints internally connect here.
 
-If a user wishes to change the IP address and port used to allow the embedded system connection to the GDS, the user
-should specify the `--ip-address ADDRESS` and `--ip-port PORT` flag. **Note:** these options are only available when
+If a user wishes to change the IP address and port used to allow the embedded system to connect to the GDS, the user
+should specify the `--ip-address ADDRESS` and `--ip-port PORT` flag. **Note:** These options are only available when
 using the default IP connector.
 
 ```bash
@@ -167,10 +166,10 @@ optional arguments:
   -d DEPLOY, --deployment DEPLOY
                         Deployment directory for detecting dict, app, and
                         logging. [default: /Users/mstarch]
-  -l LOGS, --logs LOGS  Logging directory. Created if non-existent. Default:
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. Default:
                         deployment directory.
   --log-directly        Logging directory is used directly, no extra dated
-                        directories created.
+                        directories are created.
   -g {none,html}, --gui {none,html}
                         Set the desired GUI system for running the deployment.
                         [default: html]
@@ -197,7 +196,7 @@ general, the available tabs are listed across the top and each view can be selec
 
 ![Launched Browser Window](../media/gds_gui_commanding.png)
 
-Across the top of the screen is a series of tabs: "Commanding", "Events", etc. Each of those tabs represent a piece of
+Across the top of the screen is a series of tabs: "Commanding", "Events", etc. Each of those tabs represents a piece of
 the GDS's functionality. Each view opens when you click on it. Next, we'll go through each tab's functions in more
 detail in upcoming sections.
 
@@ -210,8 +209,7 @@ disconnected and not sending/receiving any data. This is reset to an X via timeo
 timeout in the `config.js` file.  This widget is fondly referred to as "the orb" as it quickly shows if there is data
 flow from the embedded F´ system.
 
-There's also a NASA logo on the far left. It doesn't do anything right now, but hopefully the meatball continues to
-inspires our users. This logo is also configurable in `config.js`.
+There's also an F´ logo on the far left, which is configurable in `config.js`.
 
 The tabs across the top perform most of the functionality of the GDS. What do the tabs contain? Do they contain things?
 Let's find out!
@@ -221,7 +219,7 @@ Let's find out!
 The commanding tab contains the items needed to send commands to the embedded system. All available commands are listed
 in the "Mnemonic" dropdown box, in the form `<COMPONENT>.<COMMAND>`. The commands are found in the dictionary supplied
 to the GDS.  The user may select a command from the dropdown or type to filter the available commands. If the selected
-command requires any arguments, they'll appear below the drop down where the values may be entered. Invalid argument
+command requires any arguments, they'll appear below the dropdown where the values may be entered. Invalid argument
 inputs will be outlined in red. When clicked, the "Send Command" button will transmit the selected command and input
 arguments through the GDS and to the embedded system, while "Clear Arguments" will reset the arguments inputs
 to their default values.  Should an error occur in the GDS, it will be shown below the inputs.  The commanding tab is
@@ -232,10 +230,10 @@ shown below. See: [Commands](../user/cmd-evt-chn-prm.md#commands)
 
 Below the command input is the "Command History" table. This records all the commands sent with their associated
 arguments. This is recorded by the GDS and thus may include commands that did not transmit all the way to the embedded
-system in case of communication error or other event. To search for commands, you can type something into the "Filters"
+system in case of communication error or other events. To search for commands, you can type something into the "Filters"
 box and type enter, which displays only matching results. You can sort the rows by one of the table headers
 (e.g. "Command Time") by clicking on that header. Double-clicking a historical command will re-populate the command
-sending component and is useful to retry transmission of a command.
+sending component and is useful to retry the transmission of a command.
 
 ### Events
 
@@ -251,7 +249,7 @@ Each event is color-coded based on its "Event Severity;" there are 7 different k
 | DIAGNOSTIC  |        | Debug events not typically sent to the GDS |
 | COMMAND     | GREEN  | Events produced by the command dispatcher to aid in tracing actual command execution |
 | ACTIVITY_LO | GRAY   | Low priority informational events typically tracking background process actions      |
-| ACTIVITY_HI | BLUE   | High priority informational events typically tracking ground-commanded foreground actions |
+| ACTIVITY_HI | BLUE   | High-priority informational events typically tracking ground-commanded foreground actions |
 | WARNING_LO  | YELLOW | Low priority non-critical warning events |
 | WARNING_HI  | ORANGE | High priority critical warning events |
 | FATAL       | RED    | Critical failure event typically resulting in embedded system restart |
@@ -265,15 +263,15 @@ can be found by hovering over the mnemonic and a tooltip will appear.
 
 The Channels tab displays an updating table of the latest "Channels", or telemetry data, the GDS has received from the
 embedded system. These represent the latest values and, by default, only telemetry channels that have been received
-by the GDS are shown. Channels with no received value are not displayed, but can be configured (described below). Only
+by the GDS are shown. Channels with no received value are not displayed but can be configured (described below). Only
 the most recently received value for each channel is shown. This view can be seen below.
 
 ![Channel GUIs](../media/gds_gui_channels.png)
 
 If you want to view a full list of all available channels, set a view to watch specific channels, or monitor all
 channels even those which have not arrived, you can click on the "Edit View". This will show all available channels
-and allows users to tick the checkbox next to a channels that should be shown. Any unchecked channels will be hidden.
-To apply the view, click the "Done" .  Import and Export allow downloading and uploading text files that represent these
+and allows users to tick the checkbox next to a channel that should be shown. Any unchecked channels will be hidden.
+To apply the view, click the "Done".  Import and Export allow downloading and uploading text files that represent these
 views such that they may be saved. The "Edit View" is shown below.
 
 
@@ -285,9 +283,9 @@ Just like the other tables, you can sort or filter these channel items.
 ### Uplink
 
 The uplink tab allows users to upload files to the embedded system. This is dependent on the usage of the FileUplink
-components and a file system implementation. The uplink process has two steps: staging and uplink. First the user
+components and a file system implementation. The uplink process has two steps: staging and uplink. First, the user
 browses for files to uplink to the system.  This submits the files to a working set and allows them to curate that set
-before committing to an uplink.  Finally the user should press the "Submit Uplink" button to upload the files to the GDS,
+before committing to an uplink. Finally, the user should press the "Submit Uplink" button to upload the files to the GDS,
 add them to the outgoing queue, and start the uplink.  Uplink progress can be monitored and the queue can be paused to
 temporarily stop the uplink. Files are limited to no more than 32Mb.
 
@@ -297,16 +295,15 @@ temporarily stop the uplink. Files are limited to no more than 32Mb.
 
 The downlink tab monitors the downlink of files into the GDS. Any files that have been downlinked using the
 `fileDownlink.FileDownlink_SendFile` command will be tracked in this tab once the packets arrive in the F´ GDS. The
-progress of this download is tracked, and once the file has been downlinked, the user has the ability to Download the
-files.
+progress of this download is tracked, and once the file has been downlinked, the user has the ability to download the files.
 
 ![Downlink](../media/gds_gui_downlink.png)
 
 ### Logs
 
 The logs tab allows the user to monitor logs produced on-disk by the GDS. This is a convenience to allow the user to
-see those without going to the GDS server's ground system.  Select a log from the list to see its contents, which update
-in realtime.
+see those without going to the GDS server's ground system. Select a log from the list to see its contents, which update
+in real time.
 
 ![Logs](../media/gds_gui_logs.png)
 
@@ -330,6 +327,6 @@ interface for working with the GDS. You can learn more about how this works in t
 
 ## Conclusion
 
-This guide walked the user through the running the GDS and navigating the GDS UI.   While the GUI can handle everything
+This guide walked the user through running the GDS and navigating the GDS UI. While the GUI can handle everything
 you need for the GDS, it's certainly not required to use it, and some users might prefer a command-line interface for
 certain tasks. You can learn more about how to do this through the [GDS CLI guide](./gds-cli.md).

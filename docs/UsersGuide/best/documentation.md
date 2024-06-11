@@ -1,3 +1,4 @@
+
 # Documentation of F´ Projects
 
 Most projects need to generate documentation on the software. F´ uses [Doxygen](https://www.doxygen.nl/index.html) to
@@ -13,15 +14,15 @@ markdowns and C++ code. F´ Doxygen documentation may be viewed to see what the 
 ## Basic Doxygen Usage
 
 Although a full understanding of Doxygen is outside of the scope of this document, we will attempt to discuss the basic
-usage of doxygen as it pertains to F´. Doxygen requires two things a working directory and a configuration file. It
-will recurse through the working directory generating documentation using the settings set the configuration.
+usage of doxygen as it pertains to F´. Doxygen requires two things - a working directory and a configuration file. It
+will recurse through the working directory, generating documentation using the settings set in the configuration.
 
-If the user wishes to include autocoded parts of F´ to the documentation, make sure to build your F´ project before
+If the user wishes to include autocoded parts of F´ in the documentation, make sure to build your F´ project before
 running Doxygen. Make sure to delete or exclude (see EXCLUDE settings below) any non-native builds before running.
 
 The working directory should be the root of the project that is to be documented.  A configuration file can be generated
 or the sample can be used/modified. To run Doxygen through the GUI, select the working directory and a configuration
-file and then run generation.  Alternatively the `doxygen` command line utility can be run.  Change to the working
+file and then run generation.  Alternatively, the `doxygen` command line utility can be run.  Change to the working
 directory and supply the path to the configuration file. More detail can be found on the
  [Doxygen](https://www.doxygen.nl/index.html) website.
 
@@ -56,25 +57,23 @@ These settings are essential to use Doxygen to generate documentation.
 
 ### Project Descriptions
 
-There are several settings that describe the basic project these are described in the table below.  A project should
-change these settings.
+There are several settings that describe the basic project - these are listed in the table below: (a project should
+change these settings)
 
 | Setting | Description |
 |---|---|
-| PROJECT_NAME | Name of project displayed prominently in the documentation |
+| PROJECT_NAME | Name of the project displayed prominently in the documentation |
 | PROJECT_NUMBER | Project version number |
-| PROJECT_BRIEF  | Brief description of project |
-| PROJECT_LOGO | 200x50 or smaller logo for project. Leave blank for no logo |
+| PROJECT_BRIEF  | Brief description of the project |
+| PROJECT_LOGO | 200x50 or smaller logo for the project. Leave blank for no logo |
 
 ## GitHub Pages Notes
 
-There is a small problem with the Doxygen files generated and hosting these pages on GitHub pages. This is because
-Doxygen converts the leading / of markdown paths to an _ which then is ignored by GitHub pages autogenerator Jekyll.
+There is a small problem with the Doxygen files being generated and then subsequently hosted on GitHub pages. This is because Doxygen converts the leading / of markdown paths to an _ which then is ignored by Jekyll, a static site generator used by gh-pages.
 
 Possible fixes:
 
-1. Projects can set no-jekyll on their github pages.  This will prevent converting MD to web pages, but the HTML output
-of Doxygen will be hosted as-is. This is a good choice for projects that just want to host Doxygen output.
+1. Projects can set no-jekyll on their GitHub pages.  This will prevent converting MD to web pages, but the HTML output of Doxygen will be hosted as is. This is a good choice for projects that just want to host Doxygen output.
 
-2. Rename underscore files.  This is necessary when Jekyll needs to preprocess MD files. A sample renaming script can
-be found next to the Doxygen sample configuration.  Mileage may vary.
+2. Rename underscore files. This is necessary when Jekyll needs to preprocess MD files. A sample renaming script can
+be found next to the Doxygen sample configuration. Mileage may vary.

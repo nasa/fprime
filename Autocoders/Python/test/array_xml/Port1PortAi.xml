@@ -8,7 +8,7 @@
     Example port with arg
     </comment>
     <args>
-        <arg name="Arg1" type="Example::ArrayType">
+        <arg name="Arg1" type="Example::SubNameSpace::ArrayType">
             <comment>Example array arg</comment>
         </arg>
         <arg name="Arg2" type="Example::ArrSerial">
@@ -16,4 +16,3 @@
         </arg>
     </args>
 </interface>
-

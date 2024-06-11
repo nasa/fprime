@@ -20,8 +20,8 @@
 # Copyright 2007, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
-import os
 import configparser
+import os
 
 parent = configparser.ConfigParser
 
@@ -40,14 +40,14 @@ class ConfigManager(parent):
         Constructor.
         """
         configparser.ConfigParser.__init__(self)
-        self.__prop = dict()
+        self.__prop = {}
         self._setProps()
         # Now look for an ac.ini file within
         # first the current directory and then
         # the users $HOME directory.  If not found
         # then the default values from setProps are used.
         config_file_name = "ac.ini"
-        files = list()
+        files = []
         # Append other paths to look in here.
 
         # Look in next one, the home directory of the user.
@@ -72,12 +72,11 @@ class ConfigManager(parent):
         Used only by constructor to set all ConfigParser defaults. Establishes
         a dictionary of sections and then a dictionary of keyword, value
         association for each section.
-        @params None
         """
         ################################################################
         # General parameters here. This is the DEFAULT section.
         ################################################################
-        # self.__prop['DEFAULT'] = dict()
+        # self.__prop['DEFAULT'] = {}
 
         #
         # 'DEFAULT' section is baked in for Python 2.6x
@@ -90,7 +89,7 @@ class ConfigManager(parent):
         # schema parameters here.
         ################################################################
         # When using these, make sure to either prepend the build root env var or the appropriate amount of "../"
-        self.__prop["schema"] = dict()
+        self.__prop["schema"] = {}
         self.__prop["schema"][
             "commands"
         ] = "/Autocoders/Python/schema/default/command_schema.rng"
@@ -131,7 +130,7 @@ class ConfigManager(parent):
         ################################################################
         # Schematron parameters here.
         ################################################################
-        self.__prop["schematron"] = dict()
+        self.__prop["schematron"] = {}
         self.__prop["schematron"][
             "chan_id"
         ] = "/Autocoders/Python/schema/default/channel_id_schematron.rng"
@@ -163,7 +162,7 @@ class ConfigManager(parent):
         ################################################################
         # component parameters here.
         ################################################################
-        self.__prop["component"] = dict()
+        self.__prop["component"] = {}
         #
         # Default file naming corresponds to XML name and namespace
         # attributes if this is "True".  Otherwise it corresponds to
@@ -176,8 +175,8 @@ class ConfigManager(parent):
         self.__prop["component"]["ComponentXML"] = "ComponentAi.xml"
         self.__prop["component"]["ComponentCpp"] = "ComponentAc.cpp"
         self.__prop["component"]["ComponentH"] = "ComponentAc.hpp"
-        self.__prop["component"]["ImplCpp"] = "ComponentImpl.cpp-template"
-        self.__prop["component"]["ImplH"] = "ComponentImpl.hpp-template"
+        self.__prop["component"]["ImplCpp"] = ".cpp-template"
+        self.__prop["component"]["ImplH"] = ".hpp-template"
 
         self.__prop["component"]["ComponentTestCpp"] = "ComponentTestAc.cpp"
         self.__prop["component"]["ComponentTestH"] = "ComponentTestAc.hpp"
@@ -193,7 +192,7 @@ class ConfigManager(parent):
         ################################################################
         # port or interface parameters here.
         ################################################################
-        self.__prop["port"] = dict()
+        self.__prop["port"] = {}
         #
         # Default file naming corresponds to XML name and namespace
         # attributes if this is "True".  Otherwise it corresponds to
@@ -212,7 +211,7 @@ class ConfigManager(parent):
         ################################################################
         # assembly (topology) parameters here.
         ################################################################
-        self.__prop["assembly"] = dict()
+        self.__prop["assembly"] = {}
         self.__prop["assembly"]["TopologyXML"] = "AppAi.xml"
         self.__prop["assembly"]["TopologyCpp"] = "AppAc.cpp"
         self.__prop["assembly"]["TopologyH"] = "AppAc.hpp"
@@ -225,7 +224,7 @@ class ConfigManager(parent):
         ################################################################
         # deployment (topology) parameters here.
         ################################################################
-        self.__prop["deployment"] = dict()
+        self.__prop["deployment"] = {}
         self.__prop["deployment"]["TopologyXML"] = "AppAi.xml"
         self.__prop["deployment"]["TopologyCpp"] = "AppAc.cpp"
         self.__prop["deployment"]["TopologyH"] = "AppAc.hpp"
@@ -238,7 +237,7 @@ class ConfigManager(parent):
         # This sets the defaults for generated include options
         # The main idea is playing with include header files for testing
         ################################################################
-        self.__prop["includes"] = dict()
+        self.__prop["includes"] = {}
         self.__prop["includes"]["comp_include_path"] = None
         self.__prop["includes"]["port_include_path"] = None
         self.__prop["includes"]["serial_include_path"] = None
@@ -247,7 +246,7 @@ class ConfigManager(parent):
         ################################################################
         # Serializable parameters here.
         ################################################################
-        self.__prop["serialize"] = dict()
+        self.__prop["serialize"] = {}
         #
         # Default file naming corresponds to XML name and namespace
         # attributes if this is "True".  Otherwise it corresponds to
@@ -266,9 +265,9 @@ class ConfigManager(parent):
         # Special Ports and their attributes
         # They name's default to the implicit ports
         ###############################################################
-        self.__prop["special_ports"] = dict()
+        self.__prop["special_ports"] = {}
 
-        self.__prop["special_ports"]["Cmd"] = dict()
+        self.__prop["special_ports"]["Cmd"] = {}
         self.__prop["special_ports"]["Cmd"]["role"] = "Cmd"
         self.__prop["special_ports"]["Cmd"]["name"] = "CmdDisp"
         self.__prop["special_ports"]["Cmd"]["type"] = "Fw::Cmd"
@@ -276,7 +275,7 @@ class ConfigManager(parent):
         self.__prop["special_ports"]["Cmd"]["comment"] = None
         self.__prop["special_ports"]["Cmd"]["port_file"] = "Fw/Cmd/CmdPortAi.xml"
 
-        self.__prop["special_ports"]["CmdResponse"] = dict()
+        self.__prop["special_ports"]["CmdResponse"] = {}
         self.__prop["special_ports"]["CmdResponse"]["name"] = "CmdStatus"
         self.__prop["special_ports"]["CmdResponse"]["type"] = "Fw::CmdResponse"
         self.__prop["special_ports"]["CmdResponse"]["direction"] = "Output"
@@ -285,7 +284,7 @@ class ConfigManager(parent):
             "port_file"
         ] = "Fw/Cmd/CmdResponsePortAi.xml"
 
-        self.__prop["special_ports"]["CmdRegistration"] = dict()
+        self.__prop["special_ports"]["CmdRegistration"] = {}
         self.__prop["special_ports"]["CmdRegistration"]["name"] = "CmdReg"
         self.__prop["special_ports"]["CmdRegistration"]["type"] = "Fw::CmdReg"
         self.__prop["special_ports"]["CmdRegistration"]["direction"] = "Output"
@@ -294,14 +293,14 @@ class ConfigManager(parent):
             "port_file"
         ] = "Fw/Cmd/CmdRegPortAi.xml"
 
-        self.__prop["special_ports"]["LogEvent"] = dict()
+        self.__prop["special_ports"]["LogEvent"] = {}
         self.__prop["special_ports"]["LogEvent"]["name"] = "Log"
         self.__prop["special_ports"]["LogEvent"]["type"] = "Fw::Log"
         self.__prop["special_ports"]["LogEvent"]["direction"] = "Output"
         self.__prop["special_ports"]["LogEvent"]["comment"] = None
         self.__prop["special_ports"]["LogEvent"]["port_file"] = "Fw/Log/LogPortAi.xml"
 
-        self.__prop["special_ports"]["LogTextEvent"] = dict()
+        self.__prop["special_ports"]["LogTextEvent"] = {}
         self.__prop["special_ports"]["LogTextEvent"]["name"] = "LogText"
         self.__prop["special_ports"]["LogTextEvent"]["type"] = "Fw::LogText"
         self.__prop["special_ports"]["LogTextEvent"]["direction"] = "Output"
@@ -310,21 +309,21 @@ class ConfigManager(parent):
             "port_file"
         ] = "Fw/Log/LogTextPortAi.xml"
 
-        self.__prop["special_ports"]["TimeGet"] = dict()
+        self.__prop["special_ports"]["TimeGet"] = {}
         self.__prop["special_ports"]["TimeGet"]["name"] = "Time"
         self.__prop["special_ports"]["TimeGet"]["type"] = "Fw::Time"
         self.__prop["special_ports"]["TimeGet"]["direction"] = "Output"
         self.__prop["special_ports"]["TimeGet"]["comment"] = None
         self.__prop["special_ports"]["TimeGet"]["port_file"] = "Fw/Time/TimePortAi.xml"
 
-        self.__prop["special_ports"]["Telemetry"] = dict()
+        self.__prop["special_ports"]["Telemetry"] = {}
         self.__prop["special_ports"]["Telemetry"]["name"] = "Tlm"
         self.__prop["special_ports"]["Telemetry"]["type"] = "Fw::Tlm"
         self.__prop["special_ports"]["Telemetry"]["direction"] = "Output"
         self.__prop["special_ports"]["Telemetry"]["comment"] = None
         self.__prop["special_ports"]["Telemetry"]["port_file"] = "Fw/Tlm/TlmPortAi.xml"
 
-        self.__prop["special_ports"]["ParamGet"] = dict()
+        self.__prop["special_ports"]["ParamGet"] = {}
         self.__prop["special_ports"]["ParamGet"]["name"] = "ParamGet"
         self.__prop["special_ports"]["ParamGet"]["type"] = "Fw::PrmGet"
         self.__prop["special_ports"]["ParamGet"]["direction"] = "Output"
@@ -333,7 +332,7 @@ class ConfigManager(parent):
             "port_file"
         ] = "Fw/Prm/PrmGetPortAi.xml"
 
-        self.__prop["special_ports"]["ParamSet"] = dict()
+        self.__prop["special_ports"]["ParamSet"] = {}
         self.__prop["special_ports"]["ParamSet"]["name"] = "ParamSet"
         self.__prop["special_ports"]["ParamSet"]["type"] = "Fw::PrmSet"
         self.__prop["special_ports"]["ParamSet"]["direction"] = "Output"
@@ -346,7 +345,7 @@ class ConfigManager(parent):
 
         # Add constants processing
 
-        self.__prop["constants"] = dict()
+        self.__prop["constants"] = {}
         # where the constants file is relative to BUILD_ROOT
         # constants will be in the INI file format supported by the ConfigParser library
         self.__prop["constants"]["constants_file"] = os.environ.get(

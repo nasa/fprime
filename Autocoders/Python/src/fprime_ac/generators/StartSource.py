@@ -53,7 +53,7 @@ class StartSource:
         """
         Constructor.
         """
-        self.__visitor_list = list()
+        self.__visitor_list = []
 
     def __call__(self, args):
         """
@@ -80,7 +80,7 @@ class StartSource:
             DEBUG.error(
                 "StartSource.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "StartSource.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -95,7 +95,7 @@ class StartSource:
             DEBUG.error(
                 "StartSource.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "StartSource.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

@@ -1,5 +1,0 @@
-This component reads the time from a Unix system clock. This time is used by other components to time-tag events and telemetry. 
-There are Linux (includes Cygwin) and Darwin (MacOS) variations.
-
-LinuxTimeImpl.hpp(.cpp) - Generic linux time implementation
-DarwinTimeImpl.cpp - MacOS implementation

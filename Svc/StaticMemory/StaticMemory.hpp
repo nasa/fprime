@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  using StaticMemory = StaticMemoryComponentImpl;
+  typedef StaticMemoryComponentImpl StaticMemory;
 
 }
 

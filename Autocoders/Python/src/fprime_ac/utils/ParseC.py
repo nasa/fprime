@@ -48,7 +48,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     @return: the integer value, or exception
 
     Note: A ValueError exception is raised if the value is not found,
-    or if the value can not be represented as an integer.
+    or if the value cannot be represented as an integer.
     """
     if loadfile not in (True, False):
         raise ValueError("%r: invalid loadfile argument" % loadfile)
@@ -59,7 +59,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     # variable. We only do this if the loadfile argument is
     # set to True.
 
-    if loadfile == True:
+    if loadfile:
 
         if not os.path.isfile(filename):
             raise OSError("%r: file not found." % filename)
@@ -132,7 +132,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     # variable. We only do this if the loadfile argument is
     # set to True.
 
-    if loadfile == True:
+    if loadfile:
 
         if not os.path.isfile(filename):
             ##################
@@ -166,7 +166,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         # reference where we need it. No loading required.
         data = filename
 
-    if (typename == "" or typename is None) == True:
+    if typename == "" or typename is None:
         str = (
             "ERROR: utils.ParseC.ParseTypedefEnum typename argument empty (%s)"
             % typename
@@ -216,7 +216,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     #
     # LJR Added 30 July 2007 to flag missing enum definitions.
     #
-    if (typename in data) == False:
+    if typename not in data:
         str = "ERROR: could not find ENUM type (%s)" % typename
         print(str)
         raise ValueError(str)

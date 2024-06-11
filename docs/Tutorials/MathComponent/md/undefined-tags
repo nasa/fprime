@@ -1,9 +1,0 @@
-#!/bin/sh -e
-
-if ! test $# -eq 2
-then
-  echo 'usage: undefined-tags defined-tags used-tags' 1>&2
-  exit 1
-fi
-
-diff -u $1 $2 | grep '^+' | grep -v '++' | sed 's/^\+//'

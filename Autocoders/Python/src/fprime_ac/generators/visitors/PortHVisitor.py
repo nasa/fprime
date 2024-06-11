@@ -29,21 +29,22 @@ from fprime_ac.generators.visitors import AbstractVisitor
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
-from fprime_ac.utils import ConfigManager
-from fprime_ac.utils import TypesList
+from fprime_ac.utils import ConfigManager, TypesList
 
 #
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.port import startPortH
-    from fprime_ac.generators.templates.port import includes1PortH
-    from fprime_ac.generators.templates.port import includes2PortH
-    from fprime_ac.generators.templates.port import namespacePortH
-    from fprime_ac.generators.templates.port import publicPortH
-    from fprime_ac.generators.templates.port import protectedPortH
-    from fprime_ac.generators.templates.port import privatePortH
-    from fprime_ac.generators.templates.port import finishPortH
+    from fprime_ac.generators.templates.port import (
+        finishPortH,
+        includes1PortH,
+        includes2PortH,
+        namespacePortH,
+        privatePortH,
+        protectedPortH,
+        publicPortH,
+        startPortH,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -175,10 +176,20 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 "F32",
                 "F64",
                 "bool",
-                "FwOpcodeType",
+                "FwBuffSizeType",
                 "FwChanIdType",
+                "FwDpIdType",
+                "FwDpPriorityType",
+                "FwEnumStoreType",
                 "FwEventIdType",
+                "FwIndexType",
+                "FwOpcodeType",
+                "FwPacketDescriptorType",
                 "FwPrmIdType",
+                "FwSizeType",
+                "FwTimeBaseStoreType",
+                "FwTimeContextStoreType",
+                "FwTlmPacketizeIdType",
                 "NATIVE_INT_TYPE",
                 "NATIVE_UINT_TYPE",
                 "POINTER_CAST",
@@ -198,7 +209,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a list of port argument tuples
         """
-        arg_list = list()
+        arg_list = []
 
         for arg in obj.get_args():
             n = arg.get_name()
@@ -229,8 +240,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         if self.__config.get("port", "XMLDefaultFileName") == "True":
             filename = obj.get_type() + self.__config.get("port", "PortH")
             PRINT.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()
@@ -255,8 +265,6 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writing here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp is None:
-            raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):

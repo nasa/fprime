@@ -6,7 +6,7 @@
  */
 
 #include <Svc/RateGroupDriver/test/ut/RateGroupDriverImplTester.hpp>
-#include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
+#include <Svc/RateGroupDriver/RateGroupDriver.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 
 #include <gtest/gtest.h>
@@ -15,11 +15,12 @@
 static Fw::SimpleObjRegistry simpleReg;
 #endif
 
-void connectPorts(Svc::RateGroupDriverImpl& impl, Svc::RateGroupDriverImplTester& tester) {
+void connectPorts(Svc::RateGroupDriver& impl, Svc::RateGroupDriverImplTester& tester) {
 
-    impl.set_CycleOut_OutputPort(0,tester.get_from_CycleOut(0));
-    impl.set_CycleOut_OutputPort(1,tester.get_from_CycleOut(1));
-    impl.set_CycleOut_OutputPort(2,tester.get_from_CycleOut(2));
+    for(NATIVE_UINT_TYPE i=0; i<Svc::RateGroupDriver::DIVIDER_SIZE; i++)
+    {
+        impl.set_CycleOut_OutputPort(i,tester.get_from_CycleOut(i));
+    }
 
     tester.connect_to_CycleIn(0,impl.get_CycleIn_InputPort(0));
 #if FW_PORT_TRACING
@@ -31,9 +32,14 @@ void connectPorts(Svc::RateGroupDriverImpl& impl, Svc::RateGroupDriverImplTester
 
 TEST(RateGroupDriverTest,NominalSchedule) {
 
-    NATIVE_INT_TYPE dividers[] = {1,2,3};
+    Svc::RateGroupDriver::DividerSet dividersSet{};
+    for(FwIndexType i=0; i<static_cast<FwIndexType>(Svc::RateGroupDriver::DIVIDER_SIZE); i++)
+    {
+        dividersSet.dividers[i] = {i+1, i%2};
+    }
 
-    Svc::RateGroupDriverImpl impl("RateGroupDriverImpl",dividers,FW_NUM_ARRAY_ELEMENTS(dividers));
+    Svc::RateGroupDriver impl("RateGroupDriver");
+    impl.configure(dividersSet);
 
     Svc::RateGroupDriverImplTester tester(impl);
 
@@ -43,7 +49,7 @@ TEST(RateGroupDriverTest,NominalSchedule) {
     // connect ports
     connectPorts(impl,tester);
 
-    tester.runSchedNominal(dividers,FW_NUM_ARRAY_ELEMENTS(dividers));
+    tester.runSchedNominal(dividersSet,FW_NUM_ARRAY_ELEMENTS(dividersSet.dividers));
 
 }
 
@@ -52,5 +58,3 @@ int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-
-

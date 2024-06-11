@@ -1,0 +1,42 @@
+# If the event that triggered this action is a PR and has a matching `pr-<number>` branch on
+# target_repository, then return the name of that branch. Otherwise, return default_target_ref.
+# See the CONTRIBUTING.md for info on why this is used.
+
+name: 'Get PR Branch'
+
+on:
+  workflow_call:
+    inputs:
+      target_repository:
+        description: 'The repository to check for the PR branch'
+        type: string
+        required: true
+      default_target_ref:
+        description: 'Ref to use if the PR branch is not found'
+        type: string
+        required: false
+        default: devel
+    outputs:
+      target-branch:
+        value: ${{ jobs.runs.outputs.target-branch }}
+
+jobs:
+  runs:
+    runs-on: "ubuntu-latest"
+    outputs:
+      target-branch: ${{ steps.get_target_branch.outputs.TARGET_BRANCH }}
+    steps:
+      - name: "Get target branch"
+        id: get_target_branch
+        run: |
+          response_code=`curl -w '%{response_code}' https://api.github.com/repos/${{ inputs.target_repository }}/branches/pr-${{ github.event.number }} -o /dev/null`
+          if [[ "${{ github.event_name }}" == "pull_request" && "$response_code" == "200" ]]; then
+            echo "TARGET_BRANCH=pr-${{ github.event.number }}" >> $GITHUB_OUTPUT
+            echo "PR branch found, using pr-${{ github.event.number }}"
+          else
+            echo "TARGET_BRANCH=${{ inputs.default_target_ref }}" >> $GITHUB_OUTPUT
+            echo "PR branch not found, using ${{ inputs.default_target_ref }}"
+          fi
+        shell: bash
+
+

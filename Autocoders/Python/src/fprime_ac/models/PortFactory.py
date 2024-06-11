@@ -44,7 +44,7 @@ class PortFactory:
         """
         self.__parsed = None
         self.__instance = None
-        self.__configured_visitors = dict()
+        self.__configured_visitors = {}
 
     def getInstance():
         """

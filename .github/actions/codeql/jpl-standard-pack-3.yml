@@ -1,0 +1,13 @@
+name: "CodeQL JPL Coding Standard - Recommendations 2 of 2"
+
+disable-default-queries: true
+
+packs:
+  # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
+  - codeql/cpp-queries:JPL_C
+
+query-filters:
+  # This will ONLY include the following query
+  - include:
+      id:
+        - cpp/jpl-c/basic-int-types

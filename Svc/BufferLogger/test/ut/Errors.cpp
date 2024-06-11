@@ -19,16 +19,16 @@ namespace Svc {
 
   namespace Errors {
 
-    void Tester ::
+    void BufferLoggerTester ::
       LogFileOpen()
     {
       // Remove buf directory
       (void) system("rm -rf buf");
 
-      this->component.m_file.baseName = Fw::String("LogFileOpen");
+      this->component.m_file.m_baseName = Fw::String("LogFileOpen");
 
       // Check initial state
-      ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
+      ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.m_mode);
       ASSERT_EVENTS_SIZE(0);
 
       // Send data
@@ -42,13 +42,13 @@ namespace Svc {
         ASSERT_EVENTS_BL_LogFileOpenError(
           i,
           Os::File::DOESNT_EXIST,
-          this->component.m_file.name.toChar()
+          this->component.m_file.m_name.toChar()
         );
       }
 
       // Create buf directory and try again
       (void) system("mkdir buf");
-      ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
+      ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.m_mode);
 
       // Send data
       this->sendComBuffers(3);
@@ -61,7 +61,7 @@ namespace Svc {
 
       // Remove buf directory and try again
       (void) system("rm -rf buf");
-      ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
+      ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.m_mode);
 
       // Send data
       this->sendComBuffers(3);
@@ -74,25 +74,25 @@ namespace Svc {
         ASSERT_EVENTS_BL_LogFileOpenError(
           i,
           Os::File::DOESNT_EXIST,
-          this->component.m_file.name.toChar()
+          this->component.m_file.m_name.toChar()
         );
       }
 
     }
 
-    void Tester ::
+    void BufferLoggerTester ::
       LogFileWrite()
     {
-      ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
+      ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.m_mode);
       ASSERT_EVENTS_SIZE(0);
 
-      this->component.m_file.baseName = Fw::String("LogFileWrite");
+      this->component.m_file.m_baseName = Fw::String("LogFileWrite");
 
       // Send data
       this->sendComBuffers(1);
 
       // Force close the file
-      this->component.m_file.osFile.close();
+      this->component.m_file.m_osFile.close();
 
       // Send data
       this->sendComBuffers(1);
@@ -101,9 +101,9 @@ namespace Svc {
       Fw::String fileName;
       fileName.format(
           "%s%s%s",
-          this->component.m_file.prefix.toChar(),
-          this->component.m_file.baseName.toChar(),
-          this->component.m_file.suffix.toChar()
+          this->component.m_file.m_prefix.toChar(),
+          this->component.m_file.m_baseName.toChar(),
+          this->component.m_file.m_suffix.toChar()
       );
 
       // Check events
@@ -119,16 +119,16 @@ namespace Svc {
       );
 
       // Make comlogger open a new file:
-      this->component.m_file.mode = BufferLogger::File::Mode::CLOSED;
+      this->component.m_file.m_mode = BufferLogger::File::Mode::CLOSED;
       this->component.m_file.open();
 
       // NOTE(mereweth) - new file; counter has incremented
       fileName.format(
           "%s%s%d%s",
-          this->component.m_file.prefix.toChar(),
-          this->component.m_file.baseName.toChar(),
+          this->component.m_file.m_prefix.toChar(),
+          this->component.m_file.m_baseName.toChar(),
           1,
-          this->component.m_file.suffix.toChar()
+          this->component.m_file.m_suffix.toChar()
       );
 
       // Try to write and make sure it succeeds
@@ -140,7 +140,7 @@ namespace Svc {
       ASSERT_EVENTS_BL_LogFileWriteError_SIZE(1);
 
       // Force close the file from underneath the component
-      component.m_file.osFile.close();
+      component.m_file.m_osFile.close();
 
       // Send data
       this->sendComBuffers(3);
@@ -161,10 +161,10 @@ namespace Svc {
 
     }
 
-    void Tester ::
+    void BufferLoggerTester ::
       LogFileValidation()
     {
-      this->component.m_file.baseName = Fw::String("LogFileValidation");
+      this->component.m_file.m_baseName = Fw::String("LogFileValidation");
 
       // Send data
       this->sendComBuffers(1);
@@ -178,16 +178,16 @@ namespace Svc {
       Fw::String fileName;
       fileName.format(
           "%s%s%s",
-          this->component.m_file.prefix.toChar(),
-          this->component.m_file.baseName.toChar(),
-          this->component.m_file.suffix.toChar()
+          this->component.m_file.m_prefix.toChar(),
+          this->component.m_file.m_baseName.toChar(),
+          this->component.m_file.m_suffix.toChar()
       );
       ASSERT_EVENTS_BL_LogFileClosed(
           0,
           fileName.toChar()
       );
       Os::ValidatedFile validatedFile(fileName.toChar());
-      const Fw::String& hashFileName = validatedFile.getHashFileName();
+      const Fw::StringBase& hashFileName = validatedFile.getHashFileName();
       ASSERT_EVENTS_BL_LogFileValidationError(
           0,
           hashFileName.toChar(),

@@ -24,6 +24,13 @@
 #define COMLOGGER_PATH_MAX 255
 #endif
 
+// some limits.h don't have NAME_MAX
+#ifdef NAME_MAX
+#define COMLOGGER_NAME_MAX NAME_MAX
+#else
+#define COMLOGGER_NAME_MAX 255
+#endif
+
 namespace Svc {
 
   class ComLogger :
@@ -45,10 +52,22 @@ namespace Svc {
       //                    match to an expected size on the ground during post processing.
       ComLogger(const char* compName, const char* filePrefix, U32 maxFileSize, bool storeBufferLength=true);
 
+      // CONSTRUCTOR:
+      ComLogger(const char* compName);
+
       void init(
           NATIVE_INT_TYPE queueDepth, //!< The queue depth
           NATIVE_INT_TYPE instance //!< The instance number
       );
+
+      // filePrefix: string to prepend the file name with, ie. "thermal_telemetry"
+      // maxFileSize: the maximum size a file should reach before being closed and a new one opened
+      // storeBufferLength: if true, store the length of each com buffer before storing the buffer itself,
+      //                    otherwise just store the com buffer. false might be advantageous in a system
+      //                    where you can ensure that all buffers given to the ComLogger are the same size
+      //                    in which case you do not need the overhead. Or you store an id which you can
+      //                    match to an expected size on the ground during post processing.
+      void init_log_file(const char* filePrefix, U32 maxFileSize, bool storeBufferLength=true);
 
       ~ComLogger();
 
@@ -81,13 +100,13 @@ namespace Svc {
       // ----------------------------------------------------------------------
       // The maximum size of a filename
       enum {
-        MAX_FILENAME_SIZE = NAME_MAX, // as defined in limits.h
+        MAX_FILENAME_SIZE = COMLOGGER_NAME_MAX,
         MAX_PATH_SIZE = COMLOGGER_PATH_MAX
       };
 
       // The filename data:
-      CHAR filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
-      U32 maxFileSize;
+      CHAR m_filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      U32 m_maxFileSize;
 
       // ----------------------------------------------------------------------
       // Internal state:
@@ -97,14 +116,15 @@ namespace Svc {
           OPEN = 1
       };
 
-      FileMode fileMode;
-      Os::File file;
-      CHAR fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
-      CHAR hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
-      U32 byteCount;
-      bool writeErrorOccurred;
-      bool openErrorOccurred;
-      bool storeBufferLength;
+      FileMode m_fileMode;
+      Os::File m_file;
+      CHAR m_fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      CHAR m_hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      U32 m_byteCount;
+      bool m_writeErrorOccurred;
+      bool m_openErrorOccurred;
+      bool m_storeBufferLength;
+      bool m_initialized;
 
       // ----------------------------------------------------------------------
       // File functions:
@@ -132,6 +152,6 @@ namespace Svc {
       void writeHashFile(
       );
   };
-};
+}
 
 #endif

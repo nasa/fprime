@@ -50,60 +50,55 @@ namespace LoggerRules {
     // Log valid messages
     void LogGood::action(MockLogging::FakeLogger& truth) {
         NATIVE_INT_TYPE random = STest::Pick::lowerUpper(0, 10);
-        NATIVE_INT_TYPE ra1 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra2 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra3 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra4 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra5 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra6 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra7 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra8 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra9 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra10 = STest::Pick::lowerUpper(0, 0xffffffff);
+        NATIVE_INT_TYPE ra[10];
+        for (int i = 0; i < 10; ++i) {
+            ra[i] = STest::Pick::lowerUpper(0, 0xffffffff);
+        }
+        
         switch (random) {
             case 0:
                 Fw::Logger::logMsg("No args");
                 truth.check("No args");
                 break;
             case 1:
-                Fw::Logger::logMsg("One arg: %lu", ra1);
-                truth.check("One arg: %lu", ra1);
+                Fw::Logger::logMsg("One arg: %lu", ra[0]);
+                truth.check("One arg: %lu", ra[0]);
                 break;
             case 2:
-                Fw::Logger::logMsg("Two arg: %lu", ra1, ra2);
-                truth.check("Two arg: %lu", ra1, ra2);
+                Fw::Logger::logMsg("Two arg: %lu", ra[0], ra[1]);
+                truth.check("Two arg: %lu", ra[0], ra[1]);
                 break;
             case 3:
-                Fw::Logger::logMsg("Three arg: %lu", ra1, ra2, ra3);
-                truth.check("Three arg: %lu", ra1, ra2, ra3);
+                Fw::Logger::logMsg("Three arg: %lu", ra[0], ra[1], ra[2]);
+                truth.check("Three arg: %lu", ra[0], ra[1], ra[2]);
                 break;
             case 4:
-                Fw::Logger::logMsg("Four arg: %lu", ra1, ra2, ra3, ra4);
-                truth.check("Four arg: %lu", ra1, ra2, ra3, ra4);
+                Fw::Logger::logMsg("Four arg: %lu", ra[0], ra[1], ra[2], ra[3]);
+                truth.check("Four arg: %lu", ra[0], ra[1], ra[2], ra[3]);
                 break;
             case 5:
-                Fw::Logger::logMsg("Five arg: %lu", ra1, ra2, ra3, ra4, ra5);
-                truth.check("Five arg: %lu", ra1, ra2, ra3, ra4, ra5);
+                Fw::Logger::logMsg("Five arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4]);
+                truth.check("Five arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4]);
                 break;
             case 6:
-                Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6);
-                truth.check("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6);
+                Fw::Logger::logMsg("Six arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5]);
+                truth.check("Six arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5]);
                 break;
             case 7:
-                Fw::Logger::logMsg("Seven arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7);
-                truth.check("Seven arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7);
+                Fw::Logger::logMsg("Seven arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6]);
+                truth.check("Seven arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6]);
                 break;
             case 8:
-                Fw::Logger::logMsg("Eight arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8);
-                truth.check("Eight arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8);
+                Fw::Logger::logMsg("Eight arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7]);
+                truth.check("Eight arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7]);
                 break;
             case 9:
-                Fw::Logger::logMsg("Nine arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8, ra9);
-                truth.check("Nine arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8, ra9);
+                Fw::Logger::logMsg("Nine arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8]);
+                truth.check("Nine arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8]);
                 break;
             case 10:
-                Fw::Logger::logMsg("Ten arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8, ra9, ra10);
-                truth.check("Ten arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8, ra9, ra10);
+                Fw::Logger::logMsg("Ten arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
+                truth.check("Ten arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
                 break;
 
             default:
@@ -123,16 +118,10 @@ namespace LoggerRules {
     // Log valid messages
     void LogBad::action(MockLogging::FakeLogger& truth) {
         NATIVE_INT_TYPE random = STest::Pick::lowerUpper(0, 10);
-        NATIVE_INT_TYPE ra1 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra2 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra3 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra4 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra5 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra6 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra7 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra8 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra9 = STest::Pick::lowerUpper(0, 0xffffffff);
-        NATIVE_INT_TYPE ra10 = STest::Pick::lowerUpper(0, 0xffffffff);
+        NATIVE_INT_TYPE ra[10];
+        for (int i = 0; i < 10; ++i) {
+            ra[i] = STest::Pick::lowerUpper(0, 0xffffffff);
+        }
 
         switch (random) {
             case 0:
@@ -140,43 +129,43 @@ namespace LoggerRules {
                 truth.check(nullptr);
                 break;
             case 1:
-                Fw::Logger::logMsg("One arg: %lu", ra1);
+                Fw::Logger::logMsg("One arg: %lu", ra[0]);
                 truth.check(nullptr);
                 break;
             case 2:
-                Fw::Logger::logMsg("Two arg: %lu", ra1, ra2);
+                Fw::Logger::logMsg("Two arg: %lu", ra[0], ra[1]);
                 truth.check(nullptr);
                 break;
             case 3:
-                Fw::Logger::logMsg("Three arg: %lu", ra1, ra2, ra3);
+                Fw::Logger::logMsg("Three arg: %lu", ra[0], ra[1], ra[2]);
                 truth.check(nullptr);
                 break;
             case 4:
-                Fw::Logger::logMsg("Four arg: %lu", ra1, ra2, ra3, ra4);
+                Fw::Logger::logMsg("Four arg: %lu", ra[0], ra[1], ra[2], ra[3]);
                 truth.check(nullptr);
                 break;
             case 5:
-                Fw::Logger::logMsg("Five arg: %lu", ra1, ra2, ra3, ra4, ra5);
+                Fw::Logger::logMsg("Five arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4]);
                 truth.check(nullptr);
                 break;
             case 6:
-                Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6);
+                Fw::Logger::logMsg("Six arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5]);
                 truth.check(nullptr);
                 break;
             case 7:
-                Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7);
+                Fw::Logger::logMsg("Seven arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6]);
                 truth.check(nullptr);
                 break;
             case 8:
-                Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8);
+                Fw::Logger::logMsg("Eight arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7]);
                 truth.check(nullptr);
                 break;
             case 9:
-                Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8, ra9);
+                Fw::Logger::logMsg("Nine arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8]);
                 truth.check(nullptr);
                 break;
             case 10:
-                Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8, ra9, ra10);
+                Fw::Logger::logMsg("Ten arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
                 truth.check(nullptr);
                 break;
             default:

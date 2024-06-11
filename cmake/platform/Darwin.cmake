@@ -18,6 +18,8 @@ if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
    message(STATUS "Requiring thread library")
    FIND_PACKAGE ( Threads REQUIRED )
 endif()
+choose_fprime_implementation(Os/File Os/File/Posix)
+choose_fprime_implementation(Os/Task Os/Task/Posix)
 
-# Add linux include path which is compatible with Darwin for StandardTypes.hpp
-include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
+# Add linux include path which is compatible with Darwin for PlatformTypes.hpp
+include_directories(SYSTEM "${CMAKE_CURRENT_LIST_DIR}/types")

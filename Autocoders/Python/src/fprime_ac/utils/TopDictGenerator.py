@@ -1,16 +1,7 @@
-from lxml import etree
-
-from fprime_ac.parsers import (
-    XmlArrayParser,
-    XmlEnumParser,
-    XmlSerializeParser,
-)
-
-from fprime_ac.utils import (
-    DictTypeConverter,
-)
-
+from fprime_ac.parsers import XmlArrayParser, XmlEnumParser, XmlSerializeParser
+from fprime_ac.utils import DictTypeConverter
 from fprime_ac.utils.buildroot import search_for_file
+from lxml import etree
 
 
 class TopDictGenerator:
@@ -47,11 +38,6 @@ class TopDictGenerator:
                 serializable_model = XmlSerializeParser.XmlSerializeParser(
                     serializable_file
                 )
-                if len(serializable_model.get_includes()) != 0:
-                    raise Exception(
-                        "%s: Can only include one level of serializable for dictionaries"
-                        % serializable_file
-                    )
 
                 # check for included enum XML in included serializable XML
                 if len(serializable_model.get_include_enums()) != 0:
@@ -82,6 +68,8 @@ class TopDictGenerator:
                         member_elem.attrib["description"] = member_comment
                     if member_default is not None:
                         member_elem.attrib["default"] = member_default
+                    if member_array_size is not None:
+                        member_elem.attrib["size"] = member_array_size
                     if isinstance(member_type, tuple):
                         type_name = "{}::{}::{}".format(
                             serializable_type,
@@ -112,6 +100,8 @@ class TopDictGenerator:
             enum_elem = etree.Element("enum")
             enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
             enum_elem.attrib["type"] = enum_type
+            if enum_model.get_serialize_type():
+                enum_elem.attrib["serialize_type"] = enum_model.get_serialize_type()
             enum_value = 0
             for (
                 member_name,
@@ -391,8 +381,8 @@ class TopDictGenerator:
             for array_file in array_file_list:
                 array_file = search_for_file("Array", array_file)
                 array_model = XmlArrayParser.XmlArrayParser(array_file)
-                array_elem = etree.Element("array")
 
+                array_elem = etree.Element("array")
                 array_name = array_model.get_namespace() + "::" + array_model.get_name()
                 array_elem.attrib["name"] = array_name
 

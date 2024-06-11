@@ -38,15 +38,20 @@ namespace STest {
           const U32 size //!< The size of the array
       ) :
         Scenario<State>(name),
-        scenarioArray(new ScenarioArray<State>(scenarios, size))
+        scenarioArray(new ScenarioArray<State>(scenarios, size)),
+        seen(new bool[size])
       {
 
       }
 
       //! Destroy an InterleavedScenario object
       ~InterleavedScenario() {
-        assert(this->scenarioArray != nullptr);
-        delete this->scenarioArray;
+        if (this->scenarioArray != nullptr) {
+          delete this->scenarioArray;
+        }
+        if (this->seen != nullptr) {
+          delete[] this->seen;
+        }
       }
 
     protected:
@@ -62,14 +67,13 @@ namespace STest {
       }
 
       //! The virtual implementation of nextRule required by Scenario
-      //! \return The next rule, assuming isDone() is false, or NULL if none
+      //! \return The next rule, assuming isDone() is false, or nullptr if none
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
         assert(this->scenarioArray != nullptr);
         Rule<State>* rule = nullptr;
-        bool seen[this->scenarioArray->size];
-        memset(seen, 0, this->scenarioArray->size * sizeof(bool));
+        memset(this->seen, 0, this->scenarioArray->size * sizeof(bool));
         U32 numSeen = 0;
         Scenario<State>* *const scenarios =
           this->scenarioArray->getScenarios();
@@ -79,14 +83,14 @@ namespace STest {
           assert(numIterations < maxIterations);
           ++numIterations;
           const U32 i = this->scenarioArray->getRandomIndex();
-          if (seen[i]) {
+          if (this->seen[i]) {
             continue;
           }
           rule = scenarios[i]->nextRule(state);
           if (rule != nullptr) {
             break;
           }
-          seen[i] = true;
+          this->seen[i] = true;
           ++numSeen;
         }
         return rule;
@@ -117,6 +121,9 @@ namespace STest {
 
       //! The scenarios to interleave
       ScenarioArray<State>* scenarioArray;
+
+      //! An array to store the scenarios seen
+      bool* seen;
 
   };
 

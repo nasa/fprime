@@ -48,12 +48,12 @@ namespace Svc {
           FILE_NAME_ARG file,
           NATIVE_UINT_TYPE lineNo,
           NATIVE_UINT_TYPE numArgs,
-          AssertArg arg1,
-          AssertArg arg2,
-          AssertArg arg3,
-          AssertArg arg4,
-          AssertArg arg5,
-          AssertArg arg6
+          FwAssertArgType arg1,
+          FwAssertArgType arg2,
+          FwAssertArgType arg3,
+          FwAssertArgType arg4,
+          FwAssertArgType arg5,
+          FwAssertArgType arg6
           );
 
     private:
@@ -68,12 +68,12 @@ namespace Svc {
                   FILE_NAME_ARG file,
                   NATIVE_UINT_TYPE lineNo,
                   NATIVE_UINT_TYPE numArgs,
-                  AssertArg arg1,
-                  AssertArg arg2,
-                  AssertArg arg3,
-                  AssertArg arg4,
-                  AssertArg arg5,
-                  AssertArg arg6
+                  FwAssertArgType arg1,
+                  FwAssertArgType arg2,
+                  FwAssertArgType arg3,
+                  FwAssertArgType arg4,
+                  FwAssertArgType arg5,
+                  FwAssertArgType arg6
                   );
 
               // Prevent actual assert since FATAL handler will deal with it

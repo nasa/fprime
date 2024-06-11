@@ -11,7 +11,6 @@
 
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/Mixed.hpp"
-#include "Os/Stubs/FileStubs.hpp"
 
 namespace Svc {
 
@@ -21,9 +20,9 @@ namespace Svc {
     // Constructors
     // ----------------------------------------------------------------------
 
-    Tester ::
-      Tester(const SequenceFiles::File::Format::t format) :
-        MixedRelativeBase::Tester(format)
+    CmdSequencerTester ::
+      CmdSequencerTester(const SequenceFiles::File::Format::t format) :
+        MixedRelativeBase::CmdSequencerTester(format)
     {
 
     }
@@ -32,7 +31,7 @@ namespace Svc {
     // Tests
     // ----------------------------------------------------------------------
 
-    void Tester ::
+    void CmdSequencerTester ::
       AutoByCommand()
     {
       SequenceFiles::MixedFile file(this->format);
@@ -41,7 +40,7 @@ namespace Svc {
       this->parameterizedAutoByCommand(file, numCommands, bound);
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       Validate()
     {
       SequenceFiles::MixedFile file(this->format);
@@ -52,7 +51,7 @@ namespace Svc {
     // Private helper methods
     // ----------------------------------------------------------------------
 
-    void Tester ::
+    void CmdSequencerTester ::
       executeCommandsAuto(
           const char *const fileName,
           const U32 numCommands,
@@ -69,7 +68,7 @@ namespace Svc {
       this->executeCommand4(fileName);
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       executeCommand1(const char* const fileName)
     {
       // Set the time to past absolute command
@@ -104,7 +103,7 @@ namespace Svc {
       );
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       executeCommand2(const char* const fileName)
     {
       // Check command buffer
@@ -128,7 +127,7 @@ namespace Svc {
       );
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       executeCommand3(const char* const fileName)
     {
       // Set the time to past relative timer
@@ -163,7 +162,7 @@ namespace Svc {
       );
     }
 
-    void Tester ::
+    void CmdSequencerTester ::
       executeCommand4(const char* const fileName)
     {
       // Assert that timer is clear - immediate command

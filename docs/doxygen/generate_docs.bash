@@ -9,7 +9,6 @@ APIDOCS="${FPRIME}/docs/UsersGuide/api"
 
 DOXY_OUTPUT="${FPRIME}/docs/UsersGuide/api/c++"
 CMAKE_OUTPUT="${FPRIME}/docs/UsersGuide/api/cmake"
-PY_OUTPUT="${FPRIME}/docs/UsersGuide/api/python"
 
 VERSIONED_OUTPUT="${1:-}"
 
@@ -53,35 +52,42 @@ function make_version
     then
         mkdir "${FPRIME}/docs/${VERSION}"
         cp "${FPRIME}/docs/latest.md" "${FPRIME}/docs/${VERSION}/index.md"
-        cp -r "${FPRIME}/docs/INSTALL.md" "${FPRIME}/docs/Tutorials" "${FPRIME}/docs/UsersGuide" "${FPRIME}/docs/${VERSION}"
+        cp -r "${FPRIME}/docs/INSTALL.md" "${FPRIME}/docs/Tutorials" "${FPRIME}/docs/UsersGuide" "${FPRIME}/docs/Design" "${FPRIME}/docs/Design/HowTo" "${FPRIME}/docs/${VERSION}"
         REPLACE='| ['$VERSION' Documentation](https:\/\/nasa.github.io\/fprime\/'$VERSION') |\n'
     else
         echo "No version specified, updating local only"
     fi
 
-    sed -i 's/\(| \[Latest Documentation\](.\/latest.md)\)[^|]*|/'"$REPLACE"'\1 '"As of: $(date)"' |/' "${FPRIME}/docs/index.md"
+    sed -i.backup 's/\(| \[Latest Documentation\](.\/latest.md)\)[^|]*|/'"$REPLACE"'\1 As of: '"$(date)"' |/' "${FPRIME}/docs/index.md"
 
 }
 
 # Doxygen generation
 (
     cd "${FPRIME}"
+    DOCS_CACHE="${FPRIME}/docs-cache"
     clobber "${DOXY_OUTPUT}"
     echo "[INFO] Building fprime"
-    (
-        mkdir -p "${FPRIME}/build-fprime-automatic-docs"
-        cd "${FPRIME}/build-fprime-automatic-docs"
-        cmake "${FPRIME}" -DCMAKE_BUILD_TYPE=Release 1>/dev/null
-    )
-    fprime-util build "docs" --all -j32 1> /dev/null
+    rm -rf "${DOCS_CACHE}"
+
+    fprime-util generate --build-cache ${DOCS_CACHE} -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 1>/dev/null
+    fprime-util build --build-cache ${DOCS_CACHE} --all -j32 1> /dev/null
+
     if (( $? != 0 ))
     then
         echo "[ERROR] Failed to build fprime please generate build cache"
         exit 2
     fi
     mkdir -p ${DOXY_OUTPUT}
+
+    # Replace version number in Doxyfile
+    if [[ "${VERSIONED_OUTPUT}" != "" ]]
+    then
+        sed -i "s/^PROJECT_NUMBER[ ]*=.*$/PROJECT_NUMBER=${VERSIONED_OUTPUT}/g" docs/doxygen/Doxyfile
+    fi
+
     ${DOXYGEN} "${FPRIME}/docs/doxygen/Doxyfile"
-    rm -r "${FPRIME}/build-fprime-automatic-docs"
+    rm -r "${DOCS_CACHE}"
 ) || exit 1
 
 # CMake
@@ -89,11 +95,24 @@ function make_version
     cd "${FPRIME}"
     clobber "${CMAKE_OUTPUT}"
     mkdir -p "${CMAKE_OUTPUT}"
-    "${FPRIME}/cmake/docs/docs.py" "${FPRIME}/cmake/" "${FPRIME}/docs/UsersGuide/api/cmake"
+    "${FPRIME}/cmake/docs/docs.py" "${FPRIME}/cmake/" "${CMAKE_OUTPUT}"
+    "${FPRIME}/docs/doxygen/index_gen.py" "${CMAKE_OUTPUT}" 'CMake API Index' 'test,googletest-download' > "${CMAKE_OUTPUT}/index.md"
+) || exit 1
+
+# Generate full index
+(
+    cd "${FPRIME}"
+    "${FPRIME}/docs/doxygen/index_gen.py" "${FPRIME}/docs" "F´ Documentation Index" "_data,_includes,doxygen,img" > "${FPRIME}/docs/doc-index.md"
 ) || exit 1
 
 # Fix for github pages
 github_page_adjustment "${DOXY_OUTPUT}/html"
 make_version "${VERSIONED_OUTPUT}"
 
-
+# Copy images so they're properly referenced
+IMG_DIR="${FPRIME}/docs/UsersGuide/api/c++/html/img"
+mkdir -p "${IMG_DIR}"
+for image in $(find "${FPRIME}/Fw" "${FPRIME}/Svc" "${FPRIME}/Drv" \( -name '*.jpg' -o -name '*.png' -o -name '*.svg' \))
+do
+    cp "${image}" "${IMG_DIR}"
+done

@@ -1,0 +1,8 @@
+github
+https
+ssh
+ubuntu
+usec
+usecs
+workaround
+workarounds

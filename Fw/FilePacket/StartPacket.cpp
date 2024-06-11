@@ -22,20 +22,20 @@ namespace Fw {
       const char *const destinationPath
     )
   {
-    const FilePacket::Header header = { FilePacket::T_START, 0 };
-    this->header = header;
-    this->fileSize = fileSize;
-    this->sourcePath.initialize(sourcePath);
-    this->destinationPath.initialize(destinationPath);
+    this->m_header.initialize(FilePacket::T_START, 0);
+    this->m_fileSize = fileSize;
+    this->m_sourcePath.initialize(sourcePath);
+    this->m_destinationPath.initialize(destinationPath);
   }
 
   U32 FilePacket::StartPacket ::
     bufferSize() const
   {
-    return this->header.bufferSize() +
-      sizeof(this->fileSize) +
-      this->sourcePath.bufferSize() +
-      this->destinationPath.bufferSize();
+    return static_cast<U32>(
+      this->m_header.bufferSize() +
+      sizeof(this->m_fileSize) +
+      this->m_sourcePath.bufferSize() +
+      this->m_destinationPath.bufferSize());
   }
 
   SerializeStatus FilePacket::StartPacket ::
@@ -52,27 +52,33 @@ namespace Fw {
     fromSerialBuffer(SerialBuffer& serialBuffer)
   {
 
-    FW_ASSERT(this->header.type == T_START);
+    FW_ASSERT(this->m_header.m_type == T_START);
 
     {
       const SerializeStatus status =
-        serialBuffer.deserialize(this->fileSize);
-      if (status != FW_SERIALIZE_OK)
+        serialBuffer.deserialize(this->m_fileSize);
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
-        this->sourcePath.fromSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+        this->m_sourcePath.fromSerialBuffer(serialBuffer);
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
-        this->destinationPath.fromSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+        this->m_destinationPath.fromSerialBuffer(serialBuffer);
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     return FW_SERIALIZE_OK;
@@ -83,34 +89,42 @@ namespace Fw {
     toSerialBuffer(SerialBuffer& serialBuffer) const
   {
 
-    FW_ASSERT(this->header.type == T_START);
+    FW_ASSERT(this->m_header.m_type == T_START);
 
     {
       const SerializeStatus status =
-        this->header.toSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+        this->m_header.toSerialBuffer(serialBuffer);
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
-        serialBuffer.serialize(this->fileSize);
-      if (status != FW_SERIALIZE_OK)
+        serialBuffer.serialize(this->m_fileSize);
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
-        this->sourcePath.toSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+        this->m_sourcePath.toSerialBuffer(serialBuffer);
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
-        this->destinationPath.toSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+        this->m_destinationPath.toSerialBuffer(serialBuffer);
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     return FW_SERIALIZE_OK;

@@ -1,0 +1,127 @@
+// ======================================================================
+// \title  $name/test/ut/TesterHelpers.cpp
+// \author Auto-generated
+// \brief  cpp file for ${name} component test harness base class
+//
+// NOTE: this file was automatically generated
+//
+// ======================================================================
+\#include "Tester.hpp"
+
+#if $namespace_list != None
+ #for $namespace in $namespace_list
+namespace ${namespace} {
+ #end for
+#end if
+  // ----------------------------------------------------------------------
+  // Helper methods
+  // ----------------------------------------------------------------------
+
+  void Tester ::
+    connectPorts()
+  {
+
+#for $instance, $type, $sync, $priority, $full, $role, $max_num in $typed_input_ports:
+    // $instance
+  #if $max_num == 1 or $max_num == "1":
+    this->connect_to_${instance}(
+        0,
+        this->component.get_${instance}_InputPort(0)
+    );
+  #else
+    #set LT = "<"
+    for (NATIVE_INT_TYPE i = 0; i $LT $max_num; ++i) {
+      this->connect_to_${instance}(
+          i,
+          this->component.get_${instance}_InputPort(i)
+      );
+    }
+  #end if
+
+#end for
+#for $instance, $type, $sync, $priority, $role, $max_num in $typed_output_ports:
+    // $instance
+  #if $max_num == 1 or $max_num == "1":
+    this->component.set_${instance}_OutputPort(
+        0,
+        this->get_from_${instance}(0)
+    );
+  #else
+    #set LT = "<"
+    for (NATIVE_INT_TYPE i = 0; i $LT $max_num; ++i) {
+      this->component.set_${instance}_OutputPort(
+          i,
+          this->get_from_${instance}(i)
+      );
+    }
+  #end if
+
+#end for
+
+#if len($serial_output_ports) > 0:
+  // ----------------------------------------------------------------------
+  // Connect serial output ports
+  // ----------------------------------------------------------------------
+#for $instance, $sync, $priority, $max_num in $serial_output_ports:
+  #if $max_num == 1 or $max_num == "1":
+    this->component.set_${instance}_OutputPort(
+        0,
+        this->get_from_${instance}(0)
+    );
+  #else
+    #set LT = "<"
+    for (NATIVE_INT_TYPE i = 0; i $LT $max_num; ++i) {
+      this->component.set_${instance}_OutputPort(
+          i,
+          this->get_from_${instance}(i)
+      );
+    }
+  #end if
+
+#end for
+#end if
+
+#if len($serial_input_ports) > 0:
+  // ----------------------------------------------------------------------
+  // Connect serial input ports
+  // ----------------------------------------------------------------------
+#for $instance, $sync, $priority, $full, $max_num in $serial_input_ports:
+    // $instance
+  #if $max_num == 1 or $max_num == "1":
+    this->connect_to_${instance}(
+        0,
+        this->component.get_${instance}_InputPort(0)
+    );
+  #else
+    #set LT = "<"
+    for (NATIVE_INT_TYPE i = 0; i $LT $max_num; ++i) {
+      this->connect_to_${instance}(
+          i,
+          this->component.get_${instance}_InputPort(i)
+      );
+    }
+  #end if
+
+#end for
+#end if
+
+  }
+
+  void Tester ::
+    initComponents()
+  {
+    this->init();
+    this->component.init(
+#if $kind == "passive"
+        Tester::TEST_INSTANCE_ID
+#else
+        Tester::TEST_INSTANCE_QUEUE_DEPTH, Tester::TEST_INSTANCE_ID
+#end if
+    );
+  }
+
+#if $namespace_list != None
+  #for $namespace in $reversed($namespace_list)
+} // end namespace $namespace
+  #end for
+#end if

@@ -13,29 +13,27 @@
 #ifndef Svc_Drain_HPP
 #define Svc_Drain_HPP
 
-#include "Tester.hpp"
+#include "BufferAccumulatorTester.hpp"
 
 namespace Svc {
 
-  namespace Drain {
+namespace Drain {
 
-    class Tester :
-      public Svc::Tester
-    {
+class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
+ public:
+  // ----------------------------------------------------------------------
+  // Tests
+  // ----------------------------------------------------------------------
 
-      public:
+  //! Send some buffers
+  void OK(void);
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+  //! Run PartialDrain command in nominal way
+  void PartialDrainOK(void);
+};
 
-        //! Send some buffers
-        void OK();
+}  // namespace Drain
 
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

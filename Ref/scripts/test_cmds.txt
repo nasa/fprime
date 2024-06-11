@@ -1,7 +1,0 @@
-# This is a script containing a set of commands to execute via the Gse scripting API.
-# Run it by entering: run_ref_cmds.sh test_cmds.txt
-
-CMD_NO_OP # No-op command
-CMD_NO_OP_STRING, "A string" # No-op with string
-SB_START_PKTS # Start sending packets
-SB_INJECT_PKT_ERROR # inject an error

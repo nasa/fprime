@@ -16,25 +16,25 @@
 #ifndef ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_
 #define ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_
 
-#include <GTestBase.hpp>
-#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
+#include <ActiveRateGroupGTestBase.hpp>
+#include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
 
 namespace Svc {
 
     class ActiveRateGroupImplTester: public ActiveRateGroupGTestBase {
         public:
-            ActiveRateGroupImplTester(Svc::ActiveRateGroupImpl& inst);
+            ActiveRateGroupImplTester(Svc::ActiveRateGroup& inst);
             virtual ~ActiveRateGroupImplTester();
 
             void init(NATIVE_INT_TYPE instance = 0);
 
-            void runNominal(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance);
-            void runCycleOverrun(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance);
+            void runNominal(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance);
+            void runCycleOverrun(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance);
             void runPingTest();
 
         private:
 
-            void from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context);
+            void from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, U32 context);
 
             //! Handler for from_PingOut
             //!
@@ -43,13 +43,13 @@ namespace Svc {
               U32 key /*!< Value to return to pinger*/
             );
 
-            Svc::ActiveRateGroupImpl& m_impl;
+            Svc::ActiveRateGroup& m_impl;
 
             void clearPortCalls();
 
             struct {
                 bool portCalled;
-                NATIVE_UINT_TYPE contextVal;
+                U32 contextVal;
                 NATIVE_UINT_TYPE order;
             } m_callLog[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
 

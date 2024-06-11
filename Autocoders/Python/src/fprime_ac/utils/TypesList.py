@@ -16,12 +16,23 @@ types_list = [
 
 # additional types allowed in ports
 port_types_list = [
-    "FwOpcodeType",
+    "FwBuffSizeType",
     "FwChanIdType",
+    "FwDpIdType",
+    "FwDpPriorityType",
+    "FwEnumStoreType",
     "FwEventIdType",
+    "FwIndexType",
+    "FwOpcodeType",
+    "FwPacketDescriptorType",
     "FwPrmIdType",
+    "FwSizeType",
+    "FwTimeBaseStoreType",
+    "FwTimeContextStoreType",
+    "FwTlmPacketizeIdType",
     "NATIVE_INT_TYPE",
     "NATIVE_UINT_TYPE",
+    "POINTER_CAST",
 ]
 
 

@@ -41,19 +41,30 @@ class SocketReadTask {
      *
      * Starts up the socket reading task and opens socket. This should be called before send calls are expected to
      * work. Will connect to the previously configured port and host. priority, stack, and cpuAffinity are provided
-     * to the Os::Task::start call. cpuAffinity defaults to -1.
+     * to the Os::Task::start call.
      *
      * \param name: name of the task
      * \param reconnect: automatically reconnect socket when closed. Default: true.
-     * \param priority: priority of the started task. See: Os::Task::start. Default: -1, not prioritized
-     * \param stack: stack size provided to the task. See: Os::Task::start. Default: -1, posix threads default
-     * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: -1, don't care
+     * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_DEFAULT, not prioritized
+     * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
+     * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
      */
-    void startSocketTask(const Fw::StringBase &name,
+    void start(const Fw::StringBase &name,
                          const bool reconnect = true,
-                         const NATIVE_INT_TYPE priority = -1,
-                         const NATIVE_INT_TYPE stack = -1,
-                         const NATIVE_INT_TYPE cpuAffinity = -1);
+                         const Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
+                         const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
+                         const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
+
+    /**
+     * \brief startup the socket for communications
+     *
+     * Status of the socket handler.
+     *
+     * Note: this just delegates to the handler
+     *
+     * \return status of open, SOCK_SUCCESS for success, something else on error
+     */
+    SocketIpStatus startup();
 
     /**
      * \brief open the socket for communications
@@ -70,12 +81,24 @@ class SocketReadTask {
     /**
      * \brief close the socket communications
      *
-     * Typically stopping the socket read task will close the connection. However, in cases where the read task
-     * will not be started, this function may be used to close the socket.
+     * Typically stopping the socket read task will shutdown the connection. However, in cases where the read task
+     * will not be started, this function may be used to close the socket. This calls a full `close` on the client
+     * socket.
      *
      * Note: this just delegates to the handler
      */
     void close();
+
+    /**
+     * \brief shutdown the socket communications
+     *
+     * Typically stopping the socket read task will shutdown the connection. However, in cases where the read task
+     * will not be started, this function may be used to close the socket. This calls a full `shutdown` on the client
+     * socket.
+     *
+     * Note: this just delegates to the handler
+     */
+    void shutdown();
 
     /**
      * \brief stop the socket read task and close the associated socket.
@@ -83,7 +106,7 @@ class SocketReadTask {
      * Called to stop the socket read task. It is an error to call this before the thread has been started using the
      * startSocketTask call. This will stop the read task and close the client socket.
      */
-    void stopSocketTask();
+    void stop();
 
     /**
      * \brief joins to the stopping read task to wait for it to close
@@ -91,9 +114,9 @@ class SocketReadTask {
      * Called to join with the read socket task. This will block and return after the task has been stopped with a call
      * to the stopSocketTask method.
      * \param value_ptr: a pointer to fill with data. Passed to the Os::Task::join call. NULL to ignore.
-     * \return: Os::Task::TaskStatus passed back from the Os::Task::join call.
+     * \return: Os::Task::Status passed back from the Os::Task::join call.
      */
-    Os::Task::TaskStatus joinSocketTask(void** value_ptr);
+    Os::Task::Status join();
 
 
   PROTECTED:
@@ -150,5 +173,5 @@ class SocketReadTask {
     bool m_stop; //!< Stops the task when set to true
 
 };
-};
+}
 #endif  // DRV_SOCKETREADTASK_HPP

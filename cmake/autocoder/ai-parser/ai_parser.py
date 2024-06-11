@@ -8,6 +8,7 @@ automatic dependencies, and registering into the build system.
 @author mstarch
 """
 from __future__ import print_function
+
 import os
 import sys
 import xml.etree.ElementTree
@@ -140,7 +141,7 @@ def print_fprime_dependencies(root, current_library, import_base):
             gcc_order.append(dep)
     # Find module dependencies, and anything else left over goes last
     for dep in dependencies:
-        if not dep in gcc_order:
+        if dep not in gcc_order:
             gcc_order.append(dep)
     # Write out CMake style list
     sys.stdout.write(";".join(gcc_order))

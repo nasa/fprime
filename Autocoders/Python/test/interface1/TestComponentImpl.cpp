@@ -8,11 +8,7 @@
 #include <Autocoders/Python/test/interface1/TestComponentImpl.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestComponentImpl::TestComponentImpl(const char* name) : TestComponentBase(name)
-#else
-TestComponentImpl::TestComponentImpl() : TestComponentBase()
-#endif
 {
     // TODO Auto-generated constructor stub
 

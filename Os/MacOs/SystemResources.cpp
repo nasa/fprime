@@ -30,7 +30,7 @@ namespace Os {
  * \param total: total memory in bytes
  * \return: kern_return_t with success/failure straight from the kernel
  */
-kern_return_t vm_stat_helper(U64& used, U64& total) {
+kern_return_t vm_stat_helper(FwSizeType& used, FwSizeType& total) {
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics_data_t vmstat;
     vm_size_t vmsize;
@@ -79,7 +79,7 @@ kern_return_t cpu_data_helper(processor_cpu_load_info_t& cpu_load_info, U32& cpu
  *
  * \return success/failure using kern_return_t
  */
-kern_return_t cpu_by_index(U32 cpu_index, U64& used, U64& total) {
+kern_return_t cpu_by_index(U32 cpu_index, FwSizeType& used, FwSizeType& total) {
     processor_cpu_load_info_t cpu_load_info;
     U32 cpu_count = 0;
     kern_return_t stat = cpu_data_helper(cpu_load_info, cpu_count);
@@ -88,7 +88,7 @@ kern_return_t cpu_by_index(U32 cpu_index, U64& used, U64& total) {
     if (cpu_count <= cpu_index) {
         stat = KERN_FAILURE;
     } else if (KERN_SUCCESS == stat) {
-        FW_ASSERT(cpu_count > cpu_index, cpu_count, cpu_index);  // Will fail if the CPU count changes while running
+        FW_ASSERT(cpu_count > cpu_index, static_cast<FwAssertArgType>(cpu_count), static_cast<FwAssertArgType>(cpu_index));  // Will fail if the CPU count changes while running
         processor_cpu_load_info per_cpu_info = cpu_load_info[(cpu_count > cpu_index) ? cpu_index : 0];
 
         // Total the ticks across the different states: idle, system, user, etc...

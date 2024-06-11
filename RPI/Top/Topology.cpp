@@ -43,7 +43,7 @@ Svc::ConsoleTextLoggerImpl textLogger("TLOG");
 
 Svc::ActiveLoggerImpl eventLogger("ELOG");
 
-Svc::LinuxTimeImpl linuxTime("LTIME");
+Svc::PosixTime posixTime("LTIME");
 
 Svc::LinuxTimerComponentImpl linuxTimer("LTIMER");
 
@@ -102,7 +102,7 @@ void constructApp(U32 port_number, char* hostname) {
 
     eventLogger.init(10,0);
 
-    linuxTime.init(0);
+    posixTime.init(0);
 
     linuxTimer.init(0);
 

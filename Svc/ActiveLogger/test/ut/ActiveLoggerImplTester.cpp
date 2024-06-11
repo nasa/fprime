@@ -11,7 +11,6 @@
 #include <Os/IntervalTimer.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
-#include <Os/Stubs/FileStubs.hpp>
 
 #include <cstdio>
 
@@ -173,7 +172,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
         this->clearHistory();
         reportFilterLevel = FilterSeverity::WARNING_HI;
@@ -184,7 +183,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
         FilterSeverity eventLevel;
         this->clearHistory();
@@ -196,7 +195,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
 
         this->clearHistory();
@@ -209,7 +208,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
 
     }
@@ -374,7 +373,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
         ASSERT_EVENTS_SIZE(0);
 
@@ -583,15 +582,15 @@ namespace Svc {
 
         // first read should be delimiter
         BYTE de;
-        NATIVE_INT_TYPE readSize = sizeof(de);
+        FwSignedSizeType readSize = sizeof(de);
 
-        ASSERT_EQ(file.read(&de,readSize,true),Os::File::OP_OK);
+        ASSERT_EQ(file.read(&de,readSize,Os::File::WaitType::WAIT),Os::File::OP_OK);
         ASSERT_EQ(delimiter,de);
         // next is LogPacket
         Fw::ComBuffer comBuff;
         // size is specific to this test
         readSize = sizeof(FwPacketDescriptorType) + sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
-        ASSERT_EQ(file.read(comBuff.getBuffAddr(),readSize,true),Os::File::OP_OK);
+        ASSERT_EQ(file.read(comBuff.getBuffAddr(),readSize,Os::File::WaitType::WAIT),Os::File::OP_OK);
         comBuff.setBuffLen(readSize);
 
         // deserialize LogPacket
@@ -611,7 +610,7 @@ namespace Svc {
     }
 
     void ActiveLoggerImplTester::textLogIn(const FwEventIdType id, //!< The event ID
-            Fw::Time& timeTag, //!< The time
+            const Fw::Time& timeTag, //!< The time
             const Fw::LogSeverity severity, //!< The severity
             const Fw::TextLogString& text //!< The event string
             ) {

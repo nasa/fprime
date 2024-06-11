@@ -1,5 +1,5 @@
 #include <Autocoders/Python/test/partition/DuckDuckImpl.hpp>
-#include <Fw/Types/FwBasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <iostream>
 #include <cstdio>
 

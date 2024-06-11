@@ -2,21 +2,9 @@
 // \title  ${name}.hpp
 // \author $user
 // \brief  cpp file for ${name} test harness implementation class
-//
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 \#include "Tester.hpp"
-
-\#define INSTANCE 0
-\#define MAX_HISTORY_SIZE 10
-#if $kind != "passive":
-\#define QUEUE_DEPTH 10
-#end if
 
 #if $namespace_list != None
   #for $namespace in $namespace_list
@@ -30,13 +18,8 @@ namespace ${namespace} {
 
   Tester ::
     Tester() :
-\#if FW_OBJECT_NAMES == 1
-      ${gtest_base}("Tester", MAX_HISTORY_SIZE),
+      ${gtest_base}("Tester", Tester::MAX_HISTORY_SIZE),
       component("${name}")
-\#else
-      ${gtest_base}(MAX_HISTORY_SIZE),
-      component()
-\#endif
   {
     this->initComponents();
     this->connectPorts();
@@ -96,112 +79,6 @@ $emit_port_params([ $param_portNum ] + $port_params[$instance])
 
   #end for
 #end if
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
-
-  void Tester ::
-    connectPorts()
-  {
-
-#for $instance, $type, $sync, $priority, $full, $role, $max_num in $typed_input_ports:
-    // $instance
-  #if $max_num == 1 or $max_num == "1":
-    this->connect_to_${instance}(
-        0,
-        this->component.get_${instance}_InputPort(0)
-    );
-  #else
-    #set LT = "<"
-    for (NATIVE_INT_TYPE i = 0; i $LT $max_num; ++i) {
-      this->connect_to_${instance}(
-          i,
-          this->component.get_${instance}_InputPort(i)
-      );
-    }
-  #end if
-
-#end for
-#for $instance, $type, $sync, $priority, $role, $max_num in $typed_output_ports:
-    // $instance
-  #if $max_num == 1 or $max_num == "1":
-    this->component.set_${instance}_OutputPort(
-        0,
-        this->get_from_${instance}(0)
-    );
-  #else
-    #set LT = "<"
-    for (NATIVE_INT_TYPE i = 0; i $LT $max_num; ++i) {
-      this->component.set_${instance}_OutputPort(
-          i,
-          this->get_from_${instance}(i)
-      );
-    }
-  #end if
-
-#end for
-
-#if len($serial_output_ports) > 0:
-  // ----------------------------------------------------------------------
-  // Connect serial output ports
-  // ----------------------------------------------------------------------
-#for $instance, $sync, $priority, $max_num in $serial_output_ports:
-  #if $max_num == 1 or $max_num == "1":
-    this->component.set_${instance}_OutputPort(
-        0,
-        this->get_from_${instance}(0)
-    );
-  #else
-    #set LT = "<"
-    for (NATIVE_INT_TYPE i = 0; i $LT $max_num; ++i) {
-      this->component.set_${instance}_OutputPort(
-          i,
-          this->get_from_${instance}(i)
-      );
-    }
-  #end if
-
-#end for
-#end if
-
-#if len($serial_input_ports) > 0:
-  // ----------------------------------------------------------------------
-  // Connect serial input ports
-  // ----------------------------------------------------------------------
-#for $instance, $sync, $priority, $full, $max_num in $serial_input_ports:
-    // $instance
-  #if $max_num == 1 or $max_num == "1":
-    this->connect_to_${instance}(
-        0,
-        this->component.get_${instance}_InputPort(0)
-    );
-  #else
-    #set LT = "<"
-    for (NATIVE_INT_TYPE i = 0; i $LT $max_num; ++i) {
-      this->connect_to_${instance}(
-          i,
-          this->component.get_${instance}_InputPort(i)
-      );
-    }
-  #end if
-
-#end for
-#end if
-
-  }
-
-  void Tester ::
-    initComponents()
-  {
-    this->init();
-    this->component.init(
-#if $kind == "passive"
-        INSTANCE
-#else
-        QUEUE_DEPTH, INSTANCE
-#end if
-    );
-  }
 
 #if $namespace_list != None
   #for $namespace in $reversed($namespace_list)

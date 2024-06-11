@@ -23,7 +23,7 @@ module RPI {
     instance gpio24Drv
     instance gpio25Drv
     instance ledDrv
-    instance linuxTime
+    instance posixTime
     instance linuxTimer
     instance prmDb
     instance rateGroup10HzComp
@@ -35,6 +35,7 @@ module RPI {
     instance textLogger
     instance uartDrv
     instance uplink
+    instance uartBufferManager
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -52,7 +53,7 @@ module RPI {
 
     text event connections instance textLogger
 
-    time connections instance linuxTime
+    time connections instance posixTime
 
     # ----------------------------------------------------------------------
     # Direct graph specifiers
@@ -61,7 +62,7 @@ module RPI {
     connections Downlink {
       chanTlm.PktSend -> downlink.comIn
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
-      downlink.framedOut -> comm.send
+      downlink.framedOut -> comm.$send
       eventLogger.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
     }
@@ -121,9 +122,10 @@ module RPI {
     }
 
     connections UART {
-      rpiDemo.UartBuffers -> uartDrv.readBufferSend
-      rpiDemo.UartWrite -> uartDrv.serialSend
-      uartDrv.serialRecv -> rpiDemo.UartRead
+      rpiDemo.UartBuffers -> uartBufferManager.bufferSendIn
+      rpiDemo.UartWrite -> uartDrv.$send
+      uartDrv.$recv -> rpiDemo.UartRead
+      uartDrv.allocate -> uartBufferManager.bufferGetCallee
     }
 
     connections Uplink {

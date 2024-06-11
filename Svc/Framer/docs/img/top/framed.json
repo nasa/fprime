@@ -1,0 +1,109 @@
+{
+  "columns" : [
+    [
+      {
+        "instanceName" : "framer",
+        "inputPorts" : [],
+        "outputPorts" : [
+          {
+            "name" : "framedOut",
+            "portNumbers" : [
+              0
+            ]
+          },
+          {
+            "name" : "framedAllocate",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "comm",
+        "inputPorts" : [
+          {
+            "name" : "send",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : [
+          {
+            "name" : "deallocate",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "buffMgr",
+        "inputPorts" : [
+          {
+            "name" : "bufferSendIn",
+            "portNumbers" : [
+              0
+            ]
+          },
+          {
+            "name" : "bufferGetCallee",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : []
+      }
+    ]
+  ],
+  "connections" : [
+    [
+      [
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        0,
+        1,
+        0
+      ]
+    ],
+    [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ]
+  ]
+}

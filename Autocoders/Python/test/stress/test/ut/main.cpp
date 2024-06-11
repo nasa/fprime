@@ -1,18 +1,14 @@
 #ifdef FPRIME_CMAKE
 #include "Autocoder/GTestBase.hpp"
 #else
-#include <GTestBase.hpp>
+#include <stressGTestBase.hpp>
 #endif
 
 // Very minimal to test autocoder. Some day they'll be actual unit test code
 
 class ATester : public StressTest::TestPortGTestBase {
 public:
-#if FW_OBJECT_NAMES == 1
     ATester() : StressTest::TestPortGTestBase("comp",10) {
-#else
-        ATester() : StressTest::TestPortGTestBase(10)  {
-#endif
         }
 
         void from_aport_handler(

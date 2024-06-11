@@ -45,7 +45,9 @@ namespace Drv {
       ~LinuxGpioDriverComponentImpl();
 
       //! Start interrupt task
-      Os::Task::TaskStatus startIntTask(NATIVE_UINT_TYPE priority = Os::Task::TASK_DEFAULT, NATIVE_UINT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT);
+      Os::Task::Status startIntTask(Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
+                                    Os::Task::ParamType stackSize = Os::Task::TASK_DEFAULT,
+                                    Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
 
       //! configure GPIO
       enum GpioDirection {
@@ -70,14 +72,14 @@ namespace Drv {
       //!
       void gpioRead_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          bool &state
+          Fw::Logic &state
       );
 
       //! Handler implementation for gpioWrite
       //!
       void gpioWrite_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          bool state
+          const Fw::Logic& state
       );
 
       //! keep GPIO ID

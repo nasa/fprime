@@ -1,10 +1,19 @@
 ####
 # F prime CMakeLists.txt:
 #
-# SOURCE_FILES: combined list of source and autocoding diles
+# SOURCE_FILES: combined list of source and autocoding files
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Models")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stub")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
+
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
+)
+register_fprime_module(Os_Test_File_SyntheticFileSystem)
+
 
 # Basic module dependencies
 set(MOD_DEPS
@@ -17,16 +26,17 @@ set(MOD_DEPS
 # Basic source files used in every OSAL layer.  Contains common code and helpers.
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/TaskString.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
+#    "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/QueueString.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/IPCQueueCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/SimpleQueueRegistry.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/MemCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
+
+    # Refactored common files
+    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
 )
 # Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
@@ -42,14 +52,12 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
     )
 endif()
@@ -81,29 +89,33 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
             list(REMOVE_ITEM SOURCE_FILES "${ITER_ITEM}")
         endif()
     endforeach()
-    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/FileSystem.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/IntervalTimer.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Mutex.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Queue.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/SystemResources.cpp")
 endif()
 register_fprime_module()
-
-# Add stubs directory for testing builds
-if (BUILD_TESTING)
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
-endif()
+require_fprime_implementation(Os/File)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )
 register_fprime_ut()
-
+if (BUILD_TESTING)
+    foreach (TEST IN ITEMS StubFileTest PosixFileTest)
+       if (TARGET "${TEST}")
+           add_dependencies("Os_ut_exe" "${TEST}")
+       endif()
+    endforeach()
+endif()
 # Second UT Pthreads
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut/BufferQueueTest.cpp"

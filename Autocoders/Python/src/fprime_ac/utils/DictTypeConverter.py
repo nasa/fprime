@@ -11,7 +11,7 @@ class DictTypeConverter:
         type_string = ""
         type_name = t
         ser_import = None
-        use_size = False if size is None else True
+        use_size = not size is None
         # check for enums
         if isinstance(t, tuple):
             # extract enumeration arguments

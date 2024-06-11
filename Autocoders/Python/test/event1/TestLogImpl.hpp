@@ -12,11 +12,7 @@
 
 class TestLogImpl: public Somewhere::TestLogComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestLogImpl(const char* compName);
-#else
-        TestLogImpl();
-#endif
         virtual ~TestLogImpl();
         void init();
         void sendEvent(I32 arg1, F32 arg2, U8 arg3);

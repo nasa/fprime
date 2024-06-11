@@ -18,9 +18,10 @@ namespace Os {
 
         // Get the file size:
         FileSystem::Status fs_status;
-        U64 fileSize = 0;
+        FwSignedSizeType fileSize = 0;
         fs_status = FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
-        if( FileSystem::OP_OK != fs_status ) {
+        // fileSize will be used as a NATIVE_INT_TYPE below and thus must cast cleanly to that type
+        if( FileSystem::OP_OK != fs_status) {
             return File::BAD_SIZE;
         }
         const NATIVE_INT_TYPE max_itr = static_cast<NATIVE_INT_TYPE>(fileSize/VFILE_HASH_CHUNK_SIZE + 1);
@@ -29,12 +30,12 @@ namespace Os {
         Utils::Hash hash;
         hash.init();
         U8 buffer[VFILE_HASH_CHUNK_SIZE];
-        NATIVE_INT_TYPE size = 0;
-        NATIVE_INT_TYPE cnt = 0;
+        FwSignedSizeType size = 0;
+        FwSignedSizeType cnt = 0;
         while( cnt <= max_itr ) {
             // Read out chunk from file:
             size = sizeof(buffer);
-            status = file.read(&buffer, size, false);
+            status = file.read(buffer, size, Os::File::WaitType::NO_WAIT);
             if( File::OP_OK != status ) {
                 return status;
             }
@@ -43,7 +44,7 @@ namespace Os {
               break;
             }
             // Add chunk to hash calculation:
-            hash.update(&buffer, size);
+            hash.update(&buffer, static_cast<NATIVE_INT_TYPE>(size));
             cnt++;
         }
         file.close();
@@ -73,8 +74,8 @@ namespace Os {
 
         // Read hash from checksum file:
         unsigned char savedHash[HASH_DIGEST_LENGTH];
-        NATIVE_INT_TYPE size = hashBuffer.getBuffCapacity();
-        status = hashFile.read(&savedHash[0], size);
+        FwSignedSizeType size = hashBuffer.getBuffCapacity();
+        status = hashFile.read(savedHash, size);
         if( File::OP_OK != status ) {
             return status;
         }
@@ -84,7 +85,7 @@ namespace Os {
         hashFile.close();
 
         // Return the hash buffer:
-        Utils::HashBuffer savedHashBuffer(savedHash, size);
+        Utils::HashBuffer savedHashBuffer(savedHash, static_cast<NATIVE_UINT_TYPE>(size));
         hashBuffer = savedHashBuffer;
 
         return status;
@@ -100,8 +101,8 @@ namespace Os {
         }
 
         // Write out the hash
-        NATIVE_INT_TYPE size = hashBuffer.getBuffLength();
-        status = hashFile.write(hashBuffer.getBuffAddr(), size, false);
+        FwSignedSizeType size = hashBuffer.getBuffLength();
+        status = hashFile.write(hashBuffer.getBuffAddr(), size, Os::File::WaitType::NO_WAIT);
         if( File::OP_OK != status ) {
             return status;
         }

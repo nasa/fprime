@@ -2,7 +2,7 @@
 #define FW_PORT_BASE_HPP
 
 #include <Fw/Obj/ObjBase.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 #if FW_PORT_TRACING == 1
@@ -17,7 +17,7 @@ namespace Fw {
         public:
 #if FW_PORT_TRACING == 1
             static void setTrace(bool trace); // !< turn tracing on or off
-            void overrideTrace(bool override, bool trace); // !< override tracing for a particular port
+            void ovrTrace(bool ovr, bool trace); // !< override tracing for a particular port
 #endif
 
             bool isConnected();
@@ -41,7 +41,7 @@ namespace Fw {
 #if FW_PORT_TRACING == 1
             static bool s_trace; // !< global tracing is active
             bool m_trace; // !< local trace flag
-            bool m_override_trace; // !< flag to override global trace
+            bool m_ovr_trace; // !< flag to override global trace
 #endif
             // Disable constructors
             PortBase(PortBase*);

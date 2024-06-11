@@ -9,7 +9,7 @@
 #ifndef _Fw_Logger_hpp_
 #define _Fw_Logger_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Fw {
     class Logger {

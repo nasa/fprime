@@ -50,10 +50,10 @@ in the architecture document. The files are as follows:
 
   - ExampleComponentAi.xml—An example of a component type
 
-  - ExampleType.hpp(.cpp)—Not XML, but an example of a user written
+  - ExampleType.hpp(.cpp)—Not XML, but an example of a user-written
     serializable
 
-  - ExampleComponentImpl.hpp(.cpp)—An example of a user written
+  - ExampleComponentImpl.hpp(.cpp)—An example of a user-written
     component class
 
 The user can copy these files and use them as a basis for their own XML
@@ -71,20 +71,17 @@ This code should not be modified (with one exception, see Cfg in Section
 5.3.1) by developers using the framework. The code generation relies on
 the types declared to construct the entities in the architecture.
 
-### Cfg
+### config
 
-The Cfg directory contains a header file (Config.hpp) that is used to
+The config directory contains header files used to
 configure various properties of the architecture. The developer can
 modify the file to tune the architecture for the requirements of a
 particular deployment environment. The contents are described in Section
 9.
 
-The file AcConstants.ini contains a set of values for variables used in
-the code generator. This file follows the Python ConfigParser syntax,
-which is based on Windows .ini files. Using this file allows component
-features like opcodes and port numbers to be changed without modifying
-the component XML itself. See the component XML specification in Section
-6.6.3.
+The file AcConstants.fpp contains a set of values for variables used in
+the code generation. Using this file allows component features like opcodes
+and port numbers to be changed without modifying the component FPP itself. 
 
 ### Types
 
@@ -163,8 +160,7 @@ classes in the normal way via the code generator. The code generator
 then uses those generated classes as special command input ports for
 components that define commands in their component XML. Since the ports
 themselves are generated in the same way as any other port, they can be
-used by developers in other components that process commands, such
-command dispatcher. Table 6 lists the files and their descriptions.
+used by developers in other components that process commands, such as command dispatchers. Table 6 lists the files and their descriptions.
 
 **Table 6.** Cmd directory files.
 
@@ -290,9 +286,9 @@ versions would most likely be more sophisticated. The way development is
 done is that the developer will define the components and their
 properties in XML. The code generator will generate C++ classes that
 encapsulate the features of the component. The developer will then write
-a class the derives from those generated classes and implement the port
+a class that derives from those generated classes and implement the port
 methods. For these directories, each file will not be described, but a
-higher level description of what each directory contains will be given
+higher-level description of what each directory contains will be given
 instead. The descriptions are as follows.
 
 ### ActiveLogger
@@ -347,8 +343,7 @@ the SequenceFileLoader and the SequenceRunner components.
 ### Cycle
 
 This directory specifies the port used to drive the ActiveRateGroup
-components. The port passes a time stamp indicating when the cycle was
-started.
+components. The port passes a time stamp indicating when the cycle started.
 
 ### Fatal
 
@@ -381,7 +376,7 @@ original port. That allows components to be interconnected across
 computing nodes without any modifications to the components themselves.
 This particular hub is implemented as an active hub, which means that
 the serial buffers from the incoming ports are put in a message queue
-and then sent out the DataOut ports on the thread of the component. The
+and then sent out to the DataOut ports on the thread of the component. The
 data output ports are in the form of a generic com buffer. The data
 output ports would be connected to a component that manages the
 communication hardware. Likewise, incoming data on the DataIn port is
@@ -525,7 +520,7 @@ operating system implementations of file I/O.
 
 The Drv directory contains some hypothetical device driver components
 and types. It is part of the example code. The architecture does not
-depend on source code in this directory. There is no particular
+depend on the source code in this directory. There is no particular
 significance to the name; rather, it was selected to represent how a
 developer might organize their code. The subdirectories are as follows.
 

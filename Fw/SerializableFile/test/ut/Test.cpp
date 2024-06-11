@@ -4,7 +4,7 @@
 
 #include <cstring>
 #include <cstdio>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Fw/SerializableFile/SerializableFile.hpp>

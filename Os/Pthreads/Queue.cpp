@@ -43,7 +43,7 @@ namespace Os {
       (void) pthread_mutex_destroy(&this->queueLock);
     }
     bool create(NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
-      return queue.create(depth, msgSize);
+      return queue.create(static_cast<NATIVE_UINT_TYPE>(depth), static_cast<NATIVE_UINT_TYPE>(msgSize));
     }
     BufferQueue queue;
     pthread_cond_t queueNotEmpty;
@@ -108,12 +108,12 @@ namespace Os {
     ///////////////////////////////
 
     // Push item onto queue:
-    bool pushSucceeded = queue->push(buffer, size, priority);
+    bool pushSucceeded = queue->push(buffer, static_cast<NATIVE_UINT_TYPE>(size), priority);
 
     if(pushSucceeded) {
       // Push worked - wake up a thread that might be waiting on
       // the other end of the queue:
-      NATIVE_INT_TYPE ret = pthread_cond_signal(queueNotEmpty);
+      ret = pthread_cond_signal(queueNotEmpty);
       FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
     }
     else {
@@ -147,12 +147,12 @@ namespace Os {
 
     // If the queue is full, wait until a message is taken off the queue:
     while( queue->isFull() ) {
-      NATIVE_INT_TYPE ret = pthread_cond_wait(queueNotFull, queueLock);
+      ret = pthread_cond_wait(queueNotFull, queueLock);
       FW_ASSERT(ret == 0, errno);
     }
 
     // Push item onto queue:
-    bool pushSucceeded = queue->push(buffer, size, priority);
+    bool pushSucceeded = queue->push(buffer, static_cast<NATIVE_UINT_TYPE>(size), priority);
 
     // The only reason push would not succeed is if the queue
     // was full. Since we waited for the queue to NOT be full
@@ -227,7 +227,7 @@ namespace Os {
 
         // Pop worked - wake up a thread that might be waiting on
         // the send end of the queue:
-        NATIVE_INT_TYPE ret = pthread_cond_signal(queueNotFull);
+        ret = pthread_cond_signal(queueNotFull);
         FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
       }
       else {
@@ -276,7 +276,7 @@ namespace Os {
 
       // If the queue is empty, wait until a message is put on the queue:
       while( queue->isEmpty() ) {
-        NATIVE_INT_TYPE ret = pthread_cond_wait(queueNotEmpty, queueLock);
+        ret = pthread_cond_wait(queueNotEmpty, queueLock);
         FW_ASSERT(ret == 0, errno);
       }
 
@@ -290,7 +290,7 @@ namespace Os {
 
         // Pop worked - wake up a thread that might be waiting on
         // the send end of the queue:
-        NATIVE_INT_TYPE ret = pthread_cond_signal(queueNotFull);
+        ret = pthread_cond_signal(queueNotFull);
         FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
       }
       else {
@@ -347,7 +347,7 @@ namespace Os {
           return 0;
       }
       BufferQueue* queue = &queueHandle->queue;
-      return queue->getCount();
+      return static_cast<NATIVE_INT_TYPE>(queue->getCount());
   }
 
   NATIVE_INT_TYPE Queue::getMaxMsgs() const {
@@ -356,7 +356,7 @@ namespace Os {
           return 0;
       }
       BufferQueue* queue = &queueHandle->queue;
-      return queue->getMaxCount();
+      return static_cast<NATIVE_INT_TYPE>(queue->getMaxCount());
   }
 
   NATIVE_INT_TYPE Queue::getQueueSize() const {
@@ -365,7 +365,7 @@ namespace Os {
           return 0;
       }
       BufferQueue* queue = &queueHandle->queue;
-      return queue->getDepth();
+      return static_cast<NATIVE_INT_TYPE>(queue->getDepth());
   }
 
   NATIVE_INT_TYPE Queue::getMsgSize() const {
@@ -374,7 +374,7 @@ namespace Os {
           return 0;
       }
       BufferQueue* queue = &queueHandle->queue;
-      return queue->getMsgSize();
+      return static_cast<NATIVE_INT_TYPE>(queue->getMsgSize());
   }
 
 }

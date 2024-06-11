@@ -10,7 +10,7 @@
 
 namespace Drv {
 
-  using BlockDriver = BlockDriverImpl;
+  typedef BlockDriverImpl BlockDriver;
 
 }
 

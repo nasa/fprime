@@ -45,7 +45,7 @@ class Arg:
         @param type:  Type of arg (must have supporting include xml)
         @param modifier: Modification of the argument (i.e. pointer or reference)
         @param size: size of array of type (string or buffer)
-        @param comment:  A single or multline comment
+        @param comment:  A single or multiline comment
         """
         self.__name = name
         self.__type = atype

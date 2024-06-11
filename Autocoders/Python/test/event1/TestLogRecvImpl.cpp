@@ -8,12 +8,7 @@
 #include <Autocoders/Python/test/event1/TestLogRecvImpl.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestLogRecvImpl::TestLogRecvImpl(const char* name) : LogTextImpl(name)
-#else
-TestLogRecvImpl::TestLogRecvImpl() :
-    LogTextImpl()
-#endif
 {
 }
 

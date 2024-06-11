@@ -12,7 +12,7 @@
 
 
 #include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/TaskString.hpp>
 
 // TODO make proper static constants for these
@@ -27,8 +27,8 @@
 #include <fcntl.h>
 #include <poll.h>
 
-//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
-#define DEBUG_PRINT(x,...)
+//#define DEBUG_PRINT(...) printf(##__VA_ARGS__); fflush(stdout)
+#define DEBUG_PRINT(...)
 
 namespace Drv {
 
@@ -49,8 +49,8 @@ namespace Drv {
         }
 
         // TODO check value of len
-        len = snprintf(buf, sizeof(buf), "%d", gpio);
-        if(write(fd, buf, len) != len) {
+        len = snprintf(buf, sizeof(buf), "%u", gpio);
+        if(write(fd, buf, static_cast<size_t>(len)) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/export error!\n");
             return -1;
@@ -80,8 +80,8 @@ namespace Drv {
         }
 
         // TODO check value of len
-        len = snprintf(buf, sizeof(buf), "%d", gpio);
-        if(write(fd, buf, len) != len) {
+        len = snprintf(buf, sizeof(buf), "%u", gpio);
+        if(write(fd, buf, static_cast<size_t>(len)) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/unexport error!\n");
             return -1;
@@ -104,7 +104,7 @@ namespace Drv {
         int fd, len;
         char buf[MAX_BUF];
 
-        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR  "/gpio%d/direction", gpio);
+        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR  "/gpio%u/direction", gpio);
         FW_ASSERT(len > 0, len);
 
         fd = open(buf, O_WRONLY);
@@ -114,9 +114,9 @@ namespace Drv {
         }
 
         const char *dir = out_flag ? "out" : "in";
-        len = strlen(dir);
+        len = static_cast<int>(strlen(dir));
 
-        if (write(fd, dir, len) != len) {
+        if (write(fd, dir, static_cast<size_t>(len)) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/direction error!\n");
             return -1;
@@ -157,8 +157,8 @@ namespace Drv {
 
         FW_ASSERT(fd != -1);
 
-        NATIVE_INT_TYPE stat1 = lseek(fd, 0, SEEK_SET); // Must seek back to the starting
-        NATIVE_INT_TYPE stat2 = read(fd, &ch, 1);
+        NATIVE_INT_TYPE stat1 = static_cast<NATIVE_INT_TYPE>(lseek(fd, 0, SEEK_SET)); // Must seek back to the starting
+        NATIVE_INT_TYPE stat2 = static_cast<NATIVE_INT_TYPE>(read(fd, &ch, 1));
 
         if (stat1 == -1 || stat2 != 1) {
             DEBUG_PRINT("GPIO read failure: %d %d!\n",stat1,stat2);
@@ -190,7 +190,7 @@ namespace Drv {
         FW_ASSERT(edge != nullptr);
         // TODO check that edge has correct values of "none", "rising", or "falling"
 
-        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/edge", gpio);
+        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%u/edge", gpio);
         FW_ASSERT(len > 0, len);
 
         fd = open(buf, O_WRONLY);
@@ -199,8 +199,8 @@ namespace Drv {
             return -1;
         }
 
-        len = strlen(edge) + 1;
-        if(write(fd, edge, len) != len) {
+        len = static_cast<int>(strlen(edge) + 1);
+        if(write(fd, edge, static_cast<size_t>(len)) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/set-edge error!\n");
             return -1;
@@ -219,7 +219,7 @@ namespace Drv {
         int fd, len;
         char buf[MAX_BUF];
 
-        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/value", gpio);
+        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%u/value", gpio);
         FW_ASSERT(len > 0, len);
 
         fd = open(buf, O_RDWR | O_NONBLOCK );
@@ -251,7 +251,7 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     gpioRead_handler(
         const NATIVE_INT_TYPE portNum,
-        bool &state
+        Fw::Logic &state
     )
   {
       FW_ASSERT(this->m_fd != -1);
@@ -262,7 +262,7 @@ namespace Drv {
           this->log_WARNING_HI_GP_ReadError(this->m_gpio,stat);
           return;
       } else {
-          state = val?true:false;
+          state = val ? Fw::Logic::HIGH : Fw::Logic::LOW;
       }
 
   }
@@ -270,14 +270,14 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     gpioWrite_handler(
         const NATIVE_INT_TYPE portNum,
-        bool state
+        const Fw::Logic& state
     )
   {
       FW_ASSERT(this->m_fd != -1);
 
       NATIVE_INT_TYPE stat;
 
-      stat = gpio_set_value(this->m_fd,state?1:0);
+      stat = gpio_set_value(this->m_fd,(state == Fw::Logic::HIGH) ? 1 : 0);
 
       if (0 != stat) {
           this->log_WARNING_HI_GP_WriteError(this->m_gpio,stat);
@@ -292,13 +292,13 @@ namespace Drv {
       NATIVE_INT_TYPE stat;
 
       // Configure:
-      stat = gpio_export(gpio);
+      stat = gpio_export(static_cast<unsigned int>(gpio));
       if (-1 == stat) {
           Fw::LogStringArg arg = strerror(errno);
           this->log_WARNING_HI_GP_OpenError(gpio,stat,arg);
           return false;
       }
-      stat = gpio_set_dir(gpio, direction == GPIO_OUT ? 1 : 0);
+      stat = gpio_set_dir(static_cast<unsigned int>(gpio), direction == GPIO_OUT ? 1 : 0);
       if (-1 == stat) {
           Fw::LogStringArg arg = strerror(errno);
           this->log_WARNING_HI_GP_OpenError(gpio,stat,arg);
@@ -308,7 +308,7 @@ namespace Drv {
       // If needed, set edge to rising in intTaskEntry()
 
       // Open:
-      this->m_fd = gpio_fd_open(gpio);
+      this->m_fd = gpio_fd_open(static_cast<unsigned int>(gpio));
       if (-1 == this->m_fd) {
           Fw::LogStringArg arg = strerror(errno);
           this->log_WARNING_HI_GP_OpenError(gpio,errno,arg);
@@ -330,7 +330,7 @@ namespace Drv {
 
     // start GPIO interrupt
     NATIVE_INT_TYPE stat;
-    stat = gpio_set_edge(compPtr->m_gpio, "rising");
+    stat = gpio_set_edge(static_cast<unsigned int>(compPtr->m_gpio), "rising");
     if (-1 == stat) {
       compPtr->log_WARNING_HI_GP_IntStartError(compPtr->m_gpio);
       return;
@@ -346,7 +346,7 @@ namespace Drv {
 
         fdset[0].fd = compPtr->m_fd;
         fdset[0].events = POLLPRI;
-        stat = poll(fdset, nfds, timeout);
+        stat = poll(fdset, static_cast<nfds_t>(nfds), timeout);
 
         /*
         * According to this link, poll will always have POLLERR set for the sys/class/gpio subsystem
@@ -375,7 +375,7 @@ namespace Drv {
         // Read is only taking 22 usecs each time, so it is not blocking for long
         if (fdset[0].revents & POLLPRI) {
 
-            char *buf[MAX_BUF];
+            char buf[MAX_BUF];
             (void) lseek(fdset[0].fd, 0, SEEK_SET); // Must seek back to the starting
             if(read(fdset[0].fd, buf, MAX_BUF) > 0) {
                 DEBUG_PRINT("\npoll() GPIO interrupt occurred w/ value: %c\n", buf[0]);
@@ -396,13 +396,14 @@ namespace Drv {
 
   }
 
-  Os::Task::TaskStatus LinuxGpioDriverComponentImpl ::
-  startIntTask(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE cpuAffinity) {
+  Os::Task::Status LinuxGpioDriverComponentImpl ::
+  startIntTask(Os::Task::ParamType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity) {
       Os::TaskString name;
       name.format("GPINT_%s",this->getObjName()); // The task name can only be 16 chars including null
-      Os::Task::TaskStatus stat = this->m_intTask.start(name, LinuxGpioDriverComponentImpl::intTaskEntry, this, priority, Os::Task::TASK_DEFAULT, cpuAffinity);
+      Os::Task::Arguments arguments(name, LinuxGpioDriverComponentImpl::intTaskEntry, this, priority, stackSize, cpuAffinity);
+      Os::Task::Status stat = this->m_intTask.start(arguments);
 
-      if (stat != Os::Task::TASK_OK) {
+      if (stat != Os::Task::OP_OK) {
           DEBUG_PRINT("Task start error: %d\n",stat);
       }
 
@@ -422,7 +423,7 @@ namespace Drv {
   {
       if (this->m_fd != -1) {
           DEBUG_PRINT("Closing GPIO %d fd %d\n",this->m_gpio, this->m_fd);
-          (void) gpio_fd_close(this->m_fd, this->m_gpio);
+          (void) gpio_fd_close(this->m_fd, static_cast<unsigned int>(this->m_gpio));
       }
 
   }

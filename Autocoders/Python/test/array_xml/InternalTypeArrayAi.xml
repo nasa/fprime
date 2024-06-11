@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<array name="InternalType">
+<array namespace="Example" name="InternalType">
     <type>U32</type>
     <size>4</size>
     <format>%u</format>

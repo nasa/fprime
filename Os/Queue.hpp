@@ -12,7 +12,7 @@
 #ifndef _Queue_hpp_
 #define _Queue_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/QueueString.hpp>
@@ -24,7 +24,7 @@ namespace Os {
     class Queue {
         public:
 
-            typedef enum {
+            enum QueueStatus {
                 QUEUE_OK, //!<  message sent/received okay
                 QUEUE_NO_MORE_MSGS, //!<  If non-blocking, all the messages have been drained.
                 QUEUE_UNINITIALIZED, //!<  Queue wasn't initialized successfully
@@ -35,12 +35,12 @@ namespace Os {
                 QUEUE_EMPTY_BUFFER, //!<  supplied buffer is empty
                 QUEUE_FULL, //!< queue was full when attempting to send a message
                 QUEUE_UNKNOWN_ERROR //!<  Unexpected error; can't match with returns
-            } QueueStatus;
+            };
 
-            typedef enum {
+            enum QueueBlocking {
                 QUEUE_BLOCKING, //!<  Queue receive blocks until a message arrives
                 QUEUE_NONBLOCKING //!<  Queue receive always returns even if there is no message
-            } QueueBlocking;
+            };
 
             Queue();
             virtual ~Queue();

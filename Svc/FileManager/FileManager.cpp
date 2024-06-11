@@ -15,7 +15,7 @@
 
 #include "Svc/FileManager/FileManager.hpp"
 #include "Fw/Types/Assert.hpp"
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Svc {
 
@@ -80,7 +80,8 @@ namespace Svc {
     RemoveFile_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        const Fw::CmdStringArg& fileName
+        const Fw::CmdStringArg& fileName,
+        const bool ignoreErrors
     )
   {
     Fw::LogStringArg logStringFileName(fileName.toChar());
@@ -92,6 +93,16 @@ namespace Svc {
           logStringFileName,
           status
       );
+      if (ignoreErrors == true) {
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(
+          opCode,
+          cmdSeq,
+          Fw::CmdResponse::OK
+        );
+        return;
+      }
     } else {
       this->log_ACTIVITY_HI_RemoveFileSucceeded(logStringFileName);
     }
@@ -169,7 +180,7 @@ namespace Svc {
       );
     } else {
       this->log_WARNING_HI_ShellCommandFailed(
-          logStringCommand, status
+          logStringCommand, static_cast<U32>(status)
       );
     }
     this->emitTelemetry(
@@ -209,6 +220,32 @@ namespace Svc {
       );
     }
 
+    this->emitTelemetry(status);
+    this->sendCommandResponse(opCode, cmdSeq, status);
+  }
+
+  void FileManager ::
+    FileSize_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        const Fw::CmdStringArg& fileName
+    )
+  {
+    Fw::LogStringArg logStringFileName(fileName.toChar());
+    this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
+
+    FwSignedSizeType size_arg;
+    const Os::FileSystem::Status status =
+      Os::FileSystem::getFileSize(fileName.toChar(), size_arg);
+    if (status != Os::FileSystem::OP_OK) {
+      this->log_WARNING_HI_FileSizeError(
+          logStringFileName,
+          status
+      );
+    } else {
+      U64 size = static_cast<U64>(size_arg);
+      this->log_ACTIVITY_HI_FileSizeSucceeded(logStringFileName, size);
+    }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
   }

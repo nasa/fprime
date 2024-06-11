@@ -1,7 +1,7 @@
 ####
 # F prime CMakeLists.txt:
 #
-# SOURCE_FILES: combined list of source and autocoding diles
+# SOURCE_FILES: combined list of source and autocoding files
 # MOD_DEPS: (optional) module dependencies
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
@@ -21,3 +21,10 @@ set(MOD_DEPS
 
 register_fprime_module()
 
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DeframingTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FramingTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+)
+set(UT_MOD_DEPS STest)
+register_fprime_ut()

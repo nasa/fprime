@@ -9,11 +9,7 @@
 #include <Fw/Types/String.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 ExampleComponentImpl::ExampleComponentImpl(const char* name) :  ExampleComponents::ExampleComponentComponentBase(name)
-#else
-ExampleComponentImpl::ExampleComponentImpl() :  ExampleComponents::ExampleComponentComponentBase()
-#endif
 {
 }
 

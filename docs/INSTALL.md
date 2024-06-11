@@ -4,116 +4,97 @@ title: "F´ Installation Guide"
 ---
 
 ## Overview
-This installation guide is specifically designed to enable individuals and researchers to get up and
-running with F´ quickly. This guide is not intended for large teams with specific content
-management (CM) requirements.
 
-**Note:** see the troubleshooting section at the bottom for help resolving common issues found during F´ installs.
+This installation guide is specifically designed to enable individuals and researchers to get up and running with F´ quickly. Larger projects with specific requirements may need to extend this process.
 
-## Requirements
+**Note:** See the troubleshooting section at the bottom for help resolving common issues found during F´ installs.
 
-F´ depends on several items before the user should attempt to install it. These requirements are
-listed below and should be on any system the user wishes to use. Should these items not be
-available on the user's Operating System, then a Virtual Machine should be used. One option is
-[VirtualBox](https://www.virtualbox.org/).
+**Sections:**
+- [System Requirements](#system-requirements)
+- [Creating a New Project](#creating-a-new-f´-project)
+- [Working With An Existing Project](#working-with-an-existing-project)
+- [Troubleshooting](#troubleshooting)
+
+  
+## System Requirements
+
+F´ depends on several items before the user should attempt to install it. These requirements are listed below and the user should ensure they are installed before proceeding with this guide.
 
 Requirements:
 
-1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
-2. Java 1.8 or newer, e.g. [OpenJDK](https://openjdk.java.net/)
-3. [CMake 3.5](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
-4. Bash or Bash compatible shell
-5. CLang or GCC compiler
-6. [Python 3.6+](https://www.python.org/downloads/) and PIP
+1. Linux, macOS, or WSL on Windows
+2. git
+3. [CMake 3.16](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
+4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
+5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
 
-**Note:** operating system specific notes are in the [Troubleshooting](#Troubleshooting) section below.
+> Latest versions of PIP are strongly recommended. See [Recommended PIP Versions](./troubleshooting.md#recommended-pip-versions)
 
-### Cloning the F´ Repository
+> For build host architectures other than x86_64 or aarch64, and systems with older PIP versions, Java is required
 
-Installation of F´ requires cloning of the F´ core repository. This uses Git. This will bring
-down the core framework and C++ files.
+> Ubuntu and Debian users should see notes on [Python installation](./troubleshooting.md#ubuntu-debian-java-and-python-pip)
 
-**Clone F´**
+> macOS users must ensure the [CMake command line utility is on their path](./troubleshooting.md#mac-os-x-and-cmake-command-not-found)
 
+> Other OS-specific notes are in the [Troubleshooting](#troubleshooting) section below.
+
+
+## Creating a new F´ Project
+
+The ecosystem of tools supporting F´ is installed as Python packages available via PIP. These packages are installed in a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) by the F´ Bootstrap tool. It is recommended to have one virtual environment per project.
+
+### 1. Install the F´ Bootstrap tool
+
+The F´ Bootstrap tool is responsible for creating a new F´ project and installing the Python dependencies within the project's virtual environment. Install the fprime-bootstrap tool with:
 ```
-git clone https://github.com/nasa/fprime
-```
-
-### Installing F´ Python Requirements
-
-F´ python-support packages have certain requirements on various Python packages available on PYPI.
-These requirements are broken out into two files one for the Autocoder tools and one for the GDS
-tools package. This is to enable users to choose which tools they'd like to use.
-
-**Installing F´ Python Packages**
-
-```
-pip install --upgrade fprime-tools fprime-gds
+pip install fprime-bootstrap
 ```
 
-> Note: On some systems pip places user-installed tools in the `.local` folder.
-This results in a `fprime-util: command not found` error when trying to run 
-fprime-util. You will need to add `.local` to your `$PATH` or run as an admin.
+> Some macOS users see an SSL error. [Correct the SSL error](#ssl-error-with-python-38-on-macos) and rerun the above command.
 
-## Checking Your F´ Installation
+### 2. Create a new project
 
-The user may easily checkout that their F´ installation has succeeded by testing the following
-commands. First, the user will test the build and Autocoder install. Next, the user will test the GDS
-layer components. Should the user not have installed the given component, the commands won't work.
-
-**Testing F´ Autocoder Installation Via Building Ref Application**
-
+The entrypoint to developing with F´ is creating a new project. This will clone the F´ repository and install the full tool suite of the specified version for working with the selected version of F´. To create a new project, run:
 ```
-cd Ref
-fprime-util generate
-fprime-util build --jobs "$(nproc || printf '%s\n' 1)"
+fprime-bootstrap project
 ```
 
-**Testing F´ GDS Installation Via Running HTML GUI**
+This command will ask for some input. Sample responses are below:
+```
+  [1/1] Project name (MyProject): MyProject
+```
+
+This commands perform the following actions:
+- Create a new git repository with the standard F´ project structure
+- Create a new virtual environment within the project and install dependencies
+
+
+### 3. Activate the virtual environment
+
+Once the project is created, activate the virtual environment to use the F´ tool suite.
 
 ```
-fprime-gds -g html -r <path to fprime checkout>/Ref/build-artifacts
+cd MyProject
+. fprime-venv/bin/activate
 ```
+> Always remember to activate the virtual environment whenever you work with this F´  project.
 
-**Note:** `Ref` should contain pre-built dictionaries and binaries for the user's system. This can
-be achieved by running the Autocoder installation test (the user must have a working Autocoder
-installation).
+Next steps: [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/)
 
-## (Optional) Installing Tab Completion
+## Working With An Existing Project
 
-Several of F´s command-line utilities support tab completion. To enable these tools to use it, see the
-[instructions here](UsersGuide/user/autocomplete.md).
+Sometimes users wish to work with existing F´ projects. Once the project has been acquired, users should install the tools associated with that project. This is done with:
+
+1. Ensure a virtual environment for this project has been [created and activated](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
+
+2. Download the project
+> When using `git` and submodules, remember to run `git submodule update --init --recursive`
+
+4. Install the required F´ tools version
+`pip install -r <project>/fprime/requirements.txt`
+
+> Some projects ship their own `requirements.txt`.  Install using that file if it exists.
 
 ## Troubleshooting
 
-This section will add some known hints to trouble-shooting with the installation of F´. This will hopefully help users
-install things more effectively.
-
-### Ubuntu, Debian, Java and Python PIP
-
-Ubuntu and possibly other Debian variants don't include the pip packages in the default python 3 installation. To get a
-fully functional, use these commands on Ubuntu and Debian based systems:
-
-```
-sudo apt install git cmake default-jre python3 python3-pip
-```
-
-Now you should be able to run the installation without trouble.
-
-### Mac OS X and CMake Command Not Found
-
-If the user chooses to install CMake directly from the CMake site (not using homebrew nor Mac Ports), then the CMake
-command-line tools must be added to the user's PATH or default system libraries. The quickest command to do that is:
-
-```
-sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
-```
-
-More information can be found [here](https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac)
-
-### System Python, Packages, and Python3
-
-Many operating systems offer python PIP packages through their package manager (apt, yum, etc). Most python projects
-recommend avoiding those packages, but rather installing from PIP in a virtual environment. The reason for this is that
-the version of the python package from the OS may not be the required version that the python project depends on. Thus,
-users may choose to install F´ into a virtual environment. This is outside the scope of this document.
+For users having issues, please see our [troubleshooting guide](./troubleshooting.md).

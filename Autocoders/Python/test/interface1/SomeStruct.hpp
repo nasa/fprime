@@ -1,7 +1,7 @@
 #ifndef SOME_STRUCT_HPP
 #define SOME_STRUCT_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 extern "C" {
   typedef struct {

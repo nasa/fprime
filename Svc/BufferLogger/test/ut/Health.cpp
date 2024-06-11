@@ -16,7 +16,7 @@ namespace Svc {
 
   namespace Health {
 
-    void Tester ::
+    void BufferLoggerTester ::
       Ping()
     {
 

@@ -1,17 +1,13 @@
 #ifdef FPRIME_CMAKE
 #include "Autocoder/GTestBase.hpp"
 #else
-#include <GTestBase.hpp>
+#include <tlm_multi_instGTestBase.hpp>
 #endif
 // Very minimal to test autocoder. Some day they'll be actual unit test code
 
 class ATester : public Tlm::TestTlmTesterBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : Tlm::TestTlmTesterBase("comp",10) {
-#else
-        ATester() : Tlm::TestTlmTesterBase(10)  {
-#endif
     }
 };
 

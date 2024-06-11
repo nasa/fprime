@@ -8,12 +8,7 @@
 #include <Autocoders/Python/test/stress/TestPtSourceImpl.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestPtSourceImpl::TestPtSourceImpl(const char* name) : StressTest::TestPortComponentBase(name)
-#else
-TestPtSourceImpl::TestPtSourceImpl() :
-StressTest::TestPortComponentBase()
-#endif
 {
 }
 

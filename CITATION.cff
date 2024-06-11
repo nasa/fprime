@@ -1,0 +1,6 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - name: "The F´ Framework Team"
+title: "F´: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework"
+url: "https://github.com/nasa/fprime"

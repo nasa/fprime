@@ -1,0 +1,110 @@
+{
+  "columns" : [
+    [
+      {
+        "instanceName" : "client",
+        "inputPorts" : [
+          {
+            "name" : "productRecvIn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : [
+          {
+            "name" : "productRequestOut",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "dpManager",
+        "inputPorts" : [
+          {
+            "name" : "productRequestIn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : [
+          {
+            "name" : "bufferGetOut",
+            "portNumbers" : [
+              0
+            ]
+          },
+          {
+            "name" : "productResponseOut",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "bufferManager",
+        "inputPorts" : [
+          {
+            "name" : "bufferGetCallee",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : []
+      }
+    ]
+  ],
+  "connections" : [
+    [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  ]
+}

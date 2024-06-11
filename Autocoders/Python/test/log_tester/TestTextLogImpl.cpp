@@ -8,12 +8,7 @@
 #include <Autocoders/Python/test/log_tester/TestTextLogImpl.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 LogTextImpl::LogTextImpl(const char* name) : Log::LogTesterComponentBase(name)
-#else
-LogTextImpl::LogTextImpl() :
-        Log::LogTesterComponentBase()
-#endif
 {
 }
 

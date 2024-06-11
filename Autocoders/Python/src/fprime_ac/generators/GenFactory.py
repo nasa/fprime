@@ -71,7 +71,9 @@ from .visitors import (
     SerialHVisitor,
     SerializableVisitor,
     TestImplCppVisitor,
+    TestImplCppHelpersVisitor,
     TestImplHVisitor,
+    TestMainVisitor,
     TopologyCppVisitor,
     TopologyHVisitor,
     TopologyIDVisitor,
@@ -146,8 +148,12 @@ class GenFactory:
                 inst = ImplHVisitor.ImplHVisitor()
             elif self.__type == "TestImplCppVisitor":
                 inst = TestImplCppVisitor.TestImplCppVisitor()
+            elif self.__type == "TestImplCppHelpersVisitor":
+                inst = TestImplCppHelpersVisitor.TestImplCppHelpersVisitor()
             elif self.__type == "TestImplHVisitor":
                 inst = TestImplHVisitor.TestImplHVisitor()
+            elif self.__type == "TestMainVisitor":
+                inst = TestMainVisitor.TestMainVisitor()
             elif self.__type == "PortCppVisitor":
                 inst = PortCppVisitor.PortCppVisitor()
             elif self.__type == "PortHVisitor":
@@ -205,9 +211,7 @@ class GenFactory:
             elif self.__type == "TopologyIDVisitor":
                 inst = TopologyIDVisitor.TopologyIDVisitor()
             else:
-                s = "VisitorConfig.getInstance: unsupported visitor type (%s)" % (
-                    self.__type
-                )
+                s = f"VisitorConfig.getInstance: unsupported visitor type ({self.__type})"
                 PRINT.info(s)
                 raise ValueError(s)
             return inst
@@ -217,7 +221,7 @@ class GenFactory:
         Private Constructor (singleton pattern)
         """
         self.__instance = None
-        self.__configured_visitors = dict()
+        self.__configured_visitors = {}
 
     def getInstance():
         """
@@ -309,7 +313,7 @@ class GenFactory:
             code_section_generator = MdDocPage.MdDocPage()
 
         else:
-            print("GenFactory: unsupported code section (%s)." % (the_type))
+            print(f"GenFactory: unsupported code section ({the_type}).")
             return None
 
         self._addVisitor(code_section_generator, project_visitor_list)
@@ -350,7 +354,7 @@ class GenFactory:
         """
         # Instance this list only once for all elements
         if self.__visitor_list is None:
-            self.__visitor_list = list()
+            self.__visitor_list = []
             #
             # Insert each of the code producer visitors into the list of
             # visitors. The visitor must be in the list of
@@ -360,9 +364,9 @@ class GenFactory:
             for inst in self.__configured_visitors:
                 config = self.__configured_visitors[inst]
                 # If enabled instance it and place in list
-                if config.getEnabled() == True:
+                if config.getEnabled():
                     visitor = config.Instance()
-                    if config.getGenerateCode() == False:
+                    if not config.getGenerateCode():
                         visitor.setGenerateEmptyFile()
                     self.__visitor_list.append(visitor)
         #

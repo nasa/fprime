@@ -52,7 +52,7 @@ class DictBody:
         """
         Constructor.
         """
-        self.__visitor_list = list()
+        self.__visitor_list = []
 
     def __call__(self, args):
         """
@@ -79,7 +79,7 @@ class DictBody:
             DEBUG.error(
                 "DictBodyVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "DictBodyVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class DictBody:
             DEBUG.error(
                 "DictBodyVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "DictBodyVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

@@ -14,11 +14,7 @@ namespace SvcTest {
 
     class TestComponentImpl: public AQueuedTest::TestComponentBase {
         public:
-#if FW_OBJECT_NAMES == 1
             TestComponentImpl(const char* compName);
-#else
-            TestComponentImpl();
-#endif
             virtual ~TestComponentImpl();
         private:
             void aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6);

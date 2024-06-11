@@ -1,45 +1,45 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FileBuffer.hpp
 // \author bocchino
-// \brief  cpp file for Tester::FileBuffer
+// \brief  cpp file for FileDownlinkTester::FileBuffer
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #include <cstring>
 
-#include "Tester.hpp"
+#include "FileDownlinkTester.hpp"
 
 namespace Svc {
 
-  Tester::FileBuffer ::
+  FileDownlinkTester::FileBuffer ::
     FileBuffer(
         const U8 *const data,
         const size_t size
-    ) : 
+    ) :
       index(0)
   {
     this->push(data, size);
     FW_ASSERT(this->index == size);
   }
 
-  Tester::FileBuffer ::
+  FileDownlinkTester::FileBuffer ::
     FileBuffer(
         const History<Fw::FilePacket::DataPacket>& dataPackets
-    ) : 
+    ) :
       index(0)
   {
     size_t numPackets = dataPackets.size();
     for (size_t i = 0; i < numPackets; ++i) {
       const Fw::FilePacket::DataPacket& dataPacket = dataPackets.at(i);
-      this->push(dataPacket.data, dataPacket.dataSize);
+      this->push(dataPacket.m_data, dataPacket.m_dataSize);
     }
   }
 
-  void Tester::FileBuffer :: 
+  void FileDownlinkTester::FileBuffer ::
     push(
       const U8 *const data,
       const size_t size
@@ -50,7 +50,7 @@ namespace Svc {
     this->index += size;
   }
 
-  void Tester::FileBuffer ::
+  void FileDownlinkTester::FileBuffer ::
     write(const char *const fileName)
   {
 
@@ -61,7 +61,7 @@ namespace Svc {
     FW_ASSERT(status == Os::File::OP_OK);
 
     const U32 size = this->index;
-    NATIVE_INT_TYPE intSize = size;
+    FwSignedSizeType intSize = size;
     status = file.write(this->data, intSize);
     FW_ASSERT(status == Os::File::OP_OK);
     FW_ASSERT(static_cast<U32>(intSize) == size);
@@ -69,8 +69,8 @@ namespace Svc {
     file.close();
 
   }
-          
-  void Tester::FileBuffer ::
+
+  void FileDownlinkTester::FileBuffer ::
     getChecksum(CFDP::Checksum& checksum)
   {
     CFDP::Checksum c;
@@ -78,13 +78,13 @@ namespace Svc {
     checksum = c;
   }
 
-  bool Tester::FileBuffer ::
-    compare(const FileBuffer& fb1, const FileBuffer& fb2) 
+  bool FileDownlinkTester::FileBuffer ::
+    compare(const FileBuffer& fb1, const FileBuffer& fb2)
   {
 
     if (fb1.index != fb2.index) {
       fprintf(
-          stderr, 
+          stderr,
           "FileBuffer: sizes do not match (%lu vs %lu)\n",
           fb1.index,
           fb2.index

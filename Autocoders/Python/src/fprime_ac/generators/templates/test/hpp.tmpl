@@ -3,10 +3,7 @@
 // \author Auto-generated
 // \brief  hpp file for ${name} component test harness base class
 //
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
+// NOTE: this file was automatically generated
 //
 // ======================================================================
 
@@ -101,11 +98,7 @@ $emit_hpp_params([ $param_portNum ])
       //! Construct object $tester_base
       //!
       ${tester_base}(
-\#if FW_OBJECT_NAMES == 1
 $emit_hpp_params([ $param_compName, $param_maxHistorySize ])
-\#else
-$emit_hpp_params([ $param_maxHistorySize ])
-\#endif
       );
 
       //! Destroy object $tester_base

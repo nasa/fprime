@@ -225,7 +225,7 @@ namespace Svc {
           );
 
           //! Set the file name. Also sets the log file name.
-          void setFileName(const Fw::CmdStringArg& fileName);
+          void setFileName(const Fw::StringBase& fileName);
 
           //! Get the file name
           //! \return The file name
@@ -241,7 +241,7 @@ namespace Svc {
           //! Load a sequence file
           //! \return Success or failure
           virtual bool loadFile(
-              const Fw::CmdStringArg& fileName //!< The file name
+              const Fw::StringBase& fileName //!< The file name
           ) = 0;
 
           //! Query whether the sequence has any more records
@@ -341,7 +341,7 @@ namespace Svc {
           //! Load a sequence file
           //! \return Success or failure
           bool loadFile(
-              const Fw::CmdStringArg& fileName //!< The file name
+              const Fw::StringBase& fileName //!< The file name
           );
 
           //! Query whether the sequence has any more records
@@ -548,7 +548,7 @@ namespace Svc {
       //! (Optional) Load a sequence to run later.
       //! When you call this function, the event ports must be connected.
       void loadSequence(
-          const Fw::String& fileName //!< The file name
+          const Fw::StringBase& fileName //!< The file name
       );
 
       //! Return allocated buffer. Call during shutdown.
@@ -673,7 +673,7 @@ namespace Svc {
       //! Load a sequence file
       //! \return Success or failure
       bool loadFile(
-          const Fw::CmdStringArg& fileName //!< The file name
+          const Fw::StringBase& fileName //!< The file name
       );
 
       //! Perform a Cancel command

@@ -24,13 +24,8 @@ namespace Svc {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       UdpSenderGTestBase("Tester", MAX_HISTORY_SIZE),
       component("UdpSender")
-#else
-      UdpSenderGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
       ,m_recvFd(-1)
   {
     this->initComponents();

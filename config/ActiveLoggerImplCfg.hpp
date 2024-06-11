@@ -8,8 +8,6 @@
 #ifndef ACTIVELOGGER_ACTIVELOGGERIMPLCFG_HPP_
 #define ACTIVELOGGER_ACTIVELOGGERIMPLCFG_HPP_
 
-#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
-
 // set default filters
 
 enum {

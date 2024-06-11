@@ -1,5 +1,5 @@
 #include <Drv/BlockDriver/BlockDriverImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 
 namespace Drv {
@@ -34,7 +34,7 @@ namespace Drv {
         this->BufferOut_out(0,buffer);
     }
 
-    void BlockDriverImpl::Sched_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+    void BlockDriverImpl::Sched_handler(NATIVE_INT_TYPE portNum, U32 context) {
     }
 
     void BlockDriverImpl::callIsr() {

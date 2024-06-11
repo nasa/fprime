@@ -1,7 +1,7 @@
 ####
 # F prime CMakeLists.txt:
 #
-# SOURCE_FILES: combined list of source and autocoding diles
+# SOURCE_FILES: combined list of source and autocoding files
 # MOD_DEPS: (optional) module dependencies
 #
 ####
@@ -34,6 +34,6 @@ set(UT_MOD_DEPS
 )
 
 set(UT_SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FilePacketMain.cpp"
 )
 register_fprime_ut()

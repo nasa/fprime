@@ -9,14 +9,15 @@ jobs:
     name: Autodocumentation
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+        submodules: true
+    - uses: ./.github/actions/setup
     - name: Setup Dependencies
       run: |
            sudo apt-get update
-           sudo apt-get install doxygen
+           sudo apt-get install -y doxygen
     - name: Autodocs
       run: .github/actions/autodoc.bash

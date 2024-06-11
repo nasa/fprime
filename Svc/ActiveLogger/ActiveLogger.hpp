@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  using ActiveLogger = ActiveLoggerImpl;
+  typedef ActiveLoggerImpl ActiveLogger;
 
 }
 

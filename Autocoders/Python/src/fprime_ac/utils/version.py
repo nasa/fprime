@@ -1,9 +1,9 @@
 """ fprime version handling and reporting """
+
 import os
 import subprocess
 
-
-FALLBACK_VERSION = "v3.0.0"  # Keep up-to-date on release tag
+FALLBACK_VERSION = "v3.4.1"  # Keep up-to-date on release tag
 
 
 def get_version_str(working_dir, fallback=FALLBACK_VERSION):
@@ -55,3 +55,20 @@ def get_project_version(fallback=FALLBACK_VERSION):
     """
     fprime_directory = os.environ.get("FPRIME_PROJECT_ROOT", os.path.dirname(__file__))
     return get_version_str(working_dir=fprime_directory, fallback=fallback)
+
+
+def get_library_versions(fallback=FALLBACK_VERSION) -> dict:
+    """Calculate the versions of each libraries.
+    Return a dictionary with the library name as key and the version as value
+    """
+    fprime_libraries = os.environ.get("FPRIME_LIBRARY_LOCATIONS", "")
+    if fprime_libraries == "":
+        return {}
+
+    lib_versions = {}
+    for library in fprime_libraries.split(":"):
+        library_name = os.path.basename(library)
+        lib_versions[library_name] = get_version_str(
+            working_dir=library, fallback=fallback
+        )
+    return lib_versions

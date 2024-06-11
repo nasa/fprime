@@ -37,24 +37,24 @@ ${return_type}Output${name}Port::invoke(${args_proto_string}) {
 \#if FW_PORT_SERIALIZATION
     } else if (this->m_serPort) {
 
-        Fw::SerializeStatus status;
+        Fw::SerializeStatus _status;
 
         ${name}PortBuffer _buffer;
  #set $num = 0
  #for $arg in $args:
   #if $enum_marker[$num] == 'ENUM':
-        status = _buffer.serialize(static_cast<NATIVE_INT_TYPE>($arg[0]));
+        _status = _buffer.serialize(static_cast<NATIVE_INT_TYPE>($arg[0]));
   #elif $pointer_marker[$num] == True:
-        status = _buffer.serialize(static_cast<void*>($arg[0]));
+        _status = _buffer.serialize(static_cast<void*>($arg[0]));
   #else:
-        status = _buffer.serialize($arg[0]);
+        _status = _buffer.serialize($arg[0]);
   #end if
   #set $num = $num + 1
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == _status,static_cast<FwAssertArgType>(_status));
 
  #end for
-        status = this->m_serPort->invokeSerial(_buffer);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
+        _status = this->m_serPort->invokeSerial(_buffer);
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == _status,static_cast<FwAssertArgType>(_status));
     }
 \#else
     }

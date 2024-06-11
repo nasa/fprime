@@ -2,7 +2,6 @@
 #define _FileSystem_hpp_
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 
 #define FILE_SYSTEM_CHUNK_SIZE (256u)
@@ -33,11 +32,10 @@ namespace Os {
 		Status moveFile(const char* originPath, const char* destPath); //! moves a file from origin to destination
 		Status copyFile(const char* originPath, const char* destPath); //! copies a file from origin to destination
 		Status appendFile(const char* originPath, const char* destPath, bool createMissingDest=false); //! append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-		Status getFileSize(const char* path, U64& size); //!< gets the size of the file (in bytes) at location path
+		Status getFileSize(const char* path, FwSignedSizeType& size); //!< gets the size of the file (in bytes) at location path
 		Status getFileCount(const char* directory, U32& fileCount); //!< counts the number of files in the given directory
 		Status changeWorkingDirectory(const char* path); //!<  move current directory to path
-
-        Status getFreeSpace(const char* path, U64& totalBytes, U64& freeBytes); //!< get FS free and total space in bytes on filesystem containing path
+        Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes); //!< get FS free and total space in bytes on filesystem containing path
 	}
 
 }

@@ -46,12 +46,12 @@ namespace Os {
     fifoQueue->data = data;
     fifoQueue->head = 0;
     fifoQueue->tail = 0;
-    this->queue = fifoQueue;
+    this->m_queue = fifoQueue;
     return true;
   }
 
   void BufferQueue::finalize() {
-    FIFOQueue* fQueue = static_cast<FIFOQueue*>(this->queue);
+    FIFOQueue* fQueue = static_cast<FIFOQueue*>(this->m_queue);
     if (nullptr != fQueue)
     {
       U8* data = fQueue->data;
@@ -60,13 +60,13 @@ namespace Os {
       }
       delete fQueue;
     }
-    this->queue = nullptr;
+    this->m_queue = nullptr;
   }
 
   bool BufferQueue::enqueue(const U8* buffer, NATIVE_UINT_TYPE size, NATIVE_INT_TYPE priority) {
     (void) priority;
 
-    FIFOQueue* fQueue = static_cast<FIFOQueue*>(this->queue);
+    FIFOQueue* fQueue = static_cast<FIFOQueue*>(this->m_queue);
     U8* data = fQueue->data;
 
     // Store the buffer to the queue:
@@ -81,7 +81,7 @@ namespace Os {
   bool BufferQueue::dequeue(U8* buffer, NATIVE_UINT_TYPE& size, NATIVE_INT_TYPE &priority) {
     (void) priority;
 
-    FIFOQueue* fQueue = static_cast<FIFOQueue*>(this->queue);
+    FIFOQueue* fQueue = static_cast<FIFOQueue*>(this->m_queue);
     U8* data = fQueue->data;
 
     // Get the buffer from the queue:

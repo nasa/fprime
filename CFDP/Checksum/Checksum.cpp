@@ -20,13 +20,13 @@ static U32 min(const U32 a, const U32 b) {
 namespace CFDP {
 
   Checksum ::
-    Checksum() : value(0)
+    Checksum() : m_value(0)
   {
 
   }
 
   Checksum ::
-    Checksum(const U32 value) : value(value)
+    Checksum(const U32 value) : m_value(value)
   {
 
   }
@@ -34,7 +34,7 @@ namespace CFDP {
   Checksum ::
     Checksum(const Checksum &original)
   {
-    this->value = original.getValue();
+    this->m_value = original.getValue();
   }
 
   Checksum ::
@@ -46,14 +46,14 @@ namespace CFDP {
   Checksum& Checksum ::
     operator=(const Checksum& checksum)
   {
-    this->value = checksum.value;
+    this->m_value = checksum.m_value;
     return *this;
   }
 
   bool Checksum ::
     operator==(const Checksum& checksum) const
   {
-    return this->value == checksum.value;
+    return this->m_value == checksum.m_value;
   }
 
   bool Checksum ::
@@ -65,7 +65,7 @@ namespace CFDP {
   U32 Checksum ::
     getValue() const
   {
-    return this->value;
+    return this->m_value;
   }
 
   void Checksum ::
@@ -90,8 +90,9 @@ namespace CFDP {
     }
 
     // Add the middle words aligned
-    for ( ; index + 4 <= length; index += 4)
+    for ( ; index + 4 <= length; index += 4) {
       addWordAligned(&data[index]);
+    }
 
     // Add the last word unaligned if necessary
     if (index < length) {
@@ -108,8 +109,9 @@ namespace CFDP {
   void Checksum ::
     addWordAligned(const U8 *const word)
   {
-    for (U8 i = 0; i < 4; ++i)
+    for (U8 i = 0; i < 4; ++i) {
       addByteAtOffset(word[i], i);
+    }
   }
 
   void Checksum ::
@@ -124,8 +126,9 @@ namespace CFDP {
     for (U8 i = 0; i < length; ++i) {
       addByteAtOffset(word[i], offset);
       ++offset;
-      if (offset == 4)
+      if (offset == 4) {
         offset = 0;
+      }
     }
   }
 
@@ -136,8 +139,8 @@ namespace CFDP {
     )
   {
     FW_ASSERT(offset < 4);
-    const U32 addend = byte << (8*(3-offset));
-    this->value += addend;
+    const U32 addend = static_cast<U32>(byte) << (8*(3-offset));
+    this->m_value += addend;
   }
 
 }

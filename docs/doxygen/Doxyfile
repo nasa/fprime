@@ -38,7 +38,8 @@ PROJECT_NAME           = "F´ Flight Software - C/C++ Documentation"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = NASA-v1.6.0
+# Replaced with version number by ./generate_docs.bash <VERSION>
+PROJECT_NUMBER         = devel
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -170,7 +171,7 @@ FULL_PATH_NAMES        = YES
 # will be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH        = ./ ./docs-build-for-docs/ ./docs-build-for-docs/F-Prime/ ./Ref/build-fprime-automatic-default/ ./Ref/build-fprime-automatic-default/F-Prime/
+STRIP_FROM_PATH        = ./ ./docs-cache/ ./docs-cache/F-Prime/
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
@@ -179,7 +180,7 @@ STRIP_FROM_PATH        = ./ ./docs-build-for-docs/ ./docs-build-for-docs/F-Prime
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = ./ ./docs-build-for-docs/ ./docs-build-for-docs/F-Prime/ ./Ref/build-fprime-automatic-default/ ./Ref/build-fprime-automatic-default/F-Prime/
+STRIP_FROM_INC_PATH    = ./ ./docs-cache/ ./docs-cache/F-Prime/
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
 # less readable) file names. This can be useful is your file systems doesn't
@@ -222,7 +223,7 @@ QT_AUTOBRIEF           = NO
 # tag to YES if you prefer the old behavior instead.
 #
 # Note that setting this tag to YES also means that rational rose comments are
-# not recognized any more.
+# not recognized anymore.
 # The default value is: NO.
 
 MULTILINE_CPP_IS_BRIEF = NO
@@ -730,7 +731,7 @@ SHOW_NAMESPACES        = YES
 # The FILE_VERSION_FILTER tag can be used to specify a program or script that
 # doxygen should invoke to get the current version for each file (typically from
 # the version control system). Doxygen will invoke the program by executing (via
-# popen()) the command command input-file, where command is the value of the
+# popen()) the command input-file, where command is the value of the
 # FILE_VERSION_FILTER tag, and input-file is the name of an input file provided
 # by doxygen. Whatever the program writes to standard output is used as the file
 # version. For an example see the documentation.
@@ -896,10 +897,12 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = ./docs/Architecture/ ./docs/UsersGuide/ ./docs/Tutorials/ ./docs/_data/ \
-                         ./docs/INSTALL.md ./docs/projects.md ./docs/index.md ./docs/_config.yml ./docs/features.md \
-                         *CMakeFiles/* ./Gds ./Fw/Python ./ptf ./Autocoders ./cmake ./gtest ./Ref ./RPI ./metrics \
-                         STest ./mk ./README.md ./CONTRIBUTORS.md
+EXCLUDE                = ./docs/Architecture/ ./docs/UsersGuide/ ./docs/Tutorials/ \
+                         ./docs/INSTALL.md ./docs/projects.md ./docs/index.md ./docs/_config.yml \
+                         ./docs/upcoming.md ./docs/latest.md ./docs/documentation.md ./docs/features.md \
+                         *CMakeFiles/* ./Autocoders ./cmake ./gtest ./Ref ./RPI ./FppTest \
+                         STest ./mk ./README.md ./CONTRIBUTORS.md ./CONTRIBUTING.md ./SECURITY.md \
+                         ./googletest/
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -915,7 +918,7 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = */test/* */GTest/* */build-*/* */Autocoders/MagicDrawCompPlugin/* */cmake/* */docs/v*.* */README.md
+EXCLUDE_PATTERNS       = */test/* */GTest/* */build-*/* */cmake/* */docs/v*.* */docs/_* 
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the

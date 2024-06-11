@@ -122,7 +122,7 @@ module Svc {
     @ Failed to write parameter file
     event PrmFileWriteError(
                              stage: PrmWriteError @< The write stage
-                             record: I32 @< The record that had the failure
+                             $record: I32 @< The record that had the failure
                              error: I32 @< The error code
                            ) \
       severity warning high \
@@ -140,7 +140,7 @@ module Svc {
     @ Failed to read parameter file
     event PrmFileReadError(
                             stage: PrmReadError @< The read stage
-                            record: I32 @< The record that had the failure
+                            $record: I32 @< The record that had the failure
                             error: I32 @< The error code
                           ) \
       severity warning high \

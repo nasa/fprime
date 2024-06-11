@@ -8,11 +8,7 @@
 #include <Autocoders/Python/test/event1/TestLogImpl.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestLogImpl::TestLogImpl(const char* name) : Somewhere::TestLogComponentBase(name)
-#else
-TestLogImpl::TestLogImpl() : Somewhere::TestLogComponentBase()
-#endif
 {
 }
 

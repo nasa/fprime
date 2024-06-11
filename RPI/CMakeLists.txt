@@ -19,7 +19,7 @@
 # project definition.
 ##
 project(RPI C CXX)
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Location of F prime framework" FORCE)
 set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Root path of F prime project" FORCE)
 

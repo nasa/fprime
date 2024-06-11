@@ -1,14 +1,14 @@
 ####
 # F prime CMakeLists.txt:
 #
-# SOURCE_FILES: combined list of source and autocoding diles
+# SOURCE_FILES: combined list of source and autocoding files
 # MOD_DEPS: (optional) module dependencies
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Framer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FramerComponentImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Framer.cpp"
 )
 
 set(MOD_DEPS
@@ -20,7 +20,7 @@ register_fprime_module()
 #### UTS ###
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Framer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FramerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FramerTestMain.cpp"
 )
 register_fprime_ut()

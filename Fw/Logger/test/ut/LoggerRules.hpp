@@ -15,7 +15,7 @@
 #ifndef FPRIME_LOGGERRULES_HPP
 #define FPRIME_LOGGERRULES_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Logger/test/ut/FakeLogger.hpp>
 #include <STest/STest/Rule/Rule.hpp>

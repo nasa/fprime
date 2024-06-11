@@ -52,7 +52,7 @@ class InstanceDictStart:
         """
         Constructor.
         """
-        self.__visitor_list = list()
+        self.__visitor_list = []
 
     def __call__(self, args, topology_model):
         """
@@ -79,7 +79,7 @@ class InstanceDictStart:
             DEBUG.error(
                 "InstanceDictStartVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "InstanceDictStartVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class InstanceDictStart:
             DEBUG.error(
                 "InstanceDictStartVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "InstanceDictStartVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

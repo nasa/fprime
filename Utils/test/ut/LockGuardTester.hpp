@@ -15,7 +15,7 @@
 #define LOCKGUARDTESTER_HPP
 
 #include "Utils/LockGuard.hpp"
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include "gtest/gtest.h"
 
 namespace Utils {

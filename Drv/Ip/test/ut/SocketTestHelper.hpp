@@ -1,7 +1,7 @@
 //
 // Created by mstarch on 12/10/20.
 //
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw//Buffer/Buffer.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 
@@ -59,6 +59,17 @@ void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver);
  * Wait on socket change.
  */
 bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations);
+
+/**
+ * Wait on started
+*/
+bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations);
+
+/**
+ * Get the configured delay, converted to milliseconds
+ * @return SOCKET_RETRY_INTERVAL converted to milliseconds
+ */
+U64 get_configured_delay_ms();
 
 };
 };

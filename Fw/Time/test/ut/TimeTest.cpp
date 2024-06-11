@@ -24,24 +24,41 @@ TEST(TimeTestNominal,MathTest) {
     Fw::Time time1;
     Fw::Time time2;
 
-    // Try various operations
+    // Comparison
+    time1.set(1000,1000);
+    time2.set(1000,1000);
+    ASSERT_TRUE(time1 == time2);
+    ASSERT_TRUE(time1 >= time2);
+    ASSERT_TRUE(time1 <= time2);
 
     time1.set(1000,1000);
+    time2.set(2000,1000);
+    ASSERT_TRUE(time1 != time2);
+    ASSERT_TRUE(time1 < time2);
+    ASSERT_TRUE(time1 <= time2);
+
+    time1.set(2000,1000);
+    time2.set(1000,1000);
+    ASSERT_TRUE(time1 > time2);
+    ASSERT_TRUE(time1 >= time2);
+
+    // Addition
+    time1.set(1000,1000);
     time2.set(4000,2000);
+    Fw::Time time_sum = Fw::Time::add(time1,time2);
+    ASSERT_EQ(time_sum.m_seconds,5000);
+    ASSERT_EQ(time_sum.m_useconds,3000);
 
-    // test add
-
-
-    // test subtract
-
-    // normal subtract
+    // Normal subtraction
+    time1.set(1000,1000);
+    time2.set(4000,2000);
     Fw::Time time3 = Fw::Time::sub(time2,time1);
     ASSERT_EQ(time3.m_timeBase,TB_NONE);
     ASSERT_EQ(time3.m_timeContext,0);
     ASSERT_EQ(time3.m_seconds,3000);
     ASSERT_EQ(time3.m_useconds,1000);
 
-    // rollover subtract
+    // Rollover subtraction
     time1.set(1,999999);
     time2.set(2,000001);
     time3 = Fw::Time::sub(time2,time1);

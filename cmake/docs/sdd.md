@@ -261,7 +261,7 @@ set(SOURCE_FILES
 )
 
 set(MOD_DEPS
-  Svc/LinuxTime
+  Svc/PosixTime
   Svc/PassiveConsoleTextLogger
 )
 
@@ -297,7 +297,7 @@ This should look something like the following:
 # This contains the basic project information. Specifically, a cmake version and
 # project definition.
 ##
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 project(FPrime-Ref C CXX)
 
 ##

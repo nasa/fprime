@@ -9,7 +9,7 @@
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/Assert.hpp>
 
@@ -33,22 +33,17 @@ extern "C" {
 #endif
 
 int main(int argc, char* argv[]) {
-    // Construct the topology here.
-    Fw::PortBase::setTrace(true);
-    Fw::SimpleObjRegistry simpleReg_ptr;
-    simpleReg_ptr.dump();
-
     setbuf(stdout, nullptr);
 
     cout << "Initialize Arrays" << endl;
 
-    InternalType array1 = InternalType(6,7,120,444);
-    Example::ArrayType array2 = Example::ArrayType(array1);
+    Example::InternalType array1 = Example::InternalType(6,7,120,444);
+    Example::SubNameSpace::ArrayType array2 = Example::SubNameSpace::ArrayType(array1);
     // Create string array for serializable
     Fw::String mem1 = "Member 1";
     Fw::String mem2 = "Member 2";
     Fw::String mem3 = "Member 3";
-    StringArray array3 = StringArray(mem1, mem2, mem3);
+    Example::StringArray array3 = Example::StringArray(mem1, mem2, mem3);
     Example::ArrSerial serial1;
 
     // Print toString outputs for each array
@@ -89,8 +84,8 @@ int main(int argc, char* argv[]) {
 
 
     // Save copy of arrays to test against post-serialization
-    InternalType array1Save = array1;
-    Example::ArrayType array2Save = array2;
+    Example::InternalType array1Save = array1;
+    Example::SubNameSpace::ArrayType array2Save = array2;
 
     cout << "Deserializing arrays" << endl;
     if (arraySerial1.deserialize(array1Save) != Fw::FW_SERIALIZE_OK) {

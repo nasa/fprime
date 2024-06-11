@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 
 #include <cstdint>
@@ -24,8 +24,8 @@
 #include <linux/spi/spidev.h>
 #include <cerrno>
 
-//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
-#define DEBUG_PRINT(x,...)
+//#define DEBUG_PRINT(...) printf(##__VA_ARGS__); fflush(stdout)
+#define DEBUG_PRINT(...)
 
 namespace Drv {
 
@@ -46,8 +46,8 @@ namespace Drv {
         spi_ioc_transfer tr;
         // Zero for unused fields:
         memset(&tr, 0, sizeof(tr));
-        tr.tx_buf = reinterpret_cast<U64>(writeBuffer.getData());
-        tr.rx_buf = reinterpret_cast<U64>(readBuffer.getData());
+        tr.tx_buf = reinterpret_cast<__u64>(writeBuffer.getData());
+        tr.rx_buf = reinterpret_cast<__u64>(readBuffer.getData());
         tr.len = writeBuffer.getSize();
 /*
             .speed_hz = 0,
@@ -66,13 +66,12 @@ namespace Drv {
         }
         this->m_bytes += readBuffer.getSize();
         this->tlmWrite_SPI_Bytes(this->m_bytes);
-        return;
-
     }
 
     bool LinuxSpiDriverComponentImpl::open(NATIVE_INT_TYPE device,
                                            NATIVE_INT_TYPE select,
-                                           SpiFrequency clock) {
+                                           SpiFrequency clock,
+                                           SpiMode spiMode) {
 
         this->m_device = device;
         this->m_select = select;
@@ -99,9 +98,29 @@ namespace Drv {
 
         // Configure:
         /*
-         * SPI Mode 0
+         * SPI Mode 0, 1, 2, 3
          */
-        U8 mode = SPI_MODE_0; // Mode 0 (CPOL = 0, CPHA = 0)
+
+        U8 mode; // Mode Select (CPOL = 0/1, CPHA = 0/1)
+        switch(spiMode) {
+            case SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW:
+                mode = SPI_MODE_0;
+                break;
+            case SpiMode::SPI_MODE_CPOL_LOW_CPHA_HIGH:
+                mode = SPI_MODE_1;
+                break;
+            case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_LOW:
+                mode = SPI_MODE_2;
+                break;
+            case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_HIGH:
+                mode = SPI_MODE_3;
+                break;
+            default:
+                //Assert if the device SPI Mode is not in the correct range
+                FW_ASSERT(0, spiMode);                
+                break;
+        }
+
         ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
         if (ret == -1) {
             DEBUG_PRINT("ioctl SPI_IOC_WR_MODE fd %d failed. %d\n",fd,errno);

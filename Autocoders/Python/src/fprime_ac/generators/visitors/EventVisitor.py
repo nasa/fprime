@@ -36,8 +36,7 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.events import EventHeader
-    from fprime_ac.generators.templates.events import EventBody
+    from fprime_ac.generators.templates.events import EventBody, EventHeader
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -97,24 +96,20 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
 
-        self.__fp = list()
+        self.__fp = []
 
         if len(obj.get_ids()) == 1:
             pyfile = "{}/{}.py".format(output_dir, obj.get_name())
             fd = open(pyfile, "w")
-            if fd is None:
-                raise Exception("Could not open %s file." % pyfile)
             self.__fp.append(fd)
         else:
             inst = 0
             for id in obj.get_ids():
                 pyfile = "%s/%s_%d.py" % (output_dir, obj.get_name(), inst)
                 inst += 1
-                DEBUG.info("Open file: %s" % pyfile)
+                DEBUG.info(f"Open file: {pyfile}")
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception("Could not open %s file." % pyfile)
-                DEBUG.info("Completed %s open" % pyfile)
+                DEBUG.info(f"Completed {pyfile} open")
                 self.__fp.append(fd)
 
     def DictHeaderVisit(self, obj):
@@ -122,23 +117,20 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate header for  event python class.
         @param obj: the instance of the event model to operation on.
         """
-        inst = 0
-        for id in obj.get_ids():
+        for inst, id in enumerate(obj.get_ids()):
             c = EventHeader.EventHeader()
             d = datetime.datetime.now()
             c.date = d.strftime("%A, %d %B %Y")
             c.user = getuser()
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[inst], "eventHeaderVisit")
-            inst += 1
 
     def DictBodyVisit(self, obj):
         """
         Defined to generate the body of the  Python event class
         @param obj: the instance of the event model to operation on.
         """
-        inst = 0
-        for id in obj.get_ids():
+        for inst, id in enumerate(obj.get_ids()):
             c = EventBody.EventBody()
             if len(obj.get_ids()) > 1:
                 c.name = obj.get_name() + "_%d" % inst
@@ -150,11 +142,9 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
             c.description = obj.get_comment()
             c.component = obj.get_component_name()
 
-            c.arglist = list()
-            c.ser_import_list = list()
-            arg_num = 0
-
-            for arg_obj in obj.get_args():
+            c.arglist = []
+            c.ser_import_list = []
+            for arg_num, arg_obj in enumerate(obj.get_args()):
                 n = arg_obj.get_name()
                 t = arg_obj.get_type()
                 s = arg_obj.get_size()
@@ -186,7 +176,5 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
                         c.format_string = format_string
 
                 c.arglist.append((n, d, type_string))
-                arg_num += 1
             self._writeTmpl(c, self.__fp[inst], "eventBodyVisit")
             self.__fp[inst].close()
-            inst += 1

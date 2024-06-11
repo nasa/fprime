@@ -3,4 +3,4 @@ The Active Rate Group is a component that executes components assigned to the ra
 A call to the input run port wakes the task and causes it to call all the components connected to the output ports in order.
 
 ActiveRateGroupComponentAi.xml - The XML description of the active rate group component
-ActiveRateGroupImpl.hpp(.cpp) - The implementation of the component
+ActiveRateGroup.hpp(.cpp) - The implementation of the component

@@ -32,11 +32,11 @@ The `Svc::CmdDispatcher` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.html) | cmdSend | Output | n/a | Send commands to components
-[`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.html) | compStat | Input | Asynchronous | Port for components to report command status
-[`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.html) | seqStatus | Output | n/a | Send command status to command buffer source
-[`Fw::Com`](../../../Fw/Com/docs/sdd.html) | cmdBuff | Input | Asynchronous | Receive command buffer
-[`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.html) | cmdReg | Input | Synchronous | Command Registration 
+[`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.md) | cmdSend | Output | n/a | Send commands to components
+[`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | compStat | Input | Asynchronous | Port for components to report command status
+[`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | seqStatus | Output | n/a | Send command status to command buffer source
+[`Fw::Com`](../../../Fw/Com/docs/sdd.md) | cmdBuff | Input | Asynchronous | Receive command buffer
+[`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | cmdReg | Input | Synchronous | Command Registration 
 
 ### 3.2 Functional Description
 
@@ -56,13 +56,40 @@ When the command dispatcher receives a command buffer, it decodes the opcode. It
 
 The `Svc::CmdDispatcher` component accepts command registration from other components:
 
-![Command Registration](img/CommandRegistration.jpg) 
+```mermaid
+sequenceDiagram
+    Initialization->>Component: get_ComdReg_InputPort()
+    activate Initialization
+    deactivate Initialization
+    activate Component
+    deactivate Component
+    Initialization->>Component: regCommands()
+    activate Initialization
+    activate Component
+    loop for each opcode
+        Component->>CommandDispatcher: cmdReg()
+    end
+    deactivate Initialization
+    deactivate Component
+```
 
 #### 3.3.1 Dispatch Commands
 
 The `Svc::CmdDispatcher` component dispatches commands to other components:
 
-![Command Dispatch](img/CommandDispatch.jpg) 
+```mermaid
+sequenceDiagram
+    Command Buffer Source->>CommandDispatcher: cmdBuff()
+    activate Command Buffer Source
+    activate CommandDispatcher
+    CommandDispatcher->>Component: cmdBuff()
+    activate Component
+    Component->>CommandDispatcher: comStat()
+    deactivate Component
+    CommandDispatcher->>Command Buffer Source: seqStatus()
+    deactivate CommandDispatcher
+    deactivate Command Buffer Source
+```
 
 ### 3.4 State
 
@@ -71,10 +98,6 @@ The `Svc::CmdDispatcher` component dispatches commands to other components:
 ### 3.5 Algorithms
 
 `Svc::CmdDispatcher` has no significant algorithms.
-
-## 4. Dictionary
-
-Dictionaries: [HTML](CmdDispatcher.html)
 
 ## 4. Module Checklists
 

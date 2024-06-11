@@ -1,14 +1,14 @@
 ####
 # F prime CMakeLists.txt:
 #
-# SOURCE_FILES: combined list of source and autocoding diles
+# SOURCE_FILES: combined list of source and autocoding files
 # MOD_DEPS: (optional) module dependencies
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/RateGroupDriver.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/RateGroupDriverImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/RateGroupDriver.cpp"
 )
 
 register_fprime_module()

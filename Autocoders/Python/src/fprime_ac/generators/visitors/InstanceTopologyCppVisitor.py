@@ -34,8 +34,10 @@ from fprime_ac.utils import ConfigManager
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.topology import includes1TopologyCpp
-    from fprime_ac.generators.templates.topology import publicInstanceTopologyCpp
+    from fprime_ac.generators.templates.topology import (
+        includes1TopologyCpp,
+        publicInstanceTopologyCpp,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -126,8 +128,6 @@ class InstanceTopologyCppVisitor(AbstractVisitor.AbstractVisitor):
             # Open file for writing here...
             DEBUG.info("Open file: %s" % filename)
             self.__fp = open(filename, "w")
-            if self.__fp is None:
-                raise Exception("Could not open %s file.") % filename
             DEBUG.info("Completed")
         else:
             PRINT.info("ERROR: NO COMPONENTS FOUND IN TOPOLOGY XML FILE...")

@@ -75,7 +75,7 @@ namespace Svc {
           //! Open errors
           Open open;
 
-          //! Heade read errors
+          //! Header read errors
           HeaderRead headerRead;
 
           //! Data read errors

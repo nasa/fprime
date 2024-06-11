@@ -1,6 +1,6 @@
 # Constructing the F´ Topology
 
-**Note:** for a hands-on walk through of build topologies, please see: [Tutorials](../../Tutorials/README.md)
+**Note:** For a hands-on walk-through of build topologies, please see: [Tutorials](../../Tutorials/README.md)
 
 The executing software consists of a set of interconnected components
 executing on the threads of the active components or driven by other
@@ -27,7 +27,7 @@ stack. As described in Section 6.7.8.1, the constructor has either a
 name argument or none at all. The developer’s derived class constructors
 may have extra arguments that are particular to that application. If
 classes are declared statically, the developer should keep in mind
-uncertainties about execution ordering.
+uncertainties about execution order.
 
 ## Initializing the Components
 

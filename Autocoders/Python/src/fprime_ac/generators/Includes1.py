@@ -52,7 +52,7 @@ class Includes1:
         """
         Constructor.
         """
-        self.__visitor_list = list()
+        self.__visitor_list = []
 
     def __call__(self, args):
         """
@@ -79,7 +79,7 @@ class Includes1:
             DEBUG.error(
                 "Includes1.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Includes1.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class Includes1:
             DEBUG.error(
                 "Includes1.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Includes1.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

@@ -5,84 +5,218 @@
 # rather allows the users to build against fprime, fprime libraries while taking advantage of fprime's autocoding
 # support. This file includes the cmake build system setup for building like fprime.
 ####
-cmake_minimum_required(VERSION 3.13)
+include_guard()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
-set_property(GLOBAL PROPERTY FPRIME_MODULES)
-# Include the Options, and platform files. These are files that change the build
-# setup. Users may need to add items to these files in order to ensure that all
-# specific project builds work as expected. Since Options.cmake handles cache
-# variables, the path handling is setup in between.
+include(utilities)
 include(options)
-include(settings)
-# Sets up the build locations of the CMake system. This becomes the root of files
-# being searched for in the cmake system.
+include(sanitizers) # Enable sanitizers if they are requested
+include(required)
+
+# Add project root's cmake folder to module path
+if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/cmake")
+    list(APPEND CMAKE_MODULE_PATH "${FPRIME_PROJECT_ROOT}/cmake")
+endif()
+
+# Setup fprime library locations
+list(REMOVE_DUPLICATES FPRIME_LIBRARY_LOCATIONS)
 set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
 list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
-message(STATUS "Searching for F prime modules in: ${FPRIME_BUILD_LOCATIONS}")
-message(STATUS "Autocoder constants file: ${FPRIME_AC_CONSTANTS_FILE}")
-message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIR}")
 
-include(required)
-include(prescan) #Must come after required if tools detection is to be inherited
-include(platform/platform)
-# Include the support files that provide all the functions, utilities, and other
-# hidden items in the CMake system. Typically a user should not interact with any
-# of these files, as they are a library that automates FPrime builds.
+# Message describing the fprime setup
+message(STATUS "[FPRIME] Module locations: ${FPRIME_BUILD_LOCATIONS}")
+message(STATUS "[FPRIME] Configuration module: ${FPRIME_CONFIG_DIR}")
+message(STATUS "[FPRIME] Installation directory: ${CMAKE_INSTALL_PREFIX}")
+include(platform/platform) # Now that module locations are known, load platform settings
+
+# Module setup functions, attaches targets to modules, etc.
 include(module)
+# Support for autocoder implementations
 include(autocoder/autocoder)
+# Support for build target registration
 include(target/target)
+# Load domain-specific CMake functions
 include(API)
+# Sub-build support
+include(sub-build/sub-build)
+# C and C++ settings for building the framework
+include(settings)
 
-# Set the install directory for the package
-if (DEFINED FPRIME_INSTALL_DEST)
-    set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
-elseif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX STREQUAL "")
-    set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/build-artifacts CACHE PATH "Install dir" FORCE)
-endif()
-message(STATUS "Installation directory: ${CMAKE_INSTALL_PREFIX}")
+####
+# Function `fprime_setup_global_includes`:
+#
+# Adds basic include directories that make fprime work. This ensures that configuration, framework, and project all
+# function as expected. This will also include the internal build-cache directories.
+####
+function(fprime_setup_global_includes)
+    # Setup the global include directories that exist outside of the build cache
+    include_directories("${FPRIME_FRAMEWORK_PATH}")
+    include_directories("${FPRIME_CONFIG_DIR}")
+    include_directories("${FPRIME_PROJECT_ROOT}")
 
-# Setup the global include directories
-include_directories("${CMAKE_BINARY_DIR}")
-include_directories("${CMAKE_BINARY_DIR}/F-Prime")
+    # Setup the include directories that exist within the build-cache
+    include_directories("${CMAKE_BINARY_DIR}")
+    include_directories("${CMAKE_BINARY_DIR}/F-Prime")
+    include_directories("${CMAKE_BINARY_DIR}/config")
+endfunction(fprime_setup_global_includes)
 
-# Must always include the F prime core directory, as its headers are relative to
-# that directory. Same with the project directory for separated projects.
-include_directories("${FPRIME_PROJECT_ROOT}")
-foreach (LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
-    # Including manifests from libraries
-    file(GLOB MANIFESTS RELATIVE "${LIBRARY_DIR}" "${LIBRARY_DIR}/*.cmake")
-    message(STATUS "Including library ${LIBRARY_DIR} with manifests ${MANIFESTS}")
-    # Check to see if the cmake directory exists and add it
-    if (IS_DIRECTORY "${LIBRARY_DIR}/cmake")
-        list(APPEND CMAKE_MODULE_PATH "${LIBRARY_DIR}/cmake")
+####
+# Function `fprime_detect_libraries`:
+#
+# This function detects libraries using the FPRIME_LIBRARY_LOCATIONS variable. Fore each library path, the following is
+# done:
+# 1. Detect a manifest file from in-order: `library.cmake`, and then `<library name>.cmake`
+# 2. Add the library's top-level cmake directory to the CMAKE_MODULE_PATH
+# 3. Add the library root as an include directory
+# 4. Add option() to disable library UTs
+####
+macro(fprime_detect_libraries)
+    foreach (LIBRARY_DIRECTORY IN LISTS FPRIME_LIBRARY_LOCATIONS)
+        get_filename_component(LIBRARY_NAME "${LIBRARY_DIRECTORY}" NAME)
+        get_fprime_library_option_string(LIBRARY_OPTION "${LIBRARY_NAME}")
+        # Detect manifest file:
+        #  1. library.cmake (preferred)
+        #  2. <library>.cmake (old standard)
+        if (EXISTS "${LIBRARY_DIRECTORY}/library.cmake")
+            set(MANIFEST_FILE "${LIBRARY_DIRECTORY}/library.cmake")
+        elseif (EXISTS "${LIBRARY_DIRECTORY}/${LIBRARY_NAME}.cmake")
+            set(MANIFEST_FILE "${LIBRARY_DIRECTORY}/${LIBRARY_NAME}.cmake")
+        else()
+            message(WARNING "[LIBRARY] ${LIBRARY_DIRECTORY} does not define library.cmake nor ${LIBRARY_NAME}.cmake. Skipping.")
+            continue()
+        endif()
+        message(STATUS "[LIBRARY] Including library ${LIBRARY_NAME} at ${LIBRARY_DIRECTORY}")
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[LIBRARY] ${LIBRARY_NAME} using manifest ${MANIFEST_FILE}")
+        endif()
+        append_list_property("${MANIFEST_FILE}" GLOBAL PROPERTY FPRIME_LIBRARY_MANIFESTS)
+        # Check to see if the cmake directory exists and add it
+        if (IS_DIRECTORY "${LIBRARY_DIRECTORY}/cmake")
+            list(APPEND CMAKE_MODULE_PATH "${LIBRARY_DIRECTORY}/cmake")
+        endif()
+        include_directories("${LIBRARY_DIRECTORY}")
+        option(FPRIME_ENABLE_${LIBRARY_OPTION}_UTS "Enable UT generation for ${LIBRARY_NAME}" ON)
+    endforeach()
+endmacro(fprime_detect_libraries)
+
+####
+# Function `fprime_setup_standard_targets`:
+#
+# Registers the targets required for a standard fprime build. This will be changed when FPRIME_SUB_BUILD_TARGETS.
+####
+macro(fprime_setup_standard_targets)
+    # Prevent registration of standard targets when specific targets are supplied
+    # This is done for efficiency to not load all the below files
+    if (NOT DEFINED FPRIME_SUB_BUILD_TARGETS)
+        # FPP locations must come at the front of the list, then build
+        register_fprime_target(target/build)
+        register_fprime_build_autocoder(autocoder/fpp)
+        register_fprime_build_autocoder(autocoder/ai_xml)
+        register_fprime_build_autocoder(autocoder/packets)
+        register_fprime_target(target/version)
+        register_fprime_target(target/install)
+        register_fprime_ut_target(target/ut)
+
+        if (FPRIME_ENABLE_UTIL_TARGETS)
+            register_fprime_target(target/refresh_cache)
+            register_fprime_ut_target(target/check)
+        endif()
     endif()
-    include_directories("${LIBRARY_DIR}")
-endforeach()
-include_directories("${FPRIME_FRAMEWORK_PATH}")
-include_directories("${FPRIME_CONFIG_DIR}")
+endmacro(fprime_setup_standard_targets)
 
-# To prescan, either we register the prescan target or we run the prescan CMake
-if (DEFINED FPRIME_PRESCAN)
-    register_fprime_target_helper(target/prescan FPRIME_TARGET_LIST)
-else()
-    perform_prescan()
-endif()
+####
+# Function `fprime_setup_override_targets`:
+#
+# Override the targets that are registered by the default build with those supplied in FPRIME_SUB_BUILD_TARGETS. If
+# FPRIME_SUB_BUILD_TARGETS is defined, nothing happens.
+#####
+macro(fprime_setup_override_targets)
+    # Required to prevent overriding when not used
+    if (FPRIME_SUB_BUILD_TARGETS)
+        foreach (OVERRIDE_TARGET IN LISTS FPRIME_SUB_BUILD_TARGETS)
+            register_fprime_target("${OVERRIDE_TARGET}")
+        endforeach ()
+    elseif(CMAKE_DEBUG_OUTPUT)
+        message(STATUS "FPRIME_SUB_BUILD_TARGETS not defined, skipping.")
+    endif()
+endmacro(fprime_setup_override_targets)
 
-# FPP locations must come at the front of the list, then build
-register_fprime_target(target/fpp_locs)
-register_fprime_target(target/build)
-register_fprime_target(target/noop)
-register_fprime_target(target/version)
-register_fprime_target(target/dict)
-register_fprime_target(target/install)
-register_fprime_ut_target(target/ut)
+macro(fprime_initialize_build_system)
+    cmake_minimum_required(VERSION 3.16)
+    fprime_setup_global_includes()
+    fprime_detect_libraries()
+    fprime_setup_standard_targets()
+    fprime_setup_override_targets()
+    set_property(GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED ON)
 
-if (FPRIME_ENABLE_UTIL_TARGETS)
-    register_fprime_target(target/impl)
-    register_fprime_ut_target(target/check)
-    register_fprime_ut_target(target/check_leak)
-    register_fprime_ut_target(target/coverage)
-    register_fprime_ut_target(target/testimpl)
-endif()
+    # Perform necessary sub-builds
+    run_sub_build(info-cache target/fpp_locs target/fpp_depend)
+endmacro(fprime_initialize_build_system)
+
+####
+# Function `fprime_setup_included_code`:
+#
+# Sets up the code/build for fprime and libraries. Call after all project specific targets and autocoders are set up and
+# registered.
+####
+function(fprime_setup_included_code)
+    # Must be done before code is registered but after custom target registration
+    setup_global_targets()
+    # For BUILD_TESTING builds then set up libraries that support testing
+    if (BUILD_TESTING AND NOT DEFINED FPRIME_SUB_BUILD_TARGETS)
+        if (NOT EXISTS "${FPRIME_FRAMEWORK_PATH}/googletest/CMakeLists.txt")
+            message(FATAL_ERROR "googletest submodule not initialized or corrupted. Please run `git submodule update --init --recursive`.")
+        endif()
+        add_subdirectory("${FPRIME_FRAMEWORK_PATH}/googletest/" "${CMAKE_BINARY_DIR}/F-Prime/googletest")
+    endif()
+    if (BUILD_TESTING)
+        add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")
+    endif()
+    # By default we shutoff framework UTs
+    set(__FPRIME_NO_UT_GEN__ ON)
+    # Check for autocoder UTs
+    if (FPRIME_ENABLE_FRAMEWORK_UTS AND FPRIME_ENABLE_AUTOCODER_UTS)
+        set(__FPRIME_NO_UT_GEN__ OFF)
+    endif()
+    add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Autocoders/" "${CMAKE_BINARY_DIR}/F-Prime/Autocoders")
+    # Check if we are allowing framework UTs
+    if (FPRIME_ENABLE_FRAMEWORK_UTS)
+        set(__FPRIME_NO_UT_GEN__ OFF)
+    endif()
+    message(STATUS "[LIBRARY] Adding modules from F´ framework")
+    # Faux libraries used as interfaces to non-autocoded fpp items
+    add_library(Fpp INTERFACE)
+
+    # Specific configuration handling
+    set(FPRIME_CURRENT_MODULE config)
+    add_subdirectory("${FPRIME_CONFIG_DIR}" "${CMAKE_BINARY_DIR}/config")
+
+    set(_FP_CORE_PACKAGES Fw Svc Os Drv CFDP Utils)
+    foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)
+        set(FPRIME_CURRENT_MODULE "${_FP_PACKAGE_DIR}")
+        add_subdirectory("${FPRIME_FRAMEWORK_PATH}/${_FP_PACKAGE_DIR}/" "${CMAKE_BINARY_DIR}/F-Prime/${_FP_PACKAGE_DIR}")
+    endforeach ()
+    unset(FPRIME_CURRENT_MODULE)
+    message(STATUS "[LIBRARY] Adding modules from F´ framework - DONE")
+    get_property(FPRIME_LIBRARY_MANIFESTS GLOBAL PROPERTY FPRIME_LIBRARY_MANIFESTS)
+    foreach (LIBRARY_MANIFEST IN LISTS FPRIME_LIBRARY_MANIFESTS)
+        set(__FPRIME_NO_UT_GEN__ OFF)
+        get_filename_component(LIBRARY_DIRECTORY "${LIBRARY_MANIFEST}" DIRECTORY)
+        get_filename_component(LIBRARY_NAME "${LIBRARY_DIRECTORY}" NAME)
+        get_fprime_library_option_string(LIBRARY_OPTION "${LIBRARY_NAME}")
+        if (NOT FPRIME_ENABLE_${LIBRARY_OPTION}_UTS)
+            set(__FPRIME_NO_UT_GEN__ ON)
+        endif()
+        message(STATUS "[LIBRARY] Adding modules from ${LIBRARY_NAME}")
+        include("${LIBRARY_MANIFEST}")
+	message(STATUS "[LIBRARY] Adding modules from ${LIBRARY_NAME} - DONE")
+    endforeach()
+    # Always enable UTs for a project
+    set(__FPRIME_NO_UT_GEN__ OFF)
+endfunction(fprime_setup_included_code)
 
 
+# Load the build system exactly one time
+get_property(FPRIME_BUILD_SYSTEM_LOADED GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED)
+if (NOT FPRIME_BUILD_SYSTEM_LOADED)
+    fprime_initialize_build_system()
+endif ()

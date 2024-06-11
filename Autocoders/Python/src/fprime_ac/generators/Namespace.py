@@ -53,7 +53,7 @@ class Namespace:
         """
         Constructor.
         """
-        self.__visitor_list = list()
+        self.__visitor_list = []
 
     def __call__(self, args):
         """
@@ -80,7 +80,7 @@ class Namespace:
             DEBUG.error(
                 "Namespace.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Namespace.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -95,7 +95,7 @@ class Namespace:
             DEBUG.error(
                 "Namespace.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Namespace.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

@@ -4,18 +4,20 @@
 // \brief  hpp file for framing protocol interface
 //
 // \copyright
-// Copyright 2009-2021, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
 // ======================================================================
 
-
-#ifndef FRAMING_PROTOCOLINTERFACE_HPP
-#define FRAMING_PROTOCOLINTERFACE_HPP
+#ifndef SVC_FRAMING_PROTOCOL_INTERFACE_HPP
+#define SVC_FRAMING_PROTOCOL_INTERFACE_HPP
 
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/Time/Time.hpp>
+
+namespace Svc {
+
 /**
  * \brief interface supplied to the framing protocol
  *
@@ -37,4 +39,6 @@ class FramingProtocolInterface {
 
 };
 
-#endif  // OWLS_PROTOCOLINTERFACE_HPP
+}
+#endif  // SVC_FRAMING_PROTOCOL_INTERFACE_HPP
+

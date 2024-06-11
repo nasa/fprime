@@ -10,11 +10,7 @@
 
 namespace SvcTest {
 
-#if FW_OBJECT_NAMES == 1
     TestComponentImpl::TestComponentImpl(const char* compName) : TestComponentBase(compName) {
-#else
-    TestComponentImpl::TestComponentImpl() {
-#endif
 
     }
 

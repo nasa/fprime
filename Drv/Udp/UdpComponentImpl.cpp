@@ -12,7 +12,7 @@
 
 #include <Drv/Udp/UdpComponentImpl.hpp>
 #include <IpCfg.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
 
 
@@ -23,12 +23,8 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 UdpComponentImpl::UdpComponentImpl(const char* const compName)
-    : ByteStreamDriverModelComponentBase(compName),
+    : UdpComponentBase(compName),
       SocketReadTask() {}
-
-void UdpComponentImpl::init(const NATIVE_INT_TYPE instance) {
-    ByteStreamDriverModelComponentBase::init(instance);
-}
 
 SocketIpStatus UdpComponentImpl::configureSend(const char* hostname,
                                                  const U16 port,
@@ -42,6 +38,10 @@ SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 p
 }
 
 UdpComponentImpl::~UdpComponentImpl() {}
+
+U16 UdpComponentImpl::getRecvPort() {
+    return this->m_socket.getRecvPort();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for socket read task virtual methods
@@ -80,11 +80,6 @@ Drv::SendStatus UdpComponentImpl::send_handler(const NATIVE_INT_TYPE portNum, Fw
         return SendStatus::SEND_ERROR;
     }
     return SendStatus::SEND_OK;
-}
-
-Drv::PollStatus UdpComponentImpl::poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    FW_ASSERT(0); // It is an error to call this handler on IP drivers
-    return PollStatus::POLL_ERROR;
 }
 
 }  // end namespace Drv

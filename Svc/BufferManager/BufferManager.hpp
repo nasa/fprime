@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  using BufferManager = BufferManagerComponentImpl;
+  typedef BufferManagerComponentImpl BufferManager;
 
 }
 

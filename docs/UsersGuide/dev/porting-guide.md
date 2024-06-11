@@ -9,12 +9,10 @@ developed to run on a new platform:
     location of compilers and other build tools for compiling F´ for a
     given platform.
 
-2.  Fw::Types and configuration. A Fw::Types header may be needed and
-    configuration set if the hardware needs different settings from the
-    default.
+2.  Fw::Types and configuration. A Fw::Types header may be needed along with appropriate configuration if the hardware needs settings that are different from the default.
 
 3.  Hardware drivers. Any drivers that are outside the provided Linux
-    Driver package would need to be developed for the hardware specific
+    Driver package would need to be developed for the hardware-specific
     interfaces to be supported.
 
 4.  OSAL support. Should a non-Linux operating system be needed to run

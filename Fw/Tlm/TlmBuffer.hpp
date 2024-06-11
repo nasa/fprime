@@ -12,7 +12,6 @@
 #define FW_TLM_BUFFER_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 

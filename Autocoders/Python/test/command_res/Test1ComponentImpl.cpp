@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/command_res/Test1ComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Cmd {
 
@@ -21,14 +21,10 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   Test1ComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     Test1ComponentImpl(
         const char *const compName
     ) :
       Test1ComponentBase(compName)
-#else
-    Test1Impl()
-#endif
   {
 
   }

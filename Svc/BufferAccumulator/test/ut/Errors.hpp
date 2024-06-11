@@ -13,29 +13,27 @@
 #ifndef Svc_Errors_HPP
 #define Svc_Errors_HPP
 
-#include "Tester.hpp"
+#include "BufferAccumulatorTester.hpp"
 
 namespace Svc {
 
-  namespace Errors {
+namespace Errors {
 
-    class Tester :
-      public Svc::Tester
-    {
+class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
+ public:
+  // ----------------------------------------------------------------------
+  // Tests
+  // ----------------------------------------------------------------------
 
-      public:
+  //! Queue full
+  void QueueFull(void);
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+  //! Run PartialDrain command in off-nominal ways
+  void PartialDrain(void);
+};
 
-        //! Queue full
-        void QueueFull();
+}  // namespace Errors
 
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

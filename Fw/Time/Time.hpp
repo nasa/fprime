@@ -1,10 +1,9 @@
 #ifndef FW_TIME_HPP
 #define FW_TIME_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <FpConfig.hpp>
 
 namespace Fw {
     class Time: public Serializable {
@@ -86,7 +85,7 @@ namespace Fw {
             TimeBase m_timeBase; // !< basis of time (defined by system)
             FwTimeContextStoreType m_timeContext; // !< user settable value. Could be reboot count, node, etc
     };
-    const static Time ZERO_TIME = Time();
+    extern const Time ZERO_TIME;
 
 }
 

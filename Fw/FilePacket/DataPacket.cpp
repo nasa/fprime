@@ -23,20 +23,20 @@ namespace Fw {
         const U8 *const data
     )
   {
-    this->header.initialize(FilePacket::T_DATA, sequenceIndex);
-    this->byteOffset = byteOffset;
-    this->dataSize = dataSize;
-    this->data = data;
+    this->m_header.initialize(FilePacket::T_DATA, sequenceIndex);
+    this->m_byteOffset = byteOffset;
+    this->m_dataSize = dataSize;
+    this->m_data = data;
   }
 
   U32 FilePacket::DataPacket ::
     bufferSize() const
   {
-    return
-      this->header.bufferSize() +
-      sizeof(this->byteOffset) +
-      sizeof(this->dataSize) +
-      this->dataSize;
+    return static_cast<U32>(
+      this->m_header.bufferSize() +
+      sizeof(this->m_byteOffset) +
+      sizeof(this->m_dataSize) +
+      this->m_dataSize);
   }
 
   SerializeStatus FilePacket::DataPacket ::
@@ -53,21 +53,24 @@ namespace Fw {
     fromSerialBuffer(SerialBuffer& serialBuffer)
   {
 
-    FW_ASSERT(this->header.type == T_DATA);
+    FW_ASSERT(this->m_header.m_type == T_DATA);
 
-    SerializeStatus status = serialBuffer.deserialize(this->byteOffset);
-    if (status != FW_SERIALIZE_OK)
+    SerializeStatus status = serialBuffer.deserialize(this->m_byteOffset);
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
 
-    status = serialBuffer.deserialize(this->dataSize);
-    if (status != FW_SERIALIZE_OK)
+    status = serialBuffer.deserialize(this->m_dataSize);
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
 
-    if (serialBuffer.getBuffLeft() != this->dataSize)
+    if (serialBuffer.getBuffLeft() != this->m_dataSize) {
       return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
 
     U8 *const addr = serialBuffer.getBuffAddr();
-    this->data = &addr[this->fixedLengthSize()];
+    this->m_data = &addr[this->fixedLengthSize()];
 
     return FW_SERIALIZE_OK;
 
@@ -76,33 +79,36 @@ namespace Fw {
   U32 FilePacket::DataPacket ::
     fixedLengthSize() const
   {
-    return
-      this->header.bufferSize() +
-      sizeof(this->byteOffset) +
-      sizeof(this->dataSize);
+    return static_cast<U32>(
+      this->m_header.bufferSize() +
+      sizeof(this->m_byteOffset) +
+      sizeof(this->m_dataSize));
   }
 
   SerializeStatus FilePacket::DataPacket ::
     toSerialBuffer(SerialBuffer& serialBuffer) const
   {
 
-    FW_ASSERT(this->header.type == T_DATA);
+    FW_ASSERT(this->m_header.m_type == T_DATA);
 
     SerializeStatus status;
 
-    status = this->header.toSerialBuffer(serialBuffer);
-    if (status != FW_SERIALIZE_OK)
+    status = this->m_header.toSerialBuffer(serialBuffer);
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
 
-    status = serialBuffer.serialize(this->byteOffset);
-    if (status != FW_SERIALIZE_OK)
+    status = serialBuffer.serialize(this->m_byteOffset);
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
 
-    status = serialBuffer.serialize(this->dataSize);
-    if (status != FW_SERIALIZE_OK)
+    status = serialBuffer.serialize(this->m_dataSize);
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
 
-    status = serialBuffer.pushBytes(this->data, dataSize);
+    status = serialBuffer.pushBytes(this->m_data, this->m_dataSize);
 
     return status;
 

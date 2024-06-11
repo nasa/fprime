@@ -1,5 +1,5 @@
 #include <Ref/RecvBuffApp/RecvBuffComponentImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Types/Assert.hpp>
 
@@ -79,7 +79,7 @@ namespace Ref {
 
     void RecvBuffImpl::toString(char* str, I32 buffer_size) {
 #if FW_OBJECT_NAMES == 1
-        (void)snprintf(str, buffer_size, "RecvBuffImpl: %s: ATM recd count: %d", this->m_objName,
+        (void)snprintf(str, buffer_size, "RecvBuffImpl: %s: ATM recd count: %d", this->m_objName.toChar(),
                         (int) this->m_buffsReceived);
 #else
         (void)snprintf(str, buffer_size, "RecvBuffImpl: ATM recd count: %d",

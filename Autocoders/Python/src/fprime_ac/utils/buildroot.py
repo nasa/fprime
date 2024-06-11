@@ -41,6 +41,7 @@ def get_nearest_build_root(path):
     :param path: path to find nearest build root to
     :return: nearest build root
     """
+    path = os.path.abspath(path)
     parents = filter(
         lambda build: os.path.commonpath([build, path]) == build, get_build_roots()
     )

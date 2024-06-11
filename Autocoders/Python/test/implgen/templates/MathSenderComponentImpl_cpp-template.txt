@@ -1,5 +1,5 @@
 #include <Autocoders/Python/test/implgen/MathSenderComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Ref {
 
@@ -8,14 +8,10 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   MathSenderComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     MathSenderComponentImpl(
         const char *const compName
     ) :
       MathSenderComponentBase(compName)
-#else
-    MathSenderComponentImpl()
-#endif
   {
 
   }

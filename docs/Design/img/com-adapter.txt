@@ -1,0 +1,34 @@
+Com Queue
+comQueueSend
+0
+Framer
+comIn
+0
+
+Com Queue
+buffQueueSend
+0
+Framer
+bufferIn
+0
+
+Framer
+comStatusOut
+0
+Com Queue
+comStatusIn
+0
+
+Framer
+framedOut
+0
+Communication Adapter
+comDataIn
+0
+
+Communication Adapter
+comStatus
+0
+Framer
+comStatusIn
+0

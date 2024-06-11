@@ -1,0 +1,12 @@
+name: "CodeQL JPL Coding Standard - Errors and Warnings"
+
+disable-default-queries: true
+
+packs:
+  # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
+  - codeql/cpp-queries:JPL_C
+
+query-filters:
+  - exclude:
+      problem.severity:
+        - recommendation

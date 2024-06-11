@@ -14,10 +14,8 @@
 
 namespace Fw {
 
-    MemAllocator::MemAllocator() {
-    }
+MemAllocator::MemAllocator() {}
 
-    MemAllocator::~MemAllocator() {
-    }
+MemAllocator::~MemAllocator() {}
 
 } /* namespace Fw */

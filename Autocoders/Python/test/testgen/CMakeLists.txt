@@ -15,8 +15,8 @@ get_module_name(${CMAKE_CURRENT_LIST_DIR})
 
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/testgenTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/testgenTestMain.cpp"
 )
 
 register_fprime_ut()

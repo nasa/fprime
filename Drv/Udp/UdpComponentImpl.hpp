@@ -16,11 +16,11 @@
 #include <Drv/Ip/IpSocket.hpp>
 #include <Drv/Ip/SocketReadTask.hpp>
 #include <Drv/Ip/UdpSocket.hpp>
-#include "Drv/ByteStreamDriverModel/ByteStreamDriverModelComponentAc.hpp"
+#include "Drv/Udp/UdpComponentAc.hpp"
 
 namespace Drv {
 
-class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public SocketReadTask {
+class UdpComponentImpl : public UdpComponentBase, public SocketReadTask {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -31,13 +31,6 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
      * \param compName: name of this component
      */
     UdpComponentImpl(const char* const compName);
-
-
-    /**
-     * \brief Initialize this component
-     * \param instance: instance number of this component
-     */
-    void init(const NATIVE_INT_TYPE instance = 0);
 
     /**
      * \brief Destroy the component
@@ -82,13 +75,17 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
     SocketIpStatus configureRecv(const char* hostname, const U16 port);
 
     /**
-     * \brief **not supported**
+     * \brief get the port being received on
      *
-     * IP based ByteStreamDrivers don't support polling.
+     * Most useful when receive was configured to use port "0", this will return the port used for receiving data after
+     * a port has been determined. Will return 0 if the connection has not been setup.
+     *
+     * \return receive port
      */
-    Drv::PollStatus poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
+    U16 getRecvPort();
 
-  PROTECTED:
+
+PROTECTED:
     // ----------------------------------------------------------------------
     // Implementations for socket read task virtual methods
     // ----------------------------------------------------------------------

@@ -21,4 +21,4 @@ char *bsd_initstate(unsigned seed, char *arg_state, size_t n);
 
 char *bsd_setstate(const char *arg_state);
 
-long bsd_random();
+long bsd_random(void);

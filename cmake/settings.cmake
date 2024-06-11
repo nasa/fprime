@@ -10,7 +10,7 @@
 # - C++ 11 standard, fprime uses C++11 items
 # - UT flags overrides
 ####
-
+include_guard()
 # fprime framework is build with C++11 and C99 support, project may override these setting after the inclusion of
 # Fprime-Code.cmake.
 set(CMAKE_CXX_STANDARD 11)

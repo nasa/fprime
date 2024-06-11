@@ -13,11 +13,16 @@
 #define FW_PRM_BUFFER_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 
+#include "Fw/Types/StringBase.hpp"
+
+
 namespace Fw {
+
+    static_assert(FW_PARAM_BUFFER_MAX_SIZE >= StringBase::BUFFER_SIZE(FW_PARAM_STRING_MAX_SIZE),
+                  "param string must fit into param buffer");
 
     class ParamBuffer : public SerializeBufferBase {
         public:

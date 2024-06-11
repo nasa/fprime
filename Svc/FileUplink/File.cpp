@@ -19,15 +19,15 @@ namespace Svc {
   Os::File::Status FileUplink::File ::
     open(const Fw::FilePacket::StartPacket& startPacket)
   {
-    const U32 length = startPacket.destinationPath.length;
+    const U32 length = startPacket.getDestinationPath().getLength();
     char path[Fw::FilePacket::PathName::MAX_LENGTH + 1];
-    memcpy(path, startPacket.destinationPath.value, length);
+    memcpy(path, startPacket.getDestinationPath().getValue(), length);
     path[length] = 0;
     Fw::LogStringArg logStringArg(path);
     this->name = logStringArg;
-    this->size = startPacket.fileSize;
+    this->size = startPacket.getFileSize();
     CFDP::Checksum checksum;
-    this->checksum = checksum;
+    this->m_checksum = checksum;
     return this->osFile.open(path, Os::File::OPEN_WRITE);
   }
 
@@ -40,20 +40,20 @@ namespace Svc {
   {
 
     Os::File::Status status;
-    status = this->osFile.seek(byteOffset);
+    status = this->osFile.seek(byteOffset, Os::File::SeekType::ABSOLUTE);
     if (status != Os::File::OP_OK) {
         return status;
     }
 
-    NATIVE_INT_TYPE intLength = length;
+    FwSignedSizeType intLength = length;
     //Note: not waiting for the file write to finish
-    status = this->osFile.write(data, intLength, false);
+    status = this->osFile.write(data, intLength, Os::File::WaitType::NO_WAIT);
     if (status != Os::File::OP_OK) {
         return status;
     }
 
-    FW_ASSERT(static_cast<U32>(intLength) == length, intLength);
-    this->checksum.update(data, byteOffset, length);
+    FW_ASSERT(static_cast<U32>(intLength) == length, static_cast<FwAssertArgType>(intLength));
+    this->m_checksum.update(data, byteOffset, length);
     return Os::File::OP_OK;
 
   }

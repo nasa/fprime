@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  using PrmDb = PrmDbImpl;
+  typedef PrmDbImpl PrmDb;
 
 }
 

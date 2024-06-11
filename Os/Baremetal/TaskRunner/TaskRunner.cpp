@@ -5,7 +5,7 @@
  *      Author: lestarch
  */
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/Baremetal/TaskRunner/TaskRunner.hpp>
 #include <Os/Baremetal/TaskRunner/BareTaskHandle.hpp>
 namespace Os {

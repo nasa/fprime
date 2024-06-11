@@ -8,9 +8,7 @@ expected in an automated system.
 ## Implementation Via PyTest
 
 The CMake system runs its tests via PyTest. This allows the implementation to be streamlined using
-standard a testing framework. Python `subprocess` is used to run CMake for its simplicity. To
-prepare to run these tests, ensure that you are running fprime out of a virtual environment and
-followed the fprime install. Then run `pytest` in this directory: `cd cmake/test; pytest`
+standard a testing framework. Python `subprocess` is used to run CMake for its simplicity. To prepare to run these tests, ensure that you are running fprime out of a virtual environment following the fprime installation. Then run `pytest` in this directory: `cd cmake/test; pytest`
 
 **Running:**
 ```

@@ -57,11 +57,11 @@ namespace STest {
       }
 
       //! The virtual implementation of nextScenario required by IteratedScenario
-      //! \return The next scenario, assuming isDone() is false, or NULL if none
+      //! \return The next scenario, assuming isDone() is false, or nullptr if none
       Scenario<State>* nextScenario_IteratedScenario(
           State& state //!< The system state
       ) {
-        Scenario<State>* scenario = NULL;
+        Scenario<State>* scenario = nullptr;
         if (!this->condition_ConditionalIteratedScenario(state)) {
           this->done = true;
         }

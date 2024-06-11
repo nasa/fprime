@@ -1,5 +1,4 @@
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Os/Directory.hpp>
 #include <Fw/Types/Assert.hpp>
 
@@ -93,7 +92,7 @@ namespace Os {
             // Skip hidden files
             if (direntData->d_name[0] != '.') {
                 strncpy(fileNameBuffer, direntData->d_name, bufSize);
-                inode = direntData->d_ino;
+                inode = static_cast<I64>(direntData->d_ino);
                 break;
             }
         }

@@ -153,3 +153,29 @@ event RemoveFileStarted(
   severity activity high \
   id 0x11 \
   format "Removing file {}..."
+
+@ File size response
+event FileSizeSucceeded(
+                         fileName: string size 256 @< The name of the file
+                         $size: U64 @< The size of the file in bytes
+                       ) \
+  severity activity high \
+  id 0x12 \
+  format "The size of file {} is {} B"
+
+@ Failed to get file size
+event FileSizeError(
+                      fileName: string size 256 @< The name of the file
+                      status: U32 @< The error status
+                    ) \
+  severity warning high \
+  id 0x13 \
+  format "Failed to get the size of file {}, returned status {}"
+
+@ Checking file size
+event FileSizeStarted(
+                       fileName: string size 256 @< The name of the file
+                     ) \
+  severity activity high \
+  id 0x14 \
+  format "Checking size of file {}..."

@@ -53,7 +53,7 @@ class CompFactory:
         """
         self.__parsed = None
         self.__instance = None
-        self.__configured_visitors = dict()
+        self.__configured_visitors = {}
 
     def getInstance():
         """
@@ -116,7 +116,7 @@ class CompFactory:
             d = port_obj.get_direction()
             s = port_obj.get_sync()
             r = port_obj.get_role()
-            if s == "sync" or s == "guarded":
+            if s in ("sync", "guarded"):
                 num_sync_ports += 1
             if s == "async":
                 num_async_ports += 1
@@ -136,7 +136,7 @@ class CompFactory:
             f = command_obj.get_full()
             if s == "guarded":
                 has_guarded_ports = True
-            if s == "sync" or s == "guarded":
+            if s in ("sync", "guarded"):
                 num_sync_ports += 1
             if s == "async":
                 num_async_ports += 1
@@ -376,7 +376,7 @@ class CompFactory:
 
         # check some component/port rules
         # 1) Active or queued need at least one async port/command
-        if (comp_kind == "active") or (comp_kind == "queued"):
+        if comp_kind in ("active", "queued"):
             if num_async_ports == 0 and len(parameter_obj_list) == 0:
                 PRINT.info(
                     'ERROR: %s: Active/Queued component "%s" needs at least one async port, command, or interface'

@@ -8,7 +8,7 @@ module RPI {
 
     constant queueSize = 10
 
-    constant stackSize = 16 * 1024
+    constant stackSize = 64 * 1024
 
   }
 
@@ -23,12 +23,11 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup10HzComp(
-        FW_OPTIONAL_NAME("rateGroup10HzComp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup10HzComp.configure(
         ConfigObjects::rateGroup10HzComp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup10HzComp::context)
     );
@@ -51,12 +50,8 @@ module RPI {
     stack size Default.stackSize \
     priority 20 \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
-    """
-
     phase Fpp.ToCpp.Phases.readParameters """
+    prmDb.configure("PrmDb.dat");
     prmDb.readParamFile();
     """
 
@@ -105,12 +100,11 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup1HzComp(
-        FW_OPTIONAL_NAME("rateGroup1HzComp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup1HzComp.configure(
         ConfigObjects::rateGroup1HzComp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1HzComp::context)
     );
@@ -248,13 +242,8 @@ module RPI {
 
   }
 
-  instance comm: Drv.ByteStreamDriverModel base id 1260 \
-    at "../../Drv/TcpClient/TcpClient.hpp" \
+  instance comm: Drv.TcpClient base id 1260 \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
-    """
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
@@ -269,7 +258,7 @@ module RPI {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(state.hostName, state.portNumber);
-        comm.startSocketTask(
+        comm.start(
             name,
             ConfigConstants::comm::PRIORITY,
             ConfigConstants::comm::STACK_SIZE
@@ -278,31 +267,19 @@ module RPI {
     """
 
     phase Fpp.ToCpp.Phases.stopTasks """
-    comm.stopSocketTask();
+    comm.stop();
     """
 
     phase Fpp.ToCpp.Phases.freeThreads """
-    (void) comm.joinSocketTask(nullptr);
+    (void) comm.join();
     """
 
   }
 
-  instance linuxTime: Svc.Time base id 1500 \
-    at "../../Svc/LinuxTime/LinuxTime.hpp" \
-  {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::LinuxTime linuxTime(FW_OPTIONAL_NAME("linuxTime"));
-    """
-
-  }
+  instance posixTime: Svc.PosixTime base id 1500
 
   instance linuxTimer: Svc.LinuxTimer base id 1600 \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    // Declared in RPITopologyDefs.cpp
-    """
 
     phase Fpp.ToCpp.Phases.stopTasks """
     linuxTimer.quit();
@@ -314,31 +291,28 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 10, 0 };
+    Svc::RateGroupDriver::DividerSet rgDivs{{{1, 0}, {10, 0}, {0, 0}}};
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::RateGroupDriver rateGroupDriverComp(
-        FW_OPTIONAL_NAME("rateGroupDriverComp"),
-        ConfigObjects::rateGroupDriverComp::rgDivs,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroupDriverComp.configure(
+        ConfigObjects::rateGroupDriverComp::rgDivs
     );
     """
-
   }
 
   instance textLogger: Svc.PassiveTextLogger base id 1900
 
-  instance uartDrv: Drv.LinuxSerialDriver base id 2000 \
+  instance uartDrv: Drv.LinuxUartDriver base id 2000 \
   {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
       const bool status = uartDrv.open("/dev/serial0",
-          Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
-          Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
-          Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
-          true
+          Drv::LinuxUartDriver::BAUD_19200,
+          Drv::LinuxUartDriver::NO_FLOW,
+          Drv::LinuxUartDriver::PARITY_NONE,
+          1024
       );
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open UART driver\\n");
@@ -349,7 +323,7 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.startTasks """
     if (Init::status) {
-      uartDrv.startReadThread();
+      uartDrv.start();
     }
     else {
       Fw::Logger::logMsg("[ERROR] Initialization failed; not starting UART driver\\n");
@@ -451,5 +425,39 @@ module RPI {
     """
 
   }
+
+  instance uartBufferManager: Svc.BufferManager base id 2800 \
+  {
+
+    phase Fpp.ToCpp.Phases.configConstants """
+    enum {
+      STORE_SIZE = 3000,
+      QUEUE_SIZE = 30,
+      MGR_ID = 300
+    };
+    """
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    {
+      Svc::BufferManager::BufferBins bufferBins;
+      memset(&bufferBins, 0, sizeof(bufferBins));
+      using namespace ConfigConstants::uartBufferManager;
+      bufferBins.bins[0].bufferSize = STORE_SIZE;
+      bufferBins.bins[0].numBuffers = QUEUE_SIZE;
+      uartBufferManager.setup(
+          MGR_ID,
+          0,
+          Allocation::mallocator,
+          // OK to supply a local object here: BufferManager makes a copy
+          bufferBins
+      );
+    }
+    """
+
+    phase Fpp.ToCpp.Phases.tearDownComponents """
+    uartBufferManager.cleanup();
+    """
+  }
+
 
 }

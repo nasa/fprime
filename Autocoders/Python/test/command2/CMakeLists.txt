@@ -31,7 +31,7 @@ set(UT_MOD_DEPS
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/test/command2/TestComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/command2Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 register_fprime_ut()

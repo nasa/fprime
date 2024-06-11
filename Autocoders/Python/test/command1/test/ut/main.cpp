@@ -1,7 +1,7 @@
 #ifdef FPRIME_CMAKE
 #include "Autocoder/GTestBase.hpp"
 #else
-#include <GTestBase.hpp>
+#include <command1GTestBase.hpp>
 #endif
 #include "TesterBase.hpp"
 #include <FpConfig.hpp>
@@ -10,11 +10,7 @@
 
 class ATester : public Cmd::Test1GTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : Cmd::Test1GTestBase("comp",10) {
-#else
-        ATester() : Cmd::Test1GTestBase(10)  {
-#endif
     }
 };
 

@@ -28,7 +28,7 @@ module Ref {
     instance SG4
     instance SG5
     instance blockDrv
-    instance chanTlm
+    instance tlmSend
     instance cmdDisp
     instance cmdSeq
     instance comm
@@ -40,7 +40,7 @@ module Ref {
     instance fileManager
     instance fileUplink
     instance fileUplinkBufferManager
-    instance linuxTime
+    instance posixTime
     instance pingRcvr
     instance prmDb
     instance rateGroup1Comp
@@ -51,8 +51,13 @@ module Ref {
     instance sendBuffComp
     instance staticMemory
     instance textLogger
+    instance typeDemo
     instance uplink
     instance systemResources
+    instance dpCat
+    instance dpMgr
+    instance dpWriter
+    instance dpBufferManager
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -64,11 +69,11 @@ module Ref {
 
     param connections instance prmDb
 
-    telemetry connections instance chanTlm
+    telemetry connections instance tlmSend
 
     text event connections instance textLogger
 
-    time connections instance linuxTime
+    time connections instance posixTime
 
     health connections instance $health
 
@@ -78,15 +83,18 @@ module Ref {
 
     connections Downlink {
 
-      chanTlm.PktSend -> downlink.comIn
+      tlmSend.PktSend -> downlink.comIn
       eventLogger.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
 
       downlink.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
-      downlink.framedOut -> comm.send
+      downlink.framedOut -> comm.$send
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
 
       comm.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
+
+      dpCat.fileOut -> fileDownlink.SendFile
+      fileDownlink.FileComplete -> dpCat.fileDone
 
     }
 
@@ -103,7 +111,7 @@ module Ref {
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1Comp.CycleIn
       rateGroup1Comp.RateGroupMemberOut[0] -> SG1.schedIn
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
-      rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
+      rateGroup1Comp.RateGroupMemberOut[2] -> tlmSend.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
 
@@ -120,7 +128,9 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
       rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
-
+      rateGroup3Comp.RateGroupMemberOut[4] -> dpBufferManager.schedIn
+      rateGroup3Comp.RateGroupMemberOut[5] -> dpWriter.schedIn
+      rateGroup3Comp.RateGroupMemberOut[6] -> dpMgr.schedIn
     }
 
     connections Ref {
@@ -147,6 +157,24 @@ module Ref {
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
+    }
+
+    connections DataProducts {
+      # DpMgr and DpWriter connections. Have explicit port indexes for demo
+      dpMgr.bufferGetOut[0] -> dpBufferManager.bufferGetCallee
+      dpMgr.productSendOut[0] -> dpWriter.bufferSendIn
+      dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
+
+      # Component DP connections
+      
+      # Synchronous request. Will have both request kinds for demo purposes, not typical
+      SG1.productGetOut -> dpMgr.productGetIn[0]
+      # Asynchronous request
+      SG1.productRequestOut -> dpMgr.productRequestIn[0]
+      dpMgr.productResponseOut[0] -> SG1.productRecvIn
+      # Send filled DP
+      SG1.productSendOut -> dpMgr.productSendIn[0]
+      
     }
 
   }

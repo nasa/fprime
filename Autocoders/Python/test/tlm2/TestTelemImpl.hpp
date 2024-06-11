@@ -12,11 +12,7 @@
 
 class TestTlmImpl: public Tlm::TestTlmComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestTlmImpl(const char* compName);
-#else
-        TestTlmImpl();
-#endif
         void genTlm(Ref::Gnc::Quaternion val);
         virtual ~TestTlmImpl();
         void init();

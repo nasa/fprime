@@ -6,7 +6,7 @@
     Port with example args
     </comment>
     <args>
-        <arg name="Arg1" type="Example::Enum1">
+        <arg name="Arg1" type="Example::SubNamespace::Enum1">
             <comment>Example enum arg</comment>
         </arg>
         <arg name="Arg2" type="Example::Serial1">
@@ -14,4 +14,3 @@
         </arg>
     </args>
 </interface>
-

@@ -8,12 +8,7 @@
 #include <Autocoders/Python/test/stress/TestPrmSourceImpl.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestParamSourceImpl::TestParamSourceImpl(const char* name) : Prm::ParamTesterComponentBase(name)
-#else
-TestParamSourceImpl::TestParamSourceImpl() :
-        Prm::ParamTesterComponentBase()
-#endif
 {
 }
 

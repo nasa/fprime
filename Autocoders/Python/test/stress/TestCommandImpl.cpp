@@ -9,11 +9,7 @@
 #include <Fw/Types/String.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestCommand1Impl::TestCommand1Impl(const char* name) :  StressTest::TestCommandComponentBase(name)
-#else
-TestCommand1Impl::TestCommand1Impl() :  StressTest::TestCommandComponentBase()
-#endif
 {
 }
 

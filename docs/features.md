@@ -43,7 +43,7 @@ The typed port connections provide strong compile-time guarantees of correctness
 ### Standard Component Library
 
 F´ ships with a good number of flight-proven components ready for use. These include most standard functions of an
-embedded system including: commanding, telemetry capture, system event capture, and ground interaction. Often this
+embedded system such as commanding, telemetry capture, system event capture, and ground interaction. Often this
 means that most of an application is completed.  Developers often only need to develop components for their
 specific use-case and standard components are inherited from the framework itself.
 
@@ -52,7 +52,7 @@ specific use-case and standard components are inherited from the framework itsel
 F´ provides several standard tools to ease development:
 
 1. Autocoder for stamping out boilerplate code
-2. CMake based build system for building cross-platform binaries
+2. CMake-based build system for building cross-platform binaries
 3. Development ground system enabling developers to quickly test with real hardware
 4. Unit Test framework to enable quick generation of unit tests tailored to F´ code
 5. Integration test framework to test F´ at the integrated system level

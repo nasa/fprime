@@ -33,7 +33,7 @@ have for situations like the following:
 -  Automating certain tasks through scripts
 -  Pacifying hardcore command-line users in your office
 
-In particular, the CLI tools for the GDS let you do 3 essential operations from the comfort of your own shell:
+In particular, the CLI tools for the GDS let you do 3 essential operations from the comfort of your shell:
 
 - Send commands to the embedded system through the GDS layer
 - View events emitted by the embedded into the F´ GDS
@@ -43,7 +43,7 @@ Let's see how you can use these for yourself!
 
 ## Getting Started
 
-`fprime-cli` is automatically installed when installing F´.  In order to use it, make sure that your virtual environment
+`fprime-cli` is automatically installed when installing F´. In order to use it, make sure that your virtual environment
 has been activated. To ensure the tool is ready, run `fprime-cli -h` and you should see the help usage. If an error is
 received, ensure F´ is properly installed via [the installation guide](../../INSTALL.md) and that your virtual
 environment has been activated.
@@ -69,7 +69,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -V, --version         show program's version number and exit
+  -V, --version         show the program's version number and exit
 ```
 
 We can see there are 3 "positional arguments" we can provide here, corresponding to the 3 commands we can run:
@@ -79,54 +79,78 @@ We can see there are 3 "positional arguments" we can provide here, corresponding
 - `events` lets us receive events the embedded system is recording
 
 You can use each command by running `fprime-cli [COMMAND NAME]`, e.g. `fprime-cli events` or `fprime-cli channels`. To
-learn more about each one, you can include the `-h` or `--help` flag after the command to print out the individualize
- command help messages (e.g. `fprime-cli events --help`) seen below.
+learn more about each one, you can include the `-h` or `--help` flag after the command to print out the individualized
+ command help messages (e.g. `fprime-cli events --help`) described below.
 
 ```bash
 $ fprime-cli events --help
-usage: fprime-cli events [-h] [-d DICTIONARY] [-ip IP] [-p PORT] [-t SECONDS]
-                         [-l] [-i ID [ID ...]] [-c COMP [COMP ...]]
-                         [-s STRING] [-j]
+usage: fprime-cli events [-h] [--zmq] [--zmq-server] 
+            [--zmq-transport serverInUrl serverOutUrl] [--tts-port TTS_PORT]
+            [--tts-addr TTS_ADDR] [-r ROOT_INPUT] [--dictionary DICTIONARY]
+            [--packet-spec PACKET_SPEC] [-l LOGS] [--log-directly]
+            [--log-to-stdout] [--file-storage-directory FILES_DIRECTORY]
+            [--list] [-i ID] [-c COMP [COMP ...]] [-s SEARCH] [-t SECONDS] [-j]
 
 print out new events that have occurred on the F Prime instance, sorted by
 timestamp
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  -d DICTIONARY, --dictionary DICTIONARY
-                        path from the current working directory to the
-                        "<project name>Dictionary.xml" file for the project
-                        you're using the API with; if unused, tries to search
-                        the current working directory for such a file
-  -ip IP, --ip-address IP
-                        connect to the GDS server using the given IP or
-                        hostname (default=127.0.0.1 (i.e. localhost))
-  -p PORT, --port PORT  connect to the GDS server using the given port number
-                        (default=50050)
-  -t SECONDS, --timeout SECONDS
-                        wait at most SECONDS seconds for a single new message,
-                        then exit (defaults to listening until the user exits
-                        via CTRL+C, and logging all messages)
-  -l, --list            list all possible event types the current F Prime
+
+GDS Options:
+  --zmq                 Switch to using the ZMQ transportation layer
+  --zmq-server          Sets the ZMQ connection to be a server. 
+                        Default: false (client)
+  --zmq-transport serverInUrl serverOutUrl
+                        Pair of URls used with --zmq to setup ZeroMQ transportation 
+                        [default: ['ipc:///tmp/fprime-server-in', 
+                        'ipc:///tmp/fprime-server-out']]
+  --tts-port TTS_PORT   Set the threaded TCP socket server port [default: 50050]
+  --tts-addr TTS_ADDR   Set the threaded TCP socket server address 
+                        [default: 0.0.0.0]
+  -r ROOT_INPUT, --root ROOT_INPUT
+                        Root directory of build artifacts, used to automatically 
+                        find app and dictionary. 
+                        [default: install_dest field in settings.ini]
+  --dictionary DICTIONARY
+                        Path to dictionary. Overrides automatic dictionary 
+                        detection.
+  --packet-spec PACKET_SPEC
+                        Path to packet specification.
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
+                        [default: /workspaces/macos/DefaultMission/logs]
+  --log-directly        Logging directory is used directly, no extra dated
+                        directories created.
+  --log-to-stdout       Log to standard out along with log output files
+  --file-storage-directory FILES_DIRECTORY
+                        File to store uplink and downlink files. 
+                        Default: /tmp/fprime-downlink/
+
+Search/Filtering Options:
+  --list                list all possible event types the current F Prime
                         instance could produce, based on the events
                         dictionary, sorted by event type ID
-  -i ID [ID ...], --ids ID [ID ...]
-                        only show events matching the given type ID(s) "ID";
+  -i ID, --ids ID       only show events matching the given type ID(s) 'ID'; 
                         can provide multiple IDs to show all given types
   -c COMP [COMP ...], --components COMP [COMP ...]
-                        only show events from the given component name "COMP";
-                        can provide multiple components to show events from
-                        all components given
-  -s STRING, --search STRING
+                        only show events from the given component name 'COMP';
+                        can provide multiple components to show events from all 
+                        components given
+  -s SEARCH, --search SEARCH
                         only show events whose name or output string exactly
                         matches or contains the entire given string "STRING"
-  -j, --json            return the JSON response of the API call, with events
-                        filtered based on other flags provided
+
+Retrieval Options:
+  -t SECONDS, --timeout SECONDS
+                        wait at most SECONDS seconds for a single new event,
+                        then exit (defaults to listening until the user exits
+                        via CTRL+C, and logging all events)
+  -j, --json            returns response in JSON format
 ```
 
 ### Supplying F´ Dictionary
 
-As mentioned, these CLI commands let you interact with the GDS through events and commands and telemetry channels.
+As mentioned, these CLI commands let you interact with the GDS through events and commands, and telemetry channels.
 Through a *project F´ dictionary* the CLI can understand what commands, events and telemetry channels are available.
 Every F´ project deployment will have a `*Dictionary.xml` file that's created when the project's deployment is built
 In the `Ref` example project, it'll be the `Ref/Top/RefTopologyAppDictionary.xml` file.  By reading this file, the CLI
@@ -182,7 +206,7 @@ show you all the information available and allow interaction with other tools.
 
 #### Sending Commands
 
-In the second category is the `command-send` command, which can used to send commands through the GDS to the embedded
+In the second category is the `command-send` command, which can be used to send commands through the GDS to the embedded
 system. You can send commands by giving the *full name* of the command. These are typically formed by joining the
 component instance name and command name with a '.' (e.g. `health.HLTH_CHNG_PING`). When the command needs arguments,
 these can be passed in as a space-separated list using the `-args`/`--arguments` option. To send a command that does not
@@ -202,7 +226,7 @@ $ fprime-cli command-send health.HLTH_CHNG_PING --arguments eventLogger 50 20
 
 **Note:** If you need to pass in a string with spaces as an argument, just enclose it in quotes `"like this"`.
 
-Similarly to the other CLI tools, you can run `fprime-cli command-send -l` to get a list of the available commands and
+Similar to the other CLI tools, you can run `fprime-cli command-send -l` to get a list of the available commands and
 the arguments they take. The same filter options are available to search for particular commands. If you have tab
 completion enabled, you can also double-tap tab to view a list of potential commands based on what you've typed so far.
 
@@ -216,44 +240,68 @@ directly.
 Help Message:
 
 ```
-usage: fprime-cli channels [-h] [-d DICTIONARY] [-ip IP] [-p PORT]
-                           [-t SECONDS] [-l] [-i ID [ID ...]]
-                           [-c COMP [COMP ...]] [-s STRING] [-j]
+usage: fprime-cli channels [-h] [--zmq] [--zmq-server] 
+            [--zmq-transport serverInUrl serverOutUrl] [--tts-port TTS_PORT]
+            [--tts-addr TTS_ADDR] [-r ROOT_INPUT] [--dictionary DICTIONARY]
+            [--packet-spec PACKET_SPEC] [-l LOGS] [--log-directly]
+            [--log-to-stdout] [--file-storage-directory FILES_DIRECTORY]
+            [--list] [-i ID] [-c COMP [COMP ...]] [-s SEARCH] [-t SECONDS] [-j]
 
-print out new telemetry data that has been received from the F Prime instance,
+print out new telemetry data that has been received from the F Prime instance, 
 sorted by timestamp
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  -d DICTIONARY, --dictionary DICTIONARY
-                        path from the current working directory to the
-                        "<project name>Dictionary.xml" file for the project
-                        you're using the API with; if unused, tries to search
-                        the current working directory for such a file
-  -ip IP, --ip-address IP
-                        connect to the GDS server using the given IP or
-                        hostname (default=127.0.0.1 (i.e. localhost))
-  -p PORT, --port PORT  connect to the GDS server using the given port number
-                        (default=50050)
-  -t SECONDS, --timeout SECONDS
-                        wait at most SECONDS seconds for a single new message,
-                        then exit (defaults to listening until the user exits
-                        via CTRL+C, and logging all messages)
-  -l, --list            list all possible channel types the current F Prime
+
+GDS Options:
+  --zmq                 Switch to using the ZMQ transportation layer
+  --zmq-server          Sets the ZMQ connection to be a server. 
+                        Default: false (client)
+  --zmq-transport serverInUrl serverOutUrl
+                        Pair of URls used with --zmq to setup ZeroMQ transportation 
+                        [default: ['ipc:///tmp/fprime-server-in', 
+                        'ipc:///tmp/fprime-server-out']]
+  --tts-port TTS_PORT   Set the threaded TCP socket server port [default: 50050]
+  --tts-addr TTS_ADDR   Set the threaded TCP socket server address 
+                        [default: 0.0.0.0]
+  -r ROOT_INPUT, --root ROOT_INPUT
+                        Root directory of build artifacts, used to automatically 
+                        find app and dictionary. 
+                        [default: install_dest field in settings.ini]
+  --dictionary DICTIONARY
+                        Path to dictionary. Overrides automatic dictionary 
+                        detection.
+  --packet-spec PACKET_SPEC
+                        Path to packet specification.
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
+                        [default: /workspaces/macos/DefaultMission/logs]
+  --log-directly        Logging directory is used directly, no extra dated
+                        directories created.
+  --log-to-stdout       Log to standard out along with log output files
+  --file-storage-directory FILES_DIRECTORY
+                        File to store uplink and downlink files. 
+                        Default: /tmp/fprime-downlink/
+
+Search/Filtering Options:
+  --list                list all possible channel types the current F Prime
                         instance could produce, based on the channels
                         dictionary, sorted by channel type ID
-  -i ID [ID ...], --ids ID [ID ...]
-                        only show channels matching the given type ID(s) "ID";
+  -i ID, --ids ID       only show channels matching the given type ID(s) 'ID'; 
                         can provide multiple IDs to show all given types
   -c COMP [COMP ...], --components COMP [COMP ...]
-                        only show channels from the given component name
-                        "COMP"; can provide multiple components to show
-                        channels from all components given
-  -s STRING, --search STRING
+                        only show channels from the given component name 'COMP';
+                        can provide multiple components to show channels from all 
+                        components given
+  -s SEARCH, --search SEARCH
                         only show channels whose name or output string exactly
                         matches or contains the entire given string "STRING"
-  -j, --json            return the JSON response of the API call, with
-                        channels filtered based on other flags provided
+
+Retrieval Options:
+  -t SECONDS, --timeout SECONDS
+                        wait at most SECONDS seconds for a single new channel,
+                        then exit (defaults to listening until the user exits
+                        via CTRL+C, and logging all channels)
+  -j, --json            returns response in JSON format
 ```
 
 ### `command-send`
@@ -261,48 +309,71 @@ optional arguments:
 Help Message:
 
 ```
-usage: fprime-cli command-send [-h] [-d DICTIONARY] [-ip IP] [-p PORT]
-                               [-args [ARGUMENTS [ARGUMENTS ...]]] [-l]
-                               [-i ID [ID ...]] [-c COMP [COMP ...]]
-                               [-s STRING] [-j]
-                               [command-name]
+usage: fprime-cli command-send [-h] [-r ROOT_INPUT] [--dictionary DICTIONARY]
+            [--packet-spec PACKET_SPEC] [-l LOGS] [--log-directly] 
+            [--log-to-stdout] [--file-storage-directory FILES_DIRECTORY]
+            [--zmq] [--zmq-server] [--zmq-transport serverInUrl serverOutUrl]
+            [--tts-port TTS_PORT] [--tts-addr TTS_ADDR]
+            [--arguments [ARGUMENTS ...]] [--list] [-i ID] [-c COMP [COMP ...]]
+            [-s SEARCH] [-j] [command-name]
 
 sends the given command to the spacecraft via the GDS
 
 positional arguments:
-  command-name          the full name of the command you want to execute in
-                        "<component>.<name>" form
+  command-name          the full name of the command you want to execute 
+                        in "<component>.<name>" form
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  -d DICTIONARY, --dictionary DICTIONARY
-                        path from the current working directory to the
-                        "<project name>Dictionary.xml" file for the project
-                        you're using the API with; if unused, tries to search
-                        the current working directory for such a file
-  -ip IP, --ip-address IP
-                        connect to the GDS server using the given IP or
-                        hostname (default=127.0.0.1 (i.e. localhost))
-  -p PORT, --port PORT  connect to the GDS server using the given port number
-                        (default=50050)
-  -args [ARGUMENTS [ARGUMENTS ...]], --arguments [ARGUMENTS [ARGUMENTS ...]]
-                        provide a space-separated set of arguments to the
-                        command being sent
-  -l, --list            list all possible command types the current F Prime
+  --arguments [ARGUMENTS ...]
+                        provide a space-separated set of arguments to 
+                        the command being sent
+
+GDS Options:
+  -r ROOT_INPUT, --root ROOT_INPUT
+                        Root directory of build artifacts, used to automatically 
+                        find app and dictionary. 
+                        [default: install_dest field in settings.ini]
+  --dictionary DICTIONARY
+                        Path to dictionary. Overrides automatic dictionary 
+                        detection.
+  --packet-spec PACKET_SPEC
+                        Path to packet specification.
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
+                        [default: /workspaces/macos/DefaultMission/logs]
+  --log-directly        Logging directory is used directly, no extra dated
+                        directories created.
+  --log-to-stdout       Log to standard out along with log output files
+  --file-storage-directory FILES_DIRECTORY
+                        File to store uplink and downlink files. 
+                        Default: /tmp/fprime-downlink/
+  --zmq                 Switch to using the ZMQ transportation layer
+  --zmq-server          Sets the ZMQ connection to be a server. 
+                        Default: false (client)
+  --zmq-transport serverInUrl serverOutUrl
+                        Pair of URls used with --zmq to setup ZeroMQ transportation 
+                        [default: ['ipc:///tmp/fprime-server-in', 
+                        'ipc:///tmp/fprime-server-out']]
+  --tts-port TTS_PORT   Set the threaded TCP socket server port [default: 50050]
+  --tts-addr TTS_ADDR   Set the threaded TCP socket server address 
+                        [default: 0.0.0.0]
+
+Search/Filtering Options:
+  --list                list all possible command types the current F Prime
                         instance could produce, based on the commands
                         dictionary, sorted by command type ID
-  -i ID [ID ...], --ids ID [ID ...]
-                        only show commands matching the given type ID(s) "ID";
+  -i ID, --ids ID       only show commands matching the given type ID(s) 'ID'; 
                         can provide multiple IDs to show all given types
   -c COMP [COMP ...], --components COMP [COMP ...]
-                        only show commands from the given component name
-                        "COMP"; can provide multiple components to show
-                        commands from all components given
-  -s STRING, --search STRING
+                        only show commands from the given component name 'COMP';
+                        can provide multiple components to show commands from all 
+                        components given
+  -s SEARCH, --search SEARCH
                         only show commands whose name or output string exactly
                         matches or contains the entire given string "STRING"
-  -j, --json            return the JSON response of the API call, with
-                        commands filtered based on other flags provided
+
+Retrieval Options:
+  -j, --json            returns response in JSON format
 ```
 
 ### `events`
@@ -310,47 +381,71 @@ optional arguments:
 Help message:
 
 ```
-usage: fprime-cli events [-h] [-d DICTIONARY] [-ip IP] [-p PORT] [-t SECONDS]
-                         [-l] [-i ID [ID ...]] [-c COMP [COMP ...]]
-                         [-s STRING] [-j]
+usage: fprime-cli events [-h] [--zmq] [--zmq-server] 
+            [--zmq-transport serverInUrl serverOutUrl] [--tts-port TTS_PORT]
+            [--tts-addr TTS_ADDR] [-r ROOT_INPUT] [--dictionary DICTIONARY]
+            [--packet-spec PACKET_SPEC] [-l LOGS] [--log-directly]
+            [--log-to-stdout] [--file-storage-directory FILES_DIRECTORY]
+            [--list] [-i ID] [-c COMP [COMP ...]] [-s SEARCH] [-t SECONDS] [-j]
 
 print out new events that have occurred on the F Prime instance, sorted by
 timestamp
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  -d DICTIONARY, --dictionary DICTIONARY
-                        path from the current working directory to the
-                        "<project name>Dictionary.xml" file for the project
-                        you're using the API with; if unused, tries to search
-                        the current working directory for such a file
-  -ip IP, --ip-address IP
-                        connect to the GDS server using the given IP or
-                        hostname (default=127.0.0.1 (i.e. localhost))
-  -p PORT, --port PORT  connect to the GDS server using the given port number
-                        (default=50050)
-  -t SECONDS, --timeout SECONDS
-                        wait at most SECONDS seconds for a single new message,
-                        then exit (defaults to listening until the user exits
-                        via CTRL+C, and logging all messages)
-  -l, --list            list all possible event types the current F Prime
+
+GDS Options:
+  --zmq                 Switch to using the ZMQ transportation layer
+  --zmq-server          Sets the ZMQ connection to be a server. 
+                        Default: false (client)
+  --zmq-transport serverInUrl serverOutUrl
+                        Pair of URls used with --zmq to setup ZeroMQ transportation 
+                        [default: ['ipc:///tmp/fprime-server-in', 
+                        'ipc:///tmp/fprime-server-out']]
+  --tts-port TTS_PORT   Set the threaded TCP socket server port [default: 50050]
+  --tts-addr TTS_ADDR   Set the threaded TCP socket server address 
+                        [default: 0.0.0.0]
+  -r ROOT_INPUT, --root ROOT_INPUT
+                        Root directory of build artifacts, used to automatically 
+                        find app and dictionary. 
+                        [default: install_dest field in settings.ini]
+  --dictionary DICTIONARY
+                        Path to dictionary. Overrides automatic dictionary 
+                        detection.
+  --packet-spec PACKET_SPEC
+                        Path to packet specification.
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
+                        [default: /workspaces/macos/DefaultMission/logs]
+  --log-directly        Logging directory is used directly, no extra dated
+                        directories created.
+  --log-to-stdout       Log to standard out along with log output files
+  --file-storage-directory FILES_DIRECTORY
+                        File to store uplink and downlink files. 
+                        Default: /tmp/fprime-downlink/
+
+Search/Filtering Options:
+  --list                list all possible event types the current F Prime
                         instance could produce, based on the events
                         dictionary, sorted by event type ID
-  -i ID [ID ...], --ids ID [ID ...]
-                        only show events matching the given type ID(s) "ID";
+  -i ID, --ids ID       only show events matching the given type ID(s) 'ID'; 
                         can provide multiple IDs to show all given types
   -c COMP [COMP ...], --components COMP [COMP ...]
-                        only show events from the given component name "COMP";
-                        can provide multiple components to show events from
-                        all components given
-  -s STRING, --search STRING
+                        only show events from the given component name 'COMP';
+                        can provide multiple components to show events from all 
+                        components given
+  -s SEARCH, --search SEARCH
                         only show events whose name or output string exactly
                         matches or contains the entire given string "STRING"
-  -j, --json            return the JSON response of the API call, with events
-                        filtered based on other flags provided
+
+Retrieval Options:
+  -t SECONDS, --timeout SECONDS
+                        wait at most SECONDS seconds for a single new event,
+                        then exit (defaults to listening until the user exits
+                        via CTRL+C, and logging all events)
+  -j, --json            returns response in JSON format
 ```
 
 ## Conclusion
 
 The user should now be able to successfully use the GDS cli to connect to a running GDS, send commands, receive events
-and telemetry, and filter the results to be manageable.  All this is done through the command line using this tool.
+and telemetry, and filter the results to be manageable. All this is done through the command line using this tool.

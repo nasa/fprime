@@ -3,10 +3,7 @@
 // \author Auto-generated
 // \brief  hpp file for ${name} component Google Test harness base class
 //
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
+// NOTE: this file was automatically generated
 //
 // ======================================================================
 
@@ -125,11 +122,7 @@ namespace ${namespace} {
       //! Construct object $gtest_base
       //!
       ${gtest_base}(
-\#if FW_OBJECT_NAMES == 1
 $emit_hpp_params([ $param_compName, $param_maxHistorySize ])
-\#else
-$emit_hpp_params([ $param_maxHistorySize ])
-\#endif
       );
 
       //! Destroy object $gtest_base

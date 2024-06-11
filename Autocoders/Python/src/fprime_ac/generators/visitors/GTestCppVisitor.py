@@ -40,8 +40,9 @@ class GTestCppVisitor(GTestVisitorBase.GTestVisitorBase):
         c = cpp.cpp()
         self.initGTest(obj, c)
         c.emit_cpp_params = self.emitCppParams
-        c.file_message = '      << "  File:     " << __callSiteFileName << "\\n"\n'
-        c.line_message = '      << "  Line:     " << __callSiteLineNumber << "\\n"'
-        c.failure_message = '<< "\\n"\n' + c.file_message + c.line_message
+        c.file_and_line_message = (
+            '      << __callSiteFileName << ":" << __callSiteLineNumber << "\\n"'
+        )
+        c.failure_message = '<< "\\n"\n' + c.file_and_line_message
         c.LTLT = "<<"
         self._writeTmpl(c, "startSourceFilesVisit")

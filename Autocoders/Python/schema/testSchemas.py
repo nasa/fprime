@@ -4,7 +4,6 @@ import sys
 import pytest
 from lxml import etree
 
-
 """
 To add tests, go down to the setup function.
 """
@@ -50,7 +49,7 @@ class schema_test:
         if not os.path.exists(file_name):
             raise Exception("File does not exist - {}.".format(file_name))
 
-        if not file_name.upper().endswith("." + extension.upper()):
+        if not file_name.upper().endswith(f".{extension.upper()}"):
             raise Exception(
                 "File does not end with proper extension {} - {}".format(
                     extension, file_name
@@ -117,7 +116,7 @@ class schema_test:
                         root_tag = parsed.getroot().tag
                         if root_tag in list_of_root_tags:
                             self.add_test(
-                                "Path Added: " + file, new_path, None, parsed_xml=parsed
+                                f"Path Added: {file}", new_path, None, parsed_xml=parsed
                             )
                     except:
                         pass
@@ -168,7 +167,7 @@ class schema_test:
                         + str(test_set[2])
                         + "."
                     )
-                    print("File path - " + test_set[1])
+                    print(f"File path - {test_set[1]}")
                     print(excinfo)
                     print("\n")
                     sys.exit(1)
@@ -183,8 +182,8 @@ class schema_test:
                     + " failed validating the current file."
                 )
                 print("\n")
-                print(test_set[0] + " raised an exception but was supposed to pass.")
-                print("File path - " + test_set[1])
+                print(f"{test_set[0]} raised an exception but was supposed to pass.")
+                print(f"File path - {test_set[1]}")
 
                 print("\n")
                 raise
@@ -250,7 +249,7 @@ def setup():
         AssertionError,
     )
     command_test.add_test(
-        "Kind not sync nor async",
+        "Kind neither sync nor async",
         "sample_XML_files/command/kindMixed.xml",
         AssertionError,
     )

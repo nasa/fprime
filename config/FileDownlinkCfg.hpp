@@ -6,7 +6,7 @@
 
 #ifndef SVC_FILEDOWNLINK_FILEDOWNLINKCFG_HPP_
 #define SVC_FILEDOWNLINK_FILEDOWNLINKCFG_HPP_
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Svc {
     // If this is set to true, the run handler will look to

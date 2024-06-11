@@ -12,9 +12,8 @@
 #ifndef FW_CMD_ARG_BUFFER_HPP
 #define FW_CMD_ARG_BUFFER_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/Serializable.hpp>
 #include <FpConfig.hpp>
+#include <Fw/Types/Serializable.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 
 namespace Fw {

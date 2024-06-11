@@ -1,18 +1,14 @@
 #ifdef FPRIME_CMAKE
 #include "Autocoder/GTestBase.hpp"
 #else
-#include <GTestBase.hpp>
+#include <ext_dictGTestBase.hpp>
 #endif
 
 // Very minimal to test autocoder. Some day they'll be actual unit test code
 
 class ATester : public ExampleComponents::ExampleGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : ExampleComponents::ExampleGTestBase("comp",10) {
-#else
-        ATester() : ExampleComponents::ExampleGTestBase(10)  {
-#endif
     }
     void from_exampleOutput_handler(
             const NATIVE_INT_TYPE portNum, //!< The port number

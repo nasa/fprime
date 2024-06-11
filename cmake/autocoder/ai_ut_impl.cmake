@@ -1,9 +1,11 @@
 ####
 # autocoder/ai-ut-impl:
 #
-# Unit test template autocoder. Only run when BUILD_TESTING is set. Otherwise it is not registered.
+# Unit test template autocoder. Only run when BUILD_TESTING is set. Otherwise it is not registered. Generates the
+# Tester and TestMain files as templates for autocoding.
 ####
 include(utilities)
+include(autocoder/helpers)
 include(autocoder/ai-shared)
 
 # Bail if not testing
@@ -11,50 +13,49 @@ if (NOT BUILD_TESTING)
     return()
 endif()
 
-# Handles source files individually
-set_property(GLOBAL PROPERTY AI_UT_IMPL_HANDLES_INDIVIDUAL_SOURCES TRUE)
+autocoder_setup_for_individual_sources()
 
 ####
-# `is_supported`:
+# `ai_ut_impl_is_supported`:
 #
-# Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
-# IS_SUPPORTED in parent scope to be TRUE if the source file is an AI XML component file or FALSE otherwise. This only
-# processes component ai xml files.
-#
-# AC_INPUT_FILE: filepath for consideration
+# Required function, processes ComponentAi.xml files.
+# `AC_INPUT_FILE` potential input to the autocoder
 ####
 function(ai_ut_impl_is_supported AC_INPUT_FILE)
-    set(IS_SUPPORTED FALSE PARENT_SCOPE)
-    if (AC_INPUT_FILE MATCHES ".*ComponentAi\\.xml")
-        set(IS_SUPPORTED TRUE PARENT_SCOPE)
-    endif()
+    autocoder_support_by_suffix("ComponentAi.xml" "${AC_INPUT_FILE}")
 endfunction (ai_ut_impl_is_supported)
 
 ####
-# get_generated_files:
+# `ai_ut_impl_setup_autocode`:
 #
-# This autocoder always generates Tester.cpp, Tester.hpp, and TestMain.cpp.  Sets GENERATED_FILES in parent scope to
-# hold this information.
+# Required function, sets up a custom command to produce Tester and TestMain files.
 ####
-function(ai_ut_impl_get_generated_files AC_INPUT_FILE)
-    set(GENERATED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Tester.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Tester.hpp ${CMAKE_CURRENT_SOURCE_DIR}/TestMain.cpp PARENT_SCOPE)
-endfunction(ai_ut_impl_get_generated_files)
+function(ai_ut_impl_setup_autocode AC_INPUT_FILE)
+    set(AUTOCODER_GENERATED
+        ${CMAKE_CURRENT_SOURCE_DIR}/Tester.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Tester.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/TestMain.cpp
+    )
+    set(REMOVALS
+        "${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.cpp")
+    # Extra test helpers file
+    if (NOT DEFINED UT_AUTO_HELPERS OR NOT UT_AUTO_HELPERS)
+        list(APPEND AUTOCODER_GENERATED "${CMAKE_CURRENT_SOURCE_DIR}/TesterHelpers.cpp")
+    else()
+        list(APPEND REMOVALS "${CMAKE_CURRENT_SOURCE_DIR}/TesterHelpers.cpp")
+    endif()
 
-####
-# get_dependencies:
-#
-# No dependencies, this function is a no-op.
-####
-function(ai_ut_impl_get_dependencies AC_INPUT_FILE)
-endfunction(ai_ut_impl_get_dependencies)
-
-####
-# setup_autocode:
-#
-# Setup the autocoder build commands. This is a required function of a given autocoder implementation.
-####
-function(ai_ut_impl_setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    set(EXTRA_COMMANDS ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.hpp ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.hpp ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.cpp)
-    setup_ai_autocode_variant("-u" "${CMAKE_CURRENT_SOURCE_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
-                              "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")
+    # Get the shared setup for all AI autocoders
+    ai_shared_setup("${CMAKE_CURRENT_SOURCE_DIR}")
+    # Specifically setup the `add_custom_command` call as the requires extra commands to run
+    add_custom_command(
+            OUTPUT ${AUTOCODER_GENERATED}
+            COMMAND ${AI_BASE_SCRIPT} -u "${AC_INPUT_FILE}"
+            COMMAND ${CMAKE_COMMAND} -E remove ${REMOVALS}
+            DEPENDS "${AC_INPUT_FILE}" "${CODEGEN_TARGET}"
+    )
+    set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
 endfunction()

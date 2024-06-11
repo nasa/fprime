@@ -1,4 +1,4 @@
-\page SvcGenericHub Generic Hub Component
+\page SvcGenericHubComponent Svc::GenericHub Component
 # Svc::GenericHub Generic Hub Component
 
 The Generic Hub component is an implementation of the F´ [hub pattern](https://nasa.github.io/fprime/UsersGuide/best/hub-pattern.html).
@@ -22,6 +22,9 @@ Generic hub inputs on one hub should be parallel to the outputs on the other hub
 It is also essential that users never pass a **pointer** into the generic hub, as pointer data will become invalid when it 
 leaves the current address space. A sample configuration is shown below. Finally, the generic hub is bidirectional, so it
 can operate on inputs and produce outputs as long as its remote counterpart is hooked up in parallel.
+
+The hub also provides specific handlers for events and telemetry such that it can be used with telemetry and event
+pattern specifiers in the topology.
 
 ### Example Formations
 
@@ -51,25 +54,35 @@ into the hub which expands the port to the various right-side components.
 
 ## Configuration
 
-Generic hub maximum output and input ports are configured using `AcConstants.ini` as shown below. Since hubs work in
+Generic hub maximum output and input ports are configured using `AcConstants.fpp` as shown below. Since hubs work in
 tandem with another hub, the input ports on the first must match the output ports on the second. Both the number of port
 and buffer inputs/outputs may be configured.
 
-```ini
-; Hub connections. Connections on all deployments should mirror these settings.
-GenericHubInputPorts = 10
-GenericHubOutputPorts = 10
-GenericHubInputBuffers = 10
-GenericHubOutputBuffers = 10
+```
+@ Hub connections. Connections on all deployments should mirror these settings.
+constant GenericHubInputPorts = 10
+constant GenericHubOutputPorts = 10
+constant GenericHubInputBuffers = 10
+constant GenericHubOutputBuffers = 10
 ```
 
 The above configuration may be used with both deployments hubs as the input/output pairs match.
+
+To use the hub in a pattern specifier, include this in your topology:
+
+```
+    event connections instance hub
+    telemetry connections instance hub
+```
 
 ## Idiosyncrasies 
 
 Currently, the `Drv::ByteStreamDriverModel` can report errors and failures. This generic hub component drops these errors.
 Users who expect the driver to error should adapt this component to handle this issue. Future versions of this component
 may correct this issue by calling to a fault port on error.
+
+Connections are still required from the telemetry and event output ports to the system-wide event log and telemetry
+handling components as the hub is not designed to look like a telemetry nor event source.
 
 ## Requirements
 
@@ -86,3 +99,4 @@ may correct this issue by calling to a fault port on error.
 |---|---|
 | 2020-12-21 | Initial Draft |
 | 2021-01-29 | Updated |
+| 2023-06-09 | Added telemetry and event helpers |

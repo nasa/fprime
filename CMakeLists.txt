@@ -3,7 +3,7 @@
 #
 # Build core F prime.
 ####
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 project(FPrime C CXX)
 set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Location of F prime framework" FORCE)
 set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Root path of F prime project" FORCE)
@@ -23,6 +23,15 @@ add_compile_options(
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
     -Wno-unused-parameter
 )
+
+# Add -Wshadow and -pedantic only for framework code, not the unit tests
+if (NOT BUILD_TESTING)
+    add_compile_options(
+        -Wshadow
+        -pedantic
+        -Wconversion
+    )
+endif()
 
 # Turn on pedantic checks for clang, but disable specific checks that F' doesn't comply with.
 # GCC doesn't support disabling specific pedantic checks, so skip pedantic on GCC for now.
@@ -46,6 +55,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         -Wno-gnu-zero-variadic-macro-arguments
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-zero-length-array>
+    )
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND NOT DEFINED CMAKE_CXX_CLANG_TIDY)
+    # The following is not supported by clang, which also causes issues when using clang-tidy
+    add_compile_options(
+        -Wno-format-truncation
     )
 endif()
 

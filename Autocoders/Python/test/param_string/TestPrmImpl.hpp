@@ -13,11 +13,7 @@
 
 class TestPrmImpl: public Prm::TestPrmComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestPrmImpl(const char* compName);
-#else
-        TestPrmImpl();
-#endif
         void genTlm(U32 val);
         virtual ~TestPrmImpl();
         void init();

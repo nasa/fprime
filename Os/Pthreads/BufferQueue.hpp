@@ -13,7 +13,7 @@
 #ifndef OS_PTHREADS_BUFFER_QUEUE_HPP
 #define OS_PTHREADS_BUFFER_QUEUE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 // This is a generic buffer queue interface. 
 namespace Os {
@@ -121,11 +121,11 @@ namespace Os {
     NATIVE_UINT_TYPE getBufferIndex(NATIVE_INT_TYPE index);
 
     // Member variables:
-    void* queue; // The queue can be implemented in various ways
-    NATIVE_UINT_TYPE msgSize; // Max size of message on the queue
-    NATIVE_UINT_TYPE depth; // Max number of messages on the queue
-    NATIVE_UINT_TYPE count; // Current number of messages on the queue
-    NATIVE_UINT_TYPE maxCount; // Maximum number of messages ever seen on the queue
+    void* m_queue; // The queue can be implemented in various ways
+    NATIVE_UINT_TYPE m_msgSize; // Max size of message on the queue
+    NATIVE_UINT_TYPE m_depth; // Max number of messages on the queue
+    NATIVE_UINT_TYPE m_count; // Current number of messages on the queue
+    NATIVE_UINT_TYPE m_maxCount; // Maximum number of messages ever seen on the queue
   };
 }
 

@@ -15,6 +15,14 @@ assignees: ''
 
 A description of the problem with sufficient detail to understand the issue.
 
+## Context / Environment
+
+Execute `fprime-util version-check` and share the output.
+
+```
+--INSERT HERE--
+```
+
 ## How to Reproduce
 
 1. 

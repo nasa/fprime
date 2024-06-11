@@ -1,7 +1,7 @@
 #ifdef FPRIME_CMAKE
 #include "Autocoder/GTestBase.hpp"
 #else
-#include <GTestBase.hpp>
+#include <time_testerGTestBase.hpp>
 #endif
 #include "TesterBase.hpp"
 #include <FpConfig.hpp>
@@ -10,11 +10,7 @@
 
 class ATester : public Time::TimeTesterGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : Time::TimeTesterGTestBase("comp",10) {
-#else
-        ATester() : Time::TimeTesterGTestBase(10)  {
-#endif
     }
 
 };

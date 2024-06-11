@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Drv {
 

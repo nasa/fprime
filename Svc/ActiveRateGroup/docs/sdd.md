@@ -35,12 +35,21 @@ The `Svc::ActiveRateGroup` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Cycle`](../../Cycle/docs/sdd.html) | CycleIn | Input | Asynchronous | Receive a call to run one cycle of the rate group
-[`Svc::Sched`](../../Sched/docs/sdd.html) | RateGroupMemberOut | Output | n/a | Rate group ports
+[`Svc::Cycle`](../../Sched/docs/sdd.md) | CycleIn | Input | Asynchronous | Receive a call to run one cycle of the rate group
+[`Svc::Sched`](../../Sched/docs/sdd.md) | RateGroupMemberOut | Output | n/a | Rate group ports
 
 #### 3.2 Functional Description
 
 The `Svc::ActiveRateGroup` component has one input port that is called to wake up the task to execute one cycle.  
+
+A set of context values are passed in as an array to the configure function:
+
+```
+void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts);
+```
+
+A context value can be used by a component to discriminate between more than one call in the rate group.
+
 The task of the component calls the output ports in order, passing the context from the context list as the port argument. 
 
 The component sets a flag when the cycle port is invoked. At the beginning of the rate group execution, the component clears 
@@ -54,7 +63,22 @@ event, and increase the cycle slip counters.
 
 As described in the Functional Description section, the `Svc::ActiveRateGroup` component accepts calls to the CycleIn and invokes the RateGroupMemberOut ports:
 
-![System Tick Port Call](img/RateGroupCall.jpg) 
+```mermaid
+sequenceDiagram
+    Caller->>ActiveRateGroup: 1. CycleIn
+    activate Caller
+    activate ActiveRateGroup
+    deactivate  ActiveRateGroup 
+    loop for each output port
+        ActiveRateGroup->>Callee: 2. RateGroupMemberOut[N]
+        activate Callee
+        activate  ActiveRateGroup
+        deactivate  Callee 
+        deactivate  ActiveRateGroup 
+    end
+    deactivate  Caller 
+```
+
 
 ### 3.4 State
 
@@ -74,7 +98,7 @@ Document | Link
 -------- | ----
 Design Checklist | [Link](Checklist_Design.xlsx)
 Code Checklist | [Link](Checklist_Code.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xlsx)
+Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
 
 ## 6. Unit Testing
 

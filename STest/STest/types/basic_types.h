@@ -1,16 +1,16 @@
 // ====================================================================== 
 // \title  basic_types.h
 // \author bocchino
-// \brief  Basic types
+// \brief  STest basic types
 //
 // \copyright
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. 
+// acknowledged.
 // ====================================================================== 
 
-#ifndef BASIC_TYPES_H
-#define BASIC_TYPES_H
+#ifndef STEST_BASIC_TYPES_H
+#define STEST_BASIC_TYPES_H
 
 #ifdef __cplusplus
 extern "C" {

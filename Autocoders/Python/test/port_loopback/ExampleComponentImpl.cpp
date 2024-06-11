@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/port_loopback/ExampleComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <cstdio>
 
 namespace ExampleComponents {
@@ -22,14 +22,10 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
 
   ExampleComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     ExampleComponentImpl(
         const char *const compName
     ) :
       ExampleComponentBase(compName)
-#else
-    ExampleImpl()
-#endif
   {
 
   }

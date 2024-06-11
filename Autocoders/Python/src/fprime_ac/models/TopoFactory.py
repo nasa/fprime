@@ -57,39 +57,30 @@ class TopoFactory:
         self.__config = ConfigManager.ConfigManager.getInstance()
         self.__generate_new_IDS = True  # Work around to disable ID generation/table output in the case AcConstants.ini is used to build
 
-        self.__table_info = (
-            []
-        )  # ["COLUMN NAME" , <INT OF SPACE PADDING AROUND NAME> , "DESCRIPTION"]
-        self.__table_info.append(["INSTANCE NAME", 5, "Name of the instance object."])
-        self.__table_info.append(["BASE ID (HEX)", 0, "Base ID set for the instance."])
-        self.__table_info.append(
+        self.__table_info = [
+            ["INSTANCE NAME", 5, "Name of the instance object."],
+            ["BASE ID (HEX)", 0, "Base ID set for the instance."],
             [
                 "REQUESTED WINDOW SIZE",
                 0,
                 "Specified by either the 'base_id_range' attribute in the instance tag or by finding the max of the 'base_id_range' attribute in the topology tag and the largest internal ID of the instance.",
-            ]
-        )
-        self.__table_info.append(
+            ],
             [
                 "DIFFERENCED ID WINDOW SIZE",
                 0,
                 "Calculated by subtracting the current base ID from the next base ID.",
-            ]
-        )
-        self.__table_info.append(
+            ],
             [
                 "LARGEST COMPONENT INTERNAL ID",
                 0,
                 "The largest ID found in the events, channels, and commands of the instance.",
-            ]
-        )
-        self.__table_info.append(
+            ],
             [
                 "MAX AMOUNT OF IDS",
                 0,
                 "The largest amount of items from either events, channels, or commands.",
-            ]
-        )
+            ],
+        ]
 
     def set_generate_ID(self, value):
         """
@@ -126,8 +117,7 @@ class TopoFactory:
                 file_path = locate_build_root(comp_xml_path)
             except (BuildRootMissingException, BuildRootCollisionException) as bre:
                 stri = "ERROR: Could not find XML file {}. {}".format(
-                    comp_xml_path,
-                    str(bre),
+                    comp_xml_path, str(bre)
                 )
                 raise OSError(stri)
             processedXML = XmlComponentParser.XmlComponentParser(file_path)

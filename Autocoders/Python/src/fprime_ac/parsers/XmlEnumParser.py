@@ -20,14 +20,13 @@ import logging
 import os
 import sys
 
-from lxml import etree, isoschematron
-
 from fprime_ac.parsers import XmlParser
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import (
     FprimeRngXmlValidationException,
     FprimeXmlException,
 )
+from lxml import etree, isoschematron
 
 #
 # Python extension modules and custom interfaces
@@ -64,7 +63,7 @@ class XmlEnumParser:
 
         self.Config = ConfigManager.ConfigManager.getInstance()
 
-        if os.path.isfile(xml_file) == False:
+        if not os.path.isfile(xml_file):
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(stri)
         fd = open(xml_file)
@@ -185,7 +184,7 @@ class XmlEnumParser:
                     has_value += 1
 
         is_consistent = True
-        if not (has_value == 0 or has_value == total):
+        if not has_value in (0, total):
             is_consistent = False
 
         return is_consistent

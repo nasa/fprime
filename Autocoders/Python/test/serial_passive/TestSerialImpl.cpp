@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/serial_passive/TestSerialImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace TestComponents {
 
@@ -21,14 +21,10 @@ namespace TestComponents {
   // ----------------------------------------------------------------------
 
   TestSerialImpl ::
-#if FW_OBJECT_NAMES == 1
     TestSerialImpl(
         const char *const compName
     ) :
       TestSerialComponentBase(compName)
-#else
-    TestSerialImpl()
-#endif
   {
 
   }

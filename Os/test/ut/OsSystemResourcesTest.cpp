@@ -7,7 +7,6 @@ void testTestSystemResources() {
 
     Os::SystemResources::SystemResourcesStatus sys_res_status;
     Os::SystemResources::CpuTicks cpuUtil;
-    Os::SystemResources::MemUtil memUtil;
 
     U32 cpuCount;
     U32 cpuIndex;
@@ -22,9 +21,6 @@ void testTestSystemResources() {
     cpuIndex = 1000;
     sys_res_status = Os::SystemResources::getCpuTicks(cpuUtil, cpuIndex);
     ASSERT_EQ(sys_res_status, Os::SystemResources::SystemResourcesStatus::SYSTEM_RESOURCES_ERROR);
-
-    sys_res_status = Os::SystemResources::getMemUtil(memUtil);
-    ASSERT_EQ(sys_res_status, Os::SystemResources::SystemResourcesStatus::SYSTEM_RESOURCES_OK);
 }
 
 extern "C" {

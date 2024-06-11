@@ -6,7 +6,7 @@ layout: default
 F´ (or F Prime) is a software framework for the rapid development and deployment of embedded systems and spaceflight applications.
 Originally developed at NASA's Jet Propulsion Laboratory, F´ is open-source software that has been successfully deployed
 for several space applications. It has been used for but is not limited to, CubeSats, SmallSats, instruments, and
-deployable.
+deployables.
 
 F´ has the following features:
 
@@ -24,69 +24,21 @@ F´ has the following features:
 - [Discussions](https://github.com/nasa/fprime/discussions)
 - [Issues](https://github.com/nasa/fprime/issues)
 - [Community GitHub Organization](https://github.com/fprime-community)
-- [Architecture Overview](./Architecture/FPrimeArchitectureShort.pdf)
-
-### Discontinued:
-- [Community Forum and Mailing List](https://groups.google.com/d/forum/fprime-community) 
-    - **Note**: Community forum has been replaced by [Discussions](https://github.com/nasa/fprime/discussions) since mid june 2021.
+- [User Guide](./UsersGuide/guide.md)
 
 ## F´ Documentation
 
 ### F´ Release
 - [Latest Documentation](./latest.md)
+- [v3.3.0 Documentation](https://nasa.github.io/fprime/v3.3.0)
+- [v3.2.0 Documentation](https://nasa.github.io/fprime/v3.2.0)
+- [v3.1.0 Documentation](https://nasa.github.io/fprime/v3.1.0)
+- [v3.0.0 Documentation](https://nasa.github.io/fprime/v3.0.0)
+- [v2.1.0 Documentation](https://nasa.github.io/fprime/v2.1.0)
+- [v2.0.1 Documentation](https://nasa.github.io/fprime/v2.0.1)
 - [v2.0.0 Documentation](https://nasa.github.io/fprime/v2.0.0)
 - [v1.5 Series Documentation](https://nasa.github.io/fprime/v1.5)
 
-
-## F´ System Requirements
-
-To develop applications with F´, the following requirements of the user's system must be met.
-
-1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
-2. [CMake](https://cmake.org/download/) available on the system path
-3. Java 1.8 or newer, e.g. [OpenJDK](https://openjdk.java.net/)
-4. Bash or Bash compatible shell
-5. Clang or GCC compiler
-6. [Python 3](https://www.python.org/downloads/) and PIP 
-
-## Quick Installation Guide
-
-F´ can be quickly installed and ready to use by:
-1. Cloning the GitHub repository
-2. Installing Python code
-3. Building one of our reference applications. 
-
-For full installation instructions please see:
-[INSTALL.md](./INSTALL.md).
-
-**Clone and Install**
-
-```
-git clone https://github.com/nasa/fprime.git
-pip install --upgrade fprime-tools fprime-gds
-```
-
-**Build the Ref Application**
-
-```
-cd Ref
-fprime-util generate
-fprime-util build
-```
-
-**Run the Ref Application**
-
-```
-./bin/*/Ref
-...
-CTRL-C
-```
-
 ## Further References
 
-Full information on the code and F´ is available on our [GitHub page](http://github.com/nasa/fprime).
-
-To start with, follow the [installation guide](./INSTALL.md). Then inspect
-either the [reference application](https://github.com/nasa/fprime/blob/master/Ref/README.md),
-[raspberry pi reference](https://github.com/nasa/fprime/blob/master/RPI/README.md), or the
-[tutorials](Tutorials/README.md).
+To start with F´, follow the [installation guide](./INSTALL.md). Then follow our [tutorials](Tutorials/README.md), or inspect our [reference applications](https://github.com/fprime-community#references).

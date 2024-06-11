@@ -2,12 +2,6 @@
 // \title  ${name}.hpp
 // \author $user
 // \brief  hpp file for ${name} component implementation class
-//
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 \#ifndef ${name}_HPP
@@ -35,12 +29,6 @@ namespace ${namespace} {
       //!
       ${name}(
 $emit_non_port_params([ $param_compName ])
-      );
-
-      //! Initialize object $name
-      //!
-      void init(
-$emit_non_port_params($params_init_hpp)
       );
 
       //! Destroy object $name

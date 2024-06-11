@@ -40,15 +40,20 @@ namespace STest {
       ) :
         Scenario<State>(name),
         scenarioArray(new ScenarioArray<State>(scenarios, size)),
-        selectedScenario(nullptr)
+        selectedScenario(nullptr),
+        seen(new bool[size])
       {
 
       }
 
       //! Destroy a SelectedScenario object
       virtual ~SelectedScenario() {
-        assert(this->scenarioArray != nullptr);
-        delete this->scenarioArray;
+        if (this->scenarioArray != nullptr) {
+          delete this->scenarioArray;
+        }
+        if (this->seen != nullptr) {
+          delete[] this->seen;
+        }
       }
 
     public:
@@ -65,7 +70,7 @@ namespace STest {
       }
 
       //! The virtual implementation of nextRule required by Scenario
-      //! \return The next rule, assuming isDone() is false, or NULL if none
+      //! \return The next rule, assuming isDone() is false, or nullptr if none
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
@@ -114,8 +119,7 @@ namespace STest {
       ) {
         Rule<State>* rule = nullptr;
         const U32 size = this->scenarioArray->size;
-        bool seen[size];
-        memset(seen, 0, sizeof(seen));
+        memset(this->seen, 0, size * sizeof(bool));
         U32 numSeen = 0;
         assert(this->scenarioArray != nullptr);
         Scenario<State> **const scenarios =
@@ -123,7 +127,7 @@ namespace STest {
         assert(scenarios != nullptr);
         while (numSeen < size) {
           const U32 i = this->scenarioArray->getRandomIndex();
-          if (seen[i]) {
+          if (this->seen[i]) {
             continue;
           }
           Scenario<State> *const scenario = scenarios[i];
@@ -133,7 +137,7 @@ namespace STest {
             this->selectedScenario = scenario;
             break;
           }
-          seen[i] = true;
+          this->seen[i] = true;
           ++numSeen;
         }
         return rule;
@@ -150,6 +154,9 @@ namespace STest {
 
       //! The selected scenario
       Scenario<State>* selectedScenario;
+
+      //! An array to store the scenarios seen
+      bool* seen;
 
   };
 

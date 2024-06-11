@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <getopt.h>
 #include <signal.h>
-
+#include <Fw/Time/Time.hpp>
 #include <RPI/Top/RPITopologyAc.hpp>
 
 RPI::TopologyState state;
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     // Time to exit the program.
     // Give time for threads to exit.
     (void) printf("Waiting for threads...\n");
-    Os::Task::delay(1000);
+    Os::Task::delay(Fw::Time(1, 0));
 
     (void) printf("Exiting...\n");
 

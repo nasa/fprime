@@ -1,0 +1,37 @@
+# This job is to check that the requirements.txt file isn't giving
+# any troubles to pip for any of the supported versions of Python
+
+name: Python Dependency Check
+
+on:
+  push:
+    paths:
+      - 'requirements.txt'
+  pull_request:
+    paths:
+      - 'requirements.txt'
+
+jobs:
+  pip-install:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        runner: [macos-13, macos-latest, ubuntu-latest]
+        # macos-14 (ARM) currently breaks actions/setup-python with 3.8 and 3.9
+        # so we exclude them from the matrix and also test with macos-13 (x86)
+        # More info at https://github.com/actions/setup-python/issues/850
+        exclude:
+          - runner: macos-latest
+            python-version: '3.8'
+          - runner: macos-latest
+            python-version: '3.9'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
