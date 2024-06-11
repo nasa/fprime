@@ -8,7 +8,7 @@
     
 #include "stdio.h"
 #include "assert.h"
-#include "SMEvents.hpp"
+#include "Fw/Types/SMEventsSerializableAc.hpp"
 #include "DeviceSm.hpp"
 
 
