@@ -10,7 +10,7 @@ extern "C" {
 }
 namespace Os {
 
-File::File() : m_crc_buffer(), m_handle_storage(), m_delegate(*FileInterface::getDelegate(&m_handle_storage[0])) {
+File::File() : m_crc_buffer(), m_handle_storage(), m_delegate(*FileInterface::getDelegate(m_handle_storage)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -28,7 +28,7 @@ File::File(const File& other) :
     m_crc(other.m_crc),
     m_crc_buffer(),
     m_handle_storage(),
-    m_delegate(*FileInterface::getDelegate(&m_handle_storage[0], &other.m_delegate)) {
+    m_delegate(*FileInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -37,7 +37,7 @@ File& File::operator=(const File& other) {
         this->m_mode = other.m_mode;
         this->m_path = other.m_path;
         this->m_crc = other.m_crc;
-        this->m_delegate = *FileInterface::getDelegate(&m_handle_storage[0], &other.m_delegate);
+        this->m_delegate = *FileInterface::getDelegate(m_handle_storage, &other.m_delegate);
     }
     return *this;
 }
@@ -216,7 +216,10 @@ File::Status File::incrementalCrc(FwSignedSizeType &size) {
         status = this->read(this->m_crc_buffer, size, File::WaitType::NO_WAIT);
         if (OP_OK == status) {
             for (FwSignedSizeType i = 0; i < size && i < FW_FILE_CHUNK_SIZE; i++) {
-                this->m_crc = update_crc_32(this->m_crc, static_cast<CHAR>(this->m_crc_buffer[i]));
+                this->m_crc =
+                    static_cast<U32>(
+                        update_crc_32(this->m_crc, static_cast<CHAR>(this->m_crc_buffer[i]))
+                        );
             }
         }
     }

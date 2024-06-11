@@ -21,6 +21,11 @@ before reaching `DpWriter`.
 
    1. Write _B_ to disk.
 
+   1. If a notification port is connected, then send out a notification
+that the write occurred.
+An instance of [`Svc::DpCatalog`](../../DpCatalog/docs/sdd.md) can
+receive this notification and use it to update the data product catalog.
+
 ## 2. Requirements
 
 Requirement | Description | Rationale | Verification Method
@@ -29,7 +34,8 @@ SVC-DPWRITER-001 | `Svc::DpWriter` shall provide a port for receiving `Fw::Buffe
 SVC-DPWRITER-002 | `Svc::DpWriter` shall provide an array of ports for sending `Fw::Buffer` objects for processing. | This requirement supports downstream processing of the data in the buffer. | Unit Test
 SVC-DPWRITER-003 | On receiving a data product container _C_, `Svc::DpWriter` shall use the processing type field of the header of _C_ to select zero or more processing ports to invoke, in port order. | The processing type field is a bit mask. A one in bit `2^n` in the bit mask selects port index `n`. | Unit Test
 SVC-DPWRITER-004 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall write _B_ to disk. | The purpose of `DpWriter` is to write data products to the disk. | Unit Test
-SVC-DPWRITER-005 | `Svc::DpManager` shall provide telemetry that reports the number of data products written and the number of bytes written. | This requirement establishes the telemetry interface for the component. | Unit test
+SVC-DPWRITER-005 | `Svc::DpWriter` shall provide a port for notifying other components that data products have been written. | This requirement allows `Svc::DpCatalog` or a similar component to update its catalog in real time. | Unit Test
+SVC-DPWRITER-006 | `Svc::DpManager` shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors. | This requirement establishes the telemetry interface for the component. | Unit test
 
 ## 3. Design
 
@@ -50,6 +56,7 @@ The diagram below shows the `DpWriter` component.
 | `async input` | `schedIn` | `Svc.Sched` | Schedule in port |
 | `async input` | `bufferSendIn` | `Fw.BufferSend` | Port for receiving data products to write to disk |
 | `output` | `procBufferSendOut` | `[DpWriterNumProcPorts] Fw.BufferSend` | Port for processing data products |
+| `output` | `dpWrittenOut` | `DpWritten` | Port for sending `DpWritten` notifications |
 | `output` | `deallocBufferSendOut` | `Fw.BufferSend` | Port for deallocating data product buffers |
 | `time get` | `timeGetOut` | `Fw.Time` | Time get port |
 | `telemetry` | `tlmOut` | `Fw.Tlm` | Telemetry port |
@@ -66,17 +73,22 @@ The diagram below shows the `DpWriter` component.
 
 ### 3.4. Compile-Time Setup
 
-The configuration constant [`DpWriterNumProcPorts`](../../../config/AcConstants.fpp)
-specifies the number of ports for connecting components that perform
-processing.
+1. The configuration constant [`DpWriterNumProcPorts`](../../../config/AcConstants.fpp)
+   specifies the number of ports for connecting components that perform
+   processing.
+
+1. The configuration [`DP_FILENAME_FORMAT`](../../../config/DpCfg.hpp)
+   specifies the file name format.
 
 ### 3.5. Runtime Setup
 
-The `config` function specifies the following constants:
+You can call the `configure` function to supply the DP file name
+prefix. This is the prefix used when constructing names of files to write.
+For more information about the file name format, see the [**File
+Format**](#file_format) section.
 
-1. `fileNamePrefix (string)`: The prefix to use for file names.
-
-1. `fileNameSuffix (string)`: The suffix to use for file names.
+If you do not call the `configure` function, then the default
+DP file name prefix is the empty string.
 
 ### 3.6. Port Handlers
 
@@ -89,16 +101,30 @@ This handler sends out the state variables as telemetry.
 This handler receives a mutable reference to a buffer `B`.
 It does the following:
 
-1. Check that `B` is valid and that the first `sizeof(FwPacketDescriptorType)`
-   bytes of the memory referred to by `B` hold the serialized value
-   [`Fw_PACKET_DP`](../../../Fw/Com/ComPacket.hpp).
+1. Check that `B` is valid. If not, emit a warning event.
+
+1. If the previous step succeeded, then check that the size of `B` is large enough to
+   hold a data product container packet. If not, emit a warning event.
+
+1. If the previous steps succeeded, then check that the packet
+   header of `B` can be successfully deserialized.
    If not, emit a warning event.
 
-1. If step 1 succeeded, then
+1. If the previous steps succeeded, then check that the header
+   hash of `B` is valid.
+   If not, emit a warning event.
+
+1. If the previous steps succeeded, then check that the data
+   size recorded in the packet header fits within the buffer.
+   If not, emit a warning event.
+
+1. If the previous steps succeeded, then
 
    1. Read the `ProcType` field out of the container header stored in the
-      memory pointed to by `B`.
-      If the value is a valid port number `N` for `procBufferSendOut`, then invoke
+      memory pointed to by `B`. Let the resulting bit mask be `M`.
+
+   1. Visit the port numbers of `procBufferSendOut` in order.
+      For each port number `N`, if `N` is set in `M`, then invoke
       `procBufferSendOut` at port number `N`, passing in `B`.
       This step updates the memory pointed to by `B` in place.
 
@@ -106,7 +132,10 @@ It does the following:
       Format**](#file_format) section. For the time stamp, use the time
       provided by `timeGetOut`.
 
-1. Send `B` on `deallocBufferSendOut`.
+1. If the file write succeeded and `dpWrittenOut` is connected, then send the
+   file name, priority, and file size out on `dpWrittenOut`.
+
+1. If `B` is valid, then send `B` on `deallocBufferSendOut`.
 
 <a name="file_format"></a>
 ## 4. File Format
@@ -119,34 +148,46 @@ with the format described in the
 
 ### 4.2. File Name
 
-The name of each file consists of `fileNamePrefix` followed by an
-ID, a time stamp, and `fileNameSuffix`.
-The ID consists of an underscore character `_` followed by the container ID.
-The time stamp consists of an underscore character `_` followed by a seconds 
-value, an underscore character, and a microseconds value.
+The name of each file is formatted with the configurable format string
+[`DP_FILENAME_FORMAT`](../../../config/DpCfg.hpp).
+The format string must contain format specifications for the following arguments,
+in order.
 
-For example, suppose that the file name prefix is `container_data` and the
-file name suffix is `.dat`.
-Suppose that container ID is 100, the seconds value is 100000,
-and the microseconds value is 1000.
-Then the file name is `container_data_100_100000_1000.dat`.
+Format Specifier | Type |
+---------------- | -----|
+The DP file name prefix | `%s`
+Container ID | `%PRI_FwDpIdType`
+Time seconds | `%PRI_u32`
+Time microseconds | `%PRI_u32`
+
+The exact meaning of the DP file name prefix depends on the format string.
+Typically it is a directory path prefix.
 
 <a name="ground_interface"></a>
 ## 5. Ground Interface
 
-### 5.1. Telemetry
+### 5.1. Commands
+
+| Kind | Name | Description |
+|------|------|-------------|
+| `async` | `CLEAR_EVENT_THROTTLE` | Clear event throttling |
+
+### 5.2. Telemetry
 
 | Name | Type | Description |
 |------|------|-------------|
 | `NumDataProducts` | `U32` | The number of data products handled |
 | `NumBytes` | `U64` | The number of bytes handled |
 
-### 5.2. Events
+### 5.3. Events
 
 | Name | Severity | Description |
 |------|----------|-------------|
+| `BufferInvalid` | `warning high` | Incoming buffer is invalid |
 | `BufferTooSmall` | `warning high` | Incoming buffer is too small to hold a data product container |
-| `InvalidPacketDescriptor` | `warning high` | Incoming buffer had an invalid packet descriptor |
+| `InvalidPacketDescriptor` | `warning high` | Incoming buffer has an invalid packet descriptor |
+| `FileOpenError` | `warning high` | An error occurred when opening a file |
+| `FileWriteError` | `warning high` | An error occurred when writing to a file |
 
 ## 6. Example Uses
 

@@ -31,9 +31,20 @@ set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST
 #####
 macro(restrict_platforms)
     set(__CHECKER ${ARGN})
-    if (NOT FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER AND NOT FPRIME_PLATFORM IN_LIST __CHECKER)
+
+    # Each of these empty if blocks are the valid-case, that is, the platform is supported.
+    # However, the reason why this is necessary is that this function is a macro and not a function.
+    # Macros copy-paste the code into the calling context. Thus, all these valid cases want to avoid calling return.
+    # The return call  in the else block returns from the calling context (i.e. a restricted CMakeList.txt will
+    # return and not process the component setup). We do not want this return when the platform is allowed.
+
+    if (FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER)
+    elseif(FPRIME_PLATFORM IN_LIST __CHECKER)
+    elseif("Posix" IN_LIST __CHECKER AND FPRIME_USE_POSIX)
+    else()
         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
         message(STATUS "Neither toolchain ${FPRIME_TOOLCHAIN_NAME} nor platform ${FPRIME_PLATFORM} supported for module ${MODULE_NAME}")
+        append_list_property("${MODULE_NAME}" GLOBAL PROPERTY RESTRICTED_TARGETS)
         return()
     endif()
 endmacro()
@@ -598,7 +609,6 @@ function(require_fprime_implementation IMPLEMENTATION)
 
     create_implementation_interface("${IMPLEMENTATION}")
     append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
-    append_list_property("${FPRIME_CURRENT_MODULE}" TARGET "${IMPLEMENTATION}" PROPERTY "REQUESTERS")
     add_dependencies("${REQUESTER}" "${IMPLEMENTATION}")
 endfunction()
 
@@ -616,7 +626,7 @@ function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
     resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
     create_implementation_interface("${IMPLEMENTATION}")
-    append_list_property("${IMPLEMENTOR}" TARGET "${IMPLEMENTATION}" PROPERTY "IMPLEMENTORS")
+    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
     append_list_property("${ARGN}" TARGET "${IMPLEMENTOR}" PROPERTY "REQUIRED_SOURCE_FILES")
     add_dependencies("${IMPLEMENTATION}" "${IMPLEMENTOR}")
 endfunction()

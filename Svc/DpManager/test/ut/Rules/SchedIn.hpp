@@ -5,9 +5,8 @@
 //
 // \copyright
 // Copyright (C) 2023 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government sponsorship
+// acknowledged.
 // ======================================================================
 
 #ifndef Svc_SchedIn_HPP

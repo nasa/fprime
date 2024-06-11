@@ -35,6 +35,7 @@ enum SocketIpStatus {
     SOCK_FAILED_TO_ACCEPT = -11,             //!< Failed to accept connection
     SOCK_SEND_ERROR = -13,                   //!< Failed to send after configured retries
     SOCK_NOT_STARTED = -14,                  //!< Socket has not been started
+    SOCK_FAILED_TO_READ_BACK_PORT = -15,     //!< Failed to read back port from connection
 };
 
 /**
@@ -145,7 +146,7 @@ class IpSocket {
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(U8* const data, I32& size);
+    SocketIpStatus recv(U8* const data, U32& size);
     /**
      * \brief closes the socket
      *
@@ -163,6 +164,17 @@ class IpSocket {
     virtual void shutdown();
 
   PROTECTED:
+    /**
+     * \brief Check if the given port is valid for the socket
+     *
+     * Some ports should be allowed for sockets and disabled on others (e.g. port 0 is a valid tcp server port but not a
+     * client. This will check the port and return "true" if the port is valid, or "false" otherwise. In the default
+     * implementation, all ports are considered valid.
+     *
+     * \param port: port to check
+     * \return true if valid, false otherwise
+     */
+    virtual bool isValidPort(U16 port);
 
     /**
      * \brief setup the socket timeout properties of the opened outgoing socket

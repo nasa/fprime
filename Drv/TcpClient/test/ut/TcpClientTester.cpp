@@ -12,7 +12,6 @@
 #include "TcpClientTester.hpp"
 #include "STest/Pick/Pick.hpp"
 #include <Os/Log.hpp>
-#include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 
 Os::Log logger;
@@ -29,30 +28,32 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus serverStat = Drv::SOCK_SUCCESS;
 
-    U16 port =  Drv::Test::get_free_port();
-    ASSERT_NE(0, port);
+    U16 port =  0;
 
     Drv::TcpServerSocket server;
     server.configure("127.0.0.1", port, 0, 100);
-    this->component.configure("127.0.0.1", port, 0, 100);
     serverStat = server.startup();
-    ASSERT_EQ(serverStat, SOCK_SUCCESS);
+    this->component.configure("127.0.0.1", server.getListenPort(), 0, 100);
+
+    ASSERT_EQ(serverStat, SOCK_SUCCESS)
+        << "TCP server startup error: " << strerror(errno) << std::endl
+        << "Port: " << port << std::endl;
 
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
-        this->component.startSocketTask(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.start(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
     }
 
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations; i++) {
-        I32 size = sizeof(m_data_storage);
+        U32 size = sizeof(m_data_storage);
 
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {
             status1 = this->component.open();
         } else {
-            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
+            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
         }
         EXPECT_TRUE(this->component.getSocketHandler().isOpened());
         status2 = server.open();
@@ -84,8 +85,8 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
         }
         // Properly stop the client on the last iteration
         if ((1 + i) == iterations && recv_thread) {
-            this->component.stopSocketTask();
-            this->component.joinSocketTask(nullptr);
+            this->component.stop();
+            this->component.join();
         } else {
             this->component.close();
         }

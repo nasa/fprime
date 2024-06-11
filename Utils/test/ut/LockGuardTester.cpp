@@ -53,23 +53,24 @@ namespace Utils {
     TaskData data;
     data.i = 0;
     Os::Task testTask;
-    Os::Task::TaskStatus stat;
+    Os::Task::Status stat;
     Os::TaskString name("TestTask");
 
     {
       LockGuard guard(data.mutex);
-      stat = testTask.start(name, taskMethod, &data);
-      ASSERT_EQ(stat, Os::Task::TASK_OK);
-      Os::Task::delay(100);
+      Os::Task::Arguments arguments(name, taskMethod, &data);
+      stat = testTask.start(arguments);
+      ASSERT_EQ(stat, Os::Task::OP_OK);
+      Os::Task::delay(Fw::Time(0, 100));
       ASSERT_EQ(data.i, 0);
     }
-    Os::Task::delay(100);
+    Os::Task::delay(Fw::Time(0, 100));
     {
       LockGuard guard(data.mutex);
       ASSERT_EQ(data.i, 1);
     }
-    stat = testTask.join(nullptr);
-    ASSERT_EQ(stat, Os::Task::TASK_OK);
+    stat = testTask.join();
+    ASSERT_EQ(stat, Os::Task::OP_OK);
   }
 
 

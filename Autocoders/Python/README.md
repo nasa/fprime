@@ -136,7 +136,7 @@ Cmake file that is present in all parts of directory tree to be built by cmake. 
 ### Requirements
 
 The Autocoder's requirements are covered by installing the F´ software package. This is covered by the install document 
-found at: [INSTALL.md](../../INSTALL.md).
+found at: [INSTALL.md](../../docs/INSTALL.md).
 
 ## Schematron
 In Autocoders/Python/schema/default there are various schematron .rng files mixed with the normal F Prime RelaxNG .rng schema files. The schematron files validate xml in the same way as the RelaxNG schemas (within the XmlParser classes), but these schematron files will only generate command line errors, not exceptions like the schema files will. Here is a short description of each file:

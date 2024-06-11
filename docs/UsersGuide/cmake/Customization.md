@@ -15,7 +15,7 @@ Adding a utility executable that depends on F prime code is easy. Just perform a
 making this call in order to set the utility's name. This executable will then be output as part
 of the deployment's build. A separate tools deployment may be used to build only utilities.
 
-See: [API](API.md)
+See: [API](cmake-api.md)
 
 ## Custom Build-System Commands (Make Targets)
 
@@ -29,9 +29,9 @@ add targets that don't have both per-module and global steps.
 See:
   - [add_custom_target](https://cmake.org/cmake/help/latest/command/add_custom_target.html) to view
 information on CMake targets.
-  - [Target](support/Target.md) for the format of the target file
-  - [API](API.md) for the syntax of the register call
-  - [dict.cmake](../target/dict.cmake) as an example of adding targets
+  - [Target](Targets.md) for the format of the target file
+  - [API](cmake-api.md) for the syntax of the register call
+  - [F´ standard targets](https://github.com/nasa/fprime/tree/devel/cmake/target) as an example of adding targets
 
 **Example (Raw Global Target):**
 
@@ -64,4 +64,3 @@ version control, and building steps.
 1. [https://cmake.org/cmake/help/latest/command/add_custom_target.html](https://cmake.org/cmake/help/latest/command/add_custom_target.html)
 2. [https://cmake.org/cmake/help/latest/command/add_custom_command.html](https://cmake.org/cmake/help/latest/command/add_custom_command.html)
 3. [https://cmake.org/cmake/help/latest/module/ExternalProject.html](https://cmake.org/cmake/help/latest/module/ExternalProject.html)
-4. [https://blog.kitware.com/wp-content/uploads/2016/01/kitware_quarterly1009.pdf](https://blog.kitware.com/wp-content/uploads/2016/01/kitware_quarterly1009.pdf)

@@ -51,13 +51,19 @@ IpSocket::IpSocket() : m_fd(-1), m_timeoutSeconds(0), m_timeoutMicroseconds(0), 
 }
 
 SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
-    FW_ASSERT(timeout_microseconds < 1000000, timeout_microseconds);
-    FW_ASSERT(port != 0, port);
+    FW_ASSERT(timeout_microseconds < 1000000, static_cast<FwAssertArgType>(timeout_microseconds));
+    FW_ASSERT(this->isValidPort(port));
+    this->m_lock.lock();
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
     this->m_port = port;
     (void) Fw::StringUtils::string_copy(this->m_hostname, hostname, SOCKET_MAX_HOSTNAME_SIZE);
+    this->m_lock.unlock();
     return SOCK_SUCCESS;
+}
+
+bool IpSocket::isValidPort(U16 port) {
+    return true;
 }
 
 SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
@@ -67,8 +73,8 @@ SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
 #else
     // Set timeout socket option
     struct timeval timeout;
-    timeout.tv_sec = this->m_timeoutSeconds;
-    timeout.tv_usec = this->m_timeoutMicroseconds;
+    timeout.tv_sec = static_cast<time_t>(this->m_timeoutSeconds);
+    timeout.tv_usec = static_cast<suseconds_t>(this->m_timeoutMicroseconds);
     // set socket write to timeout after 1 sec
     if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout)) < 0) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
@@ -142,7 +148,9 @@ SocketIpStatus IpSocket::startup() {
 SocketIpStatus IpSocket::open() {
     NATIVE_INT_TYPE fd = -1;
     SocketIpStatus status = SOCK_SUCCESS;
+    this->m_lock.lock();
     FW_ASSERT(m_fd == -1 and not m_open); // Ensure we are not opening an opened socket
+    this->m_lock.unlock();
     // Open a TCP socket for incoming commands, and outgoing data if not using UDP
     status = this->openProtocol(fd);
     if (status != SOCK_SUCCESS) {
@@ -160,8 +168,11 @@ SocketIpStatus IpSocket::open() {
 SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
     U32 total = 0;
     I32 sent  = 0;
+    this->m_lock.lock();
+    NATIVE_INT_TYPE fd = this->m_fd;
+    this->m_lock.unlock();
     // Prevent transmission before connection, or after a disconnect
-    if (this->m_fd == -1) {
+    if (fd == -1) {
         return SOCK_DISCONNECTED;
     }
     // Attempt to send out data and retry as necessary
@@ -182,20 +193,24 @@ SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
             return SOCK_SEND_ERROR;
         }
         FW_ASSERT(sent > 0, sent);
-        total += sent;
+        total += static_cast<U32>(sent);
     }
     // Failed to retry enough to send all data
     if (total < size) {
         return SOCK_INTERRUPTED_TRY_AGAIN;
     }
-    FW_ASSERT(total == size, total, size); // Ensure we sent everything
+    // Ensure we sent everything
+    FW_ASSERT(total == size, static_cast<FwAssertArgType>(total), static_cast<FwAssertArgType>(size));
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::recv(U8* data, I32& req_read) {
+SocketIpStatus IpSocket::recv(U8* data, U32& req_read) {
     I32 size = 0;
     // Check for previously disconnected socket
-    if (m_fd == -1) {
+    this->m_lock.lock();
+    NATIVE_INT_TYPE fd = this->m_fd;
+    this->m_lock.unlock();
+    if (fd == -1) {
         return SOCK_DISCONNECTED;
     }
 
@@ -210,16 +225,16 @@ SocketIpStatus IpSocket::recv(U8* data, I32& req_read) {
         // Zero bytes read reset or bad ef means we've disconnected
         else if (size == 0 || ((size == -1) && ((errno == ECONNRESET) || (errno == EBADF)))) {
             this->close();
-            req_read = size;
+            req_read = static_cast<U32>(size);
             return SOCK_DISCONNECTED;
         }
         // Error returned, and it wasn't an interrupt, nor a disconnect
         else if (size == -1) {
-            req_read = size;
+            req_read = static_cast<U32>(size);
             return SOCK_READ_ERROR;  // Stop recv task on error
         }
     }
-    req_read = size;
+    req_read = static_cast<U32>(size);
     // Prevent interrupted socket being viewed as success
     if (size == -1) {
         return SOCK_INTERRUPTED_TRY_AGAIN;

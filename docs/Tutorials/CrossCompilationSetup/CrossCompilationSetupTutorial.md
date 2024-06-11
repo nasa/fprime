@@ -54,7 +54,7 @@ Next, ensure that the ARM toolchains were installed properly. To test, run the f
 # For  64-bit ARM hardware
 /opt/toolchains/bin/aarch64-none-linux-gnu-gcc -v 
 # For 32-bit ARM hardware
-/opt/toolchains/bin/arm-linux-gnueabi-gcc -v
+/opt/toolchains/bin/arm-none-linux-gnueabihf-gcc -v
 ```
  Any output other than "file/command not found" is good.
 

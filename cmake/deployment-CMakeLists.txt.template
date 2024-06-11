@@ -29,12 +29,12 @@
 # First, the user must call `project` to setup the project and default deployment executable name.
 # Also the project languages "C" and "CXX" (C++) must be supplied.
 #
-# Next, call `cmake_minimum_required` and set VERSION to 3.5 or greater.
+# Next, call `cmake_minimum_required` and set VERSION to 3.16 or greater.
 #
 # **Example:**
 # ```
 # project(Ref C CXX)
-# cmake_minimum_required(VERSION 3.5)
+# cmake_minimum_required(VERSION 3.16)
 # ```
 #
 # ### Section 2: Include F prime Core Build System
@@ -75,7 +75,7 @@
 # Step 1: set <OPTIONAL>
 ##
 project(<OPTIONAL> C CXX)
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.16)
 # Optional: set CMake build type
 
 ##

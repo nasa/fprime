@@ -23,7 +23,7 @@ namespace Fw {
     void QueuedComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
         FW_ASSERT(size > 0);
         FW_ASSERT(buffer != nullptr);
-        PlatformIntType status = snprintf(buffer, size, "QueueComp: %s", this->m_objName.toChar());
+        PlatformIntType status = snprintf(buffer, static_cast<size_t>(size), "QueueComp: %s", this->m_objName.toChar());
         if (status < 0) {
             buffer[0] = 0;
         }
@@ -36,7 +36,7 @@ namespace Fw {
 #if FW_OBJECT_NAMES == 1
         queueName = this->m_objName;
 #else
-        char queueNameChar[FW_QUEUE_NAME_MAX_SIZE];
+        char queueNameChar[FW_QUEUE_NAME_BUFFER_SIZE];
         (void)snprintf(queueNameChar,sizeof(queueNameChar),"CompQ_%d",Os::Queue::getNumQueues());
         queueName = queueNameChar;
 #endif

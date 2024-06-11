@@ -48,7 +48,12 @@ namespace Os {
     NATIVE_UINT_TYPE index = indexes[pQueue->startIndex % depth];
     ++pQueue->startIndex;
     NATIVE_UINT_TYPE diff = pQueue->stopIndex - pQueue->startIndex;
-    FW_ASSERT(diff <= depth, diff, depth, pQueue->stopIndex, pQueue->startIndex);
+    FW_ASSERT(
+      diff <= depth,
+      static_cast<FwAssertArgType>(diff),
+      static_cast<FwAssertArgType>(depth),
+      static_cast<FwAssertArgType>(pQueue->stopIndex),
+      static_cast<FwAssertArgType>(pQueue->startIndex));
     return index;
   }
 
@@ -59,7 +64,12 @@ namespace Os {
     indexes[pQueue->stopIndex % depth] = index;
     ++pQueue->stopIndex;
     NATIVE_UINT_TYPE diff = pQueue->stopIndex - pQueue->startIndex;
-    FW_ASSERT(diff <= depth, diff, depth, pQueue->stopIndex, pQueue->startIndex);
+    FW_ASSERT(
+      diff <= depth,
+      static_cast<FwAssertArgType>(diff),
+      static_cast<FwAssertArgType>(depth),
+      static_cast<FwAssertArgType>(pQueue->stopIndex),
+      static_cast<FwAssertArgType>(pQueue->startIndex));
   }
 
   /////////////////////////////////////////////////////
@@ -88,7 +98,7 @@ namespace Os {
       return false;
     }
     for(NATIVE_UINT_TYPE ii = 0; ii < depth; ++ii) {
-        indexes[ii] = getBufferIndex(ii);
+        indexes[ii] = getBufferIndex(static_cast<NATIVE_INT_TYPE>(ii));
     }
     PriorityQueue* priorityQueue = new(std::nothrow) PriorityQueue;
     if (nullptr == priorityQueue) {

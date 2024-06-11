@@ -23,17 +23,18 @@ SocketReadTask::SocketReadTask() : m_reconnect(false), m_stop(false) {}
 
 SocketReadTask::~SocketReadTask() {}
 
-void SocketReadTask::startSocketTask(const Fw::StringBase &name,
+void SocketReadTask::start(const Fw::StringBase &name,
                                      const bool reconnect,
                                      const Os::Task::ParamType priority,
                                      const Os::Task::ParamType stack,
                                      const Os::Task::ParamType cpuAffinity) {
-    FW_ASSERT(not m_task.isStarted());  // It is a coding error to start this task multiple times
+    FW_ASSERT(m_task.getState() == Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     FW_ASSERT(not this->m_stop);        // It is a coding error to stop the thread before it is started
     m_reconnect = reconnect;
     // Note: the first step is for the IP socket to open the port
-    Os::Task::TaskStatus stat = m_task.start(name, SocketReadTask::readTask, this, priority, stack, cpuAffinity);
-    FW_ASSERT(Os::Task::TASK_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+    Os::Task::Arguments arguments(name, SocketReadTask::readTask, this, priority, stack, cpuAffinity);
+    Os::Task::Status stat = m_task.start(arguments);
+    FW_ASSERT(Os::Task::OP_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
 }
 
 SocketIpStatus SocketReadTask::startup() {
@@ -57,11 +58,11 @@ void SocketReadTask::close() {
     this->getSocketHandler().close();
 }
 
-Os::Task::TaskStatus SocketReadTask::joinSocketTask(void** value_ptr) {
-    return m_task.join(value_ptr);
+Os::Task::Status SocketReadTask::join() {
+    return m_task.join();
 }
 
-void SocketReadTask::stopSocketTask() {
+void SocketReadTask::stop() {
     this->m_stop = true;
     this->getSocketHandler().shutdown();  // Break out of any receives and fully shutdown
 }
@@ -74,16 +75,22 @@ void SocketReadTask::readTask(void* pointer) {
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isStarted()) and (not self->m_stop) and
             ((status = self->startup()) != SOCK_SUCCESS)) {
-            Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
-            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
+            Fw::Logger::logMsg(
+                "[WARNING] Failed to open port with status %d and errno %d\n",
+                static_cast<POINTER_CAST>(status),
+                static_cast<POINTER_CAST>(errno));
+            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
             continue;
         }
 
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isOpened()) and (not self->m_stop) and
             ((status = self->open()) != SOCK_SUCCESS)) {
-            Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
-            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
+            Fw::Logger::logMsg(
+                "[WARNING] Failed to open port with status %d and errno %d\n",
+                static_cast<POINTER_CAST>(status),
+                static_cast<POINTER_CAST>(errno));
+            (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
             continue;
         }
 
@@ -92,11 +99,12 @@ void SocketReadTask::readTask(void* pointer) {
             Fw::Buffer buffer = self->getBuffer();
             U8* data = buffer.getData();
             FW_ASSERT(data);
-            I32 size = static_cast<I32>(buffer.getSize());
-            size = (size >= 0) ? size : MAXIMUM_SIZE; // Handle max U32 edge case
+            U32 size = buffer.getSize();
             status = self->getSocketHandler().recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
-                Fw::Logger::logMsg("[WARNING] Failed to recv from port with status %d and errno %d\n", status, errno);
+                Fw::Logger::logMsg("[WARNING] Failed to recv from port with status %d and errno %d\n",
+                static_cast<POINTER_CAST>(status),
+                static_cast<POINTER_CAST>(errno));
                 self->getSocketHandler().close();
                 buffer.setSize(0);
             } else {

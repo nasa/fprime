@@ -13,10 +13,10 @@
 #ifndef TestUtils_OnChangeChannel_HPP
 #define TestUtils_OnChangeChannel_HPP
 
+#include <FpConfig.hpp>
 #include <cstring>
 
 #include "TestUtils/Option.hpp"
-#include "config/FpConfig.hpp"
 
 namespace TestUtils {
 

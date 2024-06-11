@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <arpa/inet.h>
+#include <IpCfg.hpp>
 
 namespace Drv {
 namespace Test {
@@ -48,7 +49,7 @@ void fill_random_buffer(Fw::Buffer &buffer) {
 }
 
 void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver) {
-    I32 size = MAX_DRV_TEST_MESSAGE_SIZE;
+    U32 size = MAX_DRV_TEST_MESSAGE_SIZE;
     U8 buffer_out[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
     U8 buffer_in[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
 
@@ -56,7 +57,7 @@ void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver) {
     Drv::Test::fill_random_data(buffer_out, MAX_DRV_TEST_MESSAGE_SIZE);
     EXPECT_EQ(sender.send(buffer_out, MAX_DRV_TEST_MESSAGE_SIZE), Drv::SOCK_SUCCESS);
     EXPECT_EQ(receiver.recv(buffer_in, size), Drv::SOCK_SUCCESS);
-    EXPECT_EQ(size, static_cast<I32>(MAX_DRV_TEST_MESSAGE_SIZE));
+    EXPECT_EQ(size, static_cast<U32>(MAX_DRV_TEST_MESSAGE_SIZE));
     Drv::Test::validate_random_data(buffer_out, buffer_in, MAX_DRV_TEST_MESSAGE_SIZE);
 }
 
@@ -65,7 +66,7 @@ bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations) {
         if (open == socket.isOpened()) {
             return true;
         }
-        Os::Task::delay(10);
+        Os::Task::delay(Fw::Time(0, 10000));
     }
     return false;
 }
@@ -75,9 +76,14 @@ bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations) {
         if (open == socket.isStarted()) {
             return true;
         }
-        Os::Task::delay(10);
+        Os::Task::delay(Fw::Time(0, 10000));
     }
     return false;
+}
+
+U64 get_configured_delay_ms() {
+    return (static_cast<U64>(SOCKET_RETRY_INTERVAL.getSeconds()) * 1000) +
+           (static_cast<U64>(SOCKET_RETRY_INTERVAL.getUSeconds()) / 1000);
 }
 
 };

@@ -68,6 +68,8 @@ build-fprime-automatic*
 /RPI/bin
 /ci-venv/
 /ci-logs*
+/ci-Framework-logs*
+/ci-Ref-logs*
 TesterBase.*
 GTestBase.*
 **/DefaultDict/serializable/*

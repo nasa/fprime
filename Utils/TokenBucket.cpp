@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  TokenBucket.cpp
 // \author vwong
 // \brief  cpp file for a rate limiter utility class
@@ -9,7 +9,7 @@
 //
 // ALL RIGHTS RESERVED. United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #include <Utils/TokenBucket.hpp>
 
@@ -42,7 +42,7 @@ namespace Utils {
       m_tokens(maxTokens),
       m_time(0, 0)
   {
-    FW_ASSERT(this->m_maxTokens <= MAX_TOKEN_BUCKET_TOKENS, this->m_maxTokens);
+    FW_ASSERT(this->m_maxTokens <= MAX_TOKEN_BUCKET_TOKENS, static_cast<FwAssertArgType>(this->m_maxTokens));
   }
 
   void TokenBucket ::

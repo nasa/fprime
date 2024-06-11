@@ -5,6 +5,8 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+restrict_platforms(Posix)
+
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/TcpServer.fpp"
 	"${CMAKE_CURRENT_LIST_DIR}/TcpServerComponentImpl.cpp"
@@ -27,7 +29,7 @@ set(UT_SOURCE_FILES
 )
 set(UT_MOD_DEPS
 	STest
-	PortSelector
+	SocketTestHelper
 )
 set(UT_AUTO_HELPERS ON)
 register_fprime_ut()

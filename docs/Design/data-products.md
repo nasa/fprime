@@ -2,7 +2,10 @@
 
 ## 1. Introduction
 
-F' provides several features for managing the generation, storage,
+A **data product** is any data that is produced by an embedded
+system, stored on board the system, and transmitted to the ground,
+typically in priority order.
+F Prime provides several features for managing the generation, storage,
 and downlink of data products.
 In this section, we document those features.
 
@@ -12,7 +15,7 @@ First we explain some basic concepts.
 
 ### 2.1. Records, Containers, and Dictionaries
 
-F' data products are based on **records** and **containers**.
+F Prime data products are based on **records** and **containers**.
 A record is a basic unit of data.
 For example, it may be a struct, an array of typed objects of
 statically known size, or an array of bytes of statically unknown size.
@@ -21,11 +24,11 @@ In C++, a container is represented as a class object with member fields that
 (1) store header data and (2) store an `Fw::Buffer` object pointing
 to the memory that stores the records.
 
-The set of all containers forms the **data product dictionary**.
+The set of all container specifications forms the **data product dictionary**.
 To manage the data product dictionary, F Prime uses the same general approach
 as for commands, telemetry, events, and parameters:
 
-1. Each component _C_ defines records and containers.
+1. Each component _C_ specifies records and containers.
 The container IDs are local to _C_.
 Typically they have the values 0, 1, 2, ... .
 
@@ -36,12 +39,12 @@ the local identifier for _c_.
 For example, if the base identifier is 0x1000, then the global identifiers
 might be 0x1000, 0x1001, 0x1002, ... .
 
-3. For any topology _T_, the global identifiers _I.c_ for all the instances _T_
-form the data product dictionary for _T_.
+3. For any topology _T_, the global identifiers _I.c_ for all the component
+instances of _T_ form the data product dictionary for _T_.
 
-### 2.2. F' Components
+### 2.2. F Prime Components
 
-Typically a data product system in an F' application consists of the following
+Typically a data product system in an F Prime application consists of the following
 components:
 
 1. One or more **data product producers**.
@@ -63,15 +66,15 @@ components:
    1. A **data product catalog**.
       This component maintains a database of available data
       products. By command, it downlinks and deletes data products.
-      See TODO.
+      See [`Svc::DpCatalog`](../../Svc/DpCatalog/docs/sdd.md).
 
    1. A **data product processor**.
-      This component performs in-memory processing on data
+      This component is not yet developed.
+      When it is developed, it will perform in-memory processing on data
       product containers.
-      See TODO.
 
 Note that when using data products, you need to develop only the
-producer components. The other components are provided by F'.
+producer components. The other components are provided by F Prime.
 
 ## 3. Producer Components
 
@@ -84,8 +87,9 @@ as often as necessary:
 
 1. Request a container from a data manager component.
 
-2. When the container is received, fill the container with
-data by serializing records into the container.
+2. When the container is received, serialize records into the
+container.
+This action fills the container with data.
 
 3. When the container is full, send the container to the
 data product manager, which forwards it to the data
@@ -99,8 +103,9 @@ We discuss these features in the following sections.
 
 In this section we summarize the features of the FPP modeling
 language used in constructing data product producer components.
-Each of these features is fully documented in _The FPP User's Guide_
-and _The FPP Language Specification_.
+Each of these features is fully documented in
+[_The FPP User's Guide_](https://nasa.github.io/fpp/fpp-users-guide.html)
+and [_The FPP Language Specification_](https://nasa.github.io/fpp/fpp-spec.html).
 
 #### 3.2.1. Ports
 
@@ -220,8 +225,8 @@ For the serialized format of each record, see the documentation
 for [`Fw::DpContainer`](../../Fw/Dp/docs/sdd.md).
 
 1. If _C_ has a `product` `get` port, a member function `dpGet_`
-_c_ for each container defined in _C_.
-This function takes a container ID, a data size, and a reference
+_c_ for each container _c_ defined in _C_.
+This function takes a data size and a reference
 to a data product container _D_.
 It invokes `productGetOut`, which is typically connected
 to a data product manager component.
@@ -232,8 +237,8 @@ It returns a status value indicating whether the buffer
 allocation succeeded.
 
 1. If _C_ has a `product` `request` port, a member function
-`dpRequest_` _c_ for each container defined in _C_.
-This function takes a container ID and a data size.
+`dpRequest_` _c_ for each container _c_ defined in _C_.
+This function takes a data size.
 It sends out a request on `productRequestOut`, which is
 typically connected to a data product manager component.
 The request is for a buffer large enough to store a data
@@ -266,6 +271,24 @@ It does the following:
    1. Store the time tag into _c_.
 
    1. Send _c_ on `productSendOut`.
+
+1. Constant expressions representing the sizes of the records.
+
+   1. If a record _R_ holds a single value, then
+      the expression `SIZE_OF_` _R_ `_RECORD`
+      evaluates to the size of that record.
+
+   1. Otherwise _R_ is an array record. In this case
+      the expression `SIZE_OF_` _R_ `_RECORD(` _size_ `)`
+      evaluates to the size of an array record _R_ with
+      _size_ array elements.
+
+   You can use these expressions to compute data sizes
+   when requesting data product buffers. For example,
+   if a component specifies a record `Image`,
+   then inside the component implementation the expression
+   `10 * SIZE_OF_Image_RECORD` represents the size of the
+   storage necessary to hold 10 `Image` records.
 
 ### 3.4. Unit Test Support
 
@@ -440,7 +463,8 @@ The component referred to as `producer` in that document
 is a data product producer.
 
 **Cataloging and downlinking data products:**
-TODO
+For a preliminary implementation of the data product catalog,
+see [`Svc::DpCatalog`](../../Svc/DpCatalog/docs/sdd.md).
 
 **Processing data products:**
 TODO

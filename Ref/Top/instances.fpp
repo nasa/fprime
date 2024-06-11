@@ -87,7 +87,23 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 96
 
-  instance typeDemo: Ref.TypeDemo base id 0x0E00
+  instance dpCat: Svc.DpCatalog base id 0x0E00 \
+    queue size Default.QUEUE_SIZE \
+    stack size Default.STACK_SIZE \
+    priority 96
+
+  instance dpMgr: Svc.DpManager base id 0x0F00 \
+    queue size Default.QUEUE_SIZE \
+    stack size Default.STACK_SIZE \
+    priority 96
+
+  instance dpWriter: Svc.DpWriter base id 0x1000 \
+    queue size Default.QUEUE_SIZE \
+    stack size Default.STACK_SIZE \
+    priority 96
+
+
+  instance typeDemo: Ref.TypeDemo base id 0x1100
 
   # ----------------------------------------------------------------------
   # Queued component instances
@@ -143,5 +159,7 @@ module Ref {
   instance uplink: Svc.Deframer base id 0x4A00
 
   instance systemResources: Svc.SystemResources base id 0x4B00
+
+  instance dpBufferManager: Svc.BufferManager base id 0x4C00
 
 }

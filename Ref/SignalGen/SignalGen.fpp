@@ -35,26 +35,27 @@ module Ref {
     # Special ports
     # ----------------------------------------------------------------------
 
+    @ Data product get port
+    product get port productGetOut
+
+    @ Data product request port
+    product request port productRequestOut
+
+    @ Data product receive port
+    async product recv port productRecvIn
+
+    @ Data product send port
+    product send port productSendOut
+
     @ Time get port
     time get port timeCaller
 
-    @ Command registration port
-    command reg port cmdRegOut
+    @ Signal generation data product record
+    product record DataRecord: SignalInfo id 0
 
-    @ Command received port
-    command recv port cmdIn
+    @ Data product container
+    product container DataContainer id 0 default priority 10
 
-    @ Command response port
-    command resp port cmdResponseOut
-
-    @ Text event port
-    text event port logTextOut
-
-    @ Event port
-    event port logOut
-
-    @ Telemetry port
-    telemetry port tlmOut
 
     # ----------------------------------------------------------------------
     # Commands
@@ -73,6 +74,13 @@ module Ref {
     # ----------------------------------------------------------------------
 
     include "Events.fppi"
+
+    # ----------------------------------------------------------------------
+    # Interfaces
+    # ----------------------------------------------------------------------
+    include "../../Fw/Interfaces/EventsInterface.fppi"
+    include "../../Fw/Interfaces/CommandInterface.fppi"
+    include "../../Fw/Interfaces/ChannelInterface.fppi"
 
   }
 

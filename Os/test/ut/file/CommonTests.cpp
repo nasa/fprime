@@ -1,5 +1,5 @@
 // ======================================================================
-// \title Os/test/ut/file/CommonFileTests.cpp
+// \title Os/test/ut/file/CommonTests.cpp
 // \brief common test implementations
 // ======================================================================
 #include "Os/test/ut/file/CommonTests.hpp"
@@ -268,9 +268,7 @@ TEST_F(FunctionalIO, Preallocate) {
 // Randomized testing on the interfaces
 TEST_F(Functionality, RandomizedInterfaceTesting) {
     // Enumerate all rules and construct an instance of each
-    Os::Test::File::Tester::OpenFileCreate open_file_create_rule(true);
     Os::Test::File::Tester::OpenFileCreateOverwrite open_file_create_overwrite_rule(true);
-    Os::Test::File::Tester::OpenForWrite open_for_write_rule(true);
     Os::Test::File::Tester::CloseFile close_file_rule;
     Os::Test::File::Tester::CopyConstruction copy_construction;
     Os::Test::File::Tester::CopyAssignment copy_assignment;
@@ -294,9 +292,7 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::File::Tester>* rules[] = {
-            &open_file_create_rule,
             &open_file_create_overwrite_rule,
-            &open_for_write_rule,
             &close_file_rule,
             &copy_assignment,
             &copy_construction,

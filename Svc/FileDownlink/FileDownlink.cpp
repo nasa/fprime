@@ -67,7 +67,7 @@ namespace Svc {
 
     Os::Queue::QueueStatus stat = m_fileQueue.create(
       Os::QueueString("fileDownlinkQueue"),
-      fileQueueDepth,
+      static_cast<NATIVE_INT_TYPE>(fileQueueDepth),
       sizeof(struct FileEntry)
     );
     FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
@@ -149,8 +149,8 @@ namespace Svc {
   Svc::SendFileResponse FileDownlink ::
     SendFile_handler(
         const NATIVE_INT_TYPE portNum,
-        const sourceFileNameString& sourceFilename, // lgtm[cpp/large-parameter] dictated by command architecture
-        const destFileNameString& destFilename, // lgtm[cpp/large-parameter] dictated by command architecture
+        const Fw::StringBase& sourceFilename, // lgtm[cpp/large-parameter] dictated by command architecture
+        const Fw::StringBase& destFilename, // lgtm[cpp/large-parameter] dictated by command architecture
         U32 offset,
         U32 length
     )
@@ -477,7 +477,10 @@ namespace Svc {
   {
     const U32 bufferSize = filePacket.bufferSize();
     FW_ASSERT(this->m_buffer.getData() != nullptr);
-    FW_ASSERT(this->m_buffer.getSize() >= bufferSize, bufferSize, this->m_buffer.getSize());
+    FW_ASSERT(
+      this->m_buffer.getSize() >= bufferSize,
+      static_cast<FwAssertArgType>(bufferSize),
+      static_cast<FwAssertArgType>(this->m_buffer.getSize()));
     const Fw::SerializeStatus status = filePacket.toBuffer(this->m_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // set the buffer size to the packet size

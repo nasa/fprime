@@ -55,7 +55,7 @@ The iterated and random scenarios allow you to construct complex tests that expl
 
 ### Use in F Prime
 
-At present, F Prime uses STest for unit testing of components. Examples include [Svc/GroundInterface](https://github.com/nasa/fprime/blob/master/Svc/GroundInterface/test/ut/GroundInterfaceRules.cpp) and [Fw/Logger](https://github.com/nasa/fprime/blob/master/Fw/Logger/test/ut/LoggerRules.cpp). The main scenarios used here are
+At present, F Prime uses STest for unit testing of components. An example is [Fw/Logger](https://github.com/nasa/fprime/blob/master/Fw/Logger/test/ut/LoggerRules.cpp). The main scenarios used here are
 as follows:
 
 * Short sequences of rules that set up the system state and then test a particular rule.

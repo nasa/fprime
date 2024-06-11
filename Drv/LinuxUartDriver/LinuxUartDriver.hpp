@@ -72,20 +72,20 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
     enum UartParity { PARITY_NONE, PARITY_ODD, PARITY_EVEN };
 
     // Open device with specified baud and flow control.
-    bool open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, NATIVE_INT_TYPE allocationSize);
+    bool open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, U32 allocationSize);
 
     //! start the serial poll thread.
     //! buffSize is the max receive buffer size
     //!
-    void startReadThread(NATIVE_UINT_TYPE priority = Os::Task::TASK_DEFAULT,
-                         NATIVE_UINT_TYPE stackSize = Os::Task::TASK_DEFAULT,
-                         NATIVE_UINT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT);
+    void start(Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
+               Os::Task::ParamType stackSize = Os::Task::TASK_DEFAULT,
+               Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
 
     //! Quit thread
     void quitReadThread();
 
     //! Join thread
-    Os::Task::TaskStatus join(void** value_ptr);
+    Os::Task::Status join();
 
     //! Destroy object LinuxUartDriver
     //!
@@ -103,7 +103,7 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
 
 
     NATIVE_INT_TYPE m_fd;  //!< file descriptor returned for I/O device
-    NATIVE_INT_TYPE m_allocationSize; //!< size of allocation request to memory manager
+    U32 m_allocationSize; //!< size of allocation request to memory manager
     const char* m_device;  //!< original device path
 
     //! This method will be called by the new thread to wait for input on the serial port.

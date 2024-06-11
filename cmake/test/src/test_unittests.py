@@ -50,7 +50,6 @@ UNIT_TESTS = [
     "Svc_FileUplink_ut_exe",
     "Svc_Framer_ut_exe",
     "Svc_GenericHub_ut_exe",
-    "Svc_GroundInterface_ut_exe",
     "Svc_Health_ut_exe",
     "Svc_PosixTime_ut_exe",
     "Svc_LinuxTimer_ut_exe",
@@ -131,7 +130,15 @@ def test_unittest_module_ut_info(UT_BUILD):
     assert sorted(["SignalGenTester.cpp", "SignalGenTestMain.cpp"]) == sorted(
         [Path(source).name for source in sources]
     ), "Did not find expected sources"
-    expected_ac = ["SignalGen.fpp", "Commands.fppi", "Events.fppi", "Telemetry.fppi"]
+    expected_ac = [
+        "SignalGen.fpp",
+        "Commands.fppi",
+        "Events.fppi",
+        "Telemetry.fppi",
+        "CommandInterface.fppi",
+        "ChannelInterface.fppi",
+        "EventsInterface.fppi",
+    ]
     actual_ac = [Path(source).name for source in ac_sources]
     assert sorted(expected_ac) == sorted(
         actual_ac

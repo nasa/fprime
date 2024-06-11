@@ -64,11 +64,12 @@ namespace Svc {
     this->m_maxFileSize = maxFileSize;
     this->m_storeBufferLength = storeBufferLength;
     if( this->m_storeBufferLength ) {
-      FW_ASSERT(maxFileSize > sizeof(U16), maxFileSize);
+      FW_ASSERT(maxFileSize > sizeof(U16), static_cast<FwAssertArgType>(maxFileSize));
     }
 
     FW_ASSERT(Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->m_filePrefix)) < sizeof(this->m_filePrefix),
-      Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->m_filePrefix)), sizeof(this->m_filePrefix)); // ensure that file prefix is not too big
+      static_cast<FwAssertArgType>(Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->m_filePrefix))),
+      static_cast<FwAssertArgType>(sizeof(this->m_filePrefix))); // ensure that file prefix is not too big
 
     (void)Fw::StringUtils::string_copy(this->m_filePrefix, incomingFilePrefix, sizeof(this->m_filePrefix));
 
@@ -118,14 +119,14 @@ namespace Svc {
     U32 size32 = data.getBuffLength();
     // ComLogger only writes 16-bit sizes to save space
     // on disk:
-    FW_ASSERT(size32 < 65536, size32);
+    FW_ASSERT(size32 < 65536, static_cast<FwAssertArgType>(size32));
     U16 size = size32 & 0xFFFF;
 
     // Close the file if it will be too big:
     if( OPEN == this->m_fileMode ) {
       U32 projectedByteCount = this->m_byteCount + size;
       if( this->m_storeBufferLength ) {
-        projectedByteCount += sizeof(size);
+        projectedByteCount += static_cast<U32>(sizeof(size));
       }
       if( projectedByteCount > this->m_maxFileSize ) {
         this->closeFile();
@@ -179,16 +180,29 @@ namespace Svc {
     // Create filename:
     Fw::Time timestamp = getTime();
     memset(this->m_fileName, 0, sizeof(this->m_fileName));
-    bytesCopied = snprintf(this->m_fileName, sizeof(this->m_fileName), "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com",
-      this->m_filePrefix, static_cast<FwTimeBaseStoreType>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds());
+    bytesCopied = static_cast<U32>(snprintf(
+      this->m_fileName,
+      sizeof(this->m_fileName),
+      "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com",
+      this->m_filePrefix,
+      static_cast<FwTimeBaseStoreType>(timestamp.getTimeBase()),
+      timestamp.getSeconds(),
+      timestamp.getUSeconds()));
 
     // "A return value of size or more means that the output was truncated"
     // See here: http://linux.die.net/man/3/snprintf
     FW_ASSERT( bytesCopied < sizeof(this->m_fileName) );
 
     // Create sha filename:
-    bytesCopied = snprintf(this->m_hashFileName, sizeof(this->m_hashFileName), "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com%s",
-      this->m_filePrefix, static_cast<FwTimeBaseStoreType>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds(), Utils::Hash::getFileExtensionString());
+    bytesCopied = static_cast<U32>(snprintf(
+      this->m_hashFileName,
+      sizeof(this->m_hashFileName),
+      "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com%s",
+      this->m_filePrefix,
+      static_cast<FwTimeBaseStoreType>(timestamp.getTimeBase()),
+      timestamp.getSeconds(),
+      timestamp.getUSeconds(),
+      Utils::Hash::getFileExtensionString()));
     FW_ASSERT( bytesCopied < sizeof(this->m_hashFileName) );
 
     Os::File::Status ret = m_file.open(this->m_fileName, Os::File::OPEN_WRITE);
@@ -268,7 +282,7 @@ namespace Svc {
       if( !this->m_writeErrorOccurred ) { // throttle this event, otherwise a positive
                                         // feedback event loop can occur!
         Fw::LogStringArg logStringArg(this->m_fileName);
-        this->log_WARNING_HI_FileWriteError(ret, size, length, logStringArg);
+        this->log_WARNING_HI_FileWriteError(ret, static_cast<U32>(size), length, logStringArg);
       }
       this->m_writeErrorOccurred = true;
       return false;
