@@ -18,7 +18,7 @@ class MutexInterface {
     virtual ~MutexInterface() = default;
 
     //! \brief copy constructor is forbidden
-    MutexInterface(const MutexInterface& other) = delete;
+    MutexInterface(const MutexInterface& other);
 
     //! \brief assignment operator is forbidden
     MutexInterface& operator=(const MutexInterface& other) = delete;

@@ -11,8 +11,8 @@ namespace Posix {
 namespace Mutex {
 
 struct PosixMutexHandle : public MutexHandle {
-    static constexpr PlatformIntType INVALID_MUTEX_DESCRIPTOR = -1;
-    PlatformIntType m_mutex_descriptor = INVALID_MUTEX_DESCRIPTOR;  // TODO: is m_mutex_descriptor what we want?
+    static constexpr POINTER_CAST INVALID_MUTEX_DESCRIPTOR = 0;
+    POINTER_CAST m_mutex_descriptor = INVALID_MUTEX_DESCRIPTOR;  // TODO: is m_mutex_descriptor what we want?
 };
 
 //! \brief Posix implementation of Os::Mutex
