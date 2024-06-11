@@ -100,9 +100,7 @@ def create_version_file_cpp(output_dir, framework_version, project_version):
         #fid.write("#endif\n")
 
 
-def create_version_file_json(
-    output_dir: str, framework_version: str, project_version: str, lib_versions: dict
-):
+def create_version_file_json(output_dir: str, framework_version: str, project_version: str, lib_versions: dict):
     """
     Create the version files using the provided name and path.
     """
