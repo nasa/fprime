@@ -119,7 +119,7 @@ get the submission moving forward.
 ### Automated Checks on Reference Repositories
 
 Some of the above-mentioned automated checks run on reference applications that are not part of the core F´ repository, such as our [tutorial repositories](https://github.com/fprime-community#tutorials). This serves two main purposes: running more tests, and making sure our suite of reference applications and tutorials do not go out-of-date.
-Because of this pattern, users who submit a pull request which introduces breaking changes on _how_ F´ is used in those external repositories will need to submit associated pull requests to introduce a fix on said external repositories. 
+Because of this pattern, users who submit a pull request which introduces breaking changes on _how_ F´ is used in those external repositories will need to submit associated pull requests to introduce a fix on said external repositories.
 
 The checks are configured to run on the `devel` branch of each external repository, but will prioritize the branch `pr-<PR_NUMBER>` if it exists, with `PR_NUMBER` being the number of the pull request that has been opened in nasa/fprime.
 
@@ -150,3 +150,49 @@ tools this can increase the effort required to review a submission. Be careful w
 The automatic checking system will run all our unit tests and integration tests across several systems. However, this
 process will take time. Try to run the unit tests locally during development before submitting a PR and use the
 automatic checks as a safety net.
+
+The tests can be run using the following commands:
+
+```bash
+# Go into the fprime directory
+cp MY_FPRIME_DIRECTORY
+
+# Run CI tests on fprime
+./ci/tests/Framework.bash
+
+# Run CI tests on the reference application
+./ci/tests/Ref.bash
+
+# Run the static analyzer with the basic configuration
+# Purge unit test directory
+fprime-util purge
+# Generate the build files for clang-tidy. Make sure clang-tidy is installed.
+fprime-util generate --ut -DCMAKE_CXX_CLANG_TIDY=clang-tidy-12
+# Build fprime with the static analyzer
+fprime-util build --all --ut -j16
+
+# Run the static analyzer with additional flight code checks
+# Purge release directory
+fprime-util purge
+# Generate the build files for clang-tidy. Make sure clang-tidy is installed.
+fprime-util generate -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
+# Build fprime with the static analyzer
+fprime-util build --all -j16
+```
+
+## Development with modified FPP version
+
+In case FPP needs to be locally changed, first uninstall all `fprime-fpp-*` `pip` packages, and install FPP
+using the procedure mentioned in the [FPP readme](https://github.com/nasa/fpp/blob/main/compiler/README.adoc).
+
+Then, `fprime-util generate` needs to be run using `-DFPRIME_SKIP_TOOLS_VERSION_CHECK=1`
+
+For example, to generate and build F´:
+```bash
+# Go into the fprime directory
+cp MY_FPRIME_DIRECTORY
+# Generate the build files without checking the FPP version
+fprime-util generate -DFPRIME_SKIP_TOOLS_VERSION_CHECK=1
+# Build the project
+fprime-util build -j4
+```

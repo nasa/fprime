@@ -109,7 +109,15 @@ def test_ref_module_info(REF_BUILD):
     assert ["SignalGen.cpp"] == [
         Path(source).name for source in sources
     ], "Did not find expected sources"
-    expected_ac = ["SignalGen.fpp", "Commands.fppi", "Events.fppi", "Telemetry.fppi"]
+    expected_ac = [
+        "SignalGen.fpp",
+        "Commands.fppi",
+        "Events.fppi",
+        "Telemetry.fppi",
+        "CommandInterface.fppi",
+        "ChannelInterface.fppi",
+        "EventsInterface.fppi",
+    ]
     actual_ac = [Path(source).name for source in ac_sources]
     assert sorted(expected_ac) == sorted(
         actual_ac

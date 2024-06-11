@@ -79,12 +79,14 @@ namespace Fw {
     SerializeStatus status;
 
     status = this->m_header.toSerialBuffer(serialBuffer);
-    if (status != FW_SERIALIZE_OK)
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
 
     status = serialBuffer.serialize(this->m_checksumValue);
-    if (status != FW_SERIALIZE_OK)
+    if (status != FW_SERIALIZE_OK) {
       return status;
+    }
 
     return FW_SERIALIZE_OK;
 

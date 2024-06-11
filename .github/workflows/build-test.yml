@@ -95,10 +95,12 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install clang-tidy-12
+    # Uses the default configuration file (.clang-tidy)
     - name: General Static Analysis
       run: |
         fprime-util generate --ut -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY=clang-tidy-12
         fprime-util build --all --ut
+    # Uses the release configuration file (release.clang-tidy)
     - name: Flight Code Static Analysis
       run: |
         fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"

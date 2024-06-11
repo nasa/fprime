@@ -7,7 +7,6 @@
 #include <Drv/Ip/IpSocket.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 
 Os::Log logger;
@@ -17,8 +16,7 @@ void test_with_loop(U32 iterations) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    U16 port =  Drv::Test::get_free_port();
-    ASSERT_NE(0, port);
+    U16 port = 0; // Choose a port
     Drv::TcpServerSocket server;
     server.configure("127.0.0.1", port, 0, 100);
     EXPECT_EQ(server.startup(), Drv::SOCK_SUCCESS);
@@ -27,8 +25,7 @@ void test_with_loop(U32 iterations) {
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations; i++) {
         Drv::TcpClientSocket client;
-        ASSERT_NE(port, 0);
-        client.configure("127.0.0.1",port,0,100);
+        client.configure("127.0.0.1", server.getListenPort(),0,100);
         status1 = client.open();
         EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
 

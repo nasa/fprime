@@ -9,6 +9,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Com/ComPacket.hpp>
 #include <Os/Stub/test/File.hpp>
+#include <Os/Delegate.hpp>
 #include <cstdio>
 #include <gtest/gtest.h>
 
@@ -630,24 +631,14 @@ namespace Svc {
 } /* namespace Svc */
 
 namespace Os {
-//! Overrides the default delegate function with this one as it is defined in the local compilation archive
-//! \param aligned_placement_new_memory: memory to fill
-//! \param to_copy: possible copy
-//! \return: new interceptor
-FileInterface *FileInterface::getDelegate(U8 *aligned_placement_new_memory, const FileInterface* to_copy) {
-    FW_ASSERT(aligned_placement_new_memory != nullptr);
-    const Svc::PrmDbImplTester::PrmDbTestFile* copy_me =
-            reinterpret_cast<const Svc::PrmDbImplTester::PrmDbTestFile*>(to_copy);
-    // Placement-new the file handle into the opaque file-handle storage
-    static_assert(sizeof(Svc::PrmDbImplTester::PrmDbTestFile) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
-    static_assert((FW_HANDLE_ALIGNMENT % alignof(Svc::PrmDbImplTester::PrmDbTestFile)) == 0, "Handle alignment invalid");
-    Svc::PrmDbImplTester::PrmDbTestFile *interface = nullptr;
-    if (to_copy == nullptr) {
-        interface = new(aligned_placement_new_memory) Svc::PrmDbImplTester::PrmDbTestFile;
-    } else {
-        interface = new(aligned_placement_new_memory) Svc::PrmDbImplTester::PrmDbTestFile(*copy_me);
-    }
-    FW_ASSERT(interface != nullptr);
-    return interface;
+
+//! \brief get a delegate for FileInterface that intercepts calls for parameter database testing
+//! \param aligned_new_memory: aligned memory to fill
+//! \param to_copy: pointer to copy-constructor input
+//! \return: pointer to delegate
+FileInterface *FileInterface::getDelegate(HandleStorage& aligned_placement_new_memory, const FileInterface* to_copy) {
+    return Os::Delegate::makeDelegate<FileInterface, Svc::PrmDbImplTester::PrmDbTestFile>(
+            aligned_placement_new_memory, to_copy
+    );
 }
 }

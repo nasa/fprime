@@ -7,6 +7,7 @@
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/String.hpp>
+#include <Fw/Types/StringTemplate.hpp>
 #include <Os/InterruptLock.hpp>
 #include <Os/IntervalTimer.hpp>
 //
@@ -607,6 +608,14 @@ TEST(SerializationTest, Serialization1) {
     str1.serialize(buff);
     str2.deserialize(buff);
     ASSERT_EQ(str1, str2);
+
+    // serialize string template
+    Fw::StringTemplate<80> strTmpl1("Foo");
+    Fw::StringTemplate<80> strTmpl2("Bar");
+    buff.resetSer();
+    strTmpl1.serialize(buff);
+    strTmpl2.deserialize(buff);
+    ASSERT_EQ(strTmpl1, strTmpl2);
 }
 
 struct TestStruct {
@@ -1295,6 +1304,67 @@ TEST(OffNominal, string_len_zero) {
     const char* test_string = "abc123";
     ASSERT_EQ(Fw::StringUtils::string_length(test_string, 0), 0);
 }
+
+TEST(OffNominal, sub_string_no_match) {
+    const char* source_string = "abc123";
+    const char* sub_string = "456";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+}
+
+TEST(Nominal, sub_string_match_begin) {
+    const char* source_string = "abc123";
+    const char* sub_string = "abc";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),0);
+}
+
+TEST(Nominal, sub_string_match_end) {
+    const char* source_string = "abc123";
+    const char* sub_string = "123";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),3);
+}
+
+TEST(Nominal, sub_string_match_partway_1) {
+    const char* source_string = "abc123";
+    const char* sub_string = "c12";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),2);
+}
+
+TEST(OffNominal, sub_string_partial_match_begin) {
+    const char* source_string = "abc123";
+    const char* sub_string = "ab1";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+}
+
+TEST(OffNominal, sub_string_partial_match_middle) {
+    const char* source_string = "abc123";
+    const char* sub_string = "c13";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+}
+
+TEST(OffNominal, sub_string_partial_match_end) {
+    const char* source_string = "abc123";
+    const char* sub_string = "234";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+}
+
+TEST(Nominal, sub_string_exact_match) {
+    const char* source_string = "abc123";
+    const char* sub_string = "abc123";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),0);
+}
+
+TEST(OffNominal, sub_string_source_zero_size) {
+    const char* source_string = "";
+    const char* sub_string = "234";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,0,sub_string,3),-1);
+}
+
+TEST(OffNominal, sub_string_substring_zero_size) {
+    const char* source_string = "abc123";
+    const char* sub_string = "";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,0),0);
+}
+
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

@@ -57,22 +57,28 @@ namespace Fw {
     {
       const SerializeStatus status =
         serialBuffer.deserialize(this->m_fileSize);
-      if (status != FW_SERIALIZE_OK)
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
         this->m_sourcePath.fromSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
         this->m_destinationPath.fromSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     return FW_SERIALIZE_OK;
@@ -88,29 +94,37 @@ namespace Fw {
     {
       const SerializeStatus status =
         this->m_header.toSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
         serialBuffer.serialize(this->m_fileSize);
-      if (status != FW_SERIALIZE_OK)
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
         this->m_sourcePath.toSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     {
       const SerializeStatus status =
         this->m_destinationPath.toSerialBuffer(serialBuffer);
-      if (status != FW_SERIALIZE_OK)
+
+      if (status != FW_SERIALIZE_OK) {
         return status;
+      }
     }
 
     return FW_SERIALIZE_OK;

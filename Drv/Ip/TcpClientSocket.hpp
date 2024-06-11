@@ -31,6 +31,18 @@ class TcpClientSocket : public IpSocket {
     TcpClientSocket();
   PROTECTED:
     /**
+     * \brief Check if the given port is valid for the socket
+     *
+     * Some ports should be allowed for sockets and disabled on others (e.g. port 0 is a valid tcp server port but not a
+     * client. This will check the port and return "true" if the port is valid, or "false" otherwise. In the tcp client
+     * implementation, all ports are considered valid except for "0".
+     *
+     * \param port: port to check
+     * \return true if valid, false otherwise
+     */
+    bool isValidPort(U16 port) override;
+
+    /**
      * \brief Tcp specific implementation for opening a client socket.
      * \param fd: (output) file descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
      * \return status of open

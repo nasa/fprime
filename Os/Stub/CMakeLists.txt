@@ -18,6 +18,7 @@ if (NOT BUILD_TESTING)
     return()
 endif ()
 
+#### File Stub Testing ####
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/DefaultFile.cpp"
@@ -38,3 +39,26 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/File Os_File_Test_Stub)
 register_fprime_ut(StubFileTest)
+
+
+#### Task Stub Testing ####
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/Task.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/DefaultTask.cpp"
+)
+register_fprime_module(Os_Task_Test_Stub)
+register_fprime_implementation(Os/Task Os_Task_Test_Stub)
+
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubTaskTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/CommonTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/TaskRules.cpp"
+)
+set(UT_MOD_DEPS
+        Fw/Time
+        Os
+        Os_Models
+        STest
+)
+choose_fprime_implementation(Os/Task Os_Task_Test_Stub)
+register_fprime_ut(StubTaskTest)
