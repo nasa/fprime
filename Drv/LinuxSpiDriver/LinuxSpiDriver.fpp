@@ -3,10 +3,10 @@ module Drv {
   passive component LinuxSpiDriver {
 
     # ----------------------------------------------------------------------
-    # General ports
+    # Interfaces
     # ----------------------------------------------------------------------
-
-    sync input port SpiReadWrite: Drv.SpiReadWrite
+    
+    include "../../Drv/Interfaces/SpiInterface.fppi"
 
     # ----------------------------------------------------------------------
     # Special ports
