@@ -10,7 +10,7 @@
 #define DEVICESM_H_
 
 namespace Fw {
-    class SMEvents;
+  class SMEvents;
 }
 
 namespace FppTest {
