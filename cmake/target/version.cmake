@@ -29,7 +29,7 @@ function(version_add_global_target TARGET)
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_JSON}.tmp" "${OUTPUT_JSON}"
         WORKING_DIRECTORY "${FPRIME_PROJECT_ROOT}"
     )
-    add_library(fprime_versions "${OUTPUT_CPP}")
+    add_library("${TARGET}" "${OUTPUT_CPP}")
 endfunction()
 
 function(version_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)

@@ -16,7 +16,7 @@ set(SOURCE_FILES
 
 set(MOD_DEPS
    Os
-   fprime_versions 
+   version 
 )
 
 register_fprime_module()
