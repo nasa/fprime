@@ -506,7 +506,7 @@ macro(register_fprime_target TARGET_FILE_PATH)
     if (CMAKE_DEBUG_OUTPUT)
         message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
     endif()
-    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST FALSE)
 endmacro(register_fprime_target)
 
 ####
@@ -523,7 +523,7 @@ macro(register_fprime_ut_target TARGET_FILE_PATH)
         if (CMAKE_DEBUG_OUTPUT)
             message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
         endif()
-        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
+        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST FALSE)
     endif()
 endmacro(register_fprime_ut_target)
 
@@ -532,7 +532,11 @@ endmacro(register_fprime_ut_target)
 #
 # Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check.
 ####
-macro(register_fprime_list_helper TARGET_FILE_PATH TARGET_LIST)
+macro(register_fprime_list_helper TARGET_FILE_PATH TARGET_LIST TO_PREPEND)
+    if (NOT DEFINED TO_PREPEND)
+        set(TO_PREPEND FALSE)
+    endif()
+
     if (NOT DEFINED FPRIME_SUB_BUILD_TARGETS OR "${TARGET_FILE_PATH}" IN_LIST FPRIME_SUB_BUILD_TARGETS)
         include("${TARGET_FILE_PATH}")
         # Prevent out-of-order setups
@@ -542,7 +546,12 @@ macro(register_fprime_list_helper TARGET_FILE_PATH TARGET_LIST)
         endif()
         get_property(TARGETS GLOBAL PROPERTY "${TARGET_LIST}")
         if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
-            set_property(GLOBAL APPEND PROPERTY "${TARGET_LIST}" "${TARGET_FILE_PATH}")
+            if (TO_PREPEND EQUAL TRUE)
+                set_property(GLOBAL APPEND PROPERTY "${TARGET_FILE_PATH}" "${TARGET_LIST}")
+                set_property(GLOBAL PROPERTY "${TARGET_LIST}" "${TARGET_FILE_PATH}")
+            else()
+                set_property(GLOBAL APPEND PROPERTY "${TARGET_LIST}" "${TARGET_FILE_PATH}")
+            endif()
         endif()
     endif()
 endmacro(register_fprime_list_helper)
@@ -563,12 +572,15 @@ endmacro(register_fprime_list_helper)
 #
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
 ####
-macro(register_fprime_build_autocoder TARGET_FILE_PATH)
+macro(register_fprime_build_autocoder TARGET_FILE_PATH TO_PREPEND)
     # Normal registered targets don't run in prescan
     if (CMAKE_DEBUG_OUTPUT)
         message(STATUS "[autocoder] Registering custom build target autocoder: ${TARGET_FILE_PATH}")
     endif()
-    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
+    if (TO_PREPEND)
+        message(STATUS "NOTE: Prepending autocoder: ${TARGET_FILE_PATH}")
+    endif()
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST TO_PREPEND)
 endmacro(register_fprime_build_autocoder)
 
 ####
