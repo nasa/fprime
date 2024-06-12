@@ -23,6 +23,7 @@ register_fprime_module()
 
 set(UT_SOURCE_FILES
    "${CMAKE_CURRENT_LIST_DIR}/Version.fpp"
+   "${CMAKE_CURRENT_LIST_DIR}/test/ut/version.cpp"
    "${CMAKE_CURRENT_LIST_DIR}/test/ut/VersionTester.cpp"
    "${CMAKE_CURRENT_LIST_DIR}/test/ut/VersionTestMain.cpp"
 )

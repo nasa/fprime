@@ -94,7 +94,7 @@ class Version : public VersionComponentBase {
         VER_SLOT_09 = 9
     };
 
-    void process_libraryVersion();
+    //void process_libraryVersion();
     void process_CustomVersion();
     void fwVersion_tlm();
     void projectVersion_tlm();
