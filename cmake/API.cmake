@@ -530,7 +530,7 @@ endmacro(register_fprime_ut_target)
 ####
 # Macro `register_fprime_list_helper`:
 #
-# Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check.
+# Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check. Takes in a boolean argument TO_PREPEND to determine if the target should be prepended to the list.
 ####
 macro(register_fprime_list_helper TARGET_FILE_PATH TARGET_LIST TO_PREPEND)
     if (NOT DEFINED TO_PREPEND)
