@@ -45,15 +45,13 @@ def create_version_file_hpp(output_dir, framework_version, project_version):
         fid.write("#ifndef _VERSION_HPP_\n")
         fid.write("#define _VERSION_HPP_\n")
         fid.write("\n")
-        fid.write("#include \"FpConfig.h\"\n")
+        fid.write('#include "FpConfig.h"\n')
 
         fid.write("namespace Project {\n\n")
         fid.write("struct Version {\n")
         fid.write(f"    static const char* const FRAMEWORK_VERSION;\n")
         fid.write(f"    static const char* const PROJECT_VERSION;\n")
-        fid.write(
-            f"    static const FwIndexType LIBRARY_VERSIONS_COUNT; \n"
-        )
+        fid.write(f"    static const FwIndexType LIBRARY_VERSIONS_COUNT; \n")
         fid.write(f"    static const char* const LIBRARY_VERSIONS[];\n")
         fid.write("};\n\n")
         fid.write("}  // namespace Project\n")
@@ -85,20 +83,14 @@ def create_version_file_cpp(output_dir, framework_version, project_version):
         )
         lib_versions = get_library_versions()
         if len(lib_versions) == 0:
-            fid.write(
-                f"    const FwIndexType Version::LIBRARY_VERSIONS_COUNT = 0; \n"
-            )
-            fid.write(
-                f"    const char* const Version::LIBRARY_VERSIONS[] = {{ \n"
-            )
+            fid.write(f"    const FwIndexType Version::LIBRARY_VERSIONS_COUNT = 0; \n")
+            fid.write(f"    const char* const Version::LIBRARY_VERSIONS[] = {{ \n")
             fid.write("    nullptr\n")  # nullptr when no libraries are present
         else:
             fid.write(
                 f"    const FwIndexType Version::LIBRARY_VERSIONS_COUNT = {len(lib_versions)}; \n"
             )
-            fid.write(
-                f"    const char* const Version::LIBRARY_VERSIONS[] = {{ \n"
-            )
+            fid.write(f"    const char* const Version::LIBRARY_VERSIONS[] = {{ \n")
             for lib_name, version in lib_versions.items():
                 fid.write(f'        "{lib_name}@{version}",\n')
         fid.write("    };\n")

@@ -21,8 +21,8 @@ Version ::Version(const char* const compName)
     // initialize all custom entries
     for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
         // setVersion_enum is by default set to the first enum value, so not setting it here
-        verId_db[id].setversion_value(version_string);
-        verId_db[id].setversion_status(VersionStatus::FAILURE);
+        this->verId_db[id].setversion_value(version_string);
+        this->verId_db[id].setversion_status(VersionStatus::FAILURE);
     }
 }
 
@@ -30,7 +30,7 @@ Version ::~Version() {}
 
 void Version::config(bool enable) {
     // Set Verbosity for custom versions
-    m_enable = enable;
+    this->m_enable = enable;
 
     // Setup and send startup TLM
     this->fwVersion_tlm();
@@ -69,7 +69,7 @@ void Version ::setVersion_handler(FwIndexType portNum,
 // ----------------------------------------------------------------------
 
 void Version ::ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionEnabled enable) {
-    m_enable = (enable == VersionEnabled::ENABLED);
+    this->m_enable = (enable == VersionEnabled::ENABLED);
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -112,16 +112,6 @@ void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionT
 // ----------------------------------------------------------------------
 // implementations for internal functions
 // ----------------------------------------------------------------------
-// Process library version
-/*
-void Version ::process_libraryVersion() {
-    m_num_library_elements = static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(Project::Version::LIBRARY_VERSIONS));
-    // m_num_lib_elem = sizeof(Project::Version::LIBRARY_VERSIONS)/sizeof(Project::Version::LIBRARY_VERSIONS[0]);
-    if (Project::Version::LIBRARY_VERSIONS[0] == nullptr) {
-        m_num_library_elements = 0;
-    }
-}
-*/
 // functions to log tlm on versions
 void Version ::fwVersion_tlm() {
     Fw::LogStringArg fw_event = (Project::Version::FRAMEWORK_VERSION);
@@ -138,9 +128,8 @@ void Version ::projectVersion_tlm() {
 }
 
 void Version ::libraryVersion_tlm() {
-    // Process libraries array
-    //this->process_libraryVersion();
 
+    // Process libraries array
     for (U8 i = 0; i < Project::Version::LIBRARY_VERSIONS_COUNT; i++) {
         // Emit Event/TLM on library versions
         this->log_ACTIVITY_LO_LibraryVersions(Fw::LogStringArg(Project::Version::LIBRARY_VERSIONS[i]));
@@ -195,7 +184,7 @@ void Version ::customVersion_tlm(VersionSlot custom_slot) {
     // Process custom version TLM only if verbosity is enabled and there are any valid writes to it;
     //  it doesn't necessarily have to be consecutive
     if ((this->verId_db[custom_slot].getversion_value() != "no_ver") && m_enable == true &&
-        (m_num_custom_elements > 0)) {  // Write TLM for valid writes
+        (this->m_num_custom_elements > 0)) {  // Write TLM for valid writes
 
         // Emit Events/TLM on library versions
         this->log_ACTIVITY_LO_CustomVersions(this->verId_db[custom_slot].getversion_enum(),
