@@ -1,59 +1,62 @@
 // ======================================================================
 // \title Os/Posix/Mutex.cpp
-// \brief stub implementation for Os::Mutex
+// \brief Posix implementation for Os::Mutex
 // ======================================================================
-#include <pthread.h>
+// #include <pthread.h>
+#include <Os/Posix/Mutex.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Mutex.hpp>
-#include <Os/Posix/Mutex.hpp>
-#include <new>
 
 namespace Os {
 namespace Posix {
 namespace Mutex {
 
-PosixMutex::PosixMutex() : m_handle() {
-    pthread_mutex_t* handle = new (std::nothrow) pthread_mutex_t;
-    FW_ASSERT(handle != nullptr);
-
+PosixMutex::PosixMutex() : Os::MutexInterface(), m_handle() {
     // set attributes
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init(&attr);
-
-    NATIVE_INT_TYPE stat;
-    // set to error checking
-//        stat = pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_ERRORCHECK);
-//        FW_ASSERT(stat == 0,stat);
+    pthread_mutexattr_t attribute;
+    pthread_mutexattr_init(&attribute);
 
     // set to normal mutex type
-    stat = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
-    FW_ASSERT(stat == 0, stat);
+    PlatformIntType status = pthread_mutexattr_settype(&attribute, PTHREAD_MUTEX_NORMAL);
+    FW_ASSERT(status == 0, status);
 
     // set to check for priority inheritance
-    stat = pthread_mutexattr_setprotocol(&attr, PTHREAD_PRIO_INHERIT);
-    FW_ASSERT(stat == 0, stat);
+    status = pthread_mutexattr_setprotocol(&attribute, PTHREAD_PRIO_INHERIT);
+    FW_ASSERT(status == 0, status);
 
-    stat = pthread_mutex_init(handle, &attr);
-    FW_ASSERT(stat == 0, stat);
-
-    this->m_handle.m_mutex_descriptor = reinterpret_cast<POINTER_CAST>(handle);
+    status = pthread_mutex_init(&this->m_handle.m_mutex_descriptor, &attribute);
+    FW_ASSERT(status == 0, status);
 }
 
 PosixMutex::~PosixMutex() {
-    // Question: this destructor vs the one in Os/Mutex.cpp ???
-    NATIVE_INT_TYPE stat = pthread_mutex_destroy(reinterpret_cast<pthread_mutex_t*>(this->m_handle.m_mutex_descriptor));
-    FW_ASSERT(stat == 0, stat);
-    delete reinterpret_cast<pthread_mutex_t*>(this->m_handle.m_mutex_descriptor);
+    PlatformIntType status = pthread_mutex_destroy(&this->m_handle.m_mutex_descriptor);
+    FW_ASSERT(status == 0, status);
 }
 
 void PosixMutex::lock() {
-    NATIVE_INT_TYPE stat = pthread_mutex_lock(reinterpret_cast<pthread_mutex_t*>(this->m_handle.m_mutex_descriptor));
-    FW_ASSERT(stat == 0, stat);
+    PlatformIntType status = pthread_mutex_lock(&this->m_handle.m_mutex_descriptor);
+    FW_ASSERT(status == 0, status);
 }
 
 void PosixMutex::unLock() {
-    NATIVE_INT_TYPE stat = pthread_mutex_unlock(reinterpret_cast<pthread_mutex_t*>(this->m_handle.m_mutex_descriptor));
-    FW_ASSERT(stat == 0, stat);
+    PlatformIntType status = pthread_mutex_unlock(&this->m_handle.m_mutex_descriptor);
+    FW_ASSERT(status == 0, status);
+}
+
+PosixMutex::Status PosixMutex::take() {
+    if (pthread_mutex_lock(&this->m_handle.m_mutex_descriptor) == 0) {
+        return PosixMutex::Status::OP_OK;
+    } else {
+        return PosixMutex::Status::ERROR;
+    }
+}
+
+PosixMutex::Status PosixMutex::release() {
+    if (pthread_mutex_unlock(&this->m_handle.m_mutex_descriptor) == 0) {
+        return PosixMutex::Status::OP_OK;
+    } else {
+        return PosixMutex::Status::ERROR;
+    }
 }
 
 MutexHandle* PosixMutex::getHandle() {

@@ -76,6 +76,6 @@ set(SOURCE_FILES
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"
 )
-set(MOD_DEPS Os)
+# set(MOD_DEPS Os)
 register_fprime_module(Os_Mutex_Posix)
 register_fprime_implementation(Os/Mutex Os_Mutex_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")

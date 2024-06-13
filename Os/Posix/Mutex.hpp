@@ -2,17 +2,17 @@
 // \title Os/Posix/Mutex.hpp
 // \brief Posix definitions for Os::Mutex
 // ======================================================================
-#include "Os/Mutex.hpp"
-
 #ifndef OS_POSIX_MUTEX_HPP
 #define OS_POSIX_MUTEX_HPP
+#include <pthread.h>
+#include <Os/Mutex.hpp>
+
 namespace Os {
 namespace Posix {
 namespace Mutex {
 
 struct PosixMutexHandle : public MutexHandle {
-    static constexpr POINTER_CAST INVALID_MUTEX_DESCRIPTOR = 0;
-    POINTER_CAST m_mutex_descriptor = INVALID_MUTEX_DESCRIPTOR;  // TODO: is m_mutex_descriptor what we want?
+    pthread_mutex_t m_mutex_descriptor = PTHREAD_MUTEX_INITIALIZER;
 };
 
 //! \brief Posix implementation of Os::Mutex
@@ -33,8 +33,10 @@ class PosixMutex : public MutexInterface {
     //! \return internal mutex handle representation
     MutexHandle* getHandle() override;
 
-    void lock() override;    //!<  lock the mutex
-    void unLock() override;  //!<  unlock the mutex
+    void lock() override;       //!<  lock the mutex
+    void unLock() override;     //!<  unlock the mutex
+    Status take() override;     //!<  lock the mutex and get return status
+    Status release() override;  //!<  unlock the mutex and get return status
 
   private:
     //! Handle for PosixMutex

@@ -15,6 +15,14 @@ set(SOURCE_FILES
 register_fprime_module(Os_File_Stub)
 register_fprime_implementation(Os/File Os_File_Stub)
 
+######## Mutex Stub ########
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+)
+register_fprime_module(Os_Mutex_Stub)
+register_fprime_implementation(Os/Mutex Os_Mutex_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")
+
+
 # Remainder of file is specific to UTs
 if (NOT BUILD_TESTING)
     return()
@@ -41,17 +49,6 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/File Os_File_Test_Stub)
 register_fprime_ut(StubFileTest)
-
-######## Mutex Stub ########
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp"
-)
-register_fprime_module(Os_Mutex_Stub)
-register_fprime_implementation(Os/Mutex Os_Mutex_Stub)
-
-#### Mutex Stub Testing ####
-
 
 #### Task Stub Testing ####
 set(SOURCE_FILES

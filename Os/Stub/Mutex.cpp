@@ -9,11 +9,19 @@ namespace Stub {
 namespace Mutex {
 
     void StubMutex::lock() {
-        // Do nothing
+        // no op
     }
 
     void StubMutex::unLock() {
-        // Do nothing
+        // no op
+    }
+
+    StubMutex::Status StubMutex::take() {
+        return Status::NO_OP;
+    }
+
+    StubMutex::Status StubMutex::release() {
+        return Status::NO_OP;
     }
 
     MutexHandle* StubMutex::getHandle() {

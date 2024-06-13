@@ -99,6 +99,7 @@ endif()
 register_fprime_module()
 require_fprime_implementation(Os/File)
 # is require_fprime_implementation(Os/Task) missing here?
+# require_fprime_implementation(Os/Mutex)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES

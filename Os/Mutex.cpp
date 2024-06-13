@@ -30,4 +30,14 @@ void Mutex::unLock() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
     this->m_delegate.unLock();
 }
+
+Mutex::Status Mutex::take() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.take();
+}
+
+Mutex::Status Mutex::release() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.release();
+}
 }  // namespace Os

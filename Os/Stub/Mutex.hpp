@@ -10,10 +10,7 @@ namespace Os {
 namespace Stub {
 namespace Mutex {
 
-struct StubMutexHandle : public MutexHandle {
-    static constexpr PlatformIntType INVALID_MUTEX_DESCRIPTOR = -1;
-    PlatformIntType m_handle = INVALID_MUTEX_DESCRIPTOR;
-};
+struct StubMutexHandle : public MutexHandle {};
 
 //! \brief stub implementation of Os::Mutex
 //!
@@ -33,8 +30,10 @@ class StubMutex : public MutexInterface {
     //! \return internal mutex handle representation
     MutexHandle* getHandle() override;
 
-    void lock() override; //!<  lock the mutex
-    void unLock() override; //!<  unlock the mutex
+    void lock() override;       //!<  lock the mutex
+    void unLock() override;     //!<  unlock the mutex
+    Status take() override;     //!<  lock the mutex and get return status
+    Status release() override;  //!<  unlock the mutex and get return status
 
   private:
     //! Handle for StubMutex
