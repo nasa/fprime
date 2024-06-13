@@ -350,42 +350,4 @@ void VersionTester::test_ports() {
     this->test_setVer(true);
     this->test_getVer();
 }
-
-// ----------------------------------------------------------------------
-// Helper methods
-// ----------------------------------------------------------------------
-/*
-void VersionTester::connectPorts() {
-  // Connect custom ports
-  this->connect_to_run(0, this->component.get_run_InputPort(0));
-  this->connect_to_getVersion (0, this->component.get_getVersion_InputPort(0));
-  this->connect_to_setVersion (0, this->component.get_setVersion_InputPort(0));
-
-  // CmdIn
-  this->connect_to_cmdIn (0, this->component.get_cmdIn_InputPort(0));
-
-  // CmdReg
-  this->component.set_cmdRegOut_OutputPort(0,this->get_from_cmdRegOut(0));
-
-  // CmdStatus
-  this->component.set_cmdResponseOut_OutputPort(0, this->get_from_cmdResponseOut(0));
-
-  // Tlm
-  this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
-
-  // Time
-  this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
-
-  // Log
-  this->component.set_logOut_OutputPort(0, this->get_from_logOut(0));
-
-  // LogText
-  this->component.set_logTextOut_OutputPort(0, this->get_from_logTextOut(0));
-}
-
-void VersionTester::initComponents() {
-  this->init();
-  this->component.init(0);
-}
-*/
 }  // namespace Svc
