@@ -2,58 +2,6 @@
 
 Tracks versions for framework,project, libraries and user defined project specific versions.
 
-## Usage Examples
-Add usage examples here
-
-### Diagrams
-Add diagrams here
-
-### Typical Usage
-And the typical usage of the component here
-
-## Class Diagram
-Add a class diagram here
-
-## Port Descriptions
-| Name | Description |
-|---|---|
-|---|---|
-
-## Component States
-Add component states in the chart below
-| Name | Description |
-|---|---|
-|---|---|
-
-## Sequence Diagrams
-Add sequence diagrams here
-
-## Parameters
-| Name | Description |
-|---|---|
-|---|---|
-
-## Commands
-| Name | Description |
-|---|---|
-|---|---|
-
-## Events
-| Name | Description |
-|---|---|
-|---|---|
-
-## Telemetry
-| Name | Description |
-|---|---|
-|---|---|
-
-## Unit Tests
-Add unit test descriptions in the chart below
-| Name | Description | Output | Coverage |
-|---|---|---|---|
-|---|---|---|---|
-
 ## Requirements
 
 | Name | Description | Validation |
@@ -74,6 +22,9 @@ Add unit test descriptions in the chart below
 |SVC-VERSION-014|`Svc::Version` shall provide an interface for other components to set custom versions.| Enables projects to set hardware and FPGA versions, say, as needed. Also generates Events/TLM|
 |SVC-VERSION-015|`Svc::Version` shall provide an interface for other components to get custom versions.| Also generates Events/TLM|
 
+## Emitting Versions on Start-Up
+
+The version component can emit versions on startup by calling `version.config(true);` during component configuration.
 
 ## Change Log
 | Date | Description |
