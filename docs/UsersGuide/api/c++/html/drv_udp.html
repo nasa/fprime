@@ -105,7 +105,7 @@ Design</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Drv::SEND_ERROR   </td><td class="markdownTableBodyNone">Send produced an error, future sends likely to fail.   </td></tr>
 </table>
-<p>This data is immediately sent out to the remote tcp server with a configured send timeout. See Usage described below.</p>
+<p>This data is immediately sent out to the remote UDP server with a configured send timeout. See Usage described below.</p>
 <p><b>Callback Formation</b></p>
 <p><img src="../../ByteStreamDriverModel/docs/img/canvas-callback.png" alt="Callback" class="inline"/></p>
 <p>In the callback formation, the byte stream driver component initiates the transfer of received data by calling the "readCallback" output port. This port transfers any read data in a <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> along with a status for the receive. This status is an enumeration whose values are described in the following table:</p>
@@ -119,10 +119,10 @@ Design</h2>
 </table>
 <h2><a class="anchor" id="autotoc_md417"></a>
 Usage</h2>
-<p>The <a class="el" href="class_drv_1_1_tcp_client_component_impl.html">Drv::TcpClientComponentImpl</a> must be configured with the address of the remote connection, and the socket must be open to begin. Usually, the user runs the <a class="el" href="class_drv_1_1_tcp_client_component_impl.html">Drv::TcpClientComponentImpl</a> engaging its read thread, which will automatically open the connection. The component is passive and has no commands meaning users should <code>init</code>, <code>configureSend</code>/<code>configureRecv</code>, and <code>startSocketTask</code>. Upon shutdown, the <code>stopSocketThread</code> and <code>joinSocketThread</code> methods should be called to ensure proper resource deallocation. This typical usage is shown in the C++ snippet below.</p>
+<p>The <a class="el" href="class_drv_1_1_udp_component_impl.html">Drv::UdpComponentImpl</a> must be configured with the address of the remote connection, and the socket must be open to begin. Usually, the user runs the <a class="el" href="class_drv_1_1_udp_component_impl.html">Drv::UdpComponentImpl</a> engaging its read thread, which will automatically open the connection. The component is passive and has no commands meaning users should <code>init</code>, <code>configureSend</code>/<code>configureRecv</code>, and <code>startSocketTask</code>. Upon shutdown, the <code>stopSocketThread</code> and <code>joinSocketThread</code> methods should be called to ensure proper resource deallocation. This typical usage is shown in the C++ snippet below.</p>
 <p>Since UDP support single or bidirectional communication, configuring each direction is cone separately using the two methods <code>configureSend</code> and <code>configureRecv</code>. The user is not required to call both.</p>
 <div class="fragment"><div class="line"> {c++}</div>
-<div class="line">Drv::TcpClientComponentImpl comm = Drv::TcpClientComponentImpl(&quot;UDp Client&quot;);</div>
+<div class="line">Drv::UdpComponentImpl comm = Drv::UdpComponentImpl(&quot;UDP Client&quot;);</div>
 <div class="line"> </div>
 <div class="line">bool constructApp(bool dump, U32 port_number, char* hostname) {</div>
 <div class="line">    ...</div>
