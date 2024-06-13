@@ -354,14 +354,14 @@ macro(register_fprime_target TARGET_FILE_PATH)
     if (CMAKE_DEBUG_OUTPUT)
         message(STATUS "[target] Registering custom target: ${TARGET_FILE_PATH}")
     endif()
-    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
+    register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST OFF)
 endmacro(register_fprime_target)
 
 
 
 ## Macro `register_fprime_list_helper`:
 
-Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check.
+Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check. Takes in a boolean argument TO_PREPEND to determine if the target should be prepended to the list.
 
 
 ## Macro `register_fprime_build_autocoder`:
