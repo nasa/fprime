@@ -1,9 +1,23 @@
 ---
 layout: default
-title: "Getting Started with F'"
+title: "Getting Started with F´"
 ---
 
-These resources will walk a new user from a basic getting-started guide for successful use of F'. This includes an introduction to F', installation instructions, and information about how this documentation is structured. This will help new users to learn F´ and walk through the most basic steps in developing an F´ application.
+## Getting Started With F´
 
-## Getting Started Guide
-1. [Installing F´](../INSTALL.md): F´ and Embedded Hardware 
+To get started with F´, install the F´ bootstrapping tool with:
+```
+pip install fprime-bootstrap
+```
+Then, create a new project with:
+```
+fprime-bootstrap project
+```
+
+See the [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/) to guide you through all the steps of developing an F´ project.
+
+New users are encouraged to read through the [User Guide](https://nasa.github.io/fprime/UsersGuide/guide.html) and explore the [other tutorials](../Tutorials/README.md).
+
+
+For additional installation instructions and troubleshooting, see the [F´ Installation Guide](../INSTALL.md).
+
