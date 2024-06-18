@@ -111,3 +111,6 @@ GithubProjectProperty
 
 # ignore docker platform paths
 --platform=(linux|darwin)/(amd64|arm|arm32v5|arm32v6|arm32v7|arm64v8|i386|ppc64le|s390x|x86_64)
+
+# Google Forms URLs
+\bforms\.gle/\w+
