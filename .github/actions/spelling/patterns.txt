@@ -114,3 +114,6 @@ GithubProjectProperty
 
 # Google Forms URLs
 \bforms\.gle/\w+
+
+# F Prime Prime full spelling
+Prime Prime
