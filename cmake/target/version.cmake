@@ -25,6 +25,7 @@ function(version_add_global_target TARGET)
             "${FPRIME_VERSION_INFO_SCRIPT}" "${OUTPUT_DIR}" "${OPTIONAL_CHECK_ARG}"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_HPP}.tmp" "${OUTPUT_HPP}"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_JSON}.tmp" "${OUTPUT_JSON}"
+
         WORKING_DIRECTORY "${FPRIME_PROJECT_ROOT}"
     )
 endfunction()

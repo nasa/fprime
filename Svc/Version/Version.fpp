@@ -1,52 +1,25 @@
 module Svc {
-    
-    @ Tracks versions for project, framework and user defined versions etc
-    
-    enum VersionEnabled {
-        DISABLED = 0
-        ENABLED = 1
-    }
-
+    @ Tracks veramework, user defined versions etc
     passive component Version {
 
         ##############################################################################
         #### Uncomment the following examples to start customizing your component ####
         ##############################################################################
-        
-        @ Run port
-        guarded input port run: [1] Svc.Sched
-        
-        @ A command to enable or disable Version telemetry
-        guarded command ENABLE(
-                                enable: VersionEnabled @< whether or not Version telemetry is enabled
-                              ) \
-        opcode 0 
 
-        @ Report version as EVR
-        guarded command VERSION \
-            opcode 1
+        # @ Example async command
+        # async command COMMAND_NAME(param_name: U32)
 
-        @ Version of the git repository.
-        event FRAMEWORK_VERSION(
-                   version: string size 40 @< version string
-                 ) \
-        severity activity low \
-        id 0 \
-        format "Framework Version: [{}]"
+        # @ Example telemetry counter
+        # telemetry ExampleCounter: U64
 
-        @ Version of the git repository.
-        event PROJECT_VERSION(
-                   version: string size 40 @< version string
-                 ) \
-        severity activity low \
-        id 1 \
-        format "Project Version: [{}]"
+        # @ Example event
+        # event ExampleStateEvent(example_state: Fw.On) severity activity high id 0 format "State set to {}"
 
-        @ Software framework version
-        telemetry FRAMEWORK_VERSION: string size 40 id 0
+        # @ Example port: receiving calls from the rate group
+        # sync input port run: Svc.Sched
 
-        @ Software project version
-        telemetry PROJECT_VERSION: string size 40 id 1
+        # @ Example parameter
+        # param PARAMETER_NAME: U32
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
