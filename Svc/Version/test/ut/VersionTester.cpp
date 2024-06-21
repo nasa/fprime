@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include "VersionTester.hpp"
-#include "versions/version.hpp"
+#include <version.hpp>
 
 namespace Svc {
 
@@ -38,7 +38,7 @@ namespace Svc {
     void VersionTester :: test_startup() {
         this->invoke_to_run(0,0);
         ASSERT_EVENTS_STARTUP_EVR_SIZE(1);
-        ASSERT_EVENTS_STARTUP_EVR(0,Project::Version::FRAMEWORK_VERSION,Project::Version::PROJECT_VERSION);
+        ASSERT_EVENTS_STARTUP_EVR(0,FRAMEWORK_VERSION,PROJECT_VERSION);
     }
 
     // ----------------------------------------------------------------------
@@ -56,8 +56,8 @@ namespace Svc {
     this->sendCmd_ENABLE(0,cmd_seq,VersionEnabled::ENABLED);
     this->invoke_to_run(0,0);
     ASSERT_CMD_RESPONSE (0, 0, 9, Fw::CmdResponse::OK);
-    ASSERT_TLM_FRAMEWORK_VERSION(0, Project::Version::FRAMEWORK_VERSION);
-    ASSERT_TLM_PROJECT_VERSION(0, Project::Version::PROJECT_VERSION);
+    ASSERT_TLM_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
+    ASSERT_TLM_PROJECT_VERSION(0, PROJECT_VERSION);
   }
   
   void VersionTester ::
@@ -68,7 +68,7 @@ namespace Svc {
     this->invoke_to_run(0,0);
     ASSERT_CMD_RESPONSE (0, 0, 9, Fw::CmdResponse::OK);
     ASSERT_EVENTS_FRAMEWORK_VERSION_SIZE(1);
-    ASSERT_EVENTS_FRAMEWORK_VERSION(0, Project::Version::FRAMEWORK_VERSION);
+    ASSERT_EVENTS_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
   }
 
   void VersionTester :: test_commands() {
