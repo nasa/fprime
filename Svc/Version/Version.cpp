@@ -18,10 +18,7 @@ namespace Svc {
     Version(const char* const compName) :
       VersionComponentBase(compName), m_enable(true)
   {
-        // initialize all entries to stale
-        for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
-            this->verId_db[id].status = VersionStatus::FAILURE;
-        }
+
   }
 
   Version ::
@@ -40,33 +37,6 @@ void Version ::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     }
 }
 
-void Version ::
-    getVersion_handler(
-        FwIndexType portNum,
-        const Svc::VersionCfg::VersionEnum& version_id,
-        Svc::VersPortStrings::StringSize80& version_string,
-        Svc::VersionStatus& status
-    )
-  {
-        FW_ASSERT(version_id.isValid(),version_id.e);
-        version_string = this->verId_db[version_id.e].val;
-        status = this->verId_db[version_id.e].status ;
-
-  }
-
-  void Version ::
-    setVersion_handler(
-        FwIndexType portNum,
-        const Svc::VersionCfg::VersionEnum& version_id,
-        Svc::VersPortStrings::StringSize80& version_string,
-        Svc::VersionStatus& status
-    )
-  {
-        FW_ASSERT(version_id.isValid(),version_id.e);
-        this->verId_db[version_id.e].val = version_string;
-        this->verId_db[version_id.e].status = status;
-    
-  }
   // ----------------------------------------------------------------------
   // Handler implementations for commands
   // ----------------------------------------------------------------------
