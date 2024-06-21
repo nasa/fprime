@@ -11,8 +11,8 @@
 // ======================================================================
 
 #include "FormalParamTypes.hpp"
-
 #include "FppTest/utils/Utils.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 #include "STest/Pick/Pick.hpp"
 
 namespace FppTest {
@@ -180,7 +180,7 @@ void getRandomFormalParamArray(FormalParamArray& a) {
 FormalParamStruct getRandomFormalParamStruct() {
     FormalParamStruct s;
     char buf[s.gety().getCapacity()];
-    FormalParamStruct::StringSize80 str = buf;
+    Fw::StringTemplate<80> str(buf);
 
     Utils::setString(buf, sizeof(buf));
     s.set(STest::Pick::any(), str);

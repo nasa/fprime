@@ -130,7 +130,15 @@ def test_unittest_module_ut_info(UT_BUILD):
     assert sorted(["SignalGenTester.cpp", "SignalGenTestMain.cpp"]) == sorted(
         [Path(source).name for source in sources]
     ), "Did not find expected sources"
-    expected_ac = ["SignalGen.fpp", "Commands.fppi", "Events.fppi", "Telemetry.fppi"]
+    expected_ac = [
+        "SignalGen.fpp",
+        "Commands.fppi",
+        "Events.fppi",
+        "Telemetry.fppi",
+        "CommandInterface.fppi",
+        "ChannelInterface.fppi",
+        "EventsInterface.fppi",
+    ]
     actual_ac = [Path(source).name for source in ac_sources]
     assert sorted(expected_ac) == sorted(
         actual_ac
