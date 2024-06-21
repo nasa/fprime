@@ -103,9 +103,20 @@ namespace Svc {
           Svc::VersionType version_type //!< which version type EVR is requested
       ) override;
 
-    PRIVATE:
-    
-   // An enumeration for TLM slot access
+    private:
+    void proc_libver();
+    void proc_cusver();
+    void FwVer_tlm();
+    void ProjVer_tlm();
+    void LibVer_tlm();
+    void CusVer_tlm();
+    bool m_enable;       /*!<Send TLM when true>*/
+    bool startup_done;
+    U32 num_lib_elem; //number of library versions
+    U32 num_cus_elem; //number of custom versions
+    //const char* lib_ver_arr[]; // Store library versions internally
+
+    // An enumeration for TLM slot access
     enum VerSlot {
         VER_SLOT_00 = 0,
         VER_SLOT_01,
@@ -118,20 +129,6 @@ namespace Svc {
         VER_SLOT_08,
         VER_SLOT_09
     };
-
-    void proc_libver();
-    void proc_cusver();
-    void FwVer_tlm();
-    void ProjVer_tlm();
-    void LibVer_tlm();
-    void CusVer_tlm(VerSlot cus_slot);
-    void CusVer_tlm_all();
-    bool m_enable;       /*!<Send TLM when true>*/
-    bool startup_done;
-    U32 num_lib_elem; //number of library versions
-    U32 num_cus_elem; //number of custom versions
-    //const char* lib_ver_arr[]; // Store library versions internally
-
 
   };
 

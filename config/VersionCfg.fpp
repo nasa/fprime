@@ -6,7 +6,7 @@ module Svc {
 
   module VersionCfg {
 
-    @ Define a set of Version entries on a project-specific
+    @ Define a set of PolyDb entries on a project-specific
     @ basis. 
     enum VersionEnum: U32 {
       @ Entry 0
