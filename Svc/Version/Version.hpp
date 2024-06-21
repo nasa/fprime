@@ -29,21 +29,17 @@ namespace Svc {
       //! Destroy Version object
       ~Version();
 
-      //! configure version's verbosity and startup
-      void Config (bool enable);
-
     PRIVATE:
         // ----------------------------------------------------------------------
         // Handler implementations for user-defined typed input ports
         // ----------------------------------------------------------------------
 
-        // No longer using a scheduler but driven by command only
         //! Handler implementation for run
         //!
-        //void
-        //run_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-        //            U32 context                    /*!< The call order*/
-        //) override;
+        void
+        run_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                    U32 context                    /*!< The call order*/
+        ) override;
         
         //! Handler implementation for getVersion
         //!
@@ -65,19 +61,17 @@ namespace Svc {
             Svc::VersionStatus& status //!< The command response argument
         ) override;
 
-        //! \struct verId_db
-        //! \brief Custom Version database structure
+        //! \struct t_dbStruct
+        //! \brief PolyDb database structure
         //!
         //! This structure stores the latest values of the measurements.
         //! The statuses are all initialized to MeasurementStatus::STALE by the constructor.
         //!
-        /*
-        struct CusVerArr {
-            Svc::VersionCfg::VersionEnum version_id; //!< The entry to access
-            VersPortStrings::StringSize80  val; //!< the last value of the measurement
+
+        struct verArr {
             VersionStatus status; //!< last status of measurement
-        } */
-        CusVerDb verId_db[Svc::VersionCfg::VersionEnum::NUM_CONSTANTS];
+            VersPortStrings::StringSize80  val; //!< the last value of the measurement
+        } verId_db[Svc::VersionCfg::VersionEnum::NUM_CONSTANTS];
 
     
     private:
@@ -99,37 +93,13 @@ namespace Svc {
       //! Report version as EVR
       void VERSION_cmdHandler(
           FwOpcodeType opCode, //!< The opcode
-          U32 cmdSeq, //!< The command sequence number
-          Svc::VersionType version_type //!< which version type EVR is requested
+          U32 cmdSeq //!< The command sequence number
       ) override;
 
     private:
-    void proc_libver();
-    void proc_cusver();
-    void FwVer_tlm();
-    void ProjVer_tlm();
-    void LibVer_tlm();
-    void CusVer_tlm();
+    void Version_tlm();
     bool m_enable;       /*!<Send TLM when true>*/
     bool startup_done;
-    U32 num_lib_elem; //number of library versions
-    U32 num_cus_elem; //number of custom versions
-    //const char* lib_ver_arr[]; // Store library versions internally
-
-    // An enumeration for TLM slot access
-    enum VerSlot {
-        VER_SLOT_00 = 0,
-        VER_SLOT_01,
-        VER_SLOT_02,
-        VER_SLOT_03,
-        VER_SLOT_04,
-        VER_SLOT_05,
-        VER_SLOT_06,
-        VER_SLOT_07,
-        VER_SLOT_08,
-        VER_SLOT_09
-    };
-
   };
 
 }
