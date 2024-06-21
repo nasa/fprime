@@ -61,6 +61,7 @@ autocoders
 autocoding
 autodocs
 Autodocumentation
+autogen
 autoload
 automodule
 AYYYY
@@ -423,6 +424,7 @@ Gorang
 GPGGA
 GPINT
 gpio
+graphviz
 grayscales
 grnd
 GROUNDINTERFACERULES
@@ -1190,6 +1192,7 @@ wsl
 wxgui
 wxy
 Xabcdefx
+xapian
 xdf
 xdffe
 Xelect
