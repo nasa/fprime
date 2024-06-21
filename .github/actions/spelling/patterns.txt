@@ -117,7 +117,7 @@ GithubProjectProperty
 
 # General URLs
 # https/http/file urls
-#(?:\b(?:https?|ftp|file)://)[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]
+(?:\b(?:https?|ftp|file)://)[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]
 
 # F Prime Prime full spelling
 Prime Prime
