@@ -46,15 +46,6 @@ module Svc {
             opcode 1
 
         @ Version of the git repository.
-        event STARTUP_EVR(
-                   proj_version: string size 40 @< project version
-                   frm_version: string size 40 @< framework version
-                 ) \
-        severity activity low \
-        id 2 \
-        format "Project Version: [{}] Framework Version: [{}]"
-
-        @ Version of the git repository.
         event FRAMEWORK_VERSION(
                    version: string size 40 @< version string
                  ) \

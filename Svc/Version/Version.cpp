@@ -18,11 +18,8 @@ namespace Svc {
     Version(const char* const compName) :
       VersionComponentBase(compName), m_enable(true)
   {
-        startup_done = false;
-        Svc::VersPortStrings::StringSize80 ver_str = "no_ver";
         // initialize all entries to stale
         for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
-            this->verId_db[id].val = ver_str;
             this->verId_db[id].status = VersionStatus::FAILURE;
         }
   }
@@ -40,11 +37,6 @@ namespace Svc {
 void Version ::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     if(m_enable) {
         Version_tlm();
-        //TODO: Need to add libraries and user defined versions here as well
-        if (startup_done == false) { //Send EVR once at startup 
-            this->log_ACTIVITY_LO_STARTUP_EVR((PROJECT_VERSION),(FRAMEWORK_VERSION));
-            startup_done = true;
-        }
     }
 }
 

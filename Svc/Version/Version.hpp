@@ -99,7 +99,6 @@ namespace Svc {
     private:
     void Version_tlm();
     bool m_enable;       /*!<Send TLM when true>*/
-    bool startup_done;
   };
 
 }
