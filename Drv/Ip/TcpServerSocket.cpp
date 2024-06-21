@@ -84,8 +84,8 @@ SocketIpStatus TcpServerSocket::startup() {
     }
     U16 port = ntohs(address.sin_port);
     Fw::Logger::logMsg("Listening for single client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), port);
-    // TCP requires listening on the socket. Second argument prevents queueing of anything more than a single client.
-    if (::listen(serverFd, 0) < 0) {
+    // TCP requires listening on the socket. Second argument sets backlog to 1 since TCP is expecting a client.
+    if (::listen(serverFd, 1) < 0) {
         ::close(serverFd);
         return SOCK_FAILED_TO_LISTEN; // What we have here is a failure to communicate
     }
