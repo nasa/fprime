@@ -14,19 +14,6 @@
 #include "Os/test/ut/mutex/RulesHeaders.hpp"
 #include <gtest/gtest.h>
 #include "STest/Scenario/Scenario.hpp"
-// #include "Os/test/ut/mutex/CommonTests.hpp"
-
-namespace Os {
-namespace Test {
-namespace Mutex {
-
-std::unique_ptr<Os::Test::Mutex::Tester> get_tester_implementation() {
-    return std::unique_ptr<Os::Test::Mutex::Tester>(new Os::Test::Mutex::Tester());
-}
-
-}  // namespace Mutex
-}  // namespace Test
-}  // namespace Os
 
 
 int main(int argc, char** argv) {

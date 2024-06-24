@@ -7,7 +7,6 @@
 
 // ------------------------------------------------------------------------------------------------------
 // Rule:  LockMutex: Lock a mutex successfully
-//
 // ------------------------------------------------------------------------------------------------------
 struct LockMutex : public STest::Rule<Os::Test::Mutex::Tester> {
     // ----------------------------------------------------------------------
@@ -30,40 +29,8 @@ struct LockMutex : public STest::Rule<Os::Test::Mutex::Tester> {
     );
 };
 
-
-// ------------------------------------------------------------------------------------------------------
-// Rule:  LockBusyMutex: Lock a mutex that is already locked
-//
-// ------------------------------------------------------------------------------------------------------
-struct LockBusyMutex : public STest::Rule<Os::Test::Mutex::Tester> {
-
-    // ----------------------------------------------------------------------
-    // Construction
-    // ----------------------------------------------------------------------
-
-    //! Constructor
-    LockBusyMutex();
-
-    // ----------------------------------------------------------------------
-    // Public member functions
-    // ----------------------------------------------------------------------
-
-    //! Precondition
-    bool precondition(
-            const Os::Test::Mutex::Tester &state //!< The test state
-    );
-
-    //! Action
-    void action(
-            Os::Test::Mutex::Tester &state //!< The test state
-    );
-
-};
-
-
 // ------------------------------------------------------------------------------------------------------
 // Rule:  UnlockMutex: Unlock a mutex that is locked successfully
-//
 // ------------------------------------------------------------------------------------------------------
 struct UnlockMutex : public STest::Rule<Os::Test::Mutex::Tester> {
 
@@ -92,8 +59,84 @@ struct UnlockMutex : public STest::Rule<Os::Test::Mutex::Tester> {
 
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  TakeMutex: Take a mutex successfully
+// ------------------------------------------------------------------------------------------------------
+struct TakeMutex : public STest::Rule<Os::Test::Mutex::Tester> {
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
+    //! Constructor
+    TakeMutex();
+
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
+    //! Precondition
+    bool precondition(const Os::Test::Mutex::Tester &state  //!< The test state
+    );
+
+    //! Action
+    void action(Os::Test::Mutex::Tester &state  //!< The test state
+    );
+};
+
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  ReleaseMutex: Take a mutex successfully
+// ------------------------------------------------------------------------------------------------------
+struct ReleaseMutex : public STest::Rule<Os::Test::Mutex::Tester> {
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
+    //! Constructor
+    ReleaseMutex();
+
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
+    //! Precondition
+    bool precondition(const Os::Test::Mutex::Tester &state  //!< The test state
+    );
+
+    //! Action
+    void action(Os::Test::Mutex::Tester &state  //!< The test state
+    );
+};
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  LockBusyMutex: Lock a mutex that is already locked
+// ------------------------------------------------------------------------------------------------------
+struct LockBusyMutex : public STest::Rule<Os::Test::Mutex::Tester> {
+
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
+    //! Constructor
+    LockBusyMutex();
+
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
+    //! Precondition
+    bool precondition(
+            const Os::Test::Mutex::Tester &state //!< The test state
+    );
+
+    //! Action
+    void action(
+            Os::Test::Mutex::Tester &state //!< The test state
+    );
+
+};
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  UnlockFreeMutex: Unlock a mutex that is not locked
-//
 // ------------------------------------------------------------------------------------------------------
 struct UnlockFreeMutex : public STest::Rule<Os::Test::Mutex::Tester> {
 

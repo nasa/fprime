@@ -21,10 +21,10 @@ class FunctionalityTester : public ::testing::Test {
     //! Constructor
     FunctionalityTester();
 
-    //! Setup function delegating to UT setUp function
+    //! SetUp test fixture
     void SetUp() override;
 
-    //! Setup function delegating to UT tearDown function
+    //! TearDown test fixture for safe destruction
     void TearDown() override;
 
     //! Tester/state implementation

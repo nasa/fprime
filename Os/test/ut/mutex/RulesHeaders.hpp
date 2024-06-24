@@ -46,8 +46,7 @@ struct Tester {
 #include "MutexRules.hpp"
 };
 
-std::unique_ptr<Os::Test::Mutex::Tester> get_tester_implementation();
-}  // namespace File
+}  // namespace Mutex
 }  // namespace Test
 }  // namespace Os
 #endif  // __RULES_HEADERS__
