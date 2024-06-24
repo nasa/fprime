@@ -3,6 +3,7 @@
 // \brief definitions used in common Mutex testing
 // ======================================================================
 #include <Os/Mutex.hpp>
+#include <gtest/gtest.h>
 #include <Os/test/ut/mutex/RulesHeaders.hpp>
 
 #ifndef OS_TEST_UT_COMMON_MUTEX_TESTS_HPP

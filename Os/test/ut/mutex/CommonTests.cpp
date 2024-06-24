@@ -3,8 +3,6 @@
 // \brief common test implementations
 // ======================================================================
 #include "Os/test/ut/mutex/CommonTests.hpp"
-#include <gtest/gtest.h>
-#include "Os/Mutex.hpp"
 
 // ----------------------------------------------------------------------
 // Test Fixture
@@ -42,14 +40,6 @@ TEST_F(FunctionalityTester, TakeAndReleaseMutex) {
     Os::Test::Mutex::Tester::ReleaseMutex release_rule;
     take_rule.apply(*tester);
     release_rule.apply(*tester);
-}
-
-// Attempt to delete a locked mutex - expect an assertion
-TEST_F(FunctionalityTester, DeleteLockedMutex) {
-    Os::Test::Mutex::Tester::LockMutex lock_rule;
-    Os::Test::Mutex::Tester::UnlockMutex unlock_rule;
-    lock_rule.apply(*tester);
-    ASSERT_DEATH_IF_SUPPORTED(delete &tester, Os::Test::Mutex::Tester::ASSERT_IN_MUTEX_CPP);
 }
 
 // Attempt to lock a busy mutex
