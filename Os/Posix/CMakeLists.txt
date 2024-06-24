@@ -79,3 +79,16 @@ set(HEADER_FILES
 # set(MOD_DEPS Os)
 register_fprime_module(Os_Mutex_Posix)
 register_fprime_implementation(Os/Mutex Os_Mutex_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")
+
+#### Os/Mutex/Posix Unit Tests ####
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/CommonTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/MutexRules.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixMutexTests.cpp"
+)
+set(UT_MOD_DEPS
+        Os
+        STest
+)
+choose_fprime_implementation(Os/Mutex Os_Mutex_Posix)
+register_fprime_ut(PosixMutexTest)
