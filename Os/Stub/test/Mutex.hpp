@@ -7,7 +7,7 @@ namespace Stub {
 namespace Mutex {
 namespace Test {
 
-//! Data that supports the stubbed File implementation.
+//! Data that supports the stubbed Mutex implementation.
 //!/
 struct StaticData {
     //! Enumeration of last function called

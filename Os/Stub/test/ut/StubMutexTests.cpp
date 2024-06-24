@@ -4,11 +4,9 @@
 // This ensures the delegation of function calls happens properly
 // ======================================================================
 #include <gtest/gtest.h>
-#include "Os/Models/Models.hpp"
 #include "Os/test/ut/mutex/CommonTests.hpp"
 #include "Os/test/ut/mutex/RulesHeaders.hpp"
 #include "Os/Stub/test/Mutex.hpp"
-#include "Os/Models/Models.hpp"
 
 using namespace Os::Stub::Mutex::Test;
 

@@ -75,10 +75,9 @@ register_fprime_ut(StubTaskTest)
 #### Mutex Stub Testing ####
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/Mutex.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/DefaultMutex.cpp"
 )
 register_fprime_module(Os_Mutex_Test_Stub)
-register_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub)
+register_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultMutex.cpp")
 
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubMutexTests.cpp"
