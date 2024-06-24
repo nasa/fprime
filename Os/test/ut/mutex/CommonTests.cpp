@@ -6,14 +6,43 @@
 #include <gtest/gtest.h>
 #include "Os/Mutex.hpp"
 
+FunctionalityTester::FunctionalityTester() : tester(Os::Test::Mutex::get_tester_implementation()) {}
 
-// Ensure that close mode changes work reliably
-// TEST_F(Functionality, Close) {
-//     Os::Test::File::Tester::OpenFileCreate create_rule(false);
-//     Os::Test::File::Tester::CloseFile close_rule;
-//     create_rule.apply(*tester);
-//     close_rule.apply(*tester);
+void FunctionalityTester::SetUp() {
+    // No setup required
+}
+
+void FunctionalityTester::TearDown() {
+    tester->m_mutex.unLock(); // Ensure the mutex is unlocked for safe destruction
+}
+
+// Ensure lock then unlock
+TEST_F(FunctionalityTester, LockAndUnlockMutex) {
+    Os::Test::Mutex::Tester::LockMutex lock_rule;
+    Os::Test::Mutex::Tester::UnlockMutex unlock_rule;
+    lock_rule.apply(*tester);
+    unlock_rule.apply(*tester);
+}
+
+// 
+TEST_F(FunctionalityTester, DeleteLockedMutex) {
+    Os::Test::Mutex::Tester::LockMutex lock_rule;
+    Os::Test::Mutex::Tester::UnlockMutex unlock_rule;
+    lock_rule.apply(*tester);
+    ASSERT_DEATH_IF_SUPPORTED(delete &tester, Os::Test::Mutex::Tester::ASSERT_IN_MUTEX_CPP);
+}
+
+// 
+// TEST_F(FunctionalityTester, LockBusyMutex) {
+//     Os::Test::Mutex::Tester tester;
+//     Os::Test::Mutex::Tester::LockMutex lock_rule;
+//     Os::Test::Mutex::Tester::LockBusyMutex lock_busy_rule;
+//     lock_rule.apply(tester);
+//     lock_busy_rule.apply(tester);
+//     // ASSERT_DEATH_IF_SUPPORTED(delete &tester, Os::Test::Mutex::Tester::ASSERT_IN_FILE_CPP);
+//     EXPECT_CALL(tester.m_mutex, lock()).Times(1);
 // }
+
 
 // Ensure that the assignment operator works correctly
 // TEST_F(Functionality, AssignmentOperator) {

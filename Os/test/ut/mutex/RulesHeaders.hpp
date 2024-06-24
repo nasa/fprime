@@ -27,6 +27,9 @@ struct Tester {
         UNLOCKED  //!< Mutex is unlocked
     };
 
+    //! Assert in Mutex.cpp for searching death text
+    static constexpr const char* ASSERT_IN_MUTEX_CPP = "Assert: \".*/Os/.*/Mutex\\.cpp:[0-9]+\"";
+
     // Constructors that ensures the mutex is always valid
     Tester(): m_mutex(), m_state(UNLOCKED) {}
 
@@ -43,6 +46,7 @@ struct Tester {
 #include "MutexRules.hpp"
 };
 
+std::unique_ptr<Os::Test::Mutex::Tester> get_tester_implementation();
 }  // namespace File
 }  // namespace Test
 }  // namespace Os

@@ -2,25 +2,35 @@
 // \title Os/Posix/test/ut/PosixMutexTests.cpp
 // \brief tests for posix implementation for Os::Mutex
 // ======================================================================
+// #include <gtest/gtest.h>
+// #include <unistd.h>
+// #include <list>
+// #include "Os/Mutex.hpp"
+// #include "Os/Posix/Mutex.hpp"
+// #include "STest/Pick/Pick.hpp"
+// #include <cstdio>
+// #include <csignal>
+
+#include "Os/test/ut/mutex/RulesHeaders.hpp"
 #include <gtest/gtest.h>
-#include <unistd.h>
-#include <list>
-#include "Os/Mutex.hpp"
-#include "Os/Posix/Mutex.hpp"
-// #include "Os/test/ut/file/CommonTests.hpp"
-#include "STest/Pick/Pick.hpp"
-#include <cstdio>
-#include <csignal>
+#include "STest/Scenario/Scenario.hpp"
+// #include "Os/test/ut/mutex/CommonTests.hpp"
+
 namespace Os {
 namespace Test {
 namespace Mutex {
+
+std::unique_ptr<Os::Test::Mutex::Tester> get_tester_implementation() {
+    return std::unique_ptr<Os::Test::Mutex::Tester>(new Os::Test::Mutex::Tester());
+}
 
 }  // namespace Mutex
 }  // namespace Test
 }  // namespace Os
 
+
 int main(int argc, char** argv) {
-    // STest::Random::seed();
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
