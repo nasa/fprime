@@ -16,7 +16,7 @@ The F´ tutorial is intended to help new users familiarize themselves with the F
 - Component Implementation
 - Deploying to hardware and using the F Prime ground system
 
-The tutorial itself is free, however; conference registration is required to attend the tutorial. Please visit https://smcit-scc.space/ for more information and pricing. Advance enrollment is requested to confirm a seat. If you are interested in participating or have any questions, please email fprime@jpl.nasa.gov.
+The tutorial itself is free, however; conference registration is required to attend the tutorial. Please visit [https://smcit-scc.space](https://smcit-scc.space) for more information and pricing. Advance enrollment is requested to confirm a seat. If you are interested in participating or have any questions, please email [fprime@jpl.nasa.gov](mailto:fprime@jpl.nasa.gov).
  
 ## Flight Software/F´ Developer Workshop at JPL
  
