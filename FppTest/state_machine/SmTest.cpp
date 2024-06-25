@@ -32,10 +32,10 @@ void SmTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     Fw::SMEvents event;
     event.seteventSignal(DeviceSm::RTI_SIG);
 
-    event.setsmId(DEVICE1);
+    event.setsmId(STATE_MACHINE_DEVICE1);
     stateMachineInvoke(event);
 
-    event.setsmId(DEVICE2);
+    event.setsmId(STATE_MACHINE_DEVICE2);
     stateMachineInvoke(event);
 
 }

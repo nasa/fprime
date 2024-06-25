@@ -15,7 +15,7 @@ namespace Fw {
 
 namespace FppTest {
 
-class DeviceSmIf {
+class DeviceSm_Interface {
   public:
                                                                   
 };
@@ -23,11 +23,11 @@ class DeviceSmIf {
 class DeviceSm {
                                  
   private:
-    DeviceSmIf *parent;
+    DeviceSm_Interface *parent;
                                  
   public:
                                  
-    DeviceSm(DeviceSmIf* parent) : parent(parent) {}
+    DeviceSm(DeviceSm_Interface* parent) : parent(parent) {}
   
     enum DeviceSmStates {
       OFF,

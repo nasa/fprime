@@ -31,18 +31,18 @@ Tester::~Tester() {}
 // ----------------------------------------------------------------------
 
 void Tester::schedIn_OK() {
-    ASSERT_EQ(DeviceSm::OFF, this->component.device1.state);
-    ASSERT_EQ(DeviceSm::OFF, this->component.device2.state);
+    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device1.state);
+    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device2.state);
     invoke_to_schedIn(0,0);
     dispatchAll();
-    ASSERT_EQ(DeviceSm::ON, this->component.device1.state);
-    ASSERT_EQ(DeviceSm::ON, this->component.device2.state);
+    ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device1.state);
+    ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device2.state);
     invoke_to_schedIn(0,0);
     dispatchAll();
-    ASSERT_EQ(DeviceSm::OFF, this->component.device1.state);
-    ASSERT_EQ(DeviceSm::OFF, this->component.device2.state);
-    ASSERT_EQ(0, this->component.device1.state);
-    ASSERT_EQ(0, this->component.device2.state);
+    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device1.state);
+    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device2.state);
+    ASSERT_EQ(0, this->component.m_stateMachine_device1.state);
+    ASSERT_EQ(0, this->component.m_stateMachine_device2.state);
 }
 
 
