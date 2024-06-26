@@ -17,11 +17,11 @@ namespace Mutex {
     }
 
     StubMutex::Status StubMutex::take() {
-        return Status::NO_OP;
+        return Status::OP_OK;
     }
 
     StubMutex::Status StubMutex::release() {
-        return Status::NO_OP;
+        return Status::OP_OK;
     }
 
     MutexHandle* StubMutex::getHandle() {

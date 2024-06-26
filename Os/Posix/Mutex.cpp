@@ -2,10 +2,9 @@
 // \title Os/Posix/Mutex.cpp
 // \brief Posix implementation for Os::Mutex
 // ======================================================================
-// #include <pthread.h>
 #include <Os/Posix/Mutex.hpp>
+#include <Os/Posix/error.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/Mutex.hpp>
 
 namespace Os {
 namespace Posix {
@@ -33,30 +32,24 @@ PosixMutex::~PosixMutex() {
     FW_ASSERT(status == 0, status);
 }
 
-void PosixMutex::lock() {
-    PlatformIntType status = pthread_mutex_lock(&this->m_handle.m_mutex_descriptor);
-    FW_ASSERT(status == 0, status);
-}
-
-void PosixMutex::unLock() {
-    PlatformIntType status = pthread_mutex_unlock(&this->m_handle.m_mutex_descriptor);
-    FW_ASSERT(status == 0, status);
-}
-
 PosixMutex::Status PosixMutex::take() {
-    if (pthread_mutex_lock(&this->m_handle.m_mutex_descriptor) == 0) {
-        return PosixMutex::Status::OP_OK;
-    } else {
-        return PosixMutex::Status::ERROR;
-    }
+    PlatformIntType status = pthread_mutex_lock(&this->m_handle.m_mutex_descriptor);
+    return Os::Posix::posix_status_to_mutex_status(status);
 }
 
 PosixMutex::Status PosixMutex::release() {
-    if (pthread_mutex_unlock(&this->m_handle.m_mutex_descriptor) == 0) {
-        return PosixMutex::Status::OP_OK;
-    } else {
-        return PosixMutex::Status::ERROR;
-    }
+    PlatformIntType status = pthread_mutex_unlock(&this->m_handle.m_mutex_descriptor);
+    return Os::Posix::posix_status_to_mutex_status(status);
+}
+
+void PosixMutex::lock() {
+    PosixMutex::Status status = this->take();
+    FW_ASSERT(status == PosixMutex::Status::OP_OK, status);
+}
+
+void PosixMutex::unLock() {
+    PosixMutex::Status status = this->release();
+    FW_ASSERT(status == PosixMutex::Status::OP_OK, status);
 }
 
 MutexHandle* PosixMutex::getHandle() {

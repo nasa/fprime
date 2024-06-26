@@ -41,7 +41,7 @@ TEST_F(Interface, Destruction) {
 // Ensure that Os::Mutex properly calls the implementation take()
 TEST_F(Interface, Take) {
     Os::Mutex mutex;
-    StaticData::data.takeStatus = Os::Mutex::Status::ERROR;
+    StaticData::data.takeStatus = Os::Mutex::Status::ERROR_OTHER;
     ASSERT_EQ(mutex.take(), StaticData::data.takeStatus);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::TAKE_FN);
 }
@@ -49,7 +49,7 @@ TEST_F(Interface, Take) {
 // Ensure that Os::Mutex properly calls the implementation start with arguments
 TEST_F(Interface, Release) {
     Os::Mutex mutex;
-    StaticData::data.releaseStatus = Os::Mutex::Status::ERROR;
+    StaticData::data.releaseStatus = Os::Mutex::Status::ERROR_OTHER;
     ASSERT_EQ(mutex.release(), StaticData::data.releaseStatus);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::RELEASE_FN);
 }

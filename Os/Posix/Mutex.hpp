@@ -13,6 +13,7 @@ namespace Mutex {
 
 struct PosixMutexHandle : public MutexHandle {
     pthread_mutex_t m_mutex_descriptor = PTHREAD_MUTEX_INITIALIZER;
+    bool m_busy;
 };
 
 //! \brief Posix implementation of Os::Mutex

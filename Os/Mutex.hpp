@@ -13,9 +13,10 @@ class MutexInterface {
     // add enum with
   public:
     enum Status { 
-      OP_OK,
-      ERROR,
-      NO_OP //!< No-op status for Stub implementations
+      OP_OK, //!<  Operation was successful
+      ERROR_BUSY, //!<  Mutex is busy
+      ERROR_DEADLOCK, //!< Deadlock condition detected
+      ERROR_OTHER //!< All other errors
     };
 
     //! \brief default constructor
