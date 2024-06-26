@@ -163,18 +163,6 @@ class Tester : public QueuedTestGTestBase {
                                      */
     );
 
-    //! Handler for from_stringArgsOut
-    //!
-    void from_stringArgsOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                    const str80String& str80,      /*!<
-                                     A string of size 80
-                                     */
-                                    str80RefString& str80Ref,
-                                    const str100String& str100, /*!<
-                                A string of size 100
-                                */
-                                    str100RefString& str100Ref);
-
     //! Handler for from_structArgsOut
     //!
     void from_structArgsOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/

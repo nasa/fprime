@@ -26,7 +26,7 @@ set(MOD_DEPS
 # Basic source files used in every OSAL layer.  Contains common code and helpers.
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
+#    "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/IPCQueueCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/SimpleQueueRegistry.cpp"
@@ -36,6 +36,7 @@ set(SOURCE_FILES
 
     # Refactored common files
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
 )
 # Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
@@ -51,13 +52,12 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
     )
 endif()
@@ -89,13 +89,11 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
             list(REMOVE_ITEM SOURCE_FILES "${ITER_ITEM}")
         endif()
     endforeach()
-    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/File.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/FileSystem.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/IntervalTimer.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Mutex.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Queue.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/SystemResources.cpp")
-    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
 endif()
 register_fprime_module()
 require_fprime_implementation(Os/File)
@@ -107,7 +105,6 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )

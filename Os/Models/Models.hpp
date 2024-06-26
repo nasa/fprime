@@ -5,6 +5,9 @@
 
 #include "Os/Models/FileStatusEnumAc.hpp"
 #include "Os/Models/FileModeEnumAc.hpp"
+#include "Os/Models/TaskStatusEnumAc.hpp"
+#include "Os/File.hpp"
+#include "Os/Task.hpp"
 
 #ifndef OS_MODELS_MODELS_HPP
 #define OS_MODELS_MODELS_HPP
@@ -52,5 +55,28 @@ static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_SYNC_WRITE) == O
               "File mode and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_APPEND) == Os::FileMode::T::OPEN_APPEND,
               "File mode and FPP shadow enum do not Mode");
+
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::OP_OK) == Os::TaskStatus::T::OP_OK,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_HANDLE) == Os::TaskStatus::T::INVALID_HANDLE,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_PARAMS) == Os::TaskStatus::T::INVALID_PARAMS,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_STACK) == Os::TaskStatus::T::INVALID_STACK,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::UNKNOWN_ERROR) == Os::TaskStatus::T::UNKNOWN_ERROR,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_AFFINITY) == Os::TaskStatus::T::INVALID_AFFINITY,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::DELAY_ERROR) == Os::TaskStatus::T::DELAY_ERROR,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::JOIN_ERROR) == Os::TaskStatus::T::JOIN_ERROR,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::ERROR_RESOURCES) == Os::TaskStatus::T::ERROR_RESOURCES,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::ERROR_PERMISSION) == Os::TaskStatus::T::ERROR_PERMISSION,
+              "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_STATE) == Os::TaskStatus::T::INVALID_STATE,
+              "Task status and FPP shadow enum do not match");
 
 #endif // OS_MODELS_MODELS_HPP

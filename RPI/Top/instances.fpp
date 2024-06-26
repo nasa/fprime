@@ -258,7 +258,7 @@ module RPI {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(state.hostName, state.portNumber);
-        comm.startSocketTask(
+        comm.start(
             name,
             ConfigConstants::comm::PRIORITY,
             ConfigConstants::comm::STACK_SIZE
@@ -267,11 +267,11 @@ module RPI {
     """
 
     phase Fpp.ToCpp.Phases.stopTasks """
-    comm.stopSocketTask();
+    comm.stop();
     """
 
     phase Fpp.ToCpp.Phases.freeThreads """
-    (void) comm.joinSocketTask(nullptr);
+    (void) comm.join();
     """
 
   }
@@ -323,7 +323,7 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.startTasks """
     if (Init::status) {
-      uartDrv.startReadThread();
+      uartDrv.start();
     }
     else {
       Fw::Logger::logMsg("[ERROR] Initialization failed; not starting UART driver\\n");

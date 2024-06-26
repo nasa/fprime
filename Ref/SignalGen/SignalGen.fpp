@@ -50,24 +50,6 @@ module Ref {
     @ Time get port
     time get port timeCaller
 
-    @ Command registration port
-    command reg port cmdRegOut
-
-    @ Command received port
-    command recv port cmdIn
-
-    @ Command response port
-    command resp port cmdResponseOut
-
-    @ Text event port
-    text event port logTextOut
-
-    @ Event port
-    event port logOut
-
-    @ Telemetry port
-    telemetry port tlmOut
-
     @ Signal generation data product record
     product record DataRecord: SignalInfo id 0
 
@@ -92,6 +74,13 @@ module Ref {
     # ----------------------------------------------------------------------
 
     include "Events.fppi"
+
+    # ----------------------------------------------------------------------
+    # Interfaces
+    # ----------------------------------------------------------------------
+    include "../../Fw/Interfaces/EventsInterface.fppi"
+    include "../../Fw/Interfaces/CommandInterface.fppi"
+    include "../../Fw/Interfaces/ChannelInterface.fppi"
 
   }
 

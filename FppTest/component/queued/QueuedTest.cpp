@@ -104,10 +104,10 @@
   void QueuedTest ::
     stringArgsAsync_handler(
         const NATIVE_INT_TYPE portNum,
-        const str80String &str80,
-        str80RefString &str80Ref,
-        const str100String &str100,
-        str100RefString &str100Ref
+        const Fw::StringBase &str80,
+        Fw::StringBase &str80Ref,
+        const Fw::StringBase &str100,
+        Fw::StringBase &str100Ref
     )
   {
     this->stringArgsOut_out(
@@ -332,10 +332,10 @@
   void QueuedTest ::
     stringArgsGuarded_handler(
         const NATIVE_INT_TYPE portNum,
-        const str80String &str80,
-        str80RefString &str80Ref,
-        const str100String &str100,
-        str100RefString &str100Ref
+        const Fw::StringBase &str80,
+        Fw::StringBase &str80Ref,
+        const Fw::StringBase &str100,
+        Fw::StringBase &str100Ref
     )
   {
     this->stringArgsOut_out(
@@ -350,10 +350,10 @@
   void QueuedTest ::
     stringArgsSync_handler(
         const NATIVE_INT_TYPE portNum,
-        const str80String &str80,
-        str80RefString &str80Ref,
-        const str100String &str100,
-        str100RefString &str100Ref
+        const Fw::StringBase &str80,
+        Fw::StringBase &str80Ref,
+        const Fw::StringBase &str100,
+        Fw::StringBase &str100Ref
     )
   {
     this->stringArgsOut_out(

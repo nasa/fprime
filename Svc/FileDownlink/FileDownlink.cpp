@@ -149,8 +149,8 @@ namespace Svc {
   Svc::SendFileResponse FileDownlink ::
     SendFile_handler(
         const NATIVE_INT_TYPE portNum,
-        const sourceFileNameString& sourceFilename, // lgtm[cpp/large-parameter] dictated by command architecture
-        const destFileNameString& destFilename, // lgtm[cpp/large-parameter] dictated by command architecture
+        const Fw::StringBase& sourceFilename, // lgtm[cpp/large-parameter] dictated by command architecture
+        const Fw::StringBase& destFilename, // lgtm[cpp/large-parameter] dictated by command architecture
         U32 offset,
         U32 length
     )

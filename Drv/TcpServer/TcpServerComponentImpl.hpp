@@ -62,6 +62,16 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketReadT
                              const U32 send_timeout_seconds = SOCKET_SEND_TIMEOUT_SECONDS,
                              const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS);
 
+    /**
+     * \brief get the port being listened on
+     *
+     * Most useful when listen was configured to use port "0", this will return the port used for listening after a port
+     * has been determined. Will return 0 if the connection has not been setup.
+     *
+     * \return receive port
+     */
+    U16 getListenPort();
+
   PROTECTED:
     // ----------------------------------------------------------------------
     // Implementations for socket read task virtual methods

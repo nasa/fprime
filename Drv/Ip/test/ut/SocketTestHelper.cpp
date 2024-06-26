@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <arpa/inet.h>
+#include <IpCfg.hpp>
 
 namespace Drv {
 namespace Test {
@@ -65,7 +66,7 @@ bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations) {
         if (open == socket.isOpened()) {
             return true;
         }
-        Os::Task::delay(10);
+        Os::Task::delay(Fw::Time(0, 10000));
     }
     return false;
 }
@@ -75,9 +76,14 @@ bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations) {
         if (open == socket.isStarted()) {
             return true;
         }
-        Os::Task::delay(10);
+        Os::Task::delay(Fw::Time(0, 10000));
     }
     return false;
+}
+
+U64 get_configured_delay_ms() {
+    return (static_cast<U64>(SOCKET_RETRY_INTERVAL.getSeconds()) * 1000) +
+           (static_cast<U64>(SOCKET_RETRY_INTERVAL.getUSeconds()) / 1000);
 }
 
 };

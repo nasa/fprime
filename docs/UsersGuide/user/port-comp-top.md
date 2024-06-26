@@ -46,7 +46,7 @@ at a time by a component-wide mutex. This is also combined into the "kind" attri
 ![Port Image](../media/core1.png)
 
 **Figure 1. Port connectivity.** Ports are connected to ports of the same type. When used by a *component*, the ports
-can define directionality. Using *serialized ports* (see blow), serializes the call and passes it to a data buffer
+can define directionality. Using *serialized ports* (see below), serializes the call and passes it to a data buffer
 such that it can be sent and deserialized anywhere.
 
 When discussing ports, one must be careful to distinguish between the port **design** and the port instantiation.  A

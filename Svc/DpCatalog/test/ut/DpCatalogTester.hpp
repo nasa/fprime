@@ -99,8 +99,8 @@ namespace Svc {
         //! Handler implementation for fileOut
         Svc::SendFileResponse from_fileOut_handler(
             NATIVE_INT_TYPE portNum, //!< The port number
-            const Svc::SendFileRequestPortStrings::StringSize100& sourceFileName, //!< Path of file to downlink
-            const Svc::SendFileRequestPortStrings::StringSize100& destFileName, //!< Path to store downlinked file at
+            const Fw::StringBase& sourceFileName, //!< Path of file to downlink
+            const Fw::StringBase& destFileName, //!< Path to store downlinked file at
             U32 offset, //!< Amount of data in bytes to downlink from file. 0 to read until end of file
             U32 length //!< Amount of data in bytes to downlink from file. 0 to read until end of file
         ) override;
