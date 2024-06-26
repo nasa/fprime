@@ -96,7 +96,7 @@ $(document).ready(function(){initNavTree('md_docs__how_to_develop_fprime_librari
 <li><a href="#optional-platform-folder-and-platform-files">Optional: Platform Folder and Platform Files</a></li>
 <li><a href="#optional-fmodule-directories">Optional: F´&#160;Module Directories</a></li>
 </ol>
-<h1><a class="anchor" id="autotoc_md343"></a>
+<h1><a class="anchor" id="autotoc_md346"></a>
 F´ Library Structure</h1>
 <p>In this section, you will learn about the expected structure of an F´&#160;library. An F´&#160;library must have a <code>library.cmake</code> and may have any of the following items:</p>
 <ol type="1">
@@ -120,7 +120,7 @@ F´ Library Structure</h1>
 <p>Module directories shall be namespaced (i.e. <code>MyLibrary</code> above) to ensure that modules do not collide with F´ and other libraries. Placing container directories (e.g. <code>Components</code>, <code><a class="el" href="namespace_svc.html">Svc</a></code>, <code><a class="el" href="namespace_drv.html">Drv</a></code>, etc.) directly at the root of the repository is <em>strongly</em> forbidden. </p>
 </blockquote>
 <p>You will see how to develop each of these parts of the library in the following sections.</p>
-<h1><a class="anchor" id="autotoc_md344"></a>
+<h1><a class="anchor" id="autotoc_md347"></a>
 Required: &lt;tt&gt;library.cmake&lt;/tt&gt;</h1>
 <p>The <code>library.cmake</code> file is the only required file for an F´ library. It consists of a series of <code>add_fprime_subdirectory</code> calls that include the various modules that are part of the library. For libraries that just contain toolchains and platforms, this file may be empty.</p>
 <p><b>Sample <code>library.cmake</code></b> </p><div class="fragment"><div class="line">####</div>
@@ -129,22 +129,22 @@ Required: &lt;tt&gt;library.cmake&lt;/tt&gt;</h1>
 <div class="line">add_fprime_subdirectory(&quot;${CURRENT_CMAKE_LIST_DIR}/MyLibrary/Components/MyComponent&quot;)</div>
 <div class="line">add_fprime_subdirectory(&quot;${CURRENT_CMAKE_LIST_DIR}/MyLibrary/MyTopology&quot;)</div>
 </div><!-- fragment --><p><code>library.cmake</code> should exist at the root of the library's directory structure.</p>
-<h1><a class="anchor" id="autotoc_md345"></a>
+<h1><a class="anchor" id="autotoc_md348"></a>
 Optional: F´ Module Directories</h1>
 <p>F´ libraries share F´&#160;code through modules. These module directories are created by <code>fprime-util new --component</code> or by hand and may include any F´ code (Components, Ports, Topologies, Data <a class="el" href="namespace_types.html">Types</a>, etc.). These types are made available to users of the library by ensuring that they are added to the <code>library.cmake</code> file. The only restriction is that these component should be placed under a namespacing directory for the library (e.g. <code>MyLibrary</code>) to avoid collisions with other libraries and F´&#160;code.</p>
 <p>Developing component, ports, topologies, etc. are the subject of our tutorials.</p>
-<h1><a class="anchor" id="autotoc_md346"></a>
+<h1><a class="anchor" id="autotoc_md349"></a>
 Optional: Toolchain Folder and Toolchain Files</h1>
 <p>F´&#160;libraries often need to supply new toolchain integrations with F´. These libraries must define a <code>cmake/toolchain</code> folder and place toolchain files within that folder. Any file ending in <code>.cmake</code> and placed within the <code>cmake/toolchain</code> folder will be available as a toolchain via <code>fprime-util generate &lt;toolchain&gt;</code>.</p>
 <p>The example toolchain above (<code>cmake/toolchain/my-toolchain</code>) would be found as <code>my-toolchain</code> in <code>fprime-util</code>.</p>
 <div class="fragment"><div class="line">fprime-util generate my-toolchain</div>
 </div><!-- fragment --><p>The <code>cmake/toolchain</code> folder may contain any number of toolchains and must be placed in the root of the library's directory structure.</p>
-<h1><a class="anchor" id="autotoc_md347"></a>
+<h1><a class="anchor" id="autotoc_md350"></a>
 Optional: Platform Folder and Platform Files</h1>
 <p>In a similar manner to toolchains, platforms may be provided in the <code>cmake/platform</code> folder. Any file ending in <code>.cmake</code> and placed within the <code>cmake/platform</code> folder will be available to F´&#160; to be loaded as a platform. Commonly, this means that a toolchain would include the line <code>set(FPRIME_PLATFORM &lt;platform&gt;)</code>.</p>
 <p>The example platform would thus need to include <code>set(FPRIME_PLATFORM "my-platform")</code>.</p>
 <p>The <code>cmake/platform</code> folder may contain any number of platform files and must be placed in the root of the library's directory structure.</p>
-<h1><a class="anchor" id="autotoc_md348"></a>
+<h1><a class="anchor" id="autotoc_md351"></a>
 Conclusion</h1>
 <p>You should now understand the structure of an F´&#160; library an know how to assemble one. </p>
 </div></div><!-- contents -->

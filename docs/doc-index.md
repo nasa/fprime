@@ -18,10 +18,14 @@
 - [memory](Design/memory.md)
 - [numerical-types](Design/numerical-types.md)
 - [package-implementations](Design/package-implementations.md)
+## GettingStarted
+- [README](GettingStarted/README.md)
 ## HowTo
 - [develop-fprime-libraries](HowTo/develop-fprime-libraries.md)
 - [develop-gds-plugins](HowTo/develop-gds-plugins.md)
 - [general](HowTo/general.md)
+## Reference
+- [README](Reference/README.md)
 ## Tutorials
 - [README](Tutorials/README.md)
 ### Tutorials/CrossCompilationSetup

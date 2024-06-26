@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_poly_db_component.html',''); init
 <div class="title"><a class="el" href="class_svc_1_1_poly_db.html" title="PolyDb Component Class.">Svc::PolyDb</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md1010"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md1016"></a>
 Svc::PolyDb Component</h1>
-<h2><a class="anchor" id="autotoc_md1011"></a>
+<h2><a class="anchor" id="autotoc_md1017"></a>
 1. Introduction</h2>
 <p>The <code><a class="el" href="class_svc_1_1_poly_db.html" title="PolyDb Component Class.">Svc::PolyDb</a></code> component is meant to act as a resident database of values that components can use for checking or for data in algorithms.</p>
-<h2><a class="anchor" id="autotoc_md1012"></a>
+<h2><a class="anchor" id="autotoc_md1018"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="class_svc_1_1_poly_db.html" title="PolyDb Component Class.">Svc::PolyDb</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -108,15 +108,15 @@ Svc::PolyDb Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">PDB-004   </td><td class="markdownTableBodyNone">The <code><a class="el" href="class_svc_1_1_poly_db.html" title="PolyDb Component Class.">Svc::PolyDb</a></code> component shall report the measurement state of the data (good, stale, failure)   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md1013"></a>
+<h2><a class="anchor" id="autotoc_md1019"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md1014"></a>
+<h3><a class="anchor" id="autotoc_md1020"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md1015"></a>
+<h4><a class="anchor" id="autotoc_md1021"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code><a class="el" href="class_svc_1_1_poly_db.html" title="PolyDb Component Class.">Svc::PolyDb</a></code> component has the following component diagram:</p>
 <p><img src="img/PolyDbBDD.jpg" alt="`Svc::PolyDb` Diagram" title="Svc::PolyDb" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md1016"></a>
+<h4><a class="anchor" id="autotoc_md1022"></a>
 3.1.2 Ports</h4>
 <p>The <a class="el" href="class_svc_1_1_poly_db.html" title="PolyDb Component Class.">Svc::PolyDb</a> component uses the following port types:</p>
 <table class="markdownTable">
@@ -127,27 +127,27 @@ Svc::PolyDb Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a class="el" href="svc_2_poly_if_2docs_2sdd_8md.html">`Svc::Poly`</a>   </td><td class="markdownTableBodyNone">setValue   </td><td class="markdownTableBodyNone">Input   </td><td class="markdownTableBodyNone">Guarded   </td><td class="markdownTableBodyNone">Write <code><a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a></code> values   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md1017"></a>
+<h4><a class="anchor" id="autotoc_md1023"></a>
 3.2 Functional Description</h4>
 <p><code><a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a></code> is different from binary telemetry in that it is not in a serialized form, but is stored as the native type. The component stores a table of &lsquo;<a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a>&rsquo; objects which are read and written by a table index enumeration. The table is protected by a mutex to prevent simultaneous access.</p>
 <p>Users can customize the index name by modifying the <code>config/PolyDbCfg.fpp</code> file in their own configuration directory.</p>
 <p>Note that users should understand how the <code><a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a></code> works to avoid asserts when reading a different type than was written. To avoid asserts, user code can verify the expected type matches by calling the correct <code>isXX()</code> function before trying to read the value out. The <code>PolyDb</code> will not assert on the read or write of a <code><a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a></code> if there is a type mismatch. This only happens when trying to read out the value stored in the <code><a class="el" href="class_fw_1_1_poly_type.html">Fw::PolyType</a></code>.</p>
-<h3><a class="anchor" id="autotoc_md1018"></a>
+<h3><a class="anchor" id="autotoc_md1024"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md1019"></a>
+<h4><a class="anchor" id="autotoc_md1025"></a>
 3.3.1 Read and Write Values</h4>
 <p>The following diagram shows how components can share a value by having one component write the value, and the other read it:</p>
 <p><img src="img/PolyDbReadWriteScenario.jpg" alt="Read and Write Values" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md1020"></a>
+<h3><a class="anchor" id="autotoc_md1026"></a>
 3.4 State</h3>
 <p><code><a class="el" href="class_svc_1_1_poly_db.html" title="PolyDb Component Class.">Svc::PolyDb</a></code> has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md1021"></a>
+<h3><a class="anchor" id="autotoc_md1027"></a>
 3.5 Algorithms</h3>
 <p><code><a class="el" href="class_svc_1_1_poly_db.html" title="PolyDb Component Class.">Svc::PolyDb</a></code> has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md1022"></a>
+<h2><a class="anchor" id="autotoc_md1028"></a>
 4. Dictionaries</h2>
 <p>No dictionaries</p>
-<h2><a class="anchor" id="autotoc_md1023"></a>
+<h2><a class="anchor" id="autotoc_md1029"></a>
 4. Module Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -159,10 +159,10 @@ Svc::PolyDb Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test Checklist   </td><td class="markdownTableBodyNone"><a href="Checklist_Unit_Test.xls">Link</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md1024"></a>
+<h2><a class="anchor" id="autotoc_md1030"></a>
 5. Unit Testing</h2>
 <p>To see unit test coverage run fprime-util check &ndash;coverage</p>
-<h2><a class="anchor" id="autotoc_md1025"></a>
+<h2><a class="anchor" id="autotoc_md1031"></a>
 6. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

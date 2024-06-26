@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_tlm_packetizer_component.html',''
 <div class="title"><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md1101"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md1107"></a>
 Svc::TlmPacketizer Component</h1>
-<h2><a class="anchor" id="autotoc_md1102"></a>
+<h2><a class="anchor" id="autotoc_md1108"></a>
 1. Introduction</h2>
 <p>The <code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> Component is used to store telemetry values written by other components. The values are stored in serialized form. TlmPacketizer differs from <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> in that it stores telemetry in defined packets instead of streaming the updates as they come. The defined packets are passed in as a table to the <code>setPacketList()</code> public method. When telemetry updates are passed to the component, they are placed at the offset in a packet buffer defined by the table. When the <code>run()</code> port is called, all the defined packets are sent to the output port with the most recent . This is meant to replace <code>Svc::TlmCham</code> for use cases where a more compact packet format is desired. The disadvantage is that all channels are pushed whether or not they have been updated.</p>
-<h2><a class="anchor" id="autotoc_md1103"></a>
+<h2><a class="anchor" id="autotoc_md1109"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -110,15 +110,15 @@ Svc::TlmPacketizer Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">TPK-005   </td><td class="markdownTableBodyNone">The <code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> component shall write all packets when the scheduler call is made   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md1104"></a>
+<h2><a class="anchor" id="autotoc_md1110"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md1105"></a>
+<h3><a class="anchor" id="autotoc_md1111"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md1106"></a>
+<h4><a class="anchor" id="autotoc_md1112"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> component has the following component diagram:</p>
 <p><img src="img/TlmPacketizerBDD.jpg" alt="Svc::TlmPacketizer Diagram" title="Svc::TlmPacketizer" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md1107"></a>
+<h4><a class="anchor" id="autotoc_md1113"></a>
 3.1.2 Ports</h4>
 <p>The <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> component uses the following port types:</p>
 <table class="markdownTable">
@@ -131,30 +131,30 @@ Svc::TlmPacketizer Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><a class="el" href="fw_2_com_2docs_2sdd_8md.html">`Fw::Com`</a>   </td><td class="markdownTableBodyNone">PktSend   </td><td class="markdownTableBodyNone">Output   </td><td class="markdownTableBodyNone">n/a   </td><td class="markdownTableBodyNone">Write a set of packets with updated telemetry   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md1108"></a>
+<h4><a class="anchor" id="autotoc_md1114"></a>
 3.2 Functional Description</h4>
 <p>The <code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> component has an input port <code>TlmRecv</code> that receives channel updates from other components in the system. These calls from the other components are made by the component implementation classes, but the generated code in the base classes takes the type specific channel value and serializes it, then makes the call to the output port. The <code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> component can then store the channel value as generic data. The channel ID is used to look up offsets for the channel in each of the defined packets. A channel can be defined in more than one packet. The time tag is stripped from the incoming telemetry value. The time tag of the channel will become the time tag of the entire frame when it is sent.</p>
 <p>The implementation uses a hashing function to find the location of telemetry channels that is tuned in the configuration file <code>TlmPacketizerImplCfg.hpp</code>. See section 3.5 for description.</p>
 <p>When a call to the <code>Run()</code> interface is called, the packet writes are locked and all the packets are copied to a second set of packets. Once the copy is complete, the packets writes are unlocked. The destination packet set gets updated with the current time tag and are sent out the <code>pktSend()</code> port. <br  />
 </p>
-<h3><a class="anchor" id="autotoc_md1109"></a>
+<h3><a class="anchor" id="autotoc_md1115"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md1110"></a>
+<h4><a class="anchor" id="autotoc_md1116"></a>
 3.3.1 External User Option</h4>
-<h3><a class="anchor" id="autotoc_md1111"></a>
+<h3><a class="anchor" id="autotoc_md1117"></a>
 3.4 State</h3>
 <p><code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md1112"></a>
+<h3><a class="anchor" id="autotoc_md1118"></a>
 3.5 Algorithms</h3>
 <p>In order to speed up lookups for storing and reading telemetry channels, a simple hash function is used to select a location in an array of hash table slots. A configuration value in <code>TlmPacketizerImplCfg.h</code> defines a set of hash buckets to store the telemetry values. The number of buckets has to be at least as large as the number of telemetry channels defined in the system. The number of channels in the system can be determined by invoking <code>make comp_report_gen</code> from the deployment directory. The number of has table slots <code>TLMPACKETIZER_NUM_TLM_HASH_SLOTS</code> and the hash value <code>TLMPACKETIZER_HASH_MOD_VALUE</code> in the configuration file can be varied to balance the amount of memory for slots versus the distribution of buckets to slots. See <code>TlmPacketizerImplCfg.h</code> for a procedure on how to tune the algorithm.</p>
-<h2><a class="anchor" id="autotoc_md1113"></a>
+<h2><a class="anchor" id="autotoc_md1119"></a>
 4. Dictionaries</h2>
-<h2><a class="anchor" id="autotoc_md1114"></a>
+<h2><a class="anchor" id="autotoc_md1120"></a>
 5. Module Checklists</h2>
-<h2><a class="anchor" id="autotoc_md1115"></a>
+<h2><a class="anchor" id="autotoc_md1121"></a>
 6. Unit Testing</h2>
 <p>To see unit test coverage run fprime-util check &ndash;coverage</p>
-<h2><a class="anchor" id="autotoc_md1116"></a>
+<h2><a class="anchor" id="autotoc_md1122"></a>
 7. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
