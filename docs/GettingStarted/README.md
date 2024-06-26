@@ -14,9 +14,9 @@ Then, create a new project with:
 fprime-bootstrap project
 ```
 
-See the [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/) to guide you through all the steps of developing an F´ project.
+The best way to learn about F´ is to follow the [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/). This tutorial guides users through all the steps of developing an F´ project.
 
-New users are encouraged to read through the [User Guide](https://nasa.github.io/fprime/UsersGuide/guide.html) and explore the [other tutorials](../Tutorials/README.md).
+New users are also encouraged to read through the [User Guide](https://nasa.github.io/fprime/UsersGuide/guide.html) and explore the [other tutorials](../Tutorials/README.md).
 
 
 For additional installation instructions and troubleshooting, see the [F´ Installation Guide](../INSTALL.md).
