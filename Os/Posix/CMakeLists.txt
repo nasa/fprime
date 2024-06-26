@@ -50,9 +50,8 @@ set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Task.hpp"
 )
 
-set(MOD_DEPS Os_Posix_Shared Fw/Time Os)
+set(MOD_DEPS Os_Posix_Shared Fw/Time)
 register_fprime_module(Os_Task_Posix)
-# Question: how come DefaultTask is passed as a required file here, but as a source file in Stub implementation?
 register_fprime_implementation(Os/Task Os_Task_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultTask.cpp")
 
 #### Os/Task/Posix Unit Tests ####
@@ -76,7 +75,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"
 )
-# set(MOD_DEPS Os)
+set(MOD_DEPS Os_Posix_Shared)
 register_fprime_module(Os_Mutex_Posix)
 register_fprime_implementation(Os/Mutex Os_Mutex_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")
 

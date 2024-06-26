@@ -97,9 +97,11 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/SystemResources.cpp")
 endif()
 register_fprime_module()
+
 require_fprime_implementation(Os/File)
-# is require_fprime_implementation(Os/Task) missing here?
-# require_fprime_implementation(Os/Mutex)
+require_fprime_implementation(Os/Task)
+require_fprime_implementation(Os/Mutex) 
+
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
@@ -113,7 +115,7 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 if (BUILD_TESTING)
-    foreach (TEST IN ITEMS StubFileTest PosixFileTest)
+    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubTaskTest PosixTaskTest StubMutexTest PosixMutexTest)
        if (TARGET "${TEST}")
            add_dependencies("Os_ut_exe" "${TEST}")
        endif()
