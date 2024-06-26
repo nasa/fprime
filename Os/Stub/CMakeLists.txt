@@ -86,6 +86,7 @@ set(UT_SOURCE_FILES
 )
 set(UT_MOD_DEPS
         Os
+        Os_Models
         STest
 )
 choose_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub)
