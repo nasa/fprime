@@ -58,7 +58,7 @@ TEST_F(FunctionalityTester, TakeAndReleaseMutex) {
 // }
 
 // Unlock a free mutex 
-// QUESTION: does not error on MacOS, but does on Linux/RHEL8 - how should this be handled?
+// QUESTION: does not error on macOS, but does on Linux/RHEL8 - how should this be handled?
 TEST_F(FunctionalityTester, UnlockFreeMutex) {
     Os::Test::Mutex::Tester::LockMutex lock_rule;
     Os::Test::Mutex::Tester::UnlockMutex unlock_rule;
