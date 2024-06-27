@@ -80,8 +80,7 @@ It is recommended to set static IPs for both nodes if using a multi-computer sys
 
 All instances names should be unique across the entire F´ System. Instances with the same name may mix telemetry and logging together with no solid way to differentiate between deployments.
 
-If telemetry and event connections are tied to the hub, the setup order in setupTopology in obcBTopology.cpp will need to be switched around.
-initComponents(); -> setBaseIds(); -> connectComponents(); -> configureTopology(); -> loadParameters(); -> regCommands(); -> startTasks();
+If telemetry and event connections are tied to the hub, the setup order in setupTopology in obcBTopology.cpp will need to be slightly reordered. This should be a swap between `configureTopology()` and `regCommands()`, which should match the following:
 ```cpp
 // In Node B's Topology.cpp
 void setupTopology(const TopologyState& state) {
@@ -94,7 +93,7 @@ void setupTopology(const TopologyState& state) {
 
 ```
 
-### Creating a combined dictionary for a multi-deployment system
+### Creating a Combined Dictionary for a Multi-deployment System
 
 Since this system is running on two deployments, the dictionaries need to be merged together in order to process the data from both deployments. Running `fprime-gds` using a dictionary from build-artifacts of one deployment but not both would drop telemetry and logging from the other deployment, and GDS will not display any inner-deployment commands. Using [FPP Tools](), we can generate a list of dependencies for topologies of both deployments and create a combined dictionary.
 
@@ -112,7 +111,6 @@ FPrimeProject
 └── GDSDictionary
   ├── generate_dictionary.sh
   └── topology.fpp
-
 ```
 
 In the new topology.fpp file, import the topologies from the two deployments like this:
@@ -125,13 +123,15 @@ topology GDSDictionary {
 } 
 ```
 
-The following fpp tools commands could be ran in the terminal, but it may be put into a shell script for i
-convenience:
+Using FPP-Tools, we can manually generate a ground dictionary by finding the dependencies of GDSDictionary, which includes the dependencies of Node A and Node B. 
+`fpp-depend` writes out the names of generated files during dependency analysis. This is useful in retrieving the files needed to build the dictionaries for both Node A and Node B. 
+`fpp-to-dict` is then used to retrieve the dependencies and build a dictionary.
 
 ```shell
 #!/bin/bash
 
-fpp-depend ../build-fprime-automatic-native/locs.fpp topology.fpp > deps.txt
+fpp-depend ../build-fprime-automatic-native/locs.fpp topology.fpp -g deps.txt
 tr '\n' ',' < deps.txt | sed 's/,$//' > deps-comma.txt
 fpp-to-dict -i `cat deps-comma.txt` topology.fpp
 ```
+> The second line takes the file dependencies and converts it to a one-line comma-separated input for `fpp-to-dict`. This line maybe omitted, which `fpp-to-dict` would then generate dictionaries for the GDS and both nodes.
