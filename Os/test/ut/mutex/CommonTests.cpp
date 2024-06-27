@@ -19,10 +19,10 @@ void FunctionalityTester::SetUp() {
 }
 
 void FunctionalityTester::TearDown() {
-    // tester->m_mutex.unLock(); // Ensure the mutex is unlocked for safe destruction
-    Os::Test::Mutex::Tester::UnlockMutex unlock_rule;
-    unlock_rule.apply(*tester);
-
+    // Ensure the mutex is unlocked for safe destruction
+    if (tester->m_state == Os::Test::Mutex::Tester::MutexState::LOCKED) {
+        tester->m_mutex.unLock();
+    }
 }
 
 // ----------------------------------------------------------------------
