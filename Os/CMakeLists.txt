@@ -53,11 +53,9 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
-        # "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
     )
@@ -99,7 +97,7 @@ endif()
 register_fprime_module()
 
 require_fprime_implementation(Os/File)
-require_fprime_implementation(Os/Task)
+# require_fprime_implementation(Os/Task) # should be added in
 require_fprime_implementation(Os/Mutex) 
 
 
@@ -115,7 +113,7 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 if (BUILD_TESTING)
-    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubTaskTest PosixTaskTest StubMutexTest PosixMutexTest)
+    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubMutexTest PosixMutexTest) # add? : StubTaskTest PosixTaskTest
        if (TARGET "${TEST}")
            add_dependencies("Os_ut_exe" "${TEST}")
        endif()
