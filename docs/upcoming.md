@@ -26,7 +26,7 @@ Conference registration is required to attend the tutorial; please visit [https:
 
 ## Flight Software/F´ Developer Workshop at JPL
  
-#### Flight Software/F Prime Developer Workshop at JPL, October 21 – 23
+##### Flight Software/F Prime Developer Workshop at JPL, October 21 – 23
  
 This concentrated 3-day workshop covers fundamentals of flight software architecture, design, general programming practices and verification. The workshop also includes a tutorial on the F Prime open source flight software product line, which serves as the basis for a hands-on coding exercise emphasizing key concepts discussed in the workshop.
  
