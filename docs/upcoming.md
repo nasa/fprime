@@ -16,6 +16,8 @@ The F´ tutorial is intended to help new users familiarize themselves with the F
 - Component Implementation
 - Deploying to hardware and using the F Prime ground system
 
+The tutorials themselves are free, however registration is required when held at conferences and advance enrollment is requested to confirm a seat.
+
 ##### July 16-17 - F Prime Tutorial at the IEEE SMC-IT/SCC Conference in Mountain View, CA
 
 Conference registration is required to attend the tutorial; please visit [https://smcit-scc.space/](https://smcit-scc.space/) for registration information and pricing. Up to date schedule information is available from [https://smcit-scc.space/workshop-ossw.html](https://smcit-scc.space/workshop-ossw.html). Advance enrollment is requested to confirm a seat. If you are interested in participating or have any questions, please email [fprime@jpl.nasa.gov](mailto:fprime@jpl.nasa.gov).
