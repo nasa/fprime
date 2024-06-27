@@ -88,20 +88,20 @@ $(document).ready(function(){initNavTree('_utils_hash_class.html',''); initResiz
 <div class="title"><a class="el" href="class_utils_1_1_hash.html" title="A generic interface for creating and comparing hash values.">Utils::Hash</a> Class </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md1148"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md1150"></a>
 Utils::Hash</h1>
 <p>This directory contains a generic interface for creating hashes of data. It provides a mechanism for selecting different implementations of the hash interface, which could be as simple as an 8 bit checksum or as complex as a 256 bit SHA256 hash.</p>
 <p>The generic interface to the hashing utility is included in <code><a class="el" href="hash_8hpp.html">Utils/Hash/Hash.hpp</a></code>. Its corresponding generic hash buffer class (which is used to hold a computed hash digest) can be found in <code><a class="el" href="hash_buffer_8hpp.html">Utils/Hash/HashBuffer.hpp</a></code>. Some common implementation code for each class is included in <code><a class="el" href="hash_common_8cpp.html">Utils/Hash/HashCommon.cpp</a></code> and <code><a class="el" href="hash_buffer_common_8cpp.html">Utils/Hash/HashBufferCommon.cpp</a></code>.</p>
 <p>Specific implementations of the hashing utility are stored in subdirectories in <code>Utils/Hash/</code>. Currently, one such implementation exists in <code>Utils/Hash/openssl/</code> which provides a SHA256 hash using the openssl library. Another implementation is also provided which calculates a 32-bit CRC32, which depends on no external libraries.</p>
 <p>A specific implementation can be selected by modifying the <code><a class="el" href="hash_config_8hpp.html">HashConfig.hpp</a></code> file.</p>
-<h2><a class="anchor" id="autotoc_md1149"></a>
+<h2><a class="anchor" id="autotoc_md1151"></a>
 Using &lt;tt&gt;hash&lt;/tt&gt;</h2>
 <p>The generic hash interface includes only 4 methods besides the constructor/destructor. A description of each method is included below:</p>
 <p><code>hash.init()</code> - This method initializes the hash object, priming it for computing a new hash. It should be run before beginning to calculate each new hash. It resets any state remaining from a previously computed hash.</p>
 <p><code>hash.update(data, len)</code> - This method updates the hash object with new data to hash. It can be run as many times as you like, allowing you to continue adding data to the hash state. In this way, a user can hash their data as they read it from a buffer, or from a file, in segments.</p>
 <p><code>hash.final(buffer)</code> - This method returns a hash of all the data given to the hash object via <code>update</code> since the last <code>init</code> was run. It returns the hash in <code>buffer</code>, which is a <code>HashBuffer</code> object.</p>
 <p><code>hash.hash(data, len, buffer)</code> - This method runs <code>init</code>, <code>update</code>, and <code>final</code> all in one shot. If you have already collected all the data that you want to hash into a buffer <code>data</code> with length <code>len</code>, you can use this static function to calculate the hash all at once. The computed hash is returned in <code>buffer</code>, which is a <code>HashBuffer</code> object.</p>
-<h2><a class="anchor" id="autotoc_md1150"></a>
+<h2><a class="anchor" id="autotoc_md1152"></a>
 Configuring &lt;tt&gt;hash&lt;/tt&gt;</h2>
 <p>To configure the <code>hash</code> utility to use a specific hashing implementation, modify <code><a class="el" href="hash_config_8hpp.html">HashConfig.hpp</a></code> to include the header file of the implementation you wish to use. For example, to use SHA256 hashing, your <code><a class="el" href="hash_config_8hpp.html">HashConfig.hpp</a></code> should look something like:</p>
 <div class="fragment"><div class="line">#ifndef UTILS_HASH_CONFIG_HPP</div>
@@ -110,7 +110,7 @@ Configuring &lt;tt&gt;hash&lt;/tt&gt;</h2>
 <div class="line">#include &lt;Utils/Hash/openssl/SHA256.hpp&gt;</div>
 <div class="line"> </div>
 <div class="line">#endif</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md1151"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md1153"></a>
 Building your own &lt;tt&gt;hash&lt;/tt&gt; implementation</h2>
 <p>The generic interface to <code>hash</code> can be implemented using many different hashing algorithms. To construct your own please look at the SHA256 implementation as an example, found in the <code>openssl</code> subdirectory. Your implementation should include a few files:</p>
 <p><code>YourImplementationHash.hpp</code> - This file must declare the following <code>#define</code> constants: <code>HASH_HANDLE_TYPE</code>, the handle type for computing the hash internally, <code>HASH_DIGEST_LENGTH</code>, the length of the hash digest in bytes, and <code>HASH_EXTENSION_STRING</code>, the file extension you would assign to the hash should it be stored into a file (ie. <code>.SHA256</code>).</p>

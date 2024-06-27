@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('md_docs__how_to_develop_gds_plugins.ht
 </ol>
 <p>This guide will walk through the development of a <code>framing</code> selection plugin to see the basic development of a plugin. Then the guide will walk you through the development of a start-up application functionality plugin, which will also discuss taking arguments to plugins. Finally the guide will close with a discussion of testing and distributing your plugins.</p>
 <p>Examples covered here are available at: <a href="https://github.com/fprime-community/fprime-gds-plugin-examples">https://github.com/fprime-community/fprime-gds-plugin-examples</a></p>
-<h1><a class="anchor" id="autotoc_md353"></a>
+<h1><a class="anchor" id="autotoc_md355"></a>
 Contents</h1>
 <ul>
 <li><a href="#plugin-system-design">Plugin System Design</a></li>
@@ -113,7 +113,7 @@ Contents</h1>
 <li><a href="#distributing-plugins">Distributing Plugins</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
 </ul>
-<h1><a class="anchor" id="autotoc_md354"></a>
+<h1><a class="anchor" id="autotoc_md356"></a>
 Plugin System Design</h1>
 <p>GDS plugins are built on top of the <a href="https://pluggy.readthedocs.io/en/stable/">pluggy</a>. This means that each implementor of a GDS plugin must define a function for behavior and mark that function with an implementation decorator. GDS plugins all define a registration function, which returns an implementation class for the given plugin category.</p>
 <p>The GDS defines several categories of plugins that the user may implement. These categories and the plugin type of each category is summarized in the table below.</p>
@@ -131,10 +131,10 @@ Plugin System Design</h1>
 </table>
 <p>Plugins should define a function called <code>register_&lt;category&gt;_plugin</code> that return a concrete subclass of the category's implementation base class from the above table. These concrete classes may additionally define <code>get_arguments</code>, <code>get_name</code>, and <code>check_arguments</code> functions used by the plugin system to provide and validate arguments from the CLI.</p>
 <p>This guide will walk through the development of a framing plugin and compare that to a gds-app plugin.</p>
-<h1><a class="anchor" id="autotoc_md355"></a>
+<h1><a class="anchor" id="autotoc_md357"></a>
 Developing a Plugin</h1>
 <p>The first step in developing a framing plugin is to determine the function that must be implemented and the class that must be derived to develop the plugin. For the case of a <code>framing</code> plugin, the <code>register_framing_plugin</code> function must be defined to return a concrete subclass of <code>FramerDeframer</code>. This information was found in the above table.</p>
-<h2><a class="anchor" id="autotoc_md356"></a>
+<h2><a class="anchor" id="autotoc_md358"></a>
 Basic Plugin Skeleton</h2>
 <p>GDS plugins define a class that inherits from the implementation base class and implements all virtual functions. These classes also define a properly decorated class method for the registration function, and may define the other class methods used for CLI interaction.</p>
 <p>A basic framing plugin skeleton would thus look like: **<code>src/my_plugin.py</code>:** </p><div class="fragment"><div class="line">from fprime_gds.common.communication.framing import FramerDeframer</div>
@@ -162,7 +162,7 @@ Basic Plugin Skeleton</h2>
 <div class="line">    def register_framing_plugin(cls):</div>
 <div class="line">        &quot;&quot;&quot; Register the MyPlugin plugin &quot;&quot;&quot;</div>
 <div class="line">        return cls</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md357"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md359"></a>
 Implementing Virtual Functions</h2>
 <p>Each plugin implementation base class (e.g. <code>FramerDeframer</code>) has a set of virtual methods that plugin implementors <em>must</em> implement in order to support the plugin implementation. These functions are marked as <code>@abc.abstractmethod</code> and can be found in the virtual class definition.</p>
 <p><a href="https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/communication/framing.py#L29-L51">FramerDeframer virtual functions</a> consist of a <code>frame</code> and <code>deframe</code> method. Below the frame function adds the bytes <code>MY-PLUGIN</code> to the start of each frame and strip the same bytes off the start of each frame. This is a trivial example of a start word.</p>
@@ -222,11 +222,11 @@ Implementing Virtual Functions</h2>
 <div class="line">        return cls</div>
 </div><!-- fragment --><p>This is the basic implementation of a no-argument framing plugin. The above plugin tracks a single start <code>MY-PLUGIN</code> string and deframes that as a packet. Next, this guide will cover how to integrate this plugin via python packaging. Following that, plugin arguments will be covered.</p>
 <p>You may now continue to read about "Application Plugins" that show the other type of plugin available for the <code>fprime-gds</code>. This section also covers how arguments to plugins work. Otherwise, jump to the <a href="#packaging-and-testing-plugins">Packaging and Testing Plugins</a> section to begin testing your plugin!</p>
-<h1><a class="anchor" id="autotoc_md358"></a>
+<h1><a class="anchor" id="autotoc_md360"></a>
 Application Plugins</h1>
 <p>Unlike the example <code>framing</code> plugin, application plugins run in addition to the GDS. These plugins can be used to start new services that connect to the larger GDS network. Application plugins will be used to show how to solicit arguments from the command line.</p>
 <p>Our plugin ill run python to print a message supplied via arguments. This is the equivalent to running the following command line: </p><div class="fragment"><div class="line">python -c &quot;print(&#39;Hello World&#39;)&quot;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md359"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md361"></a>
 Application Plugin Skeleton</h2>
 <p>Here is the basic structure for a <code>gds-app</code> plugin. It prints "Hello World". gds-app plugins must implement the function <code>get_process_invocation</code> that returns command line arguments to be run as a separate process using the <code>subprocess</code> module.</p>
 <p>**<code>src/my_app.py</code>:** </p><div class="fragment"><div class="line">import sys</div>
@@ -249,7 +249,7 @@ Application Plugin Skeleton</h2>
 <div class="line">    def register_gds_app_plugin(cls):</div>
 <div class="line">        &quot;&quot;&quot; Register a good plugin &quot;&quot;&quot;</div>
 <div class="line">        return cls</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md360"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md362"></a>
 Plugin Arguments</h2>
 <p>Plugins can source arguments from the command line. Although, all types of plugins can source arguments using the pattern described here, you will see them shown with our application plugin.</p>
 <p>It is time to add in plugin arguments. This plugin will take one argument <code>--message</code> and will inject this message into the printed message. To do this we return the argument using the <code>get_arguments</code> class method. Add this to your plugin <code>MyApp</code> class:</p>
@@ -326,7 +326,7 @@ Plugin Arguments</h2>
 <div class="line">    def register_gds_app_plugin(cls):</div>
 <div class="line">        &quot;&quot;&quot; Register a good plugin &quot;&quot;&quot;</div>
 <div class="line">        return cls</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md361"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md363"></a>
 Packaging and Testing Plugins</h1>
 <p>Plugins are supplied as python packages with an entrypoint used to load the plugin. In the root of the package a basic python package will need to be configured. This consists of two files: pyproject.toml representing the package, and setup.py for backwards compatibility.</p>
 <p>The project structure should look like: </p><div class="fragment"><div class="line">src/my_plugin.py</div>
@@ -381,7 +381,7 @@ Packaging and Testing Plugins</h1>
 </blockquote>
 <p>Application plugins run automatically at start-up. To test these plugins, just supply any desired arguments:</p>
 <div class="fragment"><div class="line">fprime-gds --message &quot;Hello Plugin</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md362"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md364"></a>
 Distributing Plugins</h1>
 <p>Plugins are implemented as python packages. Thus plugins may be distributed in the following ways:</p>
 <ol type="1">
@@ -390,7 +390,7 @@ Distributing Plugins</h1>
 <li>PyPI: distribute your wheel via PyPI</li>
 </ol>
 <p>A tutorial on python packaging including building wheels and uploading them to PyPI is available from packaging.python.org: <a href="https://packaging.python.org/en/latest/tutorials/packaging-projects/">https://packaging.python.org/en/latest/tutorials/packaging-projects/</a></p>
-<h1><a class="anchor" id="autotoc_md363"></a>
+<h1><a class="anchor" id="autotoc_md365"></a>
 Conclusion</h1>
 <p>This guide has covered how to develop GDS plugins, their design, and selection vs functionality plugins. You should now be capable of writing plugins and handling arguments. </p>
 </div></div><!-- contents -->
