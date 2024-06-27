@@ -16,11 +16,11 @@ The F´ tutorial is intended to help new users familiarize themselves with the F
 - Component Implementation
 - Deploying to hardware and using the F Prime ground system
 
-#### July 16-17 - F Prime Tutorial at the IEEE SMC-IT/SCC Conference in Mountain View, CA
+##### July 16-17 - F Prime Tutorial at the IEEE SMC-IT/SCC Conference in Mountain View, CA
 
 Conference registration is required to attend the tutorial; please visit [https://smcit-scc.space/](https://smcit-scc.space/) for registration information and pricing. Up to date schedule information is available from [https://smcit-scc.space/workshop-ossw.html](https://smcit-scc.space/workshop-ossw.html). Advance enrollment is requested to confirm a seat. If you are interested in participating or have any questions, please email [fprime@jpl.nasa.gov](mailto:fprime@jpl.nasa.gov).
 
-#### August 3-4 - F Prime Tutorial at the SmallSat Conference in Logan, UT
+##### August 3-4 - F Prime Tutorial at the SmallSat Conference in Logan, UT
 
 Conference registration is required to attend the tutorial; please visit [https://smallsat.org/](https://smallsat.org/) for registration information and pricing. Up to date schedule information is available from [https://smallsat.org/extras/related-events/](https://smallsat.org/extras/related-events/). Advance enrollment is requested to confirm a seat. If you are interested in participating or have any questions, please email [fprime@jpl.nasa.gov](mailto:fprime@jpl.nasa.gov).
 
