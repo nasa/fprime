@@ -20,6 +20,7 @@ F´ has the following features:
 
 - [Features](./features.md)
 - [Projects](./projects.md)
+- [Upcoming Events](./upcoming.md)
 - [GitHub Repository](https://github.com/nasa/fprime)
 - [Discussions](https://github.com/nasa/fprime/discussions)
 - [Issues](https://github.com/nasa/fprime/issues)
