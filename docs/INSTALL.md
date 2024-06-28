@@ -83,14 +83,24 @@ Next steps: [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tuto
 
 ## Working With An Existing Project
 
-Sometimes users wish to work with existing F´ projects. Once the project has been acquired, users should install the tools associated with that project. This is done with:
+Sometimes users wish to work with existing F´ projects. Once the project has been acquired, users should install the tools associated with that project. This is done in one of two ways:
+
+### a) `fprime-bootstrap clone`
+
+```
+pip install fprime-bootstrap
+fprime-bootstrap clone <project_url>
+```
+> Note: replace <project_url> with the URL of a project hosted on a remote Git repository
+
+### b) Manual clone
 
 1. Ensure a virtual environment for this project has been [created and activated](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
 
 2. Download the project
 > When using `git` and submodules, remember to run `git submodule update --init --recursive`
 
-4. Install the required F´ tools version
+3. Install the required F´ tools version
 `pip install -r <project>/fprime/requirements.txt`
 
 > Some projects ship their own `requirements.txt`.  Install using that file if it exists.
