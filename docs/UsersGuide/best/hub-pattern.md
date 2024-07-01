@@ -40,8 +40,8 @@ Dispatcher. The command offset of the command splitter should match the commands
 command received above the offset directly to the hub, while commands below the offset will be routed to the local Command Dispatcher.
 Instance ids must also match this offset, which may be implemented as the following for each instance in instances.fpp:
 ```shell
-# In Node2's instances.fpp
-module Node2Deployment {
+# In Node B's instances.fpp
+module NodeBDeployment {
   constant CMD_SPLITTER_OFFSET = 0x10000
   ...
   instance b_hub: Svc.GenericHub base id CMD_SPLITTER_OFFSET + 0x9000
@@ -82,11 +82,7 @@ connected to Node A's Event Logger and Tlm Send through the Log Send and Tlm Sen
 ```
 
 ### Implementation Notes
-It is recommended to set static IPs for both nodes if using a multi-computer system. This should prevent any unwanted DHCP IP requests which 
-would change the adderss of either the host or client computer.
-
-All instances names should be unique across the entire F´ System. Instances with the same name may mix telemetry and logging together with no 
-solid way to differentiate between deployments.
+All instances names should be unique across the entire F´ System. Instances with the same name may mix telemetry and logging together with no differentiation between deployments.
 
 If telemetry and event connections are tied to the hub, the setup order in setupTopology in obcBTopology.cpp will need to be slightly 
 reordered. This should be a swap between `configureTopology()` and `regCommands()`, which should match the following:
@@ -140,6 +136,7 @@ Node A and Node B.
 dictionaries for both Node A and Node B. It also depends on the locs.fpp file generated
 when running `fprime-util generate`.
 `fpp-to-dict` is then used to retrieve the dependencies and build a dictionary.
+These can be either ran in the terminal or executed with a shell script.
 
 ```shell
 #!/bin/bash
