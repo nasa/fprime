@@ -32,7 +32,7 @@ facilitates the transfer of serialized data between the two nodes across two dif
 may be reinforced by including a `Fw::ComStub` and `Fw::ComQueue`, which are excluded in this implementation for 
 simplicity. The Hub uses the `Data Out` port to export serialized data to the remote hub, which receives them on 
 the `Data In` port. This connection works reflexively, allowing the two hubs to communicate and transmit data 
-between eachother.
+between each other.
 
 A [Command Splitter](../api/c++/html/svc_cmd_splitter.html) splits incoming commands from the Ground Interface to either a local or
 remote [Command Dispatcher](../api/c++/html/svc_cmd_dispatcher.html). This is inserted between the Ground Interface and the local Command 
@@ -51,11 +51,11 @@ module NodeBDeployment {
 > Configure the Command Splitter by calling `cmdSplitter.configure(0x10000);` in Node A's topology.cpp
 
 
-`Port In` and `Port Out` are arrays of serial ports that should be parallel to eachother across hubs. A connection to Hub A's `Port In` index 0 will be routed to Hub B's `Port Out` index 0. In this example, the Command Splitter in Node A is connected to the Command Dispatcher in Node B through the hub port arrays. Data flow from Node B to A work in the same way, such that Hub B's `Port In` will be parallel to Hub A's `Port Out`.
+`Port In` and `Port Out` are arrays of serial ports that should be parallel to each other across hubs. A connection to Hub A's `Port In` index 0 will be routed to Hub B's `Port Out` index 0. In this example, the Command Splitter in Node A is connected to the Command Dispatcher in Node B through the hub port arrays. Data flow from Node B to A work in the same way, such that Hub B's `Port In` will be parallel to Hub A's `Port Out`.
 
 To receive telemetry from Node B through the Ground Interface from Node A, Telemetry and Event Connections can be defined through the pattern 
 graph specifiers. The hub replaces `Svc::ActiveLogger` and `Svc::TlmChan` in the pattern graph specifiers of Node B, which would reroute all 
-events and logs to the hub and to the ActiveLoger and TlmChan of Node A. Events and Telemetry have a dedicated `Port In` the hub, which are 
+events and logs to the hub and to the ActiveLogger and TlmChan of Node A. Events and Telemetry have a dedicated `Port In` the hub, which are 
 connected to Node A's Event Logger and Tlm Send through the Log Send and Tlm Send port of the hub.
 
 ```shell
@@ -120,7 +120,7 @@ FPrimeProject
 In the new topology.fpp file, import the topologies from the two deployments like this:
 
 ```shell
-# In GDSDictinoary/Topology.fpp
+# In GDSDictionary/Topology.fpp
 topology GDSDictionary {
   import obcA.obcA
   import obcB.obcB 
