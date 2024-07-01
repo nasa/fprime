@@ -16,7 +16,7 @@ TEST_F(FunctionalityTester, PosixDeleteLockedMutex) {
     Os::Test::Mutex::Tester::LockMutex lock_rule;
     Os::Test::Mutex::Tester::UnlockMutex unlock_rule;
     lock_rule.apply(*tester);
-    ASSERT_DEATH_IF_SUPPORTED(delete &tester, Os::Test::Mutex::Tester::ASSERT_IN_MUTEX_CPP);
+    ASSERT_DEATH_IF_SUPPORTED(delete tester.release(), Os::Test::Mutex::Tester::ASSERT_IN_MUTEX_CPP);
 }
 
 
