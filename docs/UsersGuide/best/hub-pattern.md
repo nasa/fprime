@@ -97,7 +97,7 @@ void setupTopology(const TopologyState& state) {
 
 ```
 
-### Creating a Combined Dictionary for a Multi-deployment System
+## Creating a Combined Dictionary for a Multi-deployment System
 
 Since this system is running on two deployments, the dictionaries would need to be merged together in order to process the data from both 
 deployments. Running `fprime-gds` using a dictionary from build-artifacts of one deployment but not both would drop telemetry and logging from 
@@ -147,3 +147,7 @@ fpp-to-dict -i `cat deps-comma.txt` topology.fpp
 ```
 > The second line takes the file dependencies and converts it to a one-line comma-separated input for `fpp-to-dict`. This line maybe omitted, 
 which `fpp-to-dict` would then generate dictionaries for the GDS and both nodes.
+
+## Reference
+
+A sample F´ project featuring a two-deployment hub setup can be found on [fprime-community]().
