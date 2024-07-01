@@ -50,11 +50,8 @@ module NodeBDeployment {
 ```
 > Configure the Command Splitter by calling `cmdSplitter.configure(0x10000);` in Node A's topology.cpp
 
-`Port In` and `Port Out` are arrays of serial ports that should be parallel to eachother across hubs. For instance, the Remote Command Output 
-of the Command Splitter connects to index 0 for the `Port In` Array of Node A's hub, which is routed to index 0 of Node B's hub after passing 
-the Communication Adapter Interface. The Command Dispatcher receives the command from index 0 of the hub's `Port Out` array as if it has been 
-received by the Ground Interface directly. Data flow from Node B to A work in the same way, such that components connected to the `Port In` 
-port of Node B's Hub will be outputted to 
+
+`Port In` and `Port Out` are arrays of serial ports that should be parallel to eachother across hubs. A connection to Hub A's `Port In` index 0 will be routed to Hub B's `Port Out` index 0. In this example, the Command Splitter in Node A is connected to the Command Dispatcher in Node B through the hub port arrays. Data flow from Node B to A work in the same way, such that Hub B's `Port In` will be parallel to Hub A's `Port Out`.
 
 To receive telemetry from Node B through the Ground Interface from Node A, Telemetry and Event Connections can be defined through the pattern 
 graph specifiers. The hub replaces `Svc::ActiveLogger` and `Svc::TlmChan` in the pattern graph specifiers of Node B, which would reroute all 
