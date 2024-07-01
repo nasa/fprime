@@ -13,7 +13,7 @@ module Fw {
     NO_ROOM_LEFT  @< No room left in the buffer to serialize data
   }
 
-  struct SMEvents {
+  struct SMSignals {
         smId : U32
         eventSignal: U32
         payload: [128] U8
