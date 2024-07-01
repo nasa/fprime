@@ -80,7 +80,7 @@ TEST_F(Interface, UnlockAlias) {
 TEST_F(Interface, GetHandle) {
     Os::Mutex mutex;
     ASSERT_EQ(mutex.getHandle(), nullptr);
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GETHANDLE_FN);
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_HANDLE_FN);
 }
 
 int main(int argc, char **argv) {

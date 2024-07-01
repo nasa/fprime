@@ -33,7 +33,7 @@ void TestMutex::unLock() {
 }
 
 Os::MutexHandle *TestMutex::getHandle() {
-    StaticData::data.lastCalled = StaticData::LastFn::GETHANDLE_FN;
+    StaticData::data.lastCalled = StaticData::LastFn::GET_HANDLE_FN;
     return nullptr;
 }
 

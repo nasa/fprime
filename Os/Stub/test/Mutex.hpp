@@ -20,7 +20,7 @@ struct StaticData {
         RELEASE_FN,
         LOCK_FN,
         UNLOCK_FN,
-        GETHANDLE_FN
+        GET_HANDLE_FN
     };
     StaticData() = default;
     ~StaticData() = default;
