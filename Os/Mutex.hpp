@@ -1,4 +1,7 @@
-// Add header
+// ======================================================================
+// \title Os/Mutex.hpp
+// \brief common definitions for Os::Mutex
+// ======================================================================
 #ifndef Os_Mutex_hpp
 #define Os_Mutex_hpp
 

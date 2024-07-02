@@ -6,8 +6,6 @@
 #ifndef __RULES_HEADERS__
 #define __RULES_HEADERS__
 #include <gtest/gtest.h>
-#include <cstdio>
-#include <map>
 #include "Os/Mutex.hpp"
 #include "STest/Rule/Rule.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"

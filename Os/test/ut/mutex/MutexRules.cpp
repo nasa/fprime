@@ -7,14 +7,6 @@
 #include "MutexRules.hpp"
 #include "STest/Pick/Pick.hpp"
 
-// NOTE:
-// in stub test, we are testing the interface -> t
-// posix test, posix correctness
-// common test, functionality and feed it into both
-
-// use ASSERT_DEATH_IF_SUPPORTED to test asserts
-
-
 // ------------------------------------------------------------------------------------------------------
 // Rule:  LockMutex -> Lock a mutex successfully
 // ------------------------------------------------------------------------------------------------------

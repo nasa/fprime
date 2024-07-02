@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/Stub/Mutex.hpp
-// \brief stub file definitions for Os::Mutex
+// \brief stub definitions for Os::Mutex
 // ======================================================================
 #include "Os/Mutex.hpp"
 

@@ -1,6 +1,6 @@
 // ======================================================================
-// \title Os/test/ut/Mutex/CommonTests.hpp
-// \brief definitions used in common Mutex testing
+// \title Os/test/ut/mutex/CommonTests.hpp
+// \brief GoogleTest fixture definitions used in common Mutex testing
 // ======================================================================
 #include <Os/Mutex.hpp>
 #include <gtest/gtest.h>

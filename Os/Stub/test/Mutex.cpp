@@ -1,3 +1,8 @@
+// ======================================================================
+// \title Os/Stub/test/Mutex.cpp
+// \brief implementation for TestMutex stubs for interface testing
+// ======================================================================
+
 #include "Os/Stub/test/Mutex.hpp"
 namespace Os {
 namespace Stub {

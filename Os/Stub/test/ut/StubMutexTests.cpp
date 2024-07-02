@@ -46,7 +46,7 @@ TEST_F(Interface, Take) {
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::TAKE_FN);
 }
 
-// Ensure that Os::Mutex properly calls the implementation start with arguments
+// Ensure that Os::Mutex properly calls the implementation release()
 TEST_F(Interface, Release) {
     Os::Mutex mutex;
     StaticData::data.releaseStatus = Os::Mutex::Status::ERROR_OTHER;
@@ -54,7 +54,7 @@ TEST_F(Interface, Release) {
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::RELEASE_FN);
 }
 
-// Ensure that Os::Mutex properly calls the implementation onStart before calling start
+// Ensure that Os::Mutex properly calls the implementation lock()
 TEST_F(Interface, Lock) {
     Os::Mutex mutex;
     mutex.lock();
@@ -62,21 +62,21 @@ TEST_F(Interface, Lock) {
 
 }
 
-// Ensure that Os::Mutex properly calls the implementation suspend
+// Ensure that Os::Mutex properly calls the implementation unLock()
 TEST_F(Interface, UnLock) {
     Os::Mutex mutex;
     mutex.unLock();
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::UNLOCK_FN);
 }
 
-// Ensure that Os::Mutex properly calls the implementation resume
+// Ensure that Os::Mutex properly calls the implementation unlock()
 TEST_F(Interface, UnlockAlias) {
     Os::Mutex mutex;
     mutex.unlock();
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::UNLOCK_FN);
 }
 
-// Ensure that Os::Mutex properly calls the implementation getHandle
+// Ensure that Os::Mutex properly calls the implementation getHandle()
 TEST_F(Interface, GetHandle) {
     Os::Mutex mutex;
     ASSERT_EQ(mutex.getHandle(), nullptr);
