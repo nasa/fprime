@@ -9,10 +9,6 @@
 // acknowledged.
 //
 // ======================================================================
-#include <Drv/Ip/TcpServerSocket.hpp>
-#include <Fw/Logger/Logger.hpp>
-#include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <socket.h>
@@ -33,6 +29,13 @@
 #else
     #error OS not supported for IP Socket Communications
 #endif
+
+
+#include <Drv/Ip/TcpServerSocket.hpp>
+#include <Fw/Logger/Logger.hpp>
+#include <Fw/Types/Assert.hpp>
+#include <FpConfig.hpp>
+
 
 #include <cstring>
 

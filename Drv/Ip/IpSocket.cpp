@@ -9,17 +9,6 @@
 // acknowledged.
 //
 // ======================================================================
-#include <cstring>
-#include <Drv/Ip/IpSocket.hpp>
-#include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
-#include <Fw/Types/StringUtils.hpp>
-#include <sys/time.h>
-
-// This implementation has primarily implemented to isolate
-// the socket interface from the F' Fw::Buffer class.
-// There is a macro in VxWorks (m_data) that collides with
-// the m_data member in Fw::Buffer.
 
 #ifdef TGT_OS_TYPE_VXWORKS
 #include <socket.h>
@@ -42,6 +31,22 @@
 #else
 #error OS not supported for IP Socket Communications
 #endif
+
+
+
+
+#include <cstring>
+#include <Drv/Ip/IpSocket.hpp>
+#include <Fw/Types/Assert.hpp>
+#include <FpConfig.hpp>
+#include <Fw/Types/StringUtils.hpp>
+#include <sys/time.h>
+
+// This implementation has primarily implemented to isolate
+// the socket interface from the F' Fw::Buffer class.
+// There is a macro in VxWorks (m_data) that collides with
+// the m_data member in Fw::Buffer.
+
 
 
 namespace Drv {

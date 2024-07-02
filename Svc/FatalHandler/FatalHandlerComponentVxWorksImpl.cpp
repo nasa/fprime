@@ -10,9 +10,11 @@
 //
 // ======================================================================
 
+#include <taskLib.h>
+
+
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <FpConfig.hpp>
-#include <taskLib.h>
 #include <Fw/Logger/Logger.hpp>
 
 namespace Svc {
