@@ -95,7 +95,7 @@ mix telemetry and logging together with no differentiation between deployments.
 
 ## Creating a Combined Dictionary for a Multi-deployment System
 
-Since this system is running on two deployments, the comand, telemetry, and event dictionaries need 
+Since this system is running on two deployments, the command, telemetry, and event dictionaries need 
 to be merged together so the GDS can process data received from both deployments. Running 
 `fprime-gds` using a dictionary from build-artifacts of one deployment but not both would drop 
 telemetry and logging from the other deployment, and GDS will not display any inner-deployment 
@@ -124,8 +124,8 @@ In the new topology.fpp file, import the topologies from the two deployments lik
 ```shell
   # In GDSDictionary/Topology.fpp
   topology GDSDictionary {
-    import obcA.obcA
-    import obcB.obcB 
+    import NodeA.NodeA
+    import NodeB.NodeB
   } 
 ```
 
