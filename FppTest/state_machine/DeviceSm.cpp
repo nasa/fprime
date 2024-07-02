@@ -8,7 +8,7 @@
     
 #include "stdio.h"
 #include "assert.h"
-#include "Fw/Types/SMEventsSerializableAc.hpp"
+#include "Fw/Types/SMSignalsSerializableAc.hpp"
 #include "DeviceSm.hpp"
 
 
@@ -19,7 +19,7 @@ void FppTest::DeviceSm::init()
 }
 
 
-void FppTest::DeviceSm::update(const Fw::SMEvents *e)
+void FppTest::DeviceSm::update(const Fw::SMSignals *e)
 {
     switch (this->state) {
     

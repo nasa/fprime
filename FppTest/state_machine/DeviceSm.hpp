@@ -10,7 +10,7 @@
 #define DEVICESM_H_
 
 namespace Fw {
-  class SMEvents;
+  class SMSignals;
 }
 
 namespace FppTest {
@@ -43,7 +43,7 @@ class DeviceSm {
     void * extension;
 
     void init();
-    void update(const Fw::SMEvents *e);
+    void update(const Fw::SMSignals *e);
 
 };
 
