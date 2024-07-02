@@ -20,8 +20,9 @@ void FunctionalityTester::SetUp() {
 
 void FunctionalityTester::TearDown() {
     // Ensure the mutex is unlocked for safe destruction
-    if (tester->m_state == Os::Test::Mutex::Tester::MutexState::LOCKED) {
-        tester->m_mutex.unLock();
+    if (this->tester->m_state == Os::Test::Mutex::Tester::MutexState::LOCKED) {
+        this->tester->m_state = Os::Test::Mutex::Tester::MutexState::UNLOCKED;
+        this->tester->m_mutex.unLock();
     }
 }
 
@@ -43,29 +44,6 @@ TEST_F(FunctionalityTester, TakeAndReleaseMutex) {
     Os::Test::Mutex::Tester::ReleaseMutex release_rule;
     take_rule.apply(*tester);
     release_rule.apply(*tester);
-}
-
-// Attempt to lock a busy mutex
-// QUESTION: is it good to start a Os::Task (or raw thread?) and wait for a second or something?
-// TEST_F(FunctionalityTester, LockBusyMutex) {
-//     Os::Test::Mutex::Tester tester;
-//     Os::Test::Mutex::Tester::LockMutex lock_rule;
-//     Os::Test::Mutex::Tester::LockBusyMutex lock_busy_rule;
-//     lock_rule.apply(tester);
-//     lock_busy_rule.apply(tester);
-    // ASSERT_DEATH_IF_SUPPORTED(delete &tester, Os::Test::Mutex::Tester::ASSERT_IN_FILE_CPP);
-    // EXPECT_CALL(tester.m_mutex, lock()).Times(1);
-// }
-
-// Unlock a free mutex 
-// QUESTION: does not error on macOS, but does on Linux/RHEL8 - how should this be handled?
-TEST_F(FunctionalityTester, UnlockFreeMutex) {
-    Os::Test::Mutex::Tester::LockMutex lock_rule;
-    Os::Test::Mutex::Tester::UnlockMutex unlock_rule;
-    Os::Test::Mutex::Tester::UnlockFreeMutex unlock_free_rule;
-    lock_rule.apply(*tester);
-    unlock_rule.apply(*tester);
-    // unlock_free_rule.apply(*tester);
 }
 
 // Randomized sequence of conditioned take/release/lock/unlock

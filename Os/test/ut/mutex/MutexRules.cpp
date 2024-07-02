@@ -7,7 +7,6 @@
 #include "MutexRules.hpp"
 #include "STest/Pick/Pick.hpp"
 
-
 // NOTE:
 // in stub test, we are testing the interface -> t
 // posix test, posix correctness
@@ -83,29 +82,25 @@ void Os::Test::Mutex::Tester::ReleaseMutex::action(Os::Test::Mutex::Tester &stat
 }
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  LockBusyMutex: Lock a mutex that is already locked
+// Rule:  ProtectDataCheck: Lock a mutex, set data, assert data and unlock mutex
+// By running this concurrently with another thread, we can test the mutex does protect data
 // ------------------------------------------------------------------------------------------------------
-Os::Test::Mutex::Tester::LockBusyMutex::LockBusyMutex() :
-    STest::Rule<Os::Test::Mutex::Tester>("LockBusyMutex") {}
+Os::Test::Mutex::Tester::ProtectDataCheck::ProtectDataCheck() :
+    STest::Rule<Os::Test::Mutex::Tester>("ProtectDataCheck") {}
 
-bool Os::Test::Mutex::Tester::LockBusyMutex::precondition(const Os::Test::Mutex::Tester &state) {
-    return state.m_state == Os::Test::Mutex::Tester::MutexState::LOCKED;
+bool Os::Test::Mutex::Tester::ProtectDataCheck::precondition(const Os::Test::Mutex::Tester &state) {
+    return true;
 }
 
-void Os::Test::Mutex::Tester::LockBusyMutex::action(Os::Test::Mutex::Tester &state) {
+void Os::Test::Mutex::Tester::ProtectDataCheck::action(Os::Test::Mutex::Tester &state) {
     state.m_mutex.lock();
-}
+    state.m_state = Os::Test::Mutex::Tester::MutexState::LOCKED;
 
-// ------------------------------------------------------------------------------------------------------
-// Rule:  UnlockFreeMutex: Lock a mutex that is already locked
-// ------------------------------------------------------------------------------------------------------
-Os::Test::Mutex::Tester::UnlockFreeMutex::UnlockFreeMutex() :
-    STest::Rule<Os::Test::Mutex::Tester>("UnlockFreeMutex") {}
+    state.m_value = 42;
+    ASSERT_EQ(state.m_value, 42);
 
-bool Os::Test::Mutex::Tester::UnlockFreeMutex::precondition(const Os::Test::Mutex::Tester &state) {
-    return state.m_state == Os::Test::Mutex::Tester::MutexState::UNLOCKED;
-}
-
-void Os::Test::Mutex::Tester::UnlockFreeMutex::action(Os::Test::Mutex::Tester &state) {
+    state.m_state = Os::Test::Mutex::Tester::MutexState::UNLOCKED;
     state.m_mutex.unLock();
 }
+
+

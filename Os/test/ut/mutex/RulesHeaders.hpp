@@ -39,6 +39,9 @@ struct Tester {
     //! Mutex under test
     Os::Mutex m_mutex;
 
+    //! Shared value protected by the mutex for testing purposes
+    int m_value = 0;
+
     //! Mutex state, for testing purposes
     MutexState m_state = UNINITIALIZED;
 

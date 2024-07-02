@@ -110,14 +110,14 @@ struct ReleaseMutex : public STest::Rule<Os::Test::Mutex::Tester> {
 // ------------------------------------------------------------------------------------------------------
 // Rule:  LockBusyMutex: Lock a mutex that is already locked
 // ------------------------------------------------------------------------------------------------------
-struct LockBusyMutex : public STest::Rule<Os::Test::Mutex::Tester> {
+struct ProtectDataCheck : public STest::Rule<Os::Test::Mutex::Tester> {
 
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
 
     //! Constructor
-    LockBusyMutex();
+    ProtectDataCheck();
 
     // ----------------------------------------------------------------------
     // Public member functions
@@ -134,32 +134,3 @@ struct LockBusyMutex : public STest::Rule<Os::Test::Mutex::Tester> {
     );
 
 };
-
-// ------------------------------------------------------------------------------------------------------
-// Rule:  UnlockFreeMutex: Unlock a mutex that is not locked
-// ------------------------------------------------------------------------------------------------------
-struct UnlockFreeMutex : public STest::Rule<Os::Test::Mutex::Tester> {
-
-    // ----------------------------------------------------------------------
-    // Construction
-    // ----------------------------------------------------------------------
-
-    //! Constructor
-    UnlockFreeMutex();
-
-    // ----------------------------------------------------------------------
-    // Public member functions
-    // ----------------------------------------------------------------------
-
-    //! Precondition
-    bool precondition(
-            const Os::Test::Mutex::Tester &state //!< The test state
-    );
-
-    //! Action
-    void action(
-            Os::Test::Mutex::Tester &state //!< The test state
-    );
-
-};
-
