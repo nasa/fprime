@@ -4,10 +4,7 @@
         "pattern": "^(https?://)?localhost"
       },
       {
-        "pattern": "https://www.raspberrypi.com/documentation/computers/configuration.html"
-      },
-      {
-        "pattern": "https://en.wikipedia.org/wiki/"
+        "pattern": "https?://"
       }
     ],
     "replacementPatterns": [
