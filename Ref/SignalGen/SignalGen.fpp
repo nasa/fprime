@@ -78,7 +78,7 @@ module Ref {
     # ----------------------------------------------------------------------
     # Interfaces
     # ----------------------------------------------------------------------
-    include "../../Fw/Interfaces/EventsInterface.fppi"
+    include "../../Fw/Interfaces/EventInterface.fppi"
     include "../../Fw/Interfaces/CommandInterface.fppi"
     include "../../Fw/Interfaces/ChannelInterface.fppi"
 
