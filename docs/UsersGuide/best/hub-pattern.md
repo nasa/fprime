@@ -20,10 +20,11 @@ There is now a standard implementation of the hub pattern. The
 [GenericHub](../api/c++/html/svc_generic_hub_component.html) is an implementation of the hub pattern 
 that passes through F´ ports and `Fw::Buffer`s.
 
-## Detailed Example Generic Hub Setup
+## Example Hub Pattern Project
 
 A sample F´ project featuring a two-deployment hub setup can be found on [fprime-community](@FIXME).
 
+## Hub Pattern Implementation Breakdown
 A possible usage of the Hub pattern includes running F´ on multiple computers acting as one F´ system. 
 This example could serve as a base for a multi-computer system running F´.
 
@@ -90,8 +91,9 @@ Send through the Log Send and Tlm Send port of the hub.
 ```
 
 ### Implementation Notes
-All instances names should be unique across the entire F´ System. Instances with the same name may 
-mix telemetry and logging together with no differentiation between deployments.
+All instances names should be unique across the entire F´ System. Telemetry channels and events are
+named based on their respective component instance name, and re-using the same instance name between
+multiple deployments may result in naming conflicts.
 
 ## Creating a Combined Dictionary for a Multi-deployment System
 
