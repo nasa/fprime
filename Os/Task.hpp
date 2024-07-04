@@ -77,9 +77,11 @@ namespace Os {
                           const FwSizeType stackSize = TASK_DEFAULT,
                           const FwSizeType cpuAffinity = TASK_DEFAULT,
                           const PlatformUIntType identifier = static_cast<PlatformUIntType>(TASK_DEFAULT));
+                Arguments& operator=(const Arguments& args) = default;
+                Arguments() = default;
 
               public:
-                const Os::TaskString m_name;
+                Os::TaskString m_name;
                 taskRoutine m_routine;
                 void* m_routine_argument;
                 FwSizeType m_priority;
