@@ -22,7 +22,7 @@ that passes through F´ ports and `Fw::Buffer`s.
 
 ## Example Hub Pattern Project
 
-A sample F´ project featuring a two-deployment hub setup can be found on [fprime-community](@FIXME).
+A sample F´ project featuring a two-deployment hub setup can be found on [fprime-community](https://github.com/fprime-community/fprime-hub-pattern-example).
 
 ## Hub Pattern Implementation Breakdown
 A possible usage of the Hub pattern includes running F´ on multiple computers acting as one F´ system. 
