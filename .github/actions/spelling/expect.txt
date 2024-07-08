@@ -421,6 +421,7 @@ gnueabihf
 google
 googletest
 Gorang
+gpg
 GPGGA
 GPINT
 gpio
@@ -536,6 +537,7 @@ JSO
 jsonable
 kermit
 kevin
+keyring
 kislyuk
 kitware
 Kooi
@@ -905,6 +907,7 @@ sbb
 SBF
 SBINDIR
 sbt
+scalasbt
 Scatterometer
 schem
 schematron
@@ -1202,4 +1205,5 @@ xsh
 xsltproc
 xxxx
 yacgen
+yqq
 zmq
