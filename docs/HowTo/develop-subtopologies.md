@@ -4,9 +4,10 @@ Subtopologies are topologies for smaller chunks of behavior in F Prime. It allow
 
 *Contents*
 1. [Subtopology Structure](#subtopology-structure)
-2. [Individual File Contents](#individual-file-contents) (this is a long section with multiple subsections!)
+2. [Individual File Contents](#individual-file-contents)
+    1. [Example Scenario](#example-scenario)
 3. [Integration into a "Main" Deployment](#integration-into-a-main-deployment)
-4. [Subtopology Autocoder]()
+4. [Subtopology Autocoder](#the-subtopology-autocoder)
 5. [Conclusion](#conclusion)
 
 ## Subtopology Structure
@@ -27,7 +28,7 @@ MySubtopology/
 All files will be discussed in more detail in later sections of this guide. Additionally, note that there are optional files that can be included in your subtopology to extend its capability.
 
 - It is highly recommended to include a `docs` folder to document your subtopology. Simple markdown files (`sdd` for subtopology design document) work well in this case.
-- `.fppi` files can be included as config files to your subtopology. They can include useful constants or structures that allow users to modify your subtopology.
+- Other `.fpp` files can also be included in your subtopology. For example, a `config.fpp` may prove to be quite useful.
 - Unit tests can also be added to your subtopology, using a similar structure to unit tests for components.
 - Subtopology configuration behavior for components are written with [phases](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers_Execution-Phases).
 - `intentionally-empty.cpp` is a necessary file to include. It will be discussed why this is included [later](#cmake-and-buildstep-files).
@@ -68,8 +69,6 @@ instance rateGroup: Svc.ActiveRateGroup base id 0xFF4FF \
     queue size Defaults.QUEUE_SIZE \
     stack size DEFAULTS.STACK_SIZE \
     priority 150
-
-instance rateGroupDriver: Svc.RateGroupDriver base id 0xFF8FF // to drive the 1Hz rate group
 ```
 
 and also the following wiring:
@@ -177,10 +176,9 @@ Notice that we wrap `PingEntries` in a namespace called `GlobalDefs`. This is im
 
 This brings us to a unique naming scheme for variable names for subtopologies. On the development-end of the subtopology, we see names like `configureTopology`. However, on the build end when these subtopologies are folded into a bigger project, these functions are added to namespaces via their names. Inherently this makes sense, so that we don't confuse a function, or especially a component instance, with each other. So:
 
-```cpp
-MySubtopology -> rateGroup ==> MySubtopology_rateGroup // example for rateGroup instance
-// ... etc
-```
+| fpp                     | cpp syntax              |
+| ----------------------- | ----------------------- |
+| MySubtopology.rateGroup | MySubtopology_rateGroup |
 
 ## CMake and buildstep files
 
@@ -212,7 +210,8 @@ At this point, we're ready to integrate our subtopology into the topology of our
 
 First step is to ensure that our subtopology is linked to our project; within `project.cmake` add:
 
-```
+```cmake
+# before the line adding your main topology
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MySubtopology/")
 ```
 
@@ -225,13 +224,13 @@ register_fprime_module()
 ...
 ```
 
-Head over to `MainDeplomentTopologyDefs.hpp`. We want to not only include our subtopology's definitions header, but also modify `PingEntires` to use `GlobalDefs::PingEntires`. At the end of `namespace MainDeployment`, include:
+Head over to `MainDeplomentTopologyDefs.hpp`. We want to not only include our subtopology's definitions header, but also modify `PingEntires` to use `GlobalDefs::PingEntries`. At the end of `namespace MainDeployment`, include:
 
 ```cpp
 namespace PingEntries = GlobalDefs::PingEntries;
 ```
 
-Then modify the current `PingEntires` namespace call to be surrounded by GlobalDefs:
+Then modify the current `PingEntries` namespace call to be surrounded by GlobalDefs:
 
 ```cpp
 namespace GlobalDefs {
@@ -242,7 +241,7 @@ namespace GlobalDefs {
 ...
 ```
 
-Then, we want to tell our MainDeployment's topology to import and use our unified topology file from our subtopology. While we're here, we should also hook up the `CycleOut` port of our main deployment's rate group driver to the `CycleIn` port of our subtopology's rate group. Ensure that the rate group driver can have enough output wires going from the output port. We head over to the `topology.fpp` file, and include:
+Then, we want to tell our MainDeployment's topology to import and use our unified topology file from our subtopology. While we're here, we should also hook up the `CycleOut` port of our main deployment's rate group driver to the `CycleIn` port of our subtopology's rate group. Ensure that the rate group driver has an appropriate output port array size. We head over to the `topology.fpp` file, and include:
 
 ```cpp
 ...
@@ -267,7 +266,7 @@ At this point, we want to now call our subtopology's configure/start/teardown fu
 
 ...
 // MODIFY this line to include the 4th divider
-// Svc::RateGroupDriver::DividerSet rateGroupDivisorsSet{{{1, 0}, {2, 0}, {4, 0}, {1, 0}}};
+Svc::RateGroupDriver::DividerSet rateGroupDivisorsSet{{{1, 0}, {2, 0}, {4, 0}, {1, 0}}};
 
 void configureTopology() {
     ...
@@ -306,9 +305,9 @@ As you may notice, the current implementation of subtopologies lacks in a few ar
 1. It may be the case that I would like to have multiple uses of a subtopology `st` within a main topology `main`. For example, `st` could define the topology for managing a single temperature sensor, but I would like to implement $n$ number of those sensors. At the moment, to do this one would need to duplicate the entire subtopology and make proper modifications to instances, the TopologyDefs file, and more.
 2. Let's maintain our example of `st` being the topology for managing a single temperature sensor. It may be the case that `st` only implements the software behavior, as is reasonable: the developer of the subtopology probably cannot write hardware interface drivers for every platform possible. So, the user would provide the proper driver to `st`, which is again reasonable. However, to accomplish this one would need to modify the contents of a subtopology, changing instance definitions and possibly the connection graphs as well. Such a task could become monstrous if, say `st` now implements the [hub pattern](https://nasa.github.io/fprime/UsersGuide/best/hub-pattern.html).
 
-Thus, an autocoder [tool](FIXME) dubbed the "Subtopology AC Tool" has been developed to be able to provide features like instantiation, local components, and formal subtopology interfaces. The tool itself provides examples of the syntax required to use these features, as well as a design methodology and a worked example using a similar context to the one [in this document](#example-scenario).
+Thus, an autocoder [tool](FIXME) dubbed the "Subtopology AC Tool" has been developed to be able to provide features like instantiation, local components, and formal subtopology interfaces. The tool itself provides examples of the syntax required to use these features, as well as a design methodology and a worked example with diagrams using a similar context to the one [in this document](#example-scenario).
 
-We recommend that subtopologies are built around the syntax of this tool, as it is on the roadmap to introduce the patterns in this tool into native FPP syntax.
+We recommend that subtopologies are built around the syntax of this tool, as it is on the road map to introduce the patterns in this tool into native FPP syntax.
 
 # Conclusion
 
