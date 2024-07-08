@@ -6,32 +6,36 @@ Subtopologies are topologies for smaller chunks of behavior in F Prime. It allow
 1. [Subtopology Structure](#subtopology-structure)
 2. [Individual File Contents](#individual-file-contents) (this is a long section with multiple subsections!)
 3. [Integration into a "Main" Deployment](#integration-into-a-main-deployment)
-4. [Conclusion](#conclusion)
+4. [Subtopology Autocoder]()
+5. [Conclusion](#conclusion)
 
 ## Subtopology Structure
 
-A subtopology is a folder that contains a `topology.cpp` file, which includes the behavior for setting up your custom topology. It additionally contains a `topology.fpp` file, which is a *unified* topology file. As opposed to having separate files for component instances and the topology itself, the single file encapsulates both. A `topologydefs.hpp` defines a struct that is used when instantiating your subtopology. A `CMakeLists.txt` file links your `topology.cpp` file to the build for your project.
+A subtopology is a folder that contains a `topology.cpp` file, which includes a `topology.fpp` file, which is a *unified* topology file including your wiring, component instances, and init specifications. As opposed to having separate files for component instances and the topology itself, the single file encapsulates both. A `topologydefs.hpp` defines a struct that is used when instantiating your subtopology. A `CMakeLists.txt` file links your `topology.cpp` file to the build for your project.
 
 Thus, the required structure for your subtopology should be:
 
 ```bash
 MySubtopology/
 ├─ CMakeLists.txt
+├─ intentionally-empty.cpp
 ├─ MySubtopology.cmake
 ├─ MySubtopology.fpp
-├─ MySubtopologyTopology.cpp
-├─ MySubtopologyTopology.hpp
 └─ MySubtopologyTopologyDefs.hpp
 ```
 
 All files will be discussed in more detail in later sections of this guide. Additionally, note that there are optional files that can be included in your subtopology to extend its capability.
 
-- It is highly recommended to include a `docs` folder to document your subtopology. Simple markdown files work well in this case.
+- It is highly recommended to include a `docs` folder to document your subtopology. Simple markdown files (`sdd` for subtopology design document) work well in this case.
 - `.fppi` files can be included as config files to your subtopology. They can include useful constants or structures that allow users to modify your subtopology.
 - Unit tests can also be added to your subtopology, using a similar structure to unit tests for components.
-- Note that it is possible to write your subtopology with [phases](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers_Execution-Phases). The example repository in the [last section](#conclusion) includes an example of this in the "example/phases" branch.
+- Subtopology configuration behavior for components are written with [phases](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers_Execution-Phases).
+- `intentionally-empty.cpp` is a necessary file to include. It will be discussed why this is included [later](#cmake-and-buildstep-files).
 
 > Note that with the latest release of `fprime-tools`, you can run `fprime-util new --subtopology` to generate the subtopology structure.
+
+> [!IMPORTANT]
+> This documentation provides an overview to how subtopologies are built. However, their feature set has been expanded in the form of the [Subtopology AC tool](#the-subtopology-autocoder). We highly recommend using it to develop subtopologies.
 
 ## Individual File Contents
 
@@ -47,14 +51,14 @@ As mentioned, this is a unified `.fpp` file. It not only includes the instances 
 
 Based on our example, we may have the following instance declarations:
 
-```cpp
+```
 instance rng // RNG component instance
 instance rateGroup // rate group instance
 ``` 
 
 and thus the following instance definitions:
 
-```cpp
+```
 instance rng: MyLibrary.RNG base id 0xFF2FF \
     queue size Defaults.QUEUE_SIZE \
     stack size Defaults.STACK_SIZE \
@@ -70,7 +74,7 @@ instance rateGroupDriver: Svc.RateGroupDriver base id 0xFF8FF // to drive the 1H
 
 and also the following wiring:
 
-```cpp
+```
 connections MyWiring {
     // we will hook up the cycle for our rate group later on
     rateGroup.RateGroupMemberOut[0] -> rng.run
@@ -79,7 +83,7 @@ connections MyWiring {
 
 Thus, your unified fpp file, and so `MySubtopology.fpp` could look like:
 
-```cpp
+```
 module MySubtopology {
     instance rng: MyLibrary.RNG base id 0xFF2FF \
         queue size Defaults.QUEUE_SIZE \
@@ -102,11 +106,11 @@ module MySubtopology {
 } // end MySubtopology
 ```
 
-## MySubtopologyTopology.cpp and MySubtopologyTopology.hpp (pt1)
+## Unified fpp with Phases
 
-This file is the bread and butter of developing your topology, as it runs any functions necessary to configure the topology, and also includes start and teardown functions for when the topology is started and after the topology is stopped respectively.
+"Phases" are a way to be able to write C++ based configuration functions on a component instance-basis. They aim to replace a topology.cpp/hpp pair of files with the single, unified fpp file. For subtopologies, we enforce the usage of phases to maintain consistency and simplicity in the subtopology.
 
-As such, this file requires three implemented functions. The stubs of these functions should go in the `MySubtopologyTopology.hpp` file:
+In a standard cpp/hpp configuration model, your topology would be initialized using the following three functions:
 
 ```cpp
 namespace MySubtopology{
@@ -124,39 +128,42 @@ namespace MySubtopology{
 }
 ```
 
-Additionally, the `hpp` file will need to include a file called `TopologyConfig.hpp`. The purpose of this is to include our main deployment's namespace, and to also include its autocoded `topology.cpp` file. Our subtopology will reference it, and will require access to the namespace *after* the autocoder has built it.
+In the phase pattern, these three (as well as others, described in detail [here](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers)) are tied as "init specifiers" to fpp component instances. So, instead of configuring all components in one place, each instance defines its own init specification. 
 
-In `fprime/config`, create a file called `TopologyConfig.hpp` and include:
+This looks like the following example, and can be done inline within your unified fpp file:
 
-```cpp
-#ifndef TOPOLOGYCONFIG_HPP
-#define TOPOLOGYCONFIG_HPP
+```
+passive component C1
 
-#include <MainDeployment/Top/MainDeploymentTopologyAc.hpp> // replace with name of your main deployment
-using namespace MainDeployment; // replace with namespace of your main deployment
-
-#endif
+instance c1: C1 base id 0x4444 \
+{
+    phase Fpp.ToCpp.Phases.configComponents """
+        // your cpp code here for configuring
+    """
+}
 ```
 
-You may notice that all three functions take in the argument `state`, which is a struct that is passed in when the subtopology is called. `TopologyState` is that struct, which can include any variables you would like a developer to be able to modify. This provides dynamic-ness to your subtopology.
+As aforementioned, we enforce the utilization of phases for subtopologies. Notably, not shown here is that phases can still take in the `TopologyState state` variable. `TopologyState` is that struct, which can include any variables you would like a developer to be able to modify. This provides dynamic-ness to your subtopology.
 
 We're now going to interject information about `MySubtopologyTopologyDefs.hpp`, because it is more relevant to the current topic.
 
 ## MySubtopologyTopologyDefs.hpp
 
-In our example, we may want to allow the user to customize the clock that runs the RNG component, from 1Hz to 2Hz or otherwise. Thus, our struct may look something like:
+In our example, we may want to allow the user to customize the initial seed for our random number generator:
 
 ```cpp
 struct TopologyState {
     // ...
-    U32 clockRate;
+    U32 initialSeed;
     // ...
 }
 ```
 
-This struct definition is included within `MySubtopologyDefs.hpp`, and is included into `MySubtopology.cpp` at build time. In addition to this, we may notice that we need to include global definitions in our `Def.hpp` file; however depending on your subtopology, you may find this part optional. Since we use F Prime's rate group driver, we should include "WARN" and "ERROR" flags that are tied to the status of the driver. We'll also add these to `MySubtopologyDefs.hpp`.
+This struct definition is included within `MySubtopologyDefs.hpp`. In addition to this, we may notice that we need to include global definitions in our `Defs.hpp` file; however depending on your subtopology, you may find this part optional. An example of how these definitions may be written is here:
 
 ```cpp
+// Example; may not be required
+
 namespace GlobalDefs {
     namespace PingEntries {
         MySubtopology_rateGroup {
@@ -171,79 +178,33 @@ Notice that we wrap `PingEntries` in a namespace called `GlobalDefs`. This is im
 This brings us to a unique naming scheme for variable names for subtopologies. On the development-end of the subtopology, we see names like `configureTopology`. However, on the build end when these subtopologies are folded into a bigger project, these functions are added to namespaces via their names. Inherently this makes sense, so that we don't confuse a function, or especially a component instance, with each other. So:
 
 ```cpp
-MySubtopology -> configureTopology() ==> MySubtopology::configureTopology()
-MySubtopology -> startTopology() ==> MySubtopology::startTopology()
 MySubtopology -> rateGroup ==> MySubtopology_rateGroup // example for rateGroup instance
 // ... etc
 ```
 
-We will encounter this structure later on in this guide.
-
-## MySubtopology.cpp and MySubtopology.hpp (pt2)
-
-Back to the `.cpp` and `.hpp` files. Let's go through each of the functions that are contained here to see what can go within each.
-
-### `configureTopology()`
-
-This function contains any setup that needs to be done for your topology. This will depend on the components you instantiate. It can range from setting up your rate group (which we will do) to defining your framing/deframing protocol for a custom (or F Prime's) communication engine. In our situation, we need to pass in the context to our rate group (even though it is empty for the sake of our example).
-
-```cpp
-// Rate groups may supply a context token to each of the attached children whose purpose is set by the project. The
-// reference topology sets each token to zero as these contexts are unused in this project.
-NATIVE_INT_TYPE rateGroupContext[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
-
-void configureTopology(const TopologyState& state){
-    // you may also take this time to reference the clockRate variable from state
-    MySubtopology_rateGroup.configure(rateGroupContext, Fw_NUM_ARRAY_ELEMENTS(rateGroupContext));
-    Fw::Logger::logMsg("[RNG Topology] Topology has been configured")
-}
-```
-
-### `startTopology()`
-
-This function contains all function calls that will run on start up of the topology. In our situation, none of our instantiated components have any start up calls. However, you can imagine that something like F Prime's communication driver may want to start up the communication engine on start of the topology. For a placeholder, let's do a simple print that says we've started.
-
-```cpp
-void startTopology(const TopologyState& state){
-    Fw::Logger::logMsg("[RNG Topology] Topology has been started.")
-}
-```
-
-### `teardownTopology()`
-
-This function contains all the functions that are meant for clean up of the instantiated components. Again, in our example, we don't really have anything to clean up. But, a communication driver instance may want to clean up by terminating any active connections. For a placeholder, let's do a simple print that says we're all terminated.
-
-```cpp
-void teardownTopology(const TopologyState& state){
-    Fw::Logger::logMsg("[RNG Topology] Topology has been cleaned up.")
-}
-```
-
 ## CMake and buildstep files
 
-The last step is to include our CMake-specific files. This includes `CMakeLists.txt` and `MySubtopology.cmake`. There is a very repeatable structure, and inherently just notifies the compiler that our topology exists when we build a deployment. 
+The last step is to include our CMake-specific files. This includes `CMakeLists.txt`. There is a very repeatable structure, and inherently just notifies the compiler that our topology exists when we build a deployment. 
 
 In `CMakeLists.txt`: 
 
 ```cmake
 set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/MySubtopology.fpp",
+    "${CMAKE_CURRENT_LIST_DIR}/RNGTopology.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/intentionally-empty.cpp"
 )
 
-register_fprime_modules()
-```
+register_fprime_module()
 
-In `MySubtopology.cmake`, we want to include:
-
-```cmake
-list(APPEND MOD_DEPS
-    Fw/Logger
-)
-
-list(APPEND SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/BaseTopology.cpp"
+set_target_properties(
+    ${FPRIME_CURRENT_MODULE}
+    PROPERTIES
+    SOURCES "${CMAKE_CURRENT_LIST_DIR}/intentionally-empty.cpp"
 )
 ```
+
+As you can see, we have reached the point where we need to use `intentionally-empty.cpp`. Remember the syntax renaming from earlier, where `MySubtopology -> rateGroup` becomes `MySubtopology_rateGroup...`? Well, if we run `fprime-util build`, the *main* deployment that uses our subtopology as well as our subtopology will build and create that syntax. In this case, we get a namespace error, where we try to use `MySubtopology_rateGroup` in a place where it's "not defined". The empty file tells CMake that when our subtopology is built, return the empty file, so there is only a single place where the syntax is defined.
+
 
 # Integration into a "Main" Deployment
 
@@ -338,8 +299,17 @@ Lastly, since our RNG component has some telemetry, we need to include (or ignor
 
 Now go ahead and run and build your deployment, and you should see that you have a built deployment that uses a subtopology.
 
+# The Subtopology Autocoder
+
+As you may notice, the current implementation of subtopologies lacks in a few areas of simplicity and especially reusability. A couple of these issues are tabulated here:
+
+1. It may be the case that I would like to have multiple uses of a subtopology `st` within a main topology `main`. For example, `st` could define the topology for managing a single temperature sensor, but I would like to implement $n$ number of those sensors. At the moment, to do this one would need to duplicate the entire subtopology and make proper modifications to instances, the TopologyDefs file, and more.
+2. Let's maintain our example of `st` being the topology for managing a single temperature sensor. It may be the case that `st` only implements the software behavior, as is reasonable: the developer of the subtopology probably cannot write hardware interface drivers for every platform possible. So, the user would provide the proper driver to `st`, which is again reasonable. However, to accomplish this one would need to modify the contents of a subtopology, changing instance definitions and possibly the connection graphs as well. Such a task could become monstrous if, say `st` now implements the [hub pattern](https://nasa.github.io/fprime/UsersGuide/best/hub-pattern.html).
+
+Thus, an autocoder [tool](FIXME) dubbed the "Subtopology AC Tool" has been developed to be able to provide features like instantiation, local components, and formal subtopology interfaces. The tool itself provides examples of the syntax required to use these features, as well as a design methodology and a worked example using a similar context to the one [in this document](#example-scenario).
+
+We recommend that subtopologies are built around the syntax of this tool, as it is on the roadmap to introduce the patterns in this tool into native FPP syntax.
+
 # Conclusion
 
 This how-to guide has walked through the development of a subtopology. Deployments can include multiple different subtopologies, and thus this feature truly paves the way for making F Prime more accessible to quick prototyping. 
-
-If you'd like to see an example of how subtopologies are used within an actual project, please reference this repository: [RNG Library - An Example of Subtopologies within F'](https://github.com/mosa11aei/fprime-rngLibrary). This project uses the [example scenario](#example-scenario) from this guide.
