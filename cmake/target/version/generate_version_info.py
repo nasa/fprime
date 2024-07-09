@@ -85,7 +85,7 @@ def create_version_file_cpp(output_dir, framework_version, project_version):
         if len(lib_versions) == 0:
             fid.write(f"    const FwIndexType Version::LIBRARY_VERSIONS_COUNT = 0; \n")
             fid.write(f"    const char* const Version::LIBRARY_VERSIONS[] = {{ \n")
-            fid.write("    nullptr\n")  # nullptr when no libraries are present
+            fid.write("        nullptr\n")  # nullptr when no libraries are present
         else:
             fid.write(
                 f"    const FwIndexType Version::LIBRARY_VERSIONS_COUNT = {len(lib_versions)}; \n"
