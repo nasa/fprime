@@ -273,7 +273,7 @@ typedef FwIndexType FwQueueSizeType;
 
 // Specifies the size of the buffer that contains a communications packet.
 #ifndef FW_COM_BUFFER_MAX_SIZE
-#define FW_COM_BUFFER_MAX_SIZE (FW_LOG_STRING_MAX_SIZE + sizeof(FwEventIdType) + sizeof(FwPacketDescriptorType))
+#define FW_COM_BUFFER_MAX_SIZE 512
 #endif
 
 // Specifies the size of the buffer that contains the serialized command arguments.
