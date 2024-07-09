@@ -105,8 +105,6 @@ void TlmChanTester::runMultiChannel() {
     // do a run, and all the packets should be sent
     this->doRun(true);
     ASSERT_TRUE(this->m_bufferRecv);
-    printf("FW_NUM_ARRAY_ELEMENTS(ID_1)=%lu\n", FW_NUM_ARRAY_ELEMENTS(ID_1));
-    printf("CHANS_PER_COMBUFFER=%d\n", CHANS_PER_COMBUFFER);
     ASSERT_EQ(INTEGER_DIVISION_ROUNDED_UP(FW_NUM_ARRAY_ELEMENTS(ID_1), CHANS_PER_COMBUFFER), this->m_numBuffs);
     ASSERT_EQ(0, this->component.m_activeBuffer);
 
