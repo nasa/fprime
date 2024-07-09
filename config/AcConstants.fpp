@@ -46,7 +46,7 @@ constant DpManagerNumPorts = 5
 constant DpWriterNumProcPorts = 5
 
 @ The size of a file name string
-constant FileNameStringSize = 256
+constant FileNameStringSize = 200
 
 @ The size of a file name in an AssertFatalAdapter event
 @ Note: File names in assertion failures are also truncated by

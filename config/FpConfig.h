@@ -305,7 +305,7 @@ typedef FwIndexType FwQueueSizeType;
 // Specifies the maximum size of a string in a log event
 // Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_LOG_STRING_MAX_SIZE
-#define FW_LOG_STRING_MAX_SIZE 256  //!< Max size of log string parameter type
+#define FW_LOG_STRING_MAX_SIZE 200  //!< Max size of log string parameter type
 #endif
 
 // Specifies the size of the buffer that contains the serialized telemetry value.
