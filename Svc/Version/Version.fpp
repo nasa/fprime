@@ -1,7 +1,6 @@
 module Svc {
     
     @ Tracks versions for project, framework and user defined versions etc
-    
     enum VersionEnabled {
         DISABLED = 0 @< verbosity disabled
         ENABLED = 1 @< verbosity enabled

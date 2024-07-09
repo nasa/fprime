@@ -94,16 +94,16 @@ class Version : public VersionComponentBase {
         VER_SLOT_09 = 9
     };
 
-    //void process_libraryVersion();
-    void process_CustomVersion();
-    void fwVersion_tlm();
-    void projectVersion_tlm();
+    // function to log framework version events and channels
+    void fwVersion_tlm(); 
+    // function to log project version events and channels
+    void projectVersion_tlm(); 
+    // function to log library version events and channels
     void libraryVersion_tlm();
+    // function to log custom version events and channels
     void customVersion_tlm(VersionSlot custom_slot);
     void customVersion_tlm_all();
     bool m_enable; /*!<Send TLM when true>*/
-    bool m_startup_done;
-    U8 m_num_library_elements;  // number of library versions
     U8 m_num_custom_elements;  // number of custom versions
 };
 

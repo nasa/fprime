@@ -16,7 +16,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 Version ::Version(const char* const compName)
-    : VersionComponentBase(compName), m_enable(false), m_startup_done(false), m_num_library_elements(0), m_num_custom_elements(0)  {
+    : VersionComponentBase(compName), m_enable(false), m_num_custom_elements(0)  {
     Fw::String version_string = "no_ver";
     // initialize all custom entries
     for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
