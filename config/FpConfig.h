@@ -220,7 +220,7 @@ typedef FwIndexType FwQueueSizeType;
 
 // Define max length of assert string
 #ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE 120  //!< Size of string used to store assert description
+#define FW_ASSERT_TEXT_SIZE 256  //!< Size of string used to store assert description
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
@@ -272,7 +272,7 @@ typedef FwIndexType FwQueueSizeType;
 
 // Specifies the size of the buffer that contains a communications packet.
 #ifndef FW_COM_BUFFER_MAX_SIZE
-#define FW_COM_BUFFER_MAX_SIZE 128  //!< Max size of Fw::Com buffer
+#define FW_COM_BUFFER_MAX_SIZE (FW_LOG_STRING_MAX_SIZE + sizeof(FwEventIdType) + sizeof(FwPacketDescriptorType))
 #endif
 
 // Specifies the size of the buffer that contains the serialized command arguments.
@@ -303,7 +303,7 @@ typedef FwIndexType FwQueueSizeType;
 
 // Specifies the maximum size of a string in a log event
 #ifndef FW_LOG_STRING_MAX_SIZE
-#define FW_LOG_STRING_MAX_SIZE 100  //!< Max size of log string parameter type
+#define FW_LOG_STRING_MAX_SIZE 256  //!< Max size of log string parameter type
 #endif
 
 // Specifies the size of the buffer that contains the serialized telemetry value.

@@ -48,6 +48,9 @@ constant DpWriterNumProcPorts = 5
 @ The size of a file name string
 constant FileNameStringSize = 256
 
+@ The size of a file name in an AssertFatalAdapter event
+constant AssertFatalAdapterEventFileSize = FileNameStringSize
+
 # ----------------------------------------------------------------------
 # Hub connections. Connections on all deployments should mirror these settings.
 # ----------------------------------------------------------------------
