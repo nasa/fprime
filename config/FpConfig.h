@@ -219,6 +219,7 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Define max length of assert string
+// Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_ASSERT_TEXT_SIZE
 #define FW_ASSERT_TEXT_SIZE 256  //!< Size of string used to store assert description
 #endif
@@ -302,6 +303,7 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Specifies the maximum size of a string in a log event
+// Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_LOG_STRING_MAX_SIZE
 #define FW_LOG_STRING_MAX_SIZE 256  //!< Max size of log string parameter type
 #endif
