@@ -47,7 +47,7 @@ local Command Dispatcher.Instance ids must also match this offset, which may be 
 following for each instance in instances.fpp:
 ```shell
 # In Node B's instances.fpp
-module NodeBDeployment {
+module Node_B_Deployment {
   constant CMD_SPLITTER_OFFSET = 0x10000
   ...
   instance b_hub: Svc.GenericHub base id CMD_SPLITTER_OFFSET + 0x9000
@@ -114,8 +114,8 @@ should look like this:
   ├── build
   ├── build-artifacts
   ├── ...
-  ├── NodeADeployment
-  ├── NodeBDeployment
+  ├── Node_A_Deployment
+  ├── Node_B_Deployment
   └── GDSDictionary
     ├── generate_dictionary.sh
     └── topology.fp
