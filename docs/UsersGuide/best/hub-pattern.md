@@ -146,4 +146,4 @@ tr '\n' ',' < deps.txt | sed 's/,$//' > deps-comma.txt
 fpp-to-dict -i `cat deps-comma.txt` topology.fpp
 ```
 > See [FPP User's Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Analyzing-and-Translating-Models_Generating-Ground-Dictionaries)
-  for using generating dictionaries using `fpp-to-dict`.
+for generating dictionaries using `fpp-to-dict`.
