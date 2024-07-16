@@ -233,14 +233,6 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 #endif
 
-// When querying an object as to an object-specific description, this specifies the size of the buffer to store the
-// description.
-#if FW_OBJECT_TO_STRING
-#ifndef FW_OBJ_TO_STRING_BUFFER_SIZE
-#define FW_OBJ_TO_STRING_BUFFER_SIZE 255  //!< Size of string storing toString() text
-#endif
-#endif
-
 #if FW_OBJECT_REGISTRATION
 // For the simple object registry provided with the framework, this specifies how many objects the registry will store.
 #ifndef FW_OBJ_SIMPLE_REG_ENTRIES
@@ -350,23 +342,6 @@ typedef FwIndexType FwQueueSizeType;
 // string constants. Must be enabled if text logging enabled
 #ifndef FW_SERIALIZABLE_TO_STRING
 #define FW_SERIALIZABLE_TO_STRING 1  //!< Indicates if autocoded serializables have toString() methods
-#endif
-
-#if FW_SERIALIZABLE_TO_STRING
-#ifndef FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE
-#define FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE 255  //!< Size of string to store toString() string output
-#endif
-#endif
-
-// Define if arrays have toString() method.
-#ifndef FW_ARRAY_TO_STRING
-#define FW_ARRAY_TO_STRING 1  //!< Indicates if autocoded arrays have toString() methods
-#endif
-
-#if FW_ARRAY_TO_STRING
-#ifndef FW_ARRAY_TO_STRING_BUFFER_SIZE
-#define FW_ARRAY_TO_STRING_BUFFER_SIZE 256  //!< Size of string to store toString() string output
-#endif
 #endif
 
 // Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility
