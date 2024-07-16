@@ -1,9 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"poly_type_8hpp_source.html":[27,0,9,16,20],
-"port_base_8cpp.html":[27,0,9,10,9],
-"port_base_8cpp_source.html":[27,0,9,10,9],
-"port_base_8hpp.html":[27,0,9,10,10],
 "port_base_8hpp_source.html":[27,0,9,10,10],
 "posix_2_default_file_8cpp.html":[27,0,10,4,0],
 "posix_2_default_file_8cpp_source.html":[27,0,10,4,0],
@@ -249,5 +245,9 @@ var NAVTREEINDEX6 =
 "svc_a_m_p_c_s_sequence_class.html":[14,0],
 "svc_a_m_p_c_s_sequence_class.html#autotoc_md654":[14,0,0],
 "svc_a_m_p_c_s_sequence_class.html#autotoc_md655":[14,0,0,0],
-"svc_a_m_p_c_s_sequence_class.html#autotoc_md656":[14,0,0,1]
+"svc_a_m_p_c_s_sequence_class.html#autotoc_md656":[14,0,0,1],
+"svc_a_m_p_c_s_sequence_class.html#autotoc_md657":[14,0,0,1,0],
+"svc_a_m_p_c_s_sequence_class.html#autotoc_md658":[14,0,0,1,1],
+"svc_a_m_p_c_s_sequence_class.html#autotoc_md659":[14,0,0,1,2],
+"svc_a_m_p_c_s_sequence_class.html#autotoc_md660":[14,0,0,1,3]
 };

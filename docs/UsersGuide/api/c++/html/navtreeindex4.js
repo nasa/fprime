@@ -1,9 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"fw_time_port.html#autotoc_md505":[12,8,0,1],
-"fw_time_port.html#autotoc_md506":[12,8,0,1,0],
-"fw_time_port.html#autotoc_md507":[12,8,0,1,0,0],
-"fw_time_port.html#autotoc_md508":[12,8,0,1,0,1],
 "fw_time_port.html#autotoc_md510":[12,8,0,2],
 "fw_tlm_port.html":[12,9],
 "fw_tlm_port.html#autotoc_md511":[12,9,0],
@@ -249,5 +245,9 @@ var NAVTREEINDEX4 =
 "linux_uart_driver_8hpp_source.html":[27,0,6,7,1],
 "linux_uart_driver_component_ac_8cpp.html":[27,0,7,8,0],
 "linux_uart_driver_component_ac_8cpp_source.html":[27,0,7,8,0],
-"linux_uart_driver_component_ac_8hpp.html":[27,0,7,8,1]
+"linux_uart_driver_component_ac_8hpp.html":[27,0,7,8,1],
+"linux_uart_driver_component_ac_8hpp_source.html":[27,0,7,8,1],
+"lock_guard_8cpp.html":[27,0,16,5],
+"lock_guard_8cpp_source.html":[27,0,16,5],
+"lock_guard_8hpp.html":[27,0,16,6]
 };

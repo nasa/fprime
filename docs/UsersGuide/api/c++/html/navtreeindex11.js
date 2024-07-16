@@ -1,9 +1,5 @@
 var NAVTREEINDEX11 =
 {
-"class_drv_1_1_input_i2c_port.html#a39900cf94db846b06dd8d87ff2e22a48":[26,0,1,18,0],
-"class_drv_1_1_input_i2c_port.html#acdba18072f26b61a7a549c89fa8058f5":[26,0,1,18,1],
-"class_drv_1_1_input_i2c_port.html#ad02bb9daaecefec5b8980715bc27ad77":[26,0,1,18,4],
-"class_drv_1_1_input_i2c_port.html#ae3b89c7ec89af8949b245c4ead849560":[26,0,1,18,3],
 "class_drv_1_1_input_i2c_write_read_port.html":[26,0,1,21],
 "class_drv_1_1_input_i2c_write_read_port.html#a0717ecb3e2e1ff2f5901a3f2913ef244":[26,0,1,21,1],
 "class_drv_1_1_input_i2c_write_read_port.html#a592feed8a82929f042336a32273f9693":[26,0,1,21,2],
@@ -249,5 +245,9 @@ var NAVTREEINDEX11 =
 "class_drv_1_1_output_i2c_port.html":[26,0,1,19],
 "class_drv_1_1_output_i2c_port.html#a1d8336bba11dbab2ab73247ecf332d59":[26,0,1,19,2],
 "class_drv_1_1_output_i2c_port.html#a66d870d8a0aef835558488ab14552a2b":[26,0,1,19,0],
-"class_drv_1_1_output_i2c_port.html#aad5433cbefd3a72e2c3aabfd99c32465":[26,0,1,19,1]
+"class_drv_1_1_output_i2c_port.html#aad5433cbefd3a72e2c3aabfd99c32465":[26,0,1,19,1],
+"class_drv_1_1_output_i2c_port.html#acdc4275f216b2b8276742dfa37216d2b":[26,0,1,19,3],
+"class_drv_1_1_output_i2c_write_read_port.html":[26,0,1,22],
+"class_drv_1_1_output_i2c_write_read_port.html#a86d302bb3e7ac648aa613079d77998a8":[26,0,1,22,2],
+"class_drv_1_1_output_i2c_write_read_port.html#ac9e2a40e140ffa0ec6e0aec00aea42d2":[26,0,1,22,1]
 };
