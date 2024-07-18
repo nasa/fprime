@@ -336,7 +336,7 @@ execute_process(
 )
 ```
 
-The `RETURN_CODE` variable is useful to determine whether the script that was being executed executed properly or not. In the case of the example, it is used to determine whether files were generated for the module. Generated files need to be specified by the autocoder, as defined earlier in this documentation. However, one can also specify *removed sources* in the autocoder. An autocoder may delete or want to remove a source file from the current module. That can be done by appending to the `AUTOCODER_REMOVED_SOURCES` list:
+The `RETURN_CODE` variable is useful to determine whether the script that was being executed returned a non-zero status code. In the case of the example, it is used to determine whether files were generated for the module. Generated files need to be specified by the autocoder, as defined earlier in this documentation. However, one can also specify *removed sources* in the autocoder. An autocoder may delete or want to remove a source file from the current module. That can be done by appending to the `AUTOCODER_REMOVED_SOURCES` list:
 
 ```cmake
 set(AUTOCODER_REMOVED_SOURCES <files> PARENT_SCOPE)
