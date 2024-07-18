@@ -320,3 +320,32 @@ the project. Thus, these autocoders should make all decisions on the filename on
 
 Usually, it is a good idea to have the source autocoder provide all dependencies, and have the secondary autocoder set
 no additional dependencies. The secondary autocoder is simple input to output.
+
+## Implementing a Pre-Processor Autocoder
+
+In the above steps, a general "build step" autocoder is created, which is when the autocoder is *registered* at the generate (`fprime-util generate`) step, but is executed in the build (`fprime-util build`) step. With recent minor modifications to F Prime's CMake, it is now possible to add an autocoder as a pre-processor.
+
+In this case, instead of using `add_custom_command`, you can execute any tools and external scripts using `execute_process`. For example:
+
+```cmake
+# example derived from https://github.com/mosa11aei/fprime-subtopology-tool/
+
+execute_process(
+    COMMAND ${PYTHON} ${PYTHON_TOOL} --locs ${CMAKE_BINARY_DIR}/locs.fpp --file ${AC_INPUT_FILE} --p ${OUTPUT_FILE} --c ${LOCAL_CACHE}
+    RESULT_VARIABLE RETURN_CODE
+)
+```
+
+The `RETURN_CODE` variable is useful to determine whether the script that was being executed executed properly or not. In the case of the example, it is used to determine whether files were generated for the module. Generated files need to be specified by the autocoder, as defined earlier in this documentation. However, one can also specify *removed sources* in the autocoder. An autocoder may delete or want to remove a source file from the current module. That can be done by appending to the `AUTOCODER_REMOVED_SOURCES` list:
+
+```cmake
+set(AUTOCODER_REMOVED_SOURCES <files> PARENT_SCOPE)
+```
+
+Lastly, you can have your autocoder execute before all other autocoders with the new `PREPEND` argument for `register_fprime_build_autocoder`. Again, deriving from the tool example above:
+
+```cmake
+register_fprime_build_autocoder("${CMAKE_CURRENT_LIST_DIR}/fprime-subtopology-tool/src/cmake/autocoder/subtopology.cmake" ON) 
+```
+
+If the `PREPEND` argument is set to "ON", then the provided autocoder will execute before all other internal autocoders. If set to "OFF", it will do the standard behavior of the function, which is to append the autocoder to the list of all autocoders in the system.
