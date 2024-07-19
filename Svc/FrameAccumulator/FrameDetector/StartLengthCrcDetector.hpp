@@ -8,6 +8,7 @@
 #include "Fw/Types/PolyType.hpp"
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
 #include "Utils/Hash/libcrc/lib_crc.h"
+#include <type_traits>
 
 namespace Svc {
 namespace FrameDetectors {
@@ -157,20 +158,46 @@ class LengthToken : public Token<TokenType, TokenMask, TokenEndianness> {
         return this->Token<TokenType, TokenMask, TokenEndianness>::read(data, size_out, size_out);
     }
 };
-//! \breif type-compliant wrapper of CRC32 library update function
-//! \param checksum: checksum word (U32)
-//! \param byte: byte to update
-//! \return: updated checksum (U32)
-U32 CRC32(U32 checksum, U8 byte) {
-    return static_cast<U32>(update_crc_32(static_cast<U32>(checksum), byte));
-}
-//! \breif type-compliant wrapper of CRC16 library update function
-//! \param checksum: checksum word (U16)
-//! \param byte: byte to update
-//! \return: updated checksum (U16)
-U16 CRC16(U16 checksum, U8 byte) {
-    return static_cast<U16>(update_crc_16(static_cast<U16>(checksum), byte));
-}
+template <typename TokenType>
+class CRCWrapper {
+  protected:
+    //! \brief constructor setting initial value
+    CRCWrapper(TokenType initial) : m_crc(initial) {}
+  public:
+    //! \brief update CRC with one new byte
+    //!
+    //! Update function for CRC taking previous value from member variable and updating it.
+    //!
+    //! \param new_byte: new byte to add to calculation
+    virtual void update(U8 new_byte) = 0;
+
+    //! \brief finalize and return CRC value
+    virtual TokenType finalize() = 0;
+
+  protected:
+    TokenType m_crc;
+};
+//! \breif standard CRC32 implementation
+class CRC32 : public CRCWrapper<U32> {
+  public:
+    CRC32() : CRCWrapper<U32>(std::numeric_limits<U32>::max()) {}
+
+    //! \brief update CRC with one new byte
+    //!
+    //! Update function for CRC taking previous value from member variable and updating it.
+    //!
+    //! \param new_byte: new byte to add to calculation
+    void update(U8 new_byte) override {
+        this->m_crc =  static_cast<U32>(update_crc_32(static_cast<U32>(m_crc), new_byte));
+    };
+
+    //! \brief finalize and return CRC value
+    U32 finalize() override {
+        // Bitwise not also works, but the CRC standard requests XOR calculation instead
+        return this->m_crc ^ std::numeric_limits<U32>::max();
+    };
+};
+
 //! \brief token representing the CRC
 //!
 //! CRC checksum template used to calculate the CRC of the *entire* packet except the stored CRC value itself. This is
@@ -188,9 +215,12 @@ U16 CRC16(U16 checksum, U8 byte) {
 template <typename TokenType,
           FwSizeType DataOffset,
           FwSizeType RelativeTokenOffset = 0,
-          TokenType (*CRCFn)(TokenType, U8) = CRC32>
+          class CRCHandler = CRC32>
 class CRC : public Token<TokenType, std::numeric_limits<TokenType>::max(), BIG> {
   public:
+    // Check CRC token and CRC handler match
+    static_assert(std::is_base_of<CRCWrapper<TokenType>, CRCHandler>::value, "Invalid CRC wrapper supplied");
+
     CRC() : m_stored_offset(0), m_expected(0) {}
     //! \brief calculate CRC across whole packet
     //!
@@ -206,7 +236,7 @@ class CRC : public Token<TokenType, std::numeric_limits<TokenType>::max(), BIG> 
     FrameDetector::Status calculate(const Types::CircularBuffer& data, FwSizeType length, FwSizeType& size_out) {
         const FwSizeType checksum_length = DataOffset + length + RelativeTokenOffset;
         size_out = checksum_length;
-        TokenType checksum = std::numeric_limits<TokenType>::max(); // Start with 0xffffffff
+        CRCHandler crc;
         // Loop byte by byte
         for (FwSizeType i = 0; i < checksum_length; i++) {
             U8 byte = 0;
@@ -215,11 +245,11 @@ class CRC : public Token<TokenType, std::numeric_limits<TokenType>::max(), BIG> 
                 this->m_stored_offset = 0;
                 return FrameDetector::Status::MORE_DATA_NEEDED;
             }
-            checksum = CRCFn(checksum, byte);
+            crc.update(byte);
         }
         // CRC finalization ends in bit-wise negation
         this->m_stored_offset = checksum_length;
-        this->m_expected = ~(checksum);
+        this->m_expected = crc.finalize();
         return FrameDetector::FRAME_DETECTED;
     }
     //! \brief read stored CRC and check against recalculation
@@ -269,7 +299,7 @@ class StartLengthCrcDetector : public FrameDetector {
     //! \param data: circular buffer
     //! \param size_out: set to needed size. Note: may not be full frame size, just to read the next token.
     //! \return: FRAME_DETECTED, NO_FRAME_DETECTED, or MORE_DATA_NEEDED.
-    Status detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
+    Status detect(const Types::CircularBuffer& data, FwSizeType& size_out) const override {
         // Read start word
         StartToken startWord;
         Status status = startWord.read(data, size_out);
