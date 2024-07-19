@@ -42,7 +42,7 @@ namespace Svc {
         //! \param data: circular buffer with read-only access
         //! \param size_out: set as output to caller indicating size when appropriate
         //! \return status of the detection to be pared with size_out
-        virtual Status detect(const Types::CircularBuffer& data, const FwSizeType& size_out) const = 0;
+        virtual Status detect(const Types::CircularBuffer& data, FwSizeType& size_out) const = 0;
     };
 
 } // Svc

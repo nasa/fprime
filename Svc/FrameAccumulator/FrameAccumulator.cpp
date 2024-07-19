@@ -133,6 +133,7 @@ void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
                 if (buffer.isValid()) {
                     // Copy out data and rotate
                     FW_ASSERT(this->m_inRing.peek(buffer.getData(), size_out) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+                    buffer.setSize(size_out);
                     m_inRing.rotate(static_cast<U32>(size_out));
                     FW_ASSERT(
                             m_inRing.get_allocated_size() == static_cast<U32>(remaining - size_out),
@@ -140,6 +141,7 @@ void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
                             static_cast<FwAssertArgType>(remaining),
                             static_cast<FwAssertArgType>(size_out)
                     );
+                    this->frameOut_out(0, buffer);
                 }
                 else {
                     // No buffer is available, we need to exit and try again later
