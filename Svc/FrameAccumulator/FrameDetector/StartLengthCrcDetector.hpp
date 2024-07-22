@@ -142,20 +142,27 @@ class StartToken : public Token<TokenType, TokenMask, TokenEndianness> {
 //! \tparam TokenEndianness: template parameter setting endianness of token word. Endianness::BIG or Endianness::LITTLE.
 template <typename TokenType,
           FwSizeType Offset = 0,
+          FwSizeType MaximumLength=1024,
           TokenType TokenMask = std::numeric_limits<TokenType>::max(),
           Endianness TokenEndianness = Endianness::BIG>
 class LengthToken : public Token<TokenType, TokenMask, TokenEndianness> {
   public:
     //! \breif read length token and return total size of packet through length token
+    //!
+    //! This reads the length token from the buffer and returns the total needed size up through the length token. If
+    //! the length exceeds the maximum, then NO_FRAME_DETECTED is returned. size_out does not include the length of the
+    //! data as that is up to the caller. MORE_DATA_NEEDED is returned when insufficient data is available to read the
+    //! length token.  FRAME_DETECTED is return when a valid size token was read
     //! \param data: buffer to read
     //! \param size_out: total packet length up through end of length token
-    //!
-    //! This reads the length token from the buffer and returns the total needed size up through the length token. It
-    //! does not include the length of the data as that is up to the caller.
     //! \return: FRAME_DETECTED, or MORE_DATA_NEEDED.
     FrameDetector::Status read(const Types::CircularBuffer& data, FwSizeType& size_out) {
         size_out = Offset;
-        return this->Token<TokenType, TokenMask, TokenEndianness>::read(data, size_out, size_out);
+        FrameDetector::Status status = this->Token<TokenType, TokenMask, TokenEndianness>::read(data, size_out, size_out);
+        if (this->m_value > MaximumLength) {
+            return FrameDetector::Status::NO_FRAME_DETECTED;
+        }
+        return status;
     }
 };
 template <typename TokenType>
@@ -323,6 +330,9 @@ class StartLengthCrcDetector : public FrameDetector {
         }
         // Read CRC
         status = crc.read(data, size_out);
+        if (status == Status::FRAME_DETECTED) {
+            printf("FRAME!!!!!\n");
+        }
         return status;
     };
 };
