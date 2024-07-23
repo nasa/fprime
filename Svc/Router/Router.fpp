@@ -2,8 +2,8 @@ module Svc {
     @ Routes packets deframed by the Deframer to the rest of the system
     passive component Router {
 
-        @ Receiving Fw::Buffer from Deframer
-        guarded input port bufferIn: Fw.BufferSend
+        @ Receiving Fw::Buffer with context buffer from Deframer
+        guarded input port dataIn: Fw.DataWithContext
 
         @ Port for sending file packets as Fw::Buffer (ownership passed to receiver)
         output port fileOut: Fw.BufferSend

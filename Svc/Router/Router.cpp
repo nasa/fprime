@@ -23,7 +23,7 @@ Router ::~Router() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void Router ::bufferIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer) {
+void Router ::dataIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer, Fw::Buffer& contextBuffer) {
     // Read the packet type from the packet buffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;

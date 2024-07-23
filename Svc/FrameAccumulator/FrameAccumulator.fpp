@@ -13,6 +13,6 @@ module Svc {
         output port frameAllocate: Fw.BufferGet
 
         @ Port for sending an extracted frame out
-        output port frameOut: Fw.BufferSend
+        output port frameOut: Fw.DataWithContext
     }
 }
