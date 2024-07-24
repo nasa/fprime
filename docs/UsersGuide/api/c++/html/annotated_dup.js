@@ -224,6 +224,9 @@ var annotated_dup =
       [ "PolyDbCfg", "namespace_svc_1_1_poly_db_cfg.html", [
         [ "PolyDbEntry", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry.html", "class_svc_1_1_poly_db_cfg_1_1_poly_db_entry" ]
       ] ],
+      [ "VersionCfg", "namespace_svc_1_1_version_cfg.html", [
+        [ "VersionEnum", "class_svc_1_1_version_cfg_1_1_version_enum.html", "class_svc_1_1_version_cfg_1_1_version_enum" ]
+      ] ],
       [ "ActiveLogger_Enabled", "class_svc_1_1_active_logger___enabled.html", "class_svc_1_1_active_logger___enabled" ],
       [ "ActiveLogger_FilterSeverity", "class_svc_1_1_active_logger___filter_severity.html", "class_svc_1_1_active_logger___filter_severity" ],
       [ "ActiveLoggerComponentBase", "class_svc_1_1_active_logger_component_base.html", "class_svc_1_1_active_logger_component_base" ],
@@ -284,6 +287,9 @@ var annotated_dup =
       [ "MeasurementStatus", "class_svc_1_1_measurement_status.html", "class_svc_1_1_measurement_status" ],
       [ "InputPolyPort", "class_svc_1_1_input_poly_port.html", "class_svc_1_1_input_poly_port" ],
       [ "OutputPolyPort", "class_svc_1_1_output_poly_port.html", "class_svc_1_1_output_poly_port" ],
+      [ "InputVersionPort", "class_svc_1_1_input_version_port.html", "class_svc_1_1_input_version_port" ],
+      [ "OutputVersionPort", "class_svc_1_1_output_version_port.html", "class_svc_1_1_output_version_port" ],
+      [ "VersionStatus", "class_svc_1_1_version_status.html", "class_svc_1_1_version_status" ],
       [ "PosixTimeComponentBase", "class_svc_1_1_posix_time_component_base.html", "class_svc_1_1_posix_time_component_base" ],
       [ "PrmDb_PrmReadError", "class_svc_1_1_prm_db___prm_read_error.html", "class_svc_1_1_prm_db___prm_read_error" ],
       [ "PrmDb_PrmWriteError", "class_svc_1_1_prm_db___prm_write_error.html", "class_svc_1_1_prm_db___prm_write_error" ],
@@ -300,6 +306,10 @@ var annotated_dup =
       [ "SystemResourcesComponentBase", "class_svc_1_1_system_resources_component_base.html", "class_svc_1_1_system_resources_component_base" ],
       [ "TlmChanComponentBase", "class_svc_1_1_tlm_chan_component_base.html", "class_svc_1_1_tlm_chan_component_base" ],
       [ "TlmPacketizerComponentBase", "class_svc_1_1_tlm_packetizer_component_base.html", "class_svc_1_1_tlm_packetizer_component_base" ],
+      [ "CustomVersionDb", "class_svc_1_1_custom_version_db.html", "class_svc_1_1_custom_version_db" ],
+      [ "VersionComponentBase", "class_svc_1_1_version_component_base.html", "class_svc_1_1_version_component_base" ],
+      [ "VersionEnabled", "class_svc_1_1_version_enabled.html", "class_svc_1_1_version_enabled" ],
+      [ "VersionType", "class_svc_1_1_version_type.html", "class_svc_1_1_version_type" ],
       [ "InputWatchDogPort", "class_svc_1_1_input_watch_dog_port.html", "class_svc_1_1_input_watch_dog_port" ],
       [ "OutputWatchDogPort", "class_svc_1_1_output_watch_dog_port.html", "class_svc_1_1_output_watch_dog_port" ],
       [ "ActiveLoggerImpl", "class_svc_1_1_active_logger_impl.html", "class_svc_1_1_active_logger_impl" ],
@@ -352,7 +362,8 @@ var annotated_dup =
       [ "TlmPacketizerPacket", "struct_svc_1_1_tlm_packetizer_packet.html", "struct_svc_1_1_tlm_packetizer_packet" ],
       [ "TlmPacketizerPacketList", "struct_svc_1_1_tlm_packetizer_packet_list.html", "struct_svc_1_1_tlm_packetizer_packet_list" ],
       [ "UdpReceiverComponentImpl", "class_svc_1_1_udp_receiver_component_impl.html", "class_svc_1_1_udp_receiver_component_impl" ],
-      [ "UdpSenderComponentImpl", "class_svc_1_1_udp_sender_component_impl.html", "class_svc_1_1_udp_sender_component_impl" ]
+      [ "UdpSenderComponentImpl", "class_svc_1_1_udp_sender_component_impl.html", "class_svc_1_1_udp_sender_component_impl" ],
+      [ "Version", "class_svc_1_1_version.html", "class_svc_1_1_version" ]
     ] ],
     [ "TestUtils", "namespace_test_utils.html", [
       [ "OnChangeChannel", "class_test_utils_1_1_on_change_channel.html", "class_test_utils_1_1_on_change_channel" ],
