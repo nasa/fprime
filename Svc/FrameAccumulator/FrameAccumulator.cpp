@@ -141,7 +141,8 @@ void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
                             static_cast<FwAssertArgType>(remaining),
                             static_cast<FwAssertArgType>(size_out)
                     );
-                    this->frameOut_out(0, buffer);
+                    Fw::Buffer nullContext;
+                    this->frameOut_out(0, buffer, nullContext);
                 }
                 else {
                     // No buffer is available, we need to exit and try again later

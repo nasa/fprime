@@ -6,7 +6,6 @@
 # UT_SOURCE_FILES: list of source files for unit tests
 #
 ####
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FrameDetector")
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
