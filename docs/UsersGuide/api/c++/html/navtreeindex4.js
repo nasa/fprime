@@ -1,5 +1,7 @@
 var NAVTREEINDEX4 =
 {
+"fw_time_port.html#autotoc_md503":[12,8,0],
+"fw_time_port.html#autotoc_md504":[12,8,0,0],
 "fw_time_port.html#autotoc_md505":[12,8,0,1],
 "fw_time_port.html#autotoc_md506":[12,8,0,1,0],
 "fw_time_port.html#autotoc_md507":[12,8,0,1,0,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX4 =
 "linux_uart_driver_8cpp_source.html":[28,0,7,7,0],
 "linux_uart_driver_8hpp.html":[28,0,7,7,1],
 "linux_uart_driver_8hpp_source.html":[28,0,7,7,1],
-"linux_uart_driver_component_ac_8cpp.html":[28,0,6,8,0],
-"linux_uart_driver_component_ac_8cpp_source.html":[28,0,6,8,0],
-"linux_uart_driver_component_ac_8hpp.html":[28,0,6,8,1]
+"linux_uart_driver_component_ac_8cpp.html":[28,0,6,8,0]
 };

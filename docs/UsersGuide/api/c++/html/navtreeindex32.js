@@ -1,5 +1,7 @@
 var NAVTREEINDEX32 =
 {
+"globals_defs_f.html":[28,1,6,4],
+"globals_defs_h.html":[28,1,6,5],
 "globals_defs_i.html":[28,1,6,6],
 "globals_defs_l.html":[28,1,6,7],
 "globals_defs_m.html":[28,1,6,8],
@@ -247,7 +249,5 @@ var NAVTREEINDEX32 =
 "md_docs_doc_index.html#autotoc_md151":[0],
 "md_docs_doc_index.html#autotoc_md152":[11,7,1,0],
 "md_docs_doc_index.html#autotoc_md153":[11,7,1,1],
-"md_docs_doc_index.html#autotoc_md154":[11,7,1,2],
-"md_docs_doc_index.html#autotoc_md155":[11,7,1,2,1],
-"md_docs_doc_index.html#autotoc_md156":[11,7,1,3]
+"md_docs_doc_index.html#autotoc_md154":[11,7,1,2]
 };

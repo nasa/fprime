@@ -184,7 +184,7 @@ Macros</h2></td></tr>
 <tr class="memitem:a2355a84bf81d78e537d3ed5b146ca3bd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#a2355a84bf81d78e537d3ed5b146ca3bd">FW_ASSERT_LEVEL</a>&#160;&#160;&#160;<a class="el" href="basic_types_8h.html#a6089e13ed014522486459da04b26b167">FW_FILENAME_ASSERT</a></td></tr>
 <tr class="memdesc:a2355a84bf81d78e537d3ed5b146ca3bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the type of assert used.  <a href="fp_config_8h.html#a2355a84bf81d78e537d3ed5b146ca3bd">More...</a><br /></td></tr>
 <tr class="separator:a2355a84bf81d78e537d3ed5b146ca3bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48d947818ef0ebb372be0bf57d98c376"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#a48d947818ef0ebb372be0bf57d98c376">FW_ASSERT_TEXT_SIZE</a>&#160;&#160;&#160;120</td></tr>
+<tr class="memitem:a48d947818ef0ebb372be0bf57d98c376"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#a48d947818ef0ebb372be0bf57d98c376">FW_ASSERT_TEXT_SIZE</a>&#160;&#160;&#160;256</td></tr>
 <tr class="memdesc:a48d947818ef0ebb372be0bf57d98c376"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of string used to store assert description.  <a href="fp_config_8h.html#a48d947818ef0ebb372be0bf57d98c376">More...</a><br /></td></tr>
 <tr class="separator:a48d947818ef0ebb372be0bf57d98c376"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae19768b57fa03cf5820941b337c4b595"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#ae19768b57fa03cf5820941b337c4b595">FW_OBJ_NAME_BUFFER_SIZE</a>&#160;&#160;&#160;    80</td></tr>
@@ -205,8 +205,7 @@ Macros</h2></td></tr>
 <tr class="memitem:a9412511cf935290ed543bf9679adacb7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#a9412511cf935290ed543bf9679adacb7">FW_TASK_NAME_BUFFER_SIZE</a>&#160;&#160;&#160;80</td></tr>
 <tr class="memdesc:a9412511cf935290ed543bf9679adacb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max size of task name.  <a href="fp_config_8h.html#a9412511cf935290ed543bf9679adacb7">More...</a><br /></td></tr>
 <tr class="separator:a9412511cf935290ed543bf9679adacb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4bd2d1af8a64105ed2eb6e61c823a1a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#ac4bd2d1af8a64105ed2eb6e61c823a1a">FW_COM_BUFFER_MAX_SIZE</a>&#160;&#160;&#160;128</td></tr>
-<tr class="memdesc:ac4bd2d1af8a64105ed2eb6e61c823a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max size of Fw::Com buffer.  <a href="fp_config_8h.html#ac4bd2d1af8a64105ed2eb6e61c823a1a">More...</a><br /></td></tr>
+<tr class="memitem:ac4bd2d1af8a64105ed2eb6e61c823a1a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#ac4bd2d1af8a64105ed2eb6e61c823a1a">FW_COM_BUFFER_MAX_SIZE</a>&#160;&#160;&#160;512</td></tr>
 <tr class="separator:ac4bd2d1af8a64105ed2eb6e61c823a1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8defc303dce09190ad20a3ca955b655"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#ae8defc303dce09190ad20a3ca955b655">FW_CMD_ARG_BUFFER_MAX_SIZE</a>&#160;&#160;&#160;(<a class="el" href="fp_config_8h.html#ac4bd2d1af8a64105ed2eb6e61c823a1a">FW_COM_BUFFER_MAX_SIZE</a> - sizeof(<a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a>) - sizeof(<a class="el" href="fp_config_8h.html#a6ee2232cd0b3ee9ef2a0523f7a6d7bbf">FwPacketDescriptorType</a>))</td></tr>
 <tr class="separator:ae8defc303dce09190ad20a3ca955b655"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -218,7 +217,7 @@ Macros</h2></td></tr>
 <tr class="separator:af83eb73a0e506bb7f934f5f51e542ce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3234753745347df82e7181690b7fb599"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#a3234753745347df82e7181690b7fb599">FW_LOG_BUFFER_MAX_SIZE</a>&#160;&#160;&#160;(<a class="el" href="fp_config_8h.html#ac4bd2d1af8a64105ed2eb6e61c823a1a">FW_COM_BUFFER_MAX_SIZE</a> - sizeof(<a class="el" href="fp_config_8h.html#a3cf649086b37430f3aa561942a64f431">FwEventIdType</a>) - sizeof(<a class="el" href="fp_config_8h.html#a6ee2232cd0b3ee9ef2a0523f7a6d7bbf">FwPacketDescriptorType</a>))</td></tr>
 <tr class="separator:a3234753745347df82e7181690b7fb599"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1f697eb23831390faddb9543835771b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#ac1f697eb23831390faddb9543835771b">FW_LOG_STRING_MAX_SIZE</a>&#160;&#160;&#160;100</td></tr>
+<tr class="memitem:ac1f697eb23831390faddb9543835771b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#ac1f697eb23831390faddb9543835771b">FW_LOG_STRING_MAX_SIZE</a>&#160;&#160;&#160;200</td></tr>
 <tr class="memdesc:ac1f697eb23831390faddb9543835771b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max size of log string parameter type.  <a href="fp_config_8h.html#ac1f697eb23831390faddb9543835771b">More...</a><br /></td></tr>
 <tr class="separator:ac1f697eb23831390faddb9543835771b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8bd9da9ec5572eb59b656afada2bc437"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8h.html#a8bd9da9ec5572eb59b656afada2bc437">FW_TLM_BUFFER_MAX_SIZE</a>&#160;&#160;&#160;(<a class="el" href="fp_config_8h.html#ac4bd2d1af8a64105ed2eb6e61c823a1a">FW_COM_BUFFER_MAX_SIZE</a> - sizeof(<a class="el" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a>) - sizeof(<a class="el" href="fp_config_8h.html#a6ee2232cd0b3ee9ef2a0523f7a6d7bbf">FwPacketDescriptorType</a>))</td></tr>
@@ -361,7 +360,7 @@ Enumerations</h2></td></tr>
 
 <p>Whether or not JPL AMPCS ground system support is enabled. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00349">349</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00351">351</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -408,14 +407,14 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define FW_ASSERT_TEXT_SIZE&#160;&#160;&#160;120</td>
+          <td class="memname">#define FW_ASSERT_TEXT_SIZE&#160;&#160;&#160;256</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Size of string used to store assert description. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00223">223</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00224">224</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -449,7 +448,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00273">273</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00274">274</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -467,7 +466,7 @@ Enumerations</h2></td></tr>
 
 <p>Check for leftover command bytes. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00288">288</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00289">289</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -485,7 +484,7 @@ Enumerations</h2></td></tr>
 
 <p>Max character size of command string arguments. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00278">278</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00279">279</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -496,14 +495,12 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define FW_COM_BUFFER_MAX_SIZE&#160;&#160;&#160;128</td>
+          <td class="memname">#define FW_COM_BUFFER_MAX_SIZE&#160;&#160;&#160;512</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Max size of Fw::Com buffer. </p>
-
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00267">267</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00268">268</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -539,7 +536,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates whether text logging is turned on. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00333">333</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00335">335</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -557,7 +554,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of file buffer (i.e. chunk of file) </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00323">323</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00325">325</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -575,7 +572,7 @@ Enumerations</h2></td></tr>
 
 <p>Chunk size for working with files. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00380">380</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00382">382</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -593,7 +590,7 @@ Enumerations</h2></td></tr>
 
 <p>Character array size for <a class="el" href="class_fw_1_1_string.html">Fw::String</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00366">366</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00368">368</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -611,7 +608,7 @@ Enumerations</h2></td></tr>
 
 <p>Alignment of handle storage. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00376">376</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00378">378</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -629,7 +626,7 @@ Enumerations</h2></td></tr>
 
 <p>Maximum size of a handle for OS resources (files, queues, locks, etc.) </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00372">372</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00374">374</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -647,7 +644,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of interface string parameter type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00328">328</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00330">330</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -663,7 +660,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00293">293</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00294">294</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -674,14 +671,14 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define FW_LOG_STRING_MAX_SIZE&#160;&#160;&#160;100</td>
+          <td class="memname">#define FW_LOG_STRING_MAX_SIZE&#160;&#160;&#160;200</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Max size of log string parameter type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00298">298</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00300">300</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -699,7 +696,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of string for text log message. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00338">338</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00340">340</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -717,7 +714,7 @@ Enumerations</h2></td></tr>
 
 <p>Size of object name (if object names enabled). AC Limits to 80, truncation occurs above 80. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00232">232</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00233">233</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -735,7 +732,7 @@ Enumerations</h2></td></tr>
 
 <p>Size of object registry dump string. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00244">244</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00245">245</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -753,7 +750,7 @@ Enumerations</h2></td></tr>
 
 <p>Number of objects stored in simple object registry. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00239">239</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00240">240</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -843,7 +840,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00313">313</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00315">315</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -861,7 +858,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of parameter string type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00318">318</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00320">320</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -916,7 +913,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of message queue name. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00257">257</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00258">258</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -952,7 +949,7 @@ Enumerations</h2></td></tr>
 
 <p>Number of queues stored in simple queue registry. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00251">251</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00252">252</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -970,7 +967,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates if autocoded serializables have toString() methods. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00344">344</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00346">346</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -1042,7 +1039,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of task name. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00262">262</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00263">263</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -1058,7 +1055,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00303">303</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00305">305</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -1076,7 +1073,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of channelized telemetry string type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00308">308</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00310">310</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -1094,7 +1091,7 @@ Enumerations</h2></td></tr>
 
 <p>Whether or not to use the time base. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00356">356</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00358">358</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -1112,7 +1109,7 @@ Enumerations</h2></td></tr>
 
 <p>Whether or not to serialize the time context. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00360">360</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00362">362</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -1144,7 +1141,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00388">388</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00390">390</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>
@@ -1481,7 +1478,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00387">387</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8h_source.html#l00389">389</a> of file <a class="el" href="fp_config_8h_source.html">FpConfig.h</a>.</p>
 
 </div>
 </div>

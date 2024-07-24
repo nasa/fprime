@@ -1,5 +1,7 @@
 var NAVTREEINDEX8 =
 {
+"svc_dp_catalog_component.html#autotoc_md789":[22,0,3],
+"svc_dp_catalog_component.html#autotoc_md790":[22,0,4],
 "svc_dp_manager_component.html":[23],
 "svc_dp_manager_component.html#autotoc_md791":[23,0],
 "svc_dp_manager_component.html#autotoc_md792":[23,0,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX8 =
 "svc_poly_db_component.html#autotoc_md1020":[14,28,0,1],
 "svc_poly_db_component.html#autotoc_md1021":[14,28,0,2],
 "svc_poly_db_component.html#autotoc_md1022":[14,28,0,2,0],
-"svc_poly_db_component.html#autotoc_md1023":[14,28,0,2,0,0],
-"svc_poly_db_component.html#autotoc_md1024":[14,28,0,2,0,1],
-"svc_poly_db_component.html#autotoc_md1025":[14,28,0,2,0,2]
+"svc_poly_db_component.html#autotoc_md1023":[14,28,0,2,0,0]
 };
