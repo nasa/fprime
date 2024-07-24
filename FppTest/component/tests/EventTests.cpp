@@ -61,7 +61,9 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::LogStringParams
 
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_EventString_SIZE(1);
-    ASSERT_EVENTS_EventString(portNum, data.args.val1.toChar(), data.args.val2.toChar());
+    Fw::StringTemplate<80> arg1(data.args.val1);
+    Fw::StringTemplate<100> arg2(data.args.val2);
+    ASSERT_EVENTS_EventString(portNum, arg1.toChar(), arg2.toChar());
 
     this->printTextLogHistory(stdout);
 }
