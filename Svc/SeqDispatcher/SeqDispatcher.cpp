@@ -4,10 +4,9 @@
 // \brief  cpp file for SeqDispatcher component implementation class
 // ======================================================================
 
-#include <FpConfig.hpp>
 #include <Svc/SeqDispatcher/SeqDispatcher.hpp>
 
-namespace components {
+namespace Svc {
 
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction
@@ -18,9 +17,22 @@ SeqDispatcher ::SeqDispatcher(const char* const compName)
 
 SeqDispatcher ::~SeqDispatcher() {}
 
+void SeqDispatcher::init(NATIVE_INT_TYPE queueDepth,
+                         NATIVE_INT_TYPE instance) {
+  SeqDispatcherComponentBase::init(queueDepth, instance);
+  for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
+    // assert if any of the cmd sequencer connections aren't
+    // connected. otherwise we might think we sent out
+    // a sequence to be run but it doesn't get run
+    if (!this->isConnected_seqRunOut_OutputPort(i)) {
+      FW_ASSERT(0, i);
+    }
+  }
+}
+
 NATIVE_INT_TYPE SeqDispatcher::getNextAvailableSequencerIdx() {
-  for (int i = 0; i < types::CMD_SEQUENCERS_COUNT; i++) {
-    if (this->m_entryTable[i].state == types::CmdSequencerState::AVAILABLE) {
+  for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
+    if (this->m_entryTable[i].state == SeqDispatcher_CmdSequencerState::AVAILABLE) {
       return i;
     }
   }
@@ -29,8 +41,8 @@ NATIVE_INT_TYPE SeqDispatcher::getNextAvailableSequencerIdx() {
 
 bool SeqDispatcher::runSequence(NATIVE_INT_TYPE sequencerIdx,
                                 const Fw::String& fileName,
-                                Svc::CmdSequencer_BlockState block) {
-  FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < types::CMD_SEQUENCERS_COUNT,
+                                Fw::Wait block) {
+  FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
             sequencerIdx);
 
   // if the seqRunOut port at this idx isn't connected
@@ -41,18 +53,18 @@ bool SeqDispatcher::runSequence(NATIVE_INT_TYPE sequencerIdx,
 
   // if the sequencer is not available to run a new sequence
   if (this->m_entryTable[sequencerIdx].state !=
-      types::CmdSequencerState::AVAILABLE) {
+      SeqDispatcher_CmdSequencerState::AVAILABLE) {
     this->log_WARNING_HI_INVALID_SEQUENCER(static_cast<U16>(sequencerIdx));
     return false;
   }
 
   // ok, good to use this sequencer
-  if (block == Svc::CmdSequencer_BlockState::NO_BLOCK) {
+  if (block == Fw::Wait::NO_WAIT) {
     this->m_entryTable[sequencerIdx].state =
-        types::CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK;
+        SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK;
   } else {
     this->m_entryTable[sequencerIdx].state =
-        types::CmdSequencerState::RUNNING_SEQUENCE_BLOCK;
+        SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK;
   }
 
   this->m_sequencersAvailable--;
@@ -71,11 +83,11 @@ void SeqDispatcher::seqStartIn_handler(
     NATIVE_INT_TYPE portNum,  //!< The port number
     Fw::String& fileName      //!< The sequence file name
 ) {
-  FW_ASSERT(portNum >= 0 && portNum < types::CMD_SEQUENCERS_COUNT, portNum);
+  FW_ASSERT(portNum >= 0 && portNum < SeqDispatcherSequencerPorts, portNum);
   if (this->m_entryTable[portNum].state ==
-          types::CmdSequencerState::RUNNING_SEQUENCE_BLOCK ||
+          SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK ||
       this->m_entryTable[portNum].state ==
-          types::CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK) {
+          SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK) {
     // we were aware of this sequencer running a sequence
     if (this->m_entryTable[portNum].sequenceRunning != fileName) {
       // uh oh. m_sequencesRunning is wrong
@@ -89,7 +101,7 @@ void SeqDispatcher::seqStartIn_handler(
 
     // update the state
     this->m_entryTable[portNum].state =
-        types::CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK;
+        SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK;
     this->m_entryTable[portNum].sequenceRunning = fileName;
     this->m_sequencersAvailable--;
     this->tlmWrite_sequencersAvailable(this->m_sequencersAvailable);
@@ -102,11 +114,11 @@ void SeqDispatcher::seqDoneIn_handler(
     U32 cmdSeq,                      //!< Command Sequence
     const Fw::CmdResponse& response  //!< The command response argument
 ) {
-  FW_ASSERT(portNum >= 0 && portNum < types::CMD_SEQUENCERS_COUNT, portNum);
+  FW_ASSERT(portNum >= 0 && portNum < SeqDispatcherSequencerPorts, portNum);
   if (this->m_entryTable[portNum].state !=
-          types::CmdSequencerState::RUNNING_SEQUENCE_BLOCK &&
+          SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK &&
       this->m_entryTable[portNum].state !=
-          types::CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK) {
+          SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK) {
     // this sequencer was not running a sequence that we were aware of.
 
     // we should have caught this in seqStartIn and updated the state
@@ -115,11 +127,11 @@ void SeqDispatcher::seqDoneIn_handler(
     // anyways, don't have to do anything cuz now that this seq we didn't know
     // about is done, the sequencer is available again (which is its current
     // state)
-    this->log_WARNING_LO_UNKNOWN_SEQUENCE_FINISHED(portNum);
+    this->log_WARNING_LO_UNKNOWN_SEQUENCE_FINISHED(static_cast<U16>(portNum));
   } else {
     // ok, a sequence has finished that we knew about
     if (this->m_entryTable[portNum].state ==
-        types::CmdSequencerState::RUNNING_SEQUENCE_BLOCK) {
+        SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK) {
       // we need to give a cmd response cuz some other sequence is being blocked
       // by this
       this->cmdResponse_out(this->m_entryTable[portNum].opCode,
@@ -135,7 +147,7 @@ void SeqDispatcher::seqDoneIn_handler(
 
   // all command responses mean the sequence is no longer running
   // so component should be available
-  this->m_entryTable[portNum].state = types::CmdSequencerState::AVAILABLE;
+  this->m_entryTable[portNum].state = SeqDispatcher_CmdSequencerState::AVAILABLE;
   this->m_entryTable[portNum].sequenceRunning = "<no seq>";
   this->m_sequencersAvailable++;
   this->tlmWrite_sequencersAvailable(this->m_sequencersAvailable);
@@ -152,7 +164,7 @@ void SeqDispatcher::seqRunIn_handler(
     return;
   }
   if (!this->runSequence(idx, fileName,
-                         Svc::CmdSequencer_BlockState::NO_BLOCK)) {
+                         Fw::Wait::NO_WAIT)) {
     // port isn't connected or generally unable to run for some reason
     // runSequence will raise events for us
     return;
@@ -165,7 +177,7 @@ void SeqDispatcher::seqRunIn_handler(
 void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
                                     const U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
-                                    Svc::CmdSequencer_BlockState block) {
+                                    Fw::Wait block) {
   auto idx = this->getNextAvailableSequencerIdx();
   // no available sequencers
   if (idx == -1) {
@@ -173,12 +185,12 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     return;
   }
-  if (!this->runSequence(idx, fileName, block)) {
+  if (!this->runSequence(idx, fileName.toChar(), block)) {
     // port isn't connected or generally unable to run for some reason
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     return;
   }
-  if (block == Svc::CmdSequencer_BlockState::NO_BLOCK) {
+  if (block == Fw::Wait::NO_WAIT) {
     // return instantly
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   } else {
@@ -189,16 +201,11 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
   }
 }
 
-void SeqDispatcher::PING_cmdHandler(const FwOpcodeType opCode,
-                                    const U32 cmdSeq) {
-  this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
 void SeqDispatcher::LOG_STATUS_cmdHandler(
     const FwOpcodeType opCode,          /*!< The opcode*/
     const U32 cmdSeq) {                   /*!< The command sequence number*/
-  for(int idx = 0; idx < types::CMD_SEQUENCERS_COUNT; idx++) {
-    this->log_ACTIVITY_LO_LOG_SEQUENCER_STATUS(idx, this->m_entryTable[idx].state, Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
+  for(int idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
+    this->log_ACTIVITY_LO_LOG_SEQUENCER_STATUS(static_cast<U16>(idx), this->m_entryTable[idx].state, Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
   }
 }
 }  // end namespace components

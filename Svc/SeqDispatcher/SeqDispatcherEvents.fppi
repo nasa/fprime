@@ -16,7 +16,7 @@ event UNKNOWN_SEQUENCE_FINISHED(
 
 event LOG_SEQUENCER_STATUS(
     idx: U16
-    state: types.CmdSequencerState
+    state: CmdSequencerState
     filename: string size 240
 ) \
     severity activity low \

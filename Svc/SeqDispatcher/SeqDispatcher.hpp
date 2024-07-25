@@ -7,92 +7,93 @@
 #ifndef SeqDispatcher_HPP
 #define SeqDispatcher_HPP
 
-#include "common/types/CmdSequencerStateEnumAc.hpp"
-#include "common/types/FppConstantsAc.hpp"
 #include "Svc/SeqDispatcher/SeqDispatcherComponentAc.hpp"
+#include "Svc/SeqDispatcher/SeqDispatcher_CmdSequencerStateEnumAc.hpp"
+#include "FppConstantsAc.hpp"
+#include "Fw/Types/WaitEnumAc.hpp"
 
-namespace components {
+namespace Svc {
 
 class SeqDispatcher : public SeqDispatcherComponentBase {
- public:
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-  //! Construct object SeqDispatcher
-  //!
-  SeqDispatcher(const char* const compName /*!< The component name*/
-  );
+    //! Construct object SeqDispatcher
+    //!
+    SeqDispatcher(const char* const compName /*!< The component name*/
+    );
 
-  //! Destroy object SeqDispatcher
-  //!
-  ~SeqDispatcher();
+    //! Destroy object SeqDispatcher
+    //!
+    ~SeqDispatcher();
 
-PROTECTED :
+    //!  \brief Component initialization routine
+    //!
+    //!  The initialization function calls the initialization
+    //!  routine for the base class.
+    //!
+    //!  \param queueDepth the depth of the message queue for the component
+    void init(NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
+              NATIVE_INT_TYPE instance    /*!< The instance number*/
+    );                                    //!< initialization function
 
-  //! Handler for input port seqDoneIn
-  void
-  seqDoneIn_handler(
-      NATIVE_INT_TYPE portNum,         //!< The port number
-      FwOpcodeType opCode,             //!< Command Op Code
-      U32 cmdSeq,                      //!< Command Sequence
-      const Fw::CmdResponse& response  //!< The command response argument
-  );
+  PROTECTED:
 
-  //! Handler for input port seqStartIn
-  void seqStartIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
-                          Fw::String& fileName      //!< The sequence file name
-  );
+    //! Handler for input port seqDoneIn
+    void
+    seqDoneIn_handler(NATIVE_INT_TYPE portNum,         //!< The port number
+                      FwOpcodeType opCode,             //!< Command Op Code
+                      U32 cmdSeq,                      //!< Command Sequence
+                      const Fw::CmdResponse& response  //!< The command response argument
+    );
 
-  //! Handler for input port seqRunIn
-  void seqRunIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
-                        Fw::String& fileName);
+    //! Handler for input port seqStartIn
+    void seqStartIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
+                            Fw::String& fileName      //!< The sequence file name
+    );
 
-PRIVATE :
+    //! Handler for input port seqRunIn
+    void seqRunIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
+                          Fw::String& fileName);
 
-  // number of sequences dispatched (successful or otherwise)
-  U32 m_dispatchedCount = 0;
-  // number of errors from dispatched sequences (CmdResponse::EXECUTION_ERROR)
-  U32 m_errorCount = 0;
-  // number of sequencers in state AVAILABLE
-  U32 m_sequencersAvailable = types::CMD_SEQUENCERS_COUNT;
+  PRIVATE:
 
-  struct DispatchEntry {
-    FwOpcodeType opCode;  //!< opcode of entry
-    U32 cmdSeq;
-    // store the state of each sequencer
-    types::CmdSequencerState state;
-    // store the sequence currently running for each sequencer
-    Fw::String sequenceRunning = "<no seq>";
-  } m_entryTable[types::CMD_SEQUENCERS_COUNT];  //!< table of dispatch
-                                                //!< entries
+    // number of sequences dispatched (successful or otherwise)
+    U32 m_dispatchedCount = 0;
+    // number of errors from dispatched sequences (CmdResponse::EXECUTION_ERROR)
+    U32 m_errorCount = 0;
+    // number of sequencers in state AVAILABLE
+    U32 m_sequencersAvailable = SeqDispatcherSequencerPorts;
 
-  NATIVE_INT_TYPE getNextAvailableSequencerIdx();
+    struct DispatchEntry {
+        FwOpcodeType opCode;  //!< opcode of entry
+        U32 cmdSeq;
+        // store the state of each sequencer
+        SeqDispatcher_CmdSequencerState state;
+        // store the sequence currently running for each sequencer
+        Fw::String sequenceRunning = "<no seq>";
+    } m_entryTable[SeqDispatcherSequencerPorts];  //!< table of dispatch
+                                                  //!< entries
 
-  bool runSequence(NATIVE_INT_TYPE sequencerIdx,
-                   const Fw::String& fileName,
-                   Svc::CmdSequencer_BlockState block);
+    NATIVE_INT_TYPE getNextAvailableSequencerIdx();
 
-  // ----------------------------------------------------------------------
-  // Command handler implementations
-  // ----------------------------------------------------------------------
+    bool runSequence(NATIVE_INT_TYPE sequencerIdx, const Fw::String& fileName, Fw::Wait block);
 
-  //! Implementation for RUN command handler
-  //!
-  void RUN_cmdHandler(
-      const FwOpcodeType opCode,        /*!< The opcode*/
-      const U32 cmdSeq,                 /*!< The command sequence number*/
-      const Fw::CmdStringArg& fileName, /*!< The name of the sequence file*/
-      Svc::CmdSequencer_BlockState block);
+    // ----------------------------------------------------------------------
+    // Command handler implementations
+    // ----------------------------------------------------------------------
 
-  void PING_cmdHandler(
-    const FwOpcodeType opCode,
-    const U32 cmdSeq
-  );
+    //! Implementation for RUN command handler
+    //!
+    void RUN_cmdHandler(const FwOpcodeType opCode,        /*!< The opcode*/
+                        const U32 cmdSeq,                 /*!< The command sequence number*/
+                        const Fw::CmdStringArg& fileName, /*!< The name of the sequence file*/
+                        Fw::Wait block);
 
-  void LOG_STATUS_cmdHandler(
-      const FwOpcodeType opCode,         /*!< The opcode*/
-      const U32 cmdSeq);                 /*!< The command sequence number*/
+    void LOG_STATUS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                               const U32 cmdSeq);         /*!< The command sequence number*/
 };
 
 }  // end namespace components

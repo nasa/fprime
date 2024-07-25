@@ -1,6 +1,12 @@
-module components {
+module Svc {
     @ Dispatches command sequences to available command sequencers
     active component SeqDispatcher {
+
+        enum CmdSequencerState {
+            AVAILABLE = 0
+            RUNNING_SEQUENCE_BLOCK = 1
+            RUNNING_SEQUENCE_NO_BLOCK = 2
+        }
 
         include "SeqDispatcherCommands.fppi"
         include "SeqDispatcherTelemetry.fppi"
@@ -8,13 +14,13 @@ module components {
 
         async input port seqRunIn: Svc.CmdSeqIn
 
-        output port seqRunOut: [types.CMD_SEQUENCERS_COUNT] Svc.CmdSeqIn
+        output port seqRunOut: [SeqDispatcherSequencerPorts] Svc.CmdSeqIn
 
-        async input port seqDoneIn: [types.CMD_SEQUENCERS_COUNT] Fw.CmdResponse
+        async input port seqDoneIn: [SeqDispatcherSequencerPorts] Fw.CmdResponse
 
         # should be called by cmdsequencer whenever it starts a sequence (whether
         # called by SeqDisp or manually by ground)
-        async input port seqStartIn: [types.CMD_SEQUENCERS_COUNT] Svc.CmdSeqIn
+        async input port seqStartIn: [SeqDispatcherSequencerPorts] Svc.CmdSeqIn
 
         match seqRunOut with seqDoneIn
 
