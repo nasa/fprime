@@ -1,0 +1,63 @@
+# Runs the subtopology autocoder tool to test the subtopology tool (https://github.com/mosa11aei/fprime-subtopology-tool)
+
+name: "fpp-to-json Analysis Test"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: mosa11aei/fprime-rngLibrary
+
+  fpp-json-analysis:
+    name: "fpp-to-json analysis"
+    runs-on: ubuntu-latest
+    needs: get-branch
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          repository: mosa11aei/fprime-rngLibrary
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./fprime
+          fetch-depth: 0
+      - uses: ./fprime/.github/actions/setup
+        with:
+          location: ./fprime
+      - name: "Verify CMake is installed"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
+      - name: "Generate Ref deployment"
+        run: |
+          fprime-util generate
+        working-directory: ./fprime/Ref
+      - name: "(Ref/topology.fpp) fpp-to-json analysis"
+        if: always()
+        run: |
+          DEPENDENCIES=$(fpp-depend ./build-fprime-automatic-native/locs.fpp ./Top/topology.fpp)
+          fpp-to-json ${DEPENDENCIES} ./Top/topology.fpp
+        working-directory: ./fprime/Ref
+      - name: "(Ref/instances.fpp) fpp-to-json analysis"
+        if: always()
+        run: |
+          DEPENDENCIES=$(fpp-depend ./build-fprime-automatic-native/locs.fpp ./Top/instances.fpp)
+          fpp-to-json ${DEPENDENCIES} ./Top/instances.fpp
+        working-directory: ./fprime/Ref
