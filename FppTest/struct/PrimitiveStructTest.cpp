@@ -207,10 +207,5 @@ TEST_F(PrimitiveStructTest, ToString) {
          << "mF64 = " << std::fixed << testF64        
          << " )";
 
-    // Truncate string output
-    char buf2Str[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE]; 
-    Fw::StringUtils::string_copy(buf2Str, buf2.str().c_str(), 
-                                 FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE);
-
-    ASSERT_STREQ(buf1.str().c_str(), buf2Str);
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }

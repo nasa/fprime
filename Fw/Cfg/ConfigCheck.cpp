@@ -38,8 +38,14 @@ static_assert(FW_PARAM_STRING_MAX_SIZE <= FW_PARAM_BUFFER_MAX_SIZE,
 
 // Text logging needs the code generator for serializables to generate a stringified version of the
 // value.
-static_assert((FW_ENABLE_TEXT_LOGGING == 0) || (FW_SERIALIZABLE_TO_STRING == 1),
+static_assert((FW_ENABLE_TEXT_LOGGING == 0) || (FW_SERIALIZABLE_TO_STRING != 0),
               "FW_SERIALIZABLE_TO_STRING must be enabled to enable FW_ENABLE_TEXT_LOGGING");
+
+// Unit testing needs serializable strings
+#ifdef BUILD_UT
+static_assert(FW_SERIALIZABLE_TO_STRING != 0,
+              "FW_SERIALIZABLE_TO_STRING must be enabled for unit testing");
+#endif
 
 static_assert(std::numeric_limits<FwBuffSizeType>::max() == std::numeric_limits<FwSizeStoreType>::max() &&
                   std::numeric_limits<FwBuffSizeType>::min() == std::numeric_limits<FwSizeStoreType>::min(),
