@@ -2,6 +2,10 @@
 
 Subtopologies are topologies for smaller chunks of behavior in F Prime. It allows for grouping bits of topology architecture that fit together, to then be imported into a base deployment's topology. The use case for this is seen when working with shareable components, specifically in the form of [libraries](./develop-fprime-libraries.md).
 
+There are two ways that subtopologies can be created in F Prime. The first (native) way to do so is by hand-writing subtopologies. This method is less complex, but more tedious and restrictive on the capabilities of subtopologies. **This document covers hand-written subtopologies**. 
+
+The second method of creating subtopologies is through the [Subtopology Autocoder](https://github.com/fprime-community/fprime-subtopology-tool) (also described in [a later section of this document](#the-subtopology-autocoder)). This method is more complex, however expands upon the feature set and capabilities of subtopologies. A document that details the process for creating a subtopology with it is available [at the repo for the tool](https://github.com/fprime-community/fprime-subtopology-tool/blob/main/docs/Example.md).
+
 *Contents*
 1. [Subtopology Structure](#subtopology-structure)
 2. [Individual File Contents](#individual-file-contents)
@@ -35,8 +39,8 @@ All files will be discussed in more detail in later sections of this guide. Addi
 
 > Note that with the latest release of `fprime-tools`, you can run `fprime-util new --subtopology` to generate the subtopology structure.
 
-> [!IMPORTANT]
-> This documentation provides an overview to how subtopologies are built. However, their feature set has been expanded in the form of the [Subtopology AC tool](#the-subtopology-autocoder). We highly recommend using it to develop subtopologies.
+> [!NOTE]
+> Remember, this document covers hand-written subtopologies. See [a later section](#the-subtopology-autocoder) for information about the Subtopology Autocoder tool, the other way of creating subtopologies.
 
 ## Individual File Contents
 
@@ -305,7 +309,7 @@ As you may notice, the current implementation of subtopologies lacks in a few ar
 1. It may be the case that I would like to have multiple uses of a subtopology `st` within a main topology `main`. For example, `st` could define the topology for managing a single temperature sensor, but I would like to implement $n$ number of those sensors. At the moment, to do this one would need to duplicate the entire subtopology and make proper modifications to instances, the TopologyDefs file, and more.
 2. Let's maintain our example of `st` being the topology for managing a single temperature sensor. It may be the case that `st` only implements the software behavior, as is reasonable: the developer of the subtopology probably cannot write hardware interface drivers for every platform possible. So, the user would provide the proper driver to `st`, which is again reasonable. However, to accomplish this one would need to modify the contents of a subtopology, changing instance definitions and possibly the connection graphs as well. Such a task could become monstrous if, say `st` now implements the [hub pattern](https://nasa.github.io/fprime/UsersGuide/best/hub-pattern.html).
 
-Thus, an autocoder [tool](FIXME) dubbed the "Subtopology AC Tool" has been developed to be able to provide features like instantiation, local components, and formal subtopology interfaces. The tool itself provides examples of the syntax required to use these features, as well as a design methodology and a worked example with diagrams using a similar context to the one [in this document](#example-scenario).
+Thus, an autocoder [tool](https://github.com/fprime-community/fprime-subtopology-tool) dubbed the "Subtopology AC Tool" has been developed to be able to provide features like instantiation, local components, and formal subtopology interfaces. The tool itself provides examples of the syntax required to use these features, as well as a design methodology and a worked example with diagrams using a similar context to the one [in this document](#example-scenario).
 
 We recommend that subtopologies are built around the syntax of this tool, as it is on the road map to introduce the patterns in this tool into native FPP syntax.
 
