@@ -935,6 +935,7 @@ setschedpolicy
 setstacksize
 settime
 settype
+setversion
 sev
 sface
 sfregoso
@@ -979,6 +980,7 @@ spidev
 srandom
 srange
 SRCS
+sreddy
 sss
 Ssymbols
 STAMEM

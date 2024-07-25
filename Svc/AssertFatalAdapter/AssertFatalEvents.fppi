@@ -1,6 +1,6 @@
 @ An assert happened
 event AF_ASSERT_0(
-                   file: string size 80 @< The source file of the assert
+                   file: string size AssertFatalAdapterEventFileSize @< The source file of the assert
                    line: U32 @< Line number of the assert
                  ) \
   severity fatal \
@@ -9,7 +9,7 @@ event AF_ASSERT_0(
 
 @ An assert happened
 event AF_ASSERT_1(
-                   file: string size 80 @< The source file of the assert
+                   file: string size AssertFatalAdapterEventFileSize @< The source file of the assert
                    line: U32 @< Line number of the assert
                    arg1: U32 @< First assert argument
                  ) \
@@ -19,7 +19,7 @@ event AF_ASSERT_1(
 
 @ An assert happened
 event AF_ASSERT_2(
-                   file: string size 80 @< The source file of the assert
+                   file: string size AssertFatalAdapterEventFileSize @< The source file of the assert
                    line: U32 @< Line number of the assert
                    arg1: U32 @< First assert argument
                    arg2: U32 @< Second assert argument
@@ -30,7 +30,7 @@ event AF_ASSERT_2(
 
 @ An assert happened
 event AF_ASSERT_3(
-                   file: string size 80 @< The source file of the assert
+                   file: string size AssertFatalAdapterEventFileSize @< The source file of the assert
                    line: U32 @< Line number of the assert
                    arg1: U32 @< First assert argument
                    arg2: U32 @< Second assert argument
@@ -42,7 +42,7 @@ event AF_ASSERT_3(
 
 @ An assert happened
 event AF_ASSERT_4(
-                   file: string size 80 @< The source file of the assert
+                   file: string size AssertFatalAdapterEventFileSize @< The source file of the assert
                    line: U32 @< Line number of the assert
                    arg1: U32 @< First assert argument
                    arg2: U32 @< Second assert argument
@@ -55,7 +55,7 @@ event AF_ASSERT_4(
 
 @ An assert happened
 event AF_ASSERT_5(
-                   file: string size 80 @< The source file of the assert
+                   file: string size AssertFatalAdapterEventFileSize @< The source file of the assert
                    line: U32 @< Line number of the assert
                    arg1: U32 @< First assert argument
                    arg2: U32 @< Second assert argument
@@ -69,7 +69,7 @@ event AF_ASSERT_5(
 
 @ An assert happened
 event AF_ASSERT_6(
-                   file: string size 80 @< The source file of the assert
+                   file: string size AssertFatalAdapterEventFileSize @< The source file of the assert
                    line: U32 @< Line number of the assert
                    arg1: U32 @< First assert argument
                    arg2: U32 @< Second assert argument
@@ -84,7 +84,7 @@ event AF_ASSERT_6(
 
 @ An unexpected assert happened
 event AF_UNEXPECTED_ASSERT(
-                            file: string size 80 @< The source file of the assert
+                            file: string size AssertFatalAdapterEventFileSize @< The source file of the assert
                             line: U32 @< Line number of the assert
                             numArgs: U32 @< Number of unexpected arguments
                           ) \
