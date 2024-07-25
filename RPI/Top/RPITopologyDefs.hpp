@@ -46,15 +46,15 @@ namespace RPI {
 
   // Health ping entries
   namespace PingEntries {
-    namespace rateGroup10HzComp { enum { WARN = 3, FATAL = 5 }; }
-    namespace rateGroup1HzComp { enum { WARN = 3, FATAL = 5 }; }
-    namespace cmdDisp { enum { WARN = 3, FATAL = 5 }; }
-    namespace cmdSeq { enum { WARN = 3, FATAL = 5 }; }
-    namespace chanTlm { enum { WARN = 3, FATAL = 5 }; }
-    namespace eventLogger { enum { WARN = 3, FATAL = 5 }; }
-    namespace prmDb { enum { WARN = 3, FATAL = 5 }; }
-    namespace fileDownlink { enum { WARN = 3, FATAL = 5 }; }
-    namespace fileUplink { enum { WARN = 3, FATAL = 5 }; }
+    namespace RPI_rateGroup10HzComp { enum { WARN = 3, FATAL = 5 }; }
+    namespace RPI_rateGroup1HzComp { enum { WARN = 3, FATAL = 5 }; }
+    namespace RPI_cmdDisp { enum { WARN = 3, FATAL = 5 }; }
+    namespace RPI_cmdSeq { enum { WARN = 3, FATAL = 5 }; }
+    namespace RPI_chanTlm { enum { WARN = 3, FATAL = 5 }; }
+    namespace RPI_eventLogger { enum { WARN = 3, FATAL = 5 }; }
+    namespace RPI_prmDb { enum { WARN = 3, FATAL = 5 }; }
+    namespace RPI_fileDownlink { enum { WARN = 3, FATAL = 5 }; }
+    namespace RPI_fileUplink { enum { WARN = 3, FATAL = 5 }; }
   }
 
 }
