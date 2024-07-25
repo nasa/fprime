@@ -421,6 +421,7 @@ gnueabihf
 google
 googletest
 Gorang
+gpg
 GPGGA
 GPINT
 gpio
@@ -536,6 +537,7 @@ JSO
 jsonable
 kermit
 kevin
+keyring
 kislyuk
 kitware
 Kooi
@@ -905,6 +907,7 @@ sbb
 SBF
 SBINDIR
 sbt
+scalasbt
 Scatterometer
 schem
 schematron
@@ -1009,6 +1012,10 @@ subhistory
 subpage
 subseconds
 subtargets
+subtopology
+subtopologies
+Subtopology
+Subtopologies
 suppr
 suseconds
 SVCLOGFILE
@@ -1204,4 +1211,8 @@ xsh
 xsltproc
 xxxx
 yacgen
+yqq
 zmq
+
+mosa
+aei

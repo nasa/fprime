@@ -1,0 +1,87 @@
+# Runs the subtopology autocoder tool to test the subtopology tool (https://github.com/mosa11aei/fprime-subtopology-tool)
+
+name: "Subtopology Autocoder Tool Test"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: mosa11aei/fprime-rngLibrary
+
+  subtopology-test:
+    name: "Subtopology Test"
+    runs-on: ubuntu-latest
+    needs: get-branch
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          repository: mosa11aei/fprime-rngLibrary
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./fprime
+          fetch-depth: 0
+      - uses: ./fprime/.github/actions/setup
+        with:
+          location: ./fprime
+      - name: "Verify CMake is installed"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
+      - name: "Get FPP"
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          repository: nasa/fpp
+          path: ./fpp
+          ref: main
+      - name: "[fpp] Install sbt"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apt-transport-https curl gnupg -yqq
+          echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+          echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | sudo tee /etc/apt/sources.list.d/sbt_old.list
+          curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo -H gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import
+          sudo chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg
+          sudo apt-get update
+          sudo apt-get install -y sbt default-jre
+      - name: "Get location of fpp bin"
+        id: fpp-bin
+        run: |
+          echo "BIN_DIR=$(dirname $(which fpp-depend))" >> $GITHUB_OUTPUT
+      - name: "Install unreleased fpp"
+        run: |
+          chmod +x ./fpp/compiler/install
+          ./fpp/compiler/install ${{ steps.fpp-bin.outputs.BIN_DIR}}
+      - name: "Checkout subtopology tool"
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          path: ./fprime-subtopology-tool
+          repository: mosa11aei/fprime-subtopology-tool
+          ref: main
+      - name: "Generate Subtopology Example Build Cache"
+        working-directory: ./MainDeployment
+        run: |
+          fprime-util generate -DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON -DCMAKE_DEBUG_OUTPUT=ON
+      - name: "Build Example"
+        working-directory: ./MainDeployment
+        run: |
+          fprime-util build -v -j4
