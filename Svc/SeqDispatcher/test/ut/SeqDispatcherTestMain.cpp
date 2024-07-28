@@ -2,15 +2,15 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
+#include "SeqDispatcherTester.hpp"
 
 TEST(Nominal, testDispatch) {
-    components::Tester tester;
+    Svc::Tester tester;
     tester.testDispatch();
 }
 
 TEST(Nominal, testLogStatus) {
-    components::Tester tester;
+    Svc::Tester tester;
     tester.testLogStatus();
 }
 

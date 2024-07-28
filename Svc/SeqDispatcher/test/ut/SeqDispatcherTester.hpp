@@ -7,10 +7,10 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "GTestBase.hpp"
-#include "components/fsw/SeqDispatcher/SeqDispatcher.hpp"
+#include "SeqDispatcherGTestBase.hpp"
+#include "Svc/SeqDispatcher/SeqDispatcher.hpp"
 
-namespace components {
+namespace Svc{
 
 class Tester : public SeqDispatcherGTestBase {
   // ----------------------------------------------------------------------

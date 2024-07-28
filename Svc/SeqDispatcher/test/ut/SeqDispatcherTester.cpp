@@ -4,9 +4,9 @@
 // \brief  cpp file for SeqDispatcher test harness implementation class
 // ======================================================================
 
-#include "Tester.hpp"
+#include "SeqDispatcherTester.hpp"
 
-namespace components {
+namespace Svc{
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -27,17 +27,17 @@ Tester ::~Tester() {}
 
 void Tester ::testDispatch() {
   // test that it fails when we dispatch too many sequences
-  for (int i = 0; i < types::CMD_SEQUENCERS_COUNT; i++) {
-    sendCmd_RUN(0, 0, Fw::String("test"), Svc::CmdSequencer_BlockState::BLOCK);
+  for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
+    sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::WAIT);
     this->component.doDispatch();
     // no response cuz blocking
     ASSERT_CMD_RESPONSE_SIZE(0);
     ASSERT_EVENTS_SIZE(0);
   }
-  ASSERT_TLM_sequencersAvailable(types::CMD_SEQUENCERS_COUNT - 1, 0);
+  ASSERT_TLM_sequencersAvailable(SeqDispatcherSequencerPorts - 1, 0);
   this->clearHistory();
   // all sequencers should be busy
-  sendCmd_RUN(0, 0, Fw::String("test"), Svc::CmdSequencer_BlockState::BLOCK);
+  sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::WAIT);
   this->component.doDispatch();
   ASSERT_CMD_RESPONSE_SIZE(1);
   ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_RUN, 0,
@@ -55,7 +55,7 @@ void Tester ::testDispatch() {
   this->clearHistory();
   // ok now we should be able to send another sequence
   // let's test non blocking now
-  sendCmd_RUN(0, 0, Fw::String("test"), Svc::CmdSequencer_BlockState::NO_BLOCK);
+  sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::NO_WAIT);
   this->component.doDispatch();
 
   // should immediately return
@@ -74,12 +74,12 @@ void Tester ::testDispatch() {
 }
 
 void Tester::testLogStatus() {
-  this->sendCmd_RUN(0,0, Fw::String("test"), Svc::CmdSequencer_BlockState::BLOCK);
+  this->sendCmd_RUN(0,0, Fw::String("test"), Fw::Wait::WAIT);
   this->component.doDispatch();
   this->sendCmd_LOG_STATUS(0,0);
   this->component.doDispatch();
-  ASSERT_EVENTS_SIZE(types::CMD_SEQUENCERS_COUNT);
-  ASSERT_EVENTS_LOG_SEQUENCER_STATUS(0, 0, types::CmdSequencerState::RUNNING_SEQUENCE_BLOCK, "test");
+  ASSERT_EVENTS_SIZE(SeqDispatcherSequencerPorts);
+  ASSERT_EVENTS_LOG_SEQUENCER_STATUS(0, 0, SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK, "test");
 }
 
 void Tester::from_seqRunOut_handler(const NATIVE_INT_TYPE portNum,
