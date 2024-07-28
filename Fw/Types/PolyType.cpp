@@ -639,12 +639,16 @@ void PolyType::toString(StringBase& dest, bool append) const {
 #endif
 #if FW_HAS_F64
         case TYPE_F64:
-            (void)snprintf(valString, sizeof(valString), "%lg ", this->m_val.f64Val);
+            (void)snprintf(valString, sizeof(valString), "%g ", this->m_val.f64Val);
             break;
-#endif
+        case TYPE_F32:
+            (void)snprintf(valString, sizeof(valString), "%g ", static_cast<F64>(this->m_val.f32Val));
+            break;
+#else
         case TYPE_F32:
             (void)snprintf(valString, sizeof(valString), "%g ", this->m_val.f32Val);
             break;
+#endif
         case TYPE_BOOL:
             (void)snprintf(valString, sizeof(valString), "%s ", this->m_val.boolVal ? "T" : "F");
             break;
