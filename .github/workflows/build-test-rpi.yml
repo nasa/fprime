@@ -17,7 +17,7 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
 env:
   RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
-  DICTIONARY_PATH: build-artifacts/raspberrypi/RPI/dict/RPITopologyAppDictionary.xml
+  DICTIONARY_PATH: build-artifacts/raspberrypi/RPI/dict/RPITopologyDictionary.json
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   RPI:
