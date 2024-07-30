@@ -46,8 +46,10 @@ class Tester : public SeqDispatcherGTestBase {
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
-  void from_seqRunOut_handler(const NATIVE_INT_TYPE portNum,
-                              Fw::String& fileName);
+  void seqRunOut_handler(
+        FwIndexType portNum, //!< The port number
+        const Svc::CmdSeqInPortStrings::StringSize240& filename //!< The sequence file
+  );
 
   void textLogIn(const FwEventIdType id,         /*!< The event ID*/
                  Fw::Time& timeTag,              /*!< The time*/

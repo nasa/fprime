@@ -50,13 +50,14 @@ class SeqDispatcher : public SeqDispatcherComponentBase {
     );
 
     //! Handler for input port seqStartIn
-    void seqStartIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
-                            Fw::String& fileName      //!< The sequence file name
+    void seqStartIn_handler(NATIVE_INT_TYPE portNum,                                      //!< The port number
+                            const Svc::CmdSeqInPortStrings::StringSize240& fileName //!< The sequence file name
     );
 
     //! Handler for input port seqRunIn
     void seqRunIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
-                          Fw::String& fileName);
+                          const Svc::CmdSeqInPortStrings::StringSize240& fileName
+    );
 
   PRIVATE:
 
@@ -79,7 +80,9 @@ class SeqDispatcher : public SeqDispatcherComponentBase {
 
     NATIVE_INT_TYPE getNextAvailableSequencerIdx();
 
-    bool runSequence(NATIVE_INT_TYPE sequencerIdx, const Fw::String& fileName, Fw::Wait block);
+    bool runSequence(NATIVE_INT_TYPE sequencerIdx, 
+                     const Svc::CmdSeqInPortStrings::StringSize240& fileName, 
+                     Fw::Wait block);
 
     // ----------------------------------------------------------------------
     // Command handler implementations

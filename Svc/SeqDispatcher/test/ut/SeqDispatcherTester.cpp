@@ -16,7 +16,6 @@ Tester ::Tester()
     : SeqDispatcherGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
       component("SeqDispatcher") {
   this->initComponents();
-  this->connectPorts();
 }
 
 Tester ::~Tester() {}
@@ -82,14 +81,22 @@ void Tester::testLogStatus() {
   ASSERT_EVENTS_LOG_SEQUENCER_STATUS(0, 0, SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK, "test");
 }
 
-void Tester::from_seqRunOut_handler(const NATIVE_INT_TYPE portNum,
-                                    Fw::String& fileName) {}
+void Tester::seqRunOut_handler(
+      FwIndexType portNum, //!< The port number
+      const Svc::CmdSeqInPortStrings::StringSize240& filename //!< The sequence file
+) {
+  this->pushFromPortEntry_seqRunOut(filename);
+}
 void Tester::textLogIn(const FwEventIdType id,         /*!< The event ID*/
                        Fw::Time& timeTag,              /*!< The time*/
                        const Fw::LogSeverity severity, /*!< The severity*/
                        const Fw::TextLogString& text   /*!< The event string*/
 ) {
   std::cout << text.toChar() << std::endl;
+}
+
+void Tester::initComponents() {
+  this->component.init(TEST_INSTANCE_QUEUE_DEPTH, TEST_INSTANCE_ID);
 }
 
 }  // end namespace components
