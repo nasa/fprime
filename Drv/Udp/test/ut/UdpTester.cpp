@@ -29,18 +29,19 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    U16 port1 =  Drv::Test::get_free_port(true);
+    U16 port1 = Drv::Test::get_free_port(true);
     ASSERT_NE(0, port1);
-    U16 port2 =  Drv::Test::get_free_port(true);
-    ASSERT_NE(0, port2);
-
-    uint8_t attempt_to_find_available_port = 100;
+    U16 port2 = port1;
+    uint8_t attempt_to_find_available_port = std::numeric_limits<uint8_t>::max();
 
     while ((port1 == port2) && attempt_to_find_available_port > 0)
     {
-        U16 port2 =  Drv::Test::get_free_port(true);
+        port2 = Drv::Test::get_free_port(true);
         ASSERT_NE(0, port2);
         --attempt_to_find_available_port;
+    }
+    if (port2 == port1) {
+        GTEST_SKIP() << "Could not find two unique and available UDP ports. SKipping test.";
     }
     ASSERT_NE(port1, port2);
 
@@ -51,7 +52,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
-        this->component.startSocketTask(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.start(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
     }
 
     // Loop through a bunch of client disconnects
@@ -69,7 +70,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
                 << "Port2: " << port2;
 
         } else {
-            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, SOCKET_RETRY_INTERVAL_MS/10 + 1));
+            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
         }
         EXPECT_TRUE(this->component.getSocketHandler().isOpened());
 
@@ -106,8 +107,8 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
         }
         // Properly stop the client on the last iteration
         if ((1 + i) == iterations && recv_thread) {
-            this->component.stopSocketTask();
-            this->component.joinSocketTask(nullptr);
+            this->component.stop();
+            this->component.join();
         } else {
             this->component.close();
         }

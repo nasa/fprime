@@ -148,12 +148,12 @@ class stores a task name as private data. Table 35 provides the macro for this f
 
 **Table 35.** Macros for object naming, queue naming, and task naming
 
-| Macro                    | Definition                                  | Default | Valid Values      |
-| ------------------------ | ------------------------------------------- |---------|-------------------|
-| FW_OBJECT_NAMES          | Enables storage and retrieval of the name   | 1 (on)  | 0 (off) 1 (on)    |
-| FW_OBJ_NAME_MAX_SIZE     | Size of the buffer storing the object name  | 80      | Positive integer  |
-| FW_QUEUE_NAME_MAX_SIZE   | Size of the buffer storing the queue names  | 80      | Positive integer  |
-| FW_TASK_NAME_MAX_SIZE    | Size of the buffer storing task names       | 80      | Positive integer  |
+| Macro                     | Definition                                  | Default | Valid Values      |
+|---------------------------| ------------------------------------------- |---------|-------------------|
+| FW_OBJECT_NAMES           | Enables storage and retrieval of the name   | 1 (on)  | 0 (off) 1 (on)    |
+| FW_OBJ_NAME_BUFFER_SIZE   | Size of the buffer storing the object name  | 80      | Positive integer  |
+| FW_QUEUE_NAME_BUFFER_SIZE | Size of the buffer storing the queue names  | 80      | Positive integer  |
+| FW_TASK_NAME_BUFFER_SIZE  | Size of the buffer storing task names       | 80      | Positive integer  |
 
 > **Note**
 > The macro `FW_OPTIONAL_NAME("string")` can be used to conditionally return the given
@@ -162,10 +162,10 @@ class stores a task name as private data. Table 35 provides the macro for this f
 
 > **Note**
 > If the size of the string passed to the code-generated component base classes is larger than this size, the
-> string will be truncated. `FW_OBJECT_NAMES` must be turned on for `FW_OBJ_NAME_MAX_SIZ` to have any effect.
+> string will be truncated. `FW_OBJECT_NAMES` must be turned on for `FW_OBJ_NAME_BUFFER_SIZE` to have any effect.
 
 > **Note**
-> `FW_QUEUE_NAME_MAX_SIZE` and `FW_TASK_NAME_MAX_SIZE` are only used if `FW_OBJECT_NAMES` is **turned off**.
+> `FW_QUEUE_NAME_BUFFER_SIZE` and `FW_TASK_NAME_BUFFER_SIZE` are only used if `FW_OBJECT_NAMES` is **turned off**.
 > Otherwise, the supplied object name is used.
 
 #### Object to String

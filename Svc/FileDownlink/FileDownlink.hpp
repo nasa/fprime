@@ -312,8 +312,8 @@ namespace Svc {
       //!
       Svc::SendFileResponse SendFile_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const sourceFileNameString& sourceFilename, /*!< Path of file to downlink*/
-          const destFileNameString& destFilename, /*!< Path to store downlinked file at*/
+          const Fw::StringBase& sourceFilename, /*!< Path of file to downlink*/
+          const Fw::StringBase& destFilename, /*!< Path to store downlinked file at*/
           U32 offset, /*!< Amount of data in bytes to downlink from file. 0 to read until end of file*/
           U32 length /*!< Amount of data in bytes to downlink from file. 0 to read until end of file*/
       );

@@ -8,5 +8,6 @@
 ####
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/File.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Task.fpp"
 )
 register_fprime_module()

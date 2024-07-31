@@ -219,25 +219,18 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Define max length of assert string
+// Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE 120  //!< Size of string used to store assert description
+#define FW_ASSERT_TEXT_SIZE 256  //!< Size of string used to store assert description
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
 
 // The size of the object name stored in the object base class. Larger names will be truncated.
 #if FW_OBJECT_NAMES
-#ifndef FW_OBJ_NAME_MAX_SIZE
-#define FW_OBJ_NAME_MAX_SIZE \
+#ifndef FW_OBJ_NAME_BUFFER_SIZE
+#define FW_OBJ_NAME_BUFFER_SIZE \
     80  //!< Size of object name (if object names enabled). AC Limits to 80, truncation occurs above 80.
-#endif
-#endif
-
-// When querying an object as to an object-specific description, this specifies the size of the buffer to store the
-// description.
-#if FW_OBJECT_TO_STRING
-#ifndef FW_OBJ_TO_STRING_BUFFER_SIZE
-#define FW_OBJ_TO_STRING_BUFFER_SIZE 255  //!< Size of string storing toString() text
 #endif
 #endif
 
@@ -247,7 +240,7 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_OBJ_SIMPLE_REG_ENTRIES 500  //!< Number of objects stored in simple object registry
 #endif
 // When dumping the contents of the registry, this specifies the size of the buffer used to store object names. Should
-// be >= FW_OBJ_NAME_MAX_SIZE.
+// be >= FW_OBJ_NAME_BUFFER_SIZE.
 #ifndef FW_OBJ_SIMPLE_REG_BUFF_SIZE
 #define FW_OBJ_SIMPLE_REG_BUFF_SIZE 255  //!< Size of object registry dump string
 #endif
@@ -261,18 +254,18 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Specifies the size of the string holding the queue name for queues
-#ifndef FW_QUEUE_NAME_MAX_SIZE
-#define FW_QUEUE_NAME_MAX_SIZE 80  //!< Max size of message queue name
+#ifndef FW_QUEUE_NAME_BUFFER_SIZE
+#define FW_QUEUE_NAME_BUFFER_SIZE 80  //!< Max size of message queue name
 #endif
 
 // Specifies the size of the string holding the task name for active components and tasks
-#ifndef FW_TASK_NAME_MAX_SIZE
-#define FW_TASK_NAME_MAX_SIZE 80  //!< Max size of task name
+#ifndef FW_TASK_NAME_BUFFER_SIZE
+#define FW_TASK_NAME_BUFFER_SIZE 80  //!< Max size of task name
 #endif
 
 // Specifies the size of the buffer that contains a communications packet.
 #ifndef FW_COM_BUFFER_MAX_SIZE
-#define FW_COM_BUFFER_MAX_SIZE 128  //!< Max size of Fw::Com buffer
+#define FW_COM_BUFFER_MAX_SIZE 512
 #endif
 
 // Specifies the size of the buffer that contains the serialized command arguments.
@@ -302,8 +295,9 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Specifies the maximum size of a string in a log event
+// Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_LOG_STRING_MAX_SIZE
-#define FW_LOG_STRING_MAX_SIZE 100  //!< Max size of log string parameter type
+#define FW_LOG_STRING_MAX_SIZE 200  //!< Max size of log string parameter type
 #endif
 
 // Specifies the size of the buffer that contains the serialized telemetry value.
@@ -352,23 +346,6 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_SERIALIZABLE_TO_STRING 1  //!< Indicates if autocoded serializables have toString() methods
 #endif
 
-#if FW_SERIALIZABLE_TO_STRING
-#ifndef FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE
-#define FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE 255  //!< Size of string to store toString() string output
-#endif
-#endif
-
-// Define if arrays have toString() method.
-#ifndef FW_ARRAY_TO_STRING
-#define FW_ARRAY_TO_STRING 1  //!< Indicates if autocoded arrays have toString() methods
-#endif
-
-#if FW_ARRAY_TO_STRING
-#ifndef FW_ARRAY_TO_STRING_BUFFER_SIZE
-#define FW_ARRAY_TO_STRING_BUFFER_SIZE 256  //!< Size of string to store toString() string output
-#endif
-#endif
-
 // Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility
 #ifndef FW_AMPCS_COMPATIBLE
 #define FW_AMPCS_COMPATIBLE 0  //!< Whether or not JPL AMPCS ground system support is enabled.
@@ -384,15 +361,17 @@ typedef FwIndexType FwQueueSizeType;
 #ifndef FW_USE_TIME_CONTEXT
 #define FW_USE_TIME_CONTEXT 1  //!< Whether or not to serialize the time context
 #endif
-//
-// These defines used for the FilepathCharString type
+
+// Configuration for Fw::String
 
 #ifndef FW_FIXED_LENGTH_STRING_SIZE
-#define FW_FIXED_LENGTH_STRING_SIZE 256  //!< Character array size for the filepath character type
+#define FW_FIXED_LENGTH_STRING_SIZE 256  //!< Character array size for Fw::String
 #endif
 
+// OS configuration
+
 #ifndef FW_HANDLE_MAX_SIZE
-#define FW_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
 #ifndef FW_HANDLE_ALIGNMENT
@@ -402,7 +381,6 @@ typedef FwIndexType FwQueueSizeType;
 #ifndef FW_FILE_CHUNK_SIZE
 #define FW_FILE_CHUNK_SIZE 512  //!< Chunk size for working with files
 #endif
-
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.

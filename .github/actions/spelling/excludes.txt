@@ -134,3 +134,5 @@
 ^Svc/TlmChan/TlmChan\.hpp$
 ignore$
 ^docs/doxygen/mainpage.md$
+^\Qcmake/test/data/test-implementations/Deployment/TestModule/Empty.cpp\E$
+^\Qcmake/test/data/test-implementations/test-platforms/library.cmake\E$

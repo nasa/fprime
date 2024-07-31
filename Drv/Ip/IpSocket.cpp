@@ -52,12 +52,18 @@ IpSocket::IpSocket() : m_fd(-1), m_timeoutSeconds(0), m_timeoutMicroseconds(0), 
 
 SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     FW_ASSERT(timeout_microseconds < 1000000, static_cast<FwAssertArgType>(timeout_microseconds));
-    FW_ASSERT(port != 0, port);
+    FW_ASSERT(this->isValidPort(port));
+    this->m_lock.lock();
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
     this->m_port = port;
     (void) Fw::StringUtils::string_copy(this->m_hostname, hostname, SOCKET_MAX_HOSTNAME_SIZE);
+    this->m_lock.unlock();
     return SOCK_SUCCESS;
+}
+
+bool IpSocket::isValidPort(U16 port) {
+    return true;
 }
 
 SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
@@ -142,7 +148,9 @@ SocketIpStatus IpSocket::startup() {
 SocketIpStatus IpSocket::open() {
     NATIVE_INT_TYPE fd = -1;
     SocketIpStatus status = SOCK_SUCCESS;
+    this->m_lock.lock();
     FW_ASSERT(m_fd == -1 and not m_open); // Ensure we are not opening an opened socket
+    this->m_lock.unlock();
     // Open a TCP socket for incoming commands, and outgoing data if not using UDP
     status = this->openProtocol(fd);
     if (status != SOCK_SUCCESS) {
@@ -160,8 +168,11 @@ SocketIpStatus IpSocket::open() {
 SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
     U32 total = 0;
     I32 sent  = 0;
+    this->m_lock.lock();
+    NATIVE_INT_TYPE fd = this->m_fd;
+    this->m_lock.unlock();
     // Prevent transmission before connection, or after a disconnect
-    if (this->m_fd == -1) {
+    if (fd == -1) {
         return SOCK_DISCONNECTED;
     }
     // Attempt to send out data and retry as necessary
@@ -196,7 +207,10 @@ SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
 SocketIpStatus IpSocket::recv(U8* data, U32& req_read) {
     I32 size = 0;
     // Check for previously disconnected socket
-    if (m_fd == -1) {
+    this->m_lock.lock();
+    NATIVE_INT_TYPE fd = this->m_fd;
+    this->m_lock.unlock();
+    if (fd == -1) {
         return SOCK_DISCONNECTED;
     }
 
