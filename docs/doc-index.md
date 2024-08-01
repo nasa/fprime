@@ -23,6 +23,7 @@
 ## HowTo
 - [develop-fprime-libraries](HowTo/develop-fprime-libraries.md)
 - [develop-gds-plugins](HowTo/develop-gds-plugins.md)
+- [develop-subtopologies](HowTo/develop-subtopologies.md)
 - [general](HowTo/general.md)
 ## Reference
 - [README](Reference/README.md)

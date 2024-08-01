@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_passive_rate_group_component.html
 <div class="title"><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md998"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md1009"></a>
 RateGroupDriver Component</h1>
-<h2><a class="anchor" id="autotoc_md999"></a>
+<h2><a class="anchor" id="autotoc_md1010"></a>
 1. Introduction</h2>
 <p><code><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></code> is an passive component that drives a set of components connected to <code>Svc::Sched</code> output ports. It contains an synchronous input <code>Svc::Cycle</code> port that drives all the operations. The component invokes each output port in order, passing an argument specified in the supplied context list. It tracks execution time of the cycle.</p>
-<h2><a class="anchor" id="autotoc_md1000"></a>
+<h2><a class="anchor" id="autotoc_md1011"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -106,15 +106,15 @@ RateGroupDriver Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">FPRIME-PRG-003   </td><td class="markdownTableBodyNone">The <code><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></code> component shall track the time required to execute the rate group and report it as telemetry   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md1001"></a>
+<h2><a class="anchor" id="autotoc_md1012"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md1002"></a>
+<h3><a class="anchor" id="autotoc_md1013"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md1003"></a>
+<h4><a class="anchor" id="autotoc_md1014"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></code> component has the following component diagram:</p>
 <p><img src="img/PassiveRateGroupBDD.png" alt="PassiveRateGroup Diagram" title="PassiveRateGroup" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md1004"></a>
+<h4><a class="anchor" id="autotoc_md1015"></a>
 3.1.2 Ports</h4>
 <p>The <code><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></code> component uses the following port types:</p>
 <table class="markdownTable">
@@ -125,13 +125,13 @@ RateGroupDriver Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a class="el" href="svc_2_sched_2docs_2sdd_8md.html">`Svc::Sched`</a>   </td><td class="markdownTableBodyNone">RateGroupMemberOut   </td><td class="markdownTableBodyNone">Output   </td><td class="markdownTableBodyNone">n/a   </td><td class="markdownTableBodyNone">Rate group ports   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md1005"></a>
+<h4><a class="anchor" id="autotoc_md1016"></a>
 3.2 Functional Description</h4>
 <p>The <code><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></code> component has one input port that is used to drive all of the processing. The component calls the output ports in order, passing the context from the context list as the port argument. <br  />
 </p>
-<h3><a class="anchor" id="autotoc_md1006"></a>
+<h3><a class="anchor" id="autotoc_md1017"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md1007"></a>
+<h4><a class="anchor" id="autotoc_md1018"></a>
 3.3.1 Rate Group Port Call</h4>
 <p>As described in the Functional Description section, the <code><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></code> component accepts calls to the CycleIn and invokes the RateGroupMemberOut ports:</p>
 <p><b>Sequence Diagram</b> </p><div class="fragment"><div class="line">sequenceDiagram</div>
@@ -144,13 +144,13 @@ RateGroupDriver Component</h1>
 <div class="line">        Callee --&gt;&gt; PassiveRateGroup: </div>
 <div class="line">    end</div>
 <div class="line">    PassiveRateGroup --&gt;&gt; RateGroupDriver: </div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md1008"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md1019"></a>
 3.4 State</h3>
 <p><code><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></code> has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md1009"></a>
+<h3><a class="anchor" id="autotoc_md1020"></a>
 3.5 Algorithms</h3>
 <p><code><a class="el" href="class_svc_1_1_passive_rate_group.html">Svc::PassiveRateGroup</a></code> has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md1010"></a>
+<h2><a class="anchor" id="autotoc_md1021"></a>
 4. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
