@@ -15,6 +15,7 @@ actools
 acxz
 addoffset
 adminlist
+aei
 aeiouy
 afterstatinfo
 agg
@@ -101,6 +102,7 @@ BUGLIST
 bugprone
 builddir
 buildroot
+buildstep
 bysource
 BYTEDRV
 calcu
@@ -619,6 +621,7 @@ mman
 MMAPALLOCATOR
 MML
 modbus
+mosa
 MOSI
 MOVEFILE
 mozilla
@@ -1010,6 +1013,7 @@ subpage
 subseconds
 subtargets
 subtopology
+subtopologies
 Subtopology
 Subtopologies
 suppr
@@ -1117,6 +1121,7 @@ toklist
 toolchains
 toolset
 topologyapp
+TOPOLOGYCONFIG
 Torvalds
 totalram
 tparam
