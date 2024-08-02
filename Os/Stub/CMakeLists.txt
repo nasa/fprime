@@ -85,6 +85,7 @@ set(UT_MOD_DEPS
         Os
         Os_Models
         STest
+        Fw/Time
 )
 choose_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub)
 register_fprime_ut(StubMutexTest)

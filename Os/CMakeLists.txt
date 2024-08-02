@@ -97,7 +97,7 @@ endif()
 register_fprime_module()
 
 require_fprime_implementation(Os/File)
-# require_fprime_implementation(Os/Task) # should be added in
+require_fprime_implementation(Os/Task)
 require_fprime_implementation(Os/Mutex) 
 
 
@@ -113,7 +113,7 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 if (BUILD_TESTING)
-    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubMutexTest PosixMutexTest) # add? : StubTaskTest PosixTaskTest
+    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubMutexTest PosixMutexTest StubTaskTest PosixTaskTest)
        if (TARGET "${TEST}")
            add_dependencies("Os_ut_exe" "${TEST}")
        endif()
