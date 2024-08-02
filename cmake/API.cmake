@@ -627,6 +627,7 @@ endfunction()
 #
 # **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
 # **IMPLEMENTOR:** implementor of IMPLEMENTATION
+# **ARGN:** (optional) list of source files required to build the implementor
 ####
 function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")

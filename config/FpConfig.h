@@ -371,11 +371,11 @@ typedef FwIndexType FwQueueSizeType;
 // OS configuration
 
 #ifndef FW_HANDLE_MAX_SIZE
-#define FW_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
 #ifndef FW_HANDLE_ALIGNMENT
-#define FW_HANDLE_ALIGNMENT 16  //!< Alignment of handle storage
+#define FW_HANDLE_ALIGNMENT 8  //!< Alignment of handle storage
 #endif
 
 #ifndef FW_FILE_CHUNK_SIZE

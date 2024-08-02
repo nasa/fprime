@@ -11,6 +11,7 @@ if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
 endif()
 choose_fprime_implementation(Os/File Os/File/Posix)
 choose_fprime_implementation(Os/Task Os/Task/Posix)
+choose_fprime_implementation(Os/Mutex Os/Mutex/Posix)
 
 # Use common linux setup
 add_definitions(-DTGT_OS_TYPE_LINUX)
