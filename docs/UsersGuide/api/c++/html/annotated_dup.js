@@ -168,6 +168,10 @@ var annotated_dup =
           [ "PosixFileHandle", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle.html", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle" ],
           [ "PosixFile", "class_os_1_1_posix_1_1_file_1_1_posix_file.html", "class_os_1_1_posix_1_1_file_1_1_posix_file" ]
         ] ],
+        [ "Mutex", "namespace_os_1_1_posix_1_1_mutex.html", [
+          [ "PosixMutexHandle", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle.html", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle" ],
+          [ "PosixMutex", "class_os_1_1_posix_1_1_mutex_1_1_posix_mutex.html", "class_os_1_1_posix_1_1_mutex_1_1_posix_mutex" ]
+        ] ],
         [ "Task", "namespace_os_1_1_posix_1_1_task.html", [
           [ "PosixTaskHandle", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle.html", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle" ],
           [ "PosixTask", "class_os_1_1_posix_1_1_task_1_1_posix_task.html", "class_os_1_1_posix_1_1_task_1_1_posix_task" ]
@@ -177,6 +181,10 @@ var annotated_dup =
         [ "File", "namespace_os_1_1_stub_1_1_file.html", [
           [ "StubFileHandle", "struct_os_1_1_stub_1_1_file_1_1_stub_file_handle.html", null ],
           [ "StubFile", "class_os_1_1_stub_1_1_file_1_1_stub_file.html", "class_os_1_1_stub_1_1_file_1_1_stub_file" ]
+        ] ],
+        [ "Mutex", "namespace_os_1_1_stub_1_1_mutex.html", [
+          [ "StubMutexHandle", "struct_os_1_1_stub_1_1_mutex_1_1_stub_mutex_handle.html", null ],
+          [ "StubMutex", "class_os_1_1_stub_1_1_mutex_1_1_stub_mutex.html", "class_os_1_1_stub_1_1_mutex_1_1_stub_mutex" ]
         ] ]
       ] ],
       [ "SystemResources", "namespace_os_1_1_system_resources.html", [
@@ -185,6 +193,7 @@ var annotated_dup =
       ] ],
       [ "FileMode", "class_os_1_1_file_mode.html", "class_os_1_1_file_mode" ],
       [ "FileStatus", "class_os_1_1_file_status.html", "class_os_1_1_file_status" ],
+      [ "MutexStatus", "class_os_1_1_mutex_status.html", "class_os_1_1_mutex_status" ],
       [ "TaskStatus", "class_os_1_1_task_status.html", "class_os_1_1_task_status" ],
       [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
       [ "BareTaskHandle", "class_os_1_1_bare_task_handle.html", "class_os_1_1_bare_task_handle" ],
@@ -200,6 +209,8 @@ var annotated_dup =
       [ "Log", "class_os_1_1_log.html", "class_os_1_1_log" ],
       [ "QueueHandle", "class_os_1_1_queue_handle.html", "class_os_1_1_queue_handle" ],
       [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ],
+      [ "MutexHandle", "struct_os_1_1_mutex_handle.html", null ],
+      [ "MutexInterface", "class_os_1_1_mutex_interface.html", "class_os_1_1_mutex_interface" ],
       [ "Mutex", "class_os_1_1_mutex.html", "class_os_1_1_mutex" ],
       [ "BufferQueue", "class_os_1_1_buffer_queue.html", "class_os_1_1_buffer_queue" ],
       [ "FIFOQueue", "struct_os_1_1_f_i_f_o_queue.html", "struct_os_1_1_f_i_f_o_queue" ],

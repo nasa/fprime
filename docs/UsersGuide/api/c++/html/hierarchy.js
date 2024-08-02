@@ -74,7 +74,15 @@ var hierarchy =
     ] ],
     [ "Os::SystemResources::MemUtil", "struct_os_1_1_system_resources_1_1_mem_util.html", null ],
     [ "Svc::BufferLogger::File::Mode", "struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html", null ],
-    [ "Os::Mutex", "class_os_1_1_mutex.html", null ],
+    [ "Os::MutexHandle", "struct_os_1_1_mutex_handle.html", [
+      [ "Os::Posix::Mutex::PosixMutexHandle", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle.html", null ],
+      [ "Os::Stub::Mutex::StubMutexHandle", "struct_os_1_1_stub_1_1_mutex_1_1_stub_mutex_handle.html", null ]
+    ] ],
+    [ "Os::MutexInterface", "class_os_1_1_mutex_interface.html", [
+      [ "Os::Mutex", "class_os_1_1_mutex.html", null ],
+      [ "Os::Posix::Mutex::PosixMutex", "class_os_1_1_posix_1_1_mutex_1_1_posix_mutex.html", null ],
+      [ "Os::Stub::Mutex::StubMutex", "class_os_1_1_stub_1_1_mutex_1_1_stub_mutex.html", null ]
+    ] ],
     [ "Fw::ObjBase", "class_fw_1_1_obj_base.html", [
       [ "Fw::PassiveComponentBase", "class_fw_1_1_passive_component_base.html", [
         [ "Drv::LinuxGpioDriverComponentBase", "class_drv_1_1_linux_gpio_driver_component_base.html", [
@@ -382,6 +390,7 @@ var hierarchy =
       [ "Fw::Wait", "class_fw_1_1_wait.html", null ],
       [ "Os::FileMode", "class_os_1_1_file_mode.html", null ],
       [ "Os::FileStatus", "class_os_1_1_file_status.html", null ],
+      [ "Os::MutexStatus", "class_os_1_1_mutex_status.html", null ],
       [ "Os::TaskStatus", "class_os_1_1_task_status.html", null ],
       [ "Svc::ActiveLogger_Enabled", "class_svc_1_1_active_logger___enabled.html", null ],
       [ "Svc::ActiveLogger_FilterSeverity", "class_svc_1_1_active_logger___filter_severity.html", null ],

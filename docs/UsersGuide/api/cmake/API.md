@@ -404,6 +404,7 @@ Os_Task. These implementations must be set via
 
 **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
 **IMPLEMENTOR:** implementor of IMPLEMENTATION
+**ARGN:** (optional) list of source files required to build the implementor
 
 
 ## Function `choose_fprime_implementation`:

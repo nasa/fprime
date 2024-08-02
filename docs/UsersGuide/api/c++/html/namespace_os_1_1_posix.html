@@ -96,6 +96,8 @@ $(document).ready(function(){initNavTree('namespace_os_1_1_posix.html',''); init
 Namespaces</h2></td></tr>
 <tr class="memitem:namespace_os_1_1_posix_1_1_file"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix_1_1_file.html">File</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespace_os_1_1_posix_1_1_mutex"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix_1_1_mutex.html">Mutex</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespace_os_1_1_posix_1_1_task"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix_1_1_task.html">Task</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -105,6 +107,8 @@ Functions</h2></td></tr>
 <tr class="separator:a0053748559edc20f061c67b8345b847f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13b1156567dfc9daa32151ce6f02a562"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Task::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix.html#a13b1156567dfc9daa32151ce6f02a562">posix_status_to_task_status</a> (<a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> posix_status)</td></tr>
 <tr class="separator:a13b1156567dfc9daa32151ce6f02a562"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a757591d6b8ddc0f3366333d7d9ef92ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025">Mutex::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix.html#a757591d6b8ddc0f3366333d7d9ef92ff">posix_status_to_mutex_status</a> (<a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> posix_status)</td></tr>
+<tr class="separator:a757591d6b8ddc0f3366333d7d9ef92ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a0053748559edc20f061c67b8345b847f"></a>
@@ -131,6 +135,33 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> representation of the error </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="error_8cpp_source.html#l00011">11</a> of file <a class="el" href="error_8cpp_source.html">error.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a757591d6b8ddc0f3366333d7d9ef92ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a757591d6b8ddc0f3366333d7d9ef92ff">&#9670;&nbsp;</a></span>posix_status_to_mutex_status()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025">Os::Mutex::Status</a> Os::Posix::posix_status_to_mutex_status </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a>&#160;</td>
+          <td class="paramname"><em>posix_status</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Convert a <a class="el" href="namespace_os_1_1_posix.html">Posix</a> return status (int) for mutex operations to the <a class="el" href="class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025">Os::Mutex::Status</a> representation. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">posix_status</td><td>return status </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025">Os::Mutex::Status</a> representation of the error </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="error_8cpp_source.html#l00073">73</a> of file <a class="el" href="error_8cpp_source.html">error.cpp</a>.</p>
 
 </div>
 </div>

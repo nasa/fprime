@@ -43,7 +43,10 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
       [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ]
     ] ],
     [ "MemCommon.cpp", "mem_common_8cpp.html", null ],
+    [ "Mutex.cpp", "mutex_8cpp.html", null ],
     [ "Mutex.hpp", "mutex_8hpp.html", [
+      [ "MutexHandle", "struct_os_1_1_mutex_handle.html", null ],
+      [ "MutexInterface", "class_os_1_1_mutex_interface.html", "class_os_1_1_mutex_interface" ],
       [ "Mutex", "class_os_1_1_mutex.html", "class_os_1_1_mutex" ]
     ] ],
     [ "Os.hpp", "os_8hpp.html", "_os_8hpp" ],
