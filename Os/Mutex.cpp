@@ -21,16 +21,6 @@ MutexHandle* Mutex::getHandle() {
     return this->m_delegate.getHandle();
 }
 
-void Mutex::lock() {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
-    this->m_delegate.lock();
-}
-
-void Mutex::unLock() {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
-    this->m_delegate.unLock();
-}
-
 Mutex::Status Mutex::take() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.take();
@@ -39,5 +29,17 @@ Mutex::Status Mutex::take() {
 Mutex::Status Mutex::release() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.release();
+}
+
+void Mutex::lock() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
+    Mutex::Status status = this->take();
+    FW_ASSERT(status == Mutex::Status::OP_OK, status);
+}
+
+void Mutex::unLock() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
+    Mutex::Status status = this->release();
+    FW_ASSERT(status == Mutex::Status::OP_OK, status);
 }
 }  // namespace Os

@@ -58,7 +58,7 @@ TEST_F(Interface, Release) {
 TEST_F(Interface, Lock) {
     Os::Mutex mutex;
     mutex.lock();
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::LOCK_FN);
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::TAKE_FN);
 
 }
 
@@ -66,14 +66,14 @@ TEST_F(Interface, Lock) {
 TEST_F(Interface, UnLock) {
     Os::Mutex mutex;
     mutex.unLock();
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::UNLOCK_FN);
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::RELEASE_FN);
 }
 
 // Ensure that Os::Mutex properly calls the implementation unlock()
 TEST_F(Interface, UnlockAlias) {
     Os::Mutex mutex;
     mutex.unlock();
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::UNLOCK_FN);
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::RELEASE_FN);
 }
 
 // Ensure that Os::Mutex properly calls the implementation getHandle()

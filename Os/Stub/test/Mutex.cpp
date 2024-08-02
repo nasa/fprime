@@ -29,14 +29,6 @@ Os::MutexInterface::Status TestMutex::release() {
     return StaticData::data.releaseStatus;
 }
 
-void TestMutex::lock() {
-    StaticData::data.lastCalled = StaticData::LastFn::LOCK_FN;
-}
-
-void TestMutex::unLock() {
-    StaticData::data.lastCalled = StaticData::LastFn::UNLOCK_FN;
-}
-
 Os::MutexHandle *TestMutex::getHandle() {
     StaticData::data.lastCalled = StaticData::LastFn::GET_HANDLE_FN;
     return nullptr;

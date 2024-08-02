@@ -22,8 +22,6 @@ struct StaticData {
         DESTRUCT_FN,
         TAKE_FN,
         RELEASE_FN,
-        LOCK_FN,
-        UNLOCK_FN,
         GET_HANDLE_FN
     };
     StaticData() = default;
@@ -50,12 +48,6 @@ class TestMutex : public MutexInterface {
 
     //! Destructor
     ~TestMutex() override;
-
-    //! \brief lock mutex and assert on status
-    void lock() override;
-
-    //! \brief unlock mutex and assert on status
-    void unLock() override;
 
     //! \brief lock mutex and return status
     Status take() override;

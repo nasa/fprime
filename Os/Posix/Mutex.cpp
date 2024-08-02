@@ -13,10 +13,11 @@ namespace Mutex {
 PosixMutex::PosixMutex() : Os::MutexInterface(), m_handle() {
     // set attributes
     pthread_mutexattr_t attribute;
-    pthread_mutexattr_init(&attribute);
+    PlatformIntType status = pthread_mutexattr_init(&attribute);
+    FW_ASSERT(status == 0, status);
 
     // set to normal mutex type
-    PlatformIntType status = pthread_mutexattr_settype(&attribute, PTHREAD_MUTEX_NORMAL);
+    status = pthread_mutexattr_settype(&attribute, PTHREAD_MUTEX_NORMAL);
     FW_ASSERT(status == 0, status);
 
     // set to check for priority inheritance
@@ -40,16 +41,6 @@ PosixMutex::Status PosixMutex::take() {
 PosixMutex::Status PosixMutex::release() {
     PlatformIntType status = pthread_mutex_unlock(&this->m_handle.m_mutex_descriptor);
     return Os::Posix::posix_status_to_mutex_status(status);
-}
-
-void PosixMutex::lock() {
-    PosixMutex::Status status = this->take();
-    FW_ASSERT(status == PosixMutex::Status::OP_OK, status);
-}
-
-void PosixMutex::unLock() {
-    PosixMutex::Status status = this->release();
-    FW_ASSERT(status == PosixMutex::Status::OP_OK, status);
 }
 
 MutexHandle* PosixMutex::getHandle() {

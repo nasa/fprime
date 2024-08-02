@@ -8,14 +8,6 @@ namespace Os {
 namespace Stub {
 namespace Mutex {
 
-    void StubMutex::lock() {
-        // no op
-    }
-
-    void StubMutex::unLock() {
-        // no op
-    }
-
     StubMutex::Status StubMutex::take() {
         return Status::OP_OK;
     }

@@ -30,8 +30,6 @@ class StubMutex : public MutexInterface {
     //! \return internal mutex handle representation
     MutexHandle* getHandle() override;
 
-    void lock() override;       //!<  lock the mutex
-    void unLock() override;     //!<  unlock the mutex
     Status take() override;     //!<  lock the mutex and get return status
     Status release() override;  //!<  unlock the mutex and get return status
 

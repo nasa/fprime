@@ -108,7 +108,7 @@ struct ReleaseMutex : public STest::Rule<Os::Test::Mutex::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  LockBusyMutex: Lock a mutex that is already locked
+// Rule:  ProtectDataCheck: Check that data is protected by a mutex (running another task in parallel)
 // ------------------------------------------------------------------------------------------------------
 struct ProtectDataCheck : public STest::Rule<Os::Test::Mutex::Tester> {
 

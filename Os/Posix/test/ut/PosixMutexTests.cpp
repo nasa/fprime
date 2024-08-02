@@ -7,21 +7,21 @@
 #include "Os/Posix/Task.hpp"
 #include <gtest/gtest.h>
 #include "STest/Scenario/Scenario.hpp"
+#include "STest/Pick/Pick.hpp"
 #include "Fw/Types/String.hpp"
 
-
+// A routine that modifies the internal state of the MutexTester to test that the mutex
+// protects the shared variable successfully when ran in parallel with the main task
 static void testTaskRoutine(void* pointer) {
-    // Os::Test::Mutex::Tester::LockMutex lock_rule;
-    // Os::Test::Mutex::Tester::UnlockMutex unlock_rule;
-
     Os::Test::Mutex::Tester* tester = reinterpret_cast<Os::Test::Mutex::Tester*>(pointer);
     
     for (FwIndexType i = 0; i < 100000; i++) {
         tester->m_mutex.lock();
         tester->m_state = Os::Test::Mutex::Tester::MutexState::LOCKED;
 
-        tester->m_value = 1;
-        ASSERT_EQ(tester->m_value, 1);
+        U32 randomValue = STest::Pick::any();
+        tester->m_value = randomValue;
+        ASSERT_EQ(tester->m_value, randomValue);
 
         tester->m_state = Os::Test::Mutex::Tester::MutexState::UNLOCKED;
         tester->m_mutex.unLock();
@@ -36,9 +36,9 @@ static void testTaskRoutine(void* pointer) {
 // Attempt to delete a locked mutex - expect an assertion
 TEST_F(FunctionalityTester, PosixDeleteLockedMutex) {
     Os::Test::Mutex::Tester::LockMutex lock_rule;
-    Os::Test::Mutex::Tester::UnlockMutex unlock_rule;
     lock_rule.apply(*tester);
-    ASSERT_DEATH_IF_SUPPORTED(delete tester.release(), Os::Test::Mutex::Tester::ASSERT_IN_MUTEX_CPP);
+    // tester is a unique_ptr, retrieve the raw pointer and attempt to delete the Mutex
+    ASSERT_DEATH_IF_SUPPORTED(delete tester.get(), Os::Test::Mutex::Tester::ASSERT_IN_MUTEX_CPP);
 }
 
 // Test behavior of the mutex - two threads (main and test_task) using a mutex to protect a shared variable

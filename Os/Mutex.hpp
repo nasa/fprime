@@ -41,10 +41,8 @@ class MutexInterface {
     //! \brief provide a pointer to a Mutex delegate object
     static MutexInterface* getDelegate(HandleStorage& aligned_new_memory);  // TODO
 
-    virtual Status take() = 0;     //!<  lock the mutex and get return status
-    virtual Status release() = 0;  //!<  unlock the mutex and get return status
-    virtual void lock() = 0;       //!<  lock the mutex
-    virtual void unLock() = 0;     //!<  unlock the mutex
+    virtual Status take() = 0;     //!<  lock the mutex return status
+    virtual Status release() = 0;  //!<  unlock the mutex return status
 };
 
 class Mutex final : public MutexInterface {
@@ -56,10 +54,10 @@ class Mutex final : public MutexInterface {
     //! \return internal mutex handle representation
     MutexHandle* getHandle() override;
 
-    Status take() override;     //!<  lock the mutex and get return status
-    Status release() override;  //!<  unlock the mutex and get return status
-    void lock() override;       //!<  lock the mutex
-    void unLock() override;     //!<  unlock the mutex
+    Status take() override;            //!<  lock the mutex and get return status
+    Status release() override;         //!<  unlock the mutex and get return status
+    void lock();                       //!<  lock the mutex and assert success
+    void unLock();                     //!<  unlock the mutex and assert success
     void unlock() { this->unLock(); }  //!<  alias for unLock to meet BasicLockable requirements
 
   private:

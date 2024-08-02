@@ -88,8 +88,9 @@ void Os::Test::Mutex::Tester::ProtectDataCheck::action(Os::Test::Mutex::Tester &
     state.m_mutex.lock();
     state.m_state = Os::Test::Mutex::Tester::MutexState::LOCKED;
 
-    state.m_value = 42;
-    ASSERT_EQ(state.m_value, 42);
+    U32 randomValue = STest::Pick::any();
+    state.m_value = randomValue;
+    ASSERT_EQ(state.m_value, randomValue);
 
     state.m_state = Os::Test::Mutex::Tester::MutexState::UNLOCKED;
     state.m_mutex.unLock();

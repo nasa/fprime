@@ -70,7 +70,6 @@ register_fprime_ut(PosixTaskTest)
 #### Os/Mutex/Posix Section ####
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
-    # "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp"
 )
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"
