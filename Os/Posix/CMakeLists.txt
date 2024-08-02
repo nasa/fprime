@@ -50,7 +50,7 @@ set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Task.hpp"
 )
 
-set(MOD_DEPS Os_Posix_Shared Fw/Time)
+set(MOD_DEPS Os_Posix_Shared Fw/Time Os) # Os needs to be removed here?
 register_fprime_module(Os_Task_Posix)
 register_fprime_implementation(Os/Task Os_Task_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultTask.cpp")
 
@@ -74,7 +74,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"
 )
-set(MOD_DEPS Os_Posix_Shared Fw/Time)
+set(MOD_DEPS Os_Posix_Shared)
 register_fprime_module(Os_Mutex_Posix)
 register_fprime_implementation(Os/Mutex Os_Mutex_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")
 
