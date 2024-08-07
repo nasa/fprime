@@ -38,6 +38,9 @@ void SmTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     event.setsmId(STATE_MACHINE_DEVICE2);
     stateMachineInvoke(event);
 
+    event.setsmId(STATE_MACHINE_DEVICE3);
+    stateMachineInvoke(event);
+
 }
 
 // ----------------------------------------------------------------------
