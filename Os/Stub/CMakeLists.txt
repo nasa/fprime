@@ -6,12 +6,22 @@
 #
 ####
 add_custom_target("${FPRIME_CURRENT_MODULE}")
+
+######## File Stub ########
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp"
 )
 register_fprime_module(Os_File_Stub)
 register_fprime_implementation(Os/File Os_File_Stub)
+
+######## Mutex Stub ########
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+)
+register_fprime_module(Os_Mutex_Stub)
+register_fprime_implementation(Os/Mutex Os_Mutex_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")
+
 
 # Remainder of file is specific to UTs
 if (NOT BUILD_TESTING)
@@ -40,7 +50,6 @@ set(UT_MOD_DEPS
 choose_fprime_implementation(Os/File Os_File_Test_Stub)
 register_fprime_ut(StubFileTest)
 
-
 #### Task Stub Testing ####
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/Task.cpp"
@@ -62,3 +71,23 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/Task Os_Task_Test_Stub)
 register_fprime_ut(StubTaskTest)
+
+#### Mutex Stub Testing ####
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/Mutex.cpp"
+)
+register_fprime_module(Os_Mutex_Test_Stub)
+register_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultMutex.cpp")
+
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubMutexTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/CommonTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/MutexRules.cpp"
+)
+set(UT_MOD_DEPS
+        Os
+        Os_Models
+        STest
+)
+choose_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub)
+register_fprime_ut(StubMutexTest)

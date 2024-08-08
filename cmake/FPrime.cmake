@@ -17,6 +17,16 @@ if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/cmake")
     list(APPEND CMAKE_MODULE_PATH "${FPRIME_PROJECT_ROOT}/cmake")
 endif()
 
+# for adding libraries from the _fprime_packages directory
+if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/_fprime_packages")
+    if (EXISTS "${FPRIME_PROJECT_ROOT}/_fprime_packages/packages.cmake")
+        include("${FPRIME_PROJECT_ROOT}/_fprime_packages/packages.cmake")
+        message(STATUS "[FPRIME] Including libraries from ${FPRIME_PROJECT_ROOT}/_fprime_packages")
+    else()
+        message(WARNING "[FPRIME] ${FPRIME_PROJECT_ROOT}/_fprime_packages/packages.cmake does not exist. Skipping.")
+    endif()
+endif()
+
 # Setup fprime library locations
 list(REMOVE_DUPLICATES FPRIME_LIBRARY_LOCATIONS)
 set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
