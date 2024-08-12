@@ -20,7 +20,9 @@ ConsoleHandle* PosixConsole::getHandle() {
     return &this->m_handle;
 }
 
-void
+void PosixConsole ::setOutputStream(Stream stream) {
+    this->m_handle.m_file_descriptor = (stream == STANDARD_ERROR) ? stderr : stdout;
+}
 
 
 } // namespace Console

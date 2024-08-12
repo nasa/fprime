@@ -15,6 +15,7 @@
 
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
+#include <cstdarg>
 #ifdef BUILD_UT
 #include <iostream>
 #endif

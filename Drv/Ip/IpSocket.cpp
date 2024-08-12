@@ -57,7 +57,7 @@ SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, c
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
     this->m_port = port;
-    (void) Fw::StringUtils::string_copy(this->m_hostname, hostname, SOCKET_MAX_HOSTNAME_SIZE);
+    (void) Fw::StringUtils::string_copy(this->m_hostname, hostname, static_cast<FwSizeType>(SOCKET_MAX_HOSTNAME_SIZE));
     this->m_lock.unlock();
     return SOCK_SUCCESS;
 }

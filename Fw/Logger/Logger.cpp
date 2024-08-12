@@ -11,6 +11,7 @@
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <cstdarg>
 
 namespace Fw {
 

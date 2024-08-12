@@ -27,7 +27,7 @@ struct PosixConsoleHandle : public ConsoleHandle {
 class PosixConsole : public ConsoleInterface {
   public:
     //! Stream selection enumeration
-    enum Steam {
+    enum Stream {
         STANDARD_OUT = 0, //!< Use standard output stream
         STANDARD_ERROR = 1 //!< Use standard error stream
     };
@@ -71,8 +71,8 @@ class PosixConsole : public ConsoleInterface {
     //! \brief select the output stream
     //!
     //! There are two streams defined: standard out, and standard error. This allows users of the posix log
-    //! implementation
-    static void setOutputStream(Steam);
+    //! implementation to chose which stream to use.
+    void setOutputStream(Stream stream);
 
   private:
     //! File handle for PosixFile

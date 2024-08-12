@@ -69,7 +69,7 @@ SocketIpStatus UdpSocket::configureRecv(const char* hostname, const U16 port) {
     FW_ASSERT(this->isValidPort(port));
     this->m_lock.lock();
     this->m_recv_port = port;
-    (void) Fw::StringUtils::string_copy(this->m_recv_hostname, hostname, SOCKET_MAX_HOSTNAME_SIZE);
+    (void) Fw::StringUtils::string_copy(this->m_recv_hostname, hostname, static_cast<FwSizeType>(SOCKET_MAX_HOSTNAME_SIZE));
     this->m_lock.unlock();
     return SOCK_SUCCESS;
 }
