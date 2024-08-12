@@ -168,16 +168,10 @@ Fw::SerializeStatus Buffer::deserialize(Fw::SerializeBufferBase& buffer) {
     return stat;
 }
 
-#if FW_SERIALIZABLE_TO_STRING  || BUILD_UT
+#if FW_SERIALIZABLE_TO_STRING
 void Buffer::toString(Fw::StringBase& text) const {
-    static const char * formatString = "(data = %p, size = %u,context = %u)";
-    char outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE];
-
-    (void)snprintf(outputString, FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE, formatString, this->m_bufferData, this->m_size,
-                   this->m_context);
-    // Force NULL termination
-    outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE-1] = 0;
-    text = outputString;
+    static const char * formatString = "(data = %p, size = %u, context = %u)";
+    text.format(formatString, this->m_bufferData, this->m_size, this->m_context);
 }
 #endif
 

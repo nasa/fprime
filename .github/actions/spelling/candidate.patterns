@@ -120,8 +120,6 @@ themes\.googleusercontent\.com/static/fonts/[^/\s"]+/v\d+/[^.]+.
 \bgoogle\.(?:\w{2,4})/books(?:/\w+)*\?[-\w\d=&#.]*
 # Google Fonts
 \bfonts\.(?:googleapis|gstatic)\.com/[-/?=:;+&0-9a-zA-Z]*
-# Google Forms
-\bforms\.gle/\w+
 # Google Scholar
 \bscholar\.google\.com/citations\?user=[A-Za-z0-9_]+
 # Google Colab Research Drive

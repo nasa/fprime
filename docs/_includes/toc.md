@@ -1,6 +1,6 @@
-<h4><a href="/fprime/INSTALL.html">Getting Started</a></h4>
+<h4><a href="/fprime/GettingStarted/README.html">Getting Started</a></h4>
   <ul>
-    <!-- empty list for consistent spacing between items -->
+    <li><a href="/fprime/INSTALL.html">Installing F´</a></li>
   </ul>
 <h4><a href="/fprime/Tutorials/README.html">Tutorials</a></h4>
   <ul>
@@ -12,15 +12,6 @@
   </ul>
 <h4><a href="/fprime/UsersGuide/guide.html">User Guide</a></h4>
   <ul>
-    <details>
-      <summary>Getting Started with F´</summary>
-      <ul>
-        <li><a href="/fprime/">What is F´: a brief introduction</a></li>
-        <li><a href="/fprime/INSTALL.html">Installing F´</a></li>
-        <li><a href="/fprime/UsersGuide/user/autocomplete.html">Installing F´ Console Autocomplete</a></li>
-        <li><a href="/fprime/Tutorials/README.html">Tutorials: A Hands On Guide to F´</a></li>
-      </ul>
-    </details>
     <details>
       <summary>F´ Users Manual</summary>
       <ul>
@@ -55,6 +46,7 @@
         <li><a href="/fprime/UsersGuide/gds/gds-cli.html">The Discerning User’s Guide to the F´ GDS CLI</a></li>
         <li><a href="/fprime/UsersGuide/gds/gds-custom-dashboards.html">The GDS Dashboard</a></li>
         <li><a href="/fprime/UsersGuide/gds/seqgen.html">Sequencing in F´</a></li>
+        <li><a href="/fprime/UsersGuide/user/autocomplete.html">Installing F´ Console Autocomplete</a></li>
       </ul>
     </details>
     <details>
@@ -84,24 +76,25 @@
       </ul>
     </details>
     <details>
-      <summary>API Documentation</summary>
+      <summary>Design and Philosophy</summary>
       <ul>
-        <li><a href="/fprime/UsersGuide/dev/gds-cli-dev.html">GDS CLI Design</a></li>
-        <li><a href="/fprime/UsersGuide/api/c++/html/index.html">C++ Documentation</a></li>
-        <li><a href="/fprime/UsersGuide/cmake/cmake-api.html">CMake User API</a></li>
+        <li><a href="/fprime/Design/fprime-architecture.html">F´ Software Architecture</a></li>
+        <li><a href="/fprime/Design/numerical-types.html">Numerical Types Design</a></li>
+        <li><a href="/fprime/Design/communication-adapter-interface.html">Communication Adapter Interface</a></li>
+        <li><a href="/fprime/Design/package-implementations.html">Package Implementations</a></li>
+        <li><a href="/fprime/Design/fpp-json-dict.html">FPP JSON Dictionary Specification</a></li>
       </ul>
     </details>
   </ul>
-<h4><a href="/fprime/Design/general.html">Design and Philosophy</a></h4>
-  <ul>
-    <li><a href="/fprime/Design/fprime-architecture.html">F´ Software Architecture</a></li>
-    <li><a href="/fprime/Design/numerical-types.html">Numerical Types Design</a></li>
-    <li><a href="/fprime/Design/communication-adapter-interface.html">Communication Adapter Interface</a></li>
-    <li><a href="/fprime/Design/package-implementations.html">Package Implementations</a></li>
-    <li><a href="/fprime/Design/fpp-json-dict.html">FPP JSON Dictionary Specification</a></li>
-  </ul>
-<h4><a href="/fprime/Design/general.html">How-To Guides</a></h4>
+<h4><a href="/fprime/HowTo/general.html">How-To Guides</a></h4>
   <ul>
     <li><a href="/fprime/HowTo/develop-gds-plugins.html">F´ GDS Plugin Development</a></li>
     <li><a href="/fprime/HowTo/develop-fprime-libraries.html">F´ Library Development</a></li>
+    <li><a href="/fprime/HowTo/develop-subtopologies.html">F´ Subtopology Development</a></li>
+  </ul>
+<h4><a href="/fprime/Reference/README.html">Reference</a></h4>
+  <ul>
+    <li><a href="/fprime/UsersGuide/api/c++/html/index.html">C++ Documentation</a></li>
+    <li><a href="/fprime/UsersGuide/user/fpp-user-guide.html">FPP Documentation</a></li>
+    <li><a href="/fprime/UsersGuide/cmake/cmake-api.html">CMake User API</a></li>
   </ul>
