@@ -39,6 +39,16 @@ set(MOD_DEPS)
 register_fprime_module(Os_Console_Posix)
 register_fprime_implementation(Os/Console Os_Console_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultConsole.cpp")
 
+#### Os/Task/Posix Unit Tests ####
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixConsoleTests.cpp"
+)
+set(UT_MOD_DEPS
+        Os
+)
+choose_fprime_implementation(Os/Console Os_Console_Posix)
+register_fprime_ut(PosixConsoleTest)
+
 #### Os/File/Posix Unit Tests ####
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/CommonTests.cpp"

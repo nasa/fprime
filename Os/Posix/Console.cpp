@@ -3,6 +3,7 @@
 // \brief posix implementation for Os::Console
 // ======================================================================
 #include <Os/Posix/Console.hpp>
+#include <Fw/Types/Assert.hpp>
 #include <limits>
 #include <cstdio>
 
@@ -21,7 +22,17 @@ ConsoleHandle* PosixConsole::getHandle() {
 }
 
 void PosixConsole ::setOutputStream(Stream stream) {
-    this->m_handle.m_file_descriptor = (stream == STANDARD_ERROR) ? stderr : stdout;
+    switch (stream) {
+        case STANDARD_OUT:
+            this->m_handle.m_file_descriptor = stdout;
+            break;
+        case STANDARD_ERROR:
+            this->m_handle.m_file_descriptor = stderr;
+            break;
+        default:
+            FW_ASSERT(0);
+            break;
+    }
 }
 
 
