@@ -23,7 +23,7 @@
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
-// Instantiate a system logger that will handle Fw::Logger::logMsg calls
+// Instantiate a system logger that will handle Fw::Logger::log calls
 Os::Console logger;
 
 // The reference topology uses a malloc-based allocator for components that need to allocate memory during the

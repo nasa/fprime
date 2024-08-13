@@ -9,7 +9,7 @@
 #include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 
-Os::Log logger;
+Os::Console logger;
 
 void test_with_loop(U32 iterations, bool duplex) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;

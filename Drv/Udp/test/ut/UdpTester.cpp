@@ -16,7 +16,7 @@
 #include "Os/Console.hpp"
 #include <sys/socket.h>
 
-Os::Log logger;
+Os::Console logger;
 
 namespace Drv {
 

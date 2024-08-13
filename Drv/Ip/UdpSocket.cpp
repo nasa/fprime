@@ -175,10 +175,10 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     this->m_lock.unlock();
     // Log message for UDP
     if (port == 0) {
-        Fw::Logger::logMsg("Setup to receive udp at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_recv_hostname),
+        Fw::Logger::log("Setup to receive udp at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_recv_hostname),
                            recv_port);
     } else {
-        Fw::Logger::logMsg("Setup to receive udp at %s:%hu and send to %s:%hu\n",
+        Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n",
                            reinterpret_cast<POINTER_CAST>(m_recv_hostname),
                            recv_port,
                            reinterpret_cast<POINTER_CAST>(m_hostname),

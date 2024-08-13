@@ -9,7 +9,7 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 
-Os::Log logger;
+Os::Console logger;
 
 
 void test_with_loop(U32 iterations) {

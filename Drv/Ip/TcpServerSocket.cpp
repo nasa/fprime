@@ -83,7 +83,7 @@ SocketIpStatus TcpServerSocket::startup() {
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
     U16 port = ntohs(address.sin_port);
-    Fw::Logger::logMsg("Listening for single client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), port);
+    Fw::Logger::log("Listening for single client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), port);
     // TCP requires listening on the socket. Since we only expect a single client, set the TCP backlog (second argument) to 1 to prevent queuing of multiple clients. 
     if (::listen(serverFd, 1) < 0) {
         ::close(serverFd);
@@ -133,7 +133,7 @@ SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
-    Fw::Logger::logMsg("Accepted client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
+    Fw::Logger::log("Accepted client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
     fd = clientFd;
     return SOCK_SUCCESS;
 }

@@ -84,7 +84,7 @@ SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
         return SOCK_FAILED_TO_CONNECT;
     }
     fd = socketFd;
-    Fw::Logger::logMsg("Connected to %s:%hu as a tcp client\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
+    Fw::Logger::log("Connected to %s:%hu as a tcp client\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
     return SOCK_SUCCESS;
 }
 
