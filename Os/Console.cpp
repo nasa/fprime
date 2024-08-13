@@ -25,6 +25,7 @@ namespace Os {
     }
 
     Console& Console::operator=(const Console& other) {
+        FW_ASSERT(&this->m_delegate == reinterpret_cast<Console*>(&this->m_handle_storage[0]));
         if (this != &other) {
             this->m_delegate = *ConsoleInterface::getDelegate(m_handle_storage, &other.m_delegate);
         }

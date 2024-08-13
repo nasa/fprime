@@ -2,17 +2,17 @@
 // \title Os/Stub/Console.cpp
 // \brief stub implementation for Os::Console
 // ======================================================================
-#include <Os/Posix/Console.hpp>
+#include <Os/Stub/Console.hpp>
 
 namespace Os {
-namespace Posix {
+namespace Stub {
 namespace Console {
 
 
-void PosixConsole::write(const CHAR *message, const FwSizeType size) {
+void StubConsole::write(const CHAR *message, const FwSizeType size) {
 }
 
-ConsoleHandle* PosixConsole::getHandle() {
+ConsoleHandle* StubConsole::getHandle() {
     return &this->m_handle;
 }
 
