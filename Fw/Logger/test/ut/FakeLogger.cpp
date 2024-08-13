@@ -12,9 +12,7 @@
 namespace MockLogging {
 Fw::Logger* FakeLogger::s_current = nullptr;
 
-FakeLogger::FakeLogger() {
-    memset(&m_last, 0, sizeof(m_last));
-}
+FakeLogger::FakeLogger(): m_last("") {}
 
 void FakeLogger::write(const char* message, FwSizeType size) {
     m_last = message;
