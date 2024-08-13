@@ -16,7 +16,7 @@ U32 Fw::StringUtils::string_length(const CHAR* source, U32 max_len) {
     FwSizeType returned = Fw::StringUtils::string_length(source, static_cast<FwSizeType>(max_len));
     // Range checking for type remapping
     FW_ASSERT(returned <= static_cast<FwSizeType>(std::numeric_limits<U32>::max()));
-    return returned;
+    return static_cast<U32>(returned);
 }
 
 char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSizeType num) {
@@ -28,7 +28,7 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSize
     FW_ASSERT(destination != nullptr);
 
     // Copying an overlapping range is undefined
-    U32 source_len = string_length(source, num) + 1;
+    FwSizeType source_len = string_length(source, num) + 1;
     FW_ASSERT(source + source_len <= destination || destination + num <= source);
 
     char* returned = strncpy(destination, source, num);

@@ -25,4 +25,4 @@ set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/LoggerMain.cpp"
 )
 # STest Includes for this UT
-register_fprime_ut("Logger_Rules_Testing")
+register_fprime_ut()
