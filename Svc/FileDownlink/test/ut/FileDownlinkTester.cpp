@@ -334,8 +334,8 @@ namespace Svc {
     FileBuffer fileBufferOut(data, sizeof(data));
     fileBufferOut.write(sourceFileName);
 
-    sourceFileNameString srcFileArg(sourceFileName);
-    destFileNameString  destFileArg(destFileName);
+    Fw::String srcFileArg(sourceFileName);
+    Fw::String destFileArg(destFileName);
     Svc::SendFileResponse resp = this->invoke_to_SendFile(0, srcFileArg, destFileArg, 0, 0);
 
     ASSERT_EQ(resp.getstatus(), SendFileStatus::STATUS_OK);

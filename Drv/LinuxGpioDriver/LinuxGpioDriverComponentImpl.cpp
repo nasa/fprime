@@ -396,13 +396,14 @@ namespace Drv {
 
   }
 
-  Os::Task::TaskStatus LinuxGpioDriverComponentImpl ::
-  startIntTask(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity) {
+  Os::Task::Status LinuxGpioDriverComponentImpl ::
+  startIntTask(Os::Task::ParamType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity) {
       Os::TaskString name;
       name.format("GPINT_%s",this->getObjName()); // The task name can only be 16 chars including null
-      Os::Task::TaskStatus stat = this->m_intTask.start(name, LinuxGpioDriverComponentImpl::intTaskEntry, this, priority, stackSize, cpuAffinity);
+      Os::Task::Arguments arguments(name, LinuxGpioDriverComponentImpl::intTaskEntry, this, priority, stackSize, cpuAffinity);
+      Os::Task::Status stat = this->m_intTask.start(arguments);
 
-      if (stat != Os::Task::TASK_OK) {
+      if (stat != Os::Task::OP_OK) {
           DEBUG_PRINT("Task start error: %d\n",stat);
       }
 

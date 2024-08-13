@@ -15,6 +15,7 @@ actools
 acxz
 addoffset
 adminlist
+aei
 aeiouy
 afterstatinfo
 agg
@@ -37,7 +38,7 @@ aps
 apxs
 AQuat
 AQueued
-arcsecond
+Arcsecond
 arduino
 argcomplete
 argcount
@@ -61,7 +62,7 @@ autocoders
 autocoding
 autodocs
 Autodocumentation
-autogen
+AUTOGEN
 autoload
 automodule
 AYYYY
@@ -101,6 +102,7 @@ BUGLIST
 bugprone
 builddir
 buildroot
+buildstep
 bysource
 BYTEDRV
 calcu
@@ -113,7 +115,7 @@ caselessmatch
 Catchen
 CBF
 CBLOCK
-ccsds
+CCSDS
 ccsparc
 cdefs
 CDH
@@ -295,6 +297,7 @@ ect
 edu
 EGB
 EHAs
+eip
 elist
 ELOG
 Elts
@@ -424,7 +427,7 @@ Gorang
 GPGGA
 GPINT
 gpio
-graphviz
+Graphviz
 grayscales
 grnd
 GROUNDINTERFACERULES
@@ -620,6 +623,7 @@ mman
 MMAPALLOCATOR
 MML
 modbus
+mosa
 MOSI
 MOVEFILE
 mozilla
@@ -684,6 +688,7 @@ nproc
 npx
 NSHUFF
 NSPACES
+ntohs
 nukenewlines
 numargs
 nxt
@@ -904,7 +909,8 @@ saveop
 sbb
 SBF
 SBINDIR
-scatterometer
+sbt
+Scatterometer
 schem
 schematron
 sclk
@@ -934,6 +940,7 @@ setschedpolicy
 setstacksize
 settime
 settype
+setversion
 sev
 sface
 sfregoso
@@ -978,6 +985,7 @@ spidev
 srandom
 srange
 SRCS
+sreddy
 sss
 Ssymbols
 STAMEM
@@ -1006,6 +1014,10 @@ subhistory
 subpage
 subseconds
 subtargets
+subtopology
+subtopologies
+Subtopology
+Subtopologies
 suppr
 suseconds
 SVCLOGFILE
@@ -1014,6 +1026,7 @@ svipc
 swcaegitadmin
 synchronicity
 synopsys
+sysconf
 SYSCONFDIR
 SYSFS
 sysinfo
@@ -1110,8 +1123,10 @@ toklist
 toolchains
 toolset
 topologyapp
+TOPOLOGYCONFIG
 Torvalds
 totalram
+tparam
 treeview
 trimwhitespace
 trinomials
@@ -1189,7 +1204,7 @@ wsl
 wxgui
 wxy
 Xabcdefx
-xapian
+Xapian
 xdf
 xdffe
 Xelect

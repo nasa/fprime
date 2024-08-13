@@ -70,7 +70,7 @@ function make_version
     echo "[INFO] Building fprime"
     rm -rf "${DOCS_CACHE}"
 
-    fprime-util generate --build-cache ${DOCS_CACHE} -DCMAKE_BUILD_TYPE=Release -DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON 1>/dev/null
+    fprime-util generate --build-cache ${DOCS_CACHE} -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 1>/dev/null
     fprime-util build --build-cache ${DOCS_CACHE} --all -j32 1> /dev/null
 
     if (( $? != 0 ))

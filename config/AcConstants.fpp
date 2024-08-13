@@ -49,7 +49,13 @@ constant DpManagerNumPorts = 5
 constant DpWriterNumProcPorts = 5
 
 @ The size of a file name string
-constant FileNameStringSize = 256
+constant FileNameStringSize = 200
+
+@ The size of a file name in an AssertFatalAdapter event
+@ Note: File names in assertion failures are also truncated by
+@ the constants FW_ASSERT_TEXT_SIZE and FW_LOG_STRING_MAX_SIZE, set
+@ in FpConfig.h.
+constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
 # ----------------------------------------------------------------------
 # Hub connections. Connections on all deployments should mirror these settings.
