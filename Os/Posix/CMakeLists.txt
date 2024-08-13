@@ -28,6 +28,7 @@ set(MOD_DEPS Os_Posix_Shared)
 register_fprime_module(Os_File_Posix)
 register_fprime_implementation(Os/File Os_File_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp")
 
+#### Os/Console/Posix Section ####
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
 )
