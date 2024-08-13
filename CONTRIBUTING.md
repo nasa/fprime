@@ -74,7 +74,7 @@ Contributors to the [fprime](https://github.com/nasa/fprime) repository should u
 F´ follows a standard git flow development model. Developers should start with a
 [fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) of one of the F´ repositories and then develop
 according to [git flow](https://docs.github.com/en/get-started/quickstart/github-flow). Remember to add an
-upstream remote to your fork such that you may fetch the latest changes.
+[upstream remote](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork) to your fork such that you may fetch the latest changes.
 
 For each contribution, developers should first fetch the latest changes from upstream. Then create a new branch off
 `devel` and submit back to F´ using a pull request as described above.
