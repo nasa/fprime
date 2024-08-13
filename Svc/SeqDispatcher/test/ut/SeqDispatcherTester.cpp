@@ -15,6 +15,7 @@ namespace Svc{
 Tester ::Tester()
     : SeqDispatcherGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
       component("SeqDispatcher") {
+  this->connectPorts();
   this->initComponents();
 }
 
@@ -93,10 +94,6 @@ void Tester::textLogIn(const FwEventIdType id,         /*!< The event ID*/
                        const Fw::TextLogString& text   /*!< The event string*/
 ) {
   std::cout << text.toChar() << std::endl;
-}
-
-void Tester::initComponents() {
-  this->component.init(TEST_INSTANCE_QUEUE_DEPTH, TEST_INSTANCE_ID);
 }
 
 }  // end namespace components

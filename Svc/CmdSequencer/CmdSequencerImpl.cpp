@@ -162,7 +162,7 @@ namespace Svc {
     //! Handler for input port seqRunIn
     void CmdSequencerComponentImpl::seqRunIn_handler(
            NATIVE_INT_TYPE portNum,
-           Fw::String &filename
+           const Svc::CmdSeqInPortStrings::StringSize240& filename
        ) {
 
         if (!this->requireRunMode(STOPPED)) {
