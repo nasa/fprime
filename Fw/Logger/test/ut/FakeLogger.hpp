@@ -15,13 +15,6 @@
 #define FPRIME_FAKELOGGER_HPP
 namespace MockLogging {
 /**
- * LogMessage data type to map inputs too.
- */
-struct LogMessage {
-    std::string msssage;
-    FwSizeType size;
-};
-/**
  * Fake logger used for two purposes:
  *   1. it acts as logging truth for the test
  *   2. it intercepts logging calls bound for the system

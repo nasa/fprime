@@ -106,7 +106,7 @@ namespace Os {
         //! \param size: size of the message to write to the console
         static void writeGlobal(const CHAR *message, const FwSizeType size);
 
-        //! \breif get a reference to singleton
+        //! \brief get a reference to singleton
         //! \return
         static Console& getSingleton();
 

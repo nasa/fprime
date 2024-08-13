@@ -28,10 +28,10 @@ TEST(LoggerTests, RandomLoggerTests) {
     LoggerRules::Register reg(Fw::String("Register"));
     LoggerRules::LogGood log(Fw::String("Log Successfully"));
     LoggerRules::LogBad nolog(Fw::String("Log unsuccessfully"));
-    LoggerRules::LogBad strlog(Fw::String("Log Successfully (String)"));
+    LoggerRules::LogBad string_log(Fw::String("Log Successfully (String)"));
 
     // Setup a list of rules to choose from
-    STest::Rule<MockLogging::FakeLogger>* rules[] = {&reg, &log, &nolog, &strlog};
+    STest::Rule<MockLogging::FakeLogger>* rules[] = {&reg, &log, &nolog, &string_log};
     // Construct the random scenario and run it with the defined bounds
     STest::RandomScenario<MockLogging::FakeLogger> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
