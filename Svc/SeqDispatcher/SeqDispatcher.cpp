@@ -40,7 +40,7 @@ NATIVE_INT_TYPE SeqDispatcher::getNextAvailableSequencerIdx() {
 }
 
 bool SeqDispatcher::runSequence(NATIVE_INT_TYPE sequencerIdx,
-                                const Svc::CmdSeqInPortStrings::StringSize240& fileName,
+                                const Fw::StringBase& fileName,
                                 Fw::Wait block) {
   FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
             sequencerIdx);
@@ -81,7 +81,7 @@ bool SeqDispatcher::runSequence(NATIVE_INT_TYPE sequencerIdx,
 
 void SeqDispatcher::seqStartIn_handler(
     NATIVE_INT_TYPE portNum,                                //!< The port number
-    const Svc::CmdSeqInPortStrings::StringSize240& fileName //!< The sequence file name
+    const Fw::StringBase& fileName //!< The sequence file name
 ) {
   FW_ASSERT(portNum >= 0 && portNum < SeqDispatcherSequencerPorts, portNum);
   if (this->m_entryTable[portNum].state ==
@@ -154,9 +154,8 @@ void SeqDispatcher::seqDoneIn_handler(
 }
 
 //! Handler for input port seqRunIn
-void SeqDispatcher::seqRunIn_handler(
-    NATIVE_INT_TYPE portNum,  //!< The port number
-    const Svc::CmdSeqInPortStrings::StringSize240& fileName) {
+void SeqDispatcher::seqRunIn_handler(NATIVE_INT_TYPE portNum,
+                                     const Fw::StringBase& fileName) {
   auto idx = this->getNextAvailableSequencerIdx();
   // no available sequencers
   if (idx == -1) {
@@ -185,7 +184,7 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     return;
   }
-  if (!this->runSequence(idx, fileName.toChar(), block)) {
+  if (!this->runSequence(idx, fileName, block)) {
     // port isn't connected or generally unable to run for some reason
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     return;

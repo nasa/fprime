@@ -84,7 +84,7 @@ void Tester::testLogStatus() {
 
 void Tester::seqRunOut_handler(
       FwIndexType portNum, //!< The port number
-      const Svc::CmdSeqInPortStrings::StringSize240& filename //!< The sequence file
+      const Fw::StringBase& filename //!< The sequence file
 ) {
   this->pushFromPortEntry_seqRunOut(filename);
 }

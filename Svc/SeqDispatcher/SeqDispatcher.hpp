@@ -11,6 +11,7 @@
 #include "Svc/SeqDispatcher/SeqDispatcher_CmdSequencerStateEnumAc.hpp"
 #include "FppConstantsAc.hpp"
 #include "Fw/Types/WaitEnumAc.hpp"
+#include "Fw/Types/StringBase.hpp"
 
 namespace Svc {
 
@@ -50,13 +51,13 @@ class SeqDispatcher : public SeqDispatcherComponentBase {
     );
 
     //! Handler for input port seqStartIn
-    void seqStartIn_handler(NATIVE_INT_TYPE portNum,                                      //!< The port number
-                            const Svc::CmdSeqInPortStrings::StringSize240& fileName //!< The sequence file name
+    void seqStartIn_handler(NATIVE_INT_TYPE portNum, //!< The port number
+                            const Fw::StringBase& fileName //!< The sequence file
     );
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
-                          const Svc::CmdSeqInPortStrings::StringSize240& fileName
+    void seqRunIn_handler(NATIVE_INT_TYPE portNum, //!< The port number
+                          const Fw::StringBase& fileName //!< The sequence file
     );
 
   PRIVATE:
@@ -81,7 +82,7 @@ class SeqDispatcher : public SeqDispatcherComponentBase {
     NATIVE_INT_TYPE getNextAvailableSequencerIdx();
 
     bool runSequence(NATIVE_INT_TYPE sequencerIdx, 
-                     const Svc::CmdSeqInPortStrings::StringSize240& fileName, 
+                     const Fw::StringBase& fileName, 
                      Fw::Wait block);
 
     // ----------------------------------------------------------------------

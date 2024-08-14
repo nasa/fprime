@@ -48,7 +48,7 @@ class Tester : public SeqDispatcherGTestBase {
 
   void seqRunOut_handler(
         FwIndexType portNum, //!< The port number
-        const Svc::CmdSeqInPortStrings::StringSize240& filename //!< The sequence file
+        const Fw::StringBase& filename //!< The sequence file
   );
 
   void textLogIn(const FwEventIdType id,         /*!< The event ID*/

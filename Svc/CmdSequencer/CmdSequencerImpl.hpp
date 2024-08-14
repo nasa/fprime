@@ -589,7 +589,7 @@ namespace Svc {
       //! Handler for input port seqRunIn
       void seqRunIn_handler(
           NATIVE_INT_TYPE portNum, //!< The port number
-          const Svc::CmdSeqInPortStrings::StringSize240& fileName //!< The sequence file
+          const Fw::StringBase& filename //!< The sequence file
       );
 
       //! Handler for ping port
