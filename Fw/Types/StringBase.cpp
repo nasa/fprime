@@ -64,7 +64,11 @@ void StringBase::vformat(const CHAR* formatString, va_list args) {
     CHAR* us = const_cast<CHAR*>(this->toChar());
     SizeType cap = this->getCapacity();
     FW_ASSERT(us != nullptr);
+#if FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING
     (void) vsnprintf(us, cap, formatString, args);
+#else
+    *this = formatString;
+#endif
     // Force null terminate
     us[cap - 1] = 0;
 }

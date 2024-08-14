@@ -25,7 +25,7 @@ TestConsole::TestConsole(const Os::Stub::Console::Test::TestConsole& other) {
     this->m_handle = other.m_handle;
 }
 
-void TestConsole::write(const CHAR* message, const FwSizeType size) {
+void TestConsole::writeMessage(const CHAR* message, const FwSizeType size) {
     StaticData::data.message = message;
     StaticData::data.size = size;
     StaticData::data.lastCalled = StaticData::LastFn::WRITE_FN;

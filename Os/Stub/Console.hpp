@@ -47,7 +47,7 @@ class StubConsole : public ConsoleInterface {
     //!
     //! \param message: raw message to write
     //! \param size: size of the message to write to the console
-    void write(const CHAR *message, const FwSizeType size) override;
+    void writeMessage(const CHAR *message, const FwSizeType size) override;
 
     //! \brief returns the raw console handle
     //!

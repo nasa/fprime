@@ -9,7 +9,7 @@ namespace Stub {
 namespace Console {
 
 
-void StubConsole::write(const CHAR *message, const FwSizeType size) {
+void StubConsole::writeMessage(const CHAR *message, const FwSizeType size) {
 }
 
 ConsoleHandle* StubConsole::getHandle() {

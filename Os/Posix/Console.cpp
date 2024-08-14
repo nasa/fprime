@@ -13,8 +13,8 @@ namespace Posix {
 namespace Console {
 
 
-void PosixConsole::write(const CHAR *message, const FwSizeType size) {
-    ::fwrite(message, sizeof(CHAR), size, this->m_handle.m_file_descriptor);
+void PosixConsole::writeMessage(const CHAR *message, const FwSizeType size) {
+    (void) ::fwrite(message, sizeof(CHAR), size, this->m_handle.m_file_descriptor);
 }
 
 ConsoleHandle* PosixConsole::getHandle() {

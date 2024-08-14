@@ -30,7 +30,7 @@ namespace Os {
         //!
         //! \param message: raw message to write
         //! \param size: size of the message to write to the console
-        virtual void write(const CHAR *message, const FwSizeType size) = 0;
+        virtual void writeMessage(const CHAR *message, const FwSizeType size) = 0;
 
         //! \brief returns the raw console handle
         //!
@@ -86,7 +86,14 @@ namespace Os {
         //!
         //! \param message: raw message to write
         //! \param size: size of the message to write to the console
-        void write(const CHAR *message, const FwSizeType size) override;
+        void writeMessage(const CHAR *message, const FwSizeType size) override;
+
+        //! \brief write message to console
+        //!
+        //! Write a message to the console as stored as a StringBase
+        //!
+        //! \param message: raw message to write (StringBase)
+        void writeMessage(const Fw::StringBase& message) override;
 
         //! \brief returns the raw console handle
         //!
@@ -97,6 +104,13 @@ namespace Os {
         //!
         ConsoleHandle *getHandle() override;
 
+        //! \brief write message to console
+        //!
+        //! Write a message to the console as stored as a StringBase
+        //!
+        //! \param message: raw message to write (StringBase)
+        static void write(const Fw::StringBase& message);
+
         //! \brief write message to the global console
         //!
         //! Write a message to the console with a bounded size. This will delegate to the global singleton
@@ -104,14 +118,17 @@ namespace Os {
         //!
         //! \param message: raw message to write
         //! \param size: size of the message to write to the console
-        static void writeGlobal(const CHAR *message, const FwSizeType size);
+        static void write(const CHAR *message, const FwSizeType size);
 
-        //! \brief get a reference to singleton
-        //! \return
+        //! \breif initialize singleton
+        static void init();
+
+        //! \breif get a reference to singleton
+        //! \return reference to singleton
         static Console& getSingleton();
 
       private:
-        static Console s_singleton;
+        static Console* s_singleton;
         // This section is used to store the implementation-defined console handle. To Os::Console and fprime, this type
         // is opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle
         // in the byte-array here and set `handle` to that address for storage.

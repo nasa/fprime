@@ -8,6 +8,7 @@
  */
 
 #include <FpConfig.hpp>
+#include <Fw/Types/String.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <string>
 
@@ -27,9 +28,8 @@ class FakeLogger : public Fw::Logger {
     /**
      * Fake implementation of the logger.
      * @param message: formatted message to log
-     * @param size: size of message
      */
-    void write(const char* message, FwSizeType size);
+    void writeMessage(const Fw::StringBase& message);
 
     /**
      * Check last message.

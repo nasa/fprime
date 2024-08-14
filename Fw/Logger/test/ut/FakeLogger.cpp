@@ -14,9 +14,8 @@ Fw::Logger* FakeLogger::s_current = nullptr;
 
 FakeLogger::FakeLogger(): m_last("") {}
 
-void FakeLogger::write(const char* message, FwSizeType size) {
-    m_last = message;
-    ASSERT_EQ(m_last.size(), size);
+void FakeLogger::writeMessage(const Fw::StringBase& message) {
+    m_last = message.toChar();
 }
 
 void FakeLogger::check(const char* message) {

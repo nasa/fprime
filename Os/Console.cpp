@@ -6,12 +6,9 @@
 #include <Fw/Types/Assert.hpp>
 
 namespace Os {
-    Console Console::s_singleton;
-    Console::Console() : ConsoleInterface(), Fw::Logger(), m_delegate(*ConsoleInterface::getDelegate(m_handle_storage)) {
-        // Register myself as a logger at construction time. If used in unison with LogDefault.cpp, this will
-        // automatically create this as a default logger.
-        Fw::Logger::registerLogger(this);
-    }
+    Console* Console::s_singleton;
+
+    Console::Console() : ConsoleInterface(), Fw::Logger(), m_delegate(*ConsoleInterface::getDelegate(m_handle_storage)) {}
 
     Console::~Console() {
         FW_ASSERT(&this->m_delegate == reinterpret_cast<ConsoleInterface*>(&this->m_handle_storage[0]));
@@ -32,11 +29,14 @@ namespace Os {
         return *this;
     }
 
-    // Instance implementation
-    void Console::write(const CHAR *message, const FwSizeType size) {
+    void Console::writeMessage(const CHAR *message, const FwSizeType size) {
         FW_ASSERT(&this->m_delegate == reinterpret_cast<ConsoleInterface*>(&this->m_handle_storage));
         FW_ASSERT(message != nullptr || size == 0);
-        this->m_delegate.write(message, size);
+        this->m_delegate.writeMessage(message, size);
+    }
+
+    void Console::writeMessage(const Fw::StringBase& message) {
+        this->writeMessage(message.toChar(), message.length());
     }
 
     ConsoleHandle* Console::getHandle() {
@@ -44,13 +44,26 @@ namespace Os {
         return this->m_delegate.getHandle();
     }
 
-    void Console::writeGlobal(const CHAR* message, const FwSizeType size) {
-        FW_ASSERT(message != nullptr || size == 0);
-        Console::getSingleton().write(message, size);
+    void Console::write(const CHAR *message, const FwSizeType size) {
+        Console::getSingleton().writeMessage(message, size);
+    }
+
+    void Console::write(const Fw::StringBase& message) {
+        Console::getSingleton().writeMessage(message.toChar(), message.length());
+    }
+
+    void Console::init() {
+        // Force trigger on the fly singleton setup
+        (void) Console::getSingleton();
     }
 
     Console& Console::getSingleton() {
-        return s_singleton;
+        // On the fly construction of singleton
+        if (s_singleton == nullptr) {
+            s_singleton = new Console();
+            Fw::Logger::registerLogger(s_singleton);
+        }
+        return *s_singleton;
     }
 }
 
