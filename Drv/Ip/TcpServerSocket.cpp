@@ -133,7 +133,7 @@ SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
-    Fw::Logger::log("Accepted client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
+    Fw::Logger::log("Accepted client at %s:%hu\n", m_hostname, m_port);
     fd = clientFd;
     return SOCK_SUCCESS;
 }
