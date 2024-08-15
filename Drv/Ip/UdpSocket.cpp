@@ -62,11 +62,13 @@ UdpSocket::~UdpSocket() {
 SocketIpStatus UdpSocket::configureSend(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     //Timeout is for the send, so configure send will work with the base class
     FW_ASSERT(port != 0, port); // Send cannot be on port 0
+    FW_ASSERT(hostname != nullptr);
     return this->IpSocket::configure(hostname, port, timeout_seconds, timeout_microseconds);
 }
 
 SocketIpStatus UdpSocket::configureRecv(const char* hostname, const U16 port) {
     FW_ASSERT(this->isValidPort(port));
+    FW_ASSERT(hostname != nullptr);
     this->m_lock.lock();
     this->m_recv_port = port;
     (void) Fw::StringUtils::string_copy(this->m_recv_hostname, hostname, static_cast<FwSizeType>(SOCKET_MAX_HOSTNAME_SIZE));
@@ -175,13 +177,13 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     this->m_lock.unlock();
     // Log message for UDP
     if (port == 0) {
-        Fw::Logger::log("Setup to receive udp at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_recv_hostname),
+        Fw::Logger::log("Setup to receive udp at %s:%hu\n", m_recv_hostname,
                            recv_port);
     } else {
         Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n",
-                           reinterpret_cast<POINTER_CAST>(m_recv_hostname),
+                           m_recv_hostname,
                            recv_port,
-                           reinterpret_cast<POINTER_CAST>(m_hostname),
+                           m_hostname,
                            port);
     }
     FW_ASSERT(status == SOCK_SUCCESS, status);

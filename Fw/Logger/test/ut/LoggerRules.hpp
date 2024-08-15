@@ -31,7 +31,7 @@ namespace LoggerRules {
  */
 struct Register : public STest::Rule<MockLogging::FakeLogger> {
     // Constructor
-    Register(const Fw::String& name);
+    explicit Register(const Fw::String& name);
 
     // Check for registration, always allowed
     bool precondition(const MockLogging::FakeLogger& truth);
@@ -47,7 +47,7 @@ struct Register : public STest::Rule<MockLogging::FakeLogger> {
  */
 struct LogGood : public STest::Rule<MockLogging::FakeLogger> {
     // Constructor
-    LogGood(const Fw::String& name);
+    explicit LogGood(const Fw::String& name);
 
     // Check for logging, only when not NULL
     bool precondition(const MockLogging::FakeLogger& truth);
@@ -63,7 +63,7 @@ struct LogGood : public STest::Rule<MockLogging::FakeLogger> {
  */
 struct LogBad : public STest::Rule<MockLogging::FakeLogger> {
     // Constructor
-    LogBad(const Fw::String& name);
+    explicit LogBad(const Fw::String& name);
 
     // Check for logging, only when not NULL
     bool precondition(const MockLogging::FakeLogger& truth);
@@ -79,7 +79,7 @@ struct LogBad : public STest::Rule<MockLogging::FakeLogger> {
  */
 struct LogGoodStringObject : public STest::Rule<MockLogging::FakeLogger> {
     // Constructor
-    LogGoodStringObject(const Fw::String& name);
+    explicit LogGoodStringObject(const Fw::String& name);
 
     // Check for logging, only when not NULL
     bool precondition(const MockLogging::FakeLogger& truth);
