@@ -120,10 +120,10 @@ namespace Os {
         //! \param size: size of the message to write to the console
         static void write(const CHAR *message, const FwSizeType size);
 
-        //! \breif initialize singleton
+        //! \brief initialize singleton
         static void init();
 
-        //! \breif get a reference to singleton
+        //! \brief get a reference to singleton
         //! \return reference to singleton
         static Console& getSingleton();
 

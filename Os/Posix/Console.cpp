@@ -7,14 +7,17 @@
 #include <limits>
 #include <cstdio>
 
-static_assert(std::numeric_limits<FwSizeType>::max() <= std::numeric_limits<size_t>::max(), "FwSizeType is too large to fit in size_t limit");
 namespace Os {
 namespace Posix {
 namespace Console {
 
 
 void PosixConsole::writeMessage(const CHAR *message, const FwSizeType size) {
-    (void) ::fwrite(message, sizeof(CHAR), size, this->m_handle.m_file_descriptor);
+    // size_t is defined as different sizes on differen platforms. Since FwSizeType is likely larger than size_t
+    // on these platforms, and the user is unlikely to console-log more than size_t-max data, we cap the total
+    // size at the limit of the interface.
+    FwSizeType capped_size = (size <= std::numeric_limits<size_t>::max()) ? size : std::numeric_limits<size_t>::max();
+    (void) ::fwrite(message, sizeof(CHAR), static_cast<size_t>(capped_size), this->m_handle.m_file_descriptor);
 }
 
 ConsoleHandle* PosixConsole::getHandle() {
