@@ -13,11 +13,13 @@ namespace Console {
 
 
 void PosixConsole::writeMessage(const CHAR *message, const FwSizeType size) {
-    // size_t is defined as different sizes on differen platforms. Since FwSizeType is likely larger than size_t
+    // size_t is defined as different sizes on different platforms. Since FwSizeType is likely larger than size_t
     // on these platforms, and the user is unlikely to console-log more than size_t-max data, we cap the total
     // size at the limit of the interface.
     FwSizeType capped_size = (size <= std::numeric_limits<size_t>::max()) ? size : std::numeric_limits<size_t>::max();
-    (void) ::fwrite(message, sizeof(CHAR), static_cast<size_t>(capped_size), this->m_handle.m_file_descriptor);
+    if (message != nullptr) {
+        (void)::fwrite(message, sizeof(CHAR), static_cast<size_t>(capped_size), this->m_handle.m_file_descriptor);
+    }
 }
 
 ConsoleHandle* PosixConsole::getHandle() {
