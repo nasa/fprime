@@ -20,7 +20,7 @@ SeqDispatcher ::~SeqDispatcher() {}
 void SeqDispatcher::init(NATIVE_INT_TYPE queueDepth,
                          NATIVE_INT_TYPE instance) {
   SeqDispatcherComponentBase::init(queueDepth, instance);
-  for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
+  for (FwIndexType i = 0; i < SeqDispatcherSequencerPorts; i++) {
     // assert if any of the cmd sequencer connections aren't
     // connected. otherwise we might think we sent out
     // a sequence to be run but it doesn't get run
@@ -30,8 +30,8 @@ void SeqDispatcher::init(NATIVE_INT_TYPE queueDepth,
   }
 }
 
-NATIVE_INT_TYPE SeqDispatcher::getNextAvailableSequencerIdx() {
-  for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
+FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
+  for (FwIndexType i = 0; i < SeqDispatcherSequencerPorts; i++) {
     if (this->m_entryTable[i].state == SeqDispatcher_CmdSequencerState::AVAILABLE) {
       return i;
     }
@@ -39,7 +39,7 @@ NATIVE_INT_TYPE SeqDispatcher::getNextAvailableSequencerIdx() {
   return -1;
 }
 
-bool SeqDispatcher::runSequence(NATIVE_INT_TYPE sequencerIdx,
+bool SeqDispatcher::runSequence(FwIndexType sequencerIdx,
                                 const Fw::StringBase& fileName,
                                 Fw::Wait block) {
   FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
@@ -156,7 +156,7 @@ void SeqDispatcher::seqDoneIn_handler(
 //! Handler for input port seqRunIn
 void SeqDispatcher::seqRunIn_handler(NATIVE_INT_TYPE portNum,
                                      const Fw::StringBase& fileName) {
-  auto idx = this->getNextAvailableSequencerIdx();
+  FwIndexType idx = this->getNextAvailableSequencerIdx();
   // no available sequencers
   if (idx == -1) {
     this->log_WARNING_LO_NO_AVAILABLE_SEQUENCERS();
@@ -177,7 +177,7 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
                                     const U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
                                     Fw::Wait block) {
-  auto idx = this->getNextAvailableSequencerIdx();
+  FwIndexType idx = this->getNextAvailableSequencerIdx();
   // no available sequencers
   if (idx == -1) {
     this->log_WARNING_LO_NO_AVAILABLE_SEQUENCERS();
@@ -203,7 +203,7 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
 void SeqDispatcher::LOG_STATUS_cmdHandler(
     const FwOpcodeType opCode,          /*!< The opcode*/
     const U32 cmdSeq) {                   /*!< The command sequence number*/
-  for(int idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
+  for(FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
     this->log_ACTIVITY_LO_LOG_SEQUENCER_STATUS(static_cast<U16>(idx), this->m_entryTable[idx].state, Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
   }
 }
