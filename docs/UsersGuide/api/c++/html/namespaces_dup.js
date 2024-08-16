@@ -3,6 +3,7 @@ var namespaces_dup =
     [ "CFDP", "namespace_c_f_d_p.html", "namespace_c_f_d_p" ],
     [ "Drv", "namespace_drv.html", "namespace_drv" ],
     [ "Fw", "namespace_fw.html", "namespace_fw" ],
+    [ "LoggerRules", "namespace_logger_rules.html", null ],
     [ "Os", "namespace_os.html", "namespace_os" ],
     [ "Project", "namespace_project.html", "namespace_project" ],
     [ "Svc", "namespace_svc.html", "namespace_svc" ],

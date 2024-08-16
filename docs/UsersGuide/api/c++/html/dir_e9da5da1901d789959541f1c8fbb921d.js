@@ -8,6 +8,12 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "Pthreads", "dir_30cfc134b577cd702e1c8791e7064e55.html", "dir_30cfc134b577cd702e1c8791e7064e55" ],
     [ "Stub", "dir_4df893a225f727201a6771996bba0a27.html", "dir_4df893a225f727201a6771996bba0a27" ],
     [ "X86", "dir_71e76e8b77715942fc3d0db018d76ead.html", "dir_71e76e8b77715942fc3d0db018d76ead" ],
+    [ "Console.cpp", "console_8cpp.html", null ],
+    [ "Console.hpp", "console_8hpp.html", [
+      [ "ConsoleHandle", "struct_os_1_1_console_handle.html", null ],
+      [ "ConsoleInterface", "class_os_1_1_console_interface.html", "class_os_1_1_console_interface" ],
+      [ "Console", "class_os_1_1_console.html", "class_os_1_1_console" ]
+    ] ],
     [ "Delegate.hpp", "delegate_8hpp.html", "_delegate_8hpp" ],
     [ "Directory.hpp", "directory_8hpp.html", [
       [ "Directory", "class_os_1_1_directory.html", "class_os_1_1_directory" ]
@@ -34,11 +40,7 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "LocklessQueue.hpp", "lockless_queue_8hpp.html", [
       [ "LocklessQueue", "class_os_1_1_lockless_queue.html", "class_os_1_1_lockless_queue" ]
     ] ],
-    [ "Log.hpp", "log_8hpp.html", [
-      [ "Log", "class_os_1_1_log.html", "class_os_1_1_log" ]
-    ] ],
     [ "LogDefault.cpp", "log_default_8cpp.html", "_log_default_8cpp" ],
-    [ "LogPrintf.cpp", "log_printf_8cpp.html", null ],
     [ "Mem.hpp", "mem_8hpp.html", [
       [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ]
     ] ],

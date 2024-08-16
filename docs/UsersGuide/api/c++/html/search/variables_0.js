@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_5f_5fdefault_5flogger_5f_5f_7360',['__default_logger__',['../log_default_8cpp.html#a2944289aca4c751c4ddf9c1849031b76',1,'LogDefault.cpp']]]
+  ['_5f_5fdefault_5fconsole_5f_5f_7389',['__default_console__',['../log_default_8cpp.html#ad3181c4f28df769d2271e4d583d3c944',1,'LogDefault.cpp']]]
 ];

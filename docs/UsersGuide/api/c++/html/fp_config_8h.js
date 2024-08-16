@@ -42,6 +42,7 @@ var _fp_config_8h =
     [ "FW_TASK_NAME_BUFFER_SIZE", "fp_config_8h.html#a9412511cf935290ed543bf9679adacb7", null ],
     [ "FW_TLM_BUFFER_MAX_SIZE", "fp_config_8h.html#a8bd9da9ec5572eb59b656afada2bc437", null ],
     [ "FW_TLM_STRING_MAX_SIZE", "fp_config_8h.html#a639e2b664eb57a3df15c19af7c0a019a", null ],
+    [ "FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING", "fp_config_8h.html#aa593fd1d53840e94d3c47155a366ed72", null ],
     [ "FW_USE_TIME_BASE", "fp_config_8h.html#abf812f967779c2af11f4729609503862", null ],
     [ "FW_USE_TIME_CONTEXT", "fp_config_8h.html#aa10cb7bfb6cb98e72cacffe5160375da", null ],
     [ "PRI_FwAssertArgType", "fp_config_8h.html#a4f15a15504c74f5d3ffa1c4a0d0afaaf", null ],

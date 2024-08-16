@@ -129,6 +129,13 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_runner.html">TaskRunner</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_os_1_1_console_handle.html">ConsoleHandle</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for storing implementation specific handle information.  <a href="struct_os_1_1_console_handle.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_console_interface.html">ConsoleInterface</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_console.html">Console</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html">Directory</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_os_1_1_file_handle.html">FileHandle</a></td></tr>
@@ -145,8 +152,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_i_p_c_queue.html">IPCQueue</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_lockless_queue.html">LocklessQueue</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_log.html">Log</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_handle.html">QueueHandle</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -278,8 +283,6 @@ Functions</h2></td></tr>
 <p><a class="el" href="interval_timer_common_8cpp.html">IntervalTimerCommon.cpp</a>:</p>
 <p>Contains the common functions for interval timer. This set of functions makes no assumption on the format of the RawTime objects and thus it operates through functions that abstract that implementation away, or it is working on the raw values, as raw values.</p>
 <p><em>Note:</em> If the RawTime object is using U32 upper to store seconds and U32 lower to store nano seconds, then <a class="el" href="x86_2_interval_timer_8cpp.html">X86/IntervalTimer.cpp</a> can be used, and the implementer need only fill in the getRawTime function for the specific OS.</p>
-<p><a class="el" href="class_os_1_1_file.html">File</a>: <a class="el" href="log_8hpp.html">Os/Log.hpp</a> Description: this file provides an implementation of the <a class="el" href="class_fw_1_1_logger.html">Fw::Logger</a> class that is backed by the <a class="el" href="namespace_os.html">Os</a> abstraction layer.</p>
-<p><a class="el" href="class_os_1_1_file.html">File</a>: <a class="el" href="log_printf_8cpp.html">Os/LogPrintf.cpp</a> Description: an implementation on the <a class="el" href="class_os_1_1_log.html">Os::Log</a> abstraction that routes log messages into standard printf calls.</p>
 <p><a class="el" href="posix_2_interval_timer_8cpp.html">Posix/IntervalTimer.cpp</a>:</p>
 <p>The <a class="el" href="namespace_os_1_1_posix.html">Posix</a> implementation of the interval timer shares the same raw setup as other X86 implementations. That is: the lower U32 of the RawTime is nano-seconds, and the upper U32 of RawTime object is seconds. Thus only the "getRawTime" function differs from the base X86 version of this file.</p>
 <p>Queue.hpp:</p>

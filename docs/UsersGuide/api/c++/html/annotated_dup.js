@@ -126,7 +126,6 @@ var annotated_dup =
       [ "LogPacket", "class_fw_1_1_log_packet.html", "class_fw_1_1_log_packet" ],
       [ "LogStringArg", "class_fw_1_1_log_string_arg.html", "class_fw_1_1_log_string_arg" ],
       [ "TextLogString", "class_fw_1_1_text_log_string.html", "class_fw_1_1_text_log_string" ],
-      [ "LogAssertHook", "class_fw_1_1_log_assert_hook.html", "class_fw_1_1_log_assert_hook" ],
       [ "Logger", "class_fw_1_1_logger.html", "class_fw_1_1_logger" ],
       [ "ObjBase", "class_fw_1_1_obj_base.html", "class_fw_1_1_obj_base" ],
       [ "InputPortBase", "class_fw_1_1_input_port_base.html", "class_fw_1_1_input_port_base" ],
@@ -164,6 +163,10 @@ var annotated_dup =
     ] ],
     [ "Os", "namespace_os.html", [
       [ "Posix", "namespace_os_1_1_posix.html", [
+        [ "Console", "namespace_os_1_1_posix_1_1_console.html", [
+          [ "PosixConsoleHandle", "struct_os_1_1_posix_1_1_console_1_1_posix_console_handle.html", "struct_os_1_1_posix_1_1_console_1_1_posix_console_handle" ],
+          [ "PosixConsole", "class_os_1_1_posix_1_1_console_1_1_posix_console.html", "class_os_1_1_posix_1_1_console_1_1_posix_console" ]
+        ] ],
         [ "File", "namespace_os_1_1_posix_1_1_file.html", [
           [ "PosixFileHandle", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle.html", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle" ],
           [ "PosixFile", "class_os_1_1_posix_1_1_file_1_1_posix_file.html", "class_os_1_1_posix_1_1_file_1_1_posix_file" ]
@@ -178,6 +181,10 @@ var annotated_dup =
         ] ]
       ] ],
       [ "Stub", "namespace_os_1_1_stub.html", [
+        [ "Console", "namespace_os_1_1_stub_1_1_console.html", [
+          [ "StubConsoleHandle", "struct_os_1_1_stub_1_1_console_1_1_stub_console_handle.html", null ],
+          [ "StubConsole", "class_os_1_1_stub_1_1_console_1_1_stub_console.html", "class_os_1_1_stub_1_1_console_1_1_stub_console" ]
+        ] ],
         [ "File", "namespace_os_1_1_stub_1_1_file.html", [
           [ "StubFileHandle", "struct_os_1_1_stub_1_1_file_1_1_stub_file_handle.html", null ],
           [ "StubFile", "class_os_1_1_stub_1_1_file_1_1_stub_file.html", "class_os_1_1_stub_1_1_file_1_1_stub_file" ]
@@ -198,6 +205,9 @@ var annotated_dup =
       [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
       [ "BareTaskHandle", "class_os_1_1_bare_task_handle.html", "class_os_1_1_bare_task_handle" ],
       [ "TaskRunner", "class_os_1_1_task_runner.html", "class_os_1_1_task_runner" ],
+      [ "ConsoleHandle", "struct_os_1_1_console_handle.html", null ],
+      [ "ConsoleInterface", "class_os_1_1_console_interface.html", "class_os_1_1_console_interface" ],
+      [ "Console", "class_os_1_1_console.html", "class_os_1_1_console" ],
       [ "Directory", "class_os_1_1_directory.html", "class_os_1_1_directory" ],
       [ "FileHandle", "struct_os_1_1_file_handle.html", null ],
       [ "FileInterface", "class_os_1_1_file_interface.html", "class_os_1_1_file_interface" ],
@@ -206,7 +216,6 @@ var annotated_dup =
       [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ],
       [ "IPCQueue", "class_os_1_1_i_p_c_queue.html", "class_os_1_1_i_p_c_queue" ],
       [ "LocklessQueue", "class_os_1_1_lockless_queue.html", "class_os_1_1_lockless_queue" ],
-      [ "Log", "class_os_1_1_log.html", "class_os_1_1_log" ],
       [ "QueueHandle", "class_os_1_1_queue_handle.html", "class_os_1_1_queue_handle" ],
       [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ],
       [ "MutexHandle", "struct_os_1_1_mutex_handle.html", null ],

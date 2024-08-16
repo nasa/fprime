@@ -23,5 +23,6 @@ var class_fw_1_1_string_base =
     [ "serializedSize", "class_fw_1_1_string_base.html#ab9515a592f2ef420666a60c44b570509", null ],
     [ "serializedTruncatedSize", "class_fw_1_1_string_base.html#a684f7057151f47069c718af8a8211114", null ],
     [ "STATIC_SERIALIZED_SIZE", "class_fw_1_1_string_base.html#a5841fb8058bbdb123f988e589fa096b8", null ],
-    [ "toChar", "class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9", null ]
+    [ "toChar", "class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9", null ],
+    [ "vformat", "class_fw_1_1_string_base.html#abb8e098a546a6aa5a8648750a5072bc9", null ]
 ];

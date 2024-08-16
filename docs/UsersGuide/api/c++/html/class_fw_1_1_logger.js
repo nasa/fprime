@@ -1,8 +1,9 @@
 var class_fw_1_1_logger =
 [
-    [ "~Logger", "class_fw_1_1_logger.html#a8fc94a11a59a8710b65d7651631a4500", null ],
-    [ "log", "class_fw_1_1_logger.html#a78d4d0c54caf2b758be7244f6ec756e8", null ],
-    [ "logMsg", "class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a", null ],
+    [ "~Logger", "class_fw_1_1_logger.html#abdcbad7a7c2ed33000ce0a1093b99772", null ],
+    [ "log", "class_fw_1_1_logger.html#a96ceb48bf6492c3c160f1b303dbe4719", null ],
+    [ "log", "class_fw_1_1_logger.html#abe2194f4b3c323ad66f43811fa04b108", null ],
     [ "registerLogger", "class_fw_1_1_logger.html#a47beac4ab022cb4561f6a5f47cdabd0a", null ],
-    [ "s_current_logger", "class_fw_1_1_logger.html#ab38737d49397caacf2beab5d459569d7", null ]
+    [ "writeMessage", "class_fw_1_1_logger.html#aeb44ba9d8e3c5a8967f65e6362d5084d", null ],
+    [ "LoggerRules::Register", "class_fw_1_1_logger.html#a1ca75f46f1f7eb9bb1e9a7e62a85f515", null ]
 ];

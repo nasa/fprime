@@ -1,4 +1,4 @@
 var _log_default_8cpp =
 [
-    [ "__default_logger__", "log_default_8cpp.html#a2944289aca4c751c4ddf9c1849031b76", null ]
+    [ "__default_console__", "log_default_8cpp.html#ad3181c4f28df769d2271e4d583d3c944", null ]
 ];

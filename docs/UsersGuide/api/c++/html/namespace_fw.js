@@ -2,7 +2,9 @@ var namespace_fw =
 [
     [ "DpCfg", "namespace_fw_1_1_dp_cfg.html", "namespace_fw_1_1_dp_cfg" ],
     [ "StringUtils", "namespace_fw_1_1_string_utils.html", [
+      [ "string_copy", "namespace_fw_1_1_string_utils.html#a84e222d75f681cdc41eba1fca43b0369", null ],
       [ "string_copy", "namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e", null ],
+      [ "string_length", "namespace_fw_1_1_string_utils.html#a45ee50c4e7384bd94639e62c12128dab", null ],
       [ "string_length", "namespace_fw_1_1_string_utils.html#afcf5c356fc8ac545dc89b54abe0baa4f", null ],
       [ "substring_find", "namespace_fw_1_1_string_utils.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0", null ]
     ] ],
@@ -74,7 +76,6 @@ var namespace_fw =
     [ "LogPacket", "class_fw_1_1_log_packet.html", "class_fw_1_1_log_packet" ],
     [ "LogStringArg", "class_fw_1_1_log_string_arg.html", "class_fw_1_1_log_string_arg" ],
     [ "TextLogString", "class_fw_1_1_text_log_string.html", "class_fw_1_1_text_log_string" ],
-    [ "LogAssertHook", "class_fw_1_1_log_assert_hook.html", "class_fw_1_1_log_assert_hook" ],
     [ "Logger", "class_fw_1_1_logger.html", "class_fw_1_1_logger" ],
     [ "ObjBase", "class_fw_1_1_obj_base.html", "class_fw_1_1_obj_base" ],
     [ "InputPortBase", "class_fw_1_1_input_port_base.html", "class_fw_1_1_input_port_base" ],

@@ -204,7 +204,7 @@ Svc::Framer (Passive Component)</h1>
 <li>Invoke <code>framedOut</code>, passing in <em>B</em> as the argument.</li>
 </ol>
 <ol type="1">
-<li>Check the return status of the invocation. If the return status is not <code><a class="el" href="class_drv_1_1_send_status.html#afa440f1f1648c4ebc74a0b6836a384e2ab3329ca95a82b1aa6ff8cf3c01bbce44" title="Send worked as expected.">Drv::SendStatus::SEND_OK</a></code>, then use <code><a class="el" href="class_fw_1_1_logger.html#a0a68fd1aef48f608252dd3e84013035a">Fw::Logger::logMsg</a></code> to log an error message. Don't send an event report in this case, because downlink is apparently not working.</li>
+<li>Check the return status of the invocation. If the return status is not <code><a class="el" href="class_drv_1_1_send_status.html#afa440f1f1648c4ebc74a0b6836a384e2ab3329ca95a82b1aa6ff8cf3c01bbce44" title="Send worked as expected.">Drv::SendStatus::SEND_OK</a></code>, then use <code><a class="el" href="class_fw_1_1_logger.html#a96ceb48bf6492c3c160f1b303dbe4719" title="log a formated string with supplied arguments">Fw::Logger::log</a></code> to log an error message. Don't send an event report in this case, because downlink is apparently not working.</li>
 </ol>
 <h2><a class="anchor" id="autotoc_md937"></a>
 5. Ground Interface</h2>

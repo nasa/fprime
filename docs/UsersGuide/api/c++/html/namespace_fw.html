@@ -256,8 +256,6 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_text_log_string.html">TextLogString</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_log_assert_hook.html">LogAssertHook</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_logger.html">Logger</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_obj_base.html">ObjBase</a></td></tr>
@@ -428,8 +426,6 @@ Variables</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>File: <a class="el" href="logger_8cpp.html">Logger.cpp</a> Description: Framework logging implementation Author: mstarch</p>
-<p>This file adds in support to the core '<a class="el" href="namespace_fw.html">Fw</a>' package, to separate it from <a class="el" href="namespace_os.html">Os</a> and other loggers, and allow the architect of the system to select which core framework logging should be used.</p>
-<p>File: <a class="el" href="logger_8hpp.html">Logger.hpp</a> Description: Framework logging support Author: mstarch</p>
 <p>This file adds in support to the core '<a class="el" href="namespace_fw.html">Fw</a>' package, to separate it from <a class="el" href="namespace_os.html">Os</a> and other loggers, and allow the architect of the system to select which core framework logging should be used.</p>
 <p>This class is a pure virtual base class for memory allocators in Fprime. The intent is to provide derived classes the get memory from different sources. The base class can be passed to classes so the allocator can be selected at the system level, and different allocators can be used by different components as appropriate.</p>
 <p>The identifier can be used to look up a pre-allocated buffer by ID in an embedded system. Identifiers may be used only in a single call to an invocation. Some implementations of <a class="el" href="class_fw_1_1_mem_allocator.html">MemAllocator</a> discard the identifier but components using the <a class="el" href="class_fw_1_1_mem_allocator.html">MemAllocator</a> interface should not depend on the identifier to be discarded.</p>

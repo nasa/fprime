@@ -2,9 +2,7 @@ var hierarchy =
 [
     [ "ActiveTextLoggerComponent", "class_active_text_logger_component.html", null ],
     [ "Os::TaskInterface::Arguments", "class_os_1_1_task_interface_1_1_arguments.html", null ],
-    [ "Fw::AssertHook", "class_fw_1_1_assert_hook.html", [
-      [ "Fw::LogAssertHook", "class_fw_1_1_log_assert_hook.html", null ]
-    ] ],
+    [ "Fw::AssertHook", "class_fw_1_1_assert_hook.html", null ],
     [ "Os::BareQueueHandle", "class_os_1_1_bare_queue_handle.html", null ],
     [ "Os::BareTaskHandle", "class_os_1_1_bare_task_handle.html", null ],
     [ "Svc::BufferManagerComponentImpl::BufferBin", "struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html", null ],
@@ -15,6 +13,15 @@ var hierarchy =
     [ "CFDP::Checksum", "class_c_f_d_p_1_1_checksum.html", null ],
     [ "Types::CircularBuffer", "class_types_1_1_circular_buffer.html", null ],
     [ "Svc::AMPCSSequence::Record::CmdLength", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_cmd_length.html", null ],
+    [ "Os::ConsoleHandle", "struct_os_1_1_console_handle.html", [
+      [ "Os::Posix::Console::PosixConsoleHandle", "struct_os_1_1_posix_1_1_console_1_1_posix_console_handle.html", null ],
+      [ "Os::Stub::Console::StubConsoleHandle", "struct_os_1_1_stub_1_1_console_1_1_stub_console_handle.html", null ]
+    ] ],
+    [ "Os::ConsoleInterface", "class_os_1_1_console_interface.html", [
+      [ "Os::Console", "class_os_1_1_console.html", null ],
+      [ "Os::Posix::Console::PosixConsole", "class_os_1_1_posix_1_1_console_1_1_posix_console.html", null ],
+      [ "Os::Stub::Console::StubConsole", "class_os_1_1_stub_1_1_console_1_1_stub_console.html", null ]
+    ] ],
     [ "Svc::AMPCSSequence::SequenceHeader::Constants", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_sequence_header_1_1_constants.html", null ],
     [ "Fw::ConstByteArray", "struct_fw_1_1_const_byte_array.html", null ],
     [ "Os::SystemResources::CpuTicks", "struct_os_1_1_system_resources_1_1_cpu_ticks.html", null ],
@@ -64,7 +71,7 @@ var hierarchy =
     [ "Os::LocklessQueue", "class_os_1_1_lockless_queue.html", null ],
     [ "Svc::LogFile", "struct_svc_1_1_log_file.html", null ],
     [ "Fw::Logger", "class_fw_1_1_logger.html", [
-      [ "Os::Log", "class_os_1_1_log.html", null ]
+      [ "Os::Console", "class_os_1_1_console.html", null ]
     ] ],
     [ "Os::MaxHeap", "class_os_1_1_max_heap.html", null ],
     [ "Os::Mem", "class_os_1_1_mem.html", null ],
