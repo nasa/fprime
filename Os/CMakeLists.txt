@@ -37,6 +37,7 @@ set(SOURCE_FILES
     # Refactored common files
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
 )
 # Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
@@ -52,11 +53,9 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
     )
@@ -96,7 +95,11 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/SystemResources.cpp")
 endif()
 register_fprime_module()
+
 require_fprime_implementation(Os/File)
+# require_fprime_implementation(Os/Task) # should be added in
+require_fprime_implementation(Os/Mutex) 
+
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
@@ -110,7 +113,7 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 if (BUILD_TESTING)
-    foreach (TEST IN ITEMS StubFileTest PosixFileTest)
+    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubMutexTest PosixMutexTest) # add? : StubTaskTest PosixTaskTest
        if (TARGET "${TEST}")
            add_dependencies("Os_ut_exe" "${TEST}")
        endif()
