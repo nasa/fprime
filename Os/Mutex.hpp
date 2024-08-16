@@ -6,14 +6,13 @@
 #define Os_Mutex_hpp
 
 #include <FpConfig.hpp>
-#include <Os/Os.hpp>
+// #include <Os/Os.hpp>
 
 namespace Os {
 
 struct MutexHandle {};
 
 class MutexInterface {
-    // add enum with
   public:
     enum Status { 
       OP_OK, //!<  Operation was successful
@@ -39,7 +38,7 @@ class MutexInterface {
     virtual MutexHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a Mutex delegate object
-    static MutexInterface* getDelegate(HandleStorage& aligned_new_memory);  // TODO
+    static MutexInterface* getDelegate(HandleStorage& aligned_new_memory);
 
     virtual Status take() = 0;     //!<  lock the mutex return status
     virtual Status release() = 0;  //!<  unlock the mutex return status
