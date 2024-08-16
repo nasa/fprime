@@ -209,4 +209,3 @@ void teardownTopology(const TopologyState& state) {
     fileUplinkBufferManager.cleanup();
 }
 };  // namespace Ref
-
