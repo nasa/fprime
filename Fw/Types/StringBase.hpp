@@ -15,6 +15,7 @@
 
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
+#include <cstdarg>
 #ifdef BUILD_UT
 #include <iostream>
 #endif
@@ -62,6 +63,7 @@ class StringBase : public Serializable {
     StringBase& operator=(const StringBase& src);         //!< Assign another StringBase
 
     void format(const CHAR* formatString, ...);  //!< write formatted string to buffer
+    void vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
 
     virtual SerializeStatus serialize(SerializeBufferBase& buffer) const;                   //!< serialization function
     virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;  //!< serialization function
