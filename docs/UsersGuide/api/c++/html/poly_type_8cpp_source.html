@@ -729,35 +729,39 @@ $(document).ready(function(){initNavTree('_poly_type_8cpp_source.html',''); init
 <div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;<span class="preprocessor">#if FW_HAS_F64</span></div>
 <div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;        <span class="keywordflow">case</span> TYPE_F64:</div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%lg &quot;</span>, this-&gt;m_val.f64Val);</div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%g &quot;</span>, this-&gt;m_val.f64Val);</div>
 <div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;        <span class="keywordflow">case</span> TYPE_F32:</div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%g &quot;</span>, this-&gt;m_val.f32Val);</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;        <span class="keywordflow">case</span> TYPE_BOOL:</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%s &quot;</span>, this-&gt;m_val.boolVal ? <span class="stringliteral">&quot;T&quot;</span> : <span class="stringliteral">&quot;F&quot;</span>);</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;        <span class="keywordflow">case</span> TYPE_F32:</div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%g &quot;</span>, <span class="keyword">static_cast&lt;</span>F64<span class="keyword">&gt;</span>(this-&gt;m_val.f32Val));</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;        <span class="keywordflow">case</span> TYPE_F32:</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%g &quot;</span>, this-&gt;m_val.f32Val);</div>
 <div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;        <span class="keywordflow">case</span> TYPE_PTR:</div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%p &quot;</span>, this-&gt;m_val.ptrVal);</div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;        <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%s &quot;</span>, <span class="stringliteral">&quot;NT&quot;</span>);</div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;    }</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160; </div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;    <span class="comment">// NULL terminate</span></div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;    valString[<span class="keyword">sizeof</span>(valString) - 1] = 0;</div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160; </div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;    <span class="keywordflow">if</span> (append) {</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;        dest += valString;</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;        dest = valString;</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    }</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;}</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160; </div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;}  <span class="comment">// namespace Fw</span></div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;        <span class="keywordflow">case</span> TYPE_BOOL:</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%s &quot;</span>, this-&gt;m_val.boolVal ? <span class="stringliteral">&quot;T&quot;</span> : <span class="stringliteral">&quot;F&quot;</span>);</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;        <span class="keywordflow">case</span> TYPE_PTR:</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%p &quot;</span>, this-&gt;m_val.ptrVal);</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;        <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;            (void)snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%s &quot;</span>, <span class="stringliteral">&quot;NT&quot;</span>);</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;    }</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160; </div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;    <span class="comment">// NULL terminate</span></div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;    valString[<span class="keyword">sizeof</span>(valString) - 1] = 0;</div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160; </div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    <span class="keywordflow">if</span> (append) {</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;        dest += valString;</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;        dest = valString;</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;    }</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;}</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160; </div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;}  <span class="comment">// namespace Fw</span></div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_a33c92dd47950aa8c1d6df7e1c163e5a6"><div class="ttname"><a href="basic_types_8h.html#a33c92dd47950aa8c1d6df7e1c163e5a6">I8</a></div><div class="ttdeci">int8_t I8</div><div class="ttdoc">8-bit signed integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00025">BasicTypes.h:25</a></div></div>
