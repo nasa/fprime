@@ -45,7 +45,7 @@ FileSystem::Status FileSystem::copyFile(const char* originPath, const char* dest
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.copyFile(originPath, destPath);
 }
-FileSystem::Status FileSystem::appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) {
+FileSystem::Status FileSystem::appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.appendFile(originPath, destPath, createMissingDest);
 }

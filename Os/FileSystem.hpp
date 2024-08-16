@@ -2,6 +2,7 @@
 #define _FileSystem_hpp_
 
 #include <FpConfig.hpp>
+#include <Os/Os.hpp>
 #include <Fw/Types/FileNameString.hpp>
 
 #define FILE_SYSTEM_CHUNK_SIZE (256u)
@@ -25,8 +26,8 @@ class FileSystemInterface {
         BUSY, //!< Operand is in use by the system or by a process
         DIR_DOESNT_EXIST, //!<  Directory doesn't exist
         DIR_NOT_OPENED, //!<  Directory hasn't been opened yet
-        NOT_DIR, //!<  Path is not a directory
         NO_MORE_FILES, //!<  Directory stream has no more files
+        NOT_SUPPORTED, //!<  Operation is not supported by the current implementation
         OTHER_ERROR, //!<  other OS-specific error
     } Status;
 

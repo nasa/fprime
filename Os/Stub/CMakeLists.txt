@@ -22,6 +22,24 @@ set(SOURCE_FILES
 register_fprime_module(Os_Mutex_Stub)
 register_fprime_implementation(Os/Mutex Os_Mutex_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")
 
+######## Console Stub ########
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
+)
+set(HEADER_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Console.hpp"
+)
+set(MOD_DEPS)
+register_fprime_module(Os_Console_Stub)
+register_fprime_implementation(Os/Console Os_Console_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultConsole.cpp")
+
+######## FileSystem Stub ########
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/FileSystem.cpp"
+)
+set(MOD_DEPS)
+register_fprime_module(Os_FileSystem_Stub)
+register_fprime_implementation(Os/FileSystem Os_FileSystem_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultFileSystem.cpp")
 
 # Remainder of file is specific to UTs
 if (NOT BUILD_TESTING)
@@ -51,16 +69,6 @@ choose_fprime_implementation(Os/File Os_File_Test_Stub)
 register_fprime_ut(StubFileTest)
 
 #### Console Stub Testing ####
-set(SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
-)
-set(HEADER_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/Console.hpp"
-)
-set(MOD_DEPS)
-register_fprime_module(Os_Console_Stub)
-register_fprime_implementation(Os/Console Os_Console_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultConsole.cpp")
-
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/Console.cpp"
 )
@@ -117,3 +125,24 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub)
 register_fprime_ut(StubMutexTest)
+
+#### FileSystem Stub Testing ####
+# set(SOURCE_FILES
+#         "${CMAKE_CURRENT_LIST_DIR}/test/FileSystem.cpp"
+# )
+# register_fprime_module(Os_FileSystem_Test_Stub)
+# register_fprime_implementation(Os/FileSystem Os_FileSystem_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultFileSystem.cpp")
+
+# set(UT_SOURCE_FILES
+#         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileSystemTests.cpp"
+#         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/CommonTests.cpp"
+#         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/FileSystemRules.cpp"
+# )
+# set(UT_MOD_DEPS
+#         Os
+#         Os_Models
+#         STest
+# )
+# choose_fprime_implementation(Os/FileSystem Os_FileSystem_Test_Stub)
+# register_fprime_ut(StubFileSystemTest)
+

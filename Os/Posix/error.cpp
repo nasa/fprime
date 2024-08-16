@@ -48,6 +48,54 @@ File::Status errno_to_file_status(PlatformIntType errno_input) {
     return status;
 }
 
+FileSystem::Status errno_to_filesystem_status(PlatformIntType errno_input) {
+    FileSystem::Status status = FileSystem::Status::OP_OK;
+    switch (errno_input) {
+        case 0:
+            status = FileSystem::Status::OP_OK;
+            break;
+        // All fallthroughs intended to fallback on OTHER_ERROR
+        case EACCES:
+            status = FileSystem::Status::NO_PERMISSION;
+            break;
+        case EPERM:
+        case EROFS:
+        case EFAULT:
+            status = FileSystem::Status::NO_PERMISSION;
+            break;
+        case EEXIST:
+            status = FileSystem::Status::ALREADY_EXISTS;
+            break;
+        case ELOOP:
+        case ENOENT:
+        case ENAMETOOLONG:
+            status = FileSystem::Status::INVALID_PATH;
+            break;
+        case ENOTDIR:
+            status = FileSystem::Status::NOT_DIR;
+            break;
+        case EDQUOT:
+            status = FileSystem::Status::NO_SPACE;
+            break;
+        case EMLINK:
+            status = FileSystem::Status::FILE_LIMIT;
+            break;
+        case ENOSPC:
+        case EFBIG:
+            status = FileSystem::Status::NO_SPACE;
+            break;
+        case ENOSYS:
+        case EOPNOTSUPP:
+            status = FileSystem::Status::NOT_SUPPORTED;
+            break;
+        default:
+            status = FileSystem::Status::OTHER_ERROR;
+            break;
+    }
+    return status;
+}
+
+
 Task::Status posix_status_to_task_status(PlatformIntType posix_status) {
     Task::Status status = Task::Status::OP_OK;
     switch (posix_status) {

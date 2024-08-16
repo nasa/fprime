@@ -6,7 +6,7 @@
 #define Os_Mutex_hpp
 
 #include <FpConfig.hpp>
-// #include <Os/Os.hpp>
+#include <Os/Os.hpp>
 
 namespace Os {
 
