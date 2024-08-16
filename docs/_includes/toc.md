@@ -90,6 +90,7 @@
   <ul>
     <li><a href="/fprime/HowTo/develop-gds-plugins.html">F´ GDS Plugin Development</a></li>
     <li><a href="/fprime/HowTo/develop-fprime-libraries.html">F´ Library Development</a></li>
+    <li><a href="/fprime/HowTo/develop-subtopologies.html">F´ Subtopology Development</a></li>
   </ul>
 <h4><a href="/fprime/Reference/README.html">Reference</a></h4>
   <ul>
