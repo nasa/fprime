@@ -6,13 +6,13 @@
  *  Created on: May 23, 2019
  *      Author: mstarch
  */
-#include <STest/Scenario/Scenario.hpp>
-#include <STest/Scenario/RandomScenario.hpp>
 #include <STest/Scenario/BoundedScenario.hpp>
+#include <STest/Scenario/RandomScenario.hpp>
+#include <STest/Scenario/Scenario.hpp>
 
-#include <Fw/Test/UnitTest.hpp>
-#include <Fw/Logger/test/ut/LoggerRules.hpp>
 #include <gtest/gtest.h>
+#include <Fw/Logger/test/ut/LoggerRules.hpp>
+#include <Fw/Test/UnitTest.hpp>
 
 #include <cstdio>
 
@@ -28,20 +28,15 @@ TEST(LoggerTests, RandomLoggerTests) {
     LoggerRules::Register reg(Fw::String("Register"));
     LoggerRules::LogGood log(Fw::String("Log Successfully"));
     LoggerRules::LogBad nolog(Fw::String("Log unsuccessfully"));
+    LoggerRules::LogBad string_log(Fw::String("Log Successfully (String)"));
 
     // Setup a list of rules to choose from
-    STest::Rule<MockLogging::FakeLogger>* rules[] = {
-            &reg,
-            &log,
-            &nolog
-    };
+    STest::Rule<MockLogging::FakeLogger>* rules[] = {&reg, &log, &nolog, &string_log};
     // Construct the random scenario and run it with the defined bounds
-    STest::RandomScenario<MockLogging::FakeLogger> random("Random Rules", rules,
-                                                      FW_NUM_ARRAY_ELEMENTS(rules));
+    STest::RandomScenario<MockLogging::FakeLogger> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Setup a bounded scenario to run rules a set number of times
-    STest::BoundedScenario<MockLogging::FakeLogger> bounded("Bounded Random Rules Scenario",
-                                                        random, STEP_COUNT);
+    STest::BoundedScenario<MockLogging::FakeLogger> bounded("Bounded Random Rules Scenario", random, STEP_COUNT);
     // Run!
     const U32 numSteps = bounded.run(logger);
     printf("Ran %u steps.\n", numSteps);
@@ -58,6 +53,19 @@ TEST(LoggerTests, BasicGoodLogger) {
     LoggerRules::LogGood log(Fw::String("Log Successfully"));
     log.apply(logger);
 }
+/**
+ * Test that the most basic logging function works.
+ */
+TEST(LoggerTests, BasicGoodStringLogger) {
+    // Setup and register logger
+    MockLogging::FakeLogger logger;
+    Fw::Logger::registerLogger(&logger);
+    logger.s_current = &logger;
+    // Basic logging
+    LoggerRules::LogGoodStringObject log(Fw::String("Log Successfully"));
+    log.apply(logger);
+}
+
 /**
  * Test that null-logging function works.
  */
@@ -85,7 +93,6 @@ TEST(LoggerTests, BasicRegLogger) {
     reg.apply(logger);
     reg.apply(logger);
 }
-
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);

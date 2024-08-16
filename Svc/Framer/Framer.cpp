@@ -78,7 +78,7 @@ void Framer ::send(Fw::Buffer& outgoing) {
         // Note: if there is a data sending problem, an EVR likely wouldn't
         // make it down. Log the issue in hopes that
         // someone will see it.
-        Fw::Logger::logMsg("[ERROR] Failed to send framed data: %d\n", sendStatus.e);
+        Fw::Logger::log("[ERROR] Failed to send framed data: %d\n", sendStatus.e);
     }
     this->m_frame_sent = true;  // A frame was sent
 }
