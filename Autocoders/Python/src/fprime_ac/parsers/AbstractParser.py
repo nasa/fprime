@@ -9,7 +9,7 @@
 #        and validation routines, which can be extended by concrete implementations.
 #
 # AUTHOR: reder
-# MODIFIED AUTHOR: Hay.Banz
+# MODIFIED AUTHOR: Haybanz
 # EMAIL:  reder@jpl.nasa.gov
 # DATE CREATED: Jan 30, 2013
 #
