@@ -1,17 +1,17 @@
 # ===============================================================================
-# NAME:  abstract_face.py
+# NAME:  abstract_parser.py
 #
-# DESCRIPTION: The abstract parser defines the some shared interfaces
-#                for parsing, validation and in common
-#              getter methods for component, port and assembly
-#              XML.
+# DESCRIPTION: This module defines shared abstract interfaces for parsing,
+#              validation, and common getter methods for component, port,
+#              and assembly XML.
 #
-# USAGE: Normally this is used to establish interface
-#        to XML parsing and validation routines.
+# USAGE: This module is typically used to establish an interface to XML parsing
+#        and validation routines, which can be extended by concrete implementations.
 #
 # AUTHOR: reder
+# MODIFIED AUTHOR: Hay.Banz
 # EMAIL:  reder@jpl.nasa.gov
-# DATE CREATED  : Jan 30, 2013
+# DATE CREATED: Jan 30, 2013
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
@@ -21,50 +21,47 @@
 #
 import logging
 
-#
-# Python extension modules and custom interfaces
-#
-
-#
-# Universal globals used within module go here.
-# (DO NOT USE MANY!)
-#
-# Global logger init. below.
+# Initialize loggers for output and debugging
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 
-#
-# Module class or classes go here.
-
-
 class AbstractParser:
     """
-    Defines the common interfaces for component, port and assembly XML
-    parsing, validation.   This is intended to be used by future
-    meta-model factories to configure it.
+    Defines common interfaces for parsing and validating component, port, 
+    and assembly XML. This class is intended to be subclassed by future 
+    meta-model factories that will provide specific implementations.
     """
 
     def __init__(self):
         """
         Constructor.
+        Initializes the abstract parser. Subclasses should extend this 
+        constructor to initialize their specific context.
         """
+        pass  # Placeholder for potential future use
 
     def get(self, name):
         """
-        Get data content from XML tree.
-        @param name: Name of tag to return.
-        @return: Tag data value contents. A list.
+        Retrieve data content from an XML tree.
+        
+        @param name: Name of the XML tag to return.
+        @return: A list containing the data value contents of the specified tag.
+        
+        This method must be implemented by subclasses.
         """
-        raise Exception(
-            "AbstractFace.__call__() - Implementation Error: you must supply your own concrete implementation of get(...)."
+        raise NotImplementedError(
+            "AbstractParser.get() - Implementation Error: you must supply your own concrete implementation of get(...)."
         )
 
     def getAttr(self, name):
         """
-        Get attributes content from XML tree.
-        @param name: Name of tag to return.
-        @return: Tag attribute dict contents.  A list of dict.
+        Retrieve attribute content from an XML tree.
+        
+        @param name: Name of the XML tag whose attributes are to be returned.
+        @return: A list of dictionaries, each containing the attributes of the specified tag.
+        
+        This method must be implemented by subclasses.
         """
-        raise Exception(
-            "AbstractFace.__call__() - Implementation Error: you must supply your own concrete implementation of getAttr(...)."
+        raise NotImplementedError(
+            "AbstractParser.getAttr() - Implementation Error: you must supply your own concrete implementation of getAttr(...)."
         )
