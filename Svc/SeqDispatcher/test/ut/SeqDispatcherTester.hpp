@@ -12,7 +12,7 @@
 
 namespace Svc{
 
-class Tester : public SeqDispatcherGTestBase {
+class SeqDispatcherTester : public SeqDispatcherGTestBase {
   // ----------------------------------------------------------------------
   // Construction and destruction
   // ----------------------------------------------------------------------
@@ -25,13 +25,13 @@ class Tester : public SeqDispatcherGTestBase {
   // Queue depth supplied to component instance under test
   static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
 
-  //! Construct object Tester
+  //! Construct object SeqDispatcherTester
   //!
-  Tester();
+  SeqDispatcherTester();
 
-  //! Destroy object Tester
+  //! Destroy object SeqDispatcherTester
   //!
-  ~Tester();
+  ~SeqDispatcherTester();
 
  public:
   // ----------------------------------------------------------------------

@@ -47,14 +47,14 @@ bool SeqDispatcher::runSequence(FwIndexType sequencerIdx,
 
   // if the seqRunOut port at this idx isn't connected
   if (!this->isConnected_seqRunOut_OutputPort(sequencerIdx)) {
-    this->log_WARNING_HI_INVALID_SEQUENCER(static_cast<U16>(sequencerIdx));
+    this->log_WARNING_HI_InvalidSequencer(static_cast<U16>(sequencerIdx));
     return false;
   }
 
   // if the sequencer is not available to run a new sequence
   if (this->m_entryTable[sequencerIdx].state !=
       SeqDispatcher_CmdSequencerState::AVAILABLE) {
-    this->log_WARNING_HI_INVALID_SEQUENCER(static_cast<U16>(sequencerIdx));
+    this->log_WARNING_HI_InvalidSequencer(static_cast<U16>(sequencerIdx));
     return false;
   }
 
@@ -80,7 +80,7 @@ bool SeqDispatcher::runSequence(FwIndexType sequencerIdx,
 }
 
 void SeqDispatcher::seqStartIn_handler(
-    NATIVE_INT_TYPE portNum,                                //!< The port number
+    NATIVE_INT_TYPE portNum, //!< The port number
     const Fw::StringBase& fileName //!< The sequence file name
 ) {
   FW_ASSERT(portNum >= 0 && portNum < SeqDispatcherSequencerPorts, portNum);
@@ -91,8 +91,9 @@ void SeqDispatcher::seqStartIn_handler(
     // we were aware of this sequencer running a sequence
     if (this->m_entryTable[portNum].sequenceRunning != fileName) {
       // uh oh. m_sequencesRunning is wrong
-      // let's just silently update it to be correct. nothing we can do about
-      // it.
+      // let's just update it to be correct. nothing we can do about
+      // it except raise a warning and update our state
+      this->log_WARNING_HI_UnexpectedSequenceStarted(portNum, fileName, this->m_entryTable[portNum].sequenceRunning);
       this->m_entryTable[portNum].sequenceRunning = fileName;
     }
   } else {
@@ -126,8 +127,8 @@ void SeqDispatcher::seqDoneIn_handler(
 
     // anyways, don't have to do anything cuz now that this seq we didn't know
     // about is done, the sequencer is available again (which is its current
-    // state)
-    this->log_WARNING_LO_UNKNOWN_SEQUENCE_FINISHED(static_cast<U16>(portNum));
+    // state in our internal entry table already)
+    this->log_WARNING_LO_UnknownSequenceFinished(static_cast<U16>(portNum));
   } else {
     // ok, a sequence has finished that we knew about
     if (this->m_entryTable[portNum].state ==
@@ -159,7 +160,7 @@ void SeqDispatcher::seqRunIn_handler(NATIVE_INT_TYPE portNum,
   FwIndexType idx = this->getNextAvailableSequencerIdx();
   // no available sequencers
   if (idx == -1) {
-    this->log_WARNING_LO_NO_AVAILABLE_SEQUENCERS();
+    this->log_WARNING_LO_NoAvailableSequencers();
     return;
   }
   if (!this->runSequence(idx, fileName,
@@ -180,7 +181,7 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
   FwIndexType idx = this->getNextAvailableSequencerIdx();
   // no available sequencers
   if (idx == -1) {
-    this->log_WARNING_LO_NO_AVAILABLE_SEQUENCERS();
+    this->log_WARNING_LO_NoAvailableSequencers();
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     return;
   }
@@ -204,7 +205,7 @@ void SeqDispatcher::LOG_STATUS_cmdHandler(
     const FwOpcodeType opCode,          /*!< The opcode*/
     const U32 cmdSeq) {                   /*!< The command sequence number*/
   for(FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
-    this->log_ACTIVITY_LO_LOG_SEQUENCER_STATUS(static_cast<U16>(idx), this->m_entryTable[idx].state, Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
+    this->log_ACTIVITY_LO_LogSequencerStatus(static_cast<U16>(idx), this->m_entryTable[idx].state, Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
   }
 }
 }  // end namespace components

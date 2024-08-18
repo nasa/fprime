@@ -12,20 +12,20 @@ namespace Svc{
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester()
-    : SeqDispatcherGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
+SeqDispatcherTester ::SeqDispatcherTester()
+    : SeqDispatcherGTestBase("SeqDispatcherTester", SeqDispatcherTester::MAX_HISTORY_SIZE),
       component("SeqDispatcher") {
   this->connectPorts();
   this->initComponents();
 }
 
-Tester ::~Tester() {}
+SeqDispatcherTester ::~SeqDispatcherTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::testDispatch() {
+void SeqDispatcherTester ::testDispatch() {
   // test that it fails when we dispatch too many sequences
   for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
     sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::WAIT);
@@ -64,7 +64,7 @@ void Tester ::testDispatch() {
   ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_RUN, 0, Fw::CmdResponse::OK);
   this->clearHistory();
 
-  // ok now check that if a sequence errors on block i twill return error
+  // ok now check that if a sequence errors on block it will return error
   this->invoke_to_seqDoneIn(1, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
   this->component.doDispatch();
   ASSERT_EVENTS_SIZE(0);
@@ -73,16 +73,16 @@ void Tester ::testDispatch() {
   
 }
 
-void Tester::testLogStatus() {
+void SeqDispatcherTester::testLogStatus() {
   this->sendCmd_RUN(0,0, Fw::String("test"), Fw::Wait::WAIT);
   this->component.doDispatch();
   this->sendCmd_LOG_STATUS(0,0);
   this->component.doDispatch();
   ASSERT_EVENTS_SIZE(SeqDispatcherSequencerPorts);
-  ASSERT_EVENTS_LOG_SEQUENCER_STATUS(0, 0, SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK, "test");
+  ASSERT_EVENTS_LogSequencerStatus(0, 0, SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK, "test");
 }
 
-void Tester::seqRunOut_handler(
+void SeqDispatcherTester::seqRunOut_handler(
       FwIndexType portNum, //!< The port number
       const Fw::StringBase& filename //!< The sequence file
 ) {

@@ -5,12 +5,12 @@
 #include "SeqDispatcherTester.hpp"
 
 TEST(Nominal, testDispatch) {
-    Svc::Tester tester;
+    Svc::SeqDispatcherTester tester;
     tester.testDispatch();
 }
 
 TEST(Nominal, testLogStatus) {
-    Svc::Tester tester;
+    Svc::SeqDispatcherTester tester;
     tester.testLogStatus();
 }
 
