@@ -30,16 +30,6 @@ class SeqDispatcher : public SeqDispatcherComponentBase {
     //!
     ~SeqDispatcher();
 
-    //!  \brief Component initialization routine
-    //!
-    //!  The initialization function calls the initialization
-    //!  routine for the base class.
-    //!
-    //!  \param queueDepth the depth of the message queue for the component
-    void init(NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-              NATIVE_INT_TYPE instance    /*!< The instance number*/
-    );                                    //!< initialization function
-
   PROTECTED:
 
     //! Handler for input port seqDoneIn

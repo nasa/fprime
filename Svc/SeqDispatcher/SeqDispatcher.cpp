@@ -17,22 +17,10 @@ SeqDispatcher ::SeqDispatcher(const char* const compName)
 
 SeqDispatcher ::~SeqDispatcher() {}
 
-void SeqDispatcher::init(NATIVE_INT_TYPE queueDepth,
-                         NATIVE_INT_TYPE instance) {
-  SeqDispatcherComponentBase::init(queueDepth, instance);
-  for (FwIndexType i = 0; i < SeqDispatcherSequencerPorts; i++) {
-    // assert if any of the cmd sequencer connections aren't
-    // connected. otherwise we might think we sent out
-    // a sequence to be run but it doesn't get run
-    if (!this->isConnected_seqRunOut_OutputPort(i)) {
-      FW_ASSERT(0, i);
-    }
-  }
-}
-
 FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
   for (FwIndexType i = 0; i < SeqDispatcherSequencerPorts; i++) {
-    if (this->m_entryTable[i].state == SeqDispatcher_CmdSequencerState::AVAILABLE) {
+    if (this->isConnected_seqRunOut_OutputPort(i) && 
+        this->m_entryTable[i].state == SeqDispatcher_CmdSequencerState::AVAILABLE) {
       return i;
     }
   }
