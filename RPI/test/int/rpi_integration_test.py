@@ -70,7 +70,11 @@ def test_send_command(fprime_test_api):
 def test_send_and_assert_no_op(fprime_test_api):
     length = 100
     failed = 0
-    evr_seq = ["Ref.cmdDisp.OpCodeDispatched", "Ref.cmdDisp.NoOpReceived", "Ref.cmdDisp.OpCodeCompleted"]
+    evr_seq = [
+        "Ref.cmdDisp.OpCodeDispatched",
+        "Ref.cmdDisp.NoOpReceived",
+        "Ref.cmdDisp.OpCodeCompleted",
+    ]
     any_reordered = False
     dropped = False
     for i in range(0, length):
