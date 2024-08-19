@@ -14,7 +14,7 @@
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
 
 // Used for 1Hz synthetic cycling
@@ -23,8 +23,8 @@
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
-// Instantiate a system logger that will handle Fw::Logger::logMsg calls
-Os::Log logger;
+// Instantiate a system logger that will handle Fw::Logger::log calls
+Os::Console logger;
 
 // The reference topology uses a malloc-based allocator for components that need to allocate memory during the
 // initialization phase.
