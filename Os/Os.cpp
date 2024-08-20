@@ -1,19 +1,18 @@
 // ======================================================================
-// \title Os/Os.hpp
+// \title Os/Os.cpp
 // \brief common definitions for the OSAL layer
 // ======================================================================
-#ifndef OS_OS_HPP_
-#define OS_OS_HPP_
+#include "Os/Os.hpp"
 #include "FpConfig.h"
-
-//! Storage type for OSAL handles
-typedef U8 HandleStorage[FW_HANDLE_MAX_SIZE];
+#include "Os/Console.hpp"
+#include "Os/FileSystem.hpp"
 
 namespace Os {
 
-//! \brief Initialization function for the OSAL layer
-void init();
+void init() {
+    // Console and FileSystem are singletons and must be initialized
+    (void)Os::Console::init();
+    (void)Os::FileSystem::init();
+}
 
 }  // namespace Os
-
-#endif

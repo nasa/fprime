@@ -31,27 +31,27 @@ class PosixFileSystem : public FileSystemInterface {
     // ------------------------------------
 
     //! \brief create a new directory at location path
-    Status createDirectory(const char* path) override;
+    Status _createDirectory(const char* path) override;
     //! \brief remove a directory at location path
-    Status removeDirectory(const char* path) override;
+    Status _removeDirectory(const char* path) override;
     //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
-    Status readDirectory(const char* path,  const U32 maxNum, Fw::FileNameString fileArray[], U32& numFiles) override;
+    Status _readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) override;
     //! \brief removes a file at location path
-    Status removeFile(const char* path) override;
+    Status _removeFile(const char* path) override;
     //! \brief moves a file from origin to destination
-    Status moveFile(const char* originPath, const char* destPath) override;
+    Status _moveFile(const char* originPath, const char* destPath) override;
     //! \brief copies a file from origin to destination
-    Status copyFile(const char* originPath, const char* destPath) override;
+    Status _copyFile(const char* originPath, const char* destPath) override;
     //! \brief append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-    Status appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) override;
+    Status _appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) override;
     //! \brief gets the size of the file (in bytes) = 0 at location path
-    Status getFileSize(const char* path, FwSignedSizeType& size) override;
+    Status _getFileSize(const char* path, FwSignedSizeType& size) override;
     //! \brief counts the number of files in the given directory
-    Status getFileCount(const char* directory, U32& fileCount) override;
+    Status _getFileCount(const char* directory, U32& fileCount) override;
     //! \brief move current directory to path
-    Status changeWorkingDirectory(const char* path) override;
+    Status _changeWorkingDirectory(const char* path) override;
     //! \brief get FS free and total space in bytes on filesystem containing path
-    Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
+    Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
 
 
 

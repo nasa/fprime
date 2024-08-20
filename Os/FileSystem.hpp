@@ -3,7 +3,7 @@
 
 #include <FpConfig.hpp>
 #include <Os/Os.hpp>
-#include <Fw/Types/FileNameString.hpp>
+#include <Fw/Types/String.hpp>
 
 #define FILE_SYSTEM_CHUNK_SIZE (256u)
 
@@ -54,34 +54,35 @@ class FileSystemInterface {
     //------------ Os-specific FileSystem Functions ------------
 
     //! \brief create a new directory at location path
-    virtual Status createDirectory(const char* path) = 0;
+    virtual Status _createDirectory(const char* path) = 0;
     //! \brief remove a directory at location path
-    virtual Status removeDirectory(const char* path) = 0;
+    virtual Status _removeDirectory(const char* path) = 0;
     //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
-    virtual Status readDirectory(const char* path,  const U32 maxNum, Fw::FileNameString fileArray[], U32& numFiles) = 0;
+    virtual Status _readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) = 0;
     //! \brief removes a file at location path
-    virtual Status removeFile(const char* path) = 0;
+    virtual Status _removeFile(const char* path) = 0;
     //! \brief moves a file from origin to destination
-    virtual Status moveFile(const char* originPath, const char* destPath) = 0;
+    virtual Status _moveFile(const char* originPath, const char* destPath) = 0;
     //! \brief copies a file from origin to destination
-    virtual Status copyFile(const char* originPath, const char* destPath) = 0;
+    virtual Status _copyFile(const char* originPath, const char* destPath) = 0;
     //! \brief append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-    virtual Status appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) = 0;
+    virtual Status _appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) = 0;
     //! \brief gets the size of the file (in bytes) = 0 at location path
-    virtual Status getFileSize(const char* path, FwSignedSizeType& size) = 0;
+    virtual Status _getFileSize(const char* path, FwSignedSizeType& size) = 0;
     //! \brief counts the number of files in the given directory
-    virtual Status getFileCount(const char* directory, U32& fileCount) = 0;
+    virtual Status _getFileCount(const char* directory, U32& fileCount) = 0;
     //! \brief move current directory to path
-    virtual Status changeWorkingDirectory(const char* path) = 0;
+    virtual Status _changeWorkingDirectory(const char* path) = 0;
     //! \brief get FS free and total space in bytes on filesystem containing path
-    virtual Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) = 0;
+    virtual Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) = 0;
 
 };
 
 
 class FileSystem final : public FileSystemInterface {
+  private:
+    FileSystem();         //!<  Constructor (private because singleton pattern)
   public:
-    FileSystem();         //!<  Constructor. FileSystem is unlocked when created
     ~FileSystem() final;  //!<  Destructor
 
     //! \brief return the underlying FileSystem handle (implementation specific)
@@ -89,37 +90,71 @@ class FileSystem final : public FileSystemInterface {
     FileSystemHandle* getHandle() override;
 
     //! \brief create a new directory at location path
-    Status createDirectory(const char* path) override;
+    Status _createDirectory(const char* path) override;
     //! \brief remove a directory at location path
-    Status removeDirectory(const char* path) override;
+    Status _removeDirectory(const char* path) override;
     //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
-    Status readDirectory(const char* path,  const U32 maxNum, Fw::FileNameString fileArray[], U32& numFiles) override;;
+    Status _readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) override;
     //! \brief removes a file at location path
-    Status removeFile(const char* path) override;
+    Status _removeFile(const char* path) override;
     //! \brief moves a file from origin to destination
-    Status moveFile(const char* originPath, const char* destPath) override;;
+    Status _moveFile(const char* originPath, const char* destPath) override;
     //! \brief copies a file from origin to destination
-    Status copyFile(const char* originPath, const char* destPath) override;;
+    Status _copyFile(const char* originPath, const char* destPath) override;
     //! \brief append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-    Status appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) override;;
+    Status _appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) override;
     //! \brief gets the size of the file (in bytes) = 0 at location path
-    Status getFileSize(const char* path, FwSignedSizeType& size) override;;
+    Status _getFileSize(const char* path, FwSignedSizeType& size) override;
     //! \brief counts the number of files in the given directory
-    Status getFileCount(const char* directory, U32& fileCount) override;;
+    Status _getFileCount(const char* directory, U32& fileCount) override;
     //! \brief move current directory to path
-    Status changeWorkingDirectory(const char* path) override;;
+    Status _changeWorkingDirectory(const char* path) override;
     //! \brief get FS free and total space in bytes on filesystem containing path
-    Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;;
+    Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
 
+
+
+    //! \brief create a new directory at location path
+    static Status createDirectory(const char* path);
+    //! \brief remove a directory at location path
+    static Status removeDirectory(const char* path);
+    //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
+    static Status readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles);
+    //! \brief removes a file at location path
+    static Status removeFile(const char* path);
+    //! \brief moves a file from origin to destination
+    static Status moveFile(const char* originPath, const char* destPath);
+    //! \brief copies a file from origin to destination
+    static Status copyFile(const char* originPath, const char* destPath);
+    //! \brief append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
+    static Status appendFile(const char* originPath, const char* destPath, bool createMissingDest=false);
+    //! \brief gets the size of the file (in bytes) = 0 at location path
+    static Status getFileSize(const char* path, FwSignedSizeType& size);
+    //! \brief counts the number of files in the given directory
+    static Status getFileCount(const char* directory, U32& fileCount);
+    //! \brief move current directory to path
+    static Status changeWorkingDirectory(const char* path);
+    //! \brief get FS free and total space in bytes on filesystem containing path
+    static Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes);
+
+
+  public:
+    //! \brief initialize singleton
+    static void init();
+    //! \brief get a reference to singleton
+    //! \return reference to singleton
+    static FileSystem& getSingleton();
 
   private:
-        // This section is used to store the implementation-defined FileSystem handle. To Os::FileSystem and fprime, this type is
-        // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
-        // the byte-array here and set `handle` to that address for storage.
-        //
-        alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage;  //!< FileSystem handle storage
-        FileSystemInterface& m_delegate;          
-    };
+    static FileSystem* s_singleton;
+
+    // This section is used to store the implementation-defined FileSystem handle. To Os::FileSystem and fprime, this type is
+    // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
+    // the byte-array here and set `handle` to that address for storage.
+    //
+    alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage;  //!< FileSystem handle storage
+    FileSystemInterface& m_delegate;          
+};
 
 
 

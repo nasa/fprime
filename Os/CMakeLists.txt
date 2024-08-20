@@ -35,6 +35,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
 
     # Refactored common files
+    "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"

@@ -18,7 +18,7 @@ namespace Posix {
 namespace FileSystem {
 
 
-PosixFileSystem::Status PosixFileSystem::createDirectory(const char* path) {
+PosixFileSystem::Status PosixFileSystem::_createDirectory(const char* path) {
     Status status = OP_OK;
     if (::mkdir(path, S_IRWXU) == -1) {
         status = errno_to_filesystem_status(errno);
@@ -26,7 +26,7 @@ PosixFileSystem::Status PosixFileSystem::createDirectory(const char* path) {
     return status;
 }
 
-PosixFileSystem::Status PosixFileSystem::removeDirectory(const char* path) {
+PosixFileSystem::Status PosixFileSystem::_removeDirectory(const char* path) {
     Status status = OP_OK;
     if (::rmdir(path) == -1) {
         status = errno_to_filesystem_status(errno);
@@ -34,7 +34,7 @@ PosixFileSystem::Status PosixFileSystem::removeDirectory(const char* path) {
     return status;
 }
 
-PosixFileSystem::Status PosixFileSystem::readDirectory(const char* path,  const U32 maxNum, Fw::FileNameString fileArray[], U32& numFiles) {
+PosixFileSystem::Status PosixFileSystem::_readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
     Status dirStat = OP_OK;
     DIR* dirPtr = nullptr;
     struct dirent* direntData = nullptr;
@@ -77,7 +77,7 @@ PosixFileSystem::Status PosixFileSystem::readDirectory(const char* path,  const 
                 FW_ASSERT(arrayIdx < maxNum, static_cast<NATIVE_INT_TYPE>(arrayIdx),
                           static_cast<NATIVE_INT_TYPE>(maxNum));
 
-                Fw::FileNameString str(direntData->d_name);
+                Fw::String str(direntData->d_name);
                 fileArray[arrayIdx++] = str;
             }
         } else {
@@ -105,7 +105,7 @@ PosixFileSystem::Status PosixFileSystem::readDirectory(const char* path,  const 
 
 }
 
-PosixFileSystem::Status PosixFileSystem::removeFile(const char* path) {
+PosixFileSystem::Status PosixFileSystem::_removeFile(const char* path) {
     Status status = OP_OK;
     if (::unlink(path) == -1) {
         status = errno_to_filesystem_status(errno);
@@ -113,7 +113,7 @@ PosixFileSystem::Status PosixFileSystem::removeFile(const char* path) {
     return status;
 }
 
-PosixFileSystem::Status PosixFileSystem::moveFile(const char* originPath, const char* destPath) {
+PosixFileSystem::Status PosixFileSystem::_moveFile(const char* originPath, const char* destPath) {
     Status status = OP_OK;
     if (::rename(originPath, destPath) == -1) {
         status = errno_to_filesystem_status(errno);
@@ -230,7 +230,7 @@ PosixFileSystem::Status copyFileData(File& source, File& destination, FwSignedSi
 }  // end FileOperationHelper
 
 
-PosixFileSystem::Status PosixFileSystem::copyFile(const char* originPath, const char* destPath) {
+PosixFileSystem::Status PosixFileSystem::_copyFile(const char* originPath, const char* destPath) {
     PosixFileSystem::Status fs_status;
     File::Status file_status;
 
@@ -246,7 +246,7 @@ PosixFileSystem::Status PosixFileSystem::copyFile(const char* originPath, const 
 
     // Get the file size:
     fs_status =
-        PosixFileSystem::getFileSize(originPath, fileSize);  //!< gets the size of the file (in bytes) at location path
+        PosixFileSystem::_getFileSize(originPath, fileSize);  //!< gets the size of the file (in bytes) at location path
     if (PosixFileSystem::OP_OK != fs_status) {
         return fs_status;
     }
@@ -269,7 +269,7 @@ PosixFileSystem::Status PosixFileSystem::copyFile(const char* originPath, const 
     return fs_status;
 }
 
-PosixFileSystem::Status PosixFileSystem::appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
+PosixFileSystem::Status PosixFileSystem::_appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
     PosixFileSystem::Status fs_status;
     File::Status file_status;
     FwSignedSizeType fileSize = 0;
@@ -283,7 +283,7 @@ PosixFileSystem::Status PosixFileSystem::appendFile(const char* originPath, cons
     }
 
     // Get the file size (bytes)
-    fs_status = PosixFileSystem::getFileSize(originPath, fileSize);
+    fs_status = PosixFileSystem::_getFileSize(originPath, fileSize);
     if (PosixFileSystem::OP_OK != fs_status) {
         return fs_status;
     }
@@ -314,7 +314,7 @@ PosixFileSystem::Status PosixFileSystem::appendFile(const char* originPath, cons
     return fs_status;
 }
 
-PosixFileSystem::Status PosixFileSystem::getFileSize(const char* path, FwSignedSizeType& size) {
+PosixFileSystem::Status PosixFileSystem::_getFileSize(const char* path, FwSignedSizeType& size) {
     Status fileStat = OP_OK;
     struct stat fileStatStruct;
 
@@ -329,7 +329,7 @@ PosixFileSystem::Status PosixFileSystem::getFileSize(const char* path, FwSignedS
     return fileStat;
 }
 
-PosixFileSystem::Status PosixFileSystem::getFileCount(const char* directory, U32& fileCount) {
+PosixFileSystem::Status PosixFileSystem::_getFileCount(const char* directory, U32& fileCount) {
     Status status = OP_OK;
     DIR* dirPtr = nullptr;
     struct dirent* direntData = nullptr;
@@ -368,7 +368,7 @@ PosixFileSystem::Status PosixFileSystem::getFileCount(const char* directory, U32
     return status;
 }
 
-PosixFileSystem::Status PosixFileSystem::changeWorkingDirectory(const char* path) {
+PosixFileSystem::Status PosixFileSystem::_changeWorkingDirectory(const char* path) {
     Status status = OP_OK;
     if (::chdir(path) == -1) {
         status = errno_to_filesystem_status(errno);
@@ -376,7 +376,7 @@ PosixFileSystem::Status PosixFileSystem::changeWorkingDirectory(const char* path
     return status;
 }
 
-PosixFileSystem::Status PosixFileSystem::getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
+PosixFileSystem::Status PosixFileSystem::_getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
     Status stat = OP_OK;
 
     struct statvfs fsStat;
