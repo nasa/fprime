@@ -59,7 +59,6 @@ class TestFileSystem : public FileSystemInterface {
 
     Status _createDirectory(const char* path) override;
     Status _removeDirectory(const char* path) override;
-    Status _readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) override;
     Status _removeFile(const char* path) override;
     Status _moveFile(const char* originPath, const char* destPath) override;
     Status _copyFile(const char* originPath, const char* destPath) override;

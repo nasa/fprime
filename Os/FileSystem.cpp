@@ -4,6 +4,7 @@
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Os/FileSystem.hpp>
+#include <Os/Directory.hpp>
 
 namespace Os {
 FileSystem* FileSystem::s_singleton;
@@ -31,11 +32,6 @@ FileSystem::Status FileSystem::_createDirectory(const char* path) {
 FileSystem::Status FileSystem::_removeDirectory(const char* path) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate._removeDirectory(path);
-}
-
-FileSystem::Status FileSystem::_readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate._readDirectory(path, maxNum, fileArray, numFiles);
 }
 
 FileSystem::Status FileSystem::_removeFile(const char* path) {
@@ -98,9 +94,6 @@ FileSystem::Status FileSystem::createDirectory(const char* path) {
 FileSystem::Status FileSystem::removeDirectory(const char* path) {
     return FileSystem::getSingleton()._removeDirectory(path);
 }
-FileSystem::Status FileSystem::readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
-    return FileSystem::getSingleton()._readDirectory(path, maxNum, fileArray, numFiles);
-}
 FileSystem::Status FileSystem::removeFile(const char* path) {
     return FileSystem::getSingleton()._removeFile(path);
 }
@@ -126,5 +119,56 @@ FileSystem::Status FileSystem::getFreeSpace(const char* path, FwSizeType& totalB
     return FileSystem::getSingleton()._getFreeSpace(path, totalBytes, freeBytes);
 }
 
+FileSystem::Status FileSystem::readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
+    Directory::Status dirStatus = Directory::Status::OP_OK;
+    FileSystem::Status status = FileSystem::OP_OK;
+
+    FW_ASSERT(fileArray != nullptr);
+    FW_ASSERT(path != nullptr);
+
+    Os::Directory directory;
+    dirStatus = directory.open(path);
+
+    // Open directory failed:
+    if (dirStatus != Directory::Status::OP_OK) {
+        return FileSystem::Status::OTHER_ERROR;
+    }
+
+    U32 arrayIdx = 0;
+    U32 limitCount = 0;
+    const U32 loopLimit = std::numeric_limits<U32>::max();
+
+    char fileName[FPP_CONFIG_FILENAME_MAX_SIZE];
+
+    // Read the directory contents and store in passed in array:
+    while (arrayIdx < maxNum && limitCount < loopLimit) {
+        ++limitCount;
+
+        dirStatus = directory.read(fileName, FPP_CONFIG_FILENAME_MAX_SIZE);
+
+        if (dirStatus == Directory::Status::NO_MORE_FILES) {
+            break;
+        }
+        if (dirStatus != Directory::Status::OP_OK) {
+            return FileSystem::OTHER_ERROR;
+        }
+
+        FW_ASSERT(arrayIdx < maxNum, static_cast<NATIVE_INT_TYPE>(arrayIdx),
+                    static_cast<NATIVE_INT_TYPE>(maxNum));
+
+        fileArray[arrayIdx++] = Fw::String(fileName);
+    }
+
+    if (limitCount == loopLimit) {
+        status = FileSystem::Status::FILE_LIMIT;
+    }
+
+    directory.close();
+
+    numFiles = arrayIdx;
+
+    return status;
+
+}
 
 }  // namespace Os

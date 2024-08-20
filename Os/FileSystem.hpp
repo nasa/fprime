@@ -1,7 +1,8 @@
-#ifndef _FileSystem_hpp_
-#define _FileSystem_hpp_
+#ifndef _OS_FILESYSTEM_HPP_
+#define _OS_FILESYSTEM_HPP_
 
 #include <FpConfig.hpp>
+#include "config/FppConstantsAc.hpp"
 #include <Os/Os.hpp>
 #include <Fw/Types/String.hpp>
 
@@ -13,6 +14,8 @@ struct FileSystemHandle {};
 
 class FileSystemInterface {
   public:
+    static constexpr FwSizeType FPP_CONFIG_FILENAME_MAX_SIZE = FppConstant_FileNameStringSize::FileNameStringSize;
+
     typedef enum {
         OP_OK, //!<  Operation was successful
         ALREADY_EXISTS, //!<  File already exists
@@ -57,8 +60,6 @@ class FileSystemInterface {
     virtual Status _createDirectory(const char* path) = 0;
     //! \brief remove a directory at location path
     virtual Status _removeDirectory(const char* path) = 0;
-    //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
-    virtual Status _readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) = 0;
     //! \brief removes a file at location path
     virtual Status _removeFile(const char* path) = 0;
     //! \brief moves a file from origin to destination
@@ -93,8 +94,6 @@ class FileSystem final : public FileSystemInterface {
     Status _createDirectory(const char* path) override;
     //! \brief remove a directory at location path
     Status _removeDirectory(const char* path) override;
-    //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
-    Status _readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) override;
     //! \brief removes a file at location path
     Status _removeFile(const char* path) override;
     //! \brief moves a file from origin to destination
@@ -118,8 +117,6 @@ class FileSystem final : public FileSystemInterface {
     static Status createDirectory(const char* path);
     //! \brief remove a directory at location path
     static Status removeDirectory(const char* path);
-    //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
-    static Status readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles);
     //! \brief removes a file at location path
     static Status removeFile(const char* path);
     //! \brief moves a file from origin to destination
@@ -136,6 +133,11 @@ class FileSystem final : public FileSystemInterface {
     static Status changeWorkingDirectory(const char* path);
     //! \brief get FS free and total space in bytes on filesystem containing path
     static Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes);
+
+    //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
+    static Status readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles);
+    //! \brief Open directory returning a Os::Directory object
+    // static Os::Directory openDirectory(const char* path);
 
 
   public:

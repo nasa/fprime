@@ -17,10 +17,6 @@ StubFileSystem::Status StubFileSystem::_removeDirectory(const char* path) {
     return Status::NOT_SUPPORTED;
 }
 
-StubFileSystem::Status StubFileSystem::_readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
-    return Status::NOT_SUPPORTED;
-}
-
 StubFileSystem::Status StubFileSystem::_removeFile(const char* path) {
     return Status::NOT_SUPPORTED;
 }

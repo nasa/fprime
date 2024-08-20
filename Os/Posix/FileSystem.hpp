@@ -34,8 +34,6 @@ class PosixFileSystem : public FileSystemInterface {
     Status _createDirectory(const char* path) override;
     //! \brief remove a directory at location path
     Status _removeDirectory(const char* path) override;
-    //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
-    Status _readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) override;
     //! \brief removes a file at location path
     Status _removeFile(const char* path) override;
     //! \brief moves a file from origin to destination

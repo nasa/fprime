@@ -95,6 +95,27 @@ FileSystem::Status errno_to_filesystem_status(PlatformIntType errno_input) {
     return status;
 }
 
+Directory::Status errno_to_directory_status(PlatformIntType errno_input) {
+    Directory::Status status = Directory::Status::OP_OK;
+    switch (errno_input) {
+        case 0:
+            status = Directory::Status::OP_OK;
+            break;
+        case ENOENT:
+            status = Directory::Status::DOESNT_EXIST;
+            break;
+        case EACCES:
+            status = Directory::Status::NO_PERMISSION;
+            break;
+        case ENOTDIR:
+            status = Directory::Status::NOT_DIR;
+            break;
+        default:
+            status = Directory::Status::OTHER_ERROR;
+            break;
+    }
+    return status;
+}
 
 Task::Status posix_status_to_task_status(PlatformIntType posix_status) {
     Task::Status status = Task::Status::OP_OK;

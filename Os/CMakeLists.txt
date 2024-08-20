@@ -40,6 +40,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileSystem.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Directory.cpp"
 )
 # Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
@@ -59,7 +60,7 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
         # "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
     )
 endif()
 # Darwin IPC queue implementation
@@ -100,6 +101,7 @@ register_fprime_module()
 
 require_fprime_implementation(Os/File)
 require_fprime_implementation(Os/FileSystem)
+require_fprime_implementation(Os/Directory)
 require_fprime_implementation(Os/Mutex)
 # require_fprime_implementation(Os/Task) # should be added in
 # require_fprime_implementation(Os/Console) # should be added in

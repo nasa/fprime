@@ -31,11 +31,6 @@ TestFileSystem::Status TestFileSystem::_removeDirectory(const char* path) {
     return Status::OP_OK;
 }
 
-TestFileSystem::Status TestFileSystem::_readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
-    StaticData::data.lastCalled = StaticData::LastFn::READ_DIR_FN;
-    return Status::OP_OK;
-}
-
 TestFileSystem::Status TestFileSystem::_removeFile(const char* path) {
     StaticData::data.lastCalled = StaticData::LastFn::REMOVE_FILE_FN;
     return Status::OP_OK;
