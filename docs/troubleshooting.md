@@ -23,11 +23,26 @@ Some of the F´ Python packages are built in a way that it is recommended to ins
 
 ## fprime-util: command not found
 
-If the user is using a virtual environment and receives the ‘command not found’, the problem is likely caused by the environment not being sourced in a new terminal. Make sure to source the environment before running:
-```
-. <path/to/project>/fprime-venv/bin/activate
-```
-If installing without a virtual environment, PIP occasionally uses `$HOME/.local/bin` as a place to install user tools. Users running without virtual environments should add this directory to the path.
+There are at least three common reasons for this error.
+
+1. If the user is using a virtual environment and receives the ‘command not found’, the problem is likely caused by the environment not being sourced in a new terminal. Make sure to source the environment before running:
+    ```sh
+    # In MyProject
+    . fprime-venv/bin/activate
+    ```
+
+1. If the project folder was moved after the virtual environment was provisioned (e.g. project was originally setup in `/folderA/MyProject` and moved to `/someOtherFolder/MyProject`), various files in the original `fprime-venv` folder will contain references to the original path. The easist resolution is to remove and reprovision the virtual environment with the following:
+    ```sh
+    # In MyProject
+    rm -rf fprime-venv
+    python -m venv fprime-venv
+    . fprime-venv/bin/activate
+    pip install -r fprime/requirements.txt
+    ```
+
+    > Some projects ship their own `requirements.txt`.  Install using that file if it exists.
+
+1. If installing without a virtual environment, PIP occasionally uses `$HOME/.local/bin` as a place to install user tools. Users running without virtual environments should add this directory to the path.
 
 ## Helper script ‘fpp-redirect-helper’ exited with reason: Permission denied
 This error can occur when the helper-script, (`fprime/cmake/autocoder/fpp-wrapper/fpp-redirect-helper`) loses its execution permission.
