@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  TimeTests.cpp
-// \author T. Chieu
-// \brief  cpp file for time tests
+// \title  OverflowTests.cpp
+// \author mstarch
+// \brief  cpp file for overflow tests
 //
 // \copyright
 // Copyright (C) 2009-2023 California Institute of Technology.
