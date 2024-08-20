@@ -19,6 +19,7 @@
 #include "FppTest/component/tests/TlmTests.hpp"
 #include "FppTest/component/types/FormalParamTypes.hpp"
 
+
 class Tester : public ActiveTestGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
@@ -61,6 +62,12 @@ class Tester : public ActiveTestGTestBase {
     INTERNAL_INT_TEST_DECLS
 
     void testTime();
+
+    void testOverflowAssert();
+
+    void testOverflowDrop();
+
+    void testOverflowHook();
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -184,6 +191,10 @@ class Tester : public ActiveTestGTestBase {
                                                       A struct ref
                                                       */
     ) final;
+
+    void from_enumArgsHookOverflowed_handler(const NATIVE_INT_TYPE portNum,
+                                             const FormalParamEnum& en,
+                                             FormalParamEnum& enRef);
 
   PRIVATE:
     // ----------------------------------------------------------------------

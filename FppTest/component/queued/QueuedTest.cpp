@@ -405,6 +405,15 @@
     return this->structReturnOut_out(portNum, s, sRef);
   }
 
+
+  void QueuedTest ::
+      enumArgsHook_handler(
+          const NATIVE_INT_TYPE portNum,
+          const FormalParamEnum &en,
+          FormalParamEnum &enRef
+      )
+  {}
+
   // ----------------------------------------------------------------------
   // Handler implementations for user-defined serial input ports
   // ----------------------------------------------------------------------
@@ -696,3 +705,17 @@
     this->structInterface.args.val = str;
   }
 
+
+  // ----------------------------------------------------------------------
+  // Overflow hook implementations for user-defined async ports interfaces
+  // ----------------------------------------------------------------------
+
+  void QueuedTest ::
+      enumArgsHook_overflowHook(
+          const NATIVE_INT_TYPE portNum,
+          const FormalParamEnum &en,
+          FormalParamEnum &enRef
+      )
+  {
+      this->enumArgsHookOverflowed_out(portNum, en, enRef);
+  }

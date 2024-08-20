@@ -62,6 +62,13 @@ class Tester : public QueuedTestGTestBase {
 
     void testTime();
 
+
+    void testOverflowAssert();
+
+    void testOverflowDrop();
+
+    void testOverflowHook();
+
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
@@ -184,6 +191,10 @@ class Tester : public QueuedTestGTestBase {
                                                       A struct ref
                                                       */
     );
+
+    void from_enumArgsHookOverflowed_handler(const NATIVE_INT_TYPE portNum,
+                                             const FormalParamEnum& en,
+                                             FormalParamEnum& enRef);
 
   PRIVATE:
     // ----------------------------------------------------------------------
