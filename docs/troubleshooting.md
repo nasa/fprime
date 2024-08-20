@@ -31,7 +31,7 @@ There are at least three common reasons for this error.
     . fprime-venv/bin/activate
     ```
 
-1. If the project folder was moved after the virtual environment was provisioned (e.g. project was originally setup in `/folderA/MyProject` and moved to `/someOtherFolder/MyProject`), various files in the original `fprime-venv` folder will contain references to the original path. The easist resolution is to remove and reprovision the virtual environment with the following:
+1. If the project folder was moved after the virtual environment was provisioned (e.g. project was originally setup in `/folderA/MyProject` and moved to `/someOtherFolder/MyProject`), various files in the original `fprime-venv` folder will contain references to the original path. The easiest resolution is to remove and reprovision the virtual environment with the following:
     ```sh
     # In MyProject
     rm -rf fprime-venv
