@@ -127,22 +127,22 @@ choose_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub)
 register_fprime_ut(StubMutexTest)
 
 #### FileSystem Stub Testing ####
-# set(SOURCE_FILES
-#         "${CMAKE_CURRENT_LIST_DIR}/test/FileSystem.cpp"
-# )
-# register_fprime_module(Os_FileSystem_Test_Stub)
-# register_fprime_implementation(Os/FileSystem Os_FileSystem_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultFileSystem.cpp")
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/FileSystem.cpp"
+)
+register_fprime_module(Os_FileSystem_Test_Stub)
+register_fprime_implementation(Os/FileSystem Os_FileSystem_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultFileSystem.cpp")
 
-# set(UT_SOURCE_FILES
-#         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileSystemTests.cpp"
-#         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/CommonTests.cpp"
-#         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/FileSystemRules.cpp"
-# )
-# set(UT_MOD_DEPS
-#         Os
-#         Os_Models
-#         STest
-# )
-# choose_fprime_implementation(Os/FileSystem Os_FileSystem_Test_Stub)
-# register_fprime_ut(StubFileSystemTest)
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileSystemTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/CommonTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/FileSystemRules.cpp"
+)
+set(UT_MOD_DEPS
+        Os
+        Os_Models
+        STest
+)
+choose_fprime_implementation(Os/FileSystem Os_FileSystem_Test_Stub)
+register_fprime_ut(StubFileSystemTest)
 
