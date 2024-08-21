@@ -122,27 +122,42 @@ Recommended PIP Versions</h1>
 </table>
 <h1><a class="anchor" id="autotoc_md386"></a>
 fprime-util: command not found</h1>
-<p>If the user is using a virtual environment and receives the ‘command not found’, the problem is likely caused by the environment not being sourced in a new terminal. Make sure to source the environment before running: </p><div class="fragment"><div class="line">. &lt;path/to/project&gt;/fprime-venv/bin/activate</div>
-</div><!-- fragment --><p> If installing without a virtual environment, PIP occasionally uses <code>$HOME/.local/bin</code> as a place to install user tools. Users running without virtual environments should add this directory to the path.</p>
+<p>There are at least three common reasons for this error.</p>
+<ol type="1">
+<li>If the user is using a virtual environment and receives the ‘command not found’, the problem is likely caused by the environment not being sourced in a new terminal. Make sure to source the environment before running: ```sh </li>
+</ol>
 <h1><a class="anchor" id="autotoc_md387"></a>
-Helper script ‘fpp-redirect-helper’ exited with reason: Permission denied</h1>
+In MyProject</h1>
+<p>. fprime-venv/bin/activate ```</p>
+<ol type="1">
+<li>If the project folder was moved after the virtual environment was provisioned (e.g. project was originally setup in <code>/folderA/MyProject</code> and moved to <code>/someOtherFolder/MyProject</code>), various files in the original <code>fprime-venv</code> folder will contain references to the original path. The easiest resolution is to remove and reprovision the virtual environment with the following: ```sh </li>
+</ol>
+<h1><a class="anchor" id="autotoc_md388"></a>
+In MyProject</h1>
+<p>rm -rf fprime-venv python -m venv fprime-venv . fprime-venv/bin/activate pip install -r fprime/requirements.txt ```</p>
+<p>&gt; Some projects ship their own <code>requirements.txt</code>. Install using that file if it exists.</p>
+<ol type="1">
+<li>If installing without a virtual environment, PIP occasionally uses <code>$HOME/.local/bin</code> as a place to install user tools. Users running without virtual environments should add this directory to the path.</li>
+</ol>
+<h2><a class="anchor" id="autotoc_md389"></a>
+Helper script ‘fpp-redirect-helper’ exited with reason: Permission denied</h2>
 <p>This error can occur when the helper-script, (<code>fprime/cmake/autocoder/fpp-wrapper/fpp-redirect-helper</code>) loses its execution permission.</p>
 <p>To verify that this is the case, change to the directory containing <code>fpp-redirect-helper</code> and verify that it is executable.</p>
 <div class="fragment"><div class="line">cd fprime/cmake/autocoder/fpp-wrapper/</div>
 <div class="line">ls -l</div>
 </div><!-- fragment --><p> If it is not executable, add the permission back.</p>
 <p><code>chmod 700 fpp-redirect-helper</code></p>
-<h1><a class="anchor" id="autotoc_md388"></a>
-Ubuntu, Debian, Java and Python PIP</h1>
+<h2><a class="anchor" id="autotoc_md390"></a>
+Ubuntu, Debian, Java and Python PIP</h2>
 <p>Ubuntu and possibly other Debian variants don’t include the pip packages in the default Python 3 installation. To get fully functional, use these commands on Ubuntu and Debian based systems: </p><div class="fragment"><div class="line">sudo apt install git cmake default-jre python3 python3-pip python3-venv</div>
 </div><!-- fragment --><p> Now you should be able to run the installation without trouble.</p>
-<h1><a class="anchor" id="autotoc_md389"></a>
-macOS and CMake Command Not Found</h1>
+<h2><a class="anchor" id="autotoc_md391"></a>
+macOS and CMake Command Not Found</h2>
 <p>If the user chooses to install CMake directly from the CMake site (not using homebrew nor Mac Ports), then the CMake command-line tools must be added to the user’s PATH or default system libraries. The quickest command to do that is: </p><div class="fragment"><div class="line">sudo &quot;/Applications/CMake.app/Contents/bin/cmake-gui&quot; --install</div>
 </div><!-- fragment --><p> More information can be found <a href="https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac">here</a>. <br  />
 </p>
-<h1><a class="anchor" id="autotoc_md390"></a>
-SSL Error with Python 3.8+ on macOS</h1>
+<h2><a class="anchor" id="autotoc_md392"></a>
+SSL Error with Python 3.8+ on macOS</h2>
 <p>This fix will not work for Python installed via Homebrew. Try installing Python published at python.org. The version of openSSL bundled with Python 3.8+ requires access to macOS’s root certificates. If the following error is encountered while installing fprime: </p><div class="fragment"><div class="line">Failed find expected download: &lt;urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get  local issuer certificate</div>
 </div><!-- fragment --><p> Then run the following command in a macOS terminal to install necessary certificates: </p><div class="fragment"><div class="line">cd /Applications/Python\ 3.X/</div>
 <div class="line">./Install\ Certificates.command</div>

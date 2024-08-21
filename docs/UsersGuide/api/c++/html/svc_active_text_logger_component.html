@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_active_text_logger_component.html
 <div class="title"><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md586"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md588"></a>
 Svc::ActiveTextLogger Component</h1>
-<h2><a class="anchor" id="autotoc_md587"></a>
+<h2><a class="anchor" id="autotoc_md589"></a>
 1. Introduction</h2>
 <p>The <code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> component processes log texts from other components. The logs are written to standard output and optionally to a file.</p>
-<h2><a class="anchor" id="autotoc_md588"></a>
+<h2><a class="anchor" id="autotoc_md590"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -112,17 +112,17 @@ Svc::ActiveTextLogger Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">ISF-ATL-006   </td><td class="markdownTableBodyNone">The <code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> component shall attempt to create a new file to write to if the supplied one already exists. It will try up to ten times, by adding an integer suffix to the filename, ie "file","file0","file1"..."file9"   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md589"></a>
+<h2><a class="anchor" id="autotoc_md591"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md590"></a>
+<h3><a class="anchor" id="autotoc_md592"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md591"></a>
+<h4><a class="anchor" id="autotoc_md593"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> component has the following component diagram:</p>
 <blockquote class="doxtable">
 <p>TODO </p>
 </blockquote>
-<h4><a class="anchor" id="autotoc_md592"></a>
+<h4><a class="anchor" id="autotoc_md594"></a>
 3.1.2 Ports</h4>
 <p>The <code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> component uses the following port types:</p>
 <table class="markdownTable">
@@ -131,30 +131,30 @@ Svc::ActiveTextLogger Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><a class="el" href="fw_2_log_2docs_2sdd_8md.html">`Fw::LogText`</a>   </td><td class="markdownTableBodyNone">TextLogger   </td><td class="markdownTableBodyNone">Input   </td><td class="markdownTableBodyNone">Synchronous   </td><td class="markdownTableBodyNone">Logging port   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md593"></a>
+<h3><a class="anchor" id="autotoc_md595"></a>
 3.2 Functional Description</h3>
 <p>The <code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> component provides a text logging function for the software that maintains consistent ordering by writing the logs from a thread.</p>
-<h4><a class="anchor" id="autotoc_md594"></a>
+<h4><a class="anchor" id="autotoc_md596"></a>
 3.2.1 File Writing</h4>
 <p>Once a valid file and max size is supplied via a public function call, the <code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> component writes to that file as well as standard output. The <code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> component will stop writing to the file if it would exceed the maximum size.</p>
 <p>If the file supplied already exists, the <code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> component will attempt to create a new file up to ten times by appending an integer suffix to end of the file name.</p>
-<h3><a class="anchor" id="autotoc_md595"></a>
+<h3><a class="anchor" id="autotoc_md597"></a>
 3.3 Scenarios</h3>
 <p>TODO</p>
-<h3><a class="anchor" id="autotoc_md596"></a>
+<h3><a class="anchor" id="autotoc_md598"></a>
 3.4 State</h3>
 <p><code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md597"></a>
+<h3><a class="anchor" id="autotoc_md599"></a>
 3.5 Algorithms</h3>
 <p><code><a class="el" href="class_svc_1_1_active_text_logger.html">Svc::ActiveTextLogger</a></code> has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md598"></a>
-4. Dictionaries</h2>
-<h2><a class="anchor" id="autotoc_md599"></a>
-5. Module Checklists</h2>
 <h2><a class="anchor" id="autotoc_md600"></a>
+4. Dictionaries</h2>
+<h2><a class="anchor" id="autotoc_md601"></a>
+5. Module Checklists</h2>
+<h2><a class="anchor" id="autotoc_md602"></a>
 6. Unit Testing</h2>
 <p>To see unit test coverage run fprime-util check &ndash;coverage</p>
-<h2><a class="anchor" id="autotoc_md601"></a>
+<h2><a class="anchor" id="autotoc_md603"></a>
 7. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

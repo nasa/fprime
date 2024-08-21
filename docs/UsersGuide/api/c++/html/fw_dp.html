@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_fw_dp.html',''); initResizable(); });
 <div class="title">Framework Support for Data Products </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md465"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md467"></a>
 Framework Support for Data Products</h1>
-<h2><a class="anchor" id="autotoc_md466"></a>
+<h2><a class="anchor" id="autotoc_md468"></a>
 1. Introduction</h2>
 <p>This build module defines FPP ports and C++ classes that support the collection and storage of data products. For more information on data products and records, see the <a class="el" href="md_docs__design_data_products.html">data products documentation</a>.</p>
-<h2><a class="anchor" id="autotoc_md467"></a>
+<h2><a class="anchor" id="autotoc_md469"></a>
 2. Configuration</h2>
 <p>The following types and constants are configurable via the file <a href="../../../config/DpCfg.fpp"><code>config/DpCfg.fpp</code></a>:</p>
 <table class="markdownTable">
@@ -104,13 +104,13 @@ Framework Support for Data Products</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code><a class="el" href="namespace_fw_1_1_dp_cfg.html#a9ea816f1c2196b8ded72c6b2a709b40ba265dc0a37c075f1af68057c21e58a091">Fw::DpCfg::CONTAINER_USER_DATA_SIZE</a></code>   </td><td class="markdownTableBodyNone">Constant   </td><td class="markdownTableBodyNone">The size of the user-configurable data in the container packet header.   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md468"></a>
+<h2><a class="anchor" id="autotoc_md470"></a>
 3. FPP Types</h2>
 <p>This build module defines the following FPP types:</p>
 <ol type="1">
 <li><code>DpState</code>: An enumeration describing the state of a data product.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md469"></a>
+<h2><a class="anchor" id="autotoc_md471"></a>
 4. FPP Ports</h2>
 <p>This build module defines the following FPP ports:</p>
 <ol type="1">
@@ -126,14 +126,14 @@ Framework Support for Data Products</h1>
 <li><code>DpSend</code>: A port for sending a buffer holding data products.</li>
 </ol>
 <p>For more information, see the file <a href="../Dp.fpp"><code>Dp.fpp</code></a> in the parent directory.</p>
-<h2><a class="anchor" id="autotoc_md470"></a>
+<h2><a class="anchor" id="autotoc_md472"></a>
 5. C++ Classes</h2>
 <p>This module defines a C++ class <code>DpContainer</code>. <code>DpContainer</code> is the base class for a data product container. When you specify a container <em>C</em> in an FPP component model, the auto-generated C++ for the component defines a container class for <em>C</em>. The container class is derived from <code>DpContainer</code>. It provides all the generic operations defined in <code>DpContainer</code> plus the operations that are specific to <em>C</em>, for example serializing the specific types of data that <em>C</em> can store.</p>
 <p><a class="anchor" id="serial-format"></a> </p>
-<h3><a class="anchor" id="autotoc_md471"></a>
+<h3><a class="anchor" id="autotoc_md473"></a>
 5.1. Serialized Container Format</h3>
 <p>In serialized form, each data product container consists of the following elements: a header, a header hash, data, and a data hash.</p>
-<h4><a class="anchor" id="autotoc_md472"></a>
+<h4><a class="anchor" id="autotoc_md474"></a>
 5.1.1. Header</h4>
 <p>The data product header has the following format.</p>
 <table class="markdownTable">
@@ -157,7 +157,7 @@ Framework Support for Data Products</h1>
 <td class="markdownTableBodyNone"><code>DataSize</code>   </td><td class="markdownTableBodyNone"><code>FwSizeType</code>   </td><td class="markdownTableBodyNone"><code>sizeof(FwSizeStoreType)</code>   </td><td class="markdownTableBodyNone">The size of the data payload in bytes   </td></tr>
 </table>
 <p><code>Header::UserData</code> is an array of <code>U8</code> of size <code><a class="el" href="namespace_fw_1_1_dp_cfg.html#a9ea816f1c2196b8ded72c6b2a709b40ba265dc0a37c075f1af68057c21e58a091">Fw::DpCfg::CONTAINER_USER_DATA_SIZE</a></code>.</p>
-<h4><a class="anchor" id="autotoc_md473"></a>
+<h4><a class="anchor" id="autotoc_md475"></a>
 5.1.2. Header Hash</h4>
 <p>The header hash has the following format.</p>
 <table class="markdownTable">
@@ -166,7 +166,7 @@ Framework Support for Data Products</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Header Hash</code>   </td><td class="markdownTableBodyNone"><a class="el" href="utils_2_hash_2_r_e_a_d_m_e_8md.html">`HASH_DIGEST_LENGTH`</a>   </td><td class="markdownTableBodyNone">The hash value guarding the header.   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md474"></a>
+<h4><a class="anchor" id="autotoc_md476"></a>
 5.1.3. Data</h4>
 <p>The data is a sequence of records. The serialized format of each record <em>R</em> depends on whether <em>R</em> is a single-value record or an array record.</p>
 <p><b>Single-value records:</b> A single-value record is specified in FPP in the form <code>product record</code> <em>name</em> <code>:</code> <em>type</em>. The record has name <em>name</em> and represents one item of data of type <em>type</em>. The type may be any FPP type, including a struct or array type. Single-value records with <em>type = T</em> have the following format:</p>
@@ -189,7 +189,7 @@ Framework Support for Data Products</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Data</code>   </td><td class="markdownTableBodyNone">Array of <em>n</em> <em>T</em>   </td><td class="markdownTableBodyNone"><em>n</em> * [<code>sizeof(</code>_T_<code>)</code> if <em>T</em> is a primitive type; otherwise <em>T</em><code>::SERIALIZED_SIZE</code>]   </td><td class="markdownTableBodyNone"><em>n</em> elements, each of type <em>T</em>   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md475"></a>
+<h4><a class="anchor" id="autotoc_md477"></a>
 5.1.4. Data Hash</h4>
 <p>The data hash has the following format.</p>
 <table class="markdownTable">
@@ -198,7 +198,7 @@ Framework Support for Data Products</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Data Hash</code>   </td><td class="markdownTableBodyNone"><a class="el" href="utils_2_hash_2_r_e_a_d_m_e_8md.html">`HASH_DIGEST_LENGTH`</a>   </td><td class="markdownTableBodyNone">The hash value guarding the data.   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md476"></a>
+<h3><a class="anchor" id="autotoc_md478"></a>
 5.2. Further Information</h3>
 <p>For more information on the <code>DpContainer</code> class, see the file <a href="../DpContainer.hpp"><code>DpContainer.hpp</code></a> in the parent directory. </p>
 </div></div><!-- contents -->
