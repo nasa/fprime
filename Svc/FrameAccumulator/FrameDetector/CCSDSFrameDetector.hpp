@@ -35,6 +35,7 @@ class CRC16_CCITT : public CRCWrapper<U16> {
     };
 };
 constexpr U16 TEN_BIT_MASK = 0x03FF;
+constexpr U16 CCSDS_SDLTP_TC_MAX_FRAME_LENGTH = 1017;
 static_assert(CCSDS_SCID <= (std::numeric_limits<U16>::max() & TEN_BIT_MASK), "SCID must fit in 10bits");
 
 //! CCSDS framing start word is:
@@ -45,7 +46,7 @@ static_assert(CCSDS_SCID <= (std::numeric_limits<U16>::max() & TEN_BIT_MASK), "S
 //! - 10 bits of configurable SCID
 using CCSDSStartWord = StartToken<U16, static_cast<U16>(0 | (CCSDS_SCID & TEN_BIT_MASK))>;
 //! CCSDS length is the last 10 bits of the 3rd and 4th octet
-using CCSDSLength = LengthToken<U16, sizeof(U16), 1017, TEN_BIT_MASK>;
+using CCSDSLength = LengthToken<U16, sizeof(U16), CCSDS_SDLTP_TC_MAX_FRAME_LENGTH, TEN_BIT_MASK>;
 //! CCSDS checksum is a 16bit CRC with data starting at the 6th octet and the crc following directly
 using CCSDSChecksum = CRC<U16, 5, 0, CRC16_CCITT>;
 

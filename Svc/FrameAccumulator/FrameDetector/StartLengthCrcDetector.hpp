@@ -184,7 +184,7 @@ class CRCWrapper {
   protected:
     TokenType m_crc;
 };
-//! \breif standard CRC32 implementation
+//! \brief standard CRC32 implementation
 class CRC32 : public CRCWrapper<U32> {
   public:
     CRC32() : CRCWrapper<U32>(std::numeric_limits<U32>::max()) {}
@@ -330,9 +330,6 @@ class StartLengthCrcDetector : public FrameDetector {
         }
         // Read CRC
         status = crc.read(data, size_out);
-        if (status == Status::FRAME_DETECTED) {
-            printf("FRAME!!!!!\n");
-        }
         return status;
     };
 };
