@@ -169,12 +169,12 @@ void CircularBuffer ::clear_high_water_mark() {
 #ifdef CIRCULAR_DEBUG
 void CircularBuffer :: print() {
     NATIVE_UINT_TYPE idx = m_head_idx;
-    Os::Log::logMsg("Ring: ", 0, 0, 0, 0, 0, 0);
+    Os::Log::log("Ring: ");
     for (NATIVE_UINT_TYPE i = 0; i < m_allocated_size; ++i) {
-        Os::Log::logMsg("%c", m_store[idx], 0, 0, 0, 0, 0);
+        Os::Log::log("%c", m_store[idx]);
         idx = advance_idx(idx);
     }
-    Os::Log::logMsg("\n", 0, 0, 0, 0, 0, 0);
+    Os::Log::log("\n");
 }
 #endif
 } //End Namespace Types
