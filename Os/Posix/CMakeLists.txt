@@ -141,16 +141,16 @@ register_fprime_implementation(Os/FileSystem Os_FileSystem_Posix "${CMAKE_CURREN
 
 #### Os/FileSystem/Posix Unit Tests ####
 # set(UT_SOURCE_FILES
-#         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/CommonTests.cpp"
-#         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/MutexRules.cpp"
-#         "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixMutexTests.cpp"
+#         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/CommonTests.cpp"
+#         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/FileSystemRules.cpp"
+#         "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixFileSystemTests.cpp"
 # )
 # set(UT_MOD_DEPS
 #         Os
 #         STest
 # )
-# choose_fprime_implementation(Os/Mutex Os_Mutex_Posix)
-# register_fprime_ut(PosixMutexTest)
+# choose_fprime_implementation(Os/FileSystem Os_FileSystem_Posix)
+# register_fprime_ut(PosixFileSystemTest)
 
 #################################
 ### Os/Directory/Posix Section #

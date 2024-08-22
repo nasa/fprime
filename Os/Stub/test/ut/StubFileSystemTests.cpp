@@ -26,18 +26,6 @@ public:
 };
 
 
-// Ensure that Os::FileSystem properly calls the implementation constructor
-// TEST_F(Interface, Construction) {
-
-//     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::CONSTRUCT_FN);
-// }
-
-// // Ensure that Os::FileSystem properly calls the implementation destructor
-// TEST_F(Interface, Destruction) {
-//     delete (new Os::FileSystem);
-//     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::DESTRUCT_FN);
-// }
-
 // Ensure that Os::FileSystem properly calls the implementation createDirectory()
 TEST_F(Interface, CreateDirectory) {
     Os::FileSystem::createDirectory("test");
@@ -49,13 +37,6 @@ TEST_F(Interface, CreateDirectory) {
 TEST_F(Interface, RemoveDirectory) {
     Os::FileSystem::removeDirectory("test");
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::REMOVE_DIR_FN);
-    ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
-}
-// Ensure that Os::FileSystem properly calls the implementation readDirectory()
-TEST_F(Interface, ReadDirectory) {
-    U32 numFiles;
-    Os::FileSystem::readDirectory("test", 0, nullptr, numFiles);
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::READ_DIR_FN);
     ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
 }
 

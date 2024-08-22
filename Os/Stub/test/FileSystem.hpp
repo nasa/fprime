@@ -2,10 +2,11 @@
 // \title Os/Stub/test/FileSystem.cpp
 // \brief definitions for TestFileSystem stubs for interface testing
 // ======================================================================
+#ifndef OS_STUB_FILESYSTEM_TEST_HPP
+#define OS_STUB_FILESYSTEM_TEST_HPP
+
 #include "Os/FileSystem.hpp"
 
-#ifndef OS_STUB_FileSystem_TEST_HPP
-#define OS_STUB_FileSystem_TEST_HPP
 namespace Os {
 namespace Stub {
 namespace FileSystem {

@@ -41,6 +41,15 @@ set(MOD_DEPS)
 register_fprime_module(Os_FileSystem_Stub)
 register_fprime_implementation(Os/FileSystem Os_FileSystem_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultFileSystem.cpp")
 
+
+######## Directory Stub ########
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Directory.cpp"
+)
+set(MOD_DEPS)
+register_fprime_module(Os_Directory_Stub)
+register_fprime_implementation(Os/Directory Os_Directory_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultDirectory.cpp")
+
 # Remainder of file is specific to UTs
 if (NOT BUILD_TESTING)
     return()
@@ -145,4 +154,24 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/FileSystem Os_FileSystem_Test_Stub)
 register_fprime_ut(StubFileSystemTest)
+
+#### Directory Stub Testing ####
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/Directory.cpp"
+)
+register_fprime_module(Os_Directory_Test_Stub)
+register_fprime_implementation(Os/Directory Os_Directory_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultDirectory.cpp")
+
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubDirectoryTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/CommonTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/DirectoryRules.cpp"
+)
+set(UT_MOD_DEPS
+        Os
+        Os_Models
+        STest
+)
+choose_fprime_implementation(Os/Directory Os_Directory_Test_Stub)
+register_fprime_ut(StubDirectoryTest)
 

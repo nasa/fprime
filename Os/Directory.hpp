@@ -18,6 +18,7 @@ class DirectoryInterface {
         NOT_DIR, //!<  Path is not a directory
         NO_MORE_FILES, //!<  Directory stream has no more files
         BAD_DESCRIPTOR, //!<  Directory stream descriptor is invalid
+        NOT_SUPPORTED, //!<  Operation is not supported by the current implementation
         OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
     } Status;
 

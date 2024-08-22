@@ -59,8 +59,6 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
-        # "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
-        # "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
     )
 endif()
 # Darwin IPC queue implementation
@@ -119,7 +117,7 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 if (BUILD_TESTING)
-    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubMutexTest PosixMutexTest) # add? : StubTaskTest PosixTaskTest
+    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubMutexTest PosixMutexTest StubDirectoryTest StubFileSystemTest) # add? : StubTaskTest PosixTaskTest
        if (TARGET "${TEST}")
            add_dependencies("Os_ut_exe" "${TEST}")
        endif()
