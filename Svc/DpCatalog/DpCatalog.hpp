@@ -55,8 +55,6 @@ namespace Svc {
         // Deallocates memory.       
         void shutdown();
 
-
-
     PRIVATE:
 
         // ----------------------------------------------------------------------
@@ -124,18 +122,16 @@ namespace Svc {
         // ----------------------------------
 
         struct DpStateEntry {
-            bool entry; //!< entry exists
             FwIndexType dir; //!< index to m_directories entry that has directory name where DP exists
             DpRecord record; //!< data product metadata
-
         };
 
         /// @brief A list sorted in priority order for downlink
-        struct DpSortedList {
-            DpStateEntry* recPtr; //!< pointer to DP record          
-            bool sent; //!< flag if file sent yet
+        struct DpBtreeNode {
+            DpStateEntry entry; //!< pointer to DP record          
+            DpBtreeNode* left; //!< left child. Also used for free list
+            DpBtreeNode* right; //!< right child
         };
-
 
         // ----------------------------------
         // Private helpers
@@ -149,6 +145,23 @@ namespace Svc {
         /// @brief delete an entry from the sorted list
         /// @param entry new entry
         void deleteEntry(DpStateEntry& entry);
+
+        /// @brief enumeration for check and insert function
+        enum CheckStat {
+            CHECK_OK, //!< check passed and inserted. Can break loop
+            CHECK_CONT, //!< check passed and find another node to check
+            CHECK_ERROR, //!< check failed to allocate an entry. Quit function
+        };
+
+        /// @brief check for left/right insertion
+        CheckStat checkLeftRight(bool condition, DpBtreeNode* &node, const DpStateEntry& newEntry);
+
+        /// @brief add an entry to the tree
+        /// @param entry entry to add
+        /// @return true if a node could be allocated
+        bool allocateNode(
+            DpBtreeNode* &newNode, 
+            const DpStateEntry& newEntry);
 
         /// @brief send the next entry to file downlink
         void sendNextEntry();
@@ -169,8 +182,12 @@ namespace Svc {
         // Private data
         // ----------------------------------
         bool m_initialized; //!< set when the component has been initialized
-        DpStateEntry* m_dpList; //!< unsorted list of DPs read in
-        DpSortedList* m_sortedDpList; //!< sorted list of DPs; head of linked list
+        
+        DpBtreeNode* m_dpTree; //!< The head of the binary tree
+        DpBtreeNode* m_freeListHead; //!< The head of the free list
+        DpBtreeNode* m_freeListFoot; //!< The foot of the free list
+        DpBtreeNode** m_traverseStack; //!< pointer to memory for stack for traversing tree
+        DpBtreeNode* m_currentEntry; //!< current entry for traversing tree
 
         FwSizeType m_numDpRecords; //!< Stores the actual number of records.
         FwSizeType m_numDpSlots; //!< Stores the available number of record slots.
@@ -185,7 +202,7 @@ namespace Svc {
         Fw::MemAllocator* m_allocator; //!< stored for shutdown
 
         bool m_xmitInProgress; //!< set if DP files are in the process of being sent
-        DpSortedList* m_currXmitRecord; //!< current record being transmitted
+        FwIndexType m_currStackEntry; //!< current stack entry for traversing tree
         Fw::FileNameString m_currXmitFileName; //!< current file being transmitted
         bool m_xmitCmdWait; //!< true if waiting for transmission complete to complete xmit command
         U64 m_xmitBytes; //!< bytes transmitted for downlink session

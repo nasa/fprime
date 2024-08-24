@@ -22,8 +22,11 @@ namespace Svc {
         DpCatalog(const char* const compName) :
         DpCatalogComponentBase(compName),
         m_initialized(false),
-        m_dpList(nullptr),
-        m_sortedDpList(nullptr),
+        m_dpTree(nullptr),
+        m_freeListHead(nullptr),
+        m_freeListFoot(nullptr),
+        m_traverseStack(nullptr),
+        m_currentEntry(nullptr),
         m_numDpRecords(0),
         m_numDpSlots(0),
         m_numDirectories(0),
@@ -32,7 +35,6 @@ namespace Svc {
         m_allocatorId(0),
         m_allocator(nullptr),
         m_xmitInProgress(false),
-        m_currXmitRecord(nullptr),
         m_xmitCmdWait(false),
         m_xmitBytes(0),
         m_xmitOpCode(0),
@@ -56,33 +58,35 @@ namespace Svc {
         FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
 
         // request memory for catalog
-        this->m_memSize = DP_MAX_FILES * (sizeof(DpStateEntry) + sizeof(DpSortedList));
+        this->m_memSize = DP_MAX_FILES * (sizeof(DpBtreeNode) + sizeof(DpBtreeNode*));
         bool notUsed; // we don't need to recover the catalog.
-        // request memory
+        // request memory. this->m_memSize will be modified if there is less than we requested
         this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
         // adjust to actual size if less allocated and only initialize
         // if there is enough room for at least one record and memory
         // was allocated
         if (
-            (this->m_memSize >= (sizeof(DpSortedList) + sizeof(DpStateEntry))) and
+            (this->m_memSize >= sizeof(DpBtreeNode)) and
             (this->m_memPtr != nullptr)
             ) {
             // set the number of available record slots
-            this->m_numDpSlots = this->m_memSize / (sizeof(DpSortedList) + sizeof(DpStateEntry));
-            // initialize data structures
-            // state entry pointers will be at the beginning of the memory
-            this->m_dpList = static_cast<DpStateEntry*>(this->m_memPtr);
-            // sorted list will be after state structures
-            this->m_sortedDpList = reinterpret_cast<DpSortedList*>(&this->m_dpList[this->m_numDpSlots]);
+            this->m_numDpSlots = this->m_memSize / sizeof(DpBtreeNode);
+            // initialize data structures in the free list
+            this->m_freeListHead = static_cast<DpBtreeNode*>(this->m_memPtr);
             for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
                 // overlay new instance of the DpState entry on the memory
-                (void) new(&this->m_dpList[slot]) DpStateEntry();
-                this->m_dpList[slot].entry = false;
-                this->m_dpList[slot].dir = -1;
-                // initialize sorted list entry to empty
-                this->m_sortedDpList[slot].recPtr = nullptr;
-                this->m_sortedDpList[slot].sent = false;
+                (void) new(&this->m_freeListHead[slot]) DpBtreeNode();
+                this->m_freeListHead[slot].left = nullptr;
+                this->m_freeListHead[slot].right = nullptr;
+                // link the free list
+                if (slot > 0) {
+                    this->m_freeListHead[slot-1].left = &this->m_freeListHead[slot];
+                }
             }
+            // set the foot of the free list
+            this->m_freeListFoot = &this->m_freeListHead[this->m_numDpSlots - 1];
+            // assign pointer for the stack
+            this->m_traverseStack = reinterpret_cast<DpBtreeNode**>(&this->m_freeListHead[this->m_numDpSlots]);
         }
         else {
             // if we don't have enough memory, set the number of records
@@ -216,13 +220,10 @@ namespace Svc {
                 entry.record.settSec(container.getTimeTag().getSeconds());
                 entry.record.settSub(container.getTimeTag().getUSeconds());
                 entry.record.setsize(static_cast<U64>(fileSize));
-                entry.entry = true;
 
-                // assign the entry to the stored list
-                this->m_dpList[this->m_numDpRecords] = entry;
 
                 // insert entry into sorted list. if can't insert, quit
-                if (not this->insertEntry(this->m_dpList[this->m_numDpRecords])) {
+                if (not this->insertEntry(entry)) {
                     this->log_WARNING_HI_DpInsertError(entry.record);
                     break;
                 }
@@ -264,14 +265,108 @@ namespace Svc {
 
     bool DpCatalog::insertEntry(DpStateEntry& entry) {
 
-        // Prototype version: Just add the record to the end of the list
-        this->m_sortedDpList[this->m_numDpRecords].recPtr = &entry;
-        this->m_sortedDpList[this->m_numDpRecords].sent = false;
+        // the tree is filled in the following priority order:
+        // 1. DP priority - lower number is higher priority
+        // 2. DP time - older is higher priority
+        // 3. DP ID - lower number is higher priority
+
+        // Higher priority is to the left of the tree
+
+        // if the tree is empty, add the first entry
+        if (this->m_dpTree == nullptr) {
+            this->allocateNode(this->m_dpTree,entry);
+        // otherwise, search depth-first to sort the entry
+        } else {
+            // to avoid recursion, loop through a max of the number of available records
+            DpBtreeNode* node = this->m_dpTree;
+            for (FwSizeType record = 0; record < this->m_numDpSlots; record++) {
+                CheckStat stat = CheckStat::CHECK_CONT;
+                // check priority. Lower is higher priority 
+                if (entry.record.getpriority() == node->entry.record.getpriority()) {
+                    // check time. Older is higher priority
+                    if (entry.record.gettSec() == node->entry.record.gettSec()) {
+                        // check ID. Lower is higher priority
+                        stat = this->checkLeftRight(
+                            entry.record.getid() < node->entry.record.getid(),
+                            node,
+                            entry
+                        );
+                    } else { // if seconds are not equal. Older is higher priority
+                        stat = this->checkLeftRight(
+                            entry.record.gettSec() < node->entry.record.gettSec(),
+                            node,
+                            entry
+                        );
+                    }
+                } else { // if priority is not equal. Lower is higher priority.
+                    stat = this->checkLeftRight(
+                        entry.record.getpriority() < node->entry.record.getpriority(),
+                        node,
+                        entry
+                    );
+                } // end checking for left/right insertion
+
+                // act on status
+                if (stat == CheckStat::CHECK_ERROR) {
+                    return false;
+                } else if (stat == CheckStat::CHECK_OK) {
+                    break;
+                }
+            } // end for each possible record
+        }
+
+        // increment the number of records
+
         this->m_numDpRecords++;
 
         return true;
 
     }
+
+    DpCatalog::CheckStat DpCatalog::checkLeftRight(bool condition, DpBtreeNode* &node, const DpStateEntry& newEntry) {
+        if (condition) {
+            if (node->left == nullptr) {
+                if (!this->allocateNode(node->left,newEntry)) {
+                    return CheckStat::CHECK_ERROR;
+                }
+                return CheckStat::CHECK_OK;
+            } else {
+                node = node->left;
+                return CheckStat::CHECK_CONT;
+            }
+        } else {
+            if (node->right == nullptr) {
+                if (!this->allocateNode(node->right,newEntry)) {
+                    return CheckStat::CHECK_ERROR;
+                }
+                return CheckStat::CHECK_OK;
+            } else {
+                node = node->right;
+                return CheckStat::CHECK_CONT;
+            }
+        }
+    }
+
+
+    bool DpCatalog::allocateNode(DpBtreeNode* &newNode, 
+            const DpStateEntry& newEntry) {
+        // should always be null since we are allocating an empty slot
+        FW_ASSERT(newNode == nullptr);
+        // make sure there is an entry from the free list
+        bool success = false;
+        if (this->m_freeListHead == nullptr) {
+            this->log_WARNING_HI_DpCatalogFull(newEntry.record);
+            success = false;
+        }
+        // get a new node from the free list
+        newNode = this->m_freeListHead;
+        // move the head of the free list to the next node
+        this->m_freeListHead = this->m_freeListHead->left;
+
+        return success;
+
+    }
+
 
     void DpCatalog::deleteEntry(DpStateEntry& entry) {
 
@@ -279,48 +374,41 @@ namespace Svc {
 
     void DpCatalog::sendNextEntry() {
 
-        // Make sure that pointer is valid
-        FW_ASSERT(this->m_sortedDpList);
+        // check some asserts
+        FW_ASSERT(this->m_dpTree);
+        FW_ASSERT(this->m_xmitInProgress);
+        FW_ASSERT(this->m_traverseStack);
+        FW_ASSERT(this->m_currentEntry);
 
-        // Demo code: Walk through list and send first file
-        for (FwSizeType record = 0; record < this->m_numDpRecords; record++) {
-            if (not this->m_sortedDpList[record].sent) {
-                // make sure the entry is used
-                if (this->m_sortedDpList[record].recPtr != nullptr) {
-                    // store pointer to record for fileDone callback
-                    this->m_currXmitRecord = &this->m_sortedDpList[record];
+        // traverse the tree until we find the leaf
+        for (FwSizeType record = 0; record < this->m_numDpSlots; record++) {
+            if (this->m_currentEntry->left != nullptr) { // Step 3b
+                // push current entry on the stack
+                this->m_traverseStack[this->m_currStackEntry++] = this->m_currentEntry;
+                this->m_currentEntry = this->m_currentEntry->left;
+            } else {
+                // check to see if this node has already been transmitted, if so, pop back up the stack
+                if (this->m_currentEntry->entry.record.getstate() == Fw::DpState::TRANSMITTED) {
+                    this->m_currentEntry = this->m_traverseStack[this->m_currStackEntry--]->right;
+                    break;
+                } else { // if not transmitted, transmit it
                     // build file name
                     this->m_currXmitFileName.format(DP_FILENAME_FORMAT,
-                        this->m_directories[this->m_sortedDpList[record].recPtr->dir].toChar(),
-                        this->m_sortedDpList[record].recPtr->record.getid(),
-                        this->m_sortedDpList[record].recPtr->record.gettSec(),
-                        this->m_sortedDpList[record].recPtr->record.gettSub()
+                        this->m_directories[this->m_currentEntry->entry.dir].toChar(),
+                        this->m_currentEntry->entry.record.getid(),
+                        this->m_currentEntry->entry.record.gettSec(),
+                        this->m_currentEntry->entry.record.gettSub()
                     );
                     this->log_ACTIVITY_LO_SendingProduct(
                         this->m_currXmitFileName,
-                        static_cast<U32>(this->m_sortedDpList[record].recPtr->record.getsize()),
-                        this->m_sortedDpList[record].recPtr->record.getpriority()
+                        static_cast<U32>(this->m_currentEntry->entry.record.getsize()),
+                        this->m_currentEntry->entry.record.getpriority()
                         );
                     this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
-                    this->m_xmitBytes += this->m_sortedDpList[record].recPtr->record.getsize();
-                    // quit looking when we find an entry
                     return;
                 }
-                // clean up record
-                this->m_sortedDpList[record].sent = true;
             }
-        }
-
-        // if none were found, finish transmission
-        this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
-        this->m_xmitInProgress = false;
-        this->m_xmitBytes = 0;
-        this->m_currXmitRecord = nullptr;
-
-        if (this->m_xmitCmdWait) {
-            this->m_xmitCmdWait = false;
-            this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, Fw::CmdResponse::OK);
-        }
+        } // end for each possible node in the tree
 
     }
 
@@ -358,10 +446,15 @@ namespace Svc {
             const Svc::SendFileResponse& resp
         )
     {
-        if (this->m_currXmitRecord) {
-            this->m_currXmitRecord->sent = true;
-            this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
-        }
+        FW_ASSERT(this->m_currentEntry);
+        this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
+
+        // mark the entry as transmitted
+        this->m_currentEntry->entry.record.setstate(Fw::DpState::TRANSMITTED);
+        // set to right node
+        this->m_currentEntry = this->m_currentEntry->right;
+        // push new current to the stack
+        this->m_traverseStack[this->m_currStackEntry++] = this->m_currentEntry;
 
         this->sendNextEntry();
     }
@@ -416,7 +509,31 @@ namespace Svc {
 
     Fw::CmdResponse DpCatalog::doCatalogXmit() {
 
+        // start transmission 
         this->m_xmitBytes = 0;
+
+        // make sure a downlink is not in progress
+        if (this->m_xmitInProgress) {
+            this->log_WARNING_LO_DpXmitInProgress();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
+
+        // make sure we have valid pointers
+        FW_ASSERT(this->m_dpTree);
+        FW_ASSERT(this->m_traverseStack);
+
+        // Traverse the tree using a stack to avoid recursion
+        // https://codestandard.net/articles/binary-tree-inorder-traversal/
+
+        // Step 1 - reset the stack
+        this->m_currStackEntry = 0;
+        // Step 2 - assign root of the tree to the current entry
+        this->m_currentEntry = this->m_dpTree;
+        // Step 3a - put the root on the stack
+        this->m_traverseStack[this->m_currStackEntry] = this->m_currentEntry;
+
+        this->m_xmitInProgress = true;
+        // Step 3b - search for and send first entry
         this->sendNextEntry();
         return Fw::CmdResponse::OK;
 
