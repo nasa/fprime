@@ -49,6 +49,46 @@ namespace Svc {
         this->component.shutdown();
     }
 
+    void DpCatalogTester::testTree(
+            DpCatalog::DpStateEntry* input, 
+            DpCatalog::DpStateEntry* output, 
+            NATIVE_INT_TYPE numEntries) {
+        ASSERT_TRUE(input != NULL);
+        ASSERT_TRUE(output != NULL);
+        ASSERT_TRUE(numEntries > 0);
+
+        Fw::MallocAllocator alloc;
+
+        Fw::FileNameString dirs[1];
+        dirs[0] = "dir0";
+        this->component.configure(dirs,FW_NUM_ARRAY_ELEMENTS(dirs),100,alloc);
+
+        // reset tree
+        this->component.resetBinaryTree();
+
+        // add entries
+        for (FwIndexType entry = 0; entry < numEntries; entry++) {
+            ASSERT_TRUE(this->component.insertEntry(input[entry]));
+        }
+
+        // reset stack to read tree
+        this->component.resetTreeStack();
+        // hot wire in progress
+        this->component.m_xmitInProgress = true;
+
+        // retrive entries - they should match expected output
+        for (FwIndexType entry = 0; entry < numEntries; entry++) {
+            DpCatalog::DpBtreeNode* res = this->component.findNextTreeEntry();
+            ASSERT_TRUE(res != nullptr);
+            // should match expected entry
+            ASSERT_EQ(res->entry.record,output[entry].record);
+        }
+
+        this->component.shutdown();
+
+    }
+
+
     //! Read one DP test
     void DpCatalogTester::readDps(
             Fw::FileNameString *dpDirs,

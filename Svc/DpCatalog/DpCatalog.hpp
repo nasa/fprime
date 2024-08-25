@@ -156,6 +156,12 @@ namespace Svc {
         /// @brief check for left/right insertion
         CheckStat checkLeftRight(bool condition, DpBtreeNode* &node, const DpStateEntry& newEntry);
 
+        /// @brief reset the free list
+        void resetBinaryTree();
+
+        /// @brief reset the tree stack
+        void resetTreeStack();
+
         /// @brief add an entry to the tree
         /// @param entry entry to add
         /// @return true if a node could be allocated
@@ -165,6 +171,11 @@ namespace Svc {
 
         /// @brief send the next entry to file downlink
         void sendNextEntry();
+
+        /// @brief find the next entry in the tree
+        /// @return pointer if an entry was found, nullptr if no more entries
+        /// @param entry entry to return
+        DpBtreeNode* findNextTreeEntry();
 
         /// @brief check to see if component successfully initialized
         /// @return bool if it was initialized
@@ -182,7 +193,7 @@ namespace Svc {
         // Private data
         // ----------------------------------
         bool m_initialized; //!< set when the component has been initialized
-        
+
         DpBtreeNode* m_dpTree; //!< The head of the binary tree
         DpBtreeNode* m_freeListHead; //!< The head of the free list
         DpBtreeNode* m_freeListFoot; //!< The foot of the free list

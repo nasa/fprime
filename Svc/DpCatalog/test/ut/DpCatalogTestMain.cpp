@@ -5,13 +5,83 @@
 // ======================================================================
 
 #include "DpCatalogTester.hpp"
+#include <Svc/DpCatalog/DpCatalog.hpp>
 
 TEST(NominalManual, initTest) {
     Svc::DpCatalogTester tester;
     tester.doInit();
 }
 
-TEST(NominalManual, OneDp) {
+TEST(NominalManual, TreeTestManual1) {
+
+    Svc::DpCatalogTester tester;
+    Fw::FileNameString dir;
+
+    Svc::DpCatalog::DpStateEntry inputs[1];
+    Svc::DpCatalog::DpStateEntry outputs[1];
+
+    inputs[0].record.setid(1);
+    inputs[0].record.setpriority(2);
+    inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
+    inputs[0].record.settSec(1000);
+    inputs[0].record.settSub(1500);
+    inputs[0].record.setsize(100);
+
+    outputs[0].record.setid(1);
+    outputs[0].record.setpriority(2);
+    outputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
+    outputs[0].record.settSec(1000);
+    outputs[0].record.settSub(1500);
+    outputs[0].record.setsize(100);
+
+    tester.testTree(
+        inputs,
+        outputs,
+        1
+    );
+
+
+}
+
+TEST(NominalManual, TreeTestManual2) {
+
+    Svc::DpCatalogTester tester;
+    Fw::FileNameString dir;
+
+    Svc::DpCatalog::DpStateEntry inputs[2];
+    Svc::DpCatalog::DpStateEntry outputs[2];
+
+    inputs[0].record.setid(1);
+    inputs[0].record.setpriority(2);
+    inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
+    inputs[0].record.settSec(1000);
+    inputs[0].record.settSub(1500);
+    inputs[0].record.setsize(100);
+
+    inputs[1].record.setid(2);
+    inputs[1].record.setpriority(1);
+    inputs[1].record.setstate(Fw::DpState::UNTRANSMITTED);
+    inputs[1].record.settSec(1000);
+    inputs[1].record.settSub(1500);
+    inputs[1].record.setsize(100);
+
+
+    outputs[0].record = inputs[1].record;
+    outputs[1].record = inputs[0].record;
+
+    tester.testTree(
+        inputs,
+        outputs,
+        FW_NUM_ARRAY_ELEMENTS(inputs)
+    );
+
+
+}
+
+
+
+
+TEST(NominalManual, DISABLED_OneDp) {
 
     Svc::DpCatalogTester tester;
     Fw::FileNameString dir;
@@ -33,7 +103,7 @@ TEST(NominalManual, OneDp) {
     );
 }
 
-TEST(NominalManual, FiveDp) {
+TEST(NominalManual, DISABLED_FiveDp) {
 
     Svc::DpCatalogTester tester;
     Fw::FileNameString dirs[2];

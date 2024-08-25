@@ -71,20 +71,7 @@ namespace Svc {
             ) {
             // set the number of available record slots
             this->m_numDpSlots = this->m_memSize / sizeof(DpBtreeNode);
-            // initialize data structures in the free list
-            this->m_freeListHead = static_cast<DpBtreeNode*>(this->m_memPtr);
-            for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
-                // overlay new instance of the DpState entry on the memory
-                (void) new(&this->m_freeListHead[slot]) DpBtreeNode();
-                this->m_freeListHead[slot].left = nullptr;
-                this->m_freeListHead[slot].right = nullptr;
-                // link the free list
-                if (slot > 0) {
-                    this->m_freeListHead[slot-1].left = &this->m_freeListHead[slot];
-                }
-            }
-            // set the foot of the free list
-            this->m_freeListFoot = &this->m_freeListHead[this->m_numDpSlots - 1];
+            this->resetBinaryTree();
             // assign pointer for the stack
             this->m_traverseStack = reinterpret_cast<DpBtreeNode**>(&this->m_freeListHead[this->m_numDpSlots]);
         }
@@ -106,6 +93,26 @@ namespace Svc {
         this->m_initialized = true;
     }
 
+    void DpCatalog::resetBinaryTree() {
+        // initialize data structures in the free list
+        this->m_freeListHead = static_cast<DpBtreeNode*>(this->m_memPtr);
+        for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
+            // overlay new instance of the DpState entry on the memory
+            (void) new(&this->m_freeListHead[slot]) DpBtreeNode();
+            this->m_freeListHead[slot].left = nullptr;
+            this->m_freeListHead[slot].right = nullptr;
+            // link the free list
+            if (slot > 0) {
+                this->m_freeListHead[slot-1].left = &this->m_freeListHead[slot];
+            }
+        }
+        // set the foot of the free list
+        this->m_freeListFoot = &this->m_freeListHead[this->m_numDpSlots - 1];
+        // clear binary tree
+        this->m_dpTree = nullptr;
+    }
+
+
     Fw::CmdResponse DpCatalog::doCatalogBuild() {
 
         // check initialization
@@ -118,6 +125,9 @@ namespace Svc {
             this->log_WARNING_LO_DpXmitInProgress();
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
+
+        // reset free list for entries
+        this->resetBinaryTree();
 
         // keep cumulative number of files
         FwSizeType totalFiles = 0;
@@ -353,17 +363,22 @@ namespace Svc {
         // should always be null since we are allocating an empty slot
         FW_ASSERT(newNode == nullptr);
         // make sure there is an entry from the free list
-        bool success = false;
         if (this->m_freeListHead == nullptr) {
             this->log_WARNING_HI_DpCatalogFull(newEntry.record);
-            success = false;
+            return false;
         }
         // get a new node from the free list
         newNode = this->m_freeListHead;
         // move the head of the free list to the next node
         this->m_freeListHead = this->m_freeListHead->left;
 
-        return success;
+        // initialize the new node
+        newNode->left = nullptr;
+        newNode->right = nullptr;
+        newNode->entry = newEntry;
+
+        // we got one, so return success
+        return true;
 
     }
 
@@ -380,36 +395,65 @@ namespace Svc {
         FW_ASSERT(this->m_traverseStack);
         FW_ASSERT(this->m_currentEntry);
 
+        // look in the tree for the next entry to send
+        DpCatalog::DpBtreeNode* found = this->findNextTreeEntry();
+
+        if (found == nullptr) {
+            // if no entry found, we are done
+            this->m_xmitInProgress = false;
+            this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
+            return;
+        } else {
+            // build file name. this->m_currentry is the found entry
+            this->m_currXmitFileName.format(DP_FILENAME_FORMAT,
+                this->m_directories[found->entry.dir].toChar(),
+                found->entry.record.getid(),
+                found->entry.record.gettSec(),
+                found->entry.record.gettSub()
+            );
+            this->log_ACTIVITY_LO_SendingProduct(
+                this->m_currXmitFileName,
+                static_cast<U32>(found->entry.record.getsize()),
+                found->entry.record.getpriority()
+                );
+            this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
+        }
+
+    } // end sendNextEntry()
+
+    DpCatalog::DpBtreeNode* DpCatalog::findNextTreeEntry() {
+
+        // check some asserts
+        FW_ASSERT(this->m_dpTree);
+        FW_ASSERT(this->m_xmitInProgress);
+        FW_ASSERT(this->m_traverseStack);
+        FW_ASSERT(this->m_currentEntry);
+
+        DpBtreeNode* found = nullptr;
+
         // traverse the tree until we find the leaf
-        for (FwSizeType record = 0; record < this->m_numDpSlots; record++) {
-            if (this->m_currentEntry->left != nullptr) { // Step 3b
-                // push current entry on the stack
+        for (FwSizeType record = 0; record < this->m_numDpRecords; record++) {
+            if (this->m_currentEntry->left != nullptr) {
+                // Step 3b - push current entry on the stack
                 this->m_traverseStack[this->m_currStackEntry++] = this->m_currentEntry;
                 this->m_currentEntry = this->m_currentEntry->left;
             } else {
-                // check to see if this node has already been transmitted, if so, pop back up the stack
+                // Step 4 - check to see if this node has already been transmitted, if so, pop back up the stack
                 if (this->m_currentEntry->entry.record.getstate() == Fw::DpState::TRANSMITTED) {
                     this->m_currentEntry = this->m_traverseStack[this->m_currStackEntry--]->right;
                     break;
-                } else { // if not transmitted, transmit it
-                    // build file name
-                    this->m_currXmitFileName.format(DP_FILENAME_FORMAT,
-                        this->m_directories[this->m_currentEntry->entry.dir].toChar(),
-                        this->m_currentEntry->entry.record.getid(),
-                        this->m_currentEntry->entry.record.gettSec(),
-                        this->m_currentEntry->entry.record.gettSub()
-                    );
-                    this->log_ACTIVITY_LO_SendingProduct(
-                        this->m_currXmitFileName,
-                        static_cast<U32>(this->m_currentEntry->entry.record.getsize()),
-                        this->m_currentEntry->entry.record.getpriority()
-                        );
-                    this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
-                    return;
-                }
-            }
+                } else { 
+                    // we found an entry, so return true
+                    found = this->m_currentEntry;
+                    // go to the right node
+                    this->m_currentEntry = this->m_currentEntry->right; 
+                    this->m_currStackEntry--;
+                    return found;
+                } // check if transmitted
+            } // check if left is null
         } // end for each possible node in the tree
 
+        return found;
     }
 
     bool DpCatalog::checkInit() {
@@ -446,7 +490,11 @@ namespace Svc {
             const Svc::SendFileResponse& resp
         )
     {
+        // check some asserts
         FW_ASSERT(this->m_currentEntry);
+        FW_ASSERT(this->m_dpTree);
+        FW_ASSERT(this->m_traverseStack);
+
         this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
 
         // mark the entry as transmitted
@@ -525,13 +573,7 @@ namespace Svc {
         // Traverse the tree using a stack to avoid recursion
         // https://codestandard.net/articles/binary-tree-inorder-traversal/
 
-        // Step 1 - reset the stack
-        this->m_currStackEntry = 0;
-        // Step 2 - assign root of the tree to the current entry
-        this->m_currentEntry = this->m_dpTree;
-        // Step 3a - put the root on the stack
-        this->m_traverseStack[this->m_currStackEntry] = this->m_currentEntry;
-
+        this->resetTreeStack();
         this->m_xmitInProgress = true;
         // Step 3b - search for and send first entry
         this->sendNextEntry();
@@ -539,6 +581,15 @@ namespace Svc {
 
     }
 
+    void DpCatalog::resetTreeStack() {
+        // See URL above
+        // Step 1 - reset the stack
+        this->m_currStackEntry = 0;
+        // Step 2 - assign root of the tree to the current entry
+        this->m_currentEntry = this->m_dpTree;
+        // Step 3a - put the root on the stack
+        this->m_traverseStack[this->m_currStackEntry] = this->m_currentEntry;
+    }
 
     void DpCatalog ::
         STOP_XMIT_CATALOG_cmdHandler(

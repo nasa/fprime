@@ -52,6 +52,12 @@ namespace Svc {
         //! Initialization/teardown smoke test
         void doInit();
 
+        //! Test tree construction
+        void testTree(
+            DpCatalog::DpStateEntry* list, 
+            DpCatalog::DpStateEntry* output,
+            NATIVE_INT_TYPE numEntries);
+
         struct DpSet {
             FwDpIdType id;
             FwDpPriorityType prio;
