@@ -1,0 +1,3 @@
+ComPortAi.xml - Port description for communication buffers
+ComBuffer.hpp(.cpp) - A buffer holding a serialized communication buffer
+ComPacket.hpp(.cpp) - A packet type that holds a communication buffer

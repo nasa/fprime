@@ -8,7 +8,9 @@
            
 #ifndef DEVICESM_H_
 #define DEVICESM_H_
-
+                                
+#include <Fw/SMSignal/SMSignalBuffer.hpp>
+                                 
 namespace Fw {
   class SMSignals;
 }
@@ -43,7 +45,7 @@ class DeviceSm {
     void * extension;
 
     void init();
-    void update(const Fw::SMSignals *e);
+    void update(const DeviceSmEvents signal, const Fw::SMSignalBuffer &data);
 
 };
 

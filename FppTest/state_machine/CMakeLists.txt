@@ -3,6 +3,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SmTest.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/DeviceSm.cpp"
 )
+set(MOD_DEPS Fw/SMSignal)
 
 register_fprime_module()
 

@@ -29,17 +29,11 @@ SmTest ::~SmTest() {}
 // ----------------------------------------------------------------------
 
 void SmTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
-    Fw::SMSignals event;
-    event.seteventSignal(DeviceSm::RTI_SIG);
+    Fw::SMSignalBuffer data;
 
-    event.setsmId(STATE_MACHINE_DEVICE1);
-    stateMachineInvoke(event);
-
-    event.setsmId(STATE_MACHINE_DEVICE2);
-    stateMachineInvoke(event);
-
-    event.setsmId(STATE_MACHINE_DEVICE3);
-    stateMachineInvoke(event);
+    device1StateMachineInvoke(DeviceSm::RTI_SIG, data);
+    device2StateMachineInvoke(DeviceSm::RTI_SIG, data);
+    device3StateMachineInvoke(DeviceSm::RTI_SIG, data);
 
 }
 

@@ -19,7 +19,7 @@ void FppTest::DeviceSm::init()
 }
 
 
-void FppTest::DeviceSm::update(const Fw::SMSignals *e)
+void FppTest::DeviceSm::update(const DeviceSmEvents signal, const Fw::SMSignalBuffer &data)
 {
     switch (this->state) {
     
@@ -28,7 +28,7 @@ void FppTest::DeviceSm::update(const Fw::SMSignals *e)
             */
             case OFF:
             
-            switch (e->geteventSignal()) {
+            switch (signal) {
 
                 case RTI_SIG:
                         this->state = ON;
@@ -45,7 +45,7 @@ void FppTest::DeviceSm::update(const Fw::SMSignals *e)
             */
             case ON:
             
-            switch (e->geteventSignal()) {
+            switch (signal) {
 
                 case RTI_SIG:
                         this->state = OFF;
