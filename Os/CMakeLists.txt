@@ -48,7 +48,7 @@ endif()
 # Posix systems typically share these
 if (FPRIME_USE_POSIX)
     list(APPEND SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"

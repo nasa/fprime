@@ -89,7 +89,7 @@ namespace Svc {
         }
 
         // If file name is too large, return failure:
-        U32 fileNameSize = Fw::StringUtils::string_length(fileName, Fw::String::STRING_SIZE);
+        FwSizeType fileNameSize = Fw::StringUtils::string_length(fileName, static_cast<FwSizeType>(Fw::String::STRING_SIZE));
         if (fileNameSize == Fw::String::STRING_SIZE) {
             return false;
         }

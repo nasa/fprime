@@ -20,7 +20,7 @@ namespace Svc {
     void FatalHandlerComponentImpl::FatalReceive_handler(
             const NATIVE_INT_TYPE portNum,
             FwEventIdType Id) {
-        Fw::Logger::logMsg("FATAL %d handled.\n",Id,0,0,0,0,0);
+        Fw::Logger::log("FATAL %d handled.\n",Id,0,0,0,0,0);
         taskSuspend(0);
     }
 

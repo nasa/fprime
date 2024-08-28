@@ -1,6 +1,6 @@
 #include <Ref/RecvBuffApp/RecvBuffComponentImpl.hpp>
 #include <FpConfig.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Fw/Types/Assert.hpp>
 
 #include <cstdio>

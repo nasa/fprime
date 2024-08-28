@@ -50,6 +50,32 @@ set(UT_MOD_DEPS
 choose_fprime_implementation(Os/File Os_File_Test_Stub)
 register_fprime_ut(StubFileTest)
 
+#### Console Stub Testing ####
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
+)
+set(HEADER_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Console.hpp"
+)
+set(MOD_DEPS)
+register_fprime_module(Os_Console_Stub)
+register_fprime_implementation(Os/Console Os_Console_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultConsole.cpp")
+
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/Console.cpp"
+)
+set(MOD_DEPS)
+register_fprime_module(Os_Console_Test_Stub)
+register_fprime_implementation(Os/Console Os_Console_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultConsole.cpp")
+
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubConsoleTests.cpp"
+)
+set(UT_MOD_DEPS)
+choose_fprime_implementation(Os/Console Os_Console_Test_Stub)
+register_fprime_ut(StubConsoleTest)
+
+
 #### Task Stub Testing ####
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/Task.cpp"
