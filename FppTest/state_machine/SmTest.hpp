@@ -67,6 +67,39 @@ class SmTest :
                          U32 context                     //!< The call order
                          ) final;
 
+    //! Overflow hook for state machine device4
+    void device4_stateMachineOverflowHook(
+        const HackSm_Interface::HackSmEvents signal, //!< The state machine signal
+        const Fw::SMSignalBuffer& data //!< The state machine data
+    );
+
+    // State machine functions
+    void DeviceSm_turnOn(const FwEnumStoreType stateMachineId);
+    
+    void DeviceSm_turnOff(const FwEnumStoreType stateMachineId);
+
+    void DeviceSm_a1(
+      const FwEnumStoreType stateMachineId, 
+      const DeviceSmEvents signal, 
+      const Fw::SMSignalBuffer& data
+    );
+    
+    void DeviceSm_a2(const FwEnumStoreType stateMachineId);
+    
+    bool DeviceSm_g1(const FwEnumStoreType stateMachineId);
+    
+    bool DeviceSm_g2(
+      const FwEnumStoreType stateMachineId, 
+      const DeviceSmEvents signal, 
+      const Fw::SMSignalBuffer& data
+    );
+
+    void HackSm_turnOn(const FwEnumStoreType stateMachineId);
+    
+    void HackSm_turnOff(const FwEnumStoreType stateMachineId);
+
+    void HackSm_doDiag(const FwEnumStoreType stateMachineId);
+
   private:
     // ----------------------------------------------------------------------
     // Data product handler implementations

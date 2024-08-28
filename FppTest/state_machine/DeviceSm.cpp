@@ -12,14 +12,19 @@
 #include "DeviceSm.hpp"
 
 
-void FppTest::DeviceSm::init()
+void FppTest::DeviceSm::init(const FwEnumStoreType stateMachineId)
 {
+    parent->DeviceSm_turnOff(stateMachineId);
     this->state = OFF;
 
 }
 
 
-void FppTest::DeviceSm::update(const DeviceSmEvents signal, const Fw::SMSignalBuffer &data)
+void FppTest::DeviceSm::update(
+    const FwEnumStoreType stateMachineId, 
+    const DeviceSm_Interface::DeviceSmEvents signal, 
+    const Fw::SMSignalBuffer &data
+)
 {
     switch (this->state) {
     
@@ -30,8 +35,12 @@ void FppTest::DeviceSm::update(const DeviceSmEvents signal, const Fw::SMSignalBu
             
             switch (signal) {
 
-                case RTI_SIG:
-                        this->state = ON;
+                case DeviceSm_Interface::DeviceSmEvents::RTI_SIG:
+                        if ( parent->DeviceSm_g1(stateMachineId) ) {
+                            parent->DeviceSm_a1(stateMachineId, signal, data);
+                            parent->DeviceSm_turnOn(stateMachineId);
+                            this->state = ON;
+                        }
 
                     break;
     
@@ -47,8 +56,12 @@ void FppTest::DeviceSm::update(const DeviceSmEvents signal, const Fw::SMSignalBu
             
             switch (signal) {
 
-                case RTI_SIG:
-                        this->state = OFF;
+                case DeviceSm_Interface::DeviceSmEvents::RTI_SIG:
+                        if (parent->DeviceSm_g2(stateMachineId, signal, data) ) {
+                            parent->DeviceSm_a2(stateMachineId);
+                            parent->DeviceSm_turnOff(stateMachineId);
+                            this->state = OFF;
+                        }
 
                     break;
     

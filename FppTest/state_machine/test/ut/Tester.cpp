@@ -34,19 +34,31 @@ void Tester::schedIn_OK() {
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device1.state);
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device2.state);
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device3.state);
+    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device4.state);
+    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device5.state);
     invoke_to_schedIn(0,0);
     dispatchAll();
     ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device1.state);
     ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device2.state);
     ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device3.state);
+    ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device4.state);
+    ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device5.state);
     invoke_to_schedIn(0,0);
     dispatchAll();
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device1.state);
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device2.state);
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device3.state);
-    ASSERT_EQ(0, this->component.m_stateMachine_device1.state);
-    ASSERT_EQ(0, this->component.m_stateMachine_device2.state);
-    ASSERT_EQ(0, this->component.m_stateMachine_device3.state);
+    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device4.state);
+    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device5.state);
+
+    Fw::SMSignalBuffer data;
+    this->component.device3_stateMachineInvoke(HackSm_Interface::HackSmEvents::CHECK_SIG, data);
+    dispatchAll();
+    ASSERT_EQ(HackSm::DIAG, this->component.m_stateMachine_device3.state);
+    invoke_to_schedIn(0,0);
+    dispatchAll();
+    ASSERT_EQ(HackSm::OFF, this->component.m_stateMachine_device3.state);
+
 }
 
 
