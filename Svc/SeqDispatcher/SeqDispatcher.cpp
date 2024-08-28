@@ -81,7 +81,7 @@ void SeqDispatcher::seqStartIn_handler(
       // uh oh. m_sequencesRunning is wrong
       // let's just update it to be correct. nothing we can do about
       // it except raise a warning and update our state
-      this->log_WARNING_HI_UnexpectedSequenceStarted(portNum, fileName, this->m_entryTable[portNum].sequenceRunning);
+      this->log_WARNING_HI_UnexpectedSequenceStarted(static_cast<U16>(portNum), fileName, this->m_entryTable[portNum].sequenceRunning);
       this->m_entryTable[portNum].sequenceRunning = fileName;
     }
   } else {
@@ -148,7 +148,7 @@ void SeqDispatcher::seqRunIn_handler(NATIVE_INT_TYPE portNum,
   FwIndexType idx = this->getNextAvailableSequencerIdx();
   // no available sequencers
   if (idx == -1) {
-    this->log_WARNING_LO_NoAvailableSequencers();
+    this->log_WARNING_HI_NoAvailableSequencers();
     return;
   }
   if (!this->runSequence(idx, fileName,
@@ -169,7 +169,7 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
   FwIndexType idx = this->getNextAvailableSequencerIdx();
   // no available sequencers
   if (idx == -1) {
-    this->log_WARNING_LO_NoAvailableSequencers();
+    this->log_WARNING_HI_NoAvailableSequencers();
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     return;
   }

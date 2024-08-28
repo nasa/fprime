@@ -12,14 +12,15 @@ module Svc {
         include "SeqDispatcherTelemetry.fppi"
         include "SeqDispatcherEvents.fppi"
 
+        @ Dispatches a sequence to the first available command sequencer
         async input port seqRunIn: Svc.CmdSeqIn
 
         output port seqRunOut: [SeqDispatcherSequencerPorts] Svc.CmdSeqIn
 
+        @ Called by a command sequencer whenever it has finished any sequence
         async input port seqDoneIn: [SeqDispatcherSequencerPorts] Fw.CmdResponse
 
-        # should be called by cmdsequencer whenever it starts a sequence (whether
-        # called by SeqDisp or manually by ground)
+        @ Called by cmdsequencer whenever it starts any sequence
         async input port seqStartIn: [SeqDispatcherSequencerPorts] Svc.CmdSeqIn
 
         match seqRunOut with seqDoneIn

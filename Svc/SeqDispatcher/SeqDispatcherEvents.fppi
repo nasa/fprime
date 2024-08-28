@@ -5,7 +5,7 @@ event InvalidSequencer(
     format "Invalid sequence index {}"
 
 event NoAvailableSequencers() \
-    severity warning low \
+    severity warning high \
     format "No available cmd sequencers to dispatch a sequence to"
 
 event UnknownSequenceFinished(
