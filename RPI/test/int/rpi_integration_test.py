@@ -71,9 +71,9 @@ def test_send_and_assert_no_op(fprime_test_api):
     length = 100
     failed = 0
     evr_seq = [
-        "Ref.cmdDisp.OpCodeDispatched",
-        "Ref.cmdDisp.NoOpReceived",
-        "Ref.cmdDisp.OpCodeCompleted",
+        "RPI.cmdDisp.OpCodeDispatched",
+        "RPI.cmdDisp.NoOpReceived",
+        "RPI.cmdDisp.OpCodeCompleted",
     ]
     any_reordered = False
     dropped = False
