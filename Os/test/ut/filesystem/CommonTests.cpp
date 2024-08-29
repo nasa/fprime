@@ -8,11 +8,11 @@
 // Test Fixture
 // ----------------------------------------------------------------------
 
-std::unique_ptr<Os::Test::FileSystem::Tester> get_tester_implementation() {
-    return std::unique_ptr<Os::Test::FileSystem::Tester>(new Os::Test::FileSystem::Tester());
-}
+// std::unique_ptr<Os::Test::FileSystem::Tester> get_tester_implementation() {
+//     return std::unique_ptr<Os::Test::FileSystem::Tester>(new Os::Test::FileSystem::Tester());
+// }
 
-FunctionalityTester::FunctionalityTester() : tester(get_tester_implementation()) {}
+FunctionalityTester::FunctionalityTester() : tester() {}
 
 void FunctionalityTester::SetUp() {
     // No setup required

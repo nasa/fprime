@@ -21,8 +21,8 @@ struct Tester {
     //!
     enum DirectoryState {
         UNINITIALIZED,  //!< Directory is uninitialized
-        LOCKED,   //!< Directory is locked
-        UNLOCKED  //!< Directory is unlocked
+        OPEN,   //!< Directory is open
+        CLOSED  //!< Directory is closed
     };
 
     //! Assert in Directory.cpp for searching death text
@@ -35,10 +35,15 @@ struct Tester {
     virtual ~Tester() = default;
 
     //! Directory under test
-    // Os::Directory m_directory = Os::Directory::getSingleton();
+    Os::Directory m_directory;
 
-    //! Shared value protected by the directory for testing purposes
-    int m_value = 0;
+    //! Currently opened path
+    std::string m_path;
+
+    //! Check if the back-end tester is fully functional (i.e. not a stub)
+    //! \return true if functional, false otherwise
+    //!
+    // virtual bool functional() const = 0;
 
     //! Directory state, for testing purposes
     DirectoryState m_state = UNINITIALIZED;

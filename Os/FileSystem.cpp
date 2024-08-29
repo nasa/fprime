@@ -4,7 +4,8 @@
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Os/FileSystem.hpp>
-#include <Os/Directory.hpp>
+// #include <Os/Directory.hpp>
+// #include <Os/File.hpp>
 
 namespace Os {
 FileSystem* FileSystem::s_singleton;
@@ -39,29 +40,24 @@ FileSystem::Status FileSystem::_removeFile(const char* path) {
     return this->m_delegate._removeFile(path);
 }
 
-FileSystem::Status FileSystem::_moveFile(const char* originPath, const char* destPath) {
+FileSystem::Status FileSystem::_moveFile(const char* sourcePath, const char* destPath) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate._moveFile(originPath, destPath);
+    return this->m_delegate._moveFile(sourcePath, destPath);
 }
 
-FileSystem::Status FileSystem::_copyFile(const char* originPath, const char* destPath) {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate._copyFile(originPath, destPath);
-}
+// FileSystem::Status FileSystem::_copyFile(const char* sourcePath, const char* destPath) {
+//     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+//     return this->m_delegate._copyFile(sourcePath, destPath);
+// }
 
-FileSystem::Status FileSystem::_appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate._appendFile(originPath, destPath, createMissingDest);
-}
+// FileSystem::Status FileSystem::_appendFile(const char* sourcePath, const char* destPath, bool createMissingDest) {
+//     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+//     return this->m_delegate._appendFile(sourcePath, destPath, createMissingDest);
+// }
 
 FileSystem::Status FileSystem::_getFileSize(const char* path, FwSignedSizeType& size) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate._getFileSize(path, size);
-}
-
-FileSystem::Status FileSystem::_getFileCount(const char* directory, U32& fileCount) {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate._getFileCount(directory, fileCount);
 }
 
 FileSystem::Status FileSystem::_changeWorkingDirectory(const char* path) {
@@ -97,20 +93,11 @@ FileSystem::Status FileSystem::removeDirectory(const char* path) {
 FileSystem::Status FileSystem::removeFile(const char* path) {
     return FileSystem::getSingleton()._removeFile(path);
 }
-FileSystem::Status FileSystem::moveFile(const char* originPath, const char* destPath) {
-    return FileSystem::getSingleton()._moveFile(originPath, destPath);
-}
-FileSystem::Status FileSystem::copyFile(const char* originPath, const char* destPath) {
-    return FileSystem::getSingleton()._copyFile(originPath, destPath);
-}
-FileSystem::Status FileSystem::appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
-    return FileSystem::getSingleton()._appendFile(originPath, destPath, createMissingDest);
+FileSystem::Status FileSystem::moveFile(const char* sourcePath, const char* destPath) {
+    return FileSystem::getSingleton()._moveFile(sourcePath, destPath);
 }
 FileSystem::Status FileSystem::getFileSize(const char* path, FwSignedSizeType& size) {
     return FileSystem::getSingleton()._getFileSize(path, size);
-}
-FileSystem::Status FileSystem::getFileCount(const char* directory, U32& fileCount) {
-    return FileSystem::getSingleton()._getFileCount(directory, fileCount);
 }
 FileSystem::Status FileSystem::changeWorkingDirectory(const char* path) {
     return FileSystem::getSingleton()._changeWorkingDirectory(path);
@@ -119,56 +106,116 @@ FileSystem::Status FileSystem::getFreeSpace(const char* path, FwSizeType& totalB
     return FileSystem::getSingleton()._getFreeSpace(path, totalBytes, freeBytes);
 }
 
-FileSystem::Status FileSystem::readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles) {
-    Directory::Status dirStatus = Directory::Status::OP_OK;
-    FileSystem::Status status = FileSystem::OP_OK;
 
-    FW_ASSERT(fileArray != nullptr);
-    FW_ASSERT(path != nullptr);
+FileSystem::Status FileSystem::copyFile(const char* sourcePath, const char* destPath) {
+    Os::File source, destination;
+    Os::File::Status fileStatus = source.open(sourcePath, Os::File::OPEN_READ);
+    if (fileStatus != Os::File::OP_OK) {
+        return FileSystem::handleFileError(fileStatus);
+    }
+    fileStatus = destination.open(destPath, Os::File::OPEN_WRITE);
+    if (fileStatus != Os::File::OP_OK) {
+        return FileSystem::handleFileError(fileStatus);
+    }
+    
+    // TODO: FileSystem::exists(sourcePath)
 
-    Os::Directory directory;
-    dirStatus = directory.open(path);
-
-    // Open directory failed:
-    if (dirStatus != Directory::Status::OP_OK) {
-        return FileSystem::Status::OTHER_ERROR;
+    FwSignedSizeType sourceFileSize = 0;
+    FileSystem::Status fs_status = FileSystem::getFileSize(sourcePath, sourceFileSize);
+    if (fs_status != FileSystem::Status::OP_OK) {
+        return fs_status;
     }
 
-    U32 arrayIdx = 0;
-    U32 limitCount = 0;
-    const U32 loopLimit = std::numeric_limits<U32>::max();
+    fs_status = FileSystem::copyFileData(source, destination, sourceFileSize);
 
-    char fileName[FPP_CONFIG_FILENAME_MAX_SIZE];
+    return fs_status;
+}
 
-    // Read the directory contents and store in passed in array:
-    while (arrayIdx < maxNum && limitCount < loopLimit) {
-        ++limitCount;
+FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* destPath, bool createMissingDest) {
+    Os::File source, destination;
+    Os::File::Status fileStatus = source.open(sourcePath, Os::File::OPEN_READ);
+    if (fileStatus != Os::File::OP_OK) {
+        return FileSystem::handleFileError(fileStatus);
+    }
+    fileStatus = destination.open(destPath, Os::File::OPEN_APPEND);
+    if (fileStatus != Os::File::OP_OK) {
+        return FileSystem::handleFileError(fileStatus);
+    }
 
-        dirStatus = directory.read(fileName, FPP_CONFIG_FILENAME_MAX_SIZE);
+    FileSystem::Status fs_status = FileSystem::OP_OK;
+    // TODO: fs_status = FileSystem::exists(sourcePath)
+    
+    // If needed, check if destination file exists (and exit if not)
+    if (!createMissingDest) {
+        // fs_status = FileSystem::exists(destPath);
+        if (FileSystem::OP_OK != fs_status) {
+            return fs_status;
+        }
+    }
 
-        if (dirStatus == Directory::Status::NO_MORE_FILES) {
+    FwSignedSizeType sourceFileSize = 0;
+    fs_status = FileSystem::getFileSize(sourcePath, sourceFileSize);
+    if (fs_status != FileSystem::Status::OP_OK) {
+        return fs_status;
+    }
+
+    fs_status = FileSystem::copyFileData(source, destination, sourceFileSize);
+
+    return fs_status;
+}
+
+
+
+FileSystem::Status FileSystem::handleFileError(File::Status fileStatus) {
+    FileSystem::Status status = FileSystem::OTHER_ERROR;
+
+    switch (fileStatus) {
+        case File::NO_SPACE:
+            status = FileSystem::NO_SPACE;
+            break;
+        case File::NO_PERMISSION:
+            status = FileSystem::NO_PERMISSION;
+            break;
+        case File::DOESNT_EXIST:
+            status = FileSystem::INVALID_PATH;
+            break;
+        default:
+            status = FileSystem::OTHER_ERROR;
+    }
+    return status;
+} // end handleFileError
+
+FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwSignedSizeType size) {
+    static_assert(FILE_SYSTEM_CHUNK_SIZE != 0, "FILE_SYSTEM_CHUNK_SIZE must be >0");
+    U8 fileBuffer[FILE_SYSTEM_CHUNK_SIZE];
+    File::Status file_status;
+
+    // Set loop limit
+    const FwSignedSizeType copyLoopLimit = (size / FILE_SYSTEM_CHUNK_SIZE) + 2;
+
+    FwSignedSizeType loopCounter = 0;
+    FwSignedSizeType chunkSize;
+    while (loopCounter < copyLoopLimit) {
+        chunkSize = FILE_SYSTEM_CHUNK_SIZE;
+        file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::NO_WAIT);
+        if (file_status != File::OP_OK) {
+            return FileSystem::handleFileError(file_status);
+        }
+
+        if (chunkSize == 0) {
+            // file has been successfully copied
             break;
         }
-        if (dirStatus != Directory::Status::OP_OK) {
-            return FileSystem::OTHER_ERROR;
+
+        file_status = destination.write(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
+        if (file_status != File::OP_OK) {
+            return FileSystem::handleFileError(file_status);
         }
-
-        FW_ASSERT(arrayIdx < maxNum, static_cast<NATIVE_INT_TYPE>(arrayIdx),
-                    static_cast<NATIVE_INT_TYPE>(maxNum));
-
-        fileArray[arrayIdx++] = Fw::String(fileName);
+        loopCounter++;
     }
+    FW_ASSERT(loopCounter < copyLoopLimit);
 
-    if (limitCount == loopLimit) {
-        status = FileSystem::Status::FILE_LIMIT;
-    }
-
-    directory.close();
-
-    numFiles = arrayIdx;
-
-    return status;
-
-}
+    return FileSystem::OP_OK;
+}  // end copyFileData
 
 }  // namespace Os

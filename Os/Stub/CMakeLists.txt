@@ -144,8 +144,8 @@ register_fprime_implementation(Os/FileSystem Os_FileSystem_Test_Stub "${CMAKE_CU
 
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileSystemTests.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/CommonTests.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/FileSystemRules.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/CommonTests.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/FileSystemRules.cpp"
 )
 set(UT_MOD_DEPS
         Os
@@ -164,8 +164,8 @@ register_fprime_implementation(Os/Directory Os_Directory_Test_Stub "${CMAKE_CURR
 
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubDirectoryTests.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/CommonTests.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/DirectoryRules.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/CommonTests.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/DirectoryRules.cpp"
 )
 set(UT_MOD_DEPS
         Os

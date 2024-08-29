@@ -4,8 +4,8 @@
 // This ensures the delegation of function calls happens properly
 // ======================================================================
 #include <gtest/gtest.h>
-#include "Os/test/ut/mutex/CommonTests.hpp"
-#include "Os/test/ut/mutex/RulesHeaders.hpp"
+#include "Os/test/ut/filesystem/CommonTests.hpp"
+#include "Os/test/ut/filesystem/RulesHeaders.hpp"
 #include "Os/Stub/test/FileSystem.hpp"
 
 using namespace Os::Stub::FileSystem::Test;

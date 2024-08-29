@@ -62,10 +62,10 @@ class TestFileSystem : public FileSystemInterface {
     Status _removeDirectory(const char* path) override;
     Status _removeFile(const char* path) override;
     Status _moveFile(const char* originPath, const char* destPath) override;
-    Status _copyFile(const char* originPath, const char* destPath) override;
-    Status _appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) override;
+    // Status _copyFile(const char* originPath, const char* destPath) override;
+    // Status _appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) override;
     Status _getFileSize(const char* path, FwSignedSizeType& size) override;
-    Status _getFileCount(const char* directory, U32& fileCount) override;
+    // Status _getFileCount(const char* directory, U32& fileCount) override;
     Status _changeWorkingDirectory(const char* path) override;
     Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
 

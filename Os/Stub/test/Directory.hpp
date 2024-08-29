@@ -55,7 +55,6 @@ class TestDirectory : public DirectoryInterface {
     bool isOpen() override;
     Status rewind() override;
     Status read(char * fileNameBuffer, U32 bufSize) override;
-    Status read(char * fileNameBuffer, U32 bufSize, I64& inode) override;
     void close() override;
 
     //! \brief return the underlying Directory handle (implementation specific)

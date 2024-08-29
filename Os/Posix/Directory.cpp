@@ -52,11 +52,6 @@ PosixDirectory::Status PosixDirectory::rewind() {
 }
 
 PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, U32 bufSize) {
-    I64 unused;
-    return this->read(fileNameBuffer, bufSize, unused);
-}
-
-PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, U32 bufSize, I64& inode) {
 
         FW_ASSERT(fileNameBuffer);
 
@@ -75,7 +70,6 @@ PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, U32 bufSize, I
             // Skip hidden files
             if (direntData->d_name[0] != '.') {
                 strncpy(fileNameBuffer, direntData->d_name, bufSize);
-                inode = static_cast<I64>(direntData->d_ino);
                 break;
             }
         }

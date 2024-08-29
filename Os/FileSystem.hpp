@@ -4,7 +4,8 @@
 #include <FpConfig.hpp>
 #include <config/FppConstantsAc.hpp>
 #include <Os/Os.hpp>
-#include <Fw/Types/String.hpp>
+#include <Os/Directory.hpp>
+#include <Os/File.hpp>
 
 #define FILE_SYSTEM_CHUNK_SIZE (256u)
 
@@ -62,16 +63,14 @@ class FileSystemInterface {
     virtual Status _removeDirectory(const char* path) = 0;
     //! \brief removes a file at location path
     virtual Status _removeFile(const char* path) = 0;
-    //! \brief moves a file from origin to destination
-    virtual Status _moveFile(const char* originPath, const char* destPath) = 0;
-    //! \brief copies a file from origin to destination
-    virtual Status _copyFile(const char* originPath, const char* destPath) = 0;
-    //! \brief append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-    virtual Status _appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) = 0;
+    //! \brief moves a file from source to destination
+    virtual Status _moveFile(const char* sourcePath, const char* destPath) = 0;
+    //! \brief copies a file from source to destination
+    // virtual Status _copyFile(const char* sourcePath, const char* destPath) = 0;
+    //! \brief append file source to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
+    // virtual Status _appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false) = 0;
     //! \brief gets the size of the file (in bytes) = 0 at location path
     virtual Status _getFileSize(const char* path, FwSignedSizeType& size) = 0;
-    //! \brief counts the number of files in the given directory
-    virtual Status _getFileCount(const char* directory, U32& fileCount) = 0;
     //! \brief move current directory to path
     virtual Status _changeWorkingDirectory(const char* path) = 0;
     //! \brief get FS free and total space in bytes on filesystem containing path
@@ -96,16 +95,14 @@ class FileSystem final : public FileSystemInterface {
     Status _removeDirectory(const char* path) override;
     //! \brief removes a file at location path
     Status _removeFile(const char* path) override;
-    //! \brief moves a file from origin to destination
-    Status _moveFile(const char* originPath, const char* destPath) override;
-    //! \brief copies a file from origin to destination
-    Status _copyFile(const char* originPath, const char* destPath) override;
-    //! \brief append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-    Status _appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) override;
+    //! \brief moves a file from source to destination
+    Status _moveFile(const char* sourcePath, const char* destPath) override;
+    //! \brief copies a file from source to destination
+    // Status _copyFile(const char* sourcePath, const char* destPath) override;
+    //! \brief append file source to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
+    // Status _appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false) override;
     //! \brief gets the size of the file (in bytes) = 0 at location path
     Status _getFileSize(const char* path, FwSignedSizeType& size) override;
-    //! \brief counts the number of files in the given directory
-    Status _getFileCount(const char* directory, U32& fileCount) override;
     //! \brief move current directory to path
     Status _changeWorkingDirectory(const char* path) override;
     //! \brief get FS free and total space in bytes on filesystem containing path
@@ -119,35 +116,59 @@ class FileSystem final : public FileSystemInterface {
     static Status removeDirectory(const char* path);
     //! \brief removes a file at location path
     static Status removeFile(const char* path);
-    //! \brief moves a file from origin to destination
-    static Status moveFile(const char* originPath, const char* destPath);
-    //! \brief copies a file from origin to destination
-    static Status copyFile(const char* originPath, const char* destPath);
-    //! \brief append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-    static Status appendFile(const char* originPath, const char* destPath, bool createMissingDest=false);
+    //! \brief moves a file from source to destination
+    static Status moveFile(const char* sourcePath, const char* destPath);
     //! \brief gets the size of the file (in bytes) = 0 at location path
     static Status getFileSize(const char* path, FwSignedSizeType& size);
-    //! \brief counts the number of files in the given directory
-    static Status getFileCount(const char* directory, U32& fileCount);
     //! \brief move current directory to path
     static Status changeWorkingDirectory(const char* path);
     //! \brief get FS free and total space in bytes on filesystem containing path
     static Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes);
 
+
+    //! \brief append file source to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
+    static Status appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false);
+    //! \brief copies a file from source to destination
+    static Status copyFile(const char* sourcePath, const char* destPath);
+
+    // TODO: reimplement at the interface level: 
+    // copyFile, appendFile, using Os::Directory / Os::File
+    // TODO:  copyFileData helper as well, and probably other helpers
+    // TOOD: add touchFile and .exists() that takes an enum ref to return the type of file (file, dir, other)
+
+
     //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
-    static Status readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles);
-    //! \brief Open directory returning a Os::Directory object
-    // static Os::Directory openDirectory(const char* path);
+    // static Status readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles);
+    // TODO: move readDirectory and getFileCount to the Os::Directory interface
 
 
   public:
     //! \brief initialize singleton
     static void init();
+
     //! \brief get a reference to singleton
     //! \return reference to singleton
     static FileSystem& getSingleton();
 
   private:
+    // ---- Helper functions ----
+    //! \brief Convert a File::Status to a FileSystem::Status
+    static Status handleFileError(File::Status fileStatus);
+    /**
+     * A helper function that writes all the file information in the source
+     * file to the destination file (replaces/appends to end/etc. depending
+     * on destination file mode).
+     *
+     * Files must already be open and will remain open after this function
+     * completes.
+     *
+     * @param source File to copy data from
+     * @param destination File to copy data to
+     * @param size The number of bytes to copy
+     */
+    static Status copyFileData(File& source, File& destination, FwSignedSizeType size);
+
+
     static FileSystem* s_singleton;
 
     // This section is used to store the implementation-defined FileSystem handle. To Os::FileSystem and fprime, this type is

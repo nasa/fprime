@@ -12,13 +12,13 @@ std::unique_ptr<Os::Test::Directory::Tester> get_tester_implementation() {
     return std::unique_ptr<Os::Test::Directory::Tester>(new Os::Test::Directory::Tester());
 }
 
-FunctionalityTester::FunctionalityTester() : tester(get_tester_implementation()) {}
+Functionality::Functionality() : tester(get_tester_implementation()) {}
 
-void FunctionalityTester::SetUp() {
+void Functionality::SetUp() {
     // No setup required
 }
 
-void FunctionalityTester::TearDown() {
+void Functionality::TearDown() {
     // No teardown required
 }
 
@@ -27,7 +27,7 @@ void FunctionalityTester::TearDown() {
 // ----------------------------------------------------------------------
 
 // Lock then unlock directory
-TEST_F(FunctionalityTester, LockAndUnlockDirectory) {
+TEST_F(Functionality, LockAndUnlockDirectory) {
     // Os::Test::Directory::Tester::LockDirectory lock_rule;
 }
 

@@ -8,16 +8,16 @@
 #include "STest/Pick/Pick.hpp"
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  LockDirectory -> Lock a directory successfully
+// Rule:  OpenDirectory -> Lock a directory successfully
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::Directory::Tester::LockDirectory::LockDirectory() :
-    STest::Rule<Os::Test::Directory::Tester>("LockDirectory") {}
+Os::Test::Directory::Tester::OpenDirectory::OpenDirectory() :
+    STest::Rule<Os::Test::Directory::Tester>("OpenDirectory") {}
 
-bool Os::Test::Directory::Tester::LockDirectory::precondition(const Os::Test::Directory::Tester &state) {
-    return state.m_state == Os::Test::Directory::Tester::DirectoryState::UNLOCKED;
+bool Os::Test::Directory::Tester::OpenDirectory::precondition(const Os::Test::Directory::Tester &state) {
+    return true;
 }
 
-void Os::Test::Directory::Tester::LockDirectory::action(Os::Test::Directory::Tester &state) {
-    state.m_state = Os::Test::Directory::Tester::DirectoryState::LOCKED;
+void Os::Test::Directory::Tester::OpenDirectory::action(Os::Test::Directory::Tester &state) {
+    state.m_directory.open(state.m_path.c_str());
 }

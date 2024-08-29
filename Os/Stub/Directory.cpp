@@ -24,10 +24,6 @@ StubDirectory::Status StubDirectory::read(char * fileNameBuffer, U32 bufSize) {
     return Status::NOT_SUPPORTED;
 }
 
-StubDirectory::Status StubDirectory::read(char * fileNameBuffer, U32 bufSize, I64& inode) {
-    return Status::NOT_SUPPORTED;
-}
-
 void StubDirectory::close() {
     // no-op
 }

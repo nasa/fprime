@@ -17,10 +17,10 @@ namespace Directory {
 }  // namespace Test
 }  // namespace Os
 
-class FunctionalityTester : public ::testing::Test {
+class Functionality : public ::testing::Test {
   public:
     //! Constructor
-    FunctionalityTester();
+    Functionality();
 
     //! SetUp test fixture
     void SetUp() override;

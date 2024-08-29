@@ -159,89 +159,89 @@ PosixFileSystem::Status copyFileData(File& source, File& destination, FwSignedSi
 }  // end FileOperationHelper
 
 
-PosixFileSystem::Status PosixFileSystem::_copyFile(const char* originPath, const char* destPath) {
-    PosixFileSystem::Status fs_status;
-    File::Status file_status;
+// PosixFileSystem::Status PosixFileSystem::_copyFile(const char* originPath, const char* destPath) {
+//     PosixFileSystem::Status fs_status;
+//     File::Status file_status;
 
-    FwSignedSizeType fileSize = 0;
+//     FwSignedSizeType fileSize = 0;
 
-    File source;
-    File destination;
+//     File source;
+//     File destination;
 
-    fs_status = FileOperationHelper::initAndCheckFileStats(originPath);
-    if (PosixFileSystem::OP_OK != fs_status) {
-        return fs_status;
-    }
+//     fs_status = FileOperationHelper::initAndCheckFileStats(originPath);
+//     if (PosixFileSystem::OP_OK != fs_status) {
+//         return fs_status;
+//     }
 
-    // Get the file size:
-    fs_status =
-        PosixFileSystem::_getFileSize(originPath, fileSize);  //!< gets the size of the file (in bytes) at location path
-    if (PosixFileSystem::OP_OK != fs_status) {
-        return fs_status;
-    }
+//     // Get the file size:
+//     fs_status =
+//         PosixFileSystem::_getFileSize(originPath, fileSize);  //!< gets the size of the file (in bytes) at location path
+//     if (PosixFileSystem::OP_OK != fs_status) {
+//         return fs_status;
+//     }
 
-    file_status = source.open(originPath, File::OPEN_READ);
-    if (file_status != File::OP_OK) {
-        return FileOperationHelper::handleFileError(file_status);
-    }
+//     file_status = source.open(originPath, File::OPEN_READ);
+//     if (file_status != File::OP_OK) {
+//         return FileOperationHelper::handleFileError(file_status);
+//     }
 
-    file_status = destination.open(destPath, File::OPEN_WRITE);
-    if (file_status != File::OP_OK) {
-        return FileOperationHelper::handleFileError(file_status);
-    }
+//     file_status = destination.open(destPath, File::OPEN_WRITE);
+//     if (file_status != File::OP_OK) {
+//         return FileOperationHelper::handleFileError(file_status);
+//     }
 
-    fs_status = FileOperationHelper::copyFileData(source, destination, fileSize);
+//     fs_status = FileOperationHelper::copyFileData(source, destination, fileSize);
 
-    (void)source.close();
-    (void)destination.close();
+//     (void)source.close();
+//     (void)destination.close();
 
-    return fs_status;
-}
+//     return fs_status;
+// }
 
-PosixFileSystem::Status PosixFileSystem::_appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
-    PosixFileSystem::Status fs_status;
-    File::Status file_status;
-    FwSignedSizeType fileSize = 0;
+// PosixFileSystem::Status PosixFileSystem::_appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
+//     PosixFileSystem::Status fs_status;
+//     File::Status file_status;
+//     FwSignedSizeType fileSize = 0;
 
-    File source;
-    File destination;
+//     File source;
+//     File destination;
 
-    fs_status = FileOperationHelper::initAndCheckFileStats(originPath);
-    if (PosixFileSystem::OP_OK != fs_status) {
-        return fs_status;
-    }
+//     fs_status = FileOperationHelper::initAndCheckFileStats(originPath);
+//     if (PosixFileSystem::OP_OK != fs_status) {
+//         return fs_status;
+//     }
 
-    // Get the file size (bytes)
-    fs_status = PosixFileSystem::_getFileSize(originPath, fileSize);
-    if (PosixFileSystem::OP_OK != fs_status) {
-        return fs_status;
-    }
+//     // Get the file size (bytes)
+//     fs_status = PosixFileSystem::_getFileSize(originPath, fileSize);
+//     if (PosixFileSystem::OP_OK != fs_status) {
+//         return fs_status;
+//     }
 
-    file_status = source.open(originPath, File::OPEN_READ);
-    if (file_status != File::OP_OK) {
-        return FileOperationHelper::handleFileError(file_status);
-    }
+//     file_status = source.open(originPath, File::OPEN_READ);
+//     if (file_status != File::OP_OK) {
+//         return FileOperationHelper::handleFileError(file_status);
+//     }
 
-    // If needed, check if destination file exists (and exit if not)
-    if (!createMissingDest) {
-        fs_status = FileOperationHelper::initAndCheckFileStats(destPath);
-        if (PosixFileSystem::OP_OK != fs_status) {
-            return fs_status;
-        }
-    }
+//     // If needed, check if destination file exists (and exit if not)
+//     if (!createMissingDest) {
+//         fs_status = FileOperationHelper::initAndCheckFileStats(destPath);
+//         if (PosixFileSystem::OP_OK != fs_status) {
+//             return fs_status;
+//         }
+//     }
 
-    file_status = destination.open(destPath, File::OPEN_APPEND);
-    if (file_status != File::OP_OK) {
-        return FileOperationHelper::handleFileError(file_status);
-    }
+//     file_status = destination.open(destPath, File::OPEN_APPEND);
+//     if (file_status != File::OP_OK) {
+//         return FileOperationHelper::handleFileError(file_status);
+//     }
 
-    fs_status = FileOperationHelper::copyFileData(source, destination, fileSize);
+//     fs_status = FileOperationHelper::copyFileData(source, destination, fileSize);
 
-    (void)source.close();
-    (void)destination.close();
+//     (void)source.close();
+//     (void)destination.close();
 
-    return fs_status;
-}
+//     return fs_status;
+// }
 
 PosixFileSystem::Status PosixFileSystem::_getFileSize(const char* path, FwSignedSizeType& size) {
     Status fileStat = OP_OK;
@@ -256,45 +256,6 @@ PosixFileSystem::Status PosixFileSystem::_getFileSize(const char* path, FwSigned
         }
     }
     return fileStat;
-}
-
-PosixFileSystem::Status PosixFileSystem::_getFileCount(const char* directory, U32& fileCount) {
-    Status status = OP_OK;
-    DIR* dirPtr = nullptr;
-    struct dirent* direntData = nullptr;
-    U32 limitCount;
-    const U32 loopLimit = std::numeric_limits<U32>::max();
-    fileCount = 0;
-    if ((dirPtr = ::opendir(directory)) == nullptr) {
-        status = errno_to_filesystem_status(errno);
-        return status;
-    }
-    // Set errno to 0 so we know why we exited readdir
-    errno = 0;
-    for (limitCount = 0; limitCount < loopLimit; limitCount++) {
-        if ((direntData = ::readdir(dirPtr)) != nullptr) {
-            // We are only counting regular files
-            if (direntData->d_type == DT_REG) {
-                fileCount++;
-            }
-        } else {
-            // readdir failed, did it error or did we run out of files?
-            if (errno != 0) {
-                // Only error from readdir is EBADF
-                status = Status::OTHER_ERROR;
-            }
-            break;
-        }
-    }
-    if (limitCount == loopLimit) {
-        status = Status::FILE_LIMIT;
-    }
-    if (::closedir(dirPtr) == -1) {
-        // Only error from closedir is EBADF
-        status = Status::OTHER_ERROR;
-    }
-
-    return status;
 }
 
 PosixFileSystem::Status PosixFileSystem::_changeWorkingDirectory(const char* path) {

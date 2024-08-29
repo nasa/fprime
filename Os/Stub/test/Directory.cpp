@@ -41,11 +41,6 @@ TestDirectory::Status TestDirectory::read(char * fileNameBuffer, U32 bufSize) {
     return Status::OP_OK;
 }
 
-TestDirectory::Status TestDirectory::read(char * fileNameBuffer, U32 bufSize, I64& inode) {
-    StaticData::data.lastCalled = StaticData::LastFn::READ_INODE_FN;
-    return Status::OP_OK;
-}
-
 void TestDirectory::close() {
     StaticData::data.lastCalled = StaticData::LastFn::CLOSE_FN;
 }

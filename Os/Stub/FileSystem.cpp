@@ -25,19 +25,15 @@ StubFileSystem::Status StubFileSystem::_moveFile(const char* originPath, const c
     return Status::NOT_SUPPORTED;
 }
 
-StubFileSystem::Status StubFileSystem::_copyFile(const char* originPath, const char* destPath) {
-    return Status::NOT_SUPPORTED;
-}
+// StubFileSystem::Status StubFileSystem::_copyFile(const char* originPath, const char* destPath) {
+//     return Status::NOT_SUPPORTED;
+// }
 
-StubFileSystem::Status StubFileSystem::_appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
-    return Status::NOT_SUPPORTED;
-}
+// StubFileSystem::Status StubFileSystem::_appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
+//     return Status::NOT_SUPPORTED;
+// }
 
 StubFileSystem::Status StubFileSystem::_getFileSize(const char* path, FwSignedSizeType& size) {
-    return Status::NOT_SUPPORTED;
-}
-
-StubFileSystem::Status StubFileSystem::_getFileCount(const char* directory, U32& fileCount) {
     return Status::NOT_SUPPORTED;
 }
 

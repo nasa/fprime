@@ -32,22 +32,85 @@ bool Directory::isOpen() {
 }
 Directory::Status Directory::rewind() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
+    if (!this->m_delegate.isOpen()) {
+        return Status::NOT_OPENED;
+    }
     return this->m_delegate.rewind();
 }
 
 Directory::Status Directory::read(char * fileNameBuffer, U32 bufSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
+    if (!this->m_delegate.isOpen()) {
+        return Status::NOT_OPENED;
+    }
     return this->m_delegate.read(fileNameBuffer, bufSize);
-}
-
-Directory::Status Directory::read(char * fileNameBuffer, U32 bufSize, I64& inode) {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.read(fileNameBuffer, bufSize, inode);
 }
 
 void Directory::close() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.close();
 }
+
+// ------------ Common Directory Functions (non-OS-specific) ------------
+
+Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
+    if (this->isOpen() == false) {
+        return Status::NOT_OPENED;
+    }
+    const U32 loopLimit = std::numeric_limits<U32>::max();
+    FwSizeType count = 0;
+    FwSizeType unusedBufferSize = 1;
+    char unusedBuffer[unusedBufferSize];
+    Status readStatus = Status::OP_OK;
+    for (U32 iter = 0; iter < loopLimit; ++iter) {
+        readStatus = this->read(unusedBuffer, unusedBufferSize);
+        if (readStatus == Status::NO_MORE_FILES) {
+            break;
+        } else if (readStatus != Status::OP_OK) {
+            return Status::OTHER_ERROR;
+        }
+        ++count;
+    }
+    fileCount = count;
+    return Status::OP_OK;
+}
+
+
+Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwSizeType filenameArraySize, FwSizeType& filenameCount) {
+    FW_ASSERT(filenameArray != nullptr);
+    FW_ASSERT(filenameArraySize > 0);
+    if (this->isOpen() == false) {
+        return Status::NOT_OPENED;
+    }
+
+    Status readStatus = Status::OP_OK;
+    Status returnStatus = Status::OP_OK;
+
+    FwIndexType index;
+    constexpr FwIndexType loopLimit = std::numeric_limits<FwIndexType>::max();
+
+    char fileName[FPP_CONFIG_FILENAME_MAX_SIZE];
+
+    for (index = 0; ((index < loopLimit) && (index < static_cast<FwIndexType>(filenameArraySize))); index++) {
+        readStatus = this->read(fileName, FPP_CONFIG_FILENAME_MAX_SIZE);
+        if (readStatus == Status::NO_MORE_FILES) {
+            break;
+        } else if (readStatus != Status::OP_OK) {
+            return Status::OTHER_ERROR;
+        }
+        
+        filenameArray[index] = Fw::String(fileName);
+    }
+
+    filenameCount = index;
+
+    if (index == loopLimit) {
+        returnStatus = Status::FILE_LIMIT;
+    }
+
+    return returnStatus;
+
+}
+
 
 }  // namespace Os
