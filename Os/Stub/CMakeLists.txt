@@ -93,13 +93,43 @@ choose_fprime_implementation(Os/Console Os_Console_Test_Stub)
 register_fprime_ut(StubConsoleTest)
 
 
+#### Queue Stub ####
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
+)
+set(HEADER_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Queue.hpp"
+)
+set(MOD_DEPS)
+register_fprime_module(Os_Queue_Stub)
+register_fprime_implementation(Os/Queue Os_Queue_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultQueue.cpp")
+
+#### Queue Stub Testing ####
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/Queue.cpp"
+)
+register_fprime_module(Os_Queue_Test_Stub)
+register_fprime_implementation(Os/Queue Os_Queue_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultQueue.cpp")
+
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubQueueTests.cpp"
+)
+set(UT_MOD_DEPS
+        Fw/Time
+        Os
+        STest
+)
+choose_fprime_implementation(Os/Queue Os_Queue_Test_Stub)
+register_fprime_ut(StubQueueTest)
+
+
 #### Task Stub Testing ####
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/Task.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/DefaultTask.cpp"
+
 )
 register_fprime_module(Os_Task_Test_Stub)
-register_fprime_implementation(Os/Task Os_Task_Test_Stub)
+register_fprime_implementation(Os/Task Os_Task_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultTask.cpp")
 
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubTaskTests.cpp"

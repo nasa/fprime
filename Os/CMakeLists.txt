@@ -26,10 +26,6 @@ set(MOD_DEPS
 # Basic source files used in every OSAL layer.  Contains common code and helpers.
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
-#    "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/IPCQueueCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/SimpleQueueRegistry.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/MemCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
@@ -41,6 +37,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileSystem.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Directory.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
 )
 # Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
@@ -52,10 +49,10 @@ endif()
 if (FPRIME_USE_POSIX)
     list(APPEND SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
+#        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
@@ -64,13 +61,13 @@ endif()
 # Darwin IPC queue implementation
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   list(APPEND SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/MacOs/IPCQueueStub.cpp"
+#    "${CMAKE_CURRENT_LIST_DIR}/MacOs/IPCQueueStub.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/MacOs/SystemResources.cpp"
   )
 # Linux IPC queues implementation
 elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/Posix/IPCQueue.cpp"
+#    "${CMAKE_CURRENT_LIST_DIR}/Posix/IPCQueue.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/LocklessQueue.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Linux/SystemResources.cpp"
   )
@@ -128,10 +125,10 @@ if (BUILD_TESTING)
     endforeach()
 endif()
 # Second UT Pthreads
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut/BufferQueueTest.cpp"
-)
-register_fprime_ut("Os_pthreads")
+#set(UT_SOURCE_FILES
+#  "${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut/BufferQueueTest.cpp"
+#)
+#register_fprime_ut("Os_pthreads")
 
 # Third  UT Pthreads MAX Heap
 set(UT_SOURCE_FILES

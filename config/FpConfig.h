@@ -43,6 +43,14 @@ typedef PlatformIntType FwNativeIntType;
 typedef PlatformUIntType FwNativeUIntType;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
 
+// Task priority type
+typedef PlatformTaskPriorityType FwTaskPriorityType;
+#define PRI_FwTaskPriorityType PRI_PlatformTaskPriorityType
+
+// Queue priority type
+typedef PlatformQueuePriorityType FwQueuePriorityType;
+#define PRI_FwQueuePriorityType PRI_PlatformQueuePriorityType
+
 // The type used to serialize a size value
 typedef U16 FwSizeStoreType;
 #define PRI_FwSizeStoreType PRIu16
@@ -94,10 +102,6 @@ typedef U32 FwPrmIdType;
 // The type of a telemetry packet identifier
 typedef U16 FwTlmPacketizeIdType;
 #define PRI_FwTlmPacketizeIdType PRIu16
-
-// The type of a queue priority
-typedef I32 FwQueuePriorityType;
-#define PRI_FwQueuePriorityType PRId32
 
 // The type of a data product identifier
 typedef U32 FwDpIdType;
