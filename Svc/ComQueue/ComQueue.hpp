@@ -167,7 +167,7 @@ class ComQueue : public ComQueueComponentBase {
 
     //! Enqueues a message on the appropriate queue
     //!
-    void enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
+    bool enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
                  QueueType queueType,         //!< Type of the queue and message data
                  const U8* data,              //!< Pointer to the message data
                  const FwSizeType size        //!< Size of the message
