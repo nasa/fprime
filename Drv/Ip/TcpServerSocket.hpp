@@ -36,17 +36,19 @@ class TcpServerSocket : public IpSocket {
      * Opens the server's listening socket such that this server can listen for incoming client requests. Given the
      * nature of this component, only one (1) client can be handled at a time. After this call succeeds, clients may
      * connect. This call does not block, block occurs on `open` while waiting to accept incoming clients.
+     * \param fd: file descriptor to startup
      * \return status of the server socket setup.
      */
-    SocketIpStatus startup() override;
+    SocketIpStatus startup(NATIVE_INT_TYPE& fd) override;
 
     /**
      * \brief Shutdown and close the server socket followed by the open client
      *
+     * \param fd: file descriptor to shutdown
      * First, this calls `shutdown` and `close` on the server socket and then calls the close method to `shutdown` and
      * `close` the client.
      */
-    void shutdown() override;
+    void shutdown(NATIVE_INT_TYPE &fd) override;
 
     /**
      * \brief get the port being listened on
@@ -67,18 +69,20 @@ class TcpServerSocket : public IpSocket {
     SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd) override;
     /**
      * \brief Protocol specific implementation of send.  Called directly with retry from send.
+     * \param fd: file descriptor to send to
      * \param data: data to send
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    I32 sendProtocol(const U8* const data, const U32 size) override;
+    I32 sendProtocol(NATIVE_INT_TYPE& fd, const U8* const data, const U32 size) override;
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
+     * \param fd: file descriptor to recv from
      * \param data: data pointer to fill
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    I32 recvProtocol( U8* const data, const U32 size) override;
+    I32 recvProtocol(NATIVE_INT_TYPE& fd, U8* const data, const U32 size) override;
   private:
     NATIVE_INT_TYPE m_base_fd; //!< File descriptor of the listening socket
 };

@@ -15,13 +15,13 @@
 
 #include <IpCfg.hpp>
 #include <Drv/Ip/IpSocket.hpp>
-#include <Drv/Ip/SocketReadTask.hpp>
+#include <Drv/Ip/SocketComponentHelper.hpp>
 #include <Drv/Ip/TcpServerSocket.hpp>
 #include "Drv/TcpServer/TcpServerComponentAc.hpp"
 
 namespace Drv {
 
-class TcpServerComponentImpl : public TcpServerComponentBase, public SocketReadTask {
+class TcpServerComponentImpl : public TcpServerComponentBase, public SocketComponentHelper {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
