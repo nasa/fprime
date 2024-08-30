@@ -1,5 +1,9 @@
 # Operating System Abstraction Layer (OSAL)
 
+
+> [!WARNING]  
+> This document is out of date and will be updated shortly.
+
 The framework incorporates an OSAL providing service abstraction classes of a fictitious operating system that can perform all the operations of a real operating system.
 This layer shows the user an abstraction of the common functionality provided by all real-time operating systems (RTEMS, VxWorks, Azure ThreadX, QNX, FreeRTOS, Zephyr,...) or not (Linux, macOS, WinCE,...). We find the following services:
 

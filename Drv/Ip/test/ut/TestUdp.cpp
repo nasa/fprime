@@ -4,12 +4,12 @@
 #include <gtest/gtest.h>
 #include <Drv/Ip/UdpSocket.hpp>
 #include <Drv/Ip/IpSocket.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 
-Os::Log logger;
+Os::Console logger;
 
 void test_with_loop(U32 iterations, bool duplex) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
