@@ -61,7 +61,7 @@ namespace Svc {
 #else
         fileString = __FILE__;
 #endif
-        (void) Fw::StringUtils::string_copy(file, fileString.toChar(), sizeof(file));
+        (void) Fw::StringUtils::string_copy(file, fileString.toChar(), static_cast<FwSizeType>(sizeof(file)));
 
         // FW_ASSERT_0
 

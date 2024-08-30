@@ -37,7 +37,7 @@ Below is an example of how to run the sample example sequence with the Ref dicti
 dictionary will not be generated.
 
 ```
-fprime-seqgen fprime/Gds/examples/simple_sequence.seq -d fprime/Ref/build-artifacts/*/dict/RefTopologyAppDictionary.xml
+fprime-seqgen fprime/Gds/examples/simple_sequence.seq -d fprime/Ref/build-artifacts/*/dict/RefTopologyDictionary.json
 ```
 
 Here the output file is not specified, so it will be a new file in the same directory as the sequence but ending with

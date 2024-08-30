@@ -40,6 +40,7 @@ This section is divided into four sub-sections:
     - [Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables](user/enum-arr-ser.md)
     - [Data Constructs: Commands, Events, Channels, and Parameters](user/cmd-evt-chn-prm.md)
     - [Unit Testing F´ Components](./user/unit-testing.md)
+    - [Troubleshooting FAQ](../troubleshooting.md)
 - F´ Best Practices: helpful patterns when developing F´ software
     - [F´ Development Process](./best/development-practice.md)
     - [Application, Manager, Driver Pattern](./best/app-man-drv.md)
