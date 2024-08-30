@@ -15,8 +15,8 @@
 // ----------------------------------------------------------------------
 
 // Test 1
-TEST_F(FunctionalityTester, Directory) {
-
+TEST_F(Functionality, PosixDirectory) {
+    // pass
 }
 
 int main(int argc, char** argv) {

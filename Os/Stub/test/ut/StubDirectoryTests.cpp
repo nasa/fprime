@@ -7,6 +7,7 @@
 #include "Os/test/ut/directory/CommonTests.hpp"
 #include "Os/test/ut/directory/RulesHeaders.hpp"
 #include "Os/Stub/test/Directory.hpp"
+#include "Os/FileSystem.hpp"
 
 using namespace Os::Stub::Directory::Test;
 
@@ -41,7 +42,7 @@ TEST_F(Interface, Destruction) {
 // Ensure that Os::Directory properly calls the implementation open()
 TEST_F(Interface, Open) {
     Os::Directory directory;
-    directory.open("test");
+    directory.open("/does/not/matter");
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::OPEN_FN);
 }
 
@@ -65,15 +66,6 @@ TEST_F(Interface, Read) {
     char buffer[4];
     directory.read(buffer, 4);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::READ_FN);
-}
-
-// Ensure that Os::Directory properly calls the implementation open()
-TEST_F(Interface, ReadWithInode) {
-    Os::Directory directory;
-    I64 unused;
-    char buffer[4];
-    directory.read(buffer, 4, unused);
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::READ_INODE_FN);
 }
 
 // Ensure that Os::Directory properly calls the implementation open()

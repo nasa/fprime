@@ -25,7 +25,6 @@ struct StaticData {
         ISOPEN_FN,
         REWIND_FN,
         READ_FN,
-        READ_INODE_FN,
         CLOSE_FN,
         GET_HANDLE_FN,
     };

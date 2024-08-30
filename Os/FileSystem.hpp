@@ -65,12 +65,6 @@ class FileSystemInterface {
     virtual Status _removeFile(const char* path) = 0;
     //! \brief moves a file from source to destination
     virtual Status _moveFile(const char* sourcePath, const char* destPath) = 0;
-    //! \brief copies a file from source to destination
-    // virtual Status _copyFile(const char* sourcePath, const char* destPath) = 0;
-    //! \brief append file source to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-    // virtual Status _appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false) = 0;
-    //! \brief gets the size of the file (in bytes) = 0 at location path
-    virtual Status _getFileSize(const char* path, FwSignedSizeType& size) = 0;
     //! \brief move current directory to path
     virtual Status _changeWorkingDirectory(const char* path) = 0;
     //! \brief get FS free and total space in bytes on filesystem containing path
@@ -97,12 +91,6 @@ class FileSystem final : public FileSystemInterface {
     Status _removeFile(const char* path) override;
     //! \brief moves a file from source to destination
     Status _moveFile(const char* sourcePath, const char* destPath) override;
-    //! \brief copies a file from source to destination
-    // Status _copyFile(const char* sourcePath, const char* destPath) override;
-    //! \brief append file source to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-    // Status _appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false) override;
-    //! \brief gets the size of the file (in bytes) = 0 at location path
-    Status _getFileSize(const char* path, FwSignedSizeType& size) override;
     //! \brief move current directory to path
     Status _changeWorkingDirectory(const char* path) override;
     //! \brief get FS free and total space in bytes on filesystem containing path
@@ -118,18 +106,22 @@ class FileSystem final : public FileSystemInterface {
     static Status removeFile(const char* path);
     //! \brief moves a file from source to destination
     static Status moveFile(const char* sourcePath, const char* destPath);
-    //! \brief gets the size of the file (in bytes) = 0 at location path
-    static Status getFileSize(const char* path, FwSignedSizeType& size);
     //! \brief move current directory to path
     static Status changeWorkingDirectory(const char* path);
     //! \brief get FS free and total space in bytes on filesystem containing path
     static Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes);
 
 
+    //! \brief Returns true if path exists, false otherwise
+    static bool exists(const char* path);
+    //! \brief Touches a file at path, creating it if it doesn't exist
+    static Status touch(const char* path);
     //! \brief append file source to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
     static Status appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false);
     //! \brief copies a file from source to destination
     static Status copyFile(const char* sourcePath, const char* destPath);
+    //! \brief gets the size of the file (in bytes) = 0 at location path
+    static Status getFileSize(const char* path, FwSignedSizeType& size);
 
     // TODO: reimplement at the interface level: 
     // copyFile, appendFile, using Os::Directory / Os::File
@@ -151,7 +143,10 @@ class FileSystem final : public FileSystemInterface {
     static FileSystem& getSingleton();
 
   private:
-    // ---- Helper functions ----
+    // ####################################################
+    // ###########      Helper Functions        ###########
+    // ####################################################
+
     //! \brief Convert a File::Status to a FileSystem::Status
     static Status handleFileError(File::Status fileStatus);
     /**
@@ -168,15 +163,15 @@ class FileSystem final : public FileSystemInterface {
      */
     static Status copyFileData(File& source, File& destination, FwSignedSizeType size);
 
-
-    static FileSystem* s_singleton;
-
+  private:
     // This section is used to store the implementation-defined FileSystem handle. To Os::FileSystem and fprime, this type is
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
     // the byte-array here and set `handle` to that address for storage.
     //
     alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage;  //!< FileSystem handle storage
     FileSystemInterface& m_delegate;          
+
+    static FileSystem* s_singleton;
 };
 
 

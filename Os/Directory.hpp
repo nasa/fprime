@@ -91,12 +91,12 @@ class Directory final : public DirectoryInterface {
 
     // ------------ Common Directory Functions (non-OS-specific) ------------
 
-    //! \brief Read the contents of the directory and store filenames in filenameArray of size filenameArraySize
+    //! \brief Read the contents of the directory and store filenames in filenameArray of size arraySize
     //! \param filenameArray: array to store filenames
-    //! \param filenameArraySize: size of filenameArray
+    //! \param arraySize: size of filenameArray
     //! \param filenameCount: number of filenames written to filenameArray (output)
     //! \return status of the operation
-    Status readDirectory(Fw::String filenameArray[], const FwSizeType filenameArraySize, FwSizeType& filenameCount);
+    Status readDirectory(Fw::String filenameArray[], const FwSizeType arraySize, FwSizeType& filenameCount);
 
     //! \brief Get the number of files in the directory
     //! \param fileCount: number of files in the directory (output)

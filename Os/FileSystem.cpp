@@ -25,6 +25,11 @@ FileSystemHandle* FileSystem::getHandle() {
     return this->m_delegate.getHandle();
 }
 
+// FileSystem::PathType FileSystem::_exists(const char* path) {
+//     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+//     return this->m_delegate._exists(path);
+// }
+
 FileSystem::Status FileSystem::_createDirectory(const char* path) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate._createDirectory(path);
@@ -43,21 +48,6 @@ FileSystem::Status FileSystem::_removeFile(const char* path) {
 FileSystem::Status FileSystem::_moveFile(const char* sourcePath, const char* destPath) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate._moveFile(sourcePath, destPath);
-}
-
-// FileSystem::Status FileSystem::_copyFile(const char* sourcePath, const char* destPath) {
-//     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-//     return this->m_delegate._copyFile(sourcePath, destPath);
-// }
-
-// FileSystem::Status FileSystem::_appendFile(const char* sourcePath, const char* destPath, bool createMissingDest) {
-//     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-//     return this->m_delegate._appendFile(sourcePath, destPath, createMissingDest);
-// }
-
-FileSystem::Status FileSystem::_getFileSize(const char* path, FwSignedSizeType& size) {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate._getFileSize(path, size);
 }
 
 FileSystem::Status FileSystem::_changeWorkingDirectory(const char* path) {
@@ -90,22 +80,51 @@ FileSystem::Status FileSystem::createDirectory(const char* path) {
 FileSystem::Status FileSystem::removeDirectory(const char* path) {
     return FileSystem::getSingleton()._removeDirectory(path);
 }
+
 FileSystem::Status FileSystem::removeFile(const char* path) {
     return FileSystem::getSingleton()._removeFile(path);
 }
+
 FileSystem::Status FileSystem::moveFile(const char* sourcePath, const char* destPath) {
     return FileSystem::getSingleton()._moveFile(sourcePath, destPath);
 }
-FileSystem::Status FileSystem::getFileSize(const char* path, FwSignedSizeType& size) {
-    return FileSystem::getSingleton()._getFileSize(path, size);
-}
+
 FileSystem::Status FileSystem::changeWorkingDirectory(const char* path) {
     return FileSystem::getSingleton()._changeWorkingDirectory(path);
 }
+
 FileSystem::Status FileSystem::getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
     return FileSystem::getSingleton()._getFreeSpace(path, totalBytes, freeBytes);
 }
 
+FileSystem::Status FileSystem::touch(const char* path) {
+    Status status = Status::OP_OK;
+    Os::File file;
+    // is this actually touching the file?
+    // see https://chris-sharpe.blogspot.com/2013/05/better-than-systemtouch.html
+    File::Status file_status = file.open(path, Os::File::OPEN_WRITE);
+    if (file_status != File::OP_OK) {
+        status = FileSystem::handleFileError(file_status);
+    }
+    file.close();
+    return status;
+}
+
+bool FileSystem::exists(const char* path) {
+    Os::File file;
+    File::Status file_status = file.open(path, Os::File::OPEN_READ);
+    if (file_status == File::OP_OK) {
+        file.close();
+        return true;
+    }
+    Os::Directory dir;
+    Directory::Status dir_status = dir.open(path);
+    if (dir_status == Directory::Status::OP_OK) {
+        dir.close();
+        return true;
+    }
+    return false;
+} // end exists
 
 FileSystem::Status FileSystem::copyFile(const char* sourcePath, const char* destPath) {
     Os::File source, destination;
@@ -117,8 +136,6 @@ FileSystem::Status FileSystem::copyFile(const char* sourcePath, const char* dest
     if (fileStatus != Os::File::OP_OK) {
         return FileSystem::handleFileError(fileStatus);
     }
-    
-    // TODO: FileSystem::exists(sourcePath)
 
     FwSignedSizeType sourceFileSize = 0;
     FileSystem::Status fs_status = FileSystem::getFileSize(sourcePath, sourceFileSize);
@@ -129,10 +146,18 @@ FileSystem::Status FileSystem::copyFile(const char* sourcePath, const char* dest
     fs_status = FileSystem::copyFileData(source, destination, sourceFileSize);
 
     return fs_status;
-}
+} // end copyFile
 
 FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* destPath, bool createMissingDest) {
     Os::File source, destination;
+
+    // If requested, check if destination file exists and exit if does not exist
+    if (!createMissingDest) {
+        if (!FileSystem::exists(destPath)) {
+            return Status::INVALID_PATH;
+        }
+    }
+
     Os::File::Status fileStatus = source.open(sourcePath, Os::File::OPEN_READ);
     if (fileStatus != Os::File::OP_OK) {
         return FileSystem::handleFileError(fileStatus);
@@ -143,15 +168,6 @@ FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* de
     }
 
     FileSystem::Status fs_status = FileSystem::OP_OK;
-    // TODO: fs_status = FileSystem::exists(sourcePath)
-    
-    // If needed, check if destination file exists (and exit if not)
-    if (!createMissingDest) {
-        // fs_status = FileSystem::exists(destPath);
-        if (FileSystem::OP_OK != fs_status) {
-            return fs_status;
-        }
-    }
 
     FwSignedSizeType sourceFileSize = 0;
     fs_status = FileSystem::getFileSize(sourcePath, sourceFileSize);
@@ -162,9 +178,25 @@ FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* de
     fs_status = FileSystem::copyFileData(source, destination, sourceFileSize);
 
     return fs_status;
+} // end appendFile
+
+FileSystem::Status FileSystem::getFileSize(const char* path, FwSignedSizeType& size) {
+    Os::File file;
+    Os::File::Status status = file.open(path, Os::File::OPEN_READ);
+    if (status != File::Status::OP_OK) {
+        return FileSystem::handleFileError(status);
+    }
+    status = file.size(size);
+    if (status != File::Status::OP_OK) {
+        return FileSystem::handleFileError(status);
+    }
+    return FileSystem::OP_OK;
 }
 
 
+// ######################################################################
+// #################         Helper Functions           #################
+// ######################################################################
 
 FileSystem::Status FileSystem::handleFileError(File::Status fileStatus) {
     FileSystem::Status status = FileSystem::OTHER_ERROR;

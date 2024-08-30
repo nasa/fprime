@@ -51,15 +51,6 @@ struct ReadDirectory : public STest::Rule<Os::Test::Directory::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule: Read a directory with inode info
-// ------------------------------------------------------------------------------------------------------
-struct ReadDirectory : public STest::Rule<Os::Test::Directory::Tester> {
-    ReadDirectory();
-    bool precondition(const Os::Test::Directory::Tester& state);
-    void action(Os::Test::Directory::Tester& state);
-};
-
-// ------------------------------------------------------------------------------------------------------
 // Rule: Rewind a directory
 // ------------------------------------------------------------------------------------------------------
 struct RewindDirectory : public STest::Rule<Os::Test::Directory::Tester> {

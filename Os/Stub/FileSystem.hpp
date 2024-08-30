@@ -38,12 +38,6 @@ class StubFileSystem : public FileSystemInterface {
     Status _removeFile(const char* path) override;
     //! \brief moves a file from origin to destination
     Status _moveFile(const char* originPath, const char* destPath) override;
-    //! \brief copies a file from origin to destination
-    // Status _copyFile(const char* originPath, const char* destPath) override;
-    //! \brief append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
-    // Status _appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) override;
-    //! \brief gets the size of the file (in bytes) = 0 at location path
-    Status _getFileSize(const char* path, FwSignedSizeType& size) override;
     //! \brief move current directory to path
     Status _changeWorkingDirectory(const char* path) override;
     //! \brief get FS free and total space in bytes on filesystem containing path

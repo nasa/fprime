@@ -41,26 +41,6 @@ TestFileSystem::Status TestFileSystem::_moveFile(const char* originPath, const c
     return Status::OP_OK;
 }
 
-// TestFileSystem::Status TestFileSystem::_copyFile(const char* originPath, const char* destPath) {
-//     StaticData::data.lastCalled = StaticData::LastFn::COPY_FILE_FN;
-//     return Status::OP_OK;
-// }
-
-// TestFileSystem::Status TestFileSystem::_appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
-//     StaticData::data.lastCalled = StaticData::LastFn::APPEND_FILE_FN;
-//     return Status::OP_OK;
-// }
-
-TestFileSystem::Status TestFileSystem::_getFileSize(const char* path, FwSignedSizeType& size) {
-    StaticData::data.lastCalled = StaticData::LastFn::GET_SIZE_FN;
-    return Status::OP_OK;
-}
-
-// TestFileSystem::Status TestFileSystem::_getFileCount(const char* directory, U32& fileCount) {
-//     StaticData::data.lastCalled = StaticData::LastFn::GET_COUNT_FN;
-//     return Status::OP_OK;
-// }
-
 TestFileSystem::Status TestFileSystem::_changeWorkingDirectory(const char* path) {
     StaticData::data.lastCalled = StaticData::LastFn::CHANGE_CWD_FN;
     return Status::OP_OK;

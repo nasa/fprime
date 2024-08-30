@@ -4,6 +4,7 @@
 // ======================================================================
 #include "Os/test/ut/directory/CommonTests.hpp"
 
+#include <Os/FileSystem.hpp> // for setup
 // ----------------------------------------------------------------------
 // Test Fixture
 // ----------------------------------------------------------------------
@@ -15,7 +16,8 @@ std::unique_ptr<Os::Test::Directory::Tester> get_tester_implementation() {
 Functionality::Functionality() : tester(get_tester_implementation()) {}
 
 void Functionality::SetUp() {
-    // No setup required
+    Os::FileSystem::createDirectory("./test_directory");
+    Os::FileSystem::touch("./test_directory/test_file");
 }
 
 void Functionality::TearDown() {
@@ -27,7 +29,12 @@ void Functionality::TearDown() {
 // ----------------------------------------------------------------------
 
 // Lock then unlock directory
-TEST_F(Functionality, LockAndUnlockDirectory) {
-    // Os::Test::Directory::Tester::LockDirectory lock_rule;
+TEST_F(Functionality, OpenDirectory) {
+    Os::Directory dir;
+    dir.open("./test_directory");
+    char filename [256];
+    dir.read(filename, 256);
+    dir.close();
+
 }
 

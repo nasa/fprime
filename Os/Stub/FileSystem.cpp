@@ -8,7 +8,6 @@ namespace Os {
 namespace Stub {
 namespace FileSystem {
 
-
 StubFileSystem::Status StubFileSystem::_createDirectory(const char* path) {
     return Status::NOT_SUPPORTED;
 }
@@ -22,18 +21,6 @@ StubFileSystem::Status StubFileSystem::_removeFile(const char* path) {
 }
 
 StubFileSystem::Status StubFileSystem::_moveFile(const char* originPath, const char* destPath) {
-    return Status::NOT_SUPPORTED;
-}
-
-// StubFileSystem::Status StubFileSystem::_copyFile(const char* originPath, const char* destPath) {
-//     return Status::NOT_SUPPORTED;
-// }
-
-// StubFileSystem::Status StubFileSystem::_appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
-//     return Status::NOT_SUPPORTED;
-// }
-
-StubFileSystem::Status StubFileSystem::_getFileSize(const char* path, FwSignedSizeType& size) {
     return Status::NOT_SUPPORTED;
 }
 

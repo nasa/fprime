@@ -89,7 +89,7 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
     FwIndexType index;
     constexpr FwIndexType loopLimit = std::numeric_limits<FwIndexType>::max();
 
-    char fileName[FPP_CONFIG_FILENAME_MAX_SIZE];
+    char fileName[FPP_CONFIG_FILENAME_MAX_SIZE]; // should be FW_FIXED_LENGTH_STRING_SIZE instead??
 
     for (index = 0; ((index < loopLimit) && (index < static_cast<FwIndexType>(filenameArraySize))); index++) {
         readStatus = this->read(fileName, FPP_CONFIG_FILENAME_MAX_SIZE);

@@ -28,65 +28,35 @@ public:
 
 // Ensure that Os::FileSystem properly calls the implementation createDirectory()
 TEST_F(Interface, CreateDirectory) {
-    Os::FileSystem::createDirectory("test");
+    Os::FileSystem::createDirectory("/does/not/matter");
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::CREATE_DIR_FN);
     ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
 }
 
 // Ensure that Os::FileSystem properly calls the implementation removeDirectory()
 TEST_F(Interface, RemoveDirectory) {
-    Os::FileSystem::removeDirectory("test");
+    Os::FileSystem::removeDirectory("/does/not/matter");
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::REMOVE_DIR_FN);
     ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
 }
 
 // Ensure that Os::FileSystem properly calls the implementation removeFile()
 TEST_F(Interface, RemoveFile) {
-    Os::FileSystem::removeFile("file");
+    Os::FileSystem::removeFile("/does/not/matter");
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::REMOVE_FILE_FN);
     ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
 }
 
 // Ensure that Os::FileSystem properly calls the implementation moveFile()
 TEST_F(Interface, MoveFile) {
-    Os::FileSystem::moveFile("source", "destination");
+    Os::FileSystem::moveFile("/does/not/matter", "/does/not/matter");
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::MOVE_FILE_FN);
-    ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
-}
-
-// Ensure that Os::FileSystem properly calls the implementation copyFile()
-TEST_F(Interface, CopyFile) {
-    Os::FileSystem::copyFile("source", "destination");
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::COPY_FILE_FN);
-    ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
-}
-
-// Ensure that Os::FileSystem properly calls the implementation appendFile()
-TEST_F(Interface, AppendFile) {
-    Os::FileSystem::appendFile("file", "content");
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::APPEND_FILE_FN);
-    ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
-}
-
-// Ensure that Os::FileSystem properly calls the implementation getFileSize()
-TEST_F(Interface, GetFileSize) {
-    FwSignedSizeType size;
-    Os::FileSystem::getFileSize("file", size);
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_SIZE_FN);
-    ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
-}
-
-// Ensure that Os::FileSystem properly calls the implementation getFileCount()
-TEST_F(Interface, GetFileCount) {
-    U32 fileCount;
-    Os::FileSystem::getFileCount("directory", fileCount);
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_COUNT_FN);
     ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
 }
 
 // Ensure that Os::FileSystem properly calls the implementation changeWorkingDirectory()
 TEST_F(Interface, ChangeWorkingDirectory) {
-    Os::FileSystem::changeWorkingDirectory("directory");
+    Os::FileSystem::changeWorkingDirectory("/does/not/matter");
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::CHANGE_CWD_FN);
     ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
 }
@@ -95,7 +65,7 @@ TEST_F(Interface, ChangeWorkingDirectory) {
 TEST_F(Interface, GetFreeSpace) {
     FwSizeType totalBytes;
     FwSizeType freeBytes;
-    Os::FileSystem::getFreeSpace("path", totalBytes, freeBytes);
+    Os::FileSystem::getFreeSpace("/does/not/matter", totalBytes, freeBytes);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_FREESPACE_FN);
     ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
 }

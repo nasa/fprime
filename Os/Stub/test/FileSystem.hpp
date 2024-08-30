@@ -1,6 +1,9 @@
 // ======================================================================
 // \title Os/Stub/test/FileSystem.cpp
 // \brief definitions for TestFileSystem stubs for interface testing
+//
+// These classes are here to test that delegation of Os::FileSystem calls
+// the selected implementation of a FileSystemInterface.
 // ======================================================================
 #ifndef OS_STUB_FILESYSTEM_TEST_HPP
 #define OS_STUB_FILESYSTEM_TEST_HPP
@@ -23,13 +26,8 @@ struct StaticData {
         DESTRUCT_FN,
         CREATE_DIR_FN,
         REMOVE_DIR_FN,
-        READ_DIR_FN,
         REMOVE_FILE_FN,
         MOVE_FILE_FN,
-        COPY_FILE_FN,
-        APPEND_FILE_FN,
-        GET_SIZE_FN,
-        GET_COUNT_FN,
         CHANGE_CWD_FN,
         GET_FREESPACE_FN,
         GET_HANDLE_FN,
@@ -62,10 +60,6 @@ class TestFileSystem : public FileSystemInterface {
     Status _removeDirectory(const char* path) override;
     Status _removeFile(const char* path) override;
     Status _moveFile(const char* originPath, const char* destPath) override;
-    // Status _copyFile(const char* originPath, const char* destPath) override;
-    // Status _appendFile(const char* originPath, const char* destPath, bool createMissingDest=false) override;
-    Status _getFileSize(const char* path, FwSignedSizeType& size) override;
-    // Status _getFileCount(const char* directory, U32& fileCount) override;
     Status _changeWorkingDirectory(const char* path) override;
     Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
 

@@ -28,7 +28,7 @@ TestDirectory::Status TestDirectory::open(const char* dirName) {
 
 bool TestDirectory::isOpen() {
     StaticData::data.lastCalled = StaticData::LastFn::ISOPEN_FN;
-    return false;
+    return true;
 }
 
 TestDirectory::Status TestDirectory::rewind() {
