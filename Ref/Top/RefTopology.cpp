@@ -137,6 +137,9 @@ void configureTopology() {
 
     // Note: Uncomment when using Svc:TlmPacketizer
     //tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
+
+    //Configure Trace Logger filename to be used for storing trace data
+    traceLogger.configure("TraceFile.dat");
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -156,6 +159,8 @@ void setupTopology(const TopologyState& state) {
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
+    // Startup TLM and Config verbosity for Versions
+    version.config(true);
     // Initialize socket client communication if and only if there is a valid specification
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");

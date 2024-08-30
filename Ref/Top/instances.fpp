@@ -129,6 +129,8 @@ module Ref {
 
   instance sendBuffComp: Ref.SendBuff base id 0x2600 \
     queue size Default.QUEUE_SIZE
+  
+
 
   # ----------------------------------------------------------------------
   # Passive component instances
@@ -161,5 +163,9 @@ module Ref {
   instance systemResources: Svc.SystemResources base id 0x4B00
 
   instance dpBufferManager: Svc.BufferManager base id 0x4C00
+  
+  instance version: Svc.Version base id 0x4D00 
+  
+  instance trace: Svc.TraceLogger base id 0x4E00 
 
 }

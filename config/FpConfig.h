@@ -223,8 +223,9 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Define max length of assert string
+// Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE 120  //!< Size of string used to store assert description
+#define FW_ASSERT_TEXT_SIZE 256  //!< Size of string used to store assert description
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
@@ -234,14 +235,6 @@ typedef FwIndexType FwQueueSizeType;
 #ifndef FW_OBJ_NAME_BUFFER_SIZE
 #define FW_OBJ_NAME_BUFFER_SIZE \
     80  //!< Size of object name (if object names enabled). AC Limits to 80, truncation occurs above 80.
-#endif
-#endif
-
-// When querying an object as to an object-specific description, this specifies the size of the buffer to store the
-// description.
-#if FW_OBJECT_TO_STRING
-#ifndef FW_OBJ_TO_STRING_BUFFER_SIZE
-#define FW_OBJ_TO_STRING_BUFFER_SIZE 255  //!< Size of string storing toString() text
 #endif
 #endif
 
@@ -276,7 +269,7 @@ typedef FwIndexType FwQueueSizeType;
 
 // Specifies the size of the buffer that contains a communications packet.
 #ifndef FW_COM_BUFFER_MAX_SIZE
-#define FW_COM_BUFFER_MAX_SIZE 128  //!< Max size of Fw::Com buffer
+#define FW_COM_BUFFER_MAX_SIZE 512
 #endif
 
 // Specifies the size of the buffer that contains the serialized command arguments.
@@ -306,8 +299,9 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Specifies the maximum size of a string in a log event
+// Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_LOG_STRING_MAX_SIZE
-#define FW_LOG_STRING_MAX_SIZE 100  //!< Max size of log string parameter type
+#define FW_LOG_STRING_MAX_SIZE 200  //!< Max size of log string parameter type
 #endif
 
 // Specifies the size of the buffer that contains the serialized telemetry value.
@@ -322,8 +316,9 @@ typedef FwIndexType FwQueueSizeType;
 
 // Specifies the size of the buffer that contains the serialized trace value.
 #ifndef FW_TRACE_BUFFER_MAX_SIZE
-#define FW_TRACE_BUFFER_MAX_SIZE 64  //!< Character array size for Fw::String
+#define FW_TRACE_BUFFER_MAX_SIZE 257
 #endif
+
 
 // Specifies the size of the buffer that contains the serialized parameter value.
 #ifndef FW_PARAM_BUFFER_MAX_SIZE
@@ -359,23 +354,6 @@ typedef FwIndexType FwQueueSizeType;
 // string constants. Must be enabled if text logging enabled
 #ifndef FW_SERIALIZABLE_TO_STRING
 #define FW_SERIALIZABLE_TO_STRING 1  //!< Indicates if autocoded serializables have toString() methods
-#endif
-
-#if FW_SERIALIZABLE_TO_STRING
-#ifndef FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE
-#define FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE 255  //!< Size of string to store toString() string output
-#endif
-#endif
-
-// Define if arrays have toString() method.
-#ifndef FW_ARRAY_TO_STRING
-#define FW_ARRAY_TO_STRING 1  //!< Indicates if autocoded arrays have toString() methods
-#endif
-
-#if FW_ARRAY_TO_STRING
-#ifndef FW_ARRAY_TO_STRING_BUFFER_SIZE
-#define FW_ARRAY_TO_STRING_BUFFER_SIZE 256  //!< Size of string to store toString() string output
-#endif
 #endif
 
 // Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility

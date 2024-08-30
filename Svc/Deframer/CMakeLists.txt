@@ -41,5 +41,5 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/DeframerTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/UplinkFrame.cpp"
 )
-set(UT_MOD_DEPS STest)
+set( STest)
 register_fprime_ut(Svc_Deframer_fprime_protocol)

@@ -1,5 +1,7 @@
 #include <Fw/Trace/TraceBuffer.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Log/TextLogString.hpp>
+#include <stdio.h>
 
 namespace Fw {
 
@@ -41,4 +43,18 @@ namespace Fw {
         return this->m_bufferData;
     }
 
+    void TraceBuffer::toString(std::string& text) const{
+        
+        //FW_ASSERT(text != nullptr);
+        FW_ASSERT(this->getBuffLength() < FW_TRACE_BUFFER_MAX_SIZE);
+
+        std::string str_format(reinterpret_cast<const char*>(this->m_bufferData),this->getBuffLength());
+        text += str_format;
+        /*char temp_text[1];
+        for (NATIVE_UINT_TYPE i = 0; i < this->getBuffLength(); i++) {
+            //snprintf(temp_text,sizeof(temp_text),"%d",this->m_bufferData[i]);
+            temp_text[0] = static_cast<char>(this->m_bufferData[i]);
+            text[i] = temp_text[0];
+        }*/
+    }
 }

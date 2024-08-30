@@ -12,3 +12,18 @@ set(SOURCE_FILES
 )
 
 register_fprime_module()
+
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/TraceLogger.fpp"
+   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TraceLoggerTester.cpp"
+   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TraceLoggerTestMain.cpp"
+)
+
+set(UT_MOD_DEPS
+  Fw/Buffer
+  STest
+)
+
+set(UT_AUTO_HELPERS ON)
+register_fprime_ut()
+

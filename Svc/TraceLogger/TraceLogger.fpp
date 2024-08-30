@@ -21,7 +21,9 @@ module Svc {
     # Commands
     # ----------------------------------------------------------------------
     @ Enable or disable trace
-    async command EnableTrace \  
+    async command EnableTrace ( 
+        enable : bool 
+        )\
         opcode 0x00
     
     @ Dump Trace to a data product
@@ -37,7 +39,15 @@ module Svc {
     ) \
         severity diagnostic \
         id 0x00 \
-        format "Trace has been {}." 
+        format "Trace has been {}."
+
+    @Trace File open error
+    event TraceFileOpenError(
+        $fileName: string @<print out file name
+        )\
+        severity warning low \ 
+        id 0x01 \
+        format "Failed to open Trace Log File {} for recording."
 
     # ----------------------------------------------------------------------
     # Special ports

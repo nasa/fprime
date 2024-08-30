@@ -10,6 +10,7 @@
 #include "Svc/TraceLogger/TraceLoggerComponentAc.hpp"
 #include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Buffer/Buffer.hpp>
 
 // some limits.h don't have PATH_MAX
 #ifdef PATH_MAX
@@ -24,6 +25,10 @@
 #else
 #define FILE_NAME_MAX 255
 #endif
+
+//Max size of the Trace buffer including metadata (id,timetag,arguments) 
+static const FwSizeType FW_TRACE_MAX_SER_SIZE = (FW_TRACE_BUFFER_MAX_SIZE + sizeof(FwTraceIdType) + Fw::Time::SERIALIZED_SIZE);
+
 
 namespace Svc {
 
@@ -55,8 +60,15 @@ class TraceLogger : public TraceLoggerComponentBase {
     //!  \param maxSize The max size of the file
     //!
     //!  \return true if creating the file was successful, false otherwise
-    bool set_log_file(const char* fileName, const U32 maxSize);
+    void set_log_file(const char* fileName, const U32 maxSize=2048);
     
+    //!  \brief Trace Logger configure method
+    //!
+    //!  The configure method stores the file name to log traces.
+    //!
+    //!  \param file file where traces are stored.
+    void configure(const char* file);
+
     //! Destroy TraceLogger object
     ~TraceLogger();
 
@@ -72,7 +84,7 @@ class TraceLogger : public TraceLoggerComponentBase {
     void TraceBufferLogger_handler(FwIndexType portNum,        //!< The port number
                                    FwTraceIdType id,           //!< Trace ID
                                    Fw::Time& timeTag,          //!< Time Tag
-                                   const Fw::TraceType& type,  //!< The trace type argument
+                                   const Fw::TraceCfg::TraceType& type,  //!< The trace type argument
                                    Fw::TraceBuffer& args       //!< Buffer containing serialized trace entry
                                    ) override;
 
@@ -85,8 +97,8 @@ class TraceLogger : public TraceLoggerComponentBase {
     //!
     //! Enable or disable trace
     void EnableTrace_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                U32 cmdSeq            //!< The command sequence number
-                                ) override;
+                                U32 cmdSeq,            //!< The command sequence number
+                                bool enable) override;
 
     //! Handler implementation for command DumpTraceDp
     //!
@@ -106,10 +118,13 @@ class TraceLogger : public TraceLoggerComponentBase {
     // The filename data:
     Os::File m_log_file; //Log file
     FileMode m_mode;    // file mode
-    CHAR m_fileName[FILE_NAME_MAX + FILE_PATH_MAX]; //File name
+    Fw::String m_fileName; //File name
     U32 m_maxFileSize; //max file size
     U32 m_byteCount; //current byte count of the file
-    bool m_log_init; //Is logfile initialize
+    bool m_log_init; //Is logfile initialized
+    bool m_enable_trace; //Is trace logging enabled
+    U8 m_file_data[FW_TRACE_MAX_SER_SIZE]; //Holds a max size including metadata
+    Fw::Buffer m_file_buffer;
 
     // ----------------------------------------------------------------------
     // File functions:
@@ -120,9 +135,9 @@ class TraceLogger : public TraceLoggerComponentBase {
     void closeFile(
     );
 
-    void writeToFile(
-    const char *const data,
-    U16 size
+    void write_log_file(
+    U8* data,
+    U32 size
     );
 
     };

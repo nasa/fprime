@@ -46,6 +46,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/StaticMemory/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmChan/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SystemResources/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ports/VersionPorts")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TraceLogger/")
 
 # Text logger components included by default, 
@@ -57,3 +58,4 @@ endif()
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PosixTime/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LinuxTimer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Version/")

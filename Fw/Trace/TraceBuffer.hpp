@@ -14,6 +14,7 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Cfg/SerIds.hpp>
+#include <string>
 
 namespace Fw {
 
@@ -22,7 +23,7 @@ namespace Fw {
 
             enum {
                 SERIALIZED_TYPE_ID = FW_TYPEID_TRACE_BUFF,
-                SERIALIZED_SIZE = FW_TRACE_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
+                SERIALIZED_SIZE = FW_TRACE_BUFFER_MAX_SIZE+ sizeof(FwBuffSizeType)
             };
 
             TraceBuffer(const U8 *args, NATIVE_UINT_TYPE size);
@@ -34,6 +35,8 @@ namespace Fw {
             NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();
             const U8* getBuffAddr() const;
+            //! Supports writing this buffer to a string representation
+            void toString(std::string& text) const;
 
         private:
             U8 m_bufferData[FW_TRACE_BUFFER_MAX_SIZE]; // command argument buffer
