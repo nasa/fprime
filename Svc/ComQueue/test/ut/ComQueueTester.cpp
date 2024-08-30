@@ -41,11 +41,12 @@ void ComQueueTester ::configure() {
     component.configure(configurationTable, 0, mallocAllocator);
 }
 
-void ComQueueTester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portNum, QueueType& queueType) {
-    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
-    Fw::ComBuffer comBuffer(&data[0], sizeof(data));
-    Fw::Buffer buffer(&data[0], sizeof(data));
+void ComQueueTester ::sendByQueueNumber(Fw::Buffer& buffer,
+                                        NATIVE_INT_TYPE queueNum,
+                                        NATIVE_INT_TYPE& portNum,
+                                        QueueType& queueType) {
     if (queueNum < ComQueue::COM_PORT_COUNT) {
+        Fw::ComBuffer comBuffer(buffer.getData(), buffer.getSize());
         portNum = queueNum;
         queueType = QueueType::COM_QUEUE;
         invoke_to_comQueueIn(portNum, comBuffer, 0);
@@ -205,14 +206,24 @@ void ComQueueTester::testQueueOverflow(){
 
     component.configure(configurationTable, 0, mallocAllocator);
 
+    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    Fw::Buffer buffer(&data[0], sizeof(data));
+
     for(NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
         QueueType overflow_type;
         NATIVE_INT_TYPE portNum;
         // queue[portNum].depth + 2 to deliberately cause overflow and check throttle of exactly 1
         for (NATIVE_UINT_TYPE msgCount = 0; msgCount < configurationTable.entries[queueNum].depth + 2; msgCount++) {
-            sendByQueueNumber(queueNum, portNum, overflow_type);
+            sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
             dispatchAll();
         }
+
+        if (QueueType::BUFFER_QUEUE == overflow_type) {
+            ASSERT_from_deallocate_SIZE(2);
+            ASSERT_from_deallocate(0, buffer);
+            ASSERT_from_deallocate(1, buffer);
+        }
+
         ASSERT_EVENTS_QueueOverflow_SIZE(1);
         ASSERT_EVENTS_QueueOverflow(0, overflow_type, portNum);
 
@@ -220,9 +231,14 @@ void ComQueueTester::testQueueOverflow(){
         emitOne();
 
         // Force another overflow by filling then deliberately overflowing the queue
-        sendByQueueNumber(queueNum, portNum, overflow_type);
-        sendByQueueNumber(queueNum, portNum, overflow_type);
+        sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
+        sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
         dispatchAll();
+
+        if (QueueType::BUFFER_QUEUE == overflow_type) {
+            ASSERT_from_deallocate_SIZE(3);
+            ASSERT_from_deallocate(2, buffer);
+        }
 
         ASSERT_EVENTS_QueueOverflow_SIZE(2);
         ASSERT_EVENTS_QueueOverflow(1, overflow_type, portNum);
