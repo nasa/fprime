@@ -139,7 +139,11 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
     // Ensure that the port number of buffQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);
-    this->enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
+    bool status =
+        this->enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
+    if (!status) {
+        this->buffQueueIn_overflowHook(portNum, fwBuffer);
+    }
 }
 
 void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
