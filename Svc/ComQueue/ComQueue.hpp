@@ -152,6 +152,16 @@ class ComQueue : public ComQueueComponentBase {
     );
 
     // ----------------------------------------------------------------------
+    // Hook implementations for typed async input ports
+    // ----------------------------------------------------------------------
+
+    //! Queue overflow hook method that deallocates the fwBuffer
+    //!
+    void buffQueueIn_overflowHook(FwIndexType portNum, /*!< The port number*/
+                                  Fw::Buffer& fwBuffer /*!< The buffer*/
+    );
+
+    // ----------------------------------------------------------------------
     // Helper Functions
     // ----------------------------------------------------------------------
 

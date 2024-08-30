@@ -182,6 +182,14 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
 }
 
 // ----------------------------------------------------------------------
+// Hook implementations for typed async input ports
+// ----------------------------------------------------------------------
+
+void ComQueue::buffQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    this->deallocate_out(portNum, fwBuffer);
+}
+
+// ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------
 
