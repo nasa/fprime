@@ -52,6 +52,7 @@ The diagram below shows the `Svc::ComQueue` component.
 |---------------|-------------------|---------------------------------------|--------------------------------------------------------|
 | `output`      | `comQueueSend`    | `Fw.Com`                              | Fw::ComBuffer output port                              |
 | `output`      | `buffQueueSend`   | `Fw.BufferSend`                       | Fw::Buffer output port                                 |
+| `output`      | `deallocate`      | `Fw.BufferSend`                       | Port for deallocating Fw::Buffer on queue overflow     |
 | `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                   |
 | `async input` | `comQueueIn`      | `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                |
 | `async input` | `buffQueueIn`     | `[ComQueueBufferPorts] Fw.BufferSend` | Port array for receiving Fw::Buffers                   |
