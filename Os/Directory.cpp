@@ -57,6 +57,11 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
     if (this->isOpen() == false) {
         return Status::NOT_OPENED;
     }
+    // REVIEW NOTE: should getFileCount rewind before counting?
+    // Likely yes?? Otherwise it's just weird
+    // TODO: check return value (how to handle if not OP_OK?)
+    this->rewind();
+
     const U32 loopLimit = std::numeric_limits<U32>::max();
     FwSizeType count = 0;
     FwSizeType unusedBufferSize = 1;
@@ -72,6 +77,8 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
         ++count;
     }
     fileCount = count;
+    // and after??
+    this->rewind();
     return Status::OP_OK;
 }
 
@@ -82,6 +89,8 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
     if (this->isOpen() == false) {
         return Status::NOT_OPENED;
     }
+    // same thing here - should we rewind before?
+    this->rewind();
 
     Status readStatus = Status::OP_OK;
     Status returnStatus = Status::OP_OK;
@@ -107,6 +116,7 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
     if (index == loopLimit) {
         returnStatus = Status::FILE_LIMIT;
     }
+    this->rewind();
 
     return returnStatus;
 
