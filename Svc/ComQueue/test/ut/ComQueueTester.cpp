@@ -283,45 +283,4 @@ void ComQueueTester ::from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, F
 // Helper methods
 // ----------------------------------------------------------------------
 
-void ComQueueTester ::connectPorts() {
-    // buffQueueIn
-    for (NATIVE_INT_TYPE i = 0; i < ComQueue::BUFFER_PORT_COUNT; ++i) {
-        this->connect_to_buffQueueIn(i, this->component.get_buffQueueIn_InputPort(i));
-    }
-
-    // comQueueIn
-    for (NATIVE_INT_TYPE i = 0; i < ComQueue::COM_PORT_COUNT; ++i) {
-        this->connect_to_comQueueIn(i, this->component.get_comQueueIn_InputPort(i));
-    }
-
-    // comStatusIn
-    this->connect_to_comStatusIn(0, this->component.get_comStatusIn_InputPort(0));
-
-    // run
-    this->connect_to_run(0, this->component.get_run_InputPort(0));
-
-    // Log
-    this->component.set_Log_OutputPort(0, this->get_from_Log(0));
-
-    // LogText
-    this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
-
-    // Time
-    this->component.set_Time_OutputPort(0, this->get_from_Time(0));
-
-    // Tlm
-    this->component.set_Tlm_OutputPort(0, this->get_from_Tlm(0));
-
-    // buffQueueSend
-    this->component.set_buffQueueSend_OutputPort(0, this->get_from_buffQueueSend(0));
-
-    // comQueueSend
-    this->component.set_comQueueSend_OutputPort(0, this->get_from_comQueueSend(0));
-}
-
-void ComQueueTester ::initComponents() {
-    this->init();
-    this->component.init(QUEUE_DEPTH, INSTANCE);
-}
-
 }  // end namespace Svc

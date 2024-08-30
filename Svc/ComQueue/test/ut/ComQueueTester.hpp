@@ -14,6 +14,19 @@
 namespace Svc {
 
 class ComQueueTester : public ComQueueGTestBase {
+
+  public:
+
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    // Instance ID supplied to the component instance under test
+    static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+
+    // Queue depth supplied to the component instance under test
+    static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
+
   private:
     // ----------------------------------------------------------------------
     // Construction and destruction
