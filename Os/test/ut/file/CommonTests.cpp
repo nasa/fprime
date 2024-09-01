@@ -408,6 +408,118 @@ TEST_F(FunctionalIO, RandomizedTesting) {
     printf("Ran %u steps.\n", numSteps);
 }
 
+// Check scenario failure extracted from random scenarios
+// TEST_F(Functionality, ExtractFromRandomScenarioFailure1) {
+//     Os::Test::File::Tester::OpenFileCreate open_file_create_rule(true);
+//     Os::Test::File::Tester::CopyConstruction copy_construction;
+//     Os::Test::File::Tester::WriteInvalidModes write_invalid_modes_rule;
+//     Os::Test::File::Tester::OpenForRead open_for_read_rule(true);
+//     Os::Test::File::Tester::FinalizeCrc finalize_crc_rule;
+//
+//     open_file_create_rule.apply(*tester);
+//     copy_construction.apply(*tester);
+//     write_invalid_modes_rule.apply(*tester);
+//     open_for_read_rule.apply(*tester);
+//     finalize_crc_rule.apply(*tester);
+// }
+
+// Check scenario failure extracted from random scenarios
+// TEST_F(Functionality, ExtractFromRandomScenarioFailure2) {
+//     Os::Test::File::Tester::CopyConstruction copy_construction;
+//     Os::Test::File::Tester::SeekInvalidSize seek_invalid_size;
+//     Os::Test::File::Tester::Flush flush_rule;
+//     Os::Test::File::Tester::CloseFile close_file_rule;
+//     Os::Test::File::Tester::OpenForRead open_for_read_rule(true);
+//     Os::Test::File::Tester::FinalizeCrc finalize_crc_rule;
+//
+//     copy_construction.apply(*tester);
+//     seek_invalid_size.apply(*tester);
+//     flush_rule.apply(*tester);
+//     close_file_rule.apply(*tester);
+//     open_for_read_rule.apply(*tester);
+//     finalize_crc_rule.apply(*tester);
+// }
+
+// Check scenario failure extracted from random scenarios
+// TEST_F(Functionality, ExtractFromRandomScenarioFailure3) {
+//     Os::Test::File::Tester::OpenFileCreate open_file_create_rule(true);
+//     Os::Test::File::Tester::OpenForRead open_for_read_rule(true);
+//     Os::Test::File::Tester::FinalizeCrc finalize_crc_rule;
+//
+//     open_file_create_rule.apply(*tester);
+//     open_for_read_rule.apply(*tester);
+//     finalize_crc_rule.apply(*tester);
+// }
+
+// Check scenario failure extracted from random scenarios
+// TEST_F(Functionality, ExtractFromRandomScenarioFailure4) {
+//     Os::Test::File::Tester::IncrementalCrc incremental_crc_rule;
+//     Os::Test::File::Tester::CopyAssignment copy_assignment;
+//     Os::Test::File::Tester::OpenForRead open_for_read_rule(true);
+//     Os::Test::File::Tester::FinalizeCrc finalize_crc_rule;
+//
+//     incremental_crc_rule.apply(*tester);
+//     copy_assignment.apply(*tester);
+//     open_for_read_rule.apply(*tester);
+//     finalize_crc_rule.apply(*tester);
+// }
+
+// Check scenario failure extracted from random scenarios
+// TEST_F(Functionality, ExtractFromRandomScenarioFailure5) {
+//     Os::Test::File::Tester::Preallocate preallocate_rule;
+//     Os::Test::File::Tester::SeekInvalidSize seek_invalid_size;
+//     Os::Test::File::Tester::OpenInvalidModes open_invalid_modes_rule;
+//     Os::Test::File::Tester::CloseFile close_file_rule;
+//     Os::Test::File::Tester::OpenForWrite open_for_write_rule(true);
+//
+//     preallocate_rule.apply(*tester);
+//     seek_invalid_size.apply(*tester);
+//     open_invalid_modes_rule.apply(*tester);
+//     close_file_rule.apply(*tester);
+//     open_for_write_rule.apply(*tester);
+// }
+
+// Check scenario failure extracted from random scenarios
+// TEST_F(Functionality, ExtractFromRandomScenarioFailure6) {
+//     Os::Test::File::Tester::CloseFile close_file_rule;
+//     Os::Test::File::Tester::CopyConstruction copy_construction;
+//     Os::Test::File::Tester::SeekWithoutOpen seek_without_open_rule;
+//     Os::Test::File::Tester::ReadInvalidModes read_invalid_modes_rule;
+//     Os::Test::File::Tester::FinalizeCrc finalize_crc_rule;
+//     Os::Test::File::Tester::FlushInvalidModes flush_invalid_modes_rule;
+//     Os::Test::File::Tester::OpenForRead open_for_read_rule(true);
+//     Os::Test::File::Tester::PreallocateWithoutOpen preallocate_without_open_rule;
+//     Os::Test::File::Tester::OpenFileCreate open_file_create_rule(true);
+//
+//     close_file_rule.apply(*tester);
+//     seek_without_open_rule.apply(*tester);
+//     flush_invalid_modes_rule.apply(*tester);
+//     seek_without_open_rule.apply(*tester);
+//     copy_construction.apply(*tester);
+//     seek_without_open_rule.apply(*tester);
+//     read_invalid_modes_rule.apply(*tester);
+//     finalize_crc_rule.apply(*tester);
+//     open_for_read_rule.apply(*tester);
+//     flush_invalid_modes_rule.apply(*tester);
+//     open_for_read_rule.apply(*tester);
+//     preallocate_without_open_rule.apply(*tester);
+//     open_file_create_rule.apply(*tester);
+// }
+
+// Check scenario failure extracted from random scenarios
+// TEST_F(Functionality, ExtractFromRandomScenarioFailure7) {
+//     Os::Test::File::Tester::CloseFile close_file_rule;
+//     Os::Test::File::Tester::WriteInvalidModes write_invalid_modes_rule;
+//     Os::Test::File::Tester::OpenForRead open_for_read_rule(true);
+//     Os::Test::File::Tester::OpenForWrite open_for_write_rule(true);
+//
+//     close_file_rule.apply(*tester);
+//     write_invalid_modes_rule.apply(*tester);
+//     write_invalid_modes_rule.apply(*tester);
+//     open_for_read_rule.apply(*tester);
+//     open_for_write_rule.apply(*tester);
+// }
+
 // Ensure that Os::File properly refuses fullCrc when not in write mode
 TEST_F(Functionality, FullCrcInvalidMode) {
     Os::Test::File::Tester::OpenFileCreate open_rule(false);
