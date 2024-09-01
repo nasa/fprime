@@ -10,9 +10,10 @@
 //
 // ======================================================================
 
+#include "AssertFatalAdapterTester.hpp"
 #include "Fw/Types/String.hpp"
 #include "Fw/Types/StringUtils.hpp"
-#include "AssertFatalAdapterTester.hpp"
+#include "config/FppConstantsAc.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -40,7 +41,12 @@ namespace Svc {
     void AssertFatalAdapterTester::testAsserts() {
 
         U32 lineNo;
-        char file[80 + 1]; // Limit to 80  characters in the port call
+
+        // Apply all truncations to file buffer size
+        const FwSizeType fileMaxSize =
+            FW_MIN(FW_MIN(AssertFatalAdapterEventFileSize, FW_LOG_STRING_MAX_SIZE), FW_ASSERT_TEXT_SIZE);
+
+        char file[Fw::StringBase::BUFFER_SIZE(fileMaxSize)];
         Fw::String fileString;
 
 // Asserts may be turned off resulting in this component doing a no-op

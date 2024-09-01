@@ -20,41 +20,27 @@
 
 #include "gtest/gtest.h"
 
-namespace FppTest {
-
-    namespace String {
-
-        // Get the size of a string type
-        template <typename StringType>
-        U32 getSize() {
-            return 80;
-        }
-
-    } // namespace String
-
-} // namespace FppTest
-
-// Test a nested string class
+// Test a string type
 template <class StringType>
 class StringTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        size = FppTest::String::getSize<StringType>();
 
-        FppTest::Utils::setString(src, size);
+        FppTest::Utils::setString(this->src, sizeof this->src);
 
-        char fwStrBuf1[Fw::String::STRING_SIZE];
+        char fwStrBuf1[Fw::StringBase::BUFFER_SIZE(Fw::String::STRING_SIZE)];
         FppTest::Utils::setString(fwStrBuf1, sizeof(fwStrBuf1));
         fwStr = fwStrBuf1;
 
         // Truncate fwStr for comparison
-        char fwStrBuf2[size];
-        Fw::StringUtils::string_copy(fwStrBuf2, fwStr.toChar(), size);
+        char fwStrBuf2[bufferSize];
+        Fw::StringUtils::string_copy(fwStrBuf2, fwStr.toChar(), sizeof fwStrBuf2);
         fwSubstr = fwStrBuf2;
     }
 
-    U32 size;
-    char src[StringType::SERIALIZED_SIZE];
+    static constexpr FwSizeType size = StringType::STRING_SIZE;
+    static constexpr FwSizeType bufferSize = Fw::StringBase::BUFFER_SIZE(size);
+    char src[bufferSize];
 
     Fw::String fwStr;
     Fw::String fwSubstr;
@@ -67,12 +53,13 @@ TYPED_TEST_P(StringTest, Default) {
     TypeParam str;
 
     // Capacity
-    ASSERT_EQ(str.getCapacity(), this->size);
+    const FwSizeType bufferSizeObject = this->bufferSize;
+    ASSERT_EQ(str.getCapacity(), bufferSizeObject);
 
     // Serialized size
     ASSERT_EQ(
         TypeParam::SERIALIZED_SIZE, 
-        this->size + sizeof(FwBuffSizeType)
+        Fw::StringBase::STATIC_SERIALIZED_SIZE(this->size)
     );
 
     // Default constructors

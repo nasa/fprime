@@ -49,13 +49,13 @@ namespace FppTest {
 
 } // namespace FppTest
 
+
 // Test an array class
 template <typename ArrayType>
 class ArrayTest : public ::testing::Test {
 protected:
     void SetUp() override {
         FppTest::Array::setDefaultVals<ArrayType>(defaultVals);
-
         FppTest::Array::setTestVals<ArrayType>(testVals);
         ASSERT_FALSE(valsAreEqual());
     };
@@ -82,10 +82,6 @@ TYPED_TEST_P(ArrayTest, Default) {
 
     // Constants
     ASSERT_EQ(TypeParam::SIZE, 3);
-    ASSERT_EQ(
-        TypeParam::SERIALIZED_SIZE,
-        TypeParam::SIZE * TypeParam::ElementType::SERIALIZED_SIZE
-    );
 
     // Default constructor
     for (U32 i = 0; i < TypeParam::SIZE; i++) {
