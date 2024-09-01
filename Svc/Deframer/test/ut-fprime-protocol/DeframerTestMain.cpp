@@ -6,7 +6,7 @@
 
 #include "Fw/Test/UnitTest.hpp"
 #include "GenerateFrames.hpp"
-#include "Os/Log.hpp"
+#include "Os/Console.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"

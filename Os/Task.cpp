@@ -51,7 +51,7 @@ void Task::TaskRoutineWrapper::invoke() {
 
 TaskRegistry* Task::s_taskRegistry = nullptr;
 FwSizeType Task::s_numTasks = 0;
-Mutex Task::s_taskMutex = Mutex();
+Mutex Task::s_taskMutex;
 
 bool TaskInterface::isCooperative() {
     return false;

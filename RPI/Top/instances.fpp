@@ -315,7 +315,7 @@ module RPI {
           1024
       );
       if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open UART driver\\n");
+        Fw::Logger::log("[ERROR] Could not open UART driver\\n");
         Init::status = false;
       }
     }
@@ -326,7 +326,7 @@ module RPI {
       uartDrv.start();
     }
     else {
-      Fw::Logger::logMsg("[ERROR] Initialization failed; not starting UART driver\\n");
+      Fw::Logger::log("[ERROR] Initialization failed; not starting UART driver\\n");
     }
     """
 
@@ -343,7 +343,7 @@ module RPI {
     {
       const bool status = ledDrv.open(21, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
       if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open LED driver\\n");
+        Fw::Logger::log("[ERROR] Could not open LED driver\\n");
         Init::status = false;
       }
     }
@@ -358,7 +358,7 @@ module RPI {
     {
       const bool status = gpio23Drv.open(23, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
       if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open GPIO 23 driver\\n");
+        Fw::Logger::log("[ERROR] Could not open GPIO 23 driver\\n");
         Init::status = false;
       }
     }
@@ -373,7 +373,7 @@ module RPI {
     {
       const bool status = gpio24Drv.open(24, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
       if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open GPIO 24 driver\\n");
+        Fw::Logger::log("[ERROR] Could not open GPIO 24 driver\\n");
         Init::status = false;
       }
     }
@@ -388,7 +388,7 @@ module RPI {
     {
       const bool status = gpio25Drv.open(25, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
       if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open GPIO 25 driver\\n");
+        Fw::Logger::log("[ERROR] Could not open GPIO 25 driver\\n");
         Init::status = false;
       }
     }
@@ -403,7 +403,7 @@ module RPI {
     {
       const bool status = gpio17Drv.open(17, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
       if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open GPIO 17 driver\\n");
+        Fw::Logger::log("[ERROR] Could not open GPIO 17 driver\\n");
         Init::status = false;
       }
     }
@@ -418,7 +418,7 @@ module RPI {
     {
       const bool status = spiDrv.open(0, 0, Drv::SPI_FREQUENCY_1MHZ);
       if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open SPI driver\\n");
+        Fw::Logger::log("[ERROR] Could not open SPI driver\\n");
         Init::status = false;
       }
     }

@@ -70,5 +70,23 @@ Task::Status posix_status_to_task_status(PlatformIntType posix_status) {
     return status;
 }
 
+Mutex::Status posix_status_to_mutex_status(PlatformIntType posix_status){
+    Mutex::Status status = Mutex::Status::ERROR_OTHER;
+    switch (posix_status) {
+        case 0:
+            status = Mutex::Status::OP_OK;
+            break;
+        case EBUSY:
+            status = Mutex::Status::ERROR_BUSY;
+            break;
+        case EDEADLK:
+            status = Mutex::Status::ERROR_DEADLOCK;
+            break;
+        default:
+            status = Mutex::Status::ERROR_OTHER;
+            break;
+    }
+    return status;
+}
 }
 }

@@ -82,7 +82,7 @@ void SocketReadTask::readTask(void* pointer) {
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isStarted()) and (not self->m_stop) and
             ((status = self->startup()) != SOCK_SUCCESS)) {
-            Fw::Logger::logMsg(
+            Fw::Logger::log(
                 "[WARNING] Failed to open port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
@@ -94,7 +94,7 @@ void SocketReadTask::readTask(void* pointer) {
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isOpened()) and (not self->m_stop) and
             ((status = self->open()) != SOCK_SUCCESS)) {
-            Fw::Logger::logMsg(
+            Fw::Logger::log(
                 "[WARNING] Failed to open port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
@@ -111,7 +111,7 @@ void SocketReadTask::readTask(void* pointer) {
             U32 size = buffer.getSize();
             status = self->getSocketHandler().recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
-                Fw::Logger::logMsg("[WARNING] Failed to recv from port with status %d and errno %d\n",
+                Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
                 self->getSocketHandler().close();

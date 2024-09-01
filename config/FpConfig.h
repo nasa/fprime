@@ -171,6 +171,14 @@ typedef FwIndexType FwQueueSizeType;
     0  //!< Indicates whether or not a baremetal scheduler should be used. Alternatively the Os scheduler is used.
 #endif
 
+// On some systems, use of *printf family functions (snprintf, printf, etc) require a prohibitive amount of program
+// space. Setting this to `0` indicates that the Fw/String methods should stop using these functions to conserve
+// program size. However, this comes at the expense of discarding format parameters. i.e. the format string is returned
+// unchanged.
+#ifndef FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING
+#define FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING 1
+#endif
+
 // Port Facilities
 
 // This allows tracing calls through ports for debugging
@@ -371,11 +379,11 @@ typedef FwIndexType FwQueueSizeType;
 // OS configuration
 
 #ifndef FW_HANDLE_MAX_SIZE
-#define FW_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
 #ifndef FW_HANDLE_ALIGNMENT
-#define FW_HANDLE_ALIGNMENT 16  //!< Alignment of handle storage
+#define FW_HANDLE_ALIGNMENT 8  //!< Alignment of handle storage
 #endif
 
 #ifndef FW_FILE_CHUNK_SIZE

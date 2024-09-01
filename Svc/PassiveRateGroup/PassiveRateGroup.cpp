@@ -13,7 +13,7 @@
 
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Svc/PassiveRateGroup/PassiveRateGroup.hpp>
 
 namespace Svc {

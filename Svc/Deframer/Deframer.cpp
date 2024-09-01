@@ -140,7 +140,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                     comOut_out(0, com, 0);
                 }
                 else {
-                    Fw::Logger::logMsg(
+                    Fw::Logger::log(
                         "[ERROR] Serializing com buffer failed with status %d\n",
                         status
                     );
@@ -170,7 +170,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
         }
     }
     else {
-        Fw::Logger::logMsg(
+        Fw::Logger::log(
             "[ERROR] Deserializing packet type failed with status %d\n",
             status
         );
@@ -301,7 +301,7 @@ void Deframer ::processRing() {
             // Log checksum errors
             // This is likely a real error, not an artifact of other data corruption
             if (status == DeframingProtocol::DEFRAMING_INVALID_CHECKSUM) {
-                Fw::Logger::logMsg("[ERROR] Deframing checksum validation failed\n");
+                Fw::Logger::log("[ERROR] Deframing checksum validation failed\n");
             }
         }
     }

@@ -14,7 +14,7 @@
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
 
 // Used for 1Hz synthetic cycling
@@ -23,8 +23,8 @@
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
-// Instantiate a system logger that will handle Fw::Logger::logMsg calls
-Os::Log logger;
+// Instantiate a system logger that will handle Fw::Logger::log calls
+Os::Console logger;
 
 // The reference topology uses a malloc-based allocator for components that need to allocate memory during the
 // initialization phase.
@@ -150,6 +150,8 @@ void setupTopology(const TopologyState& state) {
     connectComponents();
     // Autocoded command registration. Function provided by autocoder.
     regCommands();
+    // Autocoded configuration. Function provided by autocoder.
+    configComponents(state);
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
     // Autocoded parameter loading. Function provided by autocoder.
