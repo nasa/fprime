@@ -28,8 +28,7 @@
 #include <fcntl.h>
 #include <poll.h>
 
-//#define DEBUG_PRINT(...) printf(##__VA_ARGS__); fflush(stdout)
-#define DEBUG_PRINT(...)
+#define DEBUG_PRINT(...) Fw::Logger::log(##__VA_ARGS__);
 
 namespace Drv {
 
