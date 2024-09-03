@@ -8,7 +8,6 @@
     
 #include "stdio.h"
 #include "assert.h"
-#include "Fw/Types/SMSignalsSerializableAc.hpp"
 #include "HackSm.hpp"
 
 
@@ -22,7 +21,7 @@ void FppTest::HackSm::init(const FwEnumStoreType stateMachineId)
 
 void FppTest::HackSm::update(
     const FwEnumStoreType stateMachineId, 
-    const HackSm_Interface::HackSmEvents signal, 
+    const HackSm_Interface::HackSm_Signals signal, 
     const Fw::SMSignalBuffer &data
 )
 {
@@ -35,13 +34,13 @@ void FppTest::HackSm::update(
             
             switch (signal) {
 
-                case HackSm_Interface::HackSmEvents::RTI_SIG:
+                case HackSm_Interface::HackSm_Signals::RTI_SIG:
                         parent->HackSm_turnOn(stateMachineId);
                         this->state = ON;
 
                     break;
     
-                case HackSm_Interface::HackSmEvents::CHECK_SIG:
+                case HackSm_Interface::HackSm_Signals::CHECK_SIG:
                         parent->HackSm_doDiag(stateMachineId);
                         this->state = DIAG;
 
@@ -59,13 +58,13 @@ void FppTest::HackSm::update(
             
             switch (signal) {
 
-                case HackSm_Interface::HackSmEvents::RTI_SIG:
+                case HackSm_Interface::HackSm_Signals::RTI_SIG:
                         parent->HackSm_turnOff(stateMachineId);
                         this->state = OFF;
 
                     break;
     
-                case HackSm_Interface::HackSmEvents::CHECK_SIG:
+                case HackSm_Interface::HackSm_Signals::CHECK_SIG:
                         parent->HackSm_doDiag(stateMachineId);
                         this->state = DIAG;
 
@@ -83,7 +82,7 @@ void FppTest::HackSm::update(
             
             switch (signal) {
 
-                case HackSm_Interface::HackSmEvents::RTI_SIG:
+                case HackSm_Interface::HackSm_Signals::RTI_SIG:
                         parent->HackSm_turnOff(stateMachineId);
                         this->state = OFF;
 

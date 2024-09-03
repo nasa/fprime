@@ -9,18 +9,14 @@
 #ifndef DEVICESM_H_
 #define DEVICESM_H_
                                 
-#include <Fw/SMSignal/SMSignalBuffer.hpp>
+#include <Fw/Sm/SMSignalBuffer.hpp>
 #include <config/FpConfig.hpp>
                                  
-namespace Fw {
-  class SMSignals;
-}
-
 namespace FppTest {
 
 class DeviceSm_Interface {
   public:
-    enum DeviceSmEvents {
+    enum DeviceSm_Signals {
       RTI_SIG,
     };
 
@@ -30,7 +26,7 @@ class DeviceSm_Interface {
                                  
     virtual bool DeviceSm_g2(
         const FwEnumStoreType stateMachineId, 
-        const DeviceSm_Interface::DeviceSmEvents signal, 
+        const DeviceSm_Interface::DeviceSm_Signals signal, 
         const Fw::SMSignalBuffer &data) = 0;
                                  
                                  
@@ -39,7 +35,7 @@ class DeviceSm_Interface {
                                  
     virtual  void DeviceSm_a1(
         const FwEnumStoreType stateMachineId, 
-        const DeviceSm_Interface::DeviceSmEvents signal, 
+        const DeviceSm_Interface::DeviceSm_Signals signal, 
         const Fw::SMSignalBuffer &data) = 0;
                                  
                                  
@@ -60,19 +56,17 @@ class DeviceSm {
                                  
     DeviceSm(DeviceSm_Interface* parent) : parent(parent) {}
   
-    enum DeviceSmStates {
+    enum DeviceSm_States {
       OFF,
       ON,
     };
     
-    enum DeviceSmStates state;
-
-    void * extension;
+    enum DeviceSm_States state;
 
     void init(const FwEnumStoreType stateMachineId);
     void update(
         const FwEnumStoreType stateMachineId, 
-        const DeviceSm_Interface::DeviceSmEvents signal, 
+        const DeviceSm_Interface::DeviceSm_Signals signal, 
         const Fw::SMSignalBuffer &data
     );
 };

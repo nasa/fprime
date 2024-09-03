@@ -1,4 +1,4 @@
-#include <Fw/SMSignal/SMSignalBuffer.hpp>
+#include <Fw/Sm/SMSignalBuffer.hpp>
 #include <Fw/Types/Assert.hpp>
 
 namespace Fw {

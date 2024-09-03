@@ -8,7 +8,6 @@
     
 #include "stdio.h"
 #include "assert.h"
-#include "Fw/Types/SMSignalsSerializableAc.hpp"
 #include "DeviceSm.hpp"
 
 
@@ -22,7 +21,7 @@ void FppTest::DeviceSm::init(const FwEnumStoreType stateMachineId)
 
 void FppTest::DeviceSm::update(
     const FwEnumStoreType stateMachineId, 
-    const DeviceSm_Interface::DeviceSmEvents signal, 
+    const DeviceSm_Interface::DeviceSm_Signals signal, 
     const Fw::SMSignalBuffer &data
 )
 {
@@ -35,7 +34,7 @@ void FppTest::DeviceSm::update(
             
             switch (signal) {
 
-                case DeviceSm_Interface::DeviceSmEvents::RTI_SIG:
+                case DeviceSm_Interface::DeviceSm_Signals::RTI_SIG:
                         if ( parent->DeviceSm_g1(stateMachineId) ) {
                             parent->DeviceSm_a1(stateMachineId, signal, data);
                             parent->DeviceSm_turnOn(stateMachineId);
@@ -56,7 +55,7 @@ void FppTest::DeviceSm::update(
             
             switch (signal) {
 
-                case DeviceSm_Interface::DeviceSmEvents::RTI_SIG:
+                case DeviceSm_Interface::DeviceSm_Signals::RTI_SIG:
                         if (parent->DeviceSm_g2(stateMachineId, signal, data) ) {
                             parent->DeviceSm_a2(stateMachineId);
                             parent->DeviceSm_turnOff(stateMachineId);

@@ -9,18 +9,14 @@
 #ifndef HACKSM_H_
 #define HACKSM_H_
                                 
-#include <Fw/SMSignal/SMSignalBuffer.hpp>
+#include <Fw/Sm/SMSignalBuffer.hpp>
 #include <config/FpConfig.hpp>
                                  
-namespace Fw {
-  class SMSignals;
-}
-
 namespace FppTest {
 
 class HackSm_Interface {
   public:
-    enum HackSmEvents {
+    enum HackSm_Signals {
       RTI_SIG,
       CHECK_SIG,
     };
@@ -46,20 +42,18 @@ class HackSm {
                                  
     HackSm(HackSm_Interface* parent) : parent(parent) {}
   
-    enum HackSmStates {
+    enum HackSm_States {
       OFF,
       ON,
       DIAG,
     };
     
-    enum HackSmStates state;
-
-    void * extension;
+    enum HackSm_States state;
 
     void init(const FwEnumStoreType stateMachineId);
     void update(
         const FwEnumStoreType stateMachineId, 
-        const HackSm_Interface::HackSmEvents signal, 
+        const HackSm_Interface::HackSm_Signals signal, 
         const Fw::SMSignalBuffer &data
     );
 };

@@ -13,12 +13,6 @@ module Fw {
     NO_ROOM_LEFT  @< No room left in the buffer to serialize data
   }
 
-  struct SMSignals {
-        smId : U32
-        eventSignal: U32
-        payload: [128] U8
-  }
-
   @ Deserialization status
   enum DeserialStatus {
     OK = 0

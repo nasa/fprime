@@ -31,17 +31,17 @@ SmTest ::~SmTest() {}
 void SmTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     Fw::SMSignalBuffer data;
 
-    device1_stateMachineInvoke(DeviceSm_Interface::DeviceSmEvents::RTI_SIG, data);
-    device2_stateMachineInvoke(DeviceSm_Interface::DeviceSmEvents::RTI_SIG, data);
-    device3_stateMachineInvoke(HackSm_Interface::HackSmEvents::RTI_SIG, data);
-    device4_stateMachineInvoke(HackSm_Interface::HackSmEvents::RTI_SIG, data);
-    device5_stateMachineInvoke(HackSm_Interface::HackSmEvents::RTI_SIG, data);
+    device1_stateMachineInvoke(DeviceSm_Interface::DeviceSm_Signals::RTI_SIG, data);
+    device2_stateMachineInvoke(DeviceSm_Interface::DeviceSm_Signals::RTI_SIG, data);
+    device3_stateMachineInvoke(HackSm_Interface::HackSm_Signals::RTI_SIG, data);
+    device4_stateMachineInvoke(HackSm_Interface::HackSm_Signals::RTI_SIG, data);
+    device5_stateMachineInvoke(HackSm_Interface::HackSm_Signals::RTI_SIG, data);
 
 }
 
 //! Overflow hook for state machine device4
 void SmTest::device4_stateMachineOverflowHook(
-    const HackSm_Interface::HackSmEvents signal, //!< The state machine signal
+    const HackSm_Interface::HackSm_Signals signal, //!< The state machine signal
     const Fw::SMSignalBuffer& data //!< The state machine data
 ) {
     
@@ -57,7 +57,7 @@ void SmTest::DeviceSm_turnOff(const FwEnumStoreType stateMachineId) {
 
 void SmTest::DeviceSm_a1(
     const FwEnumStoreType stateMachineId, 
-    const DeviceSmEvents signal, 
+    const DeviceSm_Signals signal, 
     const Fw::SMSignalBuffer& data
     ) {
     printf("Action 1, stateMachineId = %d, signal = %d\n", stateMachineId, signal);
@@ -70,7 +70,7 @@ void SmTest::DeviceSm_a1(
 
  bool SmTest::DeviceSm_g2(
       const FwEnumStoreType stateMachineId, 
-      const DeviceSmEvents signal, 
+      const DeviceSm_Signals signal, 
       const Fw::SMSignalBuffer& data
     ) {
         return true;

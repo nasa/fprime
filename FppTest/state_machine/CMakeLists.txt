@@ -4,7 +4,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/DeviceSm.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/HackSm.cpp"
 )
-set(MOD_DEPS Fw/SMSignal)
+set(MOD_DEPS Fw/Sm)
 
 register_fprime_module()
 

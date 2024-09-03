@@ -52,7 +52,7 @@ void Tester::schedIn_OK() {
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device5.state);
 
     Fw::SMSignalBuffer data;
-    this->component.device3_stateMachineInvoke(HackSm_Interface::HackSmEvents::CHECK_SIG, data);
+    this->component.device3_stateMachineInvoke(HackSm_Interface::HackSm_Signals::CHECK_SIG, data);
     dispatchAll();
     ASSERT_EQ(HackSm::DIAG, this->component.m_stateMachine_device3.state);
     invoke_to_schedIn(0,0);
