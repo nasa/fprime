@@ -19,6 +19,7 @@ void PosixConsole::writeMessage(const CHAR *message, const FwSizeType size) {
     FwSizeType capped_size = (size <= std::numeric_limits<size_t>::max()) ? size : std::numeric_limits<size_t>::max();
     if (message != nullptr) {
         (void)::fwrite(message, sizeof(CHAR), static_cast<size_t>(capped_size), this->m_handle.m_file_descriptor);
+        (void)::fflush(this->m_handle.m_file_descriptor);
     }
 }
 
