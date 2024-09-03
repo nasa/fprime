@@ -6,8 +6,7 @@
 //
 // ======================================================================            
     
-#include "stdio.h"
-#include "assert.h"
+#include <Fw/Types/Assert.hpp>
 #include "HackSm.hpp"
 
 
@@ -94,6 +93,6 @@ void FppTest::HackSm::update(
             break;
     
         default:
-        assert(0);
+        FW_ASSERT(0);
     }
 }

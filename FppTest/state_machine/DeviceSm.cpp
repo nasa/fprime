@@ -6,8 +6,7 @@
 //
 // ======================================================================            
     
-#include "stdio.h"
-#include "assert.h"
+#include <Fw/Types/Assert.hpp>
 #include "DeviceSm.hpp"
 
 
@@ -70,6 +69,6 @@ void FppTest::DeviceSm::update(
             break;
     
         default:
-        assert(0);
+        FW_ASSERT(0);
     }
 }
