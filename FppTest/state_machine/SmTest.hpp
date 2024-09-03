@@ -70,7 +70,7 @@ class SmTest :
     //! Overflow hook for state machine device4
     void device4_stateMachineOverflowHook(
         const HackSm_Interface::HackSm_Signals signal, //!< The state machine signal
-        const Fw::SMSignalBuffer& data //!< The state machine data
+        const Fw::SmSignalBuffer& data //!< The state machine data
     );
 
     // State machine functions
@@ -81,7 +81,7 @@ class SmTest :
     void DeviceSm_a1(
       const FwEnumStoreType stateMachineId, 
       const DeviceSm_Signals signal, 
-      const Fw::SMSignalBuffer& data
+      const Fw::SmSignalBuffer& data
     );
     
     void DeviceSm_a2(const FwEnumStoreType stateMachineId);
@@ -91,7 +91,7 @@ class SmTest :
     bool DeviceSm_g2(
       const FwEnumStoreType stateMachineId, 
       const DeviceSm_Signals signal, 
-      const Fw::SMSignalBuffer& data
+      const Fw::SmSignalBuffer& data
     );
 
     void HackSm_turnOn(const FwEnumStoreType stateMachineId);

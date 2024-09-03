@@ -1,11 +1,11 @@
 /*
- * SMSignalBuffer.hpp
+ * SmSignalBuffer.hpp
  *
  */
 
 /*
  * Description:
- * This object contains the SMSignalBuffer type, used for attaching data to state machine signals
+ * This object contains the SmSignalBuffer type, used for attaching data to state machine signals
  */
 #ifndef FW_SM_SIGNAL_BUFFER_HPP
 #define FW_SM_SIGNAL_BUFFER_HPP
@@ -15,7 +15,7 @@
 
 namespace Fw {
 
-    class SMSignalBuffer : public SerializeBufferBase {
+    class SmSignalBuffer : public SerializeBufferBase {
         public:
 
             enum {
@@ -23,11 +23,11 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_COM_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)  // size of buffer + storage of size word
             };
 
-            SMSignalBuffer(const U8 *args, NATIVE_UINT_TYPE size);
-            SMSignalBuffer();
-            SMSignalBuffer(const SMSignalBuffer& other);
-            virtual ~SMSignalBuffer();
-            SMSignalBuffer& operator=(const SMSignalBuffer& other);
+            SmSignalBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            SmSignalBuffer();
+            SmSignalBuffer(const SmSignalBuffer& other);
+            virtual ~SmSignalBuffer();
+            SmSignalBuffer& operator=(const SmSignalBuffer& other);
 
             NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();

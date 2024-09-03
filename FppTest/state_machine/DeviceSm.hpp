@@ -9,7 +9,7 @@
 #ifndef DEVICESM_H_
 #define DEVICESM_H_
                                 
-#include <Fw/Sm/SMSignalBuffer.hpp>
+#include <Fw/Sm/SmSignalBuffer.hpp>
 #include <config/FpConfig.hpp>
                                  
 namespace FppTest {
@@ -27,7 +27,7 @@ class DeviceSm_Interface {
     virtual bool DeviceSm_g2(
         const FwEnumStoreType stateMachineId, 
         const DeviceSm_Interface::DeviceSm_Signals signal, 
-        const Fw::SMSignalBuffer &data) = 0;
+        const Fw::SmSignalBuffer &data) = 0;
                                  
                                  
     virtual void DeviceSm_turnOff(const FwEnumStoreType stateMachineId) = 0;
@@ -36,7 +36,7 @@ class DeviceSm_Interface {
     virtual  void DeviceSm_a1(
         const FwEnumStoreType stateMachineId, 
         const DeviceSm_Interface::DeviceSm_Signals signal, 
-        const Fw::SMSignalBuffer &data) = 0;
+        const Fw::SmSignalBuffer &data) = 0;
                                  
                                  
     virtual void DeviceSm_turnOn(const FwEnumStoreType stateMachineId) = 0;
@@ -67,7 +67,7 @@ class DeviceSm {
     void update(
         const FwEnumStoreType stateMachineId, 
         const DeviceSm_Interface::DeviceSm_Signals signal, 
-        const Fw::SMSignalBuffer &data
+        const Fw::SmSignalBuffer &data
     );
 };
 

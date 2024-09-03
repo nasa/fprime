@@ -6,6 +6,6 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/SMSignalBuffer.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SmSignalBuffer.cpp"
 )
 register_fprime_module()

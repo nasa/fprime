@@ -9,7 +9,7 @@
 #ifndef HACKSM_H_
 #define HACKSM_H_
                                 
-#include <Fw/Sm/SMSignalBuffer.hpp>
+#include <Fw/Sm/SmSignalBuffer.hpp>
 #include <config/FpConfig.hpp>
                                  
 namespace FppTest {
@@ -54,7 +54,7 @@ class HackSm {
     void update(
         const FwEnumStoreType stateMachineId, 
         const HackSm_Interface::HackSm_Signals signal, 
-        const Fw::SMSignalBuffer &data
+        const Fw::SmSignalBuffer &data
     );
 };
 

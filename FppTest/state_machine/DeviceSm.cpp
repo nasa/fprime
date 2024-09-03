@@ -21,7 +21,7 @@ void FppTest::DeviceSm::init(const FwEnumStoreType stateMachineId)
 void FppTest::DeviceSm::update(
     const FwEnumStoreType stateMachineId, 
     const DeviceSm_Interface::DeviceSm_Signals signal, 
-    const Fw::SMSignalBuffer &data
+    const Fw::SmSignalBuffer &data
 )
 {
     switch (this->state) {

@@ -21,7 +21,7 @@ void FppTest::HackSm::init(const FwEnumStoreType stateMachineId)
 void FppTest::HackSm::update(
     const FwEnumStoreType stateMachineId, 
     const HackSm_Interface::HackSm_Signals signal, 
-    const Fw::SMSignalBuffer &data
+    const Fw::SmSignalBuffer &data
 )
 {
     switch (this->state) {
