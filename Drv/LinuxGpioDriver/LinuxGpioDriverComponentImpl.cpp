@@ -28,7 +28,7 @@
 #include <fcntl.h>
 #include <poll.h>
 
-#define DEBUG_PRINT(...) Fw::Logger::log(##__VA_ARGS__);
+#define DEBUG_PRINT(...) Fw::Logger::log(##__VA_ARGS__)
 
 namespace Drv {
 
