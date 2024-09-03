@@ -14,6 +14,7 @@
 #include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
 #include <FpConfig.hpp>
 #include <Os/TaskString.hpp>
+#include <Fw/Logger/Logger.hpp>
 
 // TODO make proper static constants for these
 #define SYSFS_GPIO_DIR "/sys/class/gpio"
@@ -236,11 +237,19 @@ namespace Drv {
 
     int gpio_fd_close(int fd, unsigned int gpio)
     {
-        // TODO is this needed? w/o this the edge file and others can retain the state from
-        // previous settings.
-        (void) gpio_unexport(gpio); // TODO check return value
-
-        return close(fd);
+	int unexport_status = 0;
+        int close_status = close(fd);
+	if (close_status != 0) {
+            Fw::Logger::log("[WARNING] Failed to close gpio file descriptor: %s\n", strerror(errno));
+	}
+	// If we failed to close, do not unexport as the file may be active. Let the OS deal with it
+	else {
+            unexport_status = gpio_unexport(gpio);
+	    if (unexport_status != 0) {
+                Fw::Logger::log("[WARNING] Failed to unexport gpio pin: %s\n", strerror(errno));
+	    }
+	}
+        return close_status || unexport_status;
     }
 
 
