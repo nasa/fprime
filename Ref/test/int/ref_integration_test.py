@@ -2,6 +2,7 @@
 
 A set of integration tests to apply to the Ref app. This is intended to be a reference of integration testing.
 """
+
 import subprocess
 import time
 from enum import Enum
@@ -24,14 +25,14 @@ def test_is_streaming(fprime_test_api):
     """Test flight software is streaming
 
     Tests that the flight software is streaming by looking for 5 telemetry items in 10 seconds. Additionally,
-    "sendBuffComp.SendState" is verified to be SEND_IDLE.
+    "Ref.sendBuffComp.SendState" is verified to be SEND_IDLE.
     """
     results = fprime_test_api.assert_telemetry_count(5, timeout=10)
     for result in results:
         msg = "received channel {} update: {}".format(result.get_id(), result.get_str())
         print(msg)
     fprime_test_api.assert_telemetry(
-        "sendBuffComp.SendState", value="SEND_IDLE", timeout=3
+        "Ref.sendBuffComp.SendState", value="SEND_IDLE", timeout=3
     )
 
 
@@ -56,7 +57,7 @@ def set_event_filter(fprime_test_api, severity, enabled):
         severity = FilterSeverity[severity].name
     try:
         fprime_test_api.send_command(
-            "eventLogger.SET_EVENT_FILTER",
+            "Ref.eventLogger.SET_EVENT_FILTER",
             [severity, enabled],
         )
         return True
@@ -79,9 +80,9 @@ def test_send_command(fprime_test_api):
 
     Tests command send, dispatch, and receipt using send_and_assert command with a pair of NO-OP commands.
     """
-    fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
+    fprime_test_api.send_and_assert_command("Ref.cmdDisp.CMD_NO_OP", max_delay=0.1)
     assert fprime_test_api.get_command_test_history().size() == 1
-    fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
+    fprime_test_api.send_and_assert_command("Ref.cmdDisp.CMD_NO_OP", max_delay=0.1)
     assert fprime_test_api.get_command_test_history().size() == 2
 
 
@@ -91,9 +92,11 @@ def test_send_command_args(fprime_test_api):
     Tests command send, dispatch, and receipt using send_and_assert command with a pair of NO-OP string commands.
     """
     for count, value in enumerate(["Test String 1", "Some other string"], 1):
-        events = [fprime_test_api.get_event_pred("cmdDisp.NoOpStringReceived", [value])]
+        events = [
+            fprime_test_api.get_event_pred("Ref.cmdDisp.NoOpStringReceived", [value])
+        ]
         fprime_test_api.send_and_assert_command(
-            "cmdDisp.CMD_NO_OP_STRING",
+            "Ref.cmdDisp.CMD_NO_OP_STRING",
             [
                 value,
             ],
@@ -112,15 +115,15 @@ def test_send_and_assert_no_op(fprime_test_api):
     length = 100
     failed = 0
     evr_seq = [
-        "cmdDisp.OpCodeDispatched",
-        "cmdDisp.NoOpReceived",
-        "cmdDisp.OpCodeCompleted",
+        "Ref.cmdDisp.OpCodeDispatched",
+        "Ref.cmdDisp.NoOpReceived",
+        "Ref.cmdDisp.OpCodeCompleted",
     ]
     any_reordered = False
     dropped = False
     for i in range(0, length):
         results = fprime_test_api.send_and_await_event(
-            "cmdDisp.CMD_NO_OP", events=evr_seq, timeout=25
+            "Ref.cmdDisp.CMD_NO_OP", events=evr_seq, timeout=25
         )
         msg = "Send and assert NO_OP Trial #{}".format(i)
         if not fprime_test_api.test_assert(len(results) == 3, msg, True):
@@ -167,7 +170,7 @@ def test_bd_cycles_ascending(fprime_test_api):
     length = 60
     count_pred = predicates.greater_than(length - 1)
     results = fprime_test_api.await_telemetry_count(
-        count_pred, "blockDrv.BD_Cycles", timeout=length
+        count_pred, "Ref.blockDrv.BD_Cycles", timeout=length
     )
     last = None
     reordered = False
@@ -227,8 +230,8 @@ def test_active_logger_filter(fprime_test_api):
         # Drain time for dispatch events
         time.sleep(10)
 
-        fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP")
-        fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_and_assert_command("Ref.cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_and_assert_command("Ref.cmdDisp.CMD_NO_OP")
 
         time.sleep(0.5)
 
@@ -239,8 +242,8 @@ def test_active_logger_filter(fprime_test_api):
         # Drain time for dispatch events
         time.sleep(10)
         fprime_test_api.clear_histories()
-        fprime_test_api.send_command("cmdDisp.CMD_NO_OP")
-        fprime_test_api.send_command("cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_command("Ref.cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_command("Ref.cmdDisp.CMD_NO_OP")
 
         time.sleep(0.5)
 
@@ -253,17 +256,17 @@ def test_active_logger_filter(fprime_test_api):
 def test_signal_generation(fprime_test_api):
     """Tests the behavior of signal gen component"""
     fprime_test_api.send_and_assert_command(
-        "SG4.SignalGen_Settings", [1, 5, 0, "SQUARE"]
+        "Ref.SG4.SignalGen_Settings", [1, 5, 0, "SQUARE"]
     )
     # First telemetry item should fill only the first slot of the history
     history = [0, 0, 0, 5]
     pair_history = [{"time": 0, "value": value} for value in history]
     info = {"type": "SQUARE", "history": history, "pairHistory": pair_history}
-    fprime_test_api.send_and_assert_command("SG4.SignalGen_Toggle")
-    fprime_test_api.assert_telemetry("SG4.History", history, timeout=6)
-    fprime_test_api.assert_telemetry("SG4.PairHistory", pair_history, timeout=1)
-    fprime_test_api.assert_telemetry("SG4.Info", info, timeout=1)
-    fprime_test_api.send_and_assert_command("SG4.SignalGen_Toggle")
+    fprime_test_api.send_and_assert_command("Ref.SG4.SignalGen_Toggle")
+    fprime_test_api.assert_telemetry("Ref.SG4.History", history, timeout=6)
+    fprime_test_api.assert_telemetry("Ref.SG4.PairHistory", pair_history, timeout=1)
+    fprime_test_api.assert_telemetry("Ref.SG4.Info", info, timeout=1)
+    fprime_test_api.send_and_assert_command("Ref.SG4.SignalGen_Toggle")
 
 
 def test_seqgen(fprime_test_api):
@@ -282,5 +285,5 @@ def test_seqgen(fprime_test_api):
         == 0
     ), "Failed to run fprime-seqgen"
     fprime_test_api.send_and_assert_command(
-        "cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
+        "Ref.cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
     )
