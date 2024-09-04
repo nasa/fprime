@@ -140,6 +140,7 @@ void configureTopology() {
 
     //Configure Trace Logger filename to be used for storing trace data
     traceLogger.configure("TraceFile.dat");
+    traceLogger.filter(0xF,Svc::TraceLogger_Enable::ENABLE);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref

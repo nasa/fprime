@@ -6,9 +6,9 @@ module Svc {
     # ----------------------------------------------------------------------
     # Types
     # ----------------------------------------------------------------------
-    enum Enabled {
-      DISABLED = 0 @< Disabled state
-      ENABLED = 1 @< Enabled state
+    enum Enable {
+      DISABLE = 0 @< Disabled state
+      ENABLE = 1 @< Enabled state
     }
     
     # ----------------------------------------------------------------------
@@ -22,7 +22,7 @@ module Svc {
     # ----------------------------------------------------------------------
     @ Enable or disable trace
     async command EnableTrace ( 
-        enable : bool 
+        $enable : Enable 
         )\
         opcode 0x00
     
@@ -30,12 +30,19 @@ module Svc {
     async command DumpTraceDp\ 
         opcode 0x01
 
+    @Select which trace types to be logged
+    async command FilterTrace ( 
+        bitmask: U16 @< TraceTypes to filter on
+        $enable : Enable @< enable or disable filtering
+        )\
+        opcode 0x02
+    
     # ----------------------------------------------------------------------
     # Events 
     # ----------------------------------------------------------------------
     @ Trace logging status
     event TraceStatus( 
-            $status: Enabled @< Status of Trace
+            $status: Enable @< Status of Trace
     ) \
         severity diagnostic \
         id 0x00 \
