@@ -17,40 +17,39 @@
 
 namespace CFDP {
 
-  /*! \class Checksum
-   *  \brief Class representing a 32-bit checksum as mandated by the CCSDS File
-   *         Delivery Protocol.
-   *
-   *         This checksum is calculated by update of an existing 32-bit value
-   *         with the "next" 32-bit string drawn from the file data. Beginning
-   *         at the start of the file, a 4-byte window moves up the file by four
-   *         bytes per update. The update itself replaces the existing checksum
-   *         with the byte-wise sum of the existing checksum and the file data
-   *         contained in the window. Overflows in the addition are permitted
-   *         and the carry discarded.
-   *
-   *         If an update is to be made beginning at an offset into the file
-   *         which is not aligned to a 4-byte boundary, the window is treated
-   *         as beginning at the last 4-byte boundary, but is left-zero-padded.
-   *         Similarly, where the file data for an update ends on an unaligned
-   *         byte, the window extends up to the next boundary and is
-   *         right-zero-padded.
-   *
-   *         ## Example
-   *
-   *         For buffer 0xDE 0xAD 0xBE 0xEF 0xCA 0xFE and initial zero checksum:
-   *
-   *         ------------------------------------ Update 1
-   *         Window     0xDE 0xAD 0xBE 0xEF
-   *         Checksum   0xDEADBEEF
-   *
-   *         ------------------------------------ Update 2
-   *         Window     0xCA 0xFE
-   *         Checksum   0xDEADBEEF+
-   *                    0xCAFE0000
-   *                    ----------
-   *                    0xA8ABBEEF <- Final value
-   */
+  //! \class Checksum
+  //! \brief Class representing a 32-bit checksum as mandated by the CCSDS File
+  //!        Delivery Protocol.
+  //!
+  //!        This checksum is calculated by update of an existing 32-bit value
+  //!        with the "next" 32-bit string drawn from the file data. Beginning
+  //!        at the start of the file, a 4-byte window moves up the file by four
+  //!        bytes per update. The update itself replaces the existing checksum
+  //!        with the byte-wise sum of the existing checksum and the file data
+  //!        contained in the window. Overflows in the addition are permitted
+  //!        and the carry discarded.
+  //!
+  //!        If an update is to be made beginning at an offset into the file
+  //!        which is not aligned to a 4-byte boundary, the window is treated
+  //!        as beginning at the last 4-byte boundary, but is left-zero-padded.
+  //!        Similarly, where the file data for an update ends on an unaligned
+  //!        byte, the window extends up to the next boundary and is
+  //!        right-zero-padded.
+  //!
+  //!        ## Example
+  //!
+  //!        For buffer 0xDE 0xAD 0xBE 0xEF 0xCA 0xFE and initial zero checksum:
+  //!
+  //!        ------------------------------------ Update 1
+  //!        Window     0xDE 0xAD 0xBE 0xEF
+  //!        Checksum   0xDEADBEEF
+  //!
+  //!        ------------------------------------ Update 2
+  //!        Window     0xCA 0xFE
+  //!        Checksum   0xDEADBEEF+
+  //!                   0xCAFE0000
+  //!                   ----------
+  //!                   0xA8ABBEEF <- Final value
   class Checksum {
 
     public:
