@@ -29,6 +29,9 @@
 //Max size of the Trace buffer including metadata (id,timetag,arguments) 
 static const FwSizeType FW_TRACE_MAX_SER_SIZE = (FW_TRACE_BUFFER_MAX_SIZE + sizeof(FwTraceIdType) + Fw::Time::SERIALIZED_SIZE);
 
+//Mask bit for filtering on trace types
+static const U16 FILTER_BIT = 1;
+
 
 namespace Svc {
 
@@ -69,6 +72,14 @@ class TraceLogger : public TraceLoggerComponentBase {
     //!  \param file file where traces are stored.
     void configure(const char* file);
 
+    //!  \brief Trace Logger filter method
+    //!
+    //!  The filter method selects which trace types to be logged and which to ignore.
+    //!
+    //!  \param tracetypes provides bitmasks for tracetypes to select.
+    //!  \param enable to turn on/off filtering .
+    void filter(U16 traceType_bitmask,bool enable);
+
     //! Destroy TraceLogger object
     ~TraceLogger();
 
@@ -98,7 +109,7 @@ class TraceLogger : public TraceLoggerComponentBase {
     //! Enable or disable trace
     void EnableTrace_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                 U32 cmdSeq,            //!< The command sequence number
-                                bool enable) override;
+                                Svc::TraceLogger_Enable enable) override;
 
     //! Handler implementation for command DumpTraceDp
     //!
@@ -106,6 +117,16 @@ class TraceLogger : public TraceLoggerComponentBase {
     void DumpTraceDp_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                 U32 cmdSeq            //!< The command sequence number
                                 ) override;
+   
+    //! Handler implementation for command FilterTrace
+    //!
+    //! Select which trace types to be logged
+    void FilterTrace_cmdHandler(FwOpcodeType opCode,            //!< The opcode
+                                U32 cmdSeq,                     //!< The command sequence number
+                                U16 bitmask,                    //!< TraceTypes to log on
+                                Svc::TraceLogger_Enable enable  //!< enable or disable logging 
+                                ) override;
+
     // ----------------------------------------------------------------------
     // Member Variables
     // ----------------------------------------------------------------------
@@ -125,6 +146,8 @@ class TraceLogger : public TraceLoggerComponentBase {
     bool m_enable_trace; //Is trace logging enabled
     U8 m_file_data[FW_TRACE_MAX_SER_SIZE]; //Holds a max size including metadata
     Fw::Buffer m_file_buffer;
+    //filter trace types
+    U16 m_traceFilter; //Select which trace types to allow logging
 
     // ----------------------------------------------------------------------
     // File functions:
