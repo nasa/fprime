@@ -1,7 +1,7 @@
 #include <Ref/SendBuffApp/SendBuffComponentImpl.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <cstring>
 
 #include <cstdio>

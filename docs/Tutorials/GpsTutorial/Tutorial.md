@@ -538,7 +538,7 @@ namespace GpsApp {
       char* pointer = reinterpret_cast<char*>(serBuffer.getData());
       // Check for invalid read status, log an error, return buffer and abort if there is a problem
       if (serial_status != Drv::SER_OK) {
-          Fw::Logger::logMsg("[WARNING] Received buffer with bad packet: %d\n", serial_status);
+          Fw::Logger::log("[WARNING] Received buffer with bad packet: %d\n", serial_status);
           // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
           // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
           // reset it to the full data block size before returning it.
@@ -581,7 +581,7 @@ namespace GpsApp {
       }
       // If we found some of the message but not all of the message, then log an error, return the buffer and exit.
       else if (status != 9) {
-          Fw::Logger::logMsg("[ERROR] GPS parsing failed: %d\n", status);
+          Fw::Logger::log("[ERROR] GPS parsing failed: %d\n", status);
           // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
           // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
           // reset it to the full data block size before returning it.

@@ -81,18 +81,18 @@ namespace Drv {
       }
 
 #if DEBUG_PRINT
-      Fw::Logger::logMsg("I2c addr: 0x%02X\n",addr);
+      Fw::Logger::log("I2c addr: 0x%02X\n",addr);
       for (U32 byte = 0; byte < serBuffer.getSize(); byte++) {
-    	  Fw::Logger::logMsg("0x%02X ",serBuffer.getData()[byte]);
+    	  Fw::Logger::log("0x%02X ",serBuffer.getData()[byte]);
 
       }
-      Fw::Logger::logMsg("\n");
+      Fw::Logger::log("\n");
 #endif
       // select slave address
       int stat = ioctl(this->m_fd, I2C_SLAVE, addr);
       if (stat == -1) {
 #if DEBUG_PRINT
-          Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
+          Fw::Logger::log("Status: %d Errno: %d\n", stat, errno);
 #endif
 	  return I2cStatus::I2C_ADDRESS_ERR;
       }
@@ -102,7 +102,7 @@ namespace Drv {
       stat = static_cast<int>(write(this->m_fd, serBuffer.getData(), serBuffer.getSize()));
       if (stat == -1) {
 #if DEBUG_PRINT
-          Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
+          Fw::Logger::log("Status: %d Errno: %d\n", stat, errno);
 #endif
 	  return I2cStatus::I2C_WRITE_ERR;
       }
@@ -122,13 +122,13 @@ namespace Drv {
       }
 
 #if DEBUG_PRINT
-      Fw::Logger::logMsg("I2c addr: 0x%02X\n",addr);
+      Fw::Logger::log("I2c addr: 0x%02X\n",addr);
 #endif
       // select slave address
       int stat = ioctl(this->m_fd, I2C_SLAVE, addr);
       if (stat == -1) {
 #if DEBUG_PRINT
-          Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
+          Fw::Logger::log("Status: %d Errno: %d\n", stat, errno);
 #endif
 	  return I2cStatus::I2C_ADDRESS_ERR;
       }
@@ -138,16 +138,16 @@ namespace Drv {
       stat = static_cast<int>(read(this->m_fd, serBuffer.getData(), serBuffer.getSize()));
       if (stat == -1) {
 #if DEBUG_PRINT
-          Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
+          Fw::Logger::log("Status: %d Errno: %d\n", stat, errno);
 #endif
 	  return I2cStatus::I2C_READ_ERR;
       }
 #if DEBUG_PRINT
       for (U32 byte = 0; byte < serBuffer.getSize(); byte++) {
-    	  Fw::Logger::logMsg("0x%02X ",serBuffer.getData()[byte]);
+    	  Fw::Logger::log("0x%02X ",serBuffer.getData()[byte]);
 
       }
-      Fw::Logger::logMsg("\n");
+      Fw::Logger::log("\n");
 #endif
       return I2cStatus::I2C_OK;
   }
@@ -171,7 +171,7 @@ namespace Drv {
     FW_ASSERT(readBuffer.getData());
 
     #if DEBUG_PRINT
-      Fw::Logger::logMsg("I2c addr: 0x%02X\n",addr);
+      Fw::Logger::log("I2c addr: 0x%02X\n",addr);
     #endif
 
     struct i2c_msg rdwr_msgs[2];
@@ -197,25 +197,25 @@ namespace Drv {
 
     if(stat == -1){
       #if DEBUG_PRINT
-        Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
+        Fw::Logger::log("Status: %d Errno: %d\n", stat, errno);
       #endif
       //Because we're using ioctl to perform the transaction we dont know exactly the type of error that occurred
       return I2cStatus::I2C_OTHER_ERR;
     }
 
 #if DEBUG_PRINT
-    Fw::Logger::logMsg("Wrote:\n");
+    Fw::Logger::log("Wrote:\n");
     for (U32 byte = 0; byte < writeBuffer.getSize(); byte++) {
-    	  Fw::Logger::logMsg("0x%02X ",writeBuffer.getData()[byte]);
+    	  Fw::Logger::log("0x%02X ",writeBuffer.getData()[byte]);
 
     }
-    Fw::Logger::logMsg("\n");
-    Fw::Logger::logMsg("Read:\n");
+    Fw::Logger::log("\n");
+    Fw::Logger::log("Read:\n");
     for (U32 byte = 0; byte < readBuffer.getSize(); byte++) {
-    	  Fw::Logger::logMsg("0x%02X ",readBuffer.getData()[byte]);
+    	  Fw::Logger::log("0x%02X ",readBuffer.getData()[byte]);
 
     }
-    Fw::Logger::logMsg("\n");
+    Fw::Logger::log("\n");
 #endif
 
     return I2cStatus::I2C_OK;

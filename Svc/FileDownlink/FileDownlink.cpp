@@ -167,8 +167,8 @@ namespace Svc {
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
-    (void) Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
-    (void) Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
+    (void) Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.srcFilename)));
+    (void) Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.destFilename)));
 
     Os::Queue::QueueStatus status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
@@ -240,8 +240,8 @@ namespace Svc {
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
-    (void) Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
-    (void) Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
+    (void) Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.srcFilename)));
+    (void) Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.destFilename)));
 
     Os::Queue::QueueStatus status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
@@ -273,8 +273,8 @@ namespace Svc {
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
-    (void) Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
-    (void) Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
+    (void) Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.srcFilename)));
+    (void) Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.destFilename)));
 
     Os::Queue::QueueStatus status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 

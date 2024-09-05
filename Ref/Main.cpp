@@ -16,6 +16,9 @@
 #include <getopt.h>
 // Used for printf functions
 #include <cstdlib>
+// Used to get the Os::Console
+#include <Os/Console.hpp>
+
 
 /**
  * \brief print commandline help message
@@ -51,6 +54,7 @@ static void signalHandler(int signum) {
  * @return: 0 on success, something else on failure
  */
 int main(int argc, char* argv[]) {
+    Os::Console::init();
     U32 port_number = 0;
     I32 option = 0;
     char* hostname = nullptr;

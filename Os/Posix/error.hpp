@@ -22,6 +22,12 @@ Os::File::Status errno_to_file_status(PlatformIntType errno_input);
 //!
 Os::Task::Status posix_status_to_task_status(PlatformIntType posix_status);
 
+//! Convert a Posix return status (int) for mutex operations to the Os::Mutex::Status representation.
+//! \param posix_status: return status
+//! \return: Os::Mutex::Status representation of the error
+//!
+Os::Mutex::Status posix_status_to_mutex_status(PlatformIntType posix_status);
+
 }
 }
 #endif

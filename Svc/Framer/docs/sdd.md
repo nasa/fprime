@@ -155,7 +155,7 @@ _B_ representing framed data and does the following:
 
 1. Check the return status of the invocation. 
 If the return status is not `Drv::SendStatus::SEND_OK`, then
-use `Fw::Logger::logMsg` to log an error message.
+use `Fw::Logger::log` to log an error message.
 Don't send an event report in this case, because downlink is
 apparently not working.
 
