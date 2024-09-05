@@ -125,7 +125,7 @@ namespace Os {
       // This will put the smallest value in the
       // heap on the top, violating the heap property.
       NATIVE_UINT_TYPE index = this->m_size-1;
-      // Fw::Logger::logMsg("Putting on top: i: %u v: %d\n", index, this->m_heap[index].value);
+      // Fw::Logger::log("Putting on top: i: %u v: %d\n", index, this->m_heap[index].value);
       this->m_heap[0]= this->m_heap[index];
       --this->m_size;
 
@@ -202,7 +202,7 @@ namespace Os {
         }
 
         // Swap the largest node with the current node:
-        // Fw::Logger::logMsg("Swapping: i: %u v: %d with i: %u v: %d\n",
+        // Fw::Logger::log("Swapping: i: %u v: %d with i: %u v: %d\n",
         //   index, this->m_heap[index].value,
         //   largest, this->m_heap[largest].value);
         this->swap(index, largest);
@@ -263,25 +263,25 @@ namespace Os {
       NATIVE_UINT_TYPE index = 0;
       NATIVE_UINT_TYPE left;
       NATIVE_UINT_TYPE right;
-      Fw::Logger::logMsg("Printing Heap of Size: %d\n", this->m_size);
+      Fw::Logger::log("Printing Heap of Size: %d\n", this->m_size);
       while(index < this->m_size) {
         left = LCHILD(index);
         right = RCHILD(index);
 
         if( left >= m_size && index == 0) {
-          Fw::Logger::logMsg("i: %u v: %d d: %u -> (NULL, NULL)\n",
-            index, static_cast<POINTER_CAST>(this->m_heap[index].value), this->m_heap[index].id);
+          Fw::Logger::log("i: %u v: %d d: %u -> (NULL, NULL)\n",
+            index, this->m_heap[index].value, this->m_heap[index].id);
         }
         else if( right >= m_size && left < m_size ) {
-          Fw::Logger::logMsg("i: %u v: %d d: %u -> (i: %u v: %d d: %u, NULL)\n",
-            index, static_cast<POINTER_CAST>(this->m_heap[index].value), this->m_heap[index].id,
-            left, static_cast<POINTER_CAST>(this->m_heap[left].value), this->m_heap[left].id);
+          Fw::Logger::log("i: %u v: %d d: %u -> (i: %u v: %d d: %u, NULL)\n",
+            index, this->m_heap[index].value, this->m_heap[index].id,
+            left, this->m_heap[left].value, this->m_heap[left].id);
         }
         else if( right < m_size && left < m_size ) {
-          Fw::Logger::logMsg("i: %u v: %d d: %u -> (i: %u v: %d d: %u, i: %u v: %d d: %u)\n",
-            index, static_cast<POINTER_CAST>(this->m_heap[index].value), this->m_heap[index].id,
-            left, static_cast<POINTER_CAST>(this->m_heap[left].value),this->m_heap[left].id,
-            right, static_cast<POINTER_CAST>(this->m_heap[right].value), this->m_heap[right].id);
+          Fw::Logger::log("i: %u v: %d d: %u -> (i: %u v: %d d: %u, i: %u v: %d d: %u)\n",
+            index, this->m_heap[index].value, this->m_heap[index].id,
+            left, this->m_heap[left].value,this->m_heap[left].id,
+            right, this->m_heap[right].value, this->m_heap[right].id);
         }
 
         ++index;

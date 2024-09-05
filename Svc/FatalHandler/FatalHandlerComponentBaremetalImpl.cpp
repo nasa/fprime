@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include <cstdlib>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <FpConfig.hpp>
 
@@ -19,7 +19,7 @@ namespace Svc {
             const NATIVE_INT_TYPE portNum,
             FwEventIdType Id) {
         // for **nix, delay then exit with error code
-        Os::Log::logMsg("FATAL %d handled.\n",Id,0,0,0,0,0);
+        Os::Log::log("FATAL %d handled.\n",Id);
         while (true) {} // Returning might be bad
     }
 

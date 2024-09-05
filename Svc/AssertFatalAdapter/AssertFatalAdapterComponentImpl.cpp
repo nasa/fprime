@@ -85,7 +85,7 @@ namespace Svc {
                   arg1,arg2,arg3,arg4,arg5,arg6);
       } else {
           // Can't assert, what else can we do? Maybe somebody will see it.
-          Fw::Logger::logMsg("Svc::AssertFatalAdapter not registered!\n");
+          Fw::Logger::log("Svc::AssertFatalAdapter not registered!\n");
           assert(0);
       }
   }

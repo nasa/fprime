@@ -83,7 +83,7 @@ home network where the pi and the user's computer are connected to the same netw
 
 ```
 cd fprime/RPI
-fprime-gds -n --dictionary ./build-artifacts/raspberrypi/dict/RPITopologyAppDictionary.xml
+fprime-gds -n --dictionary ./build-artifacts/raspberrypi/dict/RPITopologyDictionary.json
 ```
 The ground station should now appear in the user's default browser. Should the user wish to terminate the ground system, return to that terminal
 and press CTRL-C to shut it down. Please allow it a few moments to finalize and exit.  The user may then kill the browser tab displaying the GUI.
