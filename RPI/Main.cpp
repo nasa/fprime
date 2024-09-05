@@ -7,8 +7,6 @@
 #include <RPI/Top/RPITopologyAc.hpp>
 
 RPI::TopologyState state;
-// Enable the console logging provided by Os::Log
-Os::Log logger;
 
 void print_usage(const char* app) {
     (void) printf("Usage: ./%s [options]\n-p\tport_number\n-a\thostname/IP address\n",app);
@@ -22,6 +20,7 @@ static void sighandler(int signum) {
 }
 
 int main(int argc, char* argv[]) {
+    Os::Console::init();
     I32 option = 0;
 
     while ((option = getopt(argc, argv, "hp:a:")) != -1){
