@@ -8,7 +8,7 @@ namespace Fw {
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
 
-    SmSignalBuffer::SmSignalBuffer() {
+    SmSignalBuffer::SmSignalBuffer() : m_bufferData{} {
     }
 
     SmSignalBuffer::~SmSignalBuffer() {
