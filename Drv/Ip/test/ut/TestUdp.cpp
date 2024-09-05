@@ -18,8 +18,8 @@ void test_with_loop(U32 iterations, bool duplex) {
     NATIVE_INT_TYPE udp1_fd = -1;
     NATIVE_INT_TYPE udp2_fd = -1;
 
-    // When not duplex, we can allow the OS to choose a port
     U16 port1 = Drv::Test::get_free_port(true);
+    ASSERT_NE(0, port1);
     U16 port2 = port1;
     for (U8 i = 0; (i < std::numeric_limits<U8>::max()) && (port2 == port1); i++) {
         port2 = Drv::Test::get_free_port(true);

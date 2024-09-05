@@ -75,10 +75,9 @@ class IpSocket {
      * This will start-up the socket. In the case of most sockets, this is a no-op. On server sockets this binds to the
      * server address and progresses through the `listen` step such that on `open` new clients may be accepted.
      *
-     * \param fd: file descriptor to startup
      * \return status of startup
      */
-    virtual SocketIpStatus startup(NATIVE_INT_TYPE& fd);
+    virtual SocketIpStatus startup();
 
     /**
      * \brief open the IP socket for communications

@@ -30,10 +30,16 @@ SocketIpStatus UdpComponentImpl::configureSend(const char* hostname,
                                                  const U16 port,
                                                  const U32 send_timeout_seconds,
                                                  const U32 send_timeout_microseconds) {
+    if (not this->isStarted()) {
+        (void)this->startup();
+    }
     return m_socket.configureSend(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
 SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 port) {
+    if (not this->isStarted()) {
+        (void)this->startup();
+    }
     return m_socket.configureRecv(hostname, port);
 }
 

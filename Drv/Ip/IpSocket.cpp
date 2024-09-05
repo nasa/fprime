@@ -116,7 +116,7 @@ void IpSocket::shutdown(NATIVE_INT_TYPE &fd) {
     this->close(fd);
 }
 
-SocketIpStatus IpSocket::startup(NATIVE_INT_TYPE& fd) {
+SocketIpStatus IpSocket::startup() {
     // no op for non-server components
     return SOCK_SUCCESS;
 }

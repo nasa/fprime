@@ -28,6 +28,7 @@ SocketIpStatus TcpServerComponentImpl::configure(const char* hostname,
                                                  const U16 port,
                                                  const U32 send_timeout_seconds,
                                                  const U32 send_timeout_microseconds) {
+    (void)startup();
     return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 

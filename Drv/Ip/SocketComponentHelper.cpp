@@ -38,12 +38,8 @@ void SocketComponentHelper::start(const Fw::StringBase &name,
 }
 
 SocketIpStatus SocketComponentHelper::startup() {
-    this->m_lock.lock();
-    NATIVE_INT_TYPE fd = this->m_fd;
-    this->m_lock.unlock();
     this->m_started = true;
-    // TODO: do I need to reassign m_fd
-    return this->getSocketHandler().startup(fd);
+    return this->getSocketHandler().startup();
 }
 
 bool SocketComponentHelper::isStarted() {
@@ -171,7 +167,6 @@ void SocketComponentHelper::readTask(void* pointer) {
         if (fd == -1 and (not self->m_stop)) {
             self->reconnect();
         }
-
         // If the network connection is open, read from it
         if (self->isStarted() and self->isOpened() and (not self->m_stop)) {
             Fw::Buffer buffer = self->getBuffer();

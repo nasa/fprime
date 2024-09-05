@@ -13,6 +13,7 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <FpConfig.hpp>
+#include <iostream>
 
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <socket.h>
@@ -45,10 +46,9 @@ U16 TcpServerSocket::getListenPort() {
     return port;
 }
 
-SocketIpStatus TcpServerSocket::startup(NATIVE_INT_TYPE& fd) {
+SocketIpStatus TcpServerSocket::startup() {
     NATIVE_INT_TYPE serverFd = -1;
     struct sockaddr_in address;
-    this->close(fd);
     // Acquire a socket, or return error
     if ((serverFd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
@@ -89,7 +89,7 @@ SocketIpStatus TcpServerSocket::startup(NATIVE_INT_TYPE& fd) {
     m_base_fd = serverFd;
     m_port = port;
 
-    return this->IpSocket::startup(fd);
+    return this->IpSocket::startup();
 }
 
 void TcpServerSocket::shutdown(NATIVE_INT_TYPE &fd) {

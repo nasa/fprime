@@ -45,6 +45,10 @@ namespace Drv {
       //!
       ~TcpClientTester();
 
+      bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations);
+
+      bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations);
+
     public:
 
       // ----------------------------------------------------------------------

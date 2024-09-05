@@ -36,10 +36,9 @@ class TcpServerSocket : public IpSocket {
      * Opens the server's listening socket such that this server can listen for incoming client requests. Given the
      * nature of this component, only one (1) client can be handled at a time. After this call succeeds, clients may
      * connect. This call does not block, block occurs on `open` while waiting to accept incoming clients.
-     * \param fd: file descriptor to startup
      * \return status of the server socket setup.
      */
-    SocketIpStatus startup(NATIVE_INT_TYPE& fd) override;
+    SocketIpStatus startup() override;
 
     /**
      * \brief Shutdown and close the server socket followed by the open client
@@ -83,7 +82,7 @@ class TcpServerSocket : public IpSocket {
      * \return: size of data received, or -1 on error.
      */
     I32 recvProtocol(NATIVE_INT_TYPE& fd, U8* const data, const U32 size) override;
-  private:
+  PRIVATE:
     NATIVE_INT_TYPE m_base_fd; //!< File descriptor of the listening socket
 };
 }  // namespace Drv
