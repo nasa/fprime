@@ -69,9 +69,9 @@ class SeqDispatcher : public SeqDispatcherComponentBase {
     } m_entryTable[SeqDispatcherSequencerPorts];  //!< table of dispatch
                                                   //!< entries
 
-    NATIVE_INT_TYPE getNextAvailableSequencerIdx();
+    FwIndexType getNextAvailableSequencerIdx();
 
-    bool runSequence(NATIVE_INT_TYPE sequencerIdx, 
+    void runSequence(FwIndexType sequencerIdx, 
                      const Fw::StringBase& fileName, 
                      Fw::Wait block);
 

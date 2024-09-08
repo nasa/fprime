@@ -12,15 +12,22 @@ event UnknownSequenceFinished(
     idx: U16
 ) \
     severity warning low \
-    format "Sequencer {} said it finished a sequence but we didn't even know it had started one"
+    format "Sequencer {} completed a sequence with no matching start notification"
 
-event UnexpectedSequenceStarted(
+event ConflictingSequenceStarted(
     idx: U16,
     newSequence: string size 240,
     sequenceInInternalState: string size 240
 ) \
     severity warning high \
-    format "Sequencer {} said it started a sequence {} but we thought it was still running {}"
+    format "Sequencer {} started a sequence {} while still running {}"
+
+event UnexpectedSequenceStarted(
+    idx: U16,
+    newSequence: string size 240
+) \
+    severity warning low \
+    format "Sequencer {} was externally commanded to start a sequence {}"
 
 event LogSequencerStatus(
     idx: U16

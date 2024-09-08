@@ -7,6 +7,9 @@ Dispatches command sequences to available command sequencers, allowing the space
 * If any connected `CmdSequencer` is available, it will route the sequence to the first one it finds
 * `RUN` can be made blocking or non-blocking, just like `CmdSequencer`'s `RUN`
 
+## State diagram
+![State diagram of the SeqDispatcher](seq_dispatcher_model.png "SeqDispatcher model")
+
 ## Port Descriptions
 |Type| Name | Description |
 |async input|seqRunIn|Equivalent to the RUN cmd, dispatches a sequence to the first available sequencer|

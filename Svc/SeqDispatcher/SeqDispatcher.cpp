@@ -27,26 +27,18 @@ FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
   return -1;
 }
 
-bool SeqDispatcher::runSequence(FwIndexType sequencerIdx,
+void SeqDispatcher::runSequence(FwIndexType sequencerIdx,
                                 const Fw::StringBase& fileName,
                                 Fw::Wait block) {
+  // this function is only designed for internal usage
+  // we can guarantee it cannot be called with input that would fail
   FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
             sequencerIdx);
+  FW_ASSERT(this->isConnected_seqRunOut_OutputPort(sequencerIdx));
+  FW_ASSERT(this->m_entryTable[sequencerIdx].state == 
+              SeqDispatcher_CmdSequencerState::AVAILABLE, 
+            this->m_entryTable[sequencerIdx].state);
 
-  // if the seqRunOut port at this idx isn't connected
-  if (!this->isConnected_seqRunOut_OutputPort(sequencerIdx)) {
-    this->log_WARNING_HI_InvalidSequencer(static_cast<U16>(sequencerIdx));
-    return false;
-  }
-
-  // if the sequencer is not available to run a new sequence
-  if (this->m_entryTable[sequencerIdx].state !=
-      SeqDispatcher_CmdSequencerState::AVAILABLE) {
-    this->log_WARNING_HI_InvalidSequencer(static_cast<U16>(sequencerIdx));
-    return false;
-  }
-
-  // ok, good to use this sequencer
   if (block == Fw::Wait::NO_WAIT) {
     this->m_entryTable[sequencerIdx].state =
         SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK;
@@ -63,8 +55,6 @@ bool SeqDispatcher::runSequence(FwIndexType sequencerIdx,
   this->tlmWrite_dispatchedCount(this->m_dispatchedCount);
   this->seqRunOut_out(sequencerIdx,
                       this->m_entryTable[sequencerIdx].sequenceRunning);
-
-  return true;
 }
 
 void SeqDispatcher::seqStartIn_handler(
@@ -78,15 +68,18 @@ void SeqDispatcher::seqStartIn_handler(
           SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK) {
     // we were aware of this sequencer running a sequence
     if (this->m_entryTable[portNum].sequenceRunning != fileName) {
-      // uh oh. m_sequencesRunning is wrong
+      // uh oh. entry table is wrong
       // let's just update it to be correct. nothing we can do about
       // it except raise a warning and update our state
-      this->log_WARNING_HI_UnexpectedSequenceStarted(static_cast<U16>(portNum), fileName, this->m_entryTable[portNum].sequenceRunning);
+      this->log_WARNING_HI_ConflictingSequenceStarted(static_cast<U16>(portNum), fileName, this->m_entryTable[portNum].sequenceRunning);
       this->m_entryTable[portNum].sequenceRunning = fileName;
     }
   } else {
     // we were not aware that this sequencer was running. ground must have
     // directly commanded that specific sequencer
+
+    // warn because this may be unintentional
+    this->log_WARNING_LO_UnexpectedSequenceStarted(static_cast<U16>(portNum), fileName);
 
     // update the state
     this->m_entryTable[portNum].state =
@@ -151,12 +144,8 @@ void SeqDispatcher::seqRunIn_handler(NATIVE_INT_TYPE portNum,
     this->log_WARNING_HI_NoAvailableSequencers();
     return;
   }
-  if (!this->runSequence(idx, fileName,
-                         Fw::Wait::NO_WAIT)) {
-    // port isn't connected or generally unable to run for some reason
-    // runSequence will raise events for us
-    return;
-  }
+
+  this->runSequence(idx, fileName, Fw::Wait::NO_WAIT);
 }
 // ----------------------------------------------------------------------
 // Command handler implementations
@@ -173,11 +162,9 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     return;
   }
-  if (!this->runSequence(idx, fileName, block)) {
-    // port isn't connected or generally unable to run for some reason
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-    return;
-  }
+
+  this->runSequence(idx, fileName, block);
+
   if (block == Fw::Wait::NO_WAIT) {
     // return instantly
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
