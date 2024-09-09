@@ -30,11 +30,13 @@ namespace Svc {
     m_maxFileSize(0),
     m_byteCount(0),
     m_log_init(false),
-    m_enable_trace(true),
+    //m_enable_trace(true),
     m_traceFilter(0) 
     {
        m_file_buffer.setData(m_file_data);
        m_file_buffer.setSize(FW_TRACE_MAX_SER_SIZE);
+
+       m_enable_trace = (FW_TRACE_RECORD_TRACE == true) ? true : false;
     }
 
     TraceLogger::~TraceLogger() {
@@ -53,31 +55,33 @@ namespace Svc {
 
     void TraceLogger::set_log_file(const char* fileName, const U32 maxSize) {
         
-        FW_ASSERT(fileName != nullptr);
-        //If a file is already open then close it
-        if(this->m_mode == OPEN) {
-            this->m_mode = CLOSED;
-            this->m_log_file.close();
-        }
+        if(this->m_enable_trace == true) {
+            FW_ASSERT(fileName != nullptr);
+            //If a file is already open then close it
+            if(this->m_mode == OPEN) {
+                this->m_mode = CLOSED;
+                this->m_log_file.close();
+            }
 
-        //If file name is too large then return failure
-        U32 fileNameSize = Fw::StringUtils::string_length(fileName, Fw::String::STRING_SIZE);
-        if (fileNameSize == Fw::String::STRING_SIZE) {
-            this->m_enable_trace = false;
-        }
-        
-        Os::File::Status stat = this->m_log_file.open(fileName, Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE);
+            //If file name is too large then return failure
+            FwSizeType fileNameSize = Fw::StringUtils::string_length(fileName, static_cast<FwSizeType>(Fw::String::STRING_SIZE));
+            if (fileNameSize == Fw::String::STRING_SIZE) {
+                this->m_enable_trace = false;
+            }
+            
+            Os::File::Status stat = this->m_log_file.open(fileName, Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE);
 
-        // Bad status when trying to open the file:
-        if (stat != Os::File::OP_OK) {
-            this->m_enable_trace = false;
-            this->log_WARNING_LO_TraceFileOpenError(static_cast<Fw::LogStringArg>(fileName));
-        }
+            // Bad status when trying to open the file:
+            if (stat != Os::File::OP_OK) {
+                this->m_enable_trace = false;
+                this->log_WARNING_LO_TraceFileOpenError(static_cast<Fw::LogStringArg>(fileName));
+            }
 
-        this->m_byteCount = 0;
-        this->m_maxFileSize = maxSize;
-        this->m_fileName = fileName;
-        this->m_mode = OPEN;
+            this->m_byteCount = 0;
+            this->m_maxFileSize = maxSize;
+            this->m_fileName = fileName;
+            this->m_mode = OPEN;
+        }
     }
 
     void TraceLogger::configure(const char* file) {
@@ -87,7 +91,7 @@ namespace Svc {
 
     void TraceLogger::filter(U16 traceType_bitmask, bool enable){
         if(traceType_bitmask == 0){
-            //TODO: Figure out if this should be made an illegal entry?
+            //TODO: Figure out if this should be made an illegal entry or just ignore it?
             //      
         }
        
@@ -115,6 +119,7 @@ namespace Svc {
                 //Current design supports writing to a circular file
                 //printf ("File will be overwritten. Seeking beginning of file\n");
                 (void)this->m_log_file.seek(0,Os::FileInterface::SeekType::ABSOLUTE);
+                this->m_byteCount = 0;
             }
             //else {
             FwSignedSizeType writeSize = size;
@@ -125,6 +130,7 @@ namespace Svc {
             // Assert if file is not already open
             FW_ASSERT(stat != Os::File::NOT_OPENED);
             this->m_byteCount += (size);
+
             //}
         }
     }
@@ -140,6 +146,7 @@ namespace Svc {
             
             FW_ASSERT(type.isValid());
             U16 bit_mask = static_cast<U16> (FILTER_BIT << type.e);
+            U32 traceSize = 0;
             //Only log data that is enabled by either config or user
             if(!(this->m_traceFilter & bit_mask)) {
                 //TODO: Should we generate an event here, letting user know that this specific filter is disabled?
@@ -151,12 +158,19 @@ namespace Svc {
            buf_ref.resetSer();
            buf_ref.serialize(id);
            buf_ref.serialize(timeTag);
-           buf_ref.serialize(args);
+           if(FW_TRACE_RECORD_MINIMAL == false) {
+            buf_ref.serialize(args);
+            traceSize = m_file_buffer.getSize(); //Record max size of each trace record for circular file
+           }
+           else {
+            traceSize = buf_ref.getBuffLength(); //Record only id & timetag
+            printf("File size %d",buf_ref.getBuffLength());
+           }
            //printf("Buffer size is :%d, Full buffer length: %d\n",m_file_buffer.getSize(),buf_ref.getBuffLength()); 
            //Note: Because its a circular file we're writing the full buffer capacatiy to the file
            //      instead of the actual buffer size (variable based on number of args). This will 
            //      ensure when the file is overwritten, we preserve old records
-           this->write_log_file(m_file_buffer.getData(),m_file_buffer.getSize());
+           this->write_log_file(m_file_buffer.getData(),traceSize);
            // If we choose not to use circular file write then use the below line instead. 
            //this->write_log_file(m_file_buffer.getData(),buf_ref.getBuffLength());
            

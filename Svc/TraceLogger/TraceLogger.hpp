@@ -26,6 +26,9 @@
 #define FILE_NAME_MAX 255
 #endif
 
+constexpr bool FW_TRACE_RECORD_TRACE = true;
+constexpr bool FW_TRACE_RECORD_MINIMAL = false;
+
 //Max size of the Trace buffer including metadata (id,timetag,arguments) 
 static const FwSizeType FW_TRACE_MAX_SER_SIZE = (FW_TRACE_BUFFER_MAX_SIZE + sizeof(FwTraceIdType) + Fw::Time::SERIALIZED_SIZE);
 
@@ -63,7 +66,7 @@ class TraceLogger : public TraceLoggerComponentBase {
     //!  \param maxSize The max size of the file
     //!
     //!  \return true if creating the file was successful, false otherwise
-    void set_log_file(const char* fileName, const U32 maxSize=2048);
+    void set_log_file(const char* fileName, const U32 maxSize=FW_TRACE_FILE_MAX_SIZE);
     
     //!  \brief Trace Logger configure method
     //!

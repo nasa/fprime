@@ -327,6 +327,11 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_TRACE_BUFFER_MAX_SIZE 257
 #endif
 
+// Specifies the size of the file that contains the serialized trace value.
+#ifndef FW_TRACE_FILE_MAX_SIZE
+#define FW_TRACE_FILE_MAX_SIZE 2720000
+#endif
+
 
 // Specifies the size of the buffer that contains the serialized parameter value.
 #ifndef FW_PARAM_BUFFER_MAX_SIZE
