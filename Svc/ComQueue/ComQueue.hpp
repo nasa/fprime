@@ -157,8 +157,8 @@ class ComQueue : public ComQueueComponentBase {
 
     //! Queue overflow hook method that deallocates the fwBuffer
     //!
-    void buffQueueIn_overflowHook(FwIndexType portNum, /*!< The port number*/
-                                  Fw::Buffer& fwBuffer /*!< The buffer*/
+    void buffQueueIn_overflowHook(FwIndexType portNum, //!< The port number
+                                  Fw::Buffer& fwBuffer //!< The buffer
     );
 
     // ----------------------------------------------------------------------
