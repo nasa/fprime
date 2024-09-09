@@ -142,7 +142,7 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
     bool status =
         this->enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
     if (!status) {
-        this->buffQueueIn_overflowHook(portNum, fwBuffer);
+        this->deallocate_out(portNum, fwBuffer);
     }
 }
 
