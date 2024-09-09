@@ -57,8 +57,6 @@ class FileSystemInterface {
 
     //------------ Os-specific FileSystem Functions ------------
 
-    //! \brief create a new directory at location path
-    virtual Status _createDirectory(const char* path) = 0;
     //! \brief remove a directory at location path
     virtual Status _removeDirectory(const char* path) = 0;
     //! \brief removes a file at location path
@@ -83,8 +81,6 @@ class FileSystem final : public FileSystemInterface {
     //! \return internal FileSystem handle representation
     FileSystemHandle* getHandle() override;
 
-    //! \brief create a new directory at location path
-    Status _createDirectory(const char* path) override;
     //! \brief remove a directory at location path
     Status _removeDirectory(const char* path) override;
     //! \brief removes a file at location path
@@ -98,8 +94,6 @@ class FileSystem final : public FileSystemInterface {
 
 
 
-    //! \brief create a new directory at location path
-    static Status createDirectory(const char* path);
     //! \brief remove a directory at location path
     static Status removeDirectory(const char* path);
     //! \brief removes a file at location path
@@ -116,22 +110,14 @@ class FileSystem final : public FileSystemInterface {
     static bool exists(const char* path);
     //! \brief Touches a file at path, creating it if it doesn't exist
     static Status touch(const char* path);
+    //! \brief create a new directory at location path
+    static Status createDirectory(const char* path);
     //! \brief append file source to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
     static Status appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false);
     //! \brief copies a file from source to destination
     static Status copyFile(const char* sourcePath, const char* destPath);
     //! \brief gets the size of the file (in bytes) = 0 at location path
     static Status getFileSize(const char* path, FwSignedSizeType& size);
-
-    // TODO: reimplement at the interface level: 
-    // copyFile, appendFile, using Os::Directory / Os::File
-    // TODO:  copyFileData helper as well, and probably other helpers
-    // TOOD: add touchFile and .exists() that takes an enum ref to return the type of file (file, dir, other)
-
-
-    //! \brief read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
-    // static Status readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles);
-    // TODO: move readDirectory and getFileCount to the Os::Directory interface
 
 
   public:
@@ -149,18 +135,17 @@ class FileSystem final : public FileSystemInterface {
 
     //! \brief Convert a File::Status to a FileSystem::Status
     static Status handleFileError(File::Status fileStatus);
-    /**
-     * A helper function that writes all the file information in the source
-     * file to the destination file (replaces/appends to end/etc. depending
-     * on destination file mode).
-     *
-     * Files must already be open and will remain open after this function
-     * completes.
-     *
-     * @param source File to copy data from
-     * @param destination File to copy data to
-     * @param size The number of bytes to copy
-     */
+
+    //! \brief A helper function that writes all the file information in the source
+    //! file to the destination file (replaces/appends to end/etc. depending
+    //! on destination file mode).
+    //!
+    //! Files must already be open and will remain open after this function
+    //! completes.
+    //!
+    //! @param source File to copy data from
+    //! @param destination File to copy data to
+    //! @param size The number of bytes to copy
     static Status copyFileData(File& source, File& destination, FwSignedSizeType size);
 
   private:

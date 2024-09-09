@@ -4,8 +4,6 @@
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Os/FileSystem.hpp>
-// #include <Os/Directory.hpp>
-// #include <Os/File.hpp>
 
 namespace Os {
 FileSystem* FileSystem::s_singleton;
@@ -23,16 +21,6 @@ FileSystem::~FileSystem() {
 FileSystemHandle* FileSystem::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
-}
-
-// FileSystem::PathType FileSystem::_exists(const char* path) {
-//     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-//     return this->m_delegate._exists(path);
-// }
-
-FileSystem::Status FileSystem::_createDirectory(const char* path) {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate._createDirectory(path);
 }
 
 FileSystem::Status FileSystem::_removeDirectory(const char* path) {
@@ -73,10 +61,6 @@ FileSystem& FileSystem::getSingleton() {
     return *FileSystem::s_singleton;
 }
 
-FileSystem::Status FileSystem::createDirectory(const char* path) {
-    return FileSystem::getSingleton()._createDirectory(path);
-}
-
 FileSystem::Status FileSystem::removeDirectory(const char* path) {
     return FileSystem::getSingleton()._removeDirectory(path);
 }
@@ -95,6 +79,17 @@ FileSystem::Status FileSystem::changeWorkingDirectory(const char* path) {
 
 FileSystem::Status FileSystem::getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
     return FileSystem::getSingleton()._getFreeSpace(path, totalBytes, freeBytes);
+}
+
+FileSystem::Status FileSystem::createDirectory(const char* path) {
+    Status status = Status::OP_OK;
+    Os::Directory dir;
+    Directory::Status dirStatus = dir.open(path, Os::Directory::OpenMode::CREATE);
+    if (dirStatus != Directory::OP_OK) {
+        return FileSystem::Status::INVALID_PATH; // TODO error handling
+    }
+    dir.close();
+    return status;
 }
 
 FileSystem::Status FileSystem::touch(const char* path) {
@@ -118,7 +113,7 @@ bool FileSystem::exists(const char* path) {
         return true;
     }
     Os::Directory dir;
-    Directory::Status dir_status = dir.open(path);
+    Directory::Status dir_status = dir.open(path, Os::Directory::OpenMode::READ);
     if (dir_status == Directory::Status::OP_OK) {
         dir.close();
         return true;

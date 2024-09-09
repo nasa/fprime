@@ -10,11 +10,6 @@
 
 
 // ------------------------------------------------------------------------------------------------------
-// Helper Functions
-// ------------------------------------------------------------------------------------------------------
-
-
-// ------------------------------------------------------------------------------------------------------
 // Rule:  Open -> Open a directory
 // ------------------------------------------------------------------------------------------------------
 
@@ -26,7 +21,7 @@ bool Os::Test::Directory::Tester::Open::precondition(const Os::Test::Directory::
 }
 
 void Os::Test::Directory::Tester::Open::action(Os::Test::Directory::Tester &state) {
-    Os::Directory::Status status = state.m_directory.open(state.m_path.c_str());
+    Os::Directory::Status status = state.m_directory.open(state.m_path.c_str(), Os::Directory::OpenMode::READ);
     ASSERT_EQ(status, Os::Directory::Status::OP_OK);
     state.m_state = Os::Test::Directory::Tester::DirectoryState::OPEN;
     state.m_seek_position = 0;
@@ -134,7 +129,7 @@ void Os::Test::Directory::Tester::GetFileCount::action(Os::Test::Directory::Test
     ASSERT_EQ(status, Os::Directory::Status::OP_OK);
     ASSERT_EQ(fileCount, state.m_filenames.size());
 
-    // state.m_seek_position = state.m_filenames.size(); // TODO/NOTE: getFileCount reads in order to count
+    // NOTE: getFileCount reads in order to count
     // therefore it plays with seek_position. Should it be called out in interface? Or should Posix implementation change?
     state.m_seek_position = 0; // Reset seek position when getFileCount is called
 }
@@ -163,4 +158,35 @@ void Os::Test::Directory::Tester::ReadAllFiles::action(Os::Test::Directory::Test
     }
     // readDirectory resets the seek position to the end
     state.m_seek_position = 0;
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  ReadWithoutOpen -> Read a closed directory and expect Status::NOT_OPENED
+// ------------------------------------------------------------------------------------------------------
+Os::Test::Directory::Tester::ReadWithoutOpen::ReadWithoutOpen() :
+    STest::Rule<Os::Test::Directory::Tester>("ReadWithoutOpen") {}
+
+bool Os::Test::Directory::Tester::ReadWithoutOpen::precondition(const Os::Test::Directory::Tester &state) {
+    return state.m_state != Os::Test::Directory::Tester::DirectoryState::OPEN;
+}
+
+void Os::Test::Directory::Tester::ReadWithoutOpen::action(Os::Test::Directory::Tester &state) {
+    ASSERT_FALSE(state.m_directory.isOpen());
+    char unused[4];
+    ASSERT_EQ(state.m_directory.read(unused, 4), Os::Directory::Status::NOT_OPENED);
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  RewindWithoutOpen -> Rewind a closed directory and expect Status::NOT_OPENED
+// ------------------------------------------------------------------------------------------------------
+Os::Test::Directory::Tester::RewindWithoutOpen::RewindWithoutOpen() :
+    STest::Rule<Os::Test::Directory::Tester>("RewindWithoutOpen") {}
+
+bool Os::Test::Directory::Tester::RewindWithoutOpen::precondition(const Os::Test::Directory::Tester &state) {
+    return state.m_state != Os::Test::Directory::Tester::DirectoryState::OPEN;
+}
+
+void Os::Test::Directory::Tester::RewindWithoutOpen::action(Os::Test::Directory::Tester &state) {
+    ASSERT_FALSE(state.m_directory.isOpen());
+    ASSERT_EQ(state.m_directory.rewind(), Os::Directory::Status::NOT_OPENED);
 }

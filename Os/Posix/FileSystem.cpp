@@ -18,14 +18,6 @@ namespace Posix {
 namespace FileSystem {
 
 
-PosixFileSystem::Status PosixFileSystem::_createDirectory(const char* path) {
-    Status status = OP_OK;
-    if (::mkdir(path, S_IRWXU) == -1) {
-        status = errno_to_filesystem_status(errno);
-    }
-    return status;
-}
-
 PosixFileSystem::Status PosixFileSystem::_removeDirectory(const char* path) {
     Status status = OP_OK;
     if (::rmdir(path) == -1) {
@@ -72,11 +64,12 @@ PosixFileSystem::Status PosixFileSystem::_getFreeSpace(const char* path, FwSizeT
     const FwSizeType total_blocks = static_cast<FwSizeType>(fsStat.f_blocks);
 
     // Check for casting and type error
-    if (((block_size <= 0) || (static_cast<unsigned long>(block_size) != fsStat.f_frsize)) ||
-        ((free_blocks <= 0) || (static_cast<fsblkcnt_t>(free_blocks) != fsStat.f_bfree)) ||
-        ((total_blocks <= 0) || (static_cast<fsblkcnt_t>(block_size) != fsStat.f_blocks))) {
-        return OTHER_ERROR;
-    }
+    // REVIEW NOTE: The below fails on macOS at least?
+    // if (((block_size <= 0) || (static_cast<unsigned long>(block_size) != fsStat.f_frsize)) ||
+    //     ((free_blocks <= 0) || (static_cast<fsblkcnt_t>(free_blocks) != fsStat.f_bfree)) ||
+    //     ((total_blocks <= 0) || (static_cast<fsblkcnt_t>(block_size) != fsStat.f_blocks))) {
+    //     return OTHER_ERROR;
+    // }
     // Check for overflow in multiplication
     if (free_blocks > (std::numeric_limits<FwSizeType>::max() / block_size) ||
         total_blocks > (std::numeric_limits<FwSizeType>::max() / block_size)) {

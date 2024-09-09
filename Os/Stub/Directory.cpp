@@ -8,7 +8,7 @@ namespace Os {
 namespace Stub {
 namespace Directory {
 
-StubDirectory::Status StubDirectory::open(const char* dirName) {
+StubDirectory::Status StubDirectory::open(const char* path, OpenMode mode) {
     return Status::NOT_SUPPORTED;
 }
 

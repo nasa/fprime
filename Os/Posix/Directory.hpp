@@ -34,7 +34,12 @@ class PosixDirectory : public DirectoryInterface {
     DirectoryHandle* getHandle() override;
 
     //------------ Os-specific Directory Functions ------------
-    Status open(const char* dirName) override; //!<  open directory. Directory must already exist
+
+    //! \brief Open or create a directory
+    //! \param path: path of directory to open
+    //! \param mode: enum (READ, CREATE). READ will return an error if directory doesn't exist
+    //! \return status of the operation
+    Status open(const char* path, OpenMode mode) override;
     bool isOpen() override; //!< check if file descriptor is open or not.
     Status rewind() override; //!<  rewind directory stream to the beginning
     Status read(char * fileNameBuffer, U32 bufSize) override; //!< get next filename from directory

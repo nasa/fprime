@@ -59,15 +59,6 @@ struct ReadOneFile : public STest::Rule<Os::Test::Directory::Tester> {
     void action(Os::Test::Directory::Tester& state);
 };
 
-// // ------------------------------------------------------------------------------------------------------
-// // Rule: Read the first file in a directory that has been opened
-// // ------------------------------------------------------------------------------------------------------
-// struct ReadRewind : public STest::Rule<Os::Test::Directory::Tester> {
-//     ReadRewind();
-//     bool precondition(const Os::Test::Directory::Tester& state);
-//     void action(Os::Test::Directory::Tester& state);
-// };
-
 // ------------------------------------------------------------------------------------------------------
 // Rule: Rewind a directory
 // ------------------------------------------------------------------------------------------------------
@@ -95,21 +86,20 @@ struct ReadAllFiles : public STest::Rule<Os::Test::Directory::Tester> {
     void action(Os::Test::Directory::Tester& state);
 };
 
+// ------------------------------------------------------------------------------------------------------
+// Rule: Read a closed directory and expect an error
+// ------------------------------------------------------------------------------------------------------
+struct ReadWithoutOpen : public STest::Rule<Os::Test::Directory::Tester> {
+    ReadWithoutOpen();
+    bool precondition(const Os::Test::Directory::Tester& state);
+    void action(Os::Test::Directory::Tester& state);
+};
 
-// // ------------------------------------------------------------------------------------------------------
-// // Rule: Read a closed directory and expect an error
-// // ------------------------------------------------------------------------------------------------------
-// struct ReadWithoutOpen : public STest::Rule<Os::Test::Directory::Tester> {
-//     ReadWithoutOpen();
-//     bool precondition(const Os::Test::Directory::Tester& state);
-//     void action(Os::Test::Directory::Tester& state);
-// };
-
-// // ------------------------------------------------------------------------------------------------------
-// // Rule: Rewind a closed directory and expect an error
-// // ------------------------------------------------------------------------------------------------------
-// struct RewindWithoutOpen : public STest::Rule<Os::Test::Directory::Tester> {
-//     RewindWithoutOpen();
-//     bool precondition(const Os::Test::Directory::Tester& state);
-//     void action(Os::Test::Directory::Tester& state);
-// };
+// ------------------------------------------------------------------------------------------------------
+// Rule: Rewind a closed directory and expect an error
+// ------------------------------------------------------------------------------------------------------
+struct RewindWithoutOpen : public STest::Rule<Os::Test::Directory::Tester> {
+    RewindWithoutOpen();
+    bool precondition(const Os::Test::Directory::Tester& state);
+    void action(Os::Test::Directory::Tester& state);
+};

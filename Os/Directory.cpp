@@ -21,9 +21,9 @@ DirectoryHandle* Directory::getHandle() {
     return this->m_delegate.getHandle();
 }
 
-Directory::Status Directory::open(const char* path) {
+Directory::Status Directory::open(const char* path, OpenMode mode) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.open(path);
+    return this->m_delegate.open(path, mode);
 }
 
 bool Directory::isOpen() {

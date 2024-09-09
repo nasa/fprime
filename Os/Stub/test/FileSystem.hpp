@@ -56,7 +56,6 @@ class TestFileSystem : public FileSystemInterface {
     //! Destructor
     ~TestFileSystem() override;
 
-    Status _createDirectory(const char* path) override;
     Status _removeDirectory(const char* path) override;
     Status _removeFile(const char* path) override;
     Status _moveFile(const char* originPath, const char* destPath) override;

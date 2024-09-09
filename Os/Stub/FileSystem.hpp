@@ -30,8 +30,6 @@ class StubFileSystem : public FileSystemInterface {
     // Functions overrides
     // ------------------------------------
 
-    //! \brief create a new directory at location path
-    Status _createDirectory(const char* path) override;
     //! \brief remove a directory at location path
     Status _removeDirectory(const char* path) override;
     //! \brief removes a file at location path

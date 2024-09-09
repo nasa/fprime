@@ -8,10 +8,6 @@ namespace Os {
 namespace Stub {
 namespace FileSystem {
 
-StubFileSystem::Status StubFileSystem::_createDirectory(const char* path) {
-    return Status::NOT_SUPPORTED;
-}
-
 StubFileSystem::Status StubFileSystem::_removeDirectory(const char* path) {
     return Status::NOT_SUPPORTED;
 }

@@ -26,13 +26,6 @@ public:
 };
 
 
-// Ensure that Os::FileSystem properly calls the implementation createDirectory()
-TEST_F(Interface, CreateDirectory) {
-    Os::FileSystem::createDirectory("/does/not/matter");
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::CREATE_DIR_FN);
-    ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
-}
-
 // Ensure that Os::FileSystem properly calls the implementation removeDirectory()
 TEST_F(Interface, RemoveDirectory) {
     Os::FileSystem::removeDirectory("/does/not/matter");

@@ -26,10 +26,6 @@ struct Tester {
         CLOSED  //!< Directory is closed
     };
 
-    //! Maximum number of files per test directory
-    //! Intentionally low to have a decent probability of having an empty directory
-    static const FwIndexType MAX_FILES_PER_DIRECTORY = 4;
-
     //! Assert in Directory.cpp for searching death text
     static constexpr const char* ASSERT_IN_DIRECTORY_CPP = "Assert: \".*/Os/.*/Directory\\.cpp:[0-9]+\"";
 
@@ -41,21 +37,15 @@ struct Tester {
 
     //! Directory under test
     Os::Directory m_directory;
+
+    //! Tracks the directory state, for testing purposes
     DirectoryState m_state = UNINITIALIZED;
-
-    //! Currently opened path
+    //! Tracks the currently opened path, for testing purposes
     std::string m_path;
-    //! List of filenames created for the tested directory
+    //! Tracks the list of filenames created for the tested directory, for testing purposes
     std::vector<std::string> m_filenames;
-    //! Current seek position of directory
+    //! Tracks the seek position of directory, for testing purposes
     FwIndexType m_seek_position = 0;
-
-    //! Check if the back-end tester is fully functional (i.e. not a stub)
-    //! \return true if functional, false otherwise
-    //!
-    // virtual bool functional() const = 0;
-
-    //! Directory state, for testing purposes
 
 
     //! \brief Check if filename is in the list of test m_filenames created for the tested directory

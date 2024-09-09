@@ -21,11 +21,6 @@ TestFileSystem::~TestFileSystem() {
     StaticData::data.lastCalled = StaticData::LastFn::DESTRUCT_FN;
 }
 
-TestFileSystem::Status TestFileSystem::_createDirectory(const char* path) {
-    StaticData::data.lastCalled = StaticData::LastFn::CREATE_DIR_FN;
-    return Status::OP_OK;
-}
-
 TestFileSystem::Status TestFileSystem::_removeDirectory(const char* path) {
     StaticData::data.lastCalled = StaticData::LastFn::REMOVE_DIR_FN;
     return Status::OP_OK;

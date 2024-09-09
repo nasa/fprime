@@ -7,13 +7,6 @@
 #include <Os/FileSystem.hpp> // for setup
 #include "STest/Pick/Pick.hpp"
 
-// ----------------------------------------------------------------------
-// Test Fixture
-// ----------------------------------------------------------------------
-
-// MAX_FILES_PER_DIRECTORY is intentionally low to have a high probability of having an empty directory
-static const std::string FILENAME_PREFIX = "test_file_";
-static const std::string TEST_DIRECTORY_PATH = "./test_directory";
 
 std::unique_ptr<Os::Test::Directory::Tester> get_tester_implementation() {
     return std::unique_ptr<Os::Test::Directory::Tester>(new Os::Test::Directory::Tester());
@@ -21,28 +14,14 @@ std::unique_ptr<Os::Test::Directory::Tester> get_tester_implementation() {
 
 Functionality::Functionality() : tester(get_tester_implementation()) {}
 
-// Create a directory with a random number of files in it
+
+//! Create a directory with a number of files in it
 void Functionality::SetUp() {
-    tester->m_path = TEST_DIRECTORY_PATH;
-    Os::FileSystem::createDirectory(tester->m_path.c_str());
-    // Files are named test_file_0, test_file_1, ...
-    std::vector<std::string> filenames;
-    // fileNumbers can be 0 (empty directory)
-    FwSizeType fileNumbers = STest::Pick::lowerUpper(0, Os::Test::Directory::Tester::MAX_FILES_PER_DIRECTORY);
-    for (FwSizeType i = 0; i < fileNumbers; i++) {
-        tester->m_filenames.push_back(FILENAME_PREFIX + std::to_string(i));
-    }
-    for (auto filename : tester->m_filenames) {
-        Os::FileSystem::touch((tester->m_path + "/" + filename).c_str());
-    }
+    Os::Test::Directory::setUp(this->tester.get());
 }
 
 void Functionality::TearDown() {
-    // No teardown required
-    for (auto filename : tester->m_filenames) {
-        Os::FileSystem::removeFile((tester->m_path + "/" + filename).c_str());
-    }
-    Os::FileSystem::removeDirectory(tester->m_path.c_str());
+    Os::Test::Directory::tearDown(this->tester.get());
 }
 
 // ----------------------------------------------------------------------
@@ -120,6 +99,26 @@ TEST_F(Functionality, ReadAllFiles) {
     close_rule.apply(*tester);
 }
 
+// Read a closed directory and expect an error
+TEST_F(Functionality, ReadClosedDirectory) {
+    Os::Test::Directory::Tester::Open open_rule;
+    Os::Test::Directory::Tester::Close close_rule;
+    Os::Test::Directory::Tester::ReadWithoutOpen read_closed_rule;
+    open_rule.apply(*tester);
+    close_rule.apply(*tester);
+    read_closed_rule.apply(*tester);
+}
+
+// Rewind a closed directory and expect an error
+TEST_F(Functionality, RewindClosedDirectory) {
+    Os::Test::Directory::Tester::Open open_rule;
+    Os::Test::Directory::Tester::Close close_rule;
+    Os::Test::Directory::Tester::RewindWithoutOpen rewind_closed_rule;
+    open_rule.apply(*tester);
+    close_rule.apply(*tester);
+    rewind_closed_rule.apply(*tester);
+}
+
 TEST_F(Functionality, RandomizedTesting) {
     // Enumerate all rules and construct an instance of each
     Os::Test::Directory::Tester::Open open_rule;
@@ -130,6 +129,8 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::Directory::Tester::Rewind rewind_rule;
     Os::Test::Directory::Tester::ReadAllFiles read_all_rule;
     Os::Test::Directory::Tester::GetFileCount filecount_rule;
+    Os::Test::Directory::Tester::ReadWithoutOpen read_closed_rule;
+    Os::Test::Directory::Tester::RewindWithoutOpen rewind_closed_rule;
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::Directory::Tester>* rules[] = {
@@ -140,7 +141,9 @@ TEST_F(Functionality, RandomizedTesting) {
             &read_rule,
             &rewind_rule,
             &read_all_rule,
-            &filecount_rule 
+            &filecount_rule,
+            &read_closed_rule,
+            &rewind_closed_rule
     };
 
     // Take the rules and place them into a random scenario

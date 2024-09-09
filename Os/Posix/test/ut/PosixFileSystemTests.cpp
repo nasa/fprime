@@ -14,10 +14,11 @@
 // Posix Test Cases
 // ----------------------------------------------------------------------
 
-// Test 1
-TEST_F(FunctionalityTester, PosixDeleteLockedMutex) {
 
-}
+// Test 1
+// TEST_F(Functionality, PosixDeleteLockedMutex) {
+
+// }
 
 
 int main(int argc, char** argv) {

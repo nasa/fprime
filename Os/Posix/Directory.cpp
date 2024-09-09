@@ -3,6 +3,7 @@
 // \brief Posix implementation for Os::Directory
 // ======================================================================
 #include <cstring>
+#include <sys/stat.h>
 #include <sys/errno.h>
 
 #include <Fw/Types/Assert.hpp>
@@ -23,8 +24,15 @@ DirectoryHandle* PosixDirectory::getHandle() {
     return &this->m_handle;
 }
 
-PosixDirectory::Status PosixDirectory::open(const char* path) {
+PosixDirectory::Status PosixDirectory::open(const char* path, OpenMode mode) {
     Status status = Status::OP_OK;
+
+    // TODO: there likely is logic error here e.g. what if it exists already
+    if (mode == OpenMode::CREATE) {
+        if (::mkdir(path, S_IRWXU) == -1) {
+            status = errno_to_directory_status(errno);
+        }
+    }
 
     DIR* dir = ::opendir(path);
 

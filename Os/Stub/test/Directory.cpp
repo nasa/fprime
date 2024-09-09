@@ -21,7 +21,7 @@ TestDirectory::~TestDirectory() {
     StaticData::data.lastCalled = StaticData::LastFn::DESTRUCT_FN;
 }
 
-TestDirectory::Status TestDirectory::open(const char* dirName) {
+TestDirectory::Status TestDirectory::open(const char* path, OpenMode mode) {
     StaticData::data.lastCalled = StaticData::LastFn::OPEN_FN;
     return Status::OP_OK;
 }

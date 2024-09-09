@@ -26,6 +26,11 @@ class DirectoryInterface {
         OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
     } Status;
 
+    typedef enum {
+        READ,   //!<  Error if directory doesn't exist
+        CREATE, //!<  Create directory if it doesn't exist
+    } OpenMode;
+
     //! \brief default constructor
     DirectoryInterface() = default;
 
@@ -48,7 +53,7 @@ class DirectoryInterface {
 
     //------------ Os-specific Directory Functions ------------
 
-    virtual Status open(const char* dirName) = 0; //!<  open directory. Directory must already exist
+    virtual Status open(const char* path, OpenMode mode) = 0; //!<  open/create a directory
     virtual bool isOpen() = 0; //!< check if file descriptor is open or not.
     virtual Status rewind() = 0; //!<  rewind directory stream to the beginning
     virtual Status read(char * fileNameBuffer, U32 bufSize) = 0; //!< get next filename from directory
@@ -67,10 +72,11 @@ class Directory final : public DirectoryInterface {
 
     //------------ Os-specific Directory Functions ------------
 
-    //! \brief Open a directory. Directory must already exist
-    //! \param dirName: name of directory to open
+    //! \brief Open or create a directory
+    //! \param path: path of directory to open
+    //! \param mode: enum (READ, CREATE). READ will return an error if directory doesn't exist
     //! \return status of the operation
-    Status open(const char* dirName) override;
+    Status open(const char* path, OpenMode mode) override;
 
     //! \brief Check if Directory is open or not
     //! \return true if Directory is open, false otherwise

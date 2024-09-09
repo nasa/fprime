@@ -50,7 +50,7 @@ class TestDirectory : public DirectoryInterface {
     //! Destructor
     ~TestDirectory() override;
 
-    Status open(const char* dirName) override;
+    Status open(const char* path, OpenMode mode) override;
     bool isOpen() override;
     Status rewind() override;
     Status read(char * fileNameBuffer, U32 bufSize) override;
