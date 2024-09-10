@@ -1,3 +1,4 @@
+// ======================================================================
 // \title  SystemResourcesComponentImpl.cpp
 // \author sfregoso
 // \brief  cpp file for SystemResources component implementation class
