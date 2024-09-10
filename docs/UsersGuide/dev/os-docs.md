@@ -27,7 +27,6 @@ This guide discusses the following:
 - [Mutexes](#mutexes)
 - [Message Queues](#message-queues)
 - [Interval Timer](#interval-timer)
-- [Watchdog Timer](#watchdog-timer)
 - [Interrupt Lock](#interrupt-lock)
 - [File](#file)
 - [FileSystem](#file-system)
@@ -138,52 +137,6 @@ descriptions.
 | getDiffUsec()         | Returns the time difference between start and stop in microseconds.                                  |
 | getDiffUsec()         | Overloaded version that takes two times, subtracts them, and returns the difference in microseconds. |
 | getRawTime()          | Gets the current raw time value. Can be used for time-tagging events.                                |
-
-## Watchdog Timer
-
-**Note:** This file implementation is not required for all OS adaptations.  Only those needing watchdog functionality.
-
-The class definition can be found in **Os/WatchdogTimer.hpp** A watchdog
-timer schedules a callback at the specified time in the future. It is a
-one-shot timer; it needs to be rescheduled each time. Table 26 provides
-the methods and their descriptions.
-
-**Table 26.** Watchdog timer method descriptions.
-
-| Method     | Description                                                                                                                                                     |                                                                                        |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| startTicks | Starts the timer and gives the expiration in units of system ticks. The arguments are:                                                                          |                                                                                        |
-|            | **Argument**                                                                                                                                                    | **Description**                                                                        |
-|            | delayInTicks                                                                                                                                                    | Ticks to delay. OS/platform specific.                                                  |
-|            | p\_callback                                                                                                                                                     | Function to call when timer expires.                                                   |
-|            | parameter                                                                                                                                                       | Value passed to callback                                                               |
-| startMs    | Starts the timer and gives the expiration in units of milliseconds. The arguments are:                                                                          |                                                                                        |
-|            | **Argument**                                                                                                                                                    | **Description**                                                                        |
-|            | delayInMs                                                                                                                                                       | Milliseconds to delay. Could be rounded up to the next system timer interval in ticks. |
-|            | p\_callback                                                                                                                                                     | Function to call when timer expires.                                                   |
-|            | parameter                                                                                                                                                       | Value passed to callback                                                               |
-| restart()  | Restart the timer using the value passed to startTicks() or startMs(). If a different expiration time is desired, the start functions should be called instead. |                                                                                        |
-| cancel()   | Cancel the timer in progress. The callback will not be called.                                                                                                  |                                                                                        |
-
-## Interrupt Lock
-
-The class definition can be found in Os/InterruptLock.hpp*.* An
-interrupt lock prevents interrupts from preempting code execution. It
-can be used as a very lightweight mutex on platforms that support
-interrupt locking but should be used carefully as it is not subject to
-priorities like a conventional mutex. In addition, it defers interrupts
-that could be time critical, so the code executed between the locking
-and unlocking should be very short in duration. This is a portable
-interface, but the user should be aware of the behavior for each OS.
-Table 27 provides the methods and their descriptions.
-
-**Table 27.** Interrupt lock method descriptions.
-
-| Method   | Description                                                                      |
-| -------- | -------------------------------------------------------------------------------- |
-| lock()   | Lock interrupts.                                                                 |
-| unlock() | Unlock interrupts.                                                               |
-| getKey() | Returns the interrupt lock key, if used by the OS. This is typically not needed. |
 
 ## File
 

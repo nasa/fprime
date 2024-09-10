@@ -8,7 +8,6 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/StringTemplate.hpp>
-#include <Os/InterruptLock.hpp>
 #include <Os/IntervalTimer.hpp>
 //
 // Created by mstarch on 12/7/20.
@@ -649,84 +648,6 @@ class MySerializable : public Fw::Serializable {
   private:
     TestStruct m_testStruct;
 };
-
-TEST(PerformanceTest, SerPerfTest) {
-    Os::IntervalTimer timer;
-
-    MySerializable in;
-    MySerializable out;
-    SerializeTestBuffer buff;
-
-    Os::InterruptLock intLock;
-
-    intLock.lock();
-    timer.start();
-
-    I32 iterations = 1000000;
-    for (I32 iter = 0; iter < iterations; iter++) {
-        in.serialize(buff);
-        out.deserialize(buff);
-    }
-
-    timer.stop();
-    intLock.unLock();
-
-    printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
-}
-
-TEST(PerformanceTest, StructCopyTest) {
-    char buff[sizeof(TestStruct)];
-    TestStruct ts;
-
-    Os::InterruptLock intLock;
-    Os::IntervalTimer timer;
-
-    intLock.lock();
-    timer.start();
-
-    I32 iterations = 1000000;
-    for (I32 iter = 0; iter < iterations; iter++) {
-        // simulate the incoming MSL-style call by doing member assignments
-        ts.m_u32 = 0;
-        ts.m_u16 = 0;
-        ts.m_u8 = 0;
-        ts.m_f32 = 0.0;
-        memcpy(ts.m_buff, "1234567890123456789012345", sizeof(ts.m_buff));
-
-        memcpy(buff, &ts, sizeof(ts));
-        memcpy(&ts, buff, sizeof(buff));
-    }
-
-    timer.stop();
-    intLock.unLock();
-
-    printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
-}
-
-TEST(PerformanceTest, ClassCopyTest) {
-    char buff[sizeof(MySerializable)];
-    MySerializable ms;
-
-    Os::InterruptLock intLock;
-    Os::IntervalTimer timer;
-
-    intLock.lock();
-    timer.start();
-
-    I32 iterations = 1000000;
-    for (I32 iter = 0; iter < iterations; iter++) {
-        memcpy(buff, reinterpret_cast<void*>(&ms), sizeof(ms));
-        memcpy(reinterpret_cast<void*>(&ms), buff, sizeof(buff));
-    }
-
-    timer.stop();
-    intLock.unLock();
-
-    printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
-}
 
 void printSizes() {
     printf("Sizeof TestStruct: %lu\n", sizeof(TestStruct));
