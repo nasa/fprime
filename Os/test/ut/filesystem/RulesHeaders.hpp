@@ -54,7 +54,7 @@ struct Tester {
         void add_file(std::string name, std::string contents) {
             MockFile file = MockFile(path + "/" + name, contents);
             files.push_back(file);
-            m_test_files.push_back(file.path);
+            Tester::m_test_files.push_back(file);
             Os::File f;
             f.open(file.path.c_str(), Os::File::OPEN_CREATE);
             FwSignedSizeType bytesRead = contents.size();
@@ -64,86 +64,103 @@ struct Tester {
         void add_directory(std::string name) {
             MockDirectory dir = MockDirectory(path + "/" + name);
             directories.push_back(dir);
-            m_test_dirs.push_back(dir.path);
+            Tester::m_test_dirs.push_back(dir);
             Os::Directory d;
             d.open(dir.path.c_str(), Os::Directory::OpenMode::CREATE);
             d.close();
         }
     };
-    // struct FileSystemTestNode {
-    //     std::string path;
-    //     bool is_directory;
-    //     std::vector<FileSystemTestNode> children;
-    //     FileSystemTestNode(std::string path, bool is_directory) : path(path), is_directory(is_directory) {}
-    //     void add_child_file(std::string name) {
-    //         FileSystemTestNode child = FileSystemTestNode(path + "/" + name, false);
-    //         children.push_back(child);
-    //         Os::FileSystem::touch((child.path).c_str());
-    //     }
-    //     void add_child_dir(std::string name) {
-    //         FileSystemTestNode child = FileSystemTestNode(path + "/" + name, true);
-    //         children.push_back(child);
-    //         Os::FileSystem::createDirectory((child.path).c_str());
-    //     }
-    //     void recurse_remove() {
-    //         for (auto child : children) {
-    //             child.recurse_remove();
-    //         }
-    //         if (is_directory) {
-    //             Os::FileSystem::removeDirectory(path.c_str());
-    //         } else {
-    //             Os::FileSystem::removeFile(path.c_str());
-    //         }
-    //     }
-    //     std::string get_random_file_child () {
-    //         return children[STest::Pick::lowerUpper(0, children.size() - 1)].path;
-    //     } // TODO: we need to figure out how to retrieve either a file or a directory, on demand
-    //     // std::string get_random_file_child() {
-    //     //     std::vector<FileSystemTestNode> filtered_children;
-    //     //     std::copy_if(children.begin(), children.end(), std::back_inserter(filtered_children), [](const FileSystemTestNode& child) {
-    //     //         return !child.is_directory;
-    //     //     });
-    //     //     if (filtered_children.empty()) {
-    //     //         throw std::runtime_error("No file children available");
-    //     //     }
-    //     //     return filtered_children[STest::Pick::lowerUpper(0, filtered_children.size() - 1)].path;
-    //     // }
-    // }; //!< Mock representation of a filesystem node
 
-    static MockDirectory m_testdir_root;
-    // FileSystemTestNode m_testdir_root = FileSystemTestNode("filesystem_test_directory", true);
 
+    static FwIndexType m_counter;
     // TODO: rename to s_* for static
-    static std::vector<std::string> m_test_dirs;
-    static std::vector<std::string> m_test_files;
+    static MockDirectory m_testdir_root;
+    static std::vector<MockDirectory> m_test_dirs;
+    static std::vector<MockFile> m_test_files;
 
+    static std::string get_new_filename() {
+        return "test_file_" + std::to_string(m_counter++);
+    }
+    static std::string get_new_dirname() {
+        return "test_dir_" + std::to_string(m_counter++);
+    }
 
-    static std::string get_random_file() {
+    static MockFile get_random_file() {
         return m_test_files[STest::Pick::lowerUpper(0, m_test_files.size() - 1)];
     }
-    static std::string get_random_directory() {
+    static MockDirectory get_random_directory() {
         return m_test_dirs[STest::Pick::lowerUpper(0, m_test_dirs.size() - 1)];
     }
-    //! \brief Add file to tracking list, to be removed in teardown
-    static void track_file_for_cleanup(std::string filename) {
-        m_test_files.push_back(filename);
+
+    static void touch_file(std::string path) {
+        m_test_files.push_back(MockFile(path, ""));
     }
-    //! \brief Add directory to tracking list, to be removed in teardown
-    static void track_directory_for_cleanup(std::string directory) {
-        m_test_dirs.push_back(directory);
+    static void create_directory(std::string path) {
+        m_test_dirs.push_back(MockDirectory(path));
     }
-    static void add_file(std::string path) {
-        m_test_files.push_back(path);
-        Os::File file;
-        file.open(path.c_str(), Os::File::OPEN_CREATE);
-        file.close();
+    static void move_file(std::string source, std::string dest) {
+        for (MockFile& file : m_test_files) {
+            if (file.path == source) {
+                file.path = dest;
+                return;
+            }
+        }
     }
-    static void add_directory(std::string path) {
-        m_test_dirs.push_back(path);
-        Os::Directory dir;
-        dir.open(path.c_str(), Os::Directory::OpenMode::CREATE);
-        dir.close();
+    static void copy_file(std::string source, std::string dest) {
+        for (MockFile& file : m_test_files) {
+            if (file.path == source) {
+                m_test_files.push_back(MockFile(dest, file.contents));
+                return;
+            }
+        }
     }
+    static void append_file(std::string source, std::string dest, bool createMissingDest) {
+        for (MockFile& source_file : m_test_files) {
+            if (source_file.path == source) {
+                for (MockFile& dest_file : m_test_files) {
+                    if (dest_file.path == dest) {
+                        dest_file.contents += source_file.contents;
+                        return;
+                    }
+                }
+                if (createMissingDest) {
+                    m_test_files.push_back(MockFile(dest, source_file.contents));
+                    return;
+                }
+            }
+        }
+        std::cout << "Failed to append file: source=" << source << ", dest=" << dest << std::endl;
+    }
+    static void remove_file(std::string path) {
+        for (auto it = m_test_files.begin(); it != m_test_files.end(); ++it) {
+            if (it->path == path) {
+                m_test_files.erase(it);
+                return;
+            }
+        }
+    }
+
+
+    // //! \brief Add file to tracking list, to be removed in teardown
+    // static void track_file_for_cleanup(std::string filename) {
+    //     m_test_files.push_back(filename);
+    // }
+    // //! \brief Add directory to tracking list, to be removed in teardown
+    // static void track_directory_for_cleanup(std::string directory) {
+    //     m_test_dirs.push_back(directory);
+    // }
+    // static void add_file(std::string path) {
+    //     m_test_files.push_back(path);
+    //     Os::File file;
+    //     file.open(path.c_str(), Os::File::OPEN_CREATE);
+    //     file.close();
+    // }
+    // static void add_directory(std::string path) {
+    //     m_test_dirs.push_back(path);
+    //     Os::Directory dir;
+    //     dir.open(path.c_str(), Os::Directory::OpenMode::CREATE);
+    //     dir.close();
+    // }
 
 // Do NOT alter, adds rules to Tester as inner classes
 #include "FileSystemRules.hpp"

@@ -8,8 +8,9 @@
 
 
 // Initialize static members
-std::vector<std::string> Os::Test::FileSystem::Tester::m_test_dirs;
-std::vector<std::string> Os::Test::FileSystem::Tester::m_test_files;
+std::vector<Os::Test::FileSystem::Tester::MockDirectory> Os::Test::FileSystem::Tester::m_test_dirs;
+std::vector<Os::Test::FileSystem::Tester::MockFile> Os::Test::FileSystem::Tester::m_test_files;
+FwIndexType Os::Test::FileSystem::Tester::m_counter = 0;
 Os::Test::FileSystem::Tester::MockDirectory Os::Test::FileSystem::Tester::m_testdir_root("filesystem_test_directory");
 
 std::unique_ptr<Os::Test::FileSystem::Tester> get_tester_implementation() {
@@ -20,42 +21,23 @@ Functionality::Functionality() : tester(get_tester_implementation()) {}
 
 // TODO: complete SetUp
 void Functionality::SetUp() {
+    // Reset static variables
+    tester->m_test_files.clear();
+    tester->m_test_dirs.clear();
     tester->m_testdir_root = Os::Test::FileSystem::Tester::MockDirectory("filesystem_test_directory");
     Os::FileSystem::createDirectory("filesystem_test_directory");
+    tester->m_test_dirs.push_back(tester->m_testdir_root);
+
     tester->m_testdir_root.add_file("test_file1", "abc");
     tester->m_testdir_root.add_file("test_file2", "xyz");
     tester->m_testdir_root.add_directory("sub_dir1");
     tester->m_testdir_root.directories[0].add_file("test_file3", "123");
     tester->m_testdir_root.add_directory("sub_dir2");
 
-    // tester->m_test_dirs.push_back("filesystem_test_dir");
-    // tester->m_test_dirs.push_back("filesystem_test_dir/sub_dir");
-    // tester->m_test_files.push_back("filesystem_test_dir/test_file1");
-    // tester->m_test_files.push_back("filesystem_test_dir/sub_dir/test_file2");
+    tester->m_counter = 4;
 
-    // Create directory
-    // tester->m_testdir_root = Os::Test::FileSystem::Tester::FileSystemTestNode("filesystem_test_dir", true);
-    // Os::Directory dir;
-    // dir.open(tester->m_test_dirs[0].c_str(), Os::Directory::OpenMode::CREATE);
-    // dir.close();
-    // dir.open(tester->m_test_dirs[1].c_str(), Os::Directory::OpenMode::CREATE);
-    // dir.close();
 
-    // FwSignedSizeType size = 3;
-    // U8 buffer1[3] = {'a', 'b', 'c'};
-    // U8 buffer2[3] = {'x', 'y', 'z'};
-
-    // Os::File file;
-    // file.open(tester->m_test_files[0].c_str(), Os::File::OPEN_WRITE);
-    // file.write(buffer1, size);
-    // file.close();
-    // file.open(tester->m_test_files[1].c_str(), Os::File::OPEN_WRITE);
-    // file.write(buffer2, size);
-    // file.close();
-
-    // tester->m_testdir_root.add_child_file("filesystem_test_file");
-
-    std::cout << "Setup complete" << std::endl;
+    // std::cout << "Setup complete" << std::endl;
 
 }
 
@@ -67,14 +49,18 @@ void Functionality::TearDown() {
     // Os::File file;
 
     for (auto filename : tester->m_test_files) {
-        Os::FileSystem::removeFile(filename.c_str());
+        Os::FileSystem::removeFile(filename.path.c_str());
+        // std::cout << "Removed file: " << filename.path << std::endl;
     }
     for (auto it = tester->m_test_dirs.rbegin(); it != tester->m_test_dirs.rend(); ++it) {
-        Os::FileSystem::removeDirectory(it->c_str());
+        Os::FileSystem::removeDirectory(it->path.c_str());
+        // std::cout << "Removed directory: " << it->path << std::endl;
     }
 
+    // tester->m_testdir_root
+
     // tester->m_testdir_root.recurse_remove();
-    // std::cout << "Tear down complete" << std::endl;
+    std::cout << "Tear down complete" << std::endl;
 }
 
 // ----------------------------------------------------------------------
@@ -127,11 +113,73 @@ TEST_F(Functionality, CopyFile) {
     move_rule.apply(*tester);
 }
 
+// AppendFile 
+TEST_F(Functionality, AppendFile) {
+    Os::Test::FileSystem::Tester::AppendFile append_rule;
+    append_rule.apply(*tester);
+}
+
+// GetFileSize 
+TEST_F(Functionality, GetFileSize) {
+    Os::Test::FileSystem::Tester::GetFileSize free_space_rule;
+    free_space_rule.apply(*tester);
+}
+
 // GetFreeSpace 
 TEST_F(Functionality, GetFreeSpace) {
     Os::Test::FileSystem::Tester::GetFreeSpace free_space_rule;
     free_space_rule.apply(*tester);
 }
-// Change working directory and test that file exists within it
 
+// Randomized testing
+TEST_F(Functionality, RandomizedTesting) {
+    // Enumerate all rules and construct an instance of each
+    
+    Os::Test::FileSystem::Tester::DirectoryExists directory_exists_rule;
+    Os::Test::FileSystem::Tester::FileExists fileexists_rule;
+    Os::Test::FileSystem::Tester::PathNotExists pathnotexists_rule;
+    Os::Test::FileSystem::Tester::RemoveFile removefile_rule;
+    Os::Test::FileSystem::Tester::RemoveDirectory remove_directory_rule;
+    Os::Test::FileSystem::Tester::TouchFile touchfile_rule;
+    Os::Test::FileSystem::Tester::CreateDirectory create_directory_rule;
+    Os::Test::FileSystem::Tester::MoveFile movefile_rule;
+    Os::Test::FileSystem::Tester::CopyFile copyfile_rule;
+    Os::Test::FileSystem::Tester::AppendFile append_rule;
+    Os::Test::FileSystem::Tester::GetFileSize getfilesize_rule;
+    Os::Test::FileSystem::Tester::GetFreeSpace getfreespace_rule;
+
+    // Place these rules into a list of rules
+    STest::Rule<Os::Test::FileSystem::Tester>* rules[] = {
+            &directory_exists_rule,
+            &fileexists_rule,
+            &pathnotexists_rule,
+            &removefile_rule,
+            &remove_directory_rule,
+            &touchfile_rule,
+            &create_directory_rule,
+            &movefile_rule,
+            &copyfile_rule,
+            &append_rule,
+            &getfilesize_rule,
+            &getfreespace_rule
+    };
+
+    // Take the rules and place them into a random scenario
+    STest::RandomScenario<Os::Test::FileSystem::Tester> random(
+            "Random Rules",
+            rules,
+            FW_NUM_ARRAY_ELEMENTS(rules)
+    );
+
+    // Create a bounded scenario wrapping the random scenario
+    STest::BoundedScenario<Os::Test::FileSystem::Tester> bounded(
+            "Bounded Random Rules Scenario",
+            random,
+            1000
+    );
+    // Run!
+    const U32 numSteps = bounded.run(*tester);
+    printf("Ran %u steps.\n", numSteps);
+
+}
 
