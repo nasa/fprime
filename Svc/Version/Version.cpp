@@ -175,7 +175,7 @@ void Version ::libraryVersion_tlm() {
     }
 }
 
-// Send all events and tlm (if versbosity is enabled) for custom versions
+// Send all events and tlm (if verbosity is enabled) for custom versions
 void Version ::customVersion_tlm_all() {
     for (U8 i = 0; (m_enable == true) && (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS);
          i++) {
@@ -183,7 +183,7 @@ void Version ::customVersion_tlm_all() {
     }
 }
 
-// Send events and tlm (if versbosity is enabled) for custom versions
+// Send events and tlm (if verbosity is enabled) for custom versions
 void Version ::customVersion_tlm(VersionSlot custom_slot) {
     // Process custom version TLM only if verbosity is enabled and there are any valid writes to it;
     //  it doesn't necessarily have to be consecutive
