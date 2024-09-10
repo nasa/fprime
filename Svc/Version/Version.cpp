@@ -183,49 +183,51 @@ void Version ::customVersion_tlm_all() {
 void Version ::customVersion_tlm(VersionSlot custom_slot) {
     // Process custom version TLM only if verbosity is enabled and there are any valid writes to it;
     //  it doesn't necessarily have to be consecutive
-    if ((this->verId_db[custom_slot].getversion_value() != "no_ver") && m_enable == true &&
+    if ((this->verId_db[custom_slot].getversion_value() != "no_ver") && 
         (this->m_num_custom_elements > 0)) {  // Write TLM for valid writes
 
-        // Emit Events/TLM on library versions
+        // Emit Events/TLM on custom versions
         this->log_ACTIVITY_LO_CustomVersions(this->verId_db[custom_slot].getversion_enum(),
                                              this->verId_db[custom_slot].getversion_value());
 
+        if (m_enable == true) { //Send TLM only if verbosity is enabled
         // Write to TLM
-        switch (custom_slot) {
-            case VER_SLOT_00:
-                this->tlmWrite_CustomVersion01(verId_db[custom_slot]);
-                break;
-            case VER_SLOT_01:
-                this->tlmWrite_CustomVersion02(verId_db[custom_slot]);
-                break;
-            case VER_SLOT_02:
-                this->tlmWrite_CustomVersion03(verId_db[custom_slot]);
-                break;
-            case VER_SLOT_03:
-                this->tlmWrite_CustomVersion04(verId_db[custom_slot]);
-                break;
-            case VER_SLOT_04:
-                this->tlmWrite_CustomVersion05(verId_db[custom_slot]);
-                break;
-            case VER_SLOT_05:
-                this->tlmWrite_CustomVersion06(verId_db[custom_slot]);
-                break;
-            case VER_SLOT_06:
-                this->tlmWrite_CustomVersion07(verId_db[custom_slot]);
-                break;
-            case VER_SLOT_07:
-                this->tlmWrite_CustomVersion08(verId_db[custom_slot]);
-                break;
-            case VER_SLOT_08:
-                this->tlmWrite_CustomVersion09(verId_db[custom_slot]);
-                break;
-            case VER_SLOT_09:
-                this->tlmWrite_CustomVersion10(verId_db[custom_slot]);
-                break;
-            default:
-                // There are only 10 custom slots available
-                FW_ASSERT(0, custom_slot);
-                break;
+            switch (custom_slot) {
+                case VER_SLOT_00:
+                    this->tlmWrite_CustomVersion01(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_01:
+                    this->tlmWrite_CustomVersion02(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_02:
+                    this->tlmWrite_CustomVersion03(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_03:
+                    this->tlmWrite_CustomVersion04(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_04:
+                    this->tlmWrite_CustomVersion05(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_05:
+                    this->tlmWrite_CustomVersion06(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_06:
+                    this->tlmWrite_CustomVersion07(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_07:
+                    this->tlmWrite_CustomVersion08(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_08:
+                    this->tlmWrite_CustomVersion09(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_09:
+                    this->tlmWrite_CustomVersion10(verId_db[custom_slot]);
+                    break;
+                default:
+                    // There are only 10 custom slots available
+                    FW_ASSERT(0, custom_slot);
+                    break;
+            }
         }
     }
 }
