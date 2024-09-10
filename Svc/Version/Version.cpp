@@ -112,7 +112,7 @@ void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionT
 // ----------------------------------------------------------------------
 // implementations for internal functions
 // ----------------------------------------------------------------------
-// functions to log tlm on versions
+// Send both events and tlm for framework version
 void Version ::fwVersion_tlm() {
     Fw::LogStringArg fw_event = (Project::Version::FRAMEWORK_VERSION);
     this->log_ACTIVITY_LO_FrameworkVersion(fw_event);
@@ -120,6 +120,7 @@ void Version ::fwVersion_tlm() {
     this->tlmWrite_FrameworkVersion(fw_tlm);
 }
 
+// Send both events and tlm for project version
 void Version ::projectVersion_tlm() {
     Fw::LogStringArg proj_event = Project::Version::PROJECT_VERSION;
     this->log_ACTIVITY_LO_ProjectVersion(proj_event);
@@ -127,6 +128,7 @@ void Version ::projectVersion_tlm() {
     this->tlmWrite_ProjectVersion(proj_tlm);
 }
 
+// Send both events and tlm for library versions
 void Version ::libraryVersion_tlm() {
 
     // Process libraries array
@@ -173,6 +175,7 @@ void Version ::libraryVersion_tlm() {
     }
 }
 
+// Send all events and tlm (if versbosity is enabled) for custom versions
 void Version ::customVersion_tlm_all() {
     for (U8 i = 0; (m_enable == true) && (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS);
          i++) {
@@ -180,6 +183,7 @@ void Version ::customVersion_tlm_all() {
     }
 }
 
+// Send events and tlm (if versbosity is enabled) for custom versions
 void Version ::customVersion_tlm(VersionSlot custom_slot) {
     // Process custom version TLM only if verbosity is enabled and there are any valid writes to it;
     //  it doesn't necessarily have to be consecutive
