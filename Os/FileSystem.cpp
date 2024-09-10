@@ -220,9 +220,9 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
     // Set loop limit
     const FwSignedSizeType copyLoopLimit = (size / FILE_SYSTEM_CHUNK_SIZE) + 2;
 
-    FwSignedSizeType loopCounter = 0;
     FwSignedSizeType chunkSize;
-    while (loopCounter < copyLoopLimit) {
+    // REVIEW NOTE: implementation was changed from while to for loop
+    for (FwIndexType i = 0; i < copyLoopLimit; i++) {
         chunkSize = FILE_SYSTEM_CHUNK_SIZE;
         file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::NO_WAIT);
         if (file_status != File::OP_OK) {
@@ -238,9 +238,7 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
         if (file_status != File::OP_OK) {
             return FileSystem::handleFileError(file_status);
         }
-        loopCounter++;
     }
-    FW_ASSERT(loopCounter < copyLoopLimit);
 
     return FileSystem::OP_OK;
 }  // end copyFileData
