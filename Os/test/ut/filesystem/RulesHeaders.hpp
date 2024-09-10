@@ -84,12 +84,14 @@ struct Tester {
     static std::string get_new_dirname() {
         return "test_dir_" + std::to_string(m_counter++);
     }
-
     static MockFile get_random_file() {
         return m_test_files[STest::Pick::lowerUpper(0, m_test_files.size() - 1)];
     }
     static MockDirectory get_random_directory() {
         return m_test_dirs[STest::Pick::lowerUpper(0, m_test_dirs.size() - 1)];
+    }
+    static std::string get_random_new_filepath() {
+        return get_random_directory().path + "/" + get_new_filename()
     }
 
     static void touch_file(std::string path) {

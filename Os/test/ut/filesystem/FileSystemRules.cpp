@@ -83,7 +83,7 @@ bool Os::Test::FileSystem::Tester::TouchFile::precondition(const Os::Test::FileS
 }
 
 void Os::Test::FileSystem::Tester::TouchFile::action(Os::Test::FileSystem::Tester &state) {
-    std::string new_filename = state.get_random_directory().path + "/" + state.get_new_filename();
+    std::string new_filename = state.get_random_new_filepath();
     Os::FileSystem::Status status;
     status = Os::FileSystem::getSingleton().touch(new_filename.c_str());
     state.touch_file(new_filename);
@@ -147,7 +147,7 @@ bool Os::Test::FileSystem::Tester::MoveFile::precondition(const Os::Test::FileSy
 
 void Os::Test::FileSystem::Tester::MoveFile::action(Os::Test::FileSystem::Tester &state) {
     std::string source = state.get_random_file().path;
-    std::string dest = source + "_moved";
+    std::string dest = state.get_random_new_filepath();
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source.c_str()));
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dest.c_str()));
     Os::FileSystem::Status status;
@@ -171,8 +171,8 @@ bool Os::Test::FileSystem::Tester::CopyFile::precondition(const Os::Test::FileSy
 void Os::Test::FileSystem::Tester::CopyFile::action(Os::Test::FileSystem::Tester &state) {
     Os::FileSystem::Status status;
 
-    std::string source = Os::Test::FileSystem::Tester::get_random_file().path;
-    std::string dest = Os::Test::FileSystem::Tester::get_random_directory().path + "/" + state.get_new_filename();
+    std::string source = state.get_random_file().path;
+    std::string dest = state.get_random_new_filepath();
 
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source.c_str()));
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dest.c_str()));
@@ -210,7 +210,7 @@ void Os::Test::FileSystem::Tester::AppendFile::action(Os::Test::FileSystem::Test
     // TODO: AH! there's an issue when source and dest are the same because of appendFile implementation
     // workaround is to not allow source and dest to be the same - should it be fixed?
     if (source == dest) {
-        dest = state.get_random_directory().path + "/" + state.get_new_filename();
+        dest = state.get_random_new_filepath();
         createMissingDest = true;
     } else {
         ASSERT_TRUE(Os::FileSystem::getSingleton().exists(dest.c_str()));

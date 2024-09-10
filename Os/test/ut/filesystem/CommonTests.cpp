@@ -35,31 +35,16 @@ void Functionality::SetUp() {
     tester->m_testdir_root.add_directory("sub_dir2");
 
     tester->m_counter = 4;
-
-
-    // std::cout << "Setup complete" << std::endl;
-
 }
 
 void Functionality::TearDown() {
     // TODO: delete all files and directories without relying on Os::FileSystem
-    // Os::FileSystem::removeFile("filesystem_test_directory/filesystem_test_file");
-    // Os::FileSystem::removeDirectory("filesystem_test_directory");
-    // Os::Directory dir;
-    // Os::File file;
-
     for (auto filename : tester->m_test_files) {
         Os::FileSystem::removeFile(filename.path.c_str());
-        // std::cout << "Removed file: " << filename.path << std::endl;
     }
     for (auto it = tester->m_test_dirs.rbegin(); it != tester->m_test_dirs.rend(); ++it) {
         Os::FileSystem::removeDirectory(it->path.c_str());
-        // std::cout << "Removed directory: " << it->path << std::endl;
     }
-
-    // tester->m_testdir_root
-
-    // tester->m_testdir_root.recurse_remove();
     std::cout << "Tear down complete" << std::endl;
 }
 

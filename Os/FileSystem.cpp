@@ -222,6 +222,7 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
 
     FwSignedSizeType chunkSize;
     // REVIEW NOTE: implementation was changed from while to for loop
+    // REVIEW NOTE 2: should assert source and destination are not the same file?
     for (FwIndexType i = 0; i < copyLoopLimit; i++) {
         chunkSize = FILE_SYSTEM_CHUNK_SIZE;
         file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::NO_WAIT);
