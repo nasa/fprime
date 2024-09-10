@@ -21,9 +21,6 @@ Functionality::Functionality() : tester(get_tester_implementation()) {}
 
 // TODO: complete SetUp
 void Functionality::SetUp() {
-    // Reset static variables
-    tester->m_test_files.clear();
-    tester->m_test_dirs.clear();
     tester->m_testdir_root = Os::Test::FileSystem::Tester::MockDirectory("filesystem_test_directory");
     Os::FileSystem::createDirectory("filesystem_test_directory");
     tester->m_test_dirs.push_back(tester->m_testdir_root);
@@ -45,6 +42,9 @@ void Functionality::TearDown() {
     for (auto it = tester->m_test_dirs.rbegin(); it != tester->m_test_dirs.rend(); ++it) {
         Os::FileSystem::removeDirectory(it->path.c_str());
     }
+    // Reset static variables
+    tester->m_test_files.clear();
+    tester->m_test_dirs.clear();
     std::cout << "Tear down complete" << std::endl;
 }
 
