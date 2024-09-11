@@ -187,12 +187,12 @@ void ComQueueTester ::testPrioritySend() {
     component.cleanup();
 }
 
-void ComQueueTester::testQueueOverflow(){
+void ComQueueTester::testExternalQueueOverflow() {
     ComQueue::QueueConfigurationTable configurationTable;
     ComQueueDepth expectedComDepth;
     BuffQueueDepth expectedBuffDepth;
 
-    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++){
+    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
         configurationTable.entries[i].priority = i;
         configurationTable.entries[i].depth = 2;
 
@@ -209,7 +209,7 @@ void ComQueueTester::testQueueOverflow(){
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::Buffer buffer(&data[0], sizeof(data));
 
-    for(NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
+    for (NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
         QueueType overflow_type;
         NATIVE_INT_TYPE portNum;
         // queue[portNum].depth + 2 to deliberately cause overflow and check throttle of exactly 1

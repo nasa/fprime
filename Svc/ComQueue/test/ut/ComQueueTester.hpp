@@ -73,7 +73,7 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testPrioritySend();
 
-    void testQueueOverflow();
+    void testExternalQueueOverflow();
 
     void testReadyFirst();
 
