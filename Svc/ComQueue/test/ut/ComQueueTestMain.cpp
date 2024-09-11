@@ -24,6 +24,11 @@ TEST(Nominal, ExternalQueueOverflow) {
     tester.testExternalQueueOverflow();
 }
 
+TEST(Nominal, InternalQueueOverflow) {
+    Svc::ComQueueTester tester;
+    tester.testInternalQueueOverflow();
+}
+
 TEST(Nominal, ReadyFirst) {
     Svc::ComQueueTester tester;
     tester.testReadyFirst();

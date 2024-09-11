@@ -259,6 +259,37 @@ void ComQueueTester::testExternalQueueOverflow() {
     component.cleanup();
 }
 
+void ComQueueTester::testInternalQueueOverflow() {
+    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    Fw::Buffer buffer(data, sizeof(data));
+
+    const NATIVE_INT_TYPE queueNum = ComQueue::COM_PORT_COUNT;
+    const NATIVE_INT_TYPE msgCountMax = this->component.m_queue.getQueueSize();
+    QueueType overflow_type;
+    NATIVE_INT_TYPE portNum;
+
+    // fill the queue
+    for (NATIVE_INT_TYPE msgCount = 0; msgCount < msgCountMax; msgCount++) {
+        sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
+        ASSERT_EQ(overflow_type, QueueType::BUFFER_QUEUE);
+    }
+
+    // send one more to overflow the queue
+    sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
+
+    ASSERT_from_deallocate_SIZE(1);
+    ASSERT_from_deallocate(0, buffer);
+
+    // send another
+    sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
+
+    ASSERT_from_deallocate_SIZE(2);
+    ASSERT_from_deallocate(0, buffer);
+    ASSERT_from_deallocate(1, buffer);
+
+    component.cleanup();
+}
+
 void ComQueueTester ::testReadyFirst() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));

@@ -75,6 +75,8 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testExternalQueueOverflow();
 
+    void testInternalQueueOverflow();
+
     void testReadyFirst();
 
   private:
