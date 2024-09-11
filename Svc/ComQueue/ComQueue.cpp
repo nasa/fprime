@@ -190,6 +190,7 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
 // ----------------------------------------------------------------------
 
 void ComQueue::buffQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
     this->deallocate_out(portNum, fwBuffer);
 }
 
