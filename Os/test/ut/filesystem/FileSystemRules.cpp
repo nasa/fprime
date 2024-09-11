@@ -233,7 +233,7 @@ bool Os::Test::FileSystem::Tester::GetFileSize::precondition(const Os::Test::Fil
 }
 
 void Os::Test::FileSystem::Tester::GetFileSize::action(Os::Test::FileSystem::Tester &state) {
-    MockFile file = state.get_random_file();
+    FileTracker file = state.get_random_file();
     Os::FileSystem::Status status;
     FwSignedSizeType size;
     status = Os::FileSystem::getSingleton().getFileSize(file.path.c_str(), size);
@@ -274,7 +274,7 @@ bool Os::Test::FileSystem::Tester::ChangeWorkingDirectory::precondition(const Os
 
 void Os::Test::FileSystem::Tester::ChangeWorkingDirectory::action(Os::Test::FileSystem::Tester &state) {
     Os::FileSystem::Status status;
-    std::string other_dir = get_random_directory().path;
+    std::string other_dir = state.get_random_directory().path;
     status = Os::FileSystem::getSingleton().changeWorkingDirectory(other_dir.c_str());
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to change working directory";
 }

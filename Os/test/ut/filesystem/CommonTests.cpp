@@ -7,11 +7,6 @@
 #include <STest/Pick/Pick.hpp>
 
 
-// Initialize static members
-std::vector<Os::Test::FileSystem::Tester::MockDirectory> Os::Test::FileSystem::Tester::m_test_dirs;
-std::vector<Os::Test::FileSystem::Tester::MockFile> Os::Test::FileSystem::Tester::m_test_files;
-FwIndexType Os::Test::FileSystem::Tester::m_counter = 0;
-Os::Test::FileSystem::Tester::MockDirectory Os::Test::FileSystem::Tester::m_testdir_root("filesystem_test_directory");
 
 std::unique_ptr<Os::Test::FileSystem::Tester> get_tester_implementation() {
     return std::unique_ptr<Os::Test::FileSystem::Tester>(new Os::Test::FileSystem::Tester());
@@ -19,17 +14,33 @@ std::unique_ptr<Os::Test::FileSystem::Tester> get_tester_implementation() {
 
 Functionality::Functionality() : tester(get_tester_implementation()) {}
 
-// TODO: complete SetUp
 void Functionality::SetUp() {
-    tester->m_testdir_root = Os::Test::FileSystem::Tester::MockDirectory("filesystem_test_directory");
-    Os::FileSystem::createDirectory("filesystem_test_directory");
-    tester->m_test_dirs.push_back(tester->m_testdir_root);
+    using Os::Test::FileSystem::Tester;
 
-    tester->m_testdir_root.add_file("test_file1", "abc");
-    tester->m_testdir_root.add_file("test_file2", "xyz");
-    tester->m_testdir_root.add_directory("sub_dir1");
-    tester->m_testdir_root.directories[0].add_file("test_file3", "123");
-    tester->m_testdir_root.add_directory("sub_dir2");
+    std::vector<Os::Test::FileSystem::DirectoryTracker> directories = {
+        {"filesystem_test_directory"},
+        {"filesystem_test_directory/sub_dir1"},
+        {"filesystem_test_directory/sub_dir2"}
+    };
+
+    std::vector<Os::Test::FileSystem::FileTracker> files = {
+        {"filesystem_test_directory/test_file0", "123"},
+        {"filesystem_test_directory/test_file1", "abc"},
+        {"filesystem_test_directory/test_file2", "xyz"},
+        {"filesystem_test_directory/sub_dir1/test_file3", "789"}
+    };
+
+    // Create and write directories
+    for (Os::Test::FileSystem::DirectoryTracker& dir : directories) {
+        dir.write_on_disk();
+        tester->m_test_dirs.push_back(dir);
+    }
+
+    // Create and write files
+    for (Os::Test::FileSystem::FileTracker& file : files) {
+        file.write_on_disk();
+        tester->m_test_files.push_back(file);
+    }
 
     tester->m_counter = 4;
 }
@@ -42,9 +53,6 @@ void Functionality::TearDown() {
     for (auto it = tester->m_test_dirs.rbegin(); it != tester->m_test_dirs.rend(); ++it) {
         Os::FileSystem::removeDirectory(it->path.c_str());
     }
-    // Reset static variables
-    tester->m_test_files.clear();
-    tester->m_test_dirs.clear();
     std::cout << "Tear down complete" << std::endl;
 }
 
@@ -167,4 +175,3 @@ TEST_F(Functionality, RandomizedTesting) {
     printf("Ran %u steps.\n", numSteps);
 
 }
-
