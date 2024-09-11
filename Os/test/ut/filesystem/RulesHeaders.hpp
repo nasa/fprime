@@ -68,13 +68,13 @@ struct Tester {
     // Functions to alter/track the state of the Tester
     // ---------------------------------------------------------------
     void touch_file(std::string path) {
-        m_test_files.push_back(FileTracker(path, ""));
+        this->m_test_files.push_back(FileTracker(path, ""));
     }
     void create_directory(std::string path) {
-        m_test_dirs.push_back(DirectoryTracker(path));
+        this->m_test_dirs.push_back(DirectoryTracker(path));
     }
     void move_file(std::string source, std::string dest) {
-        for (FileTracker& file : m_test_files) {
+        for (FileTracker& file : this->m_test_files) {
             if (file.path == source) {
                 file.path = dest;
                 return;
@@ -82,24 +82,24 @@ struct Tester {
         }
     }
     void copy_file(std::string source, std::string dest) {
-        for (FileTracker& file : m_test_files) {
+        for (FileTracker& file : this->m_test_files) {
             if (file.path == source) {
-                m_test_files.push_back(FileTracker(dest, file.contents));
+                this->m_test_files.push_back(FileTracker(dest, file.contents));
                 return;
             }
         }
     }
     void append_file(std::string source, std::string dest, bool createMissingDest) {
-        for (FileTracker& source_file : m_test_files) {
+        for (FileTracker& source_file : this->m_test_files) {
             if (source_file.path == source) {
-                for (FileTracker& dest_file : m_test_files) {
+                for (FileTracker& dest_file : this->m_test_files) {
                     if (dest_file.path == dest) {
                         dest_file.contents += source_file.contents;
                         return;
                     }
                 }
                 if (createMissingDest) {
-                    m_test_files.push_back(FileTracker(dest, source_file.contents));
+                    this->m_test_files.push_back(FileTracker(dest, source_file.contents));
                     return;
                 }
             }
@@ -107,9 +107,9 @@ struct Tester {
         std::cout << "Failed to append file: source=" << source << ", dest=" << dest << std::endl;
     }
     void remove_file(std::string path) {
-        for (auto it = m_test_files.begin(); it != m_test_files.end(); ++it) {
+        for (auto it = this->m_test_files.begin(); it != this->m_test_files.end(); ++it) {
             if (it->path == path) {
-                m_test_files.erase(it);
+                this->m_test_files.erase(it);
                 return;
             }
         }
@@ -125,10 +125,10 @@ struct Tester {
         return "test_dir_" + std::to_string(m_counter++);
     }
     FileTracker get_random_file() {
-        return m_test_files[STest::Pick::lowerUpper(0, m_test_files.size() - 1)];
+        return this->m_test_files[STest::Pick::lowerUpper(0, this->m_test_files.size() - 1)];
     }
     DirectoryTracker get_random_directory() {
-        return m_test_dirs[STest::Pick::lowerUpper(0, m_test_dirs.size() - 1)];
+        return this->m_test_dirs[STest::Pick::lowerUpper(0, this->m_test_dirs.size() - 1)];
     }
     std::string get_random_new_filepath() {
         return get_random_directory().path + "/" + get_new_filename();

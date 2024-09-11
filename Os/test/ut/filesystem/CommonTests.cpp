@@ -27,6 +27,9 @@ void Functionality::SetUp() {
         {"filesystem_test_directory/test_file0", "123"},
         {"filesystem_test_directory/test_file1", "abc"},
         {"filesystem_test_directory/test_file2", "xyz"},
+        {"filesystem_test_directory/test_file3", "aaaa"},
+        {"filesystem_test_directory/test_file4", "dddd"},
+        {"filesystem_test_directory/test_file5", "sef"},
         {"filesystem_test_directory/sub_dir1/test_file3", "789"}
     };
 
@@ -42,7 +45,7 @@ void Functionality::SetUp() {
         tester->m_test_files.push_back(file);
     }
 
-    tester->m_counter = 4;
+    tester->m_counter = 6;
 }
 
 void Functionality::TearDown() {
@@ -114,8 +117,8 @@ TEST_F(Functionality, AppendFile) {
 
 // GetFileSize 
 TEST_F(Functionality, GetFileSize) {
-    Os::Test::FileSystem::Tester::GetFileSize free_space_rule;
-    free_space_rule.apply(*tester);
+    Os::Test::FileSystem::Tester::GetFileSize get_size_rule;
+    get_size_rule.apply(*tester);
 }
 
 // GetFreeSpace 
@@ -123,6 +126,12 @@ TEST_F(Functionality, GetFreeSpace) {
     Os::Test::FileSystem::Tester::GetFreeSpace free_space_rule;
     free_space_rule.apply(*tester);
 }
+
+// // ChangeWorkingDirectory 
+// TEST_F(Functionality, ChangeWorkingDirectory) {
+//     Os::Test::FileSystem::Tester::ChangeWorkingDirectory change_cwd_rule;
+//     change_cwd_rule.apply(*tester);
+// }
 
 // Randomized testing
 TEST_F(Functionality, RandomizedTesting) {
