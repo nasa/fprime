@@ -126,6 +126,7 @@ namespace Drv {
       Fw::Buffer m_data_buffer2;
       U8 m_data_storage[SEND_DATA_BUFFER_SIZE];
       std::atomic<bool> m_spinner;
+      U32 m_data_size;
 
   };
 

@@ -73,17 +73,23 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::force_recv_timeout(server.m_base_fd, server);
             m_data_buffer.setSize(sizeof(m_data_storage));
             Drv::Test::fill_random_buffer(m_data_buffer);
+            m_data_size = m_data_buffer.getSize();
             Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
             EXPECT_EQ(status, SendStatus::SEND_OK);
             status2 = server.recv(client_fd, buffer, size);
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
-            EXPECT_EQ(size, m_data_buffer.getSize());
+            EXPECT_EQ(size, m_data_size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
             // If receive thread is live, try the other way
             if (recv_thread) {
                 m_spinner = false;
                 m_data_buffer.setSize(sizeof(m_data_storage));
-                server.send(client_fd, m_data_buffer.getData(), m_data_buffer.getSize());
+
+                // save the data size so nothing weird happens
+                m_data_size = m_data_buffer.getSize();
+                status2 = server.send(client_fd, m_data_buffer.getData(), m_data_buffer.getSize());
+                EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
+                from_deallocate_handler(0, m_data_buffer);
                 while (not m_spinner) {}
             }
         }
@@ -166,8 +172,9 @@ void TcpClientTester ::test_advanced_reconnect() {
   {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     // Make sure we can get to unblocking the spinner
-    EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
+    EXPECT_EQ(m_data_size, recvBuffer.getSize()) << "Invalid transmission size";
     Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
+    m_data_buffer.setSize(0);
     m_spinner = true;
     delete[] recvBuffer.getData();
 }

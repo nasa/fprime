@@ -40,7 +40,7 @@ void fill_random_data(U8 *data, U32 size) {
 
 void validate_random_buffer(Fw::Buffer &buffer, U8 *data) {
     validate_random_data(buffer.getData(), data, buffer.getSize());
-    buffer.setSize(0);
+    // buffer.setSize(0);
 }
 
 void fill_random_buffer(Fw::Buffer &buffer) {
