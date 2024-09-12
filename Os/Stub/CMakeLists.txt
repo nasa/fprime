@@ -113,6 +113,8 @@ register_fprime_implementation(Os/Queue Os_Queue_Test_Stub "${CMAKE_CURRENT_LIST
 
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubQueueTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/queue/QueueRules.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/queue/CommonTests.cpp"
 )
 set(UT_MOD_DEPS
         Fw/Time
@@ -121,6 +123,7 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/Queue Os_Queue_Test_Stub)
 register_fprime_ut(StubQueueTest)
+target_include_directories(StubQueueTest PRIVATE "${CMAKE_CURRENT_LIST_DIR}/test/ut")
 
 
 #### Task Stub Testing ####

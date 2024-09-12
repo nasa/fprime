@@ -29,6 +29,7 @@ class QueueInterface {
     //! \brief status returned from the queue send function
     enum Status {
         OP_OK,             //!<  message sent/received okay
+        ALREADY_CREATED,   //!<  creating an already created queue
         EMPTY,             //!<  If non-blocking, all the messages have been drained.
         UNINITIALIZED,     //!<  Queue wasn't initialized successfully
         SIZE_MISMATCH,     //!<  attempted to send or receive with buffer too large, too small
@@ -104,14 +105,14 @@ class QueueInterface {
     //! \brief get number of messages available
     //!
     //! \return number of messages available
-    virtual FwSizeType getMessagesAvailable() = 0;
+    virtual FwSizeType getMessagesAvailable() const = 0;
 
     //! \brief get maximum messages stored at any given time
     //!
     //! Returns the maximum number of messages in this queue at any given time. This is the high-water mark for this
     //! queue.
     //! \return queue message high-water mark
-    virtual FwSizeType getMessageHighWaterMark() = 0;
+    virtual FwSizeType getMessageHighWaterMark() const = 0;
 
     //! \brief provide a pointer to a queue delegate object
     //!
@@ -195,14 +196,14 @@ class Queue final : public QueueInterface {
     //! \brief get number of messages available through delegate
     //!
     //! \return number of messages available
-    FwSizeType getMessagesAvailable() override;
+    FwSizeType getMessagesAvailable() const override;
 
     //! \brief get maximum messages stored at any given time through delegate
     //!
     //! Returns the maximum number of messages in this queue at any given time. This is the high-water mark for
     //! this queue.
     //! \return queue message high-water mark
-    FwSizeType getMessageHighWaterMark() override;
+    FwSizeType getMessageHighWaterMark() const override;
 
     //! \brief send a message to a queue
     //!
@@ -238,7 +239,7 @@ class Queue final : public QueueInterface {
     QueueString m_name;              //!< queue name
     FwSizeType m_depth;              //!< Queue depth
     FwSizeType m_size;               //!< Maximum message size
-    static FwSizeType s_queueCount;  //!< Count of the number of queues
+    static std::atomic<FwSizeType> s_queueCount;  //!< Count of the number of queues
 
 #if FW_QUEUE_REGISTRATION
   public:

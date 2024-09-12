@@ -12,7 +12,16 @@ namespace Test {
 
 StaticData StaticData::data;
 
-InjectableStlQueueHandle::InjectableStlQueueHandle() : m_high_water(0) {};
+InjectableStlQueueHandle::InjectableStlQueueHandle() :
+      // Creates the necessary handle on the heap to keep the handle size small
+      m_storage(*new std::priority_queue<Message, std::deque<Message>, Message::LessMessage>),
+      m_high_water(0),
+      m_max_depth(0) {}
+
+InjectableStlQueueHandle::~InjectableStlQueueHandle() {
+    // Clean-up heap
+    delete &m_storage;
+}
 
 InjectableStlQueue::InjectableStlQueue() {
     StaticData::data.lastCalled = StaticData::LastFn::CONSTRUCT_FN;
@@ -25,10 +34,13 @@ InjectableStlQueue::~InjectableStlQueue() {
 QueueInterface::Status InjectableStlQueue::create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) {
     StaticData::data.lastCalled = StaticData::LastFn::CREATE_FN;
     // This must be the case or this test queue will not work
-    FW_ASSERT(messageSize <= sizeof InjectableStlQueueHandle::Message::data);
+    if (StaticData::data.sendStatus != QueueInterface::Status::OP_OK) {
+        FW_ASSERT(messageSize <= sizeof InjectableStlQueueHandle::Message::data);
+    }
     StaticData::data.name = name;
     StaticData::data.depth = depth;
     StaticData::data.size = messageSize;
+    this->m_handle.m_max_depth = depth;
     return StaticData::data.createStatus;
 }
 
@@ -43,6 +55,8 @@ QueueInterface::Status InjectableStlQueue::send(const U8* buffer, FwSizeType siz
         return StaticData::data.sendStatus;
     } else if (size > sizeof InjectableStlQueueHandle::Message::data) {
         return QueueInterface::Status::SIZE_MISMATCH;
+    } else if (this->m_handle.m_storage.size() >= this->m_handle.m_max_depth) {
+        return QueueInterface::Status::FULL;
     }
 
     InjectableStlQueueHandle::Message message;
@@ -68,6 +82,9 @@ QueueInterface::Status InjectableStlQueue::receive(U8* destination,
         priority = StaticData::data.priority;
         return StaticData::data.receiveStatus;
     }
+    if (this->m_handle.m_storage.empty()) {
+        return Status::EMPTY;
+    }
     InjectableStlQueueHandle::Message message = this->m_handle.m_storage.top();
     // Fail with size miss-match when the destination cannot store message
     if (message.size > capacity) {
@@ -80,7 +97,7 @@ QueueInterface::Status InjectableStlQueue::receive(U8* destination,
     return QueueInterface::Status::OP_OK;
 }
 
-FwSizeType InjectableStlQueue::getMessagesAvailable() {
+FwSizeType InjectableStlQueue::getMessagesAvailable() const {
     StaticData::data.lastCalled = StaticData::LastFn::MESSAGES_FN;
     // Injection detected
     if (StaticData::data.messages != -1) {
@@ -89,7 +106,7 @@ FwSizeType InjectableStlQueue::getMessagesAvailable() {
     return this->m_handle.m_storage.size();
 }
 
-FwSizeType InjectableStlQueue::getMessageHighWaterMark() {
+FwSizeType InjectableStlQueue::getMessageHighWaterMark() const {
     StaticData::data.lastCalled = StaticData::LastFn::HIGH_WATER_FN;
     // Injection detected
     if (StaticData::data.highWaterMark != -1) {

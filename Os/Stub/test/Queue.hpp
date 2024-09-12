@@ -10,7 +10,7 @@ namespace Os {
 namespace Stub {
 namespace Queue {
 namespace Test {
-constexpr FwSizeType STUB_QUEUE_TEST_MAX_SIZE = 1024;
+constexpr FwSizeType STUB_QUEUE_TEST_MESSAGE_MAX_SIZE = 1024;
 
 //! Data that supports the stubbed File implementation.
 //!
@@ -57,20 +57,22 @@ struct StaticData {
 struct InjectableStlQueueHandle : public QueueHandle {
     //! \brief message type
     struct Message {
-        U8 data[STUB_QUEUE_TEST_MAX_SIZE];
-        FwSizeType priority;
+        U8 data[STUB_QUEUE_TEST_MESSAGE_MAX_SIZE];
+        FwQueuePriorityType priority;
         FwSizeType size;
         //! \brief comparison utility for messages
         struct LessMessage {
             bool operator()(const Message& a, const Message& b) {
-                return a.priority < b.priority;
+                return std::greater<FwQueuePriorityType>()(a.priority, b.priority);
             }
         };
     };
     InjectableStlQueueHandle();
+    ~InjectableStlQueueHandle();
 
-    std::priority_queue<Message, std::deque<Message>, Message::LessMessage> m_storage;
+    std::priority_queue<Message, std::deque<Message>, Message::LessMessage>& m_storage;
     FwSizeType m_high_water;
+    FwSizeType m_max_depth;
 };
 
 //! \brief stl-powered queue implementation with injectable statuses
@@ -134,14 +136,14 @@ class InjectableStlQueue : public QueueInterface {
     //! \brief get number of messages available
     //!
     //! \return number of messages available
-    FwSizeType getMessagesAvailable() override;
+    FwSizeType getMessagesAvailable() const override;
 
     //! \brief get maximum messages stored at any given time
     //!
     //! Returns the maximum number of messages in this queue at any given time. This is the high-water mark for this
     //! queue.
     //! \return queue message high-water mark
-    FwSizeType getMessageHighWaterMark() override;
+    FwSizeType getMessageHighWaterMark() const override;
 
     InjectableStlQueueHandle m_handle;
 };

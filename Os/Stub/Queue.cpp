@@ -26,11 +26,11 @@ QueueInterface::Status StubQueue::receive(U8* destination,
     return QueueInterface::Status::UNINITIALIZED;
 }
 
-FwSizeType StubQueue::getMessagesAvailable() {
+FwSizeType StubQueue::getMessagesAvailable() const {
     return 0;
 }
 
-FwSizeType StubQueue::getMessageHighWaterMark() {
+FwSizeType StubQueue::getMessageHighWaterMark() const {
     return 0;
 }
 

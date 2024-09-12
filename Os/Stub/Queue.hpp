@@ -70,14 +70,14 @@ class StubQueue : public QueueInterface {
     //! \brief get number of messages available
     //!
     //! \return number of messages available
-    FwSizeType getMessagesAvailable() override;
+    FwSizeType getMessagesAvailable() const override;
 
     //! \brief get maximum messages stored at any given time
     //!
     //! Returns the maximum number of messages in this queue at any given time. This is the high-water mark for this
     //! queue.
     //! \return queue message high-water mark
-    FwSizeType getMessageHighWaterMark() override;
+    FwSizeType getMessageHighWaterMark() const override;
 
     StubQueueHandle m_handle;
 };
