@@ -15,15 +15,13 @@ std::unique_ptr<Os::Test::FileSystem::Tester> get_tester_implementation() {
 Functionality::Functionality() : tester(get_tester_implementation()) {}
 
 void Functionality::SetUp() {
-    using Os::Test::FileSystem::Tester;
-
-    std::vector<Os::Test::FileSystem::DirectoryTracker> directories = {
+    tester->m_test_dirs = {
         {"filesystem_test_directory"},
         {"filesystem_test_directory/sub_dir1"},
         {"filesystem_test_directory/sub_dir2"}
     };
 
-    std::vector<Os::Test::FileSystem::FileTracker> files = {
+    tester->m_test_files = {
         {"filesystem_test_directory/test_file0", "123"},
         {"filesystem_test_directory/test_file1", "abc"},
         {"filesystem_test_directory/test_file2", "xyz"},
@@ -33,29 +31,11 @@ void Functionality::SetUp() {
         {"filesystem_test_directory/sub_dir1/test_file3", "789"}
     };
 
-    // Create and write directories
-    for (Os::Test::FileSystem::DirectoryTracker& dir : directories) {
-        dir.write_on_disk();
-        tester->m_test_dirs.push_back(dir);
-    }
-
-    // Create and write files
-    for (Os::Test::FileSystem::FileTracker& file : files) {
-        file.write_on_disk();
-        tester->m_test_files.push_back(file);
-    }
-
-    tester->m_counter = 6;
+    tester->intialize_test_state_on_disk();
 }
 
 void Functionality::TearDown() {
-    // TODO: delete all files and directories without relying on Os::FileSystem
-    for (auto filename : tester->m_test_files) {
-        Os::FileSystem::removeFile(filename.path.c_str());
-    }
-    for (auto it = tester->m_test_dirs.rbegin(); it != tester->m_test_dirs.rend(); ++it) {
-        Os::FileSystem::removeDirectory(it->path.c_str());
-    }
+    tester->purge_test_state_from_disk();
     std::cout << "Tear down complete" << std::endl;
 }
 
@@ -177,7 +157,7 @@ TEST_F(Functionality, RandomizedTesting) {
     STest::BoundedScenario<Os::Test::FileSystem::Tester> bounded(
             "Bounded Random Rules Scenario",
             random,
-            1000
+            10000
     );
     // Run!
     const U32 numSteps = bounded.run(*tester);
