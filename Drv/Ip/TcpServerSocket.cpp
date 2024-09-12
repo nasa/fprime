@@ -128,7 +128,10 @@ I32 TcpServerSocket::sendProtocol(NATIVE_INT_TYPE& fd, const U8* const data, con
 }
 
 I32 TcpServerSocket::recvProtocol(NATIVE_INT_TYPE& fd, U8* const data, const U32 size) {
-    return static_cast<I32>(::recv(fd, data, size, SOCKET_IP_RECV_FLAGS));
+    I32 size_buf;
+    // recv will return 0 if the client has done an orderly shutdown
+    size_buf = static_cast<I32>(::recv(fd, data, size, SOCKET_IP_RECV_FLAGS));
+    return size_buf;
 }
 
 }  // namespace Drv

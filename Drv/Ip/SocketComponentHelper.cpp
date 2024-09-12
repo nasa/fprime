@@ -81,7 +81,8 @@ SocketIpStatus SocketComponentHelper::reconnect() {
     // Handle opening
 
     // Open a network connection if it has not already been open
-    if ((not this->isOpened()) and
+    // TODO: improve this message
+    if (this->isStarted() and (not this->isOpened()) and
         ((status = this->open()) != SOCK_SUCCESS)) {
         Fw::Logger::log(
             "[WARNING] Failed to open port with status %d and errno %d\n",
@@ -173,7 +174,8 @@ void SocketComponentHelper::readTask(void* pointer) {
             U8* data = buffer.getData();
             FW_ASSERT(data);
             U32 size = buffer.getSize();
-            self->recv(data, size);
+            // recv blocks, so it may have been a while since its done an isOpened check
+            status = self->recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
                 Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n",
                 static_cast<POINTER_CAST>(status),

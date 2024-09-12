@@ -45,10 +45,6 @@ namespace Drv {
       //!
       ~TcpClientTester();
 
-      bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations);
-
-      bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations);
-
     public:
 
       // ----------------------------------------------------------------------
@@ -105,6 +101,8 @@ namespace Drv {
       // Helper methods
       // ----------------------------------------------------------------------
 
+      bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations);
+
       //! Connect ports
       //!
       void connectPorts();
@@ -126,7 +124,6 @@ namespace Drv {
       Fw::Buffer m_data_buffer2;
       U8 m_data_storage[SEND_DATA_BUFFER_SIZE];
       std::atomic<bool> m_spinner;
-      U32 m_data_size;
 
   };
 
