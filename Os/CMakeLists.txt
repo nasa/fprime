@@ -117,10 +117,15 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 if (BUILD_TESTING)
-    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubMutexTest PosixMutexTest StubDirectoryTest StubFileSystemTest) # add? : StubTaskTest PosixTaskTest
-       if (TARGET "${TEST}")
-           add_dependencies("Os_ut_exe" "${TEST}")
-       endif()
+    foreach (TEST IN ITEMS 
+                StubFileTest PosixFileTest
+                StubMutexTest PosixMutexTest
+                StubDirectoryTest PosixDirectory
+                StubFileSystemTest PosixFileSystemTest
+            ) # add? : StubTaskTest PosixTaskTest
+        if (TARGET "${TEST}")
+            add_dependencies("Os_ut_exe" "${TEST}")
+        endif()
     endforeach()
 endif()
 # Second UT Pthreads
