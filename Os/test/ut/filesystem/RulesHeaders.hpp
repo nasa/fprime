@@ -17,15 +17,22 @@ namespace Os {
 namespace Test {
 namespace FileSystem {
 
-struct FileTracker {
+struct FileSystemNode {
     std::string path;
+    FileSystemNode(std::string path) : path(path) {};
+    bool operator==(const FileSystemNode& other) const {
+        return this->path == other.path;
+    }
+};
+struct FileTracker : FileSystemNode {
+    // std::string path;
     std::string contents;
-    FileTracker(std::string path, std::string contents) : path(path), contents(contents) {};
+    FileTracker(std::string path, std::string contents) : FileSystemNode(path), contents(contents) {};
 }; //!< Representation of a file for tracking state of the filesystem during testing
 
-struct DirectoryTracker {
-    std::string path;
-    DirectoryTracker(std::string path) : path(path) {};
+struct DirectoryTracker : FileSystemNode {
+    // std::string path;
+    DirectoryTracker(std::string path) : FileSystemNode(path) {};
 }; //!< Representation of a directory for tracking state of the filesystem during testing
 
 
@@ -41,9 +48,6 @@ struct Tester {
     // Destructor must be virtual
     virtual ~Tester() = default;
 
-    FwIndexType m_counter; //!< Counter for generating unique file/directory names
-
-
     //! State representation of a section of FileSystem (i.e. a test directory)
     //! This only tracks relative paths, and not hierarchy. This means that all files
     //! and directories that are nested within the root of the test directory are all
@@ -52,9 +56,10 @@ struct Tester {
     std::vector<DirectoryTracker> m_test_dirs;
     std::vector<FileTracker> m_test_files;
 
+    FwIndexType m_counter; //!< Counter for generating unique file/directory names
 
     // ---------------------------------------------------------------
-    // Functions to alter/track the state of the Tester
+    // Functions to manipulate the state of the Tester w.r.t filesystem
     // ---------------------------------------------------------------
     void touch_file(std::string path) {
         this->m_test_files.push_back(FileTracker(path, ""));
@@ -70,20 +75,18 @@ struct Tester {
             }
         }
     }
-    // ------------- By reference instead ----------------
-    void move_file2(FileTracker& source, std::string dest_path) {
+    void move_file(FileTracker& source, std::string dest_path) {
         source.path = dest_path;
     }
-    void copy_file2(FileTracker& source, std::string dest_path) {
+    void copy_file(FileTracker& source, std::string dest_path) {
         FileTracker new_file(dest_path, source.contents);
         this->m_test_files.push_back(new_file);
     }
-    void append_file2(FileTracker& source_file, FileTracker& dest_file, bool createMissingDest) {
+    void append_file(FileTracker& source_file, FileTracker& dest_file, bool createMissingDest) {
         if (createMissingDest) {
             touch_file(dest_file.path);
         }
         dest_file.contents += source_file.contents;
-
     }
 
     // ----------------------------------------------------------------
@@ -106,17 +109,17 @@ struct Tester {
     }
 
     bool validate_contents_on_disk(FileTracker& file) {
-        Os::File disk_file;
-        disk_file.open(file.path.c_str(), Os::File::OPEN_READ);
+        Os::File os_file;
+        os_file.open(file.path.c_str(), Os::File::OPEN_READ);
         FwSignedSizeType size;
-        disk_file.size(size);
+        os_file.size(size);
         if (size == 0) {
-            disk_file.close();
+            os_file.close();
             return file.contents.empty();
         }
         U8 buffer[size];
-        disk_file.read(buffer, size);
-        disk_file.close();
+        os_file.read(buffer, size);
+        os_file.close();
         std::string disk_contents(reinterpret_cast<char*>(buffer), size);
         return disk_contents == file.contents;
     }
@@ -124,7 +127,7 @@ struct Tester {
     // ----------------------------------------------------------------
     // Helpers to write and remove test state from disk
     // ----------------------------------------------------------------
-    void intialize_test_state_on_disk() {
+    void write_test_state_to_disk() {
         Os::File file;
         Os::Directory dir;
         // Create and write directories
@@ -146,6 +149,7 @@ struct Tester {
     void purge_test_state_from_disk() {
         // TODO: delete all files and directories without relying on Os::FileSystem?
         // Is it strictly needed though? Since we'll rely on user-written functions anyways
+        // NOTE: this is why I originally wanted Os::File::remove() and Os::Directory::remove()
         for (auto filename : this->m_test_files) {
             Os::FileSystem::removeFile(filename.path.c_str());
         }

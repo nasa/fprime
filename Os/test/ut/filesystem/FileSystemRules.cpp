@@ -11,42 +11,36 @@
 // Utility functions
 // ------------------------------------------------------------------------------------------------------
 
-bool check_disk_file_contents(std::string path, std::string contents) {
-    Os::File file;
-    file.open(path.c_str(), Os::File::OPEN_READ);
-    if (contents.size() == 0) {
-        FwSignedSizeType bytesRead = 1;
-        U8 buffer[1];
-        file.read(buffer, bytesRead);
-        return bytesRead == 0;
-    } else {
-        U8 buffer[contents.size()];
-        FwSignedSizeType bytesRead = contents.size();
-        file.read(buffer, bytesRead);
-        return memcmp(buffer, contents.c_str(), contents.size()) == 0;
-    }
-}
-
-bool check_files_have_same_content(std::string path1, std::string path2) {
+bool compare_file_contents_on_disk(std::string path1, std::string path2) {
     Os::File file1, file2;
     file1.open(path1.c_str(), Os::File::OPEN_READ);
     file2.open(path2.c_str(), Os::File::OPEN_READ);
-
+    
     const FwSignedSizeType chunk_size = 128;
+
+    FwSignedSizeType file1Size, file2Size;
+    file1.size(file1Size);
+    file2.size(file2Size);
+    if (file1Size != file2Size) {
+        return false;
+    }
+    const FwIndexType loopLimit = file1Size / chunk_size + 2;
+
     U8 buffer1[chunk_size], buffer2[chunk_size];
     FwSignedSizeType bytesRead1 = chunk_size, bytesRead2 = chunk_size;
 
-    while (true) {
+    for (FwIndexType i = 0; i < loopLimit; i++) {
         file1.read(buffer1, bytesRead1);
         file2.read(buffer2, bytesRead2);
         if (bytesRead1 != bytesRead2 || memcmp(buffer1, buffer2, bytesRead1) != 0) {
             return false;
         }
         if (bytesRead1 < chunk_size) {
-            break; // End of file reached
+            return true; // End of file reached
         }
     }
-    return true;
+    // ASSERT_TRUE(false) << "loopLimit reached without returning - should not happen";
+    return false;
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -197,7 +191,7 @@ void Os::Test::FileSystem::Tester::MoveFile::action(Os::Test::FileSystem::Tester
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
     Os::FileSystem::Status status;
     status = Os::FileSystem::getSingleton().moveFile(source_path.c_str(), dest_path.c_str());
-    state.move_file2(file, dest_path);
+    state.move_file(file, dest_path);
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to move file";
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
@@ -226,13 +220,13 @@ void Os::Test::FileSystem::Tester::CopyFile::action(Os::Test::FileSystem::Tester
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
     status = Os::FileSystem::getSingleton().copyFile(source_path.c_str(), dest_path.c_str());
-    state.copy_file2(source, dest_path);
+    state.copy_file(source, dest_path);
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to move file";
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
 
     // Compare contents of source and dest on disk
-    ASSERT_TRUE(check_files_have_same_content(source_path, dest_path));
+    ASSERT_TRUE(compare_file_contents_on_disk(source_path, dest_path));
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -265,10 +259,9 @@ void Os::Test::FileSystem::Tester::AppendFile::action(Os::Test::FileSystem::Test
     }
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
     status = Os::FileSystem::getSingleton().appendFile(source_path.c_str(), dest_path.c_str(), createMissingDest);
-    state.append_file2(source, dest, createMissingDest);
+    state.append_file(source, dest, createMissingDest);
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to append file";
     // Compare contents of dest on disk with expected contents
-    ASSERT_TRUE(check_disk_file_contents(dest_path, dest.contents));
     ASSERT_TRUE(state.validate_contents_on_disk(dest));
 }
 

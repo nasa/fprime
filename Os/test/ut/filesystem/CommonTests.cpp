@@ -31,7 +31,7 @@ void Functionality::SetUp() {
         {"filesystem_test_directory/sub_dir1/test_file3", "789"}
     };
 
-    tester->intialize_test_state_on_disk();
+    tester->write_test_state_to_disk();
 }
 
 void Functionality::TearDown() {

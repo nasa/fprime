@@ -232,7 +232,7 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
 
         if (chunkSize == 0) {
             // file has been successfully copied
-            break;
+            return FileSystem::OP_OK;
         }
 
         file_status = destination.write(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
@@ -241,7 +241,7 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
         }
     }
 
-    return FileSystem::OP_OK;
+    return FileSystem::OTHER_ERROR;
 }  // end copyFileData
 
 }  // namespace Os
