@@ -22,7 +22,7 @@ void test_with_loop(U32 iterations) {
     NATIVE_INT_TYPE server_fd = -1;
     NATIVE_INT_TYPE client_fd = -1;
     server.configure("127.0.0.1", port, 0, 100);
-    EXPECT_EQ(server.startup(server_fd), Drv::SOCK_SUCCESS);
+    EXPECT_EQ(server.startup(), Drv::SOCK_SUCCESS);
     Drv::Test::force_recv_timeout(server_fd, server);
 
     // Loop through a bunch of client disconnects
