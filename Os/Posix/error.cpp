@@ -54,7 +54,7 @@ FileSystem::Status errno_to_filesystem_status(PlatformIntType errno_input) {
         case 0:
             status = FileSystem::Status::OP_OK;
             break;
-        // All fall throughs are intended to fallback on OTHER_ERROR
+        // All fall through are intended to fallback on OTHER_ERROR
         case EACCES:
             status = FileSystem::Status::NO_PERMISSION;
             break;

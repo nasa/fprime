@@ -3,7 +3,6 @@
 
 #include <FpConfig.hpp>
 #include <Os/Os.hpp>
-#include <FppConstantsAc.hpp>
 #include <Fw/Types/String.hpp>
 
 namespace Os {
@@ -12,7 +11,9 @@ struct DirectoryHandle {};
 
 class DirectoryInterface {
   public:
-    static constexpr FwSizeType FPP_CONFIG_FILENAME_MAX_SIZE = FppConstant_FileNameStringSize::FileNameStringSize;
+    // REVIEW NOTE: Where is the best place to retrieve that config from?
+    static constexpr FwSizeType FPP_CONFIG_FILENAME_MAX_SIZE = 256;
+
     typedef enum {
         OP_OK, //!<  Operation was successful
         DOESNT_EXIST, //!<  Directory doesn't exist

@@ -2,7 +2,6 @@
 #define _OS_FILESYSTEM_HPP_
 
 #include <FpConfig.hpp>
-#include <FppConstantsAc.hpp>
 #include <Os/Os.hpp>
 #include <Os/Directory.hpp>
 #include <Os/File.hpp>
@@ -15,8 +14,6 @@ struct FileSystemHandle {};
 
 class FileSystemInterface {
   public:
-    static constexpr FwSizeType FPP_CONFIG_FILENAME_MAX_SIZE = FppConstant_FileNameStringSize::FileNameStringSize;
-
     typedef enum {
         OP_OK, //!<  Operation was successful
         ALREADY_EXISTS, //!<  File already exists
