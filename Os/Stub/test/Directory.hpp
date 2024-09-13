@@ -53,7 +53,7 @@ class TestDirectory : public DirectoryInterface {
     Status open(const char* path, OpenMode mode) override;
     bool isOpen() override;
     Status rewind() override;
-    Status read(char * fileNameBuffer, U32 bufSize) override;
+    Status read(char * fileNameBuffer, FwSizeType bufSize) override;
     void close() override;
 
     //! \brief return the underlying Directory handle (implementation specific)

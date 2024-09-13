@@ -49,7 +49,7 @@ struct Tester {
 
 
     //! \brief Check if filename is in the list of test m_filenames created for the tested directory
-    bool is_valid_filename(const std::string& filename) {
+    bool is_valid_filename(const std::string& filename) const {
         return std::find(m_filenames.begin(), m_filenames.end(), filename) != m_filenames.end();
     }
 

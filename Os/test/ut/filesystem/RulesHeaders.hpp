@@ -19,20 +19,18 @@ namespace FileSystem {
 
 struct FileSystemNode {
     std::string path;
-    FileSystemNode(std::string path) : path(path) {};
+    explicit FileSystemNode(std::string path) : path(path) {};
     bool operator==(const FileSystemNode& other) const {
         return this->path == other.path;
     }
 };
 struct FileTracker : FileSystemNode {
-    // std::string path;
     std::string contents;
     FileTracker(std::string path, std::string contents) : FileSystemNode(path), contents(contents) {};
 }; //!< Representation of a file for tracking state of the filesystem during testing
 
 struct DirectoryTracker : FileSystemNode {
-    // std::string path;
-    DirectoryTracker(std::string path) : FileSystemNode(path) {};
+    explicit DirectoryTracker(std::string path) : FileSystemNode(path) {};
 }; //!< Representation of a directory for tracking state of the filesystem during testing
 
 

@@ -3,7 +3,7 @@
 
 #include <FpConfig.hpp>
 #include <Os/Os.hpp>
-#include <config/FppConstantsAc.hpp>
+#include "config/FppConstantsAc.hpp"
 #include <Fw/Types/String.hpp>
 
 namespace Os {
@@ -56,7 +56,7 @@ class DirectoryInterface {
     virtual Status open(const char* path, OpenMode mode) = 0; //!<  open/create a directory
     virtual bool isOpen() = 0; //!< check if file descriptor is open or not.
     virtual Status rewind() = 0; //!<  rewind directory stream to the beginning
-    virtual Status read(char * fileNameBuffer, U32 bufSize) = 0; //!< get next filename from directory
+    virtual Status read(char * fileNameBuffer, FwSizeType bufSize) = 0; //!< get next filename from directory
     virtual void close() = 0; //!<  close directory
 
 };
@@ -90,7 +90,7 @@ class Directory final : public DirectoryInterface {
     //! \param fileNameBuffer: buffer to store filename
     //! \param bufSize: size of fileNameBuffer
     //! \return status of the operation
-    Status read(char * fileNameBuffer, U32 bufSize) override;
+    Status read(char * fileNameBuffer, FwSizeType bufSize) override;
 
     //! \brief Close directory
     void close() override;

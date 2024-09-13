@@ -38,7 +38,7 @@ Directory::Status Directory::rewind() {
     return this->m_delegate.rewind();
 }
 
-Directory::Status Directory::read(char * fileNameBuffer, U32 bufSize) {
+Directory::Status Directory::read(char * fileNameBuffer, FwSizeType bufSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
     if (!this->m_delegate.isOpen()) {
         return Status::NOT_OPENED;
@@ -64,7 +64,7 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
 
     const U32 loopLimit = std::numeric_limits<U32>::max();
     FwSizeType count = 0;
-    FwSizeType unusedBufferSize = 1;
+    const FwSizeType unusedBufferSize = 1;
     char unusedBuffer[unusedBufferSize];
     Status readStatus = Status::OP_OK;
     for (U32 iter = 0; iter < loopLimit; ++iter) {

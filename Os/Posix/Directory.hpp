@@ -42,7 +42,7 @@ class PosixDirectory : public DirectoryInterface {
     Status open(const char* path, OpenMode mode) override;
     bool isOpen() override; //!< check if file descriptor is open or not.
     Status rewind() override; //!<  rewind directory stream to the beginning
-    Status read(char * fileNameBuffer, U32 bufSize) override; //!< get next filename from directory
+    Status read(char * fileNameBuffer, FwSizeType bufSize) override; //!< get next filename from directory
     void close() override; //!<  close directory
 
   private:

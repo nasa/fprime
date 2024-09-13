@@ -20,7 +20,7 @@ StubDirectory::Status StubDirectory::rewind() {
     return Status::NOT_SUPPORTED;
 }
 
-StubDirectory::Status StubDirectory::read(char * fileNameBuffer, U32 bufSize) {
+StubDirectory::Status StubDirectory::read(char * fileNameBuffer, FwSizeType bufSize) {
     return Status::NOT_SUPPORTED;
 }
 

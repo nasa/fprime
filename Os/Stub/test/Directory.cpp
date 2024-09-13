@@ -36,7 +36,7 @@ TestDirectory::Status TestDirectory::rewind() {
     return Status::OP_OK;
 }
 
-TestDirectory::Status TestDirectory::read(char * fileNameBuffer, U32 bufSize) {
+TestDirectory::Status TestDirectory::read(char * fileNameBuffer, FwSizeType bufSize) {
     StaticData::data.lastCalled = StaticData::LastFn::READ_FN;
     return Status::OP_OK;
 }

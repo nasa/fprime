@@ -17,7 +17,10 @@ namespace Directory {
 PosixDirectory::PosixDirectory() : Os::DirectoryInterface(), m_handle() {}
 
 PosixDirectory::~PosixDirectory() {
-    this->close();
+    // close the directory if it is open (compiler warns about calling this->close() directly)
+    if (this->m_handle.m_dir_descriptor != nullptr) {
+        (void)::closedir(this->m_handle.m_dir_descriptor);
+    }
 }
 
 DirectoryHandle* PosixDirectory::getHandle() {
@@ -59,7 +62,7 @@ PosixDirectory::Status PosixDirectory::rewind() {
     return status;
 }
 
-PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, U32 bufSize) {
+PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, FwSizeType bufSize) {
 
         FW_ASSERT(fileNameBuffer);
 

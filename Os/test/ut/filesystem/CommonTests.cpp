@@ -15,20 +15,21 @@ std::unique_ptr<Os::Test::FileSystem::Tester> get_tester_implementation() {
 Functionality::Functionality() : tester(get_tester_implementation()) {}
 
 void Functionality::SetUp() {
+    using namespace Os::Test::FileSystem;
     tester->m_test_dirs = {
-        {"filesystem_test_directory"},
-        {"filesystem_test_directory/sub_dir1"},
-        {"filesystem_test_directory/sub_dir2"}
+        DirectoryTracker("filesystem_test_directory"),
+        DirectoryTracker("filesystem_test_directory/sub_dir1"),
+        DirectoryTracker("filesystem_test_directory/sub_dir2")
     };
 
     tester->m_test_files = {
-        {"filesystem_test_directory/test_file0", "123"},
-        {"filesystem_test_directory/test_file1", "abc"},
-        {"filesystem_test_directory/test_file2", "xyz"},
-        {"filesystem_test_directory/test_file3", "aaaa"},
-        {"filesystem_test_directory/test_file4", "dddd"},
-        {"filesystem_test_directory/test_file5", "sef"},
-        {"filesystem_test_directory/sub_dir1/test_file3", "789"}
+        FileTracker("filesystem_test_directory/test_file0", "123"),
+        FileTracker("filesystem_test_directory/test_file1", "abc"),
+        FileTracker("filesystem_test_directory/test_file2", "xyz"),
+        FileTracker("filesystem_test_directory/test_file3", "aaaa"),
+        FileTracker("filesystem_test_directory/test_file4", "dddd"),
+        FileTracker("filesystem_test_directory/test_file5", "sef"),
+        FileTracker("filesystem_test_directory/sub_dir1/test_file3", "789")
     };
 
     tester->write_test_state_to_disk();
