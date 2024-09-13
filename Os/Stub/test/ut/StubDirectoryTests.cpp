@@ -50,7 +50,7 @@ TEST_F(Interface, Open) {
 TEST_F(Interface, IsOpen) {
     Os::Directory directory;
     directory.isOpen();
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::ISOPEN_FN);
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::IS_OPEN_FN);
 }
 
 // Ensure that Os::Directory properly calls the implementation rewind()

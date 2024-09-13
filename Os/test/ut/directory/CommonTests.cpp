@@ -78,12 +78,12 @@ TEST_F(Functionality, ReadRewindRead) {
 // Read file from directory
 TEST_F(Functionality, GetFileCount) {
     Os::Test::Directory::Tester::Open open_rule;
-    Os::Test::Directory::Tester::GetFileCount filecount_rule;
+    Os::Test::Directory::Tester::GetFileCount file_count_rule;
     Os::Test::Directory::Tester::Close close_rule;
     Os::Test::Directory::Tester::IsOpen is_open_rule;
     open_rule.apply(*tester);
     is_open_rule.apply(*tester);
-    filecount_rule.apply(*tester);
+    file_count_rule.apply(*tester);
     close_rule.apply(*tester);
 }
 
@@ -128,7 +128,7 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::Directory::Tester::ReadOneFile read_rule;
     Os::Test::Directory::Tester::Rewind rewind_rule;
     Os::Test::Directory::Tester::ReadAllFiles read_all_rule;
-    Os::Test::Directory::Tester::GetFileCount filecount_rule;
+    Os::Test::Directory::Tester::GetFileCount file_count_rule;
     Os::Test::Directory::Tester::ReadWithoutOpen read_closed_rule;
     Os::Test::Directory::Tester::RewindWithoutOpen rewind_closed_rule;
 
@@ -141,7 +141,7 @@ TEST_F(Functionality, RandomizedTesting) {
             &read_rule,
             &rewind_rule,
             &read_all_rule,
-            &filecount_rule,
+            &file_count_rule,
             &read_closed_rule,
             &rewind_closed_rule
     };

@@ -28,7 +28,7 @@ void Functionality::SetUp() {
         FileTracker("filesystem_test_directory/test_file2", "xyz"),
         FileTracker("filesystem_test_directory/test_file3", "aaaa"),
         FileTracker("filesystem_test_directory/test_file4", "dddd"),
-        FileTracker("filesystem_test_directory/test_file5", "sef"),
+        FileTracker("filesystem_test_directory/test_file5", "cc"),
         FileTracker("filesystem_test_directory/sub_dir1/test_file3", "789")
     };
 
@@ -119,32 +119,32 @@ TEST_F(Functionality, RandomizedTesting) {
     // Enumerate all rules and construct an instance of each
     
     Os::Test::FileSystem::Tester::DirectoryExists directory_exists_rule;
-    Os::Test::FileSystem::Tester::FileExists fileexists_rule;
-    Os::Test::FileSystem::Tester::PathNotExists pathnotexists_rule;
-    Os::Test::FileSystem::Tester::RemoveFile removefile_rule;
+    Os::Test::FileSystem::Tester::FileExists file_exists_rule;
+    Os::Test::FileSystem::Tester::PathNotExists not_exists_rule;
+    Os::Test::FileSystem::Tester::RemoveFile remove_rule;
     Os::Test::FileSystem::Tester::RemoveDirectory remove_directory_rule;
-    Os::Test::FileSystem::Tester::TouchFile touchfile_rule;
+    Os::Test::FileSystem::Tester::TouchFile touch_rule;
     Os::Test::FileSystem::Tester::CreateDirectory create_directory_rule;
-    Os::Test::FileSystem::Tester::MoveFile movefile_rule;
+    Os::Test::FileSystem::Tester::MoveFile move_rule;
     Os::Test::FileSystem::Tester::CopyFile copyfile_rule;
     Os::Test::FileSystem::Tester::AppendFile append_rule;
-    Os::Test::FileSystem::Tester::GetFileSize getfilesize_rule;
-    Os::Test::FileSystem::Tester::GetFreeSpace getfreespace_rule;
+    Os::Test::FileSystem::Tester::GetFileSize file_size_rule;
+    Os::Test::FileSystem::Tester::GetFreeSpace free_space_rule;
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::FileSystem::Tester>* rules[] = {
             &directory_exists_rule,
-            &fileexists_rule,
-            &pathnotexists_rule,
-            &removefile_rule,
+            &file_exists_rule,
+            &not_exists_rule,
+            &remove_rule,
             &remove_directory_rule,
-            &touchfile_rule,
+            &touch_rule,
             &create_directory_rule,
-            &movefile_rule,
+            &move_rule,
             &copyfile_rule,
             &append_rule,
-            &getfilesize_rule,
-            &getfreespace_rule
+            &file_size_rule,
+            &free_space_rule
     };
 
     // Take the rules and place them into a random scenario

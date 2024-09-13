@@ -22,7 +22,7 @@ struct StaticData {
         CONSTRUCT_FN,
         DESTRUCT_FN,
         OPEN_FN,
-        ISOPEN_FN,
+        IS_OPEN_FN,
         REWIND_FN,
         READ_FN,
         CLOSE_FN,

@@ -3,7 +3,7 @@
 
 #include <FpConfig.hpp>
 #include <Os/Os.hpp>
-#include "config/FppConstantsAc.hpp"
+#include <FppConstantsAc.hpp>
 #include <Fw/Types/String.hpp>
 
 namespace Os {

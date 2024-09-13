@@ -111,7 +111,7 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
         filenameArray[index] = Fw::String(fileName);
     }
 
-    filenameCount = index;
+    filenameCount = static_cast<FwSizeType>(index);
 
     if (index == loopLimit) {
         returnStatus = Status::FILE_LIMIT;
