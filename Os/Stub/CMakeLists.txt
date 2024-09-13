@@ -140,7 +140,7 @@ set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/TaskRules.cpp"
 )
 set(UT_MOD_DEPS
-        Fw/Time
+        Fw_Time
         Os
         Os_Models
         STest
@@ -161,6 +161,7 @@ set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/MutexRules.cpp"
 )
 set(UT_MOD_DEPS
+        Fw_Time
         Os
         Os_Models
         STest

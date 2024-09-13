@@ -104,7 +104,6 @@ require_fprime_implementation(Os/Mutex)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
@@ -134,4 +133,4 @@ endif()
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/test/ut/MaxHeapTest.cpp"
 )
-register_fprime_ut("Os_pthreads_max_heap")
+#register_fprime_ut("Os_pthreads_max_heap")

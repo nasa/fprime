@@ -14,7 +14,7 @@
 //
 // ======================================================================
 
-#include "Os/Pthreads/MaxHeap/MaxHeap.hpp"
+#include "Utils/Types/MaxHeap.hpp"
 #include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
 #include <Fw/Logger/Logger.hpp>
@@ -27,7 +27,7 @@
 #define RCHILD(x) (2 * x + 2)
 #define PARENT(x) ((x - 1) / 2)
 
-namespace Os {
+namespace Types {
 
     MaxHeap::MaxHeap() {
       // Initialize the heap:

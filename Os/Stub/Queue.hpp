@@ -82,7 +82,6 @@ class StubQueue : public QueueInterface {
     StubQueueHandle m_handle;
 };
 
-}  // namespace Test
 }  // namespace Queue
 }  // namespace Stub
 }  // namespace Os

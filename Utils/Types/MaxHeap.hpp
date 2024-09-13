@@ -10,12 +10,12 @@
 //
 // ======================================================================
 
-#ifndef OS_PTHREADS_MAX_HEAP_HPP
-#define OS_PTHREADS_MAX_HEAP_HPP
+#ifndef UTILS_TYPES_MAX_HEAP_HPP
+#define UTILS_TYPES_MAX_HEAP_HPP
 
 #include <FpConfig.hpp>
 
-namespace Os {
+namespace Types {
 
   //! \class MaxHeap
   //! \brief A stable max heap data structure
@@ -113,4 +113,4 @@ namespace Os {
 
 }
 
-#endif // OS_PTHREADS_MAX_HEAP_HPP
+#endif // UTILS_TYPES_MAX_HEAP_HPP
