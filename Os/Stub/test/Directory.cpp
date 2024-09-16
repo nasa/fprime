@@ -41,6 +41,12 @@ TestDirectory::Status TestDirectory::read(char * fileNameBuffer, FwSizeType bufS
     return Status::OP_OK;
 }
 
+TestDirectory::Status TestDirectory::read(Fw::StringBase& filename) {
+    StaticData::data.lastCalled = StaticData::LastFn::READ_STR_FN;
+    return Status::OP_OK;
+}
+
+
 void TestDirectory::close() {
     StaticData::data.lastCalled = StaticData::LastFn::CLOSE_FN;
 }

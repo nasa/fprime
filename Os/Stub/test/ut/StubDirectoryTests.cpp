@@ -69,6 +69,14 @@ TEST_F(Interface, Read) {
 }
 
 // Ensure that Os::Directory properly calls the implementation open()
+TEST_F(Interface, ReadWithString) {
+    Os::Directory directory;
+    Fw::String filename;
+    directory.read(filename);
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::READ_STR_FN);
+}
+
+// Ensure that Os::Directory properly calls the implementation open()
 TEST_F(Interface, Close) {
     Os::Directory directory;
     directory.close();

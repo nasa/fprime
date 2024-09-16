@@ -9,6 +9,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/Posix/Directory.hpp>
 #include <Os/Posix/error.hpp>
+#include <Fw/Types/StringUtils.hpp>
 
 namespace Os {
 namespace Posix {
@@ -45,10 +46,6 @@ bool PosixDirectory::isOpen() {
 }
 
 PosixDirectory::Status PosixDirectory::rewind() {
-    // TODO: move to higher level in the interface when// make sure it has been opened
-    if (!this->isOpen()) {
-        return Status::NOT_OPENED;
-    }
     Status status = Status::OP_OK;
     // no errors defined
     ::rewinddir(this->m_handle.m_dir_descriptor);
@@ -57,44 +54,65 @@ PosixDirectory::Status PosixDirectory::rewind() {
 
 PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, FwSizeType bufSize) {
 
-        FW_ASSERT(fileNameBuffer);
+    FW_ASSERT(fileNameBuffer);
 
-        // TODO: move to higher level in the interface when
-        // make sure it has been opened
-        if (!this->isOpen()) {
-            return Status::NOT_OPENED;
+    Status status = Status::OP_OK;
+
+    // Set errno to 0 so we know why we exited readdir
+    // This is recommended by the manual pages (man 3 readdir)
+    errno = 0;
+
+    struct dirent *direntData = nullptr;
+    while ((direntData = ::readdir(this->m_handle.m_dir_descriptor)) != nullptr) {
+        // Skip hidden files
+        if (direntData->d_name[0] != '.') {
+            (void)Fw::StringUtils::string_copy(fileNameBuffer, direntData->d_name, bufSize);
+            break;
         }
-
-        Status status = Status::OP_OK;
-
-        // Set errno to 0 so we know why we exited readdir
-        // This is the recommended by the manual (man 3 readdir)
-        errno = 0;
-
-        struct dirent *direntData = nullptr;
-        while ((direntData = ::readdir(this->m_handle.m_dir_descriptor)) != nullptr) {
-            // Skip hidden files
-            if (direntData->d_name[0] != '.') {
-                // TODO: use Fw::StringUtils::string_copy(FwSizeType) utility function
-                // Fw::StringUtils::string_copy();
-                strncpy(fileNameBuffer, direntData->d_name, bufSize);
-                break;
-            }
-        }
-
-        if (direntData == nullptr) {
-            // loop ended because readdir failed, did it error or did we run out of files?
-            if(errno != 0) {
-                // Only error from readdir is EBADF
-                status = Status::BAD_DESCRIPTOR;
-            }
-            else {
-                status = Status::NO_MORE_FILES;
-            }
-        }
-
-        return status;
     }
+    if (direntData == nullptr) {
+        // loop ended because readdir failed, did it error or did we run out of files?
+        if (errno != 0) {
+            // Only error from readdir is EBADF
+            status = Status::BAD_DESCRIPTOR;
+        } else {
+            status = Status::NO_MORE_FILES;
+        }
+    }
+    return status;
+}
+
+PosixDirectory::Status PosixDirectory::read(Fw::StringBase& filenameString) {
+
+    FW_ASSERT(filenameString.maxLength() > 0);
+
+    Status status = Status::OP_OK;
+
+    // Set errno to 0 so we know why we exited readdir
+    // This is recommended by the manual pages (man 3 readdir)
+    errno = 0;
+
+    struct dirent *direntData = nullptr;
+    while ((direntData = ::readdir(this->m_handle.m_dir_descriptor)) != nullptr) {
+        // Skip hidden files
+        if (direntData->d_name[0] != '.') {
+            filenameString = direntData->d_name;
+            break;
+        }
+    }
+
+    if (direntData == nullptr) {
+        // loop ended because readdir failed, did it error or did we run out of files?
+        if (errno != 0) {
+            // Only error from readdir is EBADF
+            status = Status::BAD_DESCRIPTOR;
+        } else {
+            status = Status::NO_MORE_FILES;
+        }
+    }
+
+    return status;
+}
 
 void PosixDirectory::close() {
     if (this->m_handle.m_dir_descriptor != nullptr) {

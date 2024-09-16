@@ -25,6 +25,7 @@ struct StaticData {
         IS_OPEN_FN,
         REWIND_FN,
         READ_FN,
+        READ_STR_FN,
         CLOSE_FN,
         GET_HANDLE_FN,
     };
@@ -54,6 +55,7 @@ class TestDirectory : public DirectoryInterface {
     bool isOpen() override;
     Status rewind() override;
     Status read(char * fileNameBuffer, FwSizeType bufSize) override;
+    Status read(Fw::StringBase& filename) override;
     void close() override;
 
     //! \brief return the underlying Directory handle (implementation specific)

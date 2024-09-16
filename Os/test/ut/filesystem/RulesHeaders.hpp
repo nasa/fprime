@@ -36,10 +36,6 @@ struct DirectoryTracker : FileSystemNode {
 
 struct Tester {
 
-    // ! Assert in FileSystem.cpp for searching death text
-    // TODO: should add death asserts to test cases ??
-    // static constexpr const char* ASSERT_IN_FILESYSTEM_CPP = "Assert: \".*/Os/.*/FileSystem\\.cpp:[0-9]+\"";
-
     // Constructors that ensures the filesystem is always valid
     Tester() = default;
 
@@ -145,9 +141,6 @@ struct Tester {
     }
 
     void purge_test_state_from_disk() {
-        // TODO: delete all files and directories without relying on Os::FileSystem?
-        // Is it strictly needed though? Since we'll rely on user-written functions anyways
-        // NOTE: this is why I originally wanted Os::File::remove() and Os::Directory::remove()
         for (auto filename : this->m_test_files) {
             Os::FileSystem::removeFile(filename.path.c_str());
         }

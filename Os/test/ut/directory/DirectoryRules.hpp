@@ -60,6 +60,15 @@ struct ReadOneFile : public STest::Rule<Os::Test::Directory::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
+// Rule: Read the first file in a directory that has been opened, using read(StringBase&) implementation
+// ------------------------------------------------------------------------------------------------------
+struct ReadOneFileString : public STest::Rule<Os::Test::Directory::Tester> {
+    ReadOneFileString();
+    bool precondition(const Os::Test::Directory::Tester& state);
+    void action(Os::Test::Directory::Tester& state);
+};
+
+// ------------------------------------------------------------------------------------------------------
 // Rule: Rewind a directory
 // ------------------------------------------------------------------------------------------------------
 struct Rewind : public STest::Rule<Os::Test::Directory::Tester> {

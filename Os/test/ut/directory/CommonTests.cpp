@@ -60,6 +60,18 @@ TEST_F(Functionality, ReadOneFile) {
     close_rule.apply(*tester);
 }
 
+// Read file from directory using read(StringBase&) overload
+TEST_F(Functionality, ReadOneFileString) {
+    Os::Test::Directory::Tester::Open open_rule;
+    Os::Test::Directory::Tester::ReadOneFileString read_str_rule;
+    Os::Test::Directory::Tester::Close close_rule;
+    Os::Test::Directory::Tester::IsOpen is_open_rule;
+    open_rule.apply(*tester);
+    is_open_rule.apply(*tester);
+    read_str_rule.apply(*tester);
+    close_rule.apply(*tester);
+}
+
 // Read file from directory
 TEST_F(Functionality, ReadRewindRead) {
     Os::Test::Directory::Tester::Open open_rule;
@@ -126,6 +138,7 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::Directory::Tester::IsOpen is_open_rule;
     Os::Test::Directory::Tester::IsNotOpen is_not_open_rule;
     Os::Test::Directory::Tester::ReadOneFile read_rule;
+    Os::Test::Directory::Tester::ReadOneFileString read_str_rule;
     Os::Test::Directory::Tester::Rewind rewind_rule;
     Os::Test::Directory::Tester::ReadAllFiles read_all_rule;
     Os::Test::Directory::Tester::GetFileCount file_count_rule;
@@ -139,6 +152,7 @@ TEST_F(Functionality, RandomizedTesting) {
             &is_open_rule,
             &is_not_open_rule,
             &read_rule,
+            &read_str_rule,
             &rewind_rule,
             &read_all_rule,
             &file_count_rule,

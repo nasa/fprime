@@ -24,6 +24,10 @@ StubDirectory::Status StubDirectory::read(char * fileNameBuffer, FwSizeType bufS
     return Status::NOT_SUPPORTED;
 }
 
+StubDirectory::Status StubDirectory::read(Fw::StringBase& filename) {
+    return Status::NOT_SUPPORTED;
+}
+
 void StubDirectory::close() {
     // no-op
 }

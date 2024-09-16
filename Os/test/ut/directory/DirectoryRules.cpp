@@ -96,6 +96,30 @@ void Os::Test::Directory::Tester::ReadOneFile::action(Os::Test::Directory::Teste
 }
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  ReadOneFileString -> Read one file from a directory and assert name
+// ------------------------------------------------------------------------------------------------------
+Os::Test::Directory::Tester::ReadOneFileString::ReadOneFileString() :
+    STest::Rule<Os::Test::Directory::Tester>("ReadOneFileString") {}
+
+bool Os::Test::Directory::Tester::ReadOneFileString::precondition(const Os::Test::Directory::Tester &state) {
+    return state.m_state == Os::Test::Directory::Tester::DirectoryState::OPEN;
+}
+
+void Os::Test::Directory::Tester::ReadOneFileString::action(Os::Test::Directory::Tester &state) {
+    ASSERT_TRUE(state.m_directory.isOpen());
+    Fw::String filename;
+    Os::Directory::Status status = state.m_directory.read(filename);
+    // If seek is at the end of the directory, expect NO_MORE_FILES - otherwise expect normal read and valid filename
+    if (state.m_seek_position < static_cast<FwIndexType>(state.m_filenames.size())) {
+        ASSERT_EQ(status, Os::Directory::Status::OP_OK);
+        ASSERT_TRUE(state.is_valid_filename(std::string(filename.toChar())));
+        state.m_seek_position++;
+    } else {
+        ASSERT_EQ(status, Os::Directory::Status::NO_MORE_FILES);
+    }
+}
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  Rewind -> Rewind a directory
 // ------------------------------------------------------------------------------------------------------
 Os::Test::Directory::Tester::Rewind::Rewind() :
@@ -146,9 +170,9 @@ bool Os::Test::Directory::Tester::ReadAllFiles::precondition(const Os::Test::Dir
 
 void Os::Test::Directory::Tester::ReadAllFiles::action(Os::Test::Directory::Tester &state) {
     ASSERT_TRUE(state.m_directory.isOpen());
-    FwSizeType arraySize = FW_MAX(state.m_filenames.size(), 1); // .size() can be 0 during testing so ensure at least 1
+    const FwSizeType arraySize = FW_MAX(state.m_filenames.size(), 1); // .size() can be 0 during testing so ensure at least 1
     Fw::String outArray[arraySize];
-    FwSizeType outFileCount;
+    FwSizeType outFileCount = 0;
     Os::Directory::Status status = state.m_directory.readDirectory(outArray, arraySize, outFileCount);
     ASSERT_EQ(status, Os::Directory::Status::OP_OK);
     // Number of files read should be the number of files in the directory minus the original seek position

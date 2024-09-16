@@ -11,9 +11,6 @@ struct DirectoryHandle {};
 
 class DirectoryInterface {
   public:
-    // REVIEW NOTE: Where is the best place to retrieve that config from?
-    static constexpr FwSizeType FPP_CONFIG_FILENAME_MAX_SIZE = 256; // get FpConfig
-
     enum Status {
         OP_OK, //!<  Operation was successful
         DOESNT_EXIST, //!<  Directory doesn't exist
@@ -53,7 +50,8 @@ class DirectoryInterface {
     virtual Status open(const char* path, OpenMode mode) = 0; //!<  open/create a directory
     virtual bool isOpen() = 0; //!< check if file descriptor is open or not.
     virtual Status rewind() = 0; //!<  rewind directory stream to the beginning
-    virtual Status read(char * fileNameBuffer, FwSizeType bufSize) = 0; //!< get next filename from directory
+    virtual Status read(char * fileNameBuffer, FwSizeType buffSize) = 0; //!< get next filename from directory
+    virtual Status read(Fw::StringBase& filename) = 0; //!< get next filename from directory
     virtual void close() = 0; //!<  close directory
 
 };
@@ -79,17 +77,20 @@ class Directory final : public DirectoryInterface {
     //! \return true if Directory is open, false otherwise
     bool isOpen() override;
 
-    //! \brief Rewind directory stream to the beginning // TODO: improve comment - could rename reset/seek
+    //! \brief Rewind directory stream to the beginning
     //! \return status of the operation
     Status rewind() override;
 
-    //! \brief Get next filename from directory stream
+    //! \brief Get next filename from directory stream and write it to fileNameBuffer of size buffSize
     //! \param fileNameBuffer: buffer to store filename
-    //! \param bufSize: size of fileNameBuffer
+    //! \param buffSize: size of fileNameBuffer
     //! \return status of the operation
-    Status read(char * fileNameBuffer, FwSizeType bufSize) override;
+    Status read(char * fileNameBuffer, FwSizeType buffSize) override;
 
-    // TODO: add a read(Fw::StringBase, FwSizeType) function as well
+    //! \brief Get next filename from directory stream and write it to Fw::StringBase object
+    //! \param filename: Fw::StringBase (or derived) object to store filename in
+    //! \return status of the operation
+    Status read(Fw::StringBase& filename) override;
 
     //! \brief Close directory
     void close() override;

@@ -35,7 +35,7 @@ bool Directory::isOpen() {
 }
 Directory::Status Directory::rewind() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    if (!this->m_delegate.isOpen()) {
+    if (not this->m_delegate.isOpen()) {
         return Status::NOT_OPENED;
     }
     return this->m_delegate.rewind();
@@ -43,10 +43,18 @@ Directory::Status Directory::rewind() {
 
 Directory::Status Directory::read(char * fileNameBuffer, FwSizeType bufSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    if (!this->m_delegate.isOpen()) {
+    if (not this->m_delegate.isOpen()) {
         return Status::NOT_OPENED;
     }
     return this->m_delegate.read(fileNameBuffer, bufSize);
+}
+
+Directory::Status Directory::read(Fw::StringBase& filename) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
+    if (not this->m_delegate.isOpen()) {
+        return Status::NOT_OPENED;
+    }
+    return this->m_delegate.read(filename);
 }
 
 void Directory::close() {
@@ -57,7 +65,7 @@ void Directory::close() {
 // ------------ Common Directory Functions (non-OS-specific) ------------
 
 Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
-    if (this->isOpen() == false) {
+    if (not this->isOpen()) {
         return Status::NOT_OPENED;
     }
     // REVIEW NOTE: should getFileCount rewind before counting?
@@ -90,7 +98,7 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
 Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwSizeType filenameArraySize, FwSizeType& filenameCount) {
     FW_ASSERT(filenameArray != nullptr);
     FW_ASSERT(filenameArraySize > 0);
-    if (this->isOpen() == false) {
+    if (not this->isOpen()) {
         return Status::NOT_OPENED;
     }
     // same thing here - should we rewind before?
@@ -100,26 +108,19 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
     Status returnStatus = Status::OP_OK;
 
     FwIndexType index;
-    constexpr FwIndexType loopLimit = std::numeric_limits<FwIndexType>::max();
 
-    char fileName[FPP_CONFIG_FILENAME_MAX_SIZE]; // should be FW_FIXED_LENGTH_STRING_SIZE instead??
-
-    for (index = 0; ((index < loopLimit) && (index < static_cast<FwIndexType>(filenameArraySize))); index++) {
-        readStatus = this->read(fileName, FPP_CONFIG_FILENAME_MAX_SIZE);
+    // Iterate through the directory and read the filenames into the array
+    for (index = 0; index < static_cast<FwIndexType>(filenameArraySize); index++) {
+        readStatus = this->read(filenameArray[index]);
         if (readStatus == Status::NO_MORE_FILES) {
             break;
         } else if (readStatus != Status::OP_OK) {
             return Status::OTHER_ERROR;
         }
-        
-        filenameArray[index] = Fw::String(fileName);
     }
 
     filenameCount = static_cast<FwSizeType>(index);
 
-    if (index == loopLimit) {
-        returnStatus = Status::FILE_LIMIT;
-    }
     this->rewind();
 
     return returnStatus;
