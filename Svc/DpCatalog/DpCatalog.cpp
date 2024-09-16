@@ -431,11 +431,13 @@ namespace Svc {
 
         DpBtreeNode* found = nullptr;
 
-        // traverse the tree until we find the leaf
+        // traverse the tree, finding nodes in order
         for (FwSizeType record = 0; record < this->m_numDpRecords; record++) {
             if (this->m_currentEntry->left != nullptr) {
-                // Step 3b - push current entry on the stack
-                this->m_traverseStack[this->m_currStackEntry++] = this->m_currentEntry;
+                // Step 3 - push current entry on the stack
+                // The first time through, this->m_currStackEntry is -1, signifying the stack is empty
+                // The insertion below will increment this->m_currStackEntry to 0
+                this->m_traverseStack[++this->m_currStackEntry] = this->m_currentEntry;
                 this->m_currentEntry = this->m_currentEntry->left;
             } else {
                 // Step 4 - check to see if this node has already been transmitted, if so, pop back up the stack
@@ -584,11 +586,9 @@ namespace Svc {
     void DpCatalog::resetTreeStack() {
         // See URL above
         // Step 1 - reset the stack
-        this->m_currStackEntry = 0;
+        this->m_currStackEntry = -1;
         // Step 2 - assign root of the tree to the current entry
         this->m_currentEntry = this->m_dpTree;
-        // Step 3a - put the root on the stack
-        this->m_traverseStack[this->m_currStackEntry] = this->m_currentEntry;
     }
 
     void DpCatalog ::
