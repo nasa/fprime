@@ -21,7 +21,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++ build active file"
+            "preLaunchTask": ""
         },
     ]
 }
