@@ -28,6 +28,7 @@ struct StaticData {
         REMOVE_DIR_FN,
         REMOVE_FILE_FN,
         MOVE_FILE_FN,
+        GET_CWD_FN,
         CHANGE_CWD_FN,
         GET_FREESPACE_FN,
         GET_HANDLE_FN,
@@ -59,8 +60,9 @@ class TestFileSystem : public FileSystemInterface {
     Status _removeDirectory(const char* path) override;
     Status _removeFile(const char* path) override;
     Status _moveFile(const char* originPath, const char* destPath) override;
-    Status _changeWorkingDirectory(const char* path) override;
     Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
+    Status _changeWorkingDirectory(const char* path) override;
+    Status _getWorkingDirectory(char* path, FwSizeType size) override;
 
     //! \brief return the underlying FileSystem handle (implementation specific)
     //! \return internal task handle representation

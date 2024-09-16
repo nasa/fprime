@@ -34,9 +34,19 @@ PosixFileSystem::Status PosixFileSystem::_removeFile(const char* path) {
     return status;
 }
 
+// call this one rename() instead
+// then add a moveFile() that tries rename() and fallback to copy() then unlink() if getting the error-specific EXDEV
 PosixFileSystem::Status PosixFileSystem::_moveFile(const char* originPath, const char* destPath) {
     Status status = OP_OK;
     if (::rename(originPath, destPath) == -1) {
+        status = errno_to_filesystem_status(errno);
+    }
+    return status;
+}
+
+PosixFileSystem::Status PosixFileSystem::_getWorkingDirectory(char* path, FwSizeType bufferSize) {
+    Status status = OP_OK;
+    if (::getcwd(path, bufferSize) == nullptr) {
         status = errno_to_filesystem_status(errno);
     }
     return status;
@@ -52,7 +62,9 @@ PosixFileSystem::Status PosixFileSystem::_changeWorkingDirectory(const char* pat
 
 PosixFileSystem::Status PosixFileSystem::_getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
     Status stat = OP_OK;
-
+    static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<fsblkcnt_t>::max(), "FwSizeType must be able to hold fsblkcnt_t");
+    static_assert(std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<fsblkcnt_t>::min(), "FwSizeType must be able to hold fsblkcnt_t");
+    static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<unsigned long>::max(), "FwSizeType must be able to hold unsigned long");
     struct statvfs fsStat;
     int ret = statvfs(path, &fsStat);
     if (ret) {
@@ -63,13 +75,6 @@ PosixFileSystem::Status PosixFileSystem::_getFreeSpace(const char* path, FwSizeT
     const FwSizeType free_blocks = static_cast<FwSizeType>(fsStat.f_bfree);
     const FwSizeType total_blocks = static_cast<FwSizeType>(fsStat.f_blocks);
 
-    // Check for casting and type error
-    // REVIEW NOTE: The below fails on macOS at least?
-    // if (((block_size <= 0) || (static_cast<unsigned long>(block_size) != fsStat.f_frsize)) ||
-    //     ((free_blocks <= 0) || (static_cast<fsblkcnt_t>(free_blocks) != fsStat.f_bfree)) ||
-    //     ((total_blocks <= 0) || (static_cast<fsblkcnt_t>(block_size) != fsStat.f_blocks))) {
-    //     return OTHER_ERROR;
-    // }
     // Check for overflow in multiplication
     if (free_blocks > (std::numeric_limits<FwSizeType>::max() / block_size) ||
         total_blocks > (std::numeric_limits<FwSizeType>::max() / block_size)) {

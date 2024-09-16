@@ -20,6 +20,10 @@ StubFileSystem::Status StubFileSystem::_moveFile(const char* originPath, const c
     return Status::NOT_SUPPORTED;
 }
 
+StubFileSystem::Status StubFileSystem::_getWorkingDirectory(char* path, FwSizeType bufferSize) {
+    return Status::NOT_SUPPORTED;
+}
+
 StubFileSystem::Status StubFileSystem::_changeWorkingDirectory(const char* path) {
     return Status::NOT_SUPPORTED;
 }

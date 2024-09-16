@@ -12,9 +12,9 @@ struct DirectoryHandle {};
 class DirectoryInterface {
   public:
     // REVIEW NOTE: Where is the best place to retrieve that config from?
-    static constexpr FwSizeType FPP_CONFIG_FILENAME_MAX_SIZE = 256;
+    static constexpr FwSizeType FPP_CONFIG_FILENAME_MAX_SIZE = 256; // get FpConfig
 
-    typedef enum {
+    enum Status {
         OP_OK, //!<  Operation was successful
         DOESNT_EXIST, //!<  Directory doesn't exist
         NO_PERMISSION, //!<  No permission to read directory
@@ -23,26 +23,21 @@ class DirectoryInterface {
         NO_MORE_FILES, //!<  Directory stream has no more files
         FILE_LIMIT, //!<  Directory has more files than can be read
         BAD_DESCRIPTOR, //!<  Directory stream descriptor is invalid
+        ALREADY_EXISTS, //!<  Directory already exists
         NOT_SUPPORTED, //!<  Operation is not supported by the current implementation
         OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
-    } Status;
+    };
 
-    typedef enum {
+    enum OpenMode {
         READ,   //!<  Error if directory doesn't exist
         CREATE, //!<  Create directory if it doesn't exist
-    } OpenMode;
+    };
 
     //! \brief default constructor
     DirectoryInterface() = default;
 
     //! \brief default virtual destructor
     virtual ~DirectoryInterface() = default;
-
-    //! \brief copy constructor is forbidden
-    DirectoryInterface(const DirectoryInterface& other) = delete;
-
-    //! \brief assignment operator is forbidden
-    DirectoryInterface& operator=(const DirectoryInterface& other) = delete;
 
     //! \brief return the underlying Directory handle (implementation specific)
     //! \return internal Directory handle representation
@@ -54,6 +49,7 @@ class DirectoryInterface {
 
     //------------ Os-specific Directory Functions ------------
 
+    // TODO: add comments  back up
     virtual Status open(const char* path, OpenMode mode) = 0; //!<  open/create a directory
     virtual bool isOpen() = 0; //!< check if file descriptor is open or not.
     virtual Status rewind() = 0; //!<  rewind directory stream to the beginning
@@ -83,7 +79,7 @@ class Directory final : public DirectoryInterface {
     //! \return true if Directory is open, false otherwise
     bool isOpen() override;
 
-    //! \brief Rewind directory stream to the beginning
+    //! \brief Rewind directory stream to the beginning // TODO: improve comment - could rename reset/seek
     //! \return status of the operation
     Status rewind() override;
 
@@ -92,6 +88,8 @@ class Directory final : public DirectoryInterface {
     //! \param bufSize: size of fileNameBuffer
     //! \return status of the operation
     Status read(char * fileNameBuffer, FwSizeType bufSize) override;
+
+    // TODO: add a read(Fw::StringBase, FwSizeType) function as well
 
     //! \brief Close directory
     void close() override;

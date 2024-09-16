@@ -48,6 +48,14 @@ TEST_F(Interface, MoveFile) {
 }
 
 // Ensure that Os::FileSystem properly calls the implementation changeWorkingDirectory()
+TEST_F(Interface, GetWorkingDirectory) {
+    char unused[1];
+    Os::FileSystem::getWorkingDirectory(unused, 1);
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_CWD_FN);
+    ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
+}
+
+// Ensure that Os::FileSystem properly calls the implementation changeWorkingDirectory()
 TEST_F(Interface, ChangeWorkingDirectory) {
     Os::FileSystem::changeWorkingDirectory("/does/not/matter");
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::CHANGE_CWD_FN);

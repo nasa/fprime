@@ -88,7 +88,7 @@ void Os::Test::Directory::Tester::ReadOneFile::action(Os::Test::Directory::Teste
     // If seek is at the end of the directory, expect NO_MORE_FILES - otherwise expect normal read and valid filename
     if (state.m_seek_position < static_cast<FwIndexType>(state.m_filenames.size())) {
         ASSERT_EQ(status, Os::Directory::Status::OP_OK);
-        ASSERT_TRUE(state.is_valid_filename(filename));
+        ASSERT_TRUE(state.is_valid_filename(std::string(filename)));
         state.m_seek_position++;
     } else {
         ASSERT_EQ(status, Os::Directory::Status::NO_MORE_FILES);

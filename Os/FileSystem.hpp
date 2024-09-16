@@ -6,7 +6,7 @@
 #include <Os/Directory.hpp>
 #include <Os/File.hpp>
 
-#define FILE_SYSTEM_CHUNK_SIZE (256u)
+#define FILE_SYSTEM_CHUNK_SIZE (256u) // TODO: move to FpConfig
 
 namespace Os {
 
@@ -14,7 +14,7 @@ struct FileSystemHandle {};
 
 class FileSystemInterface {
   public:
-    typedef enum {
+    enum Status {
         OP_OK, //!<  Operation was successful
         ALREADY_EXISTS, //!<  File already exists
         NO_SPACE, //!<  No space left
@@ -22,15 +22,16 @@ class FileSystemInterface {
         NOT_DIR, //!<  Path is not a directory
         IS_DIR, //!< Path is a directory
         NOT_EMPTY, //!<  directory is not empty
-        INVALID_PATH, //!< Path is too long, too many sym links, doesn't exist, ect
+        INVALID_PATH, //!< Path is too long, too many sym links, etc.
+        DOESNT_EXIST, //!<  Path doesn't exist
         FILE_LIMIT, //!< Too many files or links
         BUSY, //!< Operand is in use by the system or by a process
-        DIR_DOESNT_EXIST, //!<  Directory doesn't exist
-        DIR_NOT_OPENED, //!<  Directory hasn't been opened yet
         NO_MORE_FILES, //!<  Directory stream has no more files
+        BUFFER_TOO_SMALL, //!<  Buffer size is too small to hold full path (for getWorkingDirectory)
+        EXDEV_ERROR, // Operation not supported across devices (e.g. rename)
         NOT_SUPPORTED, //!<  Operation is not supported by the current implementation
         OTHER_ERROR, //!<  other OS-specific error
-    } Status;
+    };
 
     //! \brief default constructor
     FileSystemInterface() = default;
@@ -60,10 +61,12 @@ class FileSystemInterface {
     virtual Status _removeFile(const char* path) = 0;
     //! \brief moves a file from source to destination
     virtual Status _moveFile(const char* sourcePath, const char* destPath) = 0;
-    //! \brief move current directory to path
-    virtual Status _changeWorkingDirectory(const char* path) = 0;
     //! \brief get FS free and total space in bytes on filesystem containing path
     virtual Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) = 0;
+    //! \brief get current working directory
+    virtual Status _getWorkingDirectory(char* path, FwSizeType bufferSize) = 0;
+    //! \brief move current working directory to path
+    virtual Status _changeWorkingDirectory(const char* path) = 0;
 
 };
 
@@ -84,11 +87,12 @@ class FileSystem final : public FileSystemInterface {
     Status _removeFile(const char* path) override;
     //! \brief moves a file from source to destination
     Status _moveFile(const char* sourcePath, const char* destPath) override;
-    //! \brief move current directory to path
-    Status _changeWorkingDirectory(const char* path) override;
     //! \brief get FS free and total space in bytes on filesystem containing path
     Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
-
+    //! \brief get current working directory
+    Status _getWorkingDirectory(char* path, FwSizeType bufferSize) override;
+    //! \brief move current directory to path
+    Status _changeWorkingDirectory(const char* path) override;
 
 
     //! \brief remove a directory at location path
@@ -97,10 +101,12 @@ class FileSystem final : public FileSystemInterface {
     static Status removeFile(const char* path);
     //! \brief moves a file from source to destination
     static Status moveFile(const char* sourcePath, const char* destPath);
-    //! \brief move current directory to path
-    static Status changeWorkingDirectory(const char* path);
     //! \brief get FS free and total space in bytes on filesystem containing path
     static Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes);
+    //! \brief get current working directory
+    static Status getWorkingDirectory(char* path, FwSizeType bufferSize);
+    //! \brief move current directory to path
+    static Status changeWorkingDirectory(const char* path);
 
 
     //! \brief Returns true if path exists, false otherwise
@@ -113,7 +119,7 @@ class FileSystem final : public FileSystemInterface {
     static Status appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false);
     //! \brief copies a file from source to destination
     static Status copyFile(const char* sourcePath, const char* destPath);
-    //! \brief gets the size of the file (in bytes) = 0 at location path
+    //! \brief gets the size of the file (in bytes) at location path
     static Status getFileSize(const char* path, FwSignedSizeType& size);
 
 

@@ -88,6 +88,12 @@ FileSystem::Status errno_to_filesystem_status(PlatformIntType errno_input) {
         case EOPNOTSUPP:
             status = FileSystem::Status::NOT_SUPPORTED;
             break;
+        case ERANGE:
+            status = FileSystem::Status::BUFFER_TOO_SMALL;
+            break;
+        case EXDEV:
+            status = FileSystem::Status::EXDEV_ERROR;
+            break;
         default:
             status = FileSystem::Status::OTHER_ERROR;
             break;
@@ -109,6 +115,9 @@ Directory::Status errno_to_directory_status(PlatformIntType errno_input) {
             break;
         case ENOTDIR:
             status = Directory::Status::NOT_DIR;
+            break;
+        case EEXIST:
+            status = Directory::Status::ALREADY_EXISTS;
             break;
         default:
             status = Directory::Status::OTHER_ERROR;

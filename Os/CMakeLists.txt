@@ -18,6 +18,7 @@ register_fprime_module(Os_Test_File_SyntheticFileSystem)
 # Basic module dependencies
 set(MOD_DEPS
   ${CMAKE_THREAD_LIBS_INIT}
+  config # TODO: may be required to have dependency on FpConfig etc.
   Fw/Cfg
   Fw/Types
   Fw/Logger

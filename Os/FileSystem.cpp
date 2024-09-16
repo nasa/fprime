@@ -38,6 +38,11 @@ FileSystem::Status FileSystem::_moveFile(const char* sourcePath, const char* des
     return this->m_delegate._moveFile(sourcePath, destPath);
 }
 
+FileSystem::Status FileSystem::_getWorkingDirectory(char* path, FwSizeType bufferSize) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate._getWorkingDirectory(path, bufferSize);
+}
+
 FileSystem::Status FileSystem::_changeWorkingDirectory(const char* path) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate._changeWorkingDirectory(path);
@@ -73,6 +78,10 @@ FileSystem::Status FileSystem::moveFile(const char* sourcePath, const char* dest
     return FileSystem::getSingleton()._moveFile(sourcePath, destPath);
 }
 
+FileSystem::Status FileSystem::getWorkingDirectory(char* path, FwSizeType bufferSize) {
+    return FileSystem::getSingleton()._getWorkingDirectory(path, bufferSize);
+}
+
 FileSystem::Status FileSystem::changeWorkingDirectory(const char* path) {
     return FileSystem::getSingleton()._changeWorkingDirectory(path);
 }
@@ -86,7 +95,12 @@ FileSystem::Status FileSystem::createDirectory(const char* path) {
     Os::Directory dir;
     Directory::Status dirStatus = dir.open(path, Os::Directory::OpenMode::CREATE);
     if (dirStatus != Directory::OP_OK) {
-        return FileSystem::Status::INVALID_PATH; // TODO error handling
+        if (dirStatus == Directory::Status::ALREADY_EXISTS) {
+            status = FileSystem::Status::ALREADY_EXISTS;
+        } else {
+            status = FileSystem::Status::OTHER_ERROR;
+        }
+        return status; // TODO error handling
     }
     dir.close();
     return status;
@@ -95,8 +109,6 @@ FileSystem::Status FileSystem::createDirectory(const char* path) {
 FileSystem::Status FileSystem::touch(const char* path) {
     Status status = Status::OP_OK;
     Os::File file;
-    // is this actually touching the file?
-    // see https://chris-sharpe.blogspot.com/2013/05/better-than-systemtouch.html
     File::Status file_status = file.open(path, Os::File::OPEN_WRITE);
     if (file_status != File::OP_OK) {
         status = FileSystem::handleFileError(file_status);
@@ -147,9 +159,9 @@ FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* de
     Os::File source, destination;
 
     // If requested, check if destination file exists and exit if does not exist
-    if (!createMissingDest) {
-        if (!FileSystem::exists(destPath)) {
-            return Status::INVALID_PATH;
+    if (not createMissingDest) {
+        if (not FileSystem::exists(destPath)) {
+            return Status::DOESNT_EXIST;
         }
     }
 
@@ -204,7 +216,7 @@ FileSystem::Status FileSystem::handleFileError(File::Status fileStatus) {
             status = FileSystem::NO_PERMISSION;
             break;
         case File::DOESNT_EXIST:
-            status = FileSystem::INVALID_PATH;
+            status = FileSystem::DOESNT_EXIST;
             break;
         default:
             status = FileSystem::OTHER_ERROR;
@@ -217,12 +229,14 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
     U8 fileBuffer[FILE_SYSTEM_CHUNK_SIZE];
     File::Status file_status;
 
+    // TODO: should assert source and destination are not the same file ? Or handle appropriately.
+    // TODO: See if possible to refactor this to use size for looping
+    // and increment by chunk_size until done
+
     // Set loop limit
     const FwSignedSizeType copyLoopLimit = (size / FILE_SYSTEM_CHUNK_SIZE) + 2;
 
     FwSignedSizeType chunkSize;
-    // REVIEW NOTE: implementation was changed from while to for loop
-    // REVIEW NOTE 2: should assert source and destination are not the same file?
     for (FwIndexType i = 0; i < copyLoopLimit; i++) {
         chunkSize = FILE_SYSTEM_CHUNK_SIZE;
         file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::NO_WAIT);

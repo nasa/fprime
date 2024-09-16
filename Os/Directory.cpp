@@ -13,6 +13,9 @@ Directory::Directory() : m_handle_storage(), m_delegate(*DirectoryInterface::get
 
 Directory::~Directory() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
+    if (this->isOpen()) {
+        this->close();
+    }
     m_delegate.~DirectoryInterface();
 }
 
@@ -60,6 +63,7 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
     // REVIEW NOTE: should getFileCount rewind before counting?
     // Likely yes?? Otherwise it's just weird
     // TODO: check return value (how to handle if not OP_OK?)
+    // TODO: document why we rewind before counting
     this->rewind();
 
     const U32 loopLimit = std::numeric_limits<U32>::max();

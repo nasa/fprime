@@ -16,13 +16,6 @@ namespace Directory {
 
 PosixDirectory::PosixDirectory() : Os::DirectoryInterface(), m_handle() {}
 
-PosixDirectory::~PosixDirectory() {
-    // close the directory if it is open (compiler warns about calling this->close() directly)
-    if (this->m_handle.m_dir_descriptor != nullptr) {
-        (void)::closedir(this->m_handle.m_dir_descriptor);
-    }
-}
-
 DirectoryHandle* PosixDirectory::getHandle() {
     return &this->m_handle;
 }
@@ -52,7 +45,7 @@ bool PosixDirectory::isOpen() {
 }
 
 PosixDirectory::Status PosixDirectory::rewind() {
-    // make sure it has been opened
+    // TODO: move to higher level in the interface when// make sure it has been opened
     if (!this->isOpen()) {
         return Status::NOT_OPENED;
     }
@@ -66,6 +59,7 @@ PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, FwSizeType buf
 
         FW_ASSERT(fileNameBuffer);
 
+        // TODO: move to higher level in the interface when
         // make sure it has been opened
         if (!this->isOpen()) {
             return Status::NOT_OPENED;
@@ -74,12 +68,15 @@ PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, FwSizeType buf
         Status status = Status::OP_OK;
 
         // Set errno to 0 so we know why we exited readdir
+        // This is the recommended by the manual (man 3 readdir)
         errno = 0;
 
         struct dirent *direntData = nullptr;
         while ((direntData = ::readdir(this->m_handle.m_dir_descriptor)) != nullptr) {
             // Skip hidden files
             if (direntData->d_name[0] != '.') {
+                // TODO: use Fw::StringUtils::string_copy(FwSizeType) utility function
+                // Fw::StringUtils::string_copy();
                 strncpy(fileNameBuffer, direntData->d_name, bufSize);
                 break;
             }
@@ -100,10 +97,10 @@ PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, FwSizeType buf
     }
 
 void PosixDirectory::close() {
-    if (this->isOpen()) {
+    if (this->m_handle.m_dir_descriptor != nullptr) {
         (void)::closedir(this->m_handle.m_dir_descriptor);
+        this->m_handle.m_dir_descriptor = nullptr;
     }
-    this->m_handle.m_dir_descriptor = nullptr;
 }
 
 }  // namespace Directory

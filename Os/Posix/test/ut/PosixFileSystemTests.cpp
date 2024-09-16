@@ -14,12 +14,7 @@
 // Posix Test Cases
 // ----------------------------------------------------------------------
 
-
-// Test 1
-// TEST_F(Functionality, PosixDeleteLockedMutex) {
-
-// }
-
+// All tests are inherited from the common tests in CommonTests.hpp
 
 int main(int argc, char** argv) {
     STest::Random::seed();

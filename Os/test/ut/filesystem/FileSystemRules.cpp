@@ -65,7 +65,7 @@ Os::Test::FileSystem::Tester::FileExists::FileExists() :
     STest::Rule<Os::Test::FileSystem::Tester>("FileExists") {}
 
 bool Os::Test::FileSystem::Tester::FileExists::precondition(const Os::Test::FileSystem::Tester &state) {
-    return state.m_test_files.size() > 0; // should always be true in random testing (see precondition of RemoveFile)
+    return state.m_test_files.size() > 0;
 }
 
 void Os::Test::FileSystem::Tester::FileExists::action(Os::Test::FileSystem::Tester &state) {
@@ -95,8 +95,7 @@ Os::Test::FileSystem::Tester::RemoveFile::RemoveFile() :
     STest::Rule<Os::Test::FileSystem::Tester>("RemoveFile") {}
 
 bool Os::Test::FileSystem::Tester::RemoveFile::precondition(const Os::Test::FileSystem::Tester &state) {
-    // Don't remove last file, so as not to end up with no files at all in random testing
-    return state.m_test_files.size() > 1;
+    return state.m_test_files.size() > 0;
 }
 
 void Os::Test::FileSystem::Tester::RemoveFile::action(Os::Test::FileSystem::Tester &state) {
@@ -139,7 +138,7 @@ bool Os::Test::FileSystem::Tester::CreateDirectory::precondition(const Os::Test:
 }
 
 void Os::Test::FileSystem::Tester::CreateDirectory::action(Os::Test::FileSystem::Tester &state) {
-    std::string dirpath = state.get_random_directory().path + "/" + state.get_new_dirname(); // TODO: rename with get_new_filename
+    std::string dirpath = state.get_random_directory().path + "/" + state.get_new_dirname();
     Os::FileSystem::Status status;
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dirpath.c_str()));
     status = Os::FileSystem::getSingleton().createDirectory(dirpath.c_str());
@@ -178,7 +177,7 @@ Os::Test::FileSystem::Tester::MoveFile::MoveFile() :
     STest::Rule<Os::Test::FileSystem::Tester>("MoveFile") {}
 
 bool Os::Test::FileSystem::Tester::MoveFile::precondition(const Os::Test::FileSystem::Tester &state) {
-    return true;
+    return state.m_test_files.size() > 0;
 }
 
 void Os::Test::FileSystem::Tester::MoveFile::action(Os::Test::FileSystem::Tester &state) {
@@ -207,7 +206,7 @@ Os::Test::FileSystem::Tester::CopyFile::CopyFile() :
     STest::Rule<Os::Test::FileSystem::Tester>("CopyFile") {}
 
 bool Os::Test::FileSystem::Tester::CopyFile::precondition(const Os::Test::FileSystem::Tester &state) {
-    return true;
+    return state.m_test_files.size() > 0;
 }
 
 void Os::Test::FileSystem::Tester::CopyFile::action(Os::Test::FileSystem::Tester &state) {
@@ -236,7 +235,7 @@ Os::Test::FileSystem::Tester::AppendFile::AppendFile() :
     STest::Rule<Os::Test::FileSystem::Tester>("AppendFile") {}
 
 bool Os::Test::FileSystem::Tester::AppendFile::precondition(const Os::Test::FileSystem::Tester &state) {
-    return true;
+    return state.m_test_files.size() > 0;
 }
 
 void Os::Test::FileSystem::Tester::AppendFile::action(Os::Test::FileSystem::Tester &state) {
@@ -247,16 +246,10 @@ void Os::Test::FileSystem::Tester::AppendFile::action(Os::Test::FileSystem::Test
     std::string dest_path = dest.path;
 
     bool createMissingDest = false;
-    // TODO: AH! current appendFile implementation does not allow source and dest to be the same
-    // should it be fixed? or assert instead?
     if (source_path == dest_path) {
-        // dest = FileTracker(state.get_random_new_filepath(), "");
-        // dest.write_on_disk();
-        // createMissingDest = true;
-        return; // skip this test for now
-    } else {
-        ASSERT_TRUE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
+        return; // skip this test - we can not append a file to itself
     }
+    ASSERT_TRUE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
     status = Os::FileSystem::getSingleton().appendFile(source_path.c_str(), dest_path.c_str(), createMissingDest);
     state.append_file(source, dest, createMissingDest);
@@ -272,7 +265,7 @@ Os::Test::FileSystem::Tester::GetFileSize::GetFileSize() :
     STest::Rule<Os::Test::FileSystem::Tester>("GetFileSize") {}
 
 bool Os::Test::FileSystem::Tester::GetFileSize::precondition(const Os::Test::FileSystem::Tester &state) {
-    return true;
+    return state.m_test_files.size() > 0;
 }
 
 void Os::Test::FileSystem::Tester::GetFileSize::action(Os::Test::FileSystem::Tester &state) {
@@ -281,7 +274,6 @@ void Os::Test::FileSystem::Tester::GetFileSize::action(Os::Test::FileSystem::Tes
     FwSignedSizeType size;
     status = Os::FileSystem::getSingleton().getFileSize(file.path.c_str(), size);
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to get file size";
-    // TODO: make sure .size() is ok - might want to rework strings into U8 buffers
     ASSERT_EQ(size, file.contents.size()) << "File size should match contents size";
 }
 
@@ -306,20 +298,34 @@ void Os::Test::FileSystem::Tester::GetFreeSpace::action(Os::Test::FileSystem::Te
 }
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  ChangeWorkingDirectory
+// Rule:  GetSetWorkingDirectory: Test both get and set working directory
 // ------------------------------------------------------------------------------------------------------
-Os::Test::FileSystem::Tester::ChangeWorkingDirectory::ChangeWorkingDirectory() :
-    STest::Rule<Os::Test::FileSystem::Tester>("ChangeWorkingDirectory") {}
+Os::Test::FileSystem::Tester::GetSetWorkingDirectory::GetSetWorkingDirectory() :
+    STest::Rule<Os::Test::FileSystem::Tester>("GetSetWorkingDirectory") {}
 
-bool Os::Test::FileSystem::Tester::ChangeWorkingDirectory::precondition(const Os::Test::FileSystem::Tester &state) {
+bool Os::Test::FileSystem::Tester::GetSetWorkingDirectory::precondition(const Os::Test::FileSystem::Tester &state) {
     return true;
 }
 
-void Os::Test::FileSystem::Tester::ChangeWorkingDirectory::action(Os::Test::FileSystem::Tester &state) {
+void Os::Test::FileSystem::Tester::GetSetWorkingDirectory::action(Os::Test::FileSystem::Tester &state) {
     Os::FileSystem::Status status;
+    FwSizeType cwdSize = PATH_MAX;
+    char cwdBuffer[cwdSize];
+
+    // Get original working directory
+    status = Os::FileSystem::getSingleton().getWorkingDirectory(cwdBuffer, cwdSize);
+    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to get original working directory";
+    std::string original_cwd(cwdBuffer);
+
+    // Change working directory
     std::string other_dir = state.get_random_directory().path;
     status = Os::FileSystem::getSingleton().changeWorkingDirectory(other_dir.c_str());
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to change working directory";
-    // TODO: cd back to original directory
-}
+    status = Os::FileSystem::getSingleton().getWorkingDirectory(cwdBuffer, cwdSize);
+    ASSERT_TRUE(other_dir.compare(cwdBuffer)) << "getWorkingDirectory did not return the expected directory";
 
+    // Change back to original working directory
+    // This is done so that this test does not affect the working directory of other tests during random testing
+    status = Os::FileSystem::getSingleton().changeWorkingDirectory(original_cwd.c_str());
+    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to change working directory back";
+}

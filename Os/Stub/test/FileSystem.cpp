@@ -36,6 +36,11 @@ TestFileSystem::Status TestFileSystem::_moveFile(const char* originPath, const c
     return Status::OP_OK;
 }
 
+TestFileSystem::Status TestFileSystem::_getWorkingDirectory(char* path, FwSizeType size) {
+    StaticData::data.lastCalled = StaticData::LastFn::GET_CWD_FN;
+    return Status::OP_OK;
+}
+
 TestFileSystem::Status TestFileSystem::_changeWorkingDirectory(const char* path) {
     StaticData::data.lastCalled = StaticData::LastFn::CHANGE_CWD_FN;
     return Status::OP_OK;

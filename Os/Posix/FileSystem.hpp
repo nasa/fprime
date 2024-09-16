@@ -36,10 +36,12 @@ class PosixFileSystem : public FileSystemInterface {
     Status _removeFile(const char* path) override;
     //! \brief moves a file from origin to destination
     Status _moveFile(const char* originPath, const char* destPath) override;
-    //! \brief move current directory to path
-    Status _changeWorkingDirectory(const char* path) override;
     //! \brief get FS free and total space in bytes on filesystem containing path
     Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
+    //! \brief get current working directory
+    Status _getWorkingDirectory(char* path, FwSizeType bufferSize) override;
+    //! \brief move current directory to path
+    Status _changeWorkingDirectory(const char* path) override;
 
 
 

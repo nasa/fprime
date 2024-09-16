@@ -8,14 +8,7 @@
 
 #ifndef OS_TEST_UT_COMMON_FILESYSTEM_TESTS_HPP
 #define OS_TEST_UT_COMMON_FILESYSTEM_TESTS_HPP
-namespace Os {
-namespace Test {
-namespace FileSystem {
 
-
-}  // namespace FileSystem
-}  // namespace Test
-}  // namespace Os
 
 class Functionality : public ::testing::Test {
   public:

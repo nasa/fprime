@@ -129,10 +129,10 @@ struct GetFreeSpace : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  ChangeWorkingDirectory: Move a file from one location to another
+// Rule:  GetSetWorkingDirectory: Get working directory, set working directory
 // ------------------------------------------------------------------------------------------------------
-struct ChangeWorkingDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
-    ChangeWorkingDirectory();
+struct GetSetWorkingDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
+    GetSetWorkingDirectory();
     bool precondition(const Os::Test::FileSystem::Tester &state);
     void action(Os::Test::FileSystem::Tester &state);
 };

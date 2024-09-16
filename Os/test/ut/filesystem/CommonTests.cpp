@@ -108,11 +108,11 @@ TEST_F(Functionality, GetFreeSpace) {
     free_space_rule.apply(*tester);
 }
 
-// // ChangeWorkingDirectory 
-// TEST_F(Functionality, ChangeWorkingDirectory) {
-//     Os::Test::FileSystem::Tester::ChangeWorkingDirectory change_cwd_rule;
-//     change_cwd_rule.apply(*tester);
-// }
+// // Test both get and set working directory
+TEST_F(Functionality, GetSetWorkingDirectory) {
+    Os::Test::FileSystem::Tester::GetSetWorkingDirectory change_cwd_rule;
+    change_cwd_rule.apply(*tester);
+}
 
 // Randomized testing
 TEST_F(Functionality, RandomizedTesting) {
@@ -130,6 +130,7 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::FileSystem::Tester::AppendFile append_rule;
     Os::Test::FileSystem::Tester::GetFileSize file_size_rule;
     Os::Test::FileSystem::Tester::GetFreeSpace free_space_rule;
+    Os::Test::FileSystem::Tester::GetSetWorkingDirectory cwd_rule;
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::FileSystem::Tester>* rules[] = {
@@ -144,7 +145,8 @@ TEST_F(Functionality, RandomizedTesting) {
             &copyfile_rule,
             &append_rule,
             &file_size_rule,
-            &free_space_rule
+            &free_space_rule,
+            &cwd_rule
     };
 
     // Take the rules and place them into a random scenario
