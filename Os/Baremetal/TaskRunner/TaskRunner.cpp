@@ -70,7 +70,7 @@ void TaskRunner::run() {
         //Run-it!
         handle->m_routine(handle->m_argument);
         //Disable tasks that have "exited" or stopped
-        handle->m_enabled = (m_task_table[i]->getState() == TaskInterface::State::RUNNING);
+        handle->m_enabled = (m_task_table[i]->getState() != TaskInterface::State::EXITED);
     }
     //Check if no tasks, and stop
     if (i == 0) {
