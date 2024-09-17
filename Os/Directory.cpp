@@ -68,11 +68,10 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
     if (not this->isOpen()) {
         return Status::NOT_OPENED;
     }
-    // REVIEW NOTE: should getFileCount rewind before counting?
-    // Likely yes?? Otherwise it's just weird
-    // TODO: check return value (how to handle if not OP_OK?)
-    // TODO: document why we rewind before counting
-    this->rewind();
+    // Rewind to ensure we start from the beginning of the stream
+    if (this->rewind() != Status::OP_OK) {
+        return Status::OTHER_ERROR;
+    }
 
     const U32 loopLimit = std::numeric_limits<U32>::max();
     FwSizeType count = 0;
@@ -89,8 +88,9 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
         ++count;
     }
     fileCount = count;
-    // and after??
-    this->rewind();
+    if (this->rewind() != Status::OP_OK) {
+        return Status::OTHER_ERROR;
+    }
     return Status::OP_OK;
 }
 
@@ -101,12 +101,13 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
     if (not this->isOpen()) {
         return Status::NOT_OPENED;
     }
-    // same thing here - should we rewind before?
-    this->rewind();
+    // Rewind to ensure we start reading from the beginning of the stream
+    if (this->rewind() != Status::OP_OK) {
+        return Status::OTHER_ERROR;
+    }
 
     Status readStatus = Status::OP_OK;
     Status returnStatus = Status::OP_OK;
-
     FwIndexType index;
 
     // Iterate through the directory and read the filenames into the array
@@ -118,10 +119,11 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
             return Status::OTHER_ERROR;
         }
     }
-
     filenameCount = static_cast<FwSizeType>(index);
 
-    this->rewind();
+    if (this->rewind() != Status::OP_OK) {
+        return Status::OTHER_ERROR;
+    }
 
     return returnStatus;
 

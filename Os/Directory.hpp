@@ -26,8 +26,8 @@ class DirectoryInterface {
     };
 
     enum OpenMode {
-        READ,   //!<  Error if directory doesn't exist
-        CREATE, //!<  Create directory if it doesn't exist
+        READ,   //!<  Open directory, error if directory doesn't exist
+        CREATE, //!<  Open directory, create directory if it doesn't exist
     };
 
     //! \brief default constructor
@@ -104,9 +104,14 @@ class Directory final : public DirectoryInterface {
     //! \return status of the operation
     Status readDirectory(Fw::String filenameArray[], const FwSizeType arraySize, FwSizeType& filenameCount);
 
-    //! \brief Get the number of files in the directory
-    //! \param fileCount: number of files in the directory (output)
-    //! \return status of the operation
+    //! \brief Get the number of files in the directory.
+    //!
+    //! This function counts the number of files in the directory by reading each file entry.
+    //! It first rewinds the directory stream to ensure counting starts from the beginning.
+    //! After counting, it rewinds the directory stream again, resetting seek position to beginning.
+    //!
+    //! \param fileCount Reference to a variable where the file count will be stored.
+    //! \return Status indicating the result of the operation.
     Status getFileCount(FwSizeType& fileCount);
 
   private:

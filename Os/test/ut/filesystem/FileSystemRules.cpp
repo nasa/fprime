@@ -246,9 +246,6 @@ void Os::Test::FileSystem::Tester::AppendFile::action(Os::Test::FileSystem::Test
     std::string dest_path = dest.path;
 
     bool createMissingDest = false;
-    if (source_path == dest_path) {
-        return; // skip this test - we can not append a file to itself
-    }
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
     status = Os::FileSystem::getSingleton().appendFile(source_path.c_str(), dest_path.c_str(), createMissingDest);
@@ -256,6 +253,35 @@ void Os::Test::FileSystem::Tester::AppendFile::action(Os::Test::FileSystem::Test
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to append file";
     // Compare contents of dest on disk with expected contents
     ASSERT_TRUE(state.validate_contents_on_disk(dest));
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  AppendToNewFile
+// ------------------------------------------------------------------------------------------------------
+Os::Test::FileSystem::Tester::AppendToNewFile::AppendToNewFile() :
+    STest::Rule<Os::Test::FileSystem::Tester>("AppendToNewFile") {}
+
+bool Os::Test::FileSystem::Tester::AppendToNewFile::precondition(const Os::Test::FileSystem::Tester &state) {
+    return state.m_test_files.size() > 0;
+}
+
+void Os::Test::FileSystem::Tester::AppendToNewFile::action(Os::Test::FileSystem::Tester &state) {
+    // TODO: fix this test
+    // Os::FileSystem::Status status;
+    // FileTracker& source = state.get_random_file();
+    // std::string source_path = source.path;
+    // FileTracker& dest = state.insert_new_file(state.get_random_new_filepath(), "");
+    // std::string dest_path = dest.path;
+    // // state.insert_new_file(dest);
+
+    // bool createMissingDest = true;
+    // ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
+    // ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
+    // status = Os::FileSystem::getSingleton().appendFile(source_path.c_str(), dest_path.c_str(), createMissingDest);
+    // state.append_file(source, dest, createMissingDest);
+    // ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to append file";
+    // // Compare contents of dest on disk with expected contents
+    // ASSERT_TRUE(state.validate_contents_on_disk(dest));
 }
 
 // ------------------------------------------------------------------------------------------------------

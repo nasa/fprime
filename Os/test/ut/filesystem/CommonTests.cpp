@@ -96,6 +96,12 @@ TEST_F(Functionality, AppendFile) {
     append_rule.apply(*tester);
 }
 
+// AppendToNewFile 
+TEST_F(Functionality, AppendToNewFile) {
+    Os::Test::FileSystem::Tester::AppendToNewFile append_new_rule;
+    append_new_rule.apply(*tester);
+}
+
 // GetFileSize 
 TEST_F(Functionality, GetFileSize) {
     Os::Test::FileSystem::Tester::GetFileSize get_size_rule;
@@ -128,6 +134,7 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::FileSystem::Tester::MoveFile move_rule;
     Os::Test::FileSystem::Tester::CopyFile copyfile_rule;
     Os::Test::FileSystem::Tester::AppendFile append_rule;
+    Os::Test::FileSystem::Tester::AppendToNewFile append_new_rule;
     Os::Test::FileSystem::Tester::GetFileSize file_size_rule;
     Os::Test::FileSystem::Tester::GetFreeSpace free_space_rule;
     Os::Test::FileSystem::Tester::GetSetWorkingDirectory cwd_rule;
@@ -144,6 +151,7 @@ TEST_F(Functionality, RandomizedTesting) {
             &move_rule,
             &copyfile_rule,
             &append_rule,
+            // &append_new_rule,
             &file_size_rule,
             &free_space_rule,
             &cwd_rule

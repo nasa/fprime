@@ -5,8 +5,7 @@
 #include <Os/Os.hpp>
 #include <Os/Directory.hpp>
 #include <Os/File.hpp>
-
-#define FILE_SYSTEM_CHUNK_SIZE (256u) // TODO: move to FpConfig
+#include <FppConstantsAc.hpp>
 
 namespace Os {
 
@@ -14,6 +13,10 @@ struct FileSystemHandle {};
 
 class FileSystemInterface {
   public:
+
+    // Size of file chunks to use for file system operations (e.g. copyFile)
+    static constexpr FwSignedSizeType FILE_SYSTEM_FILE_CHUNK_SIZE = FW_FILE_CHUNK_SIZE; //!< Size of file system chunk
+
     enum Status {
         OP_OK, //!<  Operation was successful
         ALREADY_EXISTS, //!<  File already exists

@@ -75,7 +75,7 @@ struct RemoveDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  CreateDirectory: Check directory removal
+// Rule:  CreateDirectory: Check directory creation
 // ------------------------------------------------------------------------------------------------------
 struct CreateDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
     CreateDirectory();
@@ -93,7 +93,7 @@ struct MoveFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  CopyFile: Move a file from one location to another
+// Rule:  CopyFile: Copy a file from one location to another
 // ------------------------------------------------------------------------------------------------------
 struct CopyFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     CopyFile();
@@ -102,7 +102,7 @@ struct CopyFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  AppendFile: Move a file from one location to another
+// Rule:  AppendFile: Append a file to another existing file
 // ------------------------------------------------------------------------------------------------------
 struct AppendFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     AppendFile();
@@ -111,7 +111,16 @@ struct AppendFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  GetFileSize: Move a file from one location to another
+// Rule:  AppendToNewFile: Apped file to a new path, using createMissingDest
+// ------------------------------------------------------------------------------------------------------
+struct AppendToNewFile : public STest::Rule<Os::Test::FileSystem::Tester> {
+    AppendToNewFile();
+    bool precondition(const Os::Test::FileSystem::Tester &state);
+    void action(Os::Test::FileSystem::Tester &state);
+};
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  GetFileSize: Test the GetFileSize function
 // ------------------------------------------------------------------------------------------------------
 struct GetFileSize : public STest::Rule<Os::Test::FileSystem::Tester> {
     GetFileSize();
@@ -120,7 +129,7 @@ struct GetFileSize : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  GetFreeSpace: Move a file from one location to another
+// Rule:  GetFreeSpace: Test the GetFreeSpace function
 // ------------------------------------------------------------------------------------------------------
 struct GetFreeSpace : public STest::Rule<Os::Test::FileSystem::Tester> {
     GetFreeSpace();

@@ -24,10 +24,15 @@ DirectoryHandle* PosixDirectory::getHandle() {
 PosixDirectory::Status PosixDirectory::open(const char* path, OpenMode mode) {
     Status status = Status::OP_OK;
 
-    // TODO: there likely is logic error here e.g. what if it exists already
+    // If CREATE mode, attempt to create the directory
     if (mode == OpenMode::CREATE) {
         if (::mkdir(path, S_IRWXU) == -1) {
             status = errno_to_directory_status(errno);
+        }
+        if (status == Status::ALREADY_EXISTS) {
+            // In create mode, it is ok if the directory already exists
+            // If path is a file, ::opendir will fail and return appropriate error
+            status = Status::OP_OK;
         }
     }
 
@@ -47,7 +52,7 @@ bool PosixDirectory::isOpen() {
 
 PosixDirectory::Status PosixDirectory::rewind() {
     Status status = Status::OP_OK;
-    // no errors defined
+    // no errors defined in man page for rewinddir
     ::rewinddir(this->m_handle.m_dir_descriptor);
     return status;
 }
@@ -115,6 +120,7 @@ PosixDirectory::Status PosixDirectory::read(Fw::StringBase& filenameString) {
 }
 
 void PosixDirectory::close() {
+    // ::closedir errors if dir descriptor is nullptr
     if (this->m_handle.m_dir_descriptor != nullptr) {
         (void)::closedir(this->m_handle.m_dir_descriptor);
         this->m_handle.m_dir_descriptor = nullptr;

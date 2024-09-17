@@ -225,37 +225,27 @@ FileSystem::Status FileSystem::handleFileError(File::Status fileStatus) {
 } // end handleFileError
 
 FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwSignedSizeType size) {
-    static_assert(FILE_SYSTEM_CHUNK_SIZE != 0, "FILE_SYSTEM_CHUNK_SIZE must be >0");
-    U8 fileBuffer[FILE_SYSTEM_CHUNK_SIZE];
+    // TODO: add comments to explain what's going on
+    static_assert(FILE_SYSTEM_FILE_CHUNK_SIZE != 0, "FILE_SYSTEM_FILE_CHUNK_SIZE must be >0");
+    U8 fileBuffer[FILE_SYSTEM_FILE_CHUNK_SIZE];
     File::Status file_status;
 
-    // TODO: should assert source and destination are not the same file ? Or handle appropriately.
-    // TODO: See if possible to refactor this to use size for looping
-    // and increment by chunk_size until done
+    FwSignedSizeType copiedSize = 0;
+    FwSignedSizeType chunkSize = FILE_SYSTEM_FILE_CHUNK_SIZE;
 
-    // Set loop limit
-    const FwSignedSizeType copyLoopLimit = (size / FILE_SYSTEM_CHUNK_SIZE) + 2;
-
-    FwSignedSizeType chunkSize;
-    for (FwIndexType i = 0; i < copyLoopLimit; i++) {
-        chunkSize = FILE_SYSTEM_CHUNK_SIZE;
-        file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::NO_WAIT);
+    for (copiedSize = 0; copiedSize < size; copiedSize += chunkSize) {
+        chunkSize = FW_MIN(FILE_SYSTEM_FILE_CHUNK_SIZE, size - copiedSize);
+        file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
         if (file_status != File::OP_OK) {
             return FileSystem::handleFileError(file_status);
         }
-
-        if (chunkSize == 0) {
-            // file has been successfully copied
-            return FileSystem::OP_OK;
-        }
-
         file_status = destination.write(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
         if (file_status != File::OP_OK) {
             return FileSystem::handleFileError(file_status);
         }
     }
 
-    return FileSystem::OTHER_ERROR;
+    return FileSystem::OP_OK;
 }  // end copyFileData
 
 }  // namespace Os
