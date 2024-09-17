@@ -84,6 +84,15 @@ struct CreateDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  RenameFile: Move a file from one location to another
+// ------------------------------------------------------------------------------------------------------
+struct RenameFile : public STest::Rule<Os::Test::FileSystem::Tester> {
+    RenameFile();
+    bool precondition(const Os::Test::FileSystem::Tester &state);
+    void action(Os::Test::FileSystem::Tester &state);
+};
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  MoveFile: Move a file from one location to another
 // ------------------------------------------------------------------------------------------------------
 struct MoveFile : public STest::Rule<Os::Test::FileSystem::Tester> {

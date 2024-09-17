@@ -62,7 +62,7 @@ class FileSystemInterface {
     //! \brief removes a file at location path
     virtual Status _removeFile(const char* path) = 0;
     //! \brief moves a file from source to destination
-    virtual Status _moveFile(const char* sourcePath, const char* destPath) = 0;
+    virtual Status _rename(const char* sourcePath, const char* destPath) = 0;
     //! \brief get FS free and total space in bytes on filesystem containing path
     virtual Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) = 0;
     //! \brief get current working directory
@@ -87,8 +87,8 @@ class FileSystem final : public FileSystemInterface {
     Status _removeDirectory(const char* path) override;
     //! \brief removes a file at location path
     Status _removeFile(const char* path) override;
-    //! \brief moves a file from source to destination
-    Status _moveFile(const char* sourcePath, const char* destPath) override;
+    //! \brief rename (or move) a file from source to destination
+    Status _rename(const char* sourcePath, const char* destPath) override;
     //! \brief get FS free and total space in bytes on filesystem containing path
     Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
     //! \brief get current working directory
@@ -99,10 +99,11 @@ class FileSystem final : public FileSystemInterface {
 
     //! \brief remove a directory at location path
     static Status removeDirectory(const char* path);
-    //! \brief removes a file at location path
+    //! \brief remove a file at location path
     static Status removeFile(const char* path);
-    //! \brief moves a file from source to destination
-    static Status moveFile(const char* sourcePath, const char* destPath);
+    //! \brief rename (or move) a file from source to destination
+    //! Should return EXDEV_ERROR if the rename fails due to cross-device operation
+    static Status rename(const char* sourcePath, const char* destPath);
     //! \brief get FS free and total space in bytes on filesystem containing path
     static Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes);
     //! \brief get current working directory
@@ -121,6 +122,8 @@ class FileSystem final : public FileSystemInterface {
     static Status appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false);
     //! \brief copies a file from source to destination
     static Status copyFile(const char* sourcePath, const char* destPath);
+    //! \brief Moves a file by first trying to rename it, and if that fails, copying it and then removing the original
+    static Status moveFile(const char* sourcePath, const char* destPath);
     //! \brief gets the size of the file (in bytes) at location path
     static Status getFileSize(const char* path, FwSignedSizeType& size);
 

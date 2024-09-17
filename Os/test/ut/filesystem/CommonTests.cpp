@@ -84,6 +84,12 @@ TEST_F(Functionality, MoveFile) {
     move_rule.apply(*tester);
 }
 
+// RenameFile 
+TEST_F(Functionality, RenameFile) {
+    Os::Test::FileSystem::Tester::RenameFile rename_rule;
+    rename_rule.apply(*tester);
+}
+
 // CopyFile 
 TEST_F(Functionality, CopyFile) {
     Os::Test::FileSystem::Tester::CopyFile move_rule;
@@ -132,6 +138,7 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::FileSystem::Tester::TouchFile touch_rule;
     Os::Test::FileSystem::Tester::CreateDirectory create_directory_rule;
     Os::Test::FileSystem::Tester::MoveFile move_rule;
+    Os::Test::FileSystem::Tester::RenameFile rename_rule;
     Os::Test::FileSystem::Tester::CopyFile copyfile_rule;
     Os::Test::FileSystem::Tester::AppendFile append_rule;
     Os::Test::FileSystem::Tester::AppendToNewFile append_new_rule;
@@ -149,9 +156,10 @@ TEST_F(Functionality, RandomizedTesting) {
             &touch_rule,
             &create_directory_rule,
             &move_rule,
+            &rename_rule,
             &copyfile_rule,
             &append_rule,
-            // &append_new_rule,
+            &append_new_rule,
             &file_size_rule,
             &free_space_rule,
             &cwd_rule

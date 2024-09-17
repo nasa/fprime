@@ -41,9 +41,9 @@ TEST_F(Interface, RemoveFile) {
 }
 
 // Ensure that Os::FileSystem properly calls the implementation moveFile()
-TEST_F(Interface, MoveFile) {
-    Os::FileSystem::moveFile("/does/not/matter", "/does/not/matter");
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::MOVE_FILE_FN);
+TEST_F(Interface, Rename) {
+    Os::FileSystem::rename("/does/not/matter", "/does/not/matter");
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::RENAME_FN);
     ASSERT_EQ(StaticData::data.lastStatus, Os::FileSystem::Status::OP_OK);
 }
 

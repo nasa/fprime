@@ -34,9 +34,7 @@ PosixFileSystem::Status PosixFileSystem::_removeFile(const char* path) {
     return status;
 }
 
-// TODO: call this one rename() instead
-// then add a moveFile() that tries rename() and fallback to copy() then unlink() if getting the error-specific EXDEV
-PosixFileSystem::Status PosixFileSystem::_moveFile(const char* originPath, const char* destPath) {
+PosixFileSystem::Status PosixFileSystem::_rename(const char* originPath, const char* destPath) {
     Status status = OP_OK;
     if (::rename(originPath, destPath) == -1) {
         status = errno_to_filesystem_status(errno);

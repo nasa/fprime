@@ -16,7 +16,7 @@ StubFileSystem::Status StubFileSystem::_removeFile(const char* path) {
     return Status::NOT_SUPPORTED;
 }
 
-StubFileSystem::Status StubFileSystem::_moveFile(const char* originPath, const char* destPath) {
+StubFileSystem::Status StubFileSystem::_rename(const char* originPath, const char* destPath) {
     return Status::NOT_SUPPORTED;
 }
 

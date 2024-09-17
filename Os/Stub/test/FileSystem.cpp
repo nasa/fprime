@@ -31,8 +31,8 @@ TestFileSystem::Status TestFileSystem::_removeFile(const char* path) {
     return Status::OP_OK;
 }
 
-TestFileSystem::Status TestFileSystem::_moveFile(const char* originPath, const char* destPath) {
-    StaticData::data.lastCalled = StaticData::LastFn::MOVE_FILE_FN;
+TestFileSystem::Status TestFileSystem::_rename(const char* originPath, const char* destPath) {
+    StaticData::data.lastCalled = StaticData::LastFn::RENAME_FN;
     return Status::OP_OK;
 }
 

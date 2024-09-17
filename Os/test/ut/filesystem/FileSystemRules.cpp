@@ -39,7 +39,6 @@ bool compare_file_contents_on_disk(std::string path1, std::string path2) {
             return true; // End of file reached
         }
     }
-    // ASSERT_TRUE(false) << "loopLimit reached without returning - should not happen";
     return false;
 }
 
@@ -118,7 +117,7 @@ bool Os::Test::FileSystem::Tester::TouchFile::precondition(const Os::Test::FileS
 }
 
 void Os::Test::FileSystem::Tester::TouchFile::action(Os::Test::FileSystem::Tester &state) {
-    std::string new_filename = state.get_random_new_filepath();
+    std::string new_filename = state.new_random_filepath();
     Os::FileSystem::Status status;
     status = Os::FileSystem::getSingleton().touch(new_filename.c_str());
     state.touch_file(new_filename);
@@ -171,6 +170,35 @@ void Os::Test::FileSystem::Tester::RemoveDirectory::action(Os::Test::FileSystem:
 }
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  RenameFile
+// ------------------------------------------------------------------------------------------------------
+Os::Test::FileSystem::Tester::RenameFile::RenameFile() :
+    STest::Rule<Os::Test::FileSystem::Tester>("RenameFile") {}
+
+bool Os::Test::FileSystem::Tester::RenameFile::precondition(const Os::Test::FileSystem::Tester &state) {
+    return state.m_test_files.size() > 0;
+}
+
+void Os::Test::FileSystem::Tester::RenameFile::action(Os::Test::FileSystem::Tester &state) {
+    FileTracker& file = state.get_random_file();
+    std::string source_path = file.path;
+    std::string original_content = file.contents;
+
+    std::string dest_path = state.new_random_filepath();
+    ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
+    ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
+    Os::FileSystem::Status status;
+    status = Os::FileSystem::getSingleton().rename(source_path.c_str(), dest_path.c_str());
+    state.move_file(file, dest_path);
+    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to rename file";
+    ASSERT_FALSE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
+    ASSERT_TRUE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
+
+    // Assert file contents on disk
+    ASSERT_TRUE(state.validate_contents_on_disk(file));
+}
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  MoveFile
 // ------------------------------------------------------------------------------------------------------
 Os::Test::FileSystem::Tester::MoveFile::MoveFile() :
@@ -185,7 +213,7 @@ void Os::Test::FileSystem::Tester::MoveFile::action(Os::Test::FileSystem::Tester
     std::string source_path = file.path;
     std::string original_content = file.contents;
 
-    std::string dest_path = state.get_random_new_filepath();
+    std::string dest_path = state.new_random_filepath();
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
     Os::FileSystem::Status status;
@@ -214,7 +242,7 @@ void Os::Test::FileSystem::Tester::CopyFile::action(Os::Test::FileSystem::Tester
 
     FileTracker& source = state.get_random_file();
     std::string source_path = source.path;
-    std::string dest_path = state.get_random_new_filepath();
+    std::string dest_path = state.new_random_filepath();
 
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
@@ -266,22 +294,26 @@ bool Os::Test::FileSystem::Tester::AppendToNewFile::precondition(const Os::Test:
 }
 
 void Os::Test::FileSystem::Tester::AppendToNewFile::action(Os::Test::FileSystem::Tester &state) {
-    // TODO: fix this test
-    // Os::FileSystem::Status status;
-    // FileTracker& source = state.get_random_file();
-    // std::string source_path = source.path;
-    // FileTracker& dest = state.insert_new_file(state.get_random_new_filepath(), "");
-    // std::string dest_path = dest.path;
-    // // state.insert_new_file(dest);
+    Os::FileSystem::Status status;
+    FileTracker& source = state.get_random_file();
+    std::string source_path = source.path;
+    FileTracker& dest = state.get_random_file();
+    std::string dest_path = dest.path;
 
-    // bool createMissingDest = true;
-    // ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
-    // ASSERT_FALSE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
-    // status = Os::FileSystem::getSingleton().appendFile(source_path.c_str(), dest_path.c_str(), createMissingDest);
-    // state.append_file(source, dest, createMissingDest);
-    // ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to append file";
-    // // Compare contents of dest on disk with expected contents
-    // ASSERT_TRUE(state.validate_contents_on_disk(dest));
+    if (source_path == dest_path) {
+        return; // skip test - can not remove dest if it is the same as source
+    }
+    // Set up test state: remove dest file from disk and reset contents in test state
+    bool createMissingDest = true;
+    Os::FileSystem::getSingleton().removeFile(dest_path.c_str());
+    dest.contents = "";
+    ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
+    // Perform append operation
+    status = Os::FileSystem::getSingleton().appendFile(source_path.c_str(), dest_path.c_str(), createMissingDest);
+    state.append_file(source, dest, createMissingDest);
+    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to append file";
+    // Compare contents of dest on disk with expected contents
+    ASSERT_TRUE(state.validate_contents_on_disk(dest));
 }
 
 // ------------------------------------------------------------------------------------------------------

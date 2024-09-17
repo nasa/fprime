@@ -33,9 +33,9 @@ FileSystem::Status FileSystem::_removeFile(const char* path) {
     return this->m_delegate._removeFile(path);
 }
 
-FileSystem::Status FileSystem::_moveFile(const char* sourcePath, const char* destPath) {
+FileSystem::Status FileSystem::_rename(const char* sourcePath, const char* destPath) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate._moveFile(sourcePath, destPath);
+    return this->m_delegate._rename(sourcePath, destPath);
 }
 
 FileSystem::Status FileSystem::_getWorkingDirectory(char* path, FwSizeType bufferSize) {
@@ -74,8 +74,8 @@ FileSystem::Status FileSystem::removeFile(const char* path) {
     return FileSystem::getSingleton()._removeFile(path);
 }
 
-FileSystem::Status FileSystem::moveFile(const char* sourcePath, const char* destPath) {
-    return FileSystem::getSingleton()._moveFile(sourcePath, destPath);
+FileSystem::Status FileSystem::rename(const char* sourcePath, const char* destPath) {
+    return FileSystem::getSingleton()._rename(sourcePath, destPath);
 }
 
 FileSystem::Status FileSystem::getWorkingDirectory(char* path, FwSizeType bufferSize) {
@@ -95,12 +95,7 @@ FileSystem::Status FileSystem::createDirectory(const char* path) {
     Os::Directory dir;
     Directory::Status dirStatus = dir.open(path, Os::Directory::OpenMode::CREATE);
     if (dirStatus != Directory::OP_OK) {
-        if (dirStatus == Directory::Status::ALREADY_EXISTS) {
-            status = FileSystem::Status::ALREADY_EXISTS;
-        } else {
-            status = FileSystem::Status::OTHER_ERROR;
-        }
-        return status; // TODO error handling
+        return FileSystem::handleDirectoryError(dirStatus);
     }
     dir.close();
     return status;
@@ -187,6 +182,24 @@ FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* de
     return fs_status;
 } // end appendFile
 
+FileSystem::Status FileSystem::moveFile(const char* source, const char* destination) {
+    Status status = Status::OP_OK;
+
+    // Try to rename the file - if that is successful, we're done and return OP_OK
+    if (FileSystem::rename(source, destination) == Status::OP_OK) {
+        return status;
+    }
+
+    // If rename fails, copy the file and remove the original
+    status = FileSystem::copyFile(source, destination);
+    if (status != Status::OP_OK) {
+        return status;
+    }
+    // REVIEW NOTE: what to do if removeFile fails?
+    status = FileSystem::removeFile(source);
+    return status;
+}
+
 FileSystem::Status FileSystem::getFileSize(const char* path, FwSignedSizeType& size) {
     Os::File file;
     Os::File::Status status = file.open(path, Os::File::OPEN_READ);
@@ -224,8 +237,29 @@ FileSystem::Status FileSystem::handleFileError(File::Status fileStatus) {
     return status;
 } // end handleFileError
 
+FileSystem::Status FileSystem::handleDirectoryError(Directory::Status dirStatus) {
+    FileSystem::Status status = FileSystem::OTHER_ERROR;
+
+    switch (dirStatus) {
+        case Directory::DOESNT_EXIST:
+            status = FileSystem::DOESNT_EXIST;
+            break;
+        case Directory::NO_PERMISSION:
+            status = FileSystem::NO_PERMISSION;
+            break;
+        case Directory::ALREADY_EXISTS:
+            status = FileSystem::ALREADY_EXISTS;
+            break;
+        case Directory::NOT_SUPPORTED:
+            status = FileSystem::NOT_SUPPORTED;
+            break;
+        default:
+            status = FileSystem::OTHER_ERROR;
+    }
+    return status;
+} // end handleFileError
+
 FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwSignedSizeType size) {
-    // TODO: add comments to explain what's going on
     static_assert(FILE_SYSTEM_FILE_CHUNK_SIZE != 0, "FILE_SYSTEM_FILE_CHUNK_SIZE must be >0");
     U8 fileBuffer[FILE_SYSTEM_FILE_CHUNK_SIZE];
     File::Status file_status;
@@ -233,7 +267,10 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
     FwSignedSizeType copiedSize = 0;
     FwSignedSizeType chunkSize = FILE_SYSTEM_FILE_CHUNK_SIZE;
 
+    // Copy the file in chunks - loop until all data is copied
     for (copiedSize = 0; copiedSize < size; copiedSize += chunkSize) {
+        // chunkSize is FILE_SYSTEM_FILE_CHUNK_SIZE unless size-copiedSize is less than that
+        // in which case chunkSize is size-copiedSize, ensuring the last chunk reads the remaining data
         chunkSize = FW_MIN(FILE_SYSTEM_FILE_CHUNK_SIZE, size - copiedSize);
         file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
         if (file_status != File::OP_OK) {

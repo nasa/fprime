@@ -77,9 +77,6 @@ struct Tester {
         this->m_test_files.push_back(new_file);
     }
     void append_file(FileTracker& source_file, FileTracker& dest_file, bool createMissingDest) {
-        if (createMissingDest) {
-            touch_file(dest_file.path);
-        }
         dest_file.contents += source_file.contents;
     }
 
@@ -98,7 +95,7 @@ struct Tester {
     DirectoryTracker& get_random_directory() {
         return this->m_test_dirs[STest::Pick::lowerUpper(0, this->m_test_dirs.size() - 1)];
     }
-    std::string get_random_new_filepath() {
+    std::string new_random_filepath() {
         return get_random_directory().path + "/" + get_new_filename();
     }
 
