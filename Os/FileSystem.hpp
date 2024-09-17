@@ -5,7 +5,6 @@
 #include <Os/Os.hpp>
 #include <Os/Directory.hpp>
 #include <Os/File.hpp>
-#include <FppConstantsAc.hpp>
 
 namespace Os {
 
