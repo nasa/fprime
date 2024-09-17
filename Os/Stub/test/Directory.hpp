@@ -16,7 +16,6 @@ namespace Test {
 //!/
 struct StaticData {
     //! Enumeration of last function called
-    //!
     enum LastFn {
         NONE_FN,
         CONSTRUCT_FN,
@@ -51,6 +50,10 @@ class TestDirectory : public DirectoryInterface {
     //! Destructor
     ~TestDirectory() override;
 
+
+    // ------------------------------------------------------------
+    // Implementation-specific Directory member functions
+    // ------------------------------------------------------------
     Status open(const char* path, OpenMode mode) override;
     bool isOpen() override;
     Status rewind() override;

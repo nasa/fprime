@@ -19,28 +19,51 @@ struct StubFileSystemHandle : public FileSystemHandle {};
 class StubFileSystem : public FileSystemInterface {
   public:
     //! \brief constructor
-    //!
     StubFileSystem() = default;
 
     //! \brief destructor
-    //!
     ~StubFileSystem() override = default;
 
-    // ------------------------------------
-    // Functions overrides
-    // ------------------------------------
 
-    //! \brief remove a directory at location path
+    // ------------------------------------------------------------
+    // Implementation-specific FileSystem member functions
+    // ------------------------------------------------------------
+
+    //! \brief Remove a directory at the specified path
+    //! \param path The path of the directory to remove
+    //! \return Status of the operation
     Status _removeDirectory(const char* path) override;
-    //! \brief removes a file at location path
+
+    //! \brief Remove a file at the specified path
+    //! \param path The path of the file to remove
+    //! \return Status of the operation
     Status _removeFile(const char* path) override;
-    //! \brief moves a file from origin to destination
-    Status _rename(const char* originPath, const char* destPath) override;
-    //! \brief get FS free and total space in bytes on filesystem containing path
+
+    //! \brief Rename a file from source to destination
+    //! 
+    //! If the rename fails due to a cross-device operation, this function should return EXDEV_ERROR
+    //! and moveFile should be used instead.
+    //! \param sourcePath The path of the source file
+    //! \param destPath The path of the destination file
+    //! \return Status of the operation
+    Status _rename(const char* sourcePath, const char* destPath) override;
+
+    //! \brief Get filesystem free and total space in bytes on the filesystem containing the specified path
+    //! \param path The path on the filesystem to query
+    //! \param totalBytes Reference to store the total bytes on the filesystem
+    //! \param freeBytes Reference to store the free bytes on the filesystem
+    //! \return Status of the operation
     Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) override;
-    //! \brief get current working directory
+
+    //! \brief Get the current working directory
+    //! \param path Buffer to store the current working directory path
+    //! \param bufferSize Size of the buffer
+    //! \return Status of the operation
     Status _getWorkingDirectory(char* path, FwSizeType bufferSize) override;
-    //! \brief move current directory to path
+
+    //! \brief Change the current working directory to the specified path
+    //! \param path The path of the new working directory
+    //! \return Status of the operation
     Status _changeWorkingDirectory(const char* path) override;
 
 

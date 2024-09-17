@@ -66,6 +66,11 @@ FileSystem& FileSystem::getSingleton() {
     return *FileSystem::s_singleton;
 }
 
+
+// ------------------------------------------------------------
+// Static functions calling implementation-specific operations
+// ------------------------------------------------------------
+
 FileSystem::Status FileSystem::removeDirectory(const char* path) {
     return FileSystem::getSingleton()._removeDirectory(path);
 }
@@ -89,6 +94,11 @@ FileSystem::Status FileSystem::changeWorkingDirectory(const char* path) {
 FileSystem::Status FileSystem::getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
     return FileSystem::getSingleton()._getFreeSpace(path, totalBytes, freeBytes);
 }
+
+
+// ------------------------------------------------------------
+// Additional functions built on top of OS-specific operations
+// ------------------------------------------------------------
 
 FileSystem::Status FileSystem::createDirectory(const char* path) {
     Status status = Status::OP_OK;
@@ -214,9 +224,9 @@ FileSystem::Status FileSystem::getFileSize(const char* path, FwSignedSizeType& s
 }
 
 
-// ######################################################################
-// #################         Helper Functions           #################
-// ######################################################################
+// ------------------------------------------------------------
+// Internal helper functions
+// ------------------------------------------------------------
 
 FileSystem::Status FileSystem::handleFileError(File::Status fileStatus) {
     FileSystem::Status status = FileSystem::OTHER_ERROR;

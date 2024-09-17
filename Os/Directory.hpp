@@ -1,3 +1,8 @@
+// ======================================================================
+// \title Os/Directory.hpp
+// \brief Os::Directory interface defintion
+// ======================================================================
+
 #ifndef _OS_DIRECTORY_HPP_
 #define _OS_DIRECTORY_HPP_
 
@@ -44,18 +49,54 @@ class DirectoryInterface {
     static DirectoryInterface* getDelegate(HandleStorage& aligned_new_memory);
 
 
-    //------------ Os-specific Directory Functions ------------
+    // -----------------------------------------------------------------
+    // Directory operations to be implemented by an OSAL implementation
+    // -----------------------------------------------------------------
+    // These functions are to be overridden in each OS implementation
+    // See an example in in Os/Posix/Directory.hpp
 
-    // TODO: add comments  back up
-    virtual Status open(const char* path, OpenMode mode) = 0; //!<  open/create a directory
-    virtual bool isOpen() = 0; //!< check if file descriptor is open or not.
-    virtual Status rewind() = 0; //!<  rewind directory stream to the beginning
-    virtual Status read(char * fileNameBuffer, FwSizeType buffSize) = 0; //!< get next filename from directory
-    virtual Status read(Fw::StringBase& filename) = 0; //!< get next filename from directory
-    virtual void close() = 0; //!<  close directory
+
+    //! \brief Open or create a directory
+    //!
+    //! Using the path provided, this function will open or create a directory. 
+    //! Use OpenMode::READ to open an existing directory and error if the directory is not found
+    //! Use OpenMode::CREATE to open a directory, creating the directory if it doesn't exist
+    //!
+    //! \param path: path of directory to open
+    //! \param mode: enum (READ, CREATE). See notes above for more information
+    //! \return status of the operation
+    virtual Status open(const char* path, OpenMode mode) = 0;
+
+    //! \brief Check if Directory is open or not
+    //! \return true if Directory is open, false otherwise
+    virtual bool isOpen() = 0;
+
+    //! \brief Rewind directory.
+    //! Each read operation will move the seek position forward. This function resets the seek position to the beginning.
+    //! \return status of the operation
+    virtual Status rewind() = 0;
+
+    //! \brief Get next filename from directory stream and write it to fileNameBuffer of size buffSize
+    //! \param fileNameBuffer: buffer to store filename
+    //! \param buffSize: size of fileNameBuffer
+    //! \return status of the operation
+    virtual Status read(char * fileNameBuffer, FwSizeType buffSize) = 0;
+
+    //! \brief Get next filename from directory stream and write it to a Fw::StringBase object
+    //! \param filename: Fw::StringBase (or derived) object to store filename in
+    //! \return status of the operation
+    virtual Status read(Fw::StringBase& filename) = 0;
+
+    //! \brief Close directory
+    virtual void close() = 0;
+
 
 };
 
+//! \brief Directory class
+//!
+//! This class provides a common interface for directory operations, such as reading files in a directory
+//! and getting the number of files in a directory.
 class Directory final : public DirectoryInterface {
   public:
     Directory();         //!<  Constructor (private because singleton pattern)
@@ -65,11 +106,20 @@ class Directory final : public DirectoryInterface {
     //! \return internal Directory handle representation
     DirectoryHandle* getHandle() override;
 
-    //------------ Os-specific Directory Functions ------------
+
+    // ------------------------------------------------------------
+    // Implementation-specific Directory member functions
+    // ------------------------------------------------------------
+    // These functions are overridden in each OS implementation (e.g. in Os/Posix/Directory.hpp)
 
     //! \brief Open or create a directory
+    //!
+    //! Using the path provided, this function will open or create a directory. 
+    //! Use OpenMode::READ to open an existing directory and error if the directory is not found
+    //! Use OpenMode::CREATE to open a directory, creating the directory if it doesn't exist
+    //!
     //! \param path: path of directory to open
-    //! \param mode: enum (READ, CREATE). READ will return an error if directory doesn't exist
+    //! \param mode: enum (READ, CREATE). See notes above for more information
     //! \return status of the operation
     Status open(const char* path, OpenMode mode) override;
 
@@ -77,7 +127,8 @@ class Directory final : public DirectoryInterface {
     //! \return true if Directory is open, false otherwise
     bool isOpen() override;
 
-    //! \brief Rewind directory stream to the beginning
+    //! \brief Rewind directory.
+    //! Each read operation will move the seek position forward. This function resets the seek position to the beginning.
     //! \return status of the operation
     Status rewind() override;
 
@@ -87,7 +138,7 @@ class Directory final : public DirectoryInterface {
     //! \return status of the operation
     Status read(char * fileNameBuffer, FwSizeType buffSize) override;
 
-    //! \brief Get next filename from directory stream and write it to Fw::StringBase object
+    //! \brief Get next filename from directory stream and write it to a Fw::StringBase object
     //! \param filename: Fw::StringBase (or derived) object to store filename in
     //! \return status of the operation
     Status read(Fw::StringBase& filename) override;
@@ -95,7 +146,10 @@ class Directory final : public DirectoryInterface {
     //! \brief Close directory
     void close() override;
 
-    // ------------ Common Directory Functions (non-OS-specific) ------------
+
+    // ------------------------------------------------------------
+    // Common functions built on top of OS-specific functions
+    // ------------------------------------------------------------
 
     //! \brief Read the contents of the directory and store filenames in filenameArray of size arraySize
     //! \param filenameArray: array to store filenames

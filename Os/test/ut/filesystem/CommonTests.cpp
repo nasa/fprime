@@ -29,7 +29,7 @@ void Functionality::SetUp() {
         FileTracker("filesystem_test_directory/test_file3", "aaaa"),
         FileTracker("filesystem_test_directory/test_file4", "dddd"),
         FileTracker("filesystem_test_directory/test_file5", "cc"),
-        FileTracker("filesystem_test_directory/sub_dir1/test_file3", "789")
+        FileTracker("filesystem_test_directory/sub_dir1/test_file6", "789")
     };
 
     tester->write_test_state_to_disk();
@@ -37,7 +37,6 @@ void Functionality::SetUp() {
 
 void Functionality::TearDown() {
     tester->purge_test_state_from_disk();
-    std::cout << "Tear down complete" << std::endl;
 }
 
 // ----------------------------------------------------------------------

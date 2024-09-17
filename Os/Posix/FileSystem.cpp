@@ -1,6 +1,6 @@
 // ======================================================================
-// \title Os/Posix/File.cpp
-// \brief Posix implementation for Os::File
+// \title Os/Posix/FileSystem.cpp
+// \brief Posix implementation for Os::FileSystem
 // ======================================================================
 #include "Os/Posix/FileSystem.hpp"
 #include "Os/Posix/error.hpp"
