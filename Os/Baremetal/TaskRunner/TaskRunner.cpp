@@ -63,14 +63,14 @@ void TaskRunner::run() {
             break;
         }
         //Get bare task or break
-        BareTaskHandle* handle = reinterpret_cast<BareTaskHandle*>(m_task_table[i]->getRawHandle());
+        BareTaskHandle* handle = reinterpret_cast<BareTaskHandle*>(m_task_table[i]->getHandle());
         if (handle == nullptr || handle->m_routine == nullptr || !handle->m_enabled) {
             continue;
         }
         //Run-it!
         handle->m_routine(handle->m_argument);
         //Disable tasks that have "exited" or stopped
-        handle->m_enabled = m_task_table[i]->isStarted();
+        handle->m_enabled = (m_task_table[i]->getState() == TaskInterface::State::RUNNING);
     }
     //Check if no tasks, and stop
     if (i == 0) {
