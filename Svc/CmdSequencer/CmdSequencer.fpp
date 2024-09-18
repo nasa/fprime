@@ -85,6 +85,9 @@ module Svc {
     @ Schedule in port
     async input port schedIn: Svc.Sched
 
+    @ Notifies that a sequence has started running
+    output port seqStartOut: Svc.CmdSeqIn
+
     # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------

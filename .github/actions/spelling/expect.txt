@@ -152,6 +152,7 @@ CMDPACKET
 CMDREG
 cmds
 CMDSEQ
+cmdsequencer
 cnt
 cntx
 cobj
@@ -548,6 +549,7 @@ lammertbies
 LASTLOG
 LBLOCK
 LCHILD
+leisher
 lemstarch
 lestarch
 levelname
@@ -1212,4 +1214,5 @@ xsh
 xsltproc
 xxxx
 yacgen
+zimri
 zmq

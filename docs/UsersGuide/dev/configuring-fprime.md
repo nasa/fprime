@@ -53,7 +53,7 @@ number of components.
 | CmdDispatcherSequencePorts         | Number of incoming ports to command dispatcher, e.g. uplink and command sequencer                     | 5       | Positive integer |
 | RateGroupDriverRateGroupPorts      | Number of rate group driver output ports. Limits total number of different rate groups                | 3       | Positive integer |
 | HealthPingPorts                    | Number of health ping output ports. Limits number of components attached to health component          | 25      | Positive integer |
-
+| SeqDispatcherSequencerPorts         | Number of CmdSequencers that the SeqDispatcher can dispatch sequences to | 2 | Positive integer
 
 ## FpConfig.h
 
