@@ -34,7 +34,7 @@ These tutorials will walk the user from a basic getting-started guide through de
 
     The Math Component tutorial walks users through constructing a full F´ application including custom Ports, and Enumeration data types. Events, Telemetry, Commands, and Parameters are covered as well. Unit-Testing is also covered.
 
-    [:octicons-arrow-right-24: Math Component](math-component.md)
+    [:octicons-arrow-right-24: Math Component](../../tutorials-math-component/docs/math-component.md)
 
 -   <span class="card-title">__Cross-Compilation Setup Tutorial__</span>
 
