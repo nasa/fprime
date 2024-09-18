@@ -11,6 +11,7 @@ var class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence =
     [ "getFileName", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a6813e8dc3132e69fa6c0acddd1904f76", null ],
     [ "getHeader", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#aca1b2009affa1e622144356961373070", null ],
     [ "getLogFileName", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#ad8df03c655bc23e724ec26a5562a4d39", null ],
+    [ "getStringFileName", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a1ddad6dbf7abc2394b1203c0ca169ab1", null ],
     [ "hasMoreRecords", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a9a2da8a184ab07253c46a1533e73fb19", null ],
     [ "loadFile", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a2ba94d67a3f21171bfebb4cf98663118", null ],
     [ "nextRecord", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a88d322dd6aa5ebbd3b47d2dd6cfc1b90", null ],
@@ -22,5 +23,6 @@ var class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence =
     [ "m_events", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a05bac52d5b517961a6644c5f5ffcf03d", null ],
     [ "m_fileName", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#af97e03927bf84817a189a08fa0a61c7a", null ],
     [ "m_header", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a1a977e498a978b2e94c324acf1d0f096", null ],
-    [ "m_logFileName", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a6c6e184979e6072e547073d7baf42a3a", null ]
+    [ "m_logFileName", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a6c6e184979e6072e547073d7baf42a3a", null ],
+    [ "m_stringFileName", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#ad246a7fbc6f3acf3210fc3a284b6e6a8", null ]
 ];

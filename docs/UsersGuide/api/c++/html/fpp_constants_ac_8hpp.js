@@ -60,6 +60,9 @@ var _fpp_constants_ac_8hpp =
     [ "FppConstant_RateGroupDriverRateGroupPorts", "fpp_constants_ac_8hpp.html#ae7e57aaa97dc182af0d5e8bb04c0338b", [
       [ "RateGroupDriverRateGroupPorts", "fpp_constants_ac_8hpp.html#ae7e57aaa97dc182af0d5e8bb04c0338bacb327ab18cd2ef151470b7878c50ae81", null ]
     ] ],
+    [ "FppConstant_SeqDispatcherSequencerPorts", "fpp_constants_ac_8hpp.html#a876c47c3cb1bc610f85bfb6fea22b766", [
+      [ "SeqDispatcherSequencerPorts", "fpp_constants_ac_8hpp.html#a876c47c3cb1bc610f85bfb6fea22b766a23ee6b7bbcfbc80b722d1ad5d8a8abc7", null ]
+    ] ],
     [ "FppConstant_StaticMemoryAllocations", "fpp_constants_ac_8hpp.html#a47e32e6e3799809e81ba2eb87f39ebe3", [
       [ "StaticMemoryAllocations", "fpp_constants_ac_8hpp.html#a47e32e6e3799809e81ba2eb87f39ebe3a66703178fc0d970f307cc3c88dc9c6f6", null ]
     ] ]

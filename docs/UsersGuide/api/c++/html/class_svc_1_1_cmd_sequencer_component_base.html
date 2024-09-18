@@ -154,6 +154,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9cb58851b05f30afd2614232c1980081"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a9cb58851b05f30afd2614232c1980081">set_seqDone_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_cmd_response_port.html">Fw::InputCmdResponsePort</a> *port)</td></tr>
 <tr class="memdesc:a9cb58851b05f30afd2614232c1980081"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to seqDone[portNum].  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a9cb58851b05f30afd2614232c1980081">More...</a><br /></td></tr>
 <tr class="separator:a9cb58851b05f30afd2614232c1980081"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed00c10ee359670156efffc0b291f428"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#aed00c10ee359670156efffc0b291f428">set_seqStartOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_svc_1_1_input_cmd_seq_in_port.html">Svc::InputCmdSeqInPort</a> *port)</td></tr>
+<tr class="memdesc:aed00c10ee359670156efffc0b291f428"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to seqStartOut[portNum].  <a href="class_svc_1_1_cmd_sequencer_component_base.html#aed00c10ee359670156efffc0b291f428">More...</a><br /></td></tr>
+<tr class="separator:aed00c10ee359670156efffc0b291f428"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b5f66b60174b021b6430ee27a663268"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a9b5f66b60174b021b6430ee27a663268">regCommands</a> ()</td></tr>
 <tr class="memdesc:a9b5f66b60174b021b6430ee27a663268"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register commands with the Command Dispatcher.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a9b5f66b60174b021b6430ee27a663268">More...</a><br /></td></tr>
 <tr class="separator:a9b5f66b60174b021b6430ee27a663268"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -209,6 +212,7 @@ Protected Types</h2></td></tr>
 <tr class="memitem:a867a853a5f7fac105f8bfae48590bc20"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a867a853a5f7fac105f8bfae48590bc20a22dac3395c3fcce1a8237a59ffe1c0fc">NUM_COMCMDOUT_OUTPUT_PORTS</a> = 1
 , <a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a867a853a5f7fac105f8bfae48590bc20a87ff710139531117cdcc2557b3f75ab7">NUM_PINGOUT_OUTPUT_PORTS</a> = 1
 , <a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a867a853a5f7fac105f8bfae48590bc20a6efd6a14efb6d7c0e94efedf9cfb7314">NUM_SEQDONE_OUTPUT_PORTS</a> = 1
+, <a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a867a853a5f7fac105f8bfae48590bc20a85e1b9d90162938c331792c07e9685fb">NUM_SEQSTARTOUT_OUTPUT_PORTS</a> = 1
  }</td></tr>
 <tr class="memdesc:a867a853a5f7fac105f8bfae48590bc20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerations for numbers of typed output ports.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a867a853a5f7fac105f8bfae48590bc20">More...</a><br /></td></tr>
 <tr class="separator:a867a853a5f7fac105f8bfae48590bc20"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -318,6 +322,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a399437910546ba2186603e33e4c130ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5611f5041fb05785c9c1bc907b03e70"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#ac5611f5041fb05785c9c1bc907b03e70">getNum_seqDone_OutputPorts</a> () const</td></tr>
 <tr class="separator:ac5611f5041fb05785c9c1bc907b03e70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdfab7e032d1a3709da28dfaab6e59e2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#acdfab7e032d1a3709da28dfaab6e59e2">getNum_seqStartOut_OutputPorts</a> () const</td></tr>
+<tr class="separator:acdfab7e032d1a3709da28dfaab6e59e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58804b9289b8edc044df281dcbd1e2e4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a58804b9289b8edc044df281dcbd1e2e4">isConnected_cmdRegOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
 <tr class="separator:a58804b9289b8edc044df281dcbd1e2e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f2ac9b22648938b5db75e2169b45c8c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a0f2ac9b22648938b5db75e2169b45c8c">isConnected_cmdResponseOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
@@ -334,6 +340,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a5c3ea72dfe1e22d33ffd251c29932bd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a714d32befd3dd6e082310976fbc16cec"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a714d32befd3dd6e082310976fbc16cec">isConnected_seqDone_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
 <tr class="separator:a714d32befd3dd6e082310976fbc16cec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e488d7059a4ed06d1702e069a88b0e0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a0e488d7059a4ed06d1702e069a88b0e0">isConnected_seqStartOut_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:a0e488d7059a4ed06d1702e069a88b0e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20a975f6e60af391e8ffe0bb263f08ef"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a20a975f6e60af391e8ffe0bb263f08ef">cmdResponseIn_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, U32 cmdSeq, const <a class="el" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> &amp;response)=0</td></tr>
 <tr class="memdesc:a20a975f6e60af391e8ffe0bb263f08ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port cmdResponseIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a20a975f6e60af391e8ffe0bb263f08ef">More...</a><br /></td></tr>
 <tr class="separator:a20a975f6e60af391e8ffe0bb263f08ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -346,9 +354,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:af6c57ebbb371064e36b3d6efda73912e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#af6c57ebbb371064e36b3d6efda73912e">seqCancelIn_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)=0</td></tr>
 <tr class="memdesc:af6c57ebbb371064e36b3d6efda73912e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port seqCancelIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#af6c57ebbb371064e36b3d6efda73912e">More...</a><br /></td></tr>
 <tr class="separator:af6c57ebbb371064e36b3d6efda73912e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a888eebf67a476448d11bde7bc1bbcfef"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a888eebf67a476448d11bde7bc1bbcfef">seqRunIn_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_string.html">Fw::String</a> &amp;filename)=0</td></tr>
-<tr class="memdesc:a888eebf67a476448d11bde7bc1bbcfef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port seqRunIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a888eebf67a476448d11bde7bc1bbcfef">More...</a><br /></td></tr>
-<tr class="separator:a888eebf67a476448d11bde7bc1bbcfef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab686338f07c92ab31be43f3ff7e35359"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#ab686338f07c92ab31be43f3ff7e35359">seqRunIn_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;filename)=0</td></tr>
+<tr class="memdesc:ab686338f07c92ab31be43f3ff7e35359"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port seqRunIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#ab686338f07c92ab31be43f3ff7e35359">More...</a><br /></td></tr>
+<tr class="separator:ab686338f07c92ab31be43f3ff7e35359"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c5257542557ac06d2dcf98f6dbfd7ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a3c5257542557ac06d2dcf98f6dbfd7ab">cmdResponseIn_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, U32 cmdSeq, const <a class="el" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> &amp;response)</td></tr>
 <tr class="memdesc:a3c5257542557ac06d2dcf98f6dbfd7ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port cmdResponseIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a3c5257542557ac06d2dcf98f6dbfd7ab">More...</a><br /></td></tr>
 <tr class="separator:a3c5257542557ac06d2dcf98f6dbfd7ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -361,9 +369,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a0a85d28050e13312cc8802bf7799dee4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a0a85d28050e13312cc8802bf7799dee4">seqCancelIn_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
 <tr class="memdesc:a0a85d28050e13312cc8802bf7799dee4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port seqCancelIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a0a85d28050e13312cc8802bf7799dee4">More...</a><br /></td></tr>
 <tr class="separator:a0a85d28050e13312cc8802bf7799dee4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa499b56d680ba12d7bdeeaf5c80a7d3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#aa499b56d680ba12d7bdeeaf5c80a7d3e">seqRunIn_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_string.html">Fw::String</a> &amp;filename)</td></tr>
-<tr class="memdesc:aa499b56d680ba12d7bdeeaf5c80a7d3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port seqRunIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#aa499b56d680ba12d7bdeeaf5c80a7d3e">More...</a><br /></td></tr>
-<tr class="separator:aa499b56d680ba12d7bdeeaf5c80a7d3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fc240f93e3a05930d9ae1a7d44d7fa6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a3fc240f93e3a05930d9ae1a7d44d7fa6">seqRunIn_handlerBase</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;filename)</td></tr>
+<tr class="memdesc:a3fc240f93e3a05930d9ae1a7d44d7fa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler base-class function for input port seqRunIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a3fc240f93e3a05930d9ae1a7d44d7fa6">More...</a><br /></td></tr>
+<tr class="separator:a3fc240f93e3a05930d9ae1a7d44d7fa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7601024af467f6ba92d39d59c8b4190"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#ab7601024af467f6ba92d39d59c8b4190">cmdResponseIn_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, U32 cmdSeq, const <a class="el" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> &amp;response)</td></tr>
 <tr class="memdesc:ab7601024af467f6ba92d39d59c8b4190"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port cmdResponseIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#ab7601024af467f6ba92d39d59c8b4190">More...</a><br /></td></tr>
 <tr class="separator:ab7601024af467f6ba92d39d59c8b4190"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -376,9 +384,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a3ae802b8cabada6be0235c12e0cf6ca6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a3ae802b8cabada6be0235c12e0cf6ca6">seqCancelIn_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
 <tr class="memdesc:a3ae802b8cabada6be0235c12e0cf6ca6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port seqCancelIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a3ae802b8cabada6be0235c12e0cf6ca6">More...</a><br /></td></tr>
 <tr class="separator:a3ae802b8cabada6be0235c12e0cf6ca6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e44cf7be83647bf890c3feca6714237"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a4e44cf7be83647bf890c3feca6714237">seqRunIn_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_string.html">Fw::String</a> &amp;filename)</td></tr>
-<tr class="memdesc:a4e44cf7be83647bf890c3feca6714237"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port seqRunIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a4e44cf7be83647bf890c3feca6714237">More...</a><br /></td></tr>
-<tr class="separator:a4e44cf7be83647bf890c3feca6714237"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23fb2cd6f05a3066e657a034f1d66596"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a23fb2cd6f05a3066e657a034f1d66596">seqRunIn_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;filename)</td></tr>
+<tr class="memdesc:a23fb2cd6f05a3066e657a034f1d66596"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port seqRunIn.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a23fb2cd6f05a3066e657a034f1d66596">More...</a><br /></td></tr>
+<tr class="separator:a23fb2cd6f05a3066e657a034f1d66596"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9ce31adc775b063b682d8414308d882"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#ac9ce31adc775b063b682d8414308d882">comCmdOut_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a> &amp;data, U32 context)</td></tr>
 <tr class="memdesc:ac9ce31adc775b063b682d8414308d882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port comCmdOut.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#ac9ce31adc775b063b682d8414308d882">More...</a><br /></td></tr>
 <tr class="separator:ac9ce31adc775b063b682d8414308d882"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -388,6 +396,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a2504d1bc37a3b411b3f66eded6af154e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a2504d1bc37a3b411b3f66eded6af154e">seqDone_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, U32 cmdSeq, const <a class="el" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> &amp;response)</td></tr>
 <tr class="memdesc:a2504d1bc37a3b411b3f66eded6af154e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port seqDone.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a2504d1bc37a3b411b3f66eded6af154e">More...</a><br /></td></tr>
 <tr class="separator:a2504d1bc37a3b411b3f66eded6af154e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56cb2cec1cbeb2574876cee1659bf065"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a56cb2cec1cbeb2574876cee1659bf065">seqStartOut_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;filename)</td></tr>
+<tr class="memdesc:a56cb2cec1cbeb2574876cee1659bf065"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port seqStartOut.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#a56cb2cec1cbeb2574876cee1659bf065">More...</a><br /></td></tr>
+<tr class="separator:a56cb2cec1cbeb2574876cee1659bf065"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa249dd44b7575ccb45d419b7dd567580"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#aa249dd44b7575ccb45d419b7dd567580">cmdResponse_out</a> (<a class="el" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode, U32 cmdSeq, <a class="el" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> response)</td></tr>
 <tr class="memdesc:aa249dd44b7575ccb45d419b7dd567580"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit command response.  <a href="class_svc_1_1_cmd_sequencer_component_base.html#aa249dd44b7575ccb45d419b7dd567580">More...</a><br /></td></tr>
 <tr class="separator:aa249dd44b7575ccb45d419b7dd567580"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -578,9 +589,9 @@ Friends</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_types_class_fw_1_1_active_component_base"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_fw_1_1_active_component_base')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_fw_1_1_active_component_base.html">Fw::ActiveComponentBase</a></td></tr>
-<tr class="memitem:a96053f15f2527f09bb6c44f2b606ff48 inherit pub_types_class_fw_1_1_active_component_base"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_active_component_base.html#a96053f15f2527f09bb6c44f2b606ff48a8cc33621180816a11dbda2e55c379266">ACTIVE_COMPONENT_EXIT</a>
+<tr class="memitem:aabfc3bcb7aaa86451d4d0c52ad54e024 inherit pub_types_class_fw_1_1_active_component_base"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_active_component_base.html#aabfc3bcb7aaa86451d4d0c52ad54e024a8cc33621180816a11dbda2e55c379266">ACTIVE_COMPONENT_EXIT</a>
  }</td></tr>
-<tr class="separator:a96053f15f2527f09bb6c44f2b606ff48 inherit pub_types_class_fw_1_1_active_component_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:aabfc3bcb7aaa86451d4d0c52ad54e024 inherit pub_types_class_fw_1_1_active_component_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_class_fw_1_1_queued_component_base"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_fw_1_1_queued_component_base')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_fw_1_1_queued_component_base.html">Fw::QueuedComponentBase</a></td></tr>
 <tr class="memitem:a949fc72adb06a376aef83acc97943681 inherit pub_types_class_fw_1_1_queued_component_base"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_queued_component_base.html#a949fc72adb06a376aef83acc97943681">MsgDispatchStatus</a> { <a class="el" href="class_fw_1_1_queued_component_base.html#a949fc72adb06a376aef83acc97943681a5c17c4ed3bbbb8eada20779e00d654e6">MSG_DISPATCH_OK</a>
 , <a class="el" href="class_fw_1_1_queued_component_base.html#a949fc72adb06a376aef83acc97943681a0ba0a687333fa183843874e453cd2a1e">MSG_DISPATCH_EMPTY</a>
@@ -724,6 +735,7 @@ Additional Inherited Members</h2></td></tr>
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a867a853a5f7fac105f8bfae48590bc20a22dac3395c3fcce1a8237a59ffe1c0fc"></a>NUM_COMCMDOUT_OUTPUT_PORTS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a867a853a5f7fac105f8bfae48590bc20a87ff710139531117cdcc2557b3f75ab7"></a>NUM_PINGOUT_OUTPUT_PORTS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a867a853a5f7fac105f8bfae48590bc20a6efd6a14efb6d7c0e94efedf9cfb7314"></a>NUM_SEQDONE_OUTPUT_PORTS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a867a853a5f7fac105f8bfae48590bc20a85e1b9d90162938c331792c07e9685fb"></a>NUM_SEQSTARTOUT_OUTPUT_PORTS&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html#l00083">83</a> of file <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html">CmdSequencerComponentAc.hpp</a>.</p>
@@ -770,7 +782,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html#l00090">90</a> of file <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html">CmdSequencerComponentAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html#l00091">91</a> of file <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html">CmdSequencerComponentAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -848,7 +860,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html#l00102">102</a> of file <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html">CmdSequencerComponentAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html#l00103">103</a> of file <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html">CmdSequencerComponentAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -886,7 +898,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html#l00131">131</a> of file <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html">CmdSequencerComponentAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html#l00132">132</a> of file <a class="el" href="cmd_sequencer_component_ac_8hpp_source.html">CmdSequencerComponentAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -923,7 +935,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00823">823</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00870">870</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -952,7 +964,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Destroy <a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html" title="Auto-generated base for CmdSequencer component.">CmdSequencerComponentBase</a> object. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00830">830</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00877">877</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1007,7 +1019,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01444">1444</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01523">1523</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1127,7 +1139,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01063">1063</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01127">1127</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1188,7 +1200,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01341">1341</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01405">1405</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1242,7 +1254,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01389">1389</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01453">1453</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1341,7 +1353,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01756">1756</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01835">1835</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1388,7 +1400,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01996">1996</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02075">2075</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1487,7 +1499,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01579">1579</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01658">1658</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1534,7 +1546,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01963">1963</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02042">2042</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1633,7 +1645,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01874">1874</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01953">1953</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1680,7 +1692,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02018">2018</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02097">2097</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1779,7 +1791,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01815">1815</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01894">1894</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1826,7 +1838,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02007">2007</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02086">2086</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1939,7 +1951,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01461">1461</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01540">1540</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1986,7 +1998,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01941">1941</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02020">2020</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2085,7 +2097,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01638">1638</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01717">1717</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2132,7 +2144,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01974">1974</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02053">2053</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2231,7 +2243,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01697">1697</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01776">1776</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2278,7 +2290,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01985">1985</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02064">2064</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2384,7 +2396,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01520">1520</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01599">1599</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2431,7 +2443,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01952">1952</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02031">2031</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2459,7 +2471,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00423">423</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00442">442</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2487,7 +2499,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00438">438</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00457">457</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2515,7 +2527,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00449">449</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00468">468</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2543,7 +2555,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00460">460</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00479">479</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2571,7 +2583,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00471">471</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00490">490</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2599,7 +2611,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00482">482</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00501">501</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2628,7 +2640,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of cmdIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of cmdIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00840">840</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00887">887</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2657,7 +2669,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of cmdRegOut output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of cmdRegOut output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00894">894</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00941">941</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2686,7 +2698,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of cmdResponseIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of cmdResponseIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00850">850</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00897">897</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2715,7 +2727,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of cmdResponseOut output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of cmdResponseOut output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00900">900</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00947">947</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2744,7 +2756,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of comCmdOut output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of comCmdOut output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00928">928</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00975">975</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2773,7 +2785,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of logOut output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of logOut output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00906">906</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00953">953</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2802,7 +2814,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of pingIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of pingIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00856">856</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00903">903</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2831,7 +2843,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of pingOut output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of pingOut output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00934">934</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00981">981</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2860,7 +2872,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of schedIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of schedIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00862">862</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00909">909</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2889,7 +2901,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of seqCancelIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of seqCancelIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00868">868</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00915">915</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2918,7 +2930,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of seqDone output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of seqDone output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00940">940</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00987">987</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2947,7 +2959,36 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of seqRunIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of seqRunIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00874">874</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00921">921</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+
+</div>
+</div>
+<a id="acdfab7e032d1a3709da28dfaab6e59e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdfab7e032d1a3709da28dfaab6e59e2">&#9670;&nbsp;</a></span>getNum_seqStartOut_OutputPorts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::CmdSequencerComponentBase::getNum_seqStartOut_OutputPorts </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the number of seqStartOut output ports</p>
+<dl class="section return"><dt>Returns</dt><dd>The number of seqStartOut output ports </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00993">993</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2976,7 +3017,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of timeCaller output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of timeCaller output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00912">912</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00959">959</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3005,7 +3046,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of tlmOut output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of tlmOut output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00918">918</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00965">965</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3034,7 +3075,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the time</p>
 <p>\return The current time </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04431">4431</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04510">4510</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3109,7 +3150,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00965">965</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01018">1018</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3145,7 +3186,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00976">976</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01029">1029</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3181,7 +3222,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01024">1024</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01077">1077</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3217,7 +3258,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00987">987</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01040">1040</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3253,7 +3294,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01035">1035</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01088">1088</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3289,7 +3330,43 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01046">1046</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01099">1099</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a0e488d7059a4ed06d1702e069a88b0e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e488d7059a4ed06d1702e069a88b0e0">&#9670;&nbsp;</a></span>isConnected_seqStartOut_OutputPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Svc::CmdSequencerComponentBase::isConnected_seqStartOut_OutputPort </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
+          <td class="paramname"><em>portNum</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Check whether port seqStartOut is connected</p>
+<dl class="section return"><dt>Returns</dt><dd>Whether port seqStartOut is connected </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">portNum</td><td>The port number </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01110">1110</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3325,7 +3402,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00998">998</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01051">1051</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3361,7 +3438,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01009">1009</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01062">1062</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3397,7 +3474,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04011">4011</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04090">4090</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3444,7 +3521,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03919">3919</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03998">3998</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3498,7 +3575,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04083">4083</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04162">4162</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3534,7 +3611,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03605">3605</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03684">3684</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3570,7 +3647,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03451">3451</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03530">3530</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3606,7 +3683,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02105">2105</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02184">2184</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3642,7 +3719,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02856">2856</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02935">2935</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3678,7 +3755,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03755">3755</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03834">3834</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3732,7 +3809,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02746">2746</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02825">2825</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3768,7 +3845,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02033">2033</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02112">2112</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3829,7 +3906,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02928">2928</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03007">3007</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3883,7 +3960,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02636">2636</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02715">2715</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3937,7 +4014,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02249">2249</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02328">2328</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -3973,7 +4050,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02564">2564</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02643">2643</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4009,7 +4086,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02177">2177</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02256">2256</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4056,7 +4133,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02472">2472</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02551">2551</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4085,7 +4162,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Log event CS_InvalidMode</p>
 <p>The Command Sequencer received a command that was invalid for its current mode. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03056">3056</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03135">3135</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4114,7 +4191,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Log event CS_JoinWaitingNotComplete</p>
 <p>Cannot run new sequence when current sequence file is still running. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04193">4193</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04272">4272</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4168,7 +4245,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02362">2362</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l02441">2441</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4222,7 +4299,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03121">3121</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03200">3200</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4269,7 +4346,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03827">3827</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03906">3906</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4323,7 +4400,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03231">3231</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03310">3310</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4377,7 +4454,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03341">3341</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03420">3420</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4413,7 +4490,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03523">3523</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03602">3602</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4442,7 +4519,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Log event CS_NoSequenceActive</p>
 <p>A sequence related command came with no active sequence </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03690">3690</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l03769">3769</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4534,7 +4611,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01134">1134</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01198">1198</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4581,7 +4658,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01352">1352</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01416">1416</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4628,7 +4705,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01406">1406</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01470">1470</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4650,7 +4727,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Register commands with the Command Dispatcher. </p>
 <p>Connect the dispatcher first </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00781">781</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00828">828</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4742,7 +4819,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01187">1187</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01251">1251</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4789,7 +4866,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01361">1361</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01425">1425</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4859,7 +4936,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01240">1240</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01304">1304</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4895,7 +4972,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01370">1370</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01434">1434</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -4956,12 +5033,12 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01421">1421</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01485">1485</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a888eebf67a476448d11bde7bc1bbcfef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a888eebf67a476448d11bde7bc1bbcfef">&#9670;&nbsp;</a></span>seqRunIn_handler()</h2>
+<a id="ab686338f07c92ab31be43f3ff7e35359"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab686338f07c92ab31be43f3ff7e35359">&#9670;&nbsp;</a></span>seqRunIn_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -4978,7 +5055,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_fw_1_1_string.html">Fw::String</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;&#160;</td>
           <td class="paramname"><em>filename</em>&#160;</td>
         </tr>
         <tr>
@@ -5005,8 +5082,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aa499b56d680ba12d7bdeeaf5c80a7d3e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa499b56d680ba12d7bdeeaf5c80a7d3e">&#9670;&nbsp;</a></span>seqRunIn_handlerBase()</h2>
+<a id="a3fc240f93e3a05930d9ae1a7d44d7fa6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3fc240f93e3a05930d9ae1a7d44d7fa6">&#9670;&nbsp;</a></span>seqRunIn_handlerBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5023,7 +5100,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_fw_1_1_string.html">Fw::String</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;&#160;</td>
           <td class="paramname"><em>filename</em>&#160;</td>
         </tr>
         <tr>
@@ -5048,12 +5125,12 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01280">1280</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01344">1344</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a4e44cf7be83647bf890c3feca6714237"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e44cf7be83647bf890c3feca6714237">&#9670;&nbsp;</a></span>seqRunIn_preMsgHook()</h2>
+<a id="a23fb2cd6f05a3066e657a034f1d66596"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23fb2cd6f05a3066e657a034f1d66596">&#9670;&nbsp;</a></span>seqRunIn_preMsgHook()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5070,7 +5147,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_fw_1_1_string.html">Fw::String</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;&#160;</td>
           <td class="paramname"><em>filename</em>&#160;</td>
         </tr>
         <tr>
@@ -5095,7 +5172,54 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01376">1376</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01440">1440</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a56cb2cec1cbeb2574876cee1659bf065"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56cb2cec1cbeb2574876cee1659bf065">&#9670;&nbsp;</a></span>seqStartOut_out()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Svc::CmdSequencerComponentBase::seqStartOut_out </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
+          <td class="paramname"><em>portNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;&#160;</td>
+          <td class="paramname"><em>filename</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Invoke output port seqStartOut. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">portNum</td><td>The port number </td></tr>
+    <tr><td class="paramname">filename</td><td>The sequence file </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l01504">1504</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5134,7 +5258,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00515">515</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00534">534</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5173,7 +5297,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00529">529</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00548">548</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5212,7 +5336,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00589">589</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00608">608</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5251,7 +5375,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00543">543</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00562">562</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5290,7 +5414,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00603">603</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00622">622</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5329,7 +5453,46 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00617">617</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00636">636</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aed00c10ee359670156efffc0b291f428"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed00c10ee359670156efffc0b291f428">&#9670;&nbsp;</a></span>set_seqStartOut_OutputPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Svc::CmdSequencerComponentBase::set_seqStartOut_OutputPort </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
+          <td class="paramname"><em>portNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_svc_1_1_input_cmd_seq_in_port.html">Svc::InputCmdSeqInPort</a> *&#160;</td>
+          <td class="paramname"><em>port</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Connect port to seqStartOut[portNum]. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">portNum</td><td>The port number </td></tr>
+    <tr><td class="paramname">port</td><td>The input port </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00650">650</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5368,7 +5531,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00557">557</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00576">576</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5407,7 +5570,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00571">571</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l00590">590</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5454,7 +5617,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04295">4295</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04374">4374</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5501,7 +5664,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04361">4361</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04440">4440</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5548,7 +5711,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04328">4328</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04407">4407</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5595,7 +5758,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04262">4262</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04341">4341</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -5642,7 +5805,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04394">4394</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html#l04473">4473</a> of file <a class="el" href="cmd_sequencer_component_ac_8cpp_source.html">CmdSequencerComponentAc.cpp</a>.</p>
 
 </div>
 </div>

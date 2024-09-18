@@ -42,6 +42,7 @@ var dir_b74cccf55867ed6e332b9e2e329e0c6d =
     [ "RateGroupDriver", "dir_f1e6da10e2fce2e4f2597389e6e4bd9a.html", "dir_f1e6da10e2fce2e4f2597389e6e4bd9a" ],
     [ "Sched", "dir_23505c0056e11df6a1246ea115bebcc0.html", "dir_23505c0056e11df6a1246ea115bebcc0" ],
     [ "Seq", "dir_3e02b8da97dc0640b4389c4793990e9a.html", "dir_3e02b8da97dc0640b4389c4793990e9a" ],
+    [ "SeqDispatcher", "dir_22dcd0ff6efb4cfe848b646130344da7.html", "dir_22dcd0ff6efb4cfe848b646130344da7" ],
     [ "StaticMemory", "dir_614f10602855d9a7eb819964ebfd9698.html", "dir_614f10602855d9a7eb819964ebfd9698" ],
     [ "SystemResources", "dir_0cb851be7b2223f264a218150fb34a85.html", "dir_0cb851be7b2223f264a218150fb34a85" ],
     [ "TlmChan", "dir_973d254f47fae8004e1096ff7ee6bea1.html", "dir_973d254f47fae8004e1096ff7ee6bea1" ],

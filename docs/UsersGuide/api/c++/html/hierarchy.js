@@ -169,6 +169,9 @@ var hierarchy =
             [ "Svc::PrmDbComponentBase", "class_svc_1_1_prm_db_component_base.html", [
               [ "Svc::PrmDbImpl", "class_svc_1_1_prm_db_impl.html", null ]
             ] ],
+            [ "Svc::SeqDispatcherComponentBase", "class_svc_1_1_seq_dispatcher_component_base.html", [
+              [ "Svc::SeqDispatcher", "class_svc_1_1_seq_dispatcher.html", null ]
+            ] ],
             [ "Svc::TlmChanComponentBase", "class_svc_1_1_tlm_chan_component_base.html", [
               [ "Svc::TlmChan", "class_svc_1_1_tlm_chan.html", null ]
             ] ],
@@ -419,6 +422,7 @@ var hierarchy =
       [ "Svc::QueueType", "class_svc_1_1_queue_type.html", null ],
       [ "Svc::SendFileResponse", "class_svc_1_1_send_file_response.html", null ],
       [ "Svc::SendFileStatus", "class_svc_1_1_send_file_status.html", null ],
+      [ "Svc::SeqDispatcher_CmdSequencerState", "class_svc_1_1_seq_dispatcher___cmd_sequencer_state.html", null ],
       [ "Svc::SystemResourceEnabled", "class_svc_1_1_system_resource_enabled.html", null ],
       [ "Svc::TimerVal", "class_svc_1_1_timer_val.html", null ],
       [ "Svc::VersionCfg::VersionEnum", "class_svc_1_1_version_cfg_1_1_version_enum.html", null ],

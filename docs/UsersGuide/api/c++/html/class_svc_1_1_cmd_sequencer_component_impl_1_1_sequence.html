@@ -142,6 +142,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6813e8dc3132e69fa6c0acddd1904f76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8df03c655bc23e724ec26a5562a4d39"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#ad8df03c655bc23e724ec26a5562a4d39">getLogFileName</a> ()</td></tr>
 <tr class="separator:ad8df03c655bc23e724ec26a5562a4d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ddad6dbf7abc2394b1203c0ca169ab1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string.html">Fw::String</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a1ddad6dbf7abc2394b1203c0ca169ab1">getStringFileName</a> ()</td></tr>
+<tr class="separator:a1ddad6dbf7abc2394b1203c0ca169ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca1b2009affa1e622144356961373070"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_header.html">Header</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#aca1b2009affa1e622144356961373070">getHeader</a> () const</td></tr>
 <tr class="memdesc:aca1b2009affa1e622144356961373070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the sequence header.  <a href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#aca1b2009affa1e622144356961373070">More...</a><br /></td></tr>
 <tr class="separator:aca1b2009affa1e622144356961373070"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,6 +172,9 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a6c6e184979e6072e547073d7baf42a3a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a6c6e184979e6072e547073d7baf42a3a">m_logFileName</a></td></tr>
 <tr class="memdesc:a6c6e184979e6072e547073d7baf42a3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy of file name for events.  <a href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a6c6e184979e6072e547073d7baf42a3a">More...</a><br /></td></tr>
 <tr class="separator:a6c6e184979e6072e547073d7baf42a3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad246a7fbc6f3acf3210fc3a284b6e6a8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_string.html">Fw::String</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#ad246a7fbc6f3acf3210fc3a284b6e6a8">m_stringFileName</a></td></tr>
+<tr class="memdesc:ad246a7fbc6f3acf3210fc3a284b6e6a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy of file name for ports.  <a href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#ad246a7fbc6f3acf3210fc3a284b6e6a8">More...</a><br /></td></tr>
+<tr class="separator:ad246a7fbc6f3acf3210fc3a284b6e6a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d0234b5e9e9d39506884b1773cab3a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_external_serialize_buffer.html">Fw::ExternalSerializeBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a8d0234b5e9e9d39506884b1773cab3a7">m_buffer</a></td></tr>
 <tr class="memdesc:a8d0234b5e9e9d39506884b1773cab3a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serialize buffer to hold the binary sequence data.  <a href="class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a8d0234b5e9e9d39506884b1773cab3a7">More...</a><br /></td></tr>
 <tr class="separator:a8d0234b5e9e9d39506884b1773cab3a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -361,7 +366,7 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the file name </p><dl class="section return"><dt>Returns</dt><dd>The file name </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="sequence_8cpp_source.html#l00117">117</a> of file <a class="el" href="sequence_8cpp_source.html">Sequence.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sequence_8cpp_source.html#l00118">118</a> of file <a class="el" href="sequence_8cpp_source.html">Sequence.cpp</a>.</p>
 
 </div>
 </div>
@@ -402,7 +407,27 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the log file name </p><dl class="section return"><dt>Returns</dt><dd>The log file name </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="sequence_8cpp_source.html#l00123">123</a> of file <a class="el" href="sequence_8cpp_source.html">Sequence.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sequence_8cpp_source.html#l00124">124</a> of file <a class="el" href="sequence_8cpp_source.html">Sequence.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a1ddad6dbf7abc2394b1203c0ca169ab1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ddad6dbf7abc2394b1203c0ca169ab1">&#9670;&nbsp;</a></span>getStringFileName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_string.html">Fw::String</a> &amp; Svc::CmdSequencerComponentImpl::Sequence::getStringFileName </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the normal string file name </p><dl class="section return"><dt>Returns</dt><dd>The normal string file name </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="sequence_8cpp_source.html#l00130">130</a> of file <a class="el" href="sequence_8cpp_source.html">Sequence.cpp</a>.</p>
 
 </div>
 </div>
@@ -577,7 +602,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The allocator ID. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00284">284</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00291">291</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
 
 </div>
 </div>
@@ -603,7 +628,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Serialize buffer to hold the binary sequence data. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00281">281</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00288">288</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
 
 </div>
 </div>
@@ -629,7 +654,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The enclosing component. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00269">269</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00273">273</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
 
 </div>
 </div>
@@ -655,7 +680,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Event reporting. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00272">272</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00276">276</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
 
 </div>
 </div>
@@ -681,7 +706,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The sequence file name. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00275">275</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00279">279</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
 
 </div>
 </div>
@@ -707,7 +732,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The sequence header. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00287">287</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00294">294</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
 
 </div>
 </div>
@@ -733,7 +758,33 @@ Protected Attributes</h2></td></tr>
 
 <p>Copy of file name for events. </p>
 
-<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00278">278</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00282">282</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad246a7fbc6f3acf3210fc3a284b6e6a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad246a7fbc6f3acf3210fc3a284b6e6a8">&#9670;&nbsp;</a></span>m_stringFileName</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_fw_1_1_string.html">Fw::String</a> Svc::CmdSequencerComponentImpl::Sequence::m_stringFileName</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy of file name for ports. </p>
+
+<p class="definition">Definition at line <a class="el" href="cmd_sequencer_impl_8hpp_source.html#l00285">285</a> of file <a class="el" href="cmd_sequencer_impl_8hpp_source.html">CmdSequencerImpl.hpp</a>.</p>
 
 </div>
 </div>

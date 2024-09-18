@@ -162,7 +162,7 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 : <a class="el" href="class_os_1_1_lockless_queue.html#a5f9e4d29074fb51df6735663f43e3455">Os::LocklessQueue</a>
 </li>
 <li>log()
-: <a class="el" href="class_fw_1_1_logger.html#abe2194f4b3c323ad66f43811fa04b108">Fw::Logger</a>
+: <a class="el" href="class_fw_1_1_logger.html#a96ceb48bf6492c3c160f1b303dbe4719">Fw::Logger</a>
 </li>
 <li>log_ACTIVITY_HI_AppendFileStarted()
 : <a class="el" href="class_svc_1_1_file_manager_component_base.html#adc68bed32f82d2b79fbf6f97b0cfba83">Svc::FileManagerComponentBase</a>
@@ -341,6 +341,9 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 <li>log_ACTIVITY_LO_LibraryVersions()
 : <a class="el" href="class_svc_1_1_version_component_base.html#a7212d9f00ae0660df39aaed341c5a784">Svc::VersionComponentBase</a>
 </li>
+<li>log_ACTIVITY_LO_LogSequencerStatus()
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#a977072b43edb7dbda62be4d865c3a9e1">Svc::SeqDispatcherComponentBase</a>
+</li>
 <li>log_ACTIVITY_LO_PacketSent()
 : <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#a95a934ef54c31a66c3a8e04497a62c9a">Svc::TlmPacketizerComponentBase</a>
 </li>
@@ -431,6 +434,15 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 <li>log_FATAL_PrmDbFull()
 : <a class="el" href="class_svc_1_1_prm_db_component_base.html#a99bcd7ab8e92ee48691935bde6dd6a46">Svc::PrmDbComponentBase</a>
 </li>
+<li>LOG_STATUS_cmdHandler()
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#ac6c38acf70873138fc5a978eddae997f">Svc::SeqDispatcherComponentBase</a>
+</li>
+<li>LOG_STATUS_cmdHandlerBase()
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#a8d1063f3c2f58b134cfb2ae4d77ebeff">Svc::SeqDispatcherComponentBase</a>
+</li>
+<li>LOG_STATUS_preMsgHook()
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#aa34046f98de2a3dc8cecbbd51cfca719">Svc::SeqDispatcherComponentBase</a>
+</li>
 <li>log_WARNING_HI_AllocationSoftFailure()
 : <a class="el" href="class_svc_1_1_buffer_repeater_component_base.html#a01daf67048bbdf63ba6859a74c7586f8">Svc::BufferRepeaterComponentBase</a>
 </li>
@@ -505,6 +517,9 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 </li>
 <li>log_WARNING_HI_ConfigError()
 : <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html#a837df6e3f1bf48ac86c29339b96c04d5">Drv::LinuxUartDriverComponentBase</a>
+</li>
+<li>log_WARNING_HI_ConflictingSequenceStarted()
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#a54f5c7569ec476760f02524577e5db11">Svc::SeqDispatcherComponentBase</a>
 </li>
 <li>log_WARNING_HI_CS_CommandError()
 : <a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#af39d0ebbfd86b33b22135c3291b43c28">Svc::CmdSequencerComponentBase</a>
@@ -687,8 +702,14 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 <li>log_WARNING_HI_InvalidReceiveMode_ThrottleClear()
 : <a class="el" href="class_svc_1_1_file_uplink_component_base.html#ad35aaa8c29ab7c66db3106f717c1eb8f">Svc::FileUplinkComponentBase</a>
 </li>
+<li>log_WARNING_HI_InvalidSequencer()
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#afc863af25d65297b2b7f25f75d92e17e">Svc::SeqDispatcherComponentBase</a>
+</li>
 <li>log_WARNING_HI_MalformedCommand()
 : <a class="el" href="class_svc_1_1_command_dispatcher_component_base.html#a7f9e282738f301e9cc81709dceab3ab2">Svc::CommandDispatcherComponentBase</a>
+</li>
+<li>log_WARNING_HI_NoAvailableSequencers()
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#a863e280be7d31e8ea88d602fd75cbc4e">Svc::SeqDispatcherComponentBase</a>
 </li>
 <li>log_WARNING_HI_NoBuffers()
 : <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html#a9b96b0e050b79ae7786a92e5d7387af3">Drv::LinuxUartDriverComponentBase</a>
@@ -818,6 +839,12 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 </li>
 <li>log_WARNING_LO_PrmIdNotFound_ThrottleClear()
 : <a class="el" href="class_svc_1_1_prm_db_component_base.html#a36d78218294306168af572b92b129908">Svc::PrmDbComponentBase</a>
+</li>
+<li>log_WARNING_LO_UnexpectedSequenceStarted()
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#a06a49a9108ae3d4f9c441cccfee98b3d">Svc::SeqDispatcherComponentBase</a>
+</li>
+<li>log_WARNING_LO_UnknownSequenceFinished()
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#ae8949edf648f33977d5a4ab7c54ee3be">Svc::SeqDispatcherComponentBase</a>
 </li>
 <li>LogBuffer()
 : <a class="el" href="class_fw_1_1_log_buffer.html#a7ed2fbd388a231fcb77940e851d7d1c8">Fw::LogBuffer</a>

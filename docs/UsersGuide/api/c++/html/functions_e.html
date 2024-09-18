@@ -127,6 +127,7 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 , <a class="el" href="class_svc_1_1_prm_db___prm_write_error.html#af8b8a2c12045ed1292c50eb7991f84b6">Svc::PrmDb_PrmWriteError</a>
 , <a class="el" href="class_svc_1_1_queue_type.html#a59be56c9d9c621cbb65eb8f2f32d4005">Svc::QueueType</a>
 , <a class="el" href="class_svc_1_1_send_file_status.html#a9e2e76c617cac247704b1530eee8d2fd">Svc::SendFileStatus</a>
+, <a class="el" href="class_svc_1_1_seq_dispatcher___cmd_sequencer_state.html#a8b8adb05f6bbc571e654f5bae454cf97">Svc::SeqDispatcher_CmdSequencerState</a>
 , <a class="el" href="class_svc_1_1_system_resource_enabled.html#a02fee3764b30fea7e843bb747ff06887">Svc::SystemResourceEnabled</a>
 , <a class="el" href="class_svc_1_1_version_cfg_1_1_version_enum.html#acf4cbdd0e1677039018449ccbdc85070">Svc::VersionCfg::VersionEnum</a>
 , <a class="el" href="class_svc_1_1_version_enabled.html#a21c5cf0cbc934b842c6cde8d54615a62">Svc::VersionEnabled</a>
@@ -337,6 +338,9 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 <li>EVENTID_CONFIGERROR
 : <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html#a4a222bbb1a74638b996933917cee48f0a28061329dc72603cce01e70b43a9a911">Drv::LinuxUartDriverComponentBase</a>
 </li>
+<li>EVENTID_CONFLICTINGSEQUENCESTARTED
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#adac50d678fd4398803ed4e20fb6e5741a88779f27ba8b328b413851a1da15c9cd">Svc::SeqDispatcherComponentBase</a>
+</li>
 <li>EVENTID_CREATEDIRECTORYSTARTED
 : <a class="el" href="class_svc_1_1_file_manager_component_base.html#a51e82fb0d6301300201211dc02f72e90abb4b21f3d8a9b4a4298b2a22460235a7">Svc::FileManagerComponentBase</a>
 </li>
@@ -419,7 +423,7 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 : <a class="el" href="class_svc_1_1_cmd_sequencer_component_base.html#a5e0f926d3c9a721a908631bb890981fca1ae081c500b8de47ef4b41275af5e819">Svc::CmdSequencerComponentBase</a>
 </li>
 <li>EVENTID_CUSTOMVERSIONS
-: <a class="el" href="class_svc_1_1_version_component_base.html#ae85c54b5fd3e982389ab9ce1c66a03aea7a61b3bfb3de0212870ae85b9163ce86">Svc::VersionComponentBase</a>
+: <a class="el" href="class_svc_1_1_version_component_base.html#a6c1dc6ade9b82830e06ed6fd7290ea66a7a61b3bfb3de0212870ae85b9163ce86">Svc::VersionComponentBase</a>
 </li>
 <li>EVENTID_DECODEERROR
 : <a class="el" href="class_svc_1_1_file_uplink_component_base.html#a42eba06739b04b42c079c635d01e1fe0af6d651ef1f98b5a8907f0f98c72be70c">Svc::FileUplinkComponentBase</a>
@@ -549,10 +553,10 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 : <a class="el" href="class_svc_1_1_dp_writer_component_base.html#a78dbc05f900b2feb50226f5a6bb224e2a525d9f11340f485167f2d30e81d7ca75">Svc::DpWriterComponentBase</a>
 </li>
 <li>EVENTID_FRAMEWORK_VERSION
-: <a class="el" href="class_svc_1_1_system_resources_component_base.html#a4c161861904bd6a261541135d024adb4a8fcd8e02ae4c2b81dbab7914837de80b">Svc::SystemResourcesComponentBase</a>
+: <a class="el" href="class_svc_1_1_system_resources_component_base.html#ab61341b3680783e7885450cc1685b4eaa8fcd8e02ae4c2b81dbab7914837de80b">Svc::SystemResourcesComponentBase</a>
 </li>
 <li>EVENTID_FRAMEWORKVERSION
-: <a class="el" href="class_svc_1_1_version_component_base.html#ae85c54b5fd3e982389ab9ce1c66a03aea88a5fef8a70737547807a24870a7145e">Svc::VersionComponentBase</a>
+: <a class="el" href="class_svc_1_1_version_component_base.html#a6c1dc6ade9b82830e06ed6fd7290ea66a88a5fef8a70737547807a24870a7145e">Svc::VersionComponentBase</a>
 </li>
 <li>EVENTID_GP_CONFIGERROR
 : <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a0ddffd411d796a5351772b6edc981471a48635fce27b1f8f461ed32e5bc3e9e71">Drv::LinuxGpioDriverComponentBase</a>
@@ -644,23 +648,32 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 <li>EVENTID_INVALIDRECEIVEMODE_THROTTLE
 : <a class="el" href="class_svc_1_1_file_uplink_component_base.html#ad637559d372bdfcac250f0db054639bda01c00eb8edf1de6592aa2e8c311f7144">Svc::FileUplinkComponentBase</a>
 </li>
+<li>EVENTID_INVALIDSEQUENCER
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#adac50d678fd4398803ed4e20fb6e5741a129df9419336989b7a363f4889c48d27">Svc::SeqDispatcherComponentBase</a>
+</li>
 <li>EVENTID_LEVELSET
-: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#a8c3e48a6a76516e7279f5181a047c5eea3b3b9b66ff14c0c443539a2e57e76bdf">Svc::TlmPacketizerComponentBase</a>
+: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#af4c766572bc4d75add0f338d4b458c75a3b3b9b66ff14c0c443539a2e57e76bdf">Svc::TlmPacketizerComponentBase</a>
 </li>
 <li>EVENTID_LIBRARYVERSIONS
-: <a class="el" href="class_svc_1_1_version_component_base.html#ae85c54b5fd3e982389ab9ce1c66a03aeaa067113882770f42cf67926854e86d93">Svc::VersionComponentBase</a>
+: <a class="el" href="class_svc_1_1_version_component_base.html#a6c1dc6ade9b82830e06ed6fd7290ea66aa067113882770f42cf67926854e86d93">Svc::VersionComponentBase</a>
+</li>
+<li>EVENTID_LOGSEQUENCERSTATUS
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#adac50d678fd4398803ed4e20fb6e5741aaee01004a50e8141c3d395d838fddde1">Svc::SeqDispatcherComponentBase</a>
 </li>
 <li>EVENTID_MALFORMEDCOMMAND
 : <a class="el" href="class_svc_1_1_command_dispatcher_component_base.html#a1085288dd60aa04414a77cd66fd70a3ba287f88529acd3c22678f9a5a49dd71cb">Svc::CommandDispatcherComponentBase</a>
 </li>
 <li>EVENTID_MAXLEVELEXCEED
-: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#a8c3e48a6a76516e7279f5181a047c5eea7b2694a77c17c2dba0f8eb3e416114db">Svc::TlmPacketizerComponentBase</a>
+: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#af4c766572bc4d75add0f338d4b458c75a7b2694a77c17c2dba0f8eb3e416114db">Svc::TlmPacketizerComponentBase</a>
 </li>
 <li>EVENTID_MOVEFILESTARTED
 : <a class="el" href="class_svc_1_1_file_manager_component_base.html#a51e82fb0d6301300201211dc02f72e90a79f68b946e9b40d945ac2ba2e83c6e16">Svc::FileManagerComponentBase</a>
 </li>
 <li>EVENTID_MOVEFILESUCCEEDED
 : <a class="el" href="class_svc_1_1_file_manager_component_base.html#a51e82fb0d6301300201211dc02f72e90a91e979c24e65fd6dec0685057e9bd4a3">Svc::FileManagerComponentBase</a>
+</li>
+<li>EVENTID_NOAVAILABLESEQUENCERS
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#adac50d678fd4398803ed4e20fb6e5741a32f28717a25786601599f05d96f354c9">Svc::SeqDispatcherComponentBase</a>
 </li>
 <li>EVENTID_NOBUFFERS
 : <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html#a4a222bbb1a74638b996933917cee48f0aa0509f6c2efaecef4b2e83519aa4debb">Drv::LinuxUartDriverComponentBase</a>
@@ -675,7 +688,7 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 : <a class="el" href="class_svc_1_1_buffer_manager_component_base.html#aefc793d3ad8c074ac986831695cb71dfa1cd12ab82f91d1df333ce06ab9a6c0b0">Svc::BufferManagerComponentBase</a>
 </li>
 <li>EVENTID_NOCHAN
-: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#a8c3e48a6a76516e7279f5181a047c5eea2f4bbc1b7d7d6b17d864d4e821ce2b73">Svc::TlmPacketizerComponentBase</a>
+: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#af4c766572bc4d75add0f338d4b458c75a2f4bbc1b7d7d6b17d864d4e821ce2b73">Svc::TlmPacketizerComponentBase</a>
 </li>
 <li>EVENTID_NOOPRECEIVED
 : <a class="el" href="class_svc_1_1_command_dispatcher_component_base.html#a1085288dd60aa04414a77cd66fd70a3ba48fb8869e9a2f0b27ec58184acbabd9b">Svc::CommandDispatcherComponentBase</a>
@@ -702,7 +715,7 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 : <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html#a4a222bbb1a74638b996933917cee48f0a7001919519c34a2f1864fdbbaa643e26">Drv::LinuxUartDriverComponentBase</a>
 </li>
 <li>EVENTID_PACKETNOTFOUND
-: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#a8c3e48a6a76516e7279f5181a047c5eea7a6c0ba1ceac87178f3ca910673f31db">Svc::TlmPacketizerComponentBase</a>
+: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#af4c766572bc4d75add0f338d4b458c75a7a6c0ba1ceac87178f3ca910673f31db">Svc::TlmPacketizerComponentBase</a>
 </li>
 <li>EVENTID_PACKETOUTOFBOUNDS
 : <a class="el" href="class_svc_1_1_file_uplink_component_base.html#a42eba06739b04b42c079c635d01e1fe0afcfdd8919c840477cd8409f68191d3b2">Svc::FileUplinkComponentBase</a>
@@ -717,7 +730,7 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 : <a class="el" href="class_svc_1_1_file_uplink_component_base.html#ad637559d372bdfcac250f0db054639bdaa38bbda63f2aefbc09ad0c92ac0a1406">Svc::FileUplinkComponentBase</a>
 </li>
 <li>EVENTID_PACKETSENT
-: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#a8c3e48a6a76516e7279f5181a047c5eea78fc9670ff71b24dda998f7f48b80862">Svc::TlmPacketizerComponentBase</a>
+: <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#af4c766572bc4d75add0f338d4b458c75a78fc9670ff71b24dda998f7f48b80862">Svc::TlmPacketizerComponentBase</a>
 </li>
 <li>EVENTID_PORTOPENED
 : <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html#a4a222bbb1a74638b996933917cee48f0a9214a4a998830bc8c65fb5e06fdb5c97">Drv::LinuxUartDriverComponentBase</a>
@@ -762,10 +775,10 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 : <a class="el" href="class_svc_1_1_dp_catalog_component_base.html#ae981b6b02bb6a7a497b664567cd174a2a25ef6dde249a17332ead3b23d9c8f47e">Svc::DpCatalogComponentBase</a>
 </li>
 <li>EVENTID_PROJECT_VERSION
-: <a class="el" href="class_svc_1_1_system_resources_component_base.html#a4c161861904bd6a261541135d024adb4ad36081cdf58804675c1b45e831155093">Svc::SystemResourcesComponentBase</a>
+: <a class="el" href="class_svc_1_1_system_resources_component_base.html#ab61341b3680783e7885450cc1685b4eaad36081cdf58804675c1b45e831155093">Svc::SystemResourcesComponentBase</a>
 </li>
 <li>EVENTID_PROJECTVERSION
-: <a class="el" href="class_svc_1_1_version_component_base.html#ae85c54b5fd3e982389ab9ce1c66a03aea02d9ada4c59024284fceacc75763c305">Svc::VersionComponentBase</a>
+: <a class="el" href="class_svc_1_1_version_component_base.html#a6c1dc6ade9b82830e06ed6fd7290ea66a02d9ada4c59024284fceacc75763c305">Svc::VersionComponentBase</a>
 </li>
 <li>EVENTID_QUEUEOVERFLOW
 : <a class="el" href="class_svc_1_1_com_queue_component_base.html#a9df1796c16bd022cba06ee26d4919f5ea513a5f33886c29258aa80164827c25d4">Svc::ComQueueComponentBase</a>
@@ -838,6 +851,12 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 </li>
 <li>EVENTID_TOOMANYCOMMANDS
 : <a class="el" href="class_svc_1_1_command_dispatcher_component_base.html#a1085288dd60aa04414a77cd66fd70a3ba65c4a19a72624c25cb60dd372198d973">Svc::CommandDispatcherComponentBase</a>
+</li>
+<li>EVENTID_UNEXPECTEDSEQUENCESTARTED
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#adac50d678fd4398803ed4e20fb6e5741ac6afe1d0bc8f4cf317b402c0c6be51cb">Svc::SeqDispatcherComponentBase</a>
+</li>
+<li>EVENTID_UNKNOWNSEQUENCEFINISHED
+: <a class="el" href="class_svc_1_1_seq_dispatcher_component_base.html#adac50d678fd4398803ed4e20fb6e5741a941665d9a0642004244bb82d69c62a5b">Svc::SeqDispatcherComponentBase</a>
 </li>
 <li>EVENTID_UPLINKCANCELED
 : <a class="el" href="class_svc_1_1_file_uplink_component_base.html#a42eba06739b04b42c079c635d01e1fe0a04aa37042c3c89518b3664fcb0dfa347">Svc::FileUplinkComponentBase</a>
