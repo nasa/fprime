@@ -22,15 +22,6 @@ struct Open : public STest::Rule<Os::Test::Directory::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule: OpenNew
-// ------------------------------------------------------------------------------------------------------
-struct OpenNew : public STest::Rule<Os::Test::Directory::Tester> {
-    OpenNew();
-    bool precondition(const Os::Test::Directory::Tester& state);
-    void action(Os::Test::Directory::Tester& state);
-};
-
-// ------------------------------------------------------------------------------------------------------
 // Rule: OpenAlreadyExistsError
 // ------------------------------------------------------------------------------------------------------
 struct OpenAlreadyExistsError : public STest::Rule<Os::Test::Directory::Tester> {

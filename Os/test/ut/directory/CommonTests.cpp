@@ -38,10 +38,8 @@ TEST_F(Functionality, OpenIsOpen) {
 }
 
 // Open directory and check it is open
-TEST_F(Functionality, OpenCreate) {
-    Os::Test::Directory::Tester::OpenNew open_new_rule;
+TEST_F(Functionality, OpenExclusive) {
     Os::Test::Directory::Tester::OpenAlreadyExistsError open_existing_rule;
-    open_new_rule.apply(*tester);
     open_existing_rule.apply(*tester);
 }
 

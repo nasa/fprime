@@ -197,18 +197,19 @@ FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* de
 FileSystem::Status FileSystem::moveFile(const char* source, const char* destination) {
     Status status = Status::OP_OK;
 
-    // Try to rename the file - if that is successful, we're done and return OP_OK
-    if (FileSystem::rename(source, destination) == Status::OP_OK) {
-        return status;
+    // Try to simply rename the file
+    status = FileSystem::rename(source, destination);
+
+    // If rename fails because of cross-device rename, attempt to copy and remove instead
+    if (status == Status::EXDEV_ERROR) {
+        status = FileSystem::copyFile(source, destination);
+        if (status != Status::OP_OK) {
+            return status;
+        }
+        // REVIEW NOTE: what to do if removeFile fails?
+        status = FileSystem::removeFile(source);
     }
 
-    // If rename fails, copy the file and remove the original
-    status = FileSystem::copyFile(source, destination);
-    if (status != Status::OP_OK) {
-        return status;
-    }
-    // REVIEW NOTE: what to do if removeFile fails?
-    status = FileSystem::removeFile(source);
     return status;
 }
 

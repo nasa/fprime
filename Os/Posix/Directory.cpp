@@ -28,8 +28,13 @@ PosixDirectory::Status PosixDirectory::open(const char* path, OpenMode mode) {
     if (mode == OpenMode::CREATE_EXCLUSIVE || mode == OpenMode::CREATE_IF_MISSING) {
         if (::mkdir(path, S_IRWXU) == -1) {
             status = errno_to_directory_status(errno);
+            // If error is not ALREADY_EXISTS, return the error
+            // If any error and mode CREATE_EXCLUSIVE, return the error
+            // Else, we keep going with OP_OK
             if (status != Status::ALREADY_EXISTS || mode == OpenMode::CREATE_EXCLUSIVE) {
                 return status;
+            } else {
+                status = Status::OP_OK;
             }
         }
     }
@@ -37,7 +42,7 @@ PosixDirectory::Status PosixDirectory::open(const char* path, OpenMode mode) {
     DIR* dir = ::opendir(path);
 
     if (dir == nullptr) {
-        return errno_to_directory_status(errno);
+        status = errno_to_directory_status(errno);
     }
 
     this->m_handle.m_dir_descriptor = dir;
@@ -118,11 +123,11 @@ PosixDirectory::Status PosixDirectory::read(Fw::StringBase& filenameString) {
 }
 
 void PosixDirectory::close() {
-    // ::closedir errors if dir descriptor is nullptr
-    if (this->m_handle.m_dir_descriptor != nullptr) {
+    // ::closedir errors if dir descriptor is nullptr so need to check isOpen
+    if (this->isOpen()) {
         (void)::closedir(this->m_handle.m_dir_descriptor);
-        this->m_handle.m_dir_descriptor = nullptr;
     }
+    this->m_handle.m_dir_descriptor = nullptr;
 }
 
 }  // namespace Directory

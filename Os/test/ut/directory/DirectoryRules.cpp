@@ -17,35 +17,15 @@ Os::Test::Directory::Tester::Open::Open() :
     STest::Rule<Os::Test::Directory::Tester>("Open") {}
 
 bool Os::Test::Directory::Tester::Open::precondition(const Os::Test::Directory::Tester &state) {
-    return true;
+    return state.m_state != Os::Test::Directory::Tester::DirectoryState::OPEN;
 }
 
 void Os::Test::Directory::Tester::Open::action(Os::Test::Directory::Tester &state) {
-    Os::Directory::Status status = state.m_directory.open(state.m_path.c_str(), Os::Directory::OpenMode::READ);
+    Os::Directory::OpenMode mode = STest::Pick::lowerUpper(0, 1) == 1 ? Os::Directory::READ : Os::Directory::CREATE_IF_MISSING;
+    Os::Directory::Status status = state.m_directory.open(state.m_path.c_str(), mode);
     ASSERT_EQ(status, Os::Directory::Status::OP_OK);
     state.m_state = Os::Test::Directory::Tester::DirectoryState::OPEN;
     state.m_seek_position = 0;
-}
-
-// ------------------------------------------------------------------------------------------------------
-// Rule:  OpenNew -> Create a new directory
-// ------------------------------------------------------------------------------------------------------
-
-Os::Test::Directory::Tester::OpenNew::OpenNew() :
-    STest::Rule<Os::Test::Directory::Tester>("OpenNew") {}
-
-bool Os::Test::Directory::Tester::OpenNew::precondition(const Os::Test::Directory::Tester &state) {
-    return true;
-}
-
-void Os::Test::Directory::Tester::OpenNew::action(Os::Test::Directory::Tester &state) {
-    std::string new_dir = state.m_path + "/new_dir";
-    Os::Directory new_directory;
-    Os::Directory::Status status = new_directory.open(new_dir.c_str(), Os::Directory::OpenMode::CREATE_IF_MISSING);
-    ASSERT_EQ(status, Os::Directory::Status::OP_OK);
-    // Open in read mode to check it exists
-    status = new_directory.open(new_dir.c_str(), Os::Directory::OpenMode::READ);
-    ASSERT_EQ(status, Os::Directory::Status::OP_OK);
 }
 
 // ------------------------------------------------------------------------------------------------------
