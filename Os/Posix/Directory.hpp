@@ -45,6 +45,9 @@ class PosixDirectory : public DirectoryInterface {
     //! \param path: path of directory to open
     //! \param mode: enum (READ, CREATE_IF_MISSING, CREATE_EXCLUSIVE). See notes above for more information
     //! \return status of the operation
+    //!
+    //! \warning The Posix implementation of Directory::open() uses dynamic memory allocation, because the Posix
+    //! implementation of `opendir()` requires a dynamic memory allocation.
     Status open(const char* path, OpenMode mode) override;
 
     //! \brief Check if Directory is open or not

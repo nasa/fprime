@@ -16,22 +16,42 @@ Functionality::Functionality() : tester(get_tester_implementation()) {}
 
 void Functionality::SetUp() {
     using namespace Os::Test::FileSystem;
+    const FwSizeType NUMBER_TEST_FILES = 30;
+
+    // Lambda function to generate a random alphanumeric string
+    // used to populate the contents of the test files
+    // If need to debug, it can be useful to manually set strings
+    // of known values in this->m_test_files instead
+    auto generate_random_string = []() -> std::string {
+        static const char alphanum[] =
+            "0123456789"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz";
+        FwIndexType len = STest::Pick::lowerUpper(1, 4);
+        std::string result;
+        result.reserve(len);
+        for (FwIndexType i = 0; i < len; ++i) {
+            result += alphanum[STest::Pick::lowerUpper(0, sizeof(alphanum) - 2)];
+        }
+        return result;
+    };
+
+    // Set up test state - create a directory structure with files
+    std::string root_dir = "filesystem_test_directory";
     tester->m_test_dirs = {
-        DirectoryTracker("filesystem_test_directory"),
-        DirectoryTracker("filesystem_test_directory/sub_dir1"),
-        DirectoryTracker("filesystem_test_directory/sub_dir2")
+        TestDirectory(root_dir),
+        TestDirectory(root_dir + "/sub_dir_1"),
+        TestDirectory(root_dir + "/sub_dir_2")
     };
 
-    tester->m_test_files = {
-        FileTracker("filesystem_test_directory/test_file0", "123"),
-        FileTracker("filesystem_test_directory/test_file1", "abc"),
-        FileTracker("filesystem_test_directory/test_file2", "xyz"),
-        FileTracker("filesystem_test_directory/test_file3", "aaaa"),
-        FileTracker("filesystem_test_directory/test_file4", "dddd"),
-        FileTracker("filesystem_test_directory/test_file5", "cc"),
-        FileTracker("filesystem_test_directory/sub_dir1/test_file6", "789")
-    };
+    // tester->m_test_files.push_back(TestFile(root_dir + "/sub_dir_1/test_file_0", generate_random_string()));
+    for (FwSizeType i = 0; i < NUMBER_TEST_FILES; ++i) {
+        std::string path = root_dir + "/test_file_" + std::to_string(i);
+        tester->m_test_files.push_back(TestFile(path, generate_random_string()));
+    }
 
+    // All of the above is in the tester state, i.e. in memory
+    // The below initializes the filesystem with the same structure, on disk
     tester->write_test_state_to_disk();
 }
 

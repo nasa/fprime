@@ -28,9 +28,6 @@ struct Tester {
         CLOSED  //!< Directory is closed
     };
 
-    //! Assert in Directory.cpp for searching death text
-    static constexpr const char* ASSERT_IN_DIRECTORY_CPP = "Assert: \".*/Os/.*/Directory\\.cpp:[0-9]+\"";
-
     // Constructors that ensures the directory is always valid
     Tester() = default;
 

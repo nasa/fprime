@@ -180,7 +180,7 @@ bool Os::Test::FileSystem::Tester::RenameFile::precondition(const Os::Test::File
 }
 
 void Os::Test::FileSystem::Tester::RenameFile::action(Os::Test::FileSystem::Tester &state) {
-    FileTracker& file = state.get_random_file();
+    TestFile& file = state.get_random_file();
     std::string source_path = file.path;
     std::string original_content = file.contents;
 
@@ -209,7 +209,7 @@ bool Os::Test::FileSystem::Tester::MoveFile::precondition(const Os::Test::FileSy
 }
 
 void Os::Test::FileSystem::Tester::MoveFile::action(Os::Test::FileSystem::Tester &state) {
-    FileTracker& file = state.get_random_file();
+    TestFile& file = state.get_random_file();
     std::string source_path = file.path;
     std::string original_content = file.contents;
 
@@ -240,7 +240,7 @@ bool Os::Test::FileSystem::Tester::CopyFile::precondition(const Os::Test::FileSy
 void Os::Test::FileSystem::Tester::CopyFile::action(Os::Test::FileSystem::Tester &state) {
     Os::FileSystem::Status status;
 
-    FileTracker& source = state.get_random_file();
+    TestFile& source = state.get_random_file();
     std::string source_path = source.path;
     std::string dest_path = state.new_random_filepath();
 
@@ -268,9 +268,9 @@ bool Os::Test::FileSystem::Tester::AppendFile::precondition(const Os::Test::File
 
 void Os::Test::FileSystem::Tester::AppendFile::action(Os::Test::FileSystem::Tester &state) {
     Os::FileSystem::Status status;
-    FileTracker& source = state.get_random_file();
+    TestFile& source = state.get_random_file();
     std::string source_path = source.path;
-    FileTracker& dest = state.get_random_file();
+    TestFile& dest = state.get_random_file();
     std::string dest_path = dest.path;
 
     bool createMissingDest = false;
@@ -295,9 +295,9 @@ bool Os::Test::FileSystem::Tester::AppendToNewFile::precondition(const Os::Test:
 
 void Os::Test::FileSystem::Tester::AppendToNewFile::action(Os::Test::FileSystem::Tester &state) {
     Os::FileSystem::Status status;
-    FileTracker& source = state.get_random_file();
+    TestFile& source = state.get_random_file();
     std::string source_path = source.path;
-    FileTracker& dest = state.get_random_file();
+    TestFile& dest = state.get_random_file();
     std::string dest_path = dest.path;
 
     if (source_path == dest_path) {
@@ -327,7 +327,7 @@ bool Os::Test::FileSystem::Tester::GetFileSize::precondition(const Os::Test::Fil
 }
 
 void Os::Test::FileSystem::Tester::GetFileSize::action(Os::Test::FileSystem::Tester &state) {
-    FileTracker file = state.get_random_file();
+    TestFile file = state.get_random_file();
     Os::FileSystem::Status status;
     FwSignedSizeType size;
     status = Os::FileSystem::getSingleton().getFileSize(file.path.c_str(), size);
@@ -380,6 +380,7 @@ void Os::Test::FileSystem::Tester::GetSetWorkingDirectory::action(Os::Test::File
     status = Os::FileSystem::getSingleton().changeWorkingDirectory(other_dir.c_str());
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to change working directory";
     status = Os::FileSystem::getSingleton().getWorkingDirectory(cwdBuffer, cwdSize);
+    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to change working directory back";
     ASSERT_TRUE(other_dir.compare(cwdBuffer)) << "getWorkingDirectory did not return the expected directory";
 
     // Change back to original working directory

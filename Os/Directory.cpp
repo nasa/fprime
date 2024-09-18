@@ -19,6 +19,10 @@ Directory::~Directory() {
     m_delegate.~DirectoryInterface();
 }
 
+// ------------------------------------------------------------
+// Directory operations delegating to implementation
+// ------------------------------------------------------------
+
 DirectoryHandle* Directory::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
@@ -62,7 +66,9 @@ void Directory::close() {
     return this->m_delegate.close();
 }
 
-// ------------ Common Directory Functions (non-OS-specific) ------------
+// ------------------------------------------------------------
+// Common functions built on top of OS-specific functions
+// ------------------------------------------------------------
 
 Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
     if (not this->isOpen()) {

@@ -24,13 +24,13 @@ struct FileSystemNode {
         return this->path == other.path;
     }
 };
-struct FileTracker : FileSystemNode {
+struct TestFile : FileSystemNode {
     std::string contents;
-    FileTracker(std::string path, std::string contents) : FileSystemNode(path), contents(contents) {};
+    TestFile(std::string path, std::string contents) : FileSystemNode(path), contents(contents) {};
 }; //!< Representation of a file for tracking state of the filesystem during testing
 
-struct DirectoryTracker : FileSystemNode {
-    explicit DirectoryTracker(std::string path) : FileSystemNode(path) {};
+struct TestDirectory : FileSystemNode {
+    explicit TestDirectory(std::string path) : FileSystemNode(path) {};
 }; //!< Representation of a directory for tracking state of the filesystem during testing
 
 
@@ -47,8 +47,8 @@ struct Tester {
     //! and directories that are nested within the root of the test directory are all
     //! tracked in the same vector. This is for simplicity, because hierarchy is not
     //! needed for the tests.
-    std::vector<DirectoryTracker> m_test_dirs;
-    std::vector<FileTracker> m_test_files;
+    std::vector<TestDirectory> m_test_dirs;
+    std::vector<TestFile> m_test_files;
 
     FwIndexType m_counter; //!< Counter for generating unique file/directory names
 
@@ -56,10 +56,10 @@ struct Tester {
     // Functions to manipulate the state of the Tester w.r.t filesystem
     // ---------------------------------------------------------------
     void touch_file(std::string path) {
-        this->m_test_files.push_back(FileTracker(path, ""));
+        this->m_test_files.push_back(TestFile(path, ""));
     }
     void create_directory(std::string path) {
-        this->m_test_dirs.push_back(DirectoryTracker(path));
+        this->m_test_dirs.push_back(TestDirectory(path));
     }
     void remove_file(std::string path) {
         for (auto it = this->m_test_files.begin(); it != this->m_test_files.end(); ++it) {
@@ -69,14 +69,14 @@ struct Tester {
             }
         }
     }
-    void move_file(FileTracker& source, std::string dest_path) {
+    void move_file(TestFile& source, std::string dest_path) {
         source.path = dest_path;
     }
-    void copy_file(FileTracker& source, std::string dest_path) {
-        FileTracker new_file(dest_path, source.contents);
+    void copy_file(TestFile& source, std::string dest_path) {
+        TestFile new_file(dest_path, source.contents);
         this->m_test_files.push_back(new_file);
     }
-    void append_file(FileTracker& source_file, FileTracker& dest_file, bool createMissingDest) {
+    void append_file(TestFile& source_file, TestFile& dest_file, bool createMissingDest) {
         dest_file.contents += source_file.contents;
     }
 
@@ -89,17 +89,17 @@ struct Tester {
     std::string get_new_dirname() {
         return "test_dir_" + std::to_string(m_counter++);
     }
-    FileTracker& get_random_file() {
+    TestFile& get_random_file() {
         return this->m_test_files[STest::Pick::lowerUpper(0, this->m_test_files.size() - 1)];
     }
-    DirectoryTracker& get_random_directory() {
+    TestDirectory& get_random_directory() {
         return this->m_test_dirs[STest::Pick::lowerUpper(0, this->m_test_dirs.size() - 1)];
     }
     std::string new_random_filepath() {
         return get_random_directory().path + "/" + get_new_filename();
     }
 
-    bool validate_contents_on_disk(FileTracker& file) {
+    bool validate_contents_on_disk(TestFile& file) {
         Os::File os_file;
         os_file.open(file.path.c_str(), Os::File::OPEN_READ);
         FwSignedSizeType size;
@@ -122,13 +122,13 @@ struct Tester {
         Os::File file;
         Os::Directory dir;
         // Create and write directories
-        for (DirectoryTracker& dir_track : this->m_test_dirs) {
+        for (TestDirectory& dir_track : this->m_test_dirs) {
             dir.open(dir_track.path.c_str(), Os::Directory::OpenMode::CREATE_IF_MISSING);
             dir.close();
             this->m_counter++;
         }
         // Create and write files
-        for (FileTracker& file_track : this->m_test_files) {
+        for (TestFile& file_track : this->m_test_files) {
             file.open(file_track.path.c_str(), Os::File::OPEN_CREATE);
             FwSignedSizeType bytesRead = file_track.contents.size();
             file.write(reinterpret_cast<const U8*>(file_track.contents.c_str()), bytesRead);

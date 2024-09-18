@@ -8,9 +8,9 @@
 restrict_platforms(Posix)
 add_custom_target("${FPRIME_CURRENT_MODULE}")
 
-################################
-## Shared Section ##############
-################################
+# -----------------------------------------
+## Shared Section
+# -----------------------------------------
 
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/error.cpp"
@@ -20,9 +20,9 @@ set(HEADER_FILES
 )
 register_fprime_module(Os_Posix_Shared)
 
-################################
-### Os/File/Posix Section ######
-################################
+# -----------------------------------------
+### Os/File/Posix Section
+# -----------------------------------------
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
 )
@@ -47,9 +47,9 @@ set(UT_MOD_DEPS
 choose_fprime_implementation(Os/File Os_File_Posix)
 register_fprime_ut(PosixFileTest)
 
-################################
-### Os/Console/Posix Section ###
-################################
+# -----------------------------------------
+### Os/Console/Posix Section
+# -----------------------------------------
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
 )
@@ -71,9 +71,9 @@ choose_fprime_implementation(Os/Console Os_Console_Posix)
 register_fprime_ut(PosixConsoleTest)
 
 
-################################
-### Os/Task/Posix Section ######
-################################
+# -----------------------------------------
+### Os/Task/Posix Section
+# -----------------------------------------
 
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
@@ -99,9 +99,9 @@ set(UT_MOD_DEPS
 choose_fprime_implementation(Os/Task Os_Task_Posix)
 register_fprime_ut(PosixTaskTest)
 
-################################
-### Os/Mutex/Posix Section #####
-################################
+# -----------------------------------------
+### Os/Mutex/Posix Section
+# -----------------------------------------
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
 )
@@ -126,9 +126,9 @@ choose_fprime_implementation(Os/Mutex Os_Mutex_Posix)
 register_fprime_ut(PosixMutexTest)
 
 
-#################################
-### Os/FileSystem/Posix Section #
-#################################
+# -----------------------------------------
+### Os/FileSystem/Posix Section
+# -----------------------------------------
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/FileSystem.cpp"
 )
@@ -152,9 +152,9 @@ set(UT_MOD_DEPS
 choose_fprime_implementation(Os/FileSystem Os_FileSystem_Posix)
 register_fprime_ut(PosixFileSystemTest)
 
-#################################
-### Os/Directory/Posix Section #
-#################################
+# -----------------------------------------
+### Os/Directory/Posix Section
+# -----------------------------------------
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Directory.cpp"
 )
