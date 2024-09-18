@@ -45,6 +45,7 @@ void tearDown(Os::Test::Directory::Tester* tester) {
         ::unlink((tester->m_path + "/" + filename).c_str());
     }
     ::rmdir(tester->m_path.c_str());
+    ::rmdir((tester->m_path + "/new_dir").c_str());
 }
 
 }  // namespace Test

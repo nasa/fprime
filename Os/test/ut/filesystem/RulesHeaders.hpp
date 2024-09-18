@@ -123,7 +123,7 @@ struct Tester {
         Os::Directory dir;
         // Create and write directories
         for (DirectoryTracker& dir_track : this->m_test_dirs) {
-            dir.open(dir_track.path.c_str(), Os::Directory::OpenMode::CREATE);
+            dir.open(dir_track.path.c_str(), Os::Directory::OpenMode::CREATE_IF_MISSING);
             dir.close();
             this->m_counter++;
         }

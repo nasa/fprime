@@ -100,10 +100,12 @@ FileSystem::Status FileSystem::getFreeSpace(const char* path, FwSizeType& totalB
 // Additional functions built on top of OS-specific operations
 // ------------------------------------------------------------
 
-FileSystem::Status FileSystem::createDirectory(const char* path) {
+FileSystem::Status FileSystem::createDirectory(const char* path, bool errorIfAlreadyExists) {
     Status status = Status::OP_OK;
     Os::Directory dir;
-    Directory::Status dirStatus = dir.open(path, Os::Directory::OpenMode::CREATE);
+    // If errorIfAlreadyExists is true, use CREATE_EXCLUSIVE mode, otherwise use CREATE_IF_MISSING
+    Directory::OpenMode mode = errorIfAlreadyExists ? Directory::OpenMode::CREATE_EXCLUSIVE : Directory::OpenMode::CREATE_IF_MISSING;
+    Directory::Status dirStatus = dir.open(path, mode);
     if (dirStatus != Directory::OP_OK) {
         return FileSystem::handleDirectoryError(dirStatus);
     }

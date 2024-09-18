@@ -159,7 +159,7 @@ namespace Svc {
         0,
         "file1",
         "file2",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
 
   }
@@ -415,7 +415,7 @@ namespace Svc {
         0,
         "file1",
         "file2",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
   }
 

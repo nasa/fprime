@@ -31,8 +31,9 @@ class DirectoryInterface {
     };
 
     enum OpenMode {
-        READ,   //!<  Open directory, error if directory doesn't exist
-        CREATE, //!<  Open directory, create directory if it doesn't exist
+        READ,               //!<  Error if directory doesn't exist
+        CREATE_IF_MISSING,  //!<  Create directory if it doesn't exist
+        CREATE_EXCLUSIVE,   //!<  Create directory and error if it already exists
     };
 
     //! \brief default constructor
@@ -60,10 +61,11 @@ class DirectoryInterface {
     //!
     //! Using the path provided, this function will open or create a directory. 
     //! Use OpenMode::READ to open an existing directory and error if the directory is not found
-    //! Use OpenMode::CREATE to open a directory, creating the directory if it doesn't exist
+    //! Use OpenMode::CREATE_IF_MISSING to open a directory, creating the directory if it doesn't exist
+    //! Use OpenMode::CREATE_EXCLUSIVE to open a directory, creating the directory and erroring if it already exists
     //!
     //! \param path: path of directory to open
-    //! \param mode: enum (READ, CREATE). See notes above for more information
+    //! \param mode: enum (READ, CREATE_IF_MISSING, CREATE_EXCLUSIVE). See notes above for more information
     //! \return status of the operation
     virtual Status open(const char* path, OpenMode mode) = 0;
 

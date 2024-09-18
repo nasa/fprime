@@ -28,6 +28,44 @@ void Os::Test::Directory::Tester::Open::action(Os::Test::Directory::Tester &stat
 }
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  OpenNew -> Create a new directory
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::Directory::Tester::OpenNew::OpenNew() :
+    STest::Rule<Os::Test::Directory::Tester>("OpenNew") {}
+
+bool Os::Test::Directory::Tester::OpenNew::precondition(const Os::Test::Directory::Tester &state) {
+    return true;
+}
+
+void Os::Test::Directory::Tester::OpenNew::action(Os::Test::Directory::Tester &state) {
+    std::string new_dir = state.m_path + "/new_dir";
+    Os::Directory new_directory;
+    Os::Directory::Status status = new_directory.open(new_dir.c_str(), Os::Directory::OpenMode::CREATE_IF_MISSING);
+    ASSERT_EQ(status, Os::Directory::Status::OP_OK);
+    // Open in read mode to check it exists
+    status = new_directory.open(new_dir.c_str(), Os::Directory::OpenMode::READ);
+    ASSERT_EQ(status, Os::Directory::Status::OP_OK);
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenAlreadyExistsError -> Open an already existing directory with CREATE_EXCLUSIVE and error
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::Directory::Tester::OpenAlreadyExistsError::OpenAlreadyExistsError() :
+    STest::Rule<Os::Test::Directory::Tester>("OpenAlreadyExistsError") {}
+
+bool Os::Test::Directory::Tester::OpenAlreadyExistsError::precondition(const Os::Test::Directory::Tester &state) {
+    return true;
+}
+
+void Os::Test::Directory::Tester::OpenAlreadyExistsError::action(Os::Test::Directory::Tester &state) {
+    Os::Directory new_directory;
+    Os::Directory::Status status = new_directory.open(state.m_path.c_str(), Os::Directory::OpenMode::CREATE_EXCLUSIVE);
+    ASSERT_EQ(status, Os::Directory::Status::ALREADY_EXISTS);
+}
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  Close -> Close a directory
 // ------------------------------------------------------------------------------------------------------
 Os::Test::Directory::Tester::Close::Close() :

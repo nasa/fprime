@@ -24,15 +24,13 @@ DirectoryHandle* PosixDirectory::getHandle() {
 PosixDirectory::Status PosixDirectory::open(const char* path, OpenMode mode) {
     Status status = Status::OP_OK;
 
-    // If CREATE mode, attempt to create the directory
-    if (mode == OpenMode::CREATE) {
+    // If one of the CREATE mode, attempt to create the directory
+    if (mode == OpenMode::CREATE_EXCLUSIVE || mode == OpenMode::CREATE_IF_MISSING) {
         if (::mkdir(path, S_IRWXU) == -1) {
-            status = errno_to_directory_status(errno);
-        }
-        if (status == Status::ALREADY_EXISTS) {
-            // In create mode, it is ok if the directory already exists
-            // If path is a file, ::opendir will fail and return appropriate error
-            status = Status::OP_OK;
+            Status status = errno_to_directory_status(errno);
+            if (status != Status::ALREADY_EXISTS || mode == OpenMode::CREATE_EXCLUSIVE) {
+                return status;
+            }
         }
     }
 

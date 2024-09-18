@@ -217,10 +217,13 @@ class FileSystem final : public FileSystemInterface {
     //! \return Status of the operation
     static Status touch(const char* path);
     
-    //! \brief Creates a new directory at the specified path
+    //! \brief Creates a new directory at the specified path.
+    //! The optional errorIfAlreadyExists (default=false) parameter can be set to true 
+    //! to return an error status if the directory already exists.
     //! \param path The path where the new directory will be created
+    //! \param errorIfAlreadyExists If true, returns an error if the directory already exists
     //! \return Status of the operation
-    static Status createDirectory(const char* path);
+    static Status createDirectory(const char* path, bool errorIfAlreadyExists=false);
     
     //! \brief Appends the source file to the destination file
     //!

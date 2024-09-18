@@ -62,8 +62,9 @@ namespace Svc {
   {
     Fw::LogStringArg logStringDirName(dirName.toChar());
     this->log_ACTIVITY_HI_CreateDirectoryStarted(logStringDirName);
+    bool errorIfDirExists = true;
     const Os::FileSystem::Status status =
-      Os::FileSystem::createDirectory(dirName.toChar());
+      Os::FileSystem::createDirectory(dirName.toChar(), errorIfDirExists);
     if (status != Os::FileSystem::OP_OK) {
       this->log_WARNING_HI_DirectoryCreateError(
           logStringDirName,
