@@ -141,6 +141,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aff2e970e6d1b3fddebb55c06065f3605"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#aff2e970e6d1b3fddebb55c06065f3605">set_comQueueSend_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_com_port.html">Fw::InputComPort</a> *port)</td></tr>
 <tr class="memdesc:aff2e970e6d1b3fddebb55c06065f3605"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to comQueueSend[portNum].  <a href="class_svc_1_1_com_queue_component_base.html#aff2e970e6d1b3fddebb55c06065f3605">More...</a><br /></td></tr>
 <tr class="separator:aff2e970e6d1b3fddebb55c06065f3605"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a944e98cb6a2d750fa2ce50ebde4a55aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a944e98cb6a2d750fa2ce50ebde4a55aa">set_deallocate_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *port)</td></tr>
+<tr class="memdesc:a944e98cb6a2d750fa2ce50ebde4a55aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect port to deallocate[portNum].  <a href="class_svc_1_1_com_queue_component_base.html#a944e98cb6a2d750fa2ce50ebde4a55aa">More...</a><br /></td></tr>
+<tr class="separator:a944e98cb6a2d750fa2ce50ebde4a55aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_active_component_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_active_component_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_active_component_base.html">Fw::ActiveComponentBase</a></td></tr>
 <tr class="memitem:a6c8d55256efaa175fd0d5804e2b483c2 inherit pub_methods_class_fw_1_1_active_component_base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_active_component_base.html#a6c8d55256efaa175fd0d5804e2b483c2">start</a> (<a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a> priority=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a> stackSize=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a> cpuAffinity=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a>, <a class="el" href="class_os_1_1_task.html#a5de20f33a8a6e1c4a3bf2e2de6a1db22">Os::Task::ParamType</a> identifier=<a class="el" href="class_os_1_1_task_interface.html#ab33554510a55456c7eaf81829eb2fa9c">Os::Task::TASK_DEFAULT</a>)</td></tr>
 <tr class="memdesc:a6c8d55256efaa175fd0d5804e2b483c2 inherit pub_methods_class_fw_1_1_active_component_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">called by instantiator when task is to be started  <a href="class_fw_1_1_active_component_base.html#a6c8d55256efaa175fd0d5804e2b483c2">More...</a><br /></td></tr>
@@ -179,6 +182,7 @@ Protected Types</h2></td></tr>
 <tr class="separator:a84b2815bce6bd00648b66249cce1da45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a422180166f59bdb2702bce483bbd9c58"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_svc_1_1_com_queue_component_base.html#a422180166f59bdb2702bce483bbd9c58ae1868e0116381eeeb50945d44c92b5bf">NUM_BUFFQUEUESEND_OUTPUT_PORTS</a> = 1
 , <a class="el" href="class_svc_1_1_com_queue_component_base.html#a422180166f59bdb2702bce483bbd9c58ad22d076fdf9dd3b44cedbf2abe2440a8">NUM_COMQUEUESEND_OUTPUT_PORTS</a> = 1
+, <a class="el" href="class_svc_1_1_com_queue_component_base.html#a422180166f59bdb2702bce483bbd9c58a30199dcb64d249fe6e1856d863a9c5c1">NUM_DEALLOCATE_OUTPUT_PORTS</a> = 1
  }</td></tr>
 <tr class="memdesc:a422180166f59bdb2702bce483bbd9c58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerations for numbers of typed output ports.  <a href="class_svc_1_1_com_queue_component_base.html#a422180166f59bdb2702bce483bbd9c58">More...</a><br /></td></tr>
 <tr class="separator:a422180166f59bdb2702bce483bbd9c58"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -226,6 +230,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a4d7c014616e00d8fd4581d1a59e5142a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27096ea2e61ab6c412a9ae6030e2c27b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a27096ea2e61ab6c412a9ae6030e2c27b">getNum_comQueueSend_OutputPorts</a> () const</td></tr>
 <tr class="separator:a27096ea2e61ab6c412a9ae6030e2c27b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4401d8c4aa77a947e8e300934ec81894"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a4401d8c4aa77a947e8e300934ec81894">getNum_deallocate_OutputPorts</a> () const</td></tr>
+<tr class="separator:a4401d8c4aa77a947e8e300934ec81894"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a903338c9c81b05b636ec76a0a8b8972d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a903338c9c81b05b636ec76a0a8b8972d">isConnected_Log_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
 <tr class="separator:a903338c9c81b05b636ec76a0a8b8972d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb12630dc7377a5c670b9116881094e2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#afb12630dc7377a5c670b9116881094e2">isConnected_Time_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
@@ -236,6 +242,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a91c2910e39beb42ff1cdf7562337f7d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1593619939babf18af32a97bb2287514"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a1593619939babf18af32a97bb2287514">isConnected_comQueueSend_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
 <tr class="separator:a1593619939babf18af32a97bb2287514"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2baff879f8edd57ed9d4b93f86eef9a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#aa2baff879f8edd57ed9d4b93f86eef9a">isConnected_deallocate_OutputPort</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum)</td></tr>
+<tr class="separator:aa2baff879f8edd57ed9d4b93f86eef9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a824fce0c90aa24569911dbad6e4161bd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a824fce0c90aa24569911dbad6e4161bd">buffQueueIn_handler</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)=0</td></tr>
 <tr class="memdesc:a824fce0c90aa24569911dbad6e4161bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for input port buffQueueIn.  <a href="class_svc_1_1_com_queue_component_base.html#a824fce0c90aa24569911dbad6e4161bd">More...</a><br /></td></tr>
 <tr class="separator:a824fce0c90aa24569911dbad6e4161bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -272,12 +280,18 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:af1e5fa50db511b79e05134015ca66b1f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#af1e5fa50db511b79e05134015ca66b1f">run_preMsgHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, U32 context)</td></tr>
 <tr class="memdesc:af1e5fa50db511b79e05134015ca66b1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-message hook for async input port run.  <a href="class_svc_1_1_com_queue_component_base.html#af1e5fa50db511b79e05134015ca66b1f">More...</a><br /></td></tr>
 <tr class="separator:af1e5fa50db511b79e05134015ca66b1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa765153025ea469b4ece9c7d6b5abe52"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#aa765153025ea469b4ece9c7d6b5abe52">buffQueueIn_overflowHook</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)=0</td></tr>
+<tr class="memdesc:aa765153025ea469b4ece9c7d6b5abe52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overflow hook for async input port buffQueueIn.  <a href="class_svc_1_1_com_queue_component_base.html#aa765153025ea469b4ece9c7d6b5abe52">More...</a><br /></td></tr>
+<tr class="separator:aa765153025ea469b4ece9c7d6b5abe52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6199eb9986907a9459a0ba0e9bc4c120"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a6199eb9986907a9459a0ba0e9bc4c120">buffQueueSend_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
 <tr class="memdesc:a6199eb9986907a9459a0ba0e9bc4c120"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port buffQueueSend.  <a href="class_svc_1_1_com_queue_component_base.html#a6199eb9986907a9459a0ba0e9bc4c120">More...</a><br /></td></tr>
 <tr class="separator:a6199eb9986907a9459a0ba0e9bc4c120"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ff1de640080343f14adaf8c37c0be2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a7ff1de640080343f14adaf8c37c0be2b">comQueueSend_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a> &amp;data, U32 context)</td></tr>
 <tr class="memdesc:a7ff1de640080343f14adaf8c37c0be2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port comQueueSend.  <a href="class_svc_1_1_com_queue_component_base.html#a7ff1de640080343f14adaf8c37c0be2b">More...</a><br /></td></tr>
 <tr class="separator:a7ff1de640080343f14adaf8c37c0be2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ed2ec1278a8ae56093ab3b8d4ff5493"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a0ed2ec1278a8ae56093ab3b8d4ff5493">deallocate_out</a> (<a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer)</td></tr>
+<tr class="memdesc:a0ed2ec1278a8ae56093ab3b8d4ff5493"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke output port deallocate.  <a href="class_svc_1_1_com_queue_component_base.html#a0ed2ec1278a8ae56093ab3b8d4ff5493">More...</a><br /></td></tr>
+<tr class="separator:a0ed2ec1278a8ae56093ab3b8d4ff5493"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf6f682563e915a86347af566e07ba88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#acf6f682563e915a86347af566e07ba88">log_WARNING_HI_QueueOverflow</a> (<a class="el" href="class_svc_1_1_queue_type.html">Svc::QueueType</a> queueType, U32 index)</td></tr>
 <tr class="separator:acf6f682563e915a86347af566e07ba88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1bdebf36605cdaab55c5bb1ae931f6ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_com_queue_component_base.html#a1bdebf36605cdaab55c5bb1ae931f6ef">tlmWrite_comQueueDepth</a> (const <a class="el" href="class_svc_1_1_com_queue_depth.html">Svc::ComQueueDepth</a> &amp;arg, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> _tlmTime=<a class="el" href="class_fw_1_1_time.html">Fw::Time</a>())</td></tr>
@@ -468,6 +482,7 @@ Additional Inherited Members</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a422180166f59bdb2702bce483bbd9c58ae1868e0116381eeeb50945d44c92b5bf"></a>NUM_BUFFQUEUESEND_OUTPUT_PORTS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a422180166f59bdb2702bce483bbd9c58ad22d076fdf9dd3b44cedbf2abe2440a8"></a>NUM_COMQUEUESEND_OUTPUT_PORTS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a422180166f59bdb2702bce483bbd9c58a30199dcb64d249fe6e1856d863a9c5c1"></a>NUM_DEALLOCATE_OUTPUT_PORTS&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8hpp_source.html#l00070">70</a> of file <a class="el" href="com_queue_component_ac_8hpp_source.html">ComQueueComponentAc.hpp</a>.</p>
@@ -500,7 +515,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8hpp_source.html#l00076">76</a> of file <a class="el" href="com_queue_component_ac_8hpp_source.html">ComQueueComponentAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8hpp_source.html#l00077">77</a> of file <a class="el" href="com_queue_component_ac_8hpp_source.html">ComQueueComponentAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -532,7 +547,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8hpp_source.html#l00081">81</a> of file <a class="el" href="com_queue_component_ac_8hpp_source.html">ComQueueComponentAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8hpp_source.html#l00082">82</a> of file <a class="el" href="com_queue_component_ac_8hpp_source.html">ComQueueComponentAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -569,7 +584,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00556">556</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00603">603</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -598,7 +613,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Destroy <a class="el" href="class_svc_1_1_com_queue_component_base.html" title="Auto-generated base for ComQueue component.">ComQueueComponentBase</a> object. </p>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00563">563</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00610">610</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -691,7 +706,52 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00729">729</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00793">793</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aa765153025ea469b4ece9c7d6b5abe52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa765153025ea469b4ece9c7d6b5abe52">&#9670;&nbsp;</a></span>buffQueueIn_overflowHook()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Svc::ComQueueComponentBase::buffQueueIn_overflowHook </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
+          <td class="paramname"><em>portNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>fwBuffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Overflow hook for async input port buffQueueIn. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">portNum</td><td>The port number </td></tr>
+    <tr><td class="paramname">fwBuffer</td><td>The buffer </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -738,7 +798,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00973">973</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01037">1037</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -785,7 +845,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01014">1014</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01086">1086</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -891,7 +951,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00787">787</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00851">851</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -945,7 +1005,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00982">982</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01046">1046</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -999,7 +1059,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01029">1029</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01101">1101</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1091,7 +1151,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00854">854</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00918">918</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1138,7 +1198,54 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00992">992</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01056">1056</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a0ed2ec1278a8ae56093ab3b8d4ff5493"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ed2ec1278a8ae56093ab3b8d4ff5493">&#9670;&nbsp;</a></span>deallocate_out()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Svc::ComQueueComponentBase::deallocate_out </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
+          <td class="paramname"><em>portNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>fwBuffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Invoke output port deallocate. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">portNum</td><td>The port number </td></tr>
+    <tr><td class="paramname">fwBuffer</td><td>The buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01118">1118</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1166,7 +1273,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00308">308</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00327">327</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1194,7 +1301,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00319">319</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00338">338</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1222,7 +1329,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00330">330</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00349">349</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1250,7 +1357,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00341">341</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00360">360</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1279,7 +1386,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of buffQueueIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of buffQueueIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00573">573</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00620">620</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1308,7 +1415,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of buffQueueSend output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of buffQueueSend output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00633">633</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00680">680</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1337,7 +1444,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of comQueueIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of comQueueIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00579">579</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00626">626</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1366,7 +1473,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of comQueueSend output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of comQueueSend output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00639">639</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00686">686</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1395,7 +1502,36 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of comStatusIn input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of comStatusIn input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00585">585</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00632">632</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a4401d8c4aa77a947e8e300934ec81894"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4401d8c4aa77a947e8e300934ec81894">&#9670;&nbsp;</a></span>getNum_deallocate_OutputPorts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> Svc::ComQueueComponentBase::getNum_deallocate_OutputPorts </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the number of deallocate output ports</p>
+<dl class="section return"><dt>Returns</dt><dd>The number of deallocate output ports </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00692">692</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1424,7 +1560,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of Log output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of Log output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00601">601</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00648">648</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1453,7 +1589,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of run input ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of run input ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00591">591</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00638">638</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1482,7 +1618,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of Time output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of Time output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00617">617</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00664">664</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1511,7 +1647,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of Tlm output ports</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of Tlm output ports </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00623">623</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00670">670</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1540,7 +1676,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the time</p>
 <p>\return The current time </p>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01229">1229</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01316">1316</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1615,7 +1751,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00701">701</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00754">754</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1651,7 +1787,43 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00712">712</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00765">765</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aa2baff879f8edd57ed9d4b93f86eef9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2baff879f8edd57ed9d4b93f86eef9a">&#9670;&nbsp;</a></span>isConnected_deallocate_OutputPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Svc::ComQueueComponentBase::isConnected_deallocate_OutputPort </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
+          <td class="paramname"><em>portNum</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Check whether port deallocate is connected</p>
+<dl class="section return"><dt>Returns</dt><dd>Whether port deallocate is connected </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">portNum</td><td>The port number </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00776">776</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1687,7 +1859,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00649">649</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00702">702</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1723,7 +1895,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00675">675</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00728">728</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1759,7 +1931,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00686">686</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00739">739</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1806,7 +1978,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01050">1050</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01137">1137</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1898,7 +2070,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00907">907</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00971">971</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1945,7 +2117,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01001">1001</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01065">1065</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -1984,7 +2156,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00420">420</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00439">439</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2023,7 +2195,46 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00434">434</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00453">453</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a944e98cb6a2d750fa2ce50ebde4a55aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a944e98cb6a2d750fa2ce50ebde4a55aa">&#9670;&nbsp;</a></span>set_deallocate_OutputPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Svc::ComQueueComponentBase::set_deallocate_OutputPort </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a>&#160;</td>
+          <td class="paramname"><em>portNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_input_buffer_send_port.html">Fw::InputBufferSendPort</a> *&#160;</td>
+          <td class="paramname"><em>port</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Connect port to deallocate[portNum]. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">portNum</td><td>The port number </td></tr>
+    <tr><td class="paramname">port</td><td>The input port </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00467">467</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2062,7 +2273,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00356">356</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00375">375</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2101,7 +2312,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00388">388</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00407">407</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2140,7 +2351,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00402">402</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l00421">421</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2187,7 +2398,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01192">1192</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01279">1279</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -2234,7 +2445,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01159">1159</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="com_queue_component_ac_8cpp_source.html#l01246">1246</a> of file <a class="el" href="com_queue_component_ac_8cpp_source.html">ComQueueComponentAc.cpp</a>.</p>
 
 </div>
 </div>

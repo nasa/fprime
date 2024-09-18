@@ -142,20 +142,22 @@ Svc::ComQueue (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>output</code>   </td><td class="markdownTableBodyNone"><code>buffQueueSend</code>   </td><td class="markdownTableBodyNone"><code>Fw.BufferSend</code>   </td><td class="markdownTableBodyNone"><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> output port    </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>output</code>   </td><td class="markdownTableBodyNone"><code>deallocate</code>   </td><td class="markdownTableBodyNone"><code>Fw.BufferSend</code>   </td><td class="markdownTableBodyNone">Port for deallocating <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> on queue overflow    </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>async input</code>   </td><td class="markdownTableBodyNone"><code>comStatusIn</code>   </td><td class="markdownTableBodyNone"><code>Fw.SuccessCondition</code>   </td><td class="markdownTableBodyNone">Port for receiving the status signal    </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>async input</code>   </td><td class="markdownTableBodyNone"><code>comQueueIn</code>   </td><td class="markdownTableBodyNone"><code>[ComQueueComPorts] Fw.Com</code>   </td><td class="markdownTableBodyNone">Port array for receiving Fw::ComBuffers    </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>async input</code>   </td><td class="markdownTableBodyNone"><code>buffQueueIn</code>   </td><td class="markdownTableBodyNone"><code>[ComQueueBufferPorts] Fw.BufferSend</code>   </td><td class="markdownTableBodyNone">Port array for receiving Fw::Buffers    </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>async input</code>   </td><td class="markdownTableBodyNone"><code>run</code>   </td><td class="markdownTableBodyNone"><code>Svc.Sched</code>   </td><td class="markdownTableBodyNone">Port for scheduling telemetry output    </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>event</code>   </td><td class="markdownTableBodyNone"><code>Log</code>   </td><td class="markdownTableBodyNone"><code>Fw.Log</code>   </td><td class="markdownTableBodyNone">Port for emitting events    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>text event</code>   </td><td class="markdownTableBodyNone"><code>LogText</code>   </td><td class="markdownTableBodyNone"><code>Fw.LogText</code>   </td><td class="markdownTableBodyNone">Port for emitting text events    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>time get</code>   </td><td class="markdownTableBodyNone"><code>Time</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_fw_1_1_time.html">Fw.Time</a></code>   </td><td class="markdownTableBodyNone">Port for getting the time    </td></tr>
+<td class="markdownTableBodyNone"><code>text event</code>   </td><td class="markdownTableBodyNone"><code>LogText</code>   </td><td class="markdownTableBodyNone"><code>Fw.LogText</code>   </td><td class="markdownTableBodyNone">Port for emitting text events    </td></tr>
 <tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>time get</code>   </td><td class="markdownTableBodyNone"><code>Time</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_fw_1_1_time.html">Fw.Time</a></code>   </td><td class="markdownTableBodyNone">Port for getting the time    </td></tr>
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>telemetry</code>   </td><td class="markdownTableBodyNone"><code>Tlm</code>   </td><td class="markdownTableBodyNone"><code>Fw.Tlm</code>   </td><td class="markdownTableBodyNone">Port for emitting telemetry   </td></tr>
 </table>
 <h3><a class="anchor" id="autotoc_md733"></a>
