@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/Directory.hpp
-// \brief Os::Directory interface defintion
+// \brief Os::Directory interface definition
 // ======================================================================
 
 #ifndef _OS_DIRECTORY_HPP_

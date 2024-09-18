@@ -120,7 +120,7 @@ struct AppendFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  AppendToNewFile: Apped file to a new path, using createMissingDest
+// Rule:  AppendToNewFile: Append file to a new path, using createMissingDest
 // ------------------------------------------------------------------------------------------------------
 struct AppendToNewFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     AppendToNewFile();

@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/FileSystem.hpp
-// \brief Os::FileSystem interface defintion
+// \brief Os::FileSystem interface definition
 // ======================================================================
 
 #ifndef _OS_FILESYSTEM_HPP_
