@@ -89,32 +89,32 @@ $(document).ready(function(){initNavTree('md__svc__seq_dispatcher_docs_sdd.html'
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>Dispatches command sequences to available command sequencers, allowing the spacecraft controllers to run multiple sequences at once without having to manually manage which <code>CmdSequencer</code>s those sequences run on.</p>
-<h2><a class="anchor" id="autotoc_md1101"></a>
+<h2><a class="anchor" id="autotoc_md1103"></a>
 Usage</h2>
 <ul>
 <li>Call the <code>RUN</code> command just like you would call it on a <code>CmdSequencer</code></li>
 <li>If any connected <code>CmdSequencer</code> is available, it will route the sequence to the first one it finds</li>
 <li><code>RUN</code> can be made blocking or non-blocking, just like <code>CmdSequencer</code>'s <code>RUN</code></li>
 </ul>
-<h1><a class="anchor" id="autotoc_md1102"></a>
+<h1><a class="anchor" id="autotoc_md1104"></a>
 State diagram</h1>
 <p><img src="seq_dispatcher_model.png" alt="State diagram of the SeqDispatcher" title="SeqDispatcher model" class="inline"/></p>
-<h1><a class="anchor" id="autotoc_md1103"></a>
+<h1><a class="anchor" id="autotoc_md1105"></a>
 Port Descriptions</h1>
 <p>|Type| Name | Description | |async input|seqRunIn|Equivalent to the RUN cmd, dispatches a sequence to the first available sequencer| |output|seqRunOut|This is used by the SeqDispatcher to send sequence run calls to sequencers| |async input|seqDoneIn|Called by a command sequencer whenever it has finished any sequence| |async input|seqStartIn|Called by a command sequencer whenever it starts any sequence|</p>
-<h1><a class="anchor" id="autotoc_md1104"></a>
+<h1><a class="anchor" id="autotoc_md1106"></a>
 Commands</h1>
 <p>| Name | Description | |RUN|Dispatches a sequence to the first available sequencer| |LOG_STATUS|Logs via Events the state of each connected command sequencer|</p>
-<h1><a class="anchor" id="autotoc_md1105"></a>
+<h1><a class="anchor" id="autotoc_md1107"></a>
 Events</h1>
 <p>| Name | Description | |InvalidSequencer|The given sequencer index is invalid for an unspecified reason| |NoAvailableSequencers|There are no available sequencers to dispatch a sequence to| |UnknownSequenceFinished|We received a call to seqDoneIn that didn't have a corresponding seqStartIn call| |UnexpectedSequenceStarted|We received a call to seqStartIn but we didn't receive a call to seqDoneIn before that| |LogSequencerStatus|Shows the current state and sequence filename for a particular sequencer. Produced by the LOG_STATUS command|</p>
-<h1><a class="anchor" id="autotoc_md1106"></a>
+<h1><a class="anchor" id="autotoc_md1108"></a>
 Telemetry</h1>
 <p>| Name | Description | |dispatchedCount|Number of sequences dispatched| |errorCount|Number of sequences dispatched that returned an error. Note: if a sequence was run in non-blocking mode, even if the sequence errors out, this error count will never increase| |sequencersAvailable|Number of sequencers ready to run a sequence|</p>
-<h1><a class="anchor" id="autotoc_md1107"></a>
+<h1><a class="anchor" id="autotoc_md1109"></a>
 Unit Tests</h1>
 <p>Add unit test descriptions in the chart below | Name | Description | |testDispatch|Tests the basic dispatch functionality of the <code>SeqDispatcher</code>| |testLogStatus|Tests the LOG_STATUS command|</p>
-<h1><a class="anchor" id="autotoc_md1108"></a>
+<h1><a class="anchor" id="autotoc_md1110"></a>
 Requirements</h1>
 <p>Add requirements in the chart below </p><table class="markdownTable">
 <tr class="markdownTableHead">

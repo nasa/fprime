@@ -88,13 +88,13 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <div class="title">Data Products </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md27"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md29"></a>
 1. Introduction</h1>
 <p>A <b>data product</b> is any data that is produced by an embedded system, stored on board the system, and transmitted to the ground, typically in priority order. F Prime provides several features for managing the generation, storage, and downlink of data products. In this section, we document those features.</p>
-<h1><a class="anchor" id="autotoc_md28"></a>
+<h1><a class="anchor" id="autotoc_md30"></a>
 2. Basic Concepts</h1>
 <p>First we explain some basic concepts.</p>
-<h2><a class="anchor" id="autotoc_md29"></a>
+<h2><a class="anchor" id="autotoc_md31"></a>
 2.1. Records, Containers, and Dictionaries</h2>
 <p>F Prime data products are based on <b>records</b> and <b>containers</b>. A record is a basic unit of data. For example, it may be a struct, an array of typed objects of statically known size, or an array of bytes of statically unknown size. A container has an identifier and a priority and stores records. In C++, a container is represented as a class object with member fields that (1) store header data and (2) store an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> object pointing to the memory that stores the records.</p>
 <p>The set of all container specifications forms the <b>data product dictionary</b>. To manage the data product dictionary, F Prime uses the same general approach as for commands, telemetry, events, and parameters:</p>
@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <li>Each instance <em>I</em> of <em>C</em> contributes one container <em>I.c</em> to the dictionary for each container <em>c</em> defined in <em>C</em>. The global identifier for <em>I.c</em> is the base identifier of <em>I</em> plus the local identifier for <em>c</em>. For example, if the base identifier is 0x1000, then the global identifiers might be 0x1000, 0x1001, 0x1002, ... .</li>
 <li>For any topology <em>T</em>, the global identifiers <em>I.c</em> for all the component instances of <em>T</em> form the data product dictionary for <em>T</em>.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md30"></a>
+<h2><a class="anchor" id="autotoc_md32"></a>
 2.2. F Prime Components</h2>
 <p>Typically a data product system in an F Prime application consists of the following components:</p>
 <ol type="1">
@@ -125,10 +125,10 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 </li>
 </ol>
 <p>Note that when using data products, you need to develop only the producer components. The other components are provided by F Prime.</p>
-<h1><a class="anchor" id="autotoc_md31"></a>
+<h1><a class="anchor" id="autotoc_md33"></a>
 3. Producer Components</h1>
 <p>In this section we provide more detail about producer components.</p>
-<h2><a class="anchor" id="autotoc_md32"></a>
+<h2><a class="anchor" id="autotoc_md34"></a>
 3.1. Activities</h2>
 <p>A producer component typically repeats the following activities, as often as necessary:</p>
 <ol type="1">
@@ -137,10 +137,10 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <li>When the container is full, send the container to the data product manager, which forwards it to the data product writer.</li>
 </ol>
 <p>The FPP model and the autocoded C++ have several features that support these activities. We discuss these features in the following sections.</p>
-<h2><a class="anchor" id="autotoc_md33"></a>
+<h2><a class="anchor" id="autotoc_md35"></a>
 3.2. FPP Modeling</h2>
 <p>In this section we summarize the features of the FPP modeling language used in constructing data product producer components. Each of these features is fully documented in <a href="https://nasa.github.io/fpp/fpp-users-guide.html"><em>The FPP User's Guide</em></a> and <a href="https://nasa.github.io/fpp/fpp-spec.html"><em>The FPP Language Specification</em></a>.</p>
-<h3><a class="anchor" id="autotoc_md34"></a>
+<h3><a class="anchor" id="autotoc_md36"></a>
 3.2.1. Ports</h3>
 <p>FPP provides the following special ports for managing data products:</p>
 <ol type="1">
@@ -168,7 +168,7 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <p class="startli">A component that has a <code>product</code> <code>request</code> port must also have a <code>product</code> <code>receive</code> port.</p>
 </li>
 </ol>
-<h3><a class="anchor" id="autotoc_md35"></a>
+<h3><a class="anchor" id="autotoc_md37"></a>
 3.2.2. Records</h3>
 <p>A record is a unit of data. When defining a producer component, you can specify one or more records. A record specification consists of a name, a type specifier, and an optional identifier. The type specifier may be one of the following:</p>
 <ol type="1">
@@ -186,12 +186,12 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <div class="line">product record FixedSizeDataRecord: FixedSizeData id 0x00</div>
 <div class="line">@ A record containing a variable-size array</div>
 <div class="line">product record F32ArrayRecord: F32 array id 0x01</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md36"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md38"></a>
 3.2.3. Containers</h3>
 <p>A container is a data structure that stores records. When defining a producer component, you can specify one or more containers. Each container specified in a component can store any of the records specified in the component.</p>
 <p>A container specification consists of a name, an optional identifier, and an optional default priority. The default priority is the priority to use if no other priority is specified for the container during operations. Example syntax: </p><div class="fragment"><div class="line">product container C1</div>
 <div class="line">product container C2 id 0x01 default priority 10</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md37"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md39"></a>
 3.3. Autocoded C++</h2>
 <p>The autocoded C++ base class for a producer component <em>C</em> provides the following API elements:</p>
 <ol type="1">
@@ -231,12 +231,12 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 <p class="startli">You can use these expressions to compute data sizes when requesting data product buffers. For example, if a component specifies a record <code>Image</code>, then inside the component implementation the expression <code>10 * SIZE_OF_Image_RECORD</code> represents the size of the storage necessary to hold 10 <code>Image</code> records.</p>
 </li>
 </ol>
-<h2><a class="anchor" id="autotoc_md38"></a>
+<h2><a class="anchor" id="autotoc_md40"></a>
 3.4. Unit Test Support</h2>
 <p>In F Prime, each component <em>C</em> comes with auto-generated classes <em>C</em> <code>TesterBase</code> and <em>C</em> <code>GTestBase</code> for writing unit tests against <em>C</em>. <em>C</em> <code>GTestBase</code> is derived from <em>C</em> <code>TesterBase</code>; it provides test macros based on the Google Test framework.</p>
 <p>To write unit tests, you construct a class <em>C</em> <code>Tester</code>. Typically <em>C</em> <code>Tester</code> is derived from <em>C</em> <code>GTestBase</code> and uses the Google Test framework macros. If for some reason you can't use the Google Test framework (e.g., because you are running on a platform that does not support it), then your <em>C</em> <code>Tester</code> class can be derived from <em>C</em> <code>TesterBase</code>.</p>
 <p>This section documents the unit test support for producer components.</p>
-<h3><a class="anchor" id="autotoc_md39"></a>
+<h3><a class="anchor" id="autotoc_md41"></a>
 3.4.1. The TesterBase Class</h3>
 <p><b>History data structures:</b> The class <em>C</em> <code>TesterBase</code> provides the following histories:</p>
 <ol type="1">
@@ -276,7 +276,7 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 </ol>
 </li>
 </ol>
-<h3><a class="anchor" id="autotoc_md40"></a>
+<h3><a class="anchor" id="autotoc_md42"></a>
 3.4.2. The GTestBase Class</h3>
 <p><b>Testing macros:</b> The class <em>C</em> <code>GTestBase</code> provides the following macros for verifying the histories managed by <em>C</em> <code>TesterBase</code>.</p>
 <ol type="1">
@@ -320,7 +320,7 @@ $(document).ready(function(){initNavTree('md_docs__design_data_products.html',''
 </ol>
 <p><b>Container IDs:</b> The container IDs emitted by the component under test are global IDs. Therefore, when constructing specified IDs you must add the ID base specified in the tester component to the local ID specified in the component under test. For example, for container <code>CONTAINER</code> in component <code>Component</code>, you would write </p><div class="fragment"><div class="line">ID_BASE + Component::ContainerId::CONTAINER</div>
 </div><!-- fragment --><p> <code>ID_BASE</code> is a standard constant defined in each Tester implementation and provided to the Tester base classes in their constructors.</p>
-<h1><a class="anchor" id="autotoc_md41"></a>
+<h1><a class="anchor" id="autotoc_md43"></a>
 4. Use Cases</h1>
 <p>In this section we discuss several common use cases involving data products.</p>
 <p><b>Requesting and sending data products:</b> See the example uses in the documentation for <a href="../../Svc/DpManager/docs/sdd.md#5-example-uses"><code>Svc::DpManager</code></a>. The component referred to as <code>producer</code> in that document is a data product producer.</p>

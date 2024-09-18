@@ -88,9 +88,9 @@ $(document).ready(function(){initNavTree('_svc_dp_writer_component.html',''); in
 <div class="title"><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md833"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md835"></a>
 Svc::DpWriter (Active Component)</h1>
-<h2><a class="anchor" id="autotoc_md834"></a>
+<h2><a class="anchor" id="autotoc_md836"></a>
 1. Introduction</h2>
 <p><code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code> is an active component for writing data products to disk. It does the following:</p>
 <ol type="1">
@@ -108,7 +108,7 @@ Svc::DpWriter (Active Component)</h1>
 </ol>
 </li>
 </ol>
-<h2><a class="anchor" id="autotoc_md835"></a>
+<h2><a class="anchor" id="autotoc_md837"></a>
 2. Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -126,12 +126,12 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">SVC-DPWRITER-006   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_dp_manager.html">Svc::DpManager</a></code> shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors.   </td><td class="markdownTableBodyNone">This requirement establishes the telemetry interface for the component.   </td><td class="markdownTableBodyNone">Unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md836"></a>
+<h2><a class="anchor" id="autotoc_md838"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md837"></a>
+<h3><a class="anchor" id="autotoc_md839"></a>
 3.1. Component Diagram</h3>
 <p>The diagram below shows the <code>DpWriter</code> component.</p>
-<div> <img src="img/DpWriter.png" alt="" width="700/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md838"></a>
+<div> <img src="img/DpWriter.png" alt="" width="700/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md840"></a>
 3.2. Ports</h3>
 <p><code>DpWriter</code> has the following ports:</p>
 <table class="markdownTable">
@@ -156,7 +156,7 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>text event</code>   </td><td class="markdownTableBodyNone"><code>textEventOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.LogText</code>   </td><td class="markdownTableBodyNone">Text event port   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md839"></a>
+<h3><a class="anchor" id="autotoc_md841"></a>
 3.3. State</h3>
 <p><code>DpWriter</code> maintains the following state:</p>
 <ol type="1">
@@ -165,7 +165,7 @@ Svc::DpWriter (Active Component)</h1>
 <ol type="1">
 <li><code>numBytes (U64)</code>: The number of bytes written.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md840"></a>
+<h3><a class="anchor" id="autotoc_md842"></a>
 3.4. Compile-Time Setup</h3>
 <ol type="1">
 <li>The configuration constant <a href="../../../config/AcConstants.fpp"><code>DpWriterNumProcPorts</code></a> specifies the number of ports for connecting components that perform processing.</li>
@@ -173,16 +173,16 @@ Svc::DpWriter (Active Component)</h1>
 <ol type="1">
 <li>The configuration <a href="../../../config/DpCfg.hpp"><code>DP_FILENAME_FORMAT</code></a> specifies the file name format.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md841"></a>
+<h3><a class="anchor" id="autotoc_md843"></a>
 3.5. Runtime Setup</h3>
 <p>You can call the <code>configure</code> function to supply the DP file name prefix. This is the prefix used when constructing names of files to write. For more information about the file name format, see the <a href="#file_format"><b>File Format</b></a> section.</p>
 <p>If you do not call the <code>configure</code> function, then the default DP file name prefix is the empty string.</p>
-<h3><a class="anchor" id="autotoc_md842"></a>
+<h3><a class="anchor" id="autotoc_md844"></a>
 3.6. Port Handlers</h3>
-<h4><a class="anchor" id="autotoc_md843"></a>
+<h4><a class="anchor" id="autotoc_md845"></a>
 3.6.1. schedIn</h4>
 <p>This handler sends out the state variables as telemetry.</p>
-<h4><a class="anchor" id="autotoc_md844"></a>
+<h4><a class="anchor" id="autotoc_md846"></a>
 3.6.2. bufferSendIn</h4>
 <p>This handler receives a mutable reference to a buffer <code>B</code>. It does the following:</p>
 <ol type="1">
@@ -219,12 +219,12 @@ Svc::DpWriter (Active Component)</h1>
 <li>If <code>B</code> is valid, then send <code>B</code> on <code>deallocBufferSendOut</code>.</li>
 </ol>
 <p><a class="anchor" id="file_format"></a> </p>
-<h2><a class="anchor" id="autotoc_md845"></a>
+<h2><a class="anchor" id="autotoc_md847"></a>
 4. File Format</h2>
-<h3><a class="anchor" id="autotoc_md846"></a>
+<h3><a class="anchor" id="autotoc_md848"></a>
 4.1. Data Format</h3>
 <p>Each file stores a serialized data product record, with the format described in the <a href="../../../Fw/Dp/docs/sdd.md#serial-format">data products documentation</a>.</p>
-<h3><a class="anchor" id="autotoc_md847"></a>
+<h3><a class="anchor" id="autotoc_md849"></a>
 4.2. File Name</h3>
 <p>The name of each file is formatted with the configurable format string <a href="../../../config/DpCfg.hpp"><code>DP_FILENAME_FORMAT</code></a>. The format string must contain format specifications for the following arguments, in order.</p>
 <table class="markdownTable">
@@ -241,9 +241,9 @@ Svc::DpWriter (Active Component)</h1>
 </table>
 <p>The exact meaning of the DP file name prefix depends on the format string. Typically it is a directory path prefix.</p>
 <p><a class="anchor" id="ground_interface"></a> </p>
-<h2><a class="anchor" id="autotoc_md848"></a>
+<h2><a class="anchor" id="autotoc_md850"></a>
 5. Ground Interface</h2>
-<h3><a class="anchor" id="autotoc_md849"></a>
+<h3><a class="anchor" id="autotoc_md851"></a>
 5.1. Commands</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -251,7 +251,7 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>async</code>   </td><td class="markdownTableBodyNone"><code>CLEAR_EVENT_THROTTLE</code>   </td><td class="markdownTableBodyNone">Clear event throttling   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md850"></a>
+<h3><a class="anchor" id="autotoc_md852"></a>
 5.2. Telemetry</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -261,7 +261,7 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>NumBytes</code>   </td><td class="markdownTableBodyNone"><code>U64</code>   </td><td class="markdownTableBodyNone">The number of bytes handled   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md851"></a>
+<h3><a class="anchor" id="autotoc_md853"></a>
 5.3. Events</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -277,10 +277,10 @@ Svc::DpWriter (Active Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>FileWriteError</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">An error occurred when writing to a file   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md852"></a>
+<h2><a class="anchor" id="autotoc_md854"></a>
 6. Example Uses</h2>
 <p><a class="anchor" id="top-diagrams"></a> </p>
-<h3><a class="anchor" id="autotoc_md853"></a>
+<h3><a class="anchor" id="autotoc_md855"></a>
 6.1. Topology Diagrams</h3>
 <p>The following topology diagram shows how to connect <code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code> to a <code>DpManager</code> component and a processor component. The diagrams use the following instances:</p>
 <ul>
@@ -289,7 +289,7 @@ Svc::DpWriter (Active Component)</h1>
 <li><code>dpWriter</code>: An instance of <code><a class="el" href="class_svc_1_1_dp_writer.html">Svc::DpWriter</a></code>.</li>
 <li><code>producer</code>: A component that produces data products.</li>
 </ul>
-<div> <img src="img/top/product-write.png" alt="" width="800/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md854"></a>
+<div> <img src="img/top/product-write.png" alt="" width="800/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md856"></a>
 6.2. Sequence Diagrams</h3>
 <p>The following diagram shows what happens when a buffer is sent to <code>DpWriter</code>, is processed, and is written to disk.</p>
 <div class="fragment"><div class="line">sequenceDiagram</div>

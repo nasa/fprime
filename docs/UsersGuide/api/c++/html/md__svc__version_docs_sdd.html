@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('md__svc__version_docs_sdd.html',''); i
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>Tracks versions for framework,project, libraries and user defined project specific versions.</p>
-<h1><a class="anchor" id="autotoc_md1152"></a>
+<h1><a class="anchor" id="autotoc_md1154"></a>
 Requirements</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -101,7 +101,7 @@ Requirements</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">SVC-VERSION-003   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> upon startup shall generate events and telemetry channels (upto 10) with versions for library.   </td><td class="markdownTableBodyNone">Transparency on different library versions    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">SVC-VERSION-004   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> upon startup shall make verbosity on custom versions configurable.   </td><td class="markdownTableBodyNone">Transparency on different library versions    </td></tr>
+<td class="markdownTableBodyNone">SVC-VERSION-004   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> upon startup shall make verbosity on custom versions configurable.   </td><td class="markdownTableBodyNone">Verbosity will enable/disable the channel generation but will not effect the event generation    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">SVC-VERSION-005   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide a ground command to request events and telemetry on framework version   </td><td class="markdownTableBodyNone">Accessibility on demand    </td></tr>
 <tr class="markdownTableRowEven">
@@ -109,7 +109,7 @@ Requirements</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">SVC-VERSION-007   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide a ground command to request events and telemetry channels (upto 10) on library versions   </td><td class="markdownTableBodyNone">Accessibility on demand    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">SVC-VERSION-008   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide a ground command to request events and telemetry channels (upto 10) on custom versions   </td><td class="markdownTableBodyNone">Accessibility on demand    </td></tr>
+<td class="markdownTableBodyNone">SVC-VERSION-008   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide a ground command to request events and telemetry channels (upto 10) on custom versions   </td><td class="markdownTableBodyNone">Accessibility on demand. Verbosity configuration will determine the channel generation    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">SVC-VERSION-009   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide a ground command to enable/disable verbosity on custom versions   </td><td class="markdownTableBodyNone">Accessibility on demand    </td></tr>
 <tr class="markdownTableRowEven">
@@ -119,16 +119,16 @@ Requirements</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">SVC-VERSION-012   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide upto 10 telemetry channels on library versions   </td><td class="markdownTableBodyNone">Accessibility to versions being used    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">SVC-VERSION-013   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide upto 10 telemetry channels on custom versions   </td><td class="markdownTableBodyNone">Accessibility to versions being used    </td></tr>
+<td class="markdownTableBodyNone">SVC-VERSION-013   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide upto 10 telemetry channels on custom versions   </td><td class="markdownTableBodyNone">Accessibility to versions being used. Only accessible if verbosity is enabled    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">SVC-VERSION-014   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide an interface for other components to set custom versions.   </td><td class="markdownTableBodyNone">Enables projects to set hardware and FPGA versions, say, as needed. Also generates Events/TLM    </td></tr>
+<td class="markdownTableBodyNone">SVC-VERSION-014   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide an interface for other components to set custom versions.   </td><td class="markdownTableBodyNone">Enables projects to set hardware and FPGA versions, say, as needed. Also generates Events/TLM based on verbosity configuration    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">SVC-VERSION-015   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide an interface for other components to get custom versions.   </td><td class="markdownTableBodyNone">Also generates Events/TLM   </td></tr>
+<td class="markdownTableBodyNone">SVC-VERSION-015   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_version.html">Svc::Version</a></code> shall provide an interface for other components to get custom versions.   </td><td class="markdownTableBodyNone">Also generates Events/TLM based on verbosity configuration   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md1153"></a>
+<h1><a class="anchor" id="autotoc_md1155"></a>
 Emitting Versions on Start-Up</h1>
 <p>The version component can emit versions on startup by calling <code>version.config(true);</code> during component configuration.</p>
-<h1><a class="anchor" id="autotoc_md1154"></a>
+<h1><a class="anchor" id="autotoc_md1156"></a>
 Change Log</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">

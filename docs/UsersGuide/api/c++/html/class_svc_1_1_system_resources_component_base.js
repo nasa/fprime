@@ -22,8 +22,6 @@ var class_svc_1_1_system_resources_component_base =
     [ "isConnected_Time_OutputPort", "class_svc_1_1_system_resources_component_base.html#aadeb39f30f6438d24a03630f24758674", null ],
     [ "isConnected_Tlm_OutputPort", "class_svc_1_1_system_resources_component_base.html#aa7ea98c92fe2a3e6f11a5ffd8c43eac6", null ],
     [ "lock", "class_svc_1_1_system_resources_component_base.html#ac68d3b4266a563ded27f670eb262affc", null ],
-    [ "log_ACTIVITY_LO_FRAMEWORK_VERSION", "class_svc_1_1_system_resources_component_base.html#aa492d001773e783c32ff312336c8d8d6", null ],
-    [ "log_ACTIVITY_LO_PROJECT_VERSION", "class_svc_1_1_system_resources_component_base.html#af466de259fd07286b736678546ca9858", null ],
     [ "regCommands", "class_svc_1_1_system_resources_component_base.html#adef718a6202e475a3fbc3606ebfe03ad", null ],
     [ "run_handler", "class_svc_1_1_system_resources_component_base.html#a085ccd63969d0e8e09a9a326a8e6cbdf", null ],
     [ "run_handlerBase", "class_svc_1_1_system_resources_component_base.html#ac4f4efef893862976301d3f4a36ba42b", null ],
@@ -49,14 +47,10 @@ var class_svc_1_1_system_resources_component_base =
     [ "tlmWrite_CPU_13", "class_svc_1_1_system_resources_component_base.html#af86cd90b8cd0c8a1a51ba46d3ed17bcd", null ],
     [ "tlmWrite_CPU_14", "class_svc_1_1_system_resources_component_base.html#a1fcb4643ea6ead5b7c02b7ff7e5228c7", null ],
     [ "tlmWrite_CPU_15", "class_svc_1_1_system_resources_component_base.html#aca96e5bbacfdc6d87aa4af5bb3caa655", null ],
-    [ "tlmWrite_FRAMEWORK_VERSION", "class_svc_1_1_system_resources_component_base.html#a48a47313e85de8eb64b1692316a933bc", null ],
     [ "tlmWrite_MEMORY_TOTAL", "class_svc_1_1_system_resources_component_base.html#abe074efa3ea5355df2e837aad3836ffd", null ],
     [ "tlmWrite_MEMORY_USED", "class_svc_1_1_system_resources_component_base.html#a396e4eef61a3ed2498411616ecabde88", null ],
     [ "tlmWrite_NON_VOLATILE_FREE", "class_svc_1_1_system_resources_component_base.html#a4d7a9cbea6465e2502be3aaaf03398dc", null ],
     [ "tlmWrite_NON_VOLATILE_TOTAL", "class_svc_1_1_system_resources_component_base.html#a413a310eab676e9d58cdb1866d019681", null ],
-    [ "tlmWrite_PROJECT_VERSION", "class_svc_1_1_system_resources_component_base.html#a4f55a0bd78a4a4b2b28d7482b2966bc3", null ],
     [ "unLock", "class_svc_1_1_system_resources_component_base.html#a2ec3aafa6b42b2fa935a2f072e2defa0", null ],
-    [ "VERSION_cmdHandler", "class_svc_1_1_system_resources_component_base.html#abbfaa3cc2926f7b654c2c9909da7648d", null ],
-    [ "VERSION_cmdHandlerBase", "class_svc_1_1_system_resources_component_base.html#ae4698f9439dc5c4be23561af1b9665b0", null ],
     [ "SystemResourcesComponentBaseFriend", "class_svc_1_1_system_resources_component_base.html#ad45507af971eb6c74e67c929a849a3f4", null ]
 ];

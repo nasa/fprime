@@ -101,7 +101,7 @@ $(document).ready(function(){initNavTree('md_docs__how_to_develop_subtopologies.
 <li><a href="#the-subtopology-autocoder">Subtopology Autocoder</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
 </ol>
-<h1><a class="anchor" id="autotoc_md367"></a>
+<h1><a class="anchor" id="autotoc_md369"></a>
 Subtopology Structure</h1>
 <p>A subtopology is a folder that contains a <code>topology.cpp</code> file, which includes a <code>topology.fpp</code> file, which is a <em>unified</em> topology file including your wiring, component instances, and init specifications. As opposed to having separate files for component instances and the topology itself, the single file encapsulates both. A <code>topologydefs.hpp</code> defines a struct that is used when instantiating your subtopology. A <code>CMakeLists.txt</code> file links your <code>topology.cpp</code> file to the build for your project.</p>
 <p>Thus, the required structure for your subtopology should be:</p>
@@ -125,13 +125,13 @@ Subtopology Structure</h1>
 <blockquote class="doxtable">
 <p>[!NOTE] Remember, this document covers hand-written subtopologies. See <a href="#the-subtopology-autocoder">a later section</a> for information about the Subtopology Autocoder tool, the other way of creating subtopologies. </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md368"></a>
+<h1><a class="anchor" id="autotoc_md370"></a>
 Individual File Contents</h1>
 <p>This section will provide an overview to the contents of the individual files that make up a subtopology. We will use the names of the required files structure as shown in the <a href="#subtopology-structure">above</a> section. However, note that the file names shown are not required to be duplicated within your own custom subtopologies.</p>
-<h2><a class="anchor" id="autotoc_md369"></a>
+<h2><a class="anchor" id="autotoc_md371"></a>
 Example Scenario</h2>
 <p>For this section, it would be helpful to come up with an example scenario where the subtopology is used, such that it can be better understood. Let's imagine that we would like to create a component called <code>RNG</code> that will write a random integer to some telemetry channel when it is hooked up to a 1Hz clock (rate group). The <code>RNG</code> component will have an input port called <code>run</code>, that will be the entry point from the clock (rate group). The <code>RNG</code> component will be an active component, and is under the <code>MyLibrary</code> namespace.</p>
-<h2><a class="anchor" id="autotoc_md370"></a>
+<h2><a class="anchor" id="autotoc_md372"></a>
 MySubtopology.fpp</h2>
 <p>As mentioned, this is a unified <code>.fpp</code> file. It not only includes the instances instance declarations for components that you'd like your subtopology to use, but also the definitions for the instances.</p>
 <p>Based on our example, we may have the following instance declarations:</p>
@@ -173,7 +173,7 @@ MySubtopology.fpp</h2>
 <div class="line">        }</div>
 <div class="line">    } // end topology</div>
 <div class="line">} // end MySubtopology</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md371"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md373"></a>
 Unified fpp with Phases</h1>
 <p>"Phases" are a way to be able to write C++ based configuration functions on a component instance-basis. They aim to replace a topology.cpp/hpp pair of files with the single, unified fpp file. For subtopologies, we enforce the usage of phases to maintain consistency and simplicity in the subtopology.</p>
 <p>In a standard cpp/hpp configuration model, your topology would be initialized using the following three functions:</p>
@@ -202,7 +202,7 @@ Unified fpp with Phases</h1>
 <div class="line">}</div>
 </div><!-- fragment --><p>As aforementioned, we enforce the utilization of phases for subtopologies. Notably, not shown here is that phases can still take in the <code>TopologyState state</code> variable. <code>TopologyState</code> is that struct, which can include any variables you would like a developer to be able to modify. This provides dynamic-ness to your subtopology.</p>
 <p>We're now going to interject information about <code>MySubtopologyTopologyDefs.hpp</code>, because it is more relevant to the current topic.</p>
-<h1><a class="anchor" id="autotoc_md372"></a>
+<h1><a class="anchor" id="autotoc_md374"></a>
 MySubtopologyTopologyDefs.hpp</h1>
 <p>In our example, we may want to allow the user to customize the initial seed for our random number generator:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>TopologyState {</div>
@@ -228,7 +228,7 @@ MySubtopologyTopologyDefs.hpp</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">MySubtopology.rateGroup   </td><td class="markdownTableBodyNone">MySubtopology_rateGroup   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md373"></a>
+<h1><a class="anchor" id="autotoc_md375"></a>
 CMake and buildstep files</h1>
 <p>The last step is to include our CMake-specific files. This includes <code>CMakeLists.txt</code>. There is a very repeatable structure, and inherently just notifies the compiler that our topology exists when we build a deployment.</p>
 <p>In <code>CMakeLists.txt</code>:</p>
@@ -245,7 +245,7 @@ CMake and buildstep files</h1>
 <div class="line">    SOURCES &quot;${CMAKE_CURRENT_LIST_DIR}/intentionally-empty.cpp&quot;</div>
 <div class="line">)</div>
 </div><!-- fragment --><p>As you can see, we have reached the point where we need to use <code>intentionally-empty.cpp</code>. Remember the syntax renaming from earlier, where <code>MySubtopology -&gt; rateGroup</code> becomes <code>MySubtopology_rateGroup...</code>? Well, if we run <code>fprime-util build</code>, the <em>main</em> deployment that uses our subtopology as well as our subtopology will build and create that syntax. In this case, we get a namespace error, where we try to use <code>MySubtopology_rateGroup</code> in a place where it's "not defined". The empty file tells CMake that when our subtopology is built, return the empty file, so there is only a single place where the syntax is defined.</p>
-<h1><a class="anchor" id="autotoc_md374"></a>
+<h1><a class="anchor" id="autotoc_md376"></a>
 Integration into a "Main" Deployment</h1>
 <p>At this point, we're ready to integrate our subtopology into the topology of our main deployment (you can think of this being our deliverable, with <code>MySubtopology</code> being a portion of it). We will assume, given our example, that you have the RNG component developed alongside the topology. Additionally, we assume that you have created an F Prime project and an associated deployment for it. Let's call this deployment "MainDeployment", and the project "MainProject".</p>
 <p>First step is to ensure that our subtopology is linked to our project; within <code>project.cmake</code> add:</p>
@@ -309,7 +309,7 @@ Integration into a "Main" Deployment</h1>
 </div><!-- fragment --><p>Lastly, since our RNG component has some telemetry, we need to include (or ignore) these channels within the <code>Packets.xml</code> file in this folder. As with any other component that is added to a deployment, you use the same syntax with the name of the instance followed by the name of the telemetry channel. For example:</p>
 <div class="fragment"><div class="line">&lt;<span class="keywordtype">channel</span> <span class="keyword">name</span>=<span class="stringliteral">&quot;rng.RNGValue&quot;</span>/&gt; <span class="comment">&lt;!-- based on our instance name --&gt;</span></div>
 </div><!-- fragment --><p>Now go ahead and run and build your deployment, and you should see that you have a built deployment that uses a subtopology.</p>
-<h1><a class="anchor" id="autotoc_md375"></a>
+<h1><a class="anchor" id="autotoc_md377"></a>
 The Subtopology Autocoder</h1>
 <p>As you may notice, the current implementation of subtopologies lacks in a few areas of simplicity and especially reusability. A couple of these issues are tabulated here:</p>
 <ol type="1">
@@ -318,7 +318,7 @@ The Subtopology Autocoder</h1>
 </ol>
 <p>Thus, an autocoder <a href="https://github.com/fprime-community/fprime-subtopology-tool">tool</a> dubbed the "Subtopology AC Tool" has been developed to be able to provide features like instantiation, local components, and formal subtopology interfaces. The tool itself provides examples of the syntax required to use these features, as well as a design methodology and a worked example with diagrams using a similar context to the one <a href="#example-scenario">in this document</a>.</p>
 <p>We recommend that subtopologies are built around the syntax of this tool, as it is on the road map to introduce the patterns in this tool into native FPP syntax.</p>
-<h1><a class="anchor" id="autotoc_md376"></a>
+<h1><a class="anchor" id="autotoc_md378"></a>
 Conclusion</h1>
 <p>This how-to guide has walked through the development of a subtopology. Deployments can include multiple different subtopologies, and thus this feature truly paves the way for making F Prime more accessible to quick prototyping. </p>
 </div></div><!-- contents -->

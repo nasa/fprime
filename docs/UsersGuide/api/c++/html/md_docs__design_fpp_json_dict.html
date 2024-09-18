@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('md_docs__design_fpp_json_dict.html',''
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>This document describes the format of FPP JSON dictionaries.</p>
-<h1><a class="anchor" id="autotoc_md43"></a>
+<h1><a class="anchor" id="autotoc_md45"></a>
 Contents</h1>
 <ul>
 <li><a href="#type-descriptors">Type Descriptors</a><ul>
@@ -158,10 +158,10 @@ Contents</h1>
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md44"></a>
+<h1><a class="anchor" id="autotoc_md46"></a>
 Type Descriptors</h1>
 <p>A <em>Type Descriptor</em> is a JSON Dictionary that describes a type.</p>
-<h2><a class="anchor" id="autotoc_md45"></a>
+<h2><a class="anchor" id="autotoc_md47"></a>
 Primitive Integer Type Descriptors</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -175,7 +175,7 @@ Primitive Integer Type Descriptors</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>signed</code>   </td><td class="markdownTableBodyNone"><b>Boolean</b> indicating whether the integer is signed or unsigned   </td><td class="markdownTableBodyNone"><b>Boolean</b>   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md46"></a>
+<h3><a class="anchor" id="autotoc_md48"></a>
 Unsigned Integer Types</h3>
 <ul>
 <li>U8</li>
@@ -189,7 +189,7 @@ Unsigned Integer Types</h3>
 <div class="line">    &quot;size&quot;: 64,</div>
 <div class="line">    &quot;signed&quot;: false,</div>
 <div class="line">}</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md47"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md49"></a>
 Signed Integer Types</h3>
 <ul>
 <li>I8</li>
@@ -203,7 +203,7 @@ Signed Integer Types</h3>
 <div class="line">    &quot;size&quot;: 8,</div>
 <div class="line">    &quot;signed&quot;: true,</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md48"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md50"></a>
 Floating-Point Type Descriptors</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -215,7 +215,7 @@ Floating-Point Type Descriptors</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>size</code>   </td><td class="markdownTableBodyNone"><b>Number</b> of bits supported by the data type   </td><td class="markdownTableBodyNone"><code>32</code>, <code>64</code>   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md49"></a>
+<h3><a class="anchor" id="autotoc_md51"></a>
 Floating-Point Types</h3>
 <ul>
 <li>F32</li>
@@ -226,7 +226,7 @@ Floating-Point Types</h3>
 <div class="line">    &quot;kind&quot;: &quot;float&quot;,</div>
 <div class="line">    &quot;size&quot;: 64,</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md50"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md52"></a>
 Boolean Type Descriptors</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -238,7 +238,7 @@ Boolean Type Descriptors</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>size</code>   </td><td class="markdownTableBodyNone"><b>Number</b> of bits supported by the data type   </td><td class="markdownTableBodyNone"><code>8</code>   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md51"></a>
+<h3><a class="anchor" id="autotoc_md53"></a>
 Boolean Types</h3>
 <ul>
 <li>true</li>
@@ -249,7 +249,7 @@ Boolean Types</h3>
 <div class="line">    &quot;kind&quot;: &quot;bool&quot;,</div>
 <div class="line">    &quot;size&quot;: 8</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md52"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md54"></a>
 String Type Descriptors</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -261,7 +261,7 @@ String Type Descriptors</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>size</code>   </td><td class="markdownTableBodyNone"><b>Number</b> representing the maximum string size in bytes   </td><td class="markdownTableBodyNone"><b>Number</b> in the range [1, 2<sup>31</sup>)   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md53"></a>
+<h3><a class="anchor" id="autotoc_md55"></a>
 String Types</h3>
 <p>Any sequence of characters</p>
 <p>Example Type Descriptor for string </p><div class="fragment"><div class="line">{</div>
@@ -269,7 +269,7 @@ String Types</h3>
 <div class="line">    &quot;kind&quot;: &quot;string&quot;,</div>
 <div class="line">    &quot;size&quot;: 80,</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md54"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md56"></a>
 Qualified Identifier Type Descriptors</h2>
 <p>A <em>Qualified Identifier</em> is a kind of <em><a href="#type-descriptors">Type Descriptor</a></em> that refers to a <em><a href="#type-definitions">Type Definition</a></em>.</p>
 <table class="markdownTable">
@@ -284,9 +284,9 @@ Qualified Identifier Type Descriptors</h2>
 <div class="line">    &quot;name&quot;: &quot;Module1.MyArray&quot;,</div>
 <div class="line">    &quot;kind&quot;: &quot;qualifiedIdentifier&quot;,</div>
 <div class="line">}</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md55"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md57"></a>
 Type Definitions</h1>
-<h2><a class="anchor" id="autotoc_md56"></a>
+<h2><a class="anchor" id="autotoc_md58"></a>
 Array Type Definition</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -321,7 +321,7 @@ Array Type Definition</h2>
 <div class="line">    &quot;default&quot;: [0, 0, 0],</div>
 <div class="line">    &quot;annotation&quot;: &quot;My array named A&quot;</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md57"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md59"></a>
 Enumeration Type Definition</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -339,7 +339,7 @@ Enumeration Type Definition</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>annotation</code>   </td><td class="markdownTableBodyNone">User-defined annotation   </td><td class="markdownTableBodyNone"><b>String</b>   </td><td class="markdownTableBodyNone">false   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md58"></a>
+<h4><a class="anchor" id="autotoc_md60"></a>
 Enumerated Constant Descriptors</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -386,9 +386,9 @@ Enumerated Constant Descriptors</h4>
 <div class="line">    &quot;default&quot;: &quot;M.Status.MAYBE&quot;,</div>
 <div class="line">    &quot;annotation&quot;: &quot;Schroedinger&#39;s status&quot;</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md59"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md61"></a>
 Struct Type Definition</h2>
-<h3><a class="anchor" id="autotoc_md60"></a>
+<h3><a class="anchor" id="autotoc_md62"></a>
 Struct Type Definition</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -404,7 +404,7 @@ Struct Type Definition</h3>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>annotation</code>   </td><td class="markdownTableBodyNone">User-defined annotation   </td><td class="markdownTableBodyNone"><b>String</b> extracted from FPP model   </td><td class="markdownTableBodyNone">false   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md61"></a>
+<h3><a class="anchor" id="autotoc_md63"></a>
 Struct Member Descriptor</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -467,35 +467,35 @@ Struct Member Descriptor</h3>
 <div class="line">        &quot;y&quot;: 0</div>
 <div class="line">    },</div>
 <div class="line">}</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md62"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md64"></a>
 Values</h1>
-<h2><a class="anchor" id="autotoc_md63"></a>
+<h2><a class="anchor" id="autotoc_md65"></a>
 Primitive Integer Values</h2>
 <p><b>Number</b> representing integer value</p>
 <p>Example JSON of type U8 with a value of 2: </p><div class="fragment"><div class="line">2</div>
 </div><!-- fragment --><p>Example JSON of type I8 with a value of -2: </p><div class="fragment"><div class="line">-2</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md64"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md66"></a>
 Floating-Point Values</h2>
 <p><b>Number</b> representing float value</p>
 <p>Example JSON of type F32 with a value of 10.0 </p><div class="fragment"><div class="line">10.5</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md65"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md67"></a>
 Boolean Values</h2>
 <p><b>Boolean</b> value</p>
 <p>Example JSON of type bool with a value of true</p>
 <div class="fragment"><div class="line">true</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md66"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md68"></a>
 String Values</h2>
 <p><b>String</b> containing sequence of characters</p>
 <p>Example JSON of type string with a value of "Hello World!" </p><div class="fragment"><div class="line">&quot;Hello World!&quot;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md67"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md69"></a>
 Array Values</h2>
 <p><b>Array</b> with elements</p>
 <p>Example JSON of an array of type U32 consisting of 10 elements </p><div class="fragment"><div class="line">[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md68"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md70"></a>
 Enumeration Values</h2>
 <p>String qualified identifier name of enumeration value</p>
 <p>Example JSON of an enum </p><div class="fragment"><div class="line">&quot;Status.YES&quot;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md69"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md71"></a>
 Struct Values</h2>
 <p><b>JSON Dictionary</b> consisting of String qualified identifier names (keys) and values (values)</p>
 <p>Example JSON of a struct: </p><div class="fragment"><div class="line">{</div>
@@ -504,9 +504,9 @@ Struct Values</h2>
 <div class="line">    &quot;S.y&quot;: &quot;Hello World!&quot;,</div>
 <div class="line">    &quot;S.z&quot;: 15.5</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md70"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md72"></a>
 Invalid Values</h2>
-<h3><a class="anchor" id="autotoc_md71"></a>
+<h3><a class="anchor" id="autotoc_md73"></a>
 Null Values</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -516,7 +516,7 @@ Null Values</h3>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>kind</code>   </td><td class="markdownTableBodyNone"><b>String</b> indicating that the kind of value is invalid   </td><td class="markdownTableBodyNone">invalid   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md72"></a>
+<h3><a class="anchor" id="autotoc_md74"></a>
 Infinity Values</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -526,7 +526,7 @@ Infinity Values</h3>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>kind</code>   </td><td class="markdownTableBodyNone"><b>String</b> indicating that the kind of value is invalid   </td><td class="markdownTableBodyNone">invalid   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md73"></a>
+<h3><a class="anchor" id="autotoc_md75"></a>
 Negative Infinity Values</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -536,9 +536,9 @@ Negative Infinity Values</h3>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>kind</code>   </td><td class="markdownTableBodyNone"><b>String</b> indicating that the kind of value is invalid   </td><td class="markdownTableBodyNone">invalid   </td><td class="markdownTableBodyNone">true   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md74"></a>
+<h1><a class="anchor" id="autotoc_md76"></a>
 Commands, Telemetry Channels, Events, and Parameters</h1>
-<h2><a class="anchor" id="autotoc_md75"></a>
+<h2><a class="anchor" id="autotoc_md77"></a>
 Formal Parameters</h2>
 <p>Formal Parameters are used in Commands and Events definitions.</p>
 <table class="markdownTable">
@@ -564,7 +564,7 @@ Formal Parameters</h2>
 <div class="line">    &quot;ref&quot;: false,</div>
 <div class="line">    &quot;annotation&quot;: &quot;This is param1&quot;</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md76"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md78"></a>
 Commands</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -618,7 +618,7 @@ Commands</h2>
 <div class="line">        }</div>
 <div class="line">    ],</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md77"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md79"></a>
 Telemetry Channels</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -669,7 +669,7 @@ Telemetry Channels</h2>
 <div class="line">        }</div>
 <div class="line">    }</div>
 <div class="line">]</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md78"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md80"></a>
 Events</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -730,7 +730,7 @@ Events</h2>
 <div class="line">    &quot;id&quot;: 257,</div>
 <div class="line">    &quot;format&quot;: &quot;Event 1 occurred with argument {}&quot;,</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md79"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md81"></a>
 Parameters</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -763,9 +763,9 @@ Parameters</h2>
 <div class="line">    &quot;annotation&quot;: &quot;This is the annotation for Parameter 1&quot;,</div>
 <div class="line">    &quot;default&quot;: 0</div>
 <div class="line">}</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md80"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md82"></a>
 Data Products</h1>
-<h2><a class="anchor" id="autotoc_md81"></a>
+<h2><a class="anchor" id="autotoc_md83"></a>
 Records</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -812,7 +812,7 @@ Records</h2>
 <div class="line">        &quot;id&quot;: 258</div>
 <div class="line">    }      </div>
 <div class="line">]</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md82"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md84"></a>
 Containers</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -854,9 +854,9 @@ Containers</h2>
 <div class="line">        &quot;defaultPriority&quot;: 259</div>
 <div class="line">    }</div>
 <div class="line">]</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md83"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md85"></a>
 Dictionaries</h1>
-<h2><a class="anchor" id="autotoc_md84"></a>
+<h2><a class="anchor" id="autotoc_md86"></a>
 Dictionary Metadata</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -879,7 +879,7 @@ Dictionary Metadata</h2>
 <div class="line">    &quot;libraryVersions&quot;: [],</div>
 <div class="line">    &quot;dictionarySpecVersion&quot;: &quot;1.0.0&quot;</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md85"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md87"></a>
 Dictionary Content</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
