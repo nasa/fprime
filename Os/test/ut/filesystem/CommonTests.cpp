@@ -23,7 +23,7 @@ void Functionality::SetUp() {
     // If need to debug, it can be useful to manually set strings
     // of known values in this->m_test_files instead
     auto generate_random_string = []() -> std::string {
-        static const char alphanum[] =
+        static const char alphanums[] =
             "0123456789"
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz";
@@ -31,7 +31,7 @@ void Functionality::SetUp() {
         std::string result;
         result.reserve(len);
         for (FwIndexType i = 0; i < len; ++i) {
-            result += alphanum[STest::Pick::lowerUpper(0, sizeof(alphanum) - 2)];
+            result += alphanums[STest::Pick::lowerUpper(0, sizeof(alphanums) - 2)];
         }
         return result;
     };
@@ -44,7 +44,6 @@ void Functionality::SetUp() {
         TestDirectory(root_dir + "/sub_dir_2")
     };
 
-    // tester->m_test_files.push_back(TestFile(root_dir + "/sub_dir_1/test_file_0", generate_random_string()));
     for (FwSizeType i = 0; i < NUMBER_TEST_FILES; ++i) {
         std::string path = root_dir + "/test_file_" + std::to_string(i);
         tester->m_test_files.push_back(TestFile(path, generate_random_string()));
