@@ -64,20 +64,20 @@ enum TopologyConstants {
 
 // Ping entries are autocoded, however; this code is not properly exported. Thus, it is copied here.
 Svc::Health::PingEntry pingEntries[] = {
-    {PingEntries::blockDrv::WARN, PingEntries::blockDrv::FATAL, "blockDrv"},
-    {PingEntries::tlmSend::WARN, PingEntries::tlmSend::FATAL, "chanTlm"},
-    {PingEntries::cmdDisp::WARN, PingEntries::cmdDisp::FATAL, "cmdDisp"},
-    {PingEntries::cmdSeq::WARN, PingEntries::cmdSeq::FATAL, "cmdSeq"},
-    {PingEntries::eventLogger::WARN, PingEntries::eventLogger::FATAL, "eventLogger"},
-    {PingEntries::fileDownlink::WARN, PingEntries::fileDownlink::FATAL, "fileDownlink"},
-    {PingEntries::fileManager::WARN, PingEntries::fileManager::FATAL, "fileManager"},
-    {PingEntries::fileUplink::WARN, PingEntries::fileUplink::FATAL, "fileUplink"},
-    {PingEntries::pingRcvr::WARN, PingEntries::pingRcvr::FATAL, "pingRcvr"},
-    {PingEntries::prmDb::WARN, PingEntries::prmDb::FATAL, "prmDb"},
-    {PingEntries::rateGroup1Comp::WARN, PingEntries::rateGroup1Comp::FATAL, "rateGroup1Comp"},
-    {PingEntries::rateGroup2Comp::WARN, PingEntries::rateGroup2Comp::FATAL, "rateGroup2Comp"},
-    {PingEntries::rateGroup3Comp::WARN, PingEntries::rateGroup3Comp::FATAL, "rateGroup3Comp"},
-    {PingEntries::dpCat::WARN, PingEntries::dpCat::FATAL, "rateGroup3Comp"},
+    {PingEntries::Ref_blockDrv::WARN, PingEntries::Ref_blockDrv::FATAL, "blockDrv"},
+    {PingEntries::Ref_tlmSend::WARN, PingEntries::Ref_tlmSend::FATAL, "chanTlm"},
+    {PingEntries::Ref_cmdDisp::WARN, PingEntries::Ref_cmdDisp::FATAL, "cmdDisp"},
+    {PingEntries::Ref_cmdSeq::WARN, PingEntries::Ref_cmdSeq::FATAL, "cmdSeq"},
+    {PingEntries::Ref_eventLogger::WARN, PingEntries::Ref_eventLogger::FATAL, "eventLogger"},
+    {PingEntries::Ref_fileDownlink::WARN, PingEntries::Ref_fileDownlink::FATAL, "fileDownlink"},
+    {PingEntries::Ref_fileManager::WARN, PingEntries::Ref_fileManager::FATAL, "fileManager"},
+    {PingEntries::Ref_fileUplink::WARN, PingEntries::Ref_fileUplink::FATAL, "fileUplink"},
+    {PingEntries::Ref_pingRcvr::WARN, PingEntries::Ref_pingRcvr::FATAL, "pingRcvr"},
+    {PingEntries::Ref_prmDb::WARN, PingEntries::Ref_prmDb::FATAL, "prmDb"},
+    {PingEntries::Ref_rateGroup1Comp::WARN, PingEntries::Ref_rateGroup1Comp::FATAL, "rateGroup1Comp"},
+    {PingEntries::Ref_rateGroup2Comp::WARN, PingEntries::Ref_rateGroup2Comp::FATAL, "rateGroup2Comp"},
+    {PingEntries::Ref_rateGroup3Comp::WARN, PingEntries::Ref_rateGroup3Comp::FATAL, "rateGroup3Comp"},
+    {PingEntries::Ref_dpCat::WARN, PingEntries::Ref_dpCat::FATAL, "rateGroup3Comp"},
 };
 
 /**

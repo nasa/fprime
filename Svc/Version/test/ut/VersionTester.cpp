@@ -85,13 +85,35 @@ void VersionTester ::test_enable() {
     this->sendCmd_ENABLE(0, cmd_seq, VersionEnabled::DISABLED);
     ASSERT_CMD_RESPONSE(0, 0, 9, Fw::CmdResponse::OK);
     VersionTester::test_setVer(false);
-    ASSERT_EVENTS_CustomVersions_SIZE(0);
+    //When verbosity is disabled, events are still generated but not EHAs
+    ASSERT_EVENTS_CustomVersions_SIZE(10);
+    ASSERT_TLM_CustomVersion01_SIZE(0);
+    ASSERT_TLM_CustomVersion02_SIZE(0);
+    ASSERT_TLM_CustomVersion03_SIZE(0);
+    ASSERT_TLM_CustomVersion04_SIZE(0);
+    ASSERT_TLM_CustomVersion05_SIZE(0);
+    ASSERT_TLM_CustomVersion06_SIZE(0);
+    ASSERT_TLM_CustomVersion07_SIZE(0);
+    ASSERT_TLM_CustomVersion08_SIZE(0);
+    ASSERT_TLM_CustomVersion09_SIZE(0);
+    ASSERT_TLM_CustomVersion10_SIZE(0);
 
     cmd_seq = 9;
     this->sendCmd_ENABLE(0, cmd_seq, VersionEnabled::ENABLED);
     ASSERT_CMD_RESPONSE(0, 0, 9, Fw::CmdResponse::OK);
     VersionTester::test_setVer(true);
+    //When verbosity is enabled, events and EHAs are generated
     ASSERT_EVENTS_CustomVersions_SIZE(10);
+    ASSERT_TLM_CustomVersion01_SIZE(1);
+    ASSERT_TLM_CustomVersion02_SIZE(1);
+    ASSERT_TLM_CustomVersion03_SIZE(1);
+    ASSERT_TLM_CustomVersion04_SIZE(1);
+    ASSERT_TLM_CustomVersion05_SIZE(1);
+    ASSERT_TLM_CustomVersion06_SIZE(1);
+    ASSERT_TLM_CustomVersion07_SIZE(1);
+    ASSERT_TLM_CustomVersion08_SIZE(1);
+    ASSERT_TLM_CustomVersion09_SIZE(1);
+    ASSERT_TLM_CustomVersion10_SIZE(1);
 }
 
 void VersionTester ::test_versions() {

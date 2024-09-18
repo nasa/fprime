@@ -131,7 +131,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 void ComQueue::comQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     // Ensure that the port number of comQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < COM_PORT_COUNT, portNum);
-    this->enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
+    (void)this->enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
 }
 
 void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
@@ -139,7 +139,11 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
     // Ensure that the port number of buffQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);
-    this->enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
+    bool status =
+        this->enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
+    if (!status) {
+        this->deallocate_out(portNum, fwBuffer);
+    }
 }
 
 void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
@@ -182,28 +186,44 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
 }
 
 // ----------------------------------------------------------------------
+// Hook implementations for typed async input ports
+// ----------------------------------------------------------------------
+
+void ComQueue::buffQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
+    this->deallocate_out(portNum, fwBuffer);
+}
+
+// ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------
 
-void ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8* data, const FwSizeType size) {
+bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8* data, const FwSizeType size) {
     // Enqueue the given message onto the matching queue. When no space is available then emit the queue overflow event,
     // set the appropriate throttle, and move on. Will assert if passed a message for a depth 0 queue.
     const FwSizeType expectedSize = (queueType == QueueType::COM_QUEUE) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
     const FwIndexType portNum = queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT);
+    bool rvStatus = true;
     FW_ASSERT(
         expectedSize == size,
         static_cast<FwAssertArgType>(size),
         static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, portNum);
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !this->m_throttle[queueNum]) {
-        this->log_WARNING_HI_QueueOverflow(queueType, static_cast<U32>(portNum));
-        this->m_throttle[queueNum] = true;
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+        if (!this->m_throttle[queueNum]) {
+            this->log_WARNING_HI_QueueOverflow(queueType, static_cast<U32>(portNum));
+            this->m_throttle[queueNum] = true;
+        }
+
+        rvStatus = false;
     }
     // When the component is already in READY state process the queue to send out the next available message immediately
     if (this->m_state == READY) {
         this->processQueue();
     }
+
+    return rvStatus;
 }
 
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer) {

@@ -18,8 +18,38 @@
 namespace CFDP {
 
   //! \class Checksum
-  //! \brief Class representing a CFDP checksum
+  //! \brief Class representing a 32-bit checksum as mandated by the CCSDS File
+  //!        Delivery Protocol.
   //!
+  //!        This checksum is calculated by update of an existing 32-bit value
+  //!        with the "next" 32-bit string drawn from the file data. Beginning
+  //!        at the start of the file, a 4-byte window moves up the file by four
+  //!        bytes per update. The update itself replaces the existing checksum
+  //!        with the byte-wise sum of the existing checksum and the file data
+  //!        contained in the window. Overflows in the addition are permitted
+  //!        and the carry discarded.
+  //!
+  //!        If an update is to be made beginning at an offset into the file
+  //!        which is not aligned to a 4-byte boundary, the window is treated
+  //!        as beginning at the last 4-byte boundary, but is left-zero-padded.
+  //!        Similarly, where the file data for an update ends on an unaligned
+  //!        byte, the window extends up to the next boundary and is
+  //!        right-zero-padded.
+  //!
+  //!        ## Example
+  //!
+  //!        For buffer 0xDE 0xAD 0xBE 0xEF 0xCA 0xFE and initial zero checksum:
+  //!
+  //!        ------------------------------------ Update 1
+  //!        Window     0xDE 0xAD 0xBE 0xEF
+  //!        Checksum   0xDEADBEEF
+  //!
+  //!        ------------------------------------ Update 2
+  //!        Window     0xCA 0xFE
+  //!        Checksum   0xDEADBEEF+
+  //!                   0xCAFE0000
+  //!                   ----------
+  //!                   0xA8ABBEEF <- Final value
   class Checksum {
 
     public:
@@ -34,16 +64,16 @@ namespace CFDP {
       // Construction and destruction
       // ----------------------------------------------------------------------
 
-      //! Construct a fresh Checksum object
+      //! Construct a fresh Checksum object.
       Checksum();
 
-      //! Construct a Checksum object and initialize it with a value
+      //! Construct a Checksum object and initialize it with a value.
       Checksum(const U32 value);
 
-      //! Copy a Checksum object
+      //! Copy a Checksum object.
       Checksum(const Checksum &original);
 
-      //! Destroy a Checksum object
+      //! Destroy a Checksum object.
       ~Checksum();
 
     public:
@@ -52,20 +82,25 @@ namespace CFDP {
       // Public instance methods
       // ----------------------------------------------------------------------
 
-      //! Assign checksum to this
+      //! Assign checksum to this.
       Checksum& operator=(const Checksum& checksum);
 
-      //! Compare checksum and this for equality
+      //! Compare checksum and this for equality.
       bool operator==(const Checksum& checksum) const;
 
-      //! Compare checksum and this for inequality
+      //! Compare checksum and this for inequality.
       bool operator!=(const Checksum& checksum) const;
 
-      //! Update the checksum value by accumulating the words in the data
-      void update(
-          const U8 *const data, //!< The data
-          const U32 offset, //!< The offset of the start of the data, relative to the start of the file
-          const U32 length //!< The length of the data in bytes
+      //! Update the checksum value by accumulating words in the given data.
+      //!
+      //! \important The data and data-length passed to this method are specifically
+      //!            those over which the update is made, rather than the entire
+      //!            file. Typically, therefore, `data` will be a pointer to the
+      //!            byte given by the offset, e.g. `&file_buffer[offset]`.
+      //!
+      void update(const U8* const data,  //!< Beginning of the data over which to update.
+                  const U32 offset,      //!< Offset into the file at which the data begins.
+                  const U32 length       //!< Length of the update data in bytes.
       );
 
       //! Get the checksum value

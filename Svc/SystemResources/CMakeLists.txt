@@ -12,7 +12,6 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS
   Os
-  version 
 )
 register_fprime_module()
 ### UTs ###

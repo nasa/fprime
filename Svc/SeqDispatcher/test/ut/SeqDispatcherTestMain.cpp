@@ -2,17 +2,18 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "SystemResourcesTester.hpp"
+#include "SeqDispatcherTester.hpp"
 
-TEST(Nominal, Telemetry) {
-    Svc::SystemResourcesTester tester;
-    tester.test_tlm();
+TEST(Nominal, testDispatch) {
+    Svc::SeqDispatcherTester tester;
+    tester.testDispatch();
 }
 
-TEST(OffNominal, Disabled) {
-    Svc::SystemResourcesTester tester;
-    tester.test_disable_enable();
+TEST(Nominal, testLogStatus) {
+    Svc::SeqDispatcherTester tester;
+    tester.testLogStatus();
 }
+
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
