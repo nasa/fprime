@@ -11,9 +11,6 @@
 # s.b. anymore
 \bany more[,.]
 
-# s.b. cannot
-\b[Cc]an not\b
-
 # s.b. GitHub
 (?<![&*.]|// |\btype )\bGithub\b(?![{)])
 

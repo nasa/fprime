@@ -12,6 +12,9 @@
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
 
+#include <algorithm> // for std::find
+
+
 namespace Os {
 namespace Test {
 namespace Directory {
