@@ -68,6 +68,8 @@ FileSystem::Status errno_to_filesystem_status(PlatformIntType errno_input) {
             break;
         case ELOOP:
         case ENOENT:
+            status = FileSystem::Status::DOESNT_EXIST;
+            break;
         case ENAMETOOLONG:
             status = FileSystem::Status::INVALID_PATH;
             break;
