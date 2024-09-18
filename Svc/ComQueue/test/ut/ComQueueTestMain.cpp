@@ -19,9 +19,14 @@ TEST(Nominal, Priority) {
     tester.testPrioritySend();
 }
 
-TEST(Nominal, Full) {
+TEST(Nominal, ExternalQueueOverflow) {
     Svc::ComQueueTester tester;
-    tester.testQueueOverflow();
+    tester.testExternalQueueOverflow();
+}
+
+TEST(Nominal, InternalQueueOverflow) {
+    Svc::ComQueueTester tester;
+    tester.testInternalQueueOverflow();
 }
 
 TEST(Nominal, ReadyFirst) {

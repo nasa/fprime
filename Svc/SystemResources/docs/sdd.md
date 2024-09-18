@@ -3,10 +3,9 @@
 
 The system resources component downlinks information about the running F´ system. This information includes:
 
-1. System and Software version
-2. Free Memory
-3. CPU load
-4. Disk space
+1. Free Memory
+2. CPU load
+3. Disk space
 
 These items are downlinked as telemetry channels in response to a rate group port invocation.
 
