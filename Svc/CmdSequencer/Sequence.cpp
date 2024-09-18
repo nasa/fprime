@@ -112,6 +112,7 @@ namespace Svc {
     {
         this->m_fileName = fileName;
         this->m_logFileName = fileName;
+        this->m_stringFileName = fileName;
     }
 
     Fw::CmdStringArg& CmdSequencerComponentImpl::Sequence ::
@@ -124,6 +125,12 @@ namespace Svc {
       getLogFileName()
     {
         return this->m_logFileName;
+    }
+
+    Fw::String& CmdSequencerComponentImpl::Sequence ::
+      getStringFileName()
+    {
+        return this->m_stringFileName;
     }
 
 }
