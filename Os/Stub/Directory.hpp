@@ -36,10 +36,11 @@ class StubDirectory : public DirectoryInterface {
     //!
     //! Using the path provided, this function will open or create a directory. 
     //! Use OpenMode::READ to open an existing directory and error if the directory is not found
-    //! Use OpenMode::CREATE to open a directory, creating the directory if it doesn't exist
+    //! Use OpenMode::CREATE_IF_MISSING to open a directory, creating the directory if it doesn't exist
+    //! Use OpenMode::CREATE_EXCLUSIVE to open a directory, creating the directory and erroring if it already exists
     //!
     //! \param path: path of directory to open
-    //! \param mode: enum (READ, CREATE). See notes above for more information
+    //! \param mode: enum (READ, CREATE_IF_MISSING, CREATE_EXCLUSIVE). See notes above for more information
     //! \return status of the operation
     Status open(const char* path, OpenMode mode) override;
 

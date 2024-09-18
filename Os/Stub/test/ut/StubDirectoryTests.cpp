@@ -42,7 +42,7 @@ TEST_F(Interface, Destruction) {
 // Ensure that Os::Directory properly calls the implementation open()
 TEST_F(Interface, Open) {
     Os::Directory directory;
-    directory.open("/does/not/matter", Os::Directory::OpenMode::CREATE);
+    directory.open("/does/not/matter", Os::Directory::OpenMode::CREATE_IF_MISSING);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::OPEN_FN);
 }
 

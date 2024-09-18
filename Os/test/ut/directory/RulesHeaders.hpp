@@ -20,7 +20,6 @@ namespace Test {
 namespace Directory {
 
 struct Tester {
-    // static constexpr char* TEST_DIR_NAME = "DirectoryTester";
     //! State representation of a Directory.
     //!
     enum DirectoryState {
