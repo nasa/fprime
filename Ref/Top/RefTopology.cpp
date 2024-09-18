@@ -139,7 +139,7 @@ void configureTopology() {
     //tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
 
     //Configure Trace Logger filename to be used for storing trace data
-    traceLogger.configure("TraceFile.dat");
+    traceLogger.configure("TraceFile.dat",2720000);
     traceLogger.filter(0xF,Svc::TraceLogger_Enable::ENABLE);
 }
 
