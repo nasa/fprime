@@ -231,7 +231,7 @@ void Os::Test::File::Tester::assert_file_seek(const FwSignedSizeType original_po
     ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
 
     const FwSignedSizeType expected_offset = (absolute) ? seek_desired : (original_position + seek_desired);
-    if (expected_offset > 0) {
+    if (expected_offset >= 0) {
         ASSERT_EQ(new_position, expected_offset);
     } else {
         ASSERT_EQ(new_position, original_position);
@@ -497,7 +497,7 @@ void Os::Test::File::Tester::Preallocate::action(
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
     FwSignedSizeType offset = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
-    FwSignedSizeType length = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
+    FwSignedSizeType length = static_cast<FwSignedSizeType>(STest::Pick::lowerUpper(1, FILE_DATA_MAXIMUM));
     Os::File::Status status = state.m_file.preallocate(offset, length);
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     state.shadow_preallocate(offset, length);

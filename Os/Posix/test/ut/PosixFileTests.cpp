@@ -33,8 +33,8 @@ bool check_permissions(const char* path, int permission) {
 //!
 std::shared_ptr<std::string> get_test_filename(bool random) {
     const char* filename = TEST_FILE;
-    char full_buffer[PATH_MAX];
-    char buffer[PATH_MAX - sizeof(BASE_PATH)];
+    char full_buffer[_POSIX_PATH_MAX];
+    char buffer[_POSIX_PATH_MAX - sizeof(BASE_PATH)];
     // When random, select random characters
     if (random) {
         filename = buffer;
@@ -47,7 +47,7 @@ std::shared_ptr<std::string> get_test_filename(bool random) {
         }
         buffer[i] = 0; // Terminate random string
     }
-    (void) snprintf(full_buffer, PATH_MAX, "%s/%s", BASE_PATH, filename);
+    (void) snprintf(full_buffer, _POSIX_PATH_MAX, "%s/%s", BASE_PATH, filename);
     // Create a shared pointer wrapping our filename buffer
     std::shared_ptr<std::string> pointer(new std::string(full_buffer), std::default_delete<std::string>());
     return pointer;

@@ -191,7 +191,7 @@ Os::File::Status SyntheticFile::seek(const FwSignedSizeType offset, const SeekTy
         status = Os::File::Status::NOT_OPENED;
     } else {
         FwSignedSizeType new_offset = (absolute) ? offset : (offset + this->m_data->m_pointer);
-        if (new_offset > 0) {
+        if (new_offset >= 0) {
             this->m_data->m_pointer = new_offset;
         } else {
             status = Os::File::Status::INVALID_ARGUMENT;
