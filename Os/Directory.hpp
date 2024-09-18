@@ -153,7 +153,11 @@ class Directory final : public DirectoryInterface {
     // Common functions built on top of OS-specific functions
     // ------------------------------------------------------------
 
-    //! \brief Read the contents of the directory and store filenames in filenameArray of size arraySize
+    //! \brief Read the contents of the directory and store filenames in filenameArray of size arraySize.
+    //!
+    //! Note: the function first rewinds the directory stream to ensure reading starts from the beginning.
+    //! After reading, it rewinds the directory stream again, resetting seek position to beginning.
+    //!
     //! \param filenameArray: array to store filenames
     //! \param arraySize: size of filenameArray
     //! \param filenameCount: number of filenames written to filenameArray (output)
@@ -162,8 +166,9 @@ class Directory final : public DirectoryInterface {
 
     //! \brief Get the number of files in the directory.
     //!
-    //! This function counts the number of files in the directory by reading each file entry.
-    //! It first rewinds the directory stream to ensure counting starts from the beginning.
+    //! Counts the number of files in the directory by reading each file entry.
+    //!
+    //! Note: the function first rewinds the directory stream to ensure counting starts from the beginning.
     //! After counting, it rewinds the directory stream again, resetting seek position to beginning.
     //!
     //! \param fileCount Reference to a variable where the file count will be stored.

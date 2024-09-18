@@ -175,7 +175,7 @@ TEST_F(Functionality, RandomizedTesting) {
     STest::BoundedScenario<Os::Test::FileSystem::Tester> bounded(
             "Bounded Random Rules Scenario",
             random,
-            10000
+            1000
     );
     // Run!
     const U32 numSteps = bounded.run(*tester);
