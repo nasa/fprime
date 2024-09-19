@@ -20,21 +20,21 @@ namespace Fw {
 
             enum {
                 SERIALIZED_TYPE_ID = 1010,
-                SERIALIZED_SIZE = FW_COM_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)  // size of buffer + storage of size word
+                SERIALIZED_SIZE = FW_COM_BUFFER_MAX_SIZE + sizeof(FwSizeStoreType)  // size of buffer + storage of size word
             };
 
-            SmSignalBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            SmSignalBuffer(const U8 *args, FwSizeType size);
             SmSignalBuffer();
             SmSignalBuffer(const SmSignalBuffer& other);
             virtual ~SmSignalBuffer();
             SmSignalBuffer& operator=(const SmSignalBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            Serializable::SizeType getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();
             const U8* getBuffAddr() const;
 
         private:
-            U8 m_bufferData[FW_SM_SIGNALS_BUFFER_MAX_SIZE]; // packet data buffer
+            U8 m_bufferData[FW_SM_SIGNAL_BUFFER_MAX_SIZE]; // packet data buffer
     };
 
 }

@@ -277,8 +277,8 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Specifies the size of the buffer attached to state machine signals.
-#ifndef FW_SM_SIGNALS_BUFFER_MAX_SIZE
-#define FW_SM_SIGNALS_BUFFER_MAX_SIZE 128
+#ifndef FW_SM_SIGNAL_BUFFER_MAX_SIZE
+#define FW_SM_SIGNAL_BUFFER_MAX_SIZE 128
 #endif
 
 // Specifies the size of the buffer that contains the serialized command arguments.
