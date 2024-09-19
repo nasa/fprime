@@ -78,6 +78,47 @@ TEST(NominalManual, TreeTestManual2) {
 
 }
 
+TEST(NominalManual, TreeTestManual3) {
+
+    Svc::DpCatalogTester tester;
+    Fw::FileNameString dir;
+
+    Svc::DpCatalog::DpStateEntry inputs[3];
+    Svc::DpCatalog::DpStateEntry outputs[3];
+
+    inputs[0].record.setid(1);
+    inputs[0].record.setpriority(2);
+    inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
+    inputs[0].record.settSec(1000);
+    inputs[0].record.settSub(1500);
+    inputs[0].record.setsize(100);
+
+    inputs[1].record.setid(2);
+    inputs[1].record.setpriority(1);
+    inputs[1].record.setstate(Fw::DpState::UNTRANSMITTED);
+    inputs[1].record.settSec(1000);
+    inputs[1].record.settSub(1500);
+    inputs[1].record.setsize(100);
+
+    inputs[2].record.setid(3);
+    inputs[2].record.setpriority(3);
+    inputs[2].record.setstate(Fw::DpState::UNTRANSMITTED);
+    inputs[2].record.settSec(1000);
+    inputs[2].record.settSub(1500);
+    inputs[2].record.setsize(100);
+
+    outputs[0].record = inputs[1].record;
+    outputs[1].record = inputs[0].record;
+    outputs[2].record = inputs[2].record;
+
+    tester.testTree(
+        inputs,
+        outputs,
+        FW_NUM_ARRAY_ELEMENTS(inputs)
+    );
+
+
+}
 
 
 

@@ -433,23 +433,23 @@ namespace Svc {
         // traverse the tree, finding nodes in order. Max iteration of the loop
         // would be the number of records in the tree
         for (FwSizeType record = 0; record < this->m_numDpRecords; record++) {
-            // Step 4 - if the current node is null, pop back up the stack
+            // check for current node to be null
             if (this->m_currentNode == nullptr) {
                 // see if we fully traversed the tree
                 if (this->m_currStackEntry < 0) {
-                    // we are done
+                    // Step 5 - we are done
                     return nullptr;
                 } else {
+                    // Step 4 - if the current node is null, pop back up the stack
                     this->m_currentNode = this->m_traverseStack[this->m_currStackEntry--];
-                    // keep looking
-                    continue;
+                    found = this->m_currentNode;
+                    this->m_currentNode = this->m_currentNode->right;
+                    return found;
                 }
                 break;
             } else {
                 if (this->m_currentNode->left != nullptr) {
                     // Step 3 - push current entry on the stack
-                    // The first time through, this->m_currStackEntry is -1, signifying the stack is empty
-                    //    The insertion below will increment this->m_currStackEntry to 0
                     this->m_traverseStack[++this->m_currStackEntry] = this->m_currentNode;
                     this->m_currentNode = this->m_currentNode->left;
                 } else {

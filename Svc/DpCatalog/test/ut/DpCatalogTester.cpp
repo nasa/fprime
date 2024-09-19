@@ -80,6 +80,7 @@ namespace Svc {
         for (FwIndexType entry = 0; entry < numEntries+1; entry++) {
             DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
             if (entry == numEntries) {
+                // final request should indicate empty
                 ASSERT_TRUE(res == NULL);
                 break;
             } else {
