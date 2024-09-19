@@ -114,7 +114,7 @@ class IpSocket {
      * \param size: size of data to send
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus send(NATIVE_INT_TYPE& fd, const U8* const data, const U32 size);
+    SocketIpStatus send(NATIVE_INT_TYPE fd, const U8* const data, const U32 size);
     /**
      * \brief receive data from the IP socket from the given buffer
      *
@@ -131,7 +131,7 @@ class IpSocket {
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(NATIVE_INT_TYPE& fd, U8* const data, U32& size);
+    SocketIpStatus recv(NATIVE_INT_TYPE fd, U8* const data, U32& size);
     /**
      * \brief closes the socket
      *
@@ -140,7 +140,7 @@ class IpSocket {
      * 
      * \param fd: file descriptor to close
      */
-    void close(NATIVE_INT_TYPE &fd);
+    void close(NATIVE_INT_TYPE fd);
 
     /**
      * \brief shutdown the socket
@@ -150,7 +150,7 @@ class IpSocket {
      * 
      * \param fd: file descriptor to shutdown
      */
-    virtual void shutdown(NATIVE_INT_TYPE &fd);
+    virtual void shutdown(NATIVE_INT_TYPE fd);
 
   PROTECTED:
     /**
@@ -192,7 +192,7 @@ class IpSocket {
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    virtual I32 sendProtocol(NATIVE_INT_TYPE& fd, const U8* const data, const U32 size) = 0;
+    virtual I32 sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) = 0;
 
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
@@ -201,7 +201,7 @@ class IpSocket {
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    virtual I32 recvProtocol(NATIVE_INT_TYPE& fd, U8* const data, const U32 size) = 0;
+    virtual I32 recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) = 0;
 
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;

@@ -173,13 +173,13 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     return status;
 }
 
-I32 UdpSocket::sendProtocol(NATIVE_INT_TYPE& fd, const U8* const data, const U32 size) {
+I32 UdpSocket::sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
     FW_ASSERT(this->m_state->m_addr_send.sin_family != 0); // Make sure the address was previously setup
     return static_cast<I32>(::sendto(fd, data, size, SOCKET_IP_SEND_FLAGS,
                     reinterpret_cast<struct sockaddr *>(&this->m_state->m_addr_send), sizeof(this->m_state->m_addr_send)));
 }
 
-I32 UdpSocket::recvProtocol(NATIVE_INT_TYPE& fd, U8* const data, const U32 size) {
+I32 UdpSocket::recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) {
     FW_ASSERT(this->m_state->m_addr_recv.sin_family != 0); // Make sure the address was previously setup
     return static_cast<I32>(::recvfrom(fd, data, size, SOCKET_IP_RECV_FLAGS, nullptr, nullptr));
 }

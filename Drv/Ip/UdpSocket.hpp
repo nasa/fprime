@@ -106,7 +106,7 @@ class UdpSocket : public IpSocket {
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    I32 sendProtocol(NATIVE_INT_TYPE& fd, const U8* const data, const U32 size) override;
+    I32 sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) override;
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
      * \param fd: file descriptor to recv from
@@ -114,7 +114,7 @@ class UdpSocket : public IpSocket {
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    I32 recvProtocol(NATIVE_INT_TYPE& fd, U8* const data, const U32 size) override;
+    I32 recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) override;
   private:
     SocketState* m_state; //!< State storage
     U16 m_recv_port;  //!< IP address port used

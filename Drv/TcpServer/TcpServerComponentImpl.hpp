@@ -28,7 +28,7 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
     // ----------------------------------------------------------------------
 
     /**
-     * \brief construct the TcpClient component.
+     * \brief construct the TcpServer component.
      * \param compName: name of this component
      */
     TcpServerComponentImpl(const char* const compName);

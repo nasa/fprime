@@ -124,7 +124,7 @@ class SocketComponentHelper {
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(U8* data, U32 size);
+    SocketIpStatus recv(U8* data, U32 &size);
 
     /**
      * \brief close the socket communications

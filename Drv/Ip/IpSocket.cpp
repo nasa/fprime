@@ -103,16 +103,12 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     return SOCK_SUCCESS;
 }
 
-void IpSocket::close(NATIVE_INT_TYPE &fd) {
-    // TODO: keep the if statement?
-    if (fd != -1) {
-        (void)::shutdown(fd, SHUT_RDWR);
-        (void)::close(fd);
-        fd = -1;
-    }
+void IpSocket::close(NATIVE_INT_TYPE fd) {
+    (void)::shutdown(fd, SHUT_RDWR);
+    (void)::close(fd);
 }
 
-void IpSocket::shutdown(NATIVE_INT_TYPE &fd) {
+void IpSocket::shutdown(NATIVE_INT_TYPE fd) {
     this->close(fd);
 }
 
@@ -133,7 +129,7 @@ SocketIpStatus IpSocket::open(NATIVE_INT_TYPE& fd) {
     return status;
 }
 
-SocketIpStatus IpSocket::send(NATIVE_INT_TYPE& fd, const U8* const data, const U32 size) {
+SocketIpStatus IpSocket::send(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
     U32 total = 0;
     I32 sent  = 0;
     // Attempt to send out data and retry as necessary
@@ -146,7 +142,6 @@ SocketIpStatus IpSocket::send(NATIVE_INT_TYPE& fd, const U8* const data, const U
         }
         // Error bad file descriptor is a close along with reset
         else if ((sent == -1) && ((errno == EBADF) || (errno == ECONNRESET))) {
-            this->close(fd);
             return SOCK_DISCONNECTED;
         }
         // Error returned, and it wasn't an interrupt nor a disconnect
@@ -165,7 +160,7 @@ SocketIpStatus IpSocket::send(NATIVE_INT_TYPE& fd, const U8* const data, const U
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::recv(NATIVE_INT_TYPE& fd, U8* data, U32& req_read) {
+SocketIpStatus IpSocket::recv(NATIVE_INT_TYPE fd, U8* data, U32& req_read) {
     I32 size = 0;
 
     // Try to read until we fail to receive data
@@ -178,7 +173,6 @@ SocketIpStatus IpSocket::recv(NATIVE_INT_TYPE& fd, U8* data, U32& req_read) {
         }
         // Zero bytes read reset or bad ef means we've disconnected
         else if (size == 0 || ((size == -1) && ((errno == ECONNRESET) || (errno == EBADF)))) {
-            this->close(fd);
             req_read = static_cast<U32>(size);
             return SOCK_DISCONNECTED;
         }

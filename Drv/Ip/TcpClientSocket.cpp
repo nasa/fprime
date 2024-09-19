@@ -86,11 +86,11 @@ SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     return SOCK_SUCCESS;
 }
 
-I32 TcpClientSocket::sendProtocol(NATIVE_INT_TYPE& fd, const U8* const data, const U32 size) {
+I32 TcpClientSocket::sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
     return static_cast<I32>(::send(fd, data, size, SOCKET_IP_SEND_FLAGS));
 }
 
-I32 TcpClientSocket::recvProtocol(NATIVE_INT_TYPE& fd, U8* const data, const U32 size) {
+I32 TcpClientSocket::recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) {
     return static_cast<I32>(::recv(fd, data, size, SOCKET_IP_RECV_FLAGS));
 }
 

@@ -51,19 +51,22 @@ bool SocketComponentHelper::isStarted() {
 }
 
 SocketIpStatus SocketComponentHelper::open() {
+    SocketIpStatus status = SOCK_FAILED_TO_GET_SOCKET;
     NATIVE_INT_TYPE fd = -1;
     this->m_lock.lock();
-    FW_ASSERT(this->m_fd == -1 and not this->m_open); // Ensure we are not opening an opened socket
-    this->m_lock.unlock();
-    SocketIpStatus status = this->getSocketHandler().open(fd);
-    // Call connected any time the open is successful
-    if (Drv::SOCK_SUCCESS == status) {
-        this->m_lock.lock();
+    if (not this->m_open) {
+        FW_ASSERT(this->m_fd == -1 and not this->m_open); // Ensure we are not opening an opened socket
+        status = this->getSocketHandler().open(fd);
         this->m_fd = fd;
-        this->m_open = true;
-        this->m_lock.unlock();
-        this->connected();
+        // Call connected any time the open is successful
+        if (Drv::SOCK_SUCCESS == status) {
+            this->m_open = true;
+            this->m_lock.unlock();
+            this->connected();
+            return status;
+        }
     }
+    this->m_lock.unlock();
     return status;
 }
 
@@ -82,47 +85,49 @@ SocketIpStatus SocketComponentHelper::reconnect() {
 
     // Open a network connection if it has not already been open
     // TODO: improve this message
-    if (this->isStarted() and (not this->isOpened()) and
-        ((status = this->open()) != SOCK_SUCCESS)) {
-        Fw::Logger::log(
-            "[WARNING] Failed to open port with status %d and errno %d\n",
-            static_cast<POINTER_CAST>(status),
-            static_cast<POINTER_CAST>(errno));
-        (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
-        return status;
+    if (this->isStarted() and (not this->isOpened())) {
+        status = this->open();
     }
     return status;
 }
 
 SocketIpStatus SocketComponentHelper::send(const U8* const data, const U32 size) {
+    SocketIpStatus status = SOCK_SUCCESS;
     this->m_lock.lock();
     NATIVE_INT_TYPE fd = this->m_fd;
     this->m_lock.unlock();
     // Prevent transmission before connection, or after a disconnect
     if (fd == -1) {
-        this->reconnect();
+        status = this->reconnect();
+        // if reconnect wasn't successful, pass the that up to the caller
+        if(status != SOCK_SUCCESS) {
+            return status;
+        }
+        this->m_lock.lock();
+        fd = this->m_fd;
+        this->m_lock.unlock();
     }
-    return this->getSocketHandler().send(fd, data, size);
+    status = this->getSocketHandler().send(fd, data, size);
+    if (status == SOCK_DISCONNECTED) {
+        this->close();
+    }
+    return status;
 }
 
 void SocketComponentHelper::shutdown() {
     this->m_lock.lock();
-    NATIVE_INT_TYPE fd = this->m_fd;
-    this->m_lock.unlock();
-    this->getSocketHandler().shutdown(fd);
-    this->m_lock.lock();
+    this->getSocketHandler().shutdown(this->m_fd);
     this->m_started = false;
-    this->m_fd = fd;
+    this->m_fd = -1;
     this->m_lock.unLock();
 }
 
 void SocketComponentHelper::close() {
     this->m_lock.lock();
-    NATIVE_INT_TYPE fd = this->m_fd;
-    if (fd != -1) {
-        this->getSocketHandler().close(fd);
+    if (this->m_fd != -1) {
+        this->getSocketHandler().close(this->m_fd);
+        this->m_fd = -1;
     }
-    this->m_fd = fd;
     this->m_open = false;
     this->m_lock.unlock();
 }
@@ -133,13 +138,12 @@ Os::Task::Status SocketComponentHelper::join() {
 
 void SocketComponentHelper::stop() {
     this->m_lock.lock();
-    NATIVE_INT_TYPE fd = this->m_fd;
-    this->m_lock.unlock();
     this->m_stop = true;
-    this->getSocketHandler().shutdown(fd);  // Break out of any receives and fully shutdown
+    this->m_lock.unlock();
+    this->shutdown();  // Break out of any receives and fully shutdown
 }
 
-SocketIpStatus SocketComponentHelper::recv(U8* data, U32 size) {
+SocketIpStatus SocketComponentHelper::recv(U8* data, U32 &size) {
     SocketIpStatus status = SOCK_SUCCESS;
     // Check for previously disconnected socket
     this->m_lock.lock();
@@ -149,10 +153,9 @@ SocketIpStatus SocketComponentHelper::recv(U8* data, U32 size) {
         return SOCK_DISCONNECTED;
     }
     status = this->getSocketHandler().recv(fd, data, size);
-    // fd could change to closed in recv 
-    this->m_lock.lock();
-    this->m_fd = fd;
-    this->m_lock.unlock();
+    if (status == SOCK_DISCONNECTED) {
+        this->close();
+    }
     return status;
 }
 
@@ -161,12 +164,17 @@ void SocketComponentHelper::readTask(void* pointer) {
     SocketIpStatus status = SOCK_SUCCESS;
     SocketComponentHelper* self = reinterpret_cast<SocketComponentHelper*>(pointer);
     do {
-        self->m_lock.lock();
-        NATIVE_INT_TYPE fd = self->m_fd;
-        self->m_lock.unlock();
         // Prevent transmission before connection, or after a disconnect
-        if (fd == -1 and (not self->m_stop)) {
-            self->reconnect();
+        if ((not self->isOpened()) and (not self->m_stop)) {
+            status = self->reconnect();
+            if(status != SOCK_SUCCESS) {
+                Fw::Logger::log(
+                    "[WARNING] Failed to open port with status %lu and errno %lu\n",
+                    static_cast<POINTER_CAST>(status),
+                    static_cast<POINTER_CAST>(errno));
+                (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
+                continue;
+            }
         }
         // If the network connection is open, read from it
         if (self->isStarted() and self->isOpened() and (not self->m_stop)) {
@@ -177,7 +185,7 @@ void SocketComponentHelper::readTask(void* pointer) {
             // recv blocks, so it may have been a while since its done an isOpened check
             status = self->recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
-                Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n",
+                Fw::Logger::log("[WARNING] Failed to recv from port with status %lu and errno %lu\n",
                 static_cast<POINTER_CAST>(status),
                 static_cast<POINTER_CAST>(errno));
                 self->close();

@@ -92,7 +92,7 @@ SocketIpStatus TcpServerSocket::startup() {
     return this->IpSocket::startup();
 }
 
-void TcpServerSocket::shutdown(NATIVE_INT_TYPE &fd) {
+void TcpServerSocket::shutdown(NATIVE_INT_TYPE fd) {
     if (this->m_base_fd != -1) {
         (void)::shutdown(this->m_base_fd, SHUT_RDWR);
         (void)::close(this->m_base_fd);
@@ -123,11 +123,11 @@ SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     return SOCK_SUCCESS;
 }
 
-I32 TcpServerSocket::sendProtocol(NATIVE_INT_TYPE& fd, const U8* const data, const U32 size) {
+I32 TcpServerSocket::sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
     return static_cast<I32>(::send(fd, data, size, SOCKET_IP_SEND_FLAGS));
 }
 
-I32 TcpServerSocket::recvProtocol(NATIVE_INT_TYPE& fd, U8* const data, const U32 size) {
+I32 TcpServerSocket::recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) {
     I32 size_buf;
     // recv will return 0 if the client has done an orderly shutdown
     size_buf = static_cast<I32>(::recv(fd, data, size, SOCKET_IP_RECV_FLAGS));
