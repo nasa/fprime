@@ -1,12 +1,12 @@
 // ======================================================================
-// \title  Tester.cpp
+// \title  SmTestTester.cpp
 // \author watney
 // \brief  cpp file for SmTest test harness implementation class
 // ======================================================================
 
 #include <cstring>
 
-#include "FppTest/state_machine/test/ut/Tester.hpp"
+#include "FppTest/state_machine/test/ut/SmTestTester.hpp"
 #include "Fw/Types/ExternalString.hpp"
 #include "STest/Pick/Pick.hpp"
 
@@ -16,21 +16,21 @@ namespace FppTest {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester::Tester()
-    : SmTestGTestBase("Tester", Tester::MAX_HISTORY_SIZE),
+SmTestTester::SmTestTester()
+    : SmTestGTestBase("SmTestTester", SmTestTester::MAX_HISTORY_SIZE),
       component("SmTest") {
     this->initComponents();
     this->connectPorts();
     this->component.setIdBase(ID_BASE);
 }
 
-Tester::~Tester() {}
+SmTestTester::~SmTestTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester::schedIn_OK() {
+void SmTestTester::schedIn_OK() {
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device1.state);
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device2.state);
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device3.state);
@@ -65,7 +65,7 @@ void Tester::schedIn_OK() {
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
-void Tester ::
+void SmTestTester ::
     dispatchAll()
   {
     while (this->component.m_queue.getNumMsgs() > 0)

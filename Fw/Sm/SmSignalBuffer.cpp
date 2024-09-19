@@ -4,6 +4,8 @@
 namespace Fw {
 
     SmSignalBuffer::SmSignalBuffer(const U8 *args, FwSizeType size) : m_bufferData{} {
+        FW_ASSERT(args != nullptr);
+        FW_ASSERT(size <= sizeof(this->m_bufferData));
         SerializeStatus stat = SerializeBufferBase::setBuff(args,size);
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
@@ -17,6 +19,9 @@ namespace Fw {
     SmSignalBuffer::SmSignalBuffer(const SmSignalBuffer& other) : Fw::SerializeBufferBase(),
                                                                    m_bufferData{}
    {
+        FW_ASSERT(other.getBuffAddr() != nullptr);
+        FW_ASSERT(other.getBuffLength() <= sizeof(this->m_bufferData));
+
         SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
@@ -25,6 +30,9 @@ namespace Fw {
         if(this == &other) {
             return *this;
         }
+       
+        FW_ASSERT(other.getBuffAddr() != nullptr);
+        FW_ASSERT(other.getBuffLength() <= sizeof(this->m_bufferData));
 
         SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));

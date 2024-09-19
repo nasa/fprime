@@ -13,7 +13,7 @@
 
 namespace FppTest {
 
-class Tester : public SmTestGTestBase {
+class SmTestTester : public SmTestGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -32,11 +32,11 @@ class Tester : public SmTestGTestBase {
 
     //! Construct object Tester
     //!
-    Tester();
+    SmTestTester();
 
     //! Destroy object Tester
     //!
-    ~Tester();
+    ~SmTestTester();
 
   public:
     // ----------------------------------------------------------------------

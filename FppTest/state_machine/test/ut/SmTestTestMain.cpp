@@ -1,8 +1,8 @@
 // ----------------------------------------------------------------------
-// TestMain.cpp
+// SmTestTestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "FppTest/state_machine/test/ut/Tester.hpp"
+#include "FppTest/state_machine/test/ut/SmTestTester.hpp"
 #include "Fw/Test/UnitTest.hpp"
 #include "STest/Random/Random.hpp"
 
@@ -10,7 +10,7 @@ using namespace FppTest;
 
 TEST(schedIn, OK) {
     COMMENT("schedIn OK");
-    Tester tester;
+    SmTestTester tester;
     tester.schedIn_OK();
 }
 
