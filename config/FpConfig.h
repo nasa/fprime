@@ -8,9 +8,10 @@
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
  * acknowledged.
  */
-#include <Fw/Types/BasicTypes.h>
 #ifndef FPCONFIG_H_
 #define FPCONFIG_H_
+
+#include <Fw/Types/BasicTypes.h>
 
 // ----------------------------------------------------------------------
 // Type aliases

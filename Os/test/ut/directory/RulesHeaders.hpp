@@ -5,6 +5,7 @@
 
 #ifndef __RULES_HEADERS__
 #define __RULES_HEADERS__
+
 #include <gtest/gtest.h>
 #include "Os/Directory.hpp"
 #include "STest/Rule/Rule.hpp"

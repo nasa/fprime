@@ -2,12 +2,12 @@
 // \title Os/Posix/error.hpp
 // \brief header for posix errno conversion
 // ======================================================================
+#ifndef OS_POSIX_ERRNO_HPP
+#define OS_POSIX_ERRNO_HPP
 #include "Os/File.hpp"
 #include "Os/Task.hpp"
 #include "Os/FileSystem.hpp"
 #include "Os/Directory.hpp"
-#ifndef OS_POSIX_ERRNO_HPP
-#define OS_POSIX_ERRNO_HPP
 
 namespace Os {
 namespace Posix {

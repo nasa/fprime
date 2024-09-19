@@ -2,10 +2,11 @@
 // \title Os/Stub/FileSystem.hpp
 // \brief stub fileSystem definitions for Os::FileSystem
 // ======================================================================
-#include "Os/FileSystem.hpp"
-
 #ifndef OS_STUB_FILESYSTEM_HPP
 #define OS_STUB_FILESYSTEM_HPP
+
+#include "Os/FileSystem.hpp"
+
 namespace Os {
 namespace Stub {
 namespace FileSystem {

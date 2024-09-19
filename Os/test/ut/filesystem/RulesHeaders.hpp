@@ -2,9 +2,9 @@
 // \title Os/test/ut/filesystem/RulesHeaders.hpp
 // \brief rule definitions for common testing
 // ======================================================================
-
 #ifndef __RULES_HEADERS__
 #define __RULES_HEADERS__
+
 #include <gtest/gtest.h>
 #include "Os/FileSystem.hpp"
 #include "STest/Rule/Rule.hpp"

@@ -2,12 +2,12 @@
 // \title Os/test/ut/filesystem/CommonTests.hpp
 // \brief GoogleTest fixture definitions used in common FileSystem testing
 // ======================================================================
+#ifndef OS_TEST_UT_COMMON_FILESYSTEM_TESTS_HPP
+#define OS_TEST_UT_COMMON_FILESYSTEM_TESTS_HPP
+
 #include <Os/FileSystem.hpp>
 #include <gtest/gtest.h>
 #include <Os/test/ut/filesystem/RulesHeaders.hpp>
-
-#ifndef OS_TEST_UT_COMMON_FILESYSTEM_TESTS_HPP
-#define OS_TEST_UT_COMMON_FILESYSTEM_TESTS_HPP
 
 
 class Functionality : public ::testing::Test {

@@ -2,16 +2,12 @@
 // \title Os/test/ut/directory/CommonTests.hpp
 // \brief GoogleTest fixture definitions used in common Directory testing
 // ======================================================================
-#include <Os/Directory.hpp>
-#include <gtest/gtest.h>
-#include <Os/test/ut/directory/RulesHeaders.hpp>
-
 #ifndef OS_TEST_UT_COMMON_DIRECTORY_TESTS_HPP
 #define OS_TEST_UT_COMMON_DIRECTORY_TESTS_HPP
 
-namespace Os {
-namespace Test {
-namespace Directory {
+#include <Os/Directory.hpp>
+#include <gtest/gtest.h>
+#include <Os/test/ut/directory/RulesHeaders.hpp>
 
 // ----------------------------------------------------------------------
 //! Notes on CommonTests.cpp reusability
@@ -27,6 +23,10 @@ namespace Directory {
 //! The tearDown function shall remove the test directory and all files in it
 // ----------------------------------------------------------------------
 
+namespace Os {
+namespace Test {
+namespace Directory {
+  
 //! Set up function as defined by the unit test implementor
 void setUp(Os::Test::Directory::Tester* tester);
 

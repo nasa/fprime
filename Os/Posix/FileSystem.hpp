@@ -2,10 +2,11 @@
 // \title Os/Posix/FileSystem.hpp
 // \brief Posix FileSystem definitions for Os::FileSystem
 // ======================================================================
-#include "Os/FileSystem.hpp"
-
 #ifndef OS_POSIX_FILESYSTEM_HPP
 #define OS_POSIX_FILESYSTEM_HPP
+
+#include "Os/FileSystem.hpp"
+
 namespace Os {
 namespace Posix {
 namespace FileSystem {
