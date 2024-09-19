@@ -58,7 +58,9 @@ namespace Svc {
         FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
 
         // request memory for catalog
-        this->m_memSize = DP_MAX_FILES * 2 *(sizeof(DpBtreeNode) + sizeof(DpBtreeNode*));
+        // = number of file slots * (Free list entry + traverse stack entry)
+        // FIXME: Memory size hack
+        this->m_memSize = DP_MAX_FILES * 2 * (sizeof(DpBtreeNode) + sizeof(DpBtreeNode**));
         bool notUsed; // we don't need to recover the catalog.
         // request memory. this->m_memSize will be modified if there is less than we requested
         this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
@@ -455,16 +457,19 @@ namespace Svc {
                 } else {
                     // Step 4 - check to see if this node has already been transmitted, if so, pop back up the stack
                     if (this->m_currentNode->entry.record.getstate() == Fw::DpState::TRANSMITTED) {
-                        this->m_currentNode = this->m_traverseStack[this->m_currStackEntry--]->right;
                         break;
                     } else { 
-                        // we found an entry, so return true
+                        // we found an entry, so set the retun to the current node
                         found = this->m_currentNode;
-                        // go to the right node
-                        this->m_currentNode = this->m_currentNode->right; 
-                        this->m_currStackEntry--;
-                        return found;
                     } // check if transmitted
+                    // go to the right node
+                    this->m_currentNode = this->m_currentNode->right;
+                    // pop the stack
+                    this->m_currStackEntry--;
+                    // if a node was found, return it
+                    if (found != nullptr) {
+                        return found;
+                    }
                 } // check if left is null
             } // end else current node is not null
         } // end for each possible node in the tree
