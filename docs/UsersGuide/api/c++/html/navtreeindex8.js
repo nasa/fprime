@@ -1,5 +1,10 @@
 var NAVTREEINDEX8 =
 {
+"svc_com_stub_component.html#autotoc_md760":[14,15,0,3,2,2],
+"svc_deframer_component.html":[14,16],
+"svc_deframer_component.html#autotoc_md761":[14,16,0],
+"svc_deframer_component.html#autotoc_md762":[14,16,0,0],
+"svc_deframer_component.html#autotoc_md763":[14,16,0,1],
 "svc_deframer_component.html#autotoc_md764":[14,16,0,2],
 "svc_deframer_component.html#autotoc_md765":[14,16,0,3],
 "svc_deframer_component.html#autotoc_md766":[14,16,0,3,0],
@@ -244,10 +249,5 @@ var NAVTREEINDEX8 =
 "svc_health_component.html#autotoc_md990":[14,25,0,6],
 "svc_health_component.html#autotoc_md991":[14,25,0,6,0],
 "svc_health_component.html#autotoc_md992":[14,25,0,6,1],
-"svc_health_component.html#autotoc_md993":[14,25,0,6,2],
-"svc_health_component.html#autotoc_md994":[14,25,0,6,3],
-"svc_health_component.html#autotoc_md995":[14,25,0,6,4],
-"svc_health_component.html#autotoc_md996":[14,25,0,6,5],
-"svc_health_component.html#autotoc_md997":[14,25,0,6,6],
-"svc_health_component.html#autotoc_md998":[14,25,0,6,7]
+"svc_health_component.html#autotoc_md993":[14,25,0,6,2]
 };

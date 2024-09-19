@@ -84,6 +84,7 @@ var namespace_fw =
     [ "ParamBuffer", "class_fw_1_1_param_buffer.html", "class_fw_1_1_param_buffer" ],
     [ "ParamString", "class_fw_1_1_param_string.html", "class_fw_1_1_param_string" ],
     [ "SerializableFile", "class_fw_1_1_serializable_file.html", "class_fw_1_1_serializable_file" ],
+    [ "SmSignalBuffer", "class_fw_1_1_sm_signal_buffer.html", "class_fw_1_1_sm_signal_buffer" ],
     [ "Time", "class_fw_1_1_time.html", "class_fw_1_1_time" ],
     [ "TlmBuffer", "class_fw_1_1_tlm_buffer.html", "class_fw_1_1_tlm_buffer" ],
     [ "TlmPacket", "class_fw_1_1_tlm_packet.html", "class_fw_1_1_tlm_packet" ],

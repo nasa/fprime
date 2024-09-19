@@ -444,6 +444,7 @@ var hierarchy =
       [ "Fw::LogBuffer", "class_fw_1_1_log_buffer.html", null ],
       [ "Fw::ParamBuffer", "class_fw_1_1_param_buffer.html", null ],
       [ "Fw::SerialBuffer", "class_fw_1_1_serial_buffer.html", null ],
+      [ "Fw::SmSignalBuffer", "class_fw_1_1_sm_signal_buffer.html", null ],
       [ "Fw::TlmBuffer", "class_fw_1_1_tlm_buffer.html", null ],
       [ "Utils::HashBuffer", "class_utils_1_1_hash_buffer.html", null ]
     ] ],

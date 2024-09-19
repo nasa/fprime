@@ -39,6 +39,7 @@ var _fp_config_8h =
     [ "FW_SERIALIZATION_TYPE_ID", "fp_config_8h.html#ad90628f46dbd92719d5a34c3377f2b64", null ],
     [ "FW_SERIALIZE_FALSE_VALUE", "fp_config_8h.html#a3d13d914eb30a89c47dd51d6df656d6f", null ],
     [ "FW_SERIALIZE_TRUE_VALUE", "fp_config_8h.html#a2d56182509bdcb6dd60b2d5316eb3b78", null ],
+    [ "FW_SM_SIGNAL_BUFFER_MAX_SIZE", "fp_config_8h.html#a435baee7268884ad195ca1fe39768aa0", null ],
     [ "FW_TASK_NAME_BUFFER_SIZE", "fp_config_8h.html#a9412511cf935290ed543bf9679adacb7", null ],
     [ "FW_TLM_BUFFER_MAX_SIZE", "fp_config_8h.html#a8bd9da9ec5572eb59b656afada2bc437", null ],
     [ "FW_TLM_STRING_MAX_SIZE", "fp_config_8h.html#a639e2b664eb57a3df15c19af7c0a019a", null ],
