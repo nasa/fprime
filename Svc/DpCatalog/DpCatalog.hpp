@@ -175,7 +175,7 @@ namespace Svc {
         /// @brief find the next entry in the tree
         /// @return pointer if an entry was found, nullptr if no more entries
         /// @param entry entry to return
-        DpBtreeNode* findNextTreeEntry();
+        DpBtreeNode* findNextTreeNode();
 
         /// @brief check to see if component successfully initialized
         /// @return bool if it was initialized
@@ -198,7 +198,7 @@ namespace Svc {
         DpBtreeNode* m_freeListHead; //!< The head of the free list
         DpBtreeNode* m_freeListFoot; //!< The foot of the free list
         DpBtreeNode** m_traverseStack; //!< pointer to memory for stack for traversing tree
-        DpBtreeNode* m_currentEntry; //!< current entry for traversing tree
+        DpBtreeNode* m_currentNode; //!< current node for traversing tree
 
         FwSizeType m_numDpRecords; //!< Stores the actual number of records.
         FwSizeType m_numDpSlots; //!< Stores the available number of record slots.

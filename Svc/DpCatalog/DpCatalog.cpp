@@ -26,7 +26,7 @@ namespace Svc {
         m_freeListHead(nullptr),
         m_freeListFoot(nullptr),
         m_traverseStack(nullptr),
-        m_currentEntry(nullptr),
+        m_currentNode(nullptr),
         m_numDpRecords(0),
         m_numDpSlots(0),
         m_numDirectories(0),
@@ -58,7 +58,7 @@ namespace Svc {
         FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
 
         // request memory for catalog
-        this->m_memSize = DP_MAX_FILES * (sizeof(DpBtreeNode) + sizeof(DpBtreeNode*));
+        this->m_memSize = DP_MAX_FILES * 2 *(sizeof(DpBtreeNode) + sizeof(DpBtreeNode*));
         bool notUsed; // we don't need to recover the catalog.
         // request memory. this->m_memSize will be modified if there is less than we requested
         this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
@@ -393,10 +393,10 @@ namespace Svc {
         FW_ASSERT(this->m_dpTree);
         FW_ASSERT(this->m_xmitInProgress);
         FW_ASSERT(this->m_traverseStack);
-        FW_ASSERT(this->m_currentEntry);
+        FW_ASSERT(this->m_currentNode);
 
         // look in the tree for the next entry to send
-        DpCatalog::DpBtreeNode* found = this->findNextTreeEntry();
+        DpCatalog::DpBtreeNode* found = this->findNextTreeNode();
 
         if (found == nullptr) {
             // if no entry found, we are done
@@ -421,38 +421,52 @@ namespace Svc {
 
     } // end sendNextEntry()
 
-    DpCatalog::DpBtreeNode* DpCatalog::findNextTreeEntry() {
+    DpCatalog::DpBtreeNode* DpCatalog::findNextTreeNode() {
 
         // check some asserts
         FW_ASSERT(this->m_dpTree);
         FW_ASSERT(this->m_xmitInProgress);
         FW_ASSERT(this->m_traverseStack);
-        FW_ASSERT(this->m_currentEntry);
 
         DpBtreeNode* found = nullptr;
 
-        // traverse the tree, finding nodes in order
+        // traverse the tree, finding nodes in order. Max iteration of the loop
+        // would be the number of records in the tree
         for (FwSizeType record = 0; record < this->m_numDpRecords; record++) {
-            if (this->m_currentEntry->left != nullptr) {
-                // Step 3 - push current entry on the stack
-                // The first time through, this->m_currStackEntry is -1, signifying the stack is empty
-                // The insertion below will increment this->m_currStackEntry to 0
-                this->m_traverseStack[++this->m_currStackEntry] = this->m_currentEntry;
-                this->m_currentEntry = this->m_currentEntry->left;
+            // Step 4 - if the current node is null, pop back up the stack
+            if (this->m_currentNode == nullptr) {
+                // see if we fully traversed the tree
+                if (this->m_currStackEntry < 0) {
+                    // we are done
+                    return nullptr;
+                } else {
+                    this->m_currentNode = this->m_traverseStack[this->m_currStackEntry--];
+                    // keep looking
+                    continue;
+                }
+                break;
             } else {
-                // Step 4 - check to see if this node has already been transmitted, if so, pop back up the stack
-                if (this->m_currentEntry->entry.record.getstate() == Fw::DpState::TRANSMITTED) {
-                    this->m_currentEntry = this->m_traverseStack[this->m_currStackEntry--]->right;
-                    break;
-                } else { 
-                    // we found an entry, so return true
-                    found = this->m_currentEntry;
-                    // go to the right node
-                    this->m_currentEntry = this->m_currentEntry->right; 
-                    this->m_currStackEntry--;
-                    return found;
-                } // check if transmitted
-            } // check if left is null
+                if (this->m_currentNode->left != nullptr) {
+                    // Step 3 - push current entry on the stack
+                    // The first time through, this->m_currStackEntry is -1, signifying the stack is empty
+                    //    The insertion below will increment this->m_currStackEntry to 0
+                    this->m_traverseStack[++this->m_currStackEntry] = this->m_currentNode;
+                    this->m_currentNode = this->m_currentNode->left;
+                } else {
+                    // Step 4 - check to see if this node has already been transmitted, if so, pop back up the stack
+                    if (this->m_currentNode->entry.record.getstate() == Fw::DpState::TRANSMITTED) {
+                        this->m_currentNode = this->m_traverseStack[this->m_currStackEntry--]->right;
+                        break;
+                    } else { 
+                        // we found an entry, so return true
+                        found = this->m_currentNode;
+                        // go to the right node
+                        this->m_currentNode = this->m_currentNode->right; 
+                        this->m_currStackEntry--;
+                        return found;
+                    } // check if transmitted
+                } // check if left is null
+            } // end else current node is not null
         } // end for each possible node in the tree
 
         return found;
@@ -493,18 +507,18 @@ namespace Svc {
         )
     {
         // check some asserts
-        FW_ASSERT(this->m_currentEntry);
+        FW_ASSERT(this->m_currentNode);
         FW_ASSERT(this->m_dpTree);
         FW_ASSERT(this->m_traverseStack);
 
         this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
 
         // mark the entry as transmitted
-        this->m_currentEntry->entry.record.setstate(Fw::DpState::TRANSMITTED);
+        this->m_currentNode->entry.record.setstate(Fw::DpState::TRANSMITTED);
         // set to right node
-        this->m_currentEntry = this->m_currentEntry->right;
+        this->m_currentNode = this->m_currentNode->right;
         // push new current to the stack
-        this->m_traverseStack[this->m_currStackEntry++] = this->m_currentEntry;
+        this->m_traverseStack[this->m_currStackEntry++] = this->m_currentNode;
 
         this->sendNextEntry();
     }
@@ -586,9 +600,11 @@ namespace Svc {
     void DpCatalog::resetTreeStack() {
         // See URL above
         // Step 1 - reset the stack
-        this->m_currStackEntry = -1;
+        this->m_currStackEntry = 0;
         // Step 2 - assign root of the tree to the current entry
-        this->m_currentEntry = this->m_dpTree;
+        this->m_currentNode = this->m_dpTree;
+        // Step 3 - push the root of the tree on the stack
+        this->m_traverseStack[this->m_currStackEntry] = this->m_currentNode;
     }
 
     void DpCatalog ::

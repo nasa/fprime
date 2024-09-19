@@ -77,9 +77,14 @@ namespace Svc {
         this->component.m_xmitInProgress = true;
 
         // retrive entries - they should match expected output
-        for (FwIndexType entry = 0; entry < numEntries; entry++) {
-            DpCatalog::DpBtreeNode* res = this->component.findNextTreeEntry();
-            ASSERT_TRUE(res != nullptr);
+        for (FwIndexType entry = 0; entry < numEntries+1; entry++) {
+            DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
+            if (entry == numEntries) {
+                ASSERT_TRUE(res == NULL);
+                break;
+            } else {
+                ASSERT_TRUE(res != NULL);
+            }
             // should match expected entry
             ASSERT_EQ(res->entry.record,output[entry].record);
         }
