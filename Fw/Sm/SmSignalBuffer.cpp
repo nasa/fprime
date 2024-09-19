@@ -3,7 +3,7 @@
 
 namespace Fw {
 
-    SmSignalBuffer::SmSignalBuffer(const U8 *args, FwSizeType size) : m_bufferData{} {
+    SmSignalBuffer::SmSignalBuffer(const U8 *args, Serializable::SizeType size) : m_bufferData{} {
         FW_ASSERT(args != nullptr);
         FW_ASSERT(size <= sizeof(this->m_bufferData));
         SerializeStatus stat = SerializeBufferBase::setBuff(args,static_cast<NATIVE_UINT_TYPE>(size));
