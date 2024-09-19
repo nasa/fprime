@@ -6,12 +6,12 @@ First, in a terminal upload the software to hardware platform. This is done with
 
 ```sh
 # For ARM 64-bit hardware
-# In: Deployment Folder
-scp -r ../build-artifacts/aarch64-linux/<name-of-deployment> <username>@<device-address>:deployment
+# In: project root Folder
+scp -r build-artifacts/aarch64-linux/<name-of-deployment> <username>@<device-address>:deployment
 
 # For ARM 32-bit hardware
-# In: Deployment Folder
-scp -r ../build-artifacts/arm-hf-linux/<name-of-deployment> <username>@<device-address>:deployment
+# In: project root Folder
+scp -r build-artifacts/arm-hf-linux/<name-of-deployment> <username>@<device-address>:deployment
 ```
 > Users must fill in the username and device address above.
 
