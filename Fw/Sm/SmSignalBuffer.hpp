@@ -23,7 +23,7 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_COM_BUFFER_MAX_SIZE + sizeof(FwSizeStoreType)  // size of buffer + storage of size word
             };
 
-            SmSignalBuffer(const U8 *args, FwSizeType size);
+            SmSignalBuffer(const U8 *args, Serializable::SizeType size);
             SmSignalBuffer();
             SmSignalBuffer(const SmSignalBuffer& other);
             virtual ~SmSignalBuffer();
