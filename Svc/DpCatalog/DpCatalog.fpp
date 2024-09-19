@@ -21,7 +21,7 @@ module Svc {
     tSub: U32
     $priority: U32
     $size: U64
-    state: Fw.DpState
+    $state: Fw.DpState
   }
 
 

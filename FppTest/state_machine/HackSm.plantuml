@@ -1,0 +1,23 @@
+
+@startuml
+
+[*] --> OFF
+
+state OFF {
+    OFF::Entry: turnOff()
+}
+
+state ON {
+    ON::Entry: turnOn()
+}
+
+state DIAG {
+    DIAG::Entry: doDiag()
+}
+
+OFF --> ON : RTI
+ON --> OFF : RTI
+ON --> DIAG : CHECK
+OFF --> DIAG : CHECK
+DIAG --> OFF : RTI
+@enduml
