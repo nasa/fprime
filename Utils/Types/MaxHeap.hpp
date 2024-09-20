@@ -43,7 +43,7 @@ namespace Types {
     //!
     //! \param capacity the maximum number of elements to store in the heap
     //!
-    bool create(NATIVE_UINT_TYPE capacity);
+    bool create(FwSizeType capacity);
     //! \brief Push an item onto the heap.
     //!
     //! The item will be put into the heap according to its value. The
@@ -53,7 +53,7 @@ namespace Types {
     //! \param value the value of the element to push onto the heap
     //! \param id the identifier of the element to push onto the heap
     //!
-    bool push(NATIVE_INT_TYPE value, NATIVE_UINT_TYPE id);
+    bool push(FwQueuePriorityType value, FwSizeType id);
     //! \brief Pop an item from the heap.
     //!
     //! The item with the maximum value in the heap will be returned.
@@ -63,7 +63,7 @@ namespace Types {
     //! \param value the value of the element to popped from the heap
     //! \param id the identifier of the element popped from the heap
     //!
-    bool pop(NATIVE_INT_TYPE& value, NATIVE_UINT_TYPE& id);
+    bool pop(FwQueuePriorityType& value, FwSizeType& id);
     //! \brief Is the heap full?
     //!
     //! Has the heap reached max size. No new items can be put on the
@@ -81,7 +81,7 @@ namespace Types {
     //! This function returns the current number of items on the
     //! heap.
     //!
-    NATIVE_UINT_TYPE getSize();
+    FwSizeType getSize() const;
     //! \brief Print the contents of the heap to stdout.
     //!
     //! This function here is for debugging purposes.
@@ -93,22 +93,22 @@ namespace Types {
     // Ensure the heap meets the heap property:
     void heapify();
     // Swap two elements on the heap:
-    void swap(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b);
+    void swap(FwSizeType a, FwSizeType b);
     // Return the max between two elements on the heap:
-    NATIVE_UINT_TYPE max(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b);
+    FwSizeType max(FwSizeType a, FwSizeType b);
 
     // The data structure for a node on the heap:
     struct Node {
-      NATIVE_INT_TYPE value; // the priority of the node
-      NATIVE_UINT_TYPE order; // order in which node was pushed
-      NATIVE_UINT_TYPE id; // unique id for this node
+      FwQueuePriorityType value; // the priority of the node
+      FwSizeType order; // order in which node was pushed
+      FwSizeType id; // unique id for this node
     };
 
     // Private members:
     Node* m_heap; // the heap itself
-    NATIVE_UINT_TYPE m_size; // the current size of the heap
-    NATIVE_UINT_TYPE m_order; // the current count of heap pushes
-    NATIVE_UINT_TYPE m_capacity; // the maximum capacity of the heap
+    FwSizeType m_size; // the current size of the heap
+    FwSizeType m_order; // the current count of heap pushes
+    FwSizeType m_capacity; // the maximum capacity of the heap
   };
 
 }

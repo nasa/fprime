@@ -8,6 +8,7 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Models")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stub")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Generic")
 
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
@@ -37,6 +38,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileSystem.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Directory.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Condition.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
 )
 # Check for default logger

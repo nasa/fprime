@@ -104,6 +104,7 @@ register_fprime_ut(PosixTaskTest)
 # -----------------------------------------
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ConditionVariable.cpp"
 )
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"

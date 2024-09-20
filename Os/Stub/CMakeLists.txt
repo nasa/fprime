@@ -22,6 +22,17 @@ set(SOURCE_FILES
 register_fprime_module(Os_Mutex_Stub)
 register_fprime_implementation(Os/Mutex Os_Mutex_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")
 
+#### Queue Stub ####
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
+)
+set(HEADER_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Queue.hpp"
+)
+set(MOD_DEPS)
+register_fprime_module(Os_Queue_Stub)
+register_fprime_implementation(Os/Queue Os_Queue_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultQueue.cpp")
+
 ######## Console Stub ########
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
@@ -92,17 +103,6 @@ set(UT_MOD_DEPS)
 choose_fprime_implementation(Os/Console Os_Console_Test_Stub)
 register_fprime_ut(StubConsoleTest)
 
-
-#### Queue Stub ####
-set(SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
-)
-set(HEADER_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/Queue.hpp"
-)
-set(MOD_DEPS)
-register_fprime_module(Os_Queue_Stub)
-register_fprime_implementation(Os/Queue Os_Queue_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultQueue.cpp")
 
 #### Queue Stub Testing ####
 set(SOURCE_FILES

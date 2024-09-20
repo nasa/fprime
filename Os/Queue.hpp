@@ -133,7 +133,7 @@ class QueueInterface {
     //!
     //! \return result of placement new, must be equivalent to `aligned_placement_new_memory`
     //!
-    static QueueInterface* getDelegate(HandleStorage& aligned_placement_new_memory);
+    static QueueInterface* getDelegate(QueueHandleStorage& aligned_placement_new_memory);
 };
 
 class Queue final : public QueueInterface {
@@ -256,7 +256,7 @@ class Queue final : public QueueInterface {
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
     // the byte-array here and set `handle` to that address for storage.
     //
-    alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage; //!< Storage for aligned handle
+    alignas(FW_HANDLE_ALIGNMENT) QueueHandleStorage m_handle_storage; //!< Storage for aligned handle
     QueueInterface& m_delegate; //!< Delegate for the real implementation
 };
 //! \brief queue registry interface

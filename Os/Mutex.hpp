@@ -67,6 +67,22 @@ class Mutex final : public MutexInterface {
     alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage;  //!< Mutex handle storage
     MutexInterface& m_delegate;                                   //!< Delegate for the real implementation
 };
+
+class ScopeLock {
+  public:
+    ScopeLock(Mutex& mutex);
+
+    ~ScopeLock();
+
+    //! \brief copy constructor is forbidden
+    ScopeLock(const ScopeLock& other) = delete;
+
+    //! \brief assignment operator is forbidden
+    ScopeLock& operator=(const ScopeLock& other) = delete;
+
+  private:
+    Mutex& m_mutex;
+};
 }  // namespace Os
 
 #endif

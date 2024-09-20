@@ -8,6 +8,7 @@
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
 #include "Os/Queue.hpp"
+#include "Os/test/ConcurrentRule.hpp"
 #include <queue>
 #include <vector>
 
@@ -27,8 +28,14 @@ struct Tester  {
 
     struct QueueMessage {
         U8 data[QUEUE_MESSAGE_SIZE_UPPER_BOUND];
-        FwQueuePriorityType priority;
-        FwSizeType size;
+        FwQueuePriorityType priority = 0;
+        FwSizeType size = 0;
+    };
+
+    struct ReceiveMessage {
+        U8* destination  = nullptr;
+        FwQueuePriorityType* priority  = nullptr;
+        FwSizeType* size = nullptr;
     };
 
     struct QueueMessageComparer {
@@ -43,6 +50,8 @@ struct Tester  {
         FwSizeType messageSize = 0;
         FwSizeType hwm = 0;
         static FwSizeType queues;
+        QueueMessage send_block;
+        ReceiveMessage receive_block;
 
         bool created = false;
         std::priority_queue<QueueMessage, std::vector<QueueMessage>, QueueMessageComparer> queue;
@@ -78,15 +87,20 @@ struct Tester  {
 
     Os::QueueInterface::Status shadow_create(FwSizeType depth, FwSizeType messageSize);
 
+    //! Must be called before the queue send
     Os::QueueInterface::Status shadow_send(const U8* buffer, FwSizeType size, FwQueuePriorityType priority, Os::QueueInterface::BlockingType blockType);
 
-    Os::QueueInterface::Status shadow_receive(U8* destination,
+    //! Complete a previous blocking queue send
+    void shadow_send_unblock();
+
+    //! Must be called before the queue receive
+        Os::QueueInterface::Status shadow_receive(U8* destination,
                                               FwSizeType capacity,
                                               QueueInterface::BlockingType blockType,
                                               FwSizeType& actualSize,
                                               FwQueuePriorityType& priority);
-
-
+    //! Complete a previous blocking queue receive
+    void shadow_receive_unblock();
   public:
 #include "QueueRules.hpp"
 };

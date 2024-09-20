@@ -7,6 +7,8 @@
 #include "Fw/Types/String.hpp"
 #include "Os/Queue.hpp"
 #include "Os/test/ut/queue/RulesHeaders.hpp"
+#include "Os/test/ConcurrentRule.hpp"
+
 const FwSizeType RANDOM_BOUND = 10000;
 
 namespace Os {
@@ -30,34 +32,72 @@ Os::QueueInterface::Status Tester::shadow_create(FwSizeType depth, FwSizeType me
 
 Os::QueueInterface::Status Tester::shadow_send(const U8* buffer, FwSizeType size, FwQueuePriorityType priority, Os::QueueInterface::BlockingType blockType) {
     this->shadow_check();
-    if (this->shadow.queue.size() == this->shadow.depth) {
-        return QueueInterface::Status::FULL;
-    } else if (size > this->shadow.messageSize) {
-        return QueueInterface::Status::SIZE_MISMATCH;
-    }
     QueueMessage qm;
     qm.priority = priority;
     qm.size = size;
     std::memcpy(qm.data, buffer, size);
-    this->shadow.queue.push(qm);
-    this->shadow.hwm = FW_MAX(this->shadow.hwm, this->shadow.queue.size());
+    if (size > this->shadow.messageSize) {
+        return QueueInterface::Status::SIZE_MISMATCH;
+    }
+    else if ((this->shadow.queue.size() == this->shadow.depth) && (blockType == Os::QueueInterface::BlockingType::BLOCKING)) {
+        this->shadow.send_block = qm;
+        return QueueInterface::Status::OP_OK;
+    }
+    else if (this->shadow.queue.size() == this->shadow.depth) {
+        return QueueInterface::Status::FULL;
+    } else {
+        this->shadow.queue.push(qm);
+        this->shadow.hwm = FW_MAX(this->shadow.hwm, this->shadow.queue.size());
+        return QueueInterface::Status::OP_OK;
+    }
     return QueueInterface::Status::OP_OK;
+}
+
+void Tester::shadow_send_unblock() {
+    // Send the shadow send buffered message
+    this->shadow.queue.push(this->shadow.send_block);
+    this->shadow.hwm = FW_MAX(this->shadow.hwm, this->shadow.queue.size());
 }
 
 Os::QueueInterface::Status Tester::shadow_receive(U8* destination, FwSizeType capacity, QueueInterface::BlockingType blockType, FwSizeType& actualSize, FwQueuePriorityType& priority) {
     this->shadow_check();
-    if (this->shadow.queue.empty()) {
-        return QueueInterface::Status::EMPTY;
-    } else if (capacity < this->shadow.messageSize) {
+    if (capacity < this->shadow.messageSize) {
         return QueueInterface::Status::SIZE_MISMATCH;
+    } else if (this->shadow.queue.empty() && (blockType == QueueInterface::BlockingType::BLOCKING)) {
+        this->shadow.receive_block.destination = destination;
+        this->shadow.receive_block.size = &actualSize;
+        this->shadow.receive_block.priority = &priority;
+        return QueueInterface::Status::OP_OK;
+    } else if (this->shadow.queue.empty()) {
+        return QueueInterface::Status::EMPTY;
+    } else {
+        const QueueMessage& qm = shadow.queue.top();
+        std::memcpy(destination, qm.data, qm.size);
+        actualSize = qm.size;
+        priority = qm.priority;
+        shadow.queue.pop();
     }
-    const QueueMessage& qm = shadow.queue.top();
-
-    std::memcpy(destination, qm.data, qm.size);
-    actualSize = qm.size;
-    priority = qm.priority;
-    shadow.queue.pop();
     return QueueInterface::Status::OP_OK;
+}
+
+
+void Tester::shadow_receive_unblock() {
+    // Make sure outputs were stored in the shadow receive buffer
+    ASSERT_NE(this->shadow.receive_block.destination, nullptr);
+    ASSERT_NE(this->shadow.receive_block.size, nullptr);
+    ASSERT_NE(this->shadow.receive_block.priority, nullptr);
+
+    // Fill the outputs stored in the shadow receive buffer
+    const QueueMessage& qm = shadow.queue.top();
+    std::memcpy(this->shadow.receive_block.destination, qm.data, qm.size);
+    *this->shadow.receive_block.size = qm.size;
+    *this->shadow.receive_block.priority = qm.priority;
+    shadow.queue.pop();
+
+    // Clear the shadow receive buffer
+    this->shadow.receive_block.destination = nullptr;
+    this->shadow.receive_block.size = nullptr;
+    this->shadow.receive_block.priority = nullptr;
 }
 
 } // namespace Os
@@ -179,7 +219,7 @@ TEST(BasicRules, Create) {
 TEST(BasicRules, Send) {
     Os::Test::Queue::Tester tester;
     Os::Test::Queue::Tester::Create create_rule;
-    Os::Test::Queue::Tester::Send send_rule;
+    Os::Test::Queue::Tester::SendNotFull send_rule;
     create_rule.action(tester);
     send_rule.action(tester);
 }
@@ -195,7 +235,7 @@ TEST(BasicRules, Overflow) {
 TEST(BasicRules, Recv) {
     Os::Test::Queue::Tester tester;
     Os::Test::Queue::Tester::Create create_rule;
-    Os::Test::Queue::Tester::Receive receive_rule;
+    Os::Test::Queue::Tester::ReceiveEmptyNoBlock receive_rule;
 
     create_rule.action(tester);
     receive_rule.action(tester);
@@ -212,8 +252,8 @@ TEST(BasicRules, Underflow) {
 TEST(BasicRules, SendRecv) {
     Os::Test::Queue::Tester tester;
     Os::Test::Queue::Tester::Create create_rule;
-    Os::Test::Queue::Tester::Send send_rule;
-    Os::Test::Queue::Tester::Receive receive_rule;
+    Os::Test::Queue::Tester::SendNotFull send_rule;
+    Os::Test::Queue::Tester::ReceiveNotEmpty receive_rule;
 
     create_rule.action(tester);
     send_rule.action(tester);
@@ -224,18 +264,52 @@ TEST(BasicRules, OverflowUnderflow) {
     Os::Test::Queue::Tester tester;
     Os::Test::Queue::Tester::Create create_rule;
     Os::Test::Queue::Tester::Overflow overflow_rule;
+    Os::Test::Queue::Tester::SendFullNoBlock send_full_no_block;
     Os::Test::Queue::Tester::Underflow underflow_rule;
+    Os::Test::Queue::Tester::ReceiveEmptyNoBlock receive_empty_no_block;
     create_rule.action(tester);
     overflow_rule.action(tester);
+    send_full_no_block.action(tester);
     underflow_rule.action(tester);
+    receive_empty_no_block.apply(tester);
+}
+
+TEST(Blocking, SendBlock) {
+    Os::Test::Queue::Tester tester;
+    Os::Test::Queue::Tester::Create create_rule;
+    Os::Test::Queue::Tester::Overflow overflow_rule;
+    AggregatedConcurrentRule<Os::Test::Queue::Tester> aggregator;
+    Os::Test::Queue::Tester::SendBlock block(aggregator);
+    Os::Test::Queue::Tester::ReceiveNotEmpty receive_not_empty;
+    ConcurrentWrapperRule<Os::Test::Queue::Tester> unblock(aggregator,  receive_not_empty, "SendBlock", "SendUnblock");
+
+    create_rule.apply(tester);
+    overflow_rule.apply(tester);
+    aggregator.apply(tester);
+}
+
+TEST(Blocking, ReceiveBlock) {
+    Os::Test::Queue::Tester tester;
+    Os::Test::Queue::Tester::Create create_rule;
+    Os::Test::Queue::Tester::Underflow overflow_rule;
+    AggregatedConcurrentRule<Os::Test::Queue::Tester> aggregator;
+    Os::Test::Queue::Tester::ReceiveBlock block(aggregator);
+    Os::Test::Queue::Tester::SendNotFull send_not_full;
+    ConcurrentWrapperRule<Os::Test::Queue::Tester> unblock(aggregator,  send_not_full, "ReceiveBlock", "ReceiveUnblock");
+
+    create_rule.apply(tester);
+    overflow_rule.apply(tester);
+    aggregator.apply(tester);
 }
 
 TEST(Random, RandomNominal) {
     STest::Random::SeedValue::set(882558);
     Os::Test::Queue::Tester tester;
     Os::Test::Queue::Tester::Create create_rule;
-    Os::Test::Queue::Tester::Send send_rule;
-    Os::Test::Queue::Tester::Receive receive_rule;
+    Os::Test::Queue::Tester::SendNotFull send_rule;
+    Os::Test::Queue::Tester::SendFullNoBlock send_full_no_block_rule;
+    Os::Test::Queue::Tester::ReceiveNotEmpty receive_rule;
+    Os::Test::Queue::Tester::ReceiveEmptyNoBlock receive_empty_no_block_rule;
     Os::Test::Queue::Tester::Overflow overflow_rule;
     Os::Test::Queue::Tester::Underflow underflow_rule;
 
@@ -247,6 +321,8 @@ TEST(Random, RandomNominal) {
         &receive_rule,
         &overflow_rule,
         &underflow_rule,
+        &send_full_no_block_rule,
+        &receive_empty_no_block_rule
     };
 
     // Take the rules and place them into a random scenario

@@ -42,7 +42,7 @@ namespace Types {
       this->m_heap = nullptr;
     }
 
-    bool MaxHeap::create(NATIVE_UINT_TYPE capacity)
+    bool MaxHeap::create(FwSizeType capacity)
     {
       // The heap has already been created.. so delete
       // it and try again.
@@ -59,19 +59,19 @@ namespace Types {
       return true;
     }
 
-    bool MaxHeap::push(NATIVE_INT_TYPE value, NATIVE_UINT_TYPE id) {
+    bool MaxHeap::push(FwQueuePriorityType value, FwSizeType id) {
       // If the queue is full, return false:
       if(this->isFull()) {
         return false;
       }
 
       // Heap indexes:
-      NATIVE_UINT_TYPE parent;
-      NATIVE_UINT_TYPE index = this->m_size;
+      FwSizeType parent;
+      FwSizeType index = this->m_size;
 
       // Max loop bounds for bit flip protection:
-      NATIVE_UINT_TYPE maxIter = this->m_size+1;
-      NATIVE_UINT_TYPE maxCount = 0;
+      FwSizeType maxIter = this->m_size+1;
+      FwSizeType maxCount = 0;
 
       // Start at the bottom of the heap and work our ways
       // upwards until we find a parent that has a value
@@ -108,7 +108,7 @@ namespace Types {
       return true;
     }
 
-    bool MaxHeap::pop(NATIVE_INT_TYPE& value, NATIVE_UINT_TYPE& id) {
+    bool MaxHeap::pop(FwQueuePriorityType & value, FwSizeType& id) {
       // If there is nothing in the heap then
       // return false:
       if(this->isEmpty()) {
@@ -124,7 +124,7 @@ namespace Types {
       // the root position, and resize the heap.
       // This will put the smallest value in the
       // heap on the top, violating the heap property.
-      NATIVE_UINT_TYPE index = this->m_size-1;
+      FwSizeType index = this->m_size-1;
       // Fw::Logger::log("Putting on top: i: %u v: %d\n", index, this->m_heap[index].value);
       this->m_heap[0]= this->m_heap[index];
       --this->m_size;
@@ -147,7 +147,7 @@ namespace Types {
     }
 
     // Get the current size of the heap:
-    NATIVE_UINT_TYPE MaxHeap::getSize() {
+    FwSizeType MaxHeap::getSize() const {
       return this->m_size;
     }
 
@@ -156,14 +156,14 @@ namespace Types {
     // items pushed of the same priority will be popped in FIFO
     // order.
     void MaxHeap::heapify() {
-      NATIVE_UINT_TYPE index = 0;
-      NATIVE_UINT_TYPE left;
-      NATIVE_UINT_TYPE right;
-      NATIVE_UINT_TYPE largest;
+      FwSizeType index = 0;
+      FwSizeType left;
+      FwSizeType right;
+      FwSizeType largest;
 
       // Max loop bounds for bit flip protection:
-      NATIVE_UINT_TYPE maxIter = this->m_size+1;
-      NATIVE_UINT_TYPE maxCount = 0;
+      FwSizeType maxIter = this->m_size+1;
+      FwSizeType maxCount = 0;
 
       while(index <= this->m_size && maxCount < maxIter) {
         // Get the children indexes for this node:
@@ -218,13 +218,13 @@ namespace Types {
 
     // Return the maximum priority index between two nodes. If their
     // priorities are equal, return the oldest to keep the heap stable
-    NATIVE_UINT_TYPE MaxHeap::max(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b) {
+    FwSizeType MaxHeap::max(FwSizeType a, FwSizeType b) {
       FW_ASSERT(a < this->m_size, static_cast<FwAssertArgType>(a), static_cast<FwAssertArgType>(this->m_size));
       FW_ASSERT(b < this->m_size, static_cast<FwAssertArgType>(b), static_cast<FwAssertArgType>(this->m_size));
 
       // Extract the priorities:
-      NATIVE_INT_TYPE aValue = this->m_heap[a].value;
-      NATIVE_INT_TYPE bValue = this->m_heap[b].value;
+      FwQueuePriorityType aValue = this->m_heap[a].value;
+      FwQueuePriorityType bValue = this->m_heap[b].value;
 
       // If the priorities are equal, the "larger" one will be
       // the "older" one as determined by order pushed on to the
@@ -233,8 +233,8 @@ namespace Types {
       // Note: We check this first, because it is the most common
       // case. Let's save as many ticks as we can...
       if(aValue == bValue) {
-        NATIVE_UINT_TYPE aAge = this->m_order - this->m_heap[a].order;
-        NATIVE_UINT_TYPE bAge = this->m_order - this->m_heap[b].order;
+        FwSizeType aAge = this->m_order - this->m_heap[a].order;
+        FwSizeType bAge = this->m_order - this->m_heap[b].order;
         if(aAge > bAge) {
           return a;
         }
@@ -250,7 +250,7 @@ namespace Types {
     }
 
     // Swap two nodes in the heap:
-    void MaxHeap::swap(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b) {
+    void MaxHeap::swap(FwSizeType a, FwSizeType b) {
       FW_ASSERT(a < this->m_size, static_cast<FwAssertArgType>(a), static_cast<FwAssertArgType>(this->m_size));
       FW_ASSERT(b < this->m_size, static_cast<FwAssertArgType>(b), static_cast<FwAssertArgType>(this->m_size));
       Node temp = this->m_heap[a];
@@ -260,9 +260,9 @@ namespace Types {
 
     // Print heap, for debugging purposes only:
     void MaxHeap::print() {
-      NATIVE_UINT_TYPE index = 0;
-      NATIVE_UINT_TYPE left;
-      NATIVE_UINT_TYPE right;
+      FwSizeType index = 0;
+      FwSizeType left;
+      FwSizeType right;
       Fw::Logger::log("Printing Heap of Size: %d\n", this->m_size);
       while(index < this->m_size) {
         left = LCHILD(index);
