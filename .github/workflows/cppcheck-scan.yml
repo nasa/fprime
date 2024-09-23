@@ -55,13 +55,13 @@ jobs:
         run: xsltproc .github/scripts/cppcheck-xml2text.xslt cppcheck_err.xml | tee $GITHUB_STEP_SUMMARY cppcheck_err.txt
 
       - name: Upload SARIF file to GitHub Code Scanning Alerts
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ github.workspace }}/cppcheck_err.sarif
           category: "cppcheck"
 
       - name: Archive static analysis artifacts to download and view
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cppcheck-errors
           path: ./*cppcheck_err.*

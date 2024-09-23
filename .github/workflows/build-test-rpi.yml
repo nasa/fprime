@@ -37,14 +37,14 @@ jobs:
       run: mkdir -p artifact/RPI; cp -rp RPI/test RPI/build-artifacts artifact/RPI; cp -rp ci artifact
     # Build Artifacts
     - name: 'RPI Build Output'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: rpi-build
         path: artifact
         retention-days: 5
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: rpi-logs
@@ -64,7 +64,7 @@ jobs:
         . venv/bin/activate
         pip install -r requirements.txt
     - name: RPI Build Download
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: rpi-build
     - name: RPI Integration Tests
@@ -74,7 +74,7 @@ jobs:
         /bin/bash ci/tests/RPI-Ints.bash
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: pi-int-logs
