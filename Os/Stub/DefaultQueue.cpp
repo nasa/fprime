@@ -7,7 +7,7 @@
 #include "Os/Delegate.hpp"
 
 namespace Os {
-QueueInterface* QueueInterface::getDelegate(HandleStorage& aligned_new_memory) {
+QueueInterface* QueueInterface::getDelegate(QueueHandleStorage& aligned_new_memory) {
     return Os::Delegate::makeDelegate<QueueInterface, Os::Stub::Queue::StubQueue>(aligned_new_memory);
 }
 }
