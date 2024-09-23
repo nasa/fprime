@@ -42,14 +42,6 @@ namespace Svc {
 
   }
 
-  void BufferManagerComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    BufferManagerComponentBase::init(instance);
-  }
-
   BufferManagerComponentImpl ::
     ~BufferManagerComponentImpl()
   {

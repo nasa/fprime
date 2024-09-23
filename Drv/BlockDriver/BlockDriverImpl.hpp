@@ -12,7 +12,6 @@ namespace Drv {
         // Only called by derived class
         BlockDriverImpl(const char* compName);
 
-        void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instanceId = 0);
         ~BlockDriverImpl();
         // a little hack to get the reference running
         void callIsr();

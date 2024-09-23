@@ -26,13 +26,6 @@ class QueuedTest :
         const char* const compName //!< The component name
     );
 
-    //! Initialize QueuedTest object
-    void init(
-        NATIVE_INT_TYPE queueDepth, //!< The queue depth
-        NATIVE_INT_TYPE msgSize, //!< The message size
-        NATIVE_INT_TYPE instance = 0 //!< The instance number
-    );
-
     //! Destroy QueuedTest object
     ~QueuedTest();
 

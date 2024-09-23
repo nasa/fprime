@@ -12,7 +12,6 @@ namespace Ref {
 
             // Only called by derived class
             SendBuffImpl(const char* compName); //!< constructor
-            void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance = 0); //!< initialization function
             ~SendBuffImpl(); //!< destructor
 
         private:

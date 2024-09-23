@@ -200,13 +200,6 @@ namespace Svc {
           const char *const name //!< The component name
       );
 
-      //! Initialize object FileUplink
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          const NATIVE_INT_TYPE instance //!< The instance number
-      );
-
       //! Destroy object FileUplink
       //!
       ~FileUplink();

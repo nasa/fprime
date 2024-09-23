@@ -39,11 +39,6 @@ BufferAccumulator ::
       m_allocatorId(0) {
 }
 
-void BufferAccumulator ::init(const NATIVE_INT_TYPE queueDepth,
-                              const NATIVE_INT_TYPE instance) {
-  BufferAccumulatorComponentBase::init(queueDepth, instance);
-}
-
 BufferAccumulator ::~BufferAccumulator() {}
 
 // ----------------------------------------------------------------------

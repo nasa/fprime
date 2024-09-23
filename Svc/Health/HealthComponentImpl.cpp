@@ -37,6 +37,7 @@ namespace Svc {
     }
 
     void HealthImpl::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
+        FW_ASSERT(queueDepth < std::numeric_limits<U32>::max()); // Ensure there is no overflow in this type conversion
         HealthComponentBase::init(queueDepth, instance);
         this->queue_depth = static_cast<U32>(queueDepth);
 

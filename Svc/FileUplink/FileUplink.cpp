@@ -32,15 +32,6 @@ namespace Svc {
 
   }
 
-  void FileUplink ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    FileUplinkComponentBase::init(queueDepth, instance);
-  }
-
   FileUplink ::
     ~FileUplink()
   {

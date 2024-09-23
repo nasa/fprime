@@ -27,10 +27,6 @@ namespace Ref {
 
     }
 
-    void SendBuffImpl::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
-        SendBuffComponentBase::init(queueDepth,instance);
-    }
-
     void SendBuffImpl::SchedIn_handler(NATIVE_INT_TYPE portNum, U32 context) {
 
         // first, dequeue any messages

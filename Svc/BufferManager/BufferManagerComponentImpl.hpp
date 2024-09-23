@@ -68,12 +68,6 @@ namespace Svc
             const char *const compName /*!< The component name*/
         );
 
-        //! Initialize object BufferManager
-        //!
-        void init(
-            const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-        );
-
         // Defines a buffer bin
         struct BufferBin
         {

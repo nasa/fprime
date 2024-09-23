@@ -18,10 +18,6 @@ namespace FppTest {
 SmTest::SmTest(const char* const compName): 
     SmTestComponentBase(compName) {}
 
-void SmTest ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
-    SmTestComponentBase::init(queueDepth, instance);
-}
-
 SmTest ::~SmTest() {}
 
 // ----------------------------------------------------------------------

@@ -46,14 +46,6 @@ namespace Svc {
 
   }
 
-  void UdpReceiverComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    UdpReceiverComponentBase::init(instance);
-  }
-
   UdpReceiverComponentImpl ::
     ~UdpReceiverComponentImpl()
   {

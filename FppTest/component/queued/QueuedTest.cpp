@@ -22,16 +22,6 @@
 
   }
 
-  void QueuedTest ::
-    init(
-        NATIVE_INT_TYPE queueDepth,
-        NATIVE_INT_TYPE msgSize,
-        NATIVE_INT_TYPE instance
-    )
-  {
-    QueuedTestComponentBase::init(queueDepth, msgSize, instance);
-  }
-
   QueuedTest ::
     ~QueuedTest()
   {
