@@ -10,7 +10,7 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Os/QueueString.hpp>
 #include <Os/Os.hpp>
-
+#include <atomic>
 namespace Os {
 // Forward declaration for registry
 class QueueRegistry;

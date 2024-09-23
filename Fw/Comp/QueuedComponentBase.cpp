@@ -30,7 +30,7 @@ namespace Fw {
     }
 #endif
 
-    Os::Queue::QueueStatus QueuedComponentBase::createQueue(NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
+    Os::Queue::Queue::Status QueuedComponentBase::createQueue(FwSizeType depth, FwSizeType msgSize) {
 
         Os::QueueString queueName;
 #if FW_OBJECT_NAMES == 1
