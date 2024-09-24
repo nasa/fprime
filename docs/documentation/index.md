@@ -5,37 +5,37 @@ This section of the documentation captures how-to guides for various F´ develop
 
 <div class="grid cards" markdown>
 
--   <span class="card-title">__Tutorials__</span>
+-   <span class="card-title">__Tutorials__</span> *Learning-oriented*
 
     ---
 
-    This section of the documentation helps new users to learn F´ and walk through the most basic steps in developing an F´ application.
+    Tutorials walk through the essentials of F Prime development, from the canonical HelloWorld example and progressing to cross-compiling and deploying on hardware.
 
-    [:octicons-arrow-right-24: Tutorials](tutorials/index.md)
+    [Visit Tutorials](tutorials/index.md){ .md-button }
 
--   <span class="card-title">__User Manual__</span>
-
-    ---
-
-    This section of the documentation dives deeper into F' advanced features, concepts, and implementation.
-
-    [:octicons-arrow-right-24: User Manual](user-manual/index.md)
-
--   <span class="card-title">__How Tos__</span>
+-   <span class="card-title">__User Manual__</span> *Understanding-oriented*
 
     ---
 
-    This section of the documentation captures step by step how tos for various F´ development tasks.
+    The User Manual dives into F Prime design philosophy and architectural principles, providing deep understanding of how the framework operates.
 
-    [:octicons-arrow-right-24: How Tos](how-tos/index.md)
+    [Visit User Manual](user-manual/index.md){ .md-button }
 
--   <span class="card-title">__Reference__</span>
+-   <span class="card-title">__How To__</span> *Task-oriented*
 
     ---
 
-    This section of the documentation gives additional F' information such as C++, FPP, and CMake.
+    How-To guides offer step-by-step instructions for specific development tasks in F Prime.
 
-    [:octicons-arrow-right-24: Reference](reference/index.md)
+    [Visit How Tos](how-to/index.md){ .md-button }
+
+-   <span class="card-title">__Reference__</span> *Information-oriented*
+
+    ---
+
+    Technical reference for the F Prime C++ API, CMake API, FPP language specification and more.
+
+    [Visit Reference](reference/index.md){ .md-button }
 
 
 </div>

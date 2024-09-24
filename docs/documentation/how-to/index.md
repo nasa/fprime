@@ -5,7 +5,7 @@ hide:
 
 # How-To
 
-This section of the documentation captures step by step how tos for various F´ development tasks.
+How-To guides offer step-by-step instructions for specific development tasks in F Prime.
 
 
 <div class="grid cards" markdown>
@@ -16,7 +16,7 @@ This section of the documentation captures step by step how tos for various F´ 
 
     This how to will walk through the process of developing GDS plugins. 
 
-    [:octicons-arrow-right-24: Develop F´ GDS Plugins](develop-gds-plugins.md)
+    [View Develop F´ GDS Plugins](develop-gds-plugins.md){ .md-button }
 
 -   <span class="card-title">__F´ Library Development__</span>
 
@@ -24,7 +24,7 @@ This section of the documentation captures step by step how tos for various F´ 
 
     This how to will walk you through the structure and best practices in developing an F´ library.
 
-    [:octicons-arrow-right-24: Develop F´ Libraries](develop-fprime-libraries.md)
+    [View Develop F´ Libraries](develop-fprime-libraries.md){ .md-button }
 
 -   <span class="card-title">__Porting F´ To a New Platform__</span>
 
@@ -32,6 +32,6 @@ This section of the documentation captures step by step how tos for various F´ 
 
     This how to will walk you through porting F' to a new platform.
 
-    [:octicons-arrow-right-24: Porting Guide](porting-guide.md)
+    [View Porting Guide](porting-guide.md){ .md-button }
 
 </div>

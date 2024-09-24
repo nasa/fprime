@@ -5,7 +5,7 @@ hide:
 
 # User Manual
 
-This section of the documentation dives deeper into F' advanced features, concepts, and implementation.
+The User Manual dives into F Prime design philosophy and architectural principles, providing deep understanding of how the framework operates.
 
 
 <div class="grid cards" markdown>
@@ -14,7 +14,7 @@ This section of the documentation dives deeper into F' advanced features, concep
 
     ---
 
-    TBD
+    Technical overview of F Prime
 
     <!-- - [A More Complete Introduction to F´](overview/full-intro.md)
     - [A Brief Guide to the F´ Ground Data System](overview/gds-introduction.md)
@@ -30,7 +30,7 @@ This section of the documentation dives deeper into F' advanced features, concep
 
     ---
 
-    TBD
+    Dive into the mechanics and design philosophies of the F Prime framework
 
     <!-- - [Configuring F´](framework/configuring-fprime.md)
     - [F´ Implementation Classes](framework/implementation.md)
@@ -48,7 +48,7 @@ This section of the documentation dives deeper into F' advanced features, concep
 
     ---
 
-    TBD
+    In-depth user guide and language specification for FPP
 
     <!-- [:octicons-arrow-right-24: FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html) -->
 
@@ -56,7 +56,7 @@ This section of the documentation dives deeper into F' advanced features, concep
 
     ---
 
-    TBD
+    Dive into the F´ GDS and its testing framework
 
     <!-- - [The Discerning User's Guide to the F´ GDS CLI](gds/gds-cli.md)
     - [The GDS Dashboard](gds/gds-custom-dashboards.md)
@@ -68,7 +68,7 @@ This section of the documentation dives deeper into F' advanced features, concep
 
     ---
 
-    TBD
+    Explanation of the F Prime architecture and design philosophies
 
     <!-- - [F´ Software Architecture](design/fprime-architecture.md)
     - [Numerical Types Design](design/numerical-types.md)

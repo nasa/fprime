@@ -5,7 +5,7 @@ hide:
 
 # Reference
 
-This section of the documentation gives additional F' information such as C++, FPP, and CMake.
+Technical reference for the F Prime C++ API, CMake API, FPP language specification and more.
 
 
 <div class="grid cards" markdown>
@@ -16,7 +16,7 @@ This section of the documentation gives additional F' information such as C++, F
 
     This is the F´ automatically generated documentation for C++.
 
-    [:octicons-arrow-right-24: C++ Documentation](https://nasa.github.io/fprime/UsersGuide/api/c++/html/index.html)
+    [View C++ Documentation](https://nasa.github.io/fprime/UsersGuide/api/c++/html/index.html){ .md-button }
 
 -   <span class="card-title">__FPP Documentation__</span>
 
@@ -24,7 +24,7 @@ This section of the documentation gives additional F' information such as C++, F
 
     This document describes F Prime Prime, also known as FPP or F Double Prime.
 
-    [:octicons-arrow-right-24: FPP Documentation](fpp-user-guide.md)
+    [View FPP Documentation](fpp-user-guide.md){ .md-button }
 
 -   <span class="card-title">__CMake User API__</span>
 
@@ -32,7 +32,7 @@ This section of the documentation gives additional F' information such as C++, F
 
     This section of the documentation captures step by step how tos for various F´ development tasks.
 
-    [:octicons-arrow-right-24: CMAke User API Docuemtnation](cmake-api.md)
+    [View CMAke User API Docuemtnation](cmake-api.md){ .md-button }
 
 -   <span class="card-title">__GDS CLI Design__</span>
 
@@ -40,7 +40,7 @@ This section of the documentation gives additional F' information such as C++, F
 
     This guide is for programmers who intend to maintain and develop code for the Ground Data System's command-line interface suite.
 
-    [:octicons-arrow-right-24: GDS CLI - Developer's Guide](gds-cli-dev.md)
+    [View GDS CLI - Developer's Guide](gds-cli-dev.md){ .md-button }
 
 
 </div>

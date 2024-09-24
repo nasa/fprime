@@ -5,7 +5,7 @@ hide:
 
 # Tutorials
 
-These tutorials will walk the user from a basic getting-started guide through designing a full system for use with F´. This will help new users to learn F´ and walk through the most basic steps in developing an F´ application.
+Tutorials walk through the essentials of F Prime development, from the canonical HelloWorld example and progressing to cross-compiling and deploying on hardware.
 
 <div class="grid cards" markdown>
 
@@ -15,7 +15,7 @@ These tutorials will walk the user from a basic getting-started guide through de
 
     The Hello World tutorial walks new users through creating a new project, designing their first F´ component, and testing that component through an F´ deployment.
 
-    [:octicons-arrow-right-24: Hello World](hello-world.md)
+    [View Hello World Tutorial](../../tutorials-hello-world/docs/hello-world/){ .md-button }
 
 -   <span class="card-title">__LED Blinker__</span>
 
@@ -26,7 +26,7 @@ These tutorials will walk the user from a basic getting-started guide through de
     !!! note
         This tutorial can be run without hardware with the exception of section 6 “Running on Hardware”.
 
-    [:octicons-arrow-right-24: LED Blinker](led-blinker/index.md)
+    [View LED Blinker Tutorial](../../tutorials-led-blinker/docs/led-blinker/){ .md-button }
 
 -   <span class="card-title">__Math Component__</span>
 
@@ -34,7 +34,7 @@ These tutorials will walk the user from a basic getting-started guide through de
 
     The Math Component tutorial walks users through constructing a full F´ application including custom Ports, and Enumeration data types. Events, Telemetry, Commands, and Parameters are covered as well. Unit-Testing is also covered.
 
-    [:octicons-arrow-right-24: Math Component](../../tutorials-math-component/docs/math-component.md)
+    [View Math Component Tutorial](../../tutorials-math-component/docs/math-component/){ .md-button }
 
 -   <span class="card-title">__Cross-Compilation Setup Tutorial__</span>
 
@@ -42,15 +42,15 @@ These tutorials will walk the user from a basic getting-started guide through de
 
     Learn how to install all the dependencies required for cross-compiling for different architectures.
 
-    [:octicons-arrow-right-24: Cross-Compilation Setup Tutorial](cross-compilation.md)
+    [View Cross-Compilation Setup Tutorial](cross-compilation.md){ .md-button }
 
 -   <span class="card-title">__Arduino LED Blinker__</span>
 
     ---
 
-    This project is an implementation of the [F´ LED Blinker ARM Linux Tutorial](#) which will allow you to test on Arduino-based microcontrollers using the `fprime-arduino` [toolchain](#) instead of `fprime-arm-linux`.
+    This project is an implementation of the F´ LED Blinker ARM Linux Tutorial which will allow you to test on Arduino-based microcontrollers using the `fprime-arduino` toolchain instead of `fprime-arm-linux`.
 
-    [:octicons-arrow-right-24: Arduino LED Blinker](arduino-led-blinker/index.md)
+    [View Arduino LED Blinker Tutorial](../../tutorials-arduino-led-blinker/docs/arduino-led-blinker/){ .md-button }
 
 
 </div>
