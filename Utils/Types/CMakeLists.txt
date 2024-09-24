@@ -8,7 +8,6 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CircularBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/MaxHeap.cpp"
 )
 set(MOD_DEPS
   "Fw/Types"
@@ -27,8 +26,3 @@ set(UT_SOURCE_FILES
 )
 # STest Includes for this UT
 register_fprime_ut("Types_Circular_Buffer_ut_exe")
-
-set(UT_SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/MaxHeap/MaxHeapTest.cpp"
-)
-register_fprime_ut("Types_Max_Heap_test")

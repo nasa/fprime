@@ -4,7 +4,7 @@
 #include "Os/Queue.hpp"
 #include "Os/Mutex.hpp"
 #include "Os/Condition.hpp"
-#include "Utils/Types/MaxHeap.hpp"
+#include "Os/Generic/Types/MaxHeap.hpp"
 #ifndef OS_GENERIC_PRIORITYQUEUE_HPP
 #define OS_GENERIC_PRIORITYQUEUE_HPP
 

@@ -32,9 +32,9 @@ void Task::TaskRoutineWrapper::run(void* wrapper_pointer) {
     wrapper.m_task.m_lock.lock();
     Task::State state = wrapper.m_task.m_state;
     wrapper.m_task.m_lock.unlock();
-
+    FW_ASSERT(state != Task::State::NOT_STARTED);
     // Run once start code
-    if (state == Task::State::NOT_STARTED) {
+    if (state == Task::State::STARTING) {
         wrapper.m_task.m_lock.lock();
         wrapper.m_task.m_state = Task::State::RUNNING;
         wrapper.m_task.m_lock.unlock();

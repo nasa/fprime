@@ -5,6 +5,7 @@
 using PriorityCompare = std::greater<FwQueuePriorityType>;
 constexpr FwSizeType QUEUE_MESSAGE_SIZE_UPPER_BOUND = Os::Stub::Queue::Test::STUB_QUEUE_TEST_MESSAGE_MAX_SIZE;
 constexpr FwSizeType QUEUE_DEPTH_UPPER_BOUND = 100;
+constexpr bool TESTS_SUPPORT_BLOCKING = false;
 
 
 

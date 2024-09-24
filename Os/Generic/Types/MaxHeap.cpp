@@ -14,7 +14,7 @@
 //
 // ======================================================================
 
-#include "Utils/Types/MaxHeap.hpp"
+#include "Os/Generic/Types/MaxHeap.hpp"
 #include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
 #include <Fw/Logger/Logger.hpp>

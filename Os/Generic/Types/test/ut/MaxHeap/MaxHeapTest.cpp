@@ -1,4 +1,4 @@
-#include "Utils/Types/MaxHeap.hpp"
+#include "Os/Generic/Types/MaxHeap.hpp"
 #include <gtest/gtest.h>
 #include <cstdio>
 #include <cstring>

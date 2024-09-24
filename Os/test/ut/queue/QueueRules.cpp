@@ -272,6 +272,11 @@ void Os::Test::Queue::Tester::ReceiveEmptyNoBlock::action(Os::Test::Queue::Teste
   void Os::Test::Queue::Tester::SendBlock::action(
       Os::Test::Queue::Tester& state //!< The test state
   ) {
+      // Backend defined check
+      if (not TESTS_SUPPORT_BLOCKING) {
+          this->notify_other("SendUnblock");
+          return;
+      }
       PickedMessage pick = pick_message(state.shadow.messageSize);
       this->notify_other("SendUnblock");
       QueueInterface::Status status = state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::BLOCKING);
@@ -304,10 +309,15 @@ void Os::Test::Queue::Tester::ReceiveEmptyNoBlock::action(Os::Test::Queue::Teste
     void Os::Test::Queue::Tester::ReceiveBlock::action(
         Os::Test::Queue::Tester& state //!< The test state
     ) {
+        // Backend defined check
+        if (not TESTS_SUPPORT_BLOCKING) {
+            this->notify_other("ReceiveUnblock");
+            return;
+        }
+
         PickedMessage message;
         PickedMessage test;
         this->notify_other("ReceiveUnblock");
-
 
         QueueInterface::Status status = state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
                                                              QueueInterface::BlockingType::BLOCKING, message.size, message.priority);
