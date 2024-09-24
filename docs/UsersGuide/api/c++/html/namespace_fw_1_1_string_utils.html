@@ -93,12 +93,6 @@ $(document).ready(function(){initNavTree('namespace_fw_1_1_string_utils.html',''
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9eea8b0b384612042a665c4eb6bb684e"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">string_copy</a> (char *destination, const char *source, U32 num)</td></tr>
-<tr class="memdesc:a9eea8b0b384612042a665c4eb6bb684e"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy string with null-termination guaranteed  <a href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">More...</a><br /></td></tr>
-<tr class="separator:a9eea8b0b384612042a665c4eb6bb684e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcf5c356fc8ac545dc89b54abe0baa4f"><td class="memItemLeft" align="right" valign="top">U32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#afcf5c356fc8ac545dc89b54abe0baa4f">string_length</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *source, U32 max_len)</td></tr>
-<tr class="memdesc:afcf5c356fc8ac545dc89b54abe0baa4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the length of the source string or max_len if the string is longer than max_len.  <a href="namespace_fw_1_1_string_utils.html#afcf5c356fc8ac545dc89b54abe0baa4f">More...</a><br /></td></tr>
-<tr class="separator:afcf5c356fc8ac545dc89b54abe0baa4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84e222d75f681cdc41eba1fca43b0369"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a84e222d75f681cdc41eba1fca43b0369">string_copy</a> (char *destination, const char *source, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> num)</td></tr>
 <tr class="memdesc:a84e222d75f681cdc41eba1fca43b0369"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy string with null-termination guaranteed  <a href="namespace_fw_1_1_string_utils.html#a84e222d75f681cdc41eba1fca43b0369">More...</a><br /></td></tr>
 <tr class="separator:a84e222d75f681cdc41eba1fca43b0369"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -111,7 +105,7 @@ Functions</h2></td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a84e222d75f681cdc41eba1fca43b0369"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a84e222d75f681cdc41eba1fca43b0369">&#9670;&nbsp;</a></span>string_copy() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a84e222d75f681cdc41eba1fca43b0369">&#9670;&nbsp;</a></span>string_copy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -154,60 +148,12 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>destination buffer </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00022">22</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9eea8b0b384612042a665c4eb6bb684e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9eea8b0b384612042a665c4eb6bb684e">&#9670;&nbsp;</a></span>string_copy() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">char * Fw::StringUtils::string_copy </td>
-          <td>(</td>
-          <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>destination</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>source</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">U32&#160;</td>
-          <td class="paramname"><em>num</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>copy string with null-termination guaranteed </p>
-<p>Standard implementations of strncpy fail to guarantee the termination of a string with the null terminator. This implementation guarantees the string is properly null-terminated at the possible expense of the last character of the copied string being lost. The user is responsible for providing a destination large enough for the content and a null-character. Other behavior retains the behavior of strncpy.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">destination</td><td>destination buffer to hold copied contents </td></tr>
-    <tr><td class="paramname">source</td><td>source buffer to read content to copy </td></tr>
-    <tr><td class="paramname">num</td><td>length of destination buffer </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>destination buffer </dd></dl>
-
 <p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00006">6</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
 
 </div>
 </div>
 <a id="a45ee50c4e7384bd94639e62c12128dab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45ee50c4e7384bd94639e62c12128dab">&#9670;&nbsp;</a></span>string_length() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a45ee50c4e7384bd94639e62c12128dab">&#9670;&nbsp;</a></span>string_length()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -242,47 +188,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>length of the source string or max_len </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00039">39</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
-
-</div>
-</div>
-<a id="afcf5c356fc8ac545dc89b54abe0baa4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcf5c356fc8ac545dc89b54abe0baa4f">&#9670;&nbsp;</a></span>string_length() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">U32 Fw::StringUtils::string_length </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *&#160;</td>
-          <td class="paramname"><em>source</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">U32&#160;</td>
-          <td class="paramname"><em>max_len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>get the length of the source string or max_len if the string is longer than max_len. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">source</td><td>string to calculate the length </td></tr>
-    <tr><td class="paramname">max_len</td><td>the maximum length of the source string </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>length of the source string or max_len </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00013">13</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00023">23</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
 
 </div>
 </div>
@@ -336,7 +242,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>index of substring, -1 if not found </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00050">50</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00034">34</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
 
 </div>
 </div>

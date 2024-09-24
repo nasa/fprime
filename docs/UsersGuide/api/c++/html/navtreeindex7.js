@@ -5,11 +5,9 @@ var NAVTREEINDEX7 =
 "string_utils_8cpp.html":[30,0,9,17,30],
 "string_utils_8cpp_source.html":[30,0,9,17,30],
 "string_utils_8hpp.html":[30,0,9,17,31],
-"string_utils_8hpp.html#a45ee50c4e7384bd94639e62c12128dab":[30,0,9,17,31,2],
+"string_utils_8hpp.html#a45ee50c4e7384bd94639e62c12128dab":[30,0,9,17,31,1],
 "string_utils_8hpp.html#a84e222d75f681cdc41eba1fca43b0369":[30,0,9,17,31,0],
-"string_utils_8hpp.html#a9eea8b0b384612042a665c4eb6bb684e":[30,0,9,17,31,1],
-"string_utils_8hpp.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0":[30,0,9,17,31,4],
-"string_utils_8hpp.html#afcf5c356fc8ac545dc89b54abe0baa4f":[30,0,9,17,31,3],
+"string_utils_8hpp.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0":[30,0,9,17,31,2],
 "string_utils_8hpp_source.html":[30,0,9,17,31],
 "stub_2_console_8cpp.html":[30,0,10,6,0],
 "stub_2_console_8cpp_source.html":[30,0,10,6,0],
@@ -249,5 +247,7 @@ var NAVTREEINDEX7 =
 "svc_com_stub_component.html#autotoc_md756":[14,15,0,3,1],
 "svc_com_stub_component.html#autotoc_md757":[14,15,0,3,2],
 "svc_com_stub_component.html#autotoc_md758":[14,15,0,3,2,0],
-"svc_com_stub_component.html#autotoc_md759":[14,15,0,3,2,1]
+"svc_com_stub_component.html#autotoc_md759":[14,15,0,3,2,1],
+"svc_com_stub_component.html#autotoc_md760":[14,15,0,3,2,2],
+"svc_deframer_component.html":[14,16]
 };

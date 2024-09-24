@@ -1,7 +1,5 @@
 var NAVTREEINDEX10 =
 {
-"tlm_buffer_8cpp.html":[30,0,9,15,1],
-"tlm_buffer_8cpp_source.html":[30,0,9,15,1],
 "tlm_buffer_8hpp.html":[30,0,9,15,2],
 "tlm_buffer_8hpp_source.html":[30,0,9,15,2],
 "tlm_chan_8cpp.html":[30,0,13,42,1],
@@ -249,5 +247,7 @@ var NAVTREEINDEX10 =
 "class_drv_1_1_block_driver_impl.html":[29,0,1,33],
 "class_drv_1_1_block_driver_impl.html#a0285ec71c3fd27f8385fe24683a8e41a":[29,0,1,33,2],
 "class_drv_1_1_block_driver_impl.html#a0c193be609891ed95f5168a617d9c64c":[29,0,1,33,1],
-"class_drv_1_1_block_driver_impl.html#a3fccddcab1d8689aac26c72c43cd1151":[29,0,1,33,0]
+"class_drv_1_1_block_driver_impl.html#a3fccddcab1d8689aac26c72c43cd1151":[29,0,1,33,0],
+"class_drv_1_1_data_buffer.html":[29,0,1,34],
+"class_drv_1_1_data_buffer.html#a110c6407ab545d600387b8f973d8c7a5":[29,0,1,34,1]
 };

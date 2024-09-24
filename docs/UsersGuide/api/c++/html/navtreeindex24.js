@@ -1,7 +1,5 @@
 var NAVTREEINDEX24 =
 {
-"class_svc_1_1_command_dispatcher_component_base.html#aa64496130be263424fb462f3f08112db":[29,0,5,15,8],
-"class_svc_1_1_command_dispatcher_component_base.html#aa7b506607967f6ce1d440f1e375d3fbe":[29,0,5,15,70],
 "class_svc_1_1_command_dispatcher_component_base.html#aabb72f3f8214c899679693728721fcd9":[29,0,5,15,64],
 "class_svc_1_1_command_dispatcher_component_base.html#ab033a58cce399954e3f4346913559631":[29,0,5,15,4],
 "class_svc_1_1_command_dispatcher_component_base.html#ab03665c7b58c949ea4c4c1327de4dddc":[29,0,5,15,58],
@@ -249,5 +247,7 @@ var NAVTREEINDEX24 =
 "class_svc_1_1_dp_manager_component_base.html#a1f6a716ce87b5356e780d2dfd6653d68":[29,0,5,34,5],
 "class_svc_1_1_dp_manager_component_base.html#a20d3c7eed5a2f665ffa74606b3443925":[29,0,5,34,47],
 "class_svc_1_1_dp_manager_component_base.html#a234035e0b23bee8a7cde61a6b42b3d2c":[29,0,5,34,50],
-"class_svc_1_1_dp_manager_component_base.html#a2bb8a4bbb822e72cadb56ee1a3d1492f":[29,0,5,34,23]
+"class_svc_1_1_dp_manager_component_base.html#a2bb8a4bbb822e72cadb56ee1a3d1492f":[29,0,5,34,23],
+"class_svc_1_1_dp_manager_component_base.html#a2d1a03b60255e7711663ad12543dba9f":[29,0,5,34,56],
+"class_svc_1_1_dp_manager_component_base.html#a2ed80557107cae765a28f26126c7f8ed":[29,0,5,34,54]
 };

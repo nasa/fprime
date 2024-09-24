@@ -1,7 +1,5 @@
 var NAVTREEINDEX11 =
 {
-"class_drv_1_1_data_buffer.html":[29,0,1,34],
-"class_drv_1_1_data_buffer.html#a110c6407ab545d600387b8f973d8c7a5":[29,0,1,34,1],
 "class_drv_1_1_data_buffer.html#a2c9f28fb02012fff74dbc627e246acf7":[29,0,1,34,7],
 "class_drv_1_1_data_buffer.html#a42ff4a4453fba3e91653ac6a71fa4af1":[29,0,1,34,0],
 "class_drv_1_1_data_buffer.html#a9fbf2f26b0ead1f308a640aa17cffecc":[29,0,1,34,3],
@@ -249,5 +247,7 @@ var NAVTREEINDEX11 =
 "class_drv_1_1_linux_uart_driver_component_base.html#a4140f76bc82c2f28846a76aaff7e61ca":[29,0,1,26,27],
 "class_drv_1_1_linux_uart_driver_component_base.html#a4f005145ee9d44aff2f5dc7a361fe4f1":[29,0,1,26,21],
 "class_drv_1_1_linux_uart_driver_component_base.html#a501832baf532174391fde2a7b9925281":[29,0,1,26,33],
-"class_drv_1_1_linux_uart_driver_component_base.html#a52572659329ceab03898fd7bd2a67cd8":[29,0,1,26,43]
+"class_drv_1_1_linux_uart_driver_component_base.html#a52572659329ceab03898fd7bd2a67cd8":[29,0,1,26,43],
+"class_drv_1_1_linux_uart_driver_component_base.html#a53640abc1fad85bb59a77dc2ccb0e08b":[29,0,1,26,45],
+"class_drv_1_1_linux_uart_driver_component_base.html#a53d1e563c014989aa1220cf11e16aa4b":[29,0,1,26,36]
 };
