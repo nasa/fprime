@@ -18,10 +18,6 @@ namespace Svc {
         public:
             ActiveLoggerImpl(const char* compName); //!< constructor
             virtual ~ActiveLoggerImpl(); //!< destructor
-            void init(
-                    NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-                    NATIVE_INT_TYPE instance /*!< The instance number*/
-                    ); //!< initialization function
         PROTECTED:
         PRIVATE:
             void LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args);

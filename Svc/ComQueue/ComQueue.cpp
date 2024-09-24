@@ -35,10 +35,6 @@ ComQueue ::ComQueue(const char* const compName)
 
 ComQueue ::~ComQueue() {}
 
-void ComQueue ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
-    ComQueueComponentBase::init(queueDepth, instance);
-}
-
 void ComQueue ::cleanup() {
     // Deallocate memory ignoring error conditions
     if ((this->m_allocator != nullptr) && (this->m_allocation != nullptr)) {

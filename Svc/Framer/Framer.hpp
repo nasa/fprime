@@ -39,11 +39,6 @@ class Framer : public FramerComponentBase, public FramingProtocolInterface {
     Framer(const char* const compName /*!< The component name*/
     );
 
-    //! Initialize object Framer
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-    );
-
     //! \brief Setup this component with a supplied framing protocol
     //!
     void setup(FramingProtocol& protocol /*!< Protocol used in framing */);

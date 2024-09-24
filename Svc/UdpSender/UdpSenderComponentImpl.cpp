@@ -40,16 +40,6 @@ namespace Svc {
 
   }
 
-  void UdpSenderComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE msgSize,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    UdpSenderComponentBase::init(queueDepth, msgSize, instance);
-  }
-
   UdpSenderComponentImpl ::
     ~UdpSenderComponentImpl()
   {

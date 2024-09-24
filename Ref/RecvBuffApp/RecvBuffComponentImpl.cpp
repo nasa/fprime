@@ -19,11 +19,6 @@ namespace Ref {
         this->m_stats.setPacketStatus(PacketRecvStatus::PACKET_STATE_NO_PACKETS);
     }
 
-
-    void RecvBuffImpl::init(NATIVE_INT_TYPE instanceId) {
-        RecvBuffComponentBase::init(instanceId);
-    }
-
     RecvBuffImpl::~RecvBuffImpl() {
 
     }

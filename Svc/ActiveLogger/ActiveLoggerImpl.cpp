@@ -40,13 +40,6 @@ namespace Svc {
     ActiveLoggerImpl::~ActiveLoggerImpl() {
     }
 
-    void ActiveLoggerImpl::init(
-            NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-            NATIVE_INT_TYPE instance /*!< The instance number*/
-            ) {
-        ActiveLoggerComponentBase::init(queueDepth,instance);
-    }
-
     void ActiveLoggerImpl::LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args) {
 
         // make sure ID is not zero. Zero is reserved for ID filter.

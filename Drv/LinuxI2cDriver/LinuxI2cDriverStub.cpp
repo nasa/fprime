@@ -29,14 +29,6 @@ LinuxI2cDriver ::LinuxI2cDriver(
 
   }
 
-  void LinuxI2cDriver ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    LinuxI2cDriverComponentBase::init(instance);
-  }
-
   LinuxI2cDriver ::
     ~LinuxI2cDriver()
   {

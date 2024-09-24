@@ -21,14 +21,6 @@ Empty ::
 
 }
 
-void Empty ::
-  init(
-      NATIVE_INT_TYPE instance
-  )
-{
-  EmptyComponentBase::init(instance);
-}
-
 Empty ::
   ~Empty()
 {

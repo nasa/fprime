@@ -28,15 +28,6 @@ namespace Ref {
 
   }
 
-  void PingReceiverComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    PingReceiverComponentBase::init(queueDepth, instance);
-  }
-
   PingReceiverComponentImpl ::
     ~PingReceiverComponentImpl()
   {

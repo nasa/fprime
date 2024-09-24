@@ -42,11 +42,6 @@ class SmTest :
     //! Construct object SmTest
     SmTest(const char* const compName);                     //!< The component name
 
-    //! Initialize object SmTest
-    void init(const NATIVE_INT_TYPE queueDepth,   //!< The queue depth
-              const NATIVE_INT_TYPE instance = 0  //!< The instance number
-    );
-
     //! Destroy object SmTest
     ~SmTest();
 

@@ -36,10 +36,6 @@ DpTest::DpTest(const char* const compName,
     }
 }
 
-void DpTest ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
-    DpTestComponentBase::init(queueDepth, instance);
-}
-
 DpTest ::~DpTest() {}
 
 // ----------------------------------------------------------------------

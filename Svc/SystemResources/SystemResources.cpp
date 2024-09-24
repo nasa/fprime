@@ -57,10 +57,6 @@ SystemResources ::SystemResources(const char* const compName)
     m_cpu_tlm_functions[15] = &Svc::SystemResources::tlmWrite_CPU_15;
 }
 
-void SystemResources ::init(const NATIVE_INT_TYPE instance) {
-    SystemResourcesComponentBase::init(instance);
-}
-
 SystemResources ::~SystemResources() {}
 
 // ----------------------------------------------------------------------

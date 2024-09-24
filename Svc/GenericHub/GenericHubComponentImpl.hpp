@@ -42,11 +42,6 @@ class GenericHubComponentImpl : public GenericHubComponentBase {
     GenericHubComponentImpl(const char* const compName /*!< The component name*/
     );
 
-    //! Initialize object GenericHub
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-    );
-
     //! Destroy object GenericHub
     //!
     ~GenericHubComponentImpl();
