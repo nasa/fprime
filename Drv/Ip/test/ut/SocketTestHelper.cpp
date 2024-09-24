@@ -40,7 +40,7 @@ void fill_random_data(U8 *data, U32 size) {
 
 void validate_random_buffer(Fw::Buffer &buffer, U8 *data) {
     validate_random_data(buffer.getData(), data, buffer.getSize());
-    // buffer.setSize(0);
+    buffer.setSize(0);
 }
 
 void fill_random_buffer(Fw::Buffer &buffer) {
@@ -61,31 +61,6 @@ void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver, NATIVE_INT_TYPE s
     Drv::Test::validate_random_data(buffer_out, buffer_in, MAX_DRV_TEST_MESSAGE_SIZE);
 }
 
-/*
-This doesn't belong here anymore
-bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations) {
-    for (U32 i = 0; i < iterations; i++) {
-        if (open == socket.isOpened()) {
-            return true;
-        }
-        Os::Task::delay(Fw::Time(0, 10000));
-    }
-    return false;
-}
-*/
-
-/*
-This doesn't belong here anymore
-bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations) {
-    for (U32 i = 0; i < iterations; i++) {
-        if (open == socket.isStarted()) {
-            return true;
-        }
-        Os::Task::delay(Fw::Time(0, 10000));
-    }
-    return false;
-}
-*/
 U64 get_configured_delay_ms() {
     return (static_cast<U64>(SOCKET_RETRY_INTERVAL.getSeconds()) * 1000) +
            (static_cast<U64>(SOCKET_RETRY_INTERVAL.getUSeconds()) / 1000);

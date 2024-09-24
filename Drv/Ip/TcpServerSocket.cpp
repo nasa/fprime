@@ -13,7 +13,6 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <FpConfig.hpp>
-#include <iostream>
 
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <socket.h>

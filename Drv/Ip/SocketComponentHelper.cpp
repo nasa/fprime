@@ -44,9 +44,7 @@ SocketIpStatus SocketComponentHelper::startup() {
 
 bool SocketComponentHelper::isStarted() {
     bool is_started = false;
-    this->m_lock.lock();
     is_started = this->m_started;
-    this->m_lock.unlock();
     return is_started;
 }
 
@@ -84,7 +82,6 @@ SocketIpStatus SocketComponentHelper::reconnect() {
     // Handle opening
 
     // Open a network connection if it has not already been open
-    // TODO: improve this message
     if (this->isStarted() and (not this->isOpened())) {
         status = this->open();
     }

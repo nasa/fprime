@@ -122,7 +122,6 @@ SocketIpStatus IpSocket::open(NATIVE_INT_TYPE& fd) {
     // Open a TCP socket for incoming commands, and outgoing data if not using UDP
     status = this->openProtocol(fd);
     if (status != SOCK_SUCCESS) {
-        // TODO: move this to SocketComponentHelper?
         FW_ASSERT(fd == -1); // Ensure we properly kept closed on error
         return status;
     }

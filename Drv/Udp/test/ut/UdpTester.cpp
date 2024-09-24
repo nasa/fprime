@@ -165,12 +165,10 @@ void UdpTester ::test_advanced_reconnect() {
 
 void UdpTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
-    if(recvStatus == Drv::RecvStatus::RECV_OK){
-        // Make sure we can get to unblocking the spinner
-        EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
-        Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
-        m_spinner = true;
-    }
+    // Make sure we can get to unblocking the spinner
+    EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
+    Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
+    m_spinner = true;
     delete[] recvBuffer.getData();
 }
 

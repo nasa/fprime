@@ -66,7 +66,6 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
             (this->component.isOpened())) {
             // Force the sockets not to hang, if at all possible
 
-            // TODO: is server.m_base_fd right?
             Drv::Test::force_recv_timeout(this->component.m_fd, this->component.getSocketHandler());
             Drv::Test::force_recv_timeout(client_fd, client);
             m_data_buffer.setSize(sizeof(m_data_storage));
@@ -91,7 +90,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
 
         // Properly stop the client on the last iteration
         if ((1 + i) == iterations && recv_thread) {
-            // TODO: for some reason you have to stop the server receive thread before closing the client or the server will erroneously receive
+            this->component.shutdown();
             this->component.stop();
             client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
             this->component.close();
@@ -163,12 +162,10 @@ void TcpServerTester ::test_advanced_reconnect() {
 
 void TcpServerTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
-    if(recvStatus == Drv::RecvStatus::RECV_OK){
-        // Make sure we can get to unblocking the spinner
-        EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
-        Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
-        m_spinner = true;
-    }
+    // Make sure we can get to unblocking the spinner
+    EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
+    Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
+    m_spinner = true;
     delete[] recvBuffer.getData();
 }
 

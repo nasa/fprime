@@ -157,12 +157,10 @@ void TcpClientTester ::test_advanced_reconnect() {
   {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     // Make sure we can get to unblocking the spinner
-    if(recvStatus == Drv::RecvStatus::RECV_OK){
-        EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
-        Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
-        m_data_buffer.setSize(0);
-        m_spinner = true;
-    }
+    EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
+    Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
+    m_data_buffer.setSize(0);
+    m_spinner = true;
     delete[] recvBuffer.getData();
 }
 
