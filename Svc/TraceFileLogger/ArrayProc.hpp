@@ -32,10 +32,10 @@ namespace Svc {
 
         //!  \brief Set pointer to the array 
         //!
-        //!  \param element value to be added to the array 
-        //!
-        //!  \return true if adding an element to the array was successful, false otherwise
-        bool set_array(U32 *array_ptr, U8 array_size); 
+        //!  \param array_ptr pointer to the array to be used 
+        //!  \param array_size array size 
+        //!  
+        void set_array(U32 *array_ptr, U8 array_size); 
 
         //!  \brief Add an element to the array 
         //!

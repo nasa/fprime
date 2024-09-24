@@ -18,7 +18,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     ArrayProc::ArrayProc() :
-       m_currentSize(0),m_maxSize(10),m_storedArray(NULL) 
+       m_maxSize(10),m_currentSize(0),m_storedArray(NULL) 
     {
     }
     ArrayProc::~ArrayProc()
@@ -29,8 +29,7 @@ namespace Svc {
     // Member Functions
     // ----------------------------------------------------------------------
 
-    ArrayProc::set_array(U32 *array_ptr, U8 array_size) :
-       m_currentSize(0) 
+    void ArrayProc::set_array(U32 *array_ptr, U8 array_size)
     {
         m_storedArray = array_ptr;
         m_maxSize = array_size;
@@ -53,7 +52,7 @@ namespace Svc {
             return false;
         }
         else {
-            for(U8 i = elementIndex; i < this->m_currentSize, i++) {
+            for(U8 i = elementIndex; i < this->m_currentSize ; i++) {
                 this->m_storedArray[i] = this->m_storedArray[i+1];
             }
             this->m_currentSize--;
@@ -63,7 +62,7 @@ namespace Svc {
 
     bool ArrayProc::search_array(U32 element, U8 *index) {
         for(U8 i = 0 ; i < m_currentSize ; i++) {
-            if(this->m_storedArray[i] = element) {
+            if(this->m_storedArray[i] == element) {
                 if (index != NULL) *index = i;
                 return true;
             }
