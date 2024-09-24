@@ -34,21 +34,21 @@ namespace Svc {
         //!
         //!  \param element value to be added to the array 
         //!
-        //!  \return true if adding an eleemnt to the array was successful, false otherwise
+        //!  \return true if adding an element to the array was successful, false otherwise
         bool set_array(U32 *array_ptr, U8 array_size); 
 
         //!  \brief Add an element to the array 
         //!
         //!  \param element value to be added to the array 
         //!
-        //!  \return true if adding an eleemnt to the array was successful, false otherwise
+        //!  \return true if adding an element to the array was successful, false otherwise
         bool add_element(U32 element); 
 
         //!  \brief Delete element from the array and shift the rest of the array up 
         //!
         //!  \param element value to be deleted from the array 
         //!
-        //!  \return true if deleting an eleemnt from the array was successful, false otherwise
+        //!  \return true if deleting an element from the array was successful, false otherwise
         bool delete_element(U32 element);
 
         //!  \brief Search for an element in the array
@@ -56,7 +56,7 @@ namespace Svc {
         //!  \param element value to be searched in the array
         //!  \param arrayIndex returns the index where (if) the array element exists
         //!
-        //!  \return true if the eleemnt is found in the array, false otherwise
+        //!  \return true if the element is found in the array, false otherwise
         bool search_array(U32 element, U8 *index); 
 
         // ----------------------------------------------------------------------

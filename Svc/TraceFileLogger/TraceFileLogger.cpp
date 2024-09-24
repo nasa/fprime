@@ -170,7 +170,7 @@ namespace Svc {
                 //TODO: Should we generate an event here, letting user know that this specific filter is disabled?
                 return;
             }
-            //Only log trace Ids that're not filtered out  
+            //Only log trace Ids that are not filtered out  
             if(this->filterTraceId.search_array(id,NULL)) {
                 return;
             }
@@ -189,7 +189,7 @@ namespace Svc {
             printf("File size %d",buf_ref.getBuffLength());
            }
            //printf("Buffer size is :%d, Full buffer length: %d\n",m_file_buffer.getSize(),buf_ref.getBuffLength()); 
-           //Note: Because its a circular file we're writing the full buffer capacatiy to the file
+           //Note: Because its a circular file we're writing the full buffer capacity to the file
            //      instead of the actual buffer size (variable based on number of args). This will 
            //      ensure when the file is overwritten, we preserve old records
            this->write_log_file(m_file_buffer.getData(),traceSize);

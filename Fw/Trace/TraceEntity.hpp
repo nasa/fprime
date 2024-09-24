@@ -4,8 +4,8 @@
  *      Author: sreddy
  */
 
-#ifndef TRACEPACKET_HPP_
-#define TRACEPACKET_HPP_
+#ifndef TRACEENTITY_HPP_
+#define TRACEENTITY_HPP_
 
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/Trace/TraceBuffer.hpp>
@@ -38,4 +38,4 @@ namespace Fw {
 
 } /* namespace Fw */
 
-#endif /* TRACEPACKET_HPP_ */
+#endif /* TRACEENTITY_HPP_ */

@@ -27,9 +27,9 @@
 #define FILE_NAME_MAX 255
 #endif
 
-// Trace ID Filter size
-#ifndef FILTER_TRACEID_SIZE 
-#define FILTER_TRACEID_SIZE 10
+// Trace ID filter array size
+#ifndef FILTER_TRACE_ID_SIZE 
+#define FILTER_TRACE_ID_SIZE 10
 #endif
 
 //Max size of the Trace buffer including metadata (id,timetag,arguments) 
@@ -82,7 +82,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //!
     //!  The filter method selects which trace types to be logged and which to ignore.
     //!
-    //!  \param tracetypes provides bitmasks for tracetypes to select.
+    //!  \param traceType_bitmask provides bitmask for trace types to select.
     //!  \param enable to turn on/off filtering .
     void filter(U16 traceType_bitmask,bool enable);
 
@@ -91,7 +91,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //!  The process trace ID storage lets you add/remove trace IDs from the array
     //!  that is used to evaluate which trace IDs to be ignored while logging 
     //!
-    //!  \param tracetypes provides bitmasks for tracetypes to select.
+    //!  \param traceId which trace id to enable / disable.
     //!  \param enable to turn on/off filtering .
     void process_traceId_storage(U32 traceId, bool enable);
 
@@ -172,7 +172,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //filter trace types
     U16 m_traceFilter; //Select which trace types to allow logging
     //Array to filter on traceIds
-    U32 traceId_array[FILTER_TRACEID_SIZE];
+    U32 traceId_array[FILTER_TRACE_ID_SIZE];
     ArrayProc filterTraceId;
 
     // ----------------------------------------------------------------------

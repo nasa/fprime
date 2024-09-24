@@ -10,7 +10,7 @@ Trace Requirements in FPrime:
 	- It is a way to create time correlation events as a reaction for resetting software. 
 2. Trace shall provide a port to log the following:
 	- Event ID : A unique identifier recording a “Trace Event”
-	- Time Tag : Caputes a high precision timestamp
+	- Time Tag : Captures a high precision timestamp
 	- Client Data : A small sample of user arguments recorded into trace buffer
 3. Trace shall create trace points and log events in software automatically for thread switching(?) and  ...TBD, ask Tim
 4. Trace shall provide a port for other components or user defined points to log events during software execution.

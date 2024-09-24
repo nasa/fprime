@@ -40,7 +40,7 @@ void TraceFileLoggerTester ::test_file() {
     
     //Write to file until it circles back to the beginning into 2 entries
     int file_entries = (TEST_TRACE_FILE_SIZE_MAX / FW_TRACE_MAX_SER_SIZE)+2;
-    U8 type_entry = 0; //to interate over trace type 
+    U8 type_entry = 0; //to iterate over trace type 
     U8 buffer[11] = {0x15,0x26,0x37,0x48,0x59,0xAA,0xBB,0xCC,0xDD,0xEE,0xFF}; //arguments to write
     Fw::TraceBuffer trace_buffer_args(buffer,sizeof(buffer));
     
