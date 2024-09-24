@@ -8,6 +8,5 @@ var class_svc_1_1_buffer_repeater =
     ] ],
     [ "BufferRepeater", "class_svc_1_1_buffer_repeater.html#adcd5d59e48ecc6f193b0b06fef19b98f", null ],
     [ "~BufferRepeater", "class_svc_1_1_buffer_repeater.html#aa955a7d4e7737752a9eff74825eeaf4c", null ],
-    [ "configure", "class_svc_1_1_buffer_repeater.html#aa930088430abac60ad6da0f1e910b8fd", null ],
-    [ "init", "class_svc_1_1_buffer_repeater.html#a6db5f02665454b3e28f8964573488903", null ]
+    [ "configure", "class_svc_1_1_buffer_repeater.html#aa930088430abac60ad6da0f1e910b8fd", null ]
 ];

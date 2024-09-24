@@ -117,9 +117,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a37f22ada0a0a3a3295fe4d877c74eb44"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_prm_db_impl.html#a37f22ada0a0a3a3295fe4d877c74eb44">PrmDbImpl</a> (const char *name)</td></tr>
 <tr class="memdesc:a37f22ada0a0a3a3295fe4d877c74eb44"><td class="mdescLeft">&#160;</td><td class="mdescRight">PrmDb constructor.  <a href="class_svc_1_1_prm_db_impl.html#a37f22ada0a0a3a3295fe4d877c74eb44">More...</a><br /></td></tr>
 <tr class="separator:a37f22ada0a0a3a3295fe4d877c74eb44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a781bd91fe03a59219f898f7348935979"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_prm_db_impl.html#a781bd91fe03a59219f898f7348935979">init</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance)</td></tr>
-<tr class="memdesc:a781bd91fe03a59219f898f7348935979"><td class="mdescLeft">&#160;</td><td class="mdescRight">PrmDb initialization function.  <a href="class_svc_1_1_prm_db_impl.html#a781bd91fe03a59219f898f7348935979">More...</a><br /></td></tr>
-<tr class="separator:a781bd91fe03a59219f898f7348935979"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a554dc11a5ed16e1b04aacf43e10c8231"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_prm_db_impl.html#a554dc11a5ed16e1b04aacf43e10c8231">configure</a> (const char *file)</td></tr>
 <tr class="memdesc:a554dc11a5ed16e1b04aacf43e10c8231"><td class="mdescLeft">&#160;</td><td class="mdescRight">PrmDb configure method.  <a href="class_svc_1_1_prm_db_impl.html#a554dc11a5ed16e1b04aacf43e10c8231">More...</a><br /></td></tr>
 <tr class="separator:a554dc11a5ed16e1b04aacf43e10c8231"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -469,7 +466,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>PrmDb destructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="prm_db_impl_8cpp_source.html#l00255">255</a> of file <a class="el" href="prm_db_impl_8cpp_source.html">PrmDbImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="prm_db_impl_8cpp_source.html#l00251">251</a> of file <a class="el" href="prm_db_impl_8cpp_source.html">PrmDbImpl.cpp</a>.</p>
 
 </div>
 </div>
@@ -503,46 +500,6 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a781bd91fe03a59219f898f7348935979"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a781bd91fe03a59219f898f7348935979">&#9670;&nbsp;</a></span>init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Svc::PrmDbImpl::init </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>queueDepth</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>instance</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>PrmDb initialization function. </p>
-<p>The initialization function for the component creates the message queue and initializes the component base classes.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">queueDepth</td><td>queue depth for messages </td></tr>
-    <tr><td class="paramname">instance</td><td>instance of component, if more than one is needed. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="prm_db_impl_8cpp_source.html#l00053">53</a> of file <a class="el" href="prm_db_impl_8cpp_source.html">PrmDbImpl.cpp</a>.</p>
-
-</div>
-</div>
 <a id="a01e79b090692c03d4f937b79c8193aa0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a01e79b090692c03d4f937b79c8193aa0">&#9670;&nbsp;</a></span>readParamFile()</h2>
 
@@ -561,7 +518,7 @@ Additional Inherited Members</h2></td></tr>
 <p>PrmDb file read function. </p>
 <p>The readFile function reads the set of parameters from the file passed in to the constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="prm_db_impl_8cpp_source.html#l00258">258</a> of file <a class="el" href="prm_db_impl_8cpp_source.html">PrmDbImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="prm_db_impl_8cpp_source.html#l00254">254</a> of file <a class="el" href="prm_db_impl_8cpp_source.html">PrmDbImpl.cpp</a>.</p>
 
 </div>
 </div>

@@ -122,39 +122,34 @@ $(document).ready(function(){initNavTree('_linux_timer_component_impl_8hpp_sourc
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> compName </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      );</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">init</a>(</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;          <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance = 0 </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      );</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <a class="code" href="class_svc_1_1_linux_timer_component_impl.html#a7f4151599b32bfb090a1aa7309c4ae29">~LinuxTimerComponentImpl</a>();</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      <a class="code" href="class_svc_1_1_linux_timer_component_impl.html#a7f4151599b32bfb090a1aa7309c4ae29">~LinuxTimerComponentImpl</a>();</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_linux_timer_component_impl.html#ab64ef4c8fb4501a1c32e942481231b4a">startTimer</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> interval); </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_linux_timer_component_impl.html#a4cb8954d40fc46b6841e0fc40a134f81">quit</a>();</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_linux_timer_component_impl.html#ab64ef4c8fb4501a1c32e942481231b4a">startTimer</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> interval); </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_linux_timer_component_impl.html#a4cb8954d40fc46b6841e0fc40a134f81">quit</a>();</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    PRIVATE:</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <a class="code" href="class_os_1_1_mutex.html">Os::Mutex</a> m_mutex; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      <span class="keyword">volatile</span> <span class="keywordtype">bool</span> m_quit; </div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    PRIVATE:</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      <a class="code" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> m_timer;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <a class="code" href="class_os_1_1_mutex.html">Os::Mutex</a> m_mutex; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <span class="keyword">volatile</span> <span class="keywordtype">bool</span> m_quit; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <a class="code" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> m_timer;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    };</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;} <span class="comment">// end namespace Svc</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    };</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;} <span class="comment">// end namespace Svc</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_linux_timer_component_ac_8hpp_html"><div class="ttname"><a href="linux_timer_component_ac_8hpp.html">LinuxTimerComponentAc.hpp</a></div></div>
 <div class="ttc" id="a_mutex_8hpp_html"><div class="ttname"><a href="mutex_8hpp.html">Mutex.hpp</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
 <div class="ttc" id="aclass_os_1_1_mutex_html"><div class="ttname"><a href="class_os_1_1_mutex.html">Os::Mutex</a></div><div class="ttdef"><b>Definition:</b> <a href="mutex_8hpp_source.html#l00048">Mutex.hpp:48</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_linux_timer_component_base_html"><div class="ttname"><a href="class_svc_1_1_linux_timer_component_base.html">Svc::LinuxTimerComponentBase</a></div><div class="ttdoc">Auto-generated base for LinuxTimer component.</div><div class="ttdef"><b>Definition:</b> <a href="linux_timer_component_ac_8hpp_source.html#l00022">LinuxTimerComponentAc.hpp:24</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_linux_timer_component_impl_html"><div class="ttname"><a href="class_svc_1_1_linux_timer_component_impl.html">Svc::LinuxTimerComponentImpl</a></div><div class="ttdef"><b>Definition:</b> <a href="linux_timer_component_impl_8hpp_source.html#l00021">LinuxTimerComponentImpl.hpp:23</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_linux_timer_component_impl_html_a4cb8954d40fc46b6841e0fc40a134f81"><div class="ttname"><a href="class_svc_1_1_linux_timer_component_impl.html#a4cb8954d40fc46b6841e0fc40a134f81">Svc::LinuxTimerComponentImpl::quit</a></div><div class="ttdeci">void quit()</div><div class="ttdoc">Quit timer.</div><div class="ttdef"><b>Definition:</b> <a href="linux_timer_component_impl_common_8cpp_source.html#l00046">LinuxTimerComponentImplCommon.cpp:46</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_linux_timer_component_impl_html_a7f4151599b32bfb090a1aa7309c4ae29"><div class="ttname"><a href="class_svc_1_1_linux_timer_component_impl.html#a7f4151599b32bfb090a1aa7309c4ae29">Svc::LinuxTimerComponentImpl::~LinuxTimerComponentImpl</a></div><div class="ttdeci">~LinuxTimerComponentImpl()</div><div class="ttdef"><b>Definition:</b> <a href="linux_timer_component_impl_common_8cpp_source.html#l00040">LinuxTimerComponentImplCommon.cpp:41</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_linux_timer_component_impl_html_a4cb8954d40fc46b6841e0fc40a134f81"><div class="ttname"><a href="class_svc_1_1_linux_timer_component_impl.html#a4cb8954d40fc46b6841e0fc40a134f81">Svc::LinuxTimerComponentImpl::quit</a></div><div class="ttdeci">void quit()</div><div class="ttdoc">Quit timer.</div><div class="ttdef"><b>Definition:</b> <a href="linux_timer_component_impl_common_8cpp_source.html#l00038">LinuxTimerComponentImplCommon.cpp:38</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_linux_timer_component_impl_html_a7f4151599b32bfb090a1aa7309c4ae29"><div class="ttname"><a href="class_svc_1_1_linux_timer_component_impl.html#a7f4151599b32bfb090a1aa7309c4ae29">Svc::LinuxTimerComponentImpl::~LinuxTimerComponentImpl</a></div><div class="ttdeci">~LinuxTimerComponentImpl()</div><div class="ttdef"><b>Definition:</b> <a href="linux_timer_component_impl_common_8cpp_source.html#l00032">LinuxTimerComponentImplCommon.cpp:33</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_linux_timer_component_impl_html_ab64ef4c8fb4501a1c32e942481231b4a"><div class="ttname"><a href="class_svc_1_1_linux_timer_component_impl.html#ab64ef4c8fb4501a1c32e942481231b4a">Svc::LinuxTimerComponentImpl::startTimer</a></div><div class="ttdeci">void startTimer(NATIVE_INT_TYPE interval)</div><div class="ttdoc">Start timer.</div><div class="ttdef"><b>Definition:</b> <a href="linux_timer_component_impl_task_delay_8cpp_source.html#l00020">LinuxTimerComponentImplTaskDelay.cpp:20</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_linux_timer_component_impl_html_ae25a8aacabb9d10256bb19513ceecab9"><div class="ttname"><a href="class_svc_1_1_linux_timer_component_impl.html#ae25a8aacabb9d10256bb19513ceecab9">Svc::LinuxTimerComponentImpl::LinuxTimerComponentImpl</a></div><div class="ttdeci">LinuxTimerComponentImpl(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="linux_timer_component_impl_common_8cpp_source.html#l00023">LinuxTimerComponentImplCommon.cpp:24</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_timer_val_html"><div class="ttname"><a href="class_svc_1_1_timer_val.html">Svc::TimerVal</a></div><div class="ttdoc">Serializable class for carrying timer values.</div><div class="ttdef"><b>Definition:</b> <a href="timer_val_8hpp_source.html#l00022">TimerVal.hpp:22</a></div></div>

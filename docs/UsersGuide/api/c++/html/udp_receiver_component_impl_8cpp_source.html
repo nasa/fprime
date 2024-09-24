@@ -136,209 +136,201 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  }</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#aeaaf74a6304195acbf5db506f01a6526">   49</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#aeaaf74a6304195acbf5db506f01a6526">UdpReceiverComponentImpl ::</a></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#aeaaf74a6304195acbf5db506f01a6526">    init</a>(</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    )</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    UdpReceiverComponentBase::init(instance);</div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">   49</a></span>&#160;  <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">UdpReceiverComponentImpl ::</a></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">    ~UdpReceiverComponentImpl</a>()</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_fd != -1) {</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;          close(this-&gt;m_fd);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      }</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  }</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">   57</a></span>&#160;  <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">UdpReceiverComponentImpl ::</a></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">    ~UdpReceiverComponentImpl</a>()</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  {</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_fd != -1) {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          close(this-&gt;m_fd);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  }</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#a875e65a3ecc1d0fe7003e4e6b5d5fb9d">   65</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a875e65a3ecc1d0fe7003e4e6b5d5fb9d">UdpReceiverComponentImpl::open</a>(</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">char</span>* port</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;          ) {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="comment">//create a UDP socket</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      this-&gt;m_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <span class="keywordflow">if</span> (-1 == this-&gt;m_fd) {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;          <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> arg(strerror(errno));</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;          this-&gt;log_WARNING_HI_UR_SocketError(arg);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      }</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#a875e65a3ecc1d0fe7003e4e6b5d5fb9d">   57</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a875e65a3ecc1d0fe7003e4e6b5d5fb9d">UdpReceiverComponentImpl::open</a>(</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">char</span>* port</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;          ) {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="comment">//create a UDP socket</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      this-&gt;m_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      <span class="keywordflow">if</span> (-1 == this-&gt;m_fd) {</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;          <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> arg(strerror(errno));</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;          this-&gt;log_WARNING_HI_UR_SocketError(arg);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      sockaddr_in saddr;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="comment">// zero out the structure</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      memset(&amp;saddr, 0, <span class="keyword">sizeof</span>(saddr));</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      saddr.sin_family = AF_INET;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      saddr.sin_port = htons(atoi(port));</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      saddr.sin_addr.s_addr = htonl(INADDR_ANY);</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      sockaddr_in saddr;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      <span class="comment">// zero out the structure</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      memset(&amp;saddr, 0, <span class="keyword">sizeof</span>(saddr));</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      saddr.sin_family = AF_INET;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      saddr.sin_port = htons(atoi(port));</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      saddr.sin_addr.s_addr = htonl(INADDR_ANY);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      <span class="comment">//bind socket to port</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> status = bind(this-&gt;m_fd , (<span class="keyword">struct</span> sockaddr*)&amp;saddr, <span class="keyword">sizeof</span>(saddr));</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      <span class="keywordflow">if</span> (-1 == status) {</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;          <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> arg(strerror(errno));</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;          this-&gt;log_WARNING_HI_UR_BindError(arg);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;          close(this-&gt;m_fd);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;          this-&gt;m_fd = -1;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;          this-&gt;log_ACTIVITY_HI_UR_PortOpened(atoi(port));</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      }</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  }</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#aca9509c37a2094ce6e6cc66a87298de8">   96</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#aca9509c37a2094ce6e6cc66a87298de8">UdpReceiverComponentImpl::startThread</a>(</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> priority, </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> stackSize, </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> affinity </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;          ) {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      <a class="code" href="class_os_1_1_task_string.html">Os::TaskString</a> name(this-&gt;getObjName());</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      Os::Task::TaskStatus stat = this-&gt;m_socketTask.<a class="code" href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">start</a>(</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;              name,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;              0,</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;              priority,</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;              stackSize,</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;              UdpReceiverComponentImpl::workerTask,</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;              <span class="keyword">this</span>,</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;              affinity);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(Os::Task::TASK_OK == stat,stat);</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  }</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl ::</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    Sched_handler(</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        U32 context</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    )</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      this-&gt;tlmWrite_UR_BytesReceived(this-&gt;m_bytesReceived);</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      this-&gt;tlmWrite_UR_PacketsReceived(this-&gt;m_packetsReceived);</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      this-&gt;tlmWrite_UR_PacketsDropped(this-&gt;m_packetsDropped);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  }</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl::workerTask(<span class="keywordtype">void</span>* ptr) {</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;      <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a765166cf52158b3f40e1dcf9078b0827">UdpReceiverComponentImpl</a> *compPtr = <span class="keyword">static_cast&lt;</span><a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a765166cf52158b3f40e1dcf9078b0827">UdpReceiverComponentImpl</a>*<span class="keyword">&gt;</span>(ptr);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;          compPtr-&gt;doRecv();</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      }</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  }</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl::doRecv() {</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      <span class="comment">// wait for data from the socket</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> psize = recvfrom(</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;              this-&gt;m_fd,</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;              this-&gt;m_recvBuff.getBuffAddr(),</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;              this-&gt;m_recvBuff.getBuffCapacity(),</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;              MSG_WAITALL,</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;              0,</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;              0);</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      <span class="keywordflow">if</span> (-1 == psize) {</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;          <span class="keywordflow">if</span> (errno != EINTR) {</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;              <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> arg(strerror(errno));</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;              this-&gt;log_WARNING_HI_UR_RecvError(arg);</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;          }</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;          <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      }</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      <span class="comment">// reset buffer for deserialization</span></div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> stat = this-&gt;m_recvBuff.setBuffLen(psize);</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a> == stat, stat);</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      <span class="comment">// get sequence number</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;      <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> seqNum;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      stat = this-&gt;m_recvBuff.deserialize(seqNum);</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      <span class="comment">// check for deserialization error or port number too high</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;      <span class="keywordflow">if</span> (stat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;          this-&gt;log_WARNING_HI_UR_DecodeError(DECODE_SEQ,stat);</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;          this-&gt;m_decodeErrors++;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;          <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;      }</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      <span class="comment">// track sequence number</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_firstSeq) {</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;          <span class="comment">// first time, set tracked sequence number equal to the one received</span></div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;          this-&gt;m_currSeq = seqNum;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;          this-&gt;m_firstSeq = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;          <span class="comment">// make sure sequence number has gone up by one</span></div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;          <span class="keywordflow">if</span> (seqNum != ++this-&gt;m_currSeq) {</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;              <span class="comment">// will only be right if it rolls over only once, but better than nothing</span></div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;              <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> diff = seqNum - this-&gt;m_currSeq;</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;              this-&gt;m_packetsDropped += diff;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;              <span class="comment">// send EVR</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;              this-&gt;log_WARNING_HI_UR_DroppedPacket(diff);</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;              <span class="comment">// reset to current sequence</span></div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;              this-&gt;m_currSeq = seqNum;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;          }</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;      }</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;      <span class="comment">// get port number</span></div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;      <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> portNum;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;      stat = this-&gt;m_recvBuff.deserialize(portNum);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      <span class="comment">// check for deserialization error or port number too high</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;      <span class="keywordflow">if</span> (stat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a> or portNum &gt; this-&gt;getNum_PortsOut_OutputPorts()) {</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;          this-&gt;log_WARNING_HI_UR_DecodeError(DECODE_PORT,stat);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      <span class="comment">//bind socket to port</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> status = bind(this-&gt;m_fd , (<span class="keyword">struct</span> sockaddr*)&amp;saddr, <span class="keyword">sizeof</span>(saddr));</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      <span class="keywordflow">if</span> (-1 == status) {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> arg(strerror(errno));</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;          this-&gt;log_WARNING_HI_UR_BindError(arg);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;          close(this-&gt;m_fd);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          this-&gt;m_fd = -1;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;          this-&gt;log_ACTIVITY_HI_UR_PortOpened(atoi(port));</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#aca9509c37a2094ce6e6cc66a87298de8">   88</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#aca9509c37a2094ce6e6cc66a87298de8">UdpReceiverComponentImpl::startThread</a>(</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> priority, </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> stackSize, </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;          <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> affinity </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;          ) {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      <a class="code" href="class_os_1_1_task_string.html">Os::TaskString</a> name(this-&gt;getObjName());</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      Os::Task::TaskStatus stat = this-&gt;m_socketTask.<a class="code" href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">start</a>(</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;              name,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;              0,</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;              priority,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;              stackSize,</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;              UdpReceiverComponentImpl::workerTask,</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;              <span class="keyword">this</span>,</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;              affinity);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(Os::Task::TASK_OK == stat,stat);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl ::</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    Sched_handler(</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        U32 context</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    )</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      this-&gt;tlmWrite_UR_BytesReceived(this-&gt;m_bytesReceived);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      this-&gt;tlmWrite_UR_PacketsReceived(this-&gt;m_packetsReceived);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      this-&gt;tlmWrite_UR_PacketsDropped(this-&gt;m_packetsDropped);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  }</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl::workerTask(<span class="keywordtype">void</span>* ptr) {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a765166cf52158b3f40e1dcf9078b0827">UdpReceiverComponentImpl</a> *compPtr = <span class="keyword">static_cast&lt;</span><a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a765166cf52158b3f40e1dcf9078b0827">UdpReceiverComponentImpl</a>*<span class="keyword">&gt;</span>(ptr);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;          compPtr-&gt;doRecv();</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl::doRecv() {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;      <span class="comment">// wait for data from the socket</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> psize = recvfrom(</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;              this-&gt;m_fd,</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;              this-&gt;m_recvBuff.getBuffAddr(),</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;              this-&gt;m_recvBuff.getBuffCapacity(),</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;              MSG_WAITALL,</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;              0,</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;              0);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      <span class="keywordflow">if</span> (-1 == psize) {</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;          <span class="keywordflow">if</span> (errno != EINTR) {</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;              <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> arg(strerror(errno));</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;              this-&gt;log_WARNING_HI_UR_RecvError(arg);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;          }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;          <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;      }</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;      <span class="comment">// reset buffer for deserialization</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> stat = this-&gt;m_recvBuff.setBuffLen(psize);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a> == stat, stat);</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      <span class="comment">// get sequence number</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> seqNum;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      stat = this-&gt;m_recvBuff.deserialize(seqNum);</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      <span class="comment">// check for deserialization error or port number too high</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      <span class="keywordflow">if</span> (stat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;          this-&gt;log_WARNING_HI_UR_DecodeError(DECODE_SEQ,stat);</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;          this-&gt;m_decodeErrors++;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;          <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      }</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      <span class="comment">// track sequence number</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_firstSeq) {</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;          <span class="comment">// first time, set tracked sequence number equal to the one received</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;          this-&gt;m_currSeq = seqNum;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;          this-&gt;m_firstSeq = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;          <span class="comment">// make sure sequence number has gone up by one</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;          <span class="keywordflow">if</span> (seqNum != ++this-&gt;m_currSeq) {</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;              <span class="comment">// will only be right if it rolls over only once, but better than nothing</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;              <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> diff = seqNum - this-&gt;m_currSeq;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;              this-&gt;m_packetsDropped += diff;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;              <span class="comment">// send EVR</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;              this-&gt;log_WARNING_HI_UR_DroppedPacket(diff);</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;              <span class="comment">// reset to current sequence</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;              this-&gt;m_currSeq = seqNum;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;          }</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;      }</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;      <span class="comment">// get port number</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;      <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> portNum;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;      stat = this-&gt;m_recvBuff.deserialize(portNum);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;      <span class="comment">// check for deserialization error or port number too high</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;      <span class="keywordflow">if</span> (stat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a> or portNum &gt; this-&gt;getNum_PortsOut_OutputPorts()) {</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;          this-&gt;log_WARNING_HI_UR_DecodeError(DECODE_PORT,stat);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;          this-&gt;m_decodeErrors++;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;          <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;      }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;      <span class="comment">// get buffer for port</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      stat = this-&gt;m_recvBuff.deserialize(this-&gt;m_portBuff);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;      <span class="keywordflow">if</span> (stat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;          this-&gt;log_WARNING_HI_UR_DecodeError(DECODE_BUFFER,stat);</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;          this-&gt;m_decodeErrors++;</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;          <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;      }</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;      <span class="comment">// get buffer for port</span></div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      stat = this-&gt;m_recvBuff.deserialize(this-&gt;m_portBuff);</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;      <span class="keywordflow">if</span> (stat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;          this-&gt;log_WARNING_HI_UR_DecodeError(DECODE_BUFFER,stat);</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;          this-&gt;m_decodeErrors++;</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;          <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      }</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;      <span class="comment">// call output port</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;      <a class="code" href="udp_receiver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Calling port %d with %d bytes.\n&quot;</span>,portNum,this-&gt;m_portBuff.getBuffLength());</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;      <span class="keywordflow">if</span> (this-&gt;isConnected_PortsOut_OutputPort(portNum)) {</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;          <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> stat = this-&gt;PortsOut_out(portNum,this-&gt;m_portBuff);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;          <span class="comment">// If had issues deserializing the data, then report it:</span></div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;          <span class="keywordflow">if</span> (stat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;              this-&gt;log_WARNING_HI_UR_DecodeError(PORT_SEND,stat);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;              this-&gt;m_decodeErrors++;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;          }</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;          this-&gt;m_packetsReceived++;</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;          this-&gt;m_bytesReceived += psize;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;      }</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  }</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="preprocessor">#ifdef BUILD_UT</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer&amp; UdpReceiverComponentImpl::UdpSerialBuffer::operator=(<span class="keyword">const</span> UdpReceiverComponentImpl::UdpSerialBuffer&amp; other) {</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;      this-&gt;resetSer();</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;      this-&gt;serialize(other.getBuffAddr(),other.getBuffLength(),<span class="keyword">true</span>);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;      <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  }</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; other) : <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">sizeof</span>(this-&gt;m_buff)&gt;= other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a633632bd7c80f10bc1dd97cf2b67ca1b">getBuffLength</a>(),<span class="keyword">sizeof</span>(this-&gt;m_buff),other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a633632bd7c80f10bc1dd97cf2b67ca1b">getBuffLength</a>());</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;      memcpy(this-&gt;m_buff,other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a0b5e0fdec08aa08e7eedd2e9bde10b7a">getBuffAddr</a>(),other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a633632bd7c80f10bc1dd97cf2b67ca1b">getBuffLength</a>());</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;      this-&gt;setBuffLen(other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a633632bd7c80f10bc1dd97cf2b67ca1b">getBuffLength</a>());</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  }</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;          <span class="keyword">const</span> UdpReceiverComponentImpl::UdpSerialBuffer&amp; other) : <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">sizeof</span>(this-&gt;m_buff)&gt;= other.getBuffLength(),<span class="keyword">sizeof</span>(this-&gt;m_buff),other.getBuffLength());</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;      memcpy(this-&gt;m_buff,other.m_buff,other.getBuffLength());</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;      this-&gt;setBuffLen(other.getBuffLength());</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  }</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      <span class="comment">// call output port</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      <a class="code" href="udp_receiver_component_impl_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Calling port %d with %d bytes.\n&quot;</span>,portNum,this-&gt;m_portBuff.getBuffLength());</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;      <span class="keywordflow">if</span> (this-&gt;isConnected_PortsOut_OutputPort(portNum)) {</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;          <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> stat = this-&gt;PortsOut_out(portNum,this-&gt;m_portBuff);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;          <span class="comment">// If had issues deserializing the data, then report it:</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;          <span class="keywordflow">if</span> (stat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;              this-&gt;log_WARNING_HI_UR_DecodeError(PORT_SEND,stat);</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;              this-&gt;m_decodeErrors++;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;          }</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;          this-&gt;m_packetsReceived++;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;          this-&gt;m_bytesReceived += psize;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160; </div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;      }</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="preprocessor">#ifdef BUILD_UT</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer&amp; UdpReceiverComponentImpl::UdpSerialBuffer::operator=(<span class="keyword">const</span> UdpReceiverComponentImpl::UdpSerialBuffer&amp; other) {</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;      this-&gt;resetSer();</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;      this-&gt;serialize(other.getBuffAddr(),other.getBuffLength(),<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;      <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  }</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; other) : <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">sizeof</span>(this-&gt;m_buff)&gt;= other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a633632bd7c80f10bc1dd97cf2b67ca1b">getBuffLength</a>(),<span class="keyword">sizeof</span>(this-&gt;m_buff),other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a633632bd7c80f10bc1dd97cf2b67ca1b">getBuffLength</a>());</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;      memcpy(this-&gt;m_buff,other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a0b5e0fdec08aa08e7eedd2e9bde10b7a">getBuffAddr</a>(),other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a633632bd7c80f10bc1dd97cf2b67ca1b">getBuffLength</a>());</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;      this-&gt;setBuffLen(other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a633632bd7c80f10bc1dd97cf2b67ca1b">getBuffLength</a>());</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  }</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;          <span class="keyword">const</span> UdpReceiverComponentImpl::UdpSerialBuffer&amp; other) : <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">sizeof</span>(this-&gt;m_buff)&gt;= other.getBuffLength(),<span class="keyword">sizeof</span>(this-&gt;m_buff),other.getBuffLength());</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;      memcpy(this-&gt;m_buff,other.m_buff,other.getBuffLength());</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;      this-&gt;setBuffLen(other.getBuffLength());</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  }</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(): <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  }</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(): <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;  }</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;} <span class="comment">// end namespace Svc</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;} <span class="comment">// end namespace Svc</span></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00026">BasicTypes.h:26</a></div></div>
@@ -353,11 +345,10 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a633632bd7c80f10bc1dd97cf2b67ca1b"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a633632bd7c80f10bc1dd97cf2b67ca1b">Fw::SerializeBufferBase::getBuffLength</a></div><div class="ttdeci">Serializable::SizeType getBuffLength() const</div><div class="ttdoc">returns current buffer size</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00651">Serializable.cpp:651</a></div></div>
 <div class="ttc" id="aclass_os_1_1_task_html_adf42d4bb8ec737eb1755607e8919912c"><div class="ttname"><a href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">Os::Task::start</a></div><div class="ttdeci">Status start(const Arguments &amp;arguments) override</div><div class="ttdoc">start the task</div><div class="ttdef"><b>Definition:</b> <a href="task_8cpp_source.html#l00082">Task.cpp:82</a></div></div>
 <div class="ttc" id="aclass_os_1_1_task_string_html"><div class="ttname"><a href="class_os_1_1_task_string.html">Os::TaskString</a></div><div class="ttdef"><b>Definition:</b> <a href="task_string_8hpp_source.html#l00016">TaskString.hpp:16</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_a363a7f17ef5757aede389595faff21cd"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">Svc::UdpReceiverComponentImpl::~UdpReceiverComponentImpl</a></div><div class="ttdeci">~UdpReceiverComponentImpl()</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00057">UdpReceiverComponentImpl.cpp:58</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_a363a7f17ef5757aede389595faff21cd"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">Svc::UdpReceiverComponentImpl::~UdpReceiverComponentImpl</a></div><div class="ttdeci">~UdpReceiverComponentImpl()</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00049">UdpReceiverComponentImpl.cpp:50</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_a765166cf52158b3f40e1dcf9078b0827"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#a765166cf52158b3f40e1dcf9078b0827">Svc::UdpReceiverComponentImpl::UdpReceiverComponentImpl</a></div><div class="ttdeci">UdpReceiverComponentImpl(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00034">UdpReceiverComponentImpl.cpp:35</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_a875e65a3ecc1d0fe7003e4e6b5d5fb9d"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#a875e65a3ecc1d0fe7003e4e6b5d5fb9d">Svc::UdpReceiverComponentImpl::open</a></div><div class="ttdeci">void open(const char *port)</div><div class="ttdoc">Open the connection.</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00065">UdpReceiverComponentImpl.cpp:65</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_aca9509c37a2094ce6e6cc66a87298de8"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#aca9509c37a2094ce6e6cc66a87298de8">Svc::UdpReceiverComponentImpl::startThread</a></div><div class="ttdeci">void startThread(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE affinity)</div><div class="ttdoc">start worker thread</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00096">UdpReceiverComponentImpl.cpp:96</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_aeaaf74a6304195acbf5db506f01a6526"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#aeaaf74a6304195acbf5db506f01a6526">Svc::UdpReceiverComponentImpl::init</a></div><div class="ttdeci">void init(const NATIVE_INT_TYPE instance=0)</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00049">UdpReceiverComponentImpl.cpp:50</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_a875e65a3ecc1d0fe7003e4e6b5d5fb9d"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#a875e65a3ecc1d0fe7003e4e6b5d5fb9d">Svc::UdpReceiverComponentImpl::open</a></div><div class="ttdeci">void open(const char *port)</div><div class="ttdoc">Open the connection.</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00057">UdpReceiverComponentImpl.cpp:57</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_aca9509c37a2094ce6e6cc66a87298de8"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#aca9509c37a2094ce6e6cc66a87298de8">Svc::UdpReceiverComponentImpl::startThread</a></div><div class="ttdeci">void startThread(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE affinity)</div><div class="ttdoc">start worker thread</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00088">UdpReceiverComponentImpl.cpp:88</a></div></div>
 <div class="ttc" id="anamespace_fw_html"><div class="ttname"><a href="namespace_fw.html">Fw</a></div><div class="ttdef"><b>Definition:</b> <a href="fpp_constants_ac_8hpp_source.html#l00116">FppConstantsAc.hpp:116</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a></div><div class="ttdeci">SerializeStatus</div><div class="ttdoc">forward declaration for string</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00014">Serializable.hpp:14</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a></div><div class="ttdeci">@ FW_SERIALIZE_OK</div><div class="ttdoc">Serialization/Deserialization operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00015">Serializable.hpp:15</a></div></div>

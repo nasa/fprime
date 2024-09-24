@@ -112,8 +112,6 @@ Inheritance diagram for Svc::TlmPacketizer:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0817ad404a7455a8a40b6b48cb77072d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_tlm_packetizer.html#a0817ad404a7455a8a40b6b48cb77072d">TlmPacketizer</a> (const char *const compName)</td></tr>
 <tr class="separator:a0817ad404a7455a8a40b6b48cb77072d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaeb45117f2c2d2a5ef8e6538df4d7498"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_tlm_packetizer.html#aaeb45117f2c2d2a5ef8e6538df4d7498">init</a> (const <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, const <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance=0)</td></tr>
-<tr class="separator:aaeb45117f2c2d2a5ef8e6538df4d7498"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fece8d5777c28ffda5853d527a80084"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_tlm_packetizer.html#a5fece8d5777c28ffda5853d527a80084">setPacketList</a> (const <a class="el" href="struct_svc_1_1_tlm_packetizer_packet_list.html">TlmPacketizerPacketList</a> &amp;packetList, const <a class="el" href="struct_svc_1_1_tlm_packetizer_packet.html">Svc::TlmPacketizerPacket</a> &amp;ignoreList, const <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> startLevel)</td></tr>
 <tr class="separator:a5fece8d5777c28ffda5853d527a80084"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeac053094f4984790aad7a972da0a3f5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_tlm_packetizer.html#aeac053094f4984790aad7a972da0a3f5">~TlmPacketizer</a> (void)</td></tr>
@@ -450,49 +448,11 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Destroy object <a class="el" href="class_svc_1_1_tlm_packetizer.html">TlmPacketizer</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="tlm_packetizer_8cpp_source.html#l00054">54</a> of file <a class="el" href="tlm_packetizer_8cpp_source.html">TlmPacketizer.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="aaeb45117f2c2d2a5ef8e6538df4d7498"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaeb45117f2c2d2a5ef8e6538df4d7498">&#9670;&nbsp;</a></span>init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Svc::TlmPacketizer::init </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>queueDepth</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>instance</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Initialize object <a class="el" href="class_svc_1_1_tlm_packetizer.html">TlmPacketizer</a> </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">queueDepth</td><td>The queue depth </td></tr>
-    <tr><td class="paramname">instance</td><td>The instance number </td></tr>
-  </table>
-  </dd>
-</dl>
-
 <p class="definition">Definition at line <a class="el" href="tlm_packetizer_8cpp_source.html#l00050">50</a> of file <a class="el" href="tlm_packetizer_8cpp_source.html">TlmPacketizer.cpp</a>.</p>
 
 </div>
 </div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a5fece8d5777c28ffda5853d527a80084"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5fece8d5777c28ffda5853d527a80084">&#9670;&nbsp;</a></span>setPacketList()</h2>
 
@@ -525,7 +485,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tlm_packetizer_8cpp_source.html#l00056">56</a> of file <a class="el" href="tlm_packetizer_8cpp_source.html">TlmPacketizer.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tlm_packetizer_8cpp_source.html#l00052">52</a> of file <a class="el" href="tlm_packetizer_8cpp_source.html">TlmPacketizer.cpp</a>.</p>
 
 </div>
 </div>

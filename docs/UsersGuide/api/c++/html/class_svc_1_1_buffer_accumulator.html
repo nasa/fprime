@@ -112,8 +112,6 @@ Inheritance diagram for Svc::BufferAccumulator:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:afb6555f4eba7aa8248fe2e0143fde9ac"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator.html#afb6555f4eba7aa8248fe2e0143fde9ac">BufferAccumulator</a> (const char *const compName)</td></tr>
 <tr class="separator:afb6555f4eba7aa8248fe2e0143fde9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac71af9e662c99c5e311bc26d96ff215a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator.html#ac71af9e662c99c5e311bc26d96ff215a">init</a> (const <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, const <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance=0)</td></tr>
-<tr class="separator:ac71af9e662c99c5e311bc26d96ff215a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae350b00ba65798fe0467accb7577a15e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator.html#ae350b00ba65798fe0467accb7577a15e">~BufferAccumulator</a> ()</td></tr>
 <tr class="separator:ae350b00ba65798fe0467accb7577a15e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a16be0726f4574705ce2290e6a1ff4b74"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_buffer_accumulator.html#a16be0726f4574705ce2290e6a1ff4b74">allocateQueue</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> identifier, <a class="el" href="class_fw_1_1_mem_allocator.html">Fw::MemAllocator</a> &amp;allocator, <a class="el" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> maxNumBuffers)</td></tr>
@@ -472,7 +470,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Destroy <a class="el" href="class_svc_1_1_buffer_accumulator.html">BufferAccumulator</a> instance </p>
 
-<p class="definition">Definition at line <a class="el" href="buffer_accumulator_8cpp_source.html#l00047">47</a> of file <a class="el" href="buffer_accumulator_8cpp_source.html">BufferAccumulator.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_accumulator_8cpp_source.html#l00042">42</a> of file <a class="el" href="buffer_accumulator_8cpp_source.html">BufferAccumulator.cpp</a>.</p>
 
 </div>
 </div>
@@ -516,7 +514,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_accumulator_8cpp_source.html#l00053">53</a> of file <a class="el" href="buffer_accumulator_8cpp_source.html">BufferAccumulator.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_accumulator_8cpp_source.html#l00048">48</a> of file <a class="el" href="buffer_accumulator_8cpp_source.html">BufferAccumulator.cpp</a>.</p>
 
 </div>
 </div>
@@ -538,45 +536,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Return allocated queue. Should be done during shutdown. </p>
 
-<p class="definition">Definition at line <a class="el" href="buffer_accumulator_8cpp_source.html#l00067">67</a> of file <a class="el" href="buffer_accumulator_8cpp_source.html">BufferAccumulator.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac71af9e662c99c5e311bc26d96ff215a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac71af9e662c99c5e311bc26d96ff215a">&#9670;&nbsp;</a></span>init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Svc::BufferAccumulator::init </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>queueDepth</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>instance</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Initialize <a class="el" href="class_svc_1_1_buffer_accumulator.html">BufferAccumulator</a> instance </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">queueDepth</td><td>The queue depth </td></tr>
-    <tr><td class="paramname">instance</td><td>The instance number </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="buffer_accumulator_8cpp_source.html#l00042">42</a> of file <a class="el" href="buffer_accumulator_8cpp_source.html">BufferAccumulator.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_accumulator_8cpp_source.html#l00062">62</a> of file <a class="el" href="buffer_accumulator_8cpp_source.html">BufferAccumulator.cpp</a>.</p>
 
 </div>
 </div>

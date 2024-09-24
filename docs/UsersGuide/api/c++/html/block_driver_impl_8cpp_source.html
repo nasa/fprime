@@ -100,55 +100,51 @@ $(document).ready(function(){initNavTree('_block_driver_impl_8cpp_source.html','
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    }</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="class_drv_1_1_block_driver_impl.html#a5cfd8456153c78833e333a0575f37f9d">   13</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">BlockDriverImpl::init</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instanceId) {</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">BlockDriverComponentBase::init</a>(queueDepth, instanceId);</div>
+<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="class_drv_1_1_block_driver_impl.html#a0c193be609891ed95f5168a617d9c64c">   13</a></span>&#160;    <a class="code" href="class_drv_1_1_block_driver_impl.html#a0c193be609891ed95f5168a617d9c64c">BlockDriverImpl::~BlockDriverImpl</a>() {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    }</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="class_drv_1_1_block_driver_impl.html#a0c193be609891ed95f5168a617d9c64c">   17</a></span>&#160;    <a class="code" href="class_drv_1_1_block_driver_impl.html#a0c193be609891ed95f5168a617d9c64c">BlockDriverImpl::~BlockDriverImpl</a>() {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    }</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::InterruptReport_internalInterfaceHandler(U32 ip) {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="comment">// get time</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <a class="code" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> timer;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        timer.<a class="code" href="class_svc_1_1_timer_val.html#ac59ba0449f41af3880c3bd59ee3f1343">take</a>();</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="comment">// call output timing signal</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_block_driver_component_base.html#a2e48584561e41a9c4335ace6a268ffd0">CycleOut_out</a>(0,timer);</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">// increment cycles and write channel</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_block_driver_component_base.html#a515d80e76d1779f5b05e477576ed398a">tlmWrite_BD_Cycles</a>(this-&gt;m_cycles);</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        this-&gt;m_cycles++;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    }</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::BufferIn_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a>&amp; buffer) {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// just a pass-through</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_block_driver_component_base.html#a50dd0deb634f5e6bab992fef6ba30f6f">BufferOut_out</a>(0,buffer);</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::Sched_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context) {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::InterruptReport_internalInterfaceHandler(U32 ip) {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">// get time</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <a class="code" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> timer;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        timer.<a class="code" href="class_svc_1_1_timer_val.html#ac59ba0449f41af3880c3bd59ee3f1343">take</a>();</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">// call output timing signal</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_block_driver_component_base.html#a2e48584561e41a9c4335ace6a268ffd0">CycleOut_out</a>(0,timer);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">// increment cycles and write channel</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_block_driver_component_base.html#a515d80e76d1779f5b05e477576ed398a">tlmWrite_BD_Cycles</a>(this-&gt;m_cycles);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        this-&gt;m_cycles++;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    }</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::BufferIn_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a>&amp; buffer) {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="comment">// just a pass-through</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_block_driver_component_base.html#a50dd0deb634f5e6bab992fef6ba30f6f">BufferOut_out</a>(0,buffer);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    }</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::Sched_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context) {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="class_drv_1_1_block_driver_impl.html#a0285ec71c3fd27f8385fe24683a8e41a">   36</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_block_driver_impl.html#a0285ec71c3fd27f8385fe24683a8e41a">BlockDriverImpl::callIsr</a>() {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        s_driverISR(<span class="keyword">this</span>);</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    }</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="class_drv_1_1_block_driver_impl.html#a0285ec71c3fd27f8385fe24683a8e41a">   40</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_block_driver_impl.html#a0285ec71c3fd27f8385fe24683a8e41a">BlockDriverImpl::callIsr</a>() {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        s_driverISR(<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::s_driverISR(<span class="keywordtype">void</span>* arg) {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(arg);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">// cast argument to component instance</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <a class="code" href="class_drv_1_1_block_driver_impl.html">BlockDriverImpl</a>* compPtr = <span class="keyword">static_cast&lt;</span><a class="code" href="class_drv_1_1_block_driver_impl.html">BlockDriverImpl</a>*<span class="keyword">&gt;</span>(arg);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        compPtr-&gt;InterruptReport_internalInterfaceHandler(0);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    }</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::PingIn_handler(</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            U32 key</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        )</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="comment">// call ping output port</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_block_driver_component_base.html#ad74b3fec8f6496afecb18f1e9733caa0">PingOut_out</a>(0,key);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      }</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;}</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::s_driverISR(<span class="keywordtype">void</span>* arg) {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(arg);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">// cast argument to component instance</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <a class="code" href="class_drv_1_1_block_driver_impl.html">BlockDriverImpl</a>* compPtr = <span class="keyword">static_cast&lt;</span><a class="code" href="class_drv_1_1_block_driver_impl.html">BlockDriverImpl</a>*<span class="keyword">&gt;</span>(arg);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        compPtr-&gt;InterruptReport_internalInterfaceHandler(0);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> BlockDriverImpl::PingIn_handler(</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            U32 key</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        )</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="comment">// call ping output port</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        this-&gt;<a class="code" href="class_drv_1_1_block_driver_component_base.html#ad74b3fec8f6496afecb18f1e9733caa0">PingOut_out</a>(0,key);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
@@ -160,11 +156,10 @@ $(document).ready(function(){initNavTree('_block_driver_impl_8cpp_source.html','
 <div class="ttc" id="aclass_drv_1_1_block_driver_component_base_html_a515d80e76d1779f5b05e477576ed398a"><div class="ttname"><a href="class_drv_1_1_block_driver_component_base.html#a515d80e76d1779f5b05e477576ed398a">Drv::BlockDriverComponentBase::tlmWrite_BD_Cycles</a></div><div class="ttdeci">void tlmWrite_BD_Cycles(U32 arg, Fw::Time _tlmTime=Fw::Time())</div><div class="ttdef"><b>Definition:</b> <a href="block_driver_component_ac_8cpp_source.html#l00896">BlockDriverComponentAc.cpp:897</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_block_driver_component_base_html_ad74b3fec8f6496afecb18f1e9733caa0"><div class="ttname"><a href="class_drv_1_1_block_driver_component_base.html#ad74b3fec8f6496afecb18f1e9733caa0">Drv::BlockDriverComponentBase::PingOut_out</a></div><div class="ttdeci">void PingOut_out(FwIndexType portNum, U32 key)</div><div class="ttdoc">Invoke output port PingOut.</div><div class="ttdef"><b>Definition:</b> <a href="block_driver_component_ac_8cpp_source.html#l00837">BlockDriverComponentAc.cpp:838</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_block_driver_impl_html"><div class="ttname"><a href="class_drv_1_1_block_driver_impl.html">Drv::BlockDriverImpl</a></div><div class="ttdef"><b>Definition:</b> <a href="block_driver_impl_8hpp_source.html#l00008">BlockDriverImpl.hpp:8</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_block_driver_impl_html_a0285ec71c3fd27f8385fe24683a8e41a"><div class="ttname"><a href="class_drv_1_1_block_driver_impl.html#a0285ec71c3fd27f8385fe24683a8e41a">Drv::BlockDriverImpl::callIsr</a></div><div class="ttdeci">void callIsr()</div><div class="ttdef"><b>Definition:</b> <a href="block_driver_impl_8cpp_source.html#l00040">BlockDriverImpl.cpp:40</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_block_driver_impl_html_a0c193be609891ed95f5168a617d9c64c"><div class="ttname"><a href="class_drv_1_1_block_driver_impl.html#a0c193be609891ed95f5168a617d9c64c">Drv::BlockDriverImpl::~BlockDriverImpl</a></div><div class="ttdeci">~BlockDriverImpl()</div><div class="ttdef"><b>Definition:</b> <a href="block_driver_impl_8cpp_source.html#l00017">BlockDriverImpl.cpp:17</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_block_driver_impl_html_a0285ec71c3fd27f8385fe24683a8e41a"><div class="ttname"><a href="class_drv_1_1_block_driver_impl.html#a0285ec71c3fd27f8385fe24683a8e41a">Drv::BlockDriverImpl::callIsr</a></div><div class="ttdeci">void callIsr()</div><div class="ttdef"><b>Definition:</b> <a href="block_driver_impl_8cpp_source.html#l00036">BlockDriverImpl.cpp:36</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_block_driver_impl_html_a0c193be609891ed95f5168a617d9c64c"><div class="ttname"><a href="class_drv_1_1_block_driver_impl.html#a0c193be609891ed95f5168a617d9c64c">Drv::BlockDriverImpl::~BlockDriverImpl</a></div><div class="ttdeci">~BlockDriverImpl()</div><div class="ttdef"><b>Definition:</b> <a href="block_driver_impl_8cpp_source.html#l00013">BlockDriverImpl.cpp:13</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_block_driver_impl_html_a3fccddcab1d8689aac26c72c43cd1151"><div class="ttname"><a href="class_drv_1_1_block_driver_impl.html#a3fccddcab1d8689aac26c72c43cd1151">Drv::BlockDriverImpl::BlockDriverImpl</a></div><div class="ttdeci">BlockDriverImpl(const char *compName)</div><div class="ttdef"><b>Definition:</b> <a href="block_driver_impl_8cpp_source.html#l00007">BlockDriverImpl.cpp:7</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_data_buffer_html"><div class="ttname"><a href="class_drv_1_1_data_buffer.html">Drv::DataBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="data_buffer_8hpp_source.html#l00009">DataBuffer.hpp:9</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_timer_val_html"><div class="ttname"><a href="class_svc_1_1_timer_val.html">Svc::TimerVal</a></div><div class="ttdoc">Serializable class for carrying timer values.</div><div class="ttdef"><b>Definition:</b> <a href="timer_val_8hpp_source.html#l00022">TimerVal.hpp:22</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_timer_val_html_ac59ba0449f41af3880c3bd59ee3f1343"><div class="ttname"><a href="class_svc_1_1_timer_val.html#ac59ba0449f41af3880c3bd59ee3f1343">Svc::TimerVal::take</a></div><div class="ttdeci">void take()</div><div class="ttdoc">Function to store a timer value.</div><div class="ttdef"><b>Definition:</b> <a href="timer_val_8cpp_source.html#l00038">TimerVal.cpp:38</a></div></div>
 <div class="ttc" id="anamespace_drv_html"><div class="ttname"><a href="namespace_drv.html">Drv</a></div><div class="ttdef"><b>Definition:</b> <a href="block_driver_component_ac_8cpp_source.html#l00014">BlockDriverComponentAc.cpp:14</a></div></div>

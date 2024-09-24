@@ -133,521 +133,512 @@ $(document).ready(function(){initNavTree('_file_downlink_8cpp_source.html',''); 
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  {</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  }</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="class_svc_1_1_file_downlink.html#ad176eac54de2a7f3ebaaf481743a4ad7">   46</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">FileDownlink ::</a></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">    init</a>(</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth,</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    )</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">FileDownlinkComponentBase::init</a>(queueDepth, instance);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="class_svc_1_1_file_downlink.html#afaff798851eb398603a7f729ee68b76a">   55</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_file_downlink.html#afaff798851eb398603a7f729ee68b76a">FileDownlink ::</a></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<a class="code" href="class_svc_1_1_file_downlink.html#afaff798851eb398603a7f729ee68b76a">    configure</a>(</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        U32 timeout,</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        U32 cooldown,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        U32 cycleTime,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        U32 fileQueueDepth</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    )</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    this-&gt;m_timeout = timeout;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    this-&gt;m_cooldown = cooldown;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    this-&gt;m_cycleTime = cycleTime;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    this-&gt;m_configured = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> stat = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a063b4c1e8db577863a435c0bd94a2d33">create</a>(</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <a class="code" href="class_os_1_1_queue_string.html">Os::QueueString</a>(<span class="stringliteral">&quot;fileDownlinkQueue&quot;</span>),</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a><span class="keyword">&gt;</span>(fileQueueDepth),</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <span class="keyword">sizeof</span>(<span class="keyword">struct</span> FileEntry)</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    );</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(stat == <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a>, stat);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="class_svc_1_1_file_downlink.html#ab6bebef8e22a452c1a0676d0a2aef384">   76</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_file_downlink.html#ab6bebef8e22a452c1a0676d0a2aef384">FileDownlink ::</a></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<a class="code" href="class_svc_1_1_file_downlink.html#ab6bebef8e22a452c1a0676d0a2aef384">    preamble</a>()</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  {</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_configured == <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  }</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="class_svc_1_1_file_downlink.html#a10547ada6770dda55aeb28458664acfc">   82</a></span>&#160;  <a class="code" href="class_svc_1_1_file_downlink.html#a10547ada6770dda55aeb28458664acfc">FileDownlink ::</a></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<a class="code" href="class_svc_1_1_file_downlink.html#a10547ada6770dda55aeb28458664acfc">    ~FileDownlink</a>()</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    Run_handler(</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        U32 context</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    )</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  {</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">switch</span>(this-&gt;m_mode.get())</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    {</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      <span class="keywordflow">case</span> Mode::IDLE: {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> real_size = 0;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> prio = 0;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> stat = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a51a788f359d9c4d6d79d83997cef8cd6">receive</a>(</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;          <span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>*<span class="keyword">&gt;</span>(&amp;this-&gt;m_curEntry),</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;          <span class="keyword">sizeof</span>(this-&gt;m_curEntry),</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;          real_size,</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;          prio,</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;          <a class="code" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a">Os::Queue::QUEUE_NONBLOCKING</a></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        );</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordflow">if</span>(stat != <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a> || <span class="keyword">sizeof</span>(this-&gt;m_curEntry) != real_size) {</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;          <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        }</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        sendFile(</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;          this-&gt;m_curEntry.srcFilename,</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;          this-&gt;m_curEntry.destFilename,</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;          this-&gt;m_curEntry.offset,</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;          this-&gt;m_curEntry.length</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        );</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="class_svc_1_1_file_downlink.html#afaff798851eb398603a7f729ee68b76a">   46</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_file_downlink.html#afaff798851eb398603a7f729ee68b76a">FileDownlink ::</a></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<a class="code" href="class_svc_1_1_file_downlink.html#afaff798851eb398603a7f729ee68b76a">    configure</a>(</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        U32 timeout,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        U32 cooldown,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        U32 cycleTime,</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        U32 fileQueueDepth</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    )</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    this-&gt;m_timeout = timeout;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    this-&gt;m_cooldown = cooldown;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    this-&gt;m_cycleTime = cycleTime;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    this-&gt;m_configured = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> stat = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a063b4c1e8db577863a435c0bd94a2d33">create</a>(</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      <a class="code" href="class_os_1_1_queue_string.html">Os::QueueString</a>(<span class="stringliteral">&quot;fileDownlinkQueue&quot;</span>),</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a><span class="keyword">&gt;</span>(fileQueueDepth),</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      <span class="keyword">sizeof</span>(<span class="keyword">struct</span> FileEntry)</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    );</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(stat == <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a>, stat);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="class_svc_1_1_file_downlink.html#ab6bebef8e22a452c1a0676d0a2aef384">   67</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_file_downlink.html#ab6bebef8e22a452c1a0676d0a2aef384">FileDownlink ::</a></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<a class="code" href="class_svc_1_1_file_downlink.html#ab6bebef8e22a452c1a0676d0a2aef384">    preamble</a>()</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_configured == <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="class_svc_1_1_file_downlink.html#a10547ada6770dda55aeb28458664acfc">   73</a></span>&#160;  <a class="code" href="class_svc_1_1_file_downlink.html#a10547ada6770dda55aeb28458664acfc">FileDownlink ::</a></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<a class="code" href="class_svc_1_1_file_downlink.html#a10547ada6770dda55aeb28458664acfc">    ~FileDownlink</a>()</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  {</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  }</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    Run_handler(</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        U32 context</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    )</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordflow">switch</span>(this-&gt;m_mode.get())</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    {</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      <span class="keywordflow">case</span> Mode::IDLE: {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> real_size = 0;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> prio = 0;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> stat = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a51a788f359d9c4d6d79d83997cef8cd6">receive</a>(</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;          <span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>*<span class="keyword">&gt;</span>(&amp;this-&gt;m_curEntry),</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;          <span class="keyword">sizeof</span>(this-&gt;m_curEntry),</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;          real_size,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;          prio,</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;          <a class="code" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a">Os::Queue::QUEUE_NONBLOCKING</a></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        );</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">if</span>(stat != <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a> || <span class="keyword">sizeof</span>(this-&gt;m_curEntry) != real_size) {</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;          <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        }</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        sendFile(</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;          this-&gt;m_curEntry.srcFilename,</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;          this-&gt;m_curEntry.destFilename,</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;          this-&gt;m_curEntry.offset,</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;          this-&gt;m_curEntry.length</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        );</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;      }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      <span class="keywordflow">case</span> Mode::COOLDOWN: {</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_curTimer &gt;= this-&gt;m_cooldown) {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;          this-&gt;m_curTimer = 0;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;          this-&gt;m_mode.set(Mode::IDLE);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;          this-&gt;m_curTimer += m_cycleTime;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        }</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      }</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="keywordflow">case</span> Mode::COOLDOWN: {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_curTimer &gt;= this-&gt;m_cooldown) {</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;          this-&gt;m_curTimer = 0;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;          this-&gt;m_mode.set(Mode::IDLE);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;          this-&gt;m_curTimer += m_cycleTime;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        }</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      }</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="keywordflow">case</span> Mode::WAIT: {</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="comment">//If current timeout is too-high and we are waiting for a packet, issue a timeout</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_curTimer &gt;= this-&gt;m_timeout) {</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;          this-&gt;m_curTimer = 0;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;          this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a5aa80f61df886f14154907c2516ebfeb">log_WARNING_HI_DownlinkTimeout</a>(this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;          this-&gt;enterCooldown();</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;          this-&gt;sendResponse(<a class="code" href="namespace_svc.html#aac9c99b8ae513d57096132247533b0b9">FILEDOWNLINK_COMMAND_FAILURES_DISABLED</a> ? <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a> : <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>);</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        } <span class="keywordflow">else</span> { <span class="comment">//Otherwise update the current counter</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;          this-&gt;m_curTimer += m_cycleTime;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        }</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;      }</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;      <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    }</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  }</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  <a class="code" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a> FileDownlink ::</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    SendFile_handler(</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; sourceFilename, <span class="comment">// lgtm[cpp/large-parameter] dictated by command architecture</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; destFilename, <span class="comment">// lgtm[cpp/large-parameter] dictated by command architecture</span></div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        U32 offset,</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        U32 length</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    )</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  {</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keyword">struct </span>FileEntry entry;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    entry.srcFilename[0] = 0;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    entry.destFilename[0] = 0;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    entry.offset = offset;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    entry.length = length;</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    entry.source = FileDownlink::PORT;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    entry.opCode = 0;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    entry.cmdSeq = 0;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    entry.context = m_cntxId++;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(sourceFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.srcFilename));</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(destFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.destFilename));</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.srcFilename, sourceFilename.<a class="code" href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.srcFilename)));</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.destFilename, destFilename.<a class="code" href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.destFilename)));</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> status = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a19a3ca30735141b8ffffd572f9ebbc37">send</a>(<span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>*<span class="keyword">&gt;</span>(&amp;entry), <span class="keyword">sizeof</span>(entry), 0, <a class="code" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a">Os::Queue::QUEUE_NONBLOCKING</a>);</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">if</span>(status != <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a>) {</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;      <span class="keywordflow">return</span> SendFileResponse(<a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>, std::numeric_limits&lt;U32&gt;::max());</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    }</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordflow">return</span> SendFileResponse(<a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a>, entry.context);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="keywordflow">case</span> Mode::WAIT: {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="comment">//If current timeout is too-high and we are waiting for a packet, issue a timeout</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_curTimer &gt;= this-&gt;m_timeout) {</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;          this-&gt;m_curTimer = 0;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;          this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a5aa80f61df886f14154907c2516ebfeb">log_WARNING_HI_DownlinkTimeout</a>(this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;          this-&gt;enterCooldown();</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;          this-&gt;sendResponse(<a class="code" href="namespace_svc.html#aac9c99b8ae513d57096132247533b0b9">FILEDOWNLINK_COMMAND_FAILURES_DISABLED</a> ? <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a> : <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        } <span class="keywordflow">else</span> { <span class="comment">//Otherwise update the current counter</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;          this-&gt;m_curTimer += m_cycleTime;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        }</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;      }</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  }</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  <a class="code" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a> FileDownlink ::</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    SendFile_handler(</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; sourceFilename, <span class="comment">// lgtm[cpp/large-parameter] dictated by command architecture</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; destFilename, <span class="comment">// lgtm[cpp/large-parameter] dictated by command architecture</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        U32 offset,</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        U32 length</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    )</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  {</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keyword">struct </span>FileEntry entry;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    entry.srcFilename[0] = 0;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    entry.destFilename[0] = 0;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    entry.offset = offset;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    entry.length = length;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    entry.source = FileDownlink::PORT;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    entry.opCode = 0;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    entry.cmdSeq = 0;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    entry.context = m_cntxId++;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(sourceFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.srcFilename));</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(destFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.destFilename));</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.srcFilename, sourceFilename.<a class="code" href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.srcFilename)));</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.destFilename, destFilename.<a class="code" href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.destFilename)));</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> status = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a19a3ca30735141b8ffffd572f9ebbc37">send</a>(<span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>*<span class="keyword">&gt;</span>(&amp;entry), <span class="keyword">sizeof</span>(entry), 0, <a class="code" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a">Os::Queue::QUEUE_NONBLOCKING</a>);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">if</span>(status != <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a>) {</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      <span class="keywordflow">return</span> SendFileResponse(<a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>, std::numeric_limits&lt;U32&gt;::max());</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordflow">return</span> SendFileResponse(<a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a>, entry.context);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  }</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    pingIn_handler(</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        U32 key</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    )</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  {</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#ae1d1cea7903c392636747e89b84c79fd">pingOut_out</a>(0,key);</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  }</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    pingIn_handler(</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    bufferReturn_handler(</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        U32 key</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    )</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  {</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#ae1d1cea7903c392636747e89b84c79fd">pingOut_out</a>(0,key);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  }</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    bufferReturn_handler(</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;fwBuffer</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    )</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  {</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      <span class="comment">//If this is a stale buffer (old, timed-out, or both), then ignore its return.</span></div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;      <span class="comment">//File downlink actions only respond to the return of the most-recently-sent buffer.</span></div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_lastBufferId != fwBuffer.<a class="code" href="class_fw_1_1_buffer.html#ac083d4042c1fbb954f390ea121585791">getContext</a>() + 1 ||</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;          this-&gt;m_mode.get() == Mode::IDLE) {</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;          <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      }</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;      <span class="comment">//Non-ignored buffers cannot be returned in &quot;DOWNLINK&quot; and &quot;IDLE&quot; state.  Only in &quot;WAIT&quot;, &quot;CANCEL&quot; state.</span></div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_mode.get() == Mode::WAIT || this-&gt;m_mode.get() == Mode::CANCEL, this-&gt;m_mode.get());</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;      <span class="comment">//If the last packet has been sent (and is returning now) then finish the file</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501bac8edc03f1e37b3dee1eae79dab98cbbe">Fw::FilePacket::T_END</a> ||</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;          this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba11269c0eccaffad1be6dbb6a1777c46f">Fw::FilePacket::T_CANCEL</a>) {</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;          finishHelper(this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba11269c0eccaffad1be6dbb6a1777c46f">Fw::FilePacket::T_CANCEL</a>);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;          <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      }</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;      <span class="comment">//If waiting and a buffer is in-bound, then switch to downlink mode</span></div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;m_mode.get() == Mode::WAIT) {</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;          this-&gt;m_mode.set(Mode::DOWNLINK);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;      }</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;      this-&gt;downlinkPacket();</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  }</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160; </div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  <span class="comment">// Command handler implementations</span></div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    SendFile_cmdHandler(</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        <span class="keyword">const</span> <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="keyword">const</span> U32 cmdSeq,</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a>&amp; sourceFilename,</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a>&amp; destFilename</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    )</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  {</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keyword">struct </span>FileEntry entry;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    entry.srcFilename[0] = 0;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    entry.destFilename[0] = 0;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    entry.offset = 0;</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    entry.length = 0;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    entry.source = FileDownlink::COMMAND;</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    entry.opCode = opCode;</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    entry.cmdSeq = cmdSeq;</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    entry.context = std::numeric_limits&lt;U32&gt;::max();</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160; </div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(sourceFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.srcFilename));</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(destFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.destFilename));</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.srcFilename, sourceFilename.<a class="code" href="class_fw_1_1_cmd_string_arg.html#a64fa6dff0cf92c5121f4fe3d81af2303">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.srcFilename)));</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.destFilename, destFilename.<a class="code" href="class_fw_1_1_cmd_string_arg.html#a64fa6dff0cf92c5121f4fe3d81af2303">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.destFilename)));</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> status = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a19a3ca30735141b8ffffd572f9ebbc37">send</a>(<span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>*<span class="keyword">&gt;</span>(&amp;entry), <span class="keyword">sizeof</span>(entry), 0, <a class="code" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a">Os::Queue::QUEUE_NONBLOCKING</a>);</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordflow">if</span>(status != <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a>) {</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a283ecc93957183f467c0da883c895551">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>);</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    }</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;  }</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    SendPartial_cmdHandler(</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;      <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;      U32 cmdSeq,</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;      <span class="keyword">const</span> <a class="code" href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a>&amp; sourceFilename,</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;      <span class="keyword">const</span> <a class="code" href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a>&amp; destFilename,</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;      U32 startOffset,</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;      U32 length</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;   )</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;  {</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keyword">struct </span>FileEntry entry;</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    entry.srcFilename[0] = 0;</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    entry.destFilename[0] = 0;</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    entry.offset = startOffset;</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    entry.length = length;</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    entry.source = FileDownlink::COMMAND;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    entry.opCode = opCode;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    entry.cmdSeq = cmdSeq;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    entry.context = std::numeric_limits&lt;U32&gt;::max();</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(sourceFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.srcFilename));</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(destFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.destFilename));</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.srcFilename, sourceFilename.<a class="code" href="class_fw_1_1_cmd_string_arg.html#a64fa6dff0cf92c5121f4fe3d81af2303">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.srcFilename)));</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.destFilename, destFilename.<a class="code" href="class_fw_1_1_cmd_string_arg.html#a64fa6dff0cf92c5121f4fe3d81af2303">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.destFilename)));</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> status = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a19a3ca30735141b8ffffd572f9ebbc37">send</a>(<span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>*<span class="keyword">&gt;</span>(&amp;entry), <span class="keyword">sizeof</span>(entry), 0, <a class="code" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a">Os::Queue::QUEUE_NONBLOCKING</a>);</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160; </div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="keywordflow">if</span>(status != <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a>) {</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a283ecc93957183f467c0da883c895551">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>);</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    }</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  }</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    Cancel_cmdHandler(</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;        <span class="keyword">const</span> <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        <span class="keyword">const</span> U32 cmdSeq</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    )</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  {</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;      <span class="comment">//Must be able to cancel in both downlink and waiting states</span></div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_mode.get() == Mode::DOWNLINK || this-&gt;m_mode.get() == Mode::WAIT) {</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;          this-&gt;m_mode.set(Mode::CANCEL);</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;      }</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a283ecc93957183f467c0da883c895551">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>);</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  }</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;  <span class="comment">// Private helper methods</span></div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;  <a class="code" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> FileDownlink ::</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    statusToCmdResp(SendFileStatus status)</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  {</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keywordflow">switch</span>(status.e) {</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a>:</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>;</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>:</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>;</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36aaceaac9db836d6b6bdc384b00de71e39">SendFileStatus::STATUS_INVALID</a>:</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa80543452c7e41f2262fb9ce2e8a1862b">Fw::CmdResponse::VALIDATION_ERROR</a>;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36ad7affbd8ab4e739e54f3defb7aaa5b54">SendFileStatus::STATUS_BUSY</a>:</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aab22319d41c9885588b269ba438bf4dab">Fw::CmdResponse::BUSY</a>;</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        <span class="comment">// Trigger assertion if given unknown status</span></div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">false</span>);</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="comment">// It&#39;s impossible to reach this, but added to suppress gcc missing return warning</span></div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;  }</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    sendResponse(SendFileStatus resp)</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;  {</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="keywordflow">if</span>(this-&gt;m_curEntry.source == FileDownlink::COMMAND) {</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a283ecc93957183f467c0da883c895551">cmdResponse_out</a>(this-&gt;m_curEntry.opCode, this-&gt;m_curEntry.cmdSeq, statusToCmdResp(resp));</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;      <span class="keywordflow">for</span>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> i = 0; i &lt; this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a1049fa27627a49f4dfa8c1db6f2ecb4b">getNum_FileComplete_OutputPorts</a>(); i++) {</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        <span class="keywordflow">if</span>(this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a3f1a63194c3a35f0f15e9a13cb9362d5">isConnected_FileComplete_OutputPort</a>(i)) {</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;          this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a1af758760d6e3a5170d4115fb0420a67">FileComplete_out</a>(i, <a class="code" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a>(resp, this-&gt;m_curEntry.context));</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        }</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;      }</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    }</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;  }</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160; </div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    sendFile(</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">char</span>* sourceFilename,</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">char</span>* destFilename,</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;          U32 startOffset,</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;          U32 length</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;      )</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  {</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    <span class="comment">// Open file for downlink</span></div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> status = this-&gt;m_file.open(</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;        sourceFilename,</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        destFilename</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    );</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;      <span class="comment">//If this is a stale buffer (old, timed-out, or both), then ignore its return.</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      <span class="comment">//File downlink actions only respond to the return of the most-recently-sent buffer.</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_lastBufferId != fwBuffer.<a class="code" href="class_fw_1_1_buffer.html#ac083d4042c1fbb954f390ea121585791">getContext</a>() + 1 ||</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;          this-&gt;m_mode.get() == Mode::IDLE) {</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;          <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;      }</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;      <span class="comment">//Non-ignored buffers cannot be returned in &quot;DOWNLINK&quot; and &quot;IDLE&quot; state.  Only in &quot;WAIT&quot;, &quot;CANCEL&quot; state.</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_mode.get() == Mode::WAIT || this-&gt;m_mode.get() == Mode::CANCEL, this-&gt;m_mode.get());</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      <span class="comment">//If the last packet has been sent (and is returning now) then finish the file</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501bac8edc03f1e37b3dee1eae79dab98cbbe">Fw::FilePacket::T_END</a> ||</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;          this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba11269c0eccaffad1be6dbb6a1777c46f">Fw::FilePacket::T_CANCEL</a>) {</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;          finishHelper(this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba11269c0eccaffad1be6dbb6a1777c46f">Fw::FilePacket::T_CANCEL</a>);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;          <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;      }</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      <span class="comment">//If waiting and a buffer is in-bound, then switch to downlink mode</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;m_mode.get() == Mode::WAIT) {</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;          this-&gt;m_mode.set(Mode::DOWNLINK);</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;      }</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;      this-&gt;downlinkPacket();</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;  }</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;  <span class="comment">// Command handler implementations</span></div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    SendFile_cmdHandler(</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keyword">const</span> <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keyword">const</span> U32 cmdSeq,</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a>&amp; sourceFilename,</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        <span class="keyword">const</span> <a class="code" href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a>&amp; destFilename</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    )</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  {</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    <span class="keyword">struct </span>FileEntry entry;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    entry.srcFilename[0] = 0;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    entry.destFilename[0] = 0;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    entry.offset = 0;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    entry.length = 0;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    entry.source = FileDownlink::COMMAND;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    entry.opCode = opCode;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    entry.cmdSeq = cmdSeq;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    entry.context = std::numeric_limits&lt;U32&gt;::max();</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160; </div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(sourceFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.srcFilename));</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(destFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.destFilename));</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.srcFilename, sourceFilename.<a class="code" href="class_fw_1_1_cmd_string_arg.html#a64fa6dff0cf92c5121f4fe3d81af2303">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.srcFilename)));</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.destFilename, destFilename.<a class="code" href="class_fw_1_1_cmd_string_arg.html#a64fa6dff0cf92c5121f4fe3d81af2303">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.destFilename)));</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> status = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a19a3ca30735141b8ffffd572f9ebbc37">send</a>(<span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>*<span class="keyword">&gt;</span>(&amp;entry), <span class="keyword">sizeof</span>(entry), 0, <a class="code" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a">Os::Queue::QUEUE_NONBLOCKING</a>);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordflow">if</span>(status != <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a>) {</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a283ecc93957183f467c0da883c895551">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    }</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  }</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    SendPartial_cmdHandler(</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;      <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;      U32 cmdSeq,</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      <span class="keyword">const</span> <a class="code" href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a>&amp; sourceFilename,</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      <span class="keyword">const</span> <a class="code" href="class_fw_1_1_cmd_string_arg.html">Fw::CmdStringArg</a>&amp; destFilename,</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;      U32 startOffset,</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;      U32 length</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;   )</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;  {</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keyword">struct </span>FileEntry entry;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    entry.srcFilename[0] = 0;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    entry.destFilename[0] = 0;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    entry.offset = startOffset;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    entry.length = length;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    entry.source = FileDownlink::COMMAND;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    entry.opCode = opCode;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    entry.cmdSeq = cmdSeq;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    entry.context = std::numeric_limits&lt;U32&gt;::max();</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160; </div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(sourceFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.srcFilename));</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(destFilename.<a class="code" href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">length</a>() &lt; <span class="keyword">sizeof</span>(entry.destFilename));</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.srcFilename, sourceFilename.<a class="code" href="class_fw_1_1_cmd_string_arg.html#a64fa6dff0cf92c5121f4fe3d81af2303">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.srcFilename)));</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    (void) <a class="code" href="namespace_fw_1_1_string_utils.html#a9eea8b0b384612042a665c4eb6bb684e">Fw::StringUtils::string_copy</a>(entry.destFilename, destFilename.<a class="code" href="class_fw_1_1_cmd_string_arg.html#a64fa6dff0cf92c5121f4fe3d81af2303">toChar</a>(), <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(entry.destFilename)));</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a> status = m_fileQueue.<a class="code" href="class_os_1_1_queue.html#a19a3ca30735141b8ffffd572f9ebbc37">send</a>(<span class="keyword">reinterpret_cast&lt;</span><a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>*<span class="keyword">&gt;</span>(&amp;entry), <span class="keyword">sizeof</span>(entry), 0, <a class="code" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a">Os::Queue::QUEUE_NONBLOCKING</a>);</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keywordflow">if</span>(status != <a class="code" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">Os::Queue::QUEUE_OK</a>) {</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a283ecc93957183f467c0da883c895551">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>);</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    }</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;  }</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    Cancel_cmdHandler(</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        <span class="keyword">const</span> <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        <span class="keyword">const</span> U32 cmdSeq</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    )</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  {</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;      <span class="comment">//Must be able to cancel in both downlink and waiting states</span></div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_mode.get() == Mode::DOWNLINK || this-&gt;m_mode.get() == Mode::WAIT) {</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;          this-&gt;m_mode.set(Mode::CANCEL);</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;      }</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a283ecc93957183f467c0da883c895551">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  }</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  <span class="comment">// Private helper methods</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  <a class="code" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> FileDownlink ::</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    statusToCmdResp(SendFileStatus status)</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  {</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordflow">switch</span>(status.e) {</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a>:</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>:</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36aaceaac9db836d6b6bdc384b00de71e39">SendFileStatus::STATUS_INVALID</a>:</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa80543452c7e41f2262fb9ce2e8a1862b">Fw::CmdResponse::VALIDATION_ERROR</a>;</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36ad7affbd8ab4e739e54f3defb7aaa5b54">SendFileStatus::STATUS_BUSY</a>:</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aab22319d41c9885588b269ba438bf4dab">Fw::CmdResponse::BUSY</a>;</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        <span class="comment">// Trigger assertion if given unknown status</span></div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">false</span>);</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160; </div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="comment">// It&#39;s impossible to reach this, but added to suppress gcc missing return warning</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>;</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;  }</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160; </div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    sendResponse(SendFileStatus resp)</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;  {</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keywordflow">if</span>(this-&gt;m_curEntry.source == FileDownlink::COMMAND) {</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;      this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a283ecc93957183f467c0da883c895551">cmdResponse_out</a>(this-&gt;m_curEntry.opCode, this-&gt;m_curEntry.cmdSeq, statusToCmdResp(resp));</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;      <span class="keywordflow">for</span>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> i = 0; i &lt; this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a1049fa27627a49f4dfa8c1db6f2ecb4b">getNum_FileComplete_OutputPorts</a>(); i++) {</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        <span class="keywordflow">if</span>(this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a3f1a63194c3a35f0f15e9a13cb9362d5">isConnected_FileComplete_OutputPort</a>(i)) {</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;          this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a1af758760d6e3a5170d4115fb0420a67">FileComplete_out</a>(i, <a class="code" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a>(resp, this-&gt;m_curEntry.context));</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        }</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;      }</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    }</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  }</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    sendFile(</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">char</span>* sourceFilename,</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">char</span>* destFilename,</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;          U32 startOffset,</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;          U32 length</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;      )</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;  {</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="comment">// Open file for downlink</span></div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> status = this-&gt;m_file.open(</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        sourceFilename,</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        destFilename</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    );</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160; </div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    <span class="comment">// Reject command if error when opening file</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;      this-&gt;m_mode.set(Mode::IDLE);</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;      this-&gt;m_warnings.fileOpenError();</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;      sendResponse(<a class="code" href="namespace_svc.html#aac9c99b8ae513d57096132247533b0b9">FILEDOWNLINK_COMMAND_FAILURES_DISABLED</a> ? <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a> : <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>);</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    }</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
 <div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="comment">// Reject command if error when opening file</span></div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;      this-&gt;m_mode.set(Mode::IDLE);</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;      this-&gt;m_warnings.fileOpenError();</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;      sendResponse(<a class="code" href="namespace_svc.html#aac9c99b8ae513d57096132247533b0b9">FILEDOWNLINK_COMMAND_FAILURES_DISABLED</a> ? <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a> : <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>);</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    }</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160; </div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160; </div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    <span class="keywordflow">if</span> (startOffset &gt;= this-&gt;m_file.getSize()) {</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        this-&gt;enterCooldown();</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a4bee5403472582a286184a593834c9e4">log_WARNING_HI_DownlinkPartialFail</a>(this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName(), startOffset, this-&gt;m_file.getSize());</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        sendResponse(<a class="code" href="namespace_svc.html#aac9c99b8ae513d57096132247533b0b9">FILEDOWNLINK_COMMAND_FAILURES_DISABLED</a> ? <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a> : <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36aaceaac9db836d6b6bdc384b00de71e39">SendFileStatus::STATUS_INVALID</a>);</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (startOffset + length &gt; this-&gt;m_file.getSize()) {</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        <span class="comment">// If the amount to downlink is greater than the file size, emit a Warning and then allow</span></div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        <span class="comment">// the file to be downlinked anyway</span></div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#aab94407c3eb1b0426ab326bc3c0b0df1">log_WARNING_LO_DownlinkPartialWarning</a>(startOffset, length, this-&gt;m_file.getSize(), this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        length = this-&gt;m_file.getSize() - startOffset;</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    }</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="keywordflow">if</span> (startOffset &gt;= this-&gt;m_file.getSize()) {</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;        this-&gt;enterCooldown();</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a4bee5403472582a286184a593834c9e4">log_WARNING_HI_DownlinkPartialFail</a>(this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName(), startOffset, this-&gt;m_file.getSize());</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        sendResponse(<a class="code" href="namespace_svc.html#aac9c99b8ae513d57096132247533b0b9">FILEDOWNLINK_COMMAND_FAILURES_DISABLED</a> ? <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a> : <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36aaceaac9db836d6b6bdc384b00de71e39">SendFileStatus::STATUS_INVALID</a>);</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (startOffset + length &gt; this-&gt;m_file.getSize()) {</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        <span class="comment">// If the amount to downlink is greater than the file size, emit a Warning and then allow</span></div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        <span class="comment">// the file to be downlinked anyway</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#aab94407c3eb1b0426ab326bc3c0b0df1">log_WARNING_LO_DownlinkPartialWarning</a>(startOffset, length, this-&gt;m_file.getSize(), this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        length = this-&gt;m_file.getSize() - startOffset;</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    }</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160; </div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    <span class="comment">// Send file and switch to WAIT mode</span></div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    this-&gt;getBuffer(this-&gt;m_buffer, FILE_PACKET);</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    this-&gt;sendStartPacket();</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    this-&gt;m_mode.set(Mode::WAIT);</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    this-&gt;m_sequenceIndex = 1;</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    this-&gt;m_curTimer = 0;</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    this-&gt;m_byteOffset = startOffset;</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba4e4db8763c460d4290f3bb832977a4cc">Fw::FilePacket::T_START</a>;</div>
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="comment">// Send file and switch to WAIT mode</span></div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    this-&gt;getBuffer(this-&gt;m_buffer, FILE_PACKET);</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    this-&gt;sendStartPacket();</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    this-&gt;m_mode.set(Mode::WAIT);</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    this-&gt;m_sequenceIndex = 1;</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    this-&gt;m_curTimer = 0;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    this-&gt;m_byteOffset = startOffset;</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba4e4db8763c460d4290f3bb832977a4cc">Fw::FilePacket::T_START</a>;</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160; </div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    <span class="comment">// zero length means read until end of file</span></div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="keywordflow">if</span> (length &gt; 0) {</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a70820511511284f4db2e6a7e059ed3e5">log_ACTIVITY_HI_SendStarted</a>(length, this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;        this-&gt;m_endOffset = startOffset + length;</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    }</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a70820511511284f4db2e6a7e059ed3e5">log_ACTIVITY_HI_SendStarted</a>(this-&gt;m_file.getSize() - startOffset, this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        this-&gt;m_endOffset = this-&gt;m_file.getSize();</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    }</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;  }</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160; </div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;  <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> FileDownlink ::</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    sendDataPacket(U32 &amp;byteOffset)</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;  {</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(byteOffset &lt; this-&gt;m_endOffset);</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    <span class="keyword">const</span> U32 maxDataSize = <a class="code" href="namespace_svc.html#adcd0191f1387ee73cc7934ae9625af94">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</a> - <a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html#a3e5f12409565e82b87337737f2c884c0a33c69bd675c7d79f7d0551ed9fdb18b8">Fw::FilePacket::DataPacket::HEADERSIZE</a>;</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="keyword">const</span> U32 dataSize = (byteOffset + maxDataSize &gt; this-&gt;m_endOffset) ? (this-&gt;m_endOffset - byteOffset) : maxDataSize;</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> buffer[<a class="code" href="namespace_svc.html#adcd0191f1387ee73cc7934ae9625af94">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</a> - <a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html#a3e5f12409565e82b87337737f2c884c0a33c69bd675c7d79f7d0551ed9fdb18b8">Fw::FilePacket::DataPacket::HEADERSIZE</a>];</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    <span class="comment">//This will be last data packet sent</span></div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <span class="keywordflow">if</span> (dataSize + byteOffset == this-&gt;m_endOffset) {</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;        this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501baf654296d05201bd78e4fefa39e74e51f">Fw::FilePacket::T_DATA</a>;</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    }</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    <span class="keyword">const</span> <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> status =</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;      this-&gt;m_file.read(buffer, byteOffset, dataSize);</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;      this-&gt;m_warnings.fileRead(status);</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;      <span class="keywordflow">return</span> status;</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    }</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160; </div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    <a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html">Fw::FilePacket::DataPacket</a> dataPacket;</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    dataPacket.<a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html#a3f315b1c293fe28b8825bd764aabcc25">initialize</a>(</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;      this-&gt;m_sequenceIndex,</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;      byteOffset,</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;      <span class="keyword">static_cast&lt;</span>U16<span class="keyword">&gt;</span>(dataSize),</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;      buffer);</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;    ++this-&gt;m_sequenceIndex;</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a> filePacket;</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;    filePacket.<a class="code" href="union_fw_1_1_file_packet.html#a8836c5c5afe2bbd0c2e0308fb65f2bce">fromDataPacket</a>(dataPacket);</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    this-&gt;sendFilePacket(filePacket);</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160; </div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    byteOffset += dataSize;</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160; </div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="comment">// zero length means read until end of file</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    <span class="keywordflow">if</span> (length &gt; 0) {</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a70820511511284f4db2e6a7e059ed3e5">log_ACTIVITY_HI_SendStarted</a>(length, this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;        this-&gt;m_endOffset = startOffset + length;</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    }</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a70820511511284f4db2e6a7e059ed3e5">log_ACTIVITY_HI_SendStarted</a>(this-&gt;m_file.getSize() - startOffset, this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        this-&gt;m_endOffset = this-&gt;m_file.getSize();</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    }</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;  }</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160; </div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;  <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> FileDownlink ::</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    sendDataPacket(U32 &amp;byteOffset)</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;  {</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(byteOffset &lt; this-&gt;m_endOffset);</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    <span class="keyword">const</span> U32 maxDataSize = <a class="code" href="namespace_svc.html#adcd0191f1387ee73cc7934ae9625af94">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</a> - <a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html#a3e5f12409565e82b87337737f2c884c0a33c69bd675c7d79f7d0551ed9fdb18b8">Fw::FilePacket::DataPacket::HEADERSIZE</a>;</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    <span class="keyword">const</span> U32 dataSize = (byteOffset + maxDataSize &gt; this-&gt;m_endOffset) ? (this-&gt;m_endOffset - byteOffset) : maxDataSize;</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> buffer[<a class="code" href="namespace_svc.html#adcd0191f1387ee73cc7934ae9625af94">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</a> - <a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html#a3e5f12409565e82b87337737f2c884c0a33c69bd675c7d79f7d0551ed9fdb18b8">Fw::FilePacket::DataPacket::HEADERSIZE</a>];</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="comment">//This will be last data packet sent</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    <span class="keywordflow">if</span> (dataSize + byteOffset == this-&gt;m_endOffset) {</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;        this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501baf654296d05201bd78e4fefa39e74e51f">Fw::FilePacket::T_DATA</a>;</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    }</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160; </div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    <span class="keyword">const</span> <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> status =</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;      this-&gt;m_file.read(buffer, byteOffset, dataSize);</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;      this-&gt;m_warnings.fileRead(status);</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;      <span class="keywordflow">return</span> status;</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    }</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160; </div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    <a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html">Fw::FilePacket::DataPacket</a> dataPacket;</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    dataPacket.<a class="code" href="class_fw_1_1_file_packet_1_1_data_packet.html#a3f315b1c293fe28b8825bd764aabcc25">initialize</a>(</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;      this-&gt;m_sequenceIndex,</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;      byteOffset,</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;      <span class="keyword">static_cast&lt;</span>U16<span class="keyword">&gt;</span>(dataSize),</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;      buffer);</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    ++this-&gt;m_sequenceIndex;</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a> filePacket;</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    filePacket.<a class="code" href="union_fw_1_1_file_packet.html#a8836c5c5afe2bbd0c2e0308fb65f2bce">fromDataPacket</a>(dataPacket);</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    this-&gt;sendFilePacket(filePacket);</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160; </div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    byteOffset += dataSize;</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160; </div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>;</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160; </div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  }</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160; </div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    sendCancelPacket()</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;  {</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> buffer;</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    <a class="code" href="class_fw_1_1_file_packet_1_1_cancel_packet.html">Fw::FilePacket::CancelPacket</a> cancelPacket;</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;    cancelPacket.<a class="code" href="class_fw_1_1_file_packet_1_1_cancel_packet.html#a8eb1a5c02436f2a7640bf2e598655eae">initialize</a>(this-&gt;m_sequenceIndex);</div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160; </div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;  }</div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160; </div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    sendCancelPacket()</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;  {</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> buffer;</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    <a class="code" href="class_fw_1_1_file_packet_1_1_cancel_packet.html">Fw::FilePacket::CancelPacket</a> cancelPacket;</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    cancelPacket.<a class="code" href="class_fw_1_1_file_packet_1_1_cancel_packet.html#a8eb1a5c02436f2a7640bf2e598655eae">initialize</a>(this-&gt;m_sequenceIndex);</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160; </div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;    <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a> filePacket;</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;    filePacket.<a class="code" href="union_fw_1_1_file_packet.html#a2a2e63a2273861c26ec9a306b04c890a">fromCancelPacket</a>(cancelPacket);</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;    this-&gt;getBuffer(buffer, CANCEL_PACKET);</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160; </div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> status = filePacket.<a class="code" href="union_fw_1_1_file_packet.html#afb834647c1930dcca228f005c01b81c9">toBuffer</a>(buffer);</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(status == <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>);</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;    this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a0cfacf07a42de7f30d387f02ac7ec6fd">bufferSendOut_out</a>(0, buffer);</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    this-&gt;m_packetsSent.packetSent();</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;  }</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a> filePacket;</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    filePacket.<a class="code" href="union_fw_1_1_file_packet.html#a2a2e63a2273861c26ec9a306b04c890a">fromCancelPacket</a>(cancelPacket);</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;    this-&gt;getBuffer(buffer, CANCEL_PACKET);</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160; </div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> status = filePacket.<a class="code" href="union_fw_1_1_file_packet.html#afb834647c1930dcca228f005c01b81c9">toBuffer</a>(buffer);</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(status == <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>);</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a0cfacf07a42de7f30d387f02ac7ec6fd">bufferSendOut_out</a>(0, buffer);</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    this-&gt;m_packetsSent.packetSent();</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;  }</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160; </div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;    sendEndPacket()</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;  {</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    <a class="code" href="class_c_f_d_p_1_1_checksum.html">CFDP::Checksum</a> checksum;</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    this-&gt;m_file.getChecksum(checksum);</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160; </div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    <a class="code" href="class_fw_1_1_file_packet_1_1_end_packet.html">Fw::FilePacket::EndPacket</a> endPacket;</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;    endPacket.<a class="code" href="class_fw_1_1_file_packet_1_1_end_packet.html#aa9080f2d98a0335e05357b3b41519676">initialize</a>(this-&gt;m_sequenceIndex, checksum);</div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160; </div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    sendEndPacket()</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;  {</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;    <a class="code" href="class_c_f_d_p_1_1_checksum.html">CFDP::Checksum</a> checksum;</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    this-&gt;m_file.getChecksum(checksum);</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a> filePacket;</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    filePacket.<a class="code" href="union_fw_1_1_file_packet.html#a4c507de639da065fbd3471a90c6d2de5">fromEndPacket</a>(endPacket);</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    this-&gt;sendFilePacket(filePacket);</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160; </div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;  }</div>
 <div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160; </div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    <a class="code" href="class_fw_1_1_file_packet_1_1_end_packet.html">Fw::FilePacket::EndPacket</a> endPacket;</div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;    endPacket.<a class="code" href="class_fw_1_1_file_packet_1_1_end_packet.html#aa9080f2d98a0335e05357b3b41519676">initialize</a>(this-&gt;m_sequenceIndex, checksum);</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160; </div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a> filePacket;</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    filePacket.<a class="code" href="union_fw_1_1_file_packet.html#a4c507de639da065fbd3471a90c6d2de5">fromEndPacket</a>(endPacket);</div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    this-&gt;sendFilePacket(filePacket);</div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160; </div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;  }</div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160; </div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    sendStartPacket()</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;  {</div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;    <a class="code" href="struct_fw_1_1_file_packet_1_1_start_packet.html">Fw::FilePacket::StartPacket</a> startPacket;</div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;    startPacket.<a class="code" href="struct_fw_1_1_file_packet_1_1_start_packet.html#ae0672af45f145b88887adb9cf0b3532c">initialize</a>(</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;        this-&gt;m_file.getSize(),</div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;        this-&gt;m_file.getSourceName().toChar(),</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;        this-&gt;m_file.getDestName().toChar()</div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    );</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;    <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a> filePacket;</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    filePacket.<a class="code" href="union_fw_1_1_file_packet.html#ab39c3538a8a179d3fa30ad00d58b127d">fromStartPacket</a>(startPacket);</div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;    this-&gt;sendFilePacket(filePacket);</div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;  }</div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160; </div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;    sendFilePacket(<span class="keyword">const</span> <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a>&amp; filePacket)</div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;  {</div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;    <span class="keyword">const</span> U32 bufferSize = filePacket.<a class="code" href="union_fw_1_1_file_packet.html#aeb95fc0523025d46df2b0fc4748eb2ce">bufferSize</a>();</div>
-<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_buffer.<a class="code" href="class_fw_1_1_buffer.html#a0f7344fefd6813ce700c7e39dfd2ce29">getData</a>() != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
-<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;      this-&gt;m_buffer.<a class="code" href="class_fw_1_1_buffer.html#a82190e37d06defba369d8c4bff9662de">getSize</a>() &gt;= bufferSize,</div>
-<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;      <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(bufferSize),</div>
-<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;      <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(this-&gt;m_buffer.getSize()));</div>
-<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> status = filePacket.<a class="code" href="union_fw_1_1_file_packet.html#afb834647c1930dcca228f005c01b81c9">toBuffer</a>(this-&gt;m_buffer);</div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(status == <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>);</div>
-<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;    <span class="comment">// set the buffer size to the packet size</span></div>
-<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;    this-&gt;m_buffer.<a class="code" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">setSize</a>(bufferSize);</div>
-<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;    this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a0cfacf07a42de7f30d387f02ac7ec6fd">bufferSendOut_out</a>(0, this-&gt;m_buffer);</div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    <span class="comment">// restore buffer size to max</span></div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    this-&gt;m_buffer.<a class="code" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">setSize</a>(<a class="code" href="namespace_svc.html#adcd0191f1387ee73cc7934ae9625af94">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</a>);</div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    this-&gt;m_packetsSent.packetSent();</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;    sendStartPacket()</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;  {</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    <a class="code" href="struct_fw_1_1_file_packet_1_1_start_packet.html">Fw::FilePacket::StartPacket</a> startPacket;</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    startPacket.<a class="code" href="struct_fw_1_1_file_packet_1_1_start_packet.html#ae0672af45f145b88887adb9cf0b3532c">initialize</a>(</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;        this-&gt;m_file.getSize(),</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;        this-&gt;m_file.getSourceName().toChar(),</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;        this-&gt;m_file.getDestName().toChar()</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    );</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;    <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a> filePacket;</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    filePacket.<a class="code" href="union_fw_1_1_file_packet.html#ab39c3538a8a179d3fa30ad00d58b127d">fromStartPacket</a>(startPacket);</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    this-&gt;sendFilePacket(filePacket);</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;  }</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160; </div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;    sendFilePacket(<span class="keyword">const</span> <a class="code" href="union_fw_1_1_file_packet.html">Fw::FilePacket</a>&amp; filePacket)</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;  {</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    <span class="keyword">const</span> U32 bufferSize = filePacket.<a class="code" href="union_fw_1_1_file_packet.html#aeb95fc0523025d46df2b0fc4748eb2ce">bufferSize</a>();</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_buffer.<a class="code" href="class_fw_1_1_buffer.html#a0f7344fefd6813ce700c7e39dfd2ce29">getData</a>() != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;      this-&gt;m_buffer.<a class="code" href="class_fw_1_1_buffer.html#a82190e37d06defba369d8c4bff9662de">getSize</a>() &gt;= bufferSize,</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;      <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(bufferSize),</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;      <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(this-&gt;m_buffer.getSize()));</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> status = filePacket.<a class="code" href="union_fw_1_1_file_packet.html#afb834647c1930dcca228f005c01b81c9">toBuffer</a>(this-&gt;m_buffer);</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(status == <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>);</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;    <span class="comment">// set the buffer size to the packet size</span></div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;    this-&gt;m_buffer.<a class="code" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">setSize</a>(bufferSize);</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;    this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a0cfacf07a42de7f30d387f02ac7ec6fd">bufferSendOut_out</a>(0, this-&gt;m_buffer);</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;    <span class="comment">// restore buffer size to max</span></div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;    this-&gt;m_buffer.<a class="code" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">setSize</a>(<a class="code" href="namespace_svc.html#adcd0191f1387ee73cc7934ae9625af94">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</a>);</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;    this-&gt;m_packetsSent.packetSent();</div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;  }</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160; </div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;    enterCooldown()</div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;  {</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;    this-&gt;m_file.getOsFile().close();</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    this-&gt;m_mode.set(Mode::COOLDOWN);</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba32419b3d108f2a9eff632713b0661c4a">Fw::FilePacket::T_NONE</a>;</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    this-&gt;m_curTimer = 0;</div>
 <div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;  }</div>
 <div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160; </div>
 <div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;    enterCooldown()</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;    downlinkPacket()</div>
 <div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;  {</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;    this-&gt;m_file.getOsFile().close();</div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;    this-&gt;m_mode.set(Mode::COOLDOWN);</div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;    this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba32419b3d108f2a9eff632713b0661c4a">Fw::FilePacket::T_NONE</a>;</div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;    this-&gt;m_curTimer = 0;</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;  }</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160; </div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;    downlinkPacket()</div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;  {</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_lastCompletedType != <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba32419b3d108f2a9eff632713b0661c4a">Fw::FilePacket::T_NONE</a>, this-&gt;m_lastCompletedType);</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_mode.get() == Mode::CANCEL || this-&gt;m_mode.get() == Mode::DOWNLINK, this-&gt;m_mode.get());</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;      <span class="comment">//If canceled mode and currently downlinking data then send a cancel packet</span></div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_mode.get() == Mode::CANCEL &amp;&amp; this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba4e4db8763c460d4290f3bb832977a4cc">Fw::FilePacket::T_START</a>) {</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;          this-&gt;sendCancelPacket();</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;          this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba11269c0eccaffad1be6dbb6a1777c46f">Fw::FilePacket::T_CANCEL</a>;</div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;      }</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;      <span class="comment">//If in downlink mode and currently downlinking data then continue with the next packer</span></div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;m_mode.get() == Mode::DOWNLINK &amp;&amp; this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba4e4db8763c460d4290f3bb832977a4cc">Fw::FilePacket::T_START</a>) {</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;          <span class="comment">//Send the next packet, or fail doing so</span></div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> status = this-&gt;sendDataPacket(this-&gt;m_byteOffset);</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;          <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;              this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#aeea0977d667f6114790b92acc9740908">log_WARNING_HI_SendDataFail</a>(this-&gt;m_file.getSourceName(), this-&gt;m_byteOffset);</div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;              this-&gt;enterCooldown();</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;              this-&gt;sendResponse(<a class="code" href="namespace_svc.html#aac9c99b8ae513d57096132247533b0b9">FILEDOWNLINK_COMMAND_FAILURES_DISABLED</a> ? <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a> : <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>);</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;              <span class="comment">//Don&#39;t go to wait state</span></div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;              <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;          }</div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;      }</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;      <span class="comment">//If in downlink mode or cancel and finished downlinking data then send the last packet</span></div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501baf654296d05201bd78e4fefa39e74e51f">Fw::FilePacket::T_DATA</a>) {</div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;          this-&gt;sendEndPacket();</div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;          this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501bac8edc03f1e37b3dee1eae79dab98cbbe">Fw::FilePacket::T_END</a>;</div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;      }</div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;      this-&gt;m_mode.set(Mode::WAIT);</div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;      this-&gt;m_curTimer = 0;</div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;  }</div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160; </div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    finishHelper(<span class="keywordtype">bool</span> cancel)</div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;  {</div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;      <span class="comment">//Complete command and switch to IDLE</span></div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;      <span class="keywordflow">if</span> (not cancel) {</div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;          this-&gt;m_filesSent.fileSent();</div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;          this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#ad4a7fc5530a8ed0684f8f2277b91ebc0">log_ACTIVITY_HI_FileSent</a>(this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
-<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;          this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a7e4906a297fb0e98d08a68481d23f307">log_ACTIVITY_HI_DownlinkCanceled</a>(this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
-<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;      }</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;      this-&gt;enterCooldown();</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;      sendResponse(<a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a>);</div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;  }</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160; </div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    getBuffer(<a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&amp; buffer, PacketType type)</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;  {</div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;      <span class="comment">//Check type is correct</span></div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(type &lt; COUNT_PACKET_TYPE &amp;&amp; type &gt;= 0, type);</div>
-<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;      <span class="comment">// Wrap the buffer around our indexed memory.</span></div>
-<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;      buffer.<a class="code" href="class_fw_1_1_buffer.html#a8e22fb1466a971f05b264a4dbee6f789">setData</a>(this-&gt;m_memoryStore[type]);</div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;      buffer.<a class="code" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">setSize</a>(<a class="code" href="namespace_svc.html#adcd0191f1387ee73cc7934ae9625af94">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</a>);</div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;      <span class="comment">//Set a known ID to look for later</span></div>
-<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;      buffer.<a class="code" href="class_fw_1_1_buffer.html#a8febf26b9298d7a0898bf81d938ab9e8">setContext</a>(m_lastBufferId);</div>
-<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;      m_lastBufferId++;</div>
-<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;  }</div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;} <span class="comment">// end namespace Svc</span></div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_lastCompletedType != <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba32419b3d108f2a9eff632713b0661c4a">Fw::FilePacket::T_NONE</a>, this-&gt;m_lastCompletedType);</div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_mode.get() == Mode::CANCEL || this-&gt;m_mode.get() == Mode::DOWNLINK, this-&gt;m_mode.get());</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;      <span class="comment">//If canceled mode and currently downlinking data then send a cancel packet</span></div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_mode.get() == Mode::CANCEL &amp;&amp; this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba4e4db8763c460d4290f3bb832977a4cc">Fw::FilePacket::T_START</a>) {</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;          this-&gt;sendCancelPacket();</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;          this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba11269c0eccaffad1be6dbb6a1777c46f">Fw::FilePacket::T_CANCEL</a>;</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;      }</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;      <span class="comment">//If in downlink mode and currently downlinking data then continue with the next packer</span></div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;m_mode.get() == Mode::DOWNLINK &amp;&amp; this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501ba4e4db8763c460d4290f3bb832977a4cc">Fw::FilePacket::T_START</a>) {</div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;          <span class="comment">//Send the next packet, or fail doing so</span></div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> status = this-&gt;sendDataPacket(this-&gt;m_byteOffset);</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;          <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;              this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#aeea0977d667f6114790b92acc9740908">log_WARNING_HI_SendDataFail</a>(this-&gt;m_file.getSourceName(), this-&gt;m_byteOffset);</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;              this-&gt;enterCooldown();</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;              this-&gt;sendResponse(<a class="code" href="namespace_svc.html#aac9c99b8ae513d57096132247533b0b9">FILEDOWNLINK_COMMAND_FAILURES_DISABLED</a> ? <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a> : <a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">SendFileStatus::STATUS_ERROR</a>);</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;              <span class="comment">//Don&#39;t go to wait state</span></div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;              <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;          }</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;      }</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;      <span class="comment">//If in downlink mode or cancel and finished downlinking data then send the last packet</span></div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;m_lastCompletedType == <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501baf654296d05201bd78e4fefa39e74e51f">Fw::FilePacket::T_DATA</a>) {</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;          this-&gt;sendEndPacket();</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;          this-&gt;m_lastCompletedType = <a class="code" href="union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501bac8edc03f1e37b3dee1eae79dab98cbbe">Fw::FilePacket::T_END</a>;</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;      }</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;      this-&gt;m_mode.set(Mode::WAIT);</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;      this-&gt;m_curTimer = 0;</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;  }</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160; </div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;    finishHelper(<span class="keywordtype">bool</span> cancel)</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;  {</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;      <span class="comment">//Complete command and switch to IDLE</span></div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;      <span class="keywordflow">if</span> (not cancel) {</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;          this-&gt;m_filesSent.fileSent();</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;          this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#ad4a7fc5530a8ed0684f8f2277b91ebc0">log_ACTIVITY_HI_FileSent</a>(this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;          this-&gt;<a class="code" href="class_svc_1_1_file_downlink_component_base.html#a7e4906a297fb0e98d08a68481d23f307">log_ACTIVITY_HI_DownlinkCanceled</a>(this-&gt;m_file.getSourceName(), this-&gt;m_file.getDestName());</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;      }</div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;      this-&gt;enterCooldown();</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;      sendResponse(<a class="code" href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">SendFileStatus::STATUS_OK</a>);</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;  }</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160; </div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;  <span class="keywordtype">void</span> FileDownlink ::</div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    getBuffer(<a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&amp; buffer, PacketType type)</div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;  {</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;      <span class="comment">//Check type is correct</span></div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(type &lt; COUNT_PACKET_TYPE &amp;&amp; type &gt;= 0, type);</div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;      <span class="comment">// Wrap the buffer around our indexed memory.</span></div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;      buffer.<a class="code" href="class_fw_1_1_buffer.html#a8e22fb1466a971f05b264a4dbee6f789">setData</a>(this-&gt;m_memoryStore[type]);</div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;      buffer.<a class="code" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">setSize</a>(<a class="code" href="namespace_svc.html#adcd0191f1387ee73cc7934ae9625af94">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</a>);</div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;      <span class="comment">//Set a known ID to look for later</span></div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;      buffer.<a class="code" href="class_fw_1_1_buffer.html#a8febf26b9298d7a0898bf81d938ab9e8">setContext</a>(m_lastBufferId);</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;      m_lastBufferId++;</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;  }</div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;} <span class="comment">// end namespace Svc</span></div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
@@ -681,7 +672,6 @@ $(document).ready(function(){initNavTree('_file_downlink_8cpp_source.html',''); 
 <div class="ttc" id="aclass_fw_1_1_file_packet_1_1_data_packet_html_a3f315b1c293fe28b8825bd764aabcc25"><div class="ttname"><a href="class_fw_1_1_file_packet_1_1_data_packet.html#a3f315b1c293fe28b8825bd764aabcc25">Fw::FilePacket::DataPacket::initialize</a></div><div class="ttdeci">void initialize(const U32 sequenceIndex, const U32 byteOffset, const U16 dataSize, const U8 *const data)</div><div class="ttdoc">Initialize a data packet.</div><div class="ttdef"><b>Definition:</b> <a href="data_packet_8cpp_source.html#l00018">DataPacket.cpp:19</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_file_packet_1_1_end_packet_html"><div class="ttname"><a href="class_fw_1_1_file_packet_1_1_end_packet.html">Fw::FilePacket::EndPacket</a></div><div class="ttdoc">The type of an end packet.</div><div class="ttdef"><b>Definition:</b> <a href="file_packet_8hpp_source.html#l00269">FilePacket.hpp:269</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_file_packet_1_1_end_packet_html_aa9080f2d98a0335e05357b3b41519676"><div class="ttname"><a href="class_fw_1_1_file_packet_1_1_end_packet.html#aa9080f2d98a0335e05357b3b41519676">Fw::FilePacket::EndPacket::initialize</a></div><div class="ttdeci">void initialize(const U32 sequenceIndex, const CFDP::Checksum &amp;checksum)</div><div class="ttdoc">Initialize an end packet.</div><div class="ttdef"><b>Definition:</b> <a href="end_packet_8cpp_source.html#l00020">EndPacket.cpp:21</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_string_base_html"><div class="ttname"><a href="class_fw_1_1_string_base.html">Fw::StringBase</a></div><div class="ttdef"><b>Definition:</b> <a href="string_base_8hpp_source.html#l00024">StringBase.hpp:24</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_string_base_html_a210146c2a89c2ba9b995f3a9ddbd64a9"><div class="ttname"><a href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">Fw::StringBase::toChar</a></div><div class="ttdeci">virtual const CHAR * toChar() const =0</div></div>
 <div class="ttc" id="aclass_fw_1_1_string_base_html_a7a0538b972f986fce4d2fb8f89b1299f"><div class="ttname"><a href="class_fw_1_1_string_base.html#a7a0538b972f986fce4d2fb8f89b1299f">Fw::StringBase::length</a></div><div class="ttdeci">SizeType length() const</div><div class="ttdoc">Get length of string.</div><div class="ttdef"><b>Definition:</b> <a href="string_base_8cpp_source.html#l00125">StringBase.cpp:125</a></div></div>
@@ -708,10 +698,10 @@ $(document).ready(function(){initNavTree('_file_downlink_8cpp_source.html',''); 
 <div class="ttc" id="aclass_svc_1_1_file_downlink_component_base_html_ad4a7fc5530a8ed0684f8f2277b91ebc0"><div class="ttname"><a href="class_svc_1_1_file_downlink_component_base.html#ad4a7fc5530a8ed0684f8f2277b91ebc0">Svc::FileDownlinkComponentBase::log_ACTIVITY_HI_FileSent</a></div><div class="ttdeci">void log_ACTIVITY_HI_FileSent(const Fw::StringBase &amp;sourceFileName, const Fw::StringBase &amp;destFileName)</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_component_ac_8cpp_source.html#l01679">FileDownlinkComponentAc.cpp:1680</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_file_downlink_component_base_html_ae1d1cea7903c392636747e89b84c79fd"><div class="ttname"><a href="class_svc_1_1_file_downlink_component_base.html#ae1d1cea7903c392636747e89b84c79fd">Svc::FileDownlinkComponentBase::pingOut_out</a></div><div class="ttdeci">void pingOut_out(FwIndexType portNum, U32 key)</div><div class="ttdoc">Invoke output port pingOut.</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_component_ac_8cpp_source.html#l01257">FileDownlinkComponentAc.cpp:1258</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_file_downlink_component_base_html_aeea0977d667f6114790b92acc9740908"><div class="ttname"><a href="class_svc_1_1_file_downlink_component_base.html#aeea0977d667f6114790b92acc9740908">Svc::FileDownlinkComponentBase::log_WARNING_HI_SendDataFail</a></div><div class="ttdeci">void log_WARNING_HI_SendDataFail(const Fw::StringBase &amp;sourceFileName, U32 byteOffset)</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_component_ac_8cpp_source.html#l02179">FileDownlinkComponentAc.cpp:2180</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_file_downlink_html_a10547ada6770dda55aeb28458664acfc"><div class="ttname"><a href="class_svc_1_1_file_downlink.html#a10547ada6770dda55aeb28458664acfc">Svc::FileDownlink::~FileDownlink</a></div><div class="ttdeci">~FileDownlink()</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_8cpp_source.html#l00082">FileDownlink.cpp:83</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_file_downlink_html_a10547ada6770dda55aeb28458664acfc"><div class="ttname"><a href="class_svc_1_1_file_downlink.html#a10547ada6770dda55aeb28458664acfc">Svc::FileDownlink::~FileDownlink</a></div><div class="ttdeci">~FileDownlink()</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_8cpp_source.html#l00073">FileDownlink.cpp:74</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_file_downlink_html_a4c66fd5207cabb4f13799a1fddf13f06"><div class="ttname"><a href="class_svc_1_1_file_downlink.html#a4c66fd5207cabb4f13799a1fddf13f06">Svc::FileDownlink::FileDownlink</a></div><div class="ttdeci">FileDownlink(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_8cpp_source.html#l00025">FileDownlink.cpp:26</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_file_downlink_html_ab6bebef8e22a452c1a0676d0a2aef384"><div class="ttname"><a href="class_svc_1_1_file_downlink.html#ab6bebef8e22a452c1a0676d0a2aef384">Svc::FileDownlink::preamble</a></div><div class="ttdeci">void preamble()</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_8cpp_source.html#l00076">FileDownlink.cpp:77</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_file_downlink_html_afaff798851eb398603a7f729ee68b76a"><div class="ttname"><a href="class_svc_1_1_file_downlink.html#afaff798851eb398603a7f729ee68b76a">Svc::FileDownlink::configure</a></div><div class="ttdeci">void configure(U32 timeout, U32 cooldown, U32 cycleTime, U32 fileQueueDepth)</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_8cpp_source.html#l00055">FileDownlink.cpp:56</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_file_downlink_html_ab6bebef8e22a452c1a0676d0a2aef384"><div class="ttname"><a href="class_svc_1_1_file_downlink.html#ab6bebef8e22a452c1a0676d0a2aef384">Svc::FileDownlink::preamble</a></div><div class="ttdeci">void preamble()</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_8cpp_source.html#l00067">FileDownlink.cpp:68</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_file_downlink_html_afaff798851eb398603a7f729ee68b76a"><div class="ttname"><a href="class_svc_1_1_file_downlink.html#afaff798851eb398603a7f729ee68b76a">Svc::FileDownlink::configure</a></div><div class="ttdeci">void configure(U32 timeout, U32 cooldown, U32 cycleTime, U32 fileQueueDepth)</div><div class="ttdef"><b>Definition:</b> <a href="file_downlink_8cpp_source.html#l00046">FileDownlink.cpp:47</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_send_file_response_html"><div class="ttname"><a href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a></div><div class="ttdoc">Send file response struct.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00019">SendFileResponseSerializableAc.hpp:21</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_send_file_status_html_a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2"><div class="ttname"><a href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a55557f83274fc2f234b893833e46d8d2">Svc::SendFileStatus::STATUS_OK</a></div><div class="ttdeci">@ STATUS_OK</div><div class="ttdef"><b>Definition:</b> <a href="send_file_status_enum_ac_8hpp_source.html#l00032">SendFileStatusEnumAc.hpp:32</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_send_file_status_html_a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae"><div class="ttname"><a href="class_svc_1_1_send_file_status.html#a3dbd18c492c7e7a70c3ccaf7c0c02b36a5e03c0d9600e688bcf9534bfda8216ae">Svc::SendFileStatus::STATUS_ERROR</a></div><div class="ttdeci">@ STATUS_ERROR</div><div class="ttdef"><b>Definition:</b> <a href="send_file_status_enum_ac_8hpp_source.html#l00033">SendFileStatusEnumAc.hpp:33</a></div></div>

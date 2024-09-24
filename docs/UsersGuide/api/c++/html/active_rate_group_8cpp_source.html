@@ -134,81 +134,77 @@ $(document).ready(function(){initNavTree('_active_rate_group_8cpp_source.html','
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        }</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="class_svc_1_1_active_rate_group.html#a3d4f0276aaec49cd163b38a2871d2e4e">   47</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">ActiveRateGroup::init</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance) {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">ActiveRateGroupComponentBase::init</a>(queueDepth,instance);</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="class_svc_1_1_active_rate_group.html#aaa36e6c03d34a4b7dad9b1577e71fd96">   47</a></span>&#160;    <a class="code" href="class_svc_1_1_active_rate_group.html#aaa36e6c03d34a4b7dad9b1577e71fd96">ActiveRateGroup::~ActiveRateGroup</a>() {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    }</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="class_svc_1_1_active_rate_group.html#aaa36e6c03d34a4b7dad9b1577e71fd96">   51</a></span>&#160;    <a class="code" href="class_svc_1_1_active_rate_group.html#aaa36e6c03d34a4b7dad9b1577e71fd96">ActiveRateGroup::~ActiveRateGroup</a>() {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">void</span> ActiveRateGroup::preamble() {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#ac03bbfb02aca85d62fe712db21dbb7f4">log_DIAGNOSTIC_RateGroupStarted</a>();</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> ActiveRateGroup::preamble() {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#ac03bbfb02aca85d62fe712db21dbb7f4">log_DIAGNOSTIC_RateGroupStarted</a>();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> ActiveRateGroup::CycleIn_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a>&amp; cycleStart) {</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="comment">// Make sure it&#39;s been configured</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_numContexts);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> ActiveRateGroup::CycleIn_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a>&amp; cycleStart) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="comment">// Make sure it&#39;s been configured</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_numContexts);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        TimerVal end;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        this-&gt;m_cycleStarted = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        TimerVal end;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        this-&gt;m_cycleStarted = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="comment">// invoke any members of the rate group</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">for</span> (<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> port = 0; port &lt; this-&gt;m_numContexts; port++) {</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordflow">if</span> (this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#abd8b2cc3014c12d728085354d05527d3">isConnected_RateGroupMemberOut_OutputPort</a>(port)) {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a4a58569fbe4333facd6f26529cb373df">RateGroupMemberOut_out</a>(port, <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(this-&gt;m_contexts[port]));</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            }</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="comment">// grab timer for end of cycle</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        end.take();</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="comment">// get rate group execution time</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        U32 cycle_time = end.diffUSec(cycleStart);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="comment">// check to see if the time has exceeded the previous maximum</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">if</span> (cycle_time &gt; this-&gt;m_maxTime) {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            this-&gt;m_maxTime = cycle_time;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="comment">// update cycle telemetry</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a1d19b2ff63aa3947705b962131a4ba4a">tlmWrite_RgMaxTime</a>(this-&gt;m_maxTime);</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="comment">// check for cycle slip. That will happen if new cycle message has been received</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="comment">// which will cause flag will be set again.</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_cycleStarted) {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            this-&gt;m_cycleSlips++;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            <span class="keywordflow">if</span> (this-&gt;m_overrunThrottle &lt; <a class="code" href="namespace_svc.html#ae495e4aee1da4d0b3e4e6c9801eeccc7a000574367151fcc68ffc13a24d417c07">ACTIVE_RATE_GROUP_OVERRUN_THROTTLE</a>) {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a8c3900de80d6b613ea5bf89e64e69d65">log_WARNING_HI_RateGroupCycleSlip</a>(this-&gt;m_cycles);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                this-&gt;m_overrunThrottle++;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            <span class="comment">// update cycle slips</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a2905f7b9351a06a32af67a4a301c4be9">tlmWrite_RgCycleSlips</a>(this-&gt;m_cycleSlips);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        } <span class="keywordflow">else</span> { <span class="comment">// if cycle is okay start decrementing throttle value</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            <span class="keywordflow">if</span> (this-&gt;m_overrunThrottle &gt; 0) {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                this-&gt;m_overrunThrottle--;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            }</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="comment">// increment cycle</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        this-&gt;m_cycles++;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordtype">void</span> ActiveRateGroup::CycleIn_preMsgHook(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a>&amp; cycleStart) {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="comment">// set flag to indicate cycle has started. Check in thread for overflow.</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        this-&gt;m_cycleStarted = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    }</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">void</span> ActiveRateGroup::PingIn_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key) {</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="comment">// return the key to health</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#aff278733a3cd9923ec3781ebf7fa2be0">PingOut_out</a>(0,key);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    }</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;}</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="comment">// invoke any members of the rate group</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keywordflow">for</span> (<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> port = 0; port &lt; this-&gt;m_numContexts; port++) {</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <span class="keywordflow">if</span> (this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#abd8b2cc3014c12d728085354d05527d3">isConnected_RateGroupMemberOut_OutputPort</a>(port)) {</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a4a58569fbe4333facd6f26529cb373df">RateGroupMemberOut_out</a>(port, <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(this-&gt;m_contexts[port]));</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            }</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="comment">// grab timer for end of cycle</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        end.take();</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="comment">// get rate group execution time</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        U32 cycle_time = end.diffUSec(cycleStart);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="comment">// check to see if the time has exceeded the previous maximum</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordflow">if</span> (cycle_time &gt; this-&gt;m_maxTime) {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            this-&gt;m_maxTime = cycle_time;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="comment">// update cycle telemetry</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a1d19b2ff63aa3947705b962131a4ba4a">tlmWrite_RgMaxTime</a>(this-&gt;m_maxTime);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="comment">// check for cycle slip. That will happen if new cycle message has been received</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="comment">// which will cause flag will be set again.</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_cycleStarted) {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            this-&gt;m_cycleSlips++;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            <span class="keywordflow">if</span> (this-&gt;m_overrunThrottle &lt; <a class="code" href="namespace_svc.html#ae495e4aee1da4d0b3e4e6c9801eeccc7a000574367151fcc68ffc13a24d417c07">ACTIVE_RATE_GROUP_OVERRUN_THROTTLE</a>) {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a8c3900de80d6b613ea5bf89e64e69d65">log_WARNING_HI_RateGroupCycleSlip</a>(this-&gt;m_cycles);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                this-&gt;m_overrunThrottle++;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            <span class="comment">// update cycle slips</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#a2905f7b9351a06a32af67a4a301c4be9">tlmWrite_RgCycleSlips</a>(this-&gt;m_cycleSlips);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        } <span class="keywordflow">else</span> { <span class="comment">// if cycle is okay start decrementing throttle value</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">if</span> (this-&gt;m_overrunThrottle &gt; 0) {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                this-&gt;m_overrunThrottle--;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="comment">// increment cycle</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        this-&gt;m_cycles++;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordtype">void</span> ActiveRateGroup::CycleIn_preMsgHook(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a>&amp; cycleStart) {</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="comment">// set flag to indicate cycle has started. Check in thread for overflow.</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        this-&gt;m_cycleStarted = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordtype">void</span> ActiveRateGroup::PingIn_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 key) {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <span class="comment">// return the key to health</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_active_rate_group_component_base.html#aff278733a3cd9923ec3781ebf7fa2be0">PingOut_out</a>(0,key);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;}</div>
 <div class="ttc" id="a_active_rate_group_8hpp_html"><div class="ttname"><a href="active_rate_group_8hpp.html">ActiveRateGroup.hpp</a></div></div>
 <div class="ttc" id="a_active_rate_group_cfg_8hpp_html"><div class="ttname"><a href="active_rate_group_cfg_8hpp.html">ActiveRateGroupCfg.hpp</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
@@ -217,7 +213,6 @@ $(document).ready(function(){initNavTree('_active_rate_group_8cpp_source.html','
 <div class="ttc" id="a_basic_types_8h_html_ad9e564dbb201424b4ce880740f6f5aa4"><div class="ttname"><a href="basic_types_8h.html#ad9e564dbb201424b4ce880740f6f5aa4">FW_NUM_ARRAY_ELEMENTS</a></div><div class="ttdeci">#define FW_NUM_ARRAY_ELEMENTS(a)</div><div class="ttdoc">number of elements in an array</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00066">BasicTypes.h:66</a></div></div>
 <div class="ttc" id="a_console_8hpp_html"><div class="ttname"><a href="console_8hpp.html">Console.hpp</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
-<div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_active_rate_group_component_base_html"><div class="ttname"><a href="class_svc_1_1_active_rate_group_component_base.html">Svc::ActiveRateGroupComponentBase</a></div><div class="ttdoc">Auto-generated base for ActiveRateGroup component.</div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_component_ac_8hpp_source.html#l00032">ActiveRateGroupComponentAc.hpp:34</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_active_rate_group_component_base_html_a1d19b2ff63aa3947705b962131a4ba4a"><div class="ttname"><a href="class_svc_1_1_active_rate_group_component_base.html#a1d19b2ff63aa3947705b962131a4ba4a">Svc::ActiveRateGroupComponentBase::tlmWrite_RgMaxTime</a></div><div class="ttdeci">void tlmWrite_RgMaxTime(U32 arg, Fw::Time _tlmTime=Fw::Time())</div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_component_ac_8cpp_source.html#l00975">ActiveRateGroupComponentAc.cpp:976</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_active_rate_group_component_base_html_a2905f7b9351a06a32af67a4a301c4be9"><div class="ttname"><a href="class_svc_1_1_active_rate_group_component_base.html#a2905f7b9351a06a32af67a4a301c4be9">Svc::ActiveRateGroupComponentBase::tlmWrite_RgCycleSlips</a></div><div class="ttdeci">void tlmWrite_RgCycleSlips(U32 arg, Fw::Time _tlmTime=Fw::Time())</div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_component_ac_8cpp_source.html#l01023">ActiveRateGroupComponentAc.cpp:1024</a></div></div>
@@ -228,7 +223,7 @@ $(document).ready(function(){initNavTree('_active_rate_group_8cpp_source.html','
 <div class="ttc" id="aclass_svc_1_1_active_rate_group_component_base_html_ac03bbfb02aca85d62fe712db21dbb7f4"><div class="ttname"><a href="class_svc_1_1_active_rate_group_component_base.html#ac03bbfb02aca85d62fe712db21dbb7f4">Svc::ActiveRateGroupComponentBase::log_DIAGNOSTIC_RateGroupStarted</a></div><div class="ttdeci">void log_DIAGNOSTIC_RateGroupStarted()</div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_component_ac_8cpp_source.html#l00824">ActiveRateGroupComponentAc.cpp:825</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_active_rate_group_component_base_html_aff278733a3cd9923ec3781ebf7fa2be0"><div class="ttname"><a href="class_svc_1_1_active_rate_group_component_base.html#aff278733a3cd9923ec3781ebf7fa2be0">Svc::ActiveRateGroupComponentBase::PingOut_out</a></div><div class="ttdeci">void PingOut_out(FwIndexType portNum, U32 key)</div><div class="ttdoc">Invoke output port PingOut.</div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_component_ac_8cpp_source.html#l00790">ActiveRateGroupComponentAc.cpp:791</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_active_rate_group_html_a4367d22928df16fca81d50670d213196"><div class="ttname"><a href="class_svc_1_1_active_rate_group.html#a4367d22928df16fca81d50670d213196">Svc::ActiveRateGroup::configure</a></div><div class="ttdeci">void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts)</div><div class="ttdoc">ActiveRateGroup configuration function.</div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_8cpp_source.html#l00033">ActiveRateGroup.cpp:33</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_active_rate_group_html_aaa36e6c03d34a4b7dad9b1577e71fd96"><div class="ttname"><a href="class_svc_1_1_active_rate_group.html#aaa36e6c03d34a4b7dad9b1577e71fd96">Svc::ActiveRateGroup::~ActiveRateGroup</a></div><div class="ttdeci">~ActiveRateGroup()</div><div class="ttdoc">ActiveRateGroup destructor.</div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_8cpp_source.html#l00051">ActiveRateGroup.cpp:51</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_active_rate_group_html_aaa36e6c03d34a4b7dad9b1577e71fd96"><div class="ttname"><a href="class_svc_1_1_active_rate_group.html#aaa36e6c03d34a4b7dad9b1577e71fd96">Svc::ActiveRateGroup::~ActiveRateGroup</a></div><div class="ttdeci">~ActiveRateGroup()</div><div class="ttdoc">ActiveRateGroup destructor.</div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_8cpp_source.html#l00047">ActiveRateGroup.cpp:47</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_active_rate_group_html_adac78c2c08ff7a28fdac0426632e3c85"><div class="ttname"><a href="class_svc_1_1_active_rate_group.html#adac78c2c08ff7a28fdac0426632e3c85">Svc::ActiveRateGroup::ActiveRateGroup</a></div><div class="ttdeci">ActiveRateGroup(const char *compName)</div><div class="ttdoc">ActiveRateGroup constructor.</div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_8cpp_source.html#l00023">ActiveRateGroup.cpp:23</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_timer_val_html"><div class="ttname"><a href="class_svc_1_1_timer_val.html">Svc::TimerVal</a></div><div class="ttdoc">Serializable class for carrying timer values.</div><div class="ttdef"><b>Definition:</b> <a href="timer_val_8hpp_source.html#l00022">TimerVal.hpp:22</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>

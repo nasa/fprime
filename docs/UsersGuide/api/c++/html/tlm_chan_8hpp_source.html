@@ -102,57 +102,53 @@ $(document).ready(function(){initNavTree('_tlm_chan_8hpp_source.html',''); initR
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <a class="code" href="class_svc_1_1_tlm_chan.html#af83d12c6b301092774814cc37729f1ca">TlmChan</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* compName);</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="class_svc_1_1_tlm_chan.html#ae73704a646d4f6b166a573dfe20c4e2c">~TlmChan</a>();</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">init</a>(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> queueDepth, </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;              <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> instance    </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    );</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  PROTECTED:</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="comment">// can be overridden for alternate algorithms</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> <a class="code" href="class_svc_1_1_tlm_chan.html#a718b093ca33349982fb87f9589673c35">doHash</a>(<a class="code" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> <span class="keywordtype">id</span>);</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  PRIVATE:</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="comment">// Port functions</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">void</span> TlmRecv_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> <span class="keywordtype">id</span>, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; timeTag, <a class="code" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a>&amp; val);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">void</span> TlmGet_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> <span class="keywordtype">id</span>, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; timeTag, <a class="code" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a>&amp; val);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">void</span> Run_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">void</span> pingIn_handler(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                        U32 key                        </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    );</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">typedef</span> <span class="keyword">struct </span>tlmEntry {</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <a class="code" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> id;  </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keywordtype">bool</span> updated;     </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <a class="code" href="class_fw_1_1_time.html">Fw::Time</a> lastUpdate;        </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <a class="code" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a> buffer;       </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        tlmEntry* next;             </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordtype">bool</span> used;                  </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> bucketNo;  </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    } TlmEntry;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">struct </span>TlmSet {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];  </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        TlmEntry buckets[TLMCHAN_HASH_BUCKETS];       </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> free;                         </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    } m_tlmEntries[2];</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  PROTECTED:</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="comment">// can be overridden for alternate algorithms</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> <a class="code" href="class_svc_1_1_tlm_chan.html#a718b093ca33349982fb87f9589673c35">doHash</a>(<a class="code" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> <span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  PRIVATE:</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="comment">// Port functions</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">void</span> TlmRecv_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> <span class="keywordtype">id</span>, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; timeTag, <a class="code" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a>&amp; val);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">void</span> TlmGet_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, <a class="code" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> <span class="keywordtype">id</span>, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>&amp; timeTag, <a class="code" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a>&amp; val);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">void</span> Run_handler(<a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, U32 context);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">void</span> pingIn_handler(<span class="keyword">const</span> <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                        U32 key                        </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    );</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keyword">typedef</span> <span class="keyword">struct </span>tlmEntry {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <a class="code" href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a> id;  </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keywordtype">bool</span> updated;     </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <a class="code" href="class_fw_1_1_time.html">Fw::Time</a> lastUpdate;        </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <a class="code" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a> buffer;       </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        tlmEntry* next;             </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordtype">bool</span> used;                  </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <a class="code" href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a> bucketNo;  </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    } TlmEntry;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">struct </span>TlmSet {</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];  </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        TlmEntry buckets[TLMCHAN_HASH_BUCKETS];       </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> free;                         </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    } m_tlmEntries[2];</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    U32 m_activeBuffer;  <span class="comment">// !&lt; which buffer is active for storing telemetry</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;};</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    U32 m_activeBuffer;  <span class="comment">// !&lt; which buffer is active for storing telemetry</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;};</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}  <span class="comment">// namespace Svc</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* TELEMCHANIMPL_HPP_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;}  <span class="comment">// namespace Svc</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* TELEMCHANIMPL_HPP_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8h.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00052">BasicTypes.h:52</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a2d078f269f4c29e1d54fc49a5c2cd601"><div class="ttname"><a href="fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a></div><div class="ttdeci">U32 FwChanIdType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00082">FpConfig.h:82</a></div></div>
 <div class="ttc" id="a_tlm_chan_component_ac_8hpp_html"><div class="ttname"><a href="tlm_chan_component_ac_8hpp.html">TlmChanComponentAc.hpp</a></div></div>
 <div class="ttc" id="a_tlm_chan_impl_cfg_8hpp_html"><div class="ttname"><a href="tlm_chan_impl_cfg_8hpp.html">TlmChanImplCfg.hpp</a></div><div class="ttdoc">Configuration file for Telemetry Channel component.</div></div>
 <div class="ttc" id="a_tlm_packet_8hpp_html"><div class="ttname"><a href="tlm_packet_8hpp.html">TlmPacket.hpp</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_obj_base_html_a05b416b6a407312b540cda5512359d43"><div class="ttname"><a href="class_fw_1_1_obj_base.html#a05b416b6a407312b540cda5512359d43">Fw::ObjBase::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8cpp_source.html#l00027">ObjBase.cpp:27</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_time_html"><div class="ttname"><a href="class_fw_1_1_time.html">Fw::Time</a></div><div class="ttdef"><b>Definition:</b> <a href="time_8hpp_source.html#l00009">Time.hpp:9</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_tlm_buffer_html"><div class="ttname"><a href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="tlm_buffer_8hpp_source.html#l00020">TlmBuffer.hpp:20</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_tlm_chan_component_base_html"><div class="ttname"><a href="class_svc_1_1_tlm_chan_component_base.html">Svc::TlmChanComponentBase</a></div><div class="ttdoc">Auto-generated base for TlmChan component.</div><div class="ttdef"><b>Definition:</b> <a href="tlm_chan_component_ac_8hpp_source.html#l00027">TlmChanComponentAc.hpp:29</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_tlm_chan_html"><div class="ttname"><a href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></div><div class="ttdef"><b>Definition:</b> <a href="tlm_chan_8hpp_source.html#l00022">TlmChan.hpp:22</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_tlm_chan_html_a718b093ca33349982fb87f9589673c35"><div class="ttname"><a href="class_svc_1_1_tlm_chan.html#a718b093ca33349982fb87f9589673c35">Svc::TlmChan::doHash</a></div><div class="ttdeci">virtual NATIVE_UINT_TYPE doHash(FwChanIdType id)</div><div class="ttdef"><b>Definition:</b> <a href="tlm_chan_8cpp_source.html#l00051">TlmChan.cpp:51</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_tlm_chan_html_a718b093ca33349982fb87f9589673c35"><div class="ttname"><a href="class_svc_1_1_tlm_chan.html#a718b093ca33349982fb87f9589673c35">Svc::TlmChan::doHash</a></div><div class="ttdeci">virtual NATIVE_UINT_TYPE doHash(FwChanIdType id)</div><div class="ttdef"><b>Definition:</b> <a href="tlm_chan_8cpp_source.html#l00045">TlmChan.cpp:45</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_tlm_chan_html_ae73704a646d4f6b166a573dfe20c4e2c"><div class="ttname"><a href="class_svc_1_1_tlm_chan.html#ae73704a646d4f6b166a573dfe20c4e2c">Svc::TlmChan::~TlmChan</a></div><div class="ttdeci">virtual ~TlmChan()</div><div class="ttdef"><b>Definition:</b> <a href="tlm_chan_8cpp_source.html#l00043">TlmChan.cpp:43</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_tlm_chan_html_af83d12c6b301092774814cc37729f1ca"><div class="ttname"><a href="class_svc_1_1_tlm_chan.html#af83d12c6b301092774814cc37729f1ca">Svc::TlmChan::TlmChan</a></div><div class="ttdeci">TlmChan(const char *compName)</div><div class="ttdef"><b>Definition:</b> <a href="tlm_chan_8cpp_source.html#l00019">TlmChan.cpp:19</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>

@@ -8,7 +8,6 @@ var class_drv_1_1_linux_gpio_driver_component_impl =
     [ "LinuxGpioDriverComponentImpl", "class_drv_1_1_linux_gpio_driver_component_impl.html#a67ea492696ac53f47637a04015394d03", null ],
     [ "~LinuxGpioDriverComponentImpl", "class_drv_1_1_linux_gpio_driver_component_impl.html#a597f5d222833b99445494ceda7a0bd0e", null ],
     [ "exitThread", "class_drv_1_1_linux_gpio_driver_component_impl.html#a23bf94cd4b673a1aaf5fca79ec236dce", null ],
-    [ "init", "class_drv_1_1_linux_gpio_driver_component_impl.html#a9b993263bedfb350e77253973ebd02a2", null ],
     [ "open", "class_drv_1_1_linux_gpio_driver_component_impl.html#a117498a38a7256176bc34fbd8435dcc1", null ],
     [ "startIntTask", "class_drv_1_1_linux_gpio_driver_component_impl.html#a4f28f15261f71e06f231285556c2bd23", null ]
 ];
