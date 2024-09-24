@@ -34,12 +34,6 @@ namespace Svc {
           const char *const compName /*!< The component name*/
       );
 
-      //! Initialize object UdpReceiver
-      //!
-      void init(
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
-
       //! Destroy object UdpReceiver
       //!
       ~UdpReceiverComponentImpl();

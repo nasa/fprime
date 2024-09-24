@@ -34,15 +34,6 @@ namespace Svc {
 
   }
 
-  void FileManager ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    FileManagerComponentBase::init(queueDepth, instance);
-  }
-
   FileManager ::
     ~FileManager()
   {

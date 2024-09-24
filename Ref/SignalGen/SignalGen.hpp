@@ -77,14 +77,6 @@ namespace Ref {
             const char* compName //!< The component name
         );
 
-
-
-        //! Initialize a SignalGen
-        void init(
-            const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-            const NATIVE_INT_TYPE instance //!< The instance number
-        );
-
         //! Destroy a SignalGen
         ~SignalGen();
 

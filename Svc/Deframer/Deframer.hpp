@@ -50,11 +50,6 @@ class Deframer :
         const char* const compName //!< The component name
     );
 
-    //! Initialize Deframer instance
-    void init(
-        const NATIVE_INT_TYPE instance = 0 //!< The instance number
-    );
-
     //! Destroy Deframer instance
     ~Deframer();
 

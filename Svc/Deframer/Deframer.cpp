@@ -45,10 +45,6 @@ Deframer ::Deframer(const char* const compName) :
     (void) memset(m_pollBuffer, 0, sizeof m_pollBuffer);
 }
 
-void Deframer ::init(const NATIVE_INT_TYPE instance) {
-    DeframerComponentBase::init(instance);
-}
-
 Deframer ::~Deframer() {}
 
 void Deframer ::setup(DeframingProtocol& protocol) {

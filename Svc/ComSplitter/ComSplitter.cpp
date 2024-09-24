@@ -26,12 +26,6 @@ namespace Svc {
 
   }
 
-  void ComSplitter ::
-    init(NATIVE_INT_TYPE instance)
-  {
-    ComSplitterComponentBase::init(instance);
-  }
-
   // ----------------------------------------------------------------------
   // Handler implementations
   // ----------------------------------------------------------------------

@@ -99,12 +99,6 @@ class ComQueue : public ComQueueComponentBase {
     ComQueue(const char* const compName /*!< The component name */
     );
 
-    //! Initialize object ComQueue
-    //!
-    void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth */
-              const NATIVE_INT_TYPE instance = 0 /*!< The instance number */
-    );
-
     //! Destroy object ComQueue
     //!
     ~ComQueue();
