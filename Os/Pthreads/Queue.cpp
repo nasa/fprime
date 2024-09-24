@@ -341,7 +341,7 @@ namespace Os {
       return receiveBlock(queueHandle, buffer, capacity, actualSize, priority);
   }
 
-  NATIVE_INT_TYPE Queue::getNumMsgs() const {
+  NATIVE_INT_TYPE Queue::getMessagesAvailable() const {
       QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
       if (nullptr == queueHandle) {
           return 0;

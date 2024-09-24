@@ -29,8 +29,8 @@ TEST(Nominal, Empty) {
     ASSERT_TRUE(ret);
 
 
-    NATIVE_INT_TYPE value;
-    NATIVE_UINT_TYPE id=0;
+    FwQueuePriorityType value;
+    FwSizeType id=0;
 
     printf("Testing empty...\n");
     ret = heap.pop(value, id);
@@ -52,12 +52,12 @@ TEST(Nominal, PushPop) {
     ASSERT_TRUE(ret);
 
 
-    NATIVE_INT_TYPE value;
-    NATIVE_UINT_TYPE size;
-    NATIVE_UINT_TYPE id=0;
+    FwQueuePriorityType value;
+    FwSizeType size;
+    FwSizeType id=0;
 
     printf("Testing push...\n");
-    for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
+    for(FwSizeType ii = 0; ii < DEPTH; ++ii) {
         //printf("Inserting value %d\n", ii);
         ret = heap.push(ii, ii);
         ASSERT_TRUE(ret);
@@ -74,12 +74,12 @@ TEST(Nominal, PushPop) {
 
     printf("Testing pop...\n");
     //heap.print();
-    for(NATIVE_INT_TYPE ii = DEPTH-1; ii >= 0; --ii) {
+    for(FwQueuePriorityType ii = DEPTH-1; ii >= 0; --ii) {
         ret = heap.pop(value, id);
         ASSERT_TRUE(ret);
-        ASSERT_EQ(id, static_cast<NATIVE_UINT_TYPE>(ii));
+        ASSERT_EQ(id, static_cast<FwSizeType>(ii));
         size = heap.getSize();
-        ASSERT_EQ(size, static_cast<NATIVE_UINT_TYPE>(ii));
+        ASSERT_EQ(size, static_cast<FwSizeType>(ii));
         //printf("Heap state after pop:\n");
         //heap.print();
         //printf("Got value %d\n", value);
@@ -90,11 +90,11 @@ TEST(Nominal, PushPop) {
     printf("Passed.\n");
 
     printf("Testing random...\n");
-    NATIVE_INT_TYPE values[DEPTH] = {56, 0, 500, 57, 5};
-    NATIVE_INT_TYPE sorted[DEPTH] = {500, 57, 56, 5, 0};
+    FwQueuePriorityType values[DEPTH] = {56, 0, 500, 57, 5};
+    FwSizeType sorted[DEPTH] = {500, 57, 56, 5, 0};
     //heap.print();
     // Push values on in random order:
-    for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
+    for(FwSizeType ii = 0; ii < DEPTH; ++ii) {
         // Push next value in the list:
         ret = heap.push(values[ii], id);
         ASSERT_TRUE(ret);
@@ -118,7 +118,7 @@ TEST(Nominal, PushPop) {
     ASSERT_FALSE(ret);
 
     // Get values out from largest to smallest:
-    for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
+    for(FwSizeType ii = 0; ii < DEPTH; ++ii) {
         // Pop the top value:
         ret = heap.pop(value, id);
         ASSERT_TRUE(ret);
@@ -146,10 +146,10 @@ TEST(Nominal, PushPop) {
     printf("Testing no priority...\n");
     // For this test we expect things to come in fifo order
     // since all the priorities are the same:
-    NATIVE_INT_TYPE priorities[DEPTH] = {7, 7, 7, 7, 7};
-    NATIVE_UINT_TYPE data[DEPTH] = {43, 56, 47, 33, 11};
+    FwQueuePriorityType priorities[DEPTH] = {7, 7, 7, 7, 7};
+    FwSizeType data[DEPTH] = {43, 56, 47, 33, 11};
     // Push values on in random order:
-    for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
+    for(FwSizeType ii = 0; ii < DEPTH; ++ii) {
         // Push next value in the list:
         ret = heap.push(priorities[ii], data[ii]);
         ASSERT_TRUE(ret);
@@ -158,7 +158,7 @@ TEST(Nominal, PushPop) {
     }
 
     // Get values out in FIFO order:
-    for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
+    for(FwSizeType ii = 0; ii < DEPTH; ++ii) {
         // Pop the top value:
         ret = heap.pop(value, id);
         ASSERT_TRUE(ret);
@@ -173,12 +173,12 @@ TEST(Nominal, PushPop) {
     // For this test we expect things to come in fifo order
     // for things of the same priority and in priority
     // order for things of different priorities.
-    NATIVE_INT_TYPE pries[DEPTH] = {1, 7, 100, 1, 7};
-    NATIVE_INT_TYPE data2[DEPTH] = {4, 22, 99, 12344, 33};
-    NATIVE_INT_TYPE orderedPries[DEPTH] = {100, 7, 7, 1, 1};
-    NATIVE_UINT_TYPE ordered[DEPTH] = {99, 22, 33, 4, 12344};
+    FwQueuePriorityType pries[DEPTH] = {1, 7, 100, 1, 7};
+    FwQueuePriorityType data2[DEPTH] = {4, 22, 99, 12344, 33};
+    FwQueuePriorityType orderedPries[DEPTH] = {100, 7, 7, 1, 1};
+    FwSizeType ordered[DEPTH] = {99, 22, 33, 4, 12344};
     // Push values on in random order:
-    for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
+    for(FwSizeType ii = 0; ii < DEPTH; ++ii) {
         // Push next value in the list:
         ret = heap.push(pries[ii], data2[ii]);
         ASSERT_TRUE(ret);
@@ -187,7 +187,7 @@ TEST(Nominal, PushPop) {
     }
 
     // Get values out in FIFO order:
-    for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
+    for(FwSizeType ii = 0; ii < DEPTH; ++ii) {
         // Pop the top value:
         ret = heap.pop(value, id);
         ASSERT_TRUE(ret);

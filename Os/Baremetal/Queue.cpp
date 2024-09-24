@@ -208,7 +208,7 @@ Queue::QueueStatus Queue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_I
     return bareReceiveBlock(handle, buffer, capacity, actualSize, priority);
 }
 
-NATIVE_INT_TYPE Queue::getNumMsgs() const {
+NATIVE_INT_TYPE Queue::getMessagesAvailable() const {
     //Check if the handle is null or check the underlying queue is null
     if ((nullptr == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {

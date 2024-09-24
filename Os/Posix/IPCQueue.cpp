@@ -229,7 +229,7 @@ namespace Os {
         return QUEUE_OK;
     }
 
-    NATIVE_INT_TYPE IPCQueue::getNumMsgs() const {
+    NATIVE_INT_TYPE IPCQueue::getMessagesAvailable() const {
         QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 

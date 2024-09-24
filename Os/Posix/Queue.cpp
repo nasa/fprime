@@ -230,7 +230,7 @@ namespace Os {
         return QUEUE_OK;
     }
 
-    NATIVE_INT_TYPE Queue::getNumMsgs() const {
+    NATIVE_INT_TYPE Queue::getMessagesAvailable() const {
         QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 
