@@ -20,7 +20,7 @@ module Svc {
     # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------
-    @ Enable or disable trace
+    @ Enable or disable logging all trace
     async command EnableTrace ( 
         $enable : Enable 
         )\
@@ -37,6 +37,12 @@ module Svc {
         )\
         opcode 0x02
     
+    @ Enable or disable trace logging by id, can disable up to 10 IDs
+    async command DisableTraceId ( 
+        $traceId : U32 @< Trace ID to enable/disable
+        $enable : Enable 
+        )\
+        opcode 0x03
     # ----------------------------------------------------------------------
     # Events 
     # ----------------------------------------------------------------------

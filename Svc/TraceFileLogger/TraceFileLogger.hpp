@@ -8,6 +8,7 @@
 #define Svc_TraceFileLogger_HPP
 
 #include "Svc/TraceFileLogger/TraceFileLoggerComponentAc.hpp"
+#include "Svc/TraceFileLogger/ArrayProc.hpp"
 #include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Buffer/Buffer.hpp>
@@ -26,8 +27,10 @@
 #define FILE_NAME_MAX 255
 #endif
 
-constexpr bool FW_TRACE_RECORD_TRACE = true;
-constexpr bool FW_TRACE_RECORD_MINIMAL = false;
+// Trace ID Filter size
+#ifndef FILTER_TRACEID_SIZE 
+#define FILTER_TRACEID_SIZE 10
+#endif
 
 //Max size of the Trace buffer including metadata (id,timetag,arguments) 
 static const FwSizeType FW_TRACE_MAX_SER_SIZE = (FW_TRACE_BUFFER_MAX_SIZE + sizeof(FwTraceIdType) + Fw::Time::SERIALIZED_SIZE);
@@ -83,6 +86,16 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //!  \param enable to turn on/off filtering .
     void filter(U16 traceType_bitmask,bool enable);
 
+    //!  \brief Process trace ID storage method
+    //!
+    //!  The process trace ID storage lets you add/remove trace IDs from the array
+    //!  that is used to evaluate which trace IDs to be ignored while logging 
+    //!
+    //!  \param tracetypes provides bitmasks for tracetypes to select.
+    //!  \param enable to turn on/off filtering .
+    void process_traceId_storage(U32 traceId, bool enable);
+
+
     //! Destroy TraceFileLogger object
     ~TraceFileLogger();
 
@@ -130,6 +143,13 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
                                 Svc::TraceFileLogger_Enable enable  //!< enable or disable logging 
                                 ) override;
 
+    //! Handler implementation for command DisableTraceId
+    //!
+    //! Enable or disable trace logging by id, can disable up to 10 IDs
+    void DisableTraceId_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                   U32 cmdSeq,           //!< The command sequence number
+                                   U32 traceId,          //!< Trace ID to enable/disable
+                                   Svc::TraceFileLogger_Enable enable) override;
     // ----------------------------------------------------------------------
     // Member Variables
     // ----------------------------------------------------------------------
@@ -151,6 +171,9 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     Fw::Buffer m_file_buffer;
     //filter trace types
     U16 m_traceFilter; //Select which trace types to allow logging
+    //Array to filter on traceIds
+    U32 traceId_array[FILTER_TRACEID_SIZE];
+    ArrayProc filterTraceId;
 
     // ----------------------------------------------------------------------
     // File functions:

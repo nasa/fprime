@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  TraceLoggerTestMain.cpp
+// \title  TraceFileLoggerTestMain.cpp
 // \author sreddy
-// \brief  cpp file for TraceLogger component test main function
+// \brief  cpp file for TraceFileLogger component test main function
 // ======================================================================
 
 #include "TraceFileLoggerTester.hpp"
 
 TEST(Nominal, test_startup) {
-    Svc::TraceLoggerTester tester;
+    Svc::TraceFileLoggerTester tester;
     tester.test_startup();
 }
 
 TEST(Nominal, test_log_file) {
-    Svc::TraceLoggerTester tester;
+    Svc::TraceFileLoggerTester tester;
     tester.test_startup();
     tester.test_file();
 }

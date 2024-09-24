@@ -1,5 +1,5 @@
 /*
- * TracePacket.hpp
+ * TraceEntity.hpp
  *
  *      Author: sreddy
  */
@@ -13,11 +13,11 @@
 
 namespace Fw {
 
-    class TracePacket : public ComPacket {
+    class TraceEntity : public ComPacket {
         public:
 
-            TracePacket();
-            virtual ~TracePacket();
+            TraceEntity();
+            virtual ~TraceEntity();
 
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialize contents
             SerializeStatus deserialize(SerializeBufferBase& buffer);

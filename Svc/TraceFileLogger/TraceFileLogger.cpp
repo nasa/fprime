@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <Fw/Types/StringUtils.hpp>
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Trace/TracePacket.hpp>
+#include <Fw/Trace/TraceEntity.hpp>
 
 namespace Svc {
 
@@ -30,13 +30,16 @@ namespace Svc {
     m_maxFileSize(0),
     m_byteCount(0),
     m_log_init(false),
-    //m_enable_trace(true),
-    m_traceFilter(0) 
+    m_traceFilter(0)
     {
-       m_file_buffer.setData(m_file_data);
-       m_file_buffer.setSize(FW_TRACE_MAX_SER_SIZE);
-
-       m_enable_trace = (FW_TRACE_RECORD_TRACE == true) ? true : false;
+       this->m_enable_trace = (FW_TRACE_RECORD_TRACE == true) ? true : false;
+       
+       //Set data and size for file buffer
+       this->m_file_buffer.setData(m_file_data);
+       this->m_file_buffer.setSize(FW_TRACE_MAX_SER_SIZE);
+    
+       //Set array to process trace id filtering
+       this->filterTraceId.set_array(traceId_array,sizeof(traceId_array));
     }
 
     TraceFileLogger::~TraceFileLogger() {
@@ -55,8 +58,9 @@ namespace Svc {
 
     void TraceFileLogger::set_log_file(const char* fileName, const U32 maxSize) {
         
+        FW_ASSERT(fileName != nullptr);
+
         if(this->m_enable_trace == true) {
-            FW_ASSERT(fileName != nullptr);
             //If a file is already open then close it
             if(this->m_mode == OPEN) {
                 this->m_mode = CLOSED;
@@ -86,6 +90,7 @@ namespace Svc {
 
     void TraceFileLogger::configure(const char* file, const U32 maxSize) {
         //printf("HERE1: Configure, set file name\n");
+        FW_ASSERT(file != nullptr);
         this->set_log_file(file,maxSize);
     }
 
@@ -134,6 +139,18 @@ namespace Svc {
             //}
         }
     }
+
+    void TraceFileLogger::process_traceId_storage(U32 traceId,bool enable) {
+        if (enable == false) {
+            //Add trace ID to the list (if it doesn't already exist) to stop logging it
+            (void)this->filterTraceId.add_element(traceId);
+        }
+        else{
+            //Remove trace ID from list (if its in the list) to start logging it
+            (void)this->filterTraceId.delete_element(traceId);
+        }
+    }
+
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -147,9 +164,14 @@ namespace Svc {
             FW_ASSERT(type.isValid());
             U16 bit_mask = static_cast<U16> (FILTER_BIT << type.e);
             U32 traceSize = 0;
-            //Only log data that is enabled by either config or user
+            
+            //Only log trace types that are enabled by either config or user
             if(!(this->m_traceFilter & bit_mask)) {
                 //TODO: Should we generate an event here, letting user know that this specific filter is disabled?
+                return;
+            }
+            //Only log trace Ids that're not filtered out  
+            if(this->filterTraceId.search_array(id,NULL)) {
                 return;
             }
            
@@ -189,6 +211,7 @@ namespace Svc {
             */
     }
 
+
     // ----------------------------------------------------------------------
     // Handler implementations for commands
     // ----------------------------------------------------------------------
@@ -209,6 +232,15 @@ namespace Svc {
                                           U16 bitmask,
                                           Svc::TraceFileLogger_Enable enable) {
         this->filter(bitmask,enable); 
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void TraceFileLogger ::DisableTraceId_cmdHandler(FwOpcodeType opCode,
+                                                 U32 cmdSeq,
+                                                 U32 traceId,
+                                                 Svc::TraceFileLogger_Enable enable) {
+        //Add/remove trace IDs from the array
+        this->process_traceId_storage(traceId,static_cast<bool>(enable)); 
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 }  // namespace Svc

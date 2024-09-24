@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  TraceLoggerTester.hpp
+// \title  TraceFileLoggerTester.hpp
 // \author sreddy
-// \brief  hpp file for TraceLogger component test harness implementation class
+// \brief  hpp file for TraceFileLogger component test harness implementation class
 // ======================================================================
 
 #ifndef Svc_TraceFileLoggerTester_HPP
 #define Svc_TraceFileLoggerTester_HPP
 
-#include "Svc/TraceLogger/TraceFileLogger.hpp"
-#include "Svc/TraceLogger/TraceFileLoggerGTestBase.hpp"
+#include "Svc/TraceFileLogger/TraceFileLogger.hpp"
+#include "Svc/TraceFileLogger/TraceFileLoggerGTestBase.hpp"
 
 namespace Svc {
 
-class TraceLoggerTester : public TraceLoggerGTestBase {
+class TraceFileLoggerTester : public TraceFileLoggerGTestBase {
   public:
     // ----------------------------------------------------------------------
     // Constants
@@ -27,16 +27,19 @@ class TraceLoggerTester : public TraceLoggerGTestBase {
     // Queue depth supplied to the component instance under test
     static const FwQueueSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
+    //File size to store Trace data
+    static const U32 TEST_TRACE_FILE_SIZE_MAX = 2720000;
+
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct object TraceLoggerTester
-    TraceLoggerTester();
+    //! Construct object TraceFileLoggerTester
+    TraceFileLoggerTester();
 
-    //! Destroy object TraceLoggerTester
-    ~TraceLoggerTester();
+    //! Destroy object TraceFileLoggerTester
+    ~TraceFileLoggerTester();
 
   public:
     // ----------------------------------------------------------------------
@@ -64,7 +67,7 @@ class TraceLoggerTester : public TraceLoggerGTestBase {
     // ----------------------------------------------------------------------
 
     //! The component under test
-    TraceLogger component;
+    TraceFileLogger component;
 };
 
 }  // namespace Svc

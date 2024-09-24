@@ -1,21 +1,21 @@
 /*
- * TracePacket.cpp
+ * TraceEntity.cpp
  *
  */
 
-#include <Fw/Trace/TracePacket.hpp>
+#include <Fw/Trace/TraceEntity.hpp>
 #include <Fw/Types/Assert.hpp>
 
 namespace Fw {
 
-    TracePacket::TracePacket() : m_id(0) {
+    TraceEntity::TraceEntity() : m_id(0) {
         this->m_type = FW_PACKET_TRACE;
     }
 
-    TracePacket::~TracePacket() {
+    TraceEntity::~TraceEntity() {
     }
 
-    SerializeStatus TracePacket::serialize(SerializeBufferBase& buffer) const {
+    SerializeStatus TraceEntity::serialize(SerializeBufferBase& buffer) const {
 
         SerializeStatus stat = ComPacket::serializeBase(buffer);
         if (stat != FW_SERIALIZE_OK) {
@@ -37,7 +37,7 @@ namespace Fw {
 
     }
 
-    SerializeStatus TracePacket::deserialize(SerializeBufferBase& buffer) {
+    SerializeStatus TraceEntity::deserialize(SerializeBufferBase& buffer) {
         SerializeStatus stat = deserializeBase(buffer);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
@@ -64,27 +64,27 @@ namespace Fw {
         return stat;
     }
 
-    void TracePacket::setId(FwTraceIdType id) {
+    void TraceEntity::setId(FwTraceIdType id) {
         this->m_id = id;
     }
 
-    void TracePacket::setTraceBuffer(const TraceBuffer& buffer) {
+    void TraceEntity::setTraceBuffer(const TraceBuffer& buffer) {
         this->m_traceBuffer = buffer;
     }
 
-    void TracePacket::setTimeTag(const Fw::Time& timeTag) {
+    void TraceEntity::setTimeTag(const Fw::Time& timeTag) {
         this->m_timeTag = timeTag;
     }
 
-    FwTraceIdType TracePacket::getId() {
+    FwTraceIdType TraceEntity::getId() {
         return this->m_id;
     }
 
-    Fw::Time& TracePacket::getTimeTag() {
+    Fw::Time& TraceEntity::getTimeTag() {
         return this->m_timeTag;
     }
 
-    TraceBuffer& TracePacket::getTraceBuffer() {
+    TraceBuffer& TraceEntity::getTraceBuffer() {
          return this->m_traceBuffer;
     }
 

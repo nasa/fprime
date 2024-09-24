@@ -10,7 +10,7 @@ set(MOD_DEPS
 )
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TraceBuffer.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TracePacket.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/TraceEntity.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Trace.fpp"
 )
 register_fprime_module()
