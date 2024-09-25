@@ -4,6 +4,7 @@
 
 #include "TcpClientTester.hpp"
 
+
 TEST(Nominal, BasicMessaging) {
     Drv::TcpClientTester tester;
     tester.test_basic_messaging();

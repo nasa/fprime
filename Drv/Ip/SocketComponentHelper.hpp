@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  SocketReadTask.hpp
+// \title  SocketComponentHelper.hpp
 // \author mstarch
-// \brief  hpp file for SocketReadTask implementation class
+// \brief  hpp file for SocketComponentHelper implementation class
 //
 // \copyright
 // Copyright 2009-2020, by the California Institute of Technology.
@@ -9,12 +9,13 @@
 // acknowledged.
 //
 // ======================================================================
-#ifndef DRV_SOCKETREADTASK_HPP
-#define DRV_SOCKETREADTASK_HPP
+#ifndef DRV_SocketComponentHelper_HPP
+#define DRV_SocketComponentHelper_HPP
 
 #include <Fw/Buffer/Buffer.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Os/Task.hpp>
+#include <Os/Mutex.hpp>
 
 namespace Drv {
 /**
@@ -24,17 +25,17 @@ namespace Drv {
  * reading the data from the socket, sending the data out, and reopening the connection should a non-retry error occur.
  *
  */
-class SocketReadTask {
+class SocketComponentHelper {
   public:
     /**
      * \brief constructs the socket read task
      */
-    SocketReadTask();
+    SocketComponentHelper();
 
     /**
      * \brief destructor of the socket read task
      */
-    virtual ~SocketReadTask();
+    virtual ~SocketComponentHelper();
 
     /**
      * \brief start the socket read task to start producing data
@@ -67,6 +68,14 @@ class SocketReadTask {
     SocketIpStatus startup();
 
     /**
+     * \brief Returns true when the socket is started
+     *
+     * Returns true when the socket is started up sufficiently to be actively listening to clients. Returns false
+     * otherwise. This means `startup()` was called and returned success.
+     */
+    bool isStarted();
+
+    /**
      * \brief open the socket for communications
      *
      * Typically the socket read task will open the connection and keep it open. However, in cases where the read task
@@ -77,6 +86,45 @@ class SocketReadTask {
      * \return status of open, SOCK_SUCCESS for success, something else on error
      */
     SocketIpStatus open();
+
+     /**
+     * \brief check if IP socket has previously been opened
+     *
+     * Check if this IpSocket has previously been opened. In the case of Udp this will check for outgoing transmissions
+     * and (if configured) incoming transmissions as well. This does not guarantee errors will not occur when using this
+     * socket as the remote component may have disconnected.
+     *
+     * \return true if socket is open, false otherwise
+     */
+    bool isOpened();
+    
+     /**
+     * \brief Re-open port if it has been disconnected
+     *
+     *
+     * \return status of reconnect, SOCK_SUCCESS for success, something else on error
+     */
+    SocketIpStatus reconnect();
+
+    /**
+     * \brief send data to the IP socket from the given buffer
+     *
+     *
+     * \param data: pointer to data to send
+     * \param size: size of data to send
+     * \return status of send, SOCK_SUCCESS for success, something else on error
+     */
+    SocketIpStatus send(const U8* const data, const U32 size);
+
+    /**
+     * \brief receive data from the IP socket from the given buffer
+     *
+     *
+     * \param data: pointer to data to fill with received data
+     * \param size: maximum size of data buffer to fill
+     * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
+     */
+    SocketIpStatus recv(U8* data, U32 &size);
 
     /**
      * \brief close the socket communications
@@ -169,9 +217,14 @@ class SocketReadTask {
     static void readTask(void* pointer);
 
     Os::Task m_task;
+    Os::Mutex m_lock;
+    NATIVE_INT_TYPE m_fd;
     bool m_reconnect; //!< Force reconnection
     bool m_stop; //!< Stops the task when set to true
+    bool m_started; //!< Have we successfully started the socket
+    bool m_open; //!< Have we successfully opened
+
 
 };
 }
-#endif  // DRV_SOCKETREADTASK_HPP
+#endif  // DRV_SocketComponentHelper_HPP

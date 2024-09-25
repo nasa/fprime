@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  IpSocket.cpp
-// \author mstarch
+// \author mstarch, crsmith
 // \brief  cpp file for IpSocket core implementation classes
 //
 // \copyright
@@ -46,7 +46,7 @@
 
 namespace Drv {
 
-IpSocket::IpSocket() : m_fd(-1), m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0), m_open(false), m_started(false) {
+IpSocket::IpSocket() : m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0) {
     ::memset(m_hostname, 0, sizeof(m_hostname));
 }
 
@@ -54,12 +54,10 @@ SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, c
     FW_ASSERT(timeout_microseconds < 1000000, static_cast<FwAssertArgType>(timeout_microseconds));
     FW_ASSERT(this->isValidPort(port));
     FW_ASSERT(hostname != nullptr);
-    this->m_lock.lock();
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
     this->m_port = port;
     (void) Fw::StringUtils::string_copy(this->m_hostname, hostname, static_cast<FwSizeType>(SOCKET_MAX_HOSTNAME_SIZE));
-    this->m_lock.unlock();
     return SOCK_SUCCESS;
 }
 
@@ -105,88 +103,44 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     return SOCK_SUCCESS;
 }
 
-bool IpSocket::isStarted() {
-    bool is_started = false;
-    this->m_lock.lock();
-    is_started = this->m_started;
-    this->m_lock.unLock();
-    return is_started;
+void IpSocket::close(NATIVE_INT_TYPE fd) {
+    (void)::shutdown(fd, SHUT_RDWR);
+    (void)::close(fd);
 }
 
-bool IpSocket::isOpened() {
-    bool is_open = false;
-    this->m_lock.lock();
-    is_open = this->m_open;
-    this->m_lock.unLock();
-    return is_open;
-}
-
-void IpSocket::close() {
-    this->m_lock.lock();
-    if (this->m_fd != -1) {
-        (void)::shutdown(this->m_fd, SHUT_RDWR);
-        (void)::close(this->m_fd);
-        this->m_fd = -1;
-    }
-    this->m_open = false;
-    this->m_lock.unLock();
-}
-
-void IpSocket::shutdown() {
-    this->close();
-    this->m_lock.lock();
-    this->m_started = false;
-    this->m_lock.unLock();
+void IpSocket::shutdown(NATIVE_INT_TYPE fd) {
+    this->close(fd);
 }
 
 SocketIpStatus IpSocket::startup() {
-    this->m_lock.lock();
-    this->m_started = true;
-    this->m_lock.unLock();
+    // no op for non-server components
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::open() {
-    NATIVE_INT_TYPE fd = -1;
+SocketIpStatus IpSocket::open(NATIVE_INT_TYPE& fd) {
     SocketIpStatus status = SOCK_SUCCESS;
-    this->m_lock.lock();
-    FW_ASSERT(m_fd == -1 and not m_open); // Ensure we are not opening an opened socket
-    this->m_lock.unlock();
     // Open a TCP socket for incoming commands, and outgoing data if not using UDP
     status = this->openProtocol(fd);
     if (status != SOCK_SUCCESS) {
-        FW_ASSERT(m_fd == -1); // Ensure we properly kept closed on error
+        FW_ASSERT(fd == -1); // Ensure we properly kept closed on error
         return status;
     }
-    // Lock to update values and "officially open"
-    this->m_lock.lock();
-    this->m_fd = fd;
-    this->m_open = true;
-    this->m_lock.unLock();
     return status;
 }
 
-SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
+SocketIpStatus IpSocket::send(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
     U32 total = 0;
     I32 sent  = 0;
-    this->m_lock.lock();
-    NATIVE_INT_TYPE fd = this->m_fd;
-    this->m_lock.unlock();
-    // Prevent transmission before connection, or after a disconnect
-    if (fd == -1) {
-        return SOCK_DISCONNECTED;
-    }
     // Attempt to send out data and retry as necessary
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
         // Send using my specific protocol
-        sent = this->sendProtocol(data + total, size - total);
+        sent = this->sendProtocol(fd, data + total, size - total);
         // Error is EINTR or timeout just try again
         if (((sent == -1) && (errno == EINTR)) || (sent == 0)) {
             continue;
         }
         // Error bad file descriptor is a close along with reset
         else if ((sent == -1) && ((errno == EBADF) || (errno == ECONNRESET))) {
-            this->close();
             return SOCK_DISCONNECTED;
         }
         // Error returned, and it wasn't an interrupt nor a disconnect
@@ -205,27 +159,19 @@ SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::recv(U8* data, U32& req_read) {
+SocketIpStatus IpSocket::recv(NATIVE_INT_TYPE fd, U8* data, U32& req_read) {
     I32 size = 0;
-    // Check for previously disconnected socket
-    this->m_lock.lock();
-    NATIVE_INT_TYPE fd = this->m_fd;
-    this->m_lock.unlock();
-    if (fd == -1) {
-        return SOCK_DISCONNECTED;
-    }
 
     // Try to read until we fail to receive data
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
         // Attempt to recv out data
-        size = this->recvProtocol(data, req_read);
+        size = this->recvProtocol(fd, data, req_read);
         // Error is EINTR, just try again
         if (size == -1 && ((errno == EINTR) || errno == EAGAIN)) {
             continue;
         }
         // Zero bytes read reset or bad ef means we've disconnected
         else if (size == 0 || ((size == -1) && ((errno == ECONNRESET) || (errno == EBADF)))) {
-            this->close();
             req_read = static_cast<U32>(size);
             return SOCK_DISCONNECTED;
         }

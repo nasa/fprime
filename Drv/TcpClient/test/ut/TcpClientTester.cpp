@@ -33,6 +33,8 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
 
     Drv::TcpServerSocket server;
     server.configure("127.0.0.1", port, 0, 100);
+    NATIVE_INT_TYPE client_fd = -1;
+
     serverStat = server.startup();
     this->component.configure("127.0.0.1", server.getListenPort(), 0, 100);
 
@@ -54,25 +56,26 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
         if (not recv_thread) {
             status1 = this->component.open();
         } else {
-            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
+            EXPECT_TRUE(this->wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
         }
-        EXPECT_TRUE(this->component.getSocketHandler().isOpened());
-        status2 = server.open();
+        EXPECT_TRUE(this->component.isOpened());
+        // fd has now been updated to be a value we need to keep track of
+        status2 = server.open(client_fd);
 
         EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
         EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
 
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
-            (this->component.getSocketHandler().isOpened())) {
+            (this->component.isOpened())) {
             // Force the sockets not to hang, if at all possible
-            Drv::Test::force_recv_timeout(this->component.getSocketHandler());
-            Drv::Test::force_recv_timeout(server);
+            Drv::Test::force_recv_timeout(this->component.m_fd, this->component.getSocketHandler());
+            Drv::Test::force_recv_timeout(server.m_base_fd, server);
             m_data_buffer.setSize(sizeof(m_data_storage));
             Drv::Test::fill_random_buffer(m_data_buffer);
             Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
             EXPECT_EQ(status, SendStatus::SEND_OK);
-            status2 = server.recv(buffer, size);
+            status2 = server.recv(client_fd, buffer, size);
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
             EXPECT_EQ(size, m_data_buffer.getSize());
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
@@ -80,7 +83,9 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
             if (recv_thread) {
                 m_spinner = false;
                 m_data_buffer.setSize(sizeof(m_data_storage));
-                server.send(m_data_buffer.getData(), m_data_buffer.getSize());
+                status2 = server.send(client_fd, m_data_buffer.getData(), m_data_buffer.getSize());
+                EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
+                from_deallocate_handler(0, m_data_buffer);
                 while (not m_spinner) {}
             }
         }
@@ -91,9 +96,9 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
         } else {
             this->component.close();
         }
-        server.close();
+        server.close(client_fd);
     }
-    server.shutdown();
+    server.shutdown(client_fd);
     ASSERT_from_ready_SIZE(iterations);
 }
 
@@ -107,6 +112,16 @@ TcpClientTester ::TcpClientTester()
 }
 
 TcpClientTester ::~TcpClientTester() {}
+
+bool TcpClientTester::wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations) {
+    for (U32 i = 0; i < iterations; i++) {
+        if (open == this->component.isOpened()) {
+            return true;
+        }
+        Os::Task::delay(Fw::Time(0, 10000));
+    }
+    return false;
+}
 
 // ----------------------------------------------------------------------
 // Tests
@@ -144,6 +159,7 @@ void TcpClientTester ::test_advanced_reconnect() {
     // Make sure we can get to unblocking the spinner
     EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
     Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
+    m_data_buffer.setSize(0);
     m_spinner = true;
     delete[] recvBuffer.getData();
 }

@@ -17,12 +17,12 @@ namespace Test {
 
 const U32 MAX_DRV_TEST_MESSAGE_SIZE = 1024;
 
-void force_recv_timeout(Drv::IpSocket& socket) {
+void force_recv_timeout(NATIVE_INT_TYPE fd, Drv::IpSocket& socket) {
     // Set timeout socket option
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = 50; // 50ms max before test failure
-    setsockopt(socket.m_fd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout));
+    setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout));
 }
 
 void validate_random_data(U8 *data, U8 *truth, U32 size) {
@@ -48,37 +48,17 @@ void fill_random_buffer(Fw::Buffer &buffer) {
     fill_random_data(buffer.getData(), buffer.getSize());
 }
 
-void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver) {
+void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver, NATIVE_INT_TYPE sender_fd, NATIVE_INT_TYPE receiver_fd) {
     U32 size = MAX_DRV_TEST_MESSAGE_SIZE;
     U8 buffer_out[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
     U8 buffer_in[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
 
     // Send receive validate block
     Drv::Test::fill_random_data(buffer_out, MAX_DRV_TEST_MESSAGE_SIZE);
-    EXPECT_EQ(sender.send(buffer_out, MAX_DRV_TEST_MESSAGE_SIZE), Drv::SOCK_SUCCESS);
-    EXPECT_EQ(receiver.recv(buffer_in, size), Drv::SOCK_SUCCESS);
+    EXPECT_EQ(sender.send(sender_fd, buffer_out, MAX_DRV_TEST_MESSAGE_SIZE), Drv::SOCK_SUCCESS);
+    EXPECT_EQ(receiver.recv(receiver_fd, buffer_in, size), Drv::SOCK_SUCCESS);
     EXPECT_EQ(size, static_cast<U32>(MAX_DRV_TEST_MESSAGE_SIZE));
     Drv::Test::validate_random_data(buffer_out, buffer_in, MAX_DRV_TEST_MESSAGE_SIZE);
-}
-
-bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations) {
-    for (U32 i = 0; i < iterations; i++) {
-        if (open == socket.isOpened()) {
-            return true;
-        }
-        Os::Task::delay(Fw::Time(0, 10000));
-    }
-    return false;
-}
-
-bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations) {
-    for (U32 i = 0; i < iterations; i++) {
-        if (open == socket.isStarted()) {
-            return true;
-        }
-        Os::Task::delay(Fw::Time(0, 10000));
-    }
-    return false;
 }
 
 U64 get_configured_delay_ms() {

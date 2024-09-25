@@ -101,6 +101,8 @@ namespace Drv {
       // Helper methods
       // ----------------------------------------------------------------------
 
+      bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations);
+
       //! Connect ports
       //!
       void connectPorts();

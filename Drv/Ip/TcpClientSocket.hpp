@@ -50,18 +50,20 @@ class TcpClientSocket : public IpSocket {
     SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd) override;
     /**
      * \brief Protocol specific implementation of send.  Called directly with retry from send.
+     * \param fd: file descriptor to send to
      * \param data: data to send
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    I32 sendProtocol(const U8* const data, const U32 size) override;
+    I32 sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) override;
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
+     * \param fd: file descriptor to recv from
      * \param data: data pointer to fill
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    I32 recvProtocol( U8* const data, const U32 size) override;
+    I32 recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) override;
 };
 }  // namespace Drv
 
