@@ -77,7 +77,7 @@ void Os::Test::Queue::Tester::SendNotFull::action(Os::Test::Queue::Tester& state
     ASSERT_FALSE(state.is_shadow_full());
     QueueInterface::Status status = state.shadow_send(pick.sent, pick.size, pick.priority, blocking);
     QueueInterface::Status test_status = state.queue.send(pick.sent, pick.size, pick.priority, blocking);
-
+    delete[] pick.sent; // Clean-up
     ASSERT_EQ(status, QueueInterface::Status::OP_OK);
     ASSERT_EQ(test_status, status);
     state.shadow_check();
@@ -100,6 +100,7 @@ void Os::Test::Queue::Tester::SendFullNoBlock::action(Os::Test::Queue::Tester& s
     PickedMessage pick = pick_message(state.shadow.messageSize);
     QueueInterface::Status status = state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::NONBLOCKING);
     QueueInterface::Status test_status = state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::NONBLOCKING);
+    delete[] pick.sent;
 
     ASSERT_EQ(status, QueueInterface::Status::FULL);
     ASSERT_EQ(test_status, status);
@@ -191,6 +192,7 @@ void Os::Test::Queue::Tester::ReceiveEmptyNoBlock::action(Os::Test::Queue::Teste
               state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
           QueueInterface::Status test_status =
               state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
+          delete[] pick.sent;
           ASSERT_EQ(status, QueueInterface::Status::OP_OK);
           ASSERT_EQ(status, test_status);
       }
@@ -199,6 +201,7 @@ void Os::Test::Queue::Tester::ReceiveEmptyNoBlock::action(Os::Test::Queue::Teste
           state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
       QueueInterface::Status test_status =
           state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
+      delete[] pick.sent;
       ASSERT_EQ(status, QueueInterface::Status::FULL);
       ASSERT_EQ(status, test_status);
       state.shadow_check();
@@ -287,6 +290,7 @@ void Os::Test::Queue::Tester::ReceiveEmptyNoBlock::action(Os::Test::Queue::Teste
       ASSERT_TRUE(this->getCondition());
       // Unblock the shadow queue send
       state.shadow_send_unblock();
+      delete[] pick.sent;
 
       ASSERT_EQ(status, QueueInterface::Status::OP_OK);
       ASSERT_EQ(test_status, status);
