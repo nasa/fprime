@@ -59,7 +59,7 @@ namespace Os {
 
     Console& Console::getSingleton() {
         static Console s_singleton;
-        Fw::Logger::registerLogger(s_singleton);
+        Fw::Logger::registerLogger(&s_singleton);
         return s_singleton;
     }
 }
