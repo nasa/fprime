@@ -166,6 +166,7 @@ set(UT_MOD_DEPS
         Os_Models
         STest
 )
+choose_fprime_implementation(Os/Task Os_Task_Posix)
 choose_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub)
 register_fprime_ut(StubMutexTest)
 
@@ -178,8 +179,6 @@ register_fprime_implementation(Os/FileSystem Os_FileSystem_Test_Stub "${CMAKE_CU
 
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileSystemTests.cpp"
-        # "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/CommonTests.cpp"
-        # "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/FileSystemRules.cpp"
 )
 set(UT_MOD_DEPS
         Os
@@ -198,8 +197,6 @@ register_fprime_implementation(Os/Directory Os_Directory_Test_Stub "${CMAKE_CURR
 
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubDirectoryTests.cpp"
-        # "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/CommonTests.cpp"
-        # "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/DirectoryRules.cpp"
 )
 set(UT_MOD_DEPS
         Os
@@ -208,4 +205,3 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/Directory Os_Directory_Test_Stub)
 register_fprime_ut(StubDirectoryTest)
-
