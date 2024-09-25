@@ -51,10 +51,6 @@ endif()
 if (FPRIME_USE_POSIX)
     list(APPEND SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
@@ -69,8 +65,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 # Linux IPC queues implementation
 elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND SOURCE_FILES
-#    "${CMAKE_CURRENT_LIST_DIR}/Posix/IPCQueue.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Posix/LocklessQueue.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/Linux/SystemResources.cpp"
   )
   # Shared libraries need an -rt dependency for mq libs
@@ -102,6 +96,7 @@ require_fprime_implementation(Os/Directory)
 require_fprime_implementation(Os/Mutex)
 # require_fprime_implementation(Os/Task) # should be added in
 # require_fprime_implementation(Os/Console) # should be added in
+require_fprime_implementation(Os/Queue)
 
 
 ### UTS ### Note: 3 separate UTs registered here.
@@ -125,14 +120,3 @@ if (BUILD_TESTING)
         endif()
     endforeach()
 endif()
-# Second UT Pthreads
-#set(UT_SOURCE_FILES
-#  "${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut/BufferQueueTest.cpp"
-#)
-#register_fprime_ut("Os_pthreads")
-
-# Third  UT Pthreads MAX Heap
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/test/ut/MaxHeapTest.cpp"
-)
-#register_fprime_ut("Os_pthreads_max_heap")
