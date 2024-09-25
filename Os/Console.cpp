@@ -5,6 +5,8 @@
 #include <Os/Console.hpp>
 #include <Fw/Types/Assert.hpp>
 
+alignas(Os::Console) U8 _singleton_store[sizeof Os::Console];
+
 namespace Os {
     Console* Console::s_singleton;
 
@@ -60,7 +62,7 @@ namespace Os {
     Console& Console::getSingleton() {
         // On the fly construction of singleton
         if (s_singleton == nullptr) {
-            s_singleton = new Console();
+            s_singleton = new (_singleton_store) Console;
             Fw::Logger::registerLogger(s_singleton);
         }
         return *s_singleton;
