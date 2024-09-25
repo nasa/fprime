@@ -122,4 +122,4 @@ FwSizeType Queue::getNumQueues() {
     return Queue::s_queueCount;
 }
 
-};  // namespace Os
+}  // namespace Os

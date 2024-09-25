@@ -4,6 +4,7 @@
 
 #include "PriorityQueue.hpp"
 #include <Fw/Types/Assert.hpp>
+#include <cstring>
 #include <new>
 #include <mutex>
 
