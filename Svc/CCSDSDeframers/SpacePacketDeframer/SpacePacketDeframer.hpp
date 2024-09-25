@@ -1,51 +1,43 @@
 // ======================================================================
-// \title  DeframerFp.hpp
+// \title  SpacePacketDeframer.hpp
 // \author chammard
-// \brief  hpp file for DeframerFp component implementation class
+// \brief  hpp file for SpacePacketDeframer component implementation class
 // ======================================================================
 
-#ifndef Svc_DeframerFp_HPP
-#define Svc_DeframerFp_HPP
+#ifndef Svc_SpacePacketDeframer_HPP
+#define Svc_SpacePacketDeframer_HPP
 
-#include "Svc/DeframerFp/DeframerFpComponentAc.hpp"
-#include "Utils/Hash/Hash.hpp"
+#include "Svc/CCSDSDeframers/SpacePacketDeframer/SpacePacketDeframerComponentAc.hpp"
 
 namespace Svc {
 
-
-namespace FrameConfig {
-  //! Token type for F Prime frame header
-  typedef U32 TokenType;
-  static const U8 HEADER_SIZE = sizeof(TokenType) * 2;
-  static const U32 CHECKSUM_SIZE = HASH_DIGEST_LENGTH;
-}
-
-class DeframerFp : public DeframerFpComponentBase {
-
-
+class SpacePacketDeframer : public SpacePacketDeframerComponentBase {
+  
+  static const U8 SPACE_PACKET_HEADER_SIZE = 6;
+  
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct DeframerFp object
-    DeframerFp(const char* const compName  //!< The component name
+    //! Construct SpacePacketDeframer object
+    SpacePacketDeframer(const char* const compName  //!< The component name
     );
 
-    //! Destroy DeframerFp object
-    ~DeframerFp();
+    //! Destroy SpacePacketDeframer object
+    ~SpacePacketDeframer();
 
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for frame
+    //! Handler implementation for framedIn
     //!
     //! Port to receive framed data
     void framedIn_handler(FwIndexType portNum,  //!< The port number
-                       Fw::Buffer& data,
-                       Fw::Buffer& context) override;
+                          Fw::Buffer& data,
+                          Fw::Buffer& context) override;
 };
 
 }  // namespace Svc

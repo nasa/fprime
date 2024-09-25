@@ -3,17 +3,12 @@
 #
 # SOURCE_FILES: combined list of source and autocoding files
 # MOD_DEPS: (optional) module dependencies
+# UT_SOURCE_FILES: list of source files for unit tests
 #
-# Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Deframer.cpp"
-)
-
-set(MOD_DEPS
-    Svc/FramingProtocol
-    Utils/Types
+  "${CMAKE_CURRENT_LIST_DIR}/SpaceDataLinkDeframer.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SpaceDataLinkDeframer.cpp"
 )
 
 register_fprime_module()
