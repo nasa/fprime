@@ -451,7 +451,7 @@ var hierarchy =
     [ "SHA256state_st", "struct_s_h_a256state__st.html", null ],
     [ "SHA512state_st", "struct_s_h_a512state__st.html", null ],
     [ "SHAstate_st", "struct_s_h_astate__st.html", null ],
-    [ "Drv::SocketReadTask", "class_drv_1_1_socket_read_task.html", [
+    [ "Drv::SocketComponentHelper", "class_drv_1_1_socket_component_helper.html", [
       [ "Drv::TcpClientComponentImpl", "class_drv_1_1_tcp_client_component_impl.html", null ],
       [ "Drv::TcpServerComponentImpl", "class_drv_1_1_tcp_server_component_impl.html", null ],
       [ "Drv::UdpComponentImpl", "class_drv_1_1_udp_component_impl.html", null ]

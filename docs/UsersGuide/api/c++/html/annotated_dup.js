@@ -40,7 +40,7 @@ var annotated_dup =
       [ "BlockDriverImpl", "class_drv_1_1_block_driver_impl.html", "class_drv_1_1_block_driver_impl" ],
       [ "DataBuffer", "class_drv_1_1_data_buffer.html", "class_drv_1_1_data_buffer" ],
       [ "IpSocket", "class_drv_1_1_ip_socket.html", "class_drv_1_1_ip_socket" ],
-      [ "SocketReadTask", "class_drv_1_1_socket_read_task.html", "class_drv_1_1_socket_read_task" ],
+      [ "SocketComponentHelper", "class_drv_1_1_socket_component_helper.html", "class_drv_1_1_socket_component_helper" ],
       [ "TcpClientSocket", "class_drv_1_1_tcp_client_socket.html", "class_drv_1_1_tcp_client_socket" ],
       [ "TcpServerSocket", "class_drv_1_1_tcp_server_socket.html", "class_drv_1_1_tcp_server_socket" ],
       [ "SocketState", "struct_drv_1_1_socket_state.html", "struct_drv_1_1_socket_state" ],
