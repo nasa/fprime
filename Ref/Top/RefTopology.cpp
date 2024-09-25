@@ -58,13 +58,13 @@ enum TopologyConstants {
     COMM_PRIORITY = 100,
     // Buffer manager for Uplink/Downlink
     COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
-    COMMS_BUFFER_MANAGER_QUEUE_SIZE = 20,
+    COMMS_BUFFER_MANAGER_STORE_COUNT = 20,
     COMMS_BUFFER_MANAGER_FILE_STORE_SIZE = 3000,
     COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30,
     COMMS_BUFFER_MANAGER_ID = 200,
     // Buffer manager for Data Products
     DP_BUFFER_MANAGER_STORE_SIZE = 10000,
-    DP_BUFFER_MANAGER_QUEUE_SIZE = 10,
+    DP_BUFFER_MANAGER_STORE_COUNT = 10,
     DP_BUFFER_MANAGER_ID = 300,
 };
 
@@ -120,7 +120,7 @@ void configureTopology() {
     Svc::BufferManager::BufferBins commsBuffMgrBins;
     memset(&commsBuffMgrBins, 0, sizeof(commsBuffMgrBins));
     commsBuffMgrBins.bins[0].bufferSize = COMMS_BUFFER_MANAGER_STORE_SIZE;
-    commsBuffMgrBins.bins[0].numBuffers = COMMS_BUFFER_MANAGER_QUEUE_SIZE;
+    commsBuffMgrBins.bins[0].numBuffers = COMMS_BUFFER_MANAGER_STORE_COUNT;
     commsBuffMgrBins.bins[1].bufferSize = COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
     commsBuffMgrBins.bins[1].numBuffers = COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
     commsBufferManager.setup(COMMS_BUFFER_MANAGER_ID, 0, mallocator, commsBuffMgrBins);
@@ -128,7 +128,7 @@ void configureTopology() {
     Svc::BufferManager::BufferBins dpBuffMgrBins;
     memset(&dpBuffMgrBins, 0, sizeof(dpBuffMgrBins));
     dpBuffMgrBins.bins[0].bufferSize = DP_BUFFER_MANAGER_STORE_SIZE;
-    dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_QUEUE_SIZE;
+    dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
     dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
 
     // Framer and Deframer components need to be passed a protocol handler

@@ -17,7 +17,7 @@ module RPI {
     instance fatalHandler
     instance fileDownlink
     instance fileUplink
-    instance fileUplinkBufferManager
+    instance commsBufferManager
     instance gpio17Drv
     instance gpio23Drv
     instance gpio24Drv
@@ -31,7 +31,6 @@ module RPI {
     instance rateGroupDriverComp
     instance rpiDemo
     instance spiDrv
-    instance staticMemory
     instance textLogger
     instance uartDrv
     instance uplink
@@ -72,9 +71,9 @@ module RPI {
     }
 
     connections FileUplinkBuffers {
-      fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
-      uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
+      uplink.bufferAllocate -> commsBufferManager.bufferGetCallee
+      uplink.bufferDeallocate -> commsBufferManager.bufferSendIn
       uplink.bufferOut -> fileUplink.bufferSendIn
     }
 
@@ -115,10 +114,10 @@ module RPI {
     }
 
     connections StaticMemory {
-      comm.allocate -> staticMemory.bufferAllocate[0]
-      comm.deallocate -> staticMemory.bufferDeallocate[1]
-      downlink.framedAllocate -> staticMemory.bufferAllocate[1]
-      uplink.framedDeallocate -> staticMemory.bufferDeallocate[0]
+      comm.allocate -> commsBufferManager.bufferGetCallee
+      comm.deallocate -> commsBufferManager.bufferSendIn
+      downlink.framedAllocate -> commsBufferManager.bufferGetCallee
+      uplink.framedDeallocate -> commsBufferManager.bufferSendIn
     }
 
     connections UART {

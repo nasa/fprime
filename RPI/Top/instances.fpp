@@ -178,13 +178,13 @@ module RPI {
 
   instance fatalHandler: Svc.FatalHandler base id 100
 
-  instance fileUplinkBufferManager: Svc.BufferManager base id 900 \
+  instance commsBufferManager: Svc.BufferManager base id 900 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
       STORE_SIZE = 3000,
-      QUEUE_SIZE = 30,
+      STORE_COUNT = 30,
       MGR_ID = 200
     };
     """
@@ -193,10 +193,10 @@ module RPI {
     {
       Svc::BufferManager::BufferBins bufferBins;
       memset(&bufferBins, 0, sizeof(bufferBins));
-      using namespace ConfigConstants::fileUplinkBufferManager;
+      using namespace ConfigConstants::commsBufferManager;
       bufferBins.bins[0].bufferSize = STORE_SIZE;
-      bufferBins.bins[0].numBuffers = QUEUE_SIZE;
-      fileUplinkBufferManager.setup(
+      bufferBins.bins[0].numBuffers = STORE_COUNT;
+      commsBufferManager.setup(
           MGR_ID,
           0,
           Allocation::mallocator,
@@ -207,14 +207,12 @@ module RPI {
     """
 
     phase Fpp.ToCpp.Phases.tearDownComponents """
-    fileUplinkBufferManager.cleanup();
+    commsBufferManager.cleanup();
     """
 
   }
 
   instance fatalAdapter: Svc.AssertFatalAdapter base id 1000
-
-  instance staticMemory: Svc.StaticMemory base id 1200
 
   instance downlink: Svc.Framer base id 1220 \
   {
@@ -457,6 +455,11 @@ module RPI {
     phase Fpp.ToCpp.Phases.tearDownComponents """
     uartBufferManager.cleanup();
     """
+  }
+
+  instance frameAccumulator: Svc.FrameAccumulator base id 2900 \
+  {
+    
   }
 
 
