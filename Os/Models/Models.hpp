@@ -6,8 +6,10 @@
 #include "Os/Models/FileStatusEnumAc.hpp"
 #include "Os/Models/FileModeEnumAc.hpp"
 #include "Os/Models/TaskStatusEnumAc.hpp"
+#include "Os/Models/MutexStatusEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Os/Task.hpp"
+#include "Os/Mutex.hpp"
 
 #ifndef OS_MODELS_MODELS_HPP
 #define OS_MODELS_MODELS_HPP
@@ -78,5 +80,14 @@ static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::ERROR_PERMISSION)
               "Task status and FPP shadow enum do not match");
 static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_STATE) == Os::TaskStatus::T::INVALID_STATE,
               "Task status and FPP shadow enum do not match");
+
+static_assert(static_cast<Os::MutexStatus::T>(Os::Mutex::Status::OP_OK) == Os::MutexStatus::T::OP_OK,
+              "Mutex status and FPP shadow enum do not match");
+static_assert(static_cast<Os::MutexStatus::T>(Os::Mutex::Status::ERROR_BUSY) == Os::MutexStatus::T::ERROR_BUSY,
+              "Mutex status and FPP shadow enum do not match");
+static_assert(static_cast<Os::MutexStatus::T>(Os::Mutex::Status::ERROR_DEADLOCK) == Os::MutexStatus::T::ERROR_DEADLOCK,
+              "Mutex status and FPP shadow enum do not match");
+static_assert(static_cast<Os::MutexStatus::T>(Os::Mutex::Status::ERROR_OTHER) == Os::MutexStatus::T::ERROR_OTHER,
+              "Mutex status and FPP shadow enum do not match");
 
 #endif // OS_MODELS_MODELS_HPP

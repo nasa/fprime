@@ -24,7 +24,7 @@ StringBase::StringBase() {}
 StringBase::~StringBase() {}
 
 const CHAR* StringBase::operator+=(const CHAR* src) {
-    this->appendBuff(src, StringUtils::string_length(src, this->getCapacity()));
+    this->appendBuff(src, static_cast<SizeType>(StringUtils::string_length(src, this->getCapacity())));
     return this->toChar();
 }
 
@@ -54,14 +54,23 @@ bool StringBase::operator==(const CHAR* other) const {
 }
 
 void StringBase::format(const CHAR* formatString, ...) {
-    CHAR* us = const_cast<CHAR*>(this->toChar());
-    SizeType cap = this->getCapacity();
-    FW_ASSERT(us);
     va_list args;
     va_start(args, formatString);
-    (void)vsnprintf(us, cap, formatString, args);
+    this->vformat(formatString, args);
     va_end(args);
-    // null terminate
+}
+
+void StringBase::vformat(const CHAR* formatString, va_list args) {
+    CHAR* us = const_cast<CHAR*>(this->toChar());
+    SizeType cap = this->getCapacity();
+    FW_ASSERT(us != nullptr);
+    FW_ASSERT(formatString != nullptr);
+#if FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING
+    (void) vsnprintf(us, cap, formatString, args);
+#else
+    *this = formatString;
+#endif
+    // Force null terminate
     us[cap - 1] = 0;
 }
 

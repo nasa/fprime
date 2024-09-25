@@ -47,16 +47,6 @@ namespace Svc {
   {
   }
 
-
-  void ComLogger ::
-    init(
-      NATIVE_INT_TYPE queueDepth, //!< The queue depth
-      NATIVE_INT_TYPE instance //!< The instance number
-    )
-  {
-    ComLoggerComponentBase::init(queueDepth, instance);
-  }
-
   void ComLogger ::
     init_log_file(const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength)
   {
@@ -67,11 +57,11 @@ namespace Svc {
       FW_ASSERT(maxFileSize > sizeof(U16), static_cast<FwAssertArgType>(maxFileSize));
     }
 
-    FW_ASSERT(Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->m_filePrefix)) < sizeof(this->m_filePrefix),
-      static_cast<FwAssertArgType>(Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->m_filePrefix))),
+    FW_ASSERT(Fw::StringUtils::string_length(incomingFilePrefix, static_cast<FwSizeType>(sizeof(this->m_filePrefix))) < sizeof(this->m_filePrefix),
+      static_cast<FwAssertArgType>(Fw::StringUtils::string_length(incomingFilePrefix, static_cast<FwSizeType>(sizeof(this->m_filePrefix)))),
       static_cast<FwAssertArgType>(sizeof(this->m_filePrefix))); // ensure that file prefix is not too big
 
-    (void)Fw::StringUtils::string_copy(this->m_filePrefix, incomingFilePrefix, sizeof(this->m_filePrefix));
+    (void)Fw::StringUtils::string_copy(this->m_filePrefix, incomingFilePrefix, static_cast<FwSizeType>(sizeof(this->m_filePrefix)));
 
     this->m_initialized = true;
   }

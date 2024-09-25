@@ -41,11 +41,12 @@ void ComQueueTester ::configure() {
     component.configure(configurationTable, 0, mallocAllocator);
 }
 
-void ComQueueTester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portNum, QueueType& queueType) {
-    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
-    Fw::ComBuffer comBuffer(&data[0], sizeof(data));
-    Fw::Buffer buffer(&data[0], sizeof(data));
+void ComQueueTester ::sendByQueueNumber(Fw::Buffer& buffer,
+                                        NATIVE_INT_TYPE queueNum,
+                                        NATIVE_INT_TYPE& portNum,
+                                        QueueType& queueType) {
     if (queueNum < ComQueue::COM_PORT_COUNT) {
+        Fw::ComBuffer comBuffer(buffer.getData(), buffer.getSize());
         portNum = queueNum;
         queueType = QueueType::COM_QUEUE;
         invoke_to_comQueueIn(portNum, comBuffer, 0);
@@ -186,12 +187,12 @@ void ComQueueTester ::testPrioritySend() {
     component.cleanup();
 }
 
-void ComQueueTester::testQueueOverflow(){
+void ComQueueTester::testExternalQueueOverflow() {
     ComQueue::QueueConfigurationTable configurationTable;
     ComQueueDepth expectedComDepth;
     BuffQueueDepth expectedBuffDepth;
 
-    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++){
+    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
         configurationTable.entries[i].priority = i;
         configurationTable.entries[i].depth = 2;
 
@@ -205,14 +206,24 @@ void ComQueueTester::testQueueOverflow(){
 
     component.configure(configurationTable, 0, mallocAllocator);
 
-    for(NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
+    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    Fw::Buffer buffer(&data[0], sizeof(data));
+
+    for (NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
         QueueType overflow_type;
         NATIVE_INT_TYPE portNum;
         // queue[portNum].depth + 2 to deliberately cause overflow and check throttle of exactly 1
         for (NATIVE_UINT_TYPE msgCount = 0; msgCount < configurationTable.entries[queueNum].depth + 2; msgCount++) {
-            sendByQueueNumber(queueNum, portNum, overflow_type);
+            sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
             dispatchAll();
         }
+
+        if (QueueType::BUFFER_QUEUE == overflow_type) {
+            ASSERT_from_deallocate_SIZE(2);
+            ASSERT_from_deallocate(0, buffer);
+            ASSERT_from_deallocate(1, buffer);
+        }
+
         ASSERT_EVENTS_QueueOverflow_SIZE(1);
         ASSERT_EVENTS_QueueOverflow(0, overflow_type, portNum);
 
@@ -220,9 +231,14 @@ void ComQueueTester::testQueueOverflow(){
         emitOne();
 
         // Force another overflow by filling then deliberately overflowing the queue
-        sendByQueueNumber(queueNum, portNum, overflow_type);
-        sendByQueueNumber(queueNum, portNum, overflow_type);
+        sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
+        sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
         dispatchAll();
+
+        if (QueueType::BUFFER_QUEUE == overflow_type) {
+            ASSERT_from_deallocate_SIZE(3);
+            ASSERT_from_deallocate(2, buffer);
+        }
 
         ASSERT_EVENTS_QueueOverflow_SIZE(2);
         ASSERT_EVENTS_QueueOverflow(1, overflow_type, portNum);
@@ -240,6 +256,37 @@ void ComQueueTester::testQueueOverflow(){
     ASSERT_TLM_buffQueueDepth_SIZE(1);
     ASSERT_TLM_comQueueDepth(0, expectedComDepth);
     ASSERT_TLM_buffQueueDepth(0, expectedBuffDepth);
+    component.cleanup();
+}
+
+void ComQueueTester::testInternalQueueOverflow() {
+    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    Fw::Buffer buffer(data, sizeof(data));
+
+    const NATIVE_INT_TYPE queueNum = ComQueue::COM_PORT_COUNT;
+    const NATIVE_INT_TYPE msgCountMax = this->component.m_queue.getQueueSize();
+    QueueType overflow_type;
+    NATIVE_INT_TYPE portNum;
+
+    // fill the queue
+    for (NATIVE_INT_TYPE msgCount = 0; msgCount < msgCountMax; msgCount++) {
+        sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
+        ASSERT_EQ(overflow_type, QueueType::BUFFER_QUEUE);
+    }
+
+    // send one more to overflow the queue
+    sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
+
+    ASSERT_from_deallocate_SIZE(1);
+    ASSERT_from_deallocate(0, buffer);
+
+    // send another
+    sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
+
+    ASSERT_from_deallocate_SIZE(2);
+    ASSERT_from_deallocate(0, buffer);
+    ASSERT_from_deallocate(1, buffer);
+
     component.cleanup();
 }
 
@@ -282,46 +329,5 @@ void ComQueueTester ::from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, F
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
-
-void ComQueueTester ::connectPorts() {
-    // buffQueueIn
-    for (NATIVE_INT_TYPE i = 0; i < ComQueue::BUFFER_PORT_COUNT; ++i) {
-        this->connect_to_buffQueueIn(i, this->component.get_buffQueueIn_InputPort(i));
-    }
-
-    // comQueueIn
-    for (NATIVE_INT_TYPE i = 0; i < ComQueue::COM_PORT_COUNT; ++i) {
-        this->connect_to_comQueueIn(i, this->component.get_comQueueIn_InputPort(i));
-    }
-
-    // comStatusIn
-    this->connect_to_comStatusIn(0, this->component.get_comStatusIn_InputPort(0));
-
-    // run
-    this->connect_to_run(0, this->component.get_run_InputPort(0));
-
-    // Log
-    this->component.set_Log_OutputPort(0, this->get_from_Log(0));
-
-    // LogText
-    this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
-
-    // Time
-    this->component.set_Time_OutputPort(0, this->get_from_Time(0));
-
-    // Tlm
-    this->component.set_Tlm_OutputPort(0, this->get_from_Tlm(0));
-
-    // buffQueueSend
-    this->component.set_buffQueueSend_OutputPort(0, this->get_from_buffQueueSend(0));
-
-    // comQueueSend
-    this->component.set_comQueueSend_OutputPort(0, this->get_from_comQueueSend(0));
-}
-
-void ComQueueTester ::initComponents() {
-    this->init();
-    this->component.init(QUEUE_DEPTH, INSTANCE);
-}
 
 }  // end namespace Svc

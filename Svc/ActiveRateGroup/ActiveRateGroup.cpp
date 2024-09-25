@@ -16,7 +16,7 @@
 #include <ActiveRateGroupCfg.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 
 namespace Svc {
 
@@ -42,10 +42,6 @@ namespace Svc {
         for (NATIVE_INT_TYPE entry = 0; entry < this->m_numContexts; entry++) {
             this->m_contexts[entry] = contexts[entry];
         }
-    }
-
-    void ActiveRateGroup::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
-        ActiveRateGroupComponentBase::init(queueDepth,instance);
     }
 
     ActiveRateGroup::~ActiveRateGroup() {

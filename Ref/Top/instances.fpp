@@ -129,6 +129,8 @@ module Ref {
 
   instance sendBuffComp: Ref.SendBuff base id 0x2600 \
     queue size Default.QUEUE_SIZE
+  
+
 
   # ----------------------------------------------------------------------
   # Passive component instances
@@ -151,6 +153,8 @@ module Ref {
 
   instance recvBuffComp: Ref.RecvBuff base id 0x4700
 
+  instance version: Svc.Version base id 0x4800
+
   instance textLogger: Svc.PassiveTextLogger base id 0x4900
 
   instance systemResources: Svc.SystemResources base id 0x4A00
@@ -162,6 +166,9 @@ module Ref {
   instance deframer: Svc.Deframer base id 0x4D00
 
   instance uplinkRouter: Svc.Router base id 0x4E00
+
+  instance dpBufferManager: Svc.BufferManager base id 0x4F00
+  
 
 }
 

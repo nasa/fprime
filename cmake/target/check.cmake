@@ -62,10 +62,7 @@ function(check_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCI
     if (NOT BUILD_TESTING OR NOT MODULE_TYPE STREQUAL "Unit Test")
         return()
     endif()
-    # UTs MODULE_NAME defaults to <FPRIME_MODULE_NAME>_ut_exe
-    # The below handling gives CHECK_TARGET_NAME = <FPRIME_MODULE_NAME>_check
-    string(REGEX REPLACE "_${UT_TARGET}$" "" CHECK_TARGET_NAME "${MODULE_NAME}")
-    string(APPEND CHECK_TARGET_NAME "_${TARGET_NAME}")
+    set(CHECK_TARGET_NAME "${FPRIME_CURRENT_MODULE}_${TARGET_NAME}")
     if (NOT TARGET ${CHECK_TARGET_NAME})
         add_custom_target(
             "${CHECK_TARGET_NAME}"

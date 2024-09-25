@@ -57,9 +57,9 @@ namespace Fw {
 
         if (do_trace) {
 #if FW_OBJECT_NAMES == 1
-            Fw::Logger::logMsg("Trace: %s\n", reinterpret_cast<POINTER_CAST>(this->m_objName.toChar()), 0, 0, 0, 0, 0);
+            Fw::Logger::log("Trace: %s\n", this->m_objName.toChar());
 #else
-            Fw::Logger::logMsg("Trace: %p\n", reinterpret_cast<POINTER_CAST>(this), 0, 0, 0, 0, 0);
+            Fw::Logger::log("Trace: %p\n", this);
 #endif
         }
     }

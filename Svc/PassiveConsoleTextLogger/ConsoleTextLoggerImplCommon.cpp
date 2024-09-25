@@ -9,10 +9,6 @@ namespace Svc {
         PassiveTextLoggerComponentBase(compName) {
     }
 
-    void ConsoleTextLoggerImpl::init(NATIVE_INT_TYPE instanceId) {
-        PassiveTextLoggerComponentBase::init(instanceId);
-    }
-
     ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
 
     void ConsoleTextLoggerImpl::TextLogger_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::TextLogString &text) {
@@ -43,7 +39,7 @@ namespace Svc {
                 severityString = "SEVERITY ERROR";
                 break;
         }
-        Fw::Logger::logMsg("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
+        Fw::Logger::log("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
                 id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(), timeTag.getUSeconds(),
                 reinterpret_cast<PlatformPointerCastType>(severityString), reinterpret_cast<PlatformPointerCastType>(text.toChar()));
     }

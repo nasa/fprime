@@ -33,6 +33,7 @@ Tester.*
 !**/test/ut/GTestBase.*
 !**/test/ut/TesterBase.*
 !**/test/ut/Tester.*
+seed-history
 
 *.sconsign.dblite
 *.class

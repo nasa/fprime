@@ -30,9 +30,4 @@ namespace Drv {
 
     }
 
-    void LinuxSpiDriverComponentImpl::init(const NATIVE_INT_TYPE instance) {
-        LinuxSpiDriverComponentBase::init(instance);
-    }
-
-
 } // end namespace Drv

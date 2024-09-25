@@ -54,14 +54,6 @@ namespace Svc {
 
   }
 
-  void AssertFatalAdapterComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    AssertFatalAdapterComponentBase::init(instance);
-  }
-
   AssertFatalAdapterComponentImpl ::
     ~AssertFatalAdapterComponentImpl()
   {
@@ -85,7 +77,7 @@ namespace Svc {
                   arg1,arg2,arg3,arg4,arg5,arg6);
       } else {
           // Can't assert, what else can we do? Maybe somebody will see it.
-          Fw::Logger::logMsg("Svc::AssertFatalAdapter not registered!\n");
+          Fw::Logger::log("Svc::AssertFatalAdapter not registered!\n");
           assert(0);
       }
   }
@@ -124,7 +116,7 @@ namespace Svc {
       Fw::LogStringArg fileArg(file);
 #endif
 
-      CHAR msg[FW_ASSERT_TEXT_SIZE] = {0};
+      CHAR msg[Fw::StringBase::BUFFER_SIZE(FW_ASSERT_TEXT_SIZE)] = {0};
       Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
       // fprintf(stderr... allocates large buffers on stack as stderr is unbuffered by the OS
       // and this can conflict with the traditionally smaller stack sizes.

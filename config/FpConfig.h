@@ -181,6 +181,14 @@ typedef FwIndexType FwQueueSizeType;
     0  //!< Indicates whether or not a baremetal scheduler should be used. Alternatively the Os scheduler is used.
 #endif
 
+// On some systems, use of *printf family functions (snprintf, printf, etc) require a prohibitive amount of program
+// space. Setting this to `0` indicates that the Fw/String methods should stop using these functions to conserve
+// program size. However, this comes at the expense of discarding format parameters. i.e. the format string is returned
+// unchanged.
+#ifndef FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING
+#define FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING 1
+#endif
+
 // Port Facilities
 
 // This allows tracing calls through ports for debugging
@@ -229,8 +237,9 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Define max length of assert string
+// Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE 120  //!< Size of string used to store assert description
+#define FW_ASSERT_TEXT_SIZE 256  //!< Size of string used to store assert description
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
@@ -240,14 +249,6 @@ typedef FwIndexType FwQueueSizeType;
 #ifndef FW_OBJ_NAME_BUFFER_SIZE
 #define FW_OBJ_NAME_BUFFER_SIZE \
     80  //!< Size of object name (if object names enabled). AC Limits to 80, truncation occurs above 80.
-#endif
-#endif
-
-// When querying an object as to an object-specific description, this specifies the size of the buffer to store the
-// description.
-#if FW_OBJECT_TO_STRING
-#ifndef FW_OBJ_TO_STRING_BUFFER_SIZE
-#define FW_OBJ_TO_STRING_BUFFER_SIZE 255  //!< Size of string storing toString() text
 #endif
 #endif
 
@@ -282,7 +283,12 @@ typedef FwIndexType FwQueueSizeType;
 
 // Specifies the size of the buffer that contains a communications packet.
 #ifndef FW_COM_BUFFER_MAX_SIZE
-#define FW_COM_BUFFER_MAX_SIZE 128  //!< Max size of Fw::Com buffer
+#define FW_COM_BUFFER_MAX_SIZE 512
+#endif
+
+// Specifies the size of the buffer attached to state machine signals.
+#ifndef FW_SM_SIGNAL_BUFFER_MAX_SIZE
+#define FW_SM_SIGNAL_BUFFER_MAX_SIZE 128  // Not to exceed size of NATIVE_UINT_TYPE
 #endif
 
 // Specifies the size of the buffer that contains the serialized command arguments.
@@ -312,8 +318,9 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Specifies the maximum size of a string in a log event
+// Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_LOG_STRING_MAX_SIZE
-#define FW_LOG_STRING_MAX_SIZE 100  //!< Max size of log string parameter type
+#define FW_LOG_STRING_MAX_SIZE 200  //!< Max size of log string parameter type
 #endif
 
 // Specifies the size of the buffer that contains the serialized telemetry value.
@@ -362,23 +369,6 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_SERIALIZABLE_TO_STRING 1  //!< Indicates if autocoded serializables have toString() methods
 #endif
 
-#if FW_SERIALIZABLE_TO_STRING
-#ifndef FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE
-#define FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE 255  //!< Size of string to store toString() string output
-#endif
-#endif
-
-// Define if arrays have toString() method.
-#ifndef FW_ARRAY_TO_STRING
-#define FW_ARRAY_TO_STRING 1  //!< Indicates if autocoded arrays have toString() methods
-#endif
-
-#if FW_ARRAY_TO_STRING
-#ifndef FW_ARRAY_TO_STRING_BUFFER_SIZE
-#define FW_ARRAY_TO_STRING_BUFFER_SIZE 256  //!< Size of string to store toString() string output
-#endif
-#endif
-
 // Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility
 #ifndef FW_AMPCS_COMPATIBLE
 #define FW_AMPCS_COMPATIBLE 0  //!< Whether or not JPL AMPCS ground system support is enabled.
@@ -404,11 +394,11 @@ typedef FwIndexType FwQueueSizeType;
 // OS configuration
 
 #ifndef FW_HANDLE_MAX_SIZE
-#define FW_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
 #ifndef FW_HANDLE_ALIGNMENT
-#define FW_HANDLE_ALIGNMENT 16  //!< Alignment of handle storage
+#define FW_HANDLE_ALIGNMENT 8  //!< Alignment of handle storage
 #endif
 
 #ifndef FW_FILE_CHUNK_SIZE

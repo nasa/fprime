@@ -26,11 +26,6 @@ namespace Svc {
 
     }
 
-    void ActiveTextLogger::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
-    {
-        ActiveTextLoggerComponentBase::init(queueDepth,instance);
-    }
-
     // ----------------------------------------------------------------------
     // Handlers to implement for typed input ports
     // ----------------------------------------------------------------------
@@ -121,7 +116,7 @@ namespace Svc {
     {
 
         // Print to console:
-        Fw::Logger::logMsg(text.toChar(),0,0,0,0,0,0,0,0,0);
+        Fw::Logger::log(text);
 
         // Print to file if there is one:
         (void) this->m_log_file.write_to_log(text.toChar(), text.length());  // Ignoring return status

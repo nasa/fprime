@@ -57,9 +57,7 @@ SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     }
     // Set up the address port and name
     address.sin_family = AF_INET;
-    this->m_lock.lock();
     address.sin_port = htons(this->m_port);
-    this->m_lock.unlock();
 
     // OS specific settings
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
@@ -84,16 +82,16 @@ SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
         return SOCK_FAILED_TO_CONNECT;
     }
     fd = socketFd;
-    Fw::Logger::logMsg("Connected to %s:%hu as a tcp client\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
+    Fw::Logger::log("Connected to %s:%hu as a tcp client\n", m_hostname, m_port);
     return SOCK_SUCCESS;
 }
 
-I32 TcpClientSocket::sendProtocol(const U8* const data, const U32 size) {
-    return static_cast<I32>(::send(this->m_fd, data, size, SOCKET_IP_SEND_FLAGS));
+I32 TcpClientSocket::sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
+    return static_cast<I32>(::send(fd, data, size, SOCKET_IP_SEND_FLAGS));
 }
 
-I32 TcpClientSocket::recvProtocol(U8* const data, const U32 size) {
-    return static_cast<I32>(::recv(this->m_fd, data, size, SOCKET_IP_RECV_FLAGS));
+I32 TcpClientSocket::recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) {
+    return static_cast<I32>(::recv(fd, data, size, SOCKET_IP_RECV_FLAGS));
 }
 
 }  // namespace Drv

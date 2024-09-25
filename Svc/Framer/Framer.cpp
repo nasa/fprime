@@ -24,10 +24,6 @@ namespace Svc {
 Framer ::Framer(const char* const compName)
     : FramerComponentBase(compName), FramingProtocolInterface(), m_protocol(nullptr), m_frame_sent(false) {}
 
-void Framer ::init(const NATIVE_INT_TYPE instance) {
-    FramerComponentBase::init(instance);
-}
-
 Framer ::~Framer() {}
 
 void Framer ::setup(FramingProtocol& protocol) {
@@ -78,7 +74,7 @@ void Framer ::send(Fw::Buffer& outgoing) {
         // Note: if there is a data sending problem, an EVR likely wouldn't
         // make it down. Log the issue in hopes that
         // someone will see it.
-        Fw::Logger::logMsg("[ERROR] Failed to send framed data: %d\n", sendStatus.e);
+        Fw::Logger::log("[ERROR] Failed to send framed data: %d\n", sendStatus.e);
     }
     this->m_frame_sent = true;  // A frame was sent
 }

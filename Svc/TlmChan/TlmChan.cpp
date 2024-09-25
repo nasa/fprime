@@ -42,12 +42,6 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
 
 TlmChan::~TlmChan() {}
 
-void TlmChan::init(NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-                   NATIVE_INT_TYPE instance    /*!< The instance number*/
-) {
-    TlmChanComponentBase::init(queueDepth, instance);
-}
-
 NATIVE_UINT_TYPE TlmChan::doHash(FwChanIdType id) {
     return (id % TLMCHAN_HASH_MOD_VALUE) % TLMCHAN_NUM_TLM_HASH_SLOTS;
 }

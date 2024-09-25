@@ -44,14 +44,6 @@ namespace Ref {
         m_currDp(0)
     {}
 
-    void SignalGen ::
-        init(
-            const NATIVE_INT_TYPE queueDepth,
-            const NATIVE_INT_TYPE instance
-        )
-    {
-        SignalGenComponentBase::init(queueDepth, instance);
-    }
 
     SignalGen :: ~SignalGen() { }
 

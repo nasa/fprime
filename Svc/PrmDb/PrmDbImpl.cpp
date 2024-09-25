@@ -50,10 +50,6 @@ namespace Svc {
         this->m_fileName = file;
     }
 
-    void PrmDbImpl::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
-        PrmDbComponentBase::init(queueDepth,instance);
-    }
-
     void PrmDbImpl::clearDb() {
         for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             this->m_db[entry].used = false;

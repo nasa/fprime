@@ -31,7 +31,7 @@ jobs:
       run: ./ci/tests/Framework.bash
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ci-framework-logs
@@ -51,7 +51,7 @@ jobs:
       run: ./ci/tests/Ref.bash
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ci-ref-logs
@@ -75,7 +75,7 @@ jobs:
       run: ./ci/tests/30-ints.bash
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ci-int-logs

@@ -16,10 +16,6 @@ namespace Svc {
 
 ComStub::ComStub(const char* const compName) : ComStubComponentBase(compName), m_reinitialize(true) {}
 
-void ComStub::init(const NATIVE_INT_TYPE instance) {
-    ComStubComponentBase::init(instance);
-}
-
 ComStub::~ComStub() {}
 
 // ----------------------------------------------------------------------

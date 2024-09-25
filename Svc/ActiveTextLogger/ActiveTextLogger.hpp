@@ -39,15 +39,6 @@ namespace Svc {
             //!
             virtual ~ActiveTextLogger(); //!< destructor
 
-            //!  \brief Component initialization routine
-            //!
-            //!  The initialization function calls the initialization
-            //!  routine for the base class.
-            //!
-            //!  \param queueDepth the depth of the message queue for the component
-            //!  \param instance: instance identifier. Default: 0.
-            void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance = 0);
-
             //!  \brief Set log file and max size
             //!
             //!  This is to create an optional log file to write all the messages to.

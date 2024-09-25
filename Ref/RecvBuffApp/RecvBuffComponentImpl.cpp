@@ -1,6 +1,6 @@
 #include <Ref/RecvBuffApp/RecvBuffComponentImpl.hpp>
 #include <FpConfig.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <Fw/Types/Assert.hpp>
 
 #include <cstdio>
@@ -17,11 +17,6 @@ namespace Ref {
         this->m_stats.setBuffRecv(0);
         this->m_stats.setBuffErr(0);
         this->m_stats.setPacketStatus(PacketRecvStatus::PACKET_STATE_NO_PACKETS);
-    }
-
-
-    void RecvBuffImpl::init(NATIVE_INT_TYPE instanceId) {
-        RecvBuffComponentBase::init(instanceId);
     }
 
     RecvBuffImpl::~RecvBuffImpl() {

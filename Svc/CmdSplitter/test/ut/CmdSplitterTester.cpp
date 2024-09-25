@@ -116,7 +116,7 @@ void CmdSplitterTester ::test_response_forwarding() {
     Fw::CmdResponse response;
     response.e = static_cast<Fw::CmdResponse::T>(STest::Pick::lowerUpper(0, Fw::CmdResponse::NUM_CONSTANTS));
     U32 cmdSeq = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
+    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::startLength(
         0, CmdDispatcherSequencePorts));
 
     this->invoke_to_seqCmdStatus(this->active_command_source, opcode, cmdSeq, response);

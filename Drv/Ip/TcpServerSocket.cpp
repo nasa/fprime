@@ -41,25 +41,20 @@ namespace Drv {
 TcpServerSocket::TcpServerSocket() : IpSocket(), m_base_fd(-1) {}
 
 U16 TcpServerSocket::getListenPort() {
-    this->m_lock.lock();
     U16 port = this->m_port;
-    this->m_lock.unlock();
     return port;
 }
 
 SocketIpStatus TcpServerSocket::startup() {
     NATIVE_INT_TYPE serverFd = -1;
     struct sockaddr_in address;
-    this->close();
     // Acquire a socket, or return error
     if ((serverFd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
     // Set up the address port and name
     address.sin_family = AF_INET;
-    this->m_lock.lock();
     address.sin_port = htons(this->m_port);
-    this->m_lock.unlock();
 
     // OS specific settings
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
@@ -83,44 +78,33 @@ SocketIpStatus TcpServerSocket::startup() {
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
     U16 port = ntohs(address.sin_port);
-    Fw::Logger::logMsg("Listening for single client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), port);
-    // TCP requires listening on the socket. Second argument prevents queueing of anything more than a single client.
-    if (::listen(serverFd, 0) < 0) {
+    Fw::Logger::log("Listening for single client at %s:%hu\n", m_hostname, port);
+    // TCP requires listening on the socket. Since we only expect a single client, set the TCP backlog (second argument) to 1 to prevent queuing of multiple clients. 
+    if (::listen(serverFd, 1) < 0) {
         ::close(serverFd);
         return SOCK_FAILED_TO_LISTEN; // What we have here is a failure to communicate
     }
 
-    this->m_lock.lock();
     m_base_fd = serverFd;
     m_port = port;
-    this->m_lock.unLock();
 
     return this->IpSocket::startup();
 }
 
-void TcpServerSocket::shutdown() {
-    this->m_lock.lock();
+void TcpServerSocket::shutdown(NATIVE_INT_TYPE fd) {
     if (this->m_base_fd != -1) {
         (void)::shutdown(this->m_base_fd, SHUT_RDWR);
         (void)::close(this->m_base_fd);
         this->m_base_fd = -1;
     }
-    this->m_lock.unLock();
-    this->IpSocket::shutdown();
+    this->IpSocket::shutdown(fd);
 }
 
 SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     NATIVE_INT_TYPE clientFd = -1;
     NATIVE_INT_TYPE serverFd = -1;
 
-    // Check started before allowing open
-    if (not this->isStarted()) {
-        return SOCK_NOT_STARTED;
-    }
-
-    this->m_lock.lock();
     serverFd = this->m_base_fd;
-    this->m_lock.unLock();
 
     // TCP requires accepting on the socket to get the client socket file descriptor.
     clientFd = ::accept(serverFd, nullptr, nullptr);
@@ -133,17 +117,20 @@ SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
-    Fw::Logger::logMsg("Accepted client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
+    Fw::Logger::log("Accepted client at %s:%hu\n", m_hostname, m_port);
     fd = clientFd;
     return SOCK_SUCCESS;
 }
 
-I32 TcpServerSocket::sendProtocol(const U8* const data, const U32 size) {
-    return static_cast<I32>(::send(this->m_fd, data, size, SOCKET_IP_SEND_FLAGS));
+I32 TcpServerSocket::sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
+    return static_cast<I32>(::send(fd, data, size, SOCKET_IP_SEND_FLAGS));
 }
 
-I32 TcpServerSocket::recvProtocol(U8* const data, const U32 size) {
-    return static_cast<I32>(::recv(this->m_fd, data, size, SOCKET_IP_RECV_FLAGS));
+I32 TcpServerSocket::recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) {
+    I32 size_buf;
+    // recv will return 0 if the client has done an orderly shutdown
+    size_buf = static_cast<I32>(::recv(fd, data, size, SOCKET_IP_RECV_FLAGS));
+    return size_buf;
 }
 
 }  // namespace Drv

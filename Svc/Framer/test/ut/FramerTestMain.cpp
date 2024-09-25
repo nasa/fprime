@@ -3,11 +3,11 @@
 // ----------------------------------------------------------------------
 
 #include "Fw/Test/UnitTest.hpp"
-#include "Os/Log.hpp"
+#include "Os/Console.hpp"
 #include "FramerTester.hpp"
 
 // Enable the console logging provided by Os::Log
-Os::Log logger;
+Os::Console logger;
 
 TEST(Nominal, Com) {
     COMMENT("Send one Fw::Com buffer to the framer (nominal behavior)");

@@ -4,7 +4,6 @@
 
 namespace Fw {
 namespace StringUtils {
-
 /**
  * \brief copy string with null-termination guaranteed
  *
@@ -20,7 +19,7 @@ namespace StringUtils {
  * \param num: length of destination buffer
  * \return destination buffer
  */
-char* string_copy(char* destination, const char* source, U32 num);
+char* string_copy(char* destination, const char* source, FwSizeType num);
 
 /**
  * \brief get the length of the source string or max_len if the string is
@@ -30,7 +29,7 @@ char* string_copy(char* destination, const char* source, U32 num);
  * \param max_len: the maximum length of the source string
  * \return length of the source string or max_len
  */
-U32 string_length(const CHAR* source, U32 max_len);
+FwSizeType string_length(const CHAR* source, FwSizeType max_len);
 
 /**
  * \brief find the first occurrence of a substring

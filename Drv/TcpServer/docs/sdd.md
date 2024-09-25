@@ -59,7 +59,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     if (hostname != nullptr && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         comm.configure(hostname, port_number);
-        comm.startup();
         comm.startSocketTask(name);
     }
 }

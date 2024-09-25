@@ -39,16 +39,6 @@ namespace Svc {
             //!
             //!  \param name the component instance name
             CommandDispatcherImpl(const char* name);
-            //!  \brief Component initialization routine
-            //!
-            //!  The initialization function calls the initialization
-            //!  routine for the base class.
-            //!
-            //!  \param queueDepth the depth of the message queue for the component
-            void init(
-                    NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-                    NATIVE_INT_TYPE instance /*!< The instance number*/
-                    ); //!< initialization function
             //!  \brief Component destructor
             //!
             //!  The destructor for this component is empty

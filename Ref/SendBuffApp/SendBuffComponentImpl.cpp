@@ -1,7 +1,7 @@
 #include <Ref/SendBuffApp/SendBuffComponentImpl.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/Log.hpp>
+#include <Os/Console.hpp>
 #include <cstring>
 
 #include <cstdio>
@@ -25,10 +25,6 @@ namespace Ref {
 
     SendBuffImpl::~SendBuffImpl() {
 
-    }
-
-    void SendBuffImpl::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
-        SendBuffComponentBase::init(queueDepth,instance);
     }
 
     void SendBuffImpl::SchedIn_handler(NATIVE_INT_TYPE portNum, U32 context) {
