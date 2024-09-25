@@ -167,8 +167,5 @@ module Ref {
 
   instance uplinkRouter: Svc.Router base id 0x4E00
 
-  instance dpBufferManager: Svc.BufferManager base id 0x4F00
-  
-
 }
 

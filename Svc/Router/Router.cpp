@@ -53,7 +53,7 @@ void Router ::dataIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer, 
                     commandOut_out(0, com, 0);
                     // REVIEW NOTE: Deframer did not check if the output port was connected, should it?
                 } else {
-                    Fw::Logger::logMsg("[ERROR] Serializing com buffer failed with status %d\n", status);
+                    Fw::Logger::log("[ERROR] Serializing com buffer failed with status %d\n", status);
                 }
                 break;
             }
@@ -79,7 +79,7 @@ void Router ::dataIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer, 
                 break;
         }
     } else {
-        Fw::Logger::logMsg("[ERROR] Deserializing packet type failed with status %d\n", status);
+        Fw::Logger::log("[ERROR] Deserializing packet type failed with status %d\n", status);
     }
 
     if (deallocate) {
