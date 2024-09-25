@@ -11,12 +11,14 @@ module RPI {
     instance cmdDisp
     instance cmdSeq
     instance comm
+    instance deframer
     instance downlink
     instance eventLogger
     instance fatalAdapter
     instance fatalHandler
     instance fileDownlink
     instance fileUplink
+    instance frameAccumulator
     instance commsBufferManager
     instance gpio17Drv
     instance gpio23Drv
@@ -33,8 +35,8 @@ module RPI {
     instance spiDrv
     instance textLogger
     instance uartDrv
-    instance uplink
     instance uartBufferManager
+    instance uplinkRouter
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -68,13 +70,6 @@ module RPI {
 
     connections FaultProtection {
       eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
-    }
-
-    connections FileUplinkBuffers {
-      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
-      uplink.bufferAllocate -> commsBufferManager.bufferGetCallee
-      uplink.bufferDeallocate -> commsBufferManager.bufferSendIn
-      uplink.bufferOut -> fileUplink.bufferSendIn
     }
 
     connections GPIO {
@@ -113,11 +108,14 @@ module RPI {
       rpiDemo.SpiReadWrite -> spiDrv.SpiReadWrite
     }
 
-    connections StaticMemory {
+    connections MemoryMgmt {
       comm.allocate -> commsBufferManager.bufferGetCallee
       comm.deallocate -> commsBufferManager.bufferSendIn
       downlink.framedAllocate -> commsBufferManager.bufferGetCallee
-      uplink.framedDeallocate -> commsBufferManager.bufferSendIn
+      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
+      frameAccumulator.frameAllocate -> commsBufferManager.bufferGetCallee
+      frameAccumulator.dataDeallocate -> commsBufferManager.bufferSendIn
+      uplinkRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
     }
 
     connections UART {
@@ -128,9 +126,15 @@ module RPI {
     }
 
     connections Uplink {
-      cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
-      comm.$recv -> uplink.framedIn
-      uplink.comOut -> cmdDisp.seqCmdBuff
+      comm.$recv -> frameAccumulator.dataIn
+
+      frameAccumulator.frameOut -> deframer.framedIn
+      deframer.deframedOut -> uplinkRouter.dataIn
+
+      uplinkRouter.commandOut -> cmdDisp.seqCmdBuff
+      uplinkRouter.fileOut -> fileUplink.bufferSendIn
+
+      cmdDisp.seqCmdStatus -> uplinkRouter.cmdResponseIn
     }
 
   }

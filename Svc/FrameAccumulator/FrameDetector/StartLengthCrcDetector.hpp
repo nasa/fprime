@@ -7,8 +7,12 @@
 #define SVC_FRAMEACCUCULATOR_FRAME_DETECTOR_STARTLENGTHCHECKSUMDETECTOR_HPP
 #include "Fw/Types/PolyType.hpp"
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
-#include "Utils/Hash/libcrc/lib_crc.h"
 #include <type_traits>
+
+// Include the lic crc c library:
+extern "C" {
+    #include <Utils/Hash/libcrc/lib_crc.h>
+}
 
 namespace Svc {
 namespace FrameDetectors {

@@ -227,18 +227,7 @@ module RPI {
 
   }
 
-  instance uplink: Svc.Deframer base id 1240 \
-  {
-
-    phase Fpp.ToCpp.Phases.configObjects """
-    Svc::FprimeDeframing deframing;
-    """
-
-    phase Fpp.ToCpp.Phases.configComponents """
-    RPI::uplink.setup(ConfigObjects::RPI_uplink::deframing);
-    """
-
-  }
+  instance deframer: Svc.Deframer base id 1240
 
   instance comm: Drv.TcpClient base id 1260 \
   {
@@ -459,8 +448,18 @@ module RPI {
 
   instance frameAccumulator: Svc.FrameAccumulator base id 2900 \
   {
-    
+    phase Fpp.ToCpp.Phases.configObjects """
+        Svc::FrameDetectors::FprimeFrameDetector fprimeFrameDetector;
+    """
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    {
+        frameAccumulator.configure(ConfigObjects::RPI_frameAccumulator::fprimeFrameDetector, 1, Allocation::mallocator, 2048);
+    }
+
+    """
   }
 
+  instance uplinkRouter: Svc.Router base id 3000
 
 }
