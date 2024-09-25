@@ -6,17 +6,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <new>
 
-// While we desire the singleton to be in global space to avoid placing
-// such object on the heap, the singleton must be constructed at first
-// request due to C++'s undefined ordering of constructors between
-// compilation units.
-//
-// To meet both requirements, we place an aligned and sized block of
-// memory on the in global space as seen here, and then placement-new
-// the singleton into that region. Thus constructing on the fly while
-// avoiding heap usage.
-alignas(Os::Console) U8 _singleton_store[sizeof(Os::Console)];
-
 namespace Os {
     Console* Console::s_singleton;
 
@@ -70,12 +59,8 @@ namespace Os {
     }
 
     Console& Console::getSingleton() {
-        // On the fly construction of singleton
-        if (s_singleton == nullptr) {
-            s_singleton = new (_singleton_store) Console;
-            Fw::Logger::registerLogger(s_singleton);
-        }
-        return *s_singleton;
+        static Console& singleton;
+        return singleton;
     }
 }
 
