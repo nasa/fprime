@@ -13,9 +13,9 @@
         <channel name="cmdSeq.CS_SequencesCompleted"/>
         <channel name="fileUplink.FilesReceived"/>
         <channel name="fileUplink.PacketsReceived"/>
-        <channel name="fileUplinkBufferManager.TotalBuffs"/>
-        <channel name="fileUplinkBufferManager.CurrBuffs"/>
-        <channel name="fileUplinkBufferManager.HiBuffs"/>
+        <channel name="commsBufferManager.TotalBuffs"/>
+        <channel name="commsBufferManager.CurrBuffs"/>
+        <channel name="commsBufferManager.HiBuffs"/>
         <channel name="fileDownlink.FilesSent"/>
         <channel name="fileDownlink.PacketsSent"/>
         <channel name="fileManager.CommandsExecuted"/>
@@ -32,8 +32,8 @@
         <channel name="fileDownlink.Warnings"/>
         <channel name="health.PingLateWarnings"/>
         <channel name="fileManager.Errors"/>
-        <channel name="fileUplinkBufferManager.NoBuffs"/>
-        <channel name="fileUplinkBufferManager.EmptyBuffs"/>
+        <channel name="commsBufferManager.NoBuffs"/>
+        <channel name="commsBufferManager.EmptyBuffs"/>
         <channel name="fileManager.Errors"/>
     </packet>
 

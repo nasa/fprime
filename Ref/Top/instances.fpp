@@ -143,7 +143,7 @@ module Ref {
 
   instance fatalHandler: Svc.FatalHandler base id 0x4300
 
-  instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400
+  instance commsBufferManager: Svc.BufferManager base id 0x4400
 
   instance posixTime: Svc.PosixTime base id 0x4500
 
@@ -151,16 +151,17 @@ module Ref {
 
   instance recvBuffComp: Ref.RecvBuff base id 0x4700
 
-  instance staticMemory: Svc.StaticMemory base id 0x4800
-
   instance textLogger: Svc.PassiveTextLogger base id 0x4900
 
-  instance deframer: Svc.Deframer base id 0x4A00
+  instance systemResources: Svc.SystemResources base id 0x4A00
 
-  instance systemResources: Svc.SystemResources base id 0x4B00
+  instance dpBufferManager: Svc.BufferManager base id 0x4B00
 
-  instance dpBufferManager: Svc.BufferManager base id 0x4C00
+  instance frameAccumulator: Svc.FrameAccumulator base id 0x4C00
 
-  instance router: Svc.Router base id 0x4D00
+  instance deframer: Svc.Deframer base id 0x4D00
+
+  instance uplinkRouter: Svc.Router base id 0x4E00
 
 }
+

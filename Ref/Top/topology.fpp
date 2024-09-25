@@ -13,6 +13,7 @@ module Ref {
     enum Ports_StaticMemory {
       downlink
       uplink
+      accumulator
     }
 
   topology Ref {
@@ -39,7 +40,8 @@ module Ref {
     instance fileDownlink
     instance fileManager
     instance fileUplink
-    instance fileUplinkBufferManager
+    instance commsBufferManager
+    instance frameAccumulator
     instance framer
     instance posixTime
     instance pingRcvr
@@ -49,11 +51,10 @@ module Ref {
     instance rateGroup3Comp
     instance rateGroupDriverComp
     instance recvBuffComp
+    instance uplinkRouter
     instance sendBuffComp
-    instance staticMemory
     instance textLogger
     instance typeDemo
-    instance router
     instance systemResources
     instance dpCat
     instance dpMgr
@@ -88,11 +89,11 @@ module Ref {
       eventLogger.PktSend -> framer.comIn
       fileDownlink.bufferSendOut -> framer.bufferIn
 
-      framer.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
+      framer.framedAllocate -> commsBufferManager.bufferGetCallee
       framer.framedOut -> comm.$send
       framer.bufferDeallocate -> fileDownlink.bufferReturn
 
-      comm.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
+      comm.deallocate -> commsBufferManager.bufferSendIn
 
       dpCat.fileOut -> fileDownlink.SendFile
       fileDownlink.FileComplete -> dpCat.fileDone
@@ -128,7 +129,7 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[0] -> $health.Run
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
-      rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
+      rateGroup3Comp.RateGroupMemberOut[3] -> commsBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[4] -> dpBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[5] -> dpWriter.schedIn
       rateGroup3Comp.RateGroupMemberOut[6] -> dpMgr.schedIn
@@ -146,20 +147,21 @@ module Ref {
 
     connections Uplink {
 
-      comm.allocate -> staticMemory.bufferAllocate[Ports_StaticMemory.uplink]
-      comm.$recv -> deframer.framedIn
-      deframer.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
+      comm.allocate -> commsBufferManager.bufferGetCallee
+      comm.$recv -> frameAccumulator.dataIn
 
-      deframer.bufferOut -> router.bufferIn
+      frameAccumulator.frameOut -> deframer.framedIn
+      frameAccumulator.frameAllocate -> commsBufferManager.bufferGetCallee
+      frameAccumulator.dataDeallocate -> commsBufferManager.bufferSendIn
+      deframer.deframedOut -> uplinkRouter.dataIn
 
-      router.commandOut -> cmdDisp.seqCmdBuff
-      router.fileOut -> fileUplink.bufferSendIn
-      router.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+      uplinkRouter.commandOut -> cmdDisp.seqCmdBuff
+      uplinkRouter.fileOut -> fileUplink.bufferSendIn
+      uplinkRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
 
-      cmdDisp.seqCmdStatus -> router.cmdResponseIn
+      cmdDisp.seqCmdStatus -> uplinkRouter.cmdResponseIn
 
-      deframer.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
+      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
 
     }
 
