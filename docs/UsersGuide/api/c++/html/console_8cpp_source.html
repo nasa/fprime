@@ -148,15 +148,12 @@ $(document).ready(function(){initNavTree('_console_8cpp_source.html',''); initRe
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    }</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
 <div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="class_os_1_1_console.html#aea2f12f8d00bfa138b5bcd7a887d5681">   60</a></span>&#160;    <a class="code" href="class_os_1_1_console.html">Console</a>&amp; <a class="code" href="class_os_1_1_console.html#aea2f12f8d00bfa138b5bcd7a887d5681">Console::getSingleton</a>() {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="comment">// On the fly construction of singleton</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordflow">if</span> (s_singleton == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            s_singleton = <span class="keyword">new</span> <a class="code" href="class_os_1_1_console.html#a446371fbfee2b39dd437d0d173bed098">Console</a>();</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <a class="code" href="class_fw_1_1_logger.html#a47beac4ab022cb4561f6a5f47cdabd0a">Fw::Logger::registerLogger</a>(s_singleton);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        }</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keywordflow">return</span> *s_singleton;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">static</span> <a class="code" href="class_os_1_1_console.html">Console</a> s_singleton;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <a class="code" href="class_fw_1_1_logger.html#a47beac4ab022cb4561f6a5f47cdabd0a">Fw::Logger::registerLogger</a>(&amp;s_singleton);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keywordflow">return</span> s_singleton;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_aebb9e13210d88d43e32e735ada43a425"><div class="ttname"><a href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a></div><div class="ttdeci">char CHAR</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00028">BasicTypes.h:28</a></div></div>
