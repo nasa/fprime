@@ -24,7 +24,7 @@ namespace Drv {
 
 TcpClientComponentImpl::TcpClientComponentImpl(const char* const compName)
     : TcpClientComponentBase(compName),
-      SocketReadTask() {}
+      SocketComponentHelper() {}
 
 SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
                                                  const U16 port,
@@ -35,6 +35,7 @@ SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
     // Check that ensures the configured buffer size fits within the limits fixed-width type, U32                                                
     FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(buffer_size));                                                   
     m_allocation_size = buffer_size; // Store the buffer size
+    (void)startup();
     return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
@@ -69,7 +70,7 @@ void TcpClientComponentImpl::connected() {
 // ----------------------------------------------------------------------
 
 Drv::SendStatus TcpClientComponentImpl::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    Drv::SocketIpStatus status = m_socket.send(fwBuffer.getData(), fwBuffer.getSize());
+    Drv::SocketIpStatus status = send(fwBuffer.getData(), fwBuffer.getSize());
     // Only deallocate buffer when the caller is not asked to retry
     if (status == SOCK_INTERRUPTED_TRY_AGAIN) {
         return SendStatus::SEND_RETRY;

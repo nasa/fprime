@@ -30,27 +30,23 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::SocketIpStatus serverStat = Drv::SOCK_SUCCESS;
 
     U16 port =  0;
-
-    this->component.configure("127.0.0.1", port, 0, 100);
+    NATIVE_INT_TYPE client_fd = -1;
+    status1 = this->component.configure("127.0.0.1", port, 0, 100);
+    EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
 
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
         this->component.start(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
-        EXPECT_TRUE(Drv::Test::wait_on_started(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
-    } else {
-        serverStat = this->component.startup();
-        ASSERT_EQ(serverStat, SOCK_SUCCESS)
-            << "TCP server startup error: " << strerror(errno) << std::endl
-            << "Port: " << port << std::endl;
+        EXPECT_TRUE(this->wait_on_started(true, Drv::Test::get_configured_delay_ms()/10 + 1));
     }
-    EXPECT_TRUE(component.getSocketHandler().isStarted());
+    EXPECT_TRUE(component.isStarted());
 
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations && serverStat == SOCK_SUCCESS; i++) {
         Drv::TcpClientSocket client;
         client.configure("127.0.0.1", this->component.getListenPort(), 0, 100);
-        status2 = client.open();
+        status2 = client.open(client_fd);
 
         U32 size = sizeof(m_data_storage);
 
@@ -58,24 +54,25 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         if (not recv_thread) {
             status1 = this->component.open();
         } else {
-            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
+            EXPECT_TRUE(this->wait_on_change(true, Drv::Test::get_configured_delay_ms()/10 + 1));
         }
-        EXPECT_TRUE(this->component.getSocketHandler().isOpened());
+        EXPECT_TRUE(this->component.isOpened());
 
         EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
         EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
 
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
-            (this->component.getSocketHandler().isOpened())) {
+            (this->component.isOpened())) {
             // Force the sockets not to hang, if at all possible
-            Drv::Test::force_recv_timeout(this->component.getSocketHandler());
-            Drv::Test::force_recv_timeout(client);
+
+            Drv::Test::force_recv_timeout(this->component.m_fd, this->component.getSocketHandler());
+            Drv::Test::force_recv_timeout(client_fd, client);
             m_data_buffer.setSize(sizeof(m_data_storage));
             Drv::Test::fill_random_buffer(m_data_buffer);
             Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
             EXPECT_EQ(status, SendStatus::SEND_OK);
-            status2 = client.recv(buffer, size);
+            status2 = client.recv(client_fd, buffer, size);
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
             EXPECT_EQ(size, m_data_buffer.getSize());
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
@@ -84,21 +81,48 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
             if (recv_thread) {
                 m_spinner = false;
                 m_data_buffer.setSize(sizeof(m_data_storage));
-                client.send(m_data_buffer.getData(), m_data_buffer.getSize());
+                status2 = client.send(client_fd, m_data_buffer.getData(), m_data_buffer.getSize());
+                EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
+                //from_deallocate_handler(0, m_data_buffer);
                 while (not m_spinner) {}
             }
         }
-        client.close(); // Client must be closed first or the server risks binding to an existing address
+
         // Properly stop the client on the last iteration
         if ((1 + i) == iterations && recv_thread) {
             this->component.shutdown();
             this->component.stop();
+            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
+            this->component.close();
+            this->component.shutdown();
             this->component.join();
         } else {
+            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
             this->component.close();
         }
     }
     ASSERT_from_ready_SIZE(iterations);
+}
+
+bool TcpServerTester::wait_on_change(bool open, U32 iterations) {
+    for (U32 i = 0; i < iterations; i++) {
+        if (open == this->component.isOpened()) {
+            return true;
+        }
+        Os::Task::delay(Fw::Time(0, 10000));
+    }
+    return false;
+}
+
+
+bool TcpServerTester::wait_on_started(bool open, U32 iterations) {
+    for (U32 i = 0; i < iterations; i++) {
+        if (open == this->component.isStarted()) {
+            return true;
+        }
+        Os::Task::delay(Fw::Time(0, 10000));
+    }
+    return false;
 }
 
 TcpServerTester ::TcpServerTester()
