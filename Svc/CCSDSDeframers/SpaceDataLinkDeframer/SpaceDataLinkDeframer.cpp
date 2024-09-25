@@ -66,11 +66,7 @@ void SpaceDataLinkDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& d
     data.setData(data.getData() + SPACE_PACKET_HEADER_SIZE);
     data.setSize(frame_length); // 5 bytes for Header, 2 bytes for Frame Error Control Field
 
-    // Set context buffer to be frame_length so the next layer knows how much data
-    // context.setData();
-
     this->deframedOut_out(0, data, context);
-
 }
 
 }  // namespace Svc

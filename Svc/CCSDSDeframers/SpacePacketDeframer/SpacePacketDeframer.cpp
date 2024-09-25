@@ -75,7 +75,6 @@ void SpacePacketDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& dat
     data.setSize(pkt_length); // TODO: look into whether a spacePacket can span multiple frames
 
     this->deframedOut_out(0, data, context);
-
 }
 
 }  // namespace Svc
