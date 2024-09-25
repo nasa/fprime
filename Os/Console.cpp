@@ -4,6 +4,7 @@
 // ======================================================================
 #include <Os/Console.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <new>
 
 alignas(Os::Console) U8 _singleton_store[sizeof Os::Console];
 
