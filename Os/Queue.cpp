@@ -98,7 +98,8 @@ QueueInterface::Status Queue::receive(Fw::SerializeBufferBase& destination,
     QueueInterface::Status status =
         this->receive(destination.getBuffAddrSer(), destination.getBuffCapacity(), blockType, actualSize, priority);
     if (status == QueueInterface::Status::OP_OK) {
-        Fw::SerializeStatus serializeStatus = destination.setBuffLen(static_cast<Fw::Serializable::SizeType>(actualSize));
+        Fw::SerializeStatus serializeStatus =
+            destination.setBuffLen(static_cast<Fw::Serializable::SizeType>(actualSize));
         if (serializeStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
             status = QueueInterface::Status::SIZE_MISMATCH;
         }

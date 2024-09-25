@@ -16,11 +16,11 @@
 
 #include "Os/Generic/Types/MaxHeap.hpp"
 #include <FpConfig.hpp>
-#include "Fw/Types/Assert.hpp"
 #include <Fw/Logger/Logger.hpp>
+#include "Fw/Types/Assert.hpp"
 
-#include <new>
 #include <cstdio>
+#include <new>
 
 // Macros for traversing the heap:
 #define LCHILD(x) (2 * x + 1)
@@ -29,54 +29,53 @@
 
 namespace Types {
 
-    MaxHeap::MaxHeap() {
-      // Initialize the heap:
-      this->m_capacity = 0;
-      this->m_heap = nullptr;
-      this->m_size = 0;
-      this->m_order = 0;
-    }
+MaxHeap::MaxHeap() {
+    // Initialize the heap:
+    this->m_capacity = 0;
+    this->m_heap = nullptr;
+    this->m_size = 0;
+    this->m_order = 0;
+}
 
-    MaxHeap::~MaxHeap() {
-      delete [] this->m_heap;
-      this->m_heap = nullptr;
-    }
+MaxHeap::~MaxHeap() {
+    delete[] this->m_heap;
+    this->m_heap = nullptr;
+}
 
-    bool MaxHeap::create(FwSizeType capacity)
-    {
-      // The heap has already been created.. so delete
-      // it and try again.
-      if( nullptr != this->m_heap ) {
-        delete [] this->m_heap;
+bool MaxHeap::create(FwSizeType capacity) {
+    // The heap has already been created.. so delete
+    // it and try again.
+    if (nullptr != this->m_heap) {
+        delete[] this->m_heap;
         this->m_heap = nullptr;
-      }
-
-      this->m_heap = new(std::nothrow) Node[capacity];
-      if( nullptr == this->m_heap ) {
-        return false;
-      }
-      this->m_capacity = capacity;
-      return true;
     }
 
-    bool MaxHeap::push(FwQueuePriorityType value, FwSizeType id) {
-      // If the queue is full, return false:
-      if(this->isFull()) {
+    this->m_heap = new (std::nothrow) Node[capacity];
+    if (nullptr == this->m_heap) {
         return false;
-      }
+    }
+    this->m_capacity = capacity;
+    return true;
+}
 
-      // Heap indexes:
-      FwSizeType parent;
-      FwSizeType index = this->m_size;
+bool MaxHeap::push(FwQueuePriorityType value, FwSizeType id) {
+    // If the queue is full, return false:
+    if (this->isFull()) {
+        return false;
+    }
 
-      // Max loop bounds for bit flip protection:
-      FwSizeType maxIter = this->m_size+1;
-      FwSizeType maxCount = 0;
+    // Heap indexes:
+    FwSizeType parent;
+    FwSizeType index = this->m_size;
 
-      // Start at the bottom of the heap and work our ways
-      // upwards until we find a parent that has a value
-      // greater than ours.
-      while(index && maxCount < maxIter) {
+    // Max loop bounds for bit flip protection:
+    FwSizeType maxIter = this->m_size + 1;
+    FwSizeType maxCount = 0;
+
+    // Start at the bottom of the heap and work our ways
+    // upwards until we find a parent that has a value
+    // greater than ours.
+    while (index && maxCount < maxIter) {
         // Get the parent index:
         parent = PARENT(index);
         // The parent index should ALWAYS be less than the
@@ -85,87 +84,87 @@ namespace Types {
         // If the current value is less than the parent,
         // then the current index is in the correct place,
         // so break out of the loop:
-        if(value <= this->m_heap[parent].value) {
-          break;
+        if (value <= this->m_heap[parent].value) {
+            break;
         }
         // Swap the parent and child:
         this->m_heap[index] = this->m_heap[parent];
         index = parent;
         ++maxCount;
-      }
-
-      // Check for programming errors or bit flips:
-      FW_ASSERT(maxCount < maxIter, static_cast<FwAssertArgType>(maxCount), static_cast<FwAssertArgType>(maxIter));
-      FW_ASSERT(index <= this->m_size, static_cast<FwAssertArgType>(index));
-
-      // Set the values of the new element:
-      this->m_heap[index].value = value;
-      this->m_heap[index].order = m_order;
-      this->m_heap[index].id = id;
-
-      ++this->m_size;
-      ++this->m_order;
-      return true;
     }
 
-    bool MaxHeap::pop(FwQueuePriorityType & value, FwSizeType& id) {
-      // If there is nothing in the heap then
-      // return false:
-      if(this->isEmpty()) {
+    // Check for programming errors or bit flips:
+    FW_ASSERT(maxCount < maxIter, static_cast<FwAssertArgType>(maxCount), static_cast<FwAssertArgType>(maxIter));
+    FW_ASSERT(index <= this->m_size, static_cast<FwAssertArgType>(index));
+
+    // Set the values of the new element:
+    this->m_heap[index].value = value;
+    this->m_heap[index].order = m_order;
+    this->m_heap[index].id = id;
+
+    ++this->m_size;
+    ++this->m_order;
+    return true;
+}
+
+bool MaxHeap::pop(FwQueuePriorityType& value, FwSizeType& id) {
+    // If there is nothing in the heap then
+    // return false:
+    if (this->isEmpty()) {
         return false;
-      }
-
-      // Set the return values to the top (max) of
-      // the heap:
-      value = this->m_heap[0].value;
-      id = this->m_heap[0].id;
-
-      // Now place the last element on the heap in
-      // the root position, and resize the heap.
-      // This will put the smallest value in the
-      // heap on the top, violating the heap property.
-      FwSizeType index = this->m_size-1;
-      // Fw::Logger::log("Putting on top: i: %u v: %d\n", index, this->m_heap[index].value);
-      this->m_heap[0]= this->m_heap[index];
-      --this->m_size;
-
-      // Now that the heap property is violated, we
-      // need to reorganize the heap to restore it's
-      // heapy-ness.
-      this->heapify();
-      return true;
     }
 
-    // Is the heap full:
-    bool MaxHeap::isFull() {
-      return (this->m_size == this->m_capacity);
-    }
+    // Set the return values to the top (max) of
+    // the heap:
+    value = this->m_heap[0].value;
+    id = this->m_heap[0].id;
 
-    // Is the heap empty:
-    bool MaxHeap::isEmpty() {
-      return (this->m_size == 0);
-    }
+    // Now place the last element on the heap in
+    // the root position, and resize the heap.
+    // This will put the smallest value in the
+    // heap on the top, violating the heap property.
+    FwSizeType index = this->m_size - 1;
+    // Fw::Logger::log("Putting on top: i: %u v: %d\n", index, this->m_heap[index].value);
+    this->m_heap[0] = this->m_heap[index];
+    --this->m_size;
 
-    // Get the current size of the heap:
-    FwSizeType MaxHeap::getSize() const {
-      return this->m_size;
-    }
+    // Now that the heap property is violated, we
+    // need to reorganize the heap to restore it's
+    // heapy-ness.
+    this->heapify();
+    return true;
+}
 
-    // A non-recursive heapify method.
-    // Note: This method had an additional property, such that
-    // items pushed of the same priority will be popped in FIFO
-    // order.
-    void MaxHeap::heapify() {
-      FwSizeType index = 0;
-      FwSizeType left;
-      FwSizeType right;
-      FwSizeType largest;
+// Is the heap full:
+bool MaxHeap::isFull() {
+    return (this->m_size == this->m_capacity);
+}
 
-      // Max loop bounds for bit flip protection:
-      FwSizeType maxIter = this->m_size+1;
-      FwSizeType maxCount = 0;
+// Is the heap empty:
+bool MaxHeap::isEmpty() {
+    return (this->m_size == 0);
+}
 
-      while(index <= this->m_size && maxCount < maxIter) {
+// Get the current size of the heap:
+FwSizeType MaxHeap::getSize() const {
+    return this->m_size;
+}
+
+// A non-recursive heapify method.
+// Note: This method had an additional property, such that
+// items pushed of the same priority will be popped in FIFO
+// order.
+void MaxHeap::heapify() {
+    FwSizeType index = 0;
+    FwSizeType left;
+    FwSizeType right;
+    FwSizeType largest;
+
+    // Max loop bounds for bit flip protection:
+    FwSizeType maxIter = this->m_size + 1;
+    FwSizeType maxCount = 0;
+
+    while (index <= this->m_size && maxCount < maxIter) {
         // Get the children indexes for this node:
         left = LCHILD(index);
         right = RCHILD(index);
@@ -176,7 +175,7 @@ namespace Types {
         // size, we have reached the end of the heap
         // so we can stop:
         if (left >= this->m_size) {
-          break;
+            break;
         }
 
         // Initialize the largest node to the current
@@ -189,16 +188,15 @@ namespace Types {
 
         // Make sure the right node exists before checking it:
         if (right < this->m_size) {
-          // Which one is larger, the current largest
-          // node or the right node?
-          largest = this->max(right, largest);
+            // Which one is larger, the current largest
+            // node or the right node?
+            largest = this->max(right, largest);
         }
 
         // If the largest node is the current node
         // then we are done heapifying:
-        if (largest == index)
-        {
-          break;
+        if (largest == index) {
+            break;
         }
 
         // Swap the largest node with the current node:
@@ -209,82 +207,78 @@ namespace Types {
 
         // Set the new index to whichever child was larger:
         index = largest;
-      }
-
-      // Check for programming errors or bit flips:
-      FW_ASSERT(maxCount < maxIter, static_cast<FwAssertArgType>(maxCount), static_cast<FwAssertArgType>(maxIter));
-      FW_ASSERT(index <= this->m_size, static_cast<FwAssertArgType>(index));
     }
 
-    // Return the maximum priority index between two nodes. If their
-    // priorities are equal, return the oldest to keep the heap stable
-    FwSizeType MaxHeap::max(FwSizeType a, FwSizeType b) {
-      FW_ASSERT(a < this->m_size, static_cast<FwAssertArgType>(a), static_cast<FwAssertArgType>(this->m_size));
-      FW_ASSERT(b < this->m_size, static_cast<FwAssertArgType>(b), static_cast<FwAssertArgType>(this->m_size));
+    // Check for programming errors or bit flips:
+    FW_ASSERT(maxCount < maxIter, static_cast<FwAssertArgType>(maxCount), static_cast<FwAssertArgType>(maxIter));
+    FW_ASSERT(index <= this->m_size, static_cast<FwAssertArgType>(index));
+}
 
-      // Extract the priorities:
-      FwQueuePriorityType aValue = this->m_heap[a].value;
-      FwQueuePriorityType bValue = this->m_heap[b].value;
+// Return the maximum priority index between two nodes. If their
+// priorities are equal, return the oldest to keep the heap stable
+FwSizeType MaxHeap::max(FwSizeType a, FwSizeType b) {
+    FW_ASSERT(a < this->m_size, static_cast<FwAssertArgType>(a), static_cast<FwAssertArgType>(this->m_size));
+    FW_ASSERT(b < this->m_size, static_cast<FwAssertArgType>(b), static_cast<FwAssertArgType>(this->m_size));
 
-      // If the priorities are equal, the "larger" one will be
-      // the "older" one as determined by order pushed on to the
-      // heap. Using this secondary ordering technique makes the
-      // heap stable (ie. FIFO for equal priority elements).
-      // Note: We check this first, because it is the most common
-      // case. Let's save as many ticks as we can...
-      if(aValue == bValue) {
+    // Extract the priorities:
+    FwQueuePriorityType aValue = this->m_heap[a].value;
+    FwQueuePriorityType bValue = this->m_heap[b].value;
+
+    // If the priorities are equal, the "larger" one will be
+    // the "older" one as determined by order pushed on to the
+    // heap. Using this secondary ordering technique makes the
+    // heap stable (ie. FIFO for equal priority elements).
+    // Note: We check this first, because it is the most common
+    // case. Let's save as many ticks as we can...
+    if (aValue == bValue) {
         FwSizeType aAge = this->m_order - this->m_heap[a].order;
         FwSizeType bAge = this->m_order - this->m_heap[b].order;
-        if(aAge > bAge) {
-          return a;
+        if (aAge > bAge) {
+            return a;
         }
         return b;
-      }
+    }
 
-      // Which priority is larger?:
-      if( aValue > bValue ) {
+    // Which priority is larger?:
+    if (aValue > bValue) {
         return a;
-      }
-      // B is larger:
-      return b;
     }
+    // B is larger:
+    return b;
+}
 
-    // Swap two nodes in the heap:
-    void MaxHeap::swap(FwSizeType a, FwSizeType b) {
-      FW_ASSERT(a < this->m_size, static_cast<FwAssertArgType>(a), static_cast<FwAssertArgType>(this->m_size));
-      FW_ASSERT(b < this->m_size, static_cast<FwAssertArgType>(b), static_cast<FwAssertArgType>(this->m_size));
-      Node temp = this->m_heap[a];
-      this->m_heap[a] = this->m_heap[b];
-      this->m_heap[b] = temp;
-    }
+// Swap two nodes in the heap:
+void MaxHeap::swap(FwSizeType a, FwSizeType b) {
+    FW_ASSERT(a < this->m_size, static_cast<FwAssertArgType>(a), static_cast<FwAssertArgType>(this->m_size));
+    FW_ASSERT(b < this->m_size, static_cast<FwAssertArgType>(b), static_cast<FwAssertArgType>(this->m_size));
+    Node temp = this->m_heap[a];
+    this->m_heap[a] = this->m_heap[b];
+    this->m_heap[b] = temp;
+}
 
-    // Print heap, for debugging purposes only:
-    void MaxHeap::print() {
-      FwSizeType index = 0;
-      FwSizeType left;
-      FwSizeType right;
-      Fw::Logger::log("Printing Heap of Size: %d\n", this->m_size);
-      while(index < this->m_size) {
+// Print heap, for debugging purposes only:
+void MaxHeap::print() {
+    FwSizeType index = 0;
+    FwSizeType left;
+    FwSizeType right;
+    Fw::Logger::log("Printing Heap of Size: %d\n", this->m_size);
+    while (index < this->m_size) {
         left = LCHILD(index);
         right = RCHILD(index);
 
-        if( left >= m_size && index == 0) {
-          Fw::Logger::log("i: %u v: %d d: %u -> (NULL, NULL)\n",
-            index, this->m_heap[index].value, this->m_heap[index].id);
-        }
-        else if( right >= m_size && left < m_size ) {
-          Fw::Logger::log("i: %u v: %d d: %u -> (i: %u v: %d d: %u, NULL)\n",
-            index, this->m_heap[index].value, this->m_heap[index].id,
-            left, this->m_heap[left].value, this->m_heap[left].id);
-        }
-        else if( right < m_size && left < m_size ) {
-          Fw::Logger::log("i: %u v: %d d: %u -> (i: %u v: %d d: %u, i: %u v: %d d: %u)\n",
-            index, this->m_heap[index].value, this->m_heap[index].id,
-            left, this->m_heap[left].value,this->m_heap[left].id,
-            right, this->m_heap[right].value, this->m_heap[right].id);
+        if (left >= m_size && index == 0) {
+            Fw::Logger::log("i: %u v: %d d: %u -> (NULL, NULL)\n", index, this->m_heap[index].value,
+                            this->m_heap[index].id);
+        } else if (right >= m_size && left < m_size) {
+            Fw::Logger::log("i: %u v: %d d: %u -> (i: %u v: %d d: %u, NULL)\n", index, this->m_heap[index].value,
+                            this->m_heap[index].id, left, this->m_heap[left].value, this->m_heap[left].id);
+        } else if (right < m_size && left < m_size) {
+            Fw::Logger::log("i: %u v: %d d: %u -> (i: %u v: %d d: %u, i: %u v: %d d: %u)\n", index,
+                            this->m_heap[index].value, this->m_heap[index].id, left, this->m_heap[left].value,
+                            this->m_heap[left].id, right, this->m_heap[right].value, this->m_heap[right].id);
         }
 
         ++index;
-      }
     }
 }
+}  // namespace Types

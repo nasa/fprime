@@ -6,7 +6,6 @@
 #include "Os/Generic/PriorityQueue.hpp"
 #include "STest/Random/Random.hpp"
 
-
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

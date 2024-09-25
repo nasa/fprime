@@ -17,16 +17,16 @@
 
 namespace Types {
 
-  //! \class MaxHeap
-  //! \brief A stable max heap data structure
-  //!
-  //! This is a max heap data structure. Items of the highest value will
-  //! be popped off the heap first. Items of equal value will be popped
-  //! off in FIFO order. Insertion and deletion from the heap are both
-  //! O(log(n)) time.
-  class MaxHeap {
-
-    public:
+//! \class MaxHeap
+//! \brief A stable max heap data structure
+//!
+//! This is a max heap data structure. Items of the highest value will
+//! be popped off the heap first. Items of equal value will be popped
+//! off in FIFO order. Insertion and deletion from the heap are both
+//! O(log(n)) time.
+//! \warning allocates memory on the heap
+class MaxHeap {
+  public:
     //! \brief MaxHeap constructor
     //!
     //! Create a max heap object
@@ -40,6 +40,7 @@ namespace Types {
     //! \brief MaxHeap creation
     //!
     //! Create the max heap with a given maximum size
+    //! \warning allocates memory on the heap
     //!
     //! \param capacity the maximum number of elements to store in the heap
     //!
@@ -88,7 +89,7 @@ namespace Types {
     //!
     void print();
 
-    private:
+  private:
     // Private functions:
     // Ensure the heap meets the heap property:
     void heapify();
@@ -99,18 +100,18 @@ namespace Types {
 
     // The data structure for a node on the heap:
     struct Node {
-      FwQueuePriorityType value; // the priority of the node
-      FwSizeType order; // order in which node was pushed
-      FwSizeType id; // unique id for this node
+        FwQueuePriorityType value;  // the priority of the node
+        FwSizeType order;           // order in which node was pushed
+        FwSizeType id;              // unique id for this node
     };
 
     // Private members:
-    Node* m_heap; // the heap itself
-    FwSizeType m_size; // the current size of the heap
-    FwSizeType m_order; // the current count of heap pushes
-    FwSizeType m_capacity; // the maximum capacity of the heap
-  };
+    Node* m_heap;           // the heap itself
+    FwSizeType m_size;      // the current size of the heap
+    FwSizeType m_order;     // the current count of heap pushes
+    FwSizeType m_capacity;  // the maximum capacity of the heap
+};
 
-}
+}  // namespace Types
 
-#endif // UTILS_TYPES_MAX_HEAP_HPP
+#endif  // UTILS_TYPES_MAX_HEAP_HPP

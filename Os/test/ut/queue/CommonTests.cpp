@@ -6,8 +6,8 @@
 #include <gtest/gtest.h>
 #include "Fw/Types/String.hpp"
 #include "Os/Queue.hpp"
-#include "Os/test/ut/queue/RulesHeaders.hpp"
 #include "Os/test/ConcurrentRule.hpp"
+#include "Os/test/ut/queue/RulesHeaders.hpp"
 
 const FwSizeType RANDOM_BOUND = 10000;
 
@@ -30,7 +30,10 @@ Os::QueueInterface::Status Tester::shadow_create(FwSizeType depth, FwSizeType me
     return status;
 }
 
-Os::QueueInterface::Status Tester::shadow_send(const U8* buffer, FwSizeType size, FwQueuePriorityType priority, Os::QueueInterface::BlockingType blockType) {
+Os::QueueInterface::Status Tester::shadow_send(const U8* buffer,
+                                               FwSizeType size,
+                                               FwQueuePriorityType priority,
+                                               Os::QueueInterface::BlockingType blockType) {
     this->shadow_check();
     QueueMessage qm;
     qm.priority = priority;
@@ -38,16 +41,15 @@ Os::QueueInterface::Status Tester::shadow_send(const U8* buffer, FwSizeType size
     std::memcpy(qm.data, buffer, size);
     if (size > this->shadow.messageSize) {
         return QueueInterface::Status::SIZE_MISMATCH;
-    }
-    else if ((this->shadow.queue.size() == this->shadow.depth) && (blockType == Os::QueueInterface::BlockingType::BLOCKING)) {
+    } else if ((this->shadow.queue.size() == this->shadow.depth) &&
+               (blockType == Os::QueueInterface::BlockingType::BLOCKING)) {
         this->shadow.send_block = qm;
         return QueueInterface::Status::OP_OK;
-    }
-    else if (this->shadow.queue.size() == this->shadow.depth) {
+    } else if (this->shadow.queue.size() == this->shadow.depth) {
         return QueueInterface::Status::FULL;
     } else {
         this->shadow.queue.push(qm);
-        this->shadow.hwm = FW_MAX(this->shadow.hwm, this->shadow.queue.size());
+        this->shadow.highMark = FW_MAX(this->shadow.highMark, this->shadow.queue.size());
         return QueueInterface::Status::OP_OK;
     }
     return QueueInterface::Status::OP_OK;
@@ -56,10 +58,14 @@ Os::QueueInterface::Status Tester::shadow_send(const U8* buffer, FwSizeType size
 void Tester::shadow_send_unblock() {
     // Send the shadow send buffered message
     this->shadow.queue.push(this->shadow.send_block);
-    this->shadow.hwm = FW_MAX(this->shadow.hwm, this->shadow.queue.size());
+    this->shadow.highMark = FW_MAX(this->shadow.highMark, this->shadow.queue.size());
 }
 
-Os::QueueInterface::Status Tester::shadow_receive(U8* destination, FwSizeType capacity, QueueInterface::BlockingType blockType, FwSizeType& actualSize, FwQueuePriorityType& priority) {
+Os::QueueInterface::Status Tester::shadow_receive(U8* destination,
+                                                  FwSizeType capacity,
+                                                  QueueInterface::BlockingType blockType,
+                                                  FwSizeType& actualSize,
+                                                  FwQueuePriorityType& priority) {
     this->shadow_check();
     if (capacity < this->shadow.messageSize) {
         return QueueInterface::Status::SIZE_MISMATCH;
@@ -80,7 +86,6 @@ Os::QueueInterface::Status Tester::shadow_receive(U8* destination, FwSizeType ca
     return QueueInterface::Status::OP_OK;
 }
 
-
 void Tester::shadow_receive_unblock() {
     // Make sure outputs were stored in the shadow receive buffer
     ASSERT_NE(this->shadow.receive_block.destination, nullptr);
@@ -100,12 +105,11 @@ void Tester::shadow_receive_unblock() {
     this->shadow.receive_block.priority = nullptr;
 }
 
-} // namespace Os
-} // namespace Test
-} // namespace Queue
+}  // namespace Queue
+}  // namespace Test
+}  // namespace Os
 
-
-TEST(InterfaceUninitalized, SendPointer) {
+TEST(InterfaceUninitialized, SendPointer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
@@ -117,7 +121,7 @@ TEST(InterfaceUninitalized, SendPointer) {
     ASSERT_EQ(Os::QueueInterface::Status::UNINITIALIZED, status);
 }
 
-TEST(InterfaceUninitalized, SendBuffer) {
+TEST(InterfaceUninitialized, SendBuffer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
@@ -129,7 +133,7 @@ TEST(InterfaceUninitalized, SendBuffer) {
     ASSERT_EQ(Os::QueueInterface::Status::UNINITIALIZED, status);
 }
 
-TEST(InterfaceUninitalized, ReceivePointer) {
+TEST(InterfaceUninitialized, ReceivePointer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     FwSizeType size = 200;
@@ -141,7 +145,7 @@ TEST(InterfaceUninitalized, ReceivePointer) {
     ASSERT_EQ(Os::QueueInterface::Status::UNINITIALIZED, status);
 }
 
-TEST(InterfaceUninitalized, ReceiveBuffer) {
+TEST(InterfaceUninitialized, ReceiveBuffer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     FwSizeType size = 200;
@@ -181,8 +185,7 @@ TEST(InterfaceInvalid, SendInvalidEnum) {
     const FwQueuePriorityType priority = 300;
     Os::QueueInterface::BlockingType blockingType =
         static_cast<Os::QueueInterface::BlockingType>(Os::QueueInterface::BlockingType::BLOCKING + 1);
-    ASSERT_DEATH_IF_SUPPORTED(queue.send(nullptr, messageSize, priority, blockingType),
-                              "Assert:.*Queue\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(queue.send(nullptr, messageSize, priority, blockingType), "Assert:.*Queue\\.cpp");
 }
 
 TEST(InterfaceInvalid, ReceivePointerNull) {
@@ -202,9 +205,7 @@ TEST(InterfaceInvalid, ReceiveInvalidEnum) {
     FwQueuePriorityType priority;
     Os::QueueInterface::BlockingType blockingType =
         static_cast<Os::QueueInterface::BlockingType>(Os::QueueInterface::BlockingType::BLOCKING + 1);
-    ASSERT_DEATH_IF_SUPPORTED(
-        queue.receive(nullptr, size, blockingType, size, priority),
-        "Assert:.*Queue\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(queue.receive(nullptr, size, blockingType, size, priority), "Assert:.*Queue\\.cpp");
 }
 
 TEST(BasicRules, Create) {
@@ -281,7 +282,7 @@ TEST(Blocking, SendBlock) {
     AggregatedConcurrentRule<Os::Test::Queue::Tester> aggregator;
     Os::Test::Queue::Tester::SendBlock block(aggregator);
     Os::Test::Queue::Tester::ReceiveNotEmpty receive_not_empty;
-    ConcurrentWrapperRule<Os::Test::Queue::Tester> unblock(aggregator,  receive_not_empty, "SendBlock", "SendUnblock");
+    ConcurrentWrapperRule<Os::Test::Queue::Tester> unblock(aggregator, receive_not_empty, "SendBlock", "SendUnblock");
 
     create_rule.apply(tester);
     overflow_rule.apply(tester);
@@ -295,7 +296,7 @@ TEST(Blocking, ReceiveBlock) {
     AggregatedConcurrentRule<Os::Test::Queue::Tester> aggregator;
     Os::Test::Queue::Tester::ReceiveBlock block(aggregator);
     Os::Test::Queue::Tester::SendNotFull send_not_full;
-    ConcurrentWrapperRule<Os::Test::Queue::Tester> unblock(aggregator,  send_not_full, "ReceiveBlock", "ReceiveUnblock");
+    ConcurrentWrapperRule<Os::Test::Queue::Tester> unblock(aggregator, send_not_full, "ReceiveBlock", "ReceiveUnblock");
 
     create_rule.apply(tester);
     overflow_rule.apply(tester);
@@ -313,31 +314,20 @@ TEST(Random, RandomNominal) {
     Os::Test::Queue::Tester::Overflow overflow_rule;
     Os::Test::Queue::Tester::Underflow underflow_rule;
 
-
     // Place these rules into a list of rules
-    STest::Rule<Os::Test::Queue::Tester>* rules[] = {
-        &create_rule,
-        &send_rule,
-        &receive_rule,
-        &overflow_rule,
-        &underflow_rule,
-        &send_full_no_block_rule,
-        &receive_empty_no_block_rule
-    };
+    STest::Rule<Os::Test::Queue::Tester>* rules[] = {&create_rule,
+                                                     &send_rule,
+                                                     &receive_rule,
+                                                     &overflow_rule,
+                                                     &underflow_rule,
+                                                     &send_full_no_block_rule,
+                                                     &receive_empty_no_block_rule};
 
     // Take the rules and place them into a random scenario
-    STest::RandomScenario<Os::Test::Queue::Tester> random(
-        "Random Rules",
-        rules,
-        FW_NUM_ARRAY_ELEMENTS(rules)
-    );
+    STest::RandomScenario<Os::Test::Queue::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Os::Test::Queue::Tester> bounded(
-        "Bounded Random Rules Scenario",
-        random,
-        RANDOM_BOUND
-    );
+    STest::BoundedScenario<Os::Test::Queue::Tester> bounded("Bounded Random Rules Scenario", random, RANDOM_BOUND);
     // Run!
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);

@@ -8,8 +8,8 @@
 #include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <Os/QueueString.hpp>
 #include <Os/Os.hpp>
+#include <Os/QueueString.hpp>
 #include <atomic>
 namespace Os {
 // Forward declaration for registry
@@ -20,7 +20,7 @@ class QueueHandle {};
 
 //! \brief base queue interface
 //!
-//! Queues are used internally to F prime in order to support the messaging between components. The
+//! Queues are used internally to fprime in order to support the messaging between components. The
 //! QueueInterface is used to abstract away from the standard OS-based queue, allowing F prime support
 //! multiple OSes in a consistent way.
 //!
@@ -64,11 +64,14 @@ class QueueInterface {
 
     //! \brief create queue storage
     //!
-    //! Creates a queue ensuring sufficient storage to hold `depth` messages of `messageSize` size each.
+    //! Creates a queue ensuring sufficient storage to hold `depth` messages of `messageSize` size each. Resource
+    //! allocation is dependent on the underlying implementation and users should assume that resource allocation is
+    //! possible.
+    //!
     //! \param name: name of queue
     //! \param depth: depth of queue in number of messages
     //! \param messageSize: size of an individual message
-    //! \return: stauts of the creation
+    //! \return: status of the creation
     virtual Status create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) = 0;
 
     //! \brief send a message into the queue
@@ -76,6 +79,9 @@ class QueueInterface {
     //! Send a message into the queue, providing the message data, size, priority, and blocking type. When
     //! `blockType` is set to BLOCKING, this call will block on queue full. Otherwise, this will return an error
     //! status on queue full.
+    //!
+    //! It is invalid to send a null buffer.
+    //! This method will block if the queue is full and blockType is set to BLOCKING
     //!
     //! \param buffer: message data
     //! \param size: size of message data
@@ -90,6 +96,9 @@ class QueueInterface {
     //! When `blockType` is set to BLOCKING, this call will block on queue empty. Otherwise, this will return an
     //! error status on queue empty. Actual size received and priority of message is set on success status.
     //!
+    //! It is invalid to send a null buffer.
+    //! This method will block if the queue is empty and blockType is set to BLOCKING
+    //!
     //! \param destination: destination for message data
     //! \param capacity: maximum size of message data
     //! \param blockType: BLOCKING to wait for message or NONBLOCKING to return error when queue is empty
@@ -103,6 +112,8 @@ class QueueInterface {
                            FwQueuePriorityType& priority) = 0;
 
     //! \brief get number of messages available
+    //!
+    //! Returns the number of messages currently available in the queue.
     //!
     //! \return number of messages available
     virtual FwSizeType getMessagesAvailable() const = 0;
@@ -155,18 +166,24 @@ class Queue final : public QueueInterface {
 
     //! \brief create queue storage through delegate
     //!
-    //! Creates a queue ensuring sufficient storage to hold `depth` messages of `messageSize` size each.
+    //! Creates a queue ensuring sufficient storage to hold `depth` messages of `messageSize` size each. This method
+    //! delegates to the underlying implementation. Resource allocation is dependent on the underlying implementation
+    //! and users should assume that resource allocation is possible.
+    //!
     //! \param name: name of queue
     //! \param depth: depth of queue in number of messages
     //! \param messageSize: size of an individual message
-    //! \return: stauts of the creation
+    //! \return: status of the creation
     Status create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) override;
 
     //! \brief send a message into the queue through delegate
     //!
     //! Send a message into the queue, providing the message data, size, priority, and blocking type. When
     //! `blockType` is set to BLOCKING, this call will block on queue full. Otherwise, this will return an error
-    //! status on queue full.
+    //! status on queue full. This method delegates to the underlying implementation.
+    //!
+    //! \warning It is invalid to send a null buffer
+    //! \warning This method will block if the queue is full and blockType is set to BLOCKING
     //!
     //! \param buffer: message data
     //! \param size: size of message data
@@ -179,7 +196,11 @@ class Queue final : public QueueInterface {
     //!
     //! Receive a message from the queue, providing the message destination, capacity, priority, and blocking type.
     //! When `blockType` is set to BLOCKING, this call will block on queue empty. Otherwise, this will return an
-    //! error status on queue empty. Actual size received and priority of message is set on success status.
+    //! error status on queue empty. Actual size received and priority of message is set on success status. This method
+    //! delegates to the underlying implementation.
+    //!
+    //! \warning It is invalid to send a null buffer.
+    //! \warning This method will block if the queue is empty and blockType is set to BLOCKING
     //!
     //! \param destination: destination for message data
     //! \param capacity: maximum size of message data
@@ -193,7 +214,10 @@ class Queue final : public QueueInterface {
                    FwSizeType& actualSize,
                    FwQueuePriorityType& priority) override;
 
-    //! \brief get number of messages available through delegate
+    //! \brief get number of messages available
+    //!
+    //! Returns the number of messages currently available in the queue. This method delegates to the underlying
+    //! implementation.
     //!
     //! \return number of messages available
     FwSizeType getMessagesAvailable() const override;
@@ -208,6 +232,9 @@ class Queue final : public QueueInterface {
     //! \brief send a message to a queue
     //!
     //! Send a message to a queue with the given priority and block type. See: QueueInterface::send
+    //!
+    //! \warning This method will block if the queue is full and blockType is set to BLOCKING
+    //!
     //! \param message: reference to serialize buffer storing message
     //! \param priority: priority of the message
     //! \param blockType: BLOCKING to block for space or NONBLOCKING to return error when queue is full
@@ -218,6 +245,9 @@ class Queue final : public QueueInterface {
     //!
     //! Receive a message from a queue with the given block type. See: QueueInterface::receive. Note: this will entirely
     //! overwrite the buffer.
+    //!
+    //! \warning This method will block if the queue is full and blockType is set to BLOCKING
+    //!
     //! \param destination: reference to serialize buffer for storing message
     //! \param priority: (output) priority of the message
     //! \param blockType: BLOCKING to block for space or NONBLOCKING to return error when queue is full
@@ -229,6 +259,7 @@ class Queue final : public QueueInterface {
 
     //! \brief get the queue's message maximum size
     FwSizeType getMessageSize() const;
+
     //! \brief get the queue's name
     const QueueString& getName() const;
 
@@ -236,9 +267,9 @@ class Queue final : public QueueInterface {
     static FwSizeType getNumQueues();
 
   private:
-    QueueString m_name;              //!< queue name
-    FwSizeType m_depth;              //!< Queue depth
-    FwSizeType m_size;               //!< Maximum message size
+    QueueString m_name;                           //!< queue name
+    FwSizeType m_depth;                           //!< Queue depth
+    FwSizeType m_size;                            //!< Maximum message size
     static std::atomic<FwSizeType> s_queueCount;  //!< Count of the number of queues
 
 #if FW_QUEUE_REGISTRATION
@@ -256,8 +287,8 @@ class Queue final : public QueueInterface {
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
     // the byte-array here and set `handle` to that address for storage.
     //
-    alignas(FW_HANDLE_ALIGNMENT) QueueHandleStorage m_handle_storage; //!< Storage for aligned handle
-    QueueInterface& m_delegate; //!< Delegate for the real implementation
+    alignas(FW_HANDLE_ALIGNMENT) QueueHandleStorage m_handle_storage;  //!< Storage for aligned handle
+    QueueInterface& m_delegate;                                        //!< Delegate for the real implementation
 };
 //! \brief queue registry interface
 //!

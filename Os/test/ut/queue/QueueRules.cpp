@@ -1,4 +1,7 @@
-
+// ======================================================================
+// \title Os/test/ut/queue/QueueRules.cpp
+// \brief queue rule implementations
+// ======================================================================
 
 #include "CommonTests.hpp"
 #include "Fw/Types/String.hpp"
@@ -70,14 +73,15 @@ bool Os::Test::Queue::Tester::SendNotFull::precondition(const Os::Test::Queue::T
 
 void Os::Test::Queue::Tester::SendNotFull::action(Os::Test::Queue::Tester& state  //!< The test state
 ) {
-    QueueInterface::BlockingType blocking = (STest::Random::lowerUpper(0, 1) == 1) ? QueueInterface::BLOCKING : QueueInterface::NONBLOCKING;
+    QueueInterface::BlockingType blocking =
+        (STest::Random::lowerUpper(0, 1) == 1) ? QueueInterface::BLOCKING : QueueInterface::NONBLOCKING;
     PickedMessage pick = pick_message(state.shadow.messageSize);
     // Prevent lock-up
     ASSERT_LT(state.queue.getMessagesAvailable(), state.queue.getDepth());
     ASSERT_FALSE(state.is_shadow_full());
     QueueInterface::Status status = state.shadow_send(pick.sent, pick.size, pick.priority, blocking);
     QueueInterface::Status test_status = state.queue.send(pick.sent, pick.size, pick.priority, blocking);
-    delete[] pick.sent; // Clean-up
+    delete[] pick.sent;  // Clean-up
     ASSERT_EQ(status, QueueInterface::Status::OP_OK);
     ASSERT_EQ(test_status, status);
     state.shadow_check();
@@ -99,7 +103,8 @@ void Os::Test::Queue::Tester::SendFullNoBlock::action(Os::Test::Queue::Tester& s
 ) {
     PickedMessage pick = pick_message(state.shadow.messageSize);
     QueueInterface::Status status = state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::NONBLOCKING);
-    QueueInterface::Status test_status = state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::NONBLOCKING);
+    QueueInterface::Status test_status =
+        state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::NONBLOCKING);
     delete[] pick.sent;
 
     ASSERT_EQ(status, QueueInterface::Status::FULL);
@@ -121,17 +126,19 @@ bool Os::Test::Queue::Tester::ReceiveNotEmpty::precondition(const Os::Test::Queu
 
 void Os::Test::Queue::Tester::ReceiveNotEmpty::action(Os::Test::Queue::Tester& state  //!< The test state
 ) {
-    QueueInterface::BlockingType blocking = (STest::Random::lowerUpper(0, 1) == 1) ? QueueInterface::BLOCKING : QueueInterface::NONBLOCKING;
+    QueueInterface::BlockingType blocking =
+        (STest::Random::lowerUpper(0, 1) == 1) ? QueueInterface::BLOCKING : QueueInterface::NONBLOCKING;
     PickedMessage message;
     PickedMessage test;
 
     // Prevent lock-up
     ASSERT_GT(state.queue.getMessagesAvailable(), 0);
     ASSERT_FALSE(state.is_shadow_empty());
-    QueueInterface::Status status = state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
-                         blocking, message.size, message.priority);
+    QueueInterface::Status status = state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND, blocking,
+                                                         message.size, message.priority);
 
-    QueueInterface::Status test_status = state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND, blocking, test.size, test.priority);
+    QueueInterface::Status test_status =
+        state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND, blocking, test.size, test.priority);
     ASSERT_EQ(status, QueueInterface::Status::OP_OK);
     ASSERT_EQ(status, test_status);
     check_received(message, test);
@@ -142,9 +149,11 @@ void Os::Test::Queue::Tester::ReceiveNotEmpty::action(Os::Test::Queue::Tester& s
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::Queue::Tester::ReceiveEmptyNoBlock::ReceiveEmptyNoBlock() : STest::Rule<Os::Test::Queue::Tester>("ReceiveEmptyNoBlock") {}
+Os::Test::Queue::Tester::ReceiveEmptyNoBlock::ReceiveEmptyNoBlock()
+    : STest::Rule<Os::Test::Queue::Tester>("ReceiveEmptyNoBlock") {}
 
-bool Os::Test::Queue::Tester::ReceiveEmptyNoBlock::precondition(const Os::Test::Queue::Tester& state  //!< The test state
+bool Os::Test::Queue::Tester::ReceiveEmptyNoBlock::precondition(
+    const Os::Test::Queue::Tester& state  //!< The test state
 ) {
     return state.shadow.created and state.is_shadow_empty();
 }
@@ -154,186 +163,170 @@ void Os::Test::Queue::Tester::ReceiveEmptyNoBlock::action(Os::Test::Queue::Teste
     PickedMessage message;
     PickedMessage test;
 
-    QueueInterface::Status status = state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
-                                                         QueueInterface::BlockingType::NONBLOCKING, message.size, message.priority);
+    QueueInterface::Status status =
+        state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
+                             QueueInterface::BlockingType::NONBLOCKING, message.size, message.priority);
 
-    QueueInterface::Status test_status = state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND, QueueInterface::BlockingType::NONBLOCKING, test.size, test.priority);
+    QueueInterface::Status test_status =
+        state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND, QueueInterface::BlockingType::NONBLOCKING,
+                            test.size, test.priority);
     ASSERT_EQ(status, QueueInterface::Status::EMPTY);
     ASSERT_EQ(status, test_status);
 }
 
+// ------------------------------------------------------------------------------------------------------
+// Rule:  Overflow
+//
+// ------------------------------------------------------------------------------------------------------
 
-  // ------------------------------------------------------------------------------------------------------
-  // Rule:  Overflow
-  //
-  // ------------------------------------------------------------------------------------------------------
-  
-  Os::Test::Queue::Tester::Overflow::Overflow() :
-        STest::Rule<Os::Test::Queue::Tester>("Overflow")
-  {
-  }
+Os::Test::Queue::Tester::Overflow::Overflow() : STest::Rule<Os::Test::Queue::Tester>("Overflow") {}
 
+bool Os::Test::Queue::Tester::Overflow::precondition(const Os::Test::Queue::Tester& state  //!< The test state
+) {
+    return state.is_shadow_created();
+}
 
-  bool Os::Test::Queue::Tester::Overflow::precondition(
-            const Os::Test::Queue::Tester& state //!< The test state
-        ) 
-  {
-      return state.is_shadow_created();
-  }
-
-  
-  void Os::Test::Queue::Tester::Overflow::action(
-            Os::Test::Queue::Tester& state //!< The test state
-        ) 
-  {
-      while (not state.is_shadow_full()) {
-          PickedMessage pick = pick_message(state.shadow.messageSize);
-          QueueInterface::Status status =
-              state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
-          QueueInterface::Status test_status =
-              state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
-          delete[] pick.sent;
-          ASSERT_EQ(status, QueueInterface::Status::OP_OK);
-          ASSERT_EQ(status, test_status);
-      }
-      PickedMessage pick = pick_message(state.shadow.messageSize);
-      QueueInterface::Status status =
-          state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
-      QueueInterface::Status test_status =
-          state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
-      delete[] pick.sent;
-      ASSERT_EQ(status, QueueInterface::Status::FULL);
-      ASSERT_EQ(status, test_status);
-      state.shadow_check();
-  }
-
-
-    
-
-
-  // ------------------------------------------------------------------------------------------------------
-  // Rule:  Underflow
-  //
-  // ------------------------------------------------------------------------------------------------------
-  
-  Os::Test::Queue::Tester::Underflow::Underflow() :
-        STest::Rule<Os::Test::Queue::Tester>("Underflow")
-  {
-  }
-
-
-  bool Os::Test::Queue::Tester::Underflow::precondition(
-            const Os::Test::Queue::Tester& state //!< The test state
-        ) 
-  {
-      return state.is_shadow_created();
-  }
-
-  void Os::Test::Queue::Tester::Underflow::action(
-            Os::Test::Queue::Tester& state //!< The test state
-        ) 
-  {
-      PickedMessage message;
-      PickedMessage test;
-      while (not state.is_shadow_empty()) {
-          QueueInterface::Status status =
-              state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
-                                   QueueInterface::BlockingType::NONBLOCKING, message.size, message.priority);
-
-          QueueInterface::Status test_status =
-              state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
-                                  QueueInterface::BlockingType::NONBLOCKING, test.size, test.priority);
-          ASSERT_EQ(status, QueueInterface::Status::OP_OK);
-          ASSERT_EQ(status, test_status);
-          check_received(message, test);
-      }
-      QueueInterface::Status status =
-          state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
-                               QueueInterface::BlockingType::NONBLOCKING, message.size, message.priority);
-
-      QueueInterface::Status test_status =
-          state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
-                              QueueInterface::BlockingType::NONBLOCKING, test.size, test.priority);
-      ASSERT_EQ(status, QueueInterface::Status::EMPTY);
-      ASSERT_EQ(status, test_status);
-      state.shadow_check();
-  }
-
-  // ------------------------------------------------------------------------------------------------------
-  // Rule:  SendBlock
-  //
-  // ------------------------------------------------------------------------------------------------------
-
-  Os::Test::Queue::Tester::SendBlock::SendBlock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner) : ConcurrentRule<Os::Test::Queue::Tester>("SendBlock", runner) {}
-
-  bool Os::Test::Queue::Tester::SendBlock::precondition(
-      const Os::Test::Queue::Tester& state //!< The test state
-  ) {
-      return state.shadow.created && state.is_shadow_full();
-  }
-
-  void Os::Test::Queue::Tester::SendBlock::action(
-      Os::Test::Queue::Tester& state //!< The test state
-  ) {
-      // Backend defined check
-      if (not TESTS_SUPPORT_BLOCKING) {
-          this->notify_other("SendUnblock");
-          return;
-      }
-      PickedMessage pick = pick_message(state.shadow.messageSize);
-      this->notify_other("SendUnblock");
-      QueueInterface::Status status = state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::BLOCKING);
-      getLock().unlock();
-      QueueInterface::Status test_status = state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::BLOCKING);
-      getLock().lock();
-      // Condition should be set after block
-      ASSERT_TRUE(this->getCondition());
-      // Unblock the shadow queue send
-      state.shadow_send_unblock();
-      delete[] pick.sent;
-
-      ASSERT_EQ(status, QueueInterface::Status::OP_OK);
-      ASSERT_EQ(test_status, status);
-      state.shadow_check();
-  }
-
-  // ------------------------------------------------------------------------------------------------------
-  // Rule:  ReceiveBlock
-  //
-  // ------------------------------------------------------------------------------------------------------
-
-    Os::Test::Queue::Tester::ReceiveBlock::ReceiveBlock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner) : ConcurrentRule<Os::Test::Queue::Tester>("ReceiveBlock", runner) {}
-
-    bool Os::Test::Queue::Tester::ReceiveBlock::precondition(
-        const Os::Test::Queue::Tester& state //!< The test state
-    ) {
-        return state.shadow.created && state.is_shadow_empty();
+void Os::Test::Queue::Tester::Overflow::action(Os::Test::Queue::Tester& state  //!< The test state
+) {
+    while (not state.is_shadow_full()) {
+        PickedMessage pick = pick_message(state.shadow.messageSize);
+        QueueInterface::Status status =
+            state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
+        QueueInterface::Status test_status =
+            state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
+        delete[] pick.sent;
+        ASSERT_EQ(status, QueueInterface::Status::OP_OK);
+        ASSERT_EQ(status, test_status);
     }
+    PickedMessage pick = pick_message(state.shadow.messageSize);
+    QueueInterface::Status status =
+        state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
+    QueueInterface::Status test_status =
+        state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
+    delete[] pick.sent;
+    ASSERT_EQ(status, QueueInterface::Status::FULL);
+    ASSERT_EQ(status, test_status);
+    state.shadow_check();
+}
 
-    void Os::Test::Queue::Tester::ReceiveBlock::action(
-        Os::Test::Queue::Tester& state //!< The test state
-    ) {
-        // Backend defined check
-        if (not TESTS_SUPPORT_BLOCKING) {
-            this->notify_other("ReceiveUnblock");
-            return;
-        }
+// ------------------------------------------------------------------------------------------------------
+// Rule:  Underflow
+//
+// ------------------------------------------------------------------------------------------------------
 
-        PickedMessage message;
-        PickedMessage test;
-        this->notify_other("ReceiveUnblock");
+Os::Test::Queue::Tester::Underflow::Underflow() : STest::Rule<Os::Test::Queue::Tester>("Underflow") {}
 
-        QueueInterface::Status status = state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
-                                                             QueueInterface::BlockingType::BLOCKING, message.size, message.priority);
-        this->getLock().unlock();
-        QueueInterface::Status test_status = state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND, QueueInterface::BlockingType::BLOCKING, test.size, test.priority);
-        this->getLock().lock();
-        // Condition should be set after block
-        ASSERT_TRUE(this->getCondition());
-        // Unblock the shadow queue send
-        state.shadow_receive_unblock();
+bool Os::Test::Queue::Tester::Underflow::precondition(const Os::Test::Queue::Tester& state  //!< The test state
+) {
+    return state.is_shadow_created();
+}
 
+void Os::Test::Queue::Tester::Underflow::action(Os::Test::Queue::Tester& state  //!< The test state
+) {
+    PickedMessage message;
+    PickedMessage test;
+    while (not state.is_shadow_empty()) {
+        QueueInterface::Status status =
+            state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
+                                 QueueInterface::BlockingType::NONBLOCKING, message.size, message.priority);
+
+        QueueInterface::Status test_status =
+            state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
+                                QueueInterface::BlockingType::NONBLOCKING, test.size, test.priority);
         ASSERT_EQ(status, QueueInterface::Status::OP_OK);
         ASSERT_EQ(status, test_status);
         check_received(message, test);
     }
+    QueueInterface::Status status =
+        state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND,
+                             QueueInterface::BlockingType::NONBLOCKING, message.size, message.priority);
+
+    QueueInterface::Status test_status =
+        state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND, QueueInterface::BlockingType::NONBLOCKING,
+                            test.size, test.priority);
+    ASSERT_EQ(status, QueueInterface::Status::EMPTY);
+    ASSERT_EQ(status, test_status);
+    state.shadow_check();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  SendBlock
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::Queue::Tester::SendBlock::SendBlock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner)
+    : ConcurrentRule<Os::Test::Queue::Tester>("SendBlock", runner) {}
+
+bool Os::Test::Queue::Tester::SendBlock::precondition(const Os::Test::Queue::Tester& state  //!< The test state
+) {
+    return state.shadow.created && state.is_shadow_full();
+}
+
+void Os::Test::Queue::Tester::SendBlock::action(Os::Test::Queue::Tester& state  //!< The test state
+) {
+    // Backend defined check
+    if (not TESTS_SUPPORT_BLOCKING) {
+        this->notify_other("SendUnblock");
+        return;
+    }
+    PickedMessage pick = pick_message(state.shadow.messageSize);
+    this->notify_other("SendUnblock");
+    QueueInterface::Status status =
+        state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::BLOCKING);
+    getLock().unlock();
+    QueueInterface::Status test_status =
+        state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::BLOCKING);
+    getLock().lock();
+    // Condition should be set after block
+    ASSERT_TRUE(this->getCondition());
+    // Unblock the shadow queue send
+    state.shadow_send_unblock();
+    delete[] pick.sent;
+
+    ASSERT_EQ(status, QueueInterface::Status::OP_OK);
+    ASSERT_EQ(test_status, status);
+    state.shadow_check();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  ReceiveBlock
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::Queue::Tester::ReceiveBlock::ReceiveBlock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner)
+    : ConcurrentRule<Os::Test::Queue::Tester>("ReceiveBlock", runner) {}
+
+bool Os::Test::Queue::Tester::ReceiveBlock::precondition(const Os::Test::Queue::Tester& state  //!< The test state
+) {
+    return state.shadow.created && state.is_shadow_empty();
+}
+
+void Os::Test::Queue::Tester::ReceiveBlock::action(Os::Test::Queue::Tester& state  //!< The test state
+) {
+    // Backend defined check
+    if (not TESTS_SUPPORT_BLOCKING) {
+        this->notify_other("ReceiveUnblock");
+        return;
+    }
+
+    PickedMessage message;
+    PickedMessage test;
+    this->notify_other("ReceiveUnblock");
+
+    QueueInterface::Status status =
+        state.shadow_receive(message.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND, QueueInterface::BlockingType::BLOCKING,
+                             message.size, message.priority);
+    this->getLock().unlock();
+    QueueInterface::Status test_status =
+        state.queue.receive(test.received, QUEUE_MESSAGE_SIZE_UPPER_BOUND, QueueInterface::BlockingType::BLOCKING,
+                            test.size, test.priority);
+    this->getLock().lock();
+    // Condition should be set after block
+    ASSERT_TRUE(this->getCondition());
+    // Unblock the shadow queue send
+    state.shadow_receive_unblock();
+
+    ASSERT_EQ(status, QueueInterface::Status::OP_OK);
+    ASSERT_EQ(status, test_status);
+    check_received(message, test);
+}

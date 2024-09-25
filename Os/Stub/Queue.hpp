@@ -9,7 +9,7 @@ namespace Queue {
 
 struct StubQueueHandle : public QueueHandle {};
 
-//! \brief stl-powered queue implementation with injectable statuses
+//! \brief stub queue implementation with injectable statuses
 class StubQueue : public QueueInterface {
   public:
     //! \brief default queue interface constructor
@@ -33,7 +33,7 @@ class StubQueue : public QueueInterface {
     //! \param name: name of queue
     //! \param depth: depth of queue in number of messages
     //! \param messageSize: size of an individual message
-    //! \return: stauts of the creation
+    //! \return: status of the creation
     Status create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) override;
 
     //! \brief send a message into the queue
