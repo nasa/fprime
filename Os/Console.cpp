@@ -4,7 +4,6 @@
 // ======================================================================
 #include <Os/Console.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <new>
 
 namespace Os {
     Console* Console::s_singleton;
@@ -59,8 +58,9 @@ namespace Os {
     }
 
     Console& Console::getSingleton() {
-        static Console& singleton;
-        return singleton;
+        static Console s_singleton;
+        Fw::Logger::registerLogger(s_singleton);
+        return s_singleton;
     }
 }
 
