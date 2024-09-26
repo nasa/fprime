@@ -20,6 +20,7 @@ enum FileSystemStatus {
         NO_MORE_FILES,    @<  Directory stream has no more files
         BUFFER_TOO_SMALL, @<  Buffer size is too small to hold full path (for getWorkingDirectory)
         EXDEV_ERROR,      @<  Operation not supported across devices (e.g. rename)
+        OVERFLOW_ERROR,   @<  Operation failed due to overflow in calculation of the result
         NOT_SUPPORTED,    @<  Operation is not supported by the current implementation
         OTHER_ERROR,      @<  other OS-specific error
 }

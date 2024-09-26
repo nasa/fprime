@@ -7,22 +7,21 @@
 
 namespace Os {
 
-Directory::Directory() : m_handle_storage(), m_delegate(*DirectoryInterface::getDelegate(m_handle_storage)) {
+Directory::Directory() : m_is_open(false), m_handle_storage(), m_delegate(*DirectoryInterface::getDelegate(m_handle_storage)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
 }
 
 Directory::~Directory() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    if (this->isOpen()) {
+    if (this->m_is_open) {
         this->close();
     }
-    m_delegate.~DirectoryInterface();
+    this->m_delegate.~DirectoryInterface();
 }
 
 // ------------------------------------------------------------
 // Directory operations delegating to implementation
 // ------------------------------------------------------------
-
 DirectoryHandle* Directory::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
@@ -30,16 +29,22 @@ DirectoryHandle* Directory::getHandle() {
 
 Directory::Status Directory::open(const char* path, OpenMode mode) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.open(path, mode);
+    FW_ASSERT(path != nullptr);
+    FW_ASSERT(mode >= 0 and mode < OpenMode::MAX_OPEN_MODE);
+    Status status = this->m_delegate.open(path, mode);
+    if (status == Status::OP_OK) {
+        this->m_is_open = true;
+    }
+    return status;
 }
 
 bool Directory::isOpen() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.isOpen();
+    return this->m_is_open;
 }
 Directory::Status Directory::rewind() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    if (not this->m_delegate.isOpen()) {
+    if (not this->m_is_open) {
         return Status::NOT_OPENED;
     }
     return this->m_delegate.rewind();
@@ -47,22 +52,29 @@ Directory::Status Directory::rewind() {
 
 Directory::Status Directory::read(char * fileNameBuffer, FwSizeType bufSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    if (not this->m_delegate.isOpen()) {
+    if (not this->m_is_open) {
         return Status::NOT_OPENED;
     }
+    FW_ASSERT(fileNameBuffer != nullptr);
     return this->m_delegate.read(fileNameBuffer, bufSize);
 }
 
 Directory::Status Directory::read(Fw::StringBase& filename) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
-    if (not this->m_delegate.isOpen()) {
+    if (not this->m_is_open) {
         return Status::NOT_OPENED;
     }
-    return this->m_delegate.read(filename);
+    // REVIEW NOTE: other solution would be to const_cast the StringBase.toChar() ...
+    // not sure which is better, or if there is a better way
+    char filenameBuffer[filename.getCapacity()];
+    Status status = this->m_delegate.read(filenameBuffer, filename.getCapacity());
+    filename = filenameBuffer;
+    return status;
 }
 
 void Directory::close() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
+    this->m_is_open = false;
     return this->m_delegate.close();
 }
 
@@ -71,27 +83,26 @@ void Directory::close() {
 // ------------------------------------------------------------
 
 Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
-    if (not this->isOpen()) {
+    if (not this->m_is_open) {
         return Status::NOT_OPENED;
     }
     // Rewind to ensure we start from the beginning of the stream
     if (this->rewind() != Status::OP_OK) {
         return Status::OTHER_ERROR;
     }
-
-    const U32 loopLimit = std::numeric_limits<U32>::max();
+    const FwSizeType loopLimit = std::numeric_limits<FwSizeType>::max();
     FwSizeType count = 0;
-    const FwSizeType unusedBufferSize = 1;
-    char unusedBuffer[unusedBufferSize];
+    char unusedBuffer[1]; // buffer must have size but is unused
     Status readStatus = Status::OP_OK;
-    for (U32 iter = 0; iter < loopLimit; ++iter) {
-        readStatus = this->read(unusedBuffer, unusedBufferSize);
+    fileCount = 0;
+    for (FwSizeType iter = 0; iter < loopLimit; ++iter) {
+        readStatus = this->read(unusedBuffer, sizeof(unusedBuffer));
         if (readStatus == Status::NO_MORE_FILES) {
             break;
         } else if (readStatus != Status::OP_OK) {
             return Status::OTHER_ERROR;
         }
-        ++count;
+        count++;
     }
     fileCount = count;
     if (this->rewind() != Status::OP_OK) {
@@ -104,7 +115,7 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
 Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwSizeType filenameArraySize, FwSizeType& filenameCount) {
     FW_ASSERT(filenameArray != nullptr);
     FW_ASSERT(filenameArraySize > 0);
-    if (not this->isOpen()) {
+    if (not this->m_is_open) {
         return Status::NOT_OPENED;
     }
     // Rewind to ensure we start reading from the beginning of the stream
@@ -114,10 +125,10 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
 
     Status readStatus = Status::OP_OK;
     Status returnStatus = Status::OP_OK;
-    FwIndexType index;
-
+    FwSizeType index;
+    filenameCount = 0;
     // Iterate through the directory and read the filenames into the array
-    for (index = 0; index < static_cast<FwIndexType>(filenameArraySize); index++) {
+    for (index = 0; index < filenameArraySize; index++) {
         readStatus = this->read(filenameArray[index]);
         if (readStatus == Status::NO_MORE_FILES) {
             break;
@@ -125,7 +136,7 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
             return Status::OTHER_ERROR;
         }
     }
-    filenameCount = static_cast<FwSizeType>(index);
+    filenameCount = index;
 
     if (this->rewind() != Status::OP_OK) {
         return Status::OTHER_ERROR;

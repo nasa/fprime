@@ -12,19 +12,11 @@ StubDirectory::Status StubDirectory::open(const char* path, OpenMode mode) {
     return Status::NOT_SUPPORTED;
 }
 
-bool StubDirectory::isOpen() {
-    return false;
-}
-
 StubDirectory::Status StubDirectory::rewind() {
     return Status::NOT_SUPPORTED;
 }
 
 StubDirectory::Status StubDirectory::read(char * fileNameBuffer, FwSizeType bufSize) {
-    return Status::NOT_SUPPORTED;
-}
-
-StubDirectory::Status StubDirectory::read(Fw::StringBase& filename) {
     return Status::NOT_SUPPORTED;
 }
 

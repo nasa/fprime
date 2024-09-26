@@ -26,11 +26,6 @@ TestDirectory::Status TestDirectory::open(const char* path, OpenMode mode) {
     return Status::OP_OK;
 }
 
-bool TestDirectory::isOpen() {
-    StaticData::data.lastCalled = StaticData::LastFn::IS_OPEN_FN;
-    return true;
-}
-
 TestDirectory::Status TestDirectory::rewind() {
     StaticData::data.lastCalled = StaticData::LastFn::REWIND_FN;
     return Status::OP_OK;
@@ -40,12 +35,6 @@ TestDirectory::Status TestDirectory::read(char * fileNameBuffer, FwSizeType bufS
     StaticData::data.lastCalled = StaticData::LastFn::READ_FN;
     return Status::OP_OK;
 }
-
-TestDirectory::Status TestDirectory::read(Fw::StringBase& filename) {
-    StaticData::data.lastCalled = StaticData::LastFn::READ_STR_FN;
-    return Status::OP_OK;
-}
-
 
 void TestDirectory::close() {
     StaticData::data.lastCalled = StaticData::LastFn::CLOSE_FN;

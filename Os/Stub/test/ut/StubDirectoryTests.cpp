@@ -46,16 +46,10 @@ TEST_F(Interface, Open) {
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::OPEN_FN);
 }
 
-// Ensure that Os::Directory properly calls the implementation isOpen()
-TEST_F(Interface, IsOpen) {
-    Os::Directory directory;
-    directory.isOpen();
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::IS_OPEN_FN);
-}
-
 // Ensure that Os::Directory properly calls the implementation rewind()
 TEST_F(Interface, Rewind) {
     Os::Directory directory;
+    directory.open("/does/not/matter", Os::Directory::OpenMode::READ);
     directory.rewind();
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::REWIND_FN);
 }
@@ -63,17 +57,10 @@ TEST_F(Interface, Rewind) {
 // Ensure that Os::Directory properly calls the implementation open()
 TEST_F(Interface, Read) {
     Os::Directory directory;
+    directory.open("/does/not/matter", Os::Directory::OpenMode::READ);
     char buffer[4];
     directory.read(buffer, 4);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::READ_FN);
-}
-
-// Ensure that Os::Directory properly calls the implementation open()
-TEST_F(Interface, ReadWithString) {
-    Os::Directory directory;
-    Fw::String filename;
-    directory.read(filename);
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::READ_STR_FN);
 }
 
 // Ensure that Os::Directory properly calls the implementation open()

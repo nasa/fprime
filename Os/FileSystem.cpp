@@ -25,31 +25,39 @@ FileSystemHandle* FileSystem::getHandle() {
 
 FileSystem::Status FileSystem::_removeDirectory(const char* path) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(path != nullptr);
     return this->m_delegate._removeDirectory(path);
 }
 
 FileSystem::Status FileSystem::_removeFile(const char* path) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(path != nullptr);
     return this->m_delegate._removeFile(path);
 }
 
 FileSystem::Status FileSystem::_rename(const char* sourcePath, const char* destPath) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(sourcePath != nullptr);
+    FW_ASSERT(destPath != nullptr);
     return this->m_delegate._rename(sourcePath, destPath);
 }
 
 FileSystem::Status FileSystem::_getWorkingDirectory(char* path, FwSizeType bufferSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(path != nullptr);
+    FW_ASSERT(bufferSize > 0); // because bufferSize=0 would trigger a malloc in some implementations (e.g. Posix)
     return this->m_delegate._getWorkingDirectory(path, bufferSize);
 }
 
 FileSystem::Status FileSystem::_changeWorkingDirectory(const char* path) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(path != nullptr);
     return this->m_delegate._changeWorkingDirectory(path);
 }
 
 FileSystem::Status FileSystem::_getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(path != nullptr);
     return this->m_delegate._getFreeSpace(path, totalBytes, freeBytes);
 }
 
@@ -59,11 +67,8 @@ void FileSystem::init() {
 }
 
 FileSystem& FileSystem::getSingleton() {
-    // On the fly construction of singleton
-    if (FileSystem::s_singleton == nullptr) {
-        FileSystem::s_singleton = new FileSystem();
-    }
-    return *FileSystem::s_singleton;
+    static FileSystem s_singleton;
+    return s_singleton;
 }
 
 
@@ -101,47 +106,57 @@ FileSystem::Status FileSystem::getFreeSpace(const char* path, FwSizeType& totalB
 // ------------------------------------------------------------
 
 FileSystem::Status FileSystem::createDirectory(const char* path, bool errorIfAlreadyExists) {
+    FW_ASSERT(path != nullptr);
     Status status = Status::OP_OK;
     Os::Directory dir;
     // If errorIfAlreadyExists is true, use CREATE_EXCLUSIVE mode, otherwise use CREATE_IF_MISSING
     Directory::OpenMode mode = errorIfAlreadyExists ? Directory::OpenMode::CREATE_EXCLUSIVE : Directory::OpenMode::CREATE_IF_MISSING;
     Directory::Status dirStatus = dir.open(path, mode);
+    dir.close();
     if (dirStatus != Directory::OP_OK) {
         return FileSystem::handleDirectoryError(dirStatus);
     }
-    dir.close();
     return status;
 }
 
 FileSystem::Status FileSystem::touch(const char* path) {
+    FW_ASSERT(path != nullptr);
     Status status = Status::OP_OK;
     Os::File file;
     File::Status file_status = file.open(path, Os::File::OPEN_WRITE);
+    file.close();
     if (file_status != File::OP_OK) {
         status = FileSystem::handleFileError(file_status);
     }
-    file.close();
     return status;
 }
 
-bool FileSystem::exists(const char* path) {
+FileSystem::PathType FileSystem::getPathType(const char* path) {
+    FW_ASSERT(path != nullptr);
     Os::File file;
     File::Status file_status = file.open(path, Os::File::OPEN_READ);
+    file.close();
     if (file_status == File::OP_OK) {
-        file.close();
-        return true;
+        return PathType::FILE;
     }
     Os::Directory dir;
     Directory::Status dir_status = dir.open(path, Os::Directory::OpenMode::READ);
+    dir.close();
     if (dir_status == Directory::Status::OP_OK) {
-        dir.close();
-        return true;
+        return PathType::DIRECTORY;
     }
-    return false;
+    return PathType::NOT_EXIST;
+} // end getPathType
+
+bool FileSystem::exists(const char* path) {
+    return FileSystem::getPathType(path) != PathType::NOT_EXIST;
 } // end exists
 
 FileSystem::Status FileSystem::copyFile(const char* sourcePath, const char* destPath) {
-    Os::File source, destination;
+    FW_ASSERT(sourcePath != nullptr);
+    FW_ASSERT(destPath != nullptr);
+    Os::File source;
+    Os::File destination;
     Os::File::Status fileStatus = source.open(sourcePath, Os::File::OPEN_READ);
     if (fileStatus != Os::File::OP_OK) {
         return FileSystem::handleFileError(fileStatus);
@@ -163,13 +178,12 @@ FileSystem::Status FileSystem::copyFile(const char* sourcePath, const char* dest
 } // end copyFile
 
 FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* destPath, bool createMissingDest) {
-    Os::File source, destination;
+    Os::File source;
+    Os::File destination;
 
     // If requested, check if destination file exists and exit if does not exist
-    if (not createMissingDest) {
-        if (not FileSystem::exists(destPath)) {
-            return Status::DOESNT_EXIST;
-        }
+    if (not createMissingDest and not FileSystem::exists(destPath)) {
+        return Status::DOESNT_EXIST;
     }
 
     Os::File::Status fileStatus = source.open(sourcePath, Os::File::OPEN_READ);
@@ -197,7 +211,7 @@ FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* de
 FileSystem::Status FileSystem::moveFile(const char* source, const char* destination) {
     Status status = Status::OP_OK;
 
-    // Try to simply rename the file
+    // Try to rename the file
     status = FileSystem::rename(source, destination);
 
     // If rename fails because of cross-device rename, attempt to copy and remove instead
@@ -206,7 +220,6 @@ FileSystem::Status FileSystem::moveFile(const char* source, const char* destinat
         if (status != Status::OP_OK) {
             return status;
         }
-        // REVIEW NOTE: what to do if removeFile fails?
         status = FileSystem::removeFile(source);
     }
 

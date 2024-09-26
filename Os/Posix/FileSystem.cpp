@@ -76,7 +76,7 @@ PosixFileSystem::Status PosixFileSystem::_getFreeSpace(const char* path, FwSizeT
     // Check for overflow in multiplication
     if (free_blocks > (std::numeric_limits<FwSizeType>::max() / block_size) ||
         total_blocks > (std::numeric_limits<FwSizeType>::max() / block_size)) {
-        return OTHER_ERROR;
+        return OVERFLOW_ERROR;
     }
     freeBytes = free_blocks * block_size;
     totalBytes = total_blocks * block_size;
