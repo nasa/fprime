@@ -281,7 +281,7 @@ TEST(Blocking, SendBlock) {
     Os::Test::Queue::Tester::Overflow overflow_rule;
     AggregatedConcurrentRule<Os::Test::Queue::Tester> aggregator;
     Os::Test::Queue::Tester::SendBlock block(aggregator);
-    Os::Test::Queue::Tester::ReceiveNotEmpty receive_not_empty;
+    Os::Test::Queue::Tester::ReceiveNotEmpty receive_not_empty(false);
     ConcurrentWrapperRule<Os::Test::Queue::Tester> unblock(aggregator, receive_not_empty, "SendBlock", "SendUnblock");
 
     create_rule.apply(tester);
@@ -296,7 +296,7 @@ TEST(Blocking, ReceiveBlock) {
     Os::Test::Queue::Tester::Underflow overflow_rule;
     AggregatedConcurrentRule<Os::Test::Queue::Tester> aggregator;
     Os::Test::Queue::Tester::ReceiveBlock block(aggregator);
-    Os::Test::Queue::Tester::SendNotFull send_not_full;
+    Os::Test::Queue::Tester::SendNotFull send_not_full(false);
     ConcurrentWrapperRule<Os::Test::Queue::Tester> unblock(aggregator, send_not_full, "ReceiveBlock", "ReceiveUnblock");
 
     create_rule.apply(tester);

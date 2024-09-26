@@ -8,7 +8,7 @@
 
 namespace Os {
 
-std::atomic<FwSizeType> Queue::s_queueCount(0);
+FwSizeType Queue::s_queueCount = 0;
 QueueRegistry* Queue::s_queueRegistry = nullptr;
 
 Queue::Queue() : m_name(""), m_depth(0), m_size(0), m_delegate(*QueueInterface::getDelegate(m_handle_storage)) {}
@@ -30,7 +30,7 @@ QueueInterface::Status Queue ::create(const Fw::StringBase& name, FwSizeType dep
         this->m_name = name;
         this->m_depth = depth;
         this->m_size = messageSize;
-
+        ScopeLock lock(Queue::getStaticMutex());
         Queue::s_queueCount++;
         if (Queue::s_queueRegistry != nullptr) {
             Queue::s_queueRegistry->registerQueue(this);
@@ -84,6 +84,11 @@ FwSizeType Queue::getMessageHighWaterMark() const {
     return this->m_delegate.getMessageHighWaterMark();
 }
 
+QueueHandle* Queue::getHandle(){
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<const QueueInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.getHandle();
+}
+
 QueueInterface::Status Queue::send(const Fw::SerializeBufferBase& message,
                                    PlatformIntType priority,
                                    QueueInterface::BlockingType blockType) {
@@ -120,7 +125,13 @@ const QueueString& Queue::getName() const {
 }
 
 FwSizeType Queue::getNumQueues() {
+    ScopeLock lock(Queue::getStaticMutex());
     return Queue::s_queueCount;
+}
+
+Os::Mutex& Queue::getStaticMutex() {
+    static Os::Mutex s_mutex;
+    return s_mutex;
 }
 
 }  // namespace Os

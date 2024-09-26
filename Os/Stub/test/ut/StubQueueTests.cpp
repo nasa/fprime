@@ -227,6 +227,13 @@ TEST(Interface, MessageHighWaterMarkCount) {
     resetInjections();
 }
 
+TEST(Interface, QueueHandle) {
+    Os::Queue queue;
+    ASSERT_EQ(queue.getHandle(), Os::Stub::Queue::Test::StaticData::data.handle);
+    ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.lastCalled, Os::Stub::Queue::Test::StaticData::HANDLE_FN);
+    resetInjections();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

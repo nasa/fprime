@@ -13,7 +13,7 @@ struct Wait : public ConcurrentRule<Os::Test::Condition::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    Wait(AggregatedConcurrentRule<Os::Test::Condition::Tester>& runner);
+    explicit Wait(AggregatedConcurrentRule<Os::Test::Condition::Tester>& runner);
 
     // ----------------------------------------------------------------------
     // Public member functions
@@ -38,7 +38,7 @@ struct Notify : public ConcurrentRule<Os::Test::Condition::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    Notify(AggregatedConcurrentRule<Os::Test::Condition::Tester>& runner);
+    explicit Notify(AggregatedConcurrentRule<Os::Test::Condition::Tester>& runner);
 
     // ----------------------------------------------------------------------
     // Public member functions
@@ -64,7 +64,7 @@ struct NotifyAll : public ConcurrentRule<Os::Test::Condition::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    NotifyAll(AggregatedConcurrentRule<Os::Test::Condition::Tester>& runner);
+    explicit NotifyAll(AggregatedConcurrentRule<Os::Test::Condition::Tester>& runner);
 
     // ----------------------------------------------------------------------
     // Public member functions

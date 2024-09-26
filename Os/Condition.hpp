@@ -28,7 +28,7 @@ class ConditionVariableInterface {
     ConditionVariableInterface(const ConditionVariableInterface& other) = delete;
 
     //! \brief assignment operator is forbidden
-    ConditionVariableInterface& operator=(const ConditionVariableInterface& other) = delete;
+    virtual ConditionVariableInterface& operator=(const ConditionVariableInterface& other) = delete;
 
     //! \brief wait on a condition variable
     //!
@@ -50,6 +50,10 @@ class ConditionVariableInterface {
     //! Notify all waiters on this condition variable. It is not necessary to hold the mutex supplied by the waiters
     //! and it is advantageous not to hold the lock to prevent immediate re-blocking.
     virtual void notifyAll() = 0;
+
+    //! \brief return the underlying condition variable handle (implementation specific).
+    //! \return internal task handle representation
+    virtual ConditionVariableHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a Mutex delegate object
     static ConditionVariableInterface* getDelegate(ConditionVariableHandleStorage& aligned_new_memory);
@@ -100,6 +104,10 @@ class ConditionVariable final : public ConditionVariableInterface {
     //! underlying implementation.
     void notifyAll() override;
 
+    //! \brief return the underlying condition variable handle (implementation specific). Delegates to implementation.
+    //! \return internal task handle representation
+    ConditionVariableHandle* getHandle() override;
+
   private:
     //! Pointer to mutex object previously used
     Os::Mutex* m_lock = nullptr;
@@ -111,5 +119,4 @@ class ConditionVariable final : public ConditionVariableInterface {
     ConditionVariableInterface& m_delegate;                                       //!< Delegate for the real implementation
 };
 }
-
 #endif //OS_CONDITION_HPP_

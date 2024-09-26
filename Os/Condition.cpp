@@ -26,5 +26,9 @@ void ConditionVariable::notifyAll() {
     this->m_delegate.notifyAll();
 }
 
+ConditionVariableHandle* ConditionVariable::getHandle(){
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<const ConditionVariableInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.getHandle();
+}
 
 }

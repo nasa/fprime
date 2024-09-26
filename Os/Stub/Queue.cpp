@@ -1,6 +1,7 @@
-//
-// Created by Michael Starch on 8/27/24.
-//
+// ======================================================================
+// \title Os/Stub/Queue.cpp
+// \brief stub implementation for Os::Queue
+// ======================================================================
 #include "Queue.hpp"
 
 namespace Os {
@@ -32,6 +33,10 @@ FwSizeType StubQueue::getMessagesAvailable() const {
 
 FwSizeType StubQueue::getMessageHighWaterMark() const {
     return 0;
+}
+
+QueueHandle* StubQueue::getHandle() {
+    return &this->m_handle;
 }
 
 }  // namespace Queue

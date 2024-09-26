@@ -6,36 +6,20 @@
 #include "PriorityQueue.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <cstring>
-#include <mutex>
 #include <new>
 
 namespace Os {
 namespace Generic {
 
 FwSizeType PriorityQueueHandle ::find_index() {
-    // This function is predicated on the definition of unsigned "overflow"
-    static_assert(not std::numeric_limits<FwSizeType>::is_signed, "FwSizeType is presumed to be unsigned");
-    // This function will never be called when full, this assert ensures that the start index never surpasses the end
-    // index.
-    FW_ASSERT(this->m_startIndex != this->m_stopIndex);
-    FwSizeType index = this->m_indices[this->m_startIndex % this->m_depth]; // TODO fix bad wraparound
-    // Overflow allowed here, as computations handle wrap-around when assuming unsigned integers
-    this->m_startIndex++;
-    FwSizeType diff = this->m_stopIndex - this->m_startIndex;
-    FW_ASSERT(diff <= this->m_depth, static_cast<FwAssertArgType>(diff), static_cast<FwAssertArgType>(this->m_depth),
-              static_cast<FwAssertArgType>(this->m_stopIndex), static_cast<FwAssertArgType>(this->m_startIndex));
+    FwSizeType index = this->m_indices[this->m_startIndex % this->m_depth];
+    this->m_startIndex = (this->m_startIndex + 1) % this->m_depth;
     return index;
 }
 
 void PriorityQueueHandle ::return_index(FwSizeType index) {
-    // This function is predicated on the definition of unsigned "overflow"
-    static_assert(not std::numeric_limits<FwSizeType>::is_signed, "FwSizeType is presumed to be unsigned");
     this->m_indices[this->m_stopIndex % this->m_depth] = index;
-    // Overflow allowed here, as computations handle wrap-around when assuming unsigned integers
-    this->m_stopIndex++;
-    FwSizeType diff = this->m_stopIndex - this->m_startIndex;
-    FW_ASSERT(diff <= this->m_depth, static_cast<FwAssertArgType>(diff), static_cast<FwAssertArgType>(this->m_depth),
-              static_cast<FwAssertArgType>(this->m_stopIndex), static_cast<FwAssertArgType>(this->m_startIndex));
+    this->m_stopIndex = (this->m_stopIndex + 1) % this->m_depth;
 }
 
 void PriorityQueueHandle ::store_data(FwSizeType index, const U8* data, FwSizeType size) {
@@ -61,6 +45,11 @@ PriorityQueue::~PriorityQueue() {
 }
 
 QueueInterface::Status PriorityQueue::create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) {
+    // Ensure we are created exactly once
+    FW_ASSERT(this->m_handle.m_indices == nullptr);
+    FW_ASSERT(this->m_handle.m_sizes == nullptr);
+    FW_ASSERT(this->m_handle.m_data == nullptr);
+
     // Allocate indices list
     FwSizeType* indices = new (std::nothrow) FwSizeType[depth];
     if (indices == nullptr) {
@@ -98,7 +87,7 @@ QueueInterface::Status PriorityQueue::create(const Fw::StringBase& name, FwSizeT
     this->m_handle.m_data = data;
     this->m_handle.m_sizes = sizes;
     this->m_handle.m_startIndex = 0;
-    this->m_handle.m_stopIndex = depth;
+    this->m_handle.m_stopIndex = 0;
     this->m_handle.m_depth = depth;
     this->m_handle.m_highMark = 0;
 
@@ -125,10 +114,8 @@ QueueInterface::Status PriorityQueue::send(const U8* buffer,
         }
         FwSizeType index = this->m_handle.find_index();
 
-        bool pushed = this->m_handle.m_heap.push(priority, index);
-        if (not pushed) {
-            return QueueInterface::Status::UNKNOWN_ERROR;
-        }
+        // Space must exist, push must work
+        FW_ASSERT(this->m_handle.m_heap.push(priority, index));
         this->m_handle.store_data(index, buffer, size);
         this->m_handle.m_sizes[index] = size;
         this->m_handle.m_highMark = FW_MAX(this->m_handle.m_highMark, this->getMessagesAvailable());
@@ -153,15 +140,10 @@ QueueInterface::Status PriorityQueue::receive(U8* destination,
         }
 
         FwSizeType index;
-        bool popped = this->m_handle.m_heap.pop(priority, index);
-        if (not popped) {
-            return QueueInterface::Status::EMPTY;
-        }
-
+        // Message must exist, so pop must pass and size must be valid
+        FW_ASSERT(this->m_handle.m_heap.pop(priority, index));
         actualSize = this->m_handle.m_sizes[index];
-        if (actualSize > capacity) {
-            return QueueInterface::Status::SIZE_MISMATCH;
-        }
+        FW_ASSERT(actualSize <= capacity);
         this->m_handle.load_data(index, destination, actualSize);
         this->m_handle.return_index(index);
     }
@@ -178,5 +160,10 @@ FwSizeType PriorityQueue::getMessageHighWaterMark() const {
     Os::ScopeLock lock(const_cast<Mutex&>(this->m_handle.m_data_lock));
     return this->m_handle.m_highMark;
 }
+
+QueueHandle* PriorityQueue::getHandle() {
+    return &this->m_handle;
+}
+
 }  // namespace Generic
 }  // namespace Os

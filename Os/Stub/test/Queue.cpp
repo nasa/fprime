@@ -115,6 +115,13 @@ FwSizeType InjectableStlQueue::getMessageHighWaterMark() const {
     return this->m_handle.m_high_water;
 }
 
+QueueHandle* InjectableStlQueue::getHandle() {
+    StaticData::data.lastCalled = StaticData::LastFn::HANDLE_FN;
+    StaticData::data.handle = &this->m_handle;
+    return &this->m_handle;
+}
+
+
 }  // namespace Test
 }  // namespace Queue
 }  // namespace Stub

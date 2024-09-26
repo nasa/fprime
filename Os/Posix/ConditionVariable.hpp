@@ -15,9 +15,9 @@ struct PosixConditionVariableHandle : public ConditionVariableHandle {
     pthread_cond_t m_condition; //! The condition variable
 };
 
-//! \brief Posix implementation of Os::Mutex
+//! \brief Posix implementation of Os::ConditionVariable
 //!
-//! Posix implementation of `MutexInterface` for use as a delegate class handling error-only file operations.
+//! Posix implementation of `ConditionVariable` for use as a delegate class handling error-only file operations.
 //!
 class PosixConditionVariable : public ConditionVariableInterface {
   public:
@@ -29,9 +29,17 @@ class PosixConditionVariable : public ConditionVariableInterface {
     //!
     ~PosixConditionVariable() override;
 
+    //! \brief wait releasing mutex
     void wait(Os::Mutex& mutex) override;
+
+    //! \brief notify a single waiter
     void notify() override;
+
+    //! \brief notify all current waiters
     void notifyAll() override;
+
+    //! \brief get handle
+    ConditionVariableHandle* getHandle() override;
 
   private:
     //! Handle for PosixMutex
@@ -41,4 +49,4 @@ class PosixConditionVariable : public ConditionVariableInterface {
 }  // namespace Mutex
 }  // namespace Posix
 }  // namespace Os
-#endif  // OS_POSIX_MUTEX_HPP
+#endif  // OS_POSIX_CONDITION_VARIABLE_HPP

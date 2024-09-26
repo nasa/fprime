@@ -29,6 +29,10 @@ void PosixConditionVariable::notifyAll() {
     FW_ASSERT(pthread_cond_broadcast(&this->m_handle.m_condition) == 0);
 }
 
+ConditionVariableHandle* PosixConditionVariable::getHandle() {
+    return &m_handle;
+}
+
 }
 }
 }

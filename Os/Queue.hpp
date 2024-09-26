@@ -10,7 +10,7 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>
 #include <Os/QueueString.hpp>
-#include <atomic>
+#include <Os/Mutex.hpp>
 namespace Os {
 // Forward declaration for registry
 class QueueRegistry;
@@ -59,7 +59,7 @@ class QueueInterface {
     QueueInterface(const QueueInterface* other) = delete;
 
     //! \brief assignment operator is forbidden
-    QueueInterface& operator=(const QueueInterface& other) = delete;
+    virtual QueueInterface& operator=(const QueueInterface& other) = delete;
 
     //! \brief create queue storage
     //!
@@ -123,6 +123,10 @@ class QueueInterface {
     //! queue.
     //! \return queue message high-water mark
     virtual FwSizeType getMessageHighWaterMark() const = 0;
+
+    //! \brief return the underlying queue handle (implementation specific)
+    //! \return internal task handle representation
+    virtual QueueHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a queue delegate object
     //!
@@ -228,6 +232,10 @@ class Queue final : public QueueInterface {
     //! \return queue message high-water mark
     FwSizeType getMessageHighWaterMark() const override;
 
+    //! \brief return the underlying queue handle (implementation specific). Delegates to implementation.
+    //! \return internal task handle representation
+    QueueHandle* getHandle() override;
+
     //! \brief send a message to a queue
     //!
     //! Send a message to a queue with the given priority and block type. See: QueueInterface::send
@@ -265,11 +273,15 @@ class Queue final : public QueueInterface {
     //! \brief get number of queues system-wide
     static FwSizeType getNumQueues();
 
+    //! \brief get static mutex
+    static Os::Mutex& getStaticMutex();
+
   private:
     QueueString m_name;                           //!< queue name
     FwSizeType m_depth;                           //!< Queue depth
     FwSizeType m_size;                            //!< Maximum message size
-    static std::atomic<FwSizeType> s_queueCount;  //!< Count of the number of queues
+    static Os::Mutex s_countLock;                 //!< Lock the count
+    static FwSizeType s_queueCount;               //!< Count of the number of queues
 
 #if FW_QUEUE_REGISTRATION
   public:

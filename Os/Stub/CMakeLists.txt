@@ -18,6 +18,7 @@ register_fprime_implementation(Os/File Os_File_Stub)
 ######## Mutex Stub ########
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ConditionVariable.cpp"
 )
 register_fprime_module(Os_Mutex_Stub)
 register_fprime_implementation(Os/Mutex Os_Mutex_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")
@@ -33,7 +34,18 @@ set(MOD_DEPS)
 register_fprime_module(Os_Queue_Stub)
 register_fprime_implementation(Os/Queue Os_Queue_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultQueue.cpp")
 
-######## Console Stub ########
+#### Task Stub ####
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
+)
+set(HEADER_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Task.hpp"
+)
+set(MOD_DEPS)
+register_fprime_module(Os_Task_Stub)
+register_fprime_implementation(Os/Task Os_Task_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultTask.cpp")
+
+#### Console Stub ####
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
 )
@@ -151,6 +163,8 @@ register_fprime_ut(StubTaskTest)
 #### Mutex Stub Testing ####
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/Mutex.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ConditionVariable.cpp"
+
 )
 register_fprime_module(Os_Mutex_Test_Stub)
 register_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultMutex.cpp")
@@ -181,6 +195,7 @@ set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileSystemTests.cpp"
 )
 set(UT_MOD_DEPS
+        Fw_Time
         Os
         Os_Models
         STest
@@ -205,3 +220,27 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/Directory Os_Directory_Test_Stub)
 register_fprime_ut(StubDirectoryTest)
+
+## Condition variable tests
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubConditionTests.cpp"
+)
+set(UT_MOD_DEPS
+        Fw_Time
+)
+choose_fprime_implementation(Os/Task Os_Task_Posix)
+choose_fprime_implementation(Os/Mutex Os_Mutex_Test_Stub)
+register_fprime_ut(StubConditionVariableTest)
+
+## Stubs test: checks that all the no-op stubs can be selected and compile ##
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubTests.cpp"
+)
+set(UT_MOD_DEPS
+        Os
+)
+choose_fprime_implementation(Os/Task Os_Task_Stub)
+choose_fprime_implementation(Os/Mutex Os_Mutex_Stub)
+choose_fprime_implementation(Os/File Os_File_Stub)
+choose_fprime_implementation(Os/Console Os_Console_Stub)
+register_fprime_ut(StubTest)

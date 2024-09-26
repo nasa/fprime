@@ -64,7 +64,9 @@ void Os::Test::Queue::Tester::Create::action(Os::Test::Queue::Tester& state  //!
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::Queue::Tester::SendNotFull::SendNotFull() : STest::Rule<Os::Test::Queue::Tester>("SendNotFull") {}
+Os::Test::Queue::Tester::SendNotFull::SendNotFull(bool end_check) : STest::Rule<Os::Test::Queue::Tester>("SendNotFull"),
+    m_end_check(end_check)
+{}
 
 bool Os::Test::Queue::Tester::SendNotFull::precondition(const Os::Test::Queue::Tester& state  //!< The test state
 ) {
@@ -84,7 +86,9 @@ void Os::Test::Queue::Tester::SendNotFull::action(Os::Test::Queue::Tester& state
     delete[] pick.sent;  // Clean-up
     ASSERT_EQ(status, QueueInterface::Status::OP_OK);
     ASSERT_EQ(test_status, status);
-    state.shadow_check();
+    if (this->m_end_check) {
+        state.shadow_check();
+    }
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -117,7 +121,8 @@ void Os::Test::Queue::Tester::SendFullNoBlock::action(Os::Test::Queue::Tester& s
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::Queue::Tester::ReceiveNotEmpty::ReceiveNotEmpty() : STest::Rule<Os::Test::Queue::Tester>("ReceiveNotEmpty") {}
+Os::Test::Queue::Tester::ReceiveNotEmpty::ReceiveNotEmpty(bool end_check) : STest::Rule<Os::Test::Queue::Tester>("ReceiveNotEmpty"),
+      m_end_check(end_check) {}
 
 bool Os::Test::Queue::Tester::ReceiveNotEmpty::precondition(const Os::Test::Queue::Tester& state  //!< The test state
 ) {
@@ -142,6 +147,9 @@ void Os::Test::Queue::Tester::ReceiveNotEmpty::action(Os::Test::Queue::Tester& s
     ASSERT_EQ(status, QueueInterface::Status::OP_OK);
     ASSERT_EQ(status, test_status);
     check_received(message, test);
+    if (this->m_end_check) {
+        state.shadow_check();
+    }
 }
 
 // ------------------------------------------------------------------------------------------------------

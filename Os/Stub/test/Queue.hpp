@@ -25,7 +25,8 @@ struct StaticData {
         SEND_FN,
         RECEIVE_FN,
         MESSAGES_FN,
-        HIGH_WATER_FN
+        HIGH_WATER_FN,
+        HANDLE_FN
     };
     StaticData() = default;
     ~StaticData() = default;
@@ -39,6 +40,7 @@ struct StaticData {
 
     FwSignedSizeType messages = -1;
     FwSignedSizeType highWaterMark = -1;
+    QueueHandle* handle = nullptr;
 
     // Received variables
     Os::QueueString name;
@@ -91,7 +93,7 @@ class InjectableStlQueue : public QueueInterface {
     InjectableStlQueue(const QueueInterface* other) = delete;
 
     //! \brief assignment operator is forbidden
-    InjectableStlQueue& operator=(const QueueInterface& other) = delete;
+    InjectableStlQueue& operator=(const QueueInterface& other) override = delete;
 
     //! \brief create queue storage
     //!
@@ -144,6 +146,8 @@ class InjectableStlQueue : public QueueInterface {
     //! queue.
     //! \return queue message high-water mark
     FwSizeType getMessageHighWaterMark() const override;
+
+    QueueHandle* getHandle() override;
 
     InjectableStlQueueHandle m_handle;
 };

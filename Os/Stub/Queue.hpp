@@ -1,4 +1,7 @@
-
+// ======================================================================
+// \title Os/Stub/Queue.hpp
+// \brief stub definitions for Os::Queue
+// ======================================================================
 #ifndef OS_STUB_QUEUE_HPP
 #define OS_STUB_QUEUE_HPP
 #include "Os/Queue.hpp"
@@ -25,7 +28,7 @@ class StubQueue : public QueueInterface {
     StubQueue(const QueueInterface* other) = delete;
 
     //! \brief assignment operator is forbidden
-    StubQueue& operator=(const QueueInterface& other) = delete;
+    StubQueue& operator=(const QueueInterface& other) override = delete;
 
     //! \brief create queue storage
     //!
@@ -78,6 +81,8 @@ class StubQueue : public QueueInterface {
     //! queue.
     //! \return queue message high-water mark
     FwSizeType getMessageHighWaterMark() const override;
+
+    QueueHandle* getHandle() override;
 
     StubQueueHandle m_handle;
 };

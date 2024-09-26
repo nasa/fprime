@@ -66,7 +66,7 @@ class PriorityQueue : public Os::QueueInterface {
     PriorityQueue(const QueueInterface* other) = delete;
 
     //! \brief assignment operator is forbidden
-    PriorityQueue& operator=(const QueueInterface& other) = delete;
+    PriorityQueue& operator=(const QueueInterface& other) override = delete;
 
     //! \brief create queue storage
     //!
@@ -128,6 +128,8 @@ class PriorityQueue : public Os::QueueInterface {
     //! queue.
     //! \return queue message high-water mark
     FwSizeType getMessageHighWaterMark() const override;
+
+    QueueHandle* getHandle() override;
 
     PriorityQueueHandle m_handle;
 };

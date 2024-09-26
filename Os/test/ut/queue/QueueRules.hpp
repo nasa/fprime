@@ -38,7 +38,7 @@ struct SendNotFull : public STest::Rule<Os::Test::Queue::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    SendNotFull();
+    SendNotFull(bool end_check=true);
 
     // ----------------------------------------------------------------------
     // Public member functions
@@ -51,6 +51,7 @@ struct SendNotFull : public STest::Rule<Os::Test::Queue::Tester> {
     //! Action
     void action(Os::Test::Queue::Tester& state  //!< The test state
     );
+    bool m_end_check;
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -88,7 +89,7 @@ struct ReceiveNotEmpty : public STest::Rule<Os::Test::Queue::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    ReceiveNotEmpty();
+    ReceiveNotEmpty(bool end_check=true);
 
     // ----------------------------------------------------------------------
     // Public member functions
@@ -101,6 +102,7 @@ struct ReceiveNotEmpty : public STest::Rule<Os::Test::Queue::Tester> {
     //! Action
     void action(Os::Test::Queue::Tester& state  //!< The test state
     );
+    bool m_end_check;
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -188,7 +190,7 @@ struct SendBlock : public ConcurrentRule<Os::Test::Queue::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    SendBlock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner);
+    explicit SendBlock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner);
 
     // ----------------------------------------------------------------------
     // Public member functions
@@ -213,7 +215,7 @@ struct ReceiveBlock : public ConcurrentRule<Os::Test::Queue::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    ReceiveBlock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner);
+    explicit ReceiveBlock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner);
 
     // ----------------------------------------------------------------------
     // Public member functions
