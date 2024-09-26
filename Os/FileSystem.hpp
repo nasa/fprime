@@ -296,7 +296,9 @@ class FileSystem final : public FileSystemInterface {
     
     //! \brief Append the source file to the destination file
     //!
-    //! If the destination file does not exist and createMissingDest is true, a new file will be created.
+    //! This function opens both files, and iteratively reads the source by chunks and writes
+    //! chunks to the destination.
+    //! If the destination file does not exist and createMissingDest is true, a new file is created.
     //!
     //! It is invalid to pass `nullptr` as either the source or destination path.
     //!
@@ -306,7 +308,10 @@ class FileSystem final : public FileSystemInterface {
     //! \return Status of the operation
     static Status appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false);
     
-    //! \brief Copie a file from the source path to the destination path
+    //! \brief Copy a file from the source path to the destination path
+    //!
+    //! This function opens both files, and iteratively reads the source by chunks and writes
+    //! chunks to the destination.
     //!
     //! It is invalid to pass `nullptr` as either the source or destination path.
     //!
