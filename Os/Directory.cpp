@@ -64,12 +64,8 @@ Directory::Status Directory::read(Fw::StringBase& filename) {
     if (not this->m_is_open) {
         return Status::NOT_OPENED;
     }
-    // REVIEW NOTE: other solution would be to const_cast the StringBase.toChar() ...
-    // not sure which is better, or if there is a better way
-    char filenameBuffer[filename.getCapacity()];
-    Status status = this->m_delegate.read(filenameBuffer, filename.getCapacity());
-    filename = filenameBuffer;
-    return status;
+    filename.resetSer();
+    return this->m_delegate.read(const_cast<char*>(filename.toChar()), filename.getCapacity());
 }
 
 void Directory::close() {
