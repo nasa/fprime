@@ -83,6 +83,11 @@ namespace Svc {
                 // final request should indicate empty
                 ASSERT_TRUE(res == NULL);
                 break;
+            } else if (output[entry].record.getstate() == Fw::DpState::TRANSMITTED) {
+                // if transmitted, should not be returned
+                ASSERT_TRUE(res == NULL);
+                // continue to next entry
+                continue;
             } else {
                 ASSERT_TRUE(res != NULL);
             }

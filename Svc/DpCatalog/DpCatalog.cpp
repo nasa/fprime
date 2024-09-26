@@ -456,9 +456,7 @@ namespace Svc {
                     this->m_currentNode = this->m_currentNode->left;
                 } else {
                     // Step 4 - check to see if this node has already been transmitted, if so, pop back up the stack
-                    if (this->m_currentNode->entry.record.getstate() == Fw::DpState::TRANSMITTED) {
-                        break;
-                    } else { 
+                    if (this->m_currentNode->entry.record.getstate() != Fw::DpState::TRANSMITTED) {
                         // we found an entry, so set the return to the current node
                         found = this->m_currentNode;
                     } // check if transmitted

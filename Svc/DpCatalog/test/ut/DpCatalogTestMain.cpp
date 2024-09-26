@@ -40,7 +40,6 @@ TEST(NominalManual, TreeTestManual1) {
         1
     );
 
-
 }
 
 TEST(NominalManual, TreeTestManual2) {
@@ -74,7 +73,6 @@ TEST(NominalManual, TreeTestManual2) {
         outputs,
         FW_NUM_ARRAY_ELEMENTS(inputs)
     );
-
 
 }
 
@@ -116,7 +114,6 @@ TEST(NominalManual, TreeTestManual3) {
         outputs,
         FW_NUM_ARRAY_ELEMENTS(inputs)
     );
-
 
 }
 
@@ -175,8 +172,33 @@ TEST(NominalManual, TreeTestManual5) {
         FW_NUM_ARRAY_ELEMENTS(inputs)
     );
 
+}
+
+TEST(NominalManual, TreeTestManual1_Transmitted) {
+
+    Svc::DpCatalogTester tester;
+    Fw::FileNameString dir;
+
+    Svc::DpCatalog::DpStateEntry inputs[1];
+    Svc::DpCatalog::DpStateEntry outputs[1];
+
+    inputs[0].record.setid(1);
+    inputs[0].record.setpriority(2);
+    inputs[0].record.setstate(Fw::DpState::TRANSMITTED);
+    inputs[0].record.settSec(1000);
+    inputs[0].record.settSub(1500);
+    inputs[0].record.setsize(100);
+
+    outputs[0].record.setstate(Fw::DpState::TRANSMITTED);
+
+    tester.testTree(
+        inputs,
+        outputs,
+        1
+    );
 
 }
+
 
 
 TEST(NominalManual, DISABLED_OneDp) {
