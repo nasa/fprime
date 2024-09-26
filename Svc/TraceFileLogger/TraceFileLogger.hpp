@@ -172,7 +172,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //filter trace types
     U16 m_traceFilter; //Select which trace types to allow logging
     //Array to filter on traceIds
-    U32 traceId_array[FILTER_TRACE_ID_SIZE];
+    U32 traceId_array[FILTER_TRACE_ID_SIZE] = {0};
     ArrayProc filterTraceId;
 
     // ----------------------------------------------------------------------

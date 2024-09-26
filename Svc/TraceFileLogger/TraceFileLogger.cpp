@@ -141,8 +141,10 @@ namespace Svc {
     }
 
     void TraceFileLogger::process_traceId_storage(U32 traceId,bool enable) {
-        if (enable == false) {
-            //Add trace ID to the list (if it doesn't already exist) to stop logging it
+        
+        //Add trace ID to the list (if it doesn't already exist) to stop logging it
+        if (enable == false && 
+            (this->filterTraceId.search_array(traceId, nullptr) == false)) {
             (void)this->filterTraceId.add_element(traceId);
         }
         else{
@@ -170,8 +172,8 @@ namespace Svc {
                 //TODO: Should we generate an event here, letting user know that this specific filter is disabled?
                 return;
             }
-            //Only log trace Ids that are not filtered out  
-            if(this->filterTraceId.search_array(id,NULL)) {
+            //Only log trace Ids that are not in the list 
+            if(this->filterTraceId.search_array(id,nullptr)) {
                 return;
             }
            
@@ -193,7 +195,7 @@ namespace Svc {
            //      instead of the actual buffer size (variable based on number of args). This will 
            //      ensure when the file is overwritten, we preserve old records
            this->write_log_file(m_file_buffer.getData(),traceSize);
-           // If we choose not to use circular file write then use the below line instead. 
+           // If we choose not to use circular file write then use below instead. 
            //this->write_log_file(m_file_buffer.getData(),buf_ref.getBuffLength());
            
             /*
