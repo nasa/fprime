@@ -402,6 +402,9 @@ typedef FwIndexType FwQueueSizeType;
 
 #ifndef FW_FILESYSTEM_HANDLE_MAX_SIZE
 #define FW_FILESYSTEM_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+
+#ifndef FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE
+#define FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE 56  //!< Maximum size of a handle for OS condition variables
 #endif
 
 #ifndef FW_HANDLE_ALIGNMENT

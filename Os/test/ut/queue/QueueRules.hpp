@@ -202,30 +202,6 @@ struct SendBlock : public ConcurrentRule<Os::Test::Queue::Tester> {
     void action(Os::Test::Queue::Tester& state  //!< The test state
                 ) override;
 };
-// ------------------------------------------------------------------------------------------------------
-// Rule:  SendUnblock
-//
-// ------------------------------------------------------------------------------------------------------
-struct SendUnblock : public ConcurrentRule<Os::Test::Queue::Tester> {
-    // ----------------------------------------------------------------------
-    // Construction
-    // ----------------------------------------------------------------------
-
-    //! Constructor
-    SendUnblock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner);
-
-    // ----------------------------------------------------------------------
-    // Public member functions
-    // ----------------------------------------------------------------------
-
-    //! Precondition
-    bool precondition(const Os::Test::Queue::Tester& state  //!< The test state
-                      ) override;
-
-    //! Action
-    void action(Os::Test::Queue::Tester& state  //!< The test state
-                ) override;
-};
 
 // ------------------------------------------------------------------------------------------------------
 // Rule:  ReceiveBlock
@@ -238,30 +214,6 @@ struct ReceiveBlock : public ConcurrentRule<Os::Test::Queue::Tester> {
 
     //! Constructor
     ReceiveBlock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner);
-
-    // ----------------------------------------------------------------------
-    // Public member functions
-    // ----------------------------------------------------------------------
-
-    //! Precondition
-    bool precondition(const Os::Test::Queue::Tester& state  //!< The test state
-                      ) override;
-
-    //! Action
-    void action(Os::Test::Queue::Tester& state  //!< The test state
-                ) override;
-};
-// ------------------------------------------------------------------------------------------------------
-// Rule:  ReceiveUnblock
-//
-// ------------------------------------------------------------------------------------------------------
-struct ReceiveUnblock : public ConcurrentRule<Os::Test::Queue::Tester> {
-    // ----------------------------------------------------------------------
-    // Construction
-    // ----------------------------------------------------------------------
-
-    //! Constructor
-    ReceiveUnblock(AggregatedConcurrentRule<Os::Test::Queue::Tester>& runner);
 
     // ----------------------------------------------------------------------
     // Public member functions

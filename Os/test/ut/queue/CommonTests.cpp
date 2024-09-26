@@ -287,6 +287,7 @@ TEST(Blocking, SendBlock) {
     create_rule.apply(tester);
     overflow_rule.apply(tester);
     aggregator.apply(tester);
+    aggregator.join();
 }
 
 TEST(Blocking, ReceiveBlock) {
@@ -301,6 +302,7 @@ TEST(Blocking, ReceiveBlock) {
     create_rule.apply(tester);
     overflow_rule.apply(tester);
     aggregator.apply(tester);
+    aggregator.join();
 }
 
 TEST(Random, RandomNominal) {
