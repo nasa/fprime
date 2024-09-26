@@ -41,12 +41,14 @@ namespace Svc {
         /// @param maxDpFiles The max number of data product files to track
         /// @param directories list of directories to scan
         /// @param numDirs number of supplied directories
+        /// @param stateFile file to store transmit state
         /// @param memId  memory ID for allocator
         /// @param allocator Allocator to supply memory for catalog. 
         ///        Instance must survive for shutdown to use for reclaiming memory
         void configure(
             Fw::FileNameString directories[DP_MAX_DIRECTORIES],
             FwSizeType numDirs,
+            Fw::FileNameString& stateFile,
             NATIVE_UINT_TYPE memId,
             Fw::MemAllocator& allocator
         );
@@ -206,6 +208,8 @@ namespace Svc {
         Fw::FileNameString m_directories[DP_MAX_DIRECTORIES]; //!< List of supplied DP directories
         FwSizeType m_numDirectories; //!< number of supplied directories
         Fw::String m_fileList[DP_MAX_FILES]; //!< working array of files/directory
+
+        Fw::FileNameString m_stateFile; //!< file to store transmit state
 
         NATIVE_UINT_TYPE m_memSize; //!< size of allocated buffer
         void* m_memPtr; //!< stored for shutdown

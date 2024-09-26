@@ -45,7 +45,8 @@ namespace Svc {
         Fw::FileNameString dirs[2];
         dirs[0] = "dir0";
         dirs[1] = "dir1";
-        this->component.configure(dirs,FW_NUM_ARRAY_ELEMENTS(dirs),100,alloc);
+        Fw::FileNameString stateFile("dpState.dat");    
+        this->component.configure(dirs,FW_NUM_ARRAY_ELEMENTS(dirs),stateFile,100,alloc);
         this->component.shutdown();
     }
 
@@ -61,7 +62,8 @@ namespace Svc {
 
         Fw::FileNameString dirs[1];
         dirs[0] = "dir0";
-        this->component.configure(dirs,FW_NUM_ARRAY_ELEMENTS(dirs),100,alloc);
+        Fw::FileNameString stateFile("dpState.dat");
+        this->component.configure(dirs,FW_NUM_ARRAY_ELEMENTS(dirs),stateFile,100,alloc);
 
         // reset tree
         this->component.resetBinaryTree();
@@ -104,6 +106,7 @@ namespace Svc {
     void DpCatalogTester::readDps(
             Fw::FileNameString *dpDirs,
             FwSizeType numDirs,
+            Fw::FileNameString& stateFile,
             const DpSet *dpSet,
             FwSizeType numDps
         ) {
@@ -134,7 +137,7 @@ namespace Svc {
 
         Fw::MallocAllocator alloc;
 
-        this->component.configure(dpDirs,numDirs,100,alloc);
+        this->component.configure(dpDirs,numDirs,stateFile,100,alloc);
 
         this->sendCmd_BUILD_CATALOG(0,10);
         this->component.doDispatch();

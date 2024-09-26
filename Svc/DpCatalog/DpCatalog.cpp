@@ -50,6 +50,7 @@ namespace Svc {
     void DpCatalog::configure(
         Fw::FileNameString directories[DP_MAX_DIRECTORIES],
         FwSizeType numDirs,
+        Fw::FileNameString& stateFile,
         NATIVE_UINT_TYPE memId,
         Fw::MemAllocator& allocator
     ) {
@@ -60,7 +61,7 @@ namespace Svc {
         // request memory for catalog
         // = number of file slots * (Free list entry + traverse stack entry)
         // FIXME: Memory size hack
-        this->m_memSize = DP_MAX_FILES * 2 * (sizeof(DpBtreeNode) + sizeof(DpBtreeNode**));
+        this->m_memSize = DP_MAX_FILES * (sizeof(DpBtreeNode) + sizeof(DpBtreeNode**));
         bool notUsed; // we don't need to recover the catalog.
         // request memory. this->m_memSize will be modified if there is less than we requested
         this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
@@ -71,8 +72,8 @@ namespace Svc {
             (this->m_memSize >= sizeof(DpBtreeNode)) and
             (this->m_memPtr != nullptr)
             ) {
-            // set the number of available record slots
-            this->m_numDpSlots = this->m_memSize / sizeof(DpBtreeNode);
+            // set the number of available record slots based on how much memory we actually got
+            this->m_numDpSlots = this->m_memSize / (sizeof(DpBtreeNode) + sizeof(DpBtreeNode**));
             this->resetBinaryTree();
             // assign pointer for the stack
             this->m_traverseStack = reinterpret_cast<DpBtreeNode**>(&this->m_freeListHead[this->m_numDpSlots]);

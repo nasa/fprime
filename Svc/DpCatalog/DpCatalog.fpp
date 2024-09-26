@@ -16,12 +16,13 @@ module Svc {
 
   @ Data structure representing a data product.
   struct DpRecord {
-    $id: U32
-    tSec: U32
-    tSub: U32
-    $priority: U32
-    $size: U64
-    state: Fw.DpState
+    $id: U32 # The ID of the data product
+    tSec: U32 # Generation time in seconds
+    tSub: U32 # Generation time in subseconds
+    $priority: U32 # Priority of the data product
+    $size: U64 # Overall size of the data product
+    blocks: U32 # Number of blocks transmitted
+    state: Fw.DpState # Transmisstion state of the data product
   }
 
 

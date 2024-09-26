@@ -71,6 +71,7 @@ namespace Svc {
         void readDps(
             Fw::FileNameString *dpDirs,
             FwSizeType numDirs,
+            Fw::FileNameString& stateFile,
             const DpSet* dpSet,
             FwSizeType numDps
         );

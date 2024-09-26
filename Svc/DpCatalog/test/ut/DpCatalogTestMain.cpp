@@ -206,6 +206,7 @@ TEST(NominalManual, DISABLED_OneDp) {
     Svc::DpCatalogTester tester;
     Fw::FileNameString dir;
     dir = "./DpTest";
+    Fw::FileNameString stateFile("./DpState");
 
     Svc::DpCatalogTester::DpSet dpSet;
     dpSet.id = 0x123;
@@ -218,6 +219,7 @@ TEST(NominalManual, DISABLED_OneDp) {
     tester.readDps(
         &dir,
         1,
+        stateFile,
         &dpSet,
         1
     );
@@ -229,6 +231,7 @@ TEST(NominalManual, DISABLED_FiveDp) {
     Fw::FileNameString dirs[2];
     dirs[0] = "./DpTest1";
     dirs[1] = "./DpTest2";
+    Fw::FileNameString stateFile("./DpState");
 
     Svc::DpCatalogTester::DpSet dpSet[5];
     
@@ -270,6 +273,7 @@ TEST(NominalManual, DISABLED_FiveDp) {
     tester.readDps(
         dirs,
         2,
+        stateFile,
         dpSet,
         5
     );
