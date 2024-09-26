@@ -87,7 +87,7 @@ class DirectoryInterface {
 
     //! \brief Get next filename from directory stream
     //!
-    //! Writes at most buffSize characters of the the file name to fileNameBuffer.
+    //! Write at most buffSize characters of the the file name to fileNameBuffer and guarantee null-termination.
     //! This function skips the current directory (.) and parent directory (..) entries.
     //! Returns NO_MORE_FILES if there are no more files to read from the buffer.
     //!
@@ -162,7 +162,7 @@ class Directory final : public DirectoryInterface {
 
     //! \brief Get next filename from directory stream
     //!
-    //! Writes at most buffSize characters of the the file name to fileNameBuffer.
+    //! Write at most buffSize characters of the the file name to fileNameBuffer and guarantee null-termination.
     //! This function skips the current directory (.) and parent directory (..) entries.
     //! Returns NO_MORE_FILES if there are no more files to read from the buffer.
     //!

@@ -56,7 +56,9 @@ Directory::Status Directory::read(char * fileNameBuffer, FwSizeType bufSize) {
         return Status::NOT_OPENED;
     }
     FW_ASSERT(fileNameBuffer != nullptr);
-    return this->m_delegate.read(fileNameBuffer, bufSize);
+    Status status = this->m_delegate.read(fileNameBuffer, bufSize);
+    fileNameBuffer[bufSize - 1] = '\0'; // Guarantee null-termination
+    return status;
 }
 
 Directory::Status Directory::read(Fw::StringBase& filename) {
@@ -64,7 +66,6 @@ Directory::Status Directory::read(Fw::StringBase& filename) {
     if (not this->m_is_open) {
         return Status::NOT_OPENED;
     }
-    filename.resetSer();
     return this->m_delegate.read(const_cast<char*>(filename.toChar()), filename.getCapacity());
 }
 
@@ -91,6 +92,7 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
     char unusedBuffer[1]; // buffer must have size but is unused
     Status readStatus = Status::OP_OK;
     fileCount = 0;
+    // Count files by reading each file entry until there is NO_MORE_FILES
     for (FwSizeType iter = 0; iter < loopLimit; ++iter) {
         readStatus = this->read(unusedBuffer, sizeof(unusedBuffer));
         if (readStatus == Status::NO_MORE_FILES) {
