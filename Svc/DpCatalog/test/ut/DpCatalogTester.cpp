@@ -53,8 +53,8 @@ namespace Svc {
             DpCatalog::DpStateEntry* input, 
             DpCatalog::DpStateEntry* output, 
             NATIVE_INT_TYPE numEntries) {
-        ASSERT_TRUE(input != NULL);
-        ASSERT_TRUE(output != NULL);
+        ASSERT_TRUE(input != nullptr);
+        ASSERT_TRUE(output != nullptr);
         ASSERT_TRUE(numEntries > 0);
 
         Fw::MallocAllocator alloc;
@@ -81,15 +81,15 @@ namespace Svc {
             DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
             if (entry == numEntries) {
                 // final request should indicate empty
-                ASSERT_TRUE(res == NULL);
+                ASSERT_TRUE(res == nullptr);
                 break;
             } else if (output[entry].record.getstate() == Fw::DpState::TRANSMITTED) {
                 // if transmitted, should not be returned
-                ASSERT_TRUE(res == NULL);
+                ASSERT_TRUE(res == nullptr);
                 // continue to next entry
                 continue;
             } else {
-                ASSERT_TRUE(res != NULL);
+                ASSERT_TRUE(res != nullptr);
             }
             // should match expected entry
             ASSERT_EQ(res->entry.record,output[entry].record);
