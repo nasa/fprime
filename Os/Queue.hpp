@@ -36,7 +36,6 @@ class QueueInterface {
         SEND_ERROR,        //!<  message send error
         RECEIVE_ERROR,     //!<  message receive error
         INVALID_PRIORITY,  //!<  invalid priority requested
-        EMPTY_BUFFER,      //!<  supplied buffer is empty
         FULL,              //!< queue was full when attempting to send a message
         UNKNOWN_ERROR      //!<  Unexpected error; can't match with returns
     };

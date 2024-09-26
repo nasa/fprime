@@ -18,7 +18,7 @@ FwSizeType PriorityQueueHandle ::find_index() {
     // This function will never be called when full, this assert ensures that the start index never surpasses the end
     // index.
     FW_ASSERT(this->m_startIndex != this->m_stopIndex);
-    FwSizeType index = this->m_indices[this->m_startIndex % this->m_depth];
+    FwSizeType index = this->m_indices[this->m_startIndex % this->m_depth]; // TODO fix bad wraparound
     // Overflow allowed here, as computations handle wrap-around when assuming unsigned integers
     this->m_startIndex++;
     FwSizeType diff = this->m_stopIndex - this->m_startIndex;
@@ -145,7 +145,6 @@ QueueInterface::Status PriorityQueue::receive(U8* destination,
     {
         Os::ScopeLock lock(this->m_handle.m_data_lock);
         if (this->m_handle.m_heap.isEmpty() and blockType == BlockingType::NONBLOCKING) {
-            this->m_handle.m_data_lock.unlock();
             return QueueInterface::Status::EMPTY;
         }
         // Loop and lock while empty
@@ -156,18 +155,15 @@ QueueInterface::Status PriorityQueue::receive(U8* destination,
         FwSizeType index;
         bool popped = this->m_handle.m_heap.pop(priority, index);
         if (not popped) {
-            this->m_handle.m_data_lock.unlock();
             return QueueInterface::Status::EMPTY;
         }
 
         actualSize = this->m_handle.m_sizes[index];
         if (actualSize > capacity) {
-            this->m_handle.m_data_lock.unlock();
             return QueueInterface::Status::SIZE_MISMATCH;
         }
         this->m_handle.load_data(index, destination, actualSize);
         this->m_handle.return_index(index);
-        this->m_handle.m_data_lock.unlock();
     }
     this->m_handle.m_full.notify();
     return QueueInterface::Status::OP_OK;
