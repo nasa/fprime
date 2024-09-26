@@ -60,7 +60,7 @@ class StubDirectory : public DirectoryInterface {
 
     //! \brief Get next filename from directory stream
     //!
-    //! Writes at most buffSize characters of the the file name to fileNameBuffer.
+    //! Writes at most buffSize characters of the file name to fileNameBuffer.
     //! This function skips the current directory (.) and parent directory (..) entries.
     //! Returns NO_MORE_FILES if there are no more files to read from the buffer.
     //!
