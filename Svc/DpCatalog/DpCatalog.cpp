@@ -459,13 +459,11 @@ namespace Svc {
                     if (this->m_currentNode->entry.record.getstate() == Fw::DpState::TRANSMITTED) {
                         break;
                     } else { 
-                        // we found an entry, so set the retun to the current node
+                        // we found an entry, so set the return to the current node
                         found = this->m_currentNode;
                     } // check if transmitted
                     // go to the right node
                     this->m_currentNode = this->m_currentNode->right;
-                    // pop the stack
-                    this->m_currStackEntry--;
                     // if a node was found, return it
                     if (found != nullptr) {
                         return found;
@@ -605,11 +603,9 @@ namespace Svc {
     void DpCatalog::resetTreeStack() {
         // See URL above
         // Step 1 - reset the stack
-        this->m_currStackEntry = 0;
+        this->m_currStackEntry = -1;
         // Step 2 - assign root of the tree to the current entry
         this->m_currentNode = this->m_dpTree;
-        // Step 3 - push the root of the tree on the stack
-        this->m_traverseStack[this->m_currStackEntry] = this->m_currentNode;
     }
 
     void DpCatalog ::
