@@ -406,7 +406,7 @@ namespace Svc {
             this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
             return;
         } else {
-            // build file name. this->m_currentry is the found entry
+            // build file name based on the the found entry
             this->m_currXmitFileName.format(DP_FILENAME_FORMAT,
                 this->m_directories[found->entry.dir].toChar(),
                 found->entry.record.getid(),
