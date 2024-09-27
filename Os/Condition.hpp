@@ -72,10 +72,13 @@ class ConditionVariable final : public ConditionVariableInterface {
     ~ConditionVariable() final;
 
     //! \brief copy constructor is forbidden
-    ConditionVariable(const ConditionVariable& other) = delete;
+    ConditionVariable(const ConditionVariableInterface& other) = delete;
+
+    //! \brief copy constructor is forbidden
+    ConditionVariable(const ConditionVariableInterface* other) = delete;
 
     //! \brief assignment operator is forbidden
-    ConditionVariable& operator=(const ConditionVariable& other) = delete;
+    ConditionVariableInterface& operator=(const ConditionVariableInterface& other) override = delete;
 
     //! \brief wait on a condition variable
     //!
