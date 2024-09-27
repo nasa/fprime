@@ -7,7 +7,7 @@
 #include "Os/Delegate.hpp"
 
 namespace Os {
-DirectoryInterface* DirectoryInterface::getDelegate(HandleStorage& aligned_new_memory) {
+DirectoryInterface* DirectoryInterface::getDelegate(DirectoryHandleStorage& aligned_new_memory) {
     return Os::Delegate::makeDelegate<DirectoryInterface, Os::Posix::Directory::PosixDirectory>(aligned_new_memory);
 }
 }

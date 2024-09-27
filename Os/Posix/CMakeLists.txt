@@ -185,5 +185,6 @@ set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/condition/CommonTests.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/condition/ConditionRules.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixConditionTests.cpp"
+)
 choose_fprime_implementation(Os/Mutex Os_Mutex_Posix)
 register_fprime_ut(PosixConditionTests)
