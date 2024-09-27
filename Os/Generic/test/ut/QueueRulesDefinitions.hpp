@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/Generic/test/ut/QueueRulesDefinitions.hpp
-// \brief definitions fpr queue testing
+// \brief definitions for queue testing
 // ======================================================================
 #ifndef OS_STUB_TEST_UT_QUEUE_RULES_DEFINITIONS
 #define OS_STUB_TEST_UT_QUEUE_RULES_DEFINITIONS

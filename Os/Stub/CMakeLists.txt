@@ -135,8 +135,9 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/Queue Os_Queue_Test_Stub)
 register_fprime_ut(StubQueueTest)
-target_include_directories(StubQueueTest PRIVATE "${CMAKE_CURRENT_LIST_DIR}/test/ut")
-
+if (TARGET StubQueueTest)
+    target_include_directories(StubQueueTest PRIVATE "${CMAKE_CURRENT_LIST_DIR}/test/ut")
+endif ()
 
 #### Task Stub Testing ####
 set(SOURCE_FILES

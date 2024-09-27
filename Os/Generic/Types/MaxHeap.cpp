@@ -256,29 +256,4 @@ void MaxHeap::swap(FwSizeType a, FwSizeType b) {
     this->m_heap[b] = temp;
 }
 
-// Print heap, for debugging purposes only:
-void MaxHeap::print() {
-    FwSizeType index = 0;
-    FwSizeType left;
-    FwSizeType right;
-    Fw::Logger::log("Printing Heap of Size: %d\n", this->m_size);
-    while (index < this->m_size) {
-        left = LCHILD(index);
-        right = RCHILD(index);
-
-        if (left >= m_size && index == 0) {
-            Fw::Logger::log("i: %u v: %d d: %u -> (NULL, NULL)\n", index, this->m_heap[index].value,
-                            this->m_heap[index].id);
-        } else if (right >= m_size && left < m_size) {
-            Fw::Logger::log("i: %u v: %d d: %u -> (i: %u v: %d d: %u, NULL)\n", index, this->m_heap[index].value,
-                            this->m_heap[index].id, left, this->m_heap[left].value, this->m_heap[left].id);
-        } else if (right < m_size && left < m_size) {
-            Fw::Logger::log("i: %u v: %d d: %u -> (i: %u v: %d d: %u, i: %u v: %d d: %u)\n", index,
-                            this->m_heap[index].value, this->m_heap[index].id, left, this->m_heap[left].value,
-                            this->m_heap[left].id, right, this->m_heap[right].value, this->m_heap[right].id);
-        }
-
-        ++index;
-    }
-}
 }  // namespace Types

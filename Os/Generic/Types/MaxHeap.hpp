@@ -83,11 +83,6 @@ class MaxHeap {
     //! heap.
     //!
     FwSizeType getSize() const;
-    //! \brief Print the contents of the heap to stdout.
-    //!
-    //! This function here is for debugging purposes.
-    //!
-    void print();
 
   private:
     // Private functions:
