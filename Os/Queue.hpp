@@ -165,7 +165,7 @@ class Queue final : public QueueInterface {
     Queue(const Queue* other) = delete;
 
     //! \brief assignment operator is forbidden
-    Queue& operator=(const Queue& other) = delete;
+    QueueInterface& operator=(const QueueInterface& other) override = delete;
 
     //! \brief create queue storage through delegate
     //!

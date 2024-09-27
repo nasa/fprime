@@ -29,6 +29,8 @@ class PosixConditionVariable : public ConditionVariableInterface {
     //!
     ~PosixConditionVariable() override;
 
+    ConditionVariableInterface& operator=(const ConditionVariableInterface& other) override = delete;
+
     //! \brief wait releasing mutex
     void wait(Os::Mutex& mutex) override;
 
