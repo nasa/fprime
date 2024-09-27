@@ -134,8 +134,15 @@ namespace Svc {
             U64 pendingDpBytes = 0;
 
             Os::Directory dpDir;
-            dpDir.open(this->m_directories[dir].toChar(), Os::Directory::OpenMode::READ);
-            Os::Directory::Status status = dpDir.readDirectory(this->m_fileList, (this->m_numDpSlots - totalFiles), filesRead);
+            Os::Directory::Status status = dpDir.open(this->m_directories[dir].toChar(), Os::Directory::OpenMode::READ);
+            if (status != Os::Directory::OP_OK) {
+                this->log_WARNING_HI_DirectoryOpenError(
+                    this->m_directories[dir],
+                    status
+                );
+                return Fw::CmdResponse::EXECUTION_ERROR;
+            }
+            status = dpDir.readDirectory(this->m_fileList, (this->m_numDpSlots - totalFiles), filesRead);
 
             if (status != Os::Directory::OP_OK) {
                 this->log_WARNING_HI_DirectoryOpenError(
