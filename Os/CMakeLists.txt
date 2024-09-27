@@ -35,9 +35,12 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
 
     # Refactored common files
+    "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FileSystem.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Directory.cpp"
 )
 # Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
@@ -56,8 +59,6 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
     )
 endif()
 # Darwin IPC queue implementation
@@ -97,8 +98,11 @@ endif()
 register_fprime_module()
 
 require_fprime_implementation(Os/File)
+require_fprime_implementation(Os/FileSystem)
+require_fprime_implementation(Os/Directory)
+require_fprime_implementation(Os/Mutex)
 # require_fprime_implementation(Os/Task) # should be added in
-require_fprime_implementation(Os/Mutex) 
+# require_fprime_implementation(Os/Console) # should be added in
 
 
 ### UTS ### Note: 3 separate UTs registered here.
@@ -106,17 +110,21 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )
 register_fprime_ut()
 if (BUILD_TESTING)
-    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubMutexTest PosixMutexTest) # add? : StubTaskTest PosixTaskTest
-       if (TARGET "${TEST}")
-           add_dependencies("Os_ut_exe" "${TEST}")
-       endif()
+    foreach (TEST IN ITEMS 
+                StubFileTest PosixFileTest
+                StubMutexTest PosixMutexTest
+                StubDirectoryTest PosixDirectory
+                StubFileSystemTest PosixFileSystemTest
+            ) # add? : StubTaskTest PosixTaskTest
+        if (TARGET "${TEST}")
+            add_dependencies("Os_ut_exe" "${TEST}")
+        endif()
     endforeach()
 endif()
 # Second UT Pthreads
