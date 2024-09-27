@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['handlestorage_7777',['HandleStorage',['../os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da',1,'Os.hpp']]],
-  ['health_7778',['Health',['../namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb',1,'Svc']]]
+  ['generichub_7886',['GenericHub',['../namespace_svc.html#a2726e21edb6ef5238cd546d94c01c0fa',1,'Svc']]]
 ];

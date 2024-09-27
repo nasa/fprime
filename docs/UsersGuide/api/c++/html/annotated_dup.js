@@ -168,9 +168,17 @@ var annotated_dup =
           [ "PosixConsoleHandle", "struct_os_1_1_posix_1_1_console_1_1_posix_console_handle.html", "struct_os_1_1_posix_1_1_console_1_1_posix_console_handle" ],
           [ "PosixConsole", "class_os_1_1_posix_1_1_console_1_1_posix_console.html", "class_os_1_1_posix_1_1_console_1_1_posix_console" ]
         ] ],
+        [ "Directory", "namespace_os_1_1_posix_1_1_directory.html", [
+          [ "PosixDirectoryHandle", "struct_os_1_1_posix_1_1_directory_1_1_posix_directory_handle.html", "struct_os_1_1_posix_1_1_directory_1_1_posix_directory_handle" ],
+          [ "PosixDirectory", "class_os_1_1_posix_1_1_directory_1_1_posix_directory.html", "class_os_1_1_posix_1_1_directory_1_1_posix_directory" ]
+        ] ],
         [ "File", "namespace_os_1_1_posix_1_1_file.html", [
           [ "PosixFileHandle", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle.html", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle" ],
           [ "PosixFile", "class_os_1_1_posix_1_1_file_1_1_posix_file.html", "class_os_1_1_posix_1_1_file_1_1_posix_file" ]
+        ] ],
+        [ "FileSystem", "namespace_os_1_1_posix_1_1_file_system.html", [
+          [ "PosixFileSystemHandle", "struct_os_1_1_posix_1_1_file_system_1_1_posix_file_system_handle.html", null ],
+          [ "PosixFileSystem", "class_os_1_1_posix_1_1_file_system_1_1_posix_file_system.html", "class_os_1_1_posix_1_1_file_system_1_1_posix_file_system" ]
         ] ],
         [ "Mutex", "namespace_os_1_1_posix_1_1_mutex.html", [
           [ "PosixMutexHandle", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle.html", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle" ],
@@ -186,9 +194,17 @@ var annotated_dup =
           [ "StubConsoleHandle", "struct_os_1_1_stub_1_1_console_1_1_stub_console_handle.html", null ],
           [ "StubConsole", "class_os_1_1_stub_1_1_console_1_1_stub_console.html", "class_os_1_1_stub_1_1_console_1_1_stub_console" ]
         ] ],
+        [ "Directory", "namespace_os_1_1_stub_1_1_directory.html", [
+          [ "StubDirectoryHandle", "struct_os_1_1_stub_1_1_directory_1_1_stub_directory_handle.html", null ],
+          [ "StubDirectory", "class_os_1_1_stub_1_1_directory_1_1_stub_directory.html", "class_os_1_1_stub_1_1_directory_1_1_stub_directory" ]
+        ] ],
         [ "File", "namespace_os_1_1_stub_1_1_file.html", [
           [ "StubFileHandle", "struct_os_1_1_stub_1_1_file_1_1_stub_file_handle.html", null ],
           [ "StubFile", "class_os_1_1_stub_1_1_file_1_1_stub_file.html", "class_os_1_1_stub_1_1_file_1_1_stub_file" ]
+        ] ],
+        [ "FileSystem", "namespace_os_1_1_stub_1_1_file_system.html", [
+          [ "StubFileSystemHandle", "struct_os_1_1_stub_1_1_file_system_1_1_stub_file_system_handle.html", null ],
+          [ "StubFileSystem", "class_os_1_1_stub_1_1_file_system_1_1_stub_file_system.html", "class_os_1_1_stub_1_1_file_system_1_1_stub_file_system" ]
         ] ],
         [ "Mutex", "namespace_os_1_1_stub_1_1_mutex.html", [
           [ "StubMutexHandle", "struct_os_1_1_stub_1_1_mutex_1_1_stub_mutex_handle.html", null ],
@@ -199,8 +215,11 @@ var annotated_dup =
         [ "CpuTicks", "struct_os_1_1_system_resources_1_1_cpu_ticks.html", "struct_os_1_1_system_resources_1_1_cpu_ticks" ],
         [ "MemUtil", "struct_os_1_1_system_resources_1_1_mem_util.html", "struct_os_1_1_system_resources_1_1_mem_util" ]
       ] ],
+      [ "DirectoryOpenMode", "class_os_1_1_directory_open_mode.html", "class_os_1_1_directory_open_mode" ],
+      [ "DirectoryStatus", "class_os_1_1_directory_status.html", "class_os_1_1_directory_status" ],
       [ "FileMode", "class_os_1_1_file_mode.html", "class_os_1_1_file_mode" ],
       [ "FileStatus", "class_os_1_1_file_status.html", "class_os_1_1_file_status" ],
+      [ "FileSystemStatus", "class_os_1_1_file_system_status.html", "class_os_1_1_file_system_status" ],
       [ "MutexStatus", "class_os_1_1_mutex_status.html", "class_os_1_1_mutex_status" ],
       [ "TaskStatus", "class_os_1_1_task_status.html", "class_os_1_1_task_status" ],
       [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
@@ -209,10 +228,15 @@ var annotated_dup =
       [ "ConsoleHandle", "struct_os_1_1_console_handle.html", null ],
       [ "ConsoleInterface", "class_os_1_1_console_interface.html", "class_os_1_1_console_interface" ],
       [ "Console", "class_os_1_1_console.html", "class_os_1_1_console" ],
+      [ "DirectoryHandle", "struct_os_1_1_directory_handle.html", null ],
+      [ "DirectoryInterface", "class_os_1_1_directory_interface.html", "class_os_1_1_directory_interface" ],
       [ "Directory", "class_os_1_1_directory.html", "class_os_1_1_directory" ],
       [ "FileHandle", "struct_os_1_1_file_handle.html", null ],
       [ "FileInterface", "class_os_1_1_file_interface.html", "class_os_1_1_file_interface" ],
       [ "File", "class_os_1_1_file.html", "class_os_1_1_file" ],
+      [ "FileSystemHandle", "struct_os_1_1_file_system_handle.html", null ],
+      [ "FileSystemInterface", "class_os_1_1_file_system_interface.html", "class_os_1_1_file_system_interface" ],
+      [ "FileSystem", "class_os_1_1_file_system.html", "class_os_1_1_file_system" ],
       [ "InterruptLock", "class_os_1_1_interrupt_lock.html", "class_os_1_1_interrupt_lock" ],
       [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ],
       [ "IPCQueue", "class_os_1_1_i_p_c_queue.html", "class_os_1_1_i_p_c_queue" ],

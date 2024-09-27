@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['i8_7779',['I8',['../basic_types_8h.html#a33c92dd47950aa8c1d6df7e1c163e5a6',1,'BasicTypes.h']]]
+  ['handlestorage_7887',['HandleStorage',['../os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da',1,'Os.hpp']]],
+  ['health_7888',['Health',['../namespace_svc.html#ad3bf1cfb57fb596d097ad9a3401e56bb',1,'Svc']]]
 ];

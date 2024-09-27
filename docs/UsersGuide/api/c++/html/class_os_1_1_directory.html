@@ -85,101 +85,113 @@ $(document).ready(function(){initNavTree('class_os_1_1_directory.html',''); init
 
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_os_1_1_directory-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Os::Directory Class Reference</div>  </div>
+<div class="title">Os::Directory Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
+<p><a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> class.  
+ <a href="class_os_1_1_directory.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="directory_8hpp_source.html">Os/Directory.hpp</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for Os::Directory:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_os_1_1_directory.png" usemap="#Os::Directory_map" alt=""/>
+  <map id="Os::Directory_map" name="Os::Directory_map">
+<area href="class_os_1_1_directory_interface.html" alt="Os::DirectoryInterface" shape="rect" coords="0,0,137,24"/>
+  </map>
+</div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:a0d09f03b2a446f2c64abd8cc4e763d2b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Status</a> { <br />
-&#160;&#160;<a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2ba12063f75af229ebe45e9deee0da81b6b">OP_OK</a>
-, <a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2bac6b3c44eab71b964b0afdb0640464dec">DOESNT_EXIST</a>
-, <a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2ba583ef310766ff7b35e491d041dd7b27c">NO_PERMISSION</a>
-, <a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2baf3a13aee4c38e56fd25dd3d742fe72de">NOT_OPENED</a>
-, <br />
-&#160;&#160;<a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2baad039fdee2eeb8fd57da6affc6c6a1d0">NOT_DIR</a>
-, <a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2ba7ad97373c21993cc801ba03a7bde0ea6">NO_MORE_FILES</a>
-, <a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2ba2344b7f3d900fd37c50739cfa53cb1f3">OTHER_ERROR</a>
-<br />
- }</td></tr>
-<tr class="separator:a0d09f03b2a446f2c64abd8cc4e763d2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac2ad860e42e95316af7b5e541c2f0a65"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#ac2ad860e42e95316af7b5e541c2f0a65">Directory</a> ()</td></tr>
 <tr class="memdesc:ac2ad860e42e95316af7b5e541c2f0a65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="class_os_1_1_directory.html#ac2ad860e42e95316af7b5e541c2f0a65">More...</a><br /></td></tr>
 <tr class="separator:ac2ad860e42e95316af7b5e541c2f0a65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8dd8d4f7b69171af8f48686e4fca6dc"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#ad8dd8d4f7b69171af8f48686e4fca6dc">~Directory</a> ()</td></tr>
-<tr class="memdesc:ad8dd8d4f7b69171af8f48686e4fca6dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. Will close directory if still open.  <a href="class_os_1_1_directory.html#ad8dd8d4f7b69171af8f48686e4fca6dc">More...</a><br /></td></tr>
-<tr class="separator:ad8dd8d4f7b69171af8f48686e4fca6dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ad66477c3128adf4fb1b6275f63a947"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a9ad66477c3128adf4fb1b6275f63a947">open</a> (const char *dirName)</td></tr>
-<tr class="memdesc:a9ad66477c3128adf4fb1b6275f63a947"><td class="mdescLeft">&#160;</td><td class="mdescRight">open directory. <a class="el" href="class_os_1_1_directory.html">Directory</a> must already exist  <a href="class_os_1_1_directory.html#a9ad66477c3128adf4fb1b6275f63a947">More...</a><br /></td></tr>
-<tr class="separator:a9ad66477c3128adf4fb1b6275f63a947"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab00c74b4fdb58d92dcc0ea23d8f88eb5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#ab00c74b4fdb58d92dcc0ea23d8f88eb5">~Directory</a> () final</td></tr>
+<tr class="memdesc:ab00c74b4fdb58d92dcc0ea23d8f88eb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="class_os_1_1_directory.html#ab00c74b4fdb58d92dcc0ea23d8f88eb5">More...</a><br /></td></tr>
+<tr class="separator:ab00c74b4fdb58d92dcc0ea23d8f88eb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55e49e8cbe10843f61078822976a90c0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_os_1_1_directory_handle.html">DirectoryHandle</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a55e49e8cbe10843f61078822976a90c0">getHandle</a> () override</td></tr>
+<tr class="memdesc:a55e49e8cbe10843f61078822976a90c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the underlying <a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> handle (implementation specific)  <a href="class_os_1_1_directory.html#a55e49e8cbe10843f61078822976a90c0">More...</a><br /></td></tr>
+<tr class="separator:a55e49e8cbe10843f61078822976a90c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0469861ff208b3a7b2626590c3d3328d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a0469861ff208b3a7b2626590c3d3328d">open</a> (const char *path, <a class="el" href="class_os_1_1_directory_interface.html#ae70ca6428f4d44a5688b4e4853229d37">OpenMode</a> mode) override</td></tr>
+<tr class="memdesc:a0469861ff208b3a7b2626590c3d3328d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open or create a directory.  <a href="class_os_1_1_directory.html#a0469861ff208b3a7b2626590c3d3328d">More...</a><br /></td></tr>
+<tr class="separator:a0469861ff208b3a7b2626590c3d3328d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d9f525bce4ec1788296b1fa1fb368d8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a0d9f525bce4ec1788296b1fa1fb368d8">isOpen</a> ()</td></tr>
-<tr class="memdesc:a0d9f525bce4ec1788296b1fa1fb368d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if file descriptor is open or not.  <a href="class_os_1_1_directory.html#a0d9f525bce4ec1788296b1fa1fb368d8">More...</a><br /></td></tr>
+<tr class="memdesc:a0d9f525bce4ec1788296b1fa1fb368d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if <a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> is open or not.  <a href="class_os_1_1_directory.html#a0d9f525bce4ec1788296b1fa1fb368d8">More...</a><br /></td></tr>
 <tr class="separator:a0d9f525bce4ec1788296b1fa1fb368d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d1f3bdbaeb5679eb6999cb9b6d727a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a3d1f3bdbaeb5679eb6999cb9b6d727a1">rewind</a> ()</td></tr>
-<tr class="memdesc:a3d1f3bdbaeb5679eb6999cb9b6d727a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">rewind directory stream to the beginning  <a href="class_os_1_1_directory.html#a3d1f3bdbaeb5679eb6999cb9b6d727a1">More...</a><br /></td></tr>
-<tr class="separator:a3d1f3bdbaeb5679eb6999cb9b6d727a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a854069f728ea63deacfd727a6e0c572d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a854069f728ea63deacfd727a6e0c572d">read</a> (char *fileNameBuffer, U32 bufSize)</td></tr>
-<tr class="memdesc:a854069f728ea63deacfd727a6e0c572d"><td class="mdescLeft">&#160;</td><td class="mdescRight">get next filename from directory  <a href="class_os_1_1_directory.html#a854069f728ea63deacfd727a6e0c572d">More...</a><br /></td></tr>
-<tr class="separator:a854069f728ea63deacfd727a6e0c572d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af46b54619d4ee448a257065f3fced537"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#af46b54619d4ee448a257065f3fced537">read</a> (char *fileNameBuffer, U32 bufSize, I64 &amp;inode)</td></tr>
-<tr class="memdesc:af46b54619d4ee448a257065f3fced537"><td class="mdescLeft">&#160;</td><td class="mdescRight">get next filename and inode from directory  <a href="class_os_1_1_directory.html#af46b54619d4ee448a257065f3fced537">More...</a><br /></td></tr>
-<tr class="separator:af46b54619d4ee448a257065f3fced537"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c057514945c8c806b326be8195e333b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a3c057514945c8c806b326be8195e333b">close</a> ()</td></tr>
-<tr class="memdesc:a3c057514945c8c806b326be8195e333b"><td class="mdescLeft">&#160;</td><td class="mdescRight">close directory  <a href="class_os_1_1_directory.html#a3c057514945c8c806b326be8195e333b">More...</a><br /></td></tr>
-<tr class="separator:a3c057514945c8c806b326be8195e333b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aadfbebd6127a2d8d023406d211d5a607"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#aadfbebd6127a2d8d023406d211d5a607">getLastError</a> ()</td></tr>
-<tr class="memdesc:aadfbebd6127a2d8d023406d211d5a607"><td class="mdescLeft">&#160;</td><td class="mdescRight">read back last error code (typically errno)  <a href="class_os_1_1_directory.html#aadfbebd6127a2d8d023406d211d5a607">More...</a><br /></td></tr>
-<tr class="separator:aadfbebd6127a2d8d023406d211d5a607"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d9fae78c381b552d32dd082d151cdf9"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a8d9fae78c381b552d32dd082d151cdf9">getLastErrorString</a> ()</td></tr>
-<tr class="memdesc:a8d9fae78c381b552d32dd082d151cdf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a string of the last error (typically from strerror)  <a href="class_os_1_1_directory.html#a8d9fae78c381b552d32dd082d151cdf9">More...</a><br /></td></tr>
-<tr class="separator:a8d9fae78c381b552d32dd082d151cdf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a029973f68136eafa0398d1933da745ae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a029973f68136eafa0398d1933da745ae">rewind</a> () override</td></tr>
+<tr class="memdesc:a029973f68136eafa0398d1933da745ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rewind directory stream.  <a href="class_os_1_1_directory.html#a029973f68136eafa0398d1933da745ae">More...</a><br /></td></tr>
+<tr class="separator:a029973f68136eafa0398d1933da745ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb03f7e58ae11546472fc4547e7afa81"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#afb03f7e58ae11546472fc4547e7afa81">read</a> (char *fileNameBuffer, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffSize) override</td></tr>
+<tr class="memdesc:afb03f7e58ae11546472fc4547e7afa81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get next filename from directory stream.  <a href="class_os_1_1_directory.html#afb03f7e58ae11546472fc4547e7afa81">More...</a><br /></td></tr>
+<tr class="separator:afb03f7e58ae11546472fc4547e7afa81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89dd96d2221784f6d33f1309985ad52a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a89dd96d2221784f6d33f1309985ad52a">close</a> () override</td></tr>
+<tr class="memdesc:a89dd96d2221784f6d33f1309985ad52a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close directory.  <a href="class_os_1_1_directory.html#a89dd96d2221784f6d33f1309985ad52a">More...</a><br /></td></tr>
+<tr class="separator:a89dd96d2221784f6d33f1309985ad52a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a617a938ae31364233f626dedb79494a6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a617a938ae31364233f626dedb79494a6">read</a> (<a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;filename)</td></tr>
+<tr class="memdesc:a617a938ae31364233f626dedb79494a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get next filename from directory stream and write it to a <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> object.  <a href="class_os_1_1_directory.html#a617a938ae31364233f626dedb79494a6">More...</a><br /></td></tr>
+<tr class="separator:a617a938ae31364233f626dedb79494a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63a8fc9ee4be8e16d9936b48619adf3c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a63a8fc9ee4be8e16d9936b48619adf3c">readDirectory</a> (<a class="el" href="class_fw_1_1_string.html">Fw::String</a> filenameArray[], const <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> arraySize, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;filenameCount)</td></tr>
+<tr class="memdesc:a63a8fc9ee4be8e16d9936b48619adf3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the contents of the directory and store filenames in filenameArray of size arraySize.  <a href="class_os_1_1_directory.html#a63a8fc9ee4be8e16d9936b48619adf3c">More...</a><br /></td></tr>
+<tr class="separator:a63a8fc9ee4be8e16d9936b48619adf3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a044b2b0a5bac7470627dd156577b0889"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory.html#a044b2b0a5bac7470627dd156577b0889">getFileCount</a> (<a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;fileCount)</td></tr>
+<tr class="memdesc:a044b2b0a5bac7470627dd156577b0889"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of files in the directory.  <a href="class_os_1_1_directory.html#a044b2b0a5bac7470627dd156577b0889">More...</a><br /></td></tr>
+<tr class="separator:a044b2b0a5bac7470627dd156577b0889"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_os_1_1_directory_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_os_1_1_directory_interface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_os_1_1_directory_interface.html">Os::DirectoryInterface</a></td></tr>
+<tr class="memitem:acba4e4ba6adef6265ae64158602bcb84 inherit pub_methods_class_os_1_1_directory_interface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory_interface.html#acba4e4ba6adef6265ae64158602bcb84">DirectoryInterface</a> ()=default</td></tr>
+<tr class="memdesc:acba4e4ba6adef6265ae64158602bcb84 inherit pub_methods_class_os_1_1_directory_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor  <a href="class_os_1_1_directory_interface.html#acba4e4ba6adef6265ae64158602bcb84">More...</a><br /></td></tr>
+<tr class="separator:acba4e4ba6adef6265ae64158602bcb84 inherit pub_methods_class_os_1_1_directory_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dc3642f54fbc3c2cad6737c3b0de442 inherit pub_methods_class_os_1_1_directory_interface"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory_interface.html#a8dc3642f54fbc3c2cad6737c3b0de442">~DirectoryInterface</a> ()=default</td></tr>
+<tr class="memdesc:a8dc3642f54fbc3c2cad6737c3b0de442 inherit pub_methods_class_os_1_1_directory_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">default virtual destructor  <a href="class_os_1_1_directory_interface.html#a8dc3642f54fbc3c2cad6737c3b0de442">More...</a><br /></td></tr>
+<tr class="separator:a8dc3642f54fbc3c2cad6737c3b0de442 inherit pub_methods_class_os_1_1_directory_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4936fd41a5a75a2173214714bb92a6c inherit pub_methods_class_os_1_1_directory_interface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory_interface.html#ae4936fd41a5a75a2173214714bb92a6c">DirectoryInterface</a> (const <a class="el" href="class_os_1_1_directory_interface.html">DirectoryInterface</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:ae4936fd41a5a75a2173214714bb92a6c inherit pub_methods_class_os_1_1_directory_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor is forbidden  <a href="class_os_1_1_directory_interface.html#ae4936fd41a5a75a2173214714bb92a6c">More...</a><br /></td></tr>
+<tr class="separator:ae4936fd41a5a75a2173214714bb92a6c inherit pub_methods_class_os_1_1_directory_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33e45a0a76e8b234960c66166f14ec7a inherit pub_methods_class_os_1_1_directory_interface"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory_interface.html">DirectoryInterface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory_interface.html#a33e45a0a76e8b234960c66166f14ec7a">operator=</a> (const <a class="el" href="class_os_1_1_directory_interface.html">DirectoryInterface</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:a33e45a0a76e8b234960c66166f14ec7a inherit pub_methods_class_os_1_1_directory_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignment operator is forbidden  <a href="class_os_1_1_directory_interface.html#a33e45a0a76e8b234960c66166f14ec7a">More...</a><br /></td></tr>
+<tr class="separator:a33e45a0a76e8b234960c66166f14ec7a inherit pub_methods_class_os_1_1_directory_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_types_class_os_1_1_directory_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_os_1_1_directory_interface')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_os_1_1_directory_interface.html">Os::DirectoryInterface</a></td></tr>
+<tr class="memitem:afba9d1501dce9ccdfa8e80672384a5fb inherit pub_types_class_os_1_1_directory_interface"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Status</a> { <br />
+&#160;&#160;<a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fba6bf36cbba630f6acae117ef3782449be">OP_OK</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fba2c574a6d9619b1198118c75f1783c837">DOESNT_EXIST</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fba4c467a1a60731a576f1d33239c2c407f">NO_PERMISSION</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fba88160a0ae985bb3d143bd19503f90a2f">NOT_OPENED</a>
+, <br />
+&#160;&#160;<a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fbae6c8ae8366c2aefe8627e6ce61b6b260">NOT_DIR</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fba727e179d367811c4aa2d4ac3c31f03cd">NO_MORE_FILES</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fbaad30eceea29b0eacb3d027f59c25c61b">FILE_LIMIT</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fbabe8f94f60e2fb9b25e096fc2dc2f6bba">BAD_DESCRIPTOR</a>
+, <br />
+&#160;&#160;<a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fbaf6937d50950b419eba133083d54505e8">ALREADY_EXISTS</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fba98d211a99117876145dc28a0f71c92c3">NOT_SUPPORTED</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fbaf07ada10e2a60c16dbac6158144229a6">OTHER_ERROR</a>
+<br />
+ }</td></tr>
+<tr class="separator:afba9d1501dce9ccdfa8e80672384a5fb inherit pub_types_class_os_1_1_directory_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae70ca6428f4d44a5688b4e4853229d37 inherit pub_types_class_os_1_1_directory_interface"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory_interface.html#ae70ca6428f4d44a5688b4e4853229d37">OpenMode</a> { <a class="el" href="class_os_1_1_directory_interface.html#ae70ca6428f4d44a5688b4e4853229d37a014e49dfbd3b393ae3ac7a812c8a76ca">READ</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#ae70ca6428f4d44a5688b4e4853229d37a3ccfa8689ddf716f3a3340d20971fb1d">CREATE_IF_MISSING</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#ae70ca6428f4d44a5688b4e4853229d37a640bd6796cb0a4a4fe5ceecc77762454">CREATE_EXCLUSIVE</a>
+, <a class="el" href="class_os_1_1_directory_interface.html#ae70ca6428f4d44a5688b4e4853229d37a0c92c55dafd376d2bfa691a208407d34">MAX_OPEN_MODE</a>
+ }</td></tr>
+<tr class="separator:ae70ca6428f4d44a5688b4e4853229d37 inherit pub_types_class_os_1_1_directory_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_methods_class_os_1_1_directory_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_os_1_1_directory_interface')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_os_1_1_directory_interface.html">Os::DirectoryInterface</a></td></tr>
+<tr class="memitem:a571e8a372e3d9add85473d72b6782e9a inherit pub_static_methods_class_os_1_1_directory_interface"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_directory_interface.html">DirectoryInterface</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_directory_interface.html#a571e8a372e3d9add85473d72b6782e9a">getDelegate</a> (<a class="el" href="os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da">HandleStorage</a> &amp;aligned_new_memory)</td></tr>
+<tr class="memdesc:a571e8a372e3d9add85473d72b6782e9a inherit pub_static_methods_class_os_1_1_directory_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">provide a pointer to a <a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> delegate object  <a href="class_os_1_1_directory_interface.html#a571e8a372e3d9add85473d72b6782e9a">More...</a><br /></td></tr>
+<tr class="separator:a571e8a372e3d9add85473d72b6782e9a inherit pub_static_methods_class_os_1_1_directory_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="directory_8hpp_source.html#l00010">10</a> of file <a class="el" href="directory_8hpp_source.html">Directory.hpp</a>.</p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a0d09f03b2a446f2c64abd8cc4e763d2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d09f03b2a446f2c64abd8cc4e763d2b">&#9670;&nbsp;</a></span>Status</h2>
+<div class="textblock"><p><a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> class. </p>
+<p>This class provides a common interface for directory operations, such as reading files in a directory and getting the number of files in a directory. </p>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Os::Directory::Status</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a0d09f03b2a446f2c64abd8cc4e763d2ba12063f75af229ebe45e9deee0da81b6b"></a>OP_OK&#160;</td><td class="fielddoc"><p>Operation was successful. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0d09f03b2a446f2c64abd8cc4e763d2bac6b3c44eab71b964b0afdb0640464dec"></a>DOESNT_EXIST&#160;</td><td class="fielddoc"><p><a class="el" href="class_os_1_1_directory.html">Directory</a> doesn't exist. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0d09f03b2a446f2c64abd8cc4e763d2ba583ef310766ff7b35e491d041dd7b27c"></a>NO_PERMISSION&#160;</td><td class="fielddoc"><p>No permission to read directory. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0d09f03b2a446f2c64abd8cc4e763d2baf3a13aee4c38e56fd25dd3d742fe72de"></a>NOT_OPENED&#160;</td><td class="fielddoc"><p><a class="el" href="class_os_1_1_directory.html">Directory</a> hasn't been opened yet. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0d09f03b2a446f2c64abd8cc4e763d2baad039fdee2eeb8fd57da6affc6c6a1d0"></a>NOT_DIR&#160;</td><td class="fielddoc"><p>Path is not a directory. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0d09f03b2a446f2c64abd8cc4e763d2ba7ad97373c21993cc801ba03a7bde0ea6"></a>NO_MORE_FILES&#160;</td><td class="fielddoc"><p><a class="el" href="class_os_1_1_directory.html">Directory</a> stream has no more files. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0d09f03b2a446f2c64abd8cc4e763d2ba2344b7f3d900fd37c50739cfa53cb1f3"></a>OTHER_ERROR&#160;</td><td class="fielddoc"><p>A catch-all for other errors. Have to look in implementation-specific code. </p>
-</td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="directory_8hpp_source.html#l00013">13</a> of file <a class="el" href="directory_8hpp_source.html">Directory.hpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<p class="definition">Definition at line <a class="el" href="directory_8hpp_source.html#l00117">117</a> of file <a class="el" href="directory_8hpp_source.html">Directory.hpp</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ac2ad860e42e95316af7b5e541c2f0a65"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac2ad860e42e95316af7b5e541c2f0a65">&#9670;&nbsp;</a></span>Directory()</h2>
 
@@ -197,12 +209,12 @@ Public Member Functions</h2></td></tr>
 
 <p>Constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00016">16</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00010">10</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ad8dd8d4f7b69171af8f48686e4fca6dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8dd8d4f7b69171af8f48686e4fca6dc">&#9670;&nbsp;</a></span>~Directory()</h2>
+<a id="ab00c74b4fdb58d92dcc0ea23d8f88eb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab00c74b4fdb58d92dcc0ea23d8f88eb5">&#9670;&nbsp;</a></span>~Directory()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -219,23 +231,27 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Destructor. Will close directory if still open. </p>
+<p>Destructor. </p>
+<p>Destructor will close the <a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> if it is open </p>
 
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00019">19</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00014">14</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3c057514945c8c806b326be8195e333b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c057514945c8c806b326be8195e333b">&#9670;&nbsp;</a></span>close()</h2>
+<a id="a89dd96d2221784f6d33f1309985ad52a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89dd96d2221784f6d33f1309985ad52a">&#9670;&nbsp;</a></span>close()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void Os::Directory::close </td>
@@ -244,53 +260,81 @@ Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>close directory </p>
+<p>Close directory. </p>
 
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00119">119</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+<p>Implements <a class="el" href="class_os_1_1_directory_interface.html#a97605f663a7ab9e1350a89f2c3f18939">Os::DirectoryInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00072">72</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
 
 </div>
 </div>
-<a id="aadfbebd6127a2d8d023406d211d5a607"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aadfbebd6127a2d8d023406d211d5a607">&#9670;&nbsp;</a></span>getLastError()</h2>
+<a id="a044b2b0a5bac7470627dd156577b0889"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a044b2b0a5bac7470627dd156577b0889">&#9670;&nbsp;</a></span>getFileCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Os::Directory::getLastError </td>
+          <td class="memname"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Directory::Status</a> Os::Directory::getFileCount </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;&#160;</td>
+          <td class="paramname"><em>fileCount</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>read back last error code (typically errno) </p>
+<p>Get the number of files in the directory. </p>
+<p>Counts the number of files in the directory by reading each file entry and writing the count to fileCount.</p>
+<p>The function first rewinds the directory stream to ensure counting starts from the beginning. After counting, it rewinds the directory stream again, resetting seek position to beginning.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fileCount</td><td>Reference to a variable where the file count will be stored. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Status indicating the result of the operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00127">127</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00082">82</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a8d9fae78c381b552d32dd082d151cdf9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d9fae78c381b552d32dd082d151cdf9">&#9670;&nbsp;</a></span>getLastErrorString()</h2>
+<a id="a55e49e8cbe10843f61078822976a90c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55e49e8cbe10843f61078822976a90c0">&#9670;&nbsp;</a></span>getHandle()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const char * Os::Directory::getLastErrorString </td>
+          <td class="memname"><a class="el" href="struct_os_1_1_directory_handle.html">DirectoryHandle</a> * Os::Directory::getHandle </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>get a string of the last error (typically from strerror) </p>
+<p>return the underlying <a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> handle (implementation specific) </p>
+<dl class="section return"><dt>Returns</dt><dd>internal <a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> handle representation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00131">131</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+<p>Implements <a class="el" href="class_os_1_1_directory_interface.html#afdc2e5f50d425dcfa9e953692d78451a">Os::DirectoryInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00025">25</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
 
 </div>
 </div>
@@ -309,42 +353,76 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>check if file descriptor is open or not. </p>
+<p>Check if <a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> is open or not. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if <a class="el" href="class_os_1_1_directory.html" title="Directory class.">Directory</a> is open, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00115">115</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00041">41</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a9ad66477c3128adf4fb1b6275f63a947"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ad66477c3128adf4fb1b6275f63a947">&#9670;&nbsp;</a></span>open()</h2>
+<a id="a0469861ff208b3a7b2626590c3d3328d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0469861ff208b3a7b2626590c3d3328d">&#9670;&nbsp;</a></span>open()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Directory::Status</a> Os::Directory::open </td>
+          <td class="memname"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Directory::Status</a> Os::Directory::open </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>dirName</em></td><td>)</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_directory_interface.html#ae70ca6428f4d44a5688b4e4853229d37">OpenMode</a>&#160;</td>
+          <td class="paramname"><em>mode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>open directory. <a class="el" href="class_os_1_1_directory.html">Directory</a> must already exist </p>
+<p>Open or create a directory. </p>
+<p>Using the path provided, this function will open or create a directory. Use OpenMode::READ to open an existing directory and error if the directory is not found Use OpenMode::CREATE_IF_MISSING to open a directory, creating the directory if it doesn't exist Use OpenMode::CREATE_EXCLUSIVE to open a directory, creating the directory and erroring if it already exists</p>
+<p>It is invalid to pass <code>nullptr</code> as the path. It is invalid to supply <code>mode</code> as a non-enumerated value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>path of directory to open </td></tr>
+    <tr><td class="paramname">mode</td><td>enum (READ, CREATE_IF_MISSING, CREATE_EXCLUSIVE). See notes above for more information </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>status of the operation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00023">23</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+<p>Implements <a class="el" href="class_os_1_1_directory_interface.html#a5f1522524d0dc540dc88fe49c320a4d8">Os::DirectoryInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00030">30</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a854069f728ea63deacfd727a6e0c572d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a854069f728ea63deacfd727a6e0c572d">&#9670;&nbsp;</a></span>read() <span class="overload">[1/2]</span></h2>
+<a id="afb03f7e58ae11546472fc4547e7afa81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb03f7e58ae11546472fc4547e7afa81">&#9670;&nbsp;</a></span>read() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Directory::Status</a> Os::Directory::read </td>
+          <td class="memname"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Directory::Status</a> Os::Directory::read </td>
           <td>(</td>
           <td class="paramtype">char *&#160;</td>
           <td class="paramname"><em>fileNameBuffer</em>, </td>
@@ -352,8 +430,92 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">U32&#160;</td>
-          <td class="paramname"><em>bufSize</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>buffSize</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get next filename from directory stream. </p>
+<p>Write at most buffSize characters of the file name to fileNameBuffer and guarantee null-termination. This function skips the current directory (.) and parent directory (..) entries. Returns NO_MORE_FILES if there are no more files to read from the buffer.</p>
+<p>It is invalid to pass <code>nullptr</code> as fileNameBuffer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fileNameBuffer</td><td>buffer to store filename </td></tr>
+    <tr><td class="paramname">buffSize</td><td>size of fileNameBuffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>status of the operation </dd></dl>
+
+<p>Implements <a class="el" href="class_os_1_1_directory_interface.html#acea3708901011388c35eb31c2abdf311">Os::DirectoryInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00053">53</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a617a938ae31364233f626dedb79494a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a617a938ae31364233f626dedb79494a6">&#9670;&nbsp;</a></span>read() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Directory::Status</a> Os::Directory::read </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get next filename from directory stream and write it to a <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td><a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> (or derived) object to store filename in </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>status of the operation </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00064">64</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a63a8fc9ee4be8e16d9936b48619adf3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63a8fc9ee4be8e16d9936b48619adf3c">&#9670;&nbsp;</a></span>readDirectory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Directory::Status</a> Os::Directory::readDirectory </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_string.html">Fw::String</a>&#160;</td>
+          <td class="paramname"><em>filenameArray</em>[], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>arraySize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;&#160;</td>
+          <td class="paramname"><em>filenameCount</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -363,74 +525,58 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>get next filename from directory </p>
+<p>Read the contents of the directory and store filenames in filenameArray of size arraySize. </p>
+<p>The function first rewinds the directory stream to ensure reading starts from the beginning. After reading, it rewinds the directory stream again, resetting seek position to beginning.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filenameArray</td><td>array to store filenames </td></tr>
+    <tr><td class="paramname">arraySize</td><td>size of filenameArray </td></tr>
+    <tr><td class="paramname">filenameCount</td><td>number of filenames written to filenameArray (output) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>status of the operation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00068">68</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00113">113</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
 
 </div>
 </div>
-<a id="af46b54619d4ee448a257065f3fced537"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af46b54619d4ee448a257065f3fced537">&#9670;&nbsp;</a></span>read() <span class="overload">[2/2]</span></h2>
+<a id="a029973f68136eafa0398d1933da745ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a029973f68136eafa0398d1933da745ae">&#9670;&nbsp;</a></span>rewind()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Directory::Status</a> Os::Directory::read </td>
-          <td>(</td>
-          <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>fileNameBuffer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">U32&#160;</td>
-          <td class="paramname"><em>bufSize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">I64 &amp;&#160;</td>
-          <td class="paramname"><em>inode</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>get next filename and inode from directory </p>
-
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00075">75</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a3d1f3bdbaeb5679eb6999cb9b6d727a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d1f3bdbaeb5679eb6999cb9b6d727a1">&#9670;&nbsp;</a></span>rewind()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_directory.html#a0d09f03b2a446f2c64abd8cc4e763d2b">Directory::Status</a> Os::Directory::rewind </td>
+          <td class="memname"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Directory::Status</a> Os::Directory::rewind </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>rewind directory stream to the beginning </p>
+<p>Rewind directory stream. </p>
+<p>Each read operation moves the seek position forward. This function resets the seek position to the beginning.</p>
+<dl class="section return"><dt>Returns</dt><dd>status of the operation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00052">52</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
+<p>Implements <a class="el" href="class_os_1_1_directory_interface.html#a2cbe43c622183ad3e51fdacc00a60ba4">Os::DirectoryInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="directory_8cpp_source.html#l00045">45</a> of file <a class="el" href="directory_8cpp_source.html">Directory.cpp</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>Os/<a class="el" href="directory_8hpp_source.html">Directory.hpp</a></li>
-<li>Os/Linux/<a class="el" href="directory_8cpp_source.html">Directory.cpp</a></li>
+<li>Os/<a class="el" href="directory_8cpp_source.html">Directory.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

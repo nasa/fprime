@@ -219,322 +219,326 @@ $(document).ready(function(){initNavTree('_dp_catalog_8cpp_source.html',''); ini
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordflow">for</span> (<a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> dir = 0; dir &lt; this-&gt;m_numDirectories; dir++) {</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            <span class="comment">// read in each directory and keep track of total</span></div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a3f54dc0767f27d42961ace9323e60661">log_ACTIVITY_LO_ProcessingDirectory</a>(this-&gt;m_directories[dir]);</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            U32 filesRead = 0;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            <a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> filesRead = 0;</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            U32 pendingFiles = 0;</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> pendingDpBytes = 0;</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <a class="code" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Os::FileSystem::Status</a> fsStat =</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                <a class="code" href="namespace_os_1_1_file_system.html#aef0e542bc6a12590a0ac50784739bd91">Os::FileSystem::readDirectory</a>(</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                    this-&gt;m_directories[dir].toChar(),</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                    <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(this-&gt;m_numDpSlots - totalFiles),</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                    this-&gt;m_fileList,</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                    filesRead</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <a class="code" href="class_os_1_1_directory.html">Os::Directory</a> dpDir;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            <a class="code" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Os::Directory::Status</a> status = dpDir.<a class="code" href="class_os_1_1_directory.html#a0469861ff208b3a7b2626590c3d3328d">open</a>(this-&gt;m_directories[dir].toChar(), Os::Directory::OpenMode::READ);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;            <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fba6bf36cbba630f6acae117ef3782449be">Os::Directory::OP_OK</a>) {</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a3da35269bc256fb3c9d49f983d8a98a4">log_WARNING_HI_DirectoryOpenError</a>(</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                    this-&gt;m_directories[dir],</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                    status</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                );</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            <span class="keywordflow">if</span> (fsStat != <a class="code" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d">Os::FileSystem::OP_OK</a>) {</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a3da35269bc256fb3c9d49f983d8a98a4">log_WARNING_HI_DirectoryOpenError</a>(</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                    this-&gt;m_directories[dir],</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                    fsStat</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                );</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            }</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            <span class="comment">// Assert number of files isn&#39;t more than asked</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                filesRead &lt;= this-&gt;m_numDpSlots - totalFiles,</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(filesRead),</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(this-&gt;m_numDpSlots - totalFiles));</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;            <span class="comment">// extract metadata for each file</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            <span class="keywordflow">for</span> (<a class="code" href="fp_config_8h.html#a09b3765868bfcaa47e2c13e366e85e94">FwNativeUIntType</a> file = 0; file &lt; filesRead; file++) {</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                <a class="code" href="class_fw_1_1_string.html">Fw::String</a> fullFile;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                fullFile.<a class="code" href="class_fw_1_1_string_base.html#a754ea496ffd09190aff70240ae66eb1a">format</a>(<span class="stringliteral">&quot;%s/%s&quot;</span>,</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                    this-&gt;m_directories[dir].toChar(),</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                    this-&gt;m_fileList[file].toChar()</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                );</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a3eae3a781d25b82d68381de887cde8fc">log_ACTIVITY_LO_ProcessingFile</a>(fullFile);</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                <span class="comment">// get file size</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                <a class="code" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> fileSize = 0;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                <a class="code" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Os::FileSystem::Status</a> sizeStat =</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                    <a class="code" href="namespace_os_1_1_file_system.html#a4dc2c43756fb8ed89c502f6d452ec473">Os::FileSystem::getFileSize</a>(fullFile.<a class="code" href="class_fw_1_1_string.html#a9f752f24c39afc3348b60f75977f6416">toChar</a>(),fileSize);</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                <span class="keywordflow">if</span> (sizeStat != <a class="code" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d">Os::FileSystem::OP_OK</a>) {</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aa2372ac968eeb7962631dbd5af170631">log_WARNING_HI_FileSizeError</a>(fullFile, sizeStat);</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                    <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                }</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> stat = dpFile.<a class="code" href="class_os_1_1_file.html#aa4e12e12643686ff6a4c0331a1b05440">open</a>(fullFile.<a class="code" href="class_fw_1_1_string.html#a9f752f24c39afc3348b60f75977f6416">toChar</a>(), <a class="code" href="class_os_1_1_file_interface.html#ada9c17ac87f4bf43ca2cd1d2817e2ceea88dfe08b3628229b095bfb6d2af50ccd">Os::File::OPEN_READ</a>);</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                <span class="keywordflow">if</span> (stat != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a255f150dbce9092144720539543e826e">log_WARNING_HI_FileOpenError</a>(fullFile, stat);</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                    <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                }</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                <span class="comment">// Read DP header</span></div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                <a class="code" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> size = <a class="code" href="struct_fw_1_1_dp_container_1_1_header.html#aa37930aed31614c5a755a25539dfad20">Fw::DpContainer::Header::SIZE</a>;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                stat = dpFile.<a class="code" href="class_os_1_1_file.html#a55e0f4531e9d22cb182a77ccda1fcb02">read</a>(dpBuff, size);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                <span class="keywordflow">if</span> (stat != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a7bef2df287afdc243e00f47b7f553ac8">log_WARNING_HI_FileReadError</a>(fullFile, stat);</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                    dpFile.<a class="code" href="class_os_1_1_file.html#a7b4e7a7dc9072f65a4bc481c3368532e">close</a>();</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                    <span class="keywordflow">continue</span>; <span class="comment">// maybe next file is fine</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                }</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                <span class="comment">// if full header isn&#39;t read, something&#39;s wrong with the file, so skip</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                <span class="keywordflow">if</span> (size != <a class="code" href="struct_fw_1_1_dp_container_1_1_header.html#aa37930aed31614c5a755a25539dfad20">Fw::DpContainer::Header::SIZE</a>) {</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a7bef2df287afdc243e00f47b7f553ac8">log_WARNING_HI_FileReadError</a>(fullFile, <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703aabe98796920c0a9daa90e364bd83fddc">Os::File::BAD_SIZE</a>);</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                    dpFile.<a class="code" href="class_os_1_1_file.html#a7b4e7a7dc9072f65a4bc481c3368532e">close</a>();</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                    <span class="keywordflow">continue</span>; <span class="comment">// maybe next file is fine</span></div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                }</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                <span class="comment">// if all is well, don&#39;t need the file any more</span></div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                dpFile.<a class="code" href="class_os_1_1_file.html#a7b4e7a7dc9072f65a4bc481c3368532e">close</a>();</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                <span class="comment">// give buffer to container instance</span></div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                container.<a class="code" href="class_fw_1_1_dp_container.html#ae57ff45be505cdf47e543df13f531bb4">setBuffer</a>(hdrBuff);</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                <span class="comment">// reset header deserialization in the container</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> desStat = container.<a class="code" href="class_fw_1_1_dp_container.html#aab76dcf7ae184b53e2ff68b6a2374ed7">deserializeHeader</a>();</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                <span class="keywordflow">if</span> (desStat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aba404769dc62dce93f875ab28ee27c00">log_WARNING_HI_FileHdrDesError</a>(fullFile, desStat);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                }</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; </div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                <span class="comment">// add entry to catalog.</span></div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                DpStateEntry entry;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                entry.dir = <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a><span class="keyword">&gt;</span>(dir);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                entry.record.setid(container.<a class="code" href="class_fw_1_1_dp_container.html#a4824996f5aaf01f22b5633d10624795e">getId</a>());</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                entry.record.setpriority(container.<a class="code" href="class_fw_1_1_dp_container.html#a8f8a9ca29f70be2e65047a40d8caac9a">getPriority</a>());</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                entry.record.setstate(container.<a class="code" href="class_fw_1_1_dp_container.html#aa6759dce4b216e6dd8221cff80e2dfd7">getState</a>());</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                entry.record.settSec(container.<a class="code" href="class_fw_1_1_dp_container.html#a306f7f8f3b1f10b265d22051dd35757f">getTimeTag</a>().<a class="code" href="class_fw_1_1_time.html#aa7c80702961e97df1f66d6107f2aba3d">getSeconds</a>());</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                entry.record.settSub(container.<a class="code" href="class_fw_1_1_dp_container.html#a306f7f8f3b1f10b265d22051dd35757f">getTimeTag</a>().<a class="code" href="class_fw_1_1_time.html#a169d2a9967c199057f50ce8f02162af5">getUSeconds</a>());</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                entry.record.setsize(<span class="keyword">static_cast&lt;</span><a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a><span class="keyword">&gt;</span>(fileSize));</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                entry.entry = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                <span class="comment">// assign the entry to the stored list</span></div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                this-&gt;m_dpList[this-&gt;m_numDpRecords] = entry;</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                <span class="comment">// insert entry into sorted list. if can&#39;t insert, quit</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                <span class="keywordflow">if</span> (not this-&gt;insertEntry(this-&gt;m_dpList[this-&gt;m_numDpRecords])) {</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a4cf92189a0939a2ef7c7f9f52682b7d5">log_WARNING_HI_DpInsertError</a>(entry.record);</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                }</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                <span class="keywordflow">if</span> (entry.record.getstate() == <a class="code" href="class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70a51d04728aa37d098611bbb877fa00d81">Fw::DpState::UNTRANSMITTED</a>) {</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                    pendingFiles++;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                    pendingDpBytes += entry.record.getsize();</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                }</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                <span class="comment">// make sure we haven&#39;t exceeded the limit</span></div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                <span class="keywordflow">if</span> (this-&gt;m_numDpRecords &gt; this-&gt;m_numDpSlots) {</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aa82e842980957b616bf2ed06431a21cc">log_WARNING_HI_DpCatalogFull</a>(entry.record);</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                }</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            } <span class="comment">// end for each file in a directory</span></div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            totalFiles += filesRead;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            }</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;            status = dpDir.<a class="code" href="class_os_1_1_directory.html#a63a8fc9ee4be8e16d9936b48619adf3c">readDirectory</a>(this-&gt;m_fileList, (this-&gt;m_numDpSlots - totalFiles), filesRead);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            <span class="keywordflow">if</span> (status != <a class="code" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fba6bf36cbba630f6acae117ef3782449be">Os::Directory::OP_OK</a>) {</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a3da35269bc256fb3c9d49f983d8a98a4">log_WARNING_HI_DirectoryOpenError</a>(</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                    this-&gt;m_directories[dir],</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                    status</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                );</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa53a1bebc36b9883aa24735ea0ca25bbe">Fw::CmdResponse::EXECUTION_ERROR</a>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            }</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            <span class="comment">// Assert number of files isn&#39;t more than asked</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                filesRead &lt;= this-&gt;m_numDpSlots - totalFiles,</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(filesRead),</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(this-&gt;m_numDpSlots - totalFiles));</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            <span class="comment">// extract metadata for each file</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <span class="keywordflow">for</span> (<a class="code" href="fp_config_8h.html#a09b3765868bfcaa47e2c13e366e85e94">FwNativeUIntType</a> file = 0; file &lt; filesRead; file++) {</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                <a class="code" href="class_fw_1_1_string.html">Fw::String</a> fullFile;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                fullFile.<a class="code" href="class_fw_1_1_string_base.html#a754ea496ffd09190aff70240ae66eb1a">format</a>(<span class="stringliteral">&quot;%s/%s&quot;</span>,</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                    this-&gt;m_directories[dir].toChar(),</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                    this-&gt;m_fileList[file].toChar()</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                );</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a3eae3a781d25b82d68381de887cde8fc">log_ACTIVITY_LO_ProcessingFile</a>(fullFile);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                <span class="comment">// get file size</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                <a class="code" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> fileSize = 0;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                <a class="code" href="class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4b">Os::FileSystem::Status</a> sizeStat =</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                    <a class="code" href="class_os_1_1_file_system.html#abb6c82d2e4e7eb7fec011a8d8d0b14a1">Os::FileSystem::getFileSize</a>(fullFile.<a class="code" href="class_fw_1_1_string.html#a9f752f24c39afc3348b60f75977f6416">toChar</a>(),fileSize);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                <span class="keywordflow">if</span> (sizeStat != <a class="code" href="class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4ba383aeea74226400a39ca4ee3580e343c">Os::FileSystem::OP_OK</a>) {</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aa2372ac968eeb7962631dbd5af170631">log_WARNING_HI_FileSizeError</a>(fullFile, sizeStat);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                    <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                }</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> stat = dpFile.<a class="code" href="class_os_1_1_file.html#aa4e12e12643686ff6a4c0331a1b05440">open</a>(fullFile.<a class="code" href="class_fw_1_1_string.html#a9f752f24c39afc3348b60f75977f6416">toChar</a>(), <a class="code" href="class_os_1_1_file_interface.html#ada9c17ac87f4bf43ca2cd1d2817e2ceea88dfe08b3628229b095bfb6d2af50ccd">Os::File::OPEN_READ</a>);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                <span class="keywordflow">if</span> (stat != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a255f150dbce9092144720539543e826e">log_WARNING_HI_FileOpenError</a>(fullFile, stat);</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                    <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                }</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                <span class="comment">// Read DP header</span></div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                <a class="code" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> size = <a class="code" href="struct_fw_1_1_dp_container_1_1_header.html#aa37930aed31614c5a755a25539dfad20">Fw::DpContainer::Header::SIZE</a>;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                stat = dpFile.<a class="code" href="class_os_1_1_file.html#a55e0f4531e9d22cb182a77ccda1fcb02">read</a>(dpBuff, size);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                <span class="keywordflow">if</span> (stat != <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::File::OP_OK</a>) {</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a7bef2df287afdc243e00f47b7f553ac8">log_WARNING_HI_FileReadError</a>(fullFile, stat);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                    dpFile.<a class="code" href="class_os_1_1_file.html#a7b4e7a7dc9072f65a4bc481c3368532e">close</a>();</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                    <span class="keywordflow">continue</span>; <span class="comment">// maybe next file is fine</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                }</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                <span class="comment">// if full header isn&#39;t read, something&#39;s wrong with the file, so skip</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                <span class="keywordflow">if</span> (size != <a class="code" href="struct_fw_1_1_dp_container_1_1_header.html#aa37930aed31614c5a755a25539dfad20">Fw::DpContainer::Header::SIZE</a>) {</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a7bef2df287afdc243e00f47b7f553ac8">log_WARNING_HI_FileReadError</a>(fullFile, <a class="code" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703aabe98796920c0a9daa90e364bd83fddc">Os::File::BAD_SIZE</a>);</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                    dpFile.<a class="code" href="class_os_1_1_file.html#a7b4e7a7dc9072f65a4bc481c3368532e">close</a>();</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                    <span class="keywordflow">continue</span>; <span class="comment">// maybe next file is fine</span></div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                }</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                <span class="comment">// if all is well, don&#39;t need the file any more</span></div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                dpFile.<a class="code" href="class_os_1_1_file.html#a7b4e7a7dc9072f65a4bc481c3368532e">close</a>();</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                <span class="comment">// give buffer to container instance</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                container.<a class="code" href="class_fw_1_1_dp_container.html#ae57ff45be505cdf47e543df13f531bb4">setBuffer</a>(hdrBuff);</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                <span class="comment">// reset header deserialization in the container</span></div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> desStat = container.<a class="code" href="class_fw_1_1_dp_container.html#aab76dcf7ae184b53e2ff68b6a2374ed7">deserializeHeader</a>();</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                <span class="keywordflow">if</span> (desStat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aba404769dc62dce93f875ab28ee27c00">log_WARNING_HI_FileHdrDesError</a>(fullFile, desStat);</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                <span class="comment">// add entry to catalog.</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                DpStateEntry entry;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                entry.dir = <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a><span class="keyword">&gt;</span>(dir);</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                entry.record.setid(container.<a class="code" href="class_fw_1_1_dp_container.html#a4824996f5aaf01f22b5633d10624795e">getId</a>());</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                entry.record.setpriority(container.<a class="code" href="class_fw_1_1_dp_container.html#a8f8a9ca29f70be2e65047a40d8caac9a">getPriority</a>());</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                entry.record.setstate(container.<a class="code" href="class_fw_1_1_dp_container.html#aa6759dce4b216e6dd8221cff80e2dfd7">getState</a>());</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                entry.record.settSec(container.<a class="code" href="class_fw_1_1_dp_container.html#a306f7f8f3b1f10b265d22051dd35757f">getTimeTag</a>().<a class="code" href="class_fw_1_1_time.html#aa7c80702961e97df1f66d6107f2aba3d">getSeconds</a>());</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                entry.record.settSub(container.<a class="code" href="class_fw_1_1_dp_container.html#a306f7f8f3b1f10b265d22051dd35757f">getTimeTag</a>().<a class="code" href="class_fw_1_1_time.html#a169d2a9967c199057f50ce8f02162af5">getUSeconds</a>());</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                entry.record.setsize(<span class="keyword">static_cast&lt;</span><a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a><span class="keyword">&gt;</span>(fileSize));</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                entry.entry = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                <span class="comment">// assign the entry to the stored list</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                this-&gt;m_dpList[this-&gt;m_numDpRecords] = entry;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                <span class="comment">// insert entry into sorted list. if can&#39;t insert, quit</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                <span class="keywordflow">if</span> (not this-&gt;insertEntry(this-&gt;m_dpList[this-&gt;m_numDpRecords])) {</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a4cf92189a0939a2ef7c7f9f52682b7d5">log_WARNING_HI_DpInsertError</a>(entry.record);</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                }</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                <span class="keywordflow">if</span> (entry.record.getstate() == <a class="code" href="class_fw_1_1_dp_state.html#a4ca06de5e6dd2ad0dc4b8059d1a83d70a51d04728aa37d098611bbb877fa00d81">Fw::DpState::UNTRANSMITTED</a>) {</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                    pendingFiles++;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                    pendingDpBytes += entry.record.getsize();</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                }</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                <span class="comment">// make sure we haven&#39;t exceeded the limit</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                <span class="keywordflow">if</span> (this-&gt;m_numDpRecords &gt; this-&gt;m_numDpSlots) {</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aa82e842980957b616bf2ed06431a21cc">log_WARNING_HI_DpCatalogFull</a>(entry.record);</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                }</div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a25f2055414afa091e8e2cfb822490c12">log_ACTIVITY_HI_ProcessingDirectoryComplete</a>(</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                this-&gt;m_directories[dir],</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(totalFiles),</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                pendingFiles,</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                pendingDpBytes</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            );</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            <span class="comment">// check to see if catalog is full</span></div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            <span class="comment">// that means generated products exceed the catalog size</span></div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="keywordflow">if</span> (totalFiles == this-&gt;m_numDpSlots) {</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aa4f9bda3fbb21391478fbc9f89807b05">log_WARNING_HI_CatalogFull</a>(this-&gt;m_directories[dir]);</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            }</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        } <span class="comment">// end for each directory</span></div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a40271dc550e6feaf7be8827b949d92b1">log_ACTIVITY_HI_CatalogBuildComplete</a>();</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>;</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    }</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160; </div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keywordtype">bool</span> DpCatalog::insertEntry(DpStateEntry&amp; entry) {</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        <span class="comment">// Prototype version: Just add the record to the end of the list</span></div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        this-&gt;m_sortedDpList[this-&gt;m_numDpRecords].recPtr = &amp;entry;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        this-&gt;m_sortedDpList[this-&gt;m_numDpRecords].sent = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        this-&gt;m_numDpRecords++;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    }</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            } <span class="comment">// end for each file in a directory</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            totalFiles += filesRead;</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a25f2055414afa091e8e2cfb822490c12">log_ACTIVITY_HI_ProcessingDirectoryComplete</a>(</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                this-&gt;m_directories[dir],</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(totalFiles),</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                pendingFiles,</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                pendingDpBytes</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            );</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="comment">// check to see if catalog is full</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            <span class="comment">// that means generated products exceed the catalog size</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;            <span class="keywordflow">if</span> (totalFiles == this-&gt;m_numDpSlots) {</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aa4f9bda3fbb21391478fbc9f89807b05">log_WARNING_HI_CatalogFull</a>(this-&gt;m_directories[dir]);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            }</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        } <span class="comment">// end for each directory</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a40271dc550e6feaf7be8827b949d92b1">log_ACTIVITY_HI_CatalogBuildComplete</a>();</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="keywordtype">bool</span> DpCatalog::insertEntry(DpStateEntry&amp; entry) {</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        <span class="comment">// Prototype version: Just add the record to the end of the list</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        this-&gt;m_sortedDpList[this-&gt;m_numDpRecords].recPtr = &amp;entry;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        this-&gt;m_sortedDpList[this-&gt;m_numDpRecords].sent = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        this-&gt;m_numDpRecords++;</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordtype">void</span> DpCatalog::deleteEntry(DpStateEntry&amp; entry) {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
 <div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    }</div>
 <div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160; </div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keywordtype">void</span> DpCatalog::sendNextEntry() {</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keywordtype">void</span> DpCatalog::deleteEntry(DpStateEntry&amp; entry) {</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        <span class="comment">// Make sure that pointer is valid</span></div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_sortedDpList);</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        <span class="comment">// Demo code: Walk through list and send first file</span></div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        <span class="keywordflow">for</span> (<a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> record = 0; record &lt; this-&gt;m_numDpRecords; record++) {</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            <span class="keywordflow">if</span> (not this-&gt;m_sortedDpList[record].sent) {</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                <span class="comment">// make sure the entry is used</span></div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                <span class="keywordflow">if</span> (this-&gt;m_sortedDpList[record].recPtr != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                    <span class="comment">// store pointer to record for fileDone callback</span></div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                    this-&gt;m_currXmitRecord = &amp;this-&gt;m_sortedDpList[record];</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                    <span class="comment">// build file name</span></div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                    this-&gt;m_currXmitFileName.<a class="code" href="class_fw_1_1_string_base.html#a754ea496ffd09190aff70240ae66eb1a">format</a>(<a class="code" href="dp_cfg_8hpp.html#a19bb43285ef6e5365757542df5f269d9">DP_FILENAME_FORMAT</a>,</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                        this-&gt;m_directories[this-&gt;m_sortedDpList[record].recPtr-&gt;dir].toChar(),</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                        this-&gt;m_sortedDpList[record].recPtr-&gt;record.getid(),</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                        this-&gt;m_sortedDpList[record].recPtr-&gt;record.gettSec(),</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                        this-&gt;m_sortedDpList[record].recPtr-&gt;record.gettSub()</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                    );</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a2d425483153e2d189275c4615c6b0192">log_ACTIVITY_LO_SendingProduct</a>(</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                        this-&gt;m_currXmitFileName,</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                        <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(this-&gt;m_sortedDpList[record].recPtr-&gt;record.getsize()),</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                        this-&gt;m_sortedDpList[record].recPtr-&gt;record.getpriority()</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                        );</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a103bb103d9316aad040d8055a431fe6f">fileOut_out</a>(0, this-&gt;m_currXmitFileName, this-&gt;m_currXmitFileName, 0, 0);</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                    this-&gt;m_xmitBytes += this-&gt;m_sortedDpList[record].recPtr-&gt;record.getsize();</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                    <span class="comment">// quit looking when we find an entry</span></div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                }</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                <span class="comment">// clean up record</span></div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                this-&gt;m_sortedDpList[record].sent = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            }</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        }</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <span class="comment">// if none were found, finish transmission</span></div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#ac8e8913efff96b267042d45d4ecc0013">log_ACTIVITY_HI_CatalogXmitCompleted</a>(this-&gt;m_xmitBytes);</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        this-&gt;m_xmitInProgress = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        this-&gt;m_xmitBytes = 0;</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        this-&gt;m_currXmitRecord = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_xmitCmdWait) {</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;            this-&gt;m_xmitCmdWait = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(this-&gt;m_xmitOpCode, this-&gt;m_xmitCmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>);</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        }</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160; </div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    }</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160; </div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="keywordtype">bool</span> DpCatalog::checkInit() {</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;        <span class="keywordflow">if</span> (not this-&gt;m_initialized) {</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a761ec7b7a58cc00a8d9b3f4e95240d46">log_WARNING_HI_ComponentNotInitialized</a>();</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        }</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (0 == this-&gt;m_numDpSlots) {</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a8e72bda59bd21951471e5b6a5c19181d">log_WARNING_HI_ComponentNoMemory</a>();</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    }</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <span class="keywordtype">void</span> DpCatalog::sendNextEntry() {</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        <span class="comment">// Make sure that pointer is valid</span></div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_sortedDpList);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        <span class="comment">// Demo code: Walk through list and send first file</span></div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        <span class="keywordflow">for</span> (<a class="code" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> record = 0; record &lt; this-&gt;m_numDpRecords; record++) {</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            <span class="keywordflow">if</span> (not this-&gt;m_sortedDpList[record].sent) {</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                <span class="comment">// make sure the entry is used</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                <span class="keywordflow">if</span> (this-&gt;m_sortedDpList[record].recPtr != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                    <span class="comment">// store pointer to record for fileDone callback</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                    this-&gt;m_currXmitRecord = &amp;this-&gt;m_sortedDpList[record];</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                    <span class="comment">// build file name</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                    this-&gt;m_currXmitFileName.<a class="code" href="class_fw_1_1_string_base.html#a754ea496ffd09190aff70240ae66eb1a">format</a>(<a class="code" href="dp_cfg_8hpp.html#a19bb43285ef6e5365757542df5f269d9">DP_FILENAME_FORMAT</a>,</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                        this-&gt;m_directories[this-&gt;m_sortedDpList[record].recPtr-&gt;dir].toChar(),</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                        this-&gt;m_sortedDpList[record].recPtr-&gt;record.getid(),</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                        this-&gt;m_sortedDpList[record].recPtr-&gt;record.gettSec(),</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                        this-&gt;m_sortedDpList[record].recPtr-&gt;record.gettSub()</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                    );</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a2d425483153e2d189275c4615c6b0192">log_ACTIVITY_LO_SendingProduct</a>(</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                        this-&gt;m_currXmitFileName,</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                        <span class="keyword">static_cast&lt;</span>U32<span class="keyword">&gt;</span>(this-&gt;m_sortedDpList[record].recPtr-&gt;record.getsize()),</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                        this-&gt;m_sortedDpList[record].recPtr-&gt;record.getpriority()</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                        );</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                    this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a103bb103d9316aad040d8055a431fe6f">fileOut_out</a>(0, this-&gt;m_currXmitFileName, this-&gt;m_currXmitFileName, 0, 0);</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                    this-&gt;m_xmitBytes += this-&gt;m_sortedDpList[record].recPtr-&gt;record.getsize();</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                    <span class="comment">// quit looking when we find an entry</span></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                }</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                <span class="comment">// clean up record</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                this-&gt;m_sortedDpList[record].sent = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            }</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        }</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160; </div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        <span class="comment">// if none were found, finish transmission</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#ac8e8913efff96b267042d45d4ecc0013">log_ACTIVITY_HI_CatalogXmitCompleted</a>(this-&gt;m_xmitBytes);</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        this-&gt;m_xmitInProgress = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        this-&gt;m_xmitBytes = 0;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        this-&gt;m_currXmitRecord = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_xmitCmdWait) {</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;            this-&gt;m_xmitCmdWait = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(this-&gt;m_xmitOpCode, this-&gt;m_xmitCmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>);</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        }</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    }</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <span class="keywordtype">bool</span> DpCatalog::checkInit() {</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        <span class="keywordflow">if</span> (not this-&gt;m_initialized) {</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a761ec7b7a58cc00a8d9b3f4e95240d46">log_WARNING_HI_ComponentNotInitialized</a>();</div>
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        }</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160; </div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    }</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
-<div class="line"><a name="l00340"></a><span class="lineno"><a class="line" href="class_svc_1_1_dp_catalog.html#a8ae0e41b31a01a7e0f90b3a6943ff5a2">  340</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_dp_catalog.html#a8ae0e41b31a01a7e0f90b3a6943ff5a2">DpCatalog::shutdown</a>() {</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        <span class="comment">// only try to deallocate if both pointers are non-zero</span></div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        <span class="comment">// it&#39;s a way to more gracefully shut down if there are missing</span></div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;        <span class="comment">// pointers</span></div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        <span class="keywordflow">if</span> ((this-&gt;m_allocator != <span class="keyword">nullptr</span>) and (this-&gt;m_memPtr != <span class="keyword">nullptr</span>)) {</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;            this-&gt;m_allocator-&gt;<a class="code" href="class_fw_1_1_mem_allocator.html#a46f9969e0f65acc30b7f2a2eda1393a2">deallocate</a>(this-&gt;m_allocatorId, this-&gt;m_memPtr);</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;        }</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160; </div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    }</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160; </div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (0 == this-&gt;m_numDpSlots) {</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a8e72bda59bd21951471e5b6a5c19181d">log_WARNING_HI_ComponentNoMemory</a>();</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        }</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160; </div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    }</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
+<div class="line"><a name="l00344"></a><span class="lineno"><a class="line" href="class_svc_1_1_dp_catalog.html#a8ae0e41b31a01a7e0f90b3a6943ff5a2">  344</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_dp_catalog.html#a8ae0e41b31a01a7e0f90b3a6943ff5a2">DpCatalog::shutdown</a>() {</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        <span class="comment">// only try to deallocate if both pointers are non-zero</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;        <span class="comment">// it&#39;s a way to more gracefully shut down if there are missing</span></div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        <span class="comment">// pointers</span></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;        <span class="keywordflow">if</span> ((this-&gt;m_allocator != <span class="keyword">nullptr</span>) and (this-&gt;m_memPtr != <span class="keyword">nullptr</span>)) {</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;            this-&gt;m_allocator-&gt;<a class="code" href="class_fw_1_1_mem_allocator.html#a46f9969e0f65acc30b7f2a2eda1393a2">deallocate</a>(this-&gt;m_allocatorId, this-&gt;m_memPtr);</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;        }</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    }</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160; </div>
 <div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160; </div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        fileDone_handler(</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;            <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;            <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a>&amp; resp</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        )</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    {</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_currXmitRecord) {</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            this-&gt;m_currXmitRecord-&gt;sent = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#ae7a5f234ad311ea1b247b782bfa3dd5b">log_ACTIVITY_LO_ProductComplete</a>(this-&gt;m_currXmitFileName);</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        }</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160; </div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        this-&gt;sendNextEntry();</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    }</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160; </div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        pingIn_handler(</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;            U32 key</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        )</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    {</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;        <span class="comment">// return code for health ping</span></div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aa0f5697df3579da0a5773f50eafa08da">pingOut_out</a>(0, key);</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    }</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160; </div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    <span class="comment">// Handler implementations for commands</span></div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        fileDone_handler(</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;            <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            <span class="keyword">const</span> <a class="code" href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a>&amp; resp</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        )</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    {</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_currXmitRecord) {</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;            this-&gt;m_currXmitRecord-&gt;sent = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#ae7a5f234ad311ea1b247b782bfa3dd5b">log_ACTIVITY_LO_ProductComplete</a>(this-&gt;m_currXmitFileName);</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        }</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        this-&gt;sendNextEntry();</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    }</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        pingIn_handler(</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;            <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;            U32 key</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        )</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    {</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        <span class="comment">// return code for health ping</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#aa0f5697df3579da0a5773f50eafa08da">pingOut_out</a>(0, key);</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    }</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160; </div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;        BUILD_CATALOG_cmdHandler(</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;            <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;            U32 cmdSeq</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;        )</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    {</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        <span class="comment">// invoke helper</span></div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(opCode, cmdSeq, this-&gt;doCatalogBuild());</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    }</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160; </div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;        START_XMIT_CATALOG_cmdHandler(</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;            <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;            U32 cmdSeq,</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;            <a class="code" href="class_fw_1_1_wait.html">Fw::Wait</a> wait</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;        )</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    {</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160; </div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        <a class="code" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> resp = this-&gt;doCatalogXmit();</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160; </div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="class_fw_1_1_wait.html#aebe51ea50c491faf1062c6b1ed6fdb35a4a348134b3ff4c9a2c69ce6d005a7384">Fw::Wait::NO_WAIT</a> == wait) {</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(opCode, cmdSeq, resp);</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;            this-&gt;m_xmitCmdWait = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;            this-&gt;m_xmitOpCode = 0;</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;            this-&gt;m_xmitCmdSeq = 0;</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;        }</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;        <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;            this-&gt;m_xmitCmdWait = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;            this-&gt;m_xmitOpCode = opCode;</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;            this-&gt;m_xmitCmdSeq = cmdSeq;</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;        }</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160; </div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    }</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160; </div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    <a class="code" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> DpCatalog::doCatalogXmit() {</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="comment">// Handler implementations for commands</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160; </div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        BUILD_CATALOG_cmdHandler(</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;            <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;            U32 cmdSeq</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        )</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    {</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;        <span class="comment">// invoke helper</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(opCode, cmdSeq, this-&gt;doCatalogBuild());</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    }</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160; </div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;        START_XMIT_CATALOG_cmdHandler(</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;            <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            U32 cmdSeq,</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;            <a class="code" href="class_fw_1_1_wait.html">Fw::Wait</a> wait</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;        )</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    {</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;        <a class="code" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> resp = this-&gt;doCatalogXmit();</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160; </div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="class_fw_1_1_wait.html#aebe51ea50c491faf1062c6b1ed6fdb35a4a348134b3ff4c9a2c69ce6d005a7384">Fw::Wait::NO_WAIT</a> == wait) {</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;            this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(opCode, cmdSeq, resp);</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;            this-&gt;m_xmitCmdWait = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;            this-&gt;m_xmitOpCode = 0;</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;            this-&gt;m_xmitCmdSeq = 0;</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        }</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;            this-&gt;m_xmitCmdWait = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;            this-&gt;m_xmitOpCode = opCode;</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;            this-&gt;m_xmitCmdSeq = cmdSeq;</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        }</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160; </div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        this-&gt;m_xmitBytes = 0;</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;        this-&gt;sendNextEntry();</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>;</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    }</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160; </div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    <a class="code" href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a> DpCatalog::doCatalogXmit() {</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160; </div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    }</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160; </div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160; </div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;        STOP_XMIT_CATALOG_cmdHandler(</div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;            <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;            U32 cmdSeq</div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;        )</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    {</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;        <span class="comment">// TODO</span></div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>);</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    }</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160; </div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        CLEAR_CATALOG_cmdHandler(</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;            <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;            U32 cmdSeq</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;        )</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    {</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        <span class="comment">// TODO</span></div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>);</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;    }</div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160; </div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160; </div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;}</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        this-&gt;m_xmitBytes = 0;</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;        this-&gt;sendNextEntry();</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>;</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160; </div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    }</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160; </div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160; </div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;        STOP_XMIT_CATALOG_cmdHandler(</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;            <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;            U32 cmdSeq</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;        )</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;    {</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;        <span class="comment">// TODO</span></div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>);</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;    }</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160; </div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    <span class="keywordtype">void</span> DpCatalog ::</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;        CLEAR_CATALOG_cmdHandler(</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;            <a class="code" href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a> opCode,</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;            U32 cmdSeq</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;        )</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;    {</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;        <span class="comment">// TODO</span></div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;        this-&gt;<a class="code" href="class_svc_1_1_dp_catalog_component_base.html#a1f2423308b989dbb99a55a6c01ef64c4">cmdResponse_out</a>(opCode, cmdSeq, <a class="code" href="class_fw_1_1_cmd_response.html#a11efba39f348ef613be7e74462d54a1aa93403485b742a522ea566fde253570e8">Fw::CmdResponse::OK</a>);</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    }</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160; </div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160; </div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;}</div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00026">BasicTypes.h:26</a></div></div>
@@ -544,12 +548,12 @@ $(document).ready(function(){initNavTree('_dp_catalog_8cpp_source.html',''); ini
 <div class="ttc" id="a_dp_container_8hpp_html"><div class="ttname"><a href="dp_container_8hpp.html">DpContainer.hpp</a></div></div>
 <div class="ttc" id="a_file_8hpp_html"><div class="ttname"><a href="file_8hpp.html">File.hpp</a></div></div>
 <div class="ttc" id="a_file_system_8hpp_html"><div class="ttname"><a href="file_system_8hpp.html">FileSystem.hpp</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_a088216dbd07b926d5234aeaf1a18cd7d"><div class="ttname"><a href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a></div><div class="ttdeci">PlatformAssertArgType FwAssertArgType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00034">FpConfig.h:34</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_a09b3765868bfcaa47e2c13e366e85e94"><div class="ttname"><a href="fp_config_8h.html#a09b3765868bfcaa47e2c13e366e85e94">FwNativeUIntType</a></div><div class="ttdeci">PlatformUIntType FwNativeUIntType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00042">FpConfig.h:42</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_a35ac17e31b824c0c8bacc06d6489b2f1"><div class="ttname"><a href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a></div><div class="ttdeci">PlatformSignedSizeType FwSignedSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00025">FpConfig.h:25</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00078">FpConfig.h:78</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_a924ef0ded73e6ec8a0a0b55e9e555fc4"><div class="ttname"><a href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a></div><div class="ttdeci">PlatformSizeType FwSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00030">FpConfig.h:30</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_ae749c35cd3698820ac4e0182efa2ac4e"><div class="ttname"><a href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a></div><div class="ttdeci">PlatformIndexType FwIndexType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00020">FpConfig.h:20</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a088216dbd07b926d5234aeaf1a18cd7d"><div class="ttname"><a href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a></div><div class="ttdeci">PlatformAssertArgType FwAssertArgType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00035">FpConfig.h:35</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a09b3765868bfcaa47e2c13e366e85e94"><div class="ttname"><a href="fp_config_8h.html#a09b3765868bfcaa47e2c13e366e85e94">FwNativeUIntType</a></div><div class="ttdeci">PlatformUIntType FwNativeUIntType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00043">FpConfig.h:43</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a35ac17e31b824c0c8bacc06d6489b2f1"><div class="ttname"><a href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a></div><div class="ttdeci">PlatformSignedSizeType FwSignedSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00026">FpConfig.h:26</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8h.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00079">FpConfig.h:79</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a924ef0ded73e6ec8a0a0b55e9e555fc4"><div class="ttname"><a href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a></div><div class="ttdeci">PlatformSizeType FwSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00031">FpConfig.h:31</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_ae749c35cd3698820ac4e0182efa2ac4e"><div class="ttname"><a href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a></div><div class="ttdeci">PlatformIndexType FwIndexType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00021">FpConfig.h:21</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">C++-compatible configuration header for fprime configuration.</div></div>
 <div class="ttc" id="aclass_fw_1_1_buffer_html"><div class="ttname"><a href="class_fw_1_1_buffer.html">Fw::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8hpp_source.html#l00043">Buffer.hpp:43</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_cmd_response_html"><div class="ttname"><a href="class_fw_1_1_cmd_response.html">Fw::CmdResponse</a></div><div class="ttdoc">Enum representing a command response.</div><div class="ttdef"><b>Definition:</b> <a href="cmd_response_enum_ac_8hpp_source.html#l00017">CmdResponseEnumAc.hpp:19</a></div></div>
@@ -575,6 +579,11 @@ $(document).ready(function(){initNavTree('_dp_catalog_8cpp_source.html',''); ini
 <div class="ttc" id="aclass_fw_1_1_time_html_aa7c80702961e97df1f66d6107f2aba3d"><div class="ttname"><a href="class_fw_1_1_time.html#aa7c80702961e97df1f66d6107f2aba3d">Fw::Time::getSeconds</a></div><div class="ttdeci">U32 getSeconds() const</div><div class="ttdef"><b>Definition:</b> <a href="time_8cpp_source.html#l00135">Time.cpp:135</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_wait_html"><div class="ttname"><a href="class_fw_1_1_wait.html">Fw::Wait</a></div><div class="ttdoc">Wait or don't wait for something.</div><div class="ttdef"><b>Definition:</b> <a href="wait_enum_ac_8hpp_source.html#l00017">WaitEnumAc.hpp:19</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_wait_html_aebe51ea50c491faf1062c6b1ed6fdb35a4a348134b3ff4c9a2c69ce6d005a7384"><div class="ttname"><a href="class_fw_1_1_wait.html#aebe51ea50c491faf1062c6b1ed6fdb35a4a348134b3ff4c9a2c69ce6d005a7384">Fw::Wait::NO_WAIT</a></div><div class="ttdeci">@ NO_WAIT</div><div class="ttdef"><b>Definition:</b> <a href="wait_enum_ac_8hpp_source.html#l00033">WaitEnumAc.hpp:33</a></div></div>
+<div class="ttc" id="aclass_os_1_1_directory_html"><div class="ttname"><a href="class_os_1_1_directory.html">Os::Directory</a></div><div class="ttdoc">Directory class.</div><div class="ttdef"><b>Definition:</b> <a href="directory_8hpp_source.html#l00117">Directory.hpp:117</a></div></div>
+<div class="ttc" id="aclass_os_1_1_directory_html_a0469861ff208b3a7b2626590c3d3328d"><div class="ttname"><a href="class_os_1_1_directory.html#a0469861ff208b3a7b2626590c3d3328d">Os::Directory::open</a></div><div class="ttdeci">Status open(const char *path, OpenMode mode) override</div><div class="ttdoc">Open or create a directory.</div><div class="ttdef"><b>Definition:</b> <a href="directory_8cpp_source.html#l00030">Directory.cpp:30</a></div></div>
+<div class="ttc" id="aclass_os_1_1_directory_html_a63a8fc9ee4be8e16d9936b48619adf3c"><div class="ttname"><a href="class_os_1_1_directory.html#a63a8fc9ee4be8e16d9936b48619adf3c">Os::Directory::readDirectory</a></div><div class="ttdeci">Status readDirectory(Fw::String filenameArray[], const FwSizeType arraySize, FwSizeType &amp;filenameCount)</div><div class="ttdoc">Read the contents of the directory and store filenames in filenameArray of size arraySize.</div><div class="ttdef"><b>Definition:</b> <a href="directory_8cpp_source.html#l00113">Directory.cpp:113</a></div></div>
+<div class="ttc" id="aclass_os_1_1_directory_interface_html_afba9d1501dce9ccdfa8e80672384a5fb"><div class="ttname"><a href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Os::DirectoryInterface::Status</a></div><div class="ttdeci">Status</div><div class="ttdef"><b>Definition:</b> <a href="directory_8hpp_source.html#l00019">Directory.hpp:19</a></div></div>
+<div class="ttc" id="aclass_os_1_1_directory_interface_html_afba9d1501dce9ccdfa8e80672384a5fba6bf36cbba630f6acae117ef3782449be"><div class="ttname"><a href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fba6bf36cbba630f6acae117ef3782449be">Os::DirectoryInterface::OP_OK</a></div><div class="ttdeci">@ OP_OK</div><div class="ttdoc">Operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="directory_8hpp_source.html#l00020">Directory.hpp:20</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html"><div class="ttname"><a href="class_os_1_1_file.html">Os::File</a></div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00214">File.hpp:214</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_a55e0f4531e9d22cb182a77ccda1fcb02"><div class="ttname"><a href="class_os_1_1_file.html#a55e0f4531e9d22cb182a77ccda1fcb02">Os::File::read</a></div><div class="ttdeci">Status read(U8 *buffer, FwSignedSizeType &amp;size)</div><div class="ttdoc">read data from this file into supplied buffer bounded by size</div><div class="ttdef"><b>Definition:</b> <a href="os_2_file_8cpp_source.html#l00143">File.cpp:143</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_a7b4e7a7dc9072f65a4bc481c3368532e"><div class="ttname"><a href="class_os_1_1_file.html#a7b4e7a7dc9072f65a4bc481c3368532e">Os::File::close</a></div><div class="ttdeci">void close() override</div><div class="ttdoc">close the file, if not opened then do nothing</div><div class="ttdef"><b>Definition:</b> <a href="os_2_file_8cpp_source.html#l00070">File.cpp:70</a></div></div>
@@ -583,6 +592,9 @@ $(document).ready(function(){initNavTree('_dp_catalog_8cpp_source.html',''); ini
 <div class="ttc" id="aclass_os_1_1_file_interface_html_ab25fd826bc916398d70a8232f326b703aabe98796920c0a9daa90e364bd83fddc"><div class="ttname"><a href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703aabe98796920c0a9daa90e364bd83fddc">Os::FileInterface::BAD_SIZE</a></div><div class="ttdeci">@ BAD_SIZE</div><div class="ttdoc">Invalid size parameter.</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00034">File.hpp:34</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_interface_html_ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2"><div class="ttname"><a href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703ab45dc24e112977dd5a20d571a606aeb2">Os::FileInterface::OP_OK</a></div><div class="ttdeci">@ OP_OK</div><div class="ttdoc">Operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00030">File.hpp:30</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_interface_html_ada9c17ac87f4bf43ca2cd1d2817e2ceea88dfe08b3628229b095bfb6d2af50ccd"><div class="ttname"><a href="class_os_1_1_file_interface.html#ada9c17ac87f4bf43ca2cd1d2817e2ceea88dfe08b3628229b095bfb6d2af50ccd">Os::FileInterface::OPEN_READ</a></div><div class="ttdeci">@ OPEN_READ</div><div class="ttdoc">Open file for reading.</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00021">File.hpp:21</a></div></div>
+<div class="ttc" id="aclass_os_1_1_file_system_html_abb6c82d2e4e7eb7fec011a8d8d0b14a1"><div class="ttname"><a href="class_os_1_1_file_system.html#abb6c82d2e4e7eb7fec011a8d8d0b14a1">Os::FileSystem::getFileSize</a></div><div class="ttdeci">static Status getFileSize(const char *path, FwSignedSizeType &amp;size)</div><div class="ttdoc">Get the size of the file (in bytes) at the specified path.</div><div class="ttdef"><b>Definition:</b> <a href="file_system_8cpp_source.html#l00229">FileSystem.cpp:229</a></div></div>
+<div class="ttc" id="aclass_os_1_1_file_system_interface_html_a2dc5e556bc195320f2e7a9feeb9e4b4b"><div class="ttname"><a href="class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4b">Os::FileSystemInterface::Status</a></div><div class="ttdeci">Status</div><div class="ttdef"><b>Definition:</b> <a href="file_system_8hpp_source.html#l00024">FileSystem.hpp:24</a></div></div>
+<div class="ttc" id="aclass_os_1_1_file_system_interface_html_a2dc5e556bc195320f2e7a9feeb9e4b4ba383aeea74226400a39ca4ee3580e343c"><div class="ttname"><a href="class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4ba383aeea74226400a39ca4ee3580e343c">Os::FileSystemInterface::OP_OK</a></div><div class="ttdeci">@ OP_OK</div><div class="ttdoc">Operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="file_system_8hpp_source.html#l00025">FileSystem.hpp:25</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_dp_catalog_component_base_html"><div class="ttname"><a href="class_svc_1_1_dp_catalog_component_base.html">Svc::DpCatalogComponentBase</a></div><div class="ttdoc">Auto-generated base for DpCatalog component.</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_component_ac_8hpp_source.html#l00039">DpCatalogComponentAc.hpp:41</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_dp_catalog_component_base_html_a103bb103d9316aad040d8055a431fe6f"><div class="ttname"><a href="class_svc_1_1_dp_catalog_component_base.html#a103bb103d9316aad040d8055a431fe6f">Svc::DpCatalogComponentBase::fileOut_out</a></div><div class="ttdeci">Svc::SendFileResponse fileOut_out(FwIndexType portNum, const Fw::StringBase &amp;sourceFileName, const Fw::StringBase &amp;destFileName, U32 offset, U32 length)</div><div class="ttdoc">Invoke output port fileOut.</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_component_ac_8cpp_source.html#l00984">DpCatalogComponentAc.cpp:985</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_dp_catalog_component_base_html_a149be5b46a9ff8cced451ed149a1c415"><div class="ttname"><a href="class_svc_1_1_dp_catalog_component_base.html#a149be5b46a9ff8cced451ed149a1c415">Svc::DpCatalogComponentBase::log_WARNING_LO_DpXmitInProgress</a></div><div class="ttdeci">void log_WARNING_LO_DpXmitInProgress()</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_component_ac_8cpp_source.html#l03117">DpCatalogComponentAc.cpp:3118</a></div></div>
@@ -607,15 +619,11 @@ $(document).ready(function(){initNavTree('_dp_catalog_8cpp_source.html',''); ini
 <div class="ttc" id="aclass_svc_1_1_dp_catalog_component_base_html_ae7a5f234ad311ea1b247b782bfa3dd5b"><div class="ttname"><a href="class_svc_1_1_dp_catalog_component_base.html#ae7a5f234ad311ea1b247b782bfa3dd5b">Svc::DpCatalogComponentBase::log_ACTIVITY_LO_ProductComplete</a></div><div class="ttdeci">void log_ACTIVITY_LO_ProductComplete(const Fw::StringBase &amp;file)</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_component_ac_8cpp_source.html#l02101">DpCatalogComponentAc.cpp:2102</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_dp_catalog_html_a14b4189093050b9a46a8e4b2c783171c"><div class="ttname"><a href="class_svc_1_1_dp_catalog.html#a14b4189093050b9a46a8e4b2c783171c">Svc::DpCatalog::configure</a></div><div class="ttdeci">void configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES], FwSizeType numDirs, NATIVE_UINT_TYPE memId, Fw::MemAllocator &amp;allocator)</div><div class="ttdoc">Configure the DpCatalog.</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_8cpp_source.html#l00048">DpCatalog.cpp:48</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_dp_catalog_html_a8135c4202918541dd1dff3041fefb8b7"><div class="ttname"><a href="class_svc_1_1_dp_catalog.html#a8135c4202918541dd1dff3041fefb8b7">Svc::DpCatalog::DpCatalog</a></div><div class="ttdeci">DpCatalog(const char *const compName)</div><div class="ttdoc">DpCatalog constructor.</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_8cpp_source.html#l00021">DpCatalog.cpp:22</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_dp_catalog_html_a8ae0e41b31a01a7e0f90b3a6943ff5a2"><div class="ttname"><a href="class_svc_1_1_dp_catalog.html#a8ae0e41b31a01a7e0f90b3a6943ff5a2">Svc::DpCatalog::shutdown</a></div><div class="ttdeci">void shutdown()</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_8cpp_source.html#l00340">DpCatalog.cpp:340</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_dp_catalog_html_a8ae0e41b31a01a7e0f90b3a6943ff5a2"><div class="ttname"><a href="class_svc_1_1_dp_catalog.html#a8ae0e41b31a01a7e0f90b3a6943ff5a2">Svc::DpCatalog::shutdown</a></div><div class="ttdeci">void shutdown()</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_8cpp_source.html#l00344">DpCatalog.cpp:344</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_dp_catalog_html_ae3df2e203f8385d196da0eb070572988"><div class="ttname"><a href="class_svc_1_1_dp_catalog.html#ae3df2e203f8385d196da0eb070572988">Svc::DpCatalog::~DpCatalog</a></div><div class="ttdeci">~DpCatalog()</div><div class="ttdoc">DpCatalog destructor.</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_8cpp_source.html#l00044">DpCatalog.cpp:45</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_send_file_response_html"><div class="ttname"><a href="class_svc_1_1_send_file_response.html">Svc::SendFileResponse</a></div><div class="ttdoc">Send file response struct.</div><div class="ttdef"><b>Definition:</b> <a href="send_file_response_serializable_ac_8hpp_source.html#l00019">SendFileResponseSerializableAc.hpp:21</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a></div><div class="ttdeci">SerializeStatus</div><div class="ttdoc">forward declaration for string</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00014">Serializable.hpp:14</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a></div><div class="ttdeci">@ FW_SERIALIZE_OK</div><div class="ttdoc">Serialization/Deserialization operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00015">Serializable.hpp:15</a></div></div>
-<div class="ttc" id="anamespace_os_1_1_file_system_html_a4dc2c43756fb8ed89c502f6d452ec473"><div class="ttname"><a href="namespace_os_1_1_file_system.html#a4dc2c43756fb8ed89c502f6d452ec473">Os::FileSystem::getFileSize</a></div><div class="ttdeci">Status getFileSize(const char *path, FwSizeType &amp;size)</div><div class="ttdef"><b>Definition:</b> <a href="baremetal_2_file_system_8cpp_source.html#l00038">FileSystem.cpp:38</a></div></div>
-<div class="ttc" id="anamespace_os_1_1_file_system_html_a8bcd5b75e145d2e7f77d68eec9b5ca9f"><div class="ttname"><a href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Os::FileSystem::Status</a></div><div class="ttdeci">Status</div><div class="ttdef"><b>Definition:</b> <a href="file_system_8hpp_source.html#l00014">FileSystem.hpp:14</a></div></div>
-<div class="ttc" id="anamespace_os_1_1_file_system_html_a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d"><div class="ttname"><a href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d">Os::FileSystem::OP_OK</a></div><div class="ttdeci">@ OP_OK</div><div class="ttdoc">Operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="file_system_8hpp_source.html#l00015">FileSystem.hpp:15</a></div></div>
-<div class="ttc" id="anamespace_os_1_1_file_system_html_aef0e542bc6a12590a0ac50784739bd91"><div class="ttname"><a href="namespace_os_1_1_file_system.html#aef0e542bc6a12590a0ac50784739bd91">Os::FileSystem::readDirectory</a></div><div class="ttdeci">Status readDirectory(const char *path, const U32 maxNum, Fw::String fileArray[], U32 &amp;numFiles)</div><div class="ttdoc">read the contents of a directory. Size of fileArray should be maxNum. Cleaner implementation found in...</div><div class="ttdef"><b>Definition:</b> <a href="baremetal_2_file_system_8cpp_source.html#l00016">FileSystem.cpp:16</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_cfg_8hpp_source.html#l00018">ActiveRateGroupCfg.hpp:18</a></div></div>
 <div class="ttc" id="anamespace_svc_html_a157e717b5d9498f9f00de70d4fe34146"><div class="ttname"><a href="namespace_svc.html#a157e717b5d9498f9f00de70d4fe34146">Svc::DP_MAX_FILES</a></div><div class="ttdeci">static const FwSizeType DP_MAX_FILES</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_cfg_8hpp_source.html#l00017">DpCatalogCfg.hpp:17</a></div></div>
 <div class="ttc" id="anamespace_svc_html_a57b96d41d4980544a60e2141f0a34d3f"><div class="ttname"><a href="namespace_svc.html#a57b96d41d4980544a60e2141f0a34d3f">Svc::DP_MAX_DIRECTORIES</a></div><div class="ttdeci">static const FwSizeType DP_MAX_DIRECTORIES</div><div class="ttdef"><b>Definition:</b> <a href="dp_catalog_cfg_8hpp_source.html#l00016">DpCatalogCfg.hpp:16</a></div></div>

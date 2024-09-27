@@ -33,7 +33,15 @@ var hierarchy =
     [ "Svc::DeframingProtocolInterface", "class_svc_1_1_deframing_protocol_interface.html", [
       [ "Svc::Deframer", "class_svc_1_1_deframer.html", null ]
     ] ],
-    [ "Os::Directory", "class_os_1_1_directory.html", null ],
+    [ "Os::DirectoryHandle", "struct_os_1_1_directory_handle.html", [
+      [ "Os::Posix::Directory::PosixDirectoryHandle", "struct_os_1_1_posix_1_1_directory_1_1_posix_directory_handle.html", null ],
+      [ "Os::Stub::Directory::StubDirectoryHandle", "struct_os_1_1_stub_1_1_directory_1_1_stub_directory_handle.html", null ]
+    ] ],
+    [ "Os::DirectoryInterface", "class_os_1_1_directory_interface.html", [
+      [ "Os::Directory", "class_os_1_1_directory.html", null ],
+      [ "Os::Posix::Directory::PosixDirectory", "class_os_1_1_posix_1_1_directory_1_1_posix_directory.html", null ],
+      [ "Os::Stub::Directory::StubDirectory", "class_os_1_1_stub_1_1_directory_1_1_stub_directory.html", null ]
+    ] ],
     [ "Svc::RateGroupDriver::Divider", "struct_svc_1_1_rate_group_driver_1_1_divider.html", null ],
     [ "Svc::RateGroupDriver::DividerSet", "struct_svc_1_1_rate_group_driver_1_1_divider_set.html", null ],
     [ "Fw::DpContainer", "class_fw_1_1_dp_container.html", null ],
@@ -50,6 +58,15 @@ var hierarchy =
       [ "Os::Stub::File::StubFile", "class_os_1_1_stub_1_1_file_1_1_stub_file.html", null ]
     ] ],
     [ "Fw::FilePacket", "union_fw_1_1_file_packet.html", null ],
+    [ "Os::FileSystemHandle", "struct_os_1_1_file_system_handle.html", [
+      [ "Os::Posix::FileSystem::PosixFileSystemHandle", "struct_os_1_1_posix_1_1_file_system_1_1_posix_file_system_handle.html", null ],
+      [ "Os::Stub::FileSystem::StubFileSystemHandle", "struct_os_1_1_stub_1_1_file_system_1_1_stub_file_system_handle.html", null ]
+    ] ],
+    [ "Os::FileSystemInterface", "class_os_1_1_file_system_interface.html", [
+      [ "Os::FileSystem", "class_os_1_1_file_system.html", null ],
+      [ "Os::Posix::FileSystem::PosixFileSystem", "class_os_1_1_posix_1_1_file_system_1_1_posix_file_system.html", null ],
+      [ "Os::Stub::FileSystem::StubFileSystem", "class_os_1_1_stub_1_1_file_system_1_1_stub_file_system.html", null ]
+    ] ],
     [ "Svc::FramingProtocol", "class_svc_1_1_framing_protocol.html", [
       [ "Svc::FprimeFraming", "class_svc_1_1_fprime_framing.html", null ]
     ] ],
@@ -398,8 +415,11 @@ var hierarchy =
       [ "Fw::Success", "class_fw_1_1_success.html", null ],
       [ "Fw::Time", "class_fw_1_1_time.html", null ],
       [ "Fw::Wait", "class_fw_1_1_wait.html", null ],
+      [ "Os::DirectoryOpenMode", "class_os_1_1_directory_open_mode.html", null ],
+      [ "Os::DirectoryStatus", "class_os_1_1_directory_status.html", null ],
       [ "Os::FileMode", "class_os_1_1_file_mode.html", null ],
       [ "Os::FileStatus", "class_os_1_1_file_status.html", null ],
+      [ "Os::FileSystemStatus", "class_os_1_1_file_system_status.html", null ],
       [ "Os::MutexStatus", "class_os_1_1_mutex_status.html", null ],
       [ "Os::TaskStatus", "class_os_1_1_task_status.html", null ],
       [ "Svc::ActiveLogger_Enabled", "class_svc_1_1_active_logger___enabled.html", null ],

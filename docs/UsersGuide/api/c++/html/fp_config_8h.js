@@ -1,6 +1,5 @@
 var _fp_config_8h =
 [
-    [ "FPCONFIG_H_", "fp_config_8h.html#a7d1915f9a163bdbe4948e4138d8cbd3e", null ],
     [ "FW_AMPCS_COMPATIBLE", "fp_config_8h.html#a0b27aabc04bf11f630b20e441a37759b", null ],
     [ "FW_ASSERT_DFL_MSG_LEN", "fp_config_8h.html#a92863d37e945ed5469ac704c7da6d805", null ],
     [ "FW_ASSERT_LEVEL", "fp_config_8h.html#a2355a84bf81d78e537d3ed5b146ca3bd", null ],
@@ -11,9 +10,11 @@ var _fp_config_8h =
     [ "FW_CMD_STRING_MAX_SIZE", "fp_config_8h.html#a4f6c08f814db2ba18146b75075e8bbc3", null ],
     [ "FW_COM_BUFFER_MAX_SIZE", "fp_config_8h.html#ac4bd2d1af8a64105ed2eb6e61c823a1a", null ],
     [ "FW_CONTEXT_DONT_CARE", "fp_config_8h.html#a620b1fe20a890cdc1d6a3a3419bc8fda", null ],
+    [ "FW_DIRECTORY_HANDLE_MAX_SIZE", "fp_config_8h.html#ad0f62709b27d7531a8fa5757dfd6de76", null ],
     [ "FW_ENABLE_TEXT_LOGGING", "fp_config_8h.html#a9e8d829fb8392c52f5239208d21054bf", null ],
     [ "FW_FILE_BUFFER_MAX_SIZE", "fp_config_8h.html#a5e5a6fa26b27df73000a4f8813740c68", null ],
     [ "FW_FILE_CHUNK_SIZE", "fp_config_8h.html#a51737d10b6b29ef0e0261037ac2da525", null ],
+    [ "FW_FILESYSTEM_HANDLE_MAX_SIZE", "fp_config_8h.html#afa4603989fc99ed58b915f90946b8bf9", null ],
     [ "FW_FIXED_LENGTH_STRING_SIZE", "fp_config_8h.html#a44ddaed88a42bd904b544827a0a1c1e7", null ],
     [ "FW_HANDLE_ALIGNMENT", "fp_config_8h.html#a0991d35577aa21e5c3ba57bfaef9515a", null ],
     [ "FW_HANDLE_MAX_SIZE", "fp_config_8h.html#a1e5974c602b7be9168db69abffcc2b9d", null ],

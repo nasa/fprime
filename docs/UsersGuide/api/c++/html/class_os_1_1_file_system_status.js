@@ -1,0 +1,36 @@
+var class_os_1_1_file_system_status =
+[
+    [ "SerialType", "class_os_1_1_file_system_status.html#a089420a62e98ee2487634ea4463c20fd", null ],
+    [ "t", "class_os_1_1_file_system_status.html#a74f6399bca4d1657153e6189885ecbe3", null ],
+    [ "T", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39", [
+      [ "OP_OK", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39ad5f40f9eeb3592ac7e8b12756f4ee2c7", null ],
+      [ "ALREADY_EXISTS", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39a63b137b06857665f26dd10af9984c545", null ],
+      [ "NO_SPACE", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39ae0984d4ba872119b7b75f95d82432ff0", null ],
+      [ "NO_PERMISSION", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39aeb8fc54bb18817e0c2db00a7d40810a4", null ],
+      [ "NOT_DIR", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39a47ede2515e767f6290bceca743bbab17", null ],
+      [ "IS_DIR", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39a1095c345f81713403684c78923077e3d", null ],
+      [ "NOT_EMPTY", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39ac8a0bc2e775d6b13a56a22d898e7e25e", null ],
+      [ "INVALID_PATH", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39a186b6844999ad1c6c2d5bc43d2b2328c", null ],
+      [ "DOESNT_EXIST", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39aaa410999ecdfb83016da1eeb96b1f5d1", null ],
+      [ "FILE_LIMIT", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39aeecd2872c386bbffcdd0a6db75461561", null ],
+      [ "BUSY", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39a5539925a720890093068fbdd13bd1a42", null ],
+      [ "NO_MORE_FILES", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39a950ba2e4ae2f3dfb70c19bf950f99262", null ],
+      [ "BUFFER_TOO_SMALL", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39a2515a2ed705a5212f617b4799efa7398", null ],
+      [ "EXDEV_ERROR", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39ac550476826ece4697365cef41959ca5a", null ],
+      [ "OVERFLOW_ERROR", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39aad3a131b5c4c08bbab6bec4370bab18e", null ],
+      [ "NOT_SUPPORTED", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39a38ba2b6b15218848c402770e17bc6efa", null ],
+      [ "OTHER_ERROR", "class_os_1_1_file_system_status.html#aa73cbf8b60fb1c062a7f4742ebea3a39a8df81f63e2126d0c7c21a526667b58a8", null ]
+    ] ],
+    [ "FileSystemStatus", "class_os_1_1_file_system_status.html#a07774fb8bf600fb78c77fa61ca868bef", null ],
+    [ "FileSystemStatus", "class_os_1_1_file_system_status.html#ae8e1eaa509aafe10d60c31700e42c5b2", null ],
+    [ "FileSystemStatus", "class_os_1_1_file_system_status.html#ae234daf1d589ebb1944fe4949416eb02", null ],
+    [ "deserialize", "class_os_1_1_file_system_status.html#a95786ce12ded71f5326286231262b3cf", null ],
+    [ "isValid", "class_os_1_1_file_system_status.html#a6cb6a7b9e376e57b75c48df600d0445e", null ],
+    [ "operator T", "class_os_1_1_file_system_status.html#a3ac589be25d2f98ce123a9788afd7f3f", null ],
+    [ "operator!=", "class_os_1_1_file_system_status.html#a5f9a71076141cfd7e3eed1733b231170", null ],
+    [ "operator=", "class_os_1_1_file_system_status.html#aef106d244160827caf57e405417bd9ee", null ],
+    [ "operator=", "class_os_1_1_file_system_status.html#a10de562b7abd989058f9cdf1b2ce360a", null ],
+    [ "operator==", "class_os_1_1_file_system_status.html#ab8f15023c4489f0a7ffcd6734cc7b97c", null ],
+    [ "serialize", "class_os_1_1_file_system_status.html#a1bce06d085b3461d9486d8195440ebfa", null ],
+    [ "e", "class_os_1_1_file_system_status.html#a87a15abf6382dd4581468272aebf7972", null ]
+];
