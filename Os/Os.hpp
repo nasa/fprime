@@ -8,4 +8,15 @@
 
 //! Storage type for OSAL handles
 typedef U8 HandleStorage[FW_HANDLE_MAX_SIZE];
+
+typedef U8 DirectoryHandleStorage[FW_DIRECTORY_HANDLE_MAX_SIZE];
+typedef U8 FileSystemHandleStorage[FW_FILESYSTEM_HANDLE_MAX_SIZE];
+
+namespace Os {
+
+//! \brief Initialization function for the OSAL layer
+void init();
+
+}  // namespace Os
+
 #endif

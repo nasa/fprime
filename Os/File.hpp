@@ -218,6 +218,7 @@ namespace Os {
         File();
         //! \brief destructor
         //!
+        //! Destructor closes the file if it is open
         ~File() final;
 
         //! \brief copy constructor that copies the internal representation

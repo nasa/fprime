@@ -129,21 +129,25 @@ namespace Svc {
         for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
             // read in each directory and keep track of total
             this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
-            U32 filesRead = 0;
+            FwSizeType filesRead = 0;
             U32 pendingFiles = 0;
             U64 pendingDpBytes = 0;
 
-            Os::FileSystem::Status fsStat =
-                Os::FileSystem::readDirectory(
-                    this->m_directories[dir].toChar(),
-                    static_cast<U32>(this->m_numDpSlots - totalFiles),
-                    this->m_fileList,
-                    filesRead
-                );
-            if (fsStat != Os::FileSystem::OP_OK) {
+            Os::Directory dpDir;
+            Os::Directory::Status status = dpDir.open(this->m_directories[dir].toChar(), Os::Directory::OpenMode::READ);
+            if (status != Os::Directory::OP_OK) {
                 this->log_WARNING_HI_DirectoryOpenError(
                     this->m_directories[dir],
-                    fsStat
+                    status
+                );
+                return Fw::CmdResponse::EXECUTION_ERROR;
+            }
+            status = dpDir.readDirectory(this->m_fileList, (this->m_numDpSlots - totalFiles), filesRead);
+
+            if (status != Os::Directory::OP_OK) {
+                this->log_WARNING_HI_DirectoryOpenError(
+                    this->m_directories[dir],
+                    status
                 );
                 return Fw::CmdResponse::EXECUTION_ERROR;
             }
