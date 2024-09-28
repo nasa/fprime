@@ -91,16 +91,14 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         // Properly stop the client on the last iteration
         if (((1 + i) == iterations) && recv_thread) {
             this->component.stop();
-            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
             this->component.close();
+            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
             this->component.shutdown();
             this->component.join();
         } else {
-            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
             this->component.close();
+            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
         }
-
-        client.close();
     }
     ASSERT_from_ready_SIZE(iterations);
 }

@@ -165,7 +165,7 @@ SocketIpStatus IpSocket::recv(NATIVE_INT_TYPE fd, U8* data, U32& req_read) {
     // Try to read until we fail to receive data
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
         // Attempt to recv out data
-        size = this->recvProtocol(data, req_read);
+        size = this->recvProtocol(fd, data, req_read);
 
         // Nothing to be received
         if ((size == -1) && (errno == EAGAIN)) {
