@@ -183,8 +183,8 @@ void SocketComponentHelper::readTask(void* pointer) {
             status = self->recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
                 Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n",
-                status,
-                errno);
+                    status,
+                    errno);
                 self->close();
                 buffer.setSize(0);
             } else {
