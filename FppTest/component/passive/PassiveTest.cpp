@@ -21,14 +21,6 @@
 
   }
 
-  void PassiveTest ::
-    init(
-        NATIVE_INT_TYPE instance
-    )
-  {
-    PassiveTestComponentBase::init(instance);
-  }
-
   PassiveTest ::
     ~PassiveTest()
   {

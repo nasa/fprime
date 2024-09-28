@@ -44,10 +44,6 @@ namespace Svc {
         }
     }
 
-    void ActiveRateGroup::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
-        ActiveRateGroupComponentBase::init(queueDepth,instance);
-    }
-
     ActiveRateGroup::~ActiveRateGroup() {
 
     }

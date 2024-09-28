@@ -11,7 +11,6 @@ extern "C" {
   void qtest_performance();
   void qtest_concurrent();
   void intervalTimerTest();
-  void fileSystemTest();
   void validateFileTest(const char* filename);
   void systemResourcesTest();
   void mutexBasicLockableTest();
@@ -43,9 +42,6 @@ TEST(Nominal, QTestConcurrentTest) {
 // Mac OS prevents intermittent unit test failures.
 TEST(Nominal, DISABLED_IntervalTimerTest) {
    intervalTimerTest();
-}
-TEST(Nominal, FileSystemTest) {
-   fileSystemTest();
 }
 TEST(Nominal, ValidateFileTest) {
    validateFileTest(filename);

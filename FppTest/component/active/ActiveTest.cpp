@@ -22,16 +22,6 @@
 
   }
 
-  void ActiveTest ::
-    init(
-        NATIVE_INT_TYPE queueDepth,
-        NATIVE_INT_TYPE msgSize,
-        NATIVE_INT_TYPE instance
-    )
-  {
-    ActiveTestComponentBase::init(queueDepth, msgSize, instance);
-  }
-
   ActiveTest ::
     ~ActiveTest()
   {
@@ -405,6 +395,13 @@
     return this->structReturnOut_out(portNum, s, sRef);
   }
 
+  void ActiveTest ::
+      enumArgsHook_handler(
+          const NATIVE_INT_TYPE portNum,
+          const FormalParamEnum &en,
+          FormalParamEnum &enRef
+      ) {}
+
   // ----------------------------------------------------------------------
   // Handler implementations for user-defined serial input ports
   // ----------------------------------------------------------------------
@@ -696,3 +693,16 @@
     this->structInterface.args.val = str;
   }
 
+  // ----------------------------------------------------------------------
+  // Overflow hook implementations for user-defined async ports interfaces
+  // ----------------------------------------------------------------------
+
+  void ActiveTest ::
+      enumArgsHook_overflowHook(
+          const NATIVE_INT_TYPE portNum,
+          const FormalParamEnum &en,
+          FormalParamEnum &enRef
+  )
+  {
+      this->enumArgsHookOverflowed_out(portNum, en, enRef);
+  }

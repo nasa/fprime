@@ -53,13 +53,13 @@ jobs:
           sed -i -e 's/\"name\": \"CppCheck\"/\"name\": \"CppLint\"/g' cpplint_cppcheck_result.sarif
 
       - name: Upload SARIF file to GitHub Code Scanning Alerts
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ github.workspace }}/cpplint_cppcheck_result.sarif
           category: "cpplint"
 
       - name: Archive static analysis artifacts to download and view
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cpplint-errors
           path: ./*cpplint_cppcheck_result.*

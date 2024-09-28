@@ -44,15 +44,6 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    FileDownlinkComponentBase::init(queueDepth, instance);
-  }
-
-  void FileDownlink ::
     configure(
         U32 timeout,
         U32 cooldown,

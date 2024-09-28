@@ -45,10 +45,6 @@ class SystemResourcesTester : public SystemResourcesGTestBase {
     //!
     void test_disable_enable();
 
-    //! Test version EVR
-    //!
-    void test_version_evr();
-
   private:
     // ----------------------------------------------------------------------
     // Helper methods

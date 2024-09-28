@@ -68,24 +68,6 @@ class IpSocket {
      */
     SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
                              const U32 send_timeout_microseconds);
-    /**
-     * \brief Returns true when the socket is started
-     *
-     * Returns true when the socket is started up sufficiently to be actively listening to clients. Returns false
-     * otherwise. This means `startup()` was called and returned success.
-     */
-    bool isStarted();
-
-    /**
-     * \brief check if IP socket has previously been opened
-     *
-     * Check if this IpSocket has previously been opened. In the case of Udp this will check for outgoing transmissions
-     * and (if configured) incoming transmissions as well. This does not guarantee errors will not occur when using this
-     * socket as the remote component may have disconnected.
-     *
-     * \return true if socket is open, false otherwise
-     */
-    bool isOpened();
 
     /**
      * \brief startup the socket, a no-op on unless this is server
@@ -112,9 +94,10 @@ class IpSocket {
      *
      * Note: delegates to openProtocol for protocol specific implementation
      *
+     * \param fd: file descriptor to open
      * \return status of open
      */
-    SocketIpStatus open();
+    SocketIpStatus open(NATIVE_INT_TYPE& fd);
     /**
      * \brief send data out the IP socket from the given buffer
      *
@@ -126,11 +109,12 @@ class IpSocket {
      *
      * Note: delegates to `sendProtocol` to send the data
      *
+     * \param fd: file descriptor to send to
      * \param data: pointer to data to send
      * \param size: size of data to send
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus send(const U8* const data, const U32 size);
+    SocketIpStatus send(NATIVE_INT_TYPE fd, const U8* const data, const U32 size);
     /**
      * \brief receive data from the IP socket from the given buffer
      *
@@ -142,26 +126,31 @@ class IpSocket {
      *
      * Note: delegates to `recvProtocol` to send the data
      *
+     * \param fd: file descriptor to recv from
      * \param data: pointer to data to fill with received data
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(U8* const data, U32& size);
+    SocketIpStatus recv(NATIVE_INT_TYPE fd, U8* const data, U32& size);
     /**
      * \brief closes the socket
      *
      * Closes the socket opened by the open call. In this case of the TcpServer, this does NOT close server's listening
      * port (call `shutdown`) but will close the active client connection.
+     * 
+     * \param fd: file descriptor to close
      */
-    void close();
+    void close(NATIVE_INT_TYPE fd);
 
     /**
      * \brief shutdown the socket
      *
      * Closes the socket opened by the open call. In this case of the TcpServer, this does close server's listening
      * port. This will shutdown all clients.
+     * 
+     * \param fd: file descriptor to shutdown
      */
-    virtual void shutdown();
+    virtual void shutdown(NATIVE_INT_TYPE fd);
 
   PROTECTED:
     /**
@@ -198,27 +187,25 @@ class IpSocket {
     virtual SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd) = 0;
     /**
      * \brief Protocol specific implementation of send.  Called directly with retry from send.
+     * \param fd: file descriptor to send to
      * \param data: data to send
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    virtual I32 sendProtocol(const U8* const data, const U32 size) = 0;
+    virtual I32 sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) = 0;
 
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
+     * \param fd: file descriptor to recv from
      * \param data: data pointer to fill
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    virtual I32 recvProtocol( U8* const data, const U32 size) = 0;
+    virtual I32 recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) = 0;
 
-    Os::Mutex m_lock;
-    NATIVE_INT_TYPE m_fd;
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;
     U16 m_port;  //!< IP address port used
-    bool m_open; //!< Have we successfully opened
-    bool m_started; //!< Have we successfully started the socket
     char m_hostname[SOCKET_MAX_HOSTNAME_SIZE];  //!< Hostname to supply
 };
 }  // namespace Drv

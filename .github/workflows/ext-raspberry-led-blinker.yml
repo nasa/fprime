@@ -59,7 +59,7 @@ jobs:
           cp -r ./build-artifacts rpi-artifacts
           cp -r Components/Led/test/int rpi-artifacts
       - name: 'Archive Build Artifacts'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rpi-artifacts
           path: rpi-artifacts
@@ -80,7 +80,7 @@ jobs:
           . venv/bin/activate
           pip install -r requirements.txt
       - name: "Artifacts Download"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: rpi-artifacts
       - name: Run Integration Tests
@@ -92,7 +92,7 @@ jobs:
           sleep 10
           pytest --dictionary ./build-artifacts/raspberrypi/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py
       - name: 'Archive logs'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: rpi-logs

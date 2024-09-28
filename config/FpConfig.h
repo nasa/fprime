@@ -8,9 +8,10 @@
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
  * acknowledged.
  */
-#include <Fw/Types/BasicTypes.h>
 #ifndef FPCONFIG_H_
 #define FPCONFIG_H_
+
+#include <Fw/Types/BasicTypes.h>
 
 // ----------------------------------------------------------------------
 // Type aliases
@@ -276,6 +277,11 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_COM_BUFFER_MAX_SIZE 512
 #endif
 
+// Specifies the size of the buffer attached to state machine signals.
+#ifndef FW_SM_SIGNAL_BUFFER_MAX_SIZE
+#define FW_SM_SIGNAL_BUFFER_MAX_SIZE 128  // Not to exceed size of NATIVE_UINT_TYPE
+#endif
+
 // Specifies the size of the buffer that contains the serialized command arguments.
 
 #ifndef FW_CMD_ARG_BUFFER_MAX_SIZE
@@ -382,12 +388,21 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
+#ifndef FW_DIRECTORY_HANDLE_MAX_SIZE
+#define FW_DIRECTORY_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#endif
+
+#ifndef FW_FILESYSTEM_HANDLE_MAX_SIZE
+#define FW_FILESYSTEM_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#endif
+
 #ifndef FW_HANDLE_ALIGNMENT
 #define FW_HANDLE_ALIGNMENT 8  //!< Alignment of handle storage
 #endif
 
+// Note: One buffer of this size will be stack-allocated during certain OSAL operations e.g. when copying a file
 #ifndef FW_FILE_CHUNK_SIZE
-#define FW_FILE_CHUNK_SIZE 512  //!< Chunk size for working with files
+#define FW_FILE_CHUNK_SIZE 512  //!< Chunk size for working with files in the OSAL layer
 #endif
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have

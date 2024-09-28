@@ -60,9 +60,10 @@ File::Status File::open(const CHAR* filepath, File::Mode requested_mode, File::O
     if (status == File::Status::OP_OK) {
         this->m_mode = requested_mode;
         this->m_path = filepath;
+        // Reset any open CRC calculations
+        this->m_crc = File::INITIAL_CRC;
     }
-    // Reset any open CRC calculations
-    this->m_crc = File::INITIAL_CRC;
+
     return status;
 }
 

@@ -41,16 +41,6 @@ namespace Svc {
             //!  \param name component instance name
             PrmDbImpl(const char* name);
 
-            //!  \brief PrmDb initialization function
-            //!
-            //!  The initialization function for the component creates the message
-            //!  queue and initializes the component base classes.
-            //!
-            //!  \param queueDepth queue depth for messages
-            //!  \param instance instance of component, if more than one is needed.
-
-            void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance);
-
             //!  \brief PrmDb configure method
             //!
             //!  The configure method stores the file name for opening later.

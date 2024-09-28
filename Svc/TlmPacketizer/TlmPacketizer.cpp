@@ -47,10 +47,6 @@ TlmPacketizer ::TlmPacketizer(const char* const compName)
     }
 }
 
-void TlmPacketizer ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
-    TlmPacketizerComponentBase::init(queueDepth, instance);
-}
-
 TlmPacketizer ::~TlmPacketizer() {}
 
 void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,

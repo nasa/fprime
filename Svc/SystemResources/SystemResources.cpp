@@ -12,7 +12,6 @@
 
 #include <cmath>  //isnan()
 #include <Svc/SystemResources/SystemResources.hpp>
-#include <versions/version.hpp>
 #include <FpConfig.hpp>
 
 namespace Svc {
@@ -58,10 +57,6 @@ SystemResources ::SystemResources(const char* const compName)
     m_cpu_tlm_functions[15] = &Svc::SystemResources::tlmWrite_CPU_15;
 }
 
-void SystemResources ::init(const NATIVE_INT_TYPE instance) {
-    SystemResourcesComponentBase::init(instance);
-}
-
 SystemResources ::~SystemResources() {}
 
 // ----------------------------------------------------------------------
@@ -73,7 +68,6 @@ void SystemResources ::run_handler(const NATIVE_INT_TYPE portNum, U32 tick_time_
         Cpu();
         Mem();
         PhysMem();
-        Version();
     }
 }
 
@@ -85,15 +79,6 @@ void SystemResources ::ENABLE_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          SystemResourceEnabled enable) {
     m_enable = (enable == SystemResourceEnabled::ENABLED);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
-void SystemResources ::VERSION_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
-    Fw::LogStringArg version_string(Project::Version::FRAMEWORK_VERSION);
-    this->log_ACTIVITY_LO_FRAMEWORK_VERSION(version_string);
-
-    version_string = Project::Version::PROJECT_VERSION;
-    this->log_ACTIVITY_LO_PROJECT_VERSION(version_string);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
@@ -151,11 +136,4 @@ void SystemResources::PhysMem() {
     }
 }
 
-void SystemResources::Version() {
-    Fw::TlmString version_string(Project::Version::FRAMEWORK_VERSION);
-    this->tlmWrite_FRAMEWORK_VERSION(version_string);
-
-    version_string= Project::Version::PROJECT_VERSION;
-    this->tlmWrite_PROJECT_VERSION(version_string);
-}
 }  // end namespace Svc

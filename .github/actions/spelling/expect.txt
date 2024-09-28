@@ -152,6 +152,7 @@ CMDPACKET
 CMDREG
 cmds
 CMDSEQ
+cmdsequencer
 cnt
 cntx
 cobj
@@ -200,6 +201,7 @@ CRCs
 crcstat
 CREATEDIRECTORY
 Crosscompiling
+crsmith
 crt
 CRTSCTS
 cryptsoft
@@ -548,6 +550,7 @@ lammertbies
 LASTLOG
 LBLOCK
 LCHILD
+leisher
 lemstarch
 lestarch
 levelname
@@ -1212,4 +1215,5 @@ xsh
 xsltproc
 xxxx
 yacgen
+zimri
 zmq

@@ -30,11 +30,6 @@ class SystemResources : public SystemResourcesComponentBase {
     SystemResources(const char* const compName /*!< The component name*/
     );
 
-    //! Initialize object SystemResources
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-    );
-
     //! Destroy object SystemResources
     //!
     ~SystemResources(void);
@@ -67,17 +62,11 @@ class SystemResources : public SystemResourcesComponentBase {
         SystemResourceEnabled enable /*!< whether or not system resource telemetry is enabled*/
     );
 
-    //! Implementation for VERSION command handler
-    //! Report version as EVR
-    void VERSION_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
-                            const U32 cmdSeq           /*!< The command sequence number*/
-    );
 
   private:
     void Cpu();
     void Mem();
     void PhysMem();
-    void Version();
     F32 compCpuUtil(Os::SystemResources::CpuTicks current, Os::SystemResources::CpuTicks previous);
 
 
