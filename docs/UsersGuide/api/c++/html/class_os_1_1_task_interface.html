@@ -104,7 +104,8 @@ Inheritance diagram for Os::TaskInterface:</div>
   <img src="class_os_1_1_task_interface.png" usemap="#Os::TaskInterface_map" alt=""/>
   <map id="Os::TaskInterface_map" name="Os::TaskInterface_map">
 <area href="class_os_1_1_posix_1_1_task_1_1_posix_task.html" title="Posix task implementation as driven by pthreads implementation." alt="Os::Posix::Task::PosixTask" shape="rect" coords="0,56,158,80"/>
-<area href="class_os_1_1_task.html" alt="Os::Task" shape="rect" coords="168,56,326,80"/>
+<area href="class_os_1_1_stub_1_1_task_1_1_stub_task.html" title="Implementation of task." alt="Os::Stub::Task::StubTask" shape="rect" coords="168,56,326,80"/>
+<area href="class_os_1_1_task.html" alt="Os::Task" shape="rect" coords="336,56,494,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -138,11 +139,12 @@ Public Types</h2></td></tr>
 <tr class="separator:a174e2213dad7034b44cfddf7a16729f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3dbca325ee42772311eb9a542144a45"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45">State</a> { <br />
 &#160;&#160;<a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45ae8964b1cd6d6c6c4e72ac5f4740a8737">NOT_STARTED</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a8e12359bdfca7cfbb68d3ce5c31a9011">STARTING</a>
 , <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a48b9025fb8820cf2ae735ed6769c03ca">RUNNING</a>
 , <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a54c8a8fd65462bb9bd52df1188e3e0bc">SUSPENDED_INTENTIONALLY</a>
-, <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45aceb80d595a1a01f763f54997aa7b54f4">SUSPENDED_UNINTENTIONALLY</a>
 , <br />
-&#160;&#160;<a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a1b35d2df650e5f288b53352155a8373a">EXITED</a>
+&#160;&#160;<a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45aceb80d595a1a01f763f54997aa7b54f4">SUSPENDED_UNINTENTIONALLY</a>
+, <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a1b35d2df650e5f288b53352155a8373a">EXITED</a>
 , <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a76930a6ef5dc15a9816c0f526f138701">UNKNOWN</a>
 <br />
  }</td></tr>
@@ -219,7 +221,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Prototype for task routine started in task context. </p>
 
-<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00058">58</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8hpp_source.html#l00059">59</a> of file <a class="el" href="task_8hpp_source.html">Task.hpp</a>.</p>
 
 </div>
 </div>
@@ -237,6 +239,7 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab3dbca325ee42772311eb9a542144a45ae8964b1cd6d6c6c4e72ac5f4740a8737"></a>NOT_STARTED&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab3dbca325ee42772311eb9a542144a45a8e12359bdfca7cfbb68d3ce5c31a9011"></a>STARTING&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="ab3dbca325ee42772311eb9a542144a45a48b9025fb8820cf2ae735ed6769c03ca"></a>RUNNING&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="ab3dbca325ee42772311eb9a542144a45a54c8a8fd65462bb9bd52df1188e3e0bc"></a>SUSPENDED_INTENTIONALLY&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="ab3dbca325ee42772311eb9a542144a45aceb80d595a1a01f763f54997aa7b54f4"></a>SUSPENDED_UNINTENTIONALLY&#160;</td><td class="fielddoc"></td></tr>
@@ -426,7 +429,7 @@ Static Public Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of the delay </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="default_task_8cpp_source.html#l00011">11</a> of file <a class="el" href="default_task_8cpp_source.html">DefaultTask.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="posix_2_default_task_8cpp_source.html#l00011">11</a> of file <a class="el" href="posix_2_default_task_8cpp_source.html">DefaultTask.cpp</a>.</p>
 
 </div>
 </div>
@@ -465,7 +468,7 @@ Static Public Attributes</h2></td></tr>
 </ol>
 <dl class="section return"><dt>Returns</dt><dd>result of placement new, must be equivalent to <code>aligned_placement_new_memory</code> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="default_task_8cpp_source.html#l00041">41</a> of file <a class="el" href="default_task_8cpp_source.html">DefaultTask.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="posix_2_default_task_8cpp_source.html#l00041">41</a> of file <a class="el" href="posix_2_default_task_8cpp_source.html">DefaultTask.cpp</a>.</p>
 
 </div>
 </div>
@@ -495,7 +498,7 @@ Static Public Attributes</h2></td></tr>
 <p>return the underlying task handle (implementation specific) </p>
 <dl class="section return"><dt>Returns</dt><dd>internal task handle representation </dd></dl>
 
-<p>Implemented in <a class="el" href="class_os_1_1_task.html#a4b4bb4dc238f53a683f1a396765a9827">Os::Task</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#acfc105b4194df7bb931afafe92b38e2e">Os::Posix::Task::PosixTask</a>.</p>
+<p>Implemented in <a class="el" href="class_os_1_1_task.html#a4b4bb4dc238f53a683f1a396765a9827">Os::Task</a>, <a class="el" href="class_os_1_1_stub_1_1_task_1_1_stub_task.html#aa53239e76f63e072d88d4f184b39a50c">Os::Stub::Task::StubTask</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#acfc105b4194df7bb931afafe92b38e2e">Os::Posix::Task::PosixTask</a>.</p>
 
 </div>
 </div>
@@ -527,7 +530,7 @@ Static Public Attributes</h2></td></tr>
 <p>This function indicates if the task requires cooperative support. The default implementation returns false.</p>
 <dl class="section return"><dt>Returns</dt><dd>true when the task expects cooperation, false otherwise </dd></dl>
 
-<p>Reimplemented in <a class="el" href="class_os_1_1_task.html#a10dbcb7452d13b3979ab63f19ef7baf6">Os::Task</a>.</p>
+<p>Reimplemented in <a class="el" href="class_os_1_1_task.html#a10dbcb7452d13b3979ab63f19ef7baf6">Os::Task</a>, and <a class="el" href="class_os_1_1_stub_1_1_task_1_1_stub_task.html#a387bced69d22d54e5d7a5056559c0f11">Os::Stub::Task::StubTask</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00056">56</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
@@ -560,7 +563,7 @@ Static Public Attributes</h2></td></tr>
 <p>Blocks the current (calling) task until this task execution has ended. Callers should ensure that any signals required to stop this task have already been emitted or will be emitted by another task.</p>
 <dl class="section return"><dt>Returns</dt><dd>status of the block </dd></dl>
 
-<p>Implemented in <a class="el" href="class_os_1_1_task.html#af8a83a2eb930b2575cd207c08a46c245">Os::Task</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#a4a504b44fb7db7c4fcccfa10c837b066">Os::Posix::Task::PosixTask</a>.</p>
+<p>Implemented in <a class="el" href="class_os_1_1_task.html#af8a83a2eb930b2575cd207c08a46c245">Os::Task</a>, <a class="el" href="class_os_1_1_stub_1_1_task_1_1_stub_task.html#aa48bbed275045a3f5fdcfc6131605177">Os::Stub::Task::StubTask</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#a4a504b44fb7db7c4fcccfa10c837b066">Os::Posix::Task::PosixTask</a>.</p>
 
 </div>
 </div>
@@ -589,7 +592,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>perform required task start actions </p>
 
-<p>Implemented in <a class="el" href="class_os_1_1_task.html#a803747012409eb9cb6c216b5b53eb120">Os::Task</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#ad710f92b5fefaa78b0063fdddcc28afc">Os::Posix::Task::PosixTask</a>.</p>
+<p>Implemented in <a class="el" href="class_os_1_1_task.html#a803747012409eb9cb6c216b5b53eb120">Os::Task</a>, <a class="el" href="class_os_1_1_stub_1_1_task_1_1_stub_task.html#a7389f58f553692a47a85bf4963b5fed4">Os::Stub::Task::StubTask</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#ad710f92b5fefaa78b0063fdddcc28afc">Os::Posix::Task::PosixTask</a>.</p>
 
 </div>
 </div>
@@ -647,7 +650,7 @@ Static Public Attributes</h2></td></tr>
 <p>resume a suspended task </p>
 <p>Resumes this task. Not started, running, and exited tasks take no action. </p>
 
-<p>Implemented in <a class="el" href="class_os_1_1_task.html#a7e924e56d124d23dc6e6a1cef1f66977">Os::Task</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#aa7e0c15266df6ff99104a99eb660f6f0">Os::Posix::Task::PosixTask</a>.</p>
+<p>Implemented in <a class="el" href="class_os_1_1_task.html#a7e924e56d124d23dc6e6a1cef1f66977">Os::Task</a>, <a class="el" href="class_os_1_1_stub_1_1_task_1_1_stub_task.html#a7104b4eaef46444d1740a30f5c8b2675">Os::Stub::Task::StubTask</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#aa7e0c15266df6ff99104a99eb660f6f0">Os::Posix::Task::PosixTask</a>.</p>
 
 </div>
 </div>
@@ -685,7 +688,7 @@ Static Public Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of the task start </dd></dl>
 
-<p>Implemented in <a class="el" href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">Os::Task</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#adbc0b6b5c7713c89e96865b3c785cb70">Os::Posix::Task::PosixTask</a>.</p>
+<p>Implemented in <a class="el" href="class_os_1_1_task.html#adf42d4bb8ec737eb1755607e8919912c">Os::Task</a>, <a class="el" href="class_os_1_1_stub_1_1_task_1_1_stub_task.html#a7d011a482b6c24b95edb057e7434811e">Os::Stub::Task::StubTask</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#adbc0b6b5c7713c89e96865b3c785cb70">Os::Posix::Task::PosixTask</a>.</p>
 
 </div>
 </div>
@@ -722,7 +725,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_os_1_1_task.html#adeea5159dfd228cc0e330008e7cba91c">Os::Task</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#a0c3b748d482b6895fe449992d7c1179c">Os::Posix::Task::PosixTask</a>.</p>
+<p>Implemented in <a class="el" href="class_os_1_1_task.html#adeea5159dfd228cc0e330008e7cba91c">Os::Task</a>, <a class="el" href="class_os_1_1_stub_1_1_task_1_1_stub_task.html#a1ba04d99df305c2de723083a8725d5de">Os::Stub::Task::StubTask</a>, and <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#a0c3b748d482b6895fe449992d7c1179c">Os::Posix::Task::PosixTask</a>.</p>
 
 </div>
 </div>
@@ -753,7 +756,7 @@ Static Public Attributes</h2></td></tr>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>Os/<a class="el" href="task_8hpp_source.html">Task.hpp</a></li>
-<li>Os/Posix/<a class="el" href="default_task_8cpp_source.html">DefaultTask.cpp</a></li>
+<li>Os/Posix/<a class="el" href="posix_2_default_task_8cpp_source.html">DefaultTask.cpp</a></li>
 <li>Os/<a class="el" href="task_8cpp_source.html">Task.cpp</a></li>
 </ul>
 </div><!-- contents -->

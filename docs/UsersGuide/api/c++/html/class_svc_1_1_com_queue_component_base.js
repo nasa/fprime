@@ -30,7 +30,7 @@ var class_svc_1_1_com_queue_component_base =
     [ "getNum_Time_OutputPorts", "class_svc_1_1_com_queue_component_base.html#a0ad54b5e489ac84a0c8f067b33db673e", null ],
     [ "getNum_Tlm_OutputPorts", "class_svc_1_1_com_queue_component_base.html#acbed3cfae916b9c9fbf471daf359962d", null ],
     [ "getTime", "class_svc_1_1_com_queue_component_base.html#a0dfd71c6c917591956a0653c1eb9279e", null ],
-    [ "init", "class_svc_1_1_com_queue_component_base.html#a4b51c6be5cabd39b403fa0be5099f369", null ],
+    [ "init", "class_svc_1_1_com_queue_component_base.html#ab6cd2ebd2a01fb6b267958c9ed0e0157", null ],
     [ "isConnected_buffQueueSend_OutputPort", "class_svc_1_1_com_queue_component_base.html#a91c2910e39beb42ff1cdf7562337f7d3", null ],
     [ "isConnected_comQueueSend_OutputPort", "class_svc_1_1_com_queue_component_base.html#a1593619939babf18af32a97bb2287514", null ],
     [ "isConnected_deallocate_OutputPort", "class_svc_1_1_com_queue_component_base.html#aa2baff879f8edd57ed9d4b93f86eef9a", null ],

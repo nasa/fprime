@@ -21,7 +21,7 @@ var class_svc_1_1_active_logger_component_base =
     [ "getNum_PktSend_OutputPorts", "class_svc_1_1_active_logger_component_base.html#ae424da2b71547045f93eafce880d694e", null ],
     [ "getNum_Time_OutputPorts", "class_svc_1_1_active_logger_component_base.html#afa0aa9ff733fc47f48b031f6067d952f", null ],
     [ "getTime", "class_svc_1_1_active_logger_component_base.html#acfe9330a1423e416e905ca0dcdba4b62", null ],
-    [ "init", "class_svc_1_1_active_logger_component_base.html#a67a8a51e5e4cdee93ed649d667870170", null ],
+    [ "init", "class_svc_1_1_active_logger_component_base.html#a17af2a99844cb6eb0128ebe80caec730", null ],
     [ "isConnected_CmdReg_OutputPort", "class_svc_1_1_active_logger_component_base.html#a347f8cd82ddfffce0b6fd382a6051edf", null ],
     [ "isConnected_CmdStatus_OutputPort", "class_svc_1_1_active_logger_component_base.html#a70cd08915aca61a7c8255c6b2b428ca8", null ],
     [ "isConnected_FatalAnnounce_OutputPort", "class_svc_1_1_active_logger_component_base.html#a434b4abbe9d92f309afadd50df99f23f", null ],

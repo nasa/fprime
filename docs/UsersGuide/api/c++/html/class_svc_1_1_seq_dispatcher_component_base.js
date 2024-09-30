@@ -18,7 +18,7 @@ var class_svc_1_1_seq_dispatcher_component_base =
     [ "getNum_timeCaller_OutputPorts", "class_svc_1_1_seq_dispatcher_component_base.html#ad9197b447791def0d4e6cb6602be3077", null ],
     [ "getNum_tlmOut_OutputPorts", "class_svc_1_1_seq_dispatcher_component_base.html#af6a8a2c68ba8c6923382af6eb3e245d1", null ],
     [ "getTime", "class_svc_1_1_seq_dispatcher_component_base.html#a03e064987fc7a32d518aaa1a900c47fb", null ],
-    [ "init", "class_svc_1_1_seq_dispatcher_component_base.html#a38778bb492c1e46e19283052654b91bb", null ],
+    [ "init", "class_svc_1_1_seq_dispatcher_component_base.html#ad0c500409b9bb87d38a169ffe1b452fc", null ],
     [ "isConnected_cmdRegOut_OutputPort", "class_svc_1_1_seq_dispatcher_component_base.html#a91477ef6e296ffd5abc9b5902981c585", null ],
     [ "isConnected_cmdResponseOut_OutputPort", "class_svc_1_1_seq_dispatcher_component_base.html#a0a1b6232ef89033fdc59d0afd62cb28f", null ],
     [ "isConnected_logOut_OutputPort", "class_svc_1_1_seq_dispatcher_component_base.html#a288e0b117f760c8d250a8a1865e18aae", null ],

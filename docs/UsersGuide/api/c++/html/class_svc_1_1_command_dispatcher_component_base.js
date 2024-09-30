@@ -40,7 +40,7 @@ var class_svc_1_1_command_dispatcher_component_base =
     [ "getNum_Time_OutputPorts", "class_svc_1_1_command_dispatcher_component_base.html#a112d9c392ba4787b68c5ee5319f1f70e", null ],
     [ "getNum_Tlm_OutputPorts", "class_svc_1_1_command_dispatcher_component_base.html#ab463fe3b7e3112d39079463a926e4354", null ],
     [ "getTime", "class_svc_1_1_command_dispatcher_component_base.html#a8b112c53802747bf99f3c6e437505656", null ],
-    [ "init", "class_svc_1_1_command_dispatcher_component_base.html#a8ff8e82675b8ca2b21d0392ba560657c", null ],
+    [ "init", "class_svc_1_1_command_dispatcher_component_base.html#a3ecdb2a11c5d32c5e5cc87e46a5c11fe", null ],
     [ "isConnected_CmdReg_OutputPort", "class_svc_1_1_command_dispatcher_component_base.html#a974bac488d4a7dbe03c03c4b6972c571", null ],
     [ "isConnected_CmdStatus_OutputPort", "class_svc_1_1_command_dispatcher_component_base.html#accf6b041dbd5298aa2c3c351d0566d28", null ],
     [ "isConnected_compCmdSend_OutputPort", "class_svc_1_1_command_dispatcher_component_base.html#a779b0b902a175821869a94391af9a7b0", null ],

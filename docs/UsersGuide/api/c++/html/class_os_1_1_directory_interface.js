@@ -23,7 +23,7 @@ var class_os_1_1_directory_interface =
     [ "~DirectoryInterface", "class_os_1_1_directory_interface.html#a8dc3642f54fbc3c2cad6737c3b0de442", null ],
     [ "DirectoryInterface", "class_os_1_1_directory_interface.html#ae4936fd41a5a75a2173214714bb92a6c", null ],
     [ "close", "class_os_1_1_directory_interface.html#a97605f663a7ab9e1350a89f2c3f18939", null ],
-    [ "getDelegate", "class_os_1_1_directory_interface.html#a571e8a372e3d9add85473d72b6782e9a", null ],
+    [ "getDelegate", "class_os_1_1_directory_interface.html#a1e77819ca27eaac6d1fcd87e86de29f3", null ],
     [ "getHandle", "class_os_1_1_directory_interface.html#afdc2e5f50d425dcfa9e953692d78451a", null ],
     [ "open", "class_os_1_1_directory_interface.html#a5f1522524d0dc540dc88fe49c320a4d8", null ],
     [ "operator=", "class_os_1_1_directory_interface.html#a33e45a0a76e8b234960c66166f14ec7a", null ],

@@ -27,7 +27,7 @@ var class_svc_1_1_health_component_base =
     [ "HLTH_PING_ENABLE_cmdHandler", "class_svc_1_1_health_component_base.html#a2b67f37c48e158a2a3916a9f7e908dc7", null ],
     [ "HLTH_PING_ENABLE_cmdHandlerBase", "class_svc_1_1_health_component_base.html#a2cf483681988dc24380894e3c5811ec4", null ],
     [ "HLTH_PING_ENABLE_preMsgHook", "class_svc_1_1_health_component_base.html#aba19d9f58fb3bbafcef735bcc7d8070c", null ],
-    [ "init", "class_svc_1_1_health_component_base.html#a044036e9a2e38add02fbc751047d6b43", null ],
+    [ "init", "class_svc_1_1_health_component_base.html#a75b6ff3b8a585a359eaff04e5cae1848", null ],
     [ "isConnected_CmdReg_OutputPort", "class_svc_1_1_health_component_base.html#a4c83207b411183587db6b98e040c5e35", null ],
     [ "isConnected_CmdStatus_OutputPort", "class_svc_1_1_health_component_base.html#a82f0386d646103ee581f8ce7e328e10a", null ],
     [ "isConnected_Log_OutputPort", "class_svc_1_1_health_component_base.html#a6e55e3e39dec98af33a83e732925e3c2", null ],

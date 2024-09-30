@@ -88,28 +88,28 @@ $(document).ready(function(){initNavTree('_utils_types_library.html',''); initRe
 <div class="title">Utils::Types Library </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md1182"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md1166"></a>
 Utils/Types</h1>
 <p>This directory contains a library of helper types.</p>
-<h2><a class="anchor" id="autotoc_md1183"></a>
+<h2><a class="anchor" id="autotoc_md1167"></a>
 Circular Buffer</h2>
 <p>This type uses a circular buffer to implement a bounded FIFO stream, i.e., a logical store that can grow to a maximum size and can shrink. The logical store is byte addressable with addresses 0 through <em>n - 1</em>, where <em>n</em> is the current store size. It grows by increasing the top address from <em>n - 1</em> to <em>n + m - 1</em> and copying <em>m</em> bytes of data into the logical memory so allocated. It shrinks by deleting the lowest <em>m</em> addresses and renumbering the logical addresses of the remaining bytes starting at zero.</p>
 <p>The implementation uses a fixed-size physical store. The logical store is represented as a base or head index into the physical store and an allocated size. Initially both are zero. When data is added to the circular buffer, the allocated size grows. When data is removed from the circular buffer, the allocated size shrinks, and the head pointer advances.</p>
 <p>The allocated store size never exceeds the physical store size. However, when the head index is greater than zero, the sum of the head index and the allocated size may exceed the physical store size. In this case, the logical store wraps around to the beginning of the physical store. Further, deleting data while in this state may cause the head index to wrap around.</p>
 <p><code>CircularBuffer</code> does not provide concurrency control. If multiple threads use the buffer, the uses must be guarded by other concurrency control, e.g., a queue or lock.</p>
 <p>The <code>CircularBuffer</code> type provides the following operations.</p>
-<h3><a class="anchor" id="autotoc_md1184"></a>
+<h3><a class="anchor" id="autotoc_md1168"></a>
 Constructor</h3>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size)</div>
 </div><!-- fragment --><p>Construct a circular buffer with the given physical store, specified as a starting pointer and a size in bytes.</p>
-<h3><a class="anchor" id="autotoc_md1185"></a>
+<h3><a class="anchor" id="autotoc_md1169"></a>
 Adding Data</h3>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">Fw::SerializeStatus serialize(const U8* const buffer, const NATIVE_UINT_TYPE size);</div>
 </div><!-- fragment --><p>If the current logical store size plus <code>size</code> exceeds the maximum logical store size, then return an error. Otherwise increase the logical store size by <code>size</code> bytes and copy <code>size</code> bytes starting at <code>buffer</code> into the new logical memory.</p>
 <p>The operation is called <code>serialize</code> following F Prime practice. No data is actually serialized (the data is copied byte for byte).</p>
-<h3><a class="anchor" id="autotoc_md1186"></a>
+<h3><a class="anchor" id="autotoc_md1170"></a>
 Reading Data</h3>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">Fw::SerializeStatus peek(char&amp; value, NATIVE_UINT_TYPE offset = 0) const;</div>
@@ -123,12 +123,12 @@ Reading Data</h3>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">Fw::SerializeStatus peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset = 0) const;</div>
 </div><!-- fragment --><p>If <code>offset</code> through <code>offset + size - 1</code> are not all valid addresses in the logical store, then return an error. Otherwise copy <code>size</code> bytes starting at <code>offset</code> into the memory starting at <code>buffer</code>.</p>
-<h3><a class="anchor" id="autotoc_md1187"></a>
+<h3><a class="anchor" id="autotoc_md1171"></a>
 Deleting Data</h3>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">Fw::SerializeStatus rotate(NATIVE_UINT_TYPE amount);</div>
 </div><!-- fragment --><p>If the logical store size <em>s</em> is less than <code>amount</code>, then return an error. Otherwise delete <code>amount</code> bytes from the bottom of the logical store: reassign the bytes at addresses <code>amount</code> through <em>s</em> - 1 to addresses zero through <em>s</em> - <code>amount</code> - 1, and set the logical store size to <em>s</em> - <code>amount</code>.</p>
-<h3><a class="anchor" id="autotoc_md1188"></a>
+<h3><a class="anchor" id="autotoc_md1172"></a>
 Querying Buffer State</h3>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">NATIVE_UINT_TYPE get_allocated_size() const;</div>

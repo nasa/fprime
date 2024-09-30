@@ -85,15 +85,11 @@ $(document).ready(function(){initNavTree('class_os_1_1_queue.html',''); initResi
 
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
-<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="class_os_1_1_queue-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Os::Queue Class Reference</div>  </div>
+<div class="title">Os::Queue Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -104,164 +100,119 @@ Inheritance diagram for Os::Queue:</div>
  <div class="center">
   <img src="class_os_1_1_queue.png" usemap="#Os::Queue_map" alt=""/>
   <map id="Os::Queue_map" name="Os::Queue_map">
-<area href="class_os_1_1_i_p_c_queue.html" alt="Os::IPCQueue" shape="rect" coords="0,56,92,80"/>
+<area href="class_os_1_1_queue_interface.html" title="base queue interface" alt="Os::QueueInterface" shape="rect" coords="0,0,122,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:a0c0ecc2d5d5be2f2f3f0ed94672f778b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">QueueStatus</a> { <br />
-&#160;&#160;<a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc">QUEUE_OK</a>
-, <a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba4fe7580ade5df51257de6e8fb01bd558">QUEUE_NO_MORE_MSGS</a>
-, <a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba48062f0fe18c7b402de63fb97044ff92">QUEUE_UNINITIALIZED</a>
-, <a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba221b1e44801904db970ae089c3bb8cff">QUEUE_SIZE_MISMATCH</a>
-, <br />
-&#160;&#160;<a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba4ee228e8badc5d30f16548c6f56e8591">QUEUE_SEND_ERROR</a>
-, <a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baca317150550a59fbc9dc2833248fadd8">QUEUE_RECEIVE_ERROR</a>
-, <a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba6203ea4d55e8f1c8a6aa664173ea8fe5">QUEUE_INVALID_PRIORITY</a>
-, <a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba86d69a066b00aac03fe36d8e6cc84f46">QUEUE_EMPTY_BUFFER</a>
-, <br />
-&#160;&#160;<a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baac94c448c78c60149014efd5dd8ee1f9">QUEUE_FULL</a>
-, <a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba9b9f470d71ab1c1b82d50cbdb582a590">QUEUE_UNKNOWN_ERROR</a>
-<br />
- }</td></tr>
-<tr class="separator:a0c0ecc2d5d5be2f2f3f0ed94672f778b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a766caf06bbcd37473e630d0d2aa4d1ff"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">QueueBlocking</a> { <a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffada38de06220fe8a97d99347ff23e18c2">QUEUE_BLOCKING</a>
-, <a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a">QUEUE_NONBLOCKING</a>
- }</td></tr>
-<tr class="separator:a766caf06bbcd37473e630d0d2aa4d1ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a24a8cc8e4f283f981e5eb3941d266b51"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a24a8cc8e4f283f981e5eb3941d266b51">Queue</a> ()</td></tr>
+<tr class="memdesc:a24a8cc8e4f283f981e5eb3941d266b51"><td class="mdescLeft">&#160;</td><td class="mdescRight">queue constructor  <a href="class_os_1_1_queue.html#a24a8cc8e4f283f981e5eb3941d266b51">More...</a><br /></td></tr>
 <tr class="separator:a24a8cc8e4f283f981e5eb3941d266b51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cbc99b3d6c046c783deaed161fbbdf5"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a9cbc99b3d6c046c783deaed161fbbdf5">~Queue</a> ()</td></tr>
+<tr class="memdesc:a9cbc99b3d6c046c783deaed161fbbdf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">default queue destructor  <a href="class_os_1_1_queue.html#a9cbc99b3d6c046c783deaed161fbbdf5">More...</a><br /></td></tr>
 <tr class="separator:a9cbc99b3d6c046c783deaed161fbbdf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a063b4c1e8db577863a435c0bd94a2d33"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">QueueStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a063b4c1e8db577863a435c0bd94a2d33">create</a> (const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> depth, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> msgSize)</td></tr>
-<tr class="memdesc:a063b4c1e8db577863a435c0bd94a2d33"><td class="mdescLeft">&#160;</td><td class="mdescRight">create a message queue  <a href="class_os_1_1_queue.html#a063b4c1e8db577863a435c0bd94a2d33">More...</a><br /></td></tr>
-<tr class="separator:a063b4c1e8db577863a435c0bd94a2d33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19a3ca30735141b8ffffd572f9ebbc37"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">QueueStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a19a3ca30735141b8ffffd572f9ebbc37">send</a> (const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a> &amp;buffer, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> priority, <a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">QueueBlocking</a> block)</td></tr>
-<tr class="memdesc:a19a3ca30735141b8ffffd572f9ebbc37"><td class="mdescLeft">&#160;</td><td class="mdescRight">send a message  <a href="class_os_1_1_queue.html#a19a3ca30735141b8ffffd572f9ebbc37">More...</a><br /></td></tr>
-<tr class="separator:a19a3ca30735141b8ffffd572f9ebbc37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51a788f359d9c4d6d79d83997cef8cd6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">QueueStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a51a788f359d9c4d6d79d83997cef8cd6">receive</a> (<a class="el" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a> &amp;buffer, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;priority, <a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">QueueBlocking</a> block)</td></tr>
-<tr class="memdesc:a51a788f359d9c4d6d79d83997cef8cd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive a message  <a href="class_os_1_1_queue.html#a51a788f359d9c4d6d79d83997cef8cd6">More...</a><br /></td></tr>
-<tr class="separator:a51a788f359d9c4d6d79d83997cef8cd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9bd38c2d8573c812b64a93182c1a82e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">QueueStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#ac9bd38c2d8573c812b64a93182c1a82e">send</a> (const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffer, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> size, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> priority, <a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">QueueBlocking</a> block)</td></tr>
-<tr class="memdesc:ac9bd38c2d8573c812b64a93182c1a82e"><td class="mdescLeft">&#160;</td><td class="mdescRight">send a message  <a href="class_os_1_1_queue.html#ac9bd38c2d8573c812b64a93182c1a82e">More...</a><br /></td></tr>
-<tr class="separator:ac9bd38c2d8573c812b64a93182c1a82e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6968c94e323391e62689e11826dfd3a8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">QueueStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a6968c94e323391e62689e11826dfd3a8">receive</a> (<a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffer, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> capacity, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;actualSize, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;priority, <a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">QueueBlocking</a> block)</td></tr>
-<tr class="memdesc:a6968c94e323391e62689e11826dfd3a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive a message  <a href="class_os_1_1_queue.html#a6968c94e323391e62689e11826dfd3a8">More...</a><br /></td></tr>
-<tr class="separator:a6968c94e323391e62689e11826dfd3a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b10141bf66dc5a93af8be8393b51aa4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a9b10141bf66dc5a93af8be8393b51aa4">getNumMsgs</a> () const</td></tr>
-<tr class="memdesc:a9b10141bf66dc5a93af8be8393b51aa4"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the number of messages in the queue  <a href="class_os_1_1_queue.html#a9b10141bf66dc5a93af8be8393b51aa4">More...</a><br /></td></tr>
-<tr class="separator:a9b10141bf66dc5a93af8be8393b51aa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a633a717bfc23303062909c46dee961b2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a633a717bfc23303062909c46dee961b2">getMaxMsgs</a> () const</td></tr>
-<tr class="memdesc:a633a717bfc23303062909c46dee961b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the maximum number of messages (high watermark)  <a href="class_os_1_1_queue.html#a633a717bfc23303062909c46dee961b2">More...</a><br /></td></tr>
-<tr class="separator:a633a717bfc23303062909c46dee961b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61f50369eb3f56c9b104670c105666aa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a61f50369eb3f56c9b104670c105666aa">getQueueSize</a> () const</td></tr>
-<tr class="memdesc:a61f50369eb3f56c9b104670c105666aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the queue depth (maximum number of messages queue can hold)  <a href="class_os_1_1_queue.html#a61f50369eb3f56c9b104670c105666aa">More...</a><br /></td></tr>
-<tr class="separator:a61f50369eb3f56c9b104670c105666aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b057cf3481ddc493ede46af79999c74"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a0b057cf3481ddc493ede46af79999c74">getMsgSize</a> () const</td></tr>
-<tr class="memdesc:a0b057cf3481ddc493ede46af79999c74"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the message size (maximum message size queue can hold)  <a href="class_os_1_1_queue.html#a0b057cf3481ddc493ede46af79999c74">More...</a><br /></td></tr>
-<tr class="separator:a0b057cf3481ddc493ede46af79999c74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5390ca8fa30be86ab59c6d94aa111f56"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_os_1_1_queue_string.html">QueueString</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a5390ca8fa30be86ab59c6d94aa111f56">getName</a> ()</td></tr>
-<tr class="memdesc:a5390ca8fa30be86ab59c6d94aa111f56"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the queue name  <a href="class_os_1_1_queue.html#a5390ca8fa30be86ab59c6d94aa111f56">More...</a><br /></td></tr>
-<tr class="separator:a5390ca8fa30be86ab59c6d94aa111f56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06144ad4daa0b77083bc7dd590c22ed2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a06144ad4daa0b77083bc7dd590c22ed2">Queue</a> (const <a class="el" href="class_os_1_1_queue.html">Queue</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:a06144ad4daa0b77083bc7dd590c22ed2"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor is forbidden  <a href="class_os_1_1_queue.html#a06144ad4daa0b77083bc7dd590c22ed2">More...</a><br /></td></tr>
+<tr class="separator:a06144ad4daa0b77083bc7dd590c22ed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac629dafa460f6c42813eaea3d1215050"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#ac629dafa460f6c42813eaea3d1215050">Queue</a> (const <a class="el" href="class_os_1_1_queue.html">Queue</a> *other)=delete</td></tr>
+<tr class="memdesc:ac629dafa460f6c42813eaea3d1215050"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor is forbidden  <a href="class_os_1_1_queue.html#ac629dafa460f6c42813eaea3d1215050">More...</a><br /></td></tr>
+<tr class="separator:ac629dafa460f6c42813eaea3d1215050"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad433b61b436d4fc68403ec98c9090c83"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue_interface.html">QueueInterface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#ad433b61b436d4fc68403ec98c9090c83">operator=</a> (const <a class="el" href="class_os_1_1_queue_interface.html">QueueInterface</a> &amp;other) override=delete</td></tr>
+<tr class="memdesc:ad433b61b436d4fc68403ec98c9090c83"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignment operator is forbidden  <a href="class_os_1_1_queue.html#ad433b61b436d4fc68403ec98c9090c83">More...</a><br /></td></tr>
+<tr class="separator:ad433b61b436d4fc68403ec98c9090c83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93765980ee39dc7b6dcbd4aa41b8f611"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a93765980ee39dc7b6dcbd4aa41b8f611">create</a> (const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> depth, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> messageSize) override</td></tr>
+<tr class="memdesc:a93765980ee39dc7b6dcbd4aa41b8f611"><td class="mdescLeft">&#160;</td><td class="mdescRight">create queue storage through delegate  <a href="class_os_1_1_queue.html#a93765980ee39dc7b6dcbd4aa41b8f611">More...</a><br /></td></tr>
+<tr class="separator:a93765980ee39dc7b6dcbd4aa41b8f611"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a586c79950c37611fbef7f9276ad915ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a586c79950c37611fbef7f9276ad915ea">send</a> (const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffer, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> size, <a class="el" href="fp_config_8h.html#ae199505b1d26e3755455420df49b769f">FwQueuePriorityType</a> priority, <a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">BlockingType</a> blockType) override</td></tr>
+<tr class="memdesc:a586c79950c37611fbef7f9276ad915ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">send a message into the queue through delegate  <a href="class_os_1_1_queue.html#a586c79950c37611fbef7f9276ad915ea">More...</a><br /></td></tr>
+<tr class="separator:a586c79950c37611fbef7f9276ad915ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8259d9daafe134b617787eee3de03bc9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a8259d9daafe134b617787eee3de03bc9">receive</a> (<a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *destination, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> capacity, <a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">BlockingType</a> blockType, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;actualSize, <a class="el" href="fp_config_8h.html#ae199505b1d26e3755455420df49b769f">FwQueuePriorityType</a> &amp;priority) override</td></tr>
+<tr class="memdesc:a8259d9daafe134b617787eee3de03bc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive a message from the queue through delegate  <a href="class_os_1_1_queue.html#a8259d9daafe134b617787eee3de03bc9">More...</a><br /></td></tr>
+<tr class="separator:a8259d9daafe134b617787eee3de03bc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bbad17010b6f4b26fd47d3aff34900d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a5bbad17010b6f4b26fd47d3aff34900d">getMessagesAvailable</a> () const override</td></tr>
+<tr class="memdesc:a5bbad17010b6f4b26fd47d3aff34900d"><td class="mdescLeft">&#160;</td><td class="mdescRight">get number of messages available  <a href="class_os_1_1_queue.html#a5bbad17010b6f4b26fd47d3aff34900d">More...</a><br /></td></tr>
+<tr class="separator:a5bbad17010b6f4b26fd47d3aff34900d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeff26e54322f6786b607a837f81f15fb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#aeff26e54322f6786b607a837f81f15fb">getMessageHighWaterMark</a> () const override</td></tr>
+<tr class="memdesc:aeff26e54322f6786b607a837f81f15fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">get maximum messages stored at any given time through delegate  <a href="class_os_1_1_queue.html#aeff26e54322f6786b607a837f81f15fb">More...</a><br /></td></tr>
+<tr class="separator:aeff26e54322f6786b607a837f81f15fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7399c845d1930cd579255dfaf6671e92"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue_handle.html">QueueHandle</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a7399c845d1930cd579255dfaf6671e92">getHandle</a> () override</td></tr>
+<tr class="memdesc:a7399c845d1930cd579255dfaf6671e92"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the underlying queue handle (implementation specific). Delegates to implementation.  <a href="class_os_1_1_queue.html#a7399c845d1930cd579255dfaf6671e92">More...</a><br /></td></tr>
+<tr class="separator:a7399c845d1930cd579255dfaf6671e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae715ea9c631b513903835f8f6faa5ba"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#aae715ea9c631b513903835f8f6faa5ba">send</a> (const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a> &amp;message, <a class="el" href="fp_config_8h.html#ae199505b1d26e3755455420df49b769f">FwQueuePriorityType</a> priority, <a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">BlockingType</a> blockType)</td></tr>
+<tr class="memdesc:aae715ea9c631b513903835f8f6faa5ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">send a message to a queue  <a href="class_os_1_1_queue.html#aae715ea9c631b513903835f8f6faa5ba">More...</a><br /></td></tr>
+<tr class="separator:aae715ea9c631b513903835f8f6faa5ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3d0e9ee72abb26e40aca95fc31053f2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#ad3d0e9ee72abb26e40aca95fc31053f2">receive</a> (<a class="el" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a> &amp;destination, <a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">BlockingType</a> blockType, <a class="el" href="fp_config_8h.html#ae199505b1d26e3755455420df49b769f">FwQueuePriorityType</a> &amp;priority)</td></tr>
+<tr class="memdesc:ad3d0e9ee72abb26e40aca95fc31053f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive a message from a queue  <a href="class_os_1_1_queue.html#ad3d0e9ee72abb26e40aca95fc31053f2">More...</a><br /></td></tr>
+<tr class="separator:ad3d0e9ee72abb26e40aca95fc31053f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68f3abb58ce5d4dc453e0d28e2a84e7d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a68f3abb58ce5d4dc453e0d28e2a84e7d">getDepth</a> () const</td></tr>
+<tr class="memdesc:a68f3abb58ce5d4dc453e0d28e2a84e7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the queue's depth in messages  <a href="class_os_1_1_queue.html#a68f3abb58ce5d4dc453e0d28e2a84e7d">More...</a><br /></td></tr>
+<tr class="separator:a68f3abb58ce5d4dc453e0d28e2a84e7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcfe3ae765186d990fa490f9f87d6b6a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#afcfe3ae765186d990fa490f9f87d6b6a">getMessageSize</a> () const</td></tr>
+<tr class="memdesc:afcfe3ae765186d990fa490f9f87d6b6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the queue's message maximum size  <a href="class_os_1_1_queue.html#afcfe3ae765186d990fa490f9f87d6b6a">More...</a><br /></td></tr>
+<tr class="separator:afcfe3ae765186d990fa490f9f87d6b6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89d76213606e1ce50e24b91aa5ae83e3"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_os_1_1_queue_string.html">QueueString</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a89d76213606e1ce50e24b91aa5ae83e3">getName</a> () const</td></tr>
+<tr class="memdesc:a89d76213606e1ce50e24b91aa5ae83e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the queue's name  <a href="class_os_1_1_queue.html#a89d76213606e1ce50e24b91aa5ae83e3">More...</a><br /></td></tr>
+<tr class="separator:a89d76213606e1ce50e24b91aa5ae83e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_os_1_1_queue_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_os_1_1_queue_interface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_os_1_1_queue_interface.html">Os::QueueInterface</a></td></tr>
+<tr class="memitem:aeaf5749d9485b49d337825bf6e923884 inherit pub_methods_class_os_1_1_queue_interface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_interface.html#aeaf5749d9485b49d337825bf6e923884">QueueInterface</a> ()=default</td></tr>
+<tr class="memdesc:aeaf5749d9485b49d337825bf6e923884 inherit pub_methods_class_os_1_1_queue_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">default queue interface constructor  <a href="class_os_1_1_queue_interface.html#aeaf5749d9485b49d337825bf6e923884">More...</a><br /></td></tr>
+<tr class="separator:aeaf5749d9485b49d337825bf6e923884 inherit pub_methods_class_os_1_1_queue_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50aa001e4388566ddef93cdc833db49d inherit pub_methods_class_os_1_1_queue_interface"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_interface.html#a50aa001e4388566ddef93cdc833db49d">~QueueInterface</a> ()=default</td></tr>
+<tr class="memdesc:a50aa001e4388566ddef93cdc833db49d inherit pub_methods_class_os_1_1_queue_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">default queue destructor  <a href="class_os_1_1_queue_interface.html#a50aa001e4388566ddef93cdc833db49d">More...</a><br /></td></tr>
+<tr class="separator:a50aa001e4388566ddef93cdc833db49d inherit pub_methods_class_os_1_1_queue_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a088154976cfbecb94b3dbd2b23989764 inherit pub_methods_class_os_1_1_queue_interface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_interface.html#a088154976cfbecb94b3dbd2b23989764">QueueInterface</a> (const <a class="el" href="class_os_1_1_queue_interface.html">QueueInterface</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:a088154976cfbecb94b3dbd2b23989764 inherit pub_methods_class_os_1_1_queue_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor is forbidden  <a href="class_os_1_1_queue_interface.html#a088154976cfbecb94b3dbd2b23989764">More...</a><br /></td></tr>
+<tr class="separator:a088154976cfbecb94b3dbd2b23989764 inherit pub_methods_class_os_1_1_queue_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad32ce2e6d92aab50c26aeb7e943868a6 inherit pub_methods_class_os_1_1_queue_interface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_interface.html#ad32ce2e6d92aab50c26aeb7e943868a6">QueueInterface</a> (const <a class="el" href="class_os_1_1_queue_interface.html">QueueInterface</a> *other)=delete</td></tr>
+<tr class="memdesc:ad32ce2e6d92aab50c26aeb7e943868a6 inherit pub_methods_class_os_1_1_queue_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor is forbidden  <a href="class_os_1_1_queue_interface.html#ad32ce2e6d92aab50c26aeb7e943868a6">More...</a><br /></td></tr>
+<tr class="separator:ad32ce2e6d92aab50c26aeb7e943868a6 inherit pub_methods_class_os_1_1_queue_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aa83197459303b98738f7147776080ed3"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#aa83197459303b98738f7147776080ed3">getNumQueues</a> ()</td></tr>
-<tr class="memdesc:aa83197459303b98738f7147776080ed3"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the number of queues in the system  <a href="class_os_1_1_queue.html#aa83197459303b98738f7147776080ed3">More...</a><br /></td></tr>
-<tr class="separator:aa83197459303b98738f7147776080ed3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad605659fd612a8f498de4fa0fb091827"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#ad605659fd612a8f498de4fa0fb091827">getNumQueues</a> ()</td></tr>
+<tr class="memdesc:ad605659fd612a8f498de4fa0fb091827"><td class="mdescLeft">&#160;</td><td class="mdescRight">get number of queues system-wide  <a href="class_os_1_1_queue.html#ad605659fd612a8f498de4fa0fb091827">More...</a><br /></td></tr>
+<tr class="separator:ad605659fd612a8f498de4fa0fb091827"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdfa5a2c6151eaddfb8d5859b2e9e828"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_mutex.html">Os::Mutex</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#acdfa5a2c6151eaddfb8d5859b2e9e828">getStaticMutex</a> ()</td></tr>
+<tr class="memdesc:acdfa5a2c6151eaddfb8d5859b2e9e828"><td class="mdescLeft">&#160;</td><td class="mdescRight">get static mutex  <a href="class_os_1_1_queue.html#acdfa5a2c6151eaddfb8d5859b2e9e828">More...</a><br /></td></tr>
+<tr class="separator:acdfa5a2c6151eaddfb8d5859b2e9e828"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_methods_class_os_1_1_queue_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_os_1_1_queue_interface')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_os_1_1_queue_interface.html">Os::QueueInterface</a></td></tr>
+<tr class="memitem:a4bad6b52bf77896a8ec67d0d2fd7cebd inherit pub_static_methods_class_os_1_1_queue_interface"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_queue_interface.html">QueueInterface</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_interface.html#a4bad6b52bf77896a8ec67d0d2fd7cebd">getDelegate</a> (<a class="el" href="os_8hpp.html#ad4a1f7f50fa966a71d8aebadc5d75595">QueueHandleStorage</a> &amp;aligned_placement_new_memory)</td></tr>
+<tr class="memdesc:a4bad6b52bf77896a8ec67d0d2fd7cebd inherit pub_static_methods_class_os_1_1_queue_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">provide a pointer to a queue delegate object  <a href="class_os_1_1_queue_interface.html#a4bad6b52bf77896a8ec67d0d2fd7cebd">More...</a><br /></td></tr>
+<tr class="separator:a4bad6b52bf77896a8ec67d0d2fd7cebd inherit pub_static_methods_class_os_1_1_queue_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a4ac231e2aca2672c71d747b48cb209d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">QueueStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a4ac231e2aca2672c71d747b48cb209d8">createInternal</a> (const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;name, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> depth, <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> msgSize)</td></tr>
-<tr class="memdesc:a4ac231e2aca2672c71d747b48cb209d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">create a message queue  <a href="class_os_1_1_queue.html#a4ac231e2aca2672c71d747b48cb209d8">More...</a><br /></td></tr>
-<tr class="separator:a4ac231e2aca2672c71d747b48cb209d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:ae08788cca4770650b406895e4e5e72e3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8h.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#ae08788cca4770650b406895e4e5e72e3">m_handle</a></td></tr>
-<tr class="memdesc:ae08788cca4770650b406895e4e5e72e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle for implementation specific queue  <a href="class_os_1_1_queue.html#ae08788cca4770650b406895e4e5e72e3">More...</a><br /></td></tr>
-<tr class="separator:ae08788cca4770650b406895e4e5e72e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a020737d93d1e1e1cdbdf269050f126f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_queue_string.html">QueueString</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#a020737d93d1e1e1cdbdf269050f126f1">m_name</a></td></tr>
-<tr class="memdesc:a020737d93d1e1e1cdbdf269050f126f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">queue name  <a href="class_os_1_1_queue.html#a020737d93d1e1e1cdbdf269050f126f1">More...</a><br /></td></tr>
-<tr class="separator:a020737d93d1e1e1cdbdf269050f126f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
-Static Protected Attributes</h2></td></tr>
-<tr class="memitem:aac2671af4155367a21604013913fee85"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue.html#aac2671af4155367a21604013913fee85">s_numQueues</a> = 0</td></tr>
-<tr class="memdesc:aac2671af4155367a21604013913fee85"><td class="mdescLeft">&#160;</td><td class="mdescRight">tracks number of queues in the system  <a href="class_os_1_1_queue.html#aac2671af4155367a21604013913fee85">More...</a><br /></td></tr>
-<tr class="separator:aac2671af4155367a21604013913fee85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_types_class_os_1_1_queue_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_os_1_1_queue_interface')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_os_1_1_queue_interface.html">Os::QueueInterface</a></td></tr>
+<tr class="memitem:a91316813bd24efbd08f841c5dbc3d3b1 inherit pub_types_class_os_1_1_queue_interface"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a> { <br />
+&#160;&#160;<a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1a66b278091f49b9a3a78754b197751544">OP_OK</a>
+, <a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1a54187214c8b649fb2fd15670216ef887">ALREADY_CREATED</a>
+, <a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1a01fce1edddddb90ea690d41881fc28ba">EMPTY</a>
+, <a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1a54f15340bd3204e989d96f72907c3bd1">UNINITIALIZED</a>
+, <br />
+&#160;&#160;<a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1abdc30f3980e76f6ff8c004dca6dfbae7">SIZE_MISMATCH</a>
+, <a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1a66c032ccc44868ad36487944ff6a38fa">SEND_ERROR</a>
+, <a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1a141da57f89f1191b6801313e62f3a53c">RECEIVE_ERROR</a>
+, <a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1a1e7d41b13cff6df061fa9c8a47e28f5d">INVALID_PRIORITY</a>
+, <br />
+&#160;&#160;<a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1a619268eb2d82dd63d70d5d5e9b5701d9">FULL</a>
+, <a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1ac8ced42a6154628c6a07801f9df8d202">UNKNOWN_ERROR</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:a91316813bd24efbd08f841c5dbc3d3b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">status returned from the queue send function  <a href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">More...</a><br /></td></tr>
+<tr class="separator:a91316813bd24efbd08f841c5dbc3d3b1 inherit pub_types_class_os_1_1_queue_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cee348ebfab3e9b57310f1c913166fe inherit pub_types_class_os_1_1_queue_interface"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">BlockingType</a> { <a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fea454d916e670f0f01323cc23ab4fa1e23">BLOCKING</a>
+, <a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fea8f2982410737fa1ee9bae9e41c30612c">NONBLOCKING</a>
+ }</td></tr>
+<tr class="memdesc:a3cee348ebfab3e9b57310f1c913166fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">message type  <a href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">More...</a><br /></td></tr>
+<tr class="separator:a3cee348ebfab3e9b57310f1c913166fe inherit pub_types_class_os_1_1_queue_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00024">24</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a766caf06bbcd37473e630d0d2aa4d1ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a766caf06bbcd37473e630d0d2aa4d1ff">&#9670;&nbsp;</a></span>QueueBlocking</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">Os::Queue::QueueBlocking</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a766caf06bbcd37473e630d0d2aa4d1ffada38de06220fe8a97d99347ff23e18c2"></a>QUEUE_BLOCKING&#160;</td><td class="fielddoc"><p><a class="el" href="class_os_1_1_queue.html">Queue</a> receive blocks until a message arrives. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a"></a>QUEUE_NONBLOCKING&#160;</td><td class="fielddoc"><p><a class="el" href="class_os_1_1_queue.html">Queue</a> receive always returns even if there is no message. </p>
-</td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00040">40</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a0c0ecc2d5d5be2f2f3f0ed94672f778b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c0ecc2d5d5be2f2f3f0ed94672f778b">&#9670;&nbsp;</a></span>QueueStatus</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Os::Queue::QueueStatus</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc"></a>QUEUE_OK&#160;</td><td class="fielddoc"><p>message sent/received okay </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778ba4fe7580ade5df51257de6e8fb01bd558"></a>QUEUE_NO_MORE_MSGS&#160;</td><td class="fielddoc"><p>If non-blocking, all the messages have been drained. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778ba48062f0fe18c7b402de63fb97044ff92"></a>QUEUE_UNINITIALIZED&#160;</td><td class="fielddoc"><p><a class="el" href="class_os_1_1_queue.html">Queue</a> wasn't initialized successfully. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778ba221b1e44801904db970ae089c3bb8cff"></a>QUEUE_SIZE_MISMATCH&#160;</td><td class="fielddoc"><p>attempted to send or receive with buffer too large, too small </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778ba4ee228e8badc5d30f16548c6f56e8591"></a>QUEUE_SEND_ERROR&#160;</td><td class="fielddoc"><p>message send error </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778baca317150550a59fbc9dc2833248fadd8"></a>QUEUE_RECEIVE_ERROR&#160;</td><td class="fielddoc"><p>message receive error </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778ba6203ea4d55e8f1c8a6aa664173ea8fe5"></a>QUEUE_INVALID_PRIORITY&#160;</td><td class="fielddoc"><p>invalid priority requested </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778ba86d69a066b00aac03fe36d8e6cc84f46"></a>QUEUE_EMPTY_BUFFER&#160;</td><td class="fielddoc"><p>supplied buffer is empty </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778baac94c448c78c60149014efd5dd8ee1f9"></a>QUEUE_FULL&#160;</td><td class="fielddoc"><p>queue was full when attempting to send a message </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a0c0ecc2d5d5be2f2f3f0ed94672f778ba9b9f470d71ab1c1b82d50cbdb582a590"></a>QUEUE_UNKNOWN_ERROR&#160;</td><td class="fielddoc"><p>Unexpected error; can't match with returns. </p>
-</td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00027">27</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00153">153</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a24a8cc8e4f283f981e5eb3941d266b51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24a8cc8e4f283f981e5eb3941d266b51">&#9670;&nbsp;</a></span>Queue()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a24a8cc8e4f283f981e5eb3941d266b51">&#9670;&nbsp;</a></span>Queue() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -274,6 +225,8 @@ Static Protected Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>queue constructor </p>
 
 <p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00038">38</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
 
@@ -302,51 +255,14 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>default queue destructor </p>
+
 <p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00065">65</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a063b4c1e8db577863a435c0bd94a2d33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a063b4c1e8db577863a435c0bd94a2d33">&#9670;&nbsp;</a></span>create()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Queue::QueueStatus</a> Os::Queue::create </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>depth</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>msgSize</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>create a message queue </p>
-
-<p class="definition">Definition at line <a class="el" href="queue_common_8cpp_source.html#l00041">41</a> of file <a class="el" href="queue_common_8cpp_source.html">QueueCommon.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4ac231e2aca2672c71d747b48cb209d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ac231e2aca2672c71d747b48cb209d8">&#9670;&nbsp;</a></span>createInternal()</h2>
+<a id="a06144ad4daa0b77083bc7dd590c22ed2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06144ad4daa0b77083bc7dd590c22ed2">&#9670;&nbsp;</a></span>Queue() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -355,7 +271,64 @@ Static Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Queue::QueueStatus</a> Os::Queue::createInternal </td>
+          <td class="memname">Os::Queue::Queue </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_os_1_1_queue.html">Queue</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>copy constructor is forbidden </p>
+
+</div>
+</div>
+<a id="ac629dafa460f6c42813eaea3d1215050"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac629dafa460f6c42813eaea3d1215050">&#9670;&nbsp;</a></span>Queue() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Os::Queue::Queue </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_os_1_1_queue.html">Queue</a> *&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>copy constructor is forbidden </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a93765980ee39dc7b6dcbd4aa41b8f611"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93765980ee39dc7b6dcbd4aa41b8f611">&#9670;&nbsp;</a></span>create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">QueueInterface::Status</a> Os::Queue::create </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="class_fw_1_1_string_base.html">Fw::StringBase</a> &amp;&#160;</td>
           <td class="paramname"><em>name</em>, </td>
@@ -363,14 +336,14 @@ Static Protected Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
           <td class="paramname"><em>depth</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>msgSize</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>messageSize</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -380,34 +353,37 @@ Static Protected Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>create a message queue </p>
-<p>Internal method used for creating allowing alternate implementations to implement different creation behavior without needing to duplicate the majority of the creation functionality. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>create queue storage through delegate </p>
+<p>Creates a queue ensuring sufficient storage to hold <code>depth</code> messages of <code>messageSize</code> size each. This method delegates to the underlying implementation. Resource allocation is dependent on the underlying implementation and users should assume that resource allocation is possible.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>name of queue </td></tr>
-    <tr><td class="paramname">depth</td><td>depth of queue </td></tr>
-    <tr><td class="paramname">msgSize</td><td>size of a message stored on queue </td></tr>
+    <tr><td class="paramname">depth</td><td>depth of queue in number of messages </td></tr>
+    <tr><td class="paramname">messageSize</td><td>size of an individual message </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>queue creation status </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>: status of the creation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00042">42</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
+<p>Implements <a class="el" href="class_os_1_1_queue_interface.html#a54c59676af2d7d176722a7a8e68034b2">Os::QueueInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8cpp_source.html#l00020">20</a> of file <a class="el" href="os_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a633a717bfc23303062909c46dee961b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a633a717bfc23303062909c46dee961b2">&#9670;&nbsp;</a></span>getMaxMsgs()</h2>
+<a id="a68f3abb58ce5d4dc453e0d28e2a84e7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68f3abb58ce5d4dc453e0d28e2a84e7d">&#9670;&nbsp;</a></span>getDepth()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Os::Queue::getMaxMsgs </td>
+          <td class="memname"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> Os::Queue::getDepth </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -415,77 +391,14 @@ Static Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>get the maximum number of messages (high watermark) </p>
+<p>get the queue's depth in messages </p>
 
-<p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00222">222</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a0b057cf3481ddc493ede46af79999c74"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b057cf3481ddc493ede46af79999c74">&#9670;&nbsp;</a></span>getMsgSize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Os::Queue::getMsgSize </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>get the message size (maximum message size queue can hold) </p>
-
-<p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00244">244</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8cpp_source.html#l00115">115</a> of file <a class="el" href="os_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a5390ca8fa30be86ab59c6d94aa111f56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5390ca8fa30be86ab59c6d94aa111f56">&#9670;&nbsp;</a></span>getName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="class_os_1_1_queue_string.html">QueueString</a> &amp; Os::Queue::getName </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>get the queue name </p>
-
-<p class="definition">Definition at line <a class="el" href="queue_common_8cpp_source.html#l00061">61</a> of file <a class="el" href="queue_common_8cpp_source.html">QueueCommon.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9b10141bf66dc5a93af8be8393b51aa4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b10141bf66dc5a93af8be8393b51aa4">&#9670;&nbsp;</a></span>getNumMsgs()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Os::Queue::getNumMsgs </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>get the number of messages in the queue </p>
-
-<p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00211">211</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aa83197459303b98738f7147776080ed3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa83197459303b98738f7147776080ed3">&#9670;&nbsp;</a></span>getNumQueues()</h2>
+<a id="a7399c845d1930cd579255dfaf6671e92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7399c845d1930cd579255dfaf6671e92">&#9670;&nbsp;</a></span>getHandle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -494,7 +407,146 @@ Static Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Os::Queue::getNumQueues </td>
+          <td class="memname"><a class="el" href="class_os_1_1_queue_handle.html">QueueHandle</a> * Os::Queue::getHandle </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>return the underlying queue handle (implementation specific). Delegates to implementation. </p>
+<dl class="section return"><dt>Returns</dt><dd>internal task handle representation </dd></dl>
+
+<p>Implements <a class="el" href="class_os_1_1_queue_interface.html#a13e30400b3d4faa8691f728f531cb7e1">Os::QueueInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8cpp_source.html#l00087">87</a> of file <a class="el" href="os_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aeff26e54322f6786b607a837f81f15fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeff26e54322f6786b607a837f81f15fb">&#9670;&nbsp;</a></span>getMessageHighWaterMark()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> Os::Queue::getMessageHighWaterMark </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get maximum messages stored at any given time through delegate </p>
+<p>Returns the maximum number of messages in this queue at any given time. This is the high-water mark for this queue. </p><dl class="section return"><dt>Returns</dt><dd>queue message high-water mark </dd></dl>
+
+<p>Implements <a class="el" href="class_os_1_1_queue_interface.html#a6225885177afdd21e60db3fb75babb2c">Os::QueueInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8cpp_source.html#l00082">82</a> of file <a class="el" href="os_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a5bbad17010b6f4b26fd47d3aff34900d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bbad17010b6f4b26fd47d3aff34900d">&#9670;&nbsp;</a></span>getMessagesAvailable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> Os::Queue::getMessagesAvailable </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get number of messages available </p>
+<p>Returns the number of messages currently available in the queue. This method delegates to the underlying implementation.</p>
+<dl class="section return"><dt>Returns</dt><dd>number of messages available </dd></dl>
+
+<p>Implements <a class="el" href="class_os_1_1_queue_interface.html#ac1191ca286b755660e469434404215f9">Os::QueueInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00211">211</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
+
+</div>
+</div>
+<a id="afcfe3ae765186d990fa490f9f87d6b6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afcfe3ae765186d990fa490f9f87d6b6a">&#9670;&nbsp;</a></span>getMessageSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> Os::Queue::getMessageSize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the queue's message maximum size </p>
+
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8cpp_source.html#l00119">119</a> of file <a class="el" href="os_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a89d76213606e1ce50e24b91aa5ae83e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89d76213606e1ce50e24b91aa5ae83e3">&#9670;&nbsp;</a></span>getName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_os_1_1_queue_string.html">QueueString</a> &amp; Os::Queue::getName </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the queue's name </p>
+
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8cpp_source.html#l00123">123</a> of file <a class="el" href="os_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad605659fd612a8f498de4fa0fb091827"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad605659fd612a8f498de4fa0fb091827">&#9670;&nbsp;</a></span>getNumQueues()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> Os::Queue::getNumQueues </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -507,56 +559,94 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>get the number of queues in the system </p>
+<p>get number of queues system-wide </p>
 
-<p class="definition">Definition at line <a class="el" href="queue_common_8cpp_source.html#l00057">57</a> of file <a class="el" href="queue_common_8cpp_source.html">QueueCommon.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8cpp_source.html#l00127">127</a> of file <a class="el" href="os_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a61f50369eb3f56c9b104670c105666aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61f50369eb3f56c9b104670c105666aa">&#9670;&nbsp;</a></span>getQueueSize()</h2>
+<a id="acdfa5a2c6151eaddfb8d5859b2e9e828"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdfa5a2c6151eaddfb8d5859b2e9e828">&#9670;&nbsp;</a></span>getStaticMutex()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Os::Queue::getQueueSize </td>
+          <td class="memname"><a class="el" href="class_os_1_1_mutex.html">Os::Mutex</a> &amp; Os::Queue::getStaticMutex </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>get the queue depth (maximum number of messages queue can hold) </p>
+<p>get static mutex </p>
 
-<p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00233">233</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8cpp_source.html#l00132">132</a> of file <a class="el" href="os_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a51a788f359d9c4d6d79d83997cef8cd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51a788f359d9c4d6d79d83997cef8cd6">&#9670;&nbsp;</a></span>receive() <span class="overload">[1/2]</span></h2>
+<a id="ad433b61b436d4fc68403ec98c9090c83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad433b61b436d4fc68403ec98c9090c83">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_os_1_1_queue_interface.html">QueueInterface</a>&amp; Os::Queue::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_os_1_1_queue_interface.html">QueueInterface</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>assignment operator is forbidden </p>
+
+<p>Reimplemented from <a class="el" href="class_os_1_1_queue_interface.html#ae6b675a654f3413598a7e4619ea87c5d">Os::QueueInterface</a>.</p>
+
+</div>
+</div>
+<a id="ad3d0e9ee72abb26e40aca95fc31053f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3d0e9ee72abb26e40aca95fc31053f2">&#9670;&nbsp;</a></span>receive() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Queue::QueueStatus</a> Os::Queue::receive </td>
+          <td class="memname"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a> Os::Queue::receive </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a> &amp;&#160;</td>
-          <td class="paramname"><em>buffer</em>, </td>
+          <td class="paramname"><em>destination</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;&#160;</td>
-          <td class="paramname"><em>priority</em>, </td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">BlockingType</a>&#160;</td>
+          <td class="paramname"><em>blockType</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">QueueBlocking</a>&#160;</td>
-          <td class="paramname"><em>block</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae199505b1d26e3755455420df49b769f">FwQueuePriorityType</a> &amp;&#160;</td>
+          <td class="paramname"><em>priority</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -566,47 +656,59 @@ Static Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>receive a message </p>
-
-<p class="definition">Definition at line <a class="el" href="queue_common_8cpp_source.html#l00022">22</a> of file <a class="el" href="queue_common_8cpp_source.html">QueueCommon.cpp</a>.</p>
+<p>receive a message from a queue </p>
+<p>Receive a message from a queue with the given block type. See: <a class="el" href="class_os_1_1_queue_interface.html#a76d654026828c4b92baa332eccd7113f" title="receive a message from the queue">QueueInterface::receive</a>. Note: this will entirely overwrite the buffer.</p>
+<dl class="section warning"><dt>Warning</dt><dd>This method will block if the queue is full and blockType is set to BLOCKING</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">destination</td><td>reference to serialize buffer for storing message </td></tr>
+    <tr><td class="paramname">priority</td><td>(output) priority of the message </td></tr>
+    <tr><td class="paramname">blockType</td><td>BLOCKING to block for space or NONBLOCKING to return error when queue is full </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>status of the send </dd></dl>
 
 </div>
 </div>
-<a id="a6968c94e323391e62689e11826dfd3a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6968c94e323391e62689e11826dfd3a8">&#9670;&nbsp;</a></span>receive() <span class="overload">[2/2]</span></h2>
+<a id="a8259d9daafe134b617787eee3de03bc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8259d9daafe134b617787eee3de03bc9">&#9670;&nbsp;</a></span>receive() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Queue::QueueStatus</a> Os::Queue::receive </td>
+          <td class="memname"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a> Os::Queue::receive </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *&#160;</td>
-          <td class="paramname"><em>buffer</em>, </td>
+          <td class="paramname"><em>destination</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
           <td class="paramname"><em>capacity</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">BlockingType</a>&#160;</td>
+          <td class="paramname"><em>blockType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;&#160;</td>
           <td class="paramname"><em>actualSize</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;&#160;</td>
-          <td class="paramname"><em>priority</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">QueueBlocking</a>&#160;</td>
-          <td class="paramname"><em>block</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae199505b1d26e3755455420df49b769f">FwQueuePriorityType</a> &amp;&#160;</td>
+          <td class="paramname"><em>priority</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -614,37 +716,57 @@ Static Protected Attributes</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>receive a message </p>
+<p>receive a message from the queue through delegate </p>
+<p>Receive a message from the queue, providing the message destination, capacity, priority, and blocking type. When <code>blockType</code> is set to BLOCKING, this call will block on queue empty. Otherwise, this will return an error status on queue empty. Actual size received and priority of message is set on success status. This method delegates to the underlying implementation.</p>
+<dl class="section warning"><dt>Warning</dt><dd>It is invalid to send a null buffer. </dd>
+<dd>
+This method will block if the queue is empty and blockType is set to BLOCKING</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">destination</td><td>destination for message data </td></tr>
+    <tr><td class="paramname">capacity</td><td>maximum size of message data </td></tr>
+    <tr><td class="paramname">blockType</td><td>BLOCKING to wait for message or NONBLOCKING to return error when queue is empty </td></tr>
+    <tr><td class="paramname">actualSize</td><td>(output) actual size of message read </td></tr>
+    <tr><td class="paramname">priority</td><td>(output) priority of message read </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>: status of the send </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00193">193</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
+<p>Implements <a class="el" href="class_os_1_1_queue_interface.html#a76d654026828c4b92baa332eccd7113f">Os::QueueInterface</a>.</p>
 
 </div>
 </div>
-<a id="a19a3ca30735141b8ffffd572f9ebbc37"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19a3ca30735141b8ffffd572f9ebbc37">&#9670;&nbsp;</a></span>send() <span class="overload">[1/2]</span></h2>
+<a id="aae715ea9c631b513903835f8f6faa5ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae715ea9c631b513903835f8f6faa5ba">&#9670;&nbsp;</a></span>send() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Queue::QueueStatus</a> Os::Queue::send </td>
+          <td class="memname"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a> Os::Queue::send </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a> &amp;&#160;</td>
-          <td class="paramname"><em>buffer</em>, </td>
+          <td class="paramname"><em>message</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae199505b1d26e3755455420df49b769f">FwQueuePriorityType</a>&#160;</td>
           <td class="paramname"><em>priority</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">QueueBlocking</a>&#160;</td>
-          <td class="paramname"><em>block</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">BlockingType</a>&#160;</td>
+          <td class="paramname"><em>blockType</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -654,20 +776,32 @@ Static Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>send a message </p>
-
-<p class="definition">Definition at line <a class="el" href="queue_common_8cpp_source.html#l00013">13</a> of file <a class="el" href="queue_common_8cpp_source.html">QueueCommon.cpp</a>.</p>
+<p>send a message to a queue </p>
+<p>Send a message to a queue with the given priority and block type. See: <a class="el" href="class_os_1_1_queue_interface.html#abde9c4e2fb2d9147e71613be385eb0cf" title="send a message into the queue">QueueInterface::send</a></p>
+<dl class="section warning"><dt>Warning</dt><dd>This method will block if the queue is full and blockType is set to BLOCKING</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>reference to serialize buffer storing message </td></tr>
+    <tr><td class="paramname">priority</td><td>priority of the message </td></tr>
+    <tr><td class="paramname">blockType</td><td>BLOCKING to block for space or NONBLOCKING to return error when queue is full </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>status of the send </dd></dl>
 
 </div>
 </div>
-<a id="ac9bd38c2d8573c812b64a93182c1a82e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9bd38c2d8573c812b64a93182c1a82e">&#9670;&nbsp;</a></span>send() <span class="overload">[2/2]</span></h2>
+<a id="a586c79950c37611fbef7f9276ad915ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a586c79950c37611fbef7f9276ad915ea">&#9670;&nbsp;</a></span>send() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778b">Queue::QueueStatus</a> Os::Queue::send </td>
+          <td class="memname"><a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1">Status</a> Os::Queue::send </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *&#160;</td>
           <td class="paramname"><em>buffer</em>, </td>
@@ -675,20 +809,20 @@ Static Protected Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
           <td class="paramname"><em>size</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#ae199505b1d26e3755455420df49b769f">FwQueuePriorityType</a>&#160;</td>
           <td class="paramname"><em>priority</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ff">QueueBlocking</a>&#160;</td>
-          <td class="paramname"><em>block</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe">BlockingType</a>&#160;</td>
+          <td class="paramname"><em>blockType</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -696,97 +830,36 @@ Static Protected Attributes</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
-</div><div class="memdoc">
-
-<p>send a message </p>
-
-<p class="definition">Definition at line <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html#l00104">104</a> of file <a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ae08788cca4770650b406895e4e5e72e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae08788cca4770650b406895e4e5e72e3">&#9670;&nbsp;</a></span>m_handle</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a> Os::Queue::m_handle</td>
-        </tr>
-      </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>handle for implementation specific queue </p>
+<p>send a message into the queue through delegate </p>
+<p>Send a message into the queue, providing the message data, size, priority, and blocking type. When <code>blockType</code> is set to BLOCKING, this call will block on queue full. Otherwise, this will return an error status on queue full. This method delegates to the underlying implementation.</p>
+<dl class="section warning"><dt>Warning</dt><dd>It is invalid to send a null buffer </dd>
+<dd>
+This method will block if the queue is full and blockType is set to BLOCKING</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>message data </td></tr>
+    <tr><td class="paramname">size</td><td>size of message data </td></tr>
+    <tr><td class="paramname">priority</td><td>priority of the message </td></tr>
+    <tr><td class="paramname">blockType</td><td>BLOCKING to block for space or NONBLOCKING to return error when queue is full </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>: status of the send </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00075">75</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a020737d93d1e1e1cdbdf269050f126f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a020737d93d1e1e1cdbdf269050f126f1">&#9670;&nbsp;</a></span>m_name</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_os_1_1_queue_string.html">QueueString</a> Os::Queue::m_name</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>queue name </p>
-
-<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00076">76</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
-
-</div>
-</div>
-<a id="aac2671af4155367a21604013913fee85"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac2671af4155367a21604013913fee85">&#9670;&nbsp;</a></span>s_numQueues</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> Os::Queue::s_numQueues = 0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>tracks number of queues in the system </p>
-
-<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00080">80</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
+<p>Implements <a class="el" href="class_os_1_1_queue_interface.html#abde9c4e2fb2d9147e71613be385eb0cf">Os::QueueInterface</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>Os/<a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a></li>
 <li>Os/Baremetal/<a class="el" href="os_2_baremetal_2_queue_8cpp_source.html">Queue.cpp</a></li>
-<li>Os/<a class="el" href="queue_common_8cpp_source.html">QueueCommon.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

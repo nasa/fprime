@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_tlm_chan_component.html',''); ini
 <div class="title"><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md1116"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md1100"></a>
 Svc::TlmChan Component</h1>
-<h2><a class="anchor" id="autotoc_md1117"></a>
+<h2><a class="anchor" id="autotoc_md1101"></a>
 1. Introduction</h2>
 <p>The <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> Component is used to store telemetry values written by other components. The values are stored in serialized form. The data is stored as a set of telemetry channels in a table. The data can be individually read back or periodically pushed to another component for transporting out of the system. <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> is an implementation of the <code>Svc::TlmStore</code> component in the <code>Svc/Tlm</code> directory.</p>
-<h2><a class="anchor" id="autotoc_md1118"></a>
+<h2><a class="anchor" id="autotoc_md1102"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> are as follows:</p>
 <table class="markdownTable">
@@ -108,15 +108,15 @@ Svc::TlmChan Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">TLC-004   </td><td class="markdownTableBodyNone">The <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> component shall write changed telemetry channels when invoked by the run port   </td><td class="markdownTableBodyNone">Unit Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md1119"></a>
+<h2><a class="anchor" id="autotoc_md1103"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md1120"></a>
+<h3><a class="anchor" id="autotoc_md1104"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md1121"></a>
+<h4><a class="anchor" id="autotoc_md1105"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> component has the following component diagram:</p>
 <p><img src="img/TlmChanBDD.jpg" alt="Svc::TlmChan Diagram" title="Svc::TlmChan" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md1122"></a>
+<h4><a class="anchor" id="autotoc_md1106"></a>
 3.1.2 Ports</h4>
 <p>The <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> component uses the following port types:</p>
 <table class="markdownTable">
@@ -131,31 +131,31 @@ Svc::TlmChan Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a class="el" href="fw_2_com_2docs_2sdd_8md.html">`Fw::Com`</a>   </td><td class="markdownTableBodyNone">PktSend   </td><td class="markdownTableBodyNone">Output   </td><td class="markdownTableBodyNone">n/a   </td><td class="markdownTableBodyNone">Write a set of packets with updated telemetry   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md1123"></a>
+<h4><a class="anchor" id="autotoc_md1107"></a>
 3.2 Functional Description</h4>
 <p>The <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> component has an input port <code>TlmRecv</code> that receives channel updates from other components in the system. These calls from the other components are made by the component implementation classes, but the generated code in the base classes takes the type specific channel value and serializes it, then makes the call to the output port. The <code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> component can then store the channel value as generic data. The channel values are stored in an internal double-buffered table, and a flag is set when a new value is written to the channel entry.</p>
 <p>When a request is made for a nonexistent channel, the call will return with an empty buffer in the <a class="el" href="class_fw_1_1_tlm_buffer.html">Fw::TlmBuffer</a> value argument. This is to cover the case where a channel is defined in the system, but has not been written yet. If the channel has not ever been defined, there is no way to programmatically determine that from the TlmGet port call.</p>
 <p>The implementation uses a hashing function that is tuned in the configuration file <code><a class="el" href="tlm_chan_impl_cfg_8hpp.html" title="Configuration file for Telemetry Channel component.">TlmChanImplCfg.hpp</a></code>. See section 3.5 for description.</p>
-<h3><a class="anchor" id="autotoc_md1124"></a>
+<h3><a class="anchor" id="autotoc_md1108"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md1125"></a>
+<h4><a class="anchor" id="autotoc_md1109"></a>
 3.3.1 External User Option</h4>
 <p>This diagram shows the scenario where telemetry packets are generated for an external user:</p>
 <p><img src="img/ExternalUserScenario.jpg" alt="External User Scenario" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md1126"></a>
+<h4><a class="anchor" id="autotoc_md1110"></a>
 3.3.2 Telemetry Database Option</h4>
 <p>This diagram shows the scenario where telemetry packets are stored and retrieved as a database:</p>
 <p><img src="img/DatabaseScenario.jpg" alt="External User Scenario" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md1127"></a>
+<h3><a class="anchor" id="autotoc_md1111"></a>
 3.4 State</h3>
 <p><code><a class="el" href="class_svc_1_1_tlm_chan.html">Svc::TlmChan</a></code> has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md1128"></a>
+<h3><a class="anchor" id="autotoc_md1112"></a>
 3.5 Algorithms</h3>
 <p>In order to speed up lookups for storing and reading telemetry channels, a simple hash function is used to select a location in an array of hash table slots. A configuration value in <code>TlmChanImplCfg.h</code> defines a set of hash buckets to store the telemetry values. The number of buckets has to be at least as large as the number of telemetry values defined in the system. The number of channels in the system can be determined by invoking <code>make comp_report_gen</code> from the deployment directory. The number of has table slots <code>TLMCHAN_NUM_TLM_HASH_SLOTS</code> and the hash value <code>TLMCHAN_HASH_MOD_VALUE</code> in the configuration file can be varied to balance the amount of memory for slots versus the distribution of buckets to slots. See <code>TlmChanImplCfg.h</code> for a procedure on how to tune the algorithm.</p>
-<h2><a class="anchor" id="autotoc_md1129"></a>
+<h2><a class="anchor" id="autotoc_md1113"></a>
 4. Dictionaries</h2>
 <p>TBD</p>
-<h2><a class="anchor" id="autotoc_md1130"></a>
+<h2><a class="anchor" id="autotoc_md1114"></a>
 5. Module Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -167,10 +167,10 @@ Svc::TlmChan Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test Checklist   </td><td class="markdownTableBodyNone"><a href="Checklist_Unit_Test.xls">Link</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md1131"></a>
+<h2><a class="anchor" id="autotoc_md1115"></a>
 6. Unit Testing</h2>
 <p>To see unit test coverage run fprime-util check &ndash;coverage</p>
-<h2><a class="anchor" id="autotoc_md1132"></a>
+<h2><a class="anchor" id="autotoc_md1116"></a>
 7. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

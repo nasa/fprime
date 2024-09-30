@@ -7,12 +7,20 @@ var hierarchy =
     [ "Os::BareTaskHandle", "class_os_1_1_bare_task_handle.html", null ],
     [ "Svc::BufferManagerComponentImpl::BufferBin", "struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html", null ],
     [ "Svc::BufferManagerComponentImpl::BufferBins", "struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bins.html", null ],
-    [ "Os::BufferQueue", "class_os_1_1_buffer_queue.html", null ],
     [ "Fw::ByteArray", "struct_fw_1_1_byte_array.html", null ],
     [ "Fw::FilePacket::CancelPacket", "class_fw_1_1_file_packet_1_1_cancel_packet.html", null ],
     [ "CFDP::Checksum", "class_c_f_d_p_1_1_checksum.html", null ],
     [ "Types::CircularBuffer", "class_types_1_1_circular_buffer.html", null ],
     [ "Svc::AMPCSSequence::Record::CmdLength", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_cmd_length.html", null ],
+    [ "Os::ConditionVariableHandle", "class_os_1_1_condition_variable_handle.html", [
+      [ "Os::Posix::Mutex::PosixConditionVariableHandle", "struct_os_1_1_posix_1_1_mutex_1_1_posix_condition_variable_handle.html", null ],
+      [ "Os::Stub::Mutex::StubConditionVariableHandle", "struct_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable_handle.html", null ]
+    ] ],
+    [ "Os::ConditionVariableInterface", "class_os_1_1_condition_variable_interface.html", [
+      [ "Os::ConditionVariable", "class_os_1_1_condition_variable.html", null ],
+      [ "Os::Posix::Mutex::PosixConditionVariable", "class_os_1_1_posix_1_1_mutex_1_1_posix_condition_variable.html", null ],
+      [ "Os::Stub::Mutex::StubConditionVariable", "class_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable.html", null ]
+    ] ],
     [ "Os::ConsoleHandle", "struct_os_1_1_console_handle.html", [
       [ "Os::Posix::Console::PosixConsoleHandle", "struct_os_1_1_posix_1_1_console_1_1_posix_console_handle.html", null ],
       [ "Os::Stub::Console::StubConsoleHandle", "struct_os_1_1_stub_1_1_console_1_1_stub_console_handle.html", null ]
@@ -47,7 +55,6 @@ var hierarchy =
     [ "Fw::DpContainer", "class_fw_1_1_dp_container.html", null ],
     [ "Fw::FilePacket::EndPacket", "class_fw_1_1_file_packet_1_1_end_packet.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence::Events", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_events.html", null ],
-    [ "Os::FIFOQueue", "struct_os_1_1_f_i_f_o_queue.html", null ],
     [ "Os::FileHandle", "struct_os_1_1_file_handle.html", [
       [ "Os::Posix::File::PosixFileHandle", "struct_os_1_1_posix_1_1_file_1_1_posix_file_handle.html", null ],
       [ "Os::Stub::File::StubFileHandle", "struct_os_1_1_stub_1_1_file_1_1_stub_file_handle.html", null ]
@@ -85,12 +92,11 @@ var hierarchy =
       [ "Drv::UdpSocket", "class_drv_1_1_udp_socket.html", null ]
     ] ],
     [ "Utils::LockGuard", "class_utils_1_1_lock_guard.html", null ],
-    [ "Os::LocklessQueue", "class_os_1_1_lockless_queue.html", null ],
     [ "Svc::LogFile", "struct_svc_1_1_log_file.html", null ],
     [ "Fw::Logger", "class_fw_1_1_logger.html", [
       [ "Os::Console", "class_os_1_1_console.html", null ]
     ] ],
-    [ "Os::MaxHeap", "class_os_1_1_max_heap.html", null ],
+    [ "Types::MaxHeap", "class_types_1_1_max_heap.html", null ],
     [ "Os::Mem", "class_os_1_1_mem.html", null ],
     [ "Fw::MemAllocator", "class_fw_1_1_mem_allocator.html", [
       [ "Fw::MallocAllocator", "class_fw_1_1_malloc_allocator.html", null ],
@@ -351,19 +357,24 @@ var hierarchy =
     [ "PassiveRateGroupImpl", "class_passive_rate_group_impl.html", null ],
     [ "Fw::FilePacket::PathName", "class_fw_1_1_file_packet_1_1_path_name.html", null ],
     [ "Svc::HealthImpl::PingEntry", "struct_svc_1_1_health_impl_1_1_ping_entry.html", null ],
-    [ "Os::PriorityQueue", "struct_os_1_1_priority_queue.html", null ],
-    [ "Os::Queue", "class_os_1_1_queue.html", [
-      [ "Os::IPCQueue", "class_os_1_1_i_p_c_queue.html", null ]
-    ] ],
     [ "Types::Queue", "class_types_1_1_queue.html", null ],
     [ "Svc::ComQueue::QueueConfigurationEntry", "struct_svc_1_1_com_queue_1_1_queue_configuration_entry.html", null ],
     [ "Svc::ComQueue::QueueConfigurationTable", "struct_svc_1_1_com_queue_1_1_queue_configuration_table.html", null ],
-    [ "Os::QueueHandle", "class_os_1_1_queue_handle.html", null ],
+    [ "Os::QueueHandle", "class_os_1_1_queue_handle.html", [
+      [ "Os::Generic::PriorityQueueHandle", "struct_os_1_1_generic_1_1_priority_queue_handle.html", null ],
+      [ "Os::Stub::Queue::StubQueueHandle", "struct_os_1_1_stub_1_1_queue_1_1_stub_queue_handle.html", null ]
+    ] ],
+    [ "Os::QueueInterface", "class_os_1_1_queue_interface.html", [
+      [ "Os::Generic::PriorityQueue", "class_os_1_1_generic_1_1_priority_queue.html", null ],
+      [ "Os::Queue", "class_os_1_1_queue.html", null ],
+      [ "Os::Stub::Queue::StubQueue", "class_os_1_1_stub_1_1_queue_1_1_stub_queue.html", null ]
+    ] ],
     [ "Os::QueueRegistry", "class_os_1_1_queue_registry.html", null ],
     [ "Utils::RateLimiter", "class_utils_1_1_rate_limiter.html", null ],
     [ "Os::IntervalTimer::RawTime", "struct_os_1_1_interval_timer_1_1_raw_time.html", null ],
     [ "Svc::AMPCSSequence::Record", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence::Record", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html", null ],
+    [ "Os::ScopeLock", "class_os_1_1_scope_lock.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html", [
       [ "Svc::AMPCSSequence", "class_svc_1_1_a_m_p_c_s_sequence.html", null ],
       [ "Svc::CmdSequencerComponentImpl::FPrimeSequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence.html", null ]
@@ -479,10 +490,12 @@ var hierarchy =
     [ "Drv::SocketState", "struct_drv_1_1_socket_state.html", null ],
     [ "Fw::FilePacket::StartPacket", "struct_fw_1_1_file_packet_1_1_start_packet.html", null ],
     [ "Os::TaskHandle", "class_os_1_1_task_handle.html", [
-      [ "Os::Posix::Task::PosixTaskHandle", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle.html", null ]
+      [ "Os::Posix::Task::PosixTaskHandle", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle.html", null ],
+      [ "Os::Stub::Task::StubTaskHandle", "class_os_1_1_stub_1_1_task_1_1_stub_task_handle.html", null ]
     ] ],
     [ "Os::TaskInterface", "class_os_1_1_task_interface.html", [
       [ "Os::Posix::Task::PosixTask", "class_os_1_1_posix_1_1_task_1_1_posix_task.html", null ],
+      [ "Os::Stub::Task::StubTask", "class_os_1_1_stub_1_1_task_1_1_stub_task.html", null ],
       [ "Os::Task", "class_os_1_1_task.html", null ]
     ] ],
     [ "Os::TaskLock", "class_os_1_1_task_lock.html", null ],

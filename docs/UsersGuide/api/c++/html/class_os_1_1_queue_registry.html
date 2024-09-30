@@ -92,22 +92,58 @@ $(document).ready(function(){initNavTree('class_os_1_1_queue_registry.html','');
 </div><!--header-->
 <div class="contents">
 
+<p>queue registry interface  
+ <a href="class_os_1_1_queue_registry.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="os_2_queue_8hpp_source.html">Os/Queue.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9a25423d8f9716de31de16fca7219588"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_registry.html#a9a25423d8f9716de31de16fca7219588">regQueue</a> (<a class="el" href="class_os_1_1_queue.html">Queue</a> *obj)=0</td></tr>
-<tr class="memdesc:a9a25423d8f9716de31de16fca7219588"><td class="mdescLeft">&#160;</td><td class="mdescRight">method called by queue <a class="el" href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c" title="Initialization function for the OSAL layer.">init()</a> methods to register a new queue  <a href="class_os_1_1_queue_registry.html#a9a25423d8f9716de31de16fca7219588">More...</a><br /></td></tr>
-<tr class="separator:a9a25423d8f9716de31de16fca7219588"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48974d9bf3316a0bee3fa10920800ad3"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_registry.html#a48974d9bf3316a0bee3fa10920800ad3">~QueueRegistry</a> ()</td></tr>
-<tr class="separator:a48974d9bf3316a0bee3fa10920800ad3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad82fb5d2a38b6357925806a4dc320af5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_registry.html#ad82fb5d2a38b6357925806a4dc320af5">QueueRegistry</a> ()=default</td></tr>
+<tr class="memdesc:ad82fb5d2a38b6357925806a4dc320af5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default <a class="el" href="class_os_1_1_queue_registry.html" title="queue registry interface">QueueRegistry</a>.  <a href="class_os_1_1_queue_registry.html#ad82fb5d2a38b6357925806a4dc320af5">More...</a><br /></td></tr>
+<tr class="separator:ad82fb5d2a38b6357925806a4dc320af5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab71433dfb3eb2a214931c05874ddbb16"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_registry.html#ab71433dfb3eb2a214931c05874ddbb16">~QueueRegistry</a> ()=default</td></tr>
+<tr class="memdesc:ab71433dfb3eb2a214931c05874ddbb16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default ~QueueRegistry.  <a href="class_os_1_1_queue_registry.html#ab71433dfb3eb2a214931c05874ddbb16">More...</a><br /></td></tr>
+<tr class="separator:ab71433dfb3eb2a214931c05874ddbb16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5abaa31028e194fb7fc8d761c2b748f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_registry.html#ae5abaa31028e194fb7fc8d761c2b748f">registerQueue</a> (<a class="el" href="class_os_1_1_queue.html">Queue</a> *queue)=0</td></tr>
+<tr class="memdesc:ae5abaa31028e194fb7fc8d761c2b748f"><td class="mdescLeft">&#160;</td><td class="mdescRight">queue registry callback  <a href="class_os_1_1_queue_registry.html#ae5abaa31028e194fb7fc8d761c2b748f">More...</a><br /></td></tr>
+<tr class="separator:ae5abaa31028e194fb7fc8d761c2b748f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00087">87</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
+<div class="textblock"><p>queue registry interface </p>
+<p>The <a class="el" href="class_os_1_1_queue_registry.html" title="queue registry interface">QueueRegistry</a> is used to track queues in the system. There is intended to be a single, global, queue registry across the system. It is used to track queues and will receive a callback on the creation of each queue. </p>
+
+<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00308">308</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a48974d9bf3316a0bee3fa10920800ad3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48974d9bf3316a0bee3fa10920800ad3">&#9670;&nbsp;</a></span>~QueueRegistry()</h2>
+<a id="ad82fb5d2a38b6357925806a4dc320af5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad82fb5d2a38b6357925806a4dc320af5">&#9670;&nbsp;</a></span>QueueRegistry()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Os::QueueRegistry::QueueRegistry </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default <a class="el" href="class_os_1_1_queue_registry.html" title="queue registry interface">QueueRegistry</a>. </p>
+
+</div>
+</div>
+<a id="ab71433dfb3eb2a214931c05874ddbb16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab71433dfb3eb2a214931c05874ddbb16">&#9670;&nbsp;</a></span>~QueueRegistry()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -124,18 +160,18 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="os_2_queue_8hpp_source.html#l00090">90</a> of file <a class="el" href="os_2_queue_8hpp_source.html">Queue.hpp</a>.</p>
+<p>Default ~QueueRegistry. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9a25423d8f9716de31de16fca7219588"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a25423d8f9716de31de16fca7219588">&#9670;&nbsp;</a></span>regQueue()</h2>
+<a id="ae5abaa31028e194fb7fc8d761c2b748f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5abaa31028e194fb7fc8d761c2b748f">&#9670;&nbsp;</a></span>registerQueue()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -144,10 +180,10 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void Os::QueueRegistry::regQueue </td>
+          <td class="memname">virtual void Os::QueueRegistry::registerQueue </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_os_1_1_queue.html">Queue</a> *&#160;</td>
-          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td class="paramname"><em>queue</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -158,7 +194,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>method called by queue <a class="el" href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c" title="Initialization function for the OSAL layer.">init()</a> methods to register a new queue </p>
+<p>queue registry callback </p>
+<p>Register the queue with this queue registry. Must be implemented by <a class="el" href="class_os_1_1_queue_registry.html" title="queue registry interface">QueueRegistry</a> implementations.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">queue</td><td>queue being registered method called by queue <a class="el" href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c" title="Initialization function for the OSAL layer.">init()</a> methods to register a new queue </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

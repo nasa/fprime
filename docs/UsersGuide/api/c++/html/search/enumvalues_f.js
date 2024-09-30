@@ -1,15 +1,20 @@
 var searchData=
 [
-  ['queue_5fblocking_8780',['QUEUE_BLOCKING',['../class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffada38de06220fe8a97d99347ff23e18c2',1,'Os::Queue']]],
-  ['queue_5fempty_5fbuffer_8781',['QUEUE_EMPTY_BUFFER',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba86d69a066b00aac03fe36d8e6cc84f46',1,'Os::Queue']]],
-  ['queue_5ffull_8782',['QUEUE_FULL',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baac94c448c78c60149014efd5dd8ee1f9',1,'Os::Queue']]],
-  ['queue_5finvalid_5fpriority_8783',['QUEUE_INVALID_PRIORITY',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba6203ea4d55e8f1c8a6aa664173ea8fe5',1,'Os::Queue']]],
-  ['queue_5fno_5fmore_5fmsgs_8784',['QUEUE_NO_MORE_MSGS',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba4fe7580ade5df51257de6e8fb01bd558',1,'Os::Queue']]],
-  ['queue_5fnonblocking_8785',['QUEUE_NONBLOCKING',['../class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffafa806d93c6ff9cee3aae2f69cec9e66a',1,'Os::Queue']]],
-  ['queue_5fok_8786',['QUEUE_OK',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baa49ffc65d60faf9336e216882f2c7efc',1,'Os::Queue']]],
-  ['queue_5freceive_5ferror_8787',['QUEUE_RECEIVE_ERROR',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778baca317150550a59fbc9dc2833248fadd8',1,'Os::Queue']]],
-  ['queue_5fsend_5ferror_8788',['QUEUE_SEND_ERROR',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba4ee228e8badc5d30f16548c6f56e8591',1,'Os::Queue']]],
-  ['queue_5fsize_5fmismatch_8789',['QUEUE_SIZE_MISMATCH',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba221b1e44801904db970ae089c3bb8cff',1,'Os::Queue']]],
-  ['queue_5funinitialized_8790',['QUEUE_UNINITIALIZED',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba48062f0fe18c7b402de63fb97044ff92',1,'Os::Queue']]],
-  ['queue_5funknown_5ferror_8791',['QUEUE_UNKNOWN_ERROR',['../class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba9b9f470d71ab1c1b82d50cbdb582a590',1,'Os::Queue']]]
+  ['rategroupdriverrategroupports_8815',['RateGroupDriverRateGroupPorts',['../fpp_constants_ac_8hpp.html#ae7e57aaa97dc182af0d5e8bb04c0338bacb327ab18cd2ef151470b7878c50ae81',1,'FppConstantsAc.hpp']]],
+  ['read_8816',['READ',['../class_os_1_1_directory_interface.html#ae70ca6428f4d44a5688b4e4853229d37a014e49dfbd3b393ae3ac7a812c8a76ca',1,'Os::DirectoryInterface::READ()'],['../class_os_1_1_directory_open_mode.html#ae4712d3e337928011afe7bbc813e7d90a85e9e1e6e64e0e3c1a370ce3ecba526a',1,'Os::DirectoryOpenMode::READ()']]],
+  ['read_5fheader_8817',['READ_HEADER',['../class_svc_1_1_cmd_sequencer___file_read_stage.html#ae0bd6544ba5f653d772221321150bfb3a300d99d60d33f3fbca7d7ba689485ea6',1,'Svc::CmdSequencer_FileReadStage']]],
+  ['read_5fheader_5fsize_8818',['READ_HEADER_SIZE',['../class_svc_1_1_cmd_sequencer___file_read_stage.html#ae0bd6544ba5f653d772221321150bfb3a3a2f0bf43f36784edf11fb7793f8be06',1,'Svc::CmdSequencer_FileReadStage']]],
+  ['read_5fseq_5fcrc_8819',['READ_SEQ_CRC',['../class_svc_1_1_cmd_sequencer___file_read_stage.html#ae0bd6544ba5f653d772221321150bfb3a537c85ac5d79d0671a71e4c37a24ca28',1,'Svc::CmdSequencer_FileReadStage']]],
+  ['read_5fseq_5fdata_8820',['READ_SEQ_DATA',['../class_svc_1_1_cmd_sequencer___file_read_stage.html#ae0bd6544ba5f653d772221321150bfb3aef16d4341704726b08040c8a24472309',1,'Svc::CmdSequencer_FileReadStage']]],
+  ['read_5fseq_5fdata_5fsize_8821',['READ_SEQ_DATA_SIZE',['../class_svc_1_1_cmd_sequencer___file_read_stage.html#ae0bd6544ba5f653d772221321150bfb3a4ee26cabc4163f50979ad8e4ec883882',1,'Svc::CmdSequencer_FileReadStage']]],
+  ['receive_5ferror_8822',['RECEIVE_ERROR',['../class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1a141da57f89f1191b6801313e62f3a53c',1,'Os::QueueInterface']]],
+  ['record_5fsize_8823',['RECORD_SIZE',['../class_svc_1_1_prm_db___prm_read_error.html#a204bc2612a11e817c72413975608d3f0a02b6b0bef4db30603c402bffe6b22e98',1,'Svc::PrmDb_PrmReadError::RECORD_SIZE()'],['../class_svc_1_1_prm_db___prm_write_error.html#a7c2d7dbed52581ba36d694f280b78c1ca20088598501fd7a5931d2ce0de281d82',1,'Svc::PrmDb_PrmWriteError::RECORD_SIZE()']]],
+  ['record_5fsize_5fsize_8824',['RECORD_SIZE_SIZE',['../class_svc_1_1_prm_db___prm_read_error.html#a204bc2612a11e817c72413975608d3f0a4e56e91d66addbce07981209719825eb',1,'Svc::PrmDb_PrmReadError::RECORD_SIZE_SIZE()'],['../class_svc_1_1_prm_db___prm_write_error.html#a7c2d7dbed52581ba36d694f280b78c1ca940d21e2a776565b428632ba045a861a',1,'Svc::PrmDb_PrmWriteError::RECORD_SIZE_SIZE()']]],
+  ['record_5fsize_5fvalue_8825',['RECORD_SIZE_VALUE',['../class_svc_1_1_prm_db___prm_read_error.html#a204bc2612a11e817c72413975608d3f0af0c56b9222ea4538de739064b72890f1',1,'Svc::PrmDb_PrmReadError']]],
+  ['recv_5ferror_8826',['RECV_ERROR',['../class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdebabae9a35c7d9674e1d12c737509916f53',1,'Drv::RecvStatus']]],
+  ['recv_5fok_8827',['RECV_OK',['../class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdeba2cd12e6dfa0e75b92685fb2c872d10c5',1,'Drv::RecvStatus']]],
+  ['relative_8828',['RELATIVE',['../class_os_1_1_file_interface.html#ad5c239e12384d3c03b41315526ae22b2af825934c2dd02c81c2b7c10a9b29b0d3',1,'Os::FileInterface::RELATIVE()'],['../class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html#a00b48744e3b4f81d88d9578f6e767cbfa7d07a8cdec70e40dab06d54c86e81a67',1,'Svc::CmdSequencerComponentImpl::Sequence::Record::RELATIVE()'],['../struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time_flag.html#a40c964186445846486142e653ecc359faacfb3242efd34455597140dd1d886f5d',1,'Svc::AMPCSSequence::Record::TimeFlag::RELATIVE()']]],
+  ['running_8829',['RUNNING',['../class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a48b9025fb8820cf2ae735ed6769c03ca',1,'Os::TaskInterface']]],
+  ['running_5fsequence_5fblock_8830',['RUNNING_SEQUENCE_BLOCK',['../class_svc_1_1_seq_dispatcher___cmd_sequencer_state.html#ae2e680a59cd5a4313d913e8aec046b04af5bebc9cae95b91a6f42d62d9f7523bb',1,'Svc::SeqDispatcher_CmdSequencerState']]],
+  ['running_5fsequence_5fno_5fblock_8831',['RUNNING_SEQUENCE_NO_BLOCK',['../class_svc_1_1_seq_dispatcher___cmd_sequencer_state.html#ae2e680a59cd5a4313d913e8aec046b04a4e38e2eb446cc02c9beb3bdb28501d4c',1,'Svc::SeqDispatcher_CmdSequencerState']]]
 ];

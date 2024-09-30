@@ -4,6 +4,7 @@ var class_os_1_1_task_interface =
     [ "taskRoutine", "class_os_1_1_task_interface.html#ad309f951c51b85a885f8bfa218bace6e", null ],
     [ "State", "class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45", [
       [ "NOT_STARTED", "class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45ae8964b1cd6d6c6c4e72ac5f4740a8737", null ],
+      [ "STARTING", "class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a8e12359bdfca7cfbb68d3ce5c31a9011", null ],
       [ "RUNNING", "class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a48b9025fb8820cf2ae735ed6769c03ca", null ],
       [ "SUSPENDED_INTENTIONALLY", "class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a54c8a8fd65462bb9bd52df1188e3e0bc", null ],
       [ "SUSPENDED_UNINTENTIONALLY", "class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45aceb80d595a1a01f763f54997aa7b54f4", null ],

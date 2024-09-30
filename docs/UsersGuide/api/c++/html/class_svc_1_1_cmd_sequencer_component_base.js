@@ -53,7 +53,7 @@ var class_svc_1_1_cmd_sequencer_component_base =
     [ "getNum_timeCaller_OutputPorts", "class_svc_1_1_cmd_sequencer_component_base.html#a714f8ae6c980c9fcbfd621c469472c89", null ],
     [ "getNum_tlmOut_OutputPorts", "class_svc_1_1_cmd_sequencer_component_base.html#a8635b690a91bd7716a21cba2989bf165", null ],
     [ "getTime", "class_svc_1_1_cmd_sequencer_component_base.html#a5b43613f886532b45fcc6b8c2a21d75e", null ],
-    [ "init", "class_svc_1_1_cmd_sequencer_component_base.html#ab942d56fcf8400fe8d6408b0e050ff91", null ],
+    [ "init", "class_svc_1_1_cmd_sequencer_component_base.html#a882a3e6b42afc031655c88d934b47394", null ],
     [ "isConnected_cmdRegOut_OutputPort", "class_svc_1_1_cmd_sequencer_component_base.html#a58804b9289b8edc044df281dcbd1e2e4", null ],
     [ "isConnected_cmdResponseOut_OutputPort", "class_svc_1_1_cmd_sequencer_component_base.html#a0f2ac9b22648938b5db75e2169b45c8c", null ],
     [ "isConnected_comCmdOut_OutputPort", "class_svc_1_1_cmd_sequencer_component_base.html#aabf450791a843a7acbb3e5c47ca509ec", null ],

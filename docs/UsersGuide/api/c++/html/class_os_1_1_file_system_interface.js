@@ -33,7 +33,7 @@ var class_os_1_1_file_system_interface =
     [ "_removeDirectory", "class_os_1_1_file_system_interface.html#a2cc09e4b072a54136010ced3d6439062", null ],
     [ "_removeFile", "class_os_1_1_file_system_interface.html#a6ed003df66a8b711feca0df96160b7ab", null ],
     [ "_rename", "class_os_1_1_file_system_interface.html#af670d1ef9c02dd16f314c0ce39350328", null ],
-    [ "getDelegate", "class_os_1_1_file_system_interface.html#a4de1e3120fbf2a060f46843437688f21", null ],
+    [ "getDelegate", "class_os_1_1_file_system_interface.html#a4c5a44459e110882e80b1ae2ac114ad5", null ],
     [ "getHandle", "class_os_1_1_file_system_interface.html#a75136c7af5fcc595ac355bf6fc2b1215", null ],
     [ "operator=", "class_os_1_1_file_system_interface.html#a65bb7d391584b32825a0eba77038690b", null ],
     [ "FILE_SYSTEM_FILE_CHUNK_SIZE", "class_os_1_1_file_system_interface.html#a4a9dad9087b23742d8d4db0e678a67c1", null ]

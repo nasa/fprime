@@ -26,7 +26,7 @@ var class_svc_1_1_dp_writer_component_base =
     [ "getNum_timeGetOut_OutputPorts", "class_svc_1_1_dp_writer_component_base.html#ad2b7a1dfce29a48351899f9eb635d60c", null ],
     [ "getNum_tlmOut_OutputPorts", "class_svc_1_1_dp_writer_component_base.html#a8926de0ee2c11d2702d364ae5bbc3dc6", null ],
     [ "getTime", "class_svc_1_1_dp_writer_component_base.html#abd3364f4bd392b1fb8e928bdf8c93be7", null ],
-    [ "init", "class_svc_1_1_dp_writer_component_base.html#a1dd1ca65a27eaba9f93ebb15a40438b0", null ],
+    [ "init", "class_svc_1_1_dp_writer_component_base.html#a1f40ce9c5d40e76f4b2dab99f4a100f2", null ],
     [ "isConnected_cmdRegIn_OutputPort", "class_svc_1_1_dp_writer_component_base.html#a021c4971bbb233c6d2e0643386e6c5d2", null ],
     [ "isConnected_cmdResponseOut_OutputPort", "class_svc_1_1_dp_writer_component_base.html#a353032a2001e8f2d54dba4c9974a28c1", null ],
     [ "isConnected_deallocBufferSendOut_OutputPort", "class_svc_1_1_dp_writer_component_base.html#a5bd2b1050df82f21e6412d377d71a1d4", null ],

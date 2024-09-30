@@ -21,7 +21,7 @@ var class_svc_1_1_com_logger_component_base =
     [ "getNum_pingOut_OutputPorts", "class_svc_1_1_com_logger_component_base.html#a1cb3fb6a9c1d28f9e463bb8f9d5dd6a0", null ],
     [ "getNum_timeCaller_OutputPorts", "class_svc_1_1_com_logger_component_base.html#aeb08bf40f5c7ff93ba6fee83948aa4ad", null ],
     [ "getTime", "class_svc_1_1_com_logger_component_base.html#a74af57eb4f19bc50c730f9a892d7cfb3", null ],
-    [ "init", "class_svc_1_1_com_logger_component_base.html#a7f1fade64921cc1636f4dc6bbaf6c016", null ],
+    [ "init", "class_svc_1_1_com_logger_component_base.html#ae499f780ef946602c3c7294c31c4a5f4", null ],
     [ "isConnected_cmdRegOut_OutputPort", "class_svc_1_1_com_logger_component_base.html#ae5b05ae2bc9e0cd1dc463e83824e2ceb", null ],
     [ "isConnected_cmdResponseOut_OutputPort", "class_svc_1_1_com_logger_component_base.html#a50982271876542a0a3f041f5fe5ec94d", null ],
     [ "isConnected_logOut_OutputPort", "class_svc_1_1_com_logger_component_base.html#a57e41d6352a636b4fbde6ea86468103d", null ],

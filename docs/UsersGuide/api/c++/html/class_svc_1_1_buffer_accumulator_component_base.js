@@ -34,7 +34,7 @@ var class_svc_1_1_buffer_accumulator_component_base =
     [ "getNum_timeCaller_OutputPorts", "class_svc_1_1_buffer_accumulator_component_base.html#a39e7a240323bc802b7e97bcd616f4bb7", null ],
     [ "getNum_tlmOut_OutputPorts", "class_svc_1_1_buffer_accumulator_component_base.html#a651d03d8b66e74e3da5e075708bf5739", null ],
     [ "getTime", "class_svc_1_1_buffer_accumulator_component_base.html#aae29b57ffffbef552cd63dec4c53865c", null ],
-    [ "init", "class_svc_1_1_buffer_accumulator_component_base.html#a4ea30079789faf33406993429a87c1c3", null ],
+    [ "init", "class_svc_1_1_buffer_accumulator_component_base.html#a942dce2b4a9c695c1c69aed5a330f2d0", null ],
     [ "isConnected_bufferSendOutDrain_OutputPort", "class_svc_1_1_buffer_accumulator_component_base.html#a6544413f363d5ccc3719085d4d414e13", null ],
     [ "isConnected_bufferSendOutReturn_OutputPort", "class_svc_1_1_buffer_accumulator_component_base.html#a2ce0e95e418e3cc24a6869e3e3a8fc29", null ],
     [ "isConnected_cmdRegOut_OutputPort", "class_svc_1_1_buffer_accumulator_component_base.html#a2f47f97d21e301792b10e465ca9b3086", null ],

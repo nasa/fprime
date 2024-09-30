@@ -88,9 +88,9 @@ $(document).ready(function(){initNavTree('_svc_dp_manager_component.html',''); i
 <div class="title"><a class="el" href="class_svc_1_1_dp_manager.html">Svc::DpManager</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md806"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md790"></a>
 Svc::DpManager (Active Component)</h1>
-<h2><a class="anchor" id="autotoc_md807"></a>
+<h2><a class="anchor" id="autotoc_md791"></a>
 1. Introduction</h2>
 <p><code><a class="el" href="class_svc_1_1_dp_manager.html">Svc::DpManager</a></code> is an active component for managing data products. It does the following:</p>
 <ol type="1">
@@ -105,7 +105,7 @@ Svc::DpManager (Active Component)</h1>
 <ol type="1">
 <li>Receive buffers filled with data products by client components. Upon receiving a buffer, send the buffer out on a port. Another component such as <a class="el" href="buffer_accumulator_8md.html">`Svc::BufferAccumulator`</a> or <a class="el" href="svc_2_dp_writer_2docs_2sdd_8md.html">`Svc::DpWriter`</a> will process the buffer and then send it back to the buffer manager for deallocation.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md808"></a>
+<h2><a class="anchor" id="autotoc_md792"></a>
 2. Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -119,12 +119,12 @@ Svc::DpManager (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">SVC-DPMANAGER-004   </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_dp_manager.html">Svc::DpManager</a></code> shall provide telemetry that reports the number of successful allocations, the number of failed allocations, and the volume of data handled.   </td><td class="markdownTableBodyNone">This requirement establishes the telemetry interface for the component.   </td><td class="markdownTableBodyNone">Unit test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md809"></a>
+<h2><a class="anchor" id="autotoc_md793"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md810"></a>
+<h3><a class="anchor" id="autotoc_md794"></a>
 3.1. Component Diagram</h3>
 <p>The diagram below shows the <code>DpManager</code> component.</p>
-<div> <img src="img/DpManager.png" alt="" width="700/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md811"></a>
+<div> <img src="img/DpManager.png" alt="" width="700/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md795"></a>
 3.2. Ports</h3>
 <p><code>DpManager</code> has the following ports:</p>
 <table class="markdownTable">
@@ -153,7 +153,7 @@ Svc::DpManager (Active Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>text event</code>   </td><td class="markdownTableBodyNone"><code>textEventOut</code>   </td><td class="markdownTableBodyNone"><code>Fw.LogText</code>   </td><td class="markdownTableBodyNone">Text event port   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md812"></a>
+<h3><a class="anchor" id="autotoc_md796"></a>
 3.3. State</h3>
 <p><code>DpManager</code> maintains the following state:</p>
 <ol type="1">
@@ -168,18 +168,18 @@ Svc::DpManager (Active Component)</h1>
 <ol type="1">
 <li><code>numBytes (U64)</code>: The number of bytes handled.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md813"></a>
+<h3><a class="anchor" id="autotoc_md797"></a>
 3.4. Compile-Time Setup</h3>
 <p>The configuration constant <a href="../../../config/AcConstants.fpp"><code>DpManagerNumPorts</code></a> specifies the number of ports for requesting data product buffers and for sending filled data products.</p>
-<h3><a class="anchor" id="autotoc_md814"></a>
+<h3><a class="anchor" id="autotoc_md798"></a>
 3.5. Runtime Setup</h3>
 <p>No special runtime setup is required.</p>
-<h3><a class="anchor" id="autotoc_md815"></a>
+<h3><a class="anchor" id="autotoc_md799"></a>
 3.6. Port Handlers</h3>
-<h4><a class="anchor" id="autotoc_md816"></a>
+<h4><a class="anchor" id="autotoc_md800"></a>
 3.6.1. schedIn</h4>
 <p>The handler for this port sends out the state variables as telemetry.</p>
-<h4><a class="anchor" id="autotoc_md817"></a>
+<h4><a class="anchor" id="autotoc_md801"></a>
 3.6.2. productGetIn</h4>
 <p>This handler receives a port number <code>portNum</code>, a container ID <code>id</code>, a requested buffer size <code>size</code>, and a mutable reference to a buffer <code>B</code>. It does the following:</p>
 <ol type="1">
@@ -188,7 +188,7 @@ Svc::DpManager (Active Component)</h1>
 <ol type="1">
 <li>Return <code>status</code>.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md818"></a>
+<h4><a class="anchor" id="autotoc_md802"></a>
 3.6.3. productRequestIn</h4>
 <p>This handler receives a port number <code>portNum</code>, a container ID <code>id</code> and a requested buffer size <code>size</code>. It does the following:</p>
 <ol type="1">
@@ -200,7 +200,7 @@ Svc::DpManager (Active Component)</h1>
 <ol type="1">
 <li>Send <code>(id, B, status)</code> on port <code>portNum</code> of <code>productResponseOut</code>.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md819"></a>
+<h4><a class="anchor" id="autotoc_md803"></a>
 3.6.4. productSendIn</h4>
 <p>This handler receives a port number <code>portNum</code>, a data product ID <code>I</code> and a buffer <code>B</code>. It does the following:</p>
 <ol type="1">
@@ -209,10 +209,10 @@ Svc::DpManager (Active Component)</h1>
 <ol type="1">
 <li>Send <code>B</code> on port <code>portNum</code> of <code>productSendOut</code>.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md820"></a>
+<h3><a class="anchor" id="autotoc_md804"></a>
 3.7. Helper Methods</h3>
 <p><a class="anchor" id="getBuffer"></a> </p>
-<h4><a class="anchor" id="autotoc_md821"></a>
+<h4><a class="anchor" id="autotoc_md805"></a>
 3.7.1. getBuffer</h4>
 <p>This function receives a port number <code>portNum</code>, a container ID <code>id</code>, a requested buffer size <code>size</code>, and a mutable reference to a buffer <code>B</code>. It does the following:</p>
 <ol type="1">
@@ -231,9 +231,9 @@ Svc::DpManager (Active Component)</h1>
 <li>Return <code>status</code>.</li>
 </ol>
 <p><a class="anchor" id="ground_interface"></a> </p>
-<h2><a class="anchor" id="autotoc_md822"></a>
+<h2><a class="anchor" id="autotoc_md806"></a>
 4. Ground Interface</h2>
-<h3><a class="anchor" id="autotoc_md823"></a>
+<h3><a class="anchor" id="autotoc_md807"></a>
 4.1. Commands</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -241,7 +241,7 @@ Svc::DpManager (Active Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>async</code>   </td><td class="markdownTableBodyNone"><code>CLEAR_EVENT_THROTTLE</code>   </td><td class="markdownTableBodyNone">Clear event throttling   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md824"></a>
+<h3><a class="anchor" id="autotoc_md808"></a>
 4.2. Telemetry</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -255,7 +255,7 @@ Svc::DpManager (Active Component)</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>NumBytes</code>   </td><td class="markdownTableBodyNone"><code>U32</code>   </td><td class="markdownTableBodyNone">Number of bytes handled   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md825"></a>
+<h3><a class="anchor" id="autotoc_md809"></a>
 4.3. Events</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -263,10 +263,10 @@ Svc::DpManager (Active Component)</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>BufferAllocationFailed</code>   </td><td class="markdownTableBodyNone"><code>warning high</code>   </td><td class="markdownTableBodyNone">Buffer allocation failed   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md826"></a>
+<h2><a class="anchor" id="autotoc_md810"></a>
 5. Example Uses</h2>
 <p><a class="anchor" id="top-diagrams"></a> </p>
-<h3><a class="anchor" id="autotoc_md827"></a>
+<h3><a class="anchor" id="autotoc_md811"></a>
 5.1. Topology Diagrams</h3>
 <p>The following topology diagrams show how to connect <code><a class="el" href="class_svc_1_1_dp_manager.html">Svc::DpManager</a></code> to a client component, a buffer manager, and a data product writer. The diagrams use the following instances:</p>
 <ul>
@@ -276,15 +276,15 @@ Svc::DpManager (Active Component)</h1>
 <li><code>producer</code>: A client component that produces data products. <code>productRequestOut</code> is the special <code>product request</code> port. <code>productRecvIn</code> is the special <code>product recv</code> port.</li>
 </ul>
 <p>The connections shown use port zero for requesting, receiving, and sending data product buffers. If <code>DpManagerNumPorts</code> is greater than one, then you can also use other ports, e.g., port one or port two. That way you can use one <code>DpManager</code> instance to support multiple sets of connections.</p>
-<h4><a class="anchor" id="autotoc_md828"></a>
+<h4><a class="anchor" id="autotoc_md812"></a>
 5.1.1. Synchronously Getting Data Product Buffers</h4>
-<div> <img src="img/top/buffer-get.png" alt="" width="800/" class="inline"/> </div><h4><a class="anchor" id="autotoc_md829"></a>
+<div> <img src="img/top/buffer-get.png" alt="" width="800/" class="inline"/> </div><h4><a class="anchor" id="autotoc_md813"></a>
 5.1.2. Asynchronously Requesting Data Product Buffers</h4>
-<div> <img src="img/top/buffer-request.png" alt="" width="800/" class="inline"/> </div><h4><a class="anchor" id="autotoc_md830"></a>
+<div> <img src="img/top/buffer-request.png" alt="" width="800/" class="inline"/> </div><h4><a class="anchor" id="autotoc_md814"></a>
 5.1.3. Sending Data Products</h4>
-<div> <img src="img/top/product-send.png" alt="" width="1000/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md831"></a>
+<div> <img src="img/top/product-send.png" alt="" width="1000/" class="inline"/> </div><h3><a class="anchor" id="autotoc_md815"></a>
 5.2. Sequence Diagrams</h3>
-<h4><a class="anchor" id="autotoc_md832"></a>
+<h4><a class="anchor" id="autotoc_md816"></a>
 5.2.1. Synchronously Getting a Data Product Buffer</h4>
 <div class="fragment"><div class="line">sequenceDiagram</div>
 <div class="line">    activate producer</div>
@@ -294,7 +294,7 @@ Svc::DpManager (Active Component)</h1>
 <div class="line">    dpManager-&gt;&gt;dpManager: Store B into producer</div>
 <div class="line">    dpManager--&gt;&gt;producer: Return SUCCESS</div>
 <div class="line">    deactivate producer</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md833"></a>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md817"></a>
 5.2.2. Asynchronously Requesting a Data Product Buffer</h4>
 <div class="fragment"><div class="line">sequenceDiagram</div>
 <div class="line">    activate producer</div>
@@ -305,7 +305,7 @@ Svc::DpManager (Active Component)</h1>
 <div class="line">    dpManager-)producer: Send B [productResponseOut]</div>
 <div class="line">    deactivate dpManager</div>
 <div class="line">    deactivate producer</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md834"></a>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md818"></a>
 5.2.3. Sending a Data Product</h4>
 <div class="fragment"><div class="line">sequenceDiagram</div>
 <div class="line">    activate producer</div>

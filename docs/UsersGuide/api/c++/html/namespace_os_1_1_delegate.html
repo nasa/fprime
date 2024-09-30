@@ -93,88 +93,18 @@ $(document).ready(function(){initNavTree('namespace_os_1_1_delegate.html',''); i
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9ad44ca2fde8dfcac755a9f92681a84d"><td class="memTemplParams" colspan="2">template&lt;class Interface , class Implementation &gt; </td></tr>
-<tr class="memitem:a9ad44ca2fde8dfcac755a9f92681a84d"><td class="memTemplItemLeft" align="right" valign="top">Interface *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_delegate.html#a9ad44ca2fde8dfcac755a9f92681a84d">makeDelegate</a> (<a class="el" href="os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da">HandleStorage</a> &amp;aligned_new_memory)</td></tr>
-<tr class="memdesc:a9ad44ca2fde8dfcac755a9f92681a84d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a delegate of type Interface using Implementation without copy-constructor support (generic function)  <a href="namespace_os_1_1_delegate.html#a9ad44ca2fde8dfcac755a9f92681a84d">More...</a><br /></td></tr>
-<tr class="separator:a9ad44ca2fde8dfcac755a9f92681a84d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06b343274103dadcbff9cc88bc835291"><td class="memTemplParams" colspan="2">template&lt;class Interface , class Implementation , class StorageType  = HandleStorage&gt; </td></tr>
+<tr class="memitem:a06b343274103dadcbff9cc88bc835291"><td class="memTemplItemLeft" align="right" valign="top">Interface *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_delegate.html#a06b343274103dadcbff9cc88bc835291">makeDelegate</a> (StorageType &amp;aligned_new_memory)</td></tr>
+<tr class="memdesc:a06b343274103dadcbff9cc88bc835291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a delegate of type Interface using Implementation without copy-constructor support (generic function)  <a href="namespace_os_1_1_delegate.html#a06b343274103dadcbff9cc88bc835291">More...</a><br /></td></tr>
+<tr class="separator:a06b343274103dadcbff9cc88bc835291"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac63daeb47d5fee5a7fef6a3a2eb49e25"><td class="memTemplParams" colspan="2">template&lt;class Interface , class Implementation &gt; </td></tr>
 <tr class="memitem:ac63daeb47d5fee5a7fef6a3a2eb49e25"><td class="memTemplItemLeft" align="right" valign="top">Interface *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_delegate.html#ac63daeb47d5fee5a7fef6a3a2eb49e25">makeDelegate</a> (<a class="el" href="os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da">HandleStorage</a> &amp;aligned_new_memory, const Interface *to_copy)</td></tr>
 <tr class="memdesc:ac63daeb47d5fee5a7fef6a3a2eb49e25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a delegate of type Interface using Implementation with copy-constructor support (generic function)  <a href="namespace_os_1_1_delegate.html#ac63daeb47d5fee5a7fef6a3a2eb49e25">More...</a><br /></td></tr>
 <tr class="separator:ac63daeb47d5fee5a7fef6a3a2eb49e25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a9ad44ca2fde8dfcac755a9f92681a84d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ad44ca2fde8dfcac755a9f92681a84d">&#9670;&nbsp;</a></span>makeDelegate() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Interface , class Implementation &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Interface* Os::Delegate::makeDelegate </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da">HandleStorage</a> &amp;&#160;</td>
-          <td class="paramname"><em>aligned_new_memory</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Make a delegate of type Interface using Implementation without copy-constructor support (generic function) </p>
-<p>This function is a generic implementation of the <code>getDelegate</code> functions provided for each function within <a class="el" href="namespace_os.html">Os</a>. This is templated over two types: Interface (e.g. <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a>) the interface the delegate supports, and Implementation the implementation of the interface. This function takes care of the critical requirements of the getDelegate function:</p><ol type="1">
-<li>Ensure Implementation is derived from Interface</li>
-<li>Ensure Implementation fits within FW_HANDLE_MAX_SIZE</li>
-<li>Ensure Implementation alignment fits within FW_HANDLE_ALIGNMENT</li>
-<li>Performs the correct placement new for normal constructors</li>
-<li>Ensure the returned pointer is not nullptr</li>
-</ol>
-<p>Implementors of a <code>getDelegate</code> function may use this function by calling it and returning the result.</p>
-<blockquote class="doxtable">
-<p>Neither Interface nor Implementation is allowed to support copy-constructors </p>
-</blockquote>
-<p>Example: <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a> getDelegate (Without Copy-Constructor)</p>
-<div class="fragment"><div class="line"> {c++}</div>
-<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="delegate_8hpp.html">Os/Delegate.hpp</a>&quot;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="keyword">namespace </span><a class="code" href="namespace_os.html">Os</a> {</div>
-<div class="line">TaskInterface* <a class="code" href="class_os_1_1_task_interface.html#a231451057c560f5466b30099928040e0">TaskInterface::getDelegate</a>(<a class="code" href="os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da">HandleStorage</a>&amp; aligned_new_memory) {</div>
-<div class="line">  <span class="keywordflow">return</span> Os::Delegate::makeDelegate&lt;TaskInterface, Os::Posix::Task::PosixTask&gt;(aligned_new_memory);</div>
-<div class="line">}</div>
-<div class="line">}</div>
-<div class="ttc" id="a_delegate_8hpp_html"><div class="ttname"><a href="delegate_8hpp.html">Delegate.hpp</a></div></div>
-<div class="ttc" id="a_os_8hpp_html_adcf7b228058a142e9981c9ea1fa877da"><div class="ttname"><a href="os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da">HandleStorage</a></div><div class="ttdeci">U8 HandleStorage[FW_HANDLE_MAX_SIZE]</div><div class="ttdoc">Storage type for OSAL handles.</div><div class="ttdef"><b>Definition:</b> <a href="os_8hpp_source.html#l00010">Os.hpp:10</a></div></div>
-<div class="ttc" id="aclass_os_1_1_task_interface_html_a231451057c560f5466b30099928040e0"><div class="ttname"><a href="class_os_1_1_task_interface.html#a231451057c560f5466b30099928040e0">Os::TaskInterface::getDelegate</a></div><div class="ttdeci">static TaskInterface * getDelegate(HandleStorage &amp;aligned_placement_new_memory)</div><div class="ttdoc">provide a pointer to a task delegate object</div><div class="ttdef"><b>Definition:</b> <a href="default_task_8cpp_source.html#l00041">DefaultTask.cpp:41</a></div></div>
-<div class="ttc" id="anamespace_os_html"><div class="ttname"><a href="namespace_os.html">Os</a></div><div class="ttdef"><b>Definition:</b> <a href="directory_open_mode_enum_ac_8cpp_source.html#l00013">DirectoryOpenModeEnumAc.cpp:13</a></div></div>
-</div><!-- fragment --> <dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Interface</td><td>interface the delegate supports (e.g. <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a>) </td></tr>
-    <tr><td class="paramname">Implementation</td><td>implementation class of the delegate (e.g. PosixTask) </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">aligned_new_memory</td><td>memory to be filled via placement new call </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>pointer to implementation result of placement new </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="delegate_8hpp_source.html#l00046">46</a> of file <a class="el" href="delegate_8hpp_source.html">Delegate.hpp</a>.</p>
-
-</div>
-</div>
 <a id="ac63daeb47d5fee5a7fef6a3a2eb49e25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac63daeb47d5fee5a7fef6a3a2eb49e25">&#9670;&nbsp;</a></span>makeDelegate() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac63daeb47d5fee5a7fef6a3a2eb49e25">&#9670;&nbsp;</a></span>makeDelegate() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -227,7 +157,10 @@ template&lt;class Interface , class Implementation &gt; </div>
 <div class="line">  <span class="keywordflow">return</span> Os::Delegate::makeDelegate&lt;FileInterface, Os::Posix::File::PosixFile&gt;(aligned_new_memory, to_copy);</div>
 <div class="line">}</div>
 <div class="line">}</div>
+<div class="ttc" id="a_delegate_8hpp_html"><div class="ttname"><a href="delegate_8hpp.html">Delegate.hpp</a></div></div>
+<div class="ttc" id="a_os_8hpp_html_adcf7b228058a142e9981c9ea1fa877da"><div class="ttname"><a href="os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da">HandleStorage</a></div><div class="ttdeci">U8 HandleStorage[FW_HANDLE_MAX_SIZE]</div><div class="ttdef"><b>Definition:</b> <a href="os_8hpp_source.html#l00011">Os.hpp:11</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_interface_html_a3a3a068bde8cb7fde4742d5da8ea12ed"><div class="ttname"><a href="class_os_1_1_file_interface.html#a3a3a068bde8cb7fde4742d5da8ea12ed">Os::FileInterface::getDelegate</a></div><div class="ttdeci">static FileInterface * getDelegate(HandleStorage &amp;aligned_placement_new_memory, const FileInterface *to_copy=nullptr)</div><div class="ttdoc">provide a pointer to a file delegate object</div><div class="ttdef"><b>Definition:</b> <a href="posix_2_default_file_8cpp_source.html#l00010">DefaultFile.cpp:10</a></div></div>
+<div class="ttc" id="anamespace_os_html"><div class="ttname"><a href="namespace_os.html">Os</a></div><div class="ttdef"><b>Definition:</b> <a href="directory_open_mode_enum_ac_8cpp_source.html#l00013">DirectoryOpenModeEnumAc.cpp:13</a></div></div>
 </div><!-- fragment --> <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Interface</td><td>interface the delegate supports (e.g. <a class="el" href="class_os_1_1_file_interface.html">FileInterface</a>) </td></tr>
@@ -251,6 +184,73 @@ template&lt;class Interface , class Implementation &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>pointer to implementation result of placement new </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="delegate_8hpp_source.html#l00089">89</a> of file <a class="el" href="delegate_8hpp_source.html">Delegate.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a06b343274103dadcbff9cc88bc835291"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06b343274103dadcbff9cc88bc835291">&#9670;&nbsp;</a></span>makeDelegate() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Interface , class Implementation , class StorageType  = HandleStorage&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Interface* Os::Delegate::makeDelegate </td>
+          <td>(</td>
+          <td class="paramtype">StorageType &amp;&#160;</td>
+          <td class="paramname"><em>aligned_new_memory</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Make a delegate of type Interface using Implementation without copy-constructor support (generic function) </p>
+<p>This function is a generic implementation of the <code>getDelegate</code> functions provided for each function within <a class="el" href="namespace_os.html">Os</a>. This is templated over two types: Interface (e.g. <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a>) the interface the delegate supports, and Implementation the implementation of the interface. This function takes care of the critical requirements of the getDelegate function:</p><ol type="1">
+<li>Ensure Implementation is derived from Interface</li>
+<li>Ensure Implementation fits within FW_HANDLE_MAX_SIZE</li>
+<li>Ensure Implementation alignment fits within FW_HANDLE_ALIGNMENT</li>
+<li>Performs the correct placement new for normal constructors</li>
+<li>Ensure the returned pointer is not nullptr</li>
+</ol>
+<p>Implementors of a <code>getDelegate</code> function may use this function by calling it and returning the result.</p>
+<blockquote class="doxtable">
+<p>Neither Interface nor Implementation is allowed to support copy-constructors </p>
+</blockquote>
+<p>Example: <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a> getDelegate (Without Copy-Constructor)</p>
+<div class="fragment"><div class="line"> {c++}</div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="delegate_8hpp.html">Os/Delegate.hpp</a>&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">namespace </span><a class="code" href="namespace_os.html">Os</a> {</div>
+<div class="line">TaskInterface* <a class="code" href="class_os_1_1_task_interface.html#a231451057c560f5466b30099928040e0">TaskInterface::getDelegate</a>(<a class="code" href="os_8hpp.html#adcf7b228058a142e9981c9ea1fa877da">HandleStorage</a>&amp; aligned_new_memory) {</div>
+<div class="line">  <span class="keywordflow">return</span> Os::Delegate::makeDelegate&lt;TaskInterface, Os::Posix::Task::PosixTask&gt;(aligned_new_memory);</div>
+<div class="line">}</div>
+<div class="line">}</div>
+<div class="ttc" id="aclass_os_1_1_task_interface_html_a231451057c560f5466b30099928040e0"><div class="ttname"><a href="class_os_1_1_task_interface.html#a231451057c560f5466b30099928040e0">Os::TaskInterface::getDelegate</a></div><div class="ttdeci">static TaskInterface * getDelegate(HandleStorage &amp;aligned_placement_new_memory)</div><div class="ttdoc">provide a pointer to a task delegate object</div><div class="ttdef"><b>Definition:</b> <a href="posix_2_default_task_8cpp_source.html#l00041">DefaultTask.cpp:41</a></div></div>
+</div><!-- fragment --> <dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Interface</td><td>interface the delegate supports (e.g. <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a>) </td></tr>
+    <tr><td class="paramname">Implementation</td><td>implementation class of the delegate (e.g. PosixTask) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">aligned_new_memory</td><td>memory to be filled via placement new call </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to implementation result of placement new </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="delegate_8hpp_source.html#l00046">46</a> of file <a class="el" href="delegate_8hpp_source.html">Delegate.hpp</a>.</p>
 
 </div>
 </div>

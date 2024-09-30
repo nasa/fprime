@@ -163,6 +163,10 @@ var annotated_dup =
       [ "StringTemplate", "class_fw_1_1_string_template.html", "class_fw_1_1_string_template" ]
     ] ],
     [ "Os", "namespace_os.html", [
+      [ "Generic", "namespace_os_1_1_generic.html", [
+        [ "PriorityQueueHandle", "struct_os_1_1_generic_1_1_priority_queue_handle.html", "struct_os_1_1_generic_1_1_priority_queue_handle" ],
+        [ "PriorityQueue", "class_os_1_1_generic_1_1_priority_queue.html", "class_os_1_1_generic_1_1_priority_queue" ]
+      ] ],
       [ "Posix", "namespace_os_1_1_posix.html", [
         [ "Console", "namespace_os_1_1_posix_1_1_console.html", [
           [ "PosixConsoleHandle", "struct_os_1_1_posix_1_1_console_1_1_posix_console_handle.html", "struct_os_1_1_posix_1_1_console_1_1_posix_console_handle" ],
@@ -181,6 +185,8 @@ var annotated_dup =
           [ "PosixFileSystem", "class_os_1_1_posix_1_1_file_system_1_1_posix_file_system.html", "class_os_1_1_posix_1_1_file_system_1_1_posix_file_system" ]
         ] ],
         [ "Mutex", "namespace_os_1_1_posix_1_1_mutex.html", [
+          [ "PosixConditionVariableHandle", "struct_os_1_1_posix_1_1_mutex_1_1_posix_condition_variable_handle.html", "struct_os_1_1_posix_1_1_mutex_1_1_posix_condition_variable_handle" ],
+          [ "PosixConditionVariable", "class_os_1_1_posix_1_1_mutex_1_1_posix_condition_variable.html", "class_os_1_1_posix_1_1_mutex_1_1_posix_condition_variable" ],
           [ "PosixMutexHandle", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle.html", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle" ],
           [ "PosixMutex", "class_os_1_1_posix_1_1_mutex_1_1_posix_mutex.html", "class_os_1_1_posix_1_1_mutex_1_1_posix_mutex" ]
         ] ],
@@ -207,8 +213,18 @@ var annotated_dup =
           [ "StubFileSystem", "class_os_1_1_stub_1_1_file_system_1_1_stub_file_system.html", "class_os_1_1_stub_1_1_file_system_1_1_stub_file_system" ]
         ] ],
         [ "Mutex", "namespace_os_1_1_stub_1_1_mutex.html", [
+          [ "StubConditionVariableHandle", "struct_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable_handle.html", null ],
+          [ "StubConditionVariable", "class_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable.html", "class_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable" ],
           [ "StubMutexHandle", "struct_os_1_1_stub_1_1_mutex_1_1_stub_mutex_handle.html", null ],
           [ "StubMutex", "class_os_1_1_stub_1_1_mutex_1_1_stub_mutex.html", "class_os_1_1_stub_1_1_mutex_1_1_stub_mutex" ]
+        ] ],
+        [ "Queue", "namespace_os_1_1_stub_1_1_queue.html", [
+          [ "StubQueueHandle", "struct_os_1_1_stub_1_1_queue_1_1_stub_queue_handle.html", null ],
+          [ "StubQueue", "class_os_1_1_stub_1_1_queue_1_1_stub_queue.html", "class_os_1_1_stub_1_1_queue_1_1_stub_queue" ]
+        ] ],
+        [ "Task", "namespace_os_1_1_stub_1_1_task.html", [
+          [ "StubTaskHandle", "class_os_1_1_stub_1_1_task_1_1_stub_task_handle.html", null ],
+          [ "StubTask", "class_os_1_1_stub_1_1_task_1_1_stub_task.html", "class_os_1_1_stub_1_1_task_1_1_stub_task" ]
         ] ]
       ] ],
       [ "SystemResources", "namespace_os_1_1_system_resources.html", [
@@ -225,6 +241,9 @@ var annotated_dup =
       [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
       [ "BareTaskHandle", "class_os_1_1_bare_task_handle.html", "class_os_1_1_bare_task_handle" ],
       [ "TaskRunner", "class_os_1_1_task_runner.html", "class_os_1_1_task_runner" ],
+      [ "ConditionVariableHandle", "class_os_1_1_condition_variable_handle.html", null ],
+      [ "ConditionVariableInterface", "class_os_1_1_condition_variable_interface.html", "class_os_1_1_condition_variable_interface" ],
+      [ "ConditionVariable", "class_os_1_1_condition_variable.html", "class_os_1_1_condition_variable" ],
       [ "ConsoleHandle", "struct_os_1_1_console_handle.html", null ],
       [ "ConsoleInterface", "class_os_1_1_console_interface.html", "class_os_1_1_console_interface" ],
       [ "Console", "class_os_1_1_console.html", "class_os_1_1_console" ],
@@ -239,17 +258,13 @@ var annotated_dup =
       [ "FileSystem", "class_os_1_1_file_system.html", "class_os_1_1_file_system" ],
       [ "InterruptLock", "class_os_1_1_interrupt_lock.html", "class_os_1_1_interrupt_lock" ],
       [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ],
-      [ "IPCQueue", "class_os_1_1_i_p_c_queue.html", "class_os_1_1_i_p_c_queue" ],
-      [ "LocklessQueue", "class_os_1_1_lockless_queue.html", "class_os_1_1_lockless_queue" ],
       [ "QueueHandle", "class_os_1_1_queue_handle.html", "class_os_1_1_queue_handle" ],
       [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ],
       [ "MutexHandle", "struct_os_1_1_mutex_handle.html", null ],
       [ "MutexInterface", "class_os_1_1_mutex_interface.html", "class_os_1_1_mutex_interface" ],
       [ "Mutex", "class_os_1_1_mutex.html", "class_os_1_1_mutex" ],
-      [ "BufferQueue", "class_os_1_1_buffer_queue.html", "class_os_1_1_buffer_queue" ],
-      [ "FIFOQueue", "struct_os_1_1_f_i_f_o_queue.html", "struct_os_1_1_f_i_f_o_queue" ],
-      [ "MaxHeap", "class_os_1_1_max_heap.html", "class_os_1_1_max_heap" ],
-      [ "PriorityQueue", "struct_os_1_1_priority_queue.html", "struct_os_1_1_priority_queue" ],
+      [ "ScopeLock", "class_os_1_1_scope_lock.html", "class_os_1_1_scope_lock" ],
+      [ "QueueInterface", "class_os_1_1_queue_interface.html", "class_os_1_1_queue_interface" ],
       [ "Queue", "class_os_1_1_queue.html", "class_os_1_1_queue" ],
       [ "QueueRegistry", "class_os_1_1_queue_registry.html", "class_os_1_1_queue_registry" ],
       [ "QueueString", "class_os_1_1_queue_string.html", "class_os_1_1_queue_string" ],
@@ -418,6 +433,7 @@ var annotated_dup =
       [ "Option", "class_test_utils_1_1_option.html", "class_test_utils_1_1_option" ]
     ] ],
     [ "Types", "namespace_types.html", [
+      [ "MaxHeap", "class_types_1_1_max_heap.html", "class_types_1_1_max_heap" ],
       [ "CircularBuffer", "class_types_1_1_circular_buffer.html", "class_types_1_1_circular_buffer" ],
       [ "Queue", "class_types_1_1_queue.html", "class_types_1_1_queue" ]
     ] ],

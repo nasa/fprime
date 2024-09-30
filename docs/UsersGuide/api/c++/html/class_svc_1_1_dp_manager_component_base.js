@@ -26,7 +26,7 @@ var class_svc_1_1_dp_manager_component_base =
     [ "getNum_timeGetOut_OutputPorts", "class_svc_1_1_dp_manager_component_base.html#a2bb8a4bbb822e72cadb56ee1a3d1492f", null ],
     [ "getNum_tlmOut_OutputPorts", "class_svc_1_1_dp_manager_component_base.html#a383073617109ffa54f6f1e8c589f99ce", null ],
     [ "getTime", "class_svc_1_1_dp_manager_component_base.html#a325d3347f0a524739541a31b5d40d2cf", null ],
-    [ "init", "class_svc_1_1_dp_manager_component_base.html#a998c83104f0736d6c8c926b8591b75c8", null ],
+    [ "init", "class_svc_1_1_dp_manager_component_base.html#a466c006dd6a34c18ad0b35d6ddd6ffc6", null ],
     [ "isConnected_bufferGetOut_OutputPort", "class_svc_1_1_dp_manager_component_base.html#a5ece37f306bce55e0726b8e46595e5b4", null ],
     [ "isConnected_cmdRegIn_OutputPort", "class_svc_1_1_dp_manager_component_base.html#a9e9539f01fd70e9f228a5cb35823ae58", null ],
     [ "isConnected_cmdResponseOut_OutputPort", "class_svc_1_1_dp_manager_component_base.html#abb0ab19ccb1efba8907949f1c74b0379", null ],

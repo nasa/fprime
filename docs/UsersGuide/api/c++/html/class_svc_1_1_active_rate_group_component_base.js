@@ -15,7 +15,7 @@ var class_svc_1_1_active_rate_group_component_base =
     [ "getNum_Time_OutputPorts", "class_svc_1_1_active_rate_group_component_base.html#a1e82121859a5ccd1aa7f56c13c2ffcf1", null ],
     [ "getNum_Tlm_OutputPorts", "class_svc_1_1_active_rate_group_component_base.html#aee843c07b5a81b3c43a64fe3c2d9dce3", null ],
     [ "getTime", "class_svc_1_1_active_rate_group_component_base.html#a848525879315cfd898f7f91bce83aa64", null ],
-    [ "init", "class_svc_1_1_active_rate_group_component_base.html#a4ab7c937d6ce5cfd07612726d691a90d", null ],
+    [ "init", "class_svc_1_1_active_rate_group_component_base.html#a58896de52c52cdfedae8ed43e15969eb", null ],
     [ "isConnected_Log_OutputPort", "class_svc_1_1_active_rate_group_component_base.html#a73864a62aa1221fae9f3eed80927d7fa", null ],
     [ "isConnected_PingOut_OutputPort", "class_svc_1_1_active_rate_group_component_base.html#a5d7f9bb30fe64cb94a2f6460604942e2", null ],
     [ "isConnected_RateGroupMemberOut_OutputPort", "class_svc_1_1_active_rate_group_component_base.html#abd8b2cc3014c12d728085354d05527d3", null ],

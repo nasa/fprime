@@ -27,7 +27,7 @@ var class_svc_1_1_dp_catalog_component_base =
     [ "getNum_Time_OutputPorts", "class_svc_1_1_dp_catalog_component_base.html#ab1cd3f7a2dc0957dae17c70b10c39a3d", null ],
     [ "getNum_Tlm_OutputPorts", "class_svc_1_1_dp_catalog_component_base.html#aae867d834cc2f4a8b654f29ba39ee79e", null ],
     [ "getTime", "class_svc_1_1_dp_catalog_component_base.html#a6d9b5f1ddb58c2b823e4a8c762c32059", null ],
-    [ "init", "class_svc_1_1_dp_catalog_component_base.html#afa9ca2134ebe76dd85650363b0bd9535", null ],
+    [ "init", "class_svc_1_1_dp_catalog_component_base.html#ae6c253d2ccd698ded2a7432abba80db9", null ],
     [ "isConnected_CmdReg_OutputPort", "class_svc_1_1_dp_catalog_component_base.html#ac79ff3caf5f6099da89266df46410610", null ],
     [ "isConnected_CmdStatus_OutputPort", "class_svc_1_1_dp_catalog_component_base.html#aeac588c189109f032dc4b5c0116abcba", null ],
     [ "isConnected_fileOut_OutputPort", "class_svc_1_1_dp_catalog_component_base.html#aef4a034eab52d494ec14bc44fb94ee3d", null ],

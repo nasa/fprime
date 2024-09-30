@@ -40,7 +40,7 @@ var class_svc_1_1_buffer_logger_component_base =
     [ "getNum_timeCaller_OutputPorts", "class_svc_1_1_buffer_logger_component_base.html#aa93d4ddb2d3acfbf0b55ef7979791547", null ],
     [ "getNum_tlmOut_OutputPorts", "class_svc_1_1_buffer_logger_component_base.html#a33a19f92019543b88cbd75fe08f3194a", null ],
     [ "getTime", "class_svc_1_1_buffer_logger_component_base.html#a9bc8fffad677b1823bfdf730980d9312", null ],
-    [ "init", "class_svc_1_1_buffer_logger_component_base.html#a3e6ddc53f8d44480bfab51e3f0e60ec4", null ],
+    [ "init", "class_svc_1_1_buffer_logger_component_base.html#a044cf9e6cdc1f36f1052305ee63b15dc", null ],
     [ "isConnected_bufferSendOut_OutputPort", "class_svc_1_1_buffer_logger_component_base.html#abbd84aec3a2233d91f5a5c7dd03a12f4", null ],
     [ "isConnected_cmdRegOut_OutputPort", "class_svc_1_1_buffer_logger_component_base.html#a040e037d2d01df3579d086260afe7526", null ],
     [ "isConnected_cmdResponseOut_OutputPort", "class_svc_1_1_buffer_logger_component_base.html#ac4db549fe4975736c3274d733e88a3e0", null ],

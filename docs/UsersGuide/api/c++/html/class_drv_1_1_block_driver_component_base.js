@@ -19,7 +19,7 @@ var class_drv_1_1_block_driver_component_base =
     [ "getNum_Time_OutputPorts", "class_drv_1_1_block_driver_component_base.html#abe21ae541f79026fc73d15fd260de231", null ],
     [ "getNum_Tlm_OutputPorts", "class_drv_1_1_block_driver_component_base.html#a5a7466225bbe6fd6e6995a1b824706dd", null ],
     [ "getTime", "class_drv_1_1_block_driver_component_base.html#a3f4a9fdc8766b39d9a9c3367901f1dd7", null ],
-    [ "init", "class_drv_1_1_block_driver_component_base.html#a266b1d773cc1b2a2e30f4cff5f7f4b07", null ],
+    [ "init", "class_drv_1_1_block_driver_component_base.html#a6f24e2f6f3aba94d34b055b77b7339cd", null ],
     [ "InterruptReport_internalInterfaceHandler", "class_drv_1_1_block_driver_component_base.html#aaadad035a3ee42b7f10e8f7dfeac6009", null ],
     [ "InterruptReport_internalInterfaceInvoke", "class_drv_1_1_block_driver_component_base.html#a687699f773f265f57e80c25dd891f00b", null ],
     [ "isConnected_BufferOut_OutputPort", "class_drv_1_1_block_driver_component_base.html#a9f5e5b61184535e641f7b9d661df41bc", null ],

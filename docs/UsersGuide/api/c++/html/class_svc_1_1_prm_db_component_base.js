@@ -19,7 +19,7 @@ var class_svc_1_1_prm_db_component_base =
     [ "getPrm_handler", "class_svc_1_1_prm_db_component_base.html#aa08f55e1cc9d7d7a1a1ddf04c9b35d41", null ],
     [ "getPrm_handlerBase", "class_svc_1_1_prm_db_component_base.html#ade5c57d1703dfa15bb45ba3384be2657", null ],
     [ "getTime", "class_svc_1_1_prm_db_component_base.html#ab520b3336f42c872c93540e8a43cd1cf", null ],
-    [ "init", "class_svc_1_1_prm_db_component_base.html#ad333a1ce1a2bdd422adb11377127781a", null ],
+    [ "init", "class_svc_1_1_prm_db_component_base.html#ad72fd570e1e9f69931dea710a5de79bb", null ],
     [ "isConnected_CmdReg_OutputPort", "class_svc_1_1_prm_db_component_base.html#adf26478a37c5aa987de29e55fe8f161f", null ],
     [ "isConnected_CmdStatus_OutputPort", "class_svc_1_1_prm_db_component_base.html#a9d61a06c8fc30e7e4fae3290231b88c8", null ],
     [ "isConnected_Log_OutputPort", "class_svc_1_1_prm_db_component_base.html#a11597f0559bcd4ef6fd237f1bebfab7e", null ],
