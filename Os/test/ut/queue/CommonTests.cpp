@@ -306,7 +306,6 @@ TEST(Blocking, ReceiveBlock) {
 }
 
 TEST(Random, RandomNominal) {
-    STest::Random::SeedValue::set(882558);
     Os::Test::Queue::Tester tester;
     Os::Test::Queue::Tester::Create create_rule;
     Os::Test::Queue::Tester::SendNotFull send_rule;

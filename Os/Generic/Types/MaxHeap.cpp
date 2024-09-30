@@ -43,13 +43,9 @@ MaxHeap::~MaxHeap() {
 }
 
 bool MaxHeap::create(FwSizeType capacity) {
-    // The heap has already been created.. so delete
-    // it and try again.
-    if (nullptr != this->m_heap) {
-        delete[] this->m_heap;
-        this->m_heap = nullptr;
-    }
-
+    FW_ASSERT(this->m_heap == nullptr);
+    // Loop bounds will overflow if capacity set to the max allowable value
+    FW_ASSERT(capacity < std::numeric_limits<FwSizeType>::max());
     this->m_heap = new (std::nothrow) Node[capacity];
     if (nullptr == this->m_heap) {
         return false;
@@ -69,13 +65,13 @@ bool MaxHeap::push(FwQueuePriorityType value, FwSizeType id) {
     FwSizeType index = this->m_size;
 
     // Max loop bounds for bit flip protection:
-    FwSizeType maxIter = this->m_size + 1;
-    FwSizeType maxCount = 0;
-
+    const FwSizeType maxIter = this->m_size + 1;
+    FW_ASSERT(maxIter != 0);
     // Start at the bottom of the heap and work our ways
     // upwards until we find a parent that has a value
     // greater than ours.
-    while (index && maxCount < maxIter) {
+    FwSizeType i = 0;
+    for (i = 0; i < maxIter; i++) {
         // Get the parent index:
         parent = PARENT(index);
         // The parent index should ALWAYS be less than the
@@ -90,11 +86,10 @@ bool MaxHeap::push(FwQueuePriorityType value, FwSizeType id) {
         // Swap the parent and child:
         this->m_heap[index] = this->m_heap[parent];
         index = parent;
-        ++maxCount;
     }
 
     // Check for programming errors or bit flips:
-    FW_ASSERT(maxCount < maxIter, static_cast<FwAssertArgType>(maxCount), static_cast<FwAssertArgType>(maxIter));
+    FW_ASSERT(i < maxIter, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(maxIter));
     FW_ASSERT(index <= this->m_size, static_cast<FwAssertArgType>(index));
 
     // Set the values of the new element:
@@ -161,10 +156,10 @@ void MaxHeap::heapify() {
     FwSizeType largest;
 
     // Max loop bounds for bit flip protection:
-    FwSizeType maxIter = this->m_size + 1;
-    FwSizeType maxCount = 0;
+    const FwSizeType maxIter = this->m_size + 1;
+    FwSizeType i = 0;
 
-    while (index <= this->m_size && maxCount < maxIter) {
+    for (i = 0; i < maxIter; i++) {
         // Get the children indexes for this node:
         left = LCHILD(index);
         right = RCHILD(index);
@@ -200,9 +195,6 @@ void MaxHeap::heapify() {
         }
 
         // Swap the largest node with the current node:
-        // Fw::Logger::log("Swapping: i: %u v: %d with i: %u v: %d\n",
-        //   index, this->m_heap[index].value,
-        //   largest, this->m_heap[largest].value);
         this->swap(index, largest);
 
         // Set the new index to whichever child was larger:
@@ -210,13 +202,14 @@ void MaxHeap::heapify() {
     }
 
     // Check for programming errors or bit flips:
-    FW_ASSERT(maxCount < maxIter, static_cast<FwAssertArgType>(maxCount), static_cast<FwAssertArgType>(maxIter));
+    FW_ASSERT(i < maxIter, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(maxIter));
     FW_ASSERT(index <= this->m_size, static_cast<FwAssertArgType>(index));
 }
 
 // Return the maximum priority index between two nodes. If their
 // priorities are equal, return the oldest to keep the heap stable
 FwSizeType MaxHeap::max(FwSizeType a, FwSizeType b) {
+    static_assert(not std::numeric_limits<FwSizeType>::is_signed, "FwSizeType must be unsigned");
     FW_ASSERT(a < this->m_size, static_cast<FwAssertArgType>(a), static_cast<FwAssertArgType>(this->m_size));
     FW_ASSERT(b < this->m_size, static_cast<FwAssertArgType>(b), static_cast<FwAssertArgType>(this->m_size));
 

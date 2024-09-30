@@ -31,6 +31,14 @@ TEST(Stub, Console) {
     Os::Console _;
 }
 
+TEST(Stub, FileSystem) {
+    Os::FileSystem _;
+}
+
+TEST(Stub, Directory) {
+    Os::Directory _;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
