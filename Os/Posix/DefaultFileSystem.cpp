@@ -7,7 +7,7 @@
 #include "Os/Delegate.hpp"
 
 namespace Os {
-FileSystemInterface* FileSystemInterface::getDelegate(HandleStorage& aligned_new_memory) {
+FileSystemInterface* FileSystemInterface::getDelegate(FileSystemHandleStorage& aligned_new_memory) {
     return Os::Delegate::makeDelegate<FileSystemInterface, Os::Posix::FileSystem::PosixFileSystem>(aligned_new_memory);
 }
 }

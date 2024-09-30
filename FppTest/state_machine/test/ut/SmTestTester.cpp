@@ -68,7 +68,7 @@ void SmTestTester::schedIn_OK() {
 void SmTestTester ::
     dispatchAll()
   {
-    while (this->component.m_queue.getNumMsgs() > 0)
+    while (this->component.m_queue.getMessagesAvailable() > 0)
         this->component.doDispatch();
   }
 

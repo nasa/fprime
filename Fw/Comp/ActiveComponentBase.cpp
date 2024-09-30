@@ -75,7 +75,7 @@ namespace Fw {
         ActiveComponentExitSerializableBuffer exitBuff;
         SerializeStatus stat = exitBuff.serialize(static_cast<I32>(ACTIVE_COMPONENT_EXIT));
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
-        (void)this->m_queue.send(exitBuff,0,Os::Queue::QUEUE_NONBLOCKING);
+        (void)this->m_queue.send(exitBuff,0,Os::Queue::BlockingType::NONBLOCKING);
         DEBUG_PRINT("exit %s\n", this->getObjName());
     }
 
@@ -137,7 +137,7 @@ namespace Fw {
 
     ActiveComponentBase::MsgDispatchStatus ActiveComponentBase::dispatch() {
         // Cooperative tasks should return rather than block when no messages are available
-        if (this->m_task.isCooperative() and m_queue.getNumMsgs() == 0) {
+        if (this->m_task.isCooperative() and m_queue.getMessagesAvailable() == 0) {
             return MsgDispatchStatus::MSG_DISPATCH_EMPTY;
         }
        return this->doDispatch();

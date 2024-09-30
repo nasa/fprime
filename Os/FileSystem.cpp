@@ -6,8 +6,6 @@
 #include <Os/FileSystem.hpp>
 
 namespace Os {
-FileSystem* FileSystem::s_singleton;
-
 
 FileSystem::FileSystem() : m_handle_storage(), m_delegate(*FileSystemInterface::getDelegate(m_handle_storage)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));

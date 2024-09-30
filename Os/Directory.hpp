@@ -54,7 +54,7 @@ class DirectoryInterface {
     virtual DirectoryHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a Directory delegate object
-    static DirectoryInterface* getDelegate(HandleStorage& aligned_new_memory);
+    static DirectoryInterface* getDelegate(DirectoryHandleStorage& aligned_new_memory);
 
 
     // -----------------------------------------------------------------

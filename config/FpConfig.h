@@ -43,6 +43,14 @@ typedef PlatformIntType FwNativeIntType;
 typedef PlatformUIntType FwNativeUIntType;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
 
+// Task priority type
+typedef PlatformTaskPriorityType FwTaskPriorityType;
+#define PRI_FwTaskPriorityType PRI_PlatformTaskPriorityType
+
+// Queue priority type
+typedef PlatformQueuePriorityType FwQueuePriorityType;
+#define PRI_FwQueuePriorityType PRI_PlatformQueuePriorityType
+
 // The type used to serialize a size value
 typedef U16 FwSizeStoreType;
 #define PRI_FwSizeStoreType PRIu16
@@ -94,10 +102,6 @@ typedef U32 FwPrmIdType;
 // The type of a telemetry packet identifier
 typedef U16 FwTlmPacketizeIdType;
 #define PRI_FwTlmPacketizeIdType PRIu16
-
-// The type of a queue priority
-typedef I32 FwQueuePriorityType;
-#define PRI_FwQueuePriorityType PRId32
 
 // The type of a data product identifier
 typedef U32 FwDpIdType;
@@ -385,7 +389,11 @@ typedef FwIndexType FwQueueSizeType;
 // OS configuration
 
 #ifndef FW_HANDLE_MAX_SIZE
-#define FW_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_HANDLE_MAX_SIZE 104  //!< Maximum size of a handle for OS resources (files, locks, etc.)
+#endif
+
+#ifndef FW_QUEUE_HANDLE_MAX_SIZE
+#define FW_QUEUE_HANDLE_MAX_SIZE 464  //!< Maximum size of a handle for OS queues
 #endif
 
 #ifndef FW_DIRECTORY_HANDLE_MAX_SIZE
@@ -394,6 +402,10 @@ typedef FwIndexType FwQueueSizeType;
 
 #ifndef FW_FILESYSTEM_HANDLE_MAX_SIZE
 #define FW_FILESYSTEM_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#endif
+
+#ifndef FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE
+#define FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE 56  //!< Maximum size of a handle for OS condition variables
 #endif
 
 #ifndef FW_HANDLE_ALIGNMENT

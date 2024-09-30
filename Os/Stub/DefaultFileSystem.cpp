@@ -10,7 +10,7 @@ namespace Os {
 //! \param aligned_new_memory: aligned memory to fill
 //! \param to_copy: pointer to copy-constructor input
 //! \return: pointer to delegate
-FileSystemInterface *FileSystemInterface::getDelegate(HandleStorage& aligned_placement_new_memory) {
+FileSystemInterface *FileSystemInterface::getDelegate(FileSystemHandleStorage& aligned_placement_new_memory) {
     return Os::Delegate::makeDelegate<FileSystemInterface, Os::Stub::FileSystem::StubFileSystem>(
             aligned_placement_new_memory
     );
