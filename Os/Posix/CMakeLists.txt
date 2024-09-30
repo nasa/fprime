@@ -104,6 +104,7 @@ register_fprime_ut(PosixTaskTest)
 # -----------------------------------------
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ConditionVariable.cpp"
 )
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"
@@ -124,7 +125,6 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/Mutex Os_Mutex_Posix)
 register_fprime_ut(PosixMutexTest)
-
 
 # -----------------------------------------
 ### Os/FileSystem/Posix Section
@@ -178,3 +178,13 @@ set(UT_MOD_DEPS
 choose_fprime_implementation(Os/Directory Os_Directory_Posix)
 register_fprime_ut(PosixDirectoryTest)
 
+# -----------------------------------------
+### Os/ConditionVariable/Posix Section
+# -----------------------------------------
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/condition/CommonTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/condition/ConditionRules.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixConditionTests.cpp"
+)
+choose_fprime_implementation(Os/Mutex Os_Mutex_Posix)
+register_fprime_ut(PosixConditionTests)

@@ -340,7 +340,7 @@ namespace Os {
       return receiveBlockIPCStub(queueHandle, buffer, capacity, actualSize, priority);
   }
 
-  NATIVE_INT_TYPE IPCQueue::getNumMsgs() const {
+  NATIVE_INT_TYPE IPCQueue::getMessagesAvailable() const {
       QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
       if (nullptr == queueHandle) {
           return 0;

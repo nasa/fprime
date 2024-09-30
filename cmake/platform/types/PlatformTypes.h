@@ -56,6 +56,12 @@ typedef uint64_t PlatformSizeType;
 typedef PlatformIntType PlatformAssertArgType;
 #define PRI_PlatformAssertArgType PRI_PlatformIntType
 
+typedef PlatformIntType PlatformTaskPriorityType;
+#define PRI_PlatformTaskPriorityType PRI_PlatformIntType
+
+typedef PlatformIntType PlatformQueuePriorityType;
+#define PRI_PlatformQueuePriorityType PRI_PlatformIntType
+
 // Linux/Darwin definitions for pointer have various sizes across platforms
 // and since these definitions need to be consistent we must ask the size.
 #ifndef PLATFORM_POINTER_CAST_TYPE_DEFINED

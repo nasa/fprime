@@ -64,7 +64,7 @@ class FileSystemInterface {
     virtual FileSystemHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a FileSystem delegate object
-    static FileSystemInterface* getDelegate(HandleStorage& aligned_new_memory);
+    static FileSystemInterface* getDelegate(FileSystemHandleStorage& aligned_new_memory);
 
 
     // ------------------------------------------------------------------
@@ -380,8 +380,6 @@ class FileSystem final : public FileSystemInterface {
 
     alignas(FW_HANDLE_ALIGNMENT) FileSystemHandleStorage m_handle_storage;  //!< FileSystem handle storage
     FileSystemInterface& m_delegate;          
-
-    static FileSystem* s_singleton;
 };
 
 
