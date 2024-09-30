@@ -71,7 +71,7 @@ bool MaxHeap::push(FwQueuePriorityType value, FwSizeType id) {
     // upwards until we find a parent that has a value
     // greater than ours.
     FwSizeType i = 0;
-    for (i = 0; i < maxIter; i++) {
+    for (i = 0; (i < maxIter) && (index != 0); i++) {
         // Get the parent index:
         parent = PARENT(index);
         // The parent index should ALWAYS be less than the
@@ -159,7 +159,7 @@ void MaxHeap::heapify() {
     const FwSizeType maxIter = this->m_size + 1;
     FwSizeType i = 0;
 
-    for (i = 0; i < maxIter; i++) {
+    for (i = 0; (i < maxIter) && (index <= this->m_size); i++) {
         // Get the children indexes for this node:
         left = LCHILD(index);
         right = RCHILD(index);
