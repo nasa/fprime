@@ -5,6 +5,8 @@
 #include <Os/Mutex.hpp>
 #include <Os/Condition.hpp>
 #include <Os/Console.hpp>
+#include <Os/FileSystem.hpp>
+#include <Os/Directory.hpp>
 
 
 TEST(Stub, File) {
@@ -32,7 +34,7 @@ TEST(Stub, Console) {
 }
 
 TEST(Stub, FileSystem) {
-    Os::FileSystem _;
+    Os::FileSystem::getSingleton();
 }
 
 TEST(Stub, Directory) {
