@@ -38,7 +38,7 @@ struct SendNotFull : public STest::Rule<Os::Test::Queue::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    SendNotFull(bool end_check=true);
+    explicit SendNotFull(bool end_check=true);
 
     // ----------------------------------------------------------------------
     // Public member functions
@@ -89,7 +89,7 @@ struct ReceiveNotEmpty : public STest::Rule<Os::Test::Queue::Tester> {
     // ----------------------------------------------------------------------
 
     //! Constructor
-    ReceiveNotEmpty(bool end_check=true);
+    explicit ReceiveNotEmpty(bool end_check=true);
 
     // ----------------------------------------------------------------------
     // Public member functions

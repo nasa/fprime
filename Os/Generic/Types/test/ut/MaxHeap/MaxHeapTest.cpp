@@ -9,17 +9,31 @@
 
 TEST(Nominal, Creation) {
     bool ret;
-    Types::MaxHeap heap;
-    ret = heap.create(0);
-    ASSERT_TRUE(ret);
-    ret = heap.create(1000000);
-    ASSERT_TRUE(ret);
-    ret = heap.create(1);
-    ASSERT_TRUE(ret);
-    ret = heap.create(DEPTH);
-    ASSERT_TRUE(ret);
-    ret = heap.create(DEPTH);
-    ASSERT_TRUE(ret);
+    {
+        Types::MaxHeap heap;
+        ret = heap.create(0);
+        ASSERT_TRUE(ret);
+    }
+    {
+        Types::MaxHeap heap;
+        ret = heap.create(1000000);
+        ASSERT_TRUE(ret);
+    }
+    {
+        Types::MaxHeap heap;
+        ret = heap.create(1);
+        ASSERT_TRUE(ret);
+    }
+    {
+        Types::MaxHeap heap;
+        ret = heap.create(DEPTH);
+        ASSERT_TRUE(ret);
+    }
+    {
+        Types::MaxHeap heap;
+        ret = heap.create(DEPTH);
+        ASSERT_TRUE(ret);
+    }
 }
 
 TEST(Nominal, Empty) {

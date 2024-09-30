@@ -47,7 +47,7 @@ class TestConditionVariable : public ConditionVariableInterface {
     TestConditionVariable();
 
     //! \brief default destructor
-    virtual ~TestConditionVariable() override;
+    ~TestConditionVariable() override;
 
     //! \brief copy constructor is forbidden
     TestConditionVariable(const ConditionVariableInterface& other) = delete;
