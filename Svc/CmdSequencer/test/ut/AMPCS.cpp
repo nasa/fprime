@@ -84,7 +84,7 @@ namespace Svc {
           0,
           file.getName().toChar(),
           CmdSequencer_FileReadStage::READ_HEADER_SIZE,
-          Os::FileSystem::INVALID_PATH
+          Os::FileSystem::DOESNT_EXIST
       );
       // Assert telemetry
       ASSERT_TLM_SIZE(1);
