@@ -15,15 +15,8 @@ class MemoryHandle {};
 //! \brief interface for memory implementation
 class MemoryInterface {
   public:
-    enum Status {
-        OP_OK, //!< Operation succeeded
-        ERROR //!< Operaion failed
-    };
-
-    struct Usage {
-        FwSizeType used;   //!< Filled with used bytes of volatile memory (permanent, paged-in)
-        FwSizeType total;  //!< Filled with total non-volatile memory
-    };
+    using Status = Os::Generic::Status;
+    using Usage = Os::Generic::UsedTotal;
 
     //! Default constructor
     MemoryInterface() = default;

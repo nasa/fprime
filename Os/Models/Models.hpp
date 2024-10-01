@@ -169,5 +169,9 @@ static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NOT_S
 static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::OTHER_ERROR) == Os::FileSystemStatus::T::OTHER_ERROR,
               "FileSystem status and FPP shadow enum do not match");
 
-
+// Check Generic mappings
+static_assert(static_cast<Os::Generic::Status::T>(Os::Generic::Status::OP_OK) == Os::Generic::Status::T::OP_OK,
+              "Generic status enums do not match");
+static_assert(static_cast<Os::Generic::Status::T>(Os::Generic::Status::ERROR) == Os::Generic::Status::T::ERROR,
+              "Generic status enums do not match");
 #endif // OS_MODELS_MODELS_HPP

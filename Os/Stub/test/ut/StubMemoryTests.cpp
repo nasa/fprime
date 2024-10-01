@@ -6,6 +6,7 @@
 #include "Os/Memory.hpp"
 #include "Os/Stub/test/Memory.hpp"
 #include "STest/Pick/Pick.hpp"
+#include "Os/Models/Models.hpp"
 
 TEST(Interface, Construction) {
     Os::Memory memory;

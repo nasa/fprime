@@ -6,6 +6,7 @@
 #include "Os/Cpu.hpp"
 #include "Os/Stub/test/Cpu.hpp"
 #include "STest/Pick/Pick.hpp"
+#include "Os/Models/Models.hpp"
 
 TEST(Interface, Construction) {
     Os::Cpu cpu;

@@ -15,16 +15,8 @@ class CpuHandle {};
 //! \brief interface for cpu implementation
 class CpuInterface {
   public:
-    enum Status {
-        OP_OK, //!< Operation succeeded
-        ERROR //!< Operaion failed
-    };
-
-    //! \brief a representation of CPU usage
-    struct Ticks {
-        FwSizeType used;   //!< Filled with non-idle (system, user) CPU ticks
-        FwSizeType total;  //!< Filled with total CPU ticks
-    };
+    using Status = Os::Generic::Status;
+    using Ticks = Os::Generic::UsedTotal;
 
     //! Default constructor
     CpuInterface() = default;
