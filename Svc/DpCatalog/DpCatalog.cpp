@@ -141,7 +141,7 @@ namespace Svc {
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
-        // check that intialization got memory
+        // check that initialization got memory
         if (0 == this->m_numDpSlots) {
             this->log_WARNING_HI_NoDpMemory();
             return Fw::CmdResponse::EXECUTION_ERROR;
@@ -621,7 +621,7 @@ namespace Svc {
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
-        // check that intialization got memory
+        // check that initialization got memory
         if (0 == this->m_numDpSlots) {
             this->log_WARNING_HI_NoDpMemory();
             return Fw::CmdResponse::EXECUTION_ERROR;
