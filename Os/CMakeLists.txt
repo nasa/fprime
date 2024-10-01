@@ -97,9 +97,6 @@ register_fprime_module(Os_Test_File_SyntheticFileSystem)
 
 # Basic source files used in every OSAL layer.  Contains common code and helpers.
 set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
-
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"

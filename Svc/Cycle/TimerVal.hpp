@@ -10,6 +10,7 @@
 
 #include <Fw/Types/Serializable.hpp>
 #include <Os/IntervalTimer.hpp>
+#include <Os/Posix/RawTime.hpp>
 
 namespace Svc {
 
@@ -22,9 +23,8 @@ namespace Svc {
     class TimerVal: public Fw::Serializable {
         public:
 
-            enum {
-                SERIALIZED_SIZE = sizeof(U32) + sizeof(U32) //!< size of TimerVal private members
-            };
+            // TODO: is this ok?
+            static constexpr FwSizeType SERIALIZED_SIZE = OS_RAWTIME_SERIALIZED_SIZE; //!< size of TimerVal private members
 
             TimerVal(); //!< Default constructor
 
@@ -68,9 +68,9 @@ namespace Svc {
             Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialize to contents
 
             //!  \brief Returns the current timer value
-		    //!
-		    //!
-            Os::IntervalTimer::RawTime getTimerVal() const;
+            //!
+            //!
+            Os::RawTime getTimerVal() const;
 
             //!  \brief Function to store a timer value
             //!
@@ -89,8 +89,9 @@ namespace Svc {
             U32 diffUSec(const TimerVal& time); //!< takes difference between stored time and passed time
 
         PRIVATE:
-            TimerVal(U32 upper, U32 lower); //!< Private constructor for testing
-            Os::IntervalTimer::RawTime m_timerVal; //!< Stored timer value
+            // TODO: see what to do with this testing constructor
+            // TimerVal(U32 upper, U32 lower); //!< Private constructor for testing
+            Os::RawTime m_rawTime; //!< Stored timer value
     };
 
 } /* namespace Svc */

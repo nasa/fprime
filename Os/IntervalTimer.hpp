@@ -8,23 +8,24 @@
 #define _IntervalTimer_hpp_
 
 #include <FpConfig.hpp>
+#include <Os/RawTime.hpp>
 
 namespace Os {
     class IntervalTimer {
         public:
-    		/**
-    		 * RawTime:
-    		 *
-    		 * Most time is stored as an upper and lower part of this raw time object. The
-    		 * semantic meaning of this "RawTime" is platform-dependent.
-    		 */
-            typedef struct {
-                U32 upper;  //!< Upper 32-bits part of time value. Platform dependent.
-                U32 lower; //!< Lower 32-bits part of time value. Platform dependent.
-            } RawTime;
+            /**
+             * RawTime:
+             *
+             * Most time is stored as an upper and lower part of this raw time object. The
+             * semantic meaning of this "RawTime" is platform-dependent.
+             */
+            // typedef struct {
+            //     U32 upper;  //!< Upper 32-bits part of time value. Platform dependent.
+            //     U32 lower; //!< Lower 32-bits part of time value. Platform dependent.
+            // } RawTime;
 
             IntervalTimer(); //!<  Constructor
-            virtual ~IntervalTimer(); //!<  Destructor
+            ~IntervalTimer() = default; //!<  Destructor
 
             //------------ Common Functions ------------
             // Common functions, typically do not need to be implemented by an OS support package.
@@ -66,7 +67,7 @@ namespace Os {
             static void getRawTime(RawTime& time);
         PRIVATE:
 
-		    //------------ Internal Member Variables ------------
+            //------------ Internal Member Variables ------------
             RawTime m_startTime; //!<  Stored start time
             RawTime m_stopTime; //!<  Stored end time
 

@@ -1,3 +1,4 @@
+// TODO: document
 /**
  * IntervalTimerCommon.cpp:
  *
@@ -16,12 +17,18 @@
 
 namespace Os {
 
-    IntervalTimer::IntervalTimer() {
-        memset(&this->m_startTime,0,sizeof(this->m_startTime));
-        memset(&this->m_stopTime,0,sizeof(this->m_stopTime));
+    IntervalTimer::IntervalTimer() : m_startTime(), m_stopTime() {}
+
+    // IntervalTimer::~IntervalTimer() {}
+    void IntervalTimer::getRawTime(RawTime& time) {
+        time.getRawTime();
     }
 
-    IntervalTimer::~IntervalTimer() {}
+    U32 IntervalTimer::getDiffUsec(const RawTime& t1, const RawTime& t2) {
+        U32 result = 0;
+        t1.getDiffUsec(t2, result);
+        return result;
+    }
 
     void IntervalTimer::start() {
         getRawTime(this->m_startTime);

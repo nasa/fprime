@@ -14,6 +14,7 @@ add_fprime_supplied_os_module("Mutex;ConditionVariable" Stub)
 add_fprime_supplied_os_module(Cpu Stub)
 add_fprime_supplied_os_module(Memory Stub)
 add_fprime_supplied_os_module(Queue Stub)
+add_fprime_supplied_os_module(RawTime Stub)
 
 # Remainder of file is specific to UTs
 if (NOT BUILD_TESTING)
@@ -32,4 +33,5 @@ choose_fprime_implementation(Os/File Os_File_Stub)
 choose_fprime_implementation(Os/Console Os_Console_Stub)
 choose_fprime_implementation(Os/Cpu Os_Cpu_Stub)
 choose_fprime_implementation(Os/Memory Os_Memory_Stub)
+choose_fprime_implementation(Os/RawTime Os_RawTime_Stub)
 register_fprime_ut(StubTest)
