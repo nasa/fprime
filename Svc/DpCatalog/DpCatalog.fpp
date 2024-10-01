@@ -22,7 +22,7 @@ module Svc {
     $priority: U32 # Priority of the data product
     $size: U64 # Overall size of the data product
     blocks: U32 # Number of blocks transmitted
-    state: Fw.DpState # Transmisstion state of the data product
+    state: Fw.DpState # Transmission state of the data product
   }
 
 
@@ -285,6 +285,21 @@ module Svc {
       id 31 \
       format "Error getting file {} size. stat: {}" \
       throttle 10
+
+    event NoDpMemory \
+      severity warning high \
+      id 32 \
+      format "No memory for DP"
+
+    event NotInitialized \
+      severity warning high \
+      id 33 \
+      format "DpCatalog not initialized"
+
+    event XmitNotActive \
+      severity warning low \
+      id 34 \
+      format "DpCatalog transmit not active"
 
     # ----------------------------------------------------------------------
     # Telemetry

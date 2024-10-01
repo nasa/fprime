@@ -24,7 +24,7 @@ Features and more extended unit testing will be added over time. Use at your own
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
 SVC-DPCAT-001 | `DpCatalog` shall read a set of directories and build a catalog of data products. | `DpCatalog` needs to know at least one directory where data products reside | Test
-SVC-DPCAT-002 | `DpCatalog` shall sort data products first based on the internally recorded priority. | `DpCatalog` needs to downlink highest priority items first | Test
+SVC-DPCAT-002 | `DpCatalog` shall sort data products first based on the internally recorded priority where the highest priority is represented by the lowest number. | `DpCatalog` needs to downlink highest priority items first | Test
 SVC-DPCAT-003 | `DpCatalog` shall sort data products second based on the internally recorded time with oldest products as higher priority. | `DpCatalog` needs to downlink oldest items first | Test
 SVC-DPCAT-004 | `DpCatalog` shall sort data products third based on the internally recorded product ID with the lowest as higher priority. | `DpCatalog` needs to resolve case where priority and time match | Test
 SVC-DPCAT-005 | `DpCatalog` shall update the data product metadata once download is complete | `DpCatalog` needs to track completion status to avoid duplicate downloads | Test

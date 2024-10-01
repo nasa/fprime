@@ -30,6 +30,7 @@ namespace Svc {
         m_numDpRecords(0),
         m_numDpSlots(0),
         m_numDirectories(0),
+        m_stateFileData(nullptr),
         m_memSize(0),
         m_memPtr(nullptr),
         m_allocatorId(0),
@@ -61,7 +62,8 @@ namespace Svc {
         // request memory for catalog
         // = number of file slots * (Free list entry + traverse stack entry)
         // FIXME: Memory size hack
-        this->m_memSize = DP_MAX_FILES * (sizeof(DpBtreeNode) + sizeof(DpBtreeNode**));
+        static const FwSizeType slotSize = sizeof(DpBtreeNode) + sizeof(DpBtreeNode**) + sizeof(DpStateEntry);
+        this->m_memSize = DP_MAX_FILES * slotSize;
         bool notUsed; // we don't need to recover the catalog.
         // request memory. this->m_memSize will be modified if there is less than we requested
         this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
@@ -73,10 +75,13 @@ namespace Svc {
             (this->m_memPtr != nullptr)
             ) {
             // set the number of available record slots based on how much memory we actually got
-            this->m_numDpSlots = this->m_memSize / (sizeof(DpBtreeNode) + sizeof(DpBtreeNode**));
+            this->m_numDpSlots = this->m_memSize / slotSize;
             this->resetBinaryTree();
             // assign pointer for the stack
             this->m_traverseStack = reinterpret_cast<DpBtreeNode**>(&this->m_freeListHead[this->m_numDpSlots]);
+            this->resetTreeStack();
+            // assign pointer for the state file storage
+            this->m_stateFileData = reinterpret_cast<DpStateEntry*>(&this->m_traverseStack[this->m_numDpSlots]);
         }
         else {
             // if we don't have enough memory, set the number of records
@@ -115,11 +120,30 @@ namespace Svc {
         this->m_dpTree = nullptr;
     }
 
+    void DpCatalog::resetStateFileData() {
+        // clear state file data
+        for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
+            this->m_stateFileData[slot].dir = -1; // Use DP dir to indicate unused slot
+            this->m_stateFileData[slot].record.setid(0);
+            this->m_stateFileData[slot].record.setpriority(0);
+            this->m_stateFileData[slot].record.setstate(Fw::DpState::UNTRANSMITTED);
+            this->m_stateFileData[slot].record.settSec(0);
+            this->m_stateFileData[slot].record.settSub(0);
+            this->m_stateFileData[slot].record.setsize(0);
+        }
+    }
 
     Fw::CmdResponse DpCatalog::doCatalogBuild() {
 
         // check initialization
         if (not this->checkInit()) {
+            this->log_WARNING_HI_NotInitialized();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
+
+        // check that intialization got memory
+        if (0 == this->m_numDpSlots) {
+            this->log_WARNING_HI_NoDpMemory();
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
@@ -131,6 +155,19 @@ namespace Svc {
 
         // reset free list for entries
         this->resetBinaryTree();
+
+        this->fillBinaryTree();
+
+        // reset state file data
+        this->resetStateFileData();
+
+
+        this->log_ACTIVITY_HI_CatalogBuildComplete();
+
+        return Fw::CmdResponse::OK;
+    }
+
+    Fw::CmdResponse DpCatalog::fillBinaryTree() {
 
         // keep cumulative number of files
         FwSizeType totalFiles = 0;
@@ -271,10 +308,9 @@ namespace Svc {
             }
         } // end for each directory
 
-        this->log_ACTIVITY_HI_CatalogBuildComplete();
+ 
+    } // end fillBinaryTree()
 
-        return Fw::CmdResponse::OK;
-    }
 
     bool DpCatalog::insertEntry(DpStateEntry& entry) {
 
@@ -559,30 +595,46 @@ namespace Svc {
 
         Fw::CmdResponse resp = this->doCatalogXmit();
 
-        if (Fw::Wait::NO_WAIT == wait) {
-            this->cmdResponse_out(opCode, cmdSeq, resp);
-            this->m_xmitCmdWait = false;
-            this->m_xmitOpCode = 0;
-            this->m_xmitCmdSeq = 0;
-        }
-        else {
-            this->m_xmitCmdWait = true;
-            this->m_xmitOpCode = opCode;
-            this->m_xmitCmdSeq = cmdSeq;
+        if (resp != Fw::CmdResponse::OK) {
+            this->cmdResponse_out(opCode, cmdSeq, resp); 
+        } else {
+            if (Fw::Wait::NO_WAIT == wait) {
+                this->cmdResponse_out(opCode, cmdSeq, resp);
+                this->m_xmitCmdWait = false;
+                this->m_xmitOpCode = 0;
+                this->m_xmitCmdSeq = 0;
+            }
+            else {
+                this->m_xmitCmdWait = true;
+                this->m_xmitOpCode = opCode;
+                this->m_xmitCmdSeq = cmdSeq;
+            }
         }
 
     }
 
     Fw::CmdResponse DpCatalog::doCatalogXmit() {
 
-        // start transmission 
-        this->m_xmitBytes = 0;
+        // check initialization
+        if (not this->checkInit()) {
+            this->log_WARNING_HI_NotInitialized();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
+
+        // check that intialization got memory
+        if (0 == this->m_numDpSlots) {
+            this->log_WARNING_HI_NoDpMemory();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
 
         // make sure a downlink is not in progress
         if (this->m_xmitInProgress) {
             this->log_WARNING_LO_DpXmitInProgress();
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
+
+        // start transmission 
+        this->m_xmitBytes = 0;
 
         // make sure we have valid pointers
         FW_ASSERT(this->m_dpTree);
@@ -613,8 +665,13 @@ namespace Svc {
             U32 cmdSeq
         )
     {
-        // TODO
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        if (not this->m_xmitInProgress) {
+            this->log_WARNING_LO_XmitNotActive();
+            // benign error, so don't fail the command
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        } else {
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        }
     }
 
     void DpCatalog ::

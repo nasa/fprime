@@ -161,8 +161,14 @@ namespace Svc {
         /// @brief reset the free list
         void resetBinaryTree();
 
+        /// #brief fill  the binary tree from DP files
+        Fw::CmdResponse fillBinaryTree();
+
         /// @brief reset the tree stack
         void resetTreeStack();
+
+        /// @brief reset the state file data
+        void resetStateFileData();
 
         /// @brief add an entry to the tree
         /// @param entry entry to add
@@ -210,6 +216,7 @@ namespace Svc {
         Fw::String m_fileList[DP_MAX_FILES]; //!< working array of files/directory
 
         Fw::FileNameString m_stateFile; //!< file to store transmit state
+        DpStateEntry* m_stateFileData; //!< DP state loaded from file
 
         NATIVE_UINT_TYPE m_memSize; //!< size of allocated buffer
         void* m_memPtr; //!< stored for shutdown
