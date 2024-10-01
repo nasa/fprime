@@ -19,7 +19,7 @@ TestMemory::~TestMemory() {
     StaticData::data.lastCalled = StaticData::LastFn::DESTRUCT_FN;
 }
 
-TestMemory::Status TestMemory::_getUsage(MemoryUsage& memory_usage) {
+TestMemory::Status TestMemory::_getUsage(Os::Memory::Usage& memory_usage) {
     StaticData::data.lastCalled = StaticData::LastFn::USAGE_FN;
     StaticData::data.usage.total = memory_usage.total;
     StaticData::data.usage.used = memory_usage.used;

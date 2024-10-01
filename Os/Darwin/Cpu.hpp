@@ -1,40 +1,40 @@
 // ======================================================================
-// \title Os/Stub/Cpu.hpp
+// \title Os/Darwin/Cpu.hpp
 // \brief stub implementation for Os::Cpu, header and test definitions
 // ======================================================================
 #include <cstdio>
 #include <Os/Cpu.hpp>
-#ifndef OS_Stub_Cpu_HPP
-#define OS_Stub_Cpu_HPP
+#ifndef OS_Darwin_Cpu_HPP
+#define OS_Darwin_Cpu_HPP
 
 namespace Os {
-namespace Stub {
+namespace Darwin {
 namespace Cpu {
 
 //! CpuHandle class definition for stub implementations.
 //!
-struct StubCpuHandle : public CpuHandle {
+struct DarwinCpuHandle : public CpuHandle {
 };
 
 //! \brief stub implementation of Os::CpuInterface
 //!
-//! Stub implementation of `CpuInterface` for use as a delegate class handling stub console operations.
+//! Darwin implementation of `CpuInterface` for use as a delegate class handling stub console operations.
 //!
-class StubCpu : public CpuInterface {
+class DarwinCpu : public CpuInterface {
   public:
     //! \brief constructor
     //!
-    StubCpu() = default;
+    DarwinCpu() = default;
 
     //! \brief copy constructor
-    StubCpu(const StubCpu& other) = delete;
+    DarwinCpu(const DarwinCpu& other) = delete;
 
     //! \brief default copy assignment
     CpuInterface& operator=(const CpuInterface& other) override = delete;
 
     //! \brief destructor
     //!
-    ~StubCpu() override = default;
+    ~DarwinCpu() override = default;
 
     // ------------------------------------
     // Functions overrides
@@ -61,7 +61,7 @@ class StubCpu : public CpuInterface {
     //! \param cpu_index: index for CPU to read. Default: 0
     //! \return:  ERROR when error occurs, OK otherwise.
     //!
-    Status _getTicks(Ticks& ticks, FwSizeType cpu_index) override;
+    Status _getTicks(Os::Cpu::Ticks& ticks, FwSizeType cpu_index) override;
 
     //! \brief returns the raw console handle
     //!
@@ -73,10 +73,10 @@ class StubCpu : public CpuInterface {
     CpuHandle *getHandle() override;
   private:
     //! File handle for PosixFile
-    StubCpuHandle m_handle;
+    DarwinCpuHandle m_handle;
 };
 } // namespace Cpu
-} // namespace Stub
+} // namespace Darwin
 } // namespace Os
 
-#endif // OS_Stub_Cpu_HPP
+#endif // OS_Darwin_Cpu_HPP

@@ -7,8 +7,6 @@
 #include "Os/Stub/test/Cpu.hpp"
 #include "STest/Pick/Pick.hpp"
 
-
-
 TEST(Interface, Construction) {
     Os::Cpu cpu;
     ASSERT_EQ(Os::Stub::Cpu::Test::StaticData::data.lastCalled, Os::Stub::Cpu::Test::StaticData::CONSTRUCT_FN);
@@ -35,10 +33,10 @@ TEST(Interface, Count) {
 TEST(Interface, Ticks) {
     Os::Cpu cpu;
     FwSizeType index = STest::Pick::lowerUpper(0, 10000);
-    Os::CpuTicks ticks;
+    Os::Cpu::Ticks ticks;
     ticks.used = STest::Pick::lowerUpper(0, 10000);
     ticks.total = STest::Pick::lowerUpper(0, 10000);
-    Os::CpuTicks ticks_copy = ticks;
+    Os::Cpu::Ticks ticks_copy = ticks;
     Os::CpuInterface::Status status = Os::CpuInterface::Status::ERROR;
     Os::Stub::Cpu::Test::StaticData::data.status_out = status;
     ASSERT_EQ(Os::Stub::Cpu::Test::StaticData::data.lastCalled, Os::Stub::Cpu::Test::StaticData::CONSTRUCT_FN);

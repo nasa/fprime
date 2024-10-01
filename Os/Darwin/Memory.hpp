@@ -1,44 +1,45 @@
 // ======================================================================
-// \title Os/Stub/Memory.hpp
+// \title Os/Darwin/Memory.hpp
 // \brief stub implementation for Os::Memory, header and test definitions
 // ======================================================================
 #include <cstdio>
 #include <Os/Memory.hpp>
-#ifndef OS_Stub_Memory_HPP
-#define OS_Stub_Memory_HPP
+#ifndef OS_Darwin_Memory_HPP
+#define OS_Darwin_Memory_HPP
 
 namespace Os {
-namespace Stub {
+namespace Darwin {
 namespace Memory {
 
 //! MemoryHandle class definition for stub implementations.
 //!
-struct StubMemoryHandle : public MemoryHandle {
+struct DarwinMemoryHandle : public MemoryHandle {
 };
 
 //! \brief stub implementation of Os::MemoryInterface
 //!
-//! Stub implementation of `MemoryInterface` for use as a delegate class handling stub console operations.
+//! Darwin implementation of `MemoryInterface` for use as a delegate class handling stub console operations.
 //!
-class StubMemory : public MemoryInterface {
+class DarwinMemory : public MemoryInterface {
   public:
     //! \brief constructor
     //!
-    StubMemory() = default;
+    DarwinMemory() = default;
 
     //! \brief copy constructor
-    StubMemory(const StubMemory& other) = delete;
+    DarwinMemory(const DarwinMemory& other) = delete;
 
     //! \brief default copy assignment
     MemoryInterface& operator=(const MemoryInterface& other) override = delete;
 
     //! \brief destructor
     //!
-    ~StubMemory() override = default;
+    ~DarwinMemory() override = default;
 
     // ------------------------------------
     // Functions overrides
     // ------------------------------------
+  public:
 
     //! \brief get system memory usage
     //!
@@ -46,7 +47,7 @@ class StubMemory : public MemoryInterface {
     //!
     //! \param memory_usage: (output) data structure used to store memory usage
     //! \return:  ERROR when error occurs, OK otherwise.
-    Status _getUsage(Usage& memory_usage) override;
+    Status _getUsage(Os::Memory::Usage& memory_usage) override;
 
     //! \brief returns the raw console handle
     //!
@@ -58,10 +59,10 @@ class StubMemory : public MemoryInterface {
     MemoryHandle *getHandle() override;
   private:
     //! File handle for PosixFile
-    StubMemoryHandle m_handle;
+    DarwinMemoryHandle m_handle;
 };
 } // namespace Memory
-} // namespace Stub
+} // namespace Darwin
 } // namespace Os
 
-#endif // OS_Stub_Memory_HPP
+#endif // OS_Darwin_Memory_HPP

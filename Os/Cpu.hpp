@@ -9,12 +9,6 @@
 
 namespace Os {
 
-//! \brief a representation of CPU usage
-struct CpuTicks {
-    FwSizeType used;   //!< Filled with non-idle (system, user) CPU ticks
-    FwSizeType total;  //!< Filled with total CPU ticks
-};
-
 //! \brief Cpu variable handle parent
 class CpuHandle {};
 
@@ -24,6 +18,12 @@ class CpuInterface {
     enum Status {
         OP_OK, //!< Operation succeeded
         ERROR //!< Operaion failed
+    };
+
+    //! \brief a representation of CPU usage
+    struct Ticks {
+        FwSizeType used;   //!< Filled with non-idle (system, user) CPU ticks
+        FwSizeType total;  //!< Filled with total CPU ticks
     };
 
     //! Default constructor
@@ -54,7 +54,7 @@ class CpuInterface {
     //! \param cpu_index: index for CPU to read. Default: 0
     //! \return:  ERROR when error occurs, OK otherwise.
     //!
-    virtual Status _getTicks(CpuTicks& ticks, FwSizeType cpu_index) = 0;
+    virtual Status _getTicks(Ticks& ticks, FwSizeType cpu_index) = 0;
 
     //! \brief return the underlying cpu handle (implementation specific).
     //! \return internal task handle representation
@@ -116,7 +116,7 @@ class Cpu final : public CpuInterface {
     //! \param cpu_index: index for CPU to read. Default: 0
     //! \return:  ERROR when error occurs, OK otherwise.
     //!
-    Status _getTicks(CpuTicks& ticks, FwSizeType cpu_index) override;
+    Status _getTicks(Ticks& ticks, FwSizeType cpu_index) override;
 
     //! \brief return the underlying cpu handle (implementation specific).
     //! \return internal task handle representation
@@ -146,7 +146,7 @@ class Cpu final : public CpuInterface {
     //! \param cpu_index: index for CPU to read. Default: 0
     //! \return:  ERROR when error occurs, OK otherwise.
     //!
-    static Status getTicks(CpuTicks& ticks, FwSizeType cpu_index);
+    static Status getTicks(Ticks& ticks, FwSizeType cpu_index);
 
   private:
 

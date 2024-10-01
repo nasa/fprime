@@ -27,7 +27,7 @@ Cpu::Status Cpu::_getCount(FwSizeType& cpu_count) {
     return this->m_delegate._getCount(cpu_count);
 }
 
-Cpu::Status Cpu::_getTicks(CpuTicks& ticks, FwSizeType cpu_index) {
+Cpu::Status Cpu::_getTicks(Ticks& ticks, FwSizeType cpu_index) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<CpuInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate._getTicks(ticks, cpu_index);
 }
@@ -41,7 +41,7 @@ Cpu::Status Cpu::getCount(FwSizeType& cpu_count) {
     return Cpu::getSingleton()._getCount(cpu_count);
 }
 
-Cpu::Status Cpu::getTicks(CpuTicks& ticks, FwSizeType cpu_index) {
+Cpu::Status Cpu::getTicks(Ticks& ticks, FwSizeType cpu_index) {
     return Cpu::getSingleton()._getTicks(ticks, cpu_index);
 }
 }

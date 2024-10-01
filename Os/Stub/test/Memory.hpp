@@ -33,7 +33,7 @@ struct StaticData {
     FwSizeType index = 0;
 
     //! Ticks test
-    MemoryUsage usage;
+    Os::Memory::Usage usage;
 
     //! Status out
     MemoryInterface::Status status_out;
@@ -73,7 +73,7 @@ class TestMemory : public MemoryInterface {
     //!
     //! \param memory_usage: (output) data structure used to store memory usage
     //! \return:  ERROR when error occurs, OK otherwise.
-    Status _getUsage(MemoryUsage& memory_usage) override;
+    Status _getUsage(Os::Memory::Usage& memory_usage) override;
 
     //! \brief returns the raw console handle
     //!

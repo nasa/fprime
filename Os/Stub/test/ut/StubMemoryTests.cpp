@@ -19,10 +19,10 @@ TEST(Interface, Destruction) {
 
 TEST(Interface, Usage) {
     Os::Memory memory;
-    Os::MemoryUsage usage;
+    Os::Memory::Usage usage;
     usage.used = STest::Pick::lowerUpper(0, 10000);
     usage.total = STest::Pick::lowerUpper(0, 10000);
-    Os::MemoryUsage usage_copy = usage;
+    Os::Memory::Usage usage_copy = usage;
     Os::MemoryInterface::Status status = Os::MemoryInterface::Status::ERROR;
     Os::Stub::Memory::Test::StaticData::data.status_out = status;
     ASSERT_EQ(Os::Stub::Memory::Test::StaticData::data.lastCalled, Os::Stub::Memory::Test::StaticData::CONSTRUCT_FN);

@@ -26,7 +26,7 @@ TestCpu::Status TestCpu::_getCount(FwSizeType& cpu_count) {
     return  StaticData::data.status_out;
 }
 
-TestCpu::Status TestCpu::_getTicks(CpuTicks& ticks, FwSizeType cpu_index) {
+TestCpu::Status TestCpu::_getTicks(Os::Cpu::Ticks& ticks, FwSizeType cpu_index) {
     StaticData::data.lastCalled = StaticData::LastFn::TICKS_FN;
     StaticData::data.index = cpu_index;
     StaticData::data.ticks.total = ticks.total;

@@ -22,12 +22,12 @@ Memory& Memory::getSingleton() {
     return _singleton;
 }
 
-Memory::Status Memory::_getUsage(Os::MemoryUsage& memory_usage) {
+Memory::Status Memory::_getUsage(Os::Memory::Usage& memory_usage) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MemoryInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate._getUsage(memory_usage);
 }
 
-Memory::Status Memory::getUsage(Os::MemoryUsage& memory_usage) {
+Memory::Status Memory::getUsage(Os::Memory::Usage& memory_usage) {
     return Memory::getSingleton()._getUsage(memory_usage);
 }
 

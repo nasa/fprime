@@ -34,7 +34,7 @@ struct StaticData {
     FwSizeType index = 0;
 
     //! Ticks test
-    CpuTicks ticks;
+    Os::Cpu::Ticks ticks;
 
     //! Status out
     CpuInterface::Status status_out;
@@ -88,7 +88,7 @@ class TestCpu : public CpuInterface {
     //! \param cpu_index: index for CPU to read. Default: 0
     //! \return:  ERROR when error occurs, OK otherwise.
     //!
-    Status _getTicks(CpuTicks& ticks, FwSizeType cpu_index) override;
+    Status _getTicks(Os::Cpu::Ticks& ticks, FwSizeType cpu_index) override;
 
     //! \brief returns the raw console handle
     //!

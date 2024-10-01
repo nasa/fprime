@@ -8,7 +8,7 @@ namespace Os {
 namespace Stub {
 namespace Memory {
 
-MemoryInterface::Status StubMemory::_getUsage(Os::MemoryUsage& memory_usage) {
+MemoryInterface::Status StubMemory::_getUsage(Os::Memory::Usage& memory_usage) {
     memory_usage.used = 0;
     memory_usage.total = 0;
     return Status::ERROR;

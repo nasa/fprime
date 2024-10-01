@@ -12,17 +12,17 @@ namespace Os {
 //! \brief Memory variable handle parent
 class MemoryHandle {};
 
-struct MemoryUsage {
-    FwSizeType used;   //!< Filled with used bytes of volatile memory (permanent, paged-in)
-    FwSizeType total;  //!< Filled with total non-volatile memory
-};
-
 //! \brief interface for memory implementation
 class MemoryInterface {
   public:
     enum Status {
         OP_OK, //!< Operation succeeded
         ERROR //!< Operaion failed
+    };
+
+    struct Usage {
+        FwSizeType used;   //!< Filled with used bytes of volatile memory (permanent, paged-in)
+        FwSizeType total;  //!< Filled with total non-volatile memory
     };
 
     //! Default constructor
@@ -40,7 +40,7 @@ class MemoryInterface {
     //!
     //! \param memory_usage: (output) data structure used to store memory usage
     //! \return: ERROR when error occurs, OK otherwise.
-    virtual Status _getUsage(MemoryUsage& memory_usage) = 0;
+    virtual Status _getUsage(Usage& memory_usage) = 0;
 
     //! \brief return the underlying memory handle (implementation specific).
     //! \return internal task handle representation
@@ -89,7 +89,7 @@ class Memory final : public MemoryInterface {
     //!
     //! \param memory_usage: (output) data structure used to store memory usage
     //! \return:  ERROR when error occurs, OK otherwise.
-    Status _getUsage(MemoryUsage& memory_usage) override;
+    Status _getUsage(Usage& memory_usage) override;
 
 
     //! \brief return the underlying memory handle (implementation specific).
@@ -106,7 +106,7 @@ class Memory final : public MemoryInterface {
     //!
     //! \param memory_usage: (output) data structure used to store memory usage
     //! \return: ERROR when error occurs, OK otherwise.
-    static Status getUsage(MemoryUsage& memory);
+    static Status getUsage(Usage& memory);
 
   private:
 
