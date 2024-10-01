@@ -16,7 +16,7 @@ How-To guides offer step-by-step instructions for specific development tasks in 
 
     This how to will walk through the process of developing GDS plugins. 
 
-    [View Develop F´ GDS Plugins](develop-gds-plugins.md){ .md-button }
+    [View Develop F´ GDS Plugins](develop-gds-plugins.md){ .md-button .md-button--primary }
 
 -   <span class="card-title">__F´ Library Development__</span>
 
@@ -24,7 +24,7 @@ How-To guides offer step-by-step instructions for specific development tasks in 
 
     This how to will walk you through the structure and best practices in developing an F´ library.
 
-    [View Develop F´ Libraries](develop-fprime-libraries.md){ .md-button }
+    [View Develop F´ Libraries](develop-fprime-libraries.md){ .md-button .md-button--primary }
 
 -   <span class="card-title">__Porting F´ To a New Platform__</span>
 
@@ -32,6 +32,6 @@ How-To guides offer step-by-step instructions for specific development tasks in 
 
     This how to will walk you through porting F' to a new platform.
 
-    [View Porting Guide](porting-guide.md){ .md-button }
+    [View Porting Guide](porting-guide.md){ .md-button .md-button--primary }
 
 </div>

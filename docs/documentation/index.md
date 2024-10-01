@@ -11,7 +11,7 @@ This section of the documentation captures how-to guides for various F´ develop
 
     Tutorials walk through the essentials of F Prime development, from the canonical HelloWorld example and progressing to cross-compiling and deploying on hardware.
 
-    [Visit Tutorials](tutorials/index.md){ .md-button }
+    [Visit Tutorials](tutorials/index.md){ .md-button .md-button--primary }
 
 -   <span class="card-title">__User Manual__</span> *Understanding-oriented*
 
@@ -19,7 +19,7 @@ This section of the documentation captures how-to guides for various F´ develop
 
     The User Manual dives into F Prime design philosophy and architectural principles, providing deep understanding of how the framework operates.
 
-    [Visit User Manual](user-manual/index.md){ .md-button }
+    [Visit User Manual](user-manual/index.md){ .md-button .md-button--primary }
 
 -   <span class="card-title">__How To__</span> *Task-oriented*
 
@@ -27,7 +27,7 @@ This section of the documentation captures how-to guides for various F´ develop
 
     How-To guides offer step-by-step instructions for specific development tasks in F Prime.
 
-    [Visit How Tos](how-to/index.md){ .md-button }
+    [Visit How Tos](how-to/index.md){ .md-button .md-button--primary }
 
 -   <span class="card-title">__Reference__</span> *Information-oriented*
 
@@ -35,7 +35,7 @@ This section of the documentation captures how-to guides for various F´ develop
 
     Technical reference for the F Prime C++ API, CMake API, FPP language specification and more.
 
-    [Visit Reference](reference/index.md){ .md-button }
+    [Visit Reference](reference/index.md){ .md-button .md-button--primary }
 
 
 </div>

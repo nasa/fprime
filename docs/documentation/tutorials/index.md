@@ -15,7 +15,7 @@ Tutorials walk through the essentials of F Prime development, from the canonical
 
     The Hello World tutorial walks new users through creating a new project, designing their first F´ component, and testing that component through an F´ deployment.
 
-    [View Hello World Tutorial](../../tutorials-hello-world/docs/hello-world/){ .md-button }
+    [View Hello World Tutorial](../../tutorials-hello-world/docs/hello-world/){ .md-button .md-button--primary }
 
 -   <span class="card-title">__LED Blinker__</span>
 
@@ -26,7 +26,7 @@ Tutorials walk through the essentials of F Prime development, from the canonical
     !!! note
         This tutorial can be run without hardware with the exception of section 6 “Running on Hardware”.
 
-    [View LED Blinker Tutorial](../../tutorials-led-blinker/docs/led-blinker/){ .md-button }
+    [View LED Blinker Tutorial](../../tutorials-led-blinker/docs/led-blinker/){ .md-button .md-button--primary }
 
 -   <span class="card-title">__Math Component__</span>
 
@@ -34,7 +34,7 @@ Tutorials walk through the essentials of F Prime development, from the canonical
 
     The Math Component tutorial walks users through constructing a full F´ application including custom Ports, and Enumeration data types. Events, Telemetry, Commands, and Parameters are covered as well. Unit-Testing is also covered.
 
-    [View Math Component Tutorial](../../tutorials-math-component/docs/math-component/){ .md-button }
+    [View Math Component Tutorial](../../tutorials-math-component/docs/math-component/){ .md-button .md-button--primary }
 
 -   <span class="card-title">__Cross-Compilation Setup Tutorial__</span>
 
@@ -42,7 +42,7 @@ Tutorials walk through the essentials of F Prime development, from the canonical
 
     Learn how to install all the dependencies required for cross-compiling for different architectures.
 
-    [View Cross-Compilation Setup Tutorial](cross-compilation.md){ .md-button }
+    [View Cross-Compilation Setup Tutorial](cross-compilation.md){ .md-button .md-button--primary }
 
 -   <span class="card-title">__Arduino LED Blinker__</span>
 
@@ -50,7 +50,7 @@ Tutorials walk through the essentials of F Prime development, from the canonical
 
     This project is an implementation of the F´ LED Blinker ARM Linux Tutorial which will allow you to test on Arduino-based microcontrollers using the `fprime-arduino` toolchain instead of `fprime-arm-linux`.
 
-    [View Arduino LED Blinker Tutorial](../../tutorials-arduino-led-blinker/docs/arduino-led-blinker/){ .md-button }
+    [View Arduino LED Blinker Tutorial](../../tutorials-arduino-led-blinker/docs/arduino-led-blinker/){ .md-button .md-button--primary }
 
 
 </div>

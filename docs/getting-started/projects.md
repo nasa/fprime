@@ -1,6 +1,6 @@
 # F´ Projects
 
-View F Prime Projects showcase here: [Projects](../../projects)
+View F Prime Projects showcase here: [Projects](../overview/projects.md)
 
 Here are the projects and programs identified applying the F´ code:
 
