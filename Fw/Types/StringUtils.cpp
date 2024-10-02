@@ -1,6 +1,8 @@
 #include "StringUtils.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <cstring>
+#include <cstdlib>
+#include <cerrno>
 #include <limits>
 
 char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSizeType num) {
