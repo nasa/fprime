@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/Darwin/Cpu.cpp
-// \brief stub implementation for Os::Cpu
+// \brief Darwin implementation for Os::Cpu
 // ======================================================================
 #include <Os/Darwin/Cpu.hpp>
 #include <Fw/Types/Assert.hpp>

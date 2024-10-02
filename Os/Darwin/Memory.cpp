@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/Darwin/Memory.cpp
-// \brief stub implementation for Os::Memory
+// \brief Darwin implementation for Os::Memory
 // ======================================================================
 #include <Os/Darwin/Memory.hpp>
 #include <mach/mach_error.h>

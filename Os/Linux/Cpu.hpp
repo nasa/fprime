@@ -1,39 +1,42 @@
 // ======================================================================
-// \title Os/Darwin/Cpu.hpp
-// \brief Darwin implementation for Os::Cpu, header and test definitions
+// \title Os/Linux/Cpu.hpp
+// \brief Linux implementation for Os::Cpu, header and test definitions
 // ======================================================================
 #include <Os/Cpu.hpp>
-#ifndef OS_Darwin_Cpu_HPP
-#define OS_Darwin_Cpu_HPP
+#include <Os/File.hpp>
+#ifndef OS_Linux_Cpu_HPP
+#define OS_Linux_Cpu_HPP
 
 namespace Os {
-namespace Darwin {
+namespace Linux {
 namespace Cpu {
 
 //! CpuHandle class definition for stub implementations.
 //!
-struct DarwinCpuHandle : public CpuHandle {
+struct LinuxCpuHandle : public CpuHandle {
+    Os::File m_proc;
+
 };
 
 //! \brief stub implementation of Os::CpuInterface
 //!
-//! Darwin implementation of `CpuInterface` for use as a delegate class handling stub console operations.
+//! Linux implementation of `CpuInterface` for use as a delegate class handling stub console operations.
 //!
-class DarwinCpu : public CpuInterface {
+class LinuxCpu : public CpuInterface {
   public:
     //! \brief constructor
     //!
-    DarwinCpu() = default;
+    LinuxCpu() = default;
 
     //! \brief copy constructor
-    DarwinCpu(const DarwinCpu& other) = delete;
+    LinuxCpu(const LinuxCpu& other) = delete;
 
     //! \brief default copy assignment
     CpuInterface& operator=(const CpuInterface& other) override = delete;
 
     //! \brief destructor
     //!
-    ~DarwinCpu() override = default;
+    ~LinuxCpu() override = default;
 
     // ------------------------------------
     // Functions overrides
@@ -72,10 +75,10 @@ class DarwinCpu : public CpuInterface {
     CpuHandle *getHandle() override;
   private:
     //! File handle for PosixFile
-    DarwinCpuHandle m_handle;
+    LinuxCpuHandle m_handle;
 };
 } // namespace Cpu
-} // namespace Darwin
+} // namespace Linux
 } // namespace Os
 
-#endif // OS_Darwin_Cpu_HPP
+#endif // OS_Linux_Cpu_HPP

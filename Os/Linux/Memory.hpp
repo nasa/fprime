@@ -1,39 +1,39 @@
 // ======================================================================
-// \title Os/Darwin/Memory.hpp
-// \brief Darwin implementation for Os::Memory, header and test definitions
+// \title Os/Linux/Memory.hpp
+// \brief Linux implementation for Os::Memory, header and test definitions
 // ======================================================================
 #include <Os/Memory.hpp>
-#ifndef OS_Darwin_Memory_HPP
-#define OS_Darwin_Memory_HPP
+#ifndef OS_Linux_Memory_HPP
+#define OS_Linux_Memory_HPP
 
 namespace Os {
-namespace Darwin {
+namespace Linux {
 namespace Memory {
 
 //! MemoryHandle class definition for stub implementations.
 //!
-struct DarwinMemoryHandle : public MemoryHandle {
+struct LinuxMemoryHandle : public MemoryHandle {
 };
 
 //! \brief stub implementation of Os::MemoryInterface
 //!
-//! Darwin implementation of `MemoryInterface` for use as a delegate class handling stub console operations.
+//! Linux implementation of `MemoryInterface` for use as a delegate class handling stub console operations.
 //!
-class DarwinMemory : public MemoryInterface {
+class LinuxMemory : public MemoryInterface {
   public:
     //! \brief constructor
     //!
-    DarwinMemory() = default;
+    LinuxMemory() = default;
 
     //! \brief copy constructor
-    DarwinMemory(const DarwinMemory& other) = delete;
+    LinuxMemory(const LinuxMemory& other) = delete;
 
     //! \brief default copy assignment
     MemoryInterface& operator=(const MemoryInterface& other) override = delete;
 
     //! \brief destructor
     //!
-    ~DarwinMemory() override = default;
+    ~LinuxMemory() override = default;
 
     // ------------------------------------
     // Functions overrides
@@ -58,10 +58,10 @@ class DarwinMemory : public MemoryInterface {
     MemoryHandle *getHandle() override;
   private:
     //! File handle for PosixFile
-    DarwinMemoryHandle m_handle;
+    LinuxMemoryHandle m_handle;
 };
 } // namespace Memory
-} // namespace Darwin
+} // namespace Linux
 } // namespace Os
 
-#endif // OS_Darwin_Memory_HPP
+#endif // OS_Linux_Memory_HPP

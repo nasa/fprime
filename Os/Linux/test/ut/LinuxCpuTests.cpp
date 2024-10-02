@@ -1,6 +1,6 @@
 // ======================================================================
-// \title Os/Darwin/test/ut/DarwinCpuTests.cpp
-// \brief tests using Darwin implementation for Os::Cpu interface testing
+// \title Os/Linux/test/ut/LinuxCpuTests.cpp
+// \brief tests using Linux implementation for Os::Cpu interface testing
 // ======================================================================
 #include <gtest/gtest.h>
 
