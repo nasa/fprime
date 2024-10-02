@@ -128,6 +128,12 @@ namespace Svc {
             DpRecord record; //!< data product metadata
         };
 
+        struct DpDstateFileEntry {
+            bool used; //!< if the entry is used
+            bool visited; //!< used for state file state; indicates that the entry was found in the search of current data products
+            DpStateEntry entry; //!< state entry from file
+        };
+
         /// @brief A list sorted in priority order for downlink
         struct DpBtreeNode {
             DpStateEntry entry; //!< pointer to DP record          
@@ -169,6 +175,9 @@ namespace Svc {
 
         /// @brief reset the state file data
         void resetStateFileData();
+
+        /// @brief get file state from the stored state file
+        void getFileState(DpStateEntry& entry);
 
         /// @brief load state data from file
         Fw::CmdResponse loadStateFile();
@@ -219,7 +228,7 @@ namespace Svc {
         Fw::String m_fileList[DP_MAX_FILES]; //!< working array of files/directory
 
         Fw::FileNameString m_stateFile; //!< file to store transmit state
-        DpStateEntry* m_stateFileData; //!< DP state loaded from file
+        DpDstateFileEntry* m_stateFileData; //!< DP state loaded from file
         FwSizeType m_stateFileEntries; //!< size of state file data
 
         NATIVE_UINT_TYPE m_memSize; //!< size of allocated buffer

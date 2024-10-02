@@ -63,7 +63,7 @@ namespace Svc {
         // request memory for catalog
         // = number of file slots * (Free list entry + traverse stack entry)
         // FIXME: Memory size hack
-        static const FwSizeType slotSize = sizeof(DpBtreeNode) + sizeof(DpBtreeNode**) + sizeof(DpStateEntry);
+        static const FwSizeType slotSize = sizeof(DpBtreeNode) + sizeof(DpBtreeNode**) + sizeof(DpDstateFileEntry);
         this->m_memSize = DP_MAX_FILES * slotSize;
         bool notUsed; // we don't need to recover the catalog.
         // request memory. this->m_memSize will be modified if there is less than we requested
@@ -82,7 +82,7 @@ namespace Svc {
             this->m_traverseStack = reinterpret_cast<DpBtreeNode**>(&this->m_freeListHead[this->m_numDpSlots]);
             this->resetTreeStack();
             // assign pointer for the state file storage
-            this->m_stateFileData = reinterpret_cast<DpStateEntry*>(&this->m_traverseStack[this->m_numDpSlots]);
+            this->m_stateFileData = reinterpret_cast<DpDstateFileEntry*>(&this->m_traverseStack[this->m_numDpSlots]);
         }
         else {
             // if we don't have enough memory, set the number of records
@@ -124,8 +124,9 @@ namespace Svc {
     void DpCatalog::resetStateFileData() {
         // clear state file data
         for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
-            this->m_stateFileData[slot].dir = -1; // Use DP dir to indicate unused slot
-            (void) new(&this->m_stateFileData[slot].record) DpRecord();
+            this->m_stateFileData[slot].used = false; 
+            this->m_stateFileData[slot].visited = false; 
+            (void) new(&this->m_stateFileData[slot].entry.record) DpRecord();
         }
         this->m_stateFileEntries = 0;
     }
@@ -154,6 +155,7 @@ namespace Svc {
         }
 
         FwSizeType fileLoc = 0;
+        this->m_stateFileEntries = 0;
 
         // read entries from the state file
         for (FwSizeType entry = 0; entry < this->m_numDpSlots; entry++) {
@@ -187,19 +189,44 @@ namespace Svc {
             // the source buffer was specifically sized to hold the data
 
             // Deserialize the file directory index
-            Fw::SerializeStatus status = entryBuffer.deserialize(this->m_stateFileData[entry].dir);
+            Fw::SerializeStatus status = entryBuffer.deserialize(this->m_stateFileData[entry].entry.dir);
             FW_ASSERT(Fw::FW_SERIALIZE_OK == status,status);
-            status = entryBuffer.deserialize(this->m_stateFileData[entry].record);
+            status = entryBuffer.deserialize(this->m_stateFileData[entry].entry.record);
             FW_ASSERT(Fw::FW_SERIALIZE_OK == status,status);
+            this->m_stateFileData[entry].used = true;
+            this->m_stateFileData[entry].visited = false;
 
             // increment the file location
             fileLoc += size;
+            this->m_stateFileEntries++;
         }
 
         // close the state file
         stateFile.close();
 
         return Fw::CmdResponse::OK;
+    }
+
+    void DpCatalog::getFileState(DpStateEntry& entry) {
+        FW_ASSERT(this->m_stateFileData);
+        // search the file state data for the entry
+        for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
+            // check for a match
+            if (                
+                (this->m_stateFileData[line].entry.dir == entry.dir) and
+                (this->m_stateFileData[line].entry.record.getid() == entry.record.getid()) and
+                (this->m_stateFileData[line].entry.record.gettSec() == entry.record.gettSec()) and
+                (this->m_stateFileData[line].entry.record.gettSub() == entry.record.gettSub()) and
+                (this->m_stateFileData[line].entry.record.getpriority() == entry.record.getpriority())
+                ) {
+                // update the transmitted state
+                entry.record.setstate(this->m_stateFileData[line].entry.record.getstate());
+                entry.record.setblocks(this->m_stateFileData[line].entry.record.getblocks());
+                // mark it as visited for later pruning if necessary
+                this->m_stateFileData[line].visited = true;
+                return;
+            }
+        }
     }
 
     Fw::CmdResponse DpCatalog::doCatalogBuild() {
