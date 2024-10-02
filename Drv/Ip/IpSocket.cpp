@@ -168,10 +168,11 @@ SocketIpStatus IpSocket::recv(NATIVE_INT_TYPE fd, U8* data, U32& req_read) {
         size = this->recvProtocol(fd, data, req_read);
 
         // Nothing to be received
-        if ((size == -1) && (errno == EAGAIN)) {
+        if ((size == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK))) {
             req_read = 0;
-            return SOCK_SUCCESS;
+            return SOCK_NO_DATA_AVAILABLE;
         }
+
         // Error is EINTR, just try again
         if ((size == -1) && (errno == EINTR)) {
             continue;
