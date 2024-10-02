@@ -229,6 +229,55 @@ namespace Svc {
         }
     }
 
+    void DpCatalog::pruneAndWriteStateFile() {
+        FW_ASSERT(this->m_stateFileData);
+
+        // There is a chance that a data product file can disappear after
+        // the state file is written from the last catalog build and transmit.
+        // This function will walk the state file data and write back only
+        // the entries that were visited during the last transmit. This will
+        // remove any entries that are no longer valid.
+
+        // open the state file
+        Os::File stateFile;
+        // we open it as a new file so we don't accumulate invalid entries
+        Os::File::Status stat = stateFile.open(this->m_stateFile.toChar(), Os::File::OPEN_CREATE);
+        if (stat != Os::File::OP_OK) {
+            this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
+            return;
+        }
+
+        // buffer for writing entries
+        BYTE buffer[sizeof(FwIndexType)+DpRecord::SERIALIZED_SIZE];
+        Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
+
+        // write entries to the state file
+        for (FwSizeType entry = 0; entry < this->m_numDpSlots; entry++) {
+            // only write entries that were used
+            if (
+                (this->m_stateFileData[entry].used) and 
+                (this->m_stateFileData[entry].visited)
+                ) {
+                // reset the buffer for serializing the entry
+                entryBuffer.resetSer();
+                // serialize the file directory index
+                entryBuffer.serialize(this->m_stateFileData[entry].entry.dir);
+                entryBuffer.serialize(this->m_stateFileData[entry].entry.record);
+                // write the entry
+                FwSignedSizeType size = entryBuffer.getBuffLength();
+                stat = stateFile.write(buffer, size);
+                if (stat != Os::File::OP_OK) {
+                    this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
+                    return;
+                }
+            }
+        }
+
+        // close the state file
+        stateFile.close();
+    }
+
+
     Fw::CmdResponse DpCatalog::doCatalogBuild() {
 
         // check initialization

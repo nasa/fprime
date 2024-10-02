@@ -179,6 +179,9 @@ namespace Svc {
         /// @brief get file state from the stored state file
         void getFileState(DpStateEntry& entry);
 
+        /// @brief prune the state file data and write the remaining entries back
+        void pruneAndWriteStateFile();
+
         /// @brief load state data from file
         Fw::CmdResponse loadStateFile();
 

@@ -331,6 +331,14 @@ module Svc {
       id 38 \
       format "No specified state file"
 
+    event StateFileWriteError(
+                            file: string size 80 @< The file
+                            stat: I32
+                          ) \
+      severity warning high \
+      id 39 \
+      format "Error writing state file {}, stat {}"
+
 
     # ----------------------------------------------------------------------
     # Telemetry
