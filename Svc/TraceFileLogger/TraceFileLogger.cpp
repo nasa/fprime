@@ -33,6 +33,7 @@ namespace Svc {
     m_traceFilter(0)
     {
        this->m_enable_trace = (FW_TRACE_RECORD_TRACE == true) ? true : false;
+       ::memset(m_file_data, 0, sizeof(m_file_data));
        
        //Set data and size for file buffer
        this->m_file_buffer.setData(m_file_data);
@@ -94,7 +95,9 @@ namespace Svc {
         this->set_log_file(file,maxSize);
     }
 
-    void TraceFileLogger::filter(U16 traceType_bitmask, bool enable){
+    // The filter method selects which trace types to be logged and which to ignore.
+    // The bit mask is based on the enum list for trace type in TraceCfg.fpp
+    void TraceFileLogger::filterTraceType(U16 traceType_bitmask, bool enable){
         if(traceType_bitmask == 0){
             //TODO: Figure out if this should be made an illegal entry or just ignore it?
             //      
@@ -143,9 +146,10 @@ namespace Svc {
     void TraceFileLogger::process_traceId_storage(U32 traceId,bool enable) {
         
         //Add trace ID to the list (if it doesn't already exist) to stop logging it
-        if (enable == false && 
-            (this->filterTraceId.search_array(traceId, nullptr) == false)) {
-            (void)this->filterTraceId.add_element(traceId);
+        if (enable == false) { 
+            if(this->filterTraceId.search_array(traceId, nullptr) == false) {
+                (void)this->filterTraceId.add_element(traceId);
+            }
         }
         else{
             //Remove trace ID from list (if its in the list) to start logging it
@@ -233,7 +237,7 @@ namespace Svc {
                                           U32 cmdSeq,
                                           U16 bitmask,
                                           Svc::TraceFileLogger_Enable enable) {
-        this->filter(bitmask,enable); 
+        this->filterTraceType(bitmask,enable); 
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 

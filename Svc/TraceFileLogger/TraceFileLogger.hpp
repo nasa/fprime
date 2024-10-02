@@ -84,7 +84,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //!
     //!  \param traceType_bitmask provides bitmask for trace types to select.
     //!  \param enable to turn on/off filtering .
-    void filter(U16 traceType_bitmask,bool enable);
+    void filterTraceType(U16 traceType_bitmask,bool enable);
 
     //!  \brief Process trace ID storage method
     //!
