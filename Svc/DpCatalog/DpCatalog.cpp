@@ -31,6 +31,7 @@ namespace Svc {
         m_numDpSlots(0),
         m_numDirectories(0),
         m_stateFileData(nullptr),
+        m_stateFileEntries(0),
         m_memSize(0),
         m_memPtr(nullptr),
         m_allocatorId(0),
@@ -124,13 +125,81 @@ namespace Svc {
         // clear state file data
         for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
             this->m_stateFileData[slot].dir = -1; // Use DP dir to indicate unused slot
-            this->m_stateFileData[slot].record.setid(0);
-            this->m_stateFileData[slot].record.setpriority(0);
-            this->m_stateFileData[slot].record.setstate(Fw::DpState::UNTRANSMITTED);
-            this->m_stateFileData[slot].record.settSec(0);
-            this->m_stateFileData[slot].record.settSub(0);
-            this->m_stateFileData[slot].record.setsize(0);
+            (void) new(&this->m_stateFileData[slot].record) DpRecord();
         }
+        this->m_stateFileEntries = 0;
+    }
+
+    Fw::CmdResponse DpCatalog::loadStateFile() {
+
+        FW_ASSERT(this->m_stateFileData);
+
+        // Make sure that a file was specified
+        if (this->m_stateFile.length() == 0) {
+            this->log_WARNING_LO_NoStateFileSpecified();
+            return Fw::CmdResponse::OK;
+        }
+
+        // buffer for reading entries
+
+        BYTE buffer[sizeof(FwIndexType)+DpRecord::SERIALIZED_SIZE];
+        Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
+
+        // open the state file
+        Os::File stateFile;
+        Os::File::Status stat = stateFile.open(this->m_stateFile.toChar(), Os::File::OPEN_READ);
+        if (stat != Os::File::OP_OK) {
+            this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
+
+        FwSizeType fileLoc = 0;
+
+        // read entries from the state file
+        for (FwSizeType entry = 0; entry < this->m_numDpSlots; entry++) {
+
+            FwSignedSizeType size = sizeof(buffer);
+            // read the directory index
+            stat = stateFile.read(buffer, size);
+            if (stat != Os::File::OP_OK) {
+                this->log_WARNING_HI_StateFileReadError(this->m_stateFile, stat, fileLoc);
+                return Fw::CmdResponse::EXECUTION_ERROR;
+            }
+
+            // check to see if the full entry was read. If not,
+            // abandon it and finish. We can at least operate on
+            // the entries that were read.
+            if (size != sizeof(buffer)) {
+                this->log_WARNING_HI_StateFileTruncated(this->m_stateFile, stat);
+                return Fw::CmdResponse::OK;
+            }
+
+            if (0 == size) {
+                // no more entries
+                break;
+            }
+
+            // reset the buffer for deserializing the entry
+            entryBuffer.setBuffLen(size);
+            entryBuffer.resetSer();
+
+            // deserialization after this point should always work, since
+            // the source buffer was specifically sized to hold the data
+
+            // Deserialize the file directory index
+            Fw::SerializeStatus status = entryBuffer.deserialize(this->m_stateFileData[entry].dir);
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == status,status);
+            status = entryBuffer.deserialize(this->m_stateFileData[entry].record);
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == status,status);
+
+            // increment the file location
+            fileLoc += size;
+        }
+
+        // close the state file
+        stateFile.close();
+
+        return Fw::CmdResponse::OK;
     }
 
     Fw::CmdResponse DpCatalog::doCatalogBuild() {
@@ -153,14 +222,20 @@ namespace Svc {
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
-        // reset free list for entries
-        this->resetBinaryTree();
-
-        this->fillBinaryTree();
-
         // reset state file data
         this->resetStateFileData();
 
+        // load state data from file
+        Fw::CmdResponse response = this->loadStateFile();
+
+        // reset free list for entries
+        this->resetBinaryTree();
+
+        // fill the binary tree with DP files
+        response = this->fillBinaryTree();
+        if (response != Fw::CmdResponse::OK) {
+            return response;
+        }
 
         this->log_ACTIVITY_HI_CatalogBuildComplete();
 
@@ -308,6 +383,7 @@ namespace Svc {
             }
         } // end for each directory
 
+        return Fw::CmdResponse::OK;
  
     } // end fillBinaryTree()
 

@@ -170,6 +170,9 @@ namespace Svc {
         /// @brief reset the state file data
         void resetStateFileData();
 
+        /// @brief load state data from file
+        Fw::CmdResponse loadStateFile();
+
         /// @brief add an entry to the tree
         /// @param entry entry to add
         /// @return true if a node could be allocated
@@ -217,6 +220,7 @@ namespace Svc {
 
         Fw::FileNameString m_stateFile; //!< file to store transmit state
         DpStateEntry* m_stateFileData; //!< DP state loaded from file
+        FwSizeType m_stateFileEntries; //!< size of state file data
 
         NATIVE_UINT_TYPE m_memSize; //!< size of allocated buffer
         void* m_memPtr; //!< stored for shutdown

@@ -301,6 +301,37 @@ module Svc {
       id 34 \
       format "DpCatalog transmit not active"
 
+    event StateFileOpenError(
+                            file: string size 80 @< The file
+                            stat: I32
+                          ) \
+      severity warning high \
+      id 35 \
+      format "Error opening state file {} size. stat: {}"
+    
+    event StateFileReadError(
+                            file: string size 80 @< The file
+                            stat: I32
+                            offset: I32
+                          ) \
+      severity warning high \
+      id 36 \
+      format "Error reading state file {}, stat {}, offset: {}"
+
+    event StateFileTruncated(
+                            file: string size 80 @< The file
+                            offset: I32
+                          ) \
+      severity warning high \
+      id 37 \
+      format "Truncated state file {} size. offset: {}"
+
+    event NoStateFileSpecified \
+      severity warning low \
+      id 38 \
+      format "No specified state file"
+
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
