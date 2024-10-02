@@ -4,12 +4,10 @@
 # ======================================================================
 
 module Os {
-module Generic {
 @ FPP shadow-enum representing Os::Generic::Status
-enum Status {
+enum GenericStatus {
     OP_OK, @< operation okay
     ERROR, @< error return value
-}
 }
 }
 

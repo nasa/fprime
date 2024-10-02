@@ -4,10 +4,10 @@
 // ======================================================================
 #include <gtest/gtest.h>
 #include "Os/File.hpp"
-#include "Os/Models/Models.hpp"
+#include "Os/Models/Models.cpp"
+#include "Os/Stub/test/File.hpp"
 #include "Os/test/ut/file/CommonTests.hpp"
 #include "Os/test/ut/file/RulesHeaders.hpp"
-#include "Os/Stub/test/File.hpp"
 
 namespace Os {
 namespace Test {

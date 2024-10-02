@@ -33,7 +33,7 @@ SystemResources ::SystemResources(const char* const compName)
         m_cpu_prev[i].total = 0;
     }
 
-    if (Os::Cpu::getCount(m_cpu_count) == Os::Cpu::ERROR) {
+    if (Os::Cpu::getCount(m_cpu_count) == Os::Generic::ERROR) {
         m_cpu_count = 0;
     }
 
@@ -101,7 +101,7 @@ void SystemResources::Cpu() {
     for (U32 i = 0; i < m_cpu_count && i < CPU_COUNT; i++) {
         Os::Cpu::Status status = Os::Cpu::getTicks(m_cpu[i], i);
         // Best-effort calculations and telemetry
-        if (status == Os::Cpu::OP_OK) {
+        if (status == Os::Generic::OP_OK) {
             F32 cpuUtil = compCpuUtil(m_cpu[i], m_cpu_prev[i]);
             cpuAvg += cpuUtil;
 
@@ -120,7 +120,7 @@ void SystemResources::Cpu() {
 }
 
 void SystemResources::Mem() {
-    if (Os::Memory::getUsage(m_mem) == Os::Memory::OP_OK) {
+    if (Os::Memory::getUsage(m_mem) == Os::Generic::OP_OK) {
         this->tlmWrite_MEMORY_TOTAL(m_mem.total / 1024);
         this->tlmWrite_MEMORY_USED(m_mem.used / 1024);
     }

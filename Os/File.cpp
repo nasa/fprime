@@ -140,7 +140,7 @@ File::Status File::flush() {
     return this->m_delegate.flush();
 }
 
-File::Status File::read(char* buffer, FwSignedSizeType &size) {
+File::Status File::read(U8* buffer, FwSignedSizeType &size) {
     return this->read(buffer, size, WaitType::WAIT);
 }
 
@@ -258,6 +258,7 @@ File::Status File::readline(U8* buffer, FwSignedSizeType &size, File::WaitType w
     // Loop reading chunk by chunk
     for (FwSignedSizeType i = 0; i < size; i += read) {
         FwSignedSizeType current_chunk_size = FW_MIN(size - i, FW_FILE_CHUNK_SIZE);
+        read = current_chunk_size;
         status = this->read(buffer + i, read, wait);
         if (status != File::Status::OP_OK) {
             (void) this->seek(original_location, File::SeekType::ABSOLUTE);

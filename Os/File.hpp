@@ -267,7 +267,7 @@ namespace Os {
         //! \param size: size of data to read
         //! \return OP_OK on success otherwise error status
         //!
-        Status read(char* buffer, FwSignedSizeType &size);
+        Status read(U8* buffer, FwSignedSizeType &size);
 
         //! \brief write data to this file from the supplied buffer bounded by size
         //!
