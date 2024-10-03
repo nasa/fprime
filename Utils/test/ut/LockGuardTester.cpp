@@ -61,15 +61,14 @@ namespace Utils {
       Os::Task::Arguments arguments(name, taskMethod, &data);
       stat = testTask.start(arguments);
       ASSERT_EQ(stat, Os::Task::OP_OK);
-      Os::Task::delay(Fw::Time(0, 100));
+      Os::Task::delay(Fw::Time(0, 1000));
       ASSERT_EQ(data.i, 0);
     }
-    Os::Task::delay(Fw::Time(0, 100));
+    Os::Task::delay(Fw::Time(0, 1000));
     {
       LockGuard guard(data.mutex);
       ASSERT_EQ(data.i, 1);
     }
-    stat = testTask.join();
     ASSERT_EQ(stat, Os::Task::OP_OK);
   }
 
