@@ -59,6 +59,7 @@ namespace Svc {
 
         // Do some assertion checks
         FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
+        this->m_stateFile = stateFile;
 
         // request memory for catalog
         // = number of file slots * (Free list entry + traverse stack entry)
@@ -625,7 +626,6 @@ namespace Svc {
         FW_ASSERT(this->m_dpTree);
         FW_ASSERT(this->m_xmitInProgress);
         FW_ASSERT(this->m_traverseStack);
-        FW_ASSERT(this->m_currentNode);
 
         // look in the tree for the next entry to send
         DpCatalog::DpBtreeNode* found = this->findNextTreeNode();
@@ -738,7 +738,6 @@ namespace Svc {
         )
     {
         // check some asserts
-        FW_ASSERT(this->m_currentNode);
         FW_ASSERT(this->m_dpTree);
         FW_ASSERT(this->m_traverseStack);
 
