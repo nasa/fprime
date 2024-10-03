@@ -23,6 +23,11 @@ void Tester ::connectAsyncPorts() {
         this->connect_to_enumArgsAsync(i, this->component.get_enumArgsAsync_InputPort(i));
     }
 
+    // enumArgsHook
+    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+        this->connect_to_enumArgsHook(i, this->component.get_enumArgsHook_InputPort(i));
+    }
+
     // noArgsAsync
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
         this->connect_to_noArgsAsync(i, this->component.get_noArgsAsync_InputPort(i));
@@ -56,6 +61,11 @@ void Tester ::connectAsyncPorts() {
 
     // serialAsyncDropPriority
     this->connect_to_serialAsyncDropPriority(0, this->component.get_serialAsyncDropPriority_InputPort(0));
+
+    // enumArgsHookOverflowed
+    for (FwIndexType i = 0; i < 2; i++) {
+        this->component.set_enumArgsHookOverflowed_OutputPort(i, this->get_from_enumArgsHookOverflowed(i));
+    }
 }
 
 Fw::QueuedComponentBase::MsgDispatchStatus Tester ::doDispatch() {

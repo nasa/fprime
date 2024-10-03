@@ -159,7 +159,7 @@ namespace Svc {
         0,
         "file1",
         "file2",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
 
   }
@@ -214,7 +214,7 @@ namespace Svc {
     ASSERT_EVENTS_DirectoryRemoveError(
         0,
         "test_dir",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
 
   }
@@ -269,7 +269,7 @@ namespace Svc {
     ASSERT_EVENTS_FileRemoveError(
         0,
         "test_file",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
 
   }
@@ -415,7 +415,7 @@ namespace Svc {
         0,
         "file1",
         "file2",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
   }
 

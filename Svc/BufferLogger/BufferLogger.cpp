@@ -28,15 +28,6 @@ namespace Svc {
 
   }
 
-  void BufferLogger ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    BufferLoggerComponentBase::init(queueDepth, instance);
-  }
-
   // ----------------------------------------------------------------------
   // Public methods
   // ----------------------------------------------------------------------

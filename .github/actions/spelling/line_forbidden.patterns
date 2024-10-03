@@ -11,9 +11,6 @@
 # s.b. anymore
 \bany more[,.]
 
-# s.b. cannot
-\b[Cc]an not\b
-
 # s.b. GitHub
 (?<![&*.]|// |\btype )\bGithub\b(?![{)])
 
@@ -70,15 +67,8 @@
 # s.b. or (more|less)
 \bore (?:more|less)\b
 
-# s.b. nonexistent
-\bnon existing\b
-\b[Nn]o[nt][- ]existent\b
-
 # s.b. brief / details/ param / return / retval
 (?:^\s*|(?:\*|//|/*)\s+`)[\\@](?:breif|(?:detail|detials)|(?:params(?!\.)|prama?)|ret(?:uns?)|retvl)\b
-
-# s.b. preexisting
-[Pp]re[- ]existing
 
 # s.b. preempt
 [Pp]re[- ]empt\b

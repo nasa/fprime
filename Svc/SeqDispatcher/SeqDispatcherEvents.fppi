@@ -31,7 +31,7 @@ event UnexpectedSequenceStarted(
 
 event LogSequencerStatus(
     idx: U16
-    state: CmdSequencerState
+    $state: CmdSequencerState
     filename: string size 240
 ) \
     severity activity low \

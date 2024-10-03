@@ -522,12 +522,6 @@ namespace Svc {
           const char* compName //!< The component name
       );
 
-      //! Initialize a CmdSequencer
-      void init(
-          const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          const NATIVE_INT_TYPE instance //!< The instance number
-      );
-
       //! (Optional) Set a timeout.
       //! Sequence will quit if a command takes longer than the number of
       //! seconds in the timeout value.

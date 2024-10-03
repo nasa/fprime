@@ -3,16 +3,21 @@
 // \brief header used to validate Os/Models before use
 // ======================================================================
 
+#ifndef OS_MODELS_MODELS_HPP
+#define OS_MODELS_MODELS_HPP
+
 #include "Os/Models/FileStatusEnumAc.hpp"
 #include "Os/Models/FileModeEnumAc.hpp"
 #include "Os/Models/TaskStatusEnumAc.hpp"
 #include "Os/Models/MutexStatusEnumAc.hpp"
+#include "Os/Models/DirectoryStatusEnumAc.hpp"
+#include "Os/Models/DirectoryOpenModeEnumAc.hpp"
+#include "Os/Models/FileSystemStatusEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Os/Task.hpp"
 #include "Os/Mutex.hpp"
-
-#ifndef OS_MODELS_MODELS_HPP
-#define OS_MODELS_MODELS_HPP
+#include "Os/Directory.hpp"
+#include "Os/FileSystem.hpp"
 
 // Check consistency of every constant in the Os::File::Status enum
 static_assert(static_cast<FwIndexType>(Os::File::Status::MAX_STATUS) ==
@@ -89,5 +94,80 @@ static_assert(static_cast<Os::MutexStatus::T>(Os::Mutex::Status::ERROR_DEADLOCK)
               "Mutex status and FPP shadow enum do not match");
 static_assert(static_cast<Os::MutexStatus::T>(Os::Mutex::Status::ERROR_OTHER) == Os::MutexStatus::T::ERROR_OTHER,
               "Mutex status and FPP shadow enum do not match");
+
+
+// Check consistency of every constant in the Os::Directory::Status enum
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::OP_OK) == Os::DirectoryStatus::T::OP_OK,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::DOESNT_EXIST) == Os::DirectoryStatus::T::DOESNT_EXIST,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::NO_PERMISSION) == Os::DirectoryStatus::T::NO_PERMISSION,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::NOT_OPENED) == Os::DirectoryStatus::T::NOT_OPENED,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::NOT_DIR) == Os::DirectoryStatus::T::NOT_DIR,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::NO_MORE_FILES) == Os::DirectoryStatus::T::NO_MORE_FILES,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::FILE_LIMIT) == Os::DirectoryStatus::T::FILE_LIMIT,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::BAD_DESCRIPTOR) == Os::DirectoryStatus::T::BAD_DESCRIPTOR,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::ALREADY_EXISTS) == Os::DirectoryStatus::T::ALREADY_EXISTS,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::NOT_SUPPORTED) == Os::DirectoryStatus::T::NOT_SUPPORTED,
+              "Directory status and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::OTHER_ERROR) == Os::DirectoryStatus::T::OTHER_ERROR,
+              "Directory status and FPP shadow enum do not match");
+
+
+// Check consistency of every constant in the Os::Directory::Mode enum
+static_assert(static_cast<FwIndexType>(Os::Directory::OpenMode::MAX_OPEN_MODE) ==
+              static_cast<FwIndexType>(Os::DirectoryOpenMode::NUM_CONSTANTS),
+              "File mode and FPP shadow enum have inconsistent number of values");
+static_assert(static_cast<Os::DirectoryOpenMode::T>(Os::Directory::OpenMode::READ) == Os::DirectoryOpenMode::T::READ,
+              "Directory mode and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryOpenMode::T>(Os::Directory::OpenMode::CREATE_IF_MISSING) == Os::DirectoryOpenMode::T::CREATE_IF_MISSING,
+              "Directory mode and FPP shadow enum do not match");
+static_assert(static_cast<Os::DirectoryOpenMode::T>(Os::Directory::OpenMode::CREATE_EXCLUSIVE) == Os::DirectoryOpenMode::T::CREATE_EXCLUSIVE,
+              "Directory mode and FPP shadow enum do not match");
+
+
+// Check consistency of every constant in the Os::FileSystem::Status enum
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::OP_OK) == Os::FileSystemStatus::T::OP_OK,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::ALREADY_EXISTS) == Os::FileSystemStatus::T::ALREADY_EXISTS,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NO_SPACE) == Os::FileSystemStatus::T::NO_SPACE,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NO_PERMISSION) == Os::FileSystemStatus::T::NO_PERMISSION,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NOT_DIR) == Os::FileSystemStatus::T::NOT_DIR,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::IS_DIR) == Os::FileSystemStatus::T::IS_DIR,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NOT_EMPTY) == Os::FileSystemStatus::T::NOT_EMPTY,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::INVALID_PATH) == Os::FileSystemStatus::T::INVALID_PATH,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::DOESNT_EXIST) == Os::FileSystemStatus::T::DOESNT_EXIST,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::FILE_LIMIT) == Os::FileSystemStatus::T::FILE_LIMIT,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::BUSY) == Os::FileSystemStatus::T::BUSY,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NO_MORE_FILES) == Os::FileSystemStatus::T::NO_MORE_FILES,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::BUFFER_TOO_SMALL) == Os::FileSystemStatus::T::BUFFER_TOO_SMALL,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::EXDEV_ERROR) == Os::FileSystemStatus::T::EXDEV_ERROR,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::OVERFLOW_ERROR) == Os::FileSystemStatus::T::OVERFLOW_ERROR,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NOT_SUPPORTED) == Os::FileSystemStatus::T::NOT_SUPPORTED,
+              "FileSystem status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::OTHER_ERROR) == Os::FileSystemStatus::T::OTHER_ERROR,
+              "FileSystem status and FPP shadow enum do not match");
+
 
 #endif // OS_MODELS_MODELS_HPP

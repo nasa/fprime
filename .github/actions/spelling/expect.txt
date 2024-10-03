@@ -201,6 +201,7 @@ CRCs
 crcstat
 CREATEDIRECTORY
 Crosscompiling
+crsmith
 crt
 CRTSCTS
 cryptsoft
@@ -793,6 +794,7 @@ prepeneding
 pri
 printables
 prioritization
+PRIORITYQUEUE
 prm
 PRMDB
 PRMDBIMPL
@@ -996,6 +998,7 @@ STDC
 stddef
 stdint
 stest
+Stl
 STREQ
 STREQUAL
 strerror

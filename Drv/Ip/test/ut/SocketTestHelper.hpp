@@ -16,9 +16,10 @@ namespace Test {
 /**
  * Force a receive timeout on a socket such that it will not hang our testing despite the normal recv behavior of
  * "block forever" until it gets data.
+ * @param fd: socket file descriptor
  * @param socket: socket to make timeout
  */
-void force_recv_timeout(Drv::IpSocket &socket);
+void force_recv_timeout(NATIVE_INT_TYPE fd, Drv::IpSocket &socket);
 
 /**
  * Validate random data from data against truth
@@ -52,8 +53,10 @@ void fill_random_buffer(Fw::Buffer &buffer);
  * Send/receive pair.
  * @param sender: sender of the pair
  * @param receiver: receiver of pair
+ * @param sender_fd: file descriptor for sender
+ * @param receiver_fd: file descriptor for receiver
  */
-void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver);
+void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver, NATIVE_INT_TYPE sender_fd, NATIVE_INT_TYPE receiver_fd);
 
 /**
  * Wait on socket change.

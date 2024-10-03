@@ -16,10 +16,6 @@ namespace Ref {
 
 TypeDemo ::TypeDemo(const char* const compName) : TypeDemoComponentBase(compName) {}
 
-void TypeDemo ::init(const NATIVE_INT_TYPE instance) {
-    TypeDemoComponentBase::init(instance);
-}
-
 // ----------------------------------------------------------------------
 // Command handler implementations
 // ----------------------------------------------------------------------

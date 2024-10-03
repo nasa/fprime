@@ -72,6 +72,8 @@ namespace Drv {
       // Helpers
       void test_with_loop(U32 iterations, bool recv_thread=false);
 
+      bool wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations);
+
     private:
 
       // ----------------------------------------------------------------------

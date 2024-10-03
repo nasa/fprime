@@ -26,13 +26,6 @@ class ActiveTest :
         const char* const compName //!< The component name
     );
 
-    //! Initialize ActiveTest object
-    void init(
-        NATIVE_INT_TYPE queueDepth, //!< The queue depth
-        NATIVE_INT_TYPE msgSize, //!< The message size
-        NATIVE_INT_TYPE instance = 0 //!< The instance number
-    );
-
     //! Destroy ActiveTest object
     ~ActiveTest();
 
@@ -262,6 +255,13 @@ class ActiveTest :
         FormalParamStruct& sRef //!< A struct ref
     );
 
+    //! Handler implementation for enumArgsOverflow
+    void enumArgsHook_handler(
+        NATIVE_INT_TYPE portNum, //!< The port number
+        const FormalParamEnum& en, //!< An enum
+        FormalParamEnum& enRef //!< An enum ref
+    );
+
   PRIVATE:
 
     // ----------------------------------------------------------------------
@@ -442,6 +442,19 @@ class ActiveTest :
     //! Handler implementation for internalStruct
     void internalStruct_internalInterfaceHandler(
         const FormalParamStruct& str //!< A struct
+    );
+
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Overflow hook implementations for user-defined async ports interfaces
+    // ----------------------------------------------------------------------
+
+    //! Overflow hook implementation for enumArgsOverflow
+    void enumArgsHook_overflowHook(
+        NATIVE_INT_TYPE portNum, //!< The port number
+        const FormalParamEnum& en, //!< An enum
+        FormalParamEnum& enRef //!< An enum ref
     );
 
   public:

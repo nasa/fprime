@@ -26,11 +26,6 @@ namespace Svc {
 
     }
 
-    void ActiveTextLogger::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
-    {
-        ActiveTextLoggerComponentBase::init(queueDepth,instance);
-    }
-
     // ----------------------------------------------------------------------
     // Handlers to implement for typed input ports
     // ----------------------------------------------------------------------

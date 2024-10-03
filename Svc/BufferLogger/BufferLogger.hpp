@@ -161,11 +161,6 @@ namespace Svc {
           const char *const compName /*!< The component name*/
       );
 
-      //! Initialize a BufferLogger object
-      void init(
-          const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          const NATIVE_INT_TYPE instance //!< The instance number
-      );
 
       // ----------------------------------------------------------------------
       // Public methods

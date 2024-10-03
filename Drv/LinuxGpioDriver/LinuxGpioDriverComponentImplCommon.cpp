@@ -32,12 +32,4 @@ namespace Drv {
 
   }
 
-  void LinuxGpioDriverComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    LinuxGpioDriverComponentBase::init(instance);
-  }
-
 } // end namespace Drv

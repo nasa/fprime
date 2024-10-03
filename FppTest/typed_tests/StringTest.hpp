@@ -34,7 +34,7 @@ protected:
 
         // Truncate fwStr for comparison
         char fwStrBuf2[bufferSize];
-        Fw::StringUtils::string_copy(fwStrBuf2, fwStr.toChar(), sizeof fwStrBuf2);
+        Fw::StringUtils::string_copy(fwStrBuf2, fwStr.toChar(), static_cast<FwSizeType>(sizeof fwStrBuf2));
         fwSubstr = fwStrBuf2;
     }
 

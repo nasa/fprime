@@ -24,7 +24,7 @@ StringBase::StringBase() {}
 StringBase::~StringBase() {}
 
 const CHAR* StringBase::operator+=(const CHAR* src) {
-    this->appendBuff(src, StringUtils::string_length(src, this->getCapacity()));
+    this->appendBuff(src, static_cast<SizeType>(StringUtils::string_length(src, this->getCapacity())));
     return this->toChar();
 }
 
