@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <cerrno>
 
-
 Fw::StringUtils::StringToNumberStatus string_to_helper_input_check(const CHAR* input, FwSizeType max_length, U8 base) {
     Fw::StringUtils::StringToNumberStatus status = Fw::StringUtils::StringToNumberStatus::SUCCESSFUL_CONVERSION;
     // Check for null input string
@@ -59,15 +58,15 @@ Fw::StringUtils::StringToNumberStatus string_to_number_as_template(const CHAR* i
     if (status == Fw::StringUtils::SUCCESSFUL_CONVERSION) {
         Tinternal output_api = 0;
         output_api = F(input, &output_next, base);
-	printf("Output API: %s >>> %llu\n",input, static_cast<unsigned long long>(output_api)); 
         if (output_api > std::numeric_limits<T>::max()) {
             status = Fw::StringUtils::StringToNumberStatus::INVALID_RANGE;
-            output = std::numeric_limits<T>::max();
+            output_api = std::numeric_limits<T>::max();
         }
         if (output_api < std::numeric_limits<T>::min()) {
             status = Fw::StringUtils::StringToNumberStatus::INVALID_RANGE;
-            output = std::numeric_limits<T>::min();
+            output_api = std::numeric_limits<T>::min();
         }
+        output = output_api;
     }
     status = string_to_helper_output_check(status, input, output_next, next);
     return status;

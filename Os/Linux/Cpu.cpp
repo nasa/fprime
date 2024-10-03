@@ -8,7 +8,6 @@
 #include <Os/File.hpp>
 #include <unistd.h>
 #include <cstring>
-#include <cstdio>
 namespace Os {
 namespace Linux {
 namespace Cpu {
@@ -34,7 +33,7 @@ CpuInterface::Status getCpuData(FwSizeType cpu_index, ProcCpuData data) {
     // Open the procfs file
     constexpr char PROC_STAT_PATH[] = "/proc/stat";
     if (file.open(PROC_STAT_PATH, Os::File::Mode::OPEN_READ) != Os::File::Status::OP_OK) {
-	printf("PROC PATH\n");
+
         return CpuInterface::Status::ERROR;
     }
     char proc_stat_line[LINE_SIZE + 1];
@@ -45,40 +44,28 @@ CpuInterface::Status getCpuData(FwSizeType cpu_index, ProcCpuData data) {
                                                      Os::File::WaitType::NO_WAIT);
         proc_stat_line[read_size + 1] = '\0'; // Null terminate
         if (file_status != Os::File::Status::OP_OK) {
-	    printf("Read line: %d\n", file_status);
             return CpuInterface::Status::ERROR;
         }
-	    printf("Read line: %s\n", proc_stat_line);
         // Make sure we've not strayed passed the cpu section
         if (::strncmp(proc_stat_line, "cpu", 3) != 0) {
-	    printf("CPI: %s\n", proc_stat_line);
-	    printf("CPI: %s\n", proc_stat_line);
-	    printf("CPI: %s\n", proc_stat_line);
-	    printf("CPI: %s\n", proc_stat_line);
-	    printf("CPI: %s\n", proc_stat_line);
             return CpuInterface::Status::ERROR;
         }
     }
-    printf("EOL: %s %s\n", proc_stat_line, proc_stat_line + 3);
     char* token_start = proc_stat_line + 3; // Length of "cpu"
     for (FwSizeType i = 0; i < ProcCpuMeasures::MAX_CPU_TICK_TYPES; i++) {
         FwSizeType token = 0;
         Fw::StringUtils::StringToNumberStatus status = Fw::StringUtils::string_to_number(
             token_start, (sizeof proc_stat_line) - (token_start - proc_stat_line), token, &token_start);
-	printf("OUTPUT: %lu\n", token);
         // Check conversion success
         if (status != Fw::StringUtils::StringToNumberStatus::SUCCESSFUL_CONVERSION) {
-	    printf("Conversion: %d\n", status);
             return CpuInterface::Status::ERROR;
         }
         data[i] = token;
         // Check cpu index is correct
         if (i == ProcCpuMeasures::CPU_NUMBER and data[i] != cpu_index) {
-	    printf("Conversion -n : %lu\n", data[i]);
             return CpuInterface::Status::ERROR;
         }
     }
-    printf("EOL ---- FUNCTION\n");
     return CpuInterface::Status::OP_OK;
 }
 

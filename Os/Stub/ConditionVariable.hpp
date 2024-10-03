@@ -25,6 +25,9 @@ class StubConditionVariable : public ConditionVariableInterface {
     //! \brief destructor
     //!
     ~StubConditionVariable() override = default;
+    
+    //! \brief assignment operator is forbidden
+    ConditionVariableInterface& operator=(const ConditionVariableInterface& other) override = delete;
 
     //! \brief wait releasing mutex
     void wait(Os::Mutex& mutex) override;

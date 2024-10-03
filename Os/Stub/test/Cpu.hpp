@@ -62,7 +62,7 @@ class TestCpu : public CpuInterface {
     TestCpu(const TestCpu& other) = delete;
 
     //! \brief assignment operator that copies the internal representation
-    TestCpu& operator=(const TestCpu& other) = delete;
+    CpuInterface& operator=(const CpuInterface& other) override = delete;
 
     //! \brief destructor
     //!
