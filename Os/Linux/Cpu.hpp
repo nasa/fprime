@@ -13,10 +13,7 @@ namespace Cpu {
 
 //! CpuHandle class definition for stub implementations.
 //!
-struct LinuxCpuHandle : public CpuHandle {
-    Os::File m_proc;
-
-};
+struct LinuxCpuHandle : public CpuHandle {};
 
 //! \brief stub implementation of Os::CpuInterface
 //!

@@ -17,7 +17,9 @@ set(SOURCE_FILES
 set(HEADER_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Cpu.hpp"
 )
-set(MOD_DEPS)
+set(MOD_DEPS
+    Fw_Types
+)
 register_fprime_module(Os_Cpu_Linux)
 register_fprime_implementation(Os/Cpu Os_Cpu_Linux "${CMAKE_CURRENT_LIST_DIR}/DefaultCpu.cpp")
 

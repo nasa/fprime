@@ -40,7 +40,7 @@ Fw::StringUtils::StringToNumberStatus string_to_helper_output_check(Fw::StringUt
     errno = 0;
     return status;
 }
-
+#include <cstdio>
 
 // Template for internal implementation only
 // \tparam T: input type (U8, I8, U64, I64)
@@ -59,6 +59,7 @@ Fw::StringUtils::StringToNumberStatus string_to_number_as_template(const CHAR* i
     if (status == Fw::StringUtils::SUCCESSFUL_CONVERSION) {
         Tinternal output_api = 0;
         output_api = F(input, &output_next, base);
+	printf("Output API: %s >>> %llu\n",input, static_cast<unsigned long long>(output_api)); 
         if (output_api > std::numeric_limits<T>::max()) {
             status = Fw::StringUtils::StringToNumberStatus::INVALID_RANGE;
             output = std::numeric_limits<T>::max();
@@ -73,36 +74,36 @@ Fw::StringUtils::StringToNumberStatus string_to_number_as_template(const CHAR* i
 }
 
 #if FW_HAS_64_BIT
-Fw::StringUtils::StringToNumberStatus string_to_number(const CHAR* input, FwSizeType max_length, U64& output, char** next, U8 base) {
+Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType max_length, U64& output, char** next, U8 base) {
     return string_to_number_as_template<U64, unsigned long long, strtoull>(input, max_length, output, next, base);
 }
 
-Fw::StringUtils::StringToNumberStatus string_to_number(const CHAR* input, FwSizeType max_length, I64& output, char** next, U8 base) {
+Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType max_length, I64& output, char** next, U8 base) {
     return string_to_number_as_template<I64, long long, strtoll>(input, max_length, output, next, base);
 }
 #endif
 #if FW_HAS_32_BIT
-Fw::StringUtils::StringToNumberStatus string_to_number(const CHAR* input, FwSizeType max_length, U32& output, char** next, U8 base) {
+Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType max_length, U32& output, char** next, U8 base) {
     return string_to_number_as_template<U32, unsigned long, strtoul>(input, max_length, output, next, base);
 }
 
 
-Fw::StringUtils::StringToNumberStatus string_to_number(const CHAR* input, FwSizeType max_length, I32& output, char** next, U8 base) {
+Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType max_length, I32& output, char** next, U8 base) {
     return string_to_number_as_template<I32, long, strtol>(input, max_length, output, next, base);
 }
 #endif
 #if FW_HAS_16_BIT
-Fw::StringUtils::StringToNumberStatus string_to_number(const CHAR* input, FwSizeType max_length, U16& output, char** next, U8 base) {
+Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType max_length, U16& output, char** next, U8 base) {
     return string_to_number_as_template<U16, unsigned long, strtoul>(input, max_length, output, next, base);
 }
-Fw::StringUtils::StringToNumberStatus string_to_number(const CHAR* input, FwSizeType max_length, I16& output, char** next, U8 base) {
+Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType max_length, I16& output, char** next, U8 base) {
     return string_to_number_as_template<I16, long, strtol>(input, max_length, output, next, base);
 }
 #endif
-Fw::StringUtils::StringToNumberStatus string_to_number(const CHAR* input, FwSizeType max_length, U8& output, char** next, U8 base) {
+Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType max_length, U8& output, char** next, U8 base) {
     return string_to_number_as_template<U8, unsigned long, strtoul>(input, max_length, output, next, base);
 }
-Fw::StringUtils::StringToNumberStatus string_to_number(const CHAR* input, FwSizeType max_length, I8& output, char** next, U8 base) {
+Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType max_length, I8& output, char** next, U8 base) {
     return string_to_number_as_template<I8, long, strtol>(input, max_length, output, next, base);
 }
 Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType max_length, F64& output, char** next) {

@@ -276,7 +276,7 @@ File::Status File::readline(U8* buffer, FwSignedSizeType &size, File::WaitType w
                 size = j;
                 // Ensure that the computation worked
                 FW_ASSERT(size <= requested_size);
-                (void) this->seek(original_location + j, File::SeekType::ABSOLUTE);
+                (void) this->seek(original_location + j + 1, File::SeekType::ABSOLUTE);
                 return Os::File::Status::OP_OK;
             }
         }
