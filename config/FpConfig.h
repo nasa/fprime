@@ -231,12 +231,6 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_ASSERT_LEVEL FW_FILENAME_ASSERT  //!< Defines the type of assert used
 #endif
 
-// Define max length of assert string
-// Note: This constant truncates file names in assertion failure event reports
-#ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE 256  //!< Size of string used to store assert description
-#endif
-
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
 
 // The size of the object name stored in the object base class. Larger names will be truncated.
