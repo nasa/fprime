@@ -18,6 +18,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/error.hpp"
 )
+set(MOD_DEPS config)
 register_fprime_module(Os_Posix_Shared)
 
 # -----------------------------------------
@@ -56,7 +57,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Console.hpp"
 )
-set(MOD_DEPS)
+set(MOD_DEPS config)
 register_fprime_module(Os_Console_Posix)
 register_fprime_implementation(Os/Console Os_Console_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultConsole.cpp")
 
