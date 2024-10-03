@@ -17,16 +17,18 @@ TEST(Nominal, test_log_file) {
     tester.test_file();
 }
 
-TEST(Nominal, test_filter_tracy_type) {
+TEST(Nominal, test_filter_trace_type) {
     Svc::TraceFileLoggerTester tester;
     tester.test_startup();
     tester.test_filter_trace_type();
 }
 
-TEST(Nominal, test_filter_tracy_id) {
+TEST(Nominal, test_filter_trace_id) {
     Svc::TraceFileLoggerTester tester;
     tester.test_startup();
     tester.test_filter_trace_id();
+    tester.test_startup();
+    tester.test_trace_enable();
 }
 
 int main(int argc, char** argv) {

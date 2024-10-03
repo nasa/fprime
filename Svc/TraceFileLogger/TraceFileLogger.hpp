@@ -137,7 +137,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //! Handler implementation for command FilterTrace
     //!
     //! Select which trace types to be logged
-    void FilterTrace_cmdHandler(FwOpcodeType opCode,            //!< The opcode
+    void FilterTraceType_cmdHandler(FwOpcodeType opCode,            //!< The opcode
                                 U32 cmdSeq,                     //!< The command sequence number
                                 U16 bitmask,                    //!< TraceTypes to log on
                                 Svc::TraceFileLogger_Enable enable  //!< enable or disable logging 

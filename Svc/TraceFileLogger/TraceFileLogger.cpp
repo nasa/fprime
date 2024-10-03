@@ -233,7 +233,7 @@ namespace Svc {
         // TODO
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
-    void TraceFileLogger ::FilterTrace_cmdHandler(FwOpcodeType opCode,
+    void TraceFileLogger ::FilterTraceType_cmdHandler(FwOpcodeType opCode,
                                           U32 cmdSeq,
                                           U16 bitmask,
                                           Svc::TraceFileLogger_Enable enable) {

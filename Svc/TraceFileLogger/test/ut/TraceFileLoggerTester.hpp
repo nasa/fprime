@@ -54,6 +54,7 @@ class TraceFileLoggerTester : public TraceFileLoggerGTestBase {
     //Test trace filtering commands
     void test_filter_trace_id();
     void test_filter_trace_type();
+    void test_trace_enable();
 
   private:
     // ----------------------------------------------------------------------

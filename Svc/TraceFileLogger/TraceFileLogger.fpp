@@ -31,7 +31,7 @@ module Svc {
         opcode 0x01
 
     @Select which trace types to be logged
-    async command FilterTrace ( 
+    async command FilterTraceType ( 
         bitmask: U16 @< TraceTypes to filter on
         $enable : Enable @< enable or disable filtering
         )\

@@ -29,7 +29,7 @@ TraceFileLoggerTester ::~TraceFileLoggerTester() {}
 // ----------------------------------------------------------------------
 void TraceFileLoggerTester::test_startup(){
     this->component.configure("TraceFileTest.dat",TEST_TRACE_FILE_SIZE_MAX);
-    this->component.filterTraceType(0xF,Svc::TraceFileLogger_Enable::ENABLE);
+    this->component.filterTraceType(0xF,Svc::TraceFileLogger_Enable::ENABLE); //enable all trace types
 }
 
 void TraceFileLoggerTester ::test_file() {
@@ -110,7 +110,7 @@ void TraceFileLoggerTester :: test_filter_trace_type() {
     
     
     //Filter out message_dequeue and port_call
-    this->sendCmd_FilterTrace(0,1,0x6,Svc::TraceFileLogger_Enable::DISABLE);
+    this->sendCmd_FilterTraceType(0,1,0x6,Svc::TraceFileLogger_Enable::DISABLE);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, 2, 1, Fw::CmdResponse::OK);
 
@@ -125,7 +125,7 @@ void TraceFileLoggerTester :: test_filter_trace_type() {
 
     //enable all trace type filters and ensure they're received
     //Filter out message_dequeue and port_call
-    this->sendCmd_FilterTrace(0,1,0xF,Svc::TraceFileLogger_Enable::ENABLE);
+    this->sendCmd_FilterTraceType(0,1,0xF,Svc::TraceFileLogger_Enable::ENABLE);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, 2, 1, Fw::CmdResponse::OK);
     this->invoke_to_TraceBufferLogger(0,0xAA,timeTag,Fw::TraceCfg::TraceType::MESSAGE_QUEUE,trace_buffer_args);
@@ -306,8 +306,70 @@ void TraceFileLoggerTester :: test_filter_trace_id() {
         ASSERT_EQ(arg_size,sizeof(buffer)); //size of the arguments
         ASSERT_TRUE(arg_check == buffer); //Buffer data matches
     }
+
+    //Cleanup
+    this->sendCmd_DisableTraceId(0,1,0xCC,Svc::TraceFileLogger_Enable::ENABLE);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
 }
 
+void TraceFileLoggerTester :: test_trace_enable() {
+    printf("Test Trace Enable command\n");
+
+    /*
+    1. Send command to disable trace
+    2. Make port calls to fileLogger
+    3. Verify file size is 0
+    4. Send command to enable trace
+    5. Make port calls to fileLogger
+    6. Verify file size matches the number of records sent 
+    */ 
+
+    Fw::Time timeTag;
+    timeTag.set(TB_DONT_CARE ,0xBE,0xEF);
+    std::array<U8,11> buffer = {0x15,0x26,0x37,0x48,0x59,170,0xBB,0xCC,0xDD,0xEE,0xFF}; //arguments to write
+    U8 *buff_ptr = &buffer[0];
+    Fw::TraceBuffer trace_buffer_args(buff_ptr,buffer.size());
+    
+    //Disable trace and verify nothing gets written to the file
+    this->sendCmd_EnableTrace(0,1,Svc::TraceFileLogger_Enable::DISABLE);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
+
+    //Write to file logger
+    this->invoke_to_TraceBufferLogger(0,0xAB,timeTag,Fw::TraceCfg::TraceType::MESSAGE_QUEUE,trace_buffer_args);
+    this->component.doDispatch();
+    this->invoke_to_TraceBufferLogger(0,0xBC,timeTag,Fw::TraceCfg::TraceType::MESSAGE_DEQUEUE,trace_buffer_args);
+    this->component.doDispatch();
+    this->invoke_to_TraceBufferLogger(0,0xCD,timeTag,Fw::TraceCfg::TraceType::PORT_CALL,trace_buffer_args);
+    this->component.doDispatch();
+    this->invoke_to_TraceBufferLogger(0,0xDE,timeTag,Fw::TraceCfg::TraceType::USER,trace_buffer_args);
+    this->component.doDispatch();
+    
+    this->read_file();
+    ASSERT_EQ(this->file_size,0);
+
+    //Enable trace and verify file logger writes to the file
+    this->sendCmd_EnableTrace(0,1,Svc::TraceFileLogger_Enable::ENABLE);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
+
+    //Write to file logger
+    this->invoke_to_TraceBufferLogger(0,0xFE,timeTag,Fw::TraceCfg::TraceType::MESSAGE_QUEUE,trace_buffer_args);
+    this->component.doDispatch();
+    this->invoke_to_TraceBufferLogger(0,0xED,timeTag,Fw::TraceCfg::TraceType::MESSAGE_DEQUEUE,trace_buffer_args);
+    this->component.doDispatch();
+    this->invoke_to_TraceBufferLogger(0,0xDC,timeTag,Fw::TraceCfg::TraceType::PORT_CALL,trace_buffer_args);
+    this->component.doDispatch();
+    this->invoke_to_TraceBufferLogger(0,0xCB,timeTag,Fw::TraceCfg::TraceType::USER,trace_buffer_args);
+    this->component.doDispatch();
+    
+    this->read_file();
+    ASSERT_EQ(this->file_size,(FW_TRACE_MAX_SER_SIZE*4));
+
+}
+
+//Read log file into a buffer for analysis
 void TraceFileLoggerTester :: read_file() {
     std::ifstream trace_file("TraceFileTest.dat");//,std::ios::binary);
     
