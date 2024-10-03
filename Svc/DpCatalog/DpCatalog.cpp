@@ -235,7 +235,7 @@ namespace Svc {
         // There is a chance that a data product file can disappear after
         // the state file is written from the last catalog build and transmit.
         // This function will walk the state file data and write back only
-        // the entries that were visited during the last transmit. This will
+        // the entries that were visited during the last catalog build. This will
         // remove any entries that are no longer valid.
 
         // open the state file
@@ -277,6 +277,42 @@ namespace Svc {
         stateFile.close();
     }
 
+    void DpCatalog::appendFileState(const DpStateEntry& entry) {
+        FW_ASSERT(this->m_stateFileData);
+
+        // We will append state to the existing state file
+        // FIXME: Have to handle case where state file has partially transmitted
+        // state already
+
+        // open the state file
+        Os::File stateFile;
+        // we open it as a new file so we don't accumulate invalid entries
+        Os::File::Status stat = stateFile.open(this->m_stateFile.toChar(), Os::File::OPEN_APPEND);
+        if (stat != Os::File::OP_OK) {
+            this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
+            return;
+        }
+
+        // buffer for writing entries
+        BYTE buffer[sizeof(FwIndexType)+DpRecord::SERIALIZED_SIZE];
+        Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
+        // reset the buffer for serializing the entry
+        entryBuffer.resetSer();
+        // serialize the file directory index
+        entryBuffer.serialize(entry.dir);
+        entryBuffer.serialize(entry.record);
+        // write the entry
+        FwSignedSizeType size = entryBuffer.getBuffLength();
+        stat = stateFile.write(buffer, size);
+        if (stat != Os::File::OP_OK) {
+            this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
+            return;
+        }
+
+        // close the state file
+        stateFile.close();
+    }
+
 
     Fw::CmdResponse DpCatalog::doCatalogBuild() {
 
@@ -312,6 +348,9 @@ namespace Svc {
         if (response != Fw::CmdResponse::OK) {
             return response;
         }
+
+        // prune and rewrite the state file
+        this->pruneAndWriteStateFile();
 
         this->log_ACTIVITY_HI_CatalogBuildComplete();
 
@@ -422,6 +461,8 @@ namespace Svc {
                 entry.record.settSub(container.getTimeTag().getUSeconds());
                 entry.record.setsize(static_cast<U64>(fileSize));
 
+                // check the state file to see if there is transmit state
+                this->getFileState(entry);
 
                 // insert entry into sorted list. if can't insert, quit
                 if (not this->insertEntry(entry)) {
@@ -705,6 +746,8 @@ namespace Svc {
 
         // mark the entry as transmitted
         this->m_currentNode->entry.record.setstate(Fw::DpState::TRANSMITTED);
+        // update the transmitted state in the state file
+        this->appendFileState(this->m_currentNode->entry);
         // set to right node
         this->m_currentNode = this->m_currentNode->right;
         // push new current to the stack

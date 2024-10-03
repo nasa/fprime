@@ -41,7 +41,7 @@ namespace Svc {
         /// @param maxDpFiles The max number of data product files to track
         /// @param directories list of directories to scan
         /// @param numDirs number of supplied directories
-        /// @param stateFile file to store transmit state
+        /// @param stateFile file to store transmit state. Provide a zero-length string if no state tracking
         /// @param memId  memory ID for allocator
         /// @param allocator Allocator to supply memory for catalog. 
         ///        Instance must survive for shutdown to use for reclaiming memory
@@ -177,6 +177,7 @@ namespace Svc {
         void resetStateFileData();
 
         /// @brief get file state from the stored state file
+        /// @param entry entry to update from file state
         void getFileState(DpStateEntry& entry);
 
         /// @brief prune the state file data and write the remaining entries back
@@ -184,6 +185,10 @@ namespace Svc {
 
         /// @brief load state data from file
         Fw::CmdResponse loadStateFile();
+
+        /// @brief get file state from the stored state file
+        /// @param entry entry to add to state file
+        void appendFileState(const DpStateEntry& entry);
 
         /// @brief add an entry to the tree
         /// @param entry entry to add
