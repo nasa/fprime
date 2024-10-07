@@ -111,12 +111,13 @@ Inheritance diagram for Drv::RecvStatus:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a3121541222518925d12b206966d3cdeb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdeb">T</a> { <a class="el" href="class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdeba2cd12e6dfa0e75b92685fb2c872d10c5">RECV_OK</a> = 0
-, <a class="el" href="class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdebabae9a35c7d9674e1d12c737509916f53">RECV_ERROR</a> = 1
+, <a class="el" href="class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdebaecb113a507095e2fd3fe14bd3811f027">RECV_NO_DATA</a> = 1
+, <a class="el" href="class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdebabae9a35c7d9674e1d12c737509916f53">RECV_ERROR</a> = 2
  }</td></tr>
 <tr class="memdesc:a3121541222518925d12b206966d3cdeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The raw enum type.  <a href="class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdeb">More...</a><br /></td></tr>
 <tr class="separator:a3121541222518925d12b206966d3cdeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a329f7fb14e0fbc6ba01f0ac39c50f399"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_drv_1_1_recv_status.html#a329f7fb14e0fbc6ba01f0ac39c50f399a0a4e793bcae7ce9010e3745bc6123769">SERIALIZED_SIZE</a> = sizeof(SerialType)
-, <a class="el" href="class_drv_1_1_recv_status.html#a329f7fb14e0fbc6ba01f0ac39c50f399a0d9d1d9f6b607f46176d4cbde1730cd1">NUM_CONSTANTS</a> = 2
+, <a class="el" href="class_drv_1_1_recv_status.html#a329f7fb14e0fbc6ba01f0ac39c50f399a0d9d1d9f6b607f46176d4cbde1730cd1">NUM_CONSTANTS</a> = 3
  }</td></tr>
 <tr class="separator:a329f7fb14e0fbc6ba01f0ac39c50f399"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a476ce9eed21504932aa4f12f2b6516e3"><td class="memItemLeft" align="right" valign="top">typedef I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_recv_status.html#a476ce9eed21504932aa4f12f2b6516e3">SerialType</a></td></tr>
@@ -218,7 +219,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>For backwards compatibility. </p>
 
-<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00039">39</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00041">41</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -241,7 +242,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00047">47</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00049">49</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -260,6 +261,8 @@ Additional Inherited Members</h2></td></tr>
 <p>The raw enum type. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3121541222518925d12b206966d3cdeba2cd12e6dfa0e75b92685fb2c872d10c5"></a>RECV_OK&#160;</td><td class="fielddoc"><p>Receive worked as expected. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3121541222518925d12b206966d3cdebaecb113a507095e2fd3fe14bd3811f027"></a>RECV_NO_DATA&#160;</td><td class="fielddoc"><p>Receive worked, but there was no data. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a3121541222518925d12b206966d3cdebabae9a35c7d9674e1d12c737509916f53"></a>RECV_ERROR&#160;</td><td class="fielddoc"><p>Receive error occurred retrying may succeed. </p>
 </td></tr>
@@ -295,7 +298,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Constructor (default value of RECV_OK) </p>
 
-<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00061">61</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00063">63</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -331,7 +334,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00067">67</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00069">69</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -367,7 +370,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00075">75</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00077">77</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -456,7 +459,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Conversion operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00099">99</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00101">101</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -486,7 +489,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Inequality operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00111">111</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00113">113</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -572,7 +575,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Equality operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00105">105</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00107">107</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -629,7 +632,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>The raw enum value. </p>
 
-<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00161">161</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="recv_status_enum_ac_8hpp_source.html#l00163">163</a> of file <a class="el" href="recv_status_enum_ac_8hpp_source.html">RecvStatusEnumAc.hpp</a>.</p>
 
 </div>
 </div>

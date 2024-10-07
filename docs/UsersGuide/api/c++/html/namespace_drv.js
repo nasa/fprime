@@ -70,7 +70,8 @@ var namespace_drv =
       [ "SOCK_FAILED_TO_ACCEPT", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da15e3766da7278a2ccfb60fbc77e2fa4c", null ],
       [ "SOCK_SEND_ERROR", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734daa614f2b5448fd9505969e26b61dda751", null ],
       [ "SOCK_NOT_STARTED", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734daf7ee8b5efcdf13641c0e24a150015e01", null ],
-      [ "SOCK_FAILED_TO_READ_BACK_PORT", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da786e0a354c1e34eda36406694c12afaf", null ]
+      [ "SOCK_FAILED_TO_READ_BACK_PORT", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da786e0a354c1e34eda36406694c12afaf", null ],
+      [ "SOCK_NO_DATA_AVAILABLE", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734dadc3ec7a5f5a27134004ee35247613d3e", null ]
     ] ],
     [ "SpiFrequency", "namespace_drv.html#a61d09174558e3591ec1e787fc84c27ff", [
       [ "SPI_FREQUENCY_1MHZ", "namespace_drv.html#a61d09174558e3591ec1e787fc84c27ffa180638b083054d8cb5b53b96873470ad", null ],

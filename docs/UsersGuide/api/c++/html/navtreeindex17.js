@@ -1,5 +1,7 @@
 var NAVTREEINDEX17 =
 {
+"class_fw_1_1_serialize_buffer_base.html#a3b67c2d4135c96a6136f09e789b8bf33":[29,0,2,97,39],
+"class_fw_1_1_serialize_buffer_base.html#a529239ada3c74d4ea000dc4de105bbf5":[29,0,2,97,31],
 "class_fw_1_1_serialize_buffer_base.html#a54c91cf6931569e1350bcd2a159efe86":[29,0,2,97,24],
 "class_fw_1_1_serialize_buffer_base.html#a578b05b975f9cdeaeb0f7093936a4b49":[29,0,2,97,32],
 "class_fw_1_1_serialize_buffer_base.html#a59fe12829375cec3c99b320f6e395bbb":[29,0,2,97,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX17 =
 "class_os_1_1_console.html#a85796cb54c66745629e7c54c1679a7d7":[29,0,3,19,10],
 "class_os_1_1_console.html#aea2f12f8d00bfa138b5bcd7a887d5681":[29,0,3,19,4],
 "class_os_1_1_console_interface.html":[29,0,3,18],
-"class_os_1_1_console_interface.html#a0328dfe43b67fce3dc19dbc8031b4e4b":[29,0,3,18,1],
-"class_os_1_1_console_interface.html#a55b570ccd49b9773a668a35263279593":[29,0,3,18,3],
-"class_os_1_1_console_interface.html#a5f517554ff0b454da3158597997a049b":[29,0,3,18,4]
+"class_os_1_1_console_interface.html#a0328dfe43b67fce3dc19dbc8031b4e4b":[29,0,3,18,1]
 };

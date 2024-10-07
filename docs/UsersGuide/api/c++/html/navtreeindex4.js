@@ -144,6 +144,7 @@ var NAVTREEINDEX4 =
 "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da8bb0480dd170c321b762e3aa828a15a9":[30,0,6,3,2,1,6],
 "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da960a08338e2f27cc76d3f4af04ff7444":[30,0,6,3,2,1,4],
 "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734daa614f2b5448fd9505969e26b61dda751":[30,0,6,3,2,1,12],
+"ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734dadc3ec7a5f5a27134004ee35247613d3e":[30,0,6,3,2,1,15],
 "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734daf7ee8b5efcdf13641c0e24a150015e01":[30,0,6,3,2,1,13],
 "ip_socket_8hpp_source.html":[30,0,6,3,2],
 "linux_gpio_driver_8hpp.html":[30,0,6,4,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "log_default_8cpp_source.html":[30,0,10,22],
 "log_file_8cpp.html":[30,0,14,2,3],
 "log_file_8cpp_source.html":[30,0,14,2,3],
-"log_file_8hpp.html":[30,0,14,2,4],
-"log_file_8hpp_source.html":[30,0,14,2,4]
+"log_file_8hpp.html":[30,0,14,2,4]
 };

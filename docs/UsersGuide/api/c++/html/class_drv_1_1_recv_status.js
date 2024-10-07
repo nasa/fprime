@@ -4,6 +4,7 @@ var class_drv_1_1_recv_status =
     [ "t", "class_drv_1_1_recv_status.html#a25522c31c5b671460ff7c300051c08e9", null ],
     [ "T", "class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdeb", [
       [ "RECV_OK", "class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdeba2cd12e6dfa0e75b92685fb2c872d10c5", null ],
+      [ "RECV_NO_DATA", "class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdebaecb113a507095e2fd3fe14bd3811f027", null ],
       [ "RECV_ERROR", "class_drv_1_1_recv_status.html#a3121541222518925d12b206966d3cdebabae9a35c7d9674e1d12c737509916f53", null ]
     ] ],
     [ "RecvStatus", "class_drv_1_1_recv_status.html#aecccb04af02be93a50e3088e4fdfb964", null ],
