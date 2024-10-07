@@ -1,5 +1,7 @@
 var NAVTREEINDEX9 =
 {
+"svc_passive_console_text_logger_component.html#autotoc_md990":[14,26,0,2],
+"svc_passive_console_text_logger_component.html#autotoc_md991":[14,26,0,2,0],
 "svc_passive_console_text_logger_component.html#autotoc_md992":[14,26,0,2,0,0],
 "svc_passive_console_text_logger_component.html#autotoc_md993":[14,26,0,3],
 "svc_passive_console_text_logger_component.html#autotoc_md994":[14,26,0,4],
@@ -247,7 +249,5 @@ var NAVTREEINDEX9 =
 "tlm_chan_8hpp.html":[30,0,14,42,2],
 "tlm_chan_8hpp_source.html":[30,0,14,42,2],
 "tlm_chan_component_ac_8cpp.html":[30,0,13,45,0],
-"tlm_chan_component_ac_8cpp_source.html":[30,0,13,45,0],
-"tlm_chan_component_ac_8hpp.html":[30,0,13,45,1],
-"tlm_chan_component_ac_8hpp_source.html":[30,0,13,45,1]
+"tlm_chan_component_ac_8cpp_source.html":[30,0,13,45,0]
 };

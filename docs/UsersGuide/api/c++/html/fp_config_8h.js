@@ -71,6 +71,7 @@ var _fp_config_8h =
     [ "PRI_FwTimeBaseStoreType", "fp_config_8h.html#adb7de56906933e27533ca18f9f653a32", null ],
     [ "PRI_FwTimeContextStoreType", "fp_config_8h.html#a5d21978b988fe9caa109bc216cf41fc2", null ],
     [ "PRI_FwTlmPacketizeIdType", "fp_config_8h.html#a4b264f66f16cc2e6bff021091b2a8ae2", null ],
+    [ "PRI_FwTraceIdType", "fp_config_8h.html#aa3af9cb20536791e86ad2e2865db129a", null ],
     [ "FwAssertArgType", "fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d", null ],
     [ "FwBuffSizeType", "fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af", null ],
     [ "FwChanIdType", "fp_config_8h.html#a2d078f269f4c29e1d54fc49a5c2cd601", null ],
@@ -93,6 +94,7 @@ var _fp_config_8h =
     [ "FwTimeBaseStoreType", "fp_config_8h.html#a871cd5d7929492679040ce5231c48f87", null ],
     [ "FwTimeContextStoreType", "fp_config_8h.html#a8ec34593f864b0de263573da6e9b58c4", null ],
     [ "FwTlmPacketizeIdType", "fp_config_8h.html#a7e0107cb8195ff607431a9182569066c", null ],
+    [ "FwTraceIdType", "fp_config_8h.html#a95491c6cddd618dad03744edd7511f0d", null ],
     [ "TimeBase", "fp_config_8h.html#a010a00650fb5274595ddba8b03a0d17f", [
       [ "TB_NONE", "fp_config_8h.html#a010a00650fb5274595ddba8b03a0d17fae1020621e865e138f091cfeeabcddc2c", null ],
       [ "TB_PROC_TIME", "fp_config_8h.html#a010a00650fb5274595ddba8b03a0d17faad20439337171453957a14c47bc408ba", null ],

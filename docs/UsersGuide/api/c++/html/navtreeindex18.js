@@ -1,5 +1,7 @@
 var NAVTREEINDEX18 =
 {
+"class_os_1_1_console_interface.html#a769a59480a1cfed3dfec564b22b35d14":[29,0,3,18,0],
+"class_os_1_1_console_interface.html#a7a2ad9183ef81a1a0794f63e99fa44cb":[29,0,3,18,2],
 "class_os_1_1_directory.html":[29,0,3,22],
 "class_os_1_1_directory.html#a029973f68136eafa0398d1933da745ae":[29,0,3,22,10],
 "class_os_1_1_directory.html#a044b2b0a5bac7470627dd156577b0889":[29,0,3,22,3],
@@ -247,7 +249,5 @@ var NAVTREEINDEX18 =
 "class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4bae2871cb2e0ae05337d49968e2d8a257b":[29,0,3,27,1,9],
 "class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4baf1ffcee86c882cbf9010f4b47490401c":[29,0,3,27,1,14],
 "class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4baf229651c570a8e2bdf375d1d46d068e5":[29,0,3,27,1,2],
-"class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4baff0550ed125dadda7b209e9f620fc4f1":[29,0,3,27,1,7],
-"class_os_1_1_file_system_interface.html#a2eab0ed004af834d8890a19e3199e7f5":[29,0,3,27,6],
-"class_os_1_1_file_system_interface.html#a4a9dad9087b23742d8d4db0e678a67c1":[29,0,3,27,14]
+"class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4baff0550ed125dadda7b209e9f620fc4f1":[29,0,3,27,1,7]
 };

@@ -1,5 +1,7 @@
 var NAVTREEINDEX11 =
 {
+"class_drv_1_1_i2c_status.html#a01e68abbc18a6371f1a906798c501bff":[29,0,1,20,2],
+"class_drv_1_1_i2c_status.html#a01e68abbc18a6371f1a906798c501bffa0445ed41d78846032033c344e4cf9094":[29,0,1,20,2,4],
 "class_drv_1_1_i2c_status.html#a01e68abbc18a6371f1a906798c501bffa189f65ae2d7c0ac9b4cf939b523740cc":[29,0,1,20,2,5],
 "class_drv_1_1_i2c_status.html#a01e68abbc18a6371f1a906798c501bffa594254bd419f827dc243b0a0411dd53b":[29,0,1,20,2,2],
 "class_drv_1_1_i2c_status.html#a01e68abbc18a6371f1a906798c501bffa8363d7af03e5fbd61b10ac403f2cafba":[29,0,1,20,2,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX11 =
 "class_drv_1_1_linux_uart_driver_component_base.html#aa0038b104ae69caadbd1d591af2a291a":[29,0,1,26,47],
 "class_drv_1_1_linux_uart_driver_component_base.html#aa7a0a8075f29698bc61587449a37e314":[29,0,1,26,11],
 "class_drv_1_1_linux_uart_driver_component_base.html#aa88ee2945720e8c118fb142cd97636ff":[29,0,1,26,19],
-"class_drv_1_1_linux_uart_driver_component_base.html#ab25065304c212c91bdc47110a8426ad4":[29,0,1,26,8],
-"class_drv_1_1_linux_uart_driver_component_base.html#ab821033cd02a0adb9a33781ae95700ad":[29,0,1,26,15],
-"class_drv_1_1_linux_uart_driver_component_base.html#abc4e1e5d466154d3d45a687fbc7df968":[29,0,1,26,18]
+"class_drv_1_1_linux_uart_driver_component_base.html#ab25065304c212c91bdc47110a8426ad4":[29,0,1,26,8]
 };

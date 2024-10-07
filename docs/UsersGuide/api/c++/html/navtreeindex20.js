@@ -1,5 +1,7 @@
 var NAVTREEINDEX20 =
 {
+"class_os_1_1_queue_registry.html":[29,0,3,39],
+"class_os_1_1_queue_registry.html#ab71433dfb3eb2a214931c05874ddbb16":[29,0,3,39,1],
 "class_os_1_1_queue_registry.html#ad82fb5d2a38b6357925806a4dc320af5":[29,0,3,39,0],
 "class_os_1_1_queue_registry.html#ae5abaa31028e194fb7fc8d761c2b748f":[29,0,3,39,2],
 "class_os_1_1_queue_string.html":[29,0,3,40],
@@ -247,7 +249,5 @@ var NAVTREEINDEX20 =
 "class_os_1_1_watchdog_timer.html#af8d334b7e7891fb47a408e27ab7b04ee":[29,0,3,48,5],
 "class_passive_rate_group_impl.html":[29,0,10],
 "class_svc_1_1_a_m_p_c_s_sequence.html":[29,0,5,100],
-"class_svc_1_1_a_m_p_c_s_sequence.html#a443fd80bf046162bcda1d3677ba53680":[29,0,5,100,5],
-"class_svc_1_1_a_m_p_c_s_sequence.html#a4902a436ab96d8bd92722a331dc63359":[29,0,5,100,4],
-"class_svc_1_1_a_m_p_c_s_sequence.html#a4bf45cce3ea0e594c22205b19a1e53a6":[29,0,5,100,2]
+"class_svc_1_1_a_m_p_c_s_sequence.html#a443fd80bf046162bcda1d3677ba53680":[29,0,5,100,5]
 };
