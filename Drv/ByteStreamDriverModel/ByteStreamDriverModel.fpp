@@ -15,7 +15,8 @@ module Drv {
     @ Status associated with the received data
     enum RecvStatus {
         RECV_OK = 0 @< Receive worked as expected
-        RECV_ERROR = 1 @< Receive error occurred retrying may succeed
+        RECV_NO_DATA = 1 @< Receive worked, but there was no data 
+        RECV_ERROR = 2 @< Receive error occurred retrying may succeed
     }
 
     @ Carries the received bytes stream driver

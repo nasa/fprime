@@ -61,6 +61,8 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
         EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
 
+        status2 = Drv::SOCK_NO_DATA_AVAILABLE;
+
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
             (this->component.isOpened())) {
@@ -72,7 +74,11 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::fill_random_buffer(m_data_buffer);
             Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
             EXPECT_EQ(status, SendStatus::SEND_OK);
-            status2 = client.recv(client_fd, buffer, size);
+            U16 counter = 0;
+            while ((status2 == Drv::SOCK_NO_DATA_AVAILABLE) and counter < Drv::Test::MAX_ITER) {
+                status2 = client.recv(client_fd, buffer, size);
+                counter++;
+            }
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
             EXPECT_EQ(size, m_data_buffer.getSize());
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
@@ -89,16 +95,15 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         }
 
         // Properly stop the client on the last iteration
-        if ((1 + i) == iterations && recv_thread) {
-            this->component.shutdown();
+        if (((1 + i) == iterations) && recv_thread) {
             this->component.stop();
-            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
             this->component.close();
+            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
             this->component.shutdown();
             this->component.join();
         } else {
-            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
             this->component.close();
+            client.close(client_fd); // Client must be closed first or the server risks binding to an existing address
         }
     }
     ASSERT_from_ready_SIZE(iterations);
@@ -161,11 +166,14 @@ void TcpServerTester ::test_advanced_reconnect() {
 // ----------------------------------------------------------------------
 
 void TcpServerTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
+    // this function will still receive a status of error because the recv port is always called
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
-    // Make sure we can get to unblocking the spinner
-    EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
-    Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
-    m_spinner = true;
+    if (recvStatus == RecvStatus::RECV_OK){
+        // Make sure we can get to unblocking the spinner
+        EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
+        Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
+        m_spinner = true;
+    }
     delete[] recvBuffer.getData();
 }
 

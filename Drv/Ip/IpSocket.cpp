@@ -166,8 +166,15 @@ SocketIpStatus IpSocket::recv(NATIVE_INT_TYPE fd, U8* data, U32& req_read) {
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
         // Attempt to recv out data
         size = this->recvProtocol(fd, data, req_read);
+
+        // Nothing to be received
+        if ((size == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK))) {
+            req_read = 0;
+            return SOCK_NO_DATA_AVAILABLE;
+        }
+
         // Error is EINTR, just try again
-        if (size == -1 && ((errno == EINTR) || errno == EAGAIN)) {
+        if ((size == -1) && (errno == EINTR)) {
             continue;
         }
         // Zero bytes read reset or bad ef means we've disconnected

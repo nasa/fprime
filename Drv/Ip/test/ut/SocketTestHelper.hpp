@@ -12,7 +12,7 @@
 namespace Drv {
 namespace Test {
 
-
+static constexpr U16 MAX_ITER = 10;
 /**
  * Force a receive timeout on a socket such that it will not hang our testing despite the normal recv behavior of
  * "block forever" until it gets data.

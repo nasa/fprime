@@ -36,6 +36,7 @@ enum SocketIpStatus {
     SOCK_SEND_ERROR = -13,                   //!< Failed to send after configured retries
     SOCK_NOT_STARTED = -14,                  //!< Socket has not been started
     SOCK_FAILED_TO_READ_BACK_PORT = -15,     //!< Failed to read back port from connection
+    SOCK_NO_DATA_AVAILABLE = -16             //!< No data available or read operation would block
 };
 
 /**
