@@ -28,7 +28,7 @@ namespace Svc {
             FwEventIdType Id) {
         // for **nix, delay then exit with error code
         Fw::Logger::log("FATAL %d handled.\n",Id);
-        (void)Os::Task::delay(Fw::Time(1, 0));
+        (void)Os::Task::delay(Fw::TimeInterval(1, 0));
         Fw::Logger::log("Exiting with abort signal and core dump file.\n");
         (void)raise( SIGABRT );
         exit(1);

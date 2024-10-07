@@ -8,7 +8,7 @@
 #include "Os/Delegate.hpp"
 
 namespace Os {
-    Os::Task::Status TaskInterface::delay(Fw::Time interval) {
+    Os::Task::Status TaskInterface::delay(Fw::TimeInterval interval) {
         Os::Task::Status task_status = Os::Task::OP_OK;
         timespec sleep_interval;
         sleep_interval.tv_sec = interval.getSeconds();

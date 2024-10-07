@@ -9,7 +9,7 @@
 #include <sys/time.h>
 
 namespace Os {
-    Os::Task::Status TaskInterface::delay(Fw::Time interval) {
+    Os::Task::Status TaskInterface::delay(Fw::TimeInterval interval) {
         Os::Stub::Task::Test::StaticData::data.lastCalled = Os::Stub::Task::Test::StaticData::LastFn::DELAY_FN;
         Os::Stub::Task::Test::StaticData::data.delay = interval;
 
