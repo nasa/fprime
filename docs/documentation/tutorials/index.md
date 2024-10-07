@@ -13,7 +13,7 @@ Tutorials walk through the essentials of F Prime development, from the canonical
 
     ---
 
-    The Hello World tutorial walks new users through creating a new project, designing their first F´ component, and testing that component through an F´ deployment.
+    The Hello World tutorial shows how to create an F Prime project and how to design, implement, and test a basic F Prime component. We recommend that new users of F Prime start with this tutorial.
 
     [View Hello World Tutorial](../../tutorials-hello-world/docs/hello-world/){ .md-button .md-button--primary }
 
@@ -21,7 +21,7 @@ Tutorials walk through the essentials of F Prime development, from the canonical
 
     ---
 
-    LED Blinker walks users through developing an F´ project intended for running on embedded hardware. It covers manager components, hardware drivers, and cross-compilation with the goal of blinking an LED on ARM hardware. Events, Telemetry, Commands, and Parameters are covered as well.
+    The LED Blinker tutorial shows how to develop an F Prime project that runs on embedded hardware. It covers manager components, hardware drivers, and cross compilation, with the goal of blinking an LED on ARM hardware. This tutorial introduces the F Prime concepts of events, telemetry, commands, and parameters.
 
     !!! note
         This tutorial can be run without hardware with the exception of section 6 “Running on Hardware”.
@@ -32,7 +32,7 @@ Tutorials walk through the essentials of F Prime development, from the canonical
 
     ---
 
-    The Math Component tutorial walks users through constructing a full F´ application including custom Ports, and Enumeration data types. Events, Telemetry, Commands, and Parameters are covered as well. Unit-Testing is also covered.
+    The Math Component tutorial shows how to construct an F Prime application with user-defined ports and data types. It covers more advanced uses of events, telemetry, commands, and parameters. It also covers unit testing of F Prime components.
 
     [View Math Component Tutorial](../../tutorials-math-component/docs/math-component/){ .md-button .md-button--primary }
 
