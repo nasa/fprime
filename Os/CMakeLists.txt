@@ -13,6 +13,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Generic")
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
 )
+set(MOD_DEPS config)
 register_fprime_module(Os_Test_File_SyntheticFileSystem)
 
 

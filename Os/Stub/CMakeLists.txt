@@ -12,6 +12,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp"
 )
+set(MOD_DEPS config)
 register_fprime_module(Os_File_Stub)
 register_fprime_implementation(Os/File Os_File_Stub)
 
@@ -30,7 +31,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Queue.hpp"
 )
-set(MOD_DEPS)
+set(MOD_DEPS config)
 register_fprime_module(Os_Queue_Stub)
 register_fprime_implementation(Os/Queue Os_Queue_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultQueue.cpp")
 
@@ -41,7 +42,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Task.hpp"
 )
-set(MOD_DEPS)
+set(MOD_DEPS config)
 register_fprime_module(Os_Task_Stub)
 register_fprime_implementation(Os/Task Os_Task_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultTask.cpp")
 
@@ -52,7 +53,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Console.hpp"
 )
-set(MOD_DEPS)
+set(MOD_DEPS config)
 register_fprime_module(Os_Console_Stub)
 register_fprime_implementation(Os/Console Os_Console_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultConsole.cpp")
 
@@ -60,7 +61,7 @@ register_fprime_implementation(Os/Console Os_Console_Stub "${CMAKE_CURRENT_LIST_
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/FileSystem.cpp"
 )
-set(MOD_DEPS)
+set(MOD_DEPS config)
 register_fprime_module(Os_FileSystem_Stub)
 register_fprime_implementation(Os/FileSystem Os_FileSystem_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultFileSystem.cpp")
 
@@ -69,7 +70,7 @@ register_fprime_implementation(Os/FileSystem Os_FileSystem_Stub "${CMAKE_CURRENT
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Directory.cpp"
 )
-set(MOD_DEPS)
+set(MOD_DEPS config)
 register_fprime_module(Os_Directory_Stub)
 register_fprime_implementation(Os/Directory Os_Directory_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultDirectory.cpp")
 
@@ -104,7 +105,7 @@ register_fprime_ut(StubFileTest)
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/Console.cpp"
 )
-set(MOD_DEPS)
+set(MOD_DEPS config)
 register_fprime_module(Os_Console_Test_Stub)
 register_fprime_implementation(Os/Console Os_Console_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultConsole.cpp")
 
