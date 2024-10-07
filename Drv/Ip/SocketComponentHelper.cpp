@@ -166,9 +166,9 @@ void SocketComponentHelper::readTask(void* pointer) {
             status = self->reconnect();
             if(status != SOCK_SUCCESS) {
                 Fw::Logger::log(
-                    "[WARNING] Failed to open port with status %lu and errno %lu\n",
-                    static_cast<POINTER_CAST>(status),
-                    static_cast<POINTER_CAST>(errno));
+                    "[WARNING] Failed to open port with status %d and errno %d\n",
+                    status,
+                    errno);
                 (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
                 continue;
             }
@@ -181,10 +181,10 @@ void SocketComponentHelper::readTask(void* pointer) {
             U32 size = buffer.getSize();
             // recv blocks, so it may have been a while since its done an isOpened check
             status = self->recv(data, size);
-            if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
-                Fw::Logger::log("[WARNING] Failed to recv from port with status %lu and errno %lu\n",
-                static_cast<POINTER_CAST>(status),
-                static_cast<POINTER_CAST>(errno));
+            if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN && (status != SOCK_NO_DATA_AVAILABLE))) {
+                Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n",
+                    status,
+                    errno);
                 self->close();
                 buffer.setSize(0);
             } else {

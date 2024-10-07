@@ -35,8 +35,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     U16 port2 = port1;
     uint8_t attempt_to_find_available_port = std::numeric_limits<uint8_t>::max();
 
-    while ((port1 == port2) && attempt_to_find_available_port > 0)
-    {
+    while ((port1 == port2) && attempt_to_find_available_port > 0) {
         port2 = Drv::Test::get_free_port(true);
         ASSERT_NE(0, port2);
         --attempt_to_find_available_port;
@@ -83,6 +82,8 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             << "UDP socket open error: " << strerror(errno) << std::endl
             << "Port1: " << port1 << std::endl
             << "Port2: " << port2 << std::endl;
+        
+        status2 = Drv::SOCK_NO_DATA_AVAILABLE;
 
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
@@ -94,7 +95,11 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::fill_random_buffer(m_data_buffer);
             Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
             EXPECT_EQ(status, SendStatus::SEND_OK);
-            status2 = udp2.recv(udp2_fd, buffer, size);
+            U16 counter = 0;
+            while ((status2 == Drv::SOCK_NO_DATA_AVAILABLE) and counter < Drv::Test::MAX_ITER) {
+                status2 = udp2.recv(udp2_fd, buffer, size);
+                counter++;
+            }
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
             EXPECT_EQ(size, m_data_buffer.getSize());
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
@@ -107,7 +112,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             }
         }
         // Properly stop the client on the last iteration
-        if ((1 + i) == iterations && recv_thread) {
+        if (((1 + i) == iterations) && recv_thread) {
             this->component.stop();
             this->component.join();
         } else {
@@ -166,9 +171,11 @@ void UdpTester ::test_advanced_reconnect() {
 void UdpTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     // Make sure we can get to unblocking the spinner
-    EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
-    Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
-    m_spinner = true;
+    if (recvStatus == RecvStatus::RECV_OK){
+        EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
+        Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
+        m_spinner = true;
+    }
     delete[] recvBuffer.getData();
 }
 

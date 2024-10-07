@@ -97,7 +97,7 @@ class SocketComponentHelper {
      * \return true if socket is open, false otherwise
      */
     bool isOpened();
-    
+
      /**
      * \brief Re-open port if it has been disconnected
      *

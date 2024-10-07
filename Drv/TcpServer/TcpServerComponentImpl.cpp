@@ -51,7 +51,16 @@ Fw::Buffer TcpServerComponentImpl::getBuffer() {
 }
 
 void TcpServerComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    Drv::RecvStatus recvStatus = (status == SOCK_SUCCESS) ? RecvStatus::RECV_OK : RecvStatus::RECV_ERROR;
+    Drv::RecvStatus recvStatus = RecvStatus::RECV_ERROR;
+    if (status == SOCK_SUCCESS) {
+        recvStatus = RecvStatus::RECV_OK;
+    }
+    else if (status == SOCK_NO_DATA_AVAILABLE) {
+        recvStatus = RecvStatus::RECV_NO_DATA;
+    }
+    else {
+        recvStatus = RecvStatus::RECV_ERROR;
+    }
     this->recv_out(0, buffer, recvStatus);
 }
 
