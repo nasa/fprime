@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['directoryhandlestorage_7885',['DirectoryHandleStorage',['../os_8hpp.html#a1605b7bf3cdb90dc8bc9c3a5f02c61c6',1,'Os.hpp']]]
+  ['directoryhandlestorage_7886',['DirectoryHandleStorage',['../os_8hpp.html#a1605b7bf3cdb90dc8bc9c3a5f02c61c6',1,'Os.hpp']]]
 ];

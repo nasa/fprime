@@ -5,5 +5,6 @@ var class_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable =
     [ "getHandle", "class_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable.html#aadb37853694ea5369ece10cf53f8d4b8", null ],
     [ "notify", "class_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable.html#ac20ff4ffa048bdcb778be925c251d953", null ],
     [ "notifyAll", "class_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable.html#a3bf6fd220d4490c187daa993c1243c6c", null ],
+    [ "operator=", "class_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable.html#acecc24c11ba1139df10514defb0b95bc", null ],
     [ "wait", "class_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable.html#a8f28d1dbc68183299d6bf480419d09f0", null ]
 ];

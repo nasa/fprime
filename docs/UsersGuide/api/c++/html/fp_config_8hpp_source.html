@@ -90,11 +90,20 @@ $(document).ready(function(){initNavTree('_fp_config_8hpp_source.html',''); init
 <div class="contents">
 <a href="fp_config_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="basic_types_8hpp.html">Fw/Types/BasicTypes.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fp_config_8h.html">FpConfig.h</a>&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;}</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fpp_constants_ac_8hpp.html">FppConstantsAc.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fp_config_8h.html">FpConfig.h</a>&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">// Define max length of assert string</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">// Note: This constant truncates file names in assertion failure event reports</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#ifndef FW_ASSERT_TEXT_SIZE</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a48d947818ef0ebb372be0bf57d98c376">   19</a></span>&#160;<span class="preprocessor">#define FW_ASSERT_TEXT_SIZE FwAssertTextSize  </span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;}</div>
 <div class="ttc" id="a_basic_types_8hpp_html"><div class="ttname"><a href="basic_types_8hpp.html">BasicTypes.hpp</a></div><div class="ttdoc">C++ header for working with basic fprime types.</div></div>
 <div class="ttc" id="a_fp_config_8h_html"><div class="ttname"><a href="fp_config_8h.html">FpConfig.h</a></div><div class="ttdoc">C-compatible configuration header for fprime configuration.</div></div>
+<div class="ttc" id="a_fpp_constants_ac_8hpp_html"><div class="ttname"><a href="fpp_constants_ac_8hpp.html">FppConstantsAc.hpp</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

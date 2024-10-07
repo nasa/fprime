@@ -1,9 +1,7 @@
 var _fp_config_8h =
 [
     [ "FW_AMPCS_COMPATIBLE", "fp_config_8h.html#a0b27aabc04bf11f630b20e441a37759b", null ],
-    [ "FW_ASSERT_DFL_MSG_LEN", "fp_config_8h.html#a92863d37e945ed5469ac704c7da6d805", null ],
     [ "FW_ASSERT_LEVEL", "fp_config_8h.html#a2355a84bf81d78e537d3ed5b146ca3bd", null ],
-    [ "FW_ASSERT_TEXT_SIZE", "fp_config_8h.html#a48d947818ef0ebb372be0bf57d98c376", null ],
     [ "FW_BAREMETAL_SCHEDULER", "fp_config_8h.html#a9e1bbbb23342cc31a4c4500d40c1e157", null ],
     [ "FW_CMD_ARG_BUFFER_MAX_SIZE", "fp_config_8h.html#ae8defc303dce09190ad20a3ca955b655", null ],
     [ "FW_CMD_CHECK_RESIDUAL", "fp_config_8h.html#af83eb73a0e506bb7f934f5f51e542ce4", null ],
