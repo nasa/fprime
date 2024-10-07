@@ -21,6 +21,8 @@ Functionality::Functionality() : tester(get_tester_implementation()) {
     for (U32 i = 0; i < tester->TIME_COUNT; ++i) {
         tester->m_times.emplace_back();
         tester->m_shadow_times.emplace_back();
+        tester->m_times[i].getRawTime();
+        tester->m_shadow_times[i] = std::chrono::system_clock::now();
     }
 }
 
@@ -48,10 +50,16 @@ TEST_F(Functionality, SelfDiffIsZero) {
     self_diff_rule.apply(*tester);
 }
 
-// GetTimeDiff
-TEST_F(Functionality, GetTimeDiff) {
-    Os::Test::RawTime::Tester::GetTimeDiff get_diff_rule;
+// GetTimeDiffU32
+TEST_F(Functionality, GetTimeDiffU32) {
+    Os::Test::RawTime::Tester::GetTimeDiffU32 get_diff_rule;
     get_diff_rule.apply(*tester);
+}
+
+// GetTimeInterval
+TEST_F(Functionality, GetTimeInterval) {
+    Os::Test::RawTime::Tester::GetTimeInterval get_interval_rule;
+    get_interval_rule.apply(*tester);
 }
 
 // Serialization
@@ -59,6 +67,8 @@ TEST_F(Functionality, Serialization) {
     Os::Test::RawTime::Tester::Serialization serialization_rule;
     serialization_rule.apply(*tester);
 }
+
+// TODO: add overflow rule
 
 
 // ManualTesting
@@ -82,7 +92,8 @@ TEST_F(Functionality, RandomizedTesting) {
     // Enumerate all rules and construct an instance of each
     Os::Test::RawTime::Tester::GetRawTime get_time_rule;
     Os::Test::RawTime::Tester::SelfDiffIsZero diff_zero_rule;
-    Os::Test::RawTime::Tester::GetTimeDiff get_diff_rule;
+    Os::Test::RawTime::Tester::GetTimeDiffU32 get_diff_rule;
+    Os::Test::RawTime::Tester::GetTimeInterval get_interval_rule;
     Os::Test::RawTime::Tester::Serialization serialization_rule;
 
     // Place these rules into a list of rules
@@ -90,6 +101,7 @@ TEST_F(Functionality, RandomizedTesting) {
             &get_time_rule,
             &diff_zero_rule,
             &get_diff_rule,
+            &get_interval_rule,
             &serialization_rule,
     };
 
@@ -104,7 +116,7 @@ TEST_F(Functionality, RandomizedTesting) {
     STest::BoundedScenario<Os::Test::RawTime::Tester> bounded(
             "Bounded Random Rules Scenario",
             random,
-            1000
+            5000
     );
     // Run!
     const U32 numSteps = bounded.run(*tester);

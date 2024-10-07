@@ -9,22 +9,50 @@
 namespace Os {
 namespace Stub {
 namespace RawTime {
+namespace Test {
 
-struct StubRawTimeHandle : public RawTimeHandle {};
+//! Data that supports the stubbed Mutex implementation.
+//!/
+struct StaticData {
+    //! Enumeration of last function called
+    //!
+    enum LastFn {
+        NONE_FN,
+        GET_TIME_FN,
+        GET_DIFF_FN,
+        GET_INTERVAL_FN,
+        SERIALIZE_FN,
+        DESERIALIZE_FN,
+        GET_HANDLE_FN,
+        CONSTRUCT_FN,
+        DESTRUCT_FN
+    };
+    StaticData() = default;
+    ~StaticData() = default;
 
-//! \brief stub implementation of Os::RawTime
+    //! Last function called
+    LastFn lastCalled = NONE_FN;
+
+    Os::RawTime::Status lastStatus = Os::RawTime::Status::OP_OK;
+
+    // Singleton data
+    static StaticData data;
+};
+struct TestRawTimeHandle : public RawTimeHandle {};
+
+//! \brief Test implementation of Os::RawTime
 //!
-//! Stub implementation of `RawTimeInterface`.
+//! Test implementation of `RawTimeInterface`.
 //!
-class StubRawTime : public RawTimeInterface {
+class TestRawTime : public RawTimeInterface {
   public:
     //! \brief constructor
     //!
-    StubRawTime() = default;
+    TestRawTime();
 
     //! \brief destructor
     //!
-    ~StubRawTime() override = default;
+    ~TestRawTime() override;
 
     //! \brief return the underlying RawTime handle (implementation specific)
     //! \return internal RawTime handle representation
@@ -37,11 +65,12 @@ class StubRawTime : public RawTimeInterface {
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;      //!< deserialize to contents
 
   private:
-    //! Handle for StubRawTime
-    StubRawTimeHandle m_handle;
+    //! Handle for TestRawTime
+    TestRawTimeHandle m_handle;
 };
 
+} // namespace Test
 } // namespace RawTime
-} // namespace Stub
+} // namespace Test
 } // namespace Os
-#endif // OS_STUB_RAWTIME_HPP
+#endif // OS_Test_RAWTIME_HPP

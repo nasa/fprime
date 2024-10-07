@@ -17,6 +17,11 @@ namespace RawTime {
         return Status::OP_OK;
     }
 
+    StubRawTime::Status StubRawTime::getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const {
+        interval.set(0, 0);
+        return Status::OP_OK;
+    }
+
     Fw::SerializeStatus StubRawTime::serialize(Fw::SerializeBufferBase& buffer) const {
         return Fw::FW_SERIALIZE_OK;
     }

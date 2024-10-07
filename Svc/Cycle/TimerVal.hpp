@@ -9,8 +9,8 @@
 #define TIMERVAL_HPP_
 
 #include <Fw/Types/Serializable.hpp>
-#include <Os/IntervalTimer.hpp>
-#include <Os/Posix/RawTime.hpp>
+#include <Os/RawTime.hpp>
+// #include <Os/Posix/RawTime.hpp> // TODO: figure out how to get rid of this... shared header? weird...
 
 namespace Svc {
 
@@ -24,7 +24,7 @@ namespace Svc {
         public:
 
             // TODO: is this ok?
-            static constexpr FwSizeType SERIALIZED_SIZE = OS_RAWTIME_SERIALIZED_SIZE; //!< size of TimerVal private members
+            static const FwSizeType SERIALIZED_SIZE = 2 * sizeof(U32); //!< size of TimerVal private members
 
             TimerVal(); //!< Default constructor
 

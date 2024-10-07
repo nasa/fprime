@@ -7,6 +7,7 @@
 #define __RULES_HEADERS__
 #include <gtest/gtest.h>
 #include <vector>
+#include <chrono>
 
 #include "Os/RawTime.hpp"
 #include "STest/Rule/Rule.hpp"
@@ -15,9 +16,6 @@
 #include "STest/Scenario/BoundedScenario.hpp"
 
 
-// #include "STest/Scenario/Scenario.hpp"
-
-#include <chrono>
 
 namespace Os {
 namespace Test {
@@ -25,7 +23,7 @@ namespace RawTime {
 
 struct Tester {
     // Constructors that ensures the mutex is always valid
-    Tester(): m_times() {}
+    Tester() = default;
 
     // Destructor must be virtual
     virtual ~Tester() = default;
@@ -45,6 +43,30 @@ struct Tester {
 
     U32 shadow_getDiffUsec(std::chrono::time_point<std::chrono::system_clock>& t1, std::chrono::time_point<std::chrono::system_clock>& t2) const {
         return std::chrono::duration_cast<std::chrono::microseconds>(t1 - t2).count();
+    }
+
+    void shadow_getTimeInterval(FwIndexType index1, FwIndexType index2, Fw::TimeInterval& interval) {
+        auto duration = this->m_shadow_times[index1] - this->m_shadow_times[index2];
+        if (duration < std::chrono::system_clock::duration::zero()) {
+            duration = -duration;
+        }
+
+        U32 microseconds = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+        U32 seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
+
+        interval.set(seconds, microseconds);
+    }
+
+    bool shadow_validate_interval_result(FwIndexType index1, FwIndexType index2, const Fw::TimeInterval& interval) {
+        Fw::TimeInterval shadow_interval;
+        Fw::TimeInterval result;
+        this->shadow_getTimeInterval(index1, index2, shadow_interval);
+        if (interval < shadow_interval) {
+            result = Fw::TimeInterval::sub(shadow_interval, interval);
+            return result < Fw::TimeInterval(0, 10);
+        }
+        result = Fw::TimeInterval::sub(interval, shadow_interval);
+        return result < Fw::TimeInterval(0, 10);
     }
 
     FwIndexType pick_random_index() const {

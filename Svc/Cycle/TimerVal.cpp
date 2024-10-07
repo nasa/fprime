@@ -32,11 +32,13 @@ namespace Svc {
     }
 
     void TimerVal::take() {
-        Os::IntervalTimer::getRawTime(this->m_rawTime);
+        this->m_rawTime.getRawTime();
     }
 
     U32 TimerVal::diffUSec(const TimerVal& time) {
-        return Os::IntervalTimer::getDiffUsec(this->m_rawTime, time.m_rawTime);
+        U32 result = 0;
+        this->m_rawTime.getDiffUsec(time.m_rawTime, result);
+        return result;
     }
 
     Fw::SerializeStatus TimerVal::serialize(Fw::SerializeBufferBase& buffer) const {

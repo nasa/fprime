@@ -49,6 +49,16 @@ RawTime::Status RawTime::getDiffUsec(const RawTimeHandle& other, U32& result) co
     return this->m_delegate.getDiffUsec(other, result);
 }
 
+RawTime::Status RawTime::getTimeInterval(const RawTime& other, Fw::TimeInterval& result) const {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.getTimeInterval(* const_cast<RawTimeHandle*>(const_cast<RawTime&>(other).getHandle()), result);
+}
+
+RawTime::Status RawTime::getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& result) const {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.getTimeInterval(other, result);
+}
+
 Fw::SerializeStatus RawTime::serialize(Fw::SerializeBufferBase& buffer) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     // ASSERT on buffer.getBuffCapacity() ??

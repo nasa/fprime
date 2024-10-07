@@ -13,16 +13,6 @@
 namespace Os {
     class IntervalTimer {
         public:
-            /**
-             * RawTime:
-             *
-             * Most time is stored as an upper and lower part of this raw time object. The
-             * semantic meaning of this "RawTime" is platform-dependent.
-             */
-            // typedef struct {
-            //     U32 upper;  //!< Upper 32-bits part of time value. Platform dependent.
-            //     U32 lower; //!< Lower 32-bits part of time value. Platform dependent.
-            // } RawTime;
 
             IntervalTimer(); //!<  Constructor
             ~IntervalTimer() = default; //!<  Destructor

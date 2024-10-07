@@ -24,6 +24,7 @@ namespace Os {
         time.getRawTime();
     }
 
+    // use a Fw::TimeInterval (in Fw/Time), using U32; U32
     U32 IntervalTimer::getDiffUsec(const RawTime& t1, const RawTime& t2) {
         U32 result = 0;
         t1.getDiffUsec(t2, result);

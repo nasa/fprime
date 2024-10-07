@@ -4,6 +4,7 @@
 // ======================================================================
 #include "Os/Posix/RawTime.hpp"
 #include "Os/Delegate.hpp"
+#include "Svc/Cycle/TimerVal.hpp"
 namespace Os {
 
 //! \brief get a delegate for RawTimeInterface that intercepts calls for Posix
@@ -15,4 +16,8 @@ RawTimeInterface *RawTimeInterface::getDelegate(HandleStorage& aligned_new_memor
             aligned_new_memory, to_copy
     );
 }
-}
+
+const FwSizeType RawTimeInterface::SERIALIZED_SIZE = sizeof(U32) * 2; // TODO: document why
+}  // namespace Os
+
+// const FwSizeType Svc::TimerVal::SERIALIZED_SIZE = sizeof(U32) * 2; // TODO: document why

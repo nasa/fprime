@@ -7,14 +7,26 @@
 #include <ctime>
 #include <Os/RawTime.hpp>
 
-static constexpr FwSizeType OS_RAWTIME_SERIALIZED_SIZE = sizeof(timespec);
+// static constexpr FwSizeType OS_RAWTIME_SERIALIZED_SIZE = sizeof(timespec);
+
+// Questions:
+// - U32 for result in getDiffUsec ? Should I use a FwTimePrecision type or something instead?
+// - U32 microsec of diff means you can only have ~4000 seconds of difference before overflow ???
+// - is the process of using std::chrono for shadow times good ?
+// - operations in getDiffUsec are not safe from overflow  - return a status is good enough?
+// - How to handle TimerVal constructor for testing... not much of a question
+// - Should IntervalTimer be moved to Fw ??? It's not really Os anymore --> No
+// - How to handle OS_RAWTIME_SERIALIZED_SIZE ???
+
+
+
 
 namespace Os {
 namespace Posix {
 namespace RawTime {
 
 struct PosixRawTimeHandle : public RawTimeHandle {
-    timespec m_timespec = {0, 0};
+    timespec m_timespec = {0, 0}; // do it the stupidly verbose way
 };
 
 //! \brief Posix implementation of Os::RawTime
@@ -23,8 +35,7 @@ struct PosixRawTimeHandle : public RawTimeHandle {
 //!
 class PosixRawTime : public RawTimeInterface {
   public:
-
-    static constexpr FwSizeType SERIALIZED_SIZE = OS_RAWTIME_SERIALIZED_SIZE;
+    // static const FwSizeType SERIALIZED_SIZE = RawTimeInterface::SERIALIZED_SIZE;
 
     //! \brief constructor
     PosixRawTime();
@@ -37,9 +48,12 @@ class PosixRawTime : public RawTimeInterface {
     RawTimeHandle* getHandle() override;
 
     Status getRawTime() override;
-    Status getDiffUsec(const RawTimeHandle& other, U32& result) const override;
+    Status getDiffUsec(const RawTimeHandle& other, U32& result) const override; // use a Fw::TimeInterval (in Fw/Time) U32/U32 pair
+    Status getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const override;
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;  //!< serialize contents
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;      //!< deserialize to contents
+
+    // TODO: add toFwTime() ?? and fromFwTime() ??
 
 
   private:

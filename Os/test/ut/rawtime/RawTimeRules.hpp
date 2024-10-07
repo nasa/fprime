@@ -39,10 +39,19 @@ struct GetRawTime : public STest::Rule<Os::Test::RawTime::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule GetTimeDiff: Get diff between two RawTime
+// Rule GetTimeDiffU32: Get diff between two RawTime
 // ------------------------------------------------------------------------------------------------------
-struct GetTimeDiff : public STest::Rule<Os::Test::RawTime::Tester> {
-    GetTimeDiff();
+struct GetTimeDiffU32 : public STest::Rule<Os::Test::RawTime::Tester> {
+    GetTimeDiffU32();
+    bool precondition(const Os::Test::RawTime::Tester &state);
+    void action(Os::Test::RawTime::Tester &state);
+};
+
+// ------------------------------------------------------------------------------------------------------
+// Rule GetTimeInterval: Get diff between two RawTime
+// ------------------------------------------------------------------------------------------------------
+struct GetTimeInterval : public STest::Rule<Os::Test::RawTime::Tester> {
+    GetTimeInterval();
     bool precondition(const Os::Test::RawTime::Tester &state);
     void action(Os::Test::RawTime::Tester &state);
 };

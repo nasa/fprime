@@ -7,6 +7,7 @@
 
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
+#include <Fw/Time/TimeInterval.hpp>
 #include <Os/Os.hpp>
 
 
@@ -15,10 +16,14 @@ namespace Os {
 struct RawTimeHandle {};
 
 class RawTimeInterface : public Fw::Serializable {
-
+  
   public:
+
+    static const FwSizeType SERIALIZED_SIZE;
+
     enum Status { 
       OP_OK, //!<  Operation was successful
+      OP_OVERFLOW, //!< Operation result caused an overflow
       ERROR_OTHER //!< All other errors
     };
 
@@ -41,6 +46,7 @@ class RawTimeInterface : public Fw::Serializable {
     // ------------------------------------------------------------------
     virtual Status getRawTime() = 0;                 //!<  docs
     virtual Status getDiffUsec(const RawTimeHandle& other, U32& result) const = 0;  //!<  docs
+    virtual Status getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const = 0;  //!<  docs
 
     virtual Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const = 0;  //!< serialize contents
     virtual Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) = 0;      //!< deserialize to contents
@@ -64,13 +70,14 @@ class RawTime final : public RawTimeInterface {
 
     Status getRawTime() override;
     Status getDiffUsec(const RawTimeHandle& other, U32& result) const override;
-
+    Status getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const override;  //!<  docs
 
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;  //!< serialize contents
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;      //!< deserialize to contents
 
     //------------ Common Functions ------------
     Status getDiffUsec(const RawTime& other, U32& result) const;
+    Status getTimeInterval(const RawTime& other, Fw::TimeInterval& result_interval) const;  //!<  docs
 
 
   private:
