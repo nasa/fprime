@@ -91,6 +91,10 @@ typedef U32 FwOpcodeType;
 typedef U32 FwChanIdType;
 #define PRI_FwChanIdType PRIu32
 
+// The type of a trace identifier
+typedef U32 FwTraceIdType;
+#define PRI_FwTraceIdType PRIu32
+
 // The type of an event identifier
 typedef U32 FwEventIdType;
 #define PRI_FwEventIdType PRIu32
