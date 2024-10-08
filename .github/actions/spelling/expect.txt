@@ -686,6 +686,7 @@ notchars
 NOTYPE
 Nowicki
 nproc
+NPROCESSORS
 npx
 NSHUFF
 NSPACES
@@ -707,6 +708,7 @@ oldeol
 OLDINCLUDEDIR
 OMG
 onlinepubs
+ONLN
 OPCODEBASE
 opengroup
 openmct
@@ -954,6 +956,7 @@ Shenker
 showinitializer
 sideeffect
 sighandler
+Signedness
 SIMPLEQUEUEREGISTRY
 sinc
 Sinha
@@ -1095,6 +1098,7 @@ TIMERVAL
 timetag
 timeval
 timothycanham
+Tinternal
 tions
 tjh
 TKC

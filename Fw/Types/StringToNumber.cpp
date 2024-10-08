@@ -44,7 +44,7 @@ Fw::StringUtils::StringToNumberStatus string_to_helper_output_check(Fw::StringUt
 // Template for internal implementation only
 // \tparam T: input type (U8, I8, U64, I64)
 // \tparam Tinternal: function api type
-// \tpram F: conversion function to use
+// \tparam F: conversion function to use
 template <typename T, typename Tinternal, Tinternal (*F)(const char*, char**, int)>
 Fw::StringUtils::StringToNumberStatus string_to_number_as_template(const CHAR* input, FwSizeType max_length, T& output, char** next, U8 base) {
     static_assert(std::numeric_limits<T>::is_integer, "Type must be integer");
