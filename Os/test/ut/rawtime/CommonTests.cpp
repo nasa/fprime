@@ -15,10 +15,10 @@ std::unique_ptr<Os::Test::RawTime::Tester> get_tester_implementation() {
 
 Functionality::Functionality() : tester(get_tester_implementation()) {
 
-    tester->m_times.reserve(tester->TIME_COUNT);
-    tester->m_shadow_times.reserve(tester->TIME_COUNT);
+    tester->m_times.reserve(tester->TEST_TIME_COUNT);
+    tester->m_shadow_times.reserve(tester->TEST_TIME_COUNT);
 
-    for (U32 i = 0; i < tester->TIME_COUNT; ++i) {
+    for (U32 i = 0; i < tester->TEST_TIME_COUNT; ++i) {
         tester->m_times.emplace_back();
         tester->m_shadow_times.emplace_back();
         tester->m_times[i].getRawTime();

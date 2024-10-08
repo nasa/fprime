@@ -19,7 +19,6 @@ struct StaticData {
     enum LastFn {
         NONE_FN,
         GET_TIME_FN,
-        GET_DIFF_FN,
         GET_INTERVAL_FN,
         SERIALIZE_FN,
         DESERIALIZE_FN,
@@ -59,7 +58,6 @@ class TestRawTime : public RawTimeInterface {
     RawTimeHandle* getHandle() override;
 
     Status getRawTime() override;
-    Status getDiffUsec(const RawTimeHandle& other, U32& result) const override;
     Status getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const override;  //!<  docs
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;  //!< serialize contents
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;      //!< deserialize to contents

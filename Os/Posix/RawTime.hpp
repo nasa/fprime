@@ -48,12 +48,9 @@ class PosixRawTime : public RawTimeInterface {
     RawTimeHandle* getHandle() override;
 
     Status getRawTime() override;
-    Status getDiffUsec(const RawTimeHandle& other, U32& result) const override; // use a Fw::TimeInterval (in Fw/Time) U32/U32 pair
     Status getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const override;
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;  //!< serialize contents
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;      //!< deserialize to contents
-
-    // TODO: add toFwTime() ?? and fromFwTime() ??
 
 
   private:

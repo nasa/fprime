@@ -47,14 +47,6 @@ TEST_F(Interface, GetRawTime) {
 }
 
 // Ensure that Os::RawTime properly calls the following delegate function
-TEST_F(Interface, GetDiffUsec) {
-    Os::RawTime rawtime;
-    U32 unused;
-    ASSERT_EQ(rawtime.getDiffUsec(rawtime, unused), Os::RawTime::Status::OP_OK);
-    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_DIFF_FN);
-}
-
-// Ensure that Os::RawTime properly calls the following delegate function
 TEST_F(Interface, GetTimeInterval) {
     Os::RawTime rawtime;
     Fw::TimeInterval unused;

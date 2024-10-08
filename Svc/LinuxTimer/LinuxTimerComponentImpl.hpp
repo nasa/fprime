@@ -50,7 +50,7 @@ namespace Svc {
 
       volatile bool m_quit; //!< flag to quit
 
-      Svc::TimerVal m_timer;
+      Os::RawTime m_rawTime; //!< timestamp to pass to CycleOut port calls
 
 
     };

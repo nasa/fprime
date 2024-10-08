@@ -19,12 +19,14 @@ class RawTimeInterface : public Fw::Serializable {
   
   public:
 
-    static const FwSizeType SERIALIZED_SIZE;
+    // Serialization size for RawTime objects
+    static const FwSizeType SERIALIZED_SIZE = 2 * sizeof(U32); // TODO: document why + this is a limitation
 
-    enum Status { 
+    enum Status {
       OP_OK, //!<  Operation was successful
       OP_OVERFLOW, //!< Operation result caused an overflow
-      ERROR_OTHER //!< All other errors
+      INVALID_PARAMS, //!< Parameters invalid for current platform
+      OTHER_ERROR //!< All other errors
     };
 
     //! \brief default constructor
@@ -38,18 +40,39 @@ class RawTimeInterface : public Fw::Serializable {
     virtual RawTimeHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a RawTime delegate object
-    // TODO: docs
-    static RawTimeInterface* getDelegate(HandleStorage& aligned_new_memory, const RawTimeInterface* to_copy=nullptr);  // TODO
+    static RawTimeInterface* getDelegate(HandleStorage& aligned_new_memory, const RawTimeInterface* to_copy=nullptr);
 
     // ------------------------------------------------------------------
     // RawTime operations to be implemented by an OSAL implementation
     // ------------------------------------------------------------------
-    virtual Status getRawTime() = 0;                 //!<  docs
-    virtual Status getDiffUsec(const RawTimeHandle& other, U32& result) const = 0;  //!<  docs
-    virtual Status getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const = 0;  //!<  docs
+    //! \brief Get current time and store it in the object
+    //!
+    //! Store the current time in implementation-specific RawTimeHandle
+    //!
+    //! \return `Status` status of the operation.
+    virtual Status getRawTime() = 0;
 
-    virtual Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const = 0;  //!< serialize contents
-    virtual Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) = 0;      //!< deserialize to contents
+    //! \brief Calculate the time interval between the current raw time and another raw time.
+    //! \param other The other RawTimeHandle to compare against.
+    //! \param interval Output: the calculated time interval.
+    //! \return Status of the operation.
+    virtual Status getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const = 0;
+
+    //! \brief Serialize the contents of the RawTimeInterface object.
+    //!
+    //! NOTE: Serialization size is limited to 2 * sizeof(U32).
+    //!
+    //! \param buffer The buffer to serialize the contents into.
+    //! \return `Fw::SerializeStatus` status of the serialization.
+    virtual Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const = 0;
+
+    //! \brief Deserialize the contents of the RawTimeInterface object.
+    //!
+    //! NOTE: Serialization size is limited to 2 * sizeof(U32).
+    //!
+    //! \param buffer The buffer to deserialize the contents from.
+    //! \return `Fw::SerializeStatus` status of the deserialization.
+    virtual Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) = 0;
 
 };
 
@@ -69,11 +92,13 @@ class RawTime final : public RawTimeInterface {
     RawTimeHandle* getHandle() override;
 
     Status getRawTime() override;
-    Status getDiffUsec(const RawTimeHandle& other, U32& result) const override;
     Status getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const override;  //!<  docs
 
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;  //!< serialize contents
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;      //!< deserialize to contents
+
+    // TODO: add toFwTime() ?? and fromFwTime() ??
+
 
     //------------ Common Functions ------------
     Status getDiffUsec(const RawTime& other, U32& result) const;

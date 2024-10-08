@@ -17,6 +17,4 @@ RawTimeInterface *RawTimeInterface::getDelegate(HandleStorage& aligned_placement
     );
 }
 
-const FwSizeType RawTimeInterface::SERIALIZED_SIZE = 0; // Nothing to serialize in the Test implementation
-
 }  // namespace Os

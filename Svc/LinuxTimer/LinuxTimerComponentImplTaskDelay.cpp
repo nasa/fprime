@@ -26,8 +26,8 @@ namespace Svc {
           if (quit) {
               return;
           }
-          this->m_timer.take();
-          this->CycleOut_out(0,this->m_timer);
+          this->m_rawTime.take();
+          this->CycleOut_out(0,this->m_rawTime);
       }
   }
 

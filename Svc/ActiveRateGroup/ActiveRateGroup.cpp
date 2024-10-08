@@ -52,12 +52,12 @@ namespace Svc {
         this->log_DIAGNOSTIC_RateGroupStarted();
     }
 
-    void ActiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void ActiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
 
         // Make sure it's been configured
         FW_ASSERT(this->m_numContexts);
 
-        TimerVal end;
+        Os::RawTime end;
 
         this->m_cycleStarted = false;
 
@@ -69,10 +69,15 @@ namespace Svc {
         }
 
         // grab timer for end of cycle
-        end.take();
+        end.getRawTime();
 
         // get rate group execution time
-        U32 cycle_time = end.diffUSec(cycleStart);
+        U32 cycle_time;
+        Os::RawTime::Status status = end.getDiffUsec(cycleStart, cycle_time);
+        // TODO: how to handle error here? There is overflow happening in testing....
+        if (status != Os::RawTime::OP_OK) {
+            cycle_time = std::numeric_limits<U32>::max();
+        }
 
         // check to see if the time has exceeded the previous maximum
         if (cycle_time > this->m_maxTime) {
@@ -103,7 +108,7 @@ namespace Svc {
 
     }
 
-    void ActiveRateGroup::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void ActiveRateGroup::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
         // set flag to indicate cycle has started. Check in thread for overflow.
         this->m_cycleStarted = true;
     }

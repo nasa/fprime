@@ -16,10 +16,10 @@ namespace Drv {
 
     void BlockDriverImpl::InterruptReport_internalInterfaceHandler(U32 ip) {
         // get time
-        Svc::TimerVal timer;
-        timer.take();
+        Os::RawTime time;
+        time.getRawTime();
         // call output timing signal
-        this->CycleOut_out(0,timer);
+        this->CycleOut_out(0,time);
         // increment cycles and write channel
         this->tlmWrite_BD_Cycles(this->m_cycles);
         this->m_cycles++;

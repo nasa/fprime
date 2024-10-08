@@ -12,11 +12,6 @@ namespace RawTime {
         return Status::OP_OK;
     }
 
-    StubRawTime::Status StubRawTime::getDiffUsec(const RawTimeHandle& other, U32& result) const {
-        result = 0;
-        return Status::OP_OK;
-    }
-
     StubRawTime::Status StubRawTime::getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const {
         interval.set(0, 0);
         return Status::OP_OK;

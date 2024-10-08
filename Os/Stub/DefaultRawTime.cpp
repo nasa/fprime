@@ -16,6 +16,4 @@ RawTimeInterface *RawTimeInterface::getDelegate(HandleStorage& aligned_placement
     );
 }
 
-const FwSizeType RawTimeInterface::SERIALIZED_SIZE = 0; // No data to serialize for the Stub implementation
-
-}
+} // namespace Os

@@ -29,11 +29,6 @@ TestRawTime::Status TestRawTime::getRawTime() {
     return Status::OP_OK;
 }
 
-TestRawTime::Status TestRawTime::getDiffUsec(const RawTimeHandle& other, U32& result) const {
-    StaticData::data.lastCalled = StaticData::LastFn::GET_DIFF_FN;
-    return Status::OP_OK;
-}
-
 TestRawTime::Status TestRawTime::getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const {
     StaticData::data.lastCalled = StaticData::LastFn::GET_INTERVAL_FN;
     return Status::OP_OK;

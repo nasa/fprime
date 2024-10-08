@@ -151,7 +151,7 @@ namespace Fw {
 #ifdef BUILD_UT
     std::ostream& operator<<(std::ostream& os, const TimeInterval& val) {
 
-        os << "(" << val.getUSeconds() << "," << val.getSeconds() << ")";
+        os << "(" << val.getSeconds() << "s," << val.getUSeconds() << "us)";
         return os;
     }
 #endif

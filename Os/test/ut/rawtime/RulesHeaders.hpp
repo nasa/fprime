@@ -28,9 +28,14 @@ struct Tester {
     // Destructor must be virtual
     virtual ~Tester() = default;
 
-    static constexpr U32 TIME_COUNT = 5;
+    // Number of instances of RawTime under test
+    static constexpr U32 TEST_TIME_COUNT = 5;
 
-    //! RawTime under test
+    // Threshold for time differences, in microseconds
+    // This value was selected empirically
+    static constexpr U32 INTERVAL_DIFF_THRESHOLD = 20;
+
+    //! RawTime (array thereof) under test
     std::vector<Os::RawTime> m_times;
 
     //! Shadow time for testing (vector of std time points)
@@ -63,14 +68,15 @@ struct Tester {
         this->shadow_getTimeInterval(index1, index2, shadow_interval);
         if (interval < shadow_interval) {
             result = Fw::TimeInterval::sub(shadow_interval, interval);
-            return result < Fw::TimeInterval(0, 10);
+        } else {
+            result = Fw::TimeInterval::sub(interval, shadow_interval);
         }
-        result = Fw::TimeInterval::sub(interval, shadow_interval);
-        return result < Fw::TimeInterval(0, 10);
+        // Check that difference between 2 intervals is less than threshold
+        return result < Fw::TimeInterval(0, INTERVAL_DIFF_THRESHOLD);
     }
 
     FwIndexType pick_random_index() const {
-        return STest::Pick::lowerUpper(0, TIME_COUNT - 1);;
+        return STest::Pick::lowerUpper(0, TEST_TIME_COUNT - 1);;
     }
 
 // Do NOT alter, adds rules to Tester as inner classes

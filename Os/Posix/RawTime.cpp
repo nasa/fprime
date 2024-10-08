@@ -23,31 +23,10 @@ PosixRawTime::~PosixRawTime() {
 PosixRawTime::Status PosixRawTime::getRawTime() {
     Fw::Logger::log("Getting raw time\n");
     PlatformIntType status = clock_gettime(CLOCK_REALTIME, &this->m_handle.m_timespec);
-    FW_ASSERT(status == 0, errno); // TODO: error handling
+    if (status != 0) {
+        return errno_to_rawtime_status(errno);
+    }
     return Status::OP_OK;
-}
-
-PosixRawTime::Status PosixRawTime::getDiffUsec(const RawTimeHandle& other, U32& result) const {
-    Fw::Logger::log("Getting diff usec!!\n");
-    Fw::TimeInterval interval;
-    Status status = this->getTimeInterval(other, interval);
-    if (status != Status::OP_OK) {
-        return status;
-    }
-
-    // Check overflows in computation
-    U32 seconds = interval.getSeconds();
-    U32 useconds = interval.getUSeconds();
-    if (seconds > (std::numeric_limits<U32>::max() / 1000000)) {
-        return Status::OP_OVERFLOW;
-    }
-    U32 secToUsec = seconds * 1000000;
-    if (secToUsec > (std::numeric_limits<U32>::max() - useconds)) {
-        return Status::OP_OVERFLOW;
-    }
-    // No overflow, we can safely add values to get total microseconds
-    result = secToUsec + useconds;
-    return status;
 }
 
 PosixRawTime::Status PosixRawTime::getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const {
@@ -81,7 +60,7 @@ RawTimeHandle* PosixRawTime::getHandle() {
 
 Fw::SerializeStatus PosixRawTime::serialize(Fw::SerializeBufferBase& buffer) const {
     Fw::Logger::log("Serializing raw time\n");
-    FW_ASSERT(PosixRawTime::SERIALIZED_SIZE >= 2 * sizeof(U32));
+    FW_ASSERT(PosixRawTime::SERIALIZED_SIZE >= 2 * sizeof(U32)); //TODO: static assert possible?
     buffer.serialize(static_cast<U32>(this->m_handle.m_timespec.tv_sec));
     buffer.serialize(static_cast<U32>(this->m_handle.m_timespec.tv_nsec));
     return Fw::SerializeStatus::FW_SERIALIZE_OK;

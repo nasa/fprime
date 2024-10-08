@@ -33,7 +33,7 @@ namespace Svc {
     RateGroupDriverImplTester::~RateGroupDriverImplTester() {
     }
 
-    void RateGroupDriverImplTester::from_CycleOut_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void RateGroupDriverImplTester::from_CycleOut_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
         this->m_portCalls[portNum] = true;
     }
 

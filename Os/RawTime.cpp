@@ -39,16 +39,6 @@ RawTime::Status RawTime::getRawTime() {
     return this->m_delegate.getRawTime();
 }
 
-RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.getDiffUsec(* const_cast<RawTimeHandle*>(const_cast<RawTime&>(other).getHandle()), result);
-}
-
-RawTime::Status RawTime::getDiffUsec(const RawTimeHandle& other, U32& result) const {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.getDiffUsec(other, result);
-}
-
 RawTime::Status RawTime::getTimeInterval(const RawTime& other, Fw::TimeInterval& result) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getTimeInterval(* const_cast<RawTimeHandle*>(const_cast<RawTime&>(other).getHandle()), result);
@@ -64,10 +54,32 @@ Fw::SerializeStatus RawTime::serialize(Fw::SerializeBufferBase& buffer) const {
     // ASSERT on buffer.getBuffCapacity() ??
     return this->m_delegate.serialize(buffer);
 }
+
 Fw::SerializeStatus RawTime::deserialize(Fw::SerializeBufferBase& buffer) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.deserialize(buffer);
 }
 
+RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
+    Fw::TimeInterval interval;
+    Status status = this->getTimeInterval(other, interval);
+    if (status != Status::OP_OK) {
+        return status;
+    }
+
+    // Check overflows in computation
+    U32 seconds = interval.getSeconds();
+    U32 useconds = interval.getUSeconds();
+    if (seconds > (std::numeric_limits<U32>::max() / 1000000)) {
+        return Status::OP_OVERFLOW;
+    }
+    U32 secToUsec = seconds * 1000000;
+    if (secToUsec > (std::numeric_limits<U32>::max() - useconds)) {
+        return Status::OP_OVERFLOW;
+    }
+    // No overflow, we can safely add values to get total microseconds
+    result = secToUsec + useconds;
+    return status;
+}
 
 }  // namespace Os
