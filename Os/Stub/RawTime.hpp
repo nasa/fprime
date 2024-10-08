@@ -2,10 +2,11 @@
 // \title Os/Stub/RawTime.hpp
 // \brief stub definitions for Os::RawTime
 // ======================================================================
-#include "Os/RawTime.hpp"
-
 #ifndef OS_STUB_RAWTIME_HPP
 #define OS_STUB_RAWTIME_HPP
+
+#include "Os/RawTime.hpp"
+
 namespace Os {
 namespace Stub {
 namespace RawTime {
