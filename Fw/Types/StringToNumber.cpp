@@ -66,7 +66,7 @@ Fw::StringUtils::StringToNumberStatus string_to_number_as_template(const CHAR* i
             status = Fw::StringUtils::StringToNumberStatus::INVALID_RANGE;
             output_api = std::numeric_limits<T>::min();
         }
-        output = output_api;
+        output = static_cast<T>(output_api);
     }
     status = string_to_helper_output_check(status, input, output_next, next);
     return status;
