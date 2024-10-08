@@ -4,21 +4,9 @@
 // ======================================================================
 #ifndef OS_POSIX_RAWTIME_HPP
 #define OS_POSIX_RAWTIME_HPP
+
 #include <ctime>
 #include <Os/RawTime.hpp>
-
-// static constexpr FwSizeType OS_RAWTIME_SERIALIZED_SIZE = sizeof(timespec);
-
-// Questions:
-// - U32 for result in getDiffUsec ? Should I use a FwTimePrecision type or something instead?
-// - U32 microsec of diff means you can only have ~4000 seconds of difference before overflow ???
-// - is the process of using std::chrono for shadow times good ?
-// - operations in getDiffUsec are not safe from overflow  - return a status is good enough?
-// - How to handle TimerVal constructor for testing... not much of a question
-// - Should IntervalTimer be moved to Fw ??? It's not really Os anymore --> No
-// - How to handle OS_RAWTIME_SERIALIZED_SIZE ???
-
-
 
 
 namespace Os {

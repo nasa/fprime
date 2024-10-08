@@ -4,7 +4,7 @@
 // ======================================================================
 #include "Os/Posix/RawTime.hpp"
 #include "Os/Delegate.hpp"
-#include "Svc/Cycle/TimerVal.hpp"
+
 namespace Os {
 
 //! \brief get a delegate for RawTimeInterface that intercepts calls for Posix

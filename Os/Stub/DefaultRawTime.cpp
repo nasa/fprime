@@ -4,6 +4,7 @@
 // ======================================================================
 #include "Os/Stub/RawTime.hpp"
 #include "Os/Delegate.hpp"
+
 namespace Os {
 
 //! \brief get a delegate for RawTimeInterface that intercepts calls for stub RawTime usage
