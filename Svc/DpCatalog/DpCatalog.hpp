@@ -227,6 +227,7 @@ namespace Svc {
         DpBtreeNode* m_freeListFoot; //!< The foot of the free list
         DpBtreeNode** m_traverseStack; //!< pointer to memory for stack for traversing tree
         DpBtreeNode* m_currentNode; //!< current node for traversing tree
+        DpBtreeNode* m_currentXmitNode; //!< node being currently transmitted
 
         FwSizeType m_numDpRecords; //!< Stores the actual number of records.
         FwSizeType m_numDpSlots; //!< Stores the available number of record slots.

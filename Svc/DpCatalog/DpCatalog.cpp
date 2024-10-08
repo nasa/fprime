@@ -27,6 +27,7 @@ namespace Svc {
         m_freeListFoot(nullptr),
         m_traverseStack(nullptr),
         m_currentNode(nullptr),
+        m_currentXmitNode(nullptr),
         m_numDpRecords(0),
         m_numDpSlots(0),
         m_numDirectories(0),
@@ -184,7 +185,7 @@ namespace Svc {
 
             // reset the buffer for deserializing the entry
             entryBuffer.setBuffLen(size);
-            entryBuffer.resetSer();
+            entryBuffer.resetDeser();
 
             // deserialization after this point should always work, since
             // the source buffer was specifically sized to hold the data
@@ -628,9 +629,9 @@ namespace Svc {
         FW_ASSERT(this->m_traverseStack);
 
         // look in the tree for the next entry to send
-        DpCatalog::DpBtreeNode* found = this->findNextTreeNode();
+        this->m_currentXmitNode = this->findNextTreeNode();
 
-        if (found == nullptr) {
+        if (this->m_currentXmitNode == nullptr) {
             // if no entry found, we are done
             this->m_xmitInProgress = false;
             this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
@@ -638,15 +639,15 @@ namespace Svc {
         } else {
             // build file name based on the the found entry
             this->m_currXmitFileName.format(DP_FILENAME_FORMAT,
-                this->m_directories[found->entry.dir].toChar(),
-                found->entry.record.getid(),
-                found->entry.record.gettSec(),
-                found->entry.record.gettSub()
+                this->m_directories[this->m_currentXmitNode->entry.dir].toChar(),
+                this->m_currentXmitNode->entry.record.getid(),
+                this->m_currentXmitNode->entry.record.gettSec(),
+                this->m_currentXmitNode->entry.record.gettSub()
             );
             this->log_ACTIVITY_LO_SendingProduct(
                 this->m_currXmitFileName,
-                static_cast<U32>(found->entry.record.getsize()),
-                found->entry.record.getpriority()
+                static_cast<U32>(this->m_currentXmitNode->entry.record.getsize()),
+                this->m_currentXmitNode->entry.record.getpriority()
                 );
             this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
         }
@@ -665,6 +666,8 @@ namespace Svc {
         // traverse the tree, finding nodes in order. Max iteration of the loop
         // would be the number of records in the tree
         for (FwSizeType record = 0; record < this->m_numDpRecords; record++) {
+            // initialize found entry to nullptr
+            found = nullptr;
             // check for current node to be null
             if (this->m_currentNode == nullptr) {
                 // see if we fully traversed the tree
@@ -744,14 +747,10 @@ namespace Svc {
         this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
 
         // mark the entry as transmitted
-        this->m_currentNode->entry.record.setstate(Fw::DpState::TRANSMITTED);
+        this->m_currentXmitNode->entry.record.setstate(Fw::DpState::TRANSMITTED);
         // update the transmitted state in the state file
-        this->appendFileState(this->m_currentNode->entry);
-        // set to right node
-        this->m_currentNode = this->m_currentNode->right;
-        // push new current to the stack
-        this->m_traverseStack[this->m_currStackEntry++] = this->m_currentNode;
-
+        this->appendFileState(this->m_currentXmitNode->entry);
+        // send the next entry, if it exists
         this->sendNextEntry();
     }
 
