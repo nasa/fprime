@@ -43,7 +43,6 @@ TEST(Stub, Directory) {
     Os::Directory _;
 }
 
-
 TEST(Stub, Cpu) {
     Os::Cpu::getSingleton();
 }

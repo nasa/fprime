@@ -41,9 +41,6 @@ class StubConditionVariable : public ConditionVariableInterface {
     //! \brief get handle
     ConditionVariableHandle* getHandle() override;
 
-    //! \brief assignment operator is forbidden
-    virtual ConditionVariableInterface& operator=(const ConditionVariableInterface& other) override = delete;
-
   private:
     //! Handle for PosixMutex
     StubConditionVariableHandle m_handle;
