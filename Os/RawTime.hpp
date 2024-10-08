@@ -45,6 +45,9 @@ class RawTimeInterface : public Fw::Serializable {
     // ------------------------------------------------------------------
     // RawTime operations to be implemented by an OSAL implementation
     // ------------------------------------------------------------------
+
+    // NOTE: rename getRawTime() ???
+
     //! \brief Get current time and store it in the object
     //!
     //! Store the current time in implementation-specific RawTimeHandle

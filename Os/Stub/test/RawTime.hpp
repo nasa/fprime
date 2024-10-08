@@ -2,10 +2,11 @@
 // \title Os/Stub/RawTime.hpp
 // \brief stub definitions for Os::RawTime
 // ======================================================================
+#ifndef OS_STUB_RAWTIME_TEST_HPP
+#define OS_STUB_RAWTIME_TEST_HPP
+
 #include "Os/RawTime.hpp"
 
-#ifndef OS_STUB_RAWTIME_HPP
-#define OS_STUB_RAWTIME_HPP
 namespace Os {
 namespace Stub {
 namespace RawTime {
@@ -67,8 +68,8 @@ class TestRawTime : public RawTimeInterface {
     TestRawTimeHandle m_handle;
 };
 
-} // namespace Test
-} // namespace RawTime
-} // namespace Test
-} // namespace Os
-#endif // OS_Test_RAWTIME_HPP
+}  // namespace Test
+}  // namespace RawTime
+}  // namespace Stub
+}  // namespace Os
+#endif  // OS_STUB_RAWTIME_TEST_HPP

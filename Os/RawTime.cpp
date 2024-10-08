@@ -16,9 +16,8 @@ RawTime::~RawTime() {
     m_delegate.~RawTimeInterface();
 }
 
-RawTime::RawTime(const RawTime& other) :
-    m_handle_storage(),
-    m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
+RawTime::RawTime(const RawTime& other)
+    : m_handle_storage(), m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -41,7 +40,8 @@ RawTime::Status RawTime::getRawTime() {
 
 RawTime::Status RawTime::getTimeInterval(const RawTime& other, Fw::TimeInterval& result) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.getTimeInterval(* const_cast<RawTimeHandle*>(const_cast<RawTime&>(other).getHandle()), result);
+    return this->m_delegate.getTimeInterval(*const_cast<RawTimeHandle*>(const_cast<RawTime&>(other).getHandle()),
+                                            result);
 }
 
 RawTime::Status RawTime::getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& result) const {
