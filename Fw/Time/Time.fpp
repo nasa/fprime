@@ -11,7 +11,7 @@ module Fw {
 
   @ Time interval port
   port TimeInterval(
-      ref timeIntreval: Fw.TimeInterval @< Reference to TimeInterval object
+      ref timeInterval: Fw.TimeInterval @< Reference to TimeInterval object
            )
 
 }

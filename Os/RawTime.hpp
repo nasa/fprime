@@ -78,7 +78,7 @@ class RawTimeInterface : public Fw::Serializable {
 
 class RawTime final : public RawTimeInterface {
   public:
-    RawTime();         //!<  Constructor. TODO: RawTime initalization??
+    RawTime();         //!<  Constructor
     ~RawTime() final;  //!<  Destructor
     
     //! \brief copy constructor that copies the internal representation

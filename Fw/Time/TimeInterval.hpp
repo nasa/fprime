@@ -22,10 +22,6 @@ namespace Fw {
                 SERIALIZED_SIZE = sizeof(U32) * 2
             };
 
-            // Questions:
-            // Do we want to handle "signedness" of interval ?
-            // 
-
             TimeInterval() = default; // !< Default constructor
             ~TimeInterval() = default; // !< Default destructor
             TimeInterval(const TimeInterval& other); // !< Copy constructor
