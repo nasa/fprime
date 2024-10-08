@@ -61,7 +61,7 @@ class TestMemory : public MemoryInterface {
     TestMemory(const TestMemory& other) = delete;
 
     //! \brief assignment operator that copies the internal representation
-    MemoryInterface& operator=(const MemoryInterface& other) = delete;
+    MemoryInterface& operator=(const MemoryInterface& other) override = delete;
 
     //! \brief destructor
     //!
