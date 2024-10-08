@@ -71,7 +71,7 @@ CpuInterface::Status getCpuData(FwSizeType cpu_index, ProcCpuData data) {
 
 CpuInterface::Status LinuxCpu::_getCount(FwSizeType& cpu_count) {
     long cpus = sysconf(_SC_NPROCESSORS_ONLN);
-    if ((cpus > 0) && (cpus < std::numeric_limits<FwSizeType>::max())) {
+    if ((cpus > 0) && (static_cast<FwSizeType>(cpus) < std::numeric_limits<FwSizeType>::max())) {
         cpu_count = static_cast<FwSizeType>(cpus);
         return Status::OP_OK;
     }
