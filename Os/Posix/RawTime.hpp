@@ -23,13 +23,12 @@ struct PosixRawTimeHandle : public RawTimeHandle {
 //!
 class PosixRawTime : public RawTimeInterface {
   public:
-    // static const FwSizeType SERIALIZED_SIZE = RawTimeInterface::SERIALIZED_SIZE;
 
     //! \brief constructor
-    PosixRawTime();
+    PosixRawTime() = default;
 
     //! \brief destructor
-    ~PosixRawTime() override;
+    ~PosixRawTime() override = default;
 
     //! \brief return the underlying RawTime handle (implementation specific)
     //! \return internal RawTime handle representation

@@ -12,14 +12,6 @@ namespace Os {
 namespace Posix {
 namespace RawTime {
 
-PosixRawTime::PosixRawTime() : Os::RawTimeInterface(), m_handle() {
-
-}
-
-PosixRawTime::~PosixRawTime() {
-
-}
-
 PosixRawTime::Status PosixRawTime::getRawTime() {
     Fw::Logger::log("Getting raw time\n");
     PlatformIntType status = clock_gettime(CLOCK_REALTIME, &this->m_handle.m_timespec);
@@ -53,11 +45,6 @@ PosixRawTime::Status PosixRawTime::getTimeInterval(const RawTimeHandle& other, F
     return Status::OP_OK;
 }
 
-
-RawTimeHandle* PosixRawTime::getHandle() {
-    return &this->m_handle;
-}
-
 Fw::SerializeStatus PosixRawTime::serialize(Fw::SerializeBufferBase& buffer) const {
     Fw::Logger::log("Serializing raw time\n");
     FW_ASSERT(PosixRawTime::SERIALIZED_SIZE >= 2 * sizeof(U32)); //TODO: static assert possible?
@@ -75,6 +62,10 @@ Fw::SerializeStatus PosixRawTime::deserialize(Fw::SerializeBufferBase& buffer) {
     buffer.deserialize(nsec);
     this->m_handle.m_timespec = {sec, nsec};
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
+}
+
+RawTimeHandle* PosixRawTime::getHandle() {
+    return &this->m_handle;
 }
 
 }  // namespace RawTime
