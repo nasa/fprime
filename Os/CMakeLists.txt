@@ -6,7 +6,15 @@
 #
 ####
 
-# Helper function for adding OS modules
+####
+# WARNING: not for use outside of fprime/Os
+#
+# Adds a named os module (e.g. common code for an OSAL implementation). Helper to allow multiple commons per file.
+#
+# NAMES: list of named files to add to this module.  The first will be treated as the name of the module.
+#        i.e. File;Directory;FileSystem will contain the file, directory, and filesystem files in a module called File.
+# ARGN: extra MOD_DEPS to add
+####
 function(add_named_os_module NAMES)
     # Get first element of list
     list(GET NAMES 0 FIRST_ITEM)
@@ -26,6 +34,16 @@ function(add_named_os_module NAMES)
     target_link_libraries(Os PUBLIC "${OS_MODULE_NAME}")
 endfunction()
 
+####
+# WARNING: not for use outside of fprime/Os
+#
+# Adds a named os implementation supplied by fprime core. Helper to allow multiple implementations per file.
+#
+# NAMES: list of named files to add to this module.  The first will be treated as the name of the module.
+#        i.e. File;Directory;FileSystem will contain the file, directory, and filesystem files in a module called File.
+# SUFFIX: suffix to implementation (e.g. Posix)
+# ARGN: extra MOD_DEPS to add
+####
 function(add_fprime_supplied_os_module NAMES SUFFIX)
     # Get first element of list
     list(GET NAMES 0 FIRST_ITEM)
@@ -44,6 +62,17 @@ function(add_fprime_supplied_os_module NAMES SUFFIX)
     register_fprime_implementation("Os_${FIRST_ITEM}" "${OS_MODULE_NAME}" "${CMAKE_CURRENT_LIST_DIR}/Default${FIRST_ITEM}.cpp")
 endfunction()
 
+####
+# WARNING: not for use outside of fprime/Os
+#
+# Adds a test for OSAL layer. Helper to allow multiple tests per file.
+#
+# NAME: Name of test
+# UT_SOURCE_FILES: list of source files
+# IMPLEMENTATION_PAIRS: a list of pairs of implementation choices.  e.g. "Os_File\;Os_File_Posix;Os_Task\;Os_Task_Stub"
+#                       pairs are represented with internal escaped list separators.
+# ARGN: extra MOD_DEPS to add
+####
 function(add_fprime_os_test NAME UT_SOURCE_FILES IMPLEMENTATION_PAIRS)
     set(UT_MOD_DEPS Os STest ${ARGN})
     foreach (PAIR IN LISTS IMPLEMENTATION_PAIRS)
