@@ -20,10 +20,10 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSize
     return returned;
 }
 
-FwSizeType Fw::StringUtils::string_length(const CHAR* source, FwSizeType max_len) {
+FwSizeType Fw::StringUtils::string_length(const CHAR* source, FwSizeType buffer_size) {
     FwSizeType length = 0;
     FW_ASSERT(source != nullptr);
-    for (length = 0; length < max_len; length++) {
+    for (length = 0; length < buffer_size; length++) {
         if (source[length] == '\0') {
             break;
         }

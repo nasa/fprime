@@ -1,11 +1,7 @@
 // ======================================================================
-// \title Os/Models/Models.hpp
-// \brief header used to validate Os/Models before use
+// \title Os/Models/Models.cpp
+// \brief test used to validate Os/Models before use
 // ======================================================================
-
-#ifndef OS_MODELS_MODELS_HPP
-#define OS_MODELS_MODELS_HPP
-
 #include "Os/Models/FileStatusEnumAc.hpp"
 #include "Os/Models/FileModeEnumAc.hpp"
 #include "Os/Models/TaskStatusEnumAc.hpp"
@@ -13,11 +9,13 @@
 #include "Os/Models/DirectoryStatusEnumAc.hpp"
 #include "Os/Models/DirectoryOpenModeEnumAc.hpp"
 #include "Os/Models/FileSystemStatusEnumAc.hpp"
+#include "Os/Models/GenericStatusEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Os/Task.hpp"
 #include "Os/Mutex.hpp"
 #include "Os/Directory.hpp"
 #include "Os/FileSystem.hpp"
+#include "Os/Os.hpp"
 
 // Check consistency of every constant in the Os::File::Status enum
 static_assert(static_cast<FwIndexType>(Os::File::Status::MAX_STATUS) ==
@@ -169,5 +167,8 @@ static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NOT_S
 static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::OTHER_ERROR) == Os::FileSystemStatus::T::OTHER_ERROR,
               "FileSystem status and FPP shadow enum do not match");
 
-
-#endif // OS_MODELS_MODELS_HPP
+// Check Generic mappings
+static_assert(static_cast<Os::GenericStatus::T>(Os::Generic::Status::OP_OK) == Os::GenericStatus::T::OP_OK,
+              "Generic status enums do not match");
+static_assert(static_cast<Os::GenericStatus::T>(Os::Generic::Status::ERROR) == Os::GenericStatus::T::ERROR,
+              "Generic status enums do not match");

@@ -409,6 +409,14 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE 56  //!< Maximum size of a handle for OS condition variables
 #endif
 
+#ifndef FW_CPU_HANDLE_MAX_SIZE
+#define FW_CPU_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS cpu
+#endif
+
+#ifndef FW_MEMORY_HANDLE_MAX_SIZE
+#define FW_MEMORY_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS memory
+#endif
+
 #ifndef FW_HANDLE_ALIGNMENT
 #define FW_HANDLE_ALIGNMENT 8  //!< Alignment of handle storage
 #endif
