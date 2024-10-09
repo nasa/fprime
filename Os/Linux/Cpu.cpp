@@ -62,7 +62,7 @@ CpuInterface::Status getCpuData(FwSizeType cpu_index, ProcCpuData data) {
     for (FwSizeType i = 0; i < ProcCpuMeasures::MAX_CPU_TICK_TYPES; i++) {
         FwSizeType token = 0;
         Fw::StringUtils::StringToNumberStatus status = Fw::StringUtils::string_to_number(
-            token_start, (sizeof proc_stat_line) - (token_start - proc_stat_line), token, &token_start);
+            token_start, static_cast<FwSizeType>(sizeof proc_stat_line) - static_cast<FwSizeType>(token_start - proc_stat_line), token, &token_start);
         // Check conversion success
         if (status != Fw::StringUtils::StringToNumberStatus::SUCCESSFUL_CONVERSION) {
             return CpuInterface::Status::ERROR;
