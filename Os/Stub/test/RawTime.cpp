@@ -29,7 +29,7 @@ TestRawTime::Status TestRawTime::getRawTime() {
     return Status::OP_OK;
 }
 
-TestRawTime::Status TestRawTime::getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const {
+TestRawTime::Status TestRawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const {
     StaticData::data.lastCalled = StaticData::LastFn::GET_INTERVAL_FN;
     return Status::OP_OK;
 }

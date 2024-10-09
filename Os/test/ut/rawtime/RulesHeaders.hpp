@@ -32,8 +32,8 @@ struct Tester {
     static constexpr U32 TEST_TIME_COUNT = 5;
 
     // Threshold for time differences, in microseconds
-    // This value was selected empirically
-    static constexpr U32 INTERVAL_DIFF_THRESHOLD = 20;
+    // This value was selected empirically, some platforms may need to adjust
+    static constexpr U32 INTERVAL_DIFF_THRESHOLD = 5;
 
     //! RawTime (array thereof) under test
     std::vector<Os::RawTime> m_times;
@@ -47,6 +47,10 @@ struct Tester {
     }
 
     U32 shadow_getDiffUsec(std::chrono::time_point<std::chrono::system_clock>& t1, std::chrono::time_point<std::chrono::system_clock>& t2) const {
+        // Signedness is important here so we compare and substratc accordingly
+        if (t1 < t2) {
+            return std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+        }
         return std::chrono::duration_cast<std::chrono::microseconds>(t1 - t2).count();
     }
 
@@ -62,17 +66,30 @@ struct Tester {
         interval.set(seconds, microseconds);
     }
 
-    bool shadow_validate_interval_result(FwIndexType index1, FwIndexType index2, const Fw::TimeInterval& interval) {
+    void shadow_validate_interval_result(FwIndexType index1, FwIndexType index2, const Fw::TimeInterval& interval) {
         Fw::TimeInterval shadow_interval;
         Fw::TimeInterval result;
         this->shadow_getTimeInterval(index1, index2, shadow_interval);
+        // Signedness is important here so we compare and substratc accordingly
         if (interval < shadow_interval) {
             result = Fw::TimeInterval::sub(shadow_interval, interval);
         } else {
             result = Fw::TimeInterval::sub(interval, shadow_interval);
         }
         // Check that difference between 2 intervals is less than threshold
-        return result < Fw::TimeInterval(0, INTERVAL_DIFF_THRESHOLD);
+        ASSERT_TRUE(result < Fw::TimeInterval(0, INTERVAL_DIFF_THRESHOLD)) 
+            << "Interval difference: " << result.getSeconds() << " s, " << result.getUSeconds() << " us";
+    }
+
+    void shadow_validate_diff_result(U32 result, U32 shadow_result) {
+        U32 result_diff;
+        if (result > shadow_result) {
+            result_diff = result - shadow_result;
+        } else {
+            result_diff = shadow_result - result;
+        }
+        ASSERT_TRUE(result_diff < INTERVAL_DIFF_THRESHOLD)
+            << "Difference between results: " << result_diff << " microseconds";
     }
 
     FwIndexType pick_random_index() const {

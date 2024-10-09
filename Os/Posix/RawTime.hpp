@@ -14,7 +14,7 @@ namespace Posix {
 namespace RawTime {
 
 struct PosixRawTimeHandle : public RawTimeHandle {
-    timespec m_timespec = {0, 0}; // do it the stupidly verbose way
+    timespec m_timespec = timespec{0, 0};
 };
 
 //! \brief Posix implementation of Os::RawTime
@@ -35,7 +35,7 @@ class PosixRawTime : public RawTimeInterface {
     RawTimeHandle* getHandle() override;
 
     Status getRawTime() override;
-    Status getTimeInterval(const RawTimeHandle& other, Fw::TimeInterval& interval) const override;
+    Status getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const override;
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;  //!< serialize contents
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;      //!< deserialize to contents
 

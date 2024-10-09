@@ -27,7 +27,7 @@ Functionality::Functionality() : tester(get_tester_implementation()) {
 }
 
 void Functionality::SetUp() {
-    // No setup required
+    // All setup is done in the constructor (recommended by GTest)
 }
 
 void Functionality::TearDown() {
@@ -68,26 +68,13 @@ TEST_F(Functionality, Serialization) {
     serialization_rule.apply(*tester);
 }
 
-// TODO: add overflow rule
-
-
-// ManualTesting
-TEST_F(Functionality, ManualTesting) {
-    // U8 data[100];
-    // Fw::Buffer buffer(data, sizeof(data));
-
-    // tester->m_time.getDiffUsec(tester->m_time, result);
-    // ASSERT_EQ(result, 0);
-
-    // tester->m_time.serialize(buffer.getSerializeRepr());
-
-    // tester->m_other_time.deserialize(buffer.getSerializeRepr());
-    // tester->m_time.getDiffUsec(tester->m_other_time, result);
-    // ASSERT_EQ(result, 0);
-
+// DiffU32 overflows if times are too far apart
+TEST_F(Functionality, DiffU32Overflow) {
+    Os::Test::RawTime::Tester::DiffU32Overflow overflow_rule;
+    overflow_rule.apply(*tester);
 }
 
-
+// RandomizedTesting
 TEST_F(Functionality, RandomizedTesting) {
     // Enumerate all rules and construct an instance of each
     Os::Test::RawTime::Tester::GetRawTime get_time_rule;
@@ -95,6 +82,7 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::RawTime::Tester::GetTimeDiffU32 get_diff_rule;
     Os::Test::RawTime::Tester::GetTimeInterval get_interval_rule;
     Os::Test::RawTime::Tester::Serialization serialization_rule;
+    Os::Test::RawTime::Tester::DiffU32Overflow overflow_rule;
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::RawTime::Tester>* rules[] = {
@@ -103,6 +91,7 @@ TEST_F(Functionality, RandomizedTesting) {
             &get_diff_rule,
             &get_interval_rule,
             &serialization_rule,
+            &overflow_rule,
     };
 
     // Take the rules and place them into a random scenario

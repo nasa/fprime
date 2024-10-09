@@ -958,7 +958,7 @@ Shenker
 showinitializer
 sideeffect
 sighandler
-Signedness
+signedness
 SIMPLEQUEUEREGISTRY
 sinc
 Sinha

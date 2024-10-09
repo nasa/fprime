@@ -64,3 +64,12 @@ struct Serialization : public STest::Rule<Os::Test::RawTime::Tester> {
     bool precondition(const Os::Test::RawTime::Tester &state);
     void action(Os::Test::RawTime::Tester &state);
 };
+
+// ------------------------------------------------------------------------------------------------------
+// Rule DiffU32Overflow: DiffU32 overflows if times are too far apart
+// ------------------------------------------------------------------------------------------------------
+struct DiffU32Overflow : public STest::Rule<Os::Test::RawTime::Tester> {
+    DiffU32Overflow();
+    bool precondition(const Os::Test::RawTime::Tester &state);
+    void action(Os::Test::RawTime::Tester &state);
+};

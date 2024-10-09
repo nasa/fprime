@@ -36,25 +36,11 @@ namespace Os {
              * must have called start and stop previously.
              * \return U32: microseconds difference in the interval
              */
-            U32 getDiffUsec();
+            U32 getDiffUsec() const;
 
-            //------------ Platform Functions ------------
-            // Platform functions, typically do need to be implemented by an OS support package, as
-            // they are dependent on the platform definition of "RawTime".
-            //------------------------------------------
+            //! \brief Get the time interval between the start and stop times
+            Fw::TimeInterval getTimeInterval() const;
 
-            /**
-             * Returns the difference in microseconds between the supplied times t1, and t2. This
-             * calculation is done with respect to the semantic meaning of the times, and thus is
-             * dependent on the platform's representation of the RawTime object.
-             * \return U32 microsecond difference between two supplied values, t1-t2.
-             */
-            static U32 getDiffUsec(const RawTime& t1, const RawTime& t2);
-            /**
-             * Fills the RawTime object supplied with the current raw time in a platform dependent
-             * way.
-             */
-            static void getRawTime(RawTime& time);
         PRIVATE:
 
             //------------ Internal Member Variables ------------

@@ -11,8 +11,8 @@ namespace Os {
 //! \param aligned_new_memory: aligned memory to fill
 //! \param to_copy: pointer to copy-constructor input
 //! \return: pointer to delegate
-RawTimeInterface *RawTimeInterface::getDelegate(HandleStorage& aligned_new_memory, const RawTimeInterface* to_copy) {
-    return Os::Delegate::makeDelegate<RawTimeInterface, Os::Posix::RawTime::PosixRawTime>(
+RawTimeInterface *RawTimeInterface::getDelegate(RawTimeHandleStorage& aligned_new_memory, const RawTimeInterface* to_copy) {
+    return Os::Delegate::makeDelegate<RawTimeInterface, Os::Posix::RawTime::PosixRawTime, RawTimeHandleStorage>(
             aligned_new_memory, to_copy
     );
 }

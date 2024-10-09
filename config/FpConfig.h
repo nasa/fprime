@@ -416,6 +416,15 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_FILESYSTEM_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
+#ifndef FW_RAW_TIME_HANDLE_MAX_SIZE
+#define FW_RAW_TIME_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS::RawTime objects
+#endif
+
+// TODO: document
+#ifndef FW_RAW_TIME_SERIALIZATION_MAX_SIZE
+#define FW_RAW_TIME_SERIALIZATION_MAX_SIZE 64  //!< Maximum serialization size for Os::RawTime objects
+#endif
+
 #ifndef FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE
 #define FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE 56  //!< Maximum size of a handle for OS condition variables
 #endif
