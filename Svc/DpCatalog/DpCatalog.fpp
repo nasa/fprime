@@ -307,7 +307,7 @@ module Svc {
                           ) \
       severity warning high \
       id 35 \
-      format "Error opening state file {} size. stat: {}"
+      format "Error opening state file {}, stat: {}"
     
     event StateFileReadError(
                             file: string size 80 @< The file
@@ -321,10 +321,11 @@ module Svc {
     event StateFileTruncated(
                             file: string size 80 @< The file
                             offset: I32
+                            $size: I32
                           ) \
       severity warning high \
       id 37 \
-      format "Truncated state file {} size. offset: {}"
+      format "Truncated state file {} size. offset: {} size: {}"
 
     event NoStateFileSpecified \
       severity warning low \
@@ -338,6 +339,13 @@ module Svc {
       severity warning high \
       id 39 \
       format "Error writing state file {}, stat {}"
+
+    event NoStateFile(
+                            file: string size 80 @< The file
+                          ) \
+      severity warning low \
+      id 40 \
+      format "State file {} doesn't exist"
 
 
     # ----------------------------------------------------------------------

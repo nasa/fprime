@@ -10,6 +10,7 @@
 
 #include "Os/FileSystem.hpp"
 #include "Os/File.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include <new> // placement new
 
 namespace Svc {
@@ -121,6 +122,8 @@ namespace Svc {
         this->m_freeListFoot = &this->m_freeListHead[this->m_numDpSlots - 1];
         // clear binary tree
         this->m_dpTree = nullptr;
+        // reset number of records
+        this->m_numDpRecords = 0;
     }
 
     void DpCatalog::resetStateFileData() {
@@ -170,17 +173,17 @@ namespace Svc {
                 return Fw::CmdResponse::EXECUTION_ERROR;
             }
 
+            if (0 == size) {
+                // no more entries
+                break;
+            }
+
             // check to see if the full entry was read. If not,
             // abandon it and finish. We can at least operate on
             // the entries that were read.
             if (size != sizeof(buffer)) {
-                this->log_WARNING_HI_StateFileTruncated(this->m_stateFile, stat);
+                this->log_WARNING_HI_StateFileTruncated(this->m_stateFile, fileLoc, size);
                 return Fw::CmdResponse::OK;
-            }
-
-            if (0 == size) {
-                // no more entries
-                break;
             }
 
             // reset the buffer for deserializing the entry
@@ -243,7 +246,11 @@ namespace Svc {
         // open the state file
         Os::File stateFile;
         // we open it as a new file so we don't accumulate invalid entries
-        Os::File::Status stat = stateFile.open(this->m_stateFile.toChar(), Os::File::OPEN_CREATE);
+        Os::File::Status stat = stateFile.open(
+            this->m_stateFile.toChar(), 
+            Os::File::OPEN_CREATE,
+            Os::FileInterface::OVERWRITE);
+            
         if (stat != Os::File::OP_OK) {
             this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
             return;
@@ -378,6 +385,7 @@ namespace Svc {
             U32 filesRead = 0;
             U32 pendingFiles = 0;
             U64 pendingDpBytes = 0;
+            U32 filesProcessed = 0;
 
             Os::FileSystem::Status fsStat =
                 Os::FileSystem::readDirectory(
@@ -402,11 +410,26 @@ namespace Svc {
 
             // extract metadata for each file
             for (FwNativeUIntType file = 0; file < filesRead; file++) {
+
+                // only consider files with the DP extension
+            
+                FwSignedSizeType loc = Fw::StringUtils::substring_find(
+                    this->m_fileList[file].toChar(),
+                    this->m_fileList[file].length(),
+                    DP_EXT,
+                    Fw::StringUtils::string_length(DP_EXT,sizeof(DP_EXT))
+                );
+
+                if (-1 == loc) {
+                    continue;
+                }
+
                 Fw::String fullFile;
                 fullFile.format("%s/%s",
                     this->m_directories[dir].toChar(),
                     this->m_fileList[file].toChar()
                 );
+
                 this->log_ACTIVITY_LO_ProcessingFile(fullFile);
 
                 // get file size
@@ -483,9 +506,11 @@ namespace Svc {
                     break;
                 }
 
+                filesProcessed++;
+
             } // end for each file in a directory
 
-            totalFiles += filesRead;
+            totalFiles += filesProcessed;
 
             this->log_ACTIVITY_HI_ProcessingDirectoryComplete(
                 this->m_directories[dir],
@@ -750,6 +775,8 @@ namespace Svc {
         this->m_currentXmitNode->entry.record.setstate(Fw::DpState::TRANSMITTED);
         // update the transmitted state in the state file
         this->appendFileState(this->m_currentXmitNode->entry);
+        // add the size
+        this->m_xmitBytes += this->m_currentXmitNode->entry.record.getsize();
         // send the next entry, if it exists
         this->sendNextEntry();
     }
