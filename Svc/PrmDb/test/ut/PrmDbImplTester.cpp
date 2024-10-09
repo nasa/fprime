@@ -512,6 +512,7 @@ namespace Svc {
         // File open error
         this->clearEvents();
         // register interceptor
+        Os::Stub::File::Test::StaticData::setWriteResult(m_io_data, sizeof m_io_data);
         Os::Stub::File::Test::StaticData::setNextStatus(Os::File::DOESNT_EXIST);
         // dispatch command
         this->sendCmd_PRM_SAVE_FILE(0,12);
