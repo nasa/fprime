@@ -29,6 +29,7 @@ function(add_named_os_module NAMES)
     endforeach ()
     # Set up module
     set(MOD_DEPS Fw_Types ${ARGN})
+    require_fprime_implementation("Os_${FIRST_ITEM}")
     register_fprime_module("${OS_MODULE_NAME}")
     add_dependencies(Os "${OS_MODULE_NAME}")
     target_link_libraries(Os PUBLIC "${OS_MODULE_NAME}")

@@ -42,7 +42,7 @@ namespace Delegate {
 //! \tparam Implementation: implementation class of the delegate (e.g. PosixTask)
 //! \param aligned_new_memory: memory to be filled via placement new call
 //! \return pointer to implementation result of placement new
-template <class Interface, class Implementation, class StorageType=HandleStorage>
+template <class Interface, class Implementation, class StorageType>
 inline Interface* makeDelegate(StorageType& aligned_new_memory) {
     // Ensure prerequisites before performing placement new
     static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
@@ -85,8 +85,8 @@ inline Interface* makeDelegate(StorageType& aligned_new_memory) {
 //! \return pointer to implementation result of placement new
 //! \param to_copy: pointer to Interface to be copied by copy constructor
 //! \return pointer to implementation result of placement new
-template <class Interface, class Implementation>
-inline Interface* makeDelegate(HandleStorage& aligned_new_memory, const Interface* to_copy) {
+template <class Interface, class Implementation, class StorageType>
+inline Interface* makeDelegate(StorageType& aligned_new_memory, const Interface* to_copy) {
     const Implementation* copy_me = reinterpret_cast<const Implementation*>(to_copy);
     // Ensure prerequisites before performing placement new
     static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
