@@ -282,6 +282,7 @@ DRAINBUFFERS
 drv
 dsdl
 dspal
+Dstate
 Duerschmid
 duey
 dumparch
@@ -397,6 +398,7 @@ gencode
 genfile
 GENHUB
 genshi
+getblocks
 getchildren
 getcontext
 getdata
@@ -750,6 +752,7 @@ parseable
 PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 pathmaker
+patsubst
 pbuild
 pcmake
 pcomp
@@ -924,6 +927,7 @@ seqgen
 serafin
 serializables
 setaffinity
+setblocks
 setdata
 SETFL
 setid
