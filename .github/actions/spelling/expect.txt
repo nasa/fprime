@@ -760,6 +760,7 @@ pcmake
 pcomp
 pdflatex
 Peet
+penv
 PERLMOD
 PINGSEND
 pinit
