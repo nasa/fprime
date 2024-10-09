@@ -12,6 +12,10 @@ runs:
   - name: Add Python bin to PATH
     run: echo "/Library/Frameworks/Python.framework/Versions/Current/bin" >> $GITHUB_PATH
     shell: bash
+  - run: |
+      python3 -m venv "$(pwd)/fprime-venv"
+      echo "$(pwd)/bin" >> $GITHUB_PATH
+    shell: bash
   - run: pip3 install -U -r ${{ inputs.location }}/requirements.txt
     shell: bash
   - run: which fprime-util
