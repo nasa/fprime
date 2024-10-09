@@ -13,8 +13,8 @@
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
 #include "CmdSequencerTester.hpp"
 #include "Os/Delegate.hpp"
-#include "Os/Stub/FileSystem.hpp"
-#include "Os/Stub/Directory.hpp"
+#include "Os/Posix/FileSystem.hpp"
+#include "Os/Posix/Directory.hpp"
 
 namespace Svc {
 
@@ -835,7 +835,7 @@ FileInterface *FileInterface::getDelegate(HandleStorage& aligned_placement_new_m
 //! \param to_copy: pointer to copy-constructor input
 //! \return: pointer to delegate
 FileSystemInterface *FileSystemInterface::getDelegate(FileSystemHandleStorage& aligned_placement_new_memory) {
-    return Os::Delegate::makeDelegate<FileSystemInterface, Os::Stub::FileSystem::StubFileSystem>(
+    return Os::Delegate::makeDelegate<FileSystemInterface, Os::Posix::FileSystem::PosixFileSystem>(
         aligned_placement_new_memory
     );
 }
@@ -844,7 +844,7 @@ FileSystemInterface *FileSystemInterface::getDelegate(FileSystemHandleStorage& a
 //! \param aligned_new_memory: aligned memory to fill
 //! \return: pointer to delegate
 DirectoryInterface *DirectoryInterface::getDelegate(DirectoryHandleStorage& aligned_placement_new_memory) {
-    return Os::Delegate::makeDelegate<DirectoryInterface, Os::Stub::Directory::StubDirectory>(
+    return Os::Delegate::makeDelegate<DirectoryInterface, Os::Posix::Directory::PosixDirectory>(
         aligned_placement_new_memory
     );
 }
