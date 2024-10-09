@@ -86,6 +86,7 @@ $(document).ready(function(){initNavTree('_string_utils_8hpp.html',''); initResi
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">StringUtils.hpp File Reference</div>  </div>
@@ -102,17 +103,43 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespace_fw_1_1_string_utils"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html">Fw::StringUtils</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a5eae294d141e5bb6028271a51c324a93"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">Fw::StringUtils::StringToNumberStatus</a> { <br />
+&#160;&#160;<a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93aa6bfd9e3533a4b0c6423d6a1110ebdbc">Fw::StringUtils::SUCCESSFUL_CONVERSION</a>
+, <a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93aab8637f2c7b1c3a4112c191ef51cee4a">Fw::StringUtils::NULL_INPUT</a>
+, <a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93af2a018445190491755947dacb7e99060">Fw::StringUtils::INVALID_STRING</a>
+, <a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93a4e57b22fb6e52ed4129d91b6abac8cd5">Fw::StringUtils::INVALID_BASE</a>
+, <br />
+&#160;&#160;<a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93aac829b3c14e39a1d9dcc2d2e56619411">Fw::StringUtils::INVALID_NUMBER</a>
+, <a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93ab9a177442c5438a168b9f011d59fe7be">Fw::StringUtils::INVALID_RANGE</a>
+<br />
+ }</td></tr>
+<tr class="separator:a5eae294d141e5bb6028271a51c324a93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a84e222d75f681cdc41eba1fca43b0369"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a84e222d75f681cdc41eba1fca43b0369">Fw::StringUtils::string_copy</a> (char *destination, const char *source, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> num)</td></tr>
 <tr class="memdesc:a84e222d75f681cdc41eba1fca43b0369"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy string with null-termination guaranteed  <a href="namespace_fw_1_1_string_utils.html#a84e222d75f681cdc41eba1fca43b0369">More...</a><br /></td></tr>
 <tr class="separator:a84e222d75f681cdc41eba1fca43b0369"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45ee50c4e7384bd94639e62c12128dab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a45ee50c4e7384bd94639e62c12128dab">Fw::StringUtils::string_length</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *source, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> max_len)</td></tr>
-<tr class="memdesc:a45ee50c4e7384bd94639e62c12128dab"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the length of the source string or max_len if the string is longer than max_len.  <a href="namespace_fw_1_1_string_utils.html#a45ee50c4e7384bd94639e62c12128dab">More...</a><br /></td></tr>
-<tr class="separator:a45ee50c4e7384bd94639e62c12128dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e5ebbd6f1c4f9a94675042cd1b8de76"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a5e5ebbd6f1c4f9a94675042cd1b8de76">Fw::StringUtils::string_length</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *source, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size)</td></tr>
+<tr class="memdesc:a5e5ebbd6f1c4f9a94675042cd1b8de76"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the length of the source string  <a href="namespace_fw_1_1_string_utils.html#a5e5ebbd6f1c4f9a94675042cd1b8de76">More...</a><br /></td></tr>
+<tr class="separator:a5e5ebbd6f1c4f9a94675042cd1b8de76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf12f8d48f9fc00e2ddeecdf0c3ce3b0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0">Fw::StringUtils::substring_find</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *source_string, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> source_size, const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *sub_string, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> sub_size)</td></tr>
 <tr class="memdesc:abf12f8d48f9fc00e2ddeecdf0c3ce3b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the first occurrence of a substring  <a href="namespace_fw_1_1_string_utils.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0">More...</a><br /></td></tr>
 <tr class="separator:abf12f8d48f9fc00e2ddeecdf0c3ce3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a816806884e46c2138a6dabdcf00a58d5"><td class="memItemLeft" align="right" valign="top">StringToNumberStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a816806884e46c2138a6dabdcf00a58d5">Fw::StringUtils::string_to_number</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *input, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> &amp;output, char **next, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> base=0)</td></tr>
+<tr class="memdesc:a816806884e46c2138a6dabdcf00a58d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a string to a U8  <a href="namespace_fw_1_1_string_utils.html#a816806884e46c2138a6dabdcf00a58d5">More...</a><br /></td></tr>
+<tr class="separator:a816806884e46c2138a6dabdcf00a58d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cfc0536c8f7ecc3184b83f08a44dffa"><td class="memItemLeft" align="right" valign="top">StringToNumberStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a4cfc0536c8f7ecc3184b83f08a44dffa">Fw::StringUtils::string_to_number</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *input, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size, <a class="el" href="basic_types_8h.html#a33c92dd47950aa8c1d6df7e1c163e5a6">I8</a> &amp;output, char **next, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> base=0)</td></tr>
+<tr class="memdesc:a4cfc0536c8f7ecc3184b83f08a44dffa"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a string to a I8  <a href="namespace_fw_1_1_string_utils.html#a4cfc0536c8f7ecc3184b83f08a44dffa">More...</a><br /></td></tr>
+<tr class="separator:a4cfc0536c8f7ecc3184b83f08a44dffa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a819393472dca5bd6eaf57f3c3d7cb1"><td class="memItemLeft" align="right" valign="top">StringToNumberStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a6a819393472dca5bd6eaf57f3c3d7cb1">Fw::StringUtils::string_to_number</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *input, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size, <a class="el" href="basic_types_8h.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> &amp;output, char **next)</td></tr>
+<tr class="memdesc:a6a819393472dca5bd6eaf57f3c3d7cb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a string to a F32  <a href="namespace_fw_1_1_string_utils.html#a6a819393472dca5bd6eaf57f3c3d7cb1">More...</a><br /></td></tr>
+<tr class="separator:a6a819393472dca5bd6eaf57f3c3d7cb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71ac08464f2811b9b1e210e7fe2835be"><td class="memItemLeft" align="right" valign="top">StringToNumberStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a71ac08464f2811b9b1e210e7fe2835be">Fw::StringUtils::string_to_number</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *input, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size, F64 &amp;output, char **next)</td></tr>
+<tr class="memdesc:a71ac08464f2811b9b1e210e7fe2835be"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a string to a F64  <a href="namespace_fw_1_1_string_utils.html#a71ac08464f2811b9b1e210e7fe2835be">More...</a><br /></td></tr>
+<tr class="separator:a71ac08464f2811b9b1e210e7fe2835be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

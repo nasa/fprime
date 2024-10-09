@@ -10,10 +10,17 @@ var dir_4df893a225f727201a6771996bba0a27 =
       [ "StubConsoleHandle", "struct_os_1_1_stub_1_1_console_1_1_stub_console_handle.html", null ],
       [ "StubConsole", "class_os_1_1_stub_1_1_console_1_1_stub_console.html", "class_os_1_1_stub_1_1_console_1_1_stub_console" ]
     ] ],
+    [ "Cpu.cpp", "stub_2_cpu_8cpp.html", null ],
+    [ "Cpu.hpp", "stub_2_cpu_8hpp.html", [
+      [ "StubCpuHandle", "struct_os_1_1_stub_1_1_cpu_1_1_stub_cpu_handle.html", null ],
+      [ "StubCpu", "class_os_1_1_stub_1_1_cpu_1_1_stub_cpu.html", "class_os_1_1_stub_1_1_cpu_1_1_stub_cpu" ]
+    ] ],
     [ "DefaultConsole.cpp", "stub_2_default_console_8cpp.html", null ],
+    [ "DefaultCpu.cpp", "stub_2_default_cpu_8cpp.html", null ],
     [ "DefaultDirectory.cpp", "stub_2_default_directory_8cpp.html", null ],
     [ "DefaultFile.cpp", "stub_2_default_file_8cpp.html", null ],
     [ "DefaultFileSystem.cpp", "stub_2_default_file_system_8cpp.html", null ],
+    [ "DefaultMemory.cpp", "stub_2_default_memory_8cpp.html", null ],
     [ "DefaultMutex.cpp", "stub_2_default_mutex_8cpp.html", null ],
     [ "DefaultQueue.cpp", "default_queue_8cpp.html", null ],
     [ "DefaultTask.cpp", "stub_2_default_task_8cpp.html", null ],
@@ -31,6 +38,11 @@ var dir_4df893a225f727201a6771996bba0a27 =
     [ "FileSystem.hpp", "stub_2_file_system_8hpp.html", [
       [ "StubFileSystemHandle", "struct_os_1_1_stub_1_1_file_system_1_1_stub_file_system_handle.html", null ],
       [ "StubFileSystem", "class_os_1_1_stub_1_1_file_system_1_1_stub_file_system.html", "class_os_1_1_stub_1_1_file_system_1_1_stub_file_system" ]
+    ] ],
+    [ "Memory.cpp", "stub_2_memory_8cpp.html", null ],
+    [ "Memory.hpp", "stub_2_memory_8hpp.html", [
+      [ "StubMemoryHandle", "struct_os_1_1_stub_1_1_memory_1_1_stub_memory_handle.html", null ],
+      [ "StubMemory", "class_os_1_1_stub_1_1_memory_1_1_stub_memory.html", "class_os_1_1_stub_1_1_memory_1_1_stub_memory" ]
     ] ],
     [ "Mutex.cpp", "stub_2_mutex_8cpp.html", null ],
     [ "Mutex.hpp", "stub_2_mutex_8hpp.html", [

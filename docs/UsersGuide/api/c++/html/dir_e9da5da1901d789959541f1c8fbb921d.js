@@ -1,6 +1,7 @@
 var dir_e9da5da1901d789959541f1c8fbb921d =
 [
     [ "Baremetal", "dir_4619be047ff79d3a605279c962371c8c.html", "dir_4619be047ff79d3a605279c962371c8c" ],
+    [ "Darwin", "dir_fc776cc393f07b33e99471d8e97681be.html", "dir_fc776cc393f07b33e99471d8e97681be" ],
     [ "Generic", "dir_1e52824b632564578f921ac4c5e6c54b.html", "dir_1e52824b632564578f921ac4c5e6c54b" ],
     [ "Linux", "dir_e8b0a4431f50aa1b66ecfcf904ec6845.html", "dir_e8b0a4431f50aa1b66ecfcf904ec6845" ],
     [ "MacOs", "dir_da072c950dfe9ef89d97b4f59ceb0221.html", "dir_da072c950dfe9ef89d97b4f59ceb0221" ],
@@ -19,6 +20,12 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
       [ "ConsoleHandle", "struct_os_1_1_console_handle.html", null ],
       [ "ConsoleInterface", "class_os_1_1_console_interface.html", "class_os_1_1_console_interface" ],
       [ "Console", "class_os_1_1_console.html", "class_os_1_1_console" ]
+    ] ],
+    [ "Cpu.cpp", "cpu_8cpp.html", null ],
+    [ "Cpu.hpp", "cpu_8hpp.html", [
+      [ "CpuHandle", "class_os_1_1_cpu_handle.html", null ],
+      [ "CpuInterface", "class_os_1_1_cpu_interface.html", "class_os_1_1_cpu_interface" ],
+      [ "Cpu", "class_os_1_1_cpu.html", "class_os_1_1_cpu" ]
     ] ],
     [ "Delegate.hpp", "delegate_8hpp.html", "_delegate_8hpp" ],
     [ "Directory.cpp", "directory_8cpp.html", null ],
@@ -52,6 +59,12 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
       [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ]
     ] ],
     [ "MemCommon.cpp", "mem_common_8cpp.html", null ],
+    [ "Memory.cpp", "memory_8cpp.html", null ],
+    [ "Memory.hpp", "memory_8hpp.html", [
+      [ "MemoryHandle", "class_os_1_1_memory_handle.html", null ],
+      [ "MemoryInterface", "class_os_1_1_memory_interface.html", "class_os_1_1_memory_interface" ],
+      [ "Memory", "class_os_1_1_memory.html", "class_os_1_1_memory" ]
+    ] ],
     [ "Mutex.cpp", "mutex_8cpp.html", null ],
     [ "Mutex.hpp", "mutex_8hpp.html", [
       [ "MutexHandle", "struct_os_1_1_mutex_handle.html", null ],

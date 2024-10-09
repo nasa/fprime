@@ -17,6 +17,7 @@ var class_os_1_1_file =
     [ "preallocate", "class_os_1_1_file.html#aba8692ee981c9b16a9218169d2822335", null ],
     [ "read", "class_os_1_1_file.html#a55e0f4531e9d22cb182a77ccda1fcb02", null ],
     [ "read", "class_os_1_1_file.html#a7f3bc2f553b4f4a51a1ca3cb9c292e75", null ],
+    [ "readline", "class_os_1_1_file.html#a89ebcf09a915a62e34b4e61ed4cb2316", null ],
     [ "seek", "class_os_1_1_file.html#a094fb47ea8c6d286dbd1f07501c3966d", null ],
     [ "size", "class_os_1_1_file.html#a661f0906817529668c7dd45d10c11971", null ],
     [ "write", "class_os_1_1_file.html#affee3e205412e0adaf2fd8c94041a6e4", null ],

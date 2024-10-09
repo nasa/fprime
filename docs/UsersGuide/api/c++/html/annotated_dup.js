@@ -163,9 +163,30 @@ var annotated_dup =
       [ "StringTemplate", "class_fw_1_1_string_template.html", "class_fw_1_1_string_template" ]
     ] ],
     [ "Os", "namespace_os.html", [
+      [ "Darwin", "namespace_os_1_1_darwin.html", [
+        [ "Cpu", "namespace_os_1_1_darwin_1_1_cpu.html", [
+          [ "DarwinCpuHandle", "struct_os_1_1_darwin_1_1_cpu_1_1_darwin_cpu_handle.html", null ],
+          [ "DarwinCpu", "class_os_1_1_darwin_1_1_cpu_1_1_darwin_cpu.html", "class_os_1_1_darwin_1_1_cpu_1_1_darwin_cpu" ]
+        ] ],
+        [ "Memory", "namespace_os_1_1_darwin_1_1_memory.html", [
+          [ "DarwinMemoryHandle", "struct_os_1_1_darwin_1_1_memory_1_1_darwin_memory_handle.html", null ],
+          [ "DarwinMemory", "class_os_1_1_darwin_1_1_memory_1_1_darwin_memory.html", "class_os_1_1_darwin_1_1_memory_1_1_darwin_memory" ]
+        ] ]
+      ] ],
       [ "Generic", "namespace_os_1_1_generic.html", [
         [ "PriorityQueueHandle", "struct_os_1_1_generic_1_1_priority_queue_handle.html", "struct_os_1_1_generic_1_1_priority_queue_handle" ],
-        [ "PriorityQueue", "class_os_1_1_generic_1_1_priority_queue.html", "class_os_1_1_generic_1_1_priority_queue" ]
+        [ "PriorityQueue", "class_os_1_1_generic_1_1_priority_queue.html", "class_os_1_1_generic_1_1_priority_queue" ],
+        [ "UsedTotal", "struct_os_1_1_generic_1_1_used_total.html", "struct_os_1_1_generic_1_1_used_total" ]
+      ] ],
+      [ "Linux", "namespace_os_1_1_linux.html", [
+        [ "Cpu", "namespace_os_1_1_linux_1_1_cpu.html", [
+          [ "LinuxCpuHandle", "struct_os_1_1_linux_1_1_cpu_1_1_linux_cpu_handle.html", null ],
+          [ "LinuxCpu", "class_os_1_1_linux_1_1_cpu_1_1_linux_cpu.html", "class_os_1_1_linux_1_1_cpu_1_1_linux_cpu" ]
+        ] ],
+        [ "Memory", "namespace_os_1_1_linux_1_1_memory.html", [
+          [ "LinuxMemoryHandle", "struct_os_1_1_linux_1_1_memory_1_1_linux_memory_handle.html", null ],
+          [ "LinuxMemory", "class_os_1_1_linux_1_1_memory_1_1_linux_memory.html", "class_os_1_1_linux_1_1_memory_1_1_linux_memory" ]
+        ] ]
       ] ],
       [ "Posix", "namespace_os_1_1_posix.html", [
         [ "Console", "namespace_os_1_1_posix_1_1_console.html", [
@@ -200,6 +221,10 @@ var annotated_dup =
           [ "StubConsoleHandle", "struct_os_1_1_stub_1_1_console_1_1_stub_console_handle.html", null ],
           [ "StubConsole", "class_os_1_1_stub_1_1_console_1_1_stub_console.html", "class_os_1_1_stub_1_1_console_1_1_stub_console" ]
         ] ],
+        [ "Cpu", "namespace_os_1_1_stub_1_1_cpu.html", [
+          [ "StubCpuHandle", "struct_os_1_1_stub_1_1_cpu_1_1_stub_cpu_handle.html", null ],
+          [ "StubCpu", "class_os_1_1_stub_1_1_cpu_1_1_stub_cpu.html", "class_os_1_1_stub_1_1_cpu_1_1_stub_cpu" ]
+        ] ],
         [ "Directory", "namespace_os_1_1_stub_1_1_directory.html", [
           [ "StubDirectoryHandle", "struct_os_1_1_stub_1_1_directory_1_1_stub_directory_handle.html", null ],
           [ "StubDirectory", "class_os_1_1_stub_1_1_directory_1_1_stub_directory.html", "class_os_1_1_stub_1_1_directory_1_1_stub_directory" ]
@@ -211,6 +236,10 @@ var annotated_dup =
         [ "FileSystem", "namespace_os_1_1_stub_1_1_file_system.html", [
           [ "StubFileSystemHandle", "struct_os_1_1_stub_1_1_file_system_1_1_stub_file_system_handle.html", null ],
           [ "StubFileSystem", "class_os_1_1_stub_1_1_file_system_1_1_stub_file_system.html", "class_os_1_1_stub_1_1_file_system_1_1_stub_file_system" ]
+        ] ],
+        [ "Memory", "namespace_os_1_1_stub_1_1_memory.html", [
+          [ "StubMemoryHandle", "struct_os_1_1_stub_1_1_memory_1_1_stub_memory_handle.html", null ],
+          [ "StubMemory", "class_os_1_1_stub_1_1_memory_1_1_stub_memory.html", "class_os_1_1_stub_1_1_memory_1_1_stub_memory" ]
         ] ],
         [ "Mutex", "namespace_os_1_1_stub_1_1_mutex.html", [
           [ "StubConditionVariableHandle", "struct_os_1_1_stub_1_1_mutex_1_1_stub_condition_variable_handle.html", null ],
@@ -236,6 +265,7 @@ var annotated_dup =
       [ "FileMode", "class_os_1_1_file_mode.html", "class_os_1_1_file_mode" ],
       [ "FileStatus", "class_os_1_1_file_status.html", "class_os_1_1_file_status" ],
       [ "FileSystemStatus", "class_os_1_1_file_system_status.html", "class_os_1_1_file_system_status" ],
+      [ "GenericStatus", "class_os_1_1_generic_status.html", "class_os_1_1_generic_status" ],
       [ "MutexStatus", "class_os_1_1_mutex_status.html", "class_os_1_1_mutex_status" ],
       [ "TaskStatus", "class_os_1_1_task_status.html", "class_os_1_1_task_status" ],
       [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
@@ -247,6 +277,9 @@ var annotated_dup =
       [ "ConsoleHandle", "struct_os_1_1_console_handle.html", null ],
       [ "ConsoleInterface", "class_os_1_1_console_interface.html", "class_os_1_1_console_interface" ],
       [ "Console", "class_os_1_1_console.html", "class_os_1_1_console" ],
+      [ "CpuHandle", "class_os_1_1_cpu_handle.html", null ],
+      [ "CpuInterface", "class_os_1_1_cpu_interface.html", "class_os_1_1_cpu_interface" ],
+      [ "Cpu", "class_os_1_1_cpu.html", "class_os_1_1_cpu" ],
       [ "DirectoryHandle", "struct_os_1_1_directory_handle.html", null ],
       [ "DirectoryInterface", "class_os_1_1_directory_interface.html", "class_os_1_1_directory_interface" ],
       [ "Directory", "class_os_1_1_directory.html", "class_os_1_1_directory" ],
@@ -260,6 +293,9 @@ var annotated_dup =
       [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ],
       [ "QueueHandle", "class_os_1_1_queue_handle.html", "class_os_1_1_queue_handle" ],
       [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ],
+      [ "MemoryHandle", "class_os_1_1_memory_handle.html", null ],
+      [ "MemoryInterface", "class_os_1_1_memory_interface.html", "class_os_1_1_memory_interface" ],
+      [ "Memory", "class_os_1_1_memory.html", "class_os_1_1_memory" ],
       [ "MutexHandle", "struct_os_1_1_mutex_handle.html", null ],
       [ "MutexInterface", "class_os_1_1_mutex_interface.html", "class_os_1_1_mutex_interface" ],
       [ "Mutex", "class_os_1_1_mutex.html", "class_os_1_1_mutex" ],

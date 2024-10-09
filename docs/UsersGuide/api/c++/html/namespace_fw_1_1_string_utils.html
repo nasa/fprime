@@ -85,24 +85,81 @@ $(document).ready(function(){initNavTree('namespace_fw_1_1_string_utils.html',''
 
 <div class="header">
   <div class="summary">
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">Fw::StringUtils Namespace Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a5eae294d141e5bb6028271a51c324a93"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">StringToNumberStatus</a> { <br />
+&#160;&#160;<a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93aa6bfd9e3533a4b0c6423d6a1110ebdbc">SUCCESSFUL_CONVERSION</a>
+, <a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93aab8637f2c7b1c3a4112c191ef51cee4a">NULL_INPUT</a>
+, <a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93af2a018445190491755947dacb7e99060">INVALID_STRING</a>
+, <a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93a4e57b22fb6e52ed4129d91b6abac8cd5">INVALID_BASE</a>
+, <br />
+&#160;&#160;<a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93aac829b3c14e39a1d9dcc2d2e56619411">INVALID_NUMBER</a>
+, <a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93ab9a177442c5438a168b9f011d59fe7be">INVALID_RANGE</a>
+<br />
+ }</td></tr>
+<tr class="separator:a5eae294d141e5bb6028271a51c324a93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a84e222d75f681cdc41eba1fca43b0369"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a84e222d75f681cdc41eba1fca43b0369">string_copy</a> (char *destination, const char *source, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> num)</td></tr>
 <tr class="memdesc:a84e222d75f681cdc41eba1fca43b0369"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy string with null-termination guaranteed  <a href="namespace_fw_1_1_string_utils.html#a84e222d75f681cdc41eba1fca43b0369">More...</a><br /></td></tr>
 <tr class="separator:a84e222d75f681cdc41eba1fca43b0369"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45ee50c4e7384bd94639e62c12128dab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a45ee50c4e7384bd94639e62c12128dab">string_length</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *source, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> max_len)</td></tr>
-<tr class="memdesc:a45ee50c4e7384bd94639e62c12128dab"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the length of the source string or max_len if the string is longer than max_len.  <a href="namespace_fw_1_1_string_utils.html#a45ee50c4e7384bd94639e62c12128dab">More...</a><br /></td></tr>
-<tr class="separator:a45ee50c4e7384bd94639e62c12128dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e5ebbd6f1c4f9a94675042cd1b8de76"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a5e5ebbd6f1c4f9a94675042cd1b8de76">string_length</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *source, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size)</td></tr>
+<tr class="memdesc:a5e5ebbd6f1c4f9a94675042cd1b8de76"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the length of the source string  <a href="namespace_fw_1_1_string_utils.html#a5e5ebbd6f1c4f9a94675042cd1b8de76">More...</a><br /></td></tr>
+<tr class="separator:a5e5ebbd6f1c4f9a94675042cd1b8de76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf12f8d48f9fc00e2ddeecdf0c3ce3b0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0">substring_find</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *source_string, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> source_size, const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *sub_string, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> sub_size)</td></tr>
 <tr class="memdesc:abf12f8d48f9fc00e2ddeecdf0c3ce3b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the first occurrence of a substring  <a href="namespace_fw_1_1_string_utils.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0">More...</a><br /></td></tr>
 <tr class="separator:abf12f8d48f9fc00e2ddeecdf0c3ce3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a816806884e46c2138a6dabdcf00a58d5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">StringToNumberStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a816806884e46c2138a6dabdcf00a58d5">string_to_number</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *input, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> &amp;output, char **next, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> base=0)</td></tr>
+<tr class="memdesc:a816806884e46c2138a6dabdcf00a58d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a string to a U8  <a href="namespace_fw_1_1_string_utils.html#a816806884e46c2138a6dabdcf00a58d5">More...</a><br /></td></tr>
+<tr class="separator:a816806884e46c2138a6dabdcf00a58d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cfc0536c8f7ecc3184b83f08a44dffa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">StringToNumberStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a4cfc0536c8f7ecc3184b83f08a44dffa">string_to_number</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *input, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size, <a class="el" href="basic_types_8h.html#a33c92dd47950aa8c1d6df7e1c163e5a6">I8</a> &amp;output, char **next, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> base=0)</td></tr>
+<tr class="memdesc:a4cfc0536c8f7ecc3184b83f08a44dffa"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a string to a I8  <a href="namespace_fw_1_1_string_utils.html#a4cfc0536c8f7ecc3184b83f08a44dffa">More...</a><br /></td></tr>
+<tr class="separator:a4cfc0536c8f7ecc3184b83f08a44dffa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a819393472dca5bd6eaf57f3c3d7cb1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">StringToNumberStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a6a819393472dca5bd6eaf57f3c3d7cb1">string_to_number</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *input, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size, <a class="el" href="basic_types_8h.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> &amp;output, char **next)</td></tr>
+<tr class="memdesc:a6a819393472dca5bd6eaf57f3c3d7cb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a string to a F32  <a href="namespace_fw_1_1_string_utils.html#a6a819393472dca5bd6eaf57f3c3d7cb1">More...</a><br /></td></tr>
+<tr class="separator:a6a819393472dca5bd6eaf57f3c3d7cb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71ac08464f2811b9b1e210e7fe2835be"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">StringToNumberStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_fw_1_1_string_utils.html#a71ac08464f2811b9b1e210e7fe2835be">string_to_number</a> (const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *input, <a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> buffer_size, F64 &amp;output, char **next)</td></tr>
+<tr class="memdesc:a71ac08464f2811b9b1e210e7fe2835be"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a string to a F64  <a href="namespace_fw_1_1_string_utils.html#a71ac08464f2811b9b1e210e7fe2835be">More...</a><br /></td></tr>
+<tr class="separator:a71ac08464f2811b9b1e210e7fe2835be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a5eae294d141e5bb6028271a51c324a93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5eae294d141e5bb6028271a51c324a93">&#9670;&nbsp;</a></span>StringToNumberStatus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">Fw::StringUtils::StringToNumberStatus</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a5eae294d141e5bb6028271a51c324a93aa6bfd9e3533a4b0c6423d6a1110ebdbc"></a>SUCCESSFUL_CONVERSION&#160;</td><td class="fielddoc"><p>Output should be valid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5eae294d141e5bb6028271a51c324a93aab8637f2c7b1c3a4112c191ef51cee4a"></a>NULL_INPUT&#160;</td><td class="fielddoc"><p>A null string was supplied. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5eae294d141e5bb6028271a51c324a93af2a018445190491755947dacb7e99060"></a>INVALID_STRING&#160;</td><td class="fielddoc"><p>No \0 detected within the supplied length. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5eae294d141e5bb6028271a51c324a93a4e57b22fb6e52ed4129d91b6abac8cd5"></a>INVALID_BASE&#160;</td><td class="fielddoc"><p>Base was not supplied as 0, or 2-36. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5eae294d141e5bb6028271a51c324a93aac829b3c14e39a1d9dcc2d2e56619411"></a>INVALID_NUMBER&#160;</td><td class="fielddoc"><p><a class="el" href="class_fw_1_1_string.html">String</a> did not contain a valid number matching supplied base. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5eae294d141e5bb6028271a51c324a93ab9a177442c5438a168b9f011d59fe7be"></a>INVALID_RANGE&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="string_utils_8hpp_source.html#l00047">47</a> of file <a class="el" href="string_utils_8hpp_source.html">StringUtils.hpp</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a84e222d75f681cdc41eba1fca43b0369"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a84e222d75f681cdc41eba1fca43b0369">&#9670;&nbsp;</a></span>string_copy()</h2>
@@ -152,8 +209,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a45ee50c4e7384bd94639e62c12128dab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45ee50c4e7384bd94639e62c12128dab">&#9670;&nbsp;</a></span>string_length()</h2>
+<a id="a5e5ebbd6f1c4f9a94675042cd1b8de76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e5ebbd6f1c4f9a94675042cd1b8de76">&#9670;&nbsp;</a></span>string_length()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,7 +225,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
-          <td class="paramname"><em>max_len</em>&#160;</td>
+          <td class="paramname"><em>buffer_size</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -178,17 +235,254 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>get the length of the source string or max_len if the string is longer than max_len. </p>
+<p>get the length of the source string </p>
+<p>If no string termination character is detected within buffer_size number of characters then buffer_size is returned. When buffer_size is returned, it can be assumed that the source string is invalid within a bound of buffer_size.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">source</td><td>string to calculate the length </td></tr>
-    <tr><td class="paramname">max_len</td><td>the maximum length of the source string </td></tr>
+    <tr><td class="paramname">buffer_size</td><td>the size of the buffer containing source string. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>length of the source string or max_len </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>length of the source string or buffer_size if no \0 is found within buffer_size characters. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="string_utils_8cpp_source.html#l00023">23</a> of file <a class="el" href="string_utils_8cpp_source.html">StringUtils.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a6a819393472dca5bd6eaf57f3c3d7cb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a819393472dca5bd6eaf57f3c3d7cb1">&#9670;&nbsp;</a></span>string_to_number() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">Fw::StringUtils::StringToNumberStatus</a> Fw::StringUtils::string_to_number </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>buffer_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="basic_types_8h.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> &amp;&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>next</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>converts a string to a F32 </p>
+<p>See string_to_number (above) for full explanation. <code>base</code> is not supported on floating point conversions.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>input string </td></tr>
+    <tr><td class="paramname">buffer_size</td><td>maximum length of string bounding the conversion </td></tr>
+    <tr><td class="paramname">base</td><td>base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base. </td></tr>
+    <tr><td class="paramname">output</td><td>(output) will contain the converted number or 0 on error </td></tr>
+    <tr><td class="paramname">next</td><td>(output) will contain a pointer to the next character after the number and null pointer on error </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SUCCESSFUL_CONVERSION when output is valid, something else on error. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="string_to_number_8cpp_source.html#l00116">116</a> of file <a class="el" href="string_to_number_8cpp_source.html">StringToNumber.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a71ac08464f2811b9b1e210e7fe2835be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71ac08464f2811b9b1e210e7fe2835be">&#9670;&nbsp;</a></span>string_to_number() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">Fw::StringUtils::StringToNumberStatus</a> Fw::StringUtils::string_to_number </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>buffer_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">F64 &amp;&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>next</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>converts a string to a F64 </p>
+<p>See string_to_number (above) for full explanation. <code>base</code> is not supported on floating point conversions.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>input string </td></tr>
+    <tr><td class="paramname">buffer_size</td><td>maximum length of string bounding the conversion </td></tr>
+    <tr><td class="paramname">base</td><td>base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base. </td></tr>
+    <tr><td class="paramname">output</td><td>(output) will contain the converted number or 0 on error </td></tr>
+    <tr><td class="paramname">next</td><td>(output) will contain a pointer to the next character after the number and null pointer on error </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SUCCESSFUL_CONVERSION when output is valid, something else on error. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="string_to_number_8cpp_source.html#l00106">106</a> of file <a class="el" href="string_to_number_8cpp_source.html">StringToNumber.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a4cfc0536c8f7ecc3184b83f08a44dffa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cfc0536c8f7ecc3184b83f08a44dffa">&#9670;&nbsp;</a></span>string_to_number() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">Fw::StringUtils::StringToNumberStatus</a> Fw::StringUtils::string_to_number </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>buffer_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="basic_types_8h.html#a33c92dd47950aa8c1d6df7e1c163e5a6">I8</a> &amp;&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>next</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>&#160;</td>
+          <td class="paramname"><em>base</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>converts a string to a I8 </p>
+<p>See string_to_number (above) for full explanation.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>input string </td></tr>
+    <tr><td class="paramname">buffer_size</td><td>maximum length of string bounding the conversion </td></tr>
+    <tr><td class="paramname">base</td><td>base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base. </td></tr>
+    <tr><td class="paramname">output</td><td>(output) will contain the converted number or 0 on error </td></tr>
+    <tr><td class="paramname">next</td><td>(output) will contain a pointer to the next character after the number and null pointer on error </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SUCCESSFUL_CONVERSION when output is valid, something else on error. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="string_to_number_8cpp_source.html#l00103">103</a> of file <a class="el" href="string_to_number_8cpp_source.html">StringToNumber.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a816806884e46c2138a6dabdcf00a58d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a816806884e46c2138a6dabdcf00a58d5">&#9670;&nbsp;</a></span>string_to_number() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93">Fw::StringUtils::StringToNumberStatus</a> Fw::StringUtils::string_to_number </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="basic_types_8h.html#aebb9e13210d88d43e32e735ada43a425">CHAR</a> *&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td>
+          <td class="paramname"><em>buffer_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> &amp;&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>next</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>&#160;</td>
+          <td class="paramname"><em>base</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>converts a string to a U8 </p>
+<p>See string_to_number (above) for full explanation.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>input string </td></tr>
+    <tr><td class="paramname">buffer_size</td><td>maximum length of string bounding the conversion </td></tr>
+    <tr><td class="paramname">base</td><td>base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base. </td></tr>
+    <tr><td class="paramname">output</td><td>(output) will contain the converted number or 0 on error </td></tr>
+    <tr><td class="paramname">next</td><td>(output) will contain a pointer to the next character after the number and null pointer on error </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SUCCESSFUL_CONVERSION when output is valid, something else on error. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="string_to_number_8cpp_source.html#l00100">100</a> of file <a class="el" href="string_to_number_8cpp_source.html">StringToNumber.cpp</a>.</p>
 
 </div>
 </div>

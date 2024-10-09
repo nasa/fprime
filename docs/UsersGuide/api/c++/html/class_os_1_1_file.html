@@ -153,6 +153,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7f3bc2f553b4f4a51a1ca3cb9c292e75"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_file.html#a7f3bc2f553b4f4a51a1ca3cb9c292e75">read</a> (<a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffer, <a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> &amp;<a class="el" href="class_os_1_1_file.html#a661f0906817529668c7dd45d10c11971">size</a>, <a class="el" href="class_os_1_1_file_interface.html#a2c96a8d16d51ea0f487228e19bc137b5">WaitType</a> wait) override</td></tr>
 <tr class="memdesc:a7f3bc2f553b4f4a51a1ca3cb9c292e75"><td class="mdescLeft">&#160;</td><td class="mdescRight">read data from this file into supplied buffer bounded by size  <a href="class_os_1_1_file.html#a7f3bc2f553b4f4a51a1ca3cb9c292e75">More...</a><br /></td></tr>
 <tr class="separator:a7f3bc2f553b4f4a51a1ca3cb9c292e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89ebcf09a915a62e34b4e61ed4cb2316"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_file.html#a89ebcf09a915a62e34b4e61ed4cb2316">readline</a> (<a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffer, <a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> &amp;<a class="el" href="class_os_1_1_file.html#a661f0906817529668c7dd45d10c11971">size</a>, <a class="el" href="class_os_1_1_file_interface.html#a2c96a8d16d51ea0f487228e19bc137b5">WaitType</a> wait)</td></tr>
+<tr class="memdesc:a89ebcf09a915a62e34b4e61ed4cb2316"><td class="mdescLeft">&#160;</td><td class="mdescRight">read a line from the file using <code>\n</code> as the delimiter  <a href="class_os_1_1_file.html#a89ebcf09a915a62e34b4e61ed4cb2316">More...</a><br /></td></tr>
+<tr class="separator:a89ebcf09a915a62e34b4e61ed4cb2316"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0bb3c0dc85dc49d61ea9c1e682e71992"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_file.html#a0bb3c0dc85dc49d61ea9c1e682e71992">write</a> (const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *buffer, <a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> &amp;<a class="el" href="class_os_1_1_file.html#a661f0906817529668c7dd45d10c11971">size</a>, <a class="el" href="class_os_1_1_file_interface.html#a2c96a8d16d51ea0f487228e19bc137b5">WaitType</a> wait) override</td></tr>
 <tr class="memdesc:a0bb3c0dc85dc49d61ea9c1e682e71992"><td class="mdescLeft">&#160;</td><td class="mdescRight">read data from this file into supplied buffer bounded by size  <a href="class_os_1_1_file.html#a0bb3c0dc85dc49d61ea9c1e682e71992">More...</a><br /></td></tr>
 <tr class="separator:a0bb3c0dc85dc49d61ea9c1e682e71992"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -330,7 +333,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="line">    m_file.incrementalCrc(<a class="code" href="class_os_1_1_file.html#a661f0906817529668c7dd45d10c11971">size</a>);</div>
 <div class="line"><span class="keywordflow">while</span> (<a class="code" href="class_os_1_1_file.html#a661f0906817529668c7dd45d10c11971">size</a> == <a class="code" href="fp_config_8h.html#a51737d10b6b29ef0e0261037ac2da525">FW_FILE_CHUNK_SIZE</a>);</div>
 <div class="line">m_file.finalize(crc);</div>
-<div class="ttc" id="a_fp_config_8h_html_a51737d10b6b29ef0e0261037ac2da525"><div class="ttname"><a href="fp_config_8h.html#a51737d10b6b29ef0e0261037ac2da525">FW_FILE_CHUNK_SIZE</a></div><div class="ttdeci">#define FW_FILE_CHUNK_SIZE</div><div class="ttdoc">Chunk size for working with files in the OSAL layer.</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00414">FpConfig.h:414</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a51737d10b6b29ef0e0261037ac2da525"><div class="ttname"><a href="fp_config_8h.html#a51737d10b6b29ef0e0261037ac2da525">FW_FILE_CHUNK_SIZE</a></div><div class="ttdeci">#define FW_FILE_CHUNK_SIZE</div><div class="ttdoc">Chunk size for working with files in the OSAL layer.</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00422">FpConfig.h:422</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_a661f0906817529668c7dd45d10c11971"><div class="ttname"><a href="class_os_1_1_file.html#a661f0906817529668c7dd45d10c11971">Os::File::size</a></div><div class="ttdeci">Status size(FwSignedSizeType &amp;size_result) override</div><div class="ttdoc">get size of currently open file</div><div class="ttdef"><b>Definition:</b> <a href="os_2_file_8cpp_source.html#l00085">File.cpp:85</a></div></div>
 </div><!-- fragment --> <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -836,11 +839,62 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OP_OK on success otherwise error status </dd></dl>
 
 <p>Implements <a class="el" href="class_os_1_1_file_interface.html#a8e1e7f2c82ed8f5b1925efe81ccbaa66">Os::FileInterface</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="os_2_file_8cpp_source.html#l00147">147</a> of file <a class="el" href="os_2_file_8cpp_source.html">File.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a89ebcf09a915a62e34b4e61ed4cb2316"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89ebcf09a915a62e34b4e61ed4cb2316">&#9670;&nbsp;</a></span>readline()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">File::Status</a> Os::File::readline </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a> &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_file_interface.html#a2c96a8d16d51ea0f487228e19bc137b5">File::WaitType</a>&#160;</td>
+          <td class="paramname"><em>wait</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>read a line from the file using <code>\n</code> as the delimiter </p>
+<p>Reads a single line from the file including the terminating '<br  />
+'. This will return an error if no line is found within the specified buffer size. In the case of EOF, the line is read without the terminating '<br  />
+'.</p>
+<p>In the case of an error, this function will seek to the original location in the file. Otherwise, the pointer will point to the first character after the <code>\n</code> or EOF in the case of no <code>\n</code>.</p>
+<p>It is invalid to send a null buffer. It is invalid to send a size less than 0. It is an error if the file is not opened for reading.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>memory location to store data read from file </td></tr>
+    <tr><td class="paramname">size</td><td>maximum size of buffer to store the new line </td></tr>
+    <tr><td class="paramname">wait</td><td><code>WAIT</code> to wait for data, <code>NO_WAIT</code> to return what is currently available </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>OP_OK on success otherwise error status </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="os_2_file_8cpp_source.html#l00237">237</a> of file <a class="el" href="os_2_file_8cpp_source.html">File.cpp</a>.</p>
 
 </div>
 </div>

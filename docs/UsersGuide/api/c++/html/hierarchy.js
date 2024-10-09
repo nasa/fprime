@@ -32,6 +32,17 @@ var hierarchy =
     ] ],
     [ "Svc::AMPCSSequence::SequenceHeader::Constants", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_sequence_header_1_1_constants.html", null ],
     [ "Fw::ConstByteArray", "struct_fw_1_1_const_byte_array.html", null ],
+    [ "Os::CpuHandle", "class_os_1_1_cpu_handle.html", [
+      [ "Os::Darwin::Cpu::DarwinCpuHandle", "struct_os_1_1_darwin_1_1_cpu_1_1_darwin_cpu_handle.html", null ],
+      [ "Os::Linux::Cpu::LinuxCpuHandle", "struct_os_1_1_linux_1_1_cpu_1_1_linux_cpu_handle.html", null ],
+      [ "Os::Stub::Cpu::StubCpuHandle", "struct_os_1_1_stub_1_1_cpu_1_1_stub_cpu_handle.html", null ]
+    ] ],
+    [ "Os::CpuInterface", "class_os_1_1_cpu_interface.html", [
+      [ "Os::Cpu", "class_os_1_1_cpu.html", null ],
+      [ "Os::Darwin::Cpu::DarwinCpu", "class_os_1_1_darwin_1_1_cpu_1_1_darwin_cpu.html", null ],
+      [ "Os::Linux::Cpu::LinuxCpu", "class_os_1_1_linux_1_1_cpu_1_1_linux_cpu.html", null ],
+      [ "Os::Stub::Cpu::StubCpu", "class_os_1_1_stub_1_1_cpu_1_1_stub_cpu.html", null ]
+    ] ],
     [ "Os::SystemResources::CpuTicks", "struct_os_1_1_system_resources_1_1_cpu_ticks.html", null ],
     [ "Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC", "struct_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence_1_1_c_r_c.html", null ],
     [ "Fw::FilePacket::DataPacket", "class_fw_1_1_file_packet_1_1_data_packet.html", null ],
@@ -101,6 +112,17 @@ var hierarchy =
     [ "Fw::MemAllocator", "class_fw_1_1_mem_allocator.html", [
       [ "Fw::MallocAllocator", "class_fw_1_1_malloc_allocator.html", null ],
       [ "Fw::MmapAllocator", "class_fw_1_1_mmap_allocator.html", null ]
+    ] ],
+    [ "Os::MemoryHandle", "class_os_1_1_memory_handle.html", [
+      [ "Os::Darwin::Memory::DarwinMemoryHandle", "struct_os_1_1_darwin_1_1_memory_1_1_darwin_memory_handle.html", null ],
+      [ "Os::Linux::Memory::LinuxMemoryHandle", "struct_os_1_1_linux_1_1_memory_1_1_linux_memory_handle.html", null ],
+      [ "Os::Stub::Memory::StubMemoryHandle", "struct_os_1_1_stub_1_1_memory_1_1_stub_memory_handle.html", null ]
+    ] ],
+    [ "Os::MemoryInterface", "class_os_1_1_memory_interface.html", [
+      [ "Os::Darwin::Memory::DarwinMemory", "class_os_1_1_darwin_1_1_memory_1_1_darwin_memory.html", null ],
+      [ "Os::Linux::Memory::LinuxMemory", "class_os_1_1_linux_1_1_memory_1_1_linux_memory.html", null ],
+      [ "Os::Memory", "class_os_1_1_memory.html", null ],
+      [ "Os::Stub::Memory::StubMemory", "class_os_1_1_stub_1_1_memory_1_1_stub_memory.html", null ]
     ] ],
     [ "Os::SystemResources::MemUtil", "struct_os_1_1_system_resources_1_1_mem_util.html", null ],
     [ "Svc::BufferLogger::File::Mode", "struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html", null ],
@@ -431,6 +453,7 @@ var hierarchy =
       [ "Os::FileMode", "class_os_1_1_file_mode.html", null ],
       [ "Os::FileStatus", "class_os_1_1_file_status.html", null ],
       [ "Os::FileSystemStatus", "class_os_1_1_file_system_status.html", null ],
+      [ "Os::GenericStatus", "class_os_1_1_generic_status.html", null ],
       [ "Os::MutexStatus", "class_os_1_1_mutex_status.html", null ],
       [ "Os::TaskStatus", "class_os_1_1_task_status.html", null ],
       [ "Svc::ActiveLogger_Enabled", "class_svc_1_1_active_logger___enabled.html", null ],
@@ -516,6 +539,7 @@ var hierarchy =
     [ "UdpSenderComponentBase", null, [
       [ "Svc::UdpSenderComponentImpl", "class_svc_1_1_udp_sender_component_impl.html", null ]
     ] ],
+    [ "Os::Generic::UsedTotal", "struct_os_1_1_generic_1_1_used_total.html", null ],
     [ "Os::ValidatedFile", "class_os_1_1_validated_file.html", null ],
     [ "Project::Version", "struct_project_1_1_version.html", null ],
     [ "Os::WatchdogTimer", "class_os_1_1_watchdog_timer.html", null ]

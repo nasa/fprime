@@ -1,5 +1,6 @@
 var namespace_os =
 [
+    [ "Darwin", "namespace_os_1_1_darwin.html", "namespace_os_1_1_darwin" ],
     [ "Delegate", "namespace_os_1_1_delegate.html", [
       [ "makeDelegate", "namespace_os_1_1_delegate.html#ac63daeb47d5fee5a7fef6a3a2eb49e25", null ],
       [ "makeDelegate", "namespace_os_1_1_delegate.html#a06b343274103dadcbff9cc88bc835291", null ]
@@ -19,6 +20,7 @@ var namespace_os =
       [ "removeFile", "namespace_os_1_1_file_system.html#aa9cc00d2e1f1ebf4fb489c55569b59b1", null ]
     ] ],
     [ "Generic", "namespace_os_1_1_generic.html", "namespace_os_1_1_generic" ],
+    [ "Linux", "namespace_os_1_1_linux.html", "namespace_os_1_1_linux" ],
     [ "Posix", "namespace_os_1_1_posix.html", "namespace_os_1_1_posix" ],
     [ "Stub", "namespace_os_1_1_stub.html", "namespace_os_1_1_stub" ],
     [ "SystemResources", "namespace_os_1_1_system_resources.html", "namespace_os_1_1_system_resources" ],
@@ -45,6 +47,7 @@ var namespace_os =
     [ "FileMode", "class_os_1_1_file_mode.html", "class_os_1_1_file_mode" ],
     [ "FileStatus", "class_os_1_1_file_status.html", "class_os_1_1_file_status" ],
     [ "FileSystemStatus", "class_os_1_1_file_system_status.html", "class_os_1_1_file_system_status" ],
+    [ "GenericStatus", "class_os_1_1_generic_status.html", "class_os_1_1_generic_status" ],
     [ "MutexStatus", "class_os_1_1_mutex_status.html", "class_os_1_1_mutex_status" ],
     [ "TaskStatus", "class_os_1_1_task_status.html", "class_os_1_1_task_status" ],
     [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
@@ -56,6 +59,9 @@ var namespace_os =
     [ "ConsoleHandle", "struct_os_1_1_console_handle.html", null ],
     [ "ConsoleInterface", "class_os_1_1_console_interface.html", "class_os_1_1_console_interface" ],
     [ "Console", "class_os_1_1_console.html", "class_os_1_1_console" ],
+    [ "CpuHandle", "class_os_1_1_cpu_handle.html", null ],
+    [ "CpuInterface", "class_os_1_1_cpu_interface.html", "class_os_1_1_cpu_interface" ],
+    [ "Cpu", "class_os_1_1_cpu.html", "class_os_1_1_cpu" ],
     [ "DirectoryHandle", "struct_os_1_1_directory_handle.html", null ],
     [ "DirectoryInterface", "class_os_1_1_directory_interface.html", "class_os_1_1_directory_interface" ],
     [ "Directory", "class_os_1_1_directory.html", "class_os_1_1_directory" ],
@@ -69,6 +75,9 @@ var namespace_os =
     [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ],
     [ "QueueHandle", "class_os_1_1_queue_handle.html", "class_os_1_1_queue_handle" ],
     [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ],
+    [ "MemoryHandle", "class_os_1_1_memory_handle.html", null ],
+    [ "MemoryInterface", "class_os_1_1_memory_interface.html", "class_os_1_1_memory_interface" ],
+    [ "Memory", "class_os_1_1_memory.html", "class_os_1_1_memory" ],
     [ "MutexHandle", "struct_os_1_1_mutex_handle.html", null ],
     [ "MutexInterface", "class_os_1_1_mutex_interface.html", "class_os_1_1_mutex_interface" ],
     [ "Mutex", "class_os_1_1_mutex.html", "class_os_1_1_mutex" ],
