@@ -62,6 +62,7 @@ set(UT_SOURCE_FILES
 
 set(UT_MOD_DEPS
     Os_File_Posix
+    Os_File_Stub
 )
 choose_fprime_implementation(Os/File Os_File_None)
 register_fprime_ut()

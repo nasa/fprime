@@ -5,6 +5,53 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+
+# Helper function for adding OS modules
+function(add_named_os_module NAMES)
+    # Get first element of list
+    list(GET NAMES 0 FIRST_ITEM)
+    set(OS_MODULE_NAME "Os_${FIRST_ITEM}_Common")
+    # Clear variables
+    set(SOURCE_FILES)
+    set(SOURCE_HEADERS)
+    # Add files for each name supplied
+    foreach (NAME IN LISTS NAMES)
+        list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
+        list(APPEND SOURCE_HEADERS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
+    endforeach ()
+    # Set up module
+    set(MOD_DEPS Fw_Types ${ARGN})
+    register_fprime_module("${OS_MODULE_NAME}")
+    add_dependencies(Os "${OS_MODULE_NAME}")
+    target_link_libraries(Os PUBLIC "${OS_MODULE_NAME}")
+endfunction()
+
+function(add_fprime_supplied_os_module NAMES SUFFIX)
+    # Get first element of list
+    list(GET NAMES 0 FIRST_ITEM)
+    set(OS_MODULE_NAME "Os_${FIRST_ITEM}_${SUFFIX}")
+    # Clear variables
+    set(SOURCE_FILES)
+    set(SOURCE_HEADERS)
+    # Add files for each name supplied
+    foreach (NAME IN LISTS NAMES)
+        list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
+        list(APPEND SOURCE_HEADERS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
+    endforeach ()
+    # Set up module
+    set(MOD_DEPS "Os_${FIRST_ITEM}_Common" ${ARGN})
+    register_fprime_module("${OS_MODULE_NAME}")
+    register_fprime_implementation("Os_${FIRST_ITEM}" "${OS_MODULE_NAME}" "${CMAKE_CURRENT_LIST_DIR}/Default${FIRST_ITEM}.cpp")
+endfunction()
+
+function(add_fprime_os_test NAME UT_SOURCE_FILES IMPLEMENTATION_PAIRS)
+    set(UT_MOD_DEPS Os STest ${ARGN})
+    foreach (PAIR IN LISTS IMPLEMENTATION_PAIRS)
+        choose_fprime_implementation(${PAIR})
+    endforeach ()
+    register_fprime_ut("${NAME}")
+endfunction()
+
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Models")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stub")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
@@ -18,19 +65,6 @@ set(SOURCE_FILES
 set(MOD_DEPS config)
 register_fprime_module(Os_Test_File_SyntheticFileSystem)
 
-
-# Basic module dependencies
-set(MOD_DEPS
-  ${CMAKE_THREAD_LIBS_INIT}
-  Fw/Cfg
-  Fw/Types
-  Fw/Logger
-  Utils/Hash
-)
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    list(APPEND MOD_DEPS -lrt)
-endif()
-
 # Basic source files used in every OSAL layer.  Contains common code and helpers.
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
@@ -38,38 +72,23 @@ set(SOURCE_FILES
 
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
-
-    # Refactored common files
     "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/FileSystem.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Directory.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Condition.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Cpu.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Memory.cpp"
 )
-# Check for default logger
-if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
-    list(APPEND SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
-    )
-endif()
+set(SOURCE_HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Os.hpp"
+)
+set(MOD_DEPS Fw_Types)
 register_fprime_module()
 
-require_fprime_implementation(Os/File)
-require_fprime_implementation(Os/FileSystem)
-require_fprime_implementation(Os/Directory)
-require_fprime_implementation(Os/Mutex)
-#require_fprime_implementation(Os/Task)
-require_fprime_implementation(Os/Console)
-require_fprime_implementation(Os/Queue)
-require_fprime_implementation(Os/Cpu)
-require_fprime_implementation(Os/Memory)
-
+add_named_os_module(Console Fw_Logger)
+add_named_os_module("File;FileSystem;Directory" Utils/Hash)
+add_named_os_module(Task ${CMAKE_THREAD_LIBS_INIT})
+add_named_os_module("Mutex;Condition")
+add_named_os_module(Queue)
+add_named_os_module(Cpu)
+add_named_os_module(Memory)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
@@ -79,15 +98,3 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )
 register_fprime_ut()
-if (BUILD_TESTING)
-    foreach (TEST IN ITEMS 
-                StubFileTest PosixFileTest
-                StubMutexTest PosixMutexTest
-                StubDirectoryTest PosixDirectory
-                StubFileSystemTest PosixFileSystemTest
-            ) # add? : StubTaskTest PosixTaskTest
-        if (TARGET "${TEST}")
-            add_dependencies("Os_ut_exe" "${TEST}")
-        endif()
-    endforeach()
-endif()
