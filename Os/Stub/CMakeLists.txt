@@ -10,11 +10,10 @@ add_custom_target("${FPRIME_CURRENT_MODULE}")
 ######## File Stub ########
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp"
 )
 set(MOD_DEPS config)
 register_fprime_module(Os_File_Stub)
-register_fprime_implementation(Os/File Os_File_Stub)
+register_fprime_implementation(Os/File Os_File_Stub "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp")
 
 ######## Mutex Stub ########
 set(SOURCE_FILES
@@ -104,10 +103,9 @@ endif ()
 #### File Stub Testing ####
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/File.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/DefaultFile.cpp"
 )
 register_fprime_module(Os_File_Test_Stub)
-register_fprime_implementation(Os/File Os_File_Test_Stub)
+register_fprime_implementation(Os/File Os_File_Test_Stub "${CMAKE_CURRENT_LIST_DIR}/test/DefaultFile.cpp")
 
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileTests.cpp"
@@ -135,6 +133,7 @@ set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubConsoleTests.cpp"
 )
 set(UT_MOD_DEPS)
+choose_fprime_implementation(Os/File Os_File_Stub)
 choose_fprime_implementation(Os/Console Os_Console_Test_Stub)
 register_fprime_ut(StubConsoleTest)
 
