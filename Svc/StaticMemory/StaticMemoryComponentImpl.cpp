@@ -27,10 +27,6 @@ StaticMemoryComponentImpl ::StaticMemoryComponentImpl(const char* const compName
     }
 }
 
-void StaticMemoryComponentImpl ::init(const NATIVE_INT_TYPE instance) {
-    StaticMemoryComponentBase::init(instance);
-}
-
 StaticMemoryComponentImpl ::~StaticMemoryComponentImpl() {}
 
 // ----------------------------------------------------------------------

@@ -218,6 +218,7 @@ namespace Os {
         File();
         //! \brief destructor
         //!
+        //! Destructor closes the file if it is open
         ~File() final;
 
         //! \brief copy constructor that copies the internal representation
@@ -381,9 +382,27 @@ namespace Os {
         //! \param buffer: memory location to store data read from file
         //! \param size: size of data to read
         //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
-        //! \return OP_OK on success otherwise error status
+
         //!
         Status read(U8* buffer, FwSignedSizeType &size, WaitType wait) override;
+
+        //! \brief read a line from the file using `\n` as the delimiter
+        //!
+        //! Reads a single line from the file including the terminating '\n'. This will return an error if no line is
+        //! found within the specified buffer size. In the case of EOF, the line is read without the terminating '\n'.
+        //!
+        //! In the case of an error, this function will seek to the original location in the file. Otherwise, the
+        //! pointer will point to the first character after the `\n` or EOF in the case of no `\n`.
+        //!
+        //! It is invalid to send a null buffer.
+        //! It is invalid to send a size less than 0.
+        //! It is an error if the file is not opened for reading.
+        //!
+        //! \param buffer: memory location to store data read from file
+        //! \param size: maximum size of buffer to store the new line
+        //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
+        //! \return OP_OK on success otherwise error status
+        Status readline(U8* buffer, FwSignedSizeType &size, WaitType wait);
 
         //! \brief read data from this file into supplied buffer bounded by size
         //!

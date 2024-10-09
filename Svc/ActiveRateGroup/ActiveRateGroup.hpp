@@ -40,16 +40,6 @@ namespace Svc {
             //!  \param compName Name of the component
             ActiveRateGroup(const char* compName);
 
-            //!  \brief ActiveRateGroup initialization function
-            //!
-            //!  The initialization function of the class initializes the member
-            //!  ports and the component base class
-            //!
-            //!  \param queueDepth Depth of the active component message queue
-            //!  \param instance Identifies the instance of the rate group component
-
-            void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance);
-
             //!  \brief ActiveRateGroup configuration function
             //!
             //!  The configuration function takes an array of context values to pass to

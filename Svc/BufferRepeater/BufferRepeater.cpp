@@ -23,10 +23,6 @@ BufferRepeater ::BufferRepeater(const char* const compName)
     : BufferRepeaterComponentBase(compName),
       m_allocation_failure_response(BufferRepeater::NUM_BUFFER_REPEATER_FAILURE_OPTIONS) {}
 
-void BufferRepeater ::init(const NATIVE_INT_TYPE instance) {
-    BufferRepeaterComponentBase::init(instance);
-}
-
 BufferRepeater ::~BufferRepeater() {}
 
 void BufferRepeater ::configure(BufferRepeater::BufferRepeaterFailureOption allocation_failure_response) {

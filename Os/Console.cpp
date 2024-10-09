@@ -6,8 +6,6 @@
 #include <Fw/Types/Assert.hpp>
 
 namespace Os {
-    Console* Console::s_singleton;
-
     Console::Console() : ConsoleInterface(), Fw::Logger(), m_handle_storage(), m_delegate(*ConsoleInterface::getDelegate(m_handle_storage)) {}
 
     Console::~Console() {
@@ -58,12 +56,9 @@ namespace Os {
     }
 
     Console& Console::getSingleton() {
-        // On the fly construction of singleton
-        if (s_singleton == nullptr) {
-            s_singleton = new Console();
-            Fw::Logger::registerLogger(s_singleton);
-        }
-        return *s_singleton;
+        static Console s_singleton;
+        Fw::Logger::registerLogger(&s_singleton);
+        return s_singleton;
     }
 }
 

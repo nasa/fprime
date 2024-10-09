@@ -32,11 +32,6 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
     LinuxUartDriver(const char* const compName /*!< The component name*/
     );
 
-    //! Initialize object LinuxUartDriver
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-    );
-
     //! Configure UART parameters
     enum UartBaudRate {
       BAUD_9600=9600,

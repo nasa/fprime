@@ -237,6 +237,9 @@ function(register_fprime_module)
     endif()
     # Explicit call to module register
     generate_library("${MODULE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
+    if (TARGET "${MODULE_NAME}")
+        add_dependencies("${MODULE_NAME}" config)
+    endif()
 endfunction(register_fprime_module)
 
 ####

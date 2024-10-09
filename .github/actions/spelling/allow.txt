@@ -6,3 +6,5 @@ usec
 usecs
 workaround
 workarounds
+DEVICESM
+HACKSM

@@ -13,7 +13,6 @@ namespace Os {
 struct MutexHandle {};
 
 class MutexInterface {
-    // add enum with
   public:
     enum Status { 
       OP_OK, //!<  Operation was successful
@@ -31,6 +30,9 @@ class MutexInterface {
     //! \brief copy constructor is forbidden
     MutexInterface(const MutexInterface& other) = delete;
 
+    //! \brief copy constructor is forbidden
+    MutexInterface(const MutexInterface* other) = delete;
+
     //! \brief assignment operator is forbidden
     MutexInterface& operator=(const MutexInterface& other) = delete;
 
@@ -39,7 +41,7 @@ class MutexInterface {
     virtual MutexHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a Mutex delegate object
-    static MutexInterface* getDelegate(HandleStorage& aligned_new_memory);  // TODO
+    static MutexInterface* getDelegate(HandleStorage& aligned_new_memory);
 
     virtual Status take() = 0;     //!<  lock the mutex return status
     virtual Status release() = 0;  //!<  unlock the mutex return status
@@ -67,6 +69,35 @@ class Mutex final : public MutexInterface {
     //
     alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage;  //!< Mutex handle storage
     MutexInterface& m_delegate;                                   //!< Delegate for the real implementation
+};
+//! \brief locks a mutex within the current scope
+//!
+//! The scope lock will lock the associated mutex immediately and will ensure the mutex is unlock when the scope lock
+//! is destroyed.
+//!
+//! \warning it is unadvisable to dynamically allocate ScopeLock as this violates the implied usage.
+class ScopeLock {
+  public:
+    //! \brief construct the scope lock
+    //!
+    //! Will lock the supplied mutex and will unlock the mutex when this object goes out of scope.
+    //! \param mutex
+    explicit ScopeLock(Mutex& mutex);
+
+    //!\brief unlock the scoped mutex
+    ~ScopeLock();
+
+    //! \brief copy constructor is forbidden
+    ScopeLock(const ScopeLock& other) = delete;
+
+    //! \brief copy constructor is forbidden
+    ScopeLock(const ScopeLock* other) = delete;
+
+    //! \brief assignment operator is forbidden
+    ScopeLock& operator=(const ScopeLock& other) = delete;
+
+  private:
+    Mutex& m_mutex; //!< Stores the mutex reference
 };
 }  // namespace Os
 

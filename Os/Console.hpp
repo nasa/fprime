@@ -128,7 +128,6 @@ namespace Os {
         static Console& getSingleton();
 
       private:
-        static Console* s_singleton;
         // This section is used to store the implementation-defined console handle. To Os::Console and fprime, this type
         // is opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle
         // in the byte-array here and set `handle` to that address for storage.

@@ -54,14 +54,6 @@ namespace Svc {
 
   }
 
-  void AssertFatalAdapterComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    AssertFatalAdapterComponentBase::init(instance);
-  }
-
   AssertFatalAdapterComponentImpl ::
     ~AssertFatalAdapterComponentImpl()
   {

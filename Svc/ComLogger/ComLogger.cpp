@@ -47,16 +47,6 @@ namespace Svc {
   {
   }
 
-
-  void ComLogger ::
-    init(
-      NATIVE_INT_TYPE queueDepth, //!< The queue depth
-      NATIVE_INT_TYPE instance //!< The instance number
-    )
-  {
-    ComLoggerComponentBase::init(queueDepth, instance);
-  }
-
   void ComLogger ::
     init_log_file(const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength)
   {

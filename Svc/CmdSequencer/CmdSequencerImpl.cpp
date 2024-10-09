@@ -44,11 +44,6 @@ namespace Svc {
 
     }
 
-    void CmdSequencerComponentImpl::init(const NATIVE_INT_TYPE queueDepth,
-            const NATIVE_INT_TYPE instance) {
-        CmdSequencerComponentBase::init(queueDepth, instance);
-    }
-
     void CmdSequencerComponentImpl::setTimeout(const NATIVE_UINT_TYPE timeout) {
         this->m_timeout = timeout;
     }

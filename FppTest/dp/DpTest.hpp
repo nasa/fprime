@@ -66,11 +66,6 @@ class DpTest : public DpTestComponentBase {
            const Fw::StringBase& stringRecordData           //!< The StringRecord data
     );
 
-    //! Initialize object DpTest
-    void init(const NATIVE_INT_TYPE queueDepth,   //!< The queue depth
-              const NATIVE_INT_TYPE instance = 0  //!< The instance number
-    );
-
     //! Destroy object DpTest
     ~DpTest();
 

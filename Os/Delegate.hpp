@@ -42,11 +42,11 @@ namespace Delegate {
 //! \tparam Implementation: implementation class of the delegate (e.g. PosixTask)
 //! \param aligned_new_memory: memory to be filled via placement new call
 //! \return pointer to implementation result of placement new
-template <class Interface, class Implementation>
-inline Interface* makeDelegate(HandleStorage& aligned_new_memory) {
+template <class Interface, class Implementation, class StorageType=HandleStorage>
+inline Interface* makeDelegate(StorageType& aligned_new_memory) {
     // Ensure prerequisites before performing placement new
     static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
-    static_assert(sizeof(Implementation) <= FW_HANDLE_MAX_SIZE, "Handle size not large enough");
+    static_assert(sizeof(Implementation) <= sizeof(StorageType), "Handle size not large enough");
     static_assert((FW_HANDLE_ALIGNMENT % alignof(Implementation)) == 0, "Handle alignment invalid");
     // Placement new the object and ensure non-null result
     Implementation* interface = new (aligned_new_memory) Implementation;

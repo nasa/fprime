@@ -47,6 +47,7 @@ namespace Os {
 
             enum State {
                 NOT_STARTED,
+                STARTING,
                 RUNNING,
                 SUSPENDED_INTENTIONALLY,
                 SUSPENDED_UNINTENTIONALLY,

@@ -26,10 +26,6 @@ namespace Svc {
 
 GenericHubComponentImpl ::GenericHubComponentImpl(const char* const compName) : GenericHubComponentBase(compName) {}
 
-void GenericHubComponentImpl ::init(const NATIVE_INT_TYPE instance) {
-    GenericHubComponentBase::init(instance);
-}
-
 GenericHubComponentImpl ::~GenericHubComponentImpl() {}
 
 void GenericHubComponentImpl ::send_data(const HubType type,

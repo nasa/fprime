@@ -1,7 +1,7 @@
 module Drv {
 
   port GpioWrite(
-                  state: Fw.Logic
+                  $state: Fw.Logic
                 )
 
 }
@@ -9,7 +9,7 @@ module Drv {
 module Drv {
 
   port GpioRead(
-                 ref state: Fw.Logic
+                 ref $state: Fw.Logic
                )
 
 }

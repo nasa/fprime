@@ -44,15 +44,6 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    FileDownlinkComponentBase::init(queueDepth, instance);
-  }
-
-  void FileDownlink ::
     configure(
         U32 timeout,
         U32 cooldown,
@@ -65,12 +56,12 @@ namespace Svc {
     this->m_cycleTime = cycleTime;
     this->m_configured = true;
 
-    Os::Queue::QueueStatus stat = m_fileQueue.create(
+    Os::Queue::Status stat = m_fileQueue.create(
       Os::QueueString("fileDownlinkQueue"),
-      static_cast<NATIVE_INT_TYPE>(fileQueueDepth),
-      sizeof(struct FileEntry)
+      static_cast<FwSizeType>(fileQueueDepth),
+      static_cast<FwSizeType>(sizeof(struct FileEntry))
     );
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    FW_ASSERT(stat == Os::Queue::OP_OK, stat);
   }
 
   void FileDownlink ::
@@ -98,17 +89,17 @@ namespace Svc {
     switch(this->m_mode.get())
     {
       case Mode::IDLE: {
-        NATIVE_INT_TYPE real_size = 0;
-        NATIVE_INT_TYPE prio = 0;
-        Os::Queue::QueueStatus stat = m_fileQueue.receive(
+        FwSizeType real_size = 0;
+        FwQueuePriorityType prio = 0;
+        Os::Queue::Status stat = m_fileQueue.receive(
           reinterpret_cast<U8*>(&this->m_curEntry),
-          sizeof(this->m_curEntry),
+          static_cast<FwSizeType>(sizeof(this->m_curEntry)),
+          Os::Queue::BlockingType::NONBLOCKING,
           real_size,
-          prio,
-          Os::Queue::QUEUE_NONBLOCKING
+          prio
         );
 
-        if(stat != Os::Queue::QUEUE_OK || sizeof(this->m_curEntry) != real_size) {
+        if(stat != Os::Queue::Status::OP_OK || sizeof(this->m_curEntry) != real_size) {
           return;
         }
 
@@ -170,9 +161,9 @@ namespace Svc {
     (void) Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.srcFilename)));
     (void) Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.destFilename)));
 
-    Os::Queue::QueueStatus status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::Status status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)), 0, Os::Queue::BlockingType::NONBLOCKING);
 
-    if(status != Os::Queue::QUEUE_OK) {
+    if(status != Os::Queue::Status::OP_OK) {
       return SendFileResponse(SendFileStatus::STATUS_ERROR, std::numeric_limits<U32>::max());
     }
     return SendFileResponse(SendFileStatus::STATUS_OK, entry.context);
@@ -243,9 +234,9 @@ namespace Svc {
     (void) Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.srcFilename)));
     (void) Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.destFilename)));
 
-    Os::Queue::QueueStatus status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::Status status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)), 0, Os::Queue::BlockingType::NONBLOCKING);
 
-    if(status != Os::Queue::QUEUE_OK) {
+    if(status != Os::Queue::Status::OP_OK) {
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
   }
@@ -276,9 +267,9 @@ namespace Svc {
     (void) Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.srcFilename)));
     (void) Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), static_cast<FwSizeType>(sizeof(entry.destFilename)));
 
-    Os::Queue::QueueStatus status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::Status status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)), 0, Os::Queue::BlockingType::NONBLOCKING);
 
-    if(status != Os::Queue::QUEUE_OK) {
+    if(status != Os::Queue::Status::OP_OK) {
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
   }

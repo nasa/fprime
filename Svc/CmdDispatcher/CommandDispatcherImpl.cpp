@@ -24,13 +24,6 @@ namespace Svc {
     CommandDispatcherImpl::~CommandDispatcherImpl() {
     }
 
-    void CommandDispatcherImpl::init(
-            NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-            NATIVE_INT_TYPE instance /*!< The instance number*/
-            ) {
-        CommandDispatcherComponentBase::init(queueDepth);
-    }
-
     void CommandDispatcherImpl::compCmdReg_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode) {
         // search for an empty slot
         bool slotFound = false;

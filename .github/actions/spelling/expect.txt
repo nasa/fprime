@@ -201,6 +201,7 @@ CRCs
 crcstat
 CREATEDIRECTORY
 Crosscompiling
+crsmith
 crt
 CRTSCTS
 cryptsoft
@@ -685,6 +686,7 @@ notchars
 NOTYPE
 Nowicki
 nproc
+NPROCESSORS
 npx
 NSHUFF
 NSPACES
@@ -706,6 +708,7 @@ oldeol
 OLDINCLUDEDIR
 OMG
 onlinepubs
+ONLN
 OPCODEBASE
 opengroup
 openmct
@@ -757,6 +760,7 @@ pcmake
 pcomp
 pdflatex
 Peet
+penv
 PERLMOD
 PINGSEND
 pinit
@@ -793,6 +797,7 @@ prepeneding
 pri
 printables
 prioritization
+PRIORITYQUEUE
 prm
 PRMDB
 PRMDBIMPL
@@ -952,6 +957,7 @@ Shenker
 showinitializer
 sideeffect
 sighandler
+Signedness
 SIMPLEQUEUEREGISTRY
 sinc
 Sinha
@@ -996,6 +1002,7 @@ STDC
 stddef
 stdint
 stest
+Stl
 STREQ
 STREQUAL
 strerror
@@ -1092,6 +1099,7 @@ TIMERVAL
 timetag
 timeval
 timothycanham
+Tinternal
 tions
 tjh
 TKC
