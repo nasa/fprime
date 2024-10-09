@@ -7,6 +7,8 @@
 #include <Os/Console.hpp>
 #include <Os/FileSystem.hpp>
 #include <Os/Directory.hpp>
+#include <Os/Cpu.hpp>
+#include <Os/Memory.hpp>
 
 
 TEST(Stub, File) {
@@ -39,6 +41,14 @@ TEST(Stub, FileSystem) {
 
 TEST(Stub, Directory) {
     Os::Directory _;
+}
+
+TEST(Stub, Cpu) {
+    Os::Cpu::getSingleton();
+}
+
+TEST(Stub, Memory) {
+    Os::Memory::getSingleton();
 }
 
 int main(int argc, char** argv) {

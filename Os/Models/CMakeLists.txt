@@ -12,5 +12,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Mutex.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Directory.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileSystem.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Generic.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Models.cpp"
 )
 register_fprime_module()

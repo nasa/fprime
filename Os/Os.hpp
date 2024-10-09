@@ -12,8 +12,24 @@ typedef U8 HandleStorage[FW_HANDLE_MAX_SIZE];
 typedef U8 DirectoryHandleStorage[FW_DIRECTORY_HANDLE_MAX_SIZE];
 typedef U8 FileSystemHandleStorage[FW_FILESYSTEM_HANDLE_MAX_SIZE];
 typedef U8 ConditionVariableHandleStorage[FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE];
+typedef U8 CpuHandleStorage[FW_CPU_HANDLE_MAX_SIZE];
+typedef U8 MemoryHandleStorage[FW_MEMORY_HANDLE_MAX_SIZE];
 
 namespace Os {
+namespace Generic {
+//! Generic OK/ERROR status
+enum Status {
+    OP_OK, //!< Operation succeeded
+    ERROR, //!< Operation failed
+};
+
+//! Generic used/total struct
+struct UsedTotal {
+    FwSizeType used; //!< Used amount
+    FwSizeType total; //!< Total amount
+};
+
+}
 
 //! \brief Initialization function for the OSAL layer
 void init();
