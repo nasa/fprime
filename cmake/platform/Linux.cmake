@@ -17,8 +17,8 @@ choose_fprime_implementation(Os/Task Os/Task/Posix)
 choose_fprime_implementation(Os/Mutex Os/Mutex/Posix)
 choose_fprime_implementation(Os/Queue Os/Generic/PriorityQueue)
 
-choose_fprime_implementation(Os/Cpu Os/Stub/Cpu)
-choose_fprime_implementation(Os/Memory Os/Stub/Memory)
+choose_fprime_implementation(Os/Cpu Os/Linux/Cpu)
+choose_fprime_implementation(Os/Memory Os/Linux/Memory)
 
 # Use common linux setup
 add_definitions(-DTGT_OS_TYPE_LINUX)

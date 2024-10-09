@@ -3,7 +3,6 @@
 // \brief tests using stub implementation for Os::Task interface testing
 // ======================================================================
 #include <gtest/gtest.h>
-#include "Os/Models/Models.cpp"
 #include "Os/Stub/test/Task.hpp"
 #include "Os/test/ut/task/CommonTests.hpp"
 #include "Os/test/ut/task/RulesHeaders.hpp"

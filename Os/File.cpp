@@ -273,7 +273,7 @@ File::Status File::readline(U8* buffer, FwSignedSizeType &size, File::WaitType w
         for (FwSignedSizeType j = i; j < (i + read); j++) {
             // Newline seek back to after it, return the size read
             if (buffer[j] == '\n') {
-                size = j;
+                size = j + 1;
                 // Ensure that the computation worked
                 FW_ASSERT(size <= requested_size);
                 (void) this->seek(original_location + j + 1, File::SeekType::ABSOLUTE);

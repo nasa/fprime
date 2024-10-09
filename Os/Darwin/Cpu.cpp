@@ -14,16 +14,14 @@ namespace Os {
 namespace Darwin {
 namespace Cpu {
 
-/**
- * \brief helper around raw CPU capture API
- *
- * Calls for the CPU information from the machine, improving readability in cpu_by_index
- *
- * \param cpu_load_info: filled with CPU data
- * \param cpu_count: filled with CPU count
- *
- * \return success/failure using kern_return_t
- */
+//! \brief helper around raw CPU capture API
+//!
+//! Calls for the CPU information from the machine, improving readability in cpu_by_index
+//!
+//! \param cpu_load_info: filled with CPU data
+//! \param cpu_count: filled with CPU count
+//!
+//! \return success/failure using kern_return_t
 kern_return_t cpu_data_helper(processor_cpu_load_info_t& cpu_load_info, FwSizeType& cpu_count) {
     static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<natural_t>::max(),
                   "FwSizeType cannot hold natural_t values");
@@ -35,19 +33,17 @@ kern_return_t cpu_data_helper(processor_cpu_load_info_t& cpu_load_info, FwSizeTy
     return stat;
 }
 
-/**
- * \brief Query for a single CPU's ticks information
- *
- * Queries all CPU information but only deals with a single CPU's output. This is done because the load average is
- * tracked sample to sample and the call pattern is cpu0, cpu1, ..., cpu last, wait for sample window, cpu0, ... and
- * thus each call should update one CPU's sample or only the last cpu will have the benefit of the sampling window.
- *
- * \param cpu_index: index of current CPU being queried
- * \param used: filled with CPU's used ticks count
- * \param total: filled with CPU's total ticks
- *
- * \return success/failure using kern_return_t
- */
+//! \brief Query for a single CPU's ticks information
+//!
+//! Queries all CPU information but only deals with a single CPU's output. This is done because the load average is
+//! tracked sample to sample and the call pattern is cpu0, cpu1, ..., cpu last, wait for sample window, cpu0, ... and
+//! thus each call should update one CPU's sample or only the last cpu will have the benefit of the sampling window.
+//!
+//! \param cpu_index: index of current CPU being queried
+//! \param used: filled with CPU's used ticks count
+//! \param total: filled with CPU's total ticks
+//!
+//! \return success/failure using kern_return_t
 kern_return_t cpu_by_index(FwSizeType cpu_index, FwSizeType& used, FwSizeType& total) {
     processor_cpu_load_info_t cpu_load_info;
     FwSizeType cpu_count = 0;

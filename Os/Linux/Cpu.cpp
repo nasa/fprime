@@ -12,21 +12,28 @@ namespace Os {
 namespace Linux {
 namespace Cpu {
 
+// Proc FS /proc/stat file format example:
+//
+// cpu  270288 1598 88660 8470416 15185 9775 2990 867 0 0
+// cpu0 67462 108 22104 2118172 3779 2540 648 287 0 0
+// cpu1 74237 650 24059 2109680 2995 2447 667 93 0 0
+// cpu2 69388 630 22033 2115177 4428 2424 649 378 0 0
+// cpu3 59199 209 20462 2127387 3981 2363 1024 108 0 0
+// ...
+
+// Needed format, and compliant with kernel < 2.5
 enum ProcCpuMeasures {
     CPU_NUMBER = 0,
     USER = 1,
     NICE = 2,
     SYSTEM = 3,
     IDLE = 4,
-    IO_WAIT = 5,
-    IRQ = 6,
-    SOFT_IRQ = 7,
     MAX_CPU_TICK_TYPES = 8
 };
 
 
 using ProcCpuData = FwSizeType[ProcCpuMeasures::MAX_CPU_TICK_TYPES];
-constexpr FwSizeType LINE_SIZE = 256; // log10(max(U64)) * 7 rounded to nearest power of 2
+constexpr FwSizeType LINE_SIZE = 255; // log10(max(U64)) * 11 fields (kernel 2.6.33) = 220. Round to 256 - 1 (\0)
 
 CpuInterface::Status getCpuData(FwSizeType cpu_index, ProcCpuData data) {
     Os::File file;
