@@ -27,7 +27,7 @@ jobs:
 
   cross-compilation:
     name: "Cross Compilation"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: get-branch
     steps:
       - name: "Checkout target repository"
