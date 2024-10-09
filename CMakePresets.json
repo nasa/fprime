@@ -43,14 +43,14 @@
       },
       {
         "name": "fprime-debug-ninja",
-        "inherits": "fprime-ninja",
+        "inherits": "fprime-debug",
         "displayName": "F´ Debug (Ninja) Preset",
         "description": "F´ debug build using ninja and local fprime-venv",
         "generator": "Ninja"
       },
       {
         "name": "fprime-ut-ninja",
-        "inherits": "fprime-debug-ninja",
+        "inherits": "fprime-ut",
         "displayName": "F´ Unit Test (Ninja) Preset",
         "description": "F´ debug build including unit tests using ninja and local fprime-venv",
         "binaryDir": "${sourceDir}/build-fprime-automatic-native-ut",
