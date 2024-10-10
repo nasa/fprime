@@ -100,28 +100,37 @@ $(document).ready(function(){initNavTree('_c_assert_8h_source.html',''); initRes
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fp_config_8h.html">FpConfig.h</a>&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#if FW_ASSERT_LEVEL == FW_NO_ASSERT</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="c_assert_8h.html#a9a3bcc61a8546769033ab82bf35cba81">   15</a></span>&#160;<span class="preprocessor">#define FW_CASSERT(...)</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifdef  __cplusplus</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#else  </span><span class="comment">// ASSERT is defined</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#if FW_ASSERT_LEVEL == FW_NO_ASSERT</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define FILE_NAME_ARG NATIVE_UINT_TYPE</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#define FW_CASSERT(cond) ((void)((cond) ? (0) : (CAssert0(ASSERT_FILE_ID, __LINE__))))</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#define FILE_NAME_ARG const CHAR*</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#define FW_CASSERT(cond) ((void)((cond) ? (0) : (CAssert0((FILE_NAME_ARG)(__FILE__), __LINE__))))</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;I32 <a class="code" href="assert_8cpp.html#ad8e358556733ca483d57b9298d32798f">CAssert0</a>(<a class="code" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, U32 lineNo);                        </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;I32 CAssert1(<a class="code" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, U32 lineNo, <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> arg1);  </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ASSERT is defined</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">/* FWCASSERT_HPP_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="c_assert_8h.html#a9a3bcc61a8546769033ab82bf35cba81">   19</a></span>&#160;<span class="preprocessor">#define FW_CASSERT(...)</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#else  </span><span class="comment">// ASSERT is defined</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#define FILE_NAME_ARG NATIVE_UINT_TYPE</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#define FW_CASSERT(cond) ((void)((cond) ? (0) : (CAssert0(ASSERT_FILE_ID, __LINE__))))</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#define FILE_NAME_ARG const CHAR*</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#define FW_CASSERT(cond) ((void)((cond) ? (0) : (CAssert0((FILE_NAME_ARG)(__FILE__), __LINE__))))</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;I32 <a class="code" href="assert_8cpp.html#ad8e358556733ca483d57b9298d32798f">CAssert0</a>(<a class="code" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, U32 lineNo);                        </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;I32 CAssert1(<a class="code" href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a> file, U32 lineNo, <a class="code" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> arg1);  </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ASSERT is defined</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#ifdef  __cplusplus</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;}</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">/* FWCASSERT_HPP_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="a_assert_8cpp_html_ad8e358556733ca483d57b9298d32798f"><div class="ttname"><a href="assert_8cpp.html#ad8e358556733ca483d57b9298d32798f">CAssert0</a></div><div class="ttdeci">NATIVE_INT_TYPE CAssert0(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8cpp_source.html#l00183">Assert.cpp:183</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html_af5a28500bcc7ea8428b3590a50e0a64d"><div class="ttname"><a href="assert_8hpp.html#af5a28500bcc7ea8428b3590a50e0a64d">FILE_NAME_ARG</a></div><div class="ttdeci">#define FILE_NAME_ARG</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00016">Assert.hpp:16</a></div></div>
-<div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00051">BasicTypes.h:51</a></div></div>
+<div class="ttc" id="a_basic_types_8h_html_a424190609c8e1ad106ae33173cf29416"><div class="ttname"><a href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a></div><div class="ttdeci">PlatformIntType NATIVE_INT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00055">BasicTypes.h:55</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html"><div class="ttname"><a href="fp_config_8h.html">FpConfig.h</a></div><div class="ttdoc">C-compatible configuration header for fprime configuration.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
