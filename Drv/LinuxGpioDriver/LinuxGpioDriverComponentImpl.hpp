@@ -34,12 +34,6 @@ namespace Drv {
           const char *const compName /*!< The component name*/
       );
 
-      //! Initialize object LinuxGpioDriver
-      //!
-      void init(
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
-
       //! Destroy object LinuxGpioDriver
       //!
       ~LinuxGpioDriverComponentImpl();

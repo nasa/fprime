@@ -235,6 +235,10 @@ namespace Svc {
           //! \return The log file name
           Fw::LogStringArg& getLogFileName();
 
+          //! Get the normal string file name
+          //! \return The normal string file name
+          Fw::String& getStringFileName();
+
           //! Get the sequence header
           const Header& getHeader() const;
 
@@ -276,6 +280,9 @@ namespace Svc {
 
           //! Copy of file name for events
           Fw::LogStringArg m_logFileName;
+
+          //! Copy of file name for ports
+          Fw::String m_stringFileName;
 
           //! Serialize buffer to hold the binary sequence data
           Fw::ExternalSerializeBuffer m_buffer;
@@ -515,12 +522,6 @@ namespace Svc {
           const char* compName //!< The component name
       );
 
-      //! Initialize a CmdSequencer
-      void init(
-          const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          const NATIVE_INT_TYPE instance //!< The instance number
-      );
-
       //! (Optional) Set a timeout.
       //! Sequence will quit if a command takes longer than the number of
       //! seconds in the timeout value.
@@ -582,7 +583,7 @@ namespace Svc {
       //! Handler for input port seqRunIn
       void seqRunIn_handler(
           NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::String &filename //!< The sequence file
+          const Fw::StringBase& filename //!< The sequence file
       );
 
       //! Handler for ping port

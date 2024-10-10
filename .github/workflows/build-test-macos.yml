@@ -35,7 +35,7 @@ jobs:
         JOBS: 2
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ci-framework-logs
@@ -58,7 +58,7 @@ jobs:
         JOBS: 2
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ci-ref-logs
@@ -83,7 +83,7 @@ jobs:
         JOBS: 2
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ci-int-logs

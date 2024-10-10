@@ -6,25 +6,25 @@ First, in a terminal upload the software to hardware platform. This is done with
 
 ```sh
 # For ARM 64-bit hardware
-# In: Deployment Folder
+# In: project root folder
 scp -r build-artifacts/aarch64-linux/<name-of-deployment> <username>@<device-address>:deployment
 
 # For ARM 32-bit hardware
-# In: Deployment Folder
+# In: project root folder
 scp -r build-artifacts/arm-hf-linux/<name-of-deployment> <username>@<device-address>:deployment
 ```
 > Users must fill in the username and device address above.
 
 Next run the F´ GDS without launching the native compilation (`-n`) and with the 
-dictionary from the build above (`--dictionary ./build-artifacts/<platform name>/<name-of-deployment>/dict/<.xml document>`).
+dictionary from the build above (`--dictionary ../build-artifacts/<platform name>/<name-of-deployment>/dict/<.xml document>`).
 
 ```sh
 # For in-person workshops and ARM 64-bit hardware
-# In: Deployment Folder
+# In: project root folder
 fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/dict/<App Dictionary>.xml --ip-client --ip-address <device-address>
 
 # For ARM 32-bit hardware
-# In: Deployment Folder
+# In: project root folder
 fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/dict/<App Dictionary>.xml --ip-client --ip-address <device-address>
 ```
 > This depends on a flight software deployment that uses TcpServer as the communications driver implementation.

@@ -16,6 +16,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Serializable.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StringBase.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StringUtils.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/StringToNumber.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
 )
 set(MOD_DEPS

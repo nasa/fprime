@@ -17,7 +17,7 @@
 // Used for printf functions
 #include <cstdlib>
 // Used to get the Os::Console
-#include <Os/Console.hpp>
+#include <Os/Os.hpp>
 
 
 /**
@@ -54,7 +54,7 @@ static void signalHandler(int signum) {
  * @return: 0 on success, something else on failure
  */
 int main(int argc, char* argv[]) {
-    Os::Console::init();
+    Os::init();
     U32 port_number = 0;
     I32 option = 0;
     char* hostname = nullptr;

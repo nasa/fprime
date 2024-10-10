@@ -55,11 +55,6 @@ namespace Svc {
       // CONSTRUCTOR:
       ComLogger(const char* compName);
 
-      void init(
-          NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          NATIVE_INT_TYPE instance //!< The instance number
-      );
-
       // filePrefix: string to prepend the file name with, ie. "thermal_telemetry"
       // maxFileSize: the maximum size a file should reach before being closed and a new one opened
       // storeBufferLength: if true, store the length of each com buffer before storing the buffer itself,

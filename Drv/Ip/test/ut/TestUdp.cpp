@@ -15,8 +15,11 @@ void test_with_loop(U32 iterations, bool duplex) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    // When not duplex, we can allow the OS to choose a port
-    U16 port1 = (duplex) ? Drv::Test::get_free_port(true) : 0;
+    NATIVE_INT_TYPE udp1_fd = -1;
+    NATIVE_INT_TYPE udp2_fd = -1;
+
+    U16 port1 = Drv::Test::get_free_port(true);
+    ASSERT_NE(0, port1);
     U16 port2 = port1;
     for (U8 i = 0; (i < std::numeric_limits<U8>::max()) && (port2 == port1); i++) {
         port2 = Drv::Test::get_free_port(true);
@@ -35,27 +38,27 @@ void test_with_loop(U32 iterations, bool duplex) {
         if (duplex) {
             udp2.configureSend("127.0.0.1", port2, 0, 100);
         }
-        status2 = udp2.open();
+        status2 = udp2.open(udp2_fd);
         ASSERT_EQ(status2, Drv::SOCK_SUCCESS);
 
         udp1.configureSend("127.0.0.1", udp2.getRecvPort(), 0, 100);
         udp1.configureRecv("127.0.0.1", port2);
-        status1 = udp1.open();
+        status1 = udp1.open(udp1_fd);
         ASSERT_EQ(status1, Drv::SOCK_SUCCESS);
 
         // If all the opens worked, then run this
         if (Drv::SOCK_SUCCESS == status1 && Drv::SOCK_SUCCESS == status2) {
             // Force the sockets not to hang, if at all possible
-            Drv::Test::force_recv_timeout(udp1);
-            Drv::Test::force_recv_timeout(udp2);
-            Drv::Test::send_recv(udp1, udp2);
+            Drv::Test::force_recv_timeout(udp1_fd, udp1);
+            Drv::Test::force_recv_timeout(udp2_fd, udp2);
+            Drv::Test::send_recv(udp1, udp2, udp1_fd, udp2_fd);
             // Allow duplex connections
             if (duplex) {
-                Drv::Test::send_recv(udp2, udp1);
+                Drv::Test::send_recv(udp2, udp1, udp2_fd, udp1_fd);
             }
         }
-        udp1.close();
-        udp2.close();
+        udp1.close(udp1_fd);
+        udp2.close(udp2_fd);
     }
 }
 

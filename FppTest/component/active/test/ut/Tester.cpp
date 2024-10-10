@@ -4,8 +4,9 @@
 // \brief  cpp file for ActiveTest test harness implementation class
 // ======================================================================
 
-#include "STest/Pick/Pick.hpp"
 #include "Tester.hpp"
+#include "STest/Pick/Pick.hpp"
+
 
 // ----------------------------------------------------------------------
 // Construction and destruction

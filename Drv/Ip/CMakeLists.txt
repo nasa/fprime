@@ -12,7 +12,7 @@ set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/TcpClientSocket.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/TcpServerSocket.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/UdpSocket.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/SocketReadTask.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/SocketComponentHelper.cpp"
 )
 
 set(MOD_DEPS

@@ -3,8 +3,6 @@
 #include <cassert>
 #include <cstdio>
 
-#define FW_ASSERT_DFL_MSG_LEN 256
-
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define fileIdFs "Assert: 0x%08" PRIx32 ":%" PRI_PlatformUIntType
 #else
@@ -83,7 +81,7 @@ void AssertHook::reportAssert(FILE_NAME_ARG file,
                               FwAssertArgType arg4,
                               FwAssertArgType arg5,
                               FwAssertArgType arg6) {
-    CHAR destBuffer[FW_ASSERT_DFL_MSG_LEN];
+    CHAR destBuffer[FW_ASSERT_TEXT_SIZE];
     defaultReportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6, destBuffer, sizeof(destBuffer));
     // print message
     this->printAssert(destBuffer);
@@ -115,7 +113,7 @@ NATIVE_INT_TYPE defaultSwAssert(FILE_NAME_ARG file,
                                 FwAssertArgType arg5,
                                 FwAssertArgType arg6) {
     if (nullptr == s_assertHook) {
-        CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
+        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
         defaultReportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6, assertMsg, sizeof(assertMsg));
         defaultPrintAssert(assertMsg);
         assert(0);
@@ -184,7 +182,7 @@ NATIVE_INT_TYPE CAssert0(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo);
 
 NATIVE_INT_TYPE CAssert0(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) {
     if (nullptr == Fw::s_assertHook) {
-        CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
+        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
         Fw::defaultReportAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0, assertMsg, sizeof(assertMsg));
     } else {
         Fw::s_assertHook->reportAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0);

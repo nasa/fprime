@@ -32,9 +32,9 @@ void Task::TaskRoutineWrapper::run(void* wrapper_pointer) {
     wrapper.m_task.m_lock.lock();
     Task::State state = wrapper.m_task.m_state;
     wrapper.m_task.m_lock.unlock();
-
+    FW_ASSERT(state != Task::State::NOT_STARTED);
     // Run once start code
-    if (state == Task::State::NOT_STARTED) {
+    if (state == Task::State::STARTING) {
         wrapper.m_task.m_lock.lock();
         wrapper.m_task.m_state = Task::State::RUNNING;
         wrapper.m_task.m_lock.unlock();
@@ -95,6 +95,7 @@ Task::Status Task::start(const Task::Arguments& arguments) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(arguments.m_routine != nullptr);
     this->m_name = arguments.m_name;
+    this->m_state = State::STARTING;
 
     Arguments wrapped_arguments = arguments;
     // Intercept routine and argument with the local wrapper
@@ -131,7 +132,7 @@ Task::Status Task::join() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     Task::Status status = Task::Status::INVALID_STATE;
     Task::State state = this->getState();
-    if (state == Task::RUNNING) {
+    if (state == Task::RUNNING || state == STARTING) {
         status = this->m_delegate.join();
         this->m_lock.lock();
         if (status == Task::Status::OP_OK) {

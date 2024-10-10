@@ -18,6 +18,9 @@ constant CmdDispatcherComponentCommandPorts = 30
 @ Used for uplink/sequencer buffer/response ports
 constant CmdDispatcherSequencePorts = 5
 
+@ Used for dispatching sequences to command sequencers
+constant SeqDispatcherSequencerPorts = 2
+
 @ Used for sizing the command splitter input arrays
 constant CmdSplitterPorts = CmdDispatcherSequencePorts
 
@@ -47,6 +50,9 @@ constant DpWriterNumProcPorts = 5
 
 @ The size of a file name string
 constant FileNameStringSize = 200
+
+@ The size of an assert text string
+constant FwAssertTextSize = 256
 
 @ The size of a file name in an AssertFatalAdapter event
 @ Note: File names in assertion failures are also truncated by

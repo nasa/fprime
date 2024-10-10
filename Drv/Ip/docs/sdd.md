@@ -11,8 +11,8 @@ interacting with sockets generically. Drv::IpSocket delegates protocol specific 
 implemented by the children concrete socket classes. i.e. Drv::IpSocket::open delegates to the functions
 Drv::TcpClientSocket::openProtocol to open up specifically a tcp client socket.
 
-Drv::SocketReadTask is a virtual base class that comes with the functionality for setting up a generic reading thread
-complete with the ability to reconnect to a closed/broken connection. This virtual base class is intended to be
+Drv::SocketComponentHelper is a virtual base class that comes with the functionality for setting up a generic reading thread
+complete with the ability to reconnect to a closed/broken connection. It exists at the component level and serves as a passthrough for requests from the F` component to the IPv4 sockets. This virtual base class is intended to be
 inherited by an F´ component wrapper that need to support a receive thread such that this functionality need not be
 redundantly implemented.
 
@@ -22,7 +22,7 @@ Each of these classes is explained in more detail below.
 - [Drv::TcpClientSocket](#drvtcpclientsocket-class)
 - [Drv::TcpServerSocket](#drvtcpserversocket-class)
 - [Drv::UdpSocket](#drvudpsocket-class)
-- [Drv::SocketReadTask](#drvsocketreadtask-virtual-baseclass)
+- [Drv::SocketComponentHelper](#drvsocketreadtask-virtual-baseclass)
 
 ## Drv::IpSocket Baseclass
 
@@ -40,13 +40,13 @@ system resources and form a connection.  In server implementations (Drv::TcpServ
 a client connection has been made.  It is safe to assume that a successfully opened socket is ready to send or receive,
 however; those calls may detect an error and close the socket in response.
 
-`Drv::TcpServerSocket::send` will attempt to send data across the socket. It will retry to transmit data a configured
+`Drv::IpSocket::send` will attempt to send data across the socket. It will retry to transmit data a configured
 number of times on correctable errors before finally succeeding once all data has been transmitted or failing should the
 socket send fail. Interrupts and timeouts are the only recoverable errors. Other problems result in an error status and
 when a remote disconnect is detected `Drv::IpSocket::close` is closed to ensure the socket is ready for a subsequent
 call to `Drv::IpSocket::open`.
 
-`Drv::TcpServerSocket::recv` will attempt to read data from across the socket. It will block until data is received and
+`Drv::IpSocket::recv` will attempt to read data from across the socket. It will block until data is received and
 in the case that the socket is interrupted without data, it will retry a configurable number of times. Other errors will
 result in an error status with a specific `Drv::IpSocket::close` call issued in the case of detected disconnects.
 
@@ -130,7 +130,7 @@ The Drv::UdpSocket class represents an IPv4 UDP sender/receiver. Drv::UdpSocket 
 bidirectional communication using UDP. UDP is typically faster than TCP as it does not acknowledge transmissions. There
 is no guarantee that a sent packet is received, or even that the remote side is listening.
 
-A udp socket must be configured for each direction that it will communicate in. This can be done using calls to
+A UDP socket must be configured for each direction that it will communicate in. This can be done using calls to
 `Drv::UdpSocket::configureSend` and `Drv::UdpSocket::configureRecv`.  If either call is omitted only a single direction
 of communication will function. It is erroneous to omit both configuration calls.  Calling `Drv::UdpSocket::configure`
 is equivalent to  calling `Drv::UdpSocket::configureSend` for compatibility with `Drv::IpSocket`.  Other interaction
@@ -152,43 +152,42 @@ socketBoth.configureRecv(127.0.0.1, 60212);
 ...
 ```
 
-## Drv::SocketReadTask Virtual Baseclass
+## Drv::SocketComponentHelper Virtual Baseclass
 
-The Drv::SocketReadTask is intended as a base class used to add in the functionality of an automatically reconnecting
-receive thread to another class (typically an F´ component). In order for this thread to function, the inheritor must
+The Drv::SocketComponentHelper is intended as a base class used to add in the functionality of an automatically reconnecting
+receive thread to another class (typically an F´ component) as well as an interface between the component using an IP socket and the IP socket library functions implemented in this folder. In order for this thread to function, the inheritor must
 implement several methods to provide the necessary interaction of this thread. These functions are described in the next
 section.
 
-In order to start the receiving thread a call to the `Drv::SocketReadTask::startSocketTask` method is performed passing
+In order to start the receiving thread a call to the `Drv::SocketComponentHelper::start` method is performed passing
 in a name, and all arguments to `Os::Task::start` to start the task. An optional parameter, reconnect, will determine if
 this read task will reconnect to sockets should a disconnect or error occur. Once started the read task will continue
-until a `Drv::SocketReadTask::stopSocketTask` has been called or an error occurred when started without reconnect set to
-`true`.  Once the socket stop call has been made, the user should call `Drv::SocketReadTask::joinSocketTask` in order to
-wait until the full task has finished.  `Drv::SocketReadTask::stopSocketTask` will call `Drv::IpSocket::close` on the
+until a `Drv::SocketComponentHelper::stop` has been called or an error occurred when started without reconnect set to
+`true`.  Once the socket stop call has been made, the user should call `Drv::SocketComponentHelper::join` in order to
+wait until the full task has finished.  `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::close` on the
 provided Drv::IpSocket to ensure that any blocking reads exit freeing the thread to completely stop. Normal usage of
-a Drv::SocketReadTask derived class is shown below.
+a Drv::SocketComponentHelper derived class is shown below.
 
 ```c++
 Os::TaskString name("ReceiveTask");
-uplinkComm.startSocketTask(name); // Default reconnect=true
+uplinkComm.start(name); // Default reconnect=true
 ...
 
-uplinkComm.stopSocketTask();
-(void) uplinkComm.joinSocketTask(nullptr);
+uplinkComm.stop();
+(void) uplinkComm.join(nullptr);
 ```
 
-`Drv::SocketReadTask::open` and `Drv::SocketReadTask::close` convenience methods are also provided to open and close the
-provided Drv::IpSocket, although it should be noted that both are called automatically during the normal process of the
-receive thread.
+`Drv::SocketComponentHelper::open` and `Drv::SocketComponentHelper::close` convenience methods are also provided to open and close the
+provided Drv::IpSocket, although it should be noted that both are called automatically either by the receive thread or on send.
 
 
-### Drv::SocketReadTask Inheritance
+### Drv::SocketComponentHelper Inheritance
 
-Drv::SocketReadTask is used via inheritance. A class that needs to provide receive thread functionality may inherit from
+Drv::SocketComponentHelper is used via inheritance. A class that needs to provide receive thread functionality may inherit from
 this class and implement the three virtual methods to integrate with the thread. These methods are described below and
 each provides its prototype.
 
-`Drv::SocketReadTask::getSocketHandler` returns a reference to an existing Drv::IpSocket for this task to interact with
+`Drv::SocketComponentHelper::getSocketHandler` returns a reference to an existing Drv::IpSocket for this task to interact with
 for receiving, sending, opening, and closing. This should not be allocated within the function call as it will be used
 outside the call. The instance is expected to have been configured and started (in the case of servers). The prototype
 of the function is shown below.
@@ -197,15 +196,15 @@ of the function is shown below.
 virtual IpSocket& getSocketHandler() = 0;
 ```
 
-`Drv::SocketReadTask::getBuffer` returns an Fw::Buffer instance that wraps data for the read call to fill. This can wrap
+`Drv::SocketComponentHelper::getBuffer` returns an Fw::Buffer instance that wraps data for the read call to fill. This can wrap
 stack memory, or delegate the call to a buffer manager instance.  This buffer will be returned via a call to
-`Drv::SocketReadTask::sendBuffer` once the received data has filled it.  The prototype of the function is shown below.
+`Drv::SocketComponentHelper::sendBuffer` once the received data has filled it.  The prototype of the function is shown below.
 
 ```c++
 virtual Fw::Buffer getBuffer() = 0;
 ```
 
-`Drv::SocketReadTask::sendBuffer` returns the buffer obtained from `Drv::SocketReadTask::getBuffer` after it has been
+`Drv::SocketComponentHelper::sendBuffer` returns the buffer obtained from `Drv::SocketComponentHelper::getBuffer` after it has been
 filled with data read from the socket. This will come with a status associated with the read but will always be called
 such that the allocated buffer can be freed when needed.
 

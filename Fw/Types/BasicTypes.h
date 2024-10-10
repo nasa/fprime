@@ -13,6 +13,10 @@
 #ifndef FW_BASIC_TYPES_H
 #define FW_BASIC_TYPES_H
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 // Compiler checks
 #if defined(__GNUC__) || defined(__llvm__) || defined(PLATFORM_OVERRIDE_GCC_CLANG_CHECK)
 #else
@@ -77,6 +81,10 @@ typedef PlatformPointerCastType POINTER_CAST;
 
 #ifndef PRIVATE
 #define PRIVATE private  //!< overridable private for unit testing
+#endif
+
+#ifdef  __cplusplus
+}
 #endif
 
 #endif  // FW_BASIC_TYPES_H

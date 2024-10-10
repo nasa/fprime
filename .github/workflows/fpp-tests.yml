@@ -15,7 +15,7 @@ on:
 jobs:
   fpptest:
     name: Run FppTest
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
           fprime-util check
         shell: bash
       - name: "Archive Logs"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: FppTest-Logs

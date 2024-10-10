@@ -25,10 +25,10 @@ on:
         type: string
         default: "./fprime"
       runs_on:
-        description: "Platform to run on. Defaults to ubuntu-latest"
+        description: "Platform to run on. Defaults to ubuntu-22.04"
         required: false
         type: string
-        default: "ubuntu-latest"
+        default: "ubuntu-22.04"
       target_platform:
         description: "Target platform to pass to fprime-util"
         required: false

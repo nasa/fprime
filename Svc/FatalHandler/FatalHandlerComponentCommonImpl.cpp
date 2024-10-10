@@ -28,14 +28,6 @@ namespace Svc {
 
   }
 
-  void FatalHandlerComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    FatalHandlerComponentBase::init(instance);
-  }
-
   FatalHandlerComponentImpl ::
     ~FatalHandlerComponentImpl()
   {
