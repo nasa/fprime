@@ -39,13 +39,6 @@ namespace Drv {
       //!
       ~LinuxGpioDriver();
 
-      //! Start interrupt task
-      Os::Task::Status startIntTask(Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
-                                    Os::Task::ParamType stackSize = Os::Task::TASK_DEFAULT,
-                                    Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
-
-
-
       //! \brief configure the GPIO pin
       //!
       //! Configure the GPIO pin for use in this driver. Only one mode may be selected as a time.
@@ -53,14 +46,11 @@ namespace Drv {
           GPIO_INPUT, //!< Input GPIO pin for direct reading
           GPIO_OUTPUT, //!< Output GPIO pin for direct writing
           GPIO_AS_IS, //!< Input GPIO pin for reading without altering the existing electrical configuration
-          GPIO_INTERRUPT, //!< Input GPIO pin triggering interrupt
+          //GPIO_INTERRUPT, //!< Input GPIO pin triggering interrupt
       };
 
       //! open GPIO
-      Os::File::Status open(const char* dev, FwSizeType gpio, GpioConfiguration direction);
-
-      //! exit thread
-      void exitThread();
+      Os::File::Status open(const char* device, U32 gpio, GpioConfiguration direction, Fw::Logic default_state=Fw::Logic::LOW);
 
     PRIVATE:
 
@@ -81,23 +71,13 @@ namespace Drv {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const Fw::Logic& state
       );
+      //! Keep the chip
+      Fw::String m_chip;
 
       //! keep GPIO ID
-      NATIVE_INT_TYPE m_gpio;
-
-      //! device direction
-      GpioDirection m_direction;
-
-      //! Entry point for task waiting for interrupt
-      static void intTaskEntry(void * ptr);
-
-      //! Task object for RTI task
-      Os::Task m_intTask;
+      FwSizeType m_gpio;
       //! file descriptor for GPIO
-      NATIVE_INT_TYPE m_fd;
-      //! flag to quit thread
-      bool m_quitThread;
-
+      PlatformIntType m_fd;
     };
 
 } // end namespace Drv

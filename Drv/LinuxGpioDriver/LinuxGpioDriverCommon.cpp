@@ -24,11 +24,6 @@ LinuxGpioDriver ::LinuxGpioDriver(
         const char *const compName
     ) : LinuxGpioDriverComponentBase(compName),
       m_gpio(-1),
-      m_direction(GPIO_IN),
-      m_fd(-1),
-      m_quitThread(false)
-  {
-
-  }
+      m_fd(-1) {}
 
 } // end namespace Drv

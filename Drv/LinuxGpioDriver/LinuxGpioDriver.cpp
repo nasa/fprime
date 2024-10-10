@@ -10,25 +10,15 @@
 //
 // ======================================================================
 #include <Os/Posix/File.hpp>
-
 #include <Drv/LinuxGpioDriver/LinuxGpioDriver.hpp>
 #include <FpConfig.hpp>
-#include <Os/TaskString.hpp>
+#include <Fw/Types/String.hpp>
+#include <Fw/Types/StringUtils.hpp>
+
+#include <linux/gpio.h>
+#include <sys/ioctl.h>
 #include <cerrno>
-
-
-// TODO make proper static constants for these
-#define SYSFS_GPIO_DIR "/sys/class/gpio"
-#define MAX_BUF 64
-
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-
 #include <unistd.h>
-#include <fcntl.h>
-#include <poll.h>
-
 
 namespace Drv {
 
@@ -72,188 +62,101 @@ Os::File::Status errno_to_status(PlatformIntType errno_input) {
     return status;
 }
 
+U32 configuration_to_flags(Drv::LinuxGpioDriver::GpioConfiguration configuration) {
+    U32 flags = 0;
+    switch (configuration) {
+        case LinuxGpioDriver::GPIO_INPUT:
+            flags = GPIOHANDLE_REQUEST_INPUT;
+            break;
+        case LinuxGpioDriver::GPIO_OUTPUT:
+            flags = GPIOHANDLE_REQUEST_OUTPUT;
+            break;
+        case LinuxGpioDriver::GPIO_AS_IS:
+            flags = GPIOHANDLE_REQUEST_ACTIVE_LOW;
+            break;
+        default:
+            FW_ASSERT(0);
+            break;
+    }
+    return flags;
+}
 
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined typed input ports
-  // ----------------------------------------------------------------------
+LinuxGpioDriver ::~LinuxGpioDriver() {
+    ::close(this->m_fd);
+}
 
-Os::File::Status LinuxGpioDriver ::open(const char* chip, FwSizeType gpio, GpioConfiguration direction) {
+
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
+
+
+Os::File::Status LinuxGpioDriver ::open(const char* device, U32 gpio, GpioConfiguration configuration, Fw::Logic default_state) {
     Os::File::Status status = Os::File::OP_OK;
     Os::File chip_file; // TODO: how to force posix file safely
 
     // Open chip file and check for success
-    status = chip_file.open(chip, Os::File::Mode::OPEN_WRITE);
-    if (status == Os::File::OP_OK) {
-        struct gpiochip_info chip_info;
-        PlatformIntType fd = reinterpret_cast<Os::Posix::File::PosixFileHandle*>(chip_file.getHandle())->m_file_descriptor;
-        PlatformIntType return_value = ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, chip_info);
-        if (return_value == 0) {
-            this->log_ACTIVITY_HI_OpenChip(
-                Fw::String(chip_info.name), Fw::String(chip_info.label), chip_info.lines);
-            Os::File pin_file; // TODO: how to force posix file safely
-            int ioctl(int chip_fd, GPIO_GET_LINEHANDLE_IOCTL, struct )
-        }
-
-
-
-
-
-    } else {
-        this->log_WARNING_HI_OpenChipError(
-            Fw::String(chip), Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
+    status = chip_file.open(device, Os::File::Mode::OPEN_WRITE);
+    if (status != Os::File::OP_OK) {
+        this->log_WARNING_HI_OpenChipError(Fw::String(device), Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
+        return status;
     }
-
-
-
+    // Read chip information and check for correctness
+    PlatformIntType chip_descriptor = reinterpret_cast<Os::Posix::File::PosixFileHandle*>(chip_file.getHandle())->m_file_descriptor;
+    struct gpiochip_info chip_info;
+    PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_CHIPINFO_IOCTL, &chip_info);
+    if (return_value != 0) {
+        status = errno_to_status(errno);
+        this->log_WARNING_HI_OpenChipError(Fw::String(device), Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
+        return status;
+    }
+    this->log_DIAGNOSTIC_OpenChip(Fw::String(chip_info.name), Fw::String(chip_info.label), chip_info.lines);
+    // Check if the GPIO line exists
+    if (gpio >= chip_info.lines) {
+        this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio, Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
+        return status;
+    }
+    // Set up the GPIO request
+    struct gpiohandle_request request;
+    request.lineoffsets[0] = gpio;
+    Fw::StringUtils::string_copy(request.consumer_label, this->getObjName(),
+        static_cast<FwSizeType>(sizeof request.consumer_label));
+    request.default_values[0] = (default_state == Fw::Logic::HIGH) ? 1 : 0;
+    request.fd = -1;
+    request.lines = 1;
+    request.flags = configuration_to_flags(configuration);
+    return_value = ioctl(chip_descriptor, GPIO_GET_LINEHANDLE_IOCTL, &request);
+    if (return_value != 0) {
+        status = errno_to_status(errno);
+        this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio, Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
+        return status;
+    }
+    this->m_chip = device;
+    this->m_gpio = gpio;
+    this->m_fd = request.fd;
     return status;
 }
 
-  void LinuxGpioDriver ::
-    gpioRead_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Logic &state
-    )
-  {
-      FW_ASSERT(this->m_fd != -1);
-
-      NATIVE_UINT_TYPE val;
-      NATIVE_INT_TYPE stat = gpio_get_value(this->m_fd, &val);
-      if (-1 == stat) {
-          this->log_WARNING_HI_GP_ReadError(this->m_gpio,stat);
-          return;
-      } else {
-          state = val ? Fw::Logic::HIGH : Fw::Logic::LOW;
-      }
-
-  }
-
-  void LinuxGpioDriver ::
-    gpioWrite_handler(
-        const NATIVE_INT_TYPE portNum,
-        const Fw::Logic& state
-    )
-  {
-      FW_ASSERT(this->m_fd != -1);
-
-      NATIVE_INT_TYPE stat;
-
-      stat = gpio_set_value(this->m_fd,(state == Fw::Logic::HIGH) ? 1 : 0);
-
-      if (0 != stat) {
-          this->log_WARNING_HI_GP_WriteError(this->m_gpio,stat);
-          return;
-      }
-  }
-
-  
-
-  //! Entry point for task waiting for RTI
-  void LinuxGpioDriver ::
-    intTaskEntry(void * ptr) {
-
-    FW_ASSERT(ptr);
-    LinuxGpioDriver* compPtr = static_cast<LinuxGpioDriver*>(ptr);
-    FW_ASSERT(compPtr->m_fd != -1);
-
-    // start GPIO interrupt
-    NATIVE_INT_TYPE stat;
-    stat = gpio_set_edge(static_cast<unsigned int>(compPtr->m_gpio), "rising");
-    if (-1 == stat) {
-      compPtr->log_WARNING_HI_GP_IntStartError(compPtr->m_gpio);
-      return;
+void LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum, Fw::Logic &state) {
+    struct gpiohandle_data values;
+    PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, values);
+    if (return_value != 0) {
+        Os::File::Status status = errno_to_status(errno);
+        this->log_WARNING_HI_PinReadError(this->m_chip, this->m_gpio, Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
+    } else {
+        state = values.values[0] ? Fw::Logic::HIGH : Fw::Logic::LOW;
     }
+}
 
-    // spin waiting for interrupt
-    while(not compPtr->m_quitThread) {
-        pollfd fdset[1];
-        NATIVE_INT_TYPE nfds = 1;
-        NATIVE_INT_TYPE timeout = 10000; // Timeout of 10 seconds
+void LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNum, const Fw::Logic& state){
+    struct gpiohandle_data values;
+    values.values[0] = (state == Fw::Logic::HIGH) ? 1 : 0;
+    PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, values);
+    if (return_value != 0) {
+        Os::File::Status status = errno_to_status(errno);
+        this->log_WARNING_HI_PinWriteError(this->m_chip, this->m_gpio, Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
 
-        memset(fdset, 0, sizeof(fdset));
-
-        fdset[0].fd = compPtr->m_fd;
-        fdset[0].events = POLLPRI;
-        stat = poll(fdset, static_cast<nfds_t>(nfds), timeout);
-
-        /*
-        * According to this link, poll will always have POLLERR set for the sys/class/gpio subsystem
-        * so can't check for it to look for error:
-        * http://stackoverflow.com/questions/27411013/poll-returns-both-pollpri-pollerr
-        */
-        if (stat < 0) {
-            DEBUG_PRINT("stat: %d, revents: 0x%x, POLLERR: 0x%x, POLLIN: 0x%x, POLLPRI: 0x%x\n",
-                    stat, fdset[0].revents, POLLERR, POLLIN, POLLPRI); // TODO remove
-            compPtr->log_WARNING_HI_GP_IntWaitError(compPtr->m_gpio);
-            return;
-        }
-
-        if (stat == 0) {
-            // continue to poll
-            DEBUG_PRINT("Krait timed out waiting for GPIO interrupt\n");
-            continue;
-        }
-
-        // Asserting that number of fds w/ revents is 1:
-        FW_ASSERT(stat == 1, stat);  // TODO should i bother w/ this assert?
-
-        // TODO what to do if POLLPRI not set?
-
-        // TODO: if I take out the read then the poll just continually interrupts
-        // Read is only taking 22 usecs each time, so it is not blocking for long
-        if (fdset[0].revents & POLLPRI) {
-
-            char buf[MAX_BUF];
-            (void) lseek(fdset[0].fd, 0, SEEK_SET); // Must seek back to the starting
-            if(read(fdset[0].fd, buf, MAX_BUF) > 0) {
-                DEBUG_PRINT("\npoll() GPIO interrupt occurred w/ value: %c\n", buf[0]);
-            }
-        }
-
-        // call interrupt ports
-        Svc::TimerVal timerVal;
-        timerVal.take();
-
-        for (NATIVE_INT_TYPE port = 0; port < compPtr->getNum_intOut_OutputPorts(); port++) {
-            if (compPtr->isConnected_intOut_OutputPort(port)) {
-                compPtr->intOut_out(port,timerVal);
-            }
-        }
-
-      }
-
-  }
-
-  Os::Task::Status LinuxGpioDriver ::
-  startIntTask(Os::Task::ParamType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity) {
-      Os::TaskString name;
-      name.format("GPINT_%s",this->getObjName()); // The task name can only be 16 chars including null
-      Os::Task::Arguments arguments(name, LinuxGpioDriver::intTaskEntry, this, priority, stackSize, cpuAffinity);
-      Os::Task::Status stat = this->m_intTask.start(arguments);
-
-      if (stat != Os::Task::OP_OK) {
-          DEBUG_PRINT("Task start error: %d\n",stat);
-      }
-
-      return stat;
-
-  }
-
-  void LinuxGpioDriver ::
-    exitThread() {
-      this->m_quitThread = true;
-  }
-
-
-
-  LinuxGpioDriver ::
-    ~LinuxGpioDriver()
-  {
-      if (this->m_fd != -1) {
-          DEBUG_PRINT("Closing GPIO %d fd %d\n",this->m_gpio, this->m_fd);
-          (void) gpio_fd_close(this->m_fd, static_cast<unsigned int>(this->m_gpio));
-      }
-
-  }
-
+    }
+}
 
 } // end namespace Drv

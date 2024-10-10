@@ -26,9 +26,15 @@ module Drv {
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
-    event OpenChip(chip: string, label: string, pins: U32) severity activity high format "Opened {}[{}] with {} lines"
+    event OpenChip(chip: string, label: string, pins: U32) severity diagnostic format "Opened {}[{}] with {} lines"
 
     event OpenChipError(chip: string, status: Os.FileStatus) severity warning high format "Failed to open chip {}: {}"
+
+    event OpenPinError(chip: string, pin: U32, status: Os.FileStatus) severity warning high format "Failed to open pin {}.{}: {}"
+
+    event PinReadError(chip: string, pin: U32, status: Os.FileStatus) severity warning high format "Failed to open pin {}.{}: {}"
+
+    event PinWriteError(chip: string, pin: U32, status: Os.FileStatus) severity warning high format "Failed to open pin {}.{}: {}"
   }
 
 }
