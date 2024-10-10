@@ -32,7 +32,7 @@ namespace Os {
         return Os::Stub::Task::Test::StaticData::data.delayStatus;
     }
 
-    TaskInterface* TaskInterface::getDelegate(HandleStorage& aligned_new_memory) {
+    TaskInterface* TaskInterface::getDelegate(TaskHandleStorage& aligned_new_memory) {
         return Os::Delegate::makeDelegate<TaskInterface, Os::Stub::Task::Test::TestTask>(aligned_new_memory);
     }
 

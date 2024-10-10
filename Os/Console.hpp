@@ -62,7 +62,7 @@ namespace Os {
         //!
         //! \return result of placement new, must be equivalent to `aligned_placement_new_memory`
         //!
-        static ConsoleInterface* getDelegate(HandleStorage& aligned_placement_new_memory, const ConsoleInterface* to_copy=nullptr);
+        static ConsoleInterface* getDelegate(ConsoleHandleStorage& aligned_placement_new_memory, const ConsoleInterface* to_copy=nullptr);
     };
 
     class Console : public ConsoleInterface, public Fw::Logger {
@@ -131,7 +131,7 @@ namespace Os {
         // This section is used to store the implementation-defined console handle. To Os::Console and fprime, this type
         // is opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle
         // in the byte-array here and set `handle` to that address for storage.
-        alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage; // Storage for the delegate
+        alignas(FW_HANDLE_ALIGNMENT) ConsoleHandleStorage m_handle_storage; // Storage for the delegate
         ConsoleInterface &m_delegate; //!< Delegate for the real implementation
     };
 }
