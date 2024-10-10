@@ -38,7 +38,7 @@ namespace Os {
         return task_status;
     }
 
-    TaskInterface* TaskInterface::getDelegate(HandleStorage& aligned_new_memory) {
+    TaskInterface* TaskInterface::getDelegate(TaskHandleStorage& aligned_new_memory) {
         return Os::Delegate::makeDelegate<TaskInterface, Os::Posix::Task::PosixTask>(aligned_new_memory);
     }
 

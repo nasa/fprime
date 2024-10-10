@@ -13,6 +13,10 @@
 
 #include <Fw/Types/BasicTypes.h>
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 // ----------------------------------------------------------------------
 // Type aliases
 // ----------------------------------------------------------------------
@@ -384,21 +388,32 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // OS configuration
+#ifndef FW_CONSOLE_HANDLE_MAX_SIZE
+#define FW_CONSOLE_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS queues
+#endif
 
-#ifndef FW_HANDLE_MAX_SIZE
-#define FW_HANDLE_MAX_SIZE 104  //!< Maximum size of a handle for OS resources (files, locks, etc.)
+#ifndef FW_TASK_HANDLE_MAX_SIZE
+#define FW_TASK_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS queues
+#endif
+
+#ifndef FW_FILE_HANDLE_MAX_SIZE
+#define FW_FILE_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS queues
+#endif
+
+#ifndef FW_MUTEX_HANDLE_MAX_SIZE
+#define FW_MUTEX_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS queues
 #endif
 
 #ifndef FW_QUEUE_HANDLE_MAX_SIZE
-#define FW_QUEUE_HANDLE_MAX_SIZE 464  //!< Maximum size of a handle for OS queues
+#define FW_QUEUE_HANDLE_MAX_SIZE 352  //!< Maximum size of a handle for OS queues
 #endif
 
 #ifndef FW_DIRECTORY_HANDLE_MAX_SIZE
-#define FW_DIRECTORY_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_DIRECTORY_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
 #ifndef FW_FILESYSTEM_HANDLE_MAX_SIZE
-#define FW_FILESYSTEM_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_FILESYSTEM_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
 #ifndef FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE
@@ -428,4 +443,9 @@ typedef FwIndexType FwQueueSizeType;
 // DO NOT TOUCH.  These types are specified for backwards naming compatibility.
 typedef FwSizeStoreType FwBuffSizeType;
 #define PRI_FwBuffSizeType PRI_FwSizeStoreType
+
+#ifdef  __cplusplus
+}
+#endif
+
 #endif

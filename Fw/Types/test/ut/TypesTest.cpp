@@ -8,7 +8,6 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/StringTemplate.hpp>
-#include <Os/InterruptLock.hpp>
 #include <Os/IntervalTimer.hpp>
 //
 // Created by mstarch on 12/7/20.

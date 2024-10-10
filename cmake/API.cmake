@@ -615,7 +615,6 @@ function(require_fprime_implementation IMPLEMENTATION)
     endif()
     resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
     resolve_dependencies(REQUESTER "${REQUESTER}")
-
     create_implementation_interface("${IMPLEMENTATION}")
     append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
     add_dependencies("${REQUESTER}" "${IMPLEMENTATION}")

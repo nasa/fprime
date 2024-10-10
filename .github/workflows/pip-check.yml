@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-        runner: [macos-13, macos-latest, ubuntu-latest]
+        runner: [macos-13, macos-latest, ubuntu-22.04]
         # macos-14 (ARM) currently breaks actions/setup-python with 3.8 and 3.9
         # so we exclude them from the matrix and also test with macos-13 (x86)
         # More info at https://github.com/actions/setup-python/issues/850
