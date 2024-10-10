@@ -197,7 +197,6 @@ class SerializeBufferBase {
     // Copy constructor can be used only by the implementation
     SerializeBufferBase(const SerializeBufferBase& src);  //!< constructor with buffer as source
 
-
     void copyFrom(const SerializeBufferBase& src);  //!< copy data from source buffer
     Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
     Serializable::SizeType m_deserLoc;              //!< current offset for deserialization
@@ -208,10 +207,12 @@ class SerializeBufferBase {
 //! External serialize buffer with no copy semantics
 class ExternalSerializeBuffer : public SerializeBufferBase {
   public:
-    ExternalSerializeBuffer(U8* buffPtr, Serializable::SizeType size);     //!< construct with external buffer
-    ExternalSerializeBuffer();                                             //!< default constructor
-    ~ExternalSerializeBuffer() {}                                          //!< destructor
-    void setExtBuffer(U8* buffPtr, Serializable::SizeType size);           //!< Set the external buffer
+    ExternalSerializeBuffer(U8* buffPtr, Serializable::SizeType size);  //!< construct with external buffer
+    ExternalSerializeBuffer();                                          //!< default constructor
+    ~ExternalSerializeBuffer() {}                                       //!< destructor
+    //! Set the external buffer
+    //! This action also resets the serialization and deserialization pointers
+    void setExtBuffer(U8* buffPtr, Serializable::SizeType size);
     void clear();                                                          //!< clear external buffer
     ExternalSerializeBuffer(const ExternalSerializeBuffer& src) = delete;  //!< deleted copy constructor
 

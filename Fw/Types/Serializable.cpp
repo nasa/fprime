@@ -765,11 +765,14 @@ ExternalSerializeBuffer::ExternalSerializeBuffer() {
 
 void ExternalSerializeBuffer::setExtBuffer(U8* buffPtr, Serializable::SizeType size) {
     FW_ASSERT(buffPtr != nullptr);
+    this->clear();
     this->m_buff = buffPtr;
     this->m_buffSize = size;
 }
 
 void ExternalSerializeBuffer::clear() {
+    this->resetSer();
+    this->resetDeser();
     this->m_buff = nullptr;
     this->m_buffSize = 0;
 }
