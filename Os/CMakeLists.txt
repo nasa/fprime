@@ -116,6 +116,7 @@ add_named_os_module("Mutex;Condition")
 add_named_os_module(Queue)
 add_named_os_module(Cpu)
 add_named_os_module(Memory)
+add_named_os_module(RawTime)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES

@@ -26,7 +26,7 @@ add_fprime_supplied_os_module("File;FileSystem;Directory" Posix Os_Posix_Shared)
 add_fprime_supplied_os_module("Console" Posix)
 add_fprime_supplied_os_module("Task" Posix Os_Posix_Shared Fw_Time)
 add_fprime_supplied_os_module("Mutex;ConditionVariable" Posix Os_Posix_Shared)
-add_fprime_supplied_os_module("RawTime" Posix Os_Posix_Shared)
+add_fprime_supplied_os_module("RawTime" Posix Os_Posix_Shared Fw_Buffer)
 
 # -----------------------------------------
 ### Os/File/Posix Test Section

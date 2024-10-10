@@ -17,6 +17,7 @@ add_fprime_supplied_os_module("Mutex;ConditionVariable" Test_Stub)
 add_fprime_supplied_os_module(Cpu Test_Stub)
 add_fprime_supplied_os_module(Memory Test_Stub)
 add_fprime_supplied_os_module(Queue Test_Stub)
+add_fprime_supplied_os_module(RawTime Test_Stub) # add Fw_Buffer here?
 
 #### File Stub Testing ####
 set(UT_SOURCE_FILES
@@ -90,3 +91,9 @@ set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ut/StubConditionTests.cpp"
 )
 add_fprime_os_test(StubConditionVariableTest "${UT_SOURCE_FILES}" "Os_Mutex\;Os_Mutex_Test_Stub" Fw_Time)
+
+#### RawTime Stub Testing ####
+set(UT_SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/ut/StubRawTimeTests.cpp"
+)
+add_fprime_os_test(StubRawTimeTest "${UT_SOURCE_FILES}" "Os_RawTime\;Os_RawTime_Test_Stub" Fw_Time Fw_Buffer)
