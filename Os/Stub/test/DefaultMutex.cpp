@@ -11,7 +11,7 @@ namespace Os {
 //! \brief get a delegate for Mutex that intercepts calls for  for stub test Mutex usage
 //! \param aligned_new_memory: aligned memory to fill
 //! \return: pointer to delegate
-MutexInterface *MutexInterface::getDelegate(HandleStorage& aligned_placement_new_memory) {
+MutexInterface *MutexInterface::getDelegate(MutexHandleStorage& aligned_placement_new_memory) {
     return Os::Delegate::makeDelegate<MutexInterface, Os::Stub::Mutex::Test::TestMutex>(
             aligned_placement_new_memory
     );

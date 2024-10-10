@@ -41,7 +41,7 @@ class MutexInterface {
     virtual MutexHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a Mutex delegate object
-    static MutexInterface* getDelegate(HandleStorage& aligned_new_memory);
+    static MutexInterface* getDelegate(MutexHandleStorage& aligned_new_memory);
 
     virtual Status take() = 0;     //!<  lock the mutex return status
     virtual Status release() = 0;  //!<  unlock the mutex return status
@@ -67,8 +67,8 @@ class Mutex final : public MutexInterface {
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
     // the byte-array here and set `handle` to that address for storage.
     //
-    alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage;  //!< Mutex handle storage
-    MutexInterface& m_delegate;                                   //!< Delegate for the real implementation
+    alignas(FW_HANDLE_ALIGNMENT) MutexHandleStorage m_handle_storage;  //!< Mutex handle storage
+    MutexInterface& m_delegate;                                        //!< Delegate for the real implementation
 };
 //! \brief locks a mutex within the current scope
 //!

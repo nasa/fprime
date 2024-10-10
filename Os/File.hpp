@@ -207,7 +207,7 @@ namespace Os {
             //!
             //! \return result of placement new, must be equivalent to `aligned_placement_new_memory`
             //!
-            static FileInterface* getDelegate(HandleStorage& aligned_placement_new_memory, const FileInterface* to_copy=nullptr);
+            static FileInterface* getDelegate(FileHandleStorage& aligned_placement_new_memory, const FileInterface* to_copy=nullptr);
     };
 
 
@@ -503,7 +503,7 @@ namespace Os {
         // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
         // the byte-array here and set `handle` to that address for storage.
         //
-        alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage; //!< Storage for aligned FileHandle data
+        alignas(FW_HANDLE_ALIGNMENT) FileHandleStorage m_handle_storage; //!< Storage for aligned FileHandle data
         FileInterface& m_delegate; //!< Delegate for the real implementation
     };
 }
