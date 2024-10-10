@@ -11,7 +11,7 @@
 // ======================================================================
 
 
-#include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
+#include <Drv/LinuxGpioDriver/LinuxGpioDriver.hpp>
 #include <FpConfig.hpp>
 
 namespace Drv {
@@ -20,8 +20,7 @@ namespace Drv {
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  LinuxGpioDriverComponentImpl ::
-    LinuxGpioDriverComponentImpl(
+LinuxGpioDriver ::LinuxGpioDriver(
         const char *const compName
     ) : LinuxGpioDriverComponentBase(compName),
       m_gpio(-1),

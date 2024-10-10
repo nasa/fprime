@@ -13,8 +13,8 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include "Drv/LinuxGpioDriver/LinuxGpioDriver.hpp"
 #include "TesterBase.hpp"
-#include "Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp"
 
 namespace Drv {
 

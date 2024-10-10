@@ -11,7 +11,7 @@
 // ======================================================================
 
 
-#include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
+#include <Drv/LinuxGpioDriver/LinuxGpioDriver.hpp>
 #include <FpConfig.hpp>
 
 namespace Drv {
@@ -20,41 +20,38 @@ namespace Drv {
   // Handler implementations for user-defined typed input ports
   // ----------------------------------------------------------------------
 
-  void LinuxGpioDriverComponentImpl ::
+Os::File::Status LinuxGpioDriver ::open(const char* chip, FwSizeType gpio, GpioDirection direction) {
+    return Os::File::Status::NOT_SUPPORTED;
+}
+
+  void LinuxGpioDriver ::
     gpioRead_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Logic &state
     )
-  {
-    // TODO
-  }
+  {}
 
-  void LinuxGpioDriverComponentImpl ::
+  void LinuxGpioDriver ::
     gpioWrite_handler(
         const NATIVE_INT_TYPE portNum,
         const Fw::Logic& state
     )
-  {
-    // TODO
-  }
+  {}
 
-  bool LinuxGpioDriverComponentImpl ::
-    open(NATIVE_INT_TYPE gpio, GpioDirection direction) {
-      return false;
-  }
 
-  Os::Task::Status LinuxGpioDriverComponentImpl ::
+
+  Os::Task::Status LinuxGpioDriver ::
     startIntTask(Os::Task::ParamType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity) {
      return Os::Task::OP_OK;
    }
 
-  LinuxGpioDriverComponentImpl ::
-    ~LinuxGpioDriverComponentImpl()
+   LinuxGpioDriver ::
+    ~LinuxGpioDriver()
   {
 
   }
 
-  void LinuxGpioDriverComponentImpl ::
+  void LinuxGpioDriver ::
     exitThread() {
   }
 } // end namespace Drv

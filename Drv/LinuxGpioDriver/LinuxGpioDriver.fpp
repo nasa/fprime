@@ -10,6 +10,7 @@ module Drv {
 
     output port intOut: [2] Svc.Cycle
 
+
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------
@@ -25,9 +26,9 @@ module Drv {
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
+    event OpenChip(chip: string, label: string, pins: U32) severity activity high format "Opened {}[{}] with {} lines"
 
-    include "Events.fppi"
-
+    event OpenChipError(chip: string, status: Os.FileStatus) severity warning high format "Failed to open chip {}: {}"
   }
 
 }
