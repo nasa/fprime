@@ -10,8 +10,15 @@ extern "C" {
 void intervalTimerTest() {
     Os::IntervalTimer timer;
     timer.start();
-    Os::Task::delay(Fw::TimeInterval(1, 0));
+    Os::Task::delay(Fw::TimeInterval(0, 20000));
     timer.stop();
-    ASSERT_GE(timer.getDiffUsec(), 1000000);
-    ASSERT_LT(timer.getDiffUsec(), 1005000);
+    ASSERT_GE(timer.getDiffUsec(), 20000);
+    ASSERT_LT(timer.getDiffUsec(), 25000);
+
+    Fw::TimeInterval interval;
+    ASSERT_TRUE(timer.getTimeInterval(interval));
+    ASSERT_EQ(interval.getSeconds(), 0);
+    ASSERT_GE(interval.getUSeconds(), 20000);
+    ASSERT_LT(interval.getUSeconds(), 25000);
+
 }

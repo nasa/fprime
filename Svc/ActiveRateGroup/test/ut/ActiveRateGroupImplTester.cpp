@@ -78,15 +78,15 @@ namespace Svc {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_RateGroupStarted_SIZE(1);
 
-        Os::RawTime timer;
-        timer.getRawTime();
+        Os::RawTime time;
+        time.now();
 
         // clear port call log
         this->clearPortCalls();
         // verify cycle start flag is NOT set
         ASSERT_FALSE(this->m_impl.m_cycleStarted);
-        // call active rate group with timer val
-        this->invoke_to_CycleIn(0,timer);
+        // call active rate group with time val
+        this->invoke_to_CycleIn(0,time);
         // verify cycle started flag is set
         ASSERT_TRUE(this->m_impl.m_cycleStarted);
         // call doDispatch() for ActiveRateGroup

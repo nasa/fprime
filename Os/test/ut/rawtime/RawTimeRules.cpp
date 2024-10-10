@@ -29,20 +29,20 @@ void Os::Test::RawTime::Tester::SelfDiffIsZero::action(Os::Test::RawTime::Tester
 }
 
 // ------------------------------------------------------------------------------------------------------
-// Rule GetRawTime
+// Rule Now
 // ------------------------------------------------------------------------------------------------------
-Os::Test::RawTime::Tester::GetRawTime::GetRawTime() :
-    STest::Rule<Os::Test::RawTime::Tester>("GetRawTime") {}
+Os::Test::RawTime::Tester::Now::Now() :
+    STest::Rule<Os::Test::RawTime::Tester>("Now") {}
 
-bool Os::Test::RawTime::Tester::GetRawTime::precondition(const Os::Test::RawTime::Tester &state) {
+bool Os::Test::RawTime::Tester::Now::precondition(const Os::Test::RawTime::Tester &state) {
     return true;
 }
 
-void Os::Test::RawTime::Tester::GetRawTime::action(Os::Test::RawTime::Tester &state) {
+void Os::Test::RawTime::Tester::Now::action(Os::Test::RawTime::Tester &state) {
     FwIndexType index = state.pick_random_index();
 
-    Os::RawTime::Status status = state.m_times[index].getRawTime();
-    state.shadow_getRawTime(index);
+    Os::RawTime::Status status = state.m_times[index].now();
+    state.shadow_now(index);
     ASSERT_EQ(status, Os::RawTime::Status::OP_OK);
 }
 
@@ -115,7 +115,7 @@ void Os::Test::RawTime::Tester::Serialization::action(Os::Test::RawTime::Tester 
     raw_time.deserialize(buffer.getSerializeRepr());
 
     // We make sure that serialization and deserialization are successful by deserializing
-    // into a new Os::RawTime object and comparing the differece between the original RawTime
+    // into a new Os::RawTime object and comparing the difference between the original RawTime
     // test and the deserialized RawTime
     U32 result = 1; // initialize to non-zero value to ensure result is set by getDiffUsec
     Os::RawTime::Status status = state.m_times[index].getDiffUsec(raw_time, result);

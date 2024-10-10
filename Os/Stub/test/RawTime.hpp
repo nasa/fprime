@@ -58,10 +58,13 @@ class TestRawTime : public RawTimeInterface {
     //! \return internal RawTime handle representation
     RawTimeHandle* getHandle() override;
 
-    Status getRawTime() override;
-    Status getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const override;  //!<  docs
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;  //!< serialize contents
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;      //!< deserialize to contents
+    // ------------------------------------------------------------
+    // Implementation-specific RawTime overrides
+    // ------------------------------------------------------------
+    Status now() override;
+    Status getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const override;
+    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;
+    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;
 
   private:
     //! Handle for TestRawTime

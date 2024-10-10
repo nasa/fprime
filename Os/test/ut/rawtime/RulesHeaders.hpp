@@ -42,12 +42,12 @@ struct Tester {
     std::vector<std::chrono::time_point<std::chrono::system_clock>> m_shadow_times;
 
     //! Get time for shadow state, at specified index
-    void shadow_getRawTime(FwIndexType index) {
+    void shadow_now(FwIndexType index) {
         this->m_shadow_times[index] = std::chrono::system_clock::now();
     }
 
     U32 shadow_getDiffUsec(std::chrono::time_point<std::chrono::system_clock>& t1, std::chrono::time_point<std::chrono::system_clock>& t2) const {
-        // Signedness is important here so we compare and substratc accordingly
+        // Signedness is important here so we compare and substract accordingly
         if (t1 < t2) {
             return std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
         }
@@ -70,7 +70,7 @@ struct Tester {
         Fw::TimeInterval shadow_interval;
         Fw::TimeInterval result;
         this->shadow_getTimeInterval(index1, index2, shadow_interval);
-        // Signedness is important here so we compare and substratc accordingly
+        // Signedness is important here so we compare and substract accordingly
         if (interval < shadow_interval) {
             result = Fw::TimeInterval::sub(shadow_interval, interval);
         } else {

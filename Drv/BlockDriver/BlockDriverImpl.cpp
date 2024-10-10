@@ -17,7 +17,7 @@ namespace Drv {
     void BlockDriverImpl::InterruptReport_internalInterfaceHandler(U32 ip) {
         // get time
         Os::RawTime time;
-        time.getRawTime();
+        time.now();
         // call output timing signal
         this->CycleOut_out(0,time);
         // increment cycles and write channel

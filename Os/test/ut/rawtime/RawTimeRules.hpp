@@ -30,10 +30,10 @@ struct SelfDiffIsZero : public STest::Rule<Os::Test::RawTime::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule GetRawTime: Get current RawTime
+// Rule Now: Get current RawTime
 // ------------------------------------------------------------------------------------------------------
-struct GetRawTime : public STest::Rule<Os::Test::RawTime::Tester> {
-    GetRawTime();
+struct Now : public STest::Rule<Os::Test::RawTime::Tester> {
+    Now();
     bool precondition(const Os::Test::RawTime::Tester &state);
     void action(Os::Test::RawTime::Tester &state);
 };

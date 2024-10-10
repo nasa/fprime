@@ -12,7 +12,7 @@ RawTimeHandle* StubRawTime::getHandle() {
     return &this->m_handle;
 }
 
-StubRawTime::Status StubRawTime::getRawTime() {
+StubRawTime::Status StubRawTime::now() {
     return Status::OP_OK;
 }
 

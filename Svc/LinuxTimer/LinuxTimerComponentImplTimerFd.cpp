@@ -52,7 +52,7 @@ namespace Svc {
               timerfd_settime (fd, 0, &itval, nullptr);
               return;
           }
-          this->m_rawTime.getRawTime();
+          this->m_rawTime.now();
           this->CycleOut_out(0,this->m_rawTime);
       }
   }

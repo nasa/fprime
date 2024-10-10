@@ -40,9 +40,9 @@ TEST_F(Interface, Destruction) {
 }
 
 // Ensure that Os::RawTime properly calls the following delegate function
-TEST_F(Interface, GetRawTime) {
+TEST_F(Interface, Now) {
     Os::RawTime rawtime;
-    ASSERT_EQ(rawtime.getRawTime(), Os::RawTime::Status::OP_OK);
+    ASSERT_EQ(rawtime.now(), Os::RawTime::Status::OP_OK);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_TIME_FN);
 }
 

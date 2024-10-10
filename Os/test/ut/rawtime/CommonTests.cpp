@@ -21,7 +21,7 @@ Functionality::Functionality() : tester(get_tester_implementation()) {
     for (U32 i = 0; i < tester->TEST_TIME_COUNT; ++i) {
         tester->m_times.emplace_back();
         tester->m_shadow_times.emplace_back();
-        tester->m_times[i].getRawTime();
+        tester->m_times[i].now();
         tester->m_shadow_times[i] = std::chrono::system_clock::now();
     }
 }
@@ -38,9 +38,9 @@ void Functionality::TearDown() {
 // Test Cases
 // ----------------------------------------------------------------------
 
-// GetRawTime
-TEST_F(Functionality, GetRawTime) {
-    Os::Test::RawTime::Tester::GetRawTime get_time_rule;
+// Now
+TEST_F(Functionality, Now) {
+    Os::Test::RawTime::Tester::Now get_time_rule;
     get_time_rule.apply(*tester);
 }
 
@@ -77,7 +77,7 @@ TEST_F(Functionality, DiffU32Overflow) {
 // RandomizedTesting
 TEST_F(Functionality, RandomizedTesting) {
     // Enumerate all rules and construct an instance of each
-    Os::Test::RawTime::Tester::GetRawTime get_time_rule;
+    Os::Test::RawTime::Tester::Now get_time_rule;
     Os::Test::RawTime::Tester::SelfDiffIsZero diff_zero_rule;
     Os::Test::RawTime::Tester::GetTimeDiffU32 get_diff_rule;
     Os::Test::RawTime::Tester::GetTimeInterval get_interval_rule;

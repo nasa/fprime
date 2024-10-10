@@ -24,7 +24,7 @@ RawTimeHandle* TestRawTime::getHandle() {
     return &this->m_handle;
 }
 
-TestRawTime::Status TestRawTime::getRawTime() {
+TestRawTime::Status TestRawTime::now() {
     StaticData::data.lastCalled = StaticData::LastFn::GET_TIME_FN;
     return Status::OP_OK;
 }

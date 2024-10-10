@@ -39,7 +39,7 @@ void PassiveRateGroup::configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE num
 
 
 void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
-    Os::RawTime end;
+    Os::RawTime endTime;
     FW_ASSERT(this->m_numContexts);
 
     // invoke any members of the rate group
@@ -49,22 +49,21 @@ void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cyc
         }
     }
 
-    // grab timer for end of cycle
-    end.getRawTime();
+    // grab timer for endTime of cycle
+    endTime.now();
 
     // get rate group execution time
-    U32 cycle_time;
-    Os::RawTime::Status status = end.getDiffUsec(cycleStart, cycle_time);
-    // TODO: error handling?
+    U32 cycleTime;
+    Os::RawTime::Status status = endTime.getDiffUsec(cycleStart, cycleTime);
     if (status != Os::RawTime::OP_OK) {
-        cycle_time = std::numeric_limits<U32>::max();
+        cycleTime = std::numeric_limits<U32>::max();
     }
     // check to see if the time has exceeded the previous maximum
-    if (cycle_time > this->m_maxTime) {
-        this->m_maxTime = cycle_time;
+    if (cycleTime > this->m_maxTime) {
+        this->m_maxTime = cycleTime;
     }
     this->tlmWrite_MaxCycleTime(this->m_maxTime);
-    this->tlmWrite_CycleTime(cycle_time);
+    this->tlmWrite_CycleTime(cycleTime);
     this->tlmWrite_CycleCount(++this->m_cycles);
 }
 

@@ -56,7 +56,7 @@ void PassiveRateGroupTester::runNominal(NATIVE_INT_TYPE contexts[],
     this->clearTlm();
 
     Os::RawTime timestamp;
-    timestamp.getRawTime();
+    timestamp.now();
 
     // clear port call log
     this->clearPortCalls();

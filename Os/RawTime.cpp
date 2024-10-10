@@ -33,9 +33,9 @@ RawTimeHandle* RawTime::getHandle() {
     return this->m_delegate.getHandle();
 }
 
-RawTime::Status RawTime::getRawTime() {
+RawTime::Status RawTime::now() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.getRawTime();
+    return this->m_delegate.now();
 }
 
 RawTime::Status RawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& result) const {

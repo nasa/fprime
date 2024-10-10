@@ -57,7 +57,7 @@ namespace Svc {
         // Make sure it's been configured
         FW_ASSERT(this->m_numContexts);
 
-        Os::RawTime end;
+        Os::RawTime endTime;
 
         this->m_cycleStarted = false;
 
@@ -68,20 +68,19 @@ namespace Svc {
             }
         }
 
-        // grab timer for end of cycle
-        end.getRawTime();
+        // grab timer for endTime of cycle
+        endTime.now();
 
         // get rate group execution time
-        U32 cycle_time;
-        Os::RawTime::Status status = end.getDiffUsec(cycleStart, cycle_time);
-        // TODO: how to handle error here? There is overflow happening in testing....
+        U32 cycleTime;
+        Os::RawTime::Status status = endTime.getDiffUsec(cycleStart, cycleTime);
         if (status != Os::RawTime::OP_OK) {
-            cycle_time = std::numeric_limits<U32>::max();
+            cycleTime = std::numeric_limits<U32>::max();
         }
 
         // check to see if the time has exceeded the previous maximum
-        if (cycle_time > this->m_maxTime) {
-            this->m_maxTime = cycle_time;
+        if (cycleTime > this->m_maxTime) {
+            this->m_maxTime = cycleTime;
         }
 
         // update cycle telemetry

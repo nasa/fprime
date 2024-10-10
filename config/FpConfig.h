@@ -422,7 +422,7 @@ typedef FwIndexType FwQueueSizeType;
 
 // TODO: document
 #ifndef FW_RAW_TIME_SERIALIZATION_MAX_SIZE
-#define FW_RAW_TIME_SERIALIZATION_MAX_SIZE 64  //!< Maximum serialization size for Os::RawTime objects
+#define FW_RAW_TIME_SERIALIZATION_MAX_SIZE 8  //!< Maximum serialization size for Os::RawTime objects
 #endif
 
 #ifndef FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE
