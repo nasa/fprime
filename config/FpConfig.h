@@ -13,6 +13,10 @@
 
 #include <Fw/Types/BasicTypes.h>
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 // ----------------------------------------------------------------------
 // Type aliases
 // ----------------------------------------------------------------------
@@ -439,4 +443,9 @@ typedef FwIndexType FwQueueSizeType;
 // DO NOT TOUCH.  These types are specified for backwards naming compatibility.
 typedef FwSizeStoreType FwBuffSizeType;
 #define PRI_FwBuffSizeType PRI_FwSizeStoreType
+
+#ifdef  __cplusplus
+}
+#endif
+
 #endif
