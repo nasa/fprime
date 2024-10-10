@@ -99,10 +99,11 @@ register_fprime_module(Os_Test_File_SyntheticFileSystem)
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Os.fpp"
 )
 set(SOURCE_HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/Os.hpp"
 )

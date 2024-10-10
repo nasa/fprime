@@ -8,6 +8,7 @@
 #include "Os/Models/MutexStatusEnumAc.hpp"
 #include "Os/Models/DirectoryStatusEnumAc.hpp"
 #include "Os/Models/DirectoryOpenModeEnumAc.hpp"
+#include "Os/Models/RawTimeStatusEnumAc.hpp"
 #include "Os/Models/FileSystemStatusEnumAc.hpp"
 #include "Os/Models/GenericStatusEnumAc.hpp"
 #include "Os/File.hpp"
@@ -167,6 +168,17 @@ static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NOT_S
               "FileSystem status and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::OTHER_ERROR) == Os::FileSystemStatus::T::OTHER_ERROR,
               "FileSystem status and FPP shadow enum do not match");
+
+
+// Check consistency of every constant in the Os::RawTime::Status enum
+static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::OP_OK) == Os::RawTimeStatus::T::OP_OK,
+              "RawTime status enums do not match");
+static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::OP_OVERFLOW) == Os::RawTimeStatus::T::OP_OVERFLOW,
+              "RawTime status enums do not match");
+static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::INVALID_PARAMS) == Os::RawTimeStatus::T::INVALID_PARAMS,
+              "RawTime status enums do not match");
+static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::OTHER_ERROR) == Os::RawTimeStatus::T::OTHER_ERROR,
+              "Generic status enums do not match");
 
 // Check Generic mappings
 static_assert(static_cast<Os::GenericStatus::T>(Os::Generic::Status::OP_OK) == Os::GenericStatus::T::OP_OK,
