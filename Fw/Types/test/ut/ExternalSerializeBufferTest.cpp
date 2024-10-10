@@ -55,7 +55,7 @@ namespace ExternalSerializeBufferTest {
     serializeFail(esb);
     // Deserialization should succeed
     deserializeOK(esb);
-    // Derialization should fail
+    // Deserialization should fail
     deserializeFail(esb);
   }
 
@@ -67,7 +67,7 @@ namespace ExternalSerializeBufferTest {
     esb.clear();
     // Serialization should fail
     serializeFail(esb);
-    // Derialization should fail
+    // Deserialization should fail
     deserializeFail(esb);
   }
 
@@ -80,7 +80,7 @@ namespace ExternalSerializeBufferTest {
     esb.setExtBuffer(buffer, BUFFER_SIZE);
     // Serialization should succeed
     serializeOK(esb);
-    // Derialization should succeed
+    // Deserialization should succeed
     deserializeOK(esb);
   }
 
@@ -91,7 +91,7 @@ namespace ExternalSerializeBufferTest {
     serializeOK(esb1);
     // Assign esb2 to esb1
     esb1 = esb2;
-    // Derialization should fail
+    // Deserialization should fail
     deserializeFail(esb1);
     // Serialization should succeed
     serializeOK(esb1);
