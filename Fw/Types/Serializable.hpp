@@ -263,8 +263,7 @@ class ExternalSerializeBufferWithMemberCopy final : public ExternalSerializeBuff
     ExternalSerializeBufferWithMemberCopy& operator=(const ExternalSerializeBufferWithMemberCopy& src) {
         // Ward against self-assignment
         if (this != &src) {
-            this->m_buff = src.m_buff;
-            this->m_buffSize = src.m_buffSize;
+            this->setExtBuffer(src.m_buff, src.m_buffSize);
         }
         return *this;
     }
