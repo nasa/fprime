@@ -97,5 +97,4 @@ namespace ExternalSerializeBufferTest {
     serializeOK(esb1);
   }
 
-
 }

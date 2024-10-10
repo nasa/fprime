@@ -8,6 +8,7 @@
 
 using namespace FppTest;
 
+// Iterate the tests to ensure that everything works after the first time
 static constexpr FwIndexType NUM_ITERS = 2;
 
 TEST(schedIn, OK) {
