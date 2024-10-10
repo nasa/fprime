@@ -11,9 +11,7 @@ var dir_5d2d44be9d89e5af4b3ae87b5b477c1c =
       [ "PosixConsole", "class_os_1_1_posix_1_1_console_1_1_posix_console.html", "class_os_1_1_posix_1_1_console_1_1_posix_console" ]
     ] ],
     [ "DefaultConsole.cpp", "posix_2_default_console_8cpp.html", null ],
-    [ "DefaultDirectory.cpp", "posix_2_default_directory_8cpp.html", null ],
     [ "DefaultFile.cpp", "posix_2_default_file_8cpp.html", null ],
-    [ "DefaultFileSystem.cpp", "posix_2_default_file_system_8cpp.html", null ],
     [ "DefaultMutex.cpp", "posix_2_default_mutex_8cpp.html", null ],
     [ "DefaultTask.cpp", "posix_2_default_task_8cpp.html", null ],
     [ "Directory.cpp", "posix_2_directory_8cpp.html", null ],

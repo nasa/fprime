@@ -10,7 +10,7 @@ var class_os_1_1_mutex_interface =
     [ "~MutexInterface", "class_os_1_1_mutex_interface.html#ab11257bc1150ab40ba4c97c8a930325e", null ],
     [ "MutexInterface", "class_os_1_1_mutex_interface.html#a91e42f69c788362cb6362411e40bfb65", null ],
     [ "MutexInterface", "class_os_1_1_mutex_interface.html#a54c629d5245f08314f6d22337a1c0c6e", null ],
-    [ "getDelegate", "class_os_1_1_mutex_interface.html#a7e1a7251da4f4b86f28c319032966bfb", null ],
+    [ "getDelegate", "class_os_1_1_mutex_interface.html#aec2651126b49998e1e8037df4e02c3fa", null ],
     [ "getHandle", "class_os_1_1_mutex_interface.html#a5752ff580846d5dd74cf1995e56c6062", null ],
     [ "operator=", "class_os_1_1_mutex_interface.html#a9d480d637f793c2a303f10b125e525e7", null ],
     [ "release", "class_os_1_1_mutex_interface.html#acf2c256c1daa1c772cb383bfa56ea315", null ],

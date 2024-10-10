@@ -5,10 +5,6 @@ var dir_0a824aa1f70ce3b829ef378253b085da =
     [ "Types", "dir_5f929cd0c03be70341d2bc1982a10da4.html", "dir_5f929cd0c03be70341d2bc1982a10da4" ],
     [ "CRCChecker.cpp", "c_r_c_checker_8cpp.html", "_c_r_c_checker_8cpp" ],
     [ "CRCChecker.hpp", "c_r_c_checker_8hpp.html", "_c_r_c_checker_8hpp" ],
-    [ "LockGuard.cpp", "lock_guard_8cpp.html", null ],
-    [ "LockGuard.hpp", "lock_guard_8hpp.html", [
-      [ "LockGuard", "class_utils_1_1_lock_guard.html", "class_utils_1_1_lock_guard" ]
-    ] ],
     [ "RateLimiter.cpp", "rate_limiter_8cpp.html", null ],
     [ "RateLimiter.hpp", "rate_limiter_8hpp.html", [
       [ "RateLimiter", "class_utils_1_1_rate_limiter.html", "class_utils_1_1_rate_limiter" ]

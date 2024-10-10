@@ -3,8 +3,6 @@ var hierarchy =
     [ "ActiveTextLoggerComponent", "class_active_text_logger_component.html", null ],
     [ "Os::TaskInterface::Arguments", "class_os_1_1_task_interface_1_1_arguments.html", null ],
     [ "Fw::AssertHook", "class_fw_1_1_assert_hook.html", null ],
-    [ "Os::BareQueueHandle", "class_os_1_1_bare_queue_handle.html", null ],
-    [ "Os::BareTaskHandle", "class_os_1_1_bare_task_handle.html", null ],
     [ "Svc::BufferManagerComponentImpl::BufferBin", "struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html", null ],
     [ "Svc::BufferManagerComponentImpl::BufferBins", "struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bins.html", null ],
     [ "Fw::ByteArray", "struct_fw_1_1_byte_array.html", null ],
@@ -43,7 +41,6 @@ var hierarchy =
       [ "Os::Linux::Cpu::LinuxCpu", "class_os_1_1_linux_1_1_cpu_1_1_linux_cpu.html", null ],
       [ "Os::Stub::Cpu::StubCpu", "class_os_1_1_stub_1_1_cpu_1_1_stub_cpu.html", null ]
     ] ],
-    [ "Os::SystemResources::CpuTicks", "struct_os_1_1_system_resources_1_1_cpu_ticks.html", null ],
     [ "Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC", "struct_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence_1_1_c_r_c.html", null ],
     [ "Fw::FilePacket::DataPacket", "class_fw_1_1_file_packet_1_1_data_packet.html", null ],
     [ "Svc::DeframingProtocol", "class_svc_1_1_deframing_protocol.html", [
@@ -95,20 +92,17 @@ var hierarchy =
     [ "Fw::DpContainer::Header", "struct_fw_1_1_dp_container_1_1_header.html", null ],
     [ "Fw::FilePacket::Header", "class_fw_1_1_file_packet_1_1_header.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence::Header", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_header.html", null ],
-    [ "Os::InterruptLock", "class_os_1_1_interrupt_lock.html", null ],
     [ "Os::IntervalTimer", "class_os_1_1_interval_timer.html", null ],
     [ "Drv::IpSocket", "class_drv_1_1_ip_socket.html", [
       [ "Drv::TcpClientSocket", "class_drv_1_1_tcp_client_socket.html", null ],
       [ "Drv::TcpServerSocket", "class_drv_1_1_tcp_server_socket.html", null ],
       [ "Drv::UdpSocket", "class_drv_1_1_udp_socket.html", null ]
     ] ],
-    [ "Utils::LockGuard", "class_utils_1_1_lock_guard.html", null ],
     [ "Svc::LogFile", "struct_svc_1_1_log_file.html", null ],
     [ "Fw::Logger", "class_fw_1_1_logger.html", [
       [ "Os::Console", "class_os_1_1_console.html", null ]
     ] ],
     [ "Types::MaxHeap", "class_types_1_1_max_heap.html", null ],
-    [ "Os::Mem", "class_os_1_1_mem.html", null ],
     [ "Fw::MemAllocator", "class_fw_1_1_mem_allocator.html", [
       [ "Fw::MallocAllocator", "class_fw_1_1_malloc_allocator.html", null ],
       [ "Fw::MmapAllocator", "class_fw_1_1_mmap_allocator.html", null ]
@@ -124,7 +118,6 @@ var hierarchy =
       [ "Os::Memory", "class_os_1_1_memory.html", null ],
       [ "Os::Stub::Memory::StubMemory", "class_os_1_1_stub_1_1_memory_1_1_stub_memory.html", null ]
     ] ],
-    [ "Os::SystemResources::MemUtil", "struct_os_1_1_system_resources_1_1_mem_util.html", null ],
     [ "Svc::BufferLogger::File::Mode", "struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html", null ],
     [ "Os::MutexHandle", "struct_os_1_1_mutex_handle.html", [
       [ "Os::Posix::Mutex::PosixMutexHandle", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle.html", null ],
@@ -521,10 +514,7 @@ var hierarchy =
       [ "Os::Stub::Task::StubTask", "class_os_1_1_stub_1_1_task_1_1_stub_task.html", null ],
       [ "Os::Task", "class_os_1_1_task.html", null ]
     ] ],
-    [ "Os::TaskLock", "class_os_1_1_task_lock.html", null ],
-    [ "Os::TaskRegistry", "class_os_1_1_task_registry.html", [
-      [ "Os::TaskRunner", "class_os_1_1_task_runner.html", null ]
-    ] ],
+    [ "Os::TaskRegistry", "class_os_1_1_task_registry.html", null ],
     [ "Os::Task::TaskRoutineWrapper", "class_os_1_1_task_1_1_task_routine_wrapper.html", null ],
     [ "Svc::AMPCSSequence::Record::Time", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time.html", null ],
     [ "Svc::AMPCSSequence::Record::TimeFlag", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time_flag.html", null ],
@@ -541,6 +531,5 @@ var hierarchy =
     ] ],
     [ "Os::Generic::UsedTotal", "struct_os_1_1_generic_1_1_used_total.html", null ],
     [ "Os::ValidatedFile", "class_os_1_1_validated_file.html", null ],
-    [ "Project::Version", "struct_project_1_1_version.html", null ],
-    [ "Os::WatchdogTimer", "class_os_1_1_watchdog_timer.html", null ]
+    [ "Project::Version", "struct_project_1_1_version.html", null ]
 ];

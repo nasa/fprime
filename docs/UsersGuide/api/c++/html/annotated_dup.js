@@ -256,10 +256,6 @@ var annotated_dup =
           [ "StubTask", "class_os_1_1_stub_1_1_task_1_1_stub_task.html", "class_os_1_1_stub_1_1_task_1_1_stub_task" ]
         ] ]
       ] ],
-      [ "SystemResources", "namespace_os_1_1_system_resources.html", [
-        [ "CpuTicks", "struct_os_1_1_system_resources_1_1_cpu_ticks.html", "struct_os_1_1_system_resources_1_1_cpu_ticks" ],
-        [ "MemUtil", "struct_os_1_1_system_resources_1_1_mem_util.html", "struct_os_1_1_system_resources_1_1_mem_util" ]
-      ] ],
       [ "DirectoryOpenMode", "class_os_1_1_directory_open_mode.html", "class_os_1_1_directory_open_mode" ],
       [ "DirectoryStatus", "class_os_1_1_directory_status.html", "class_os_1_1_directory_status" ],
       [ "FileMode", "class_os_1_1_file_mode.html", "class_os_1_1_file_mode" ],
@@ -268,9 +264,6 @@ var annotated_dup =
       [ "GenericStatus", "class_os_1_1_generic_status.html", "class_os_1_1_generic_status" ],
       [ "MutexStatus", "class_os_1_1_mutex_status.html", "class_os_1_1_mutex_status" ],
       [ "TaskStatus", "class_os_1_1_task_status.html", "class_os_1_1_task_status" ],
-      [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
-      [ "BareTaskHandle", "class_os_1_1_bare_task_handle.html", "class_os_1_1_bare_task_handle" ],
-      [ "TaskRunner", "class_os_1_1_task_runner.html", "class_os_1_1_task_runner" ],
       [ "ConditionVariableHandle", "class_os_1_1_condition_variable_handle.html", null ],
       [ "ConditionVariableInterface", "class_os_1_1_condition_variable_interface.html", "class_os_1_1_condition_variable_interface" ],
       [ "ConditionVariable", "class_os_1_1_condition_variable.html", "class_os_1_1_condition_variable" ],
@@ -289,10 +282,7 @@ var annotated_dup =
       [ "FileSystemHandle", "struct_os_1_1_file_system_handle.html", null ],
       [ "FileSystemInterface", "class_os_1_1_file_system_interface.html", "class_os_1_1_file_system_interface" ],
       [ "FileSystem", "class_os_1_1_file_system.html", "class_os_1_1_file_system" ],
-      [ "InterruptLock", "class_os_1_1_interrupt_lock.html", "class_os_1_1_interrupt_lock" ],
       [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ],
-      [ "QueueHandle", "class_os_1_1_queue_handle.html", "class_os_1_1_queue_handle" ],
-      [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ],
       [ "MemoryHandle", "class_os_1_1_memory_handle.html", null ],
       [ "MemoryInterface", "class_os_1_1_memory_interface.html", "class_os_1_1_memory_interface" ],
       [ "Memory", "class_os_1_1_memory.html", "class_os_1_1_memory" ],
@@ -300,6 +290,7 @@ var annotated_dup =
       [ "MutexInterface", "class_os_1_1_mutex_interface.html", "class_os_1_1_mutex_interface" ],
       [ "Mutex", "class_os_1_1_mutex.html", "class_os_1_1_mutex" ],
       [ "ScopeLock", "class_os_1_1_scope_lock.html", "class_os_1_1_scope_lock" ],
+      [ "QueueHandle", "class_os_1_1_queue_handle.html", null ],
       [ "QueueInterface", "class_os_1_1_queue_interface.html", "class_os_1_1_queue_interface" ],
       [ "Queue", "class_os_1_1_queue.html", "class_os_1_1_queue" ],
       [ "QueueRegistry", "class_os_1_1_queue_registry.html", "class_os_1_1_queue_registry" ],
@@ -308,10 +299,8 @@ var annotated_dup =
       [ "TaskInterface", "class_os_1_1_task_interface.html", "class_os_1_1_task_interface" ],
       [ "Task", "class_os_1_1_task.html", "class_os_1_1_task" ],
       [ "TaskRegistry", "class_os_1_1_task_registry.html", "class_os_1_1_task_registry" ],
-      [ "TaskLock", "class_os_1_1_task_lock.html", "class_os_1_1_task_lock" ],
       [ "TaskString", "class_os_1_1_task_string.html", "class_os_1_1_task_string" ],
-      [ "ValidatedFile", "class_os_1_1_validated_file.html", "class_os_1_1_validated_file" ],
-      [ "WatchdogTimer", "class_os_1_1_watchdog_timer.html", "class_os_1_1_watchdog_timer" ]
+      [ "ValidatedFile", "class_os_1_1_validated_file.html", "class_os_1_1_validated_file" ]
     ] ],
     [ "Project", "namespace_project.html", [
       [ "Version", "struct_project_1_1_version.html", "struct_project_1_1_version" ]
@@ -476,7 +465,6 @@ var annotated_dup =
     [ "Utils", "namespace_utils.html", [
       [ "Hash", "class_utils_1_1_hash.html", "class_utils_1_1_hash" ],
       [ "HashBuffer", "class_utils_1_1_hash_buffer.html", "class_utils_1_1_hash_buffer" ],
-      [ "LockGuard", "class_utils_1_1_lock_guard.html", "class_utils_1_1_lock_guard" ],
       [ "RateLimiter", "class_utils_1_1_rate_limiter.html", "class_utils_1_1_rate_limiter" ],
       [ "TokenBucket", "class_utils_1_1_token_bucket.html", "class_utils_1_1_token_bucket" ]
     ] ],

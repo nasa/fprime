@@ -85,7 +85,7 @@ $(document).ready(function(){initNavTree('_utils_lock_guard_class.html',''); ini
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title"><a class="el" href="class_utils_1_1_lock_guard.html">Utils::LockGuard</a> Class </div>  </div>
+<div class="title">Utils::LockGuard Class </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="autotoc_md1148"></a>
@@ -99,11 +99,10 @@ Utils::LockGuard</h1>
 <h3><a class="anchor" id="autotoc_md1151"></a>
 2.1 Basic</h3>
 <p>LockGuard is a class that can be included and instantiated with an associated <a class="el" href="class_os_1_1_mutex.html">Os::Mutex</a> reference.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="lock_guard_8hpp.html">Utils/LockGuard.hpp</a>&gt;</span></div>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;Utils/LockGuard.hpp&gt;</span></div>
 <div class="line">...</div>
 <div class="line">Os::Mutex mutex;</div>
 <div class="line">LockGuard lock(mutex);</div>
-<div class="ttc" id="a_lock_guard_8hpp_html"><div class="ttname"><a href="lock_guard_8hpp.html">LockGuard.hpp</a></div></div>
 </div><!-- fragment --><p>The moment LockGuard is instantiated, it will attempt to lock the mutex that's given to it.</p>
 <p>LockGuard is meant for scoped use, i.e. it should always live on a function call stack. It allows a sometimes more convenient way of using mutex, e.g. you want this entire function locked from this point forward, and early returns should be guaranteed to release the lock.</p>
 <div class="fragment"><div class="line">LockGuard _lock(mutex);</div>

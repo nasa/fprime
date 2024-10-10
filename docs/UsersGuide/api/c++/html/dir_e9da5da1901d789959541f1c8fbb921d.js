@@ -1,10 +1,8 @@
 var dir_e9da5da1901d789959541f1c8fbb921d =
 [
-    [ "Baremetal", "dir_4619be047ff79d3a605279c962371c8c.html", "dir_4619be047ff79d3a605279c962371c8c" ],
     [ "Darwin", "dir_fc776cc393f07b33e99471d8e97681be.html", "dir_fc776cc393f07b33e99471d8e97681be" ],
     [ "Generic", "dir_1e52824b632564578f921ac4c5e6c54b.html", "dir_1e52824b632564578f921ac4c5e6c54b" ],
     [ "Linux", "dir_e8b0a4431f50aa1b66ecfcf904ec6845.html", "dir_e8b0a4431f50aa1b66ecfcf904ec6845" ],
-    [ "MacOs", "dir_da072c950dfe9ef89d97b4f59ceb0221.html", "dir_da072c950dfe9ef89d97b4f59ceb0221" ],
     [ "Models", "dir_0e548070549289538222d2105f4d6175.html", "dir_0e548070549289538222d2105f4d6175" ],
     [ "Posix", "dir_5d2d44be9d89e5af4b3ae87b5b477c1c.html", "dir_5d2d44be9d89e5af4b3ae87b5b477c1c" ],
     [ "Stub", "dir_4df893a225f727201a6771996bba0a27.html", "dir_4df893a225f727201a6771996bba0a27" ],
@@ -46,19 +44,11 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
       [ "FileSystemInterface", "class_os_1_1_file_system_interface.html", "class_os_1_1_file_system_interface" ],
       [ "FileSystem", "class_os_1_1_file_system.html", "class_os_1_1_file_system" ]
     ] ],
-    [ "InterruptLock.hpp", "interrupt_lock_8hpp.html", [
-      [ "InterruptLock", "class_os_1_1_interrupt_lock.html", "class_os_1_1_interrupt_lock" ]
-    ] ],
     [ "IntervalTimer.hpp", "interval_timer_8hpp.html", [
       [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ],
       [ "RawTime", "struct_os_1_1_interval_timer_1_1_raw_time.html", "struct_os_1_1_interval_timer_1_1_raw_time" ]
     ] ],
     [ "IntervalTimerCommon.cpp", "interval_timer_common_8cpp.html", null ],
-    [ "LogDefault.cpp", "log_default_8cpp.html", "_log_default_8cpp" ],
-    [ "Mem.hpp", "mem_8hpp.html", [
-      [ "Mem", "class_os_1_1_mem.html", "class_os_1_1_mem" ]
-    ] ],
-    [ "MemCommon.cpp", "mem_common_8cpp.html", null ],
     [ "Memory.cpp", "memory_8cpp.html", null ],
     [ "Memory.hpp", "memory_8hpp.html", [
       [ "MemoryHandle", "class_os_1_1_memory_handle.html", null ],
@@ -76,7 +66,7 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "Os.hpp", "os_8hpp.html", "_os_8hpp" ],
     [ "Queue.cpp", "os_2_queue_8cpp.html", null ],
     [ "Queue.hpp", "os_2_queue_8hpp.html", [
-      [ "QueueHandle", "class_os_1_1_queue_handle.html", "class_os_1_1_queue_handle" ],
+      [ "QueueHandle", "class_os_1_1_queue_handle.html", null ],
       [ "QueueInterface", "class_os_1_1_queue_interface.html", "class_os_1_1_queue_interface" ],
       [ "Queue", "class_os_1_1_queue.html", "class_os_1_1_queue" ],
       [ "QueueRegistry", "class_os_1_1_queue_registry.html", "class_os_1_1_queue_registry" ]
@@ -84,7 +74,6 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "QueueString.hpp", "queue_string_8hpp.html", [
       [ "QueueString", "class_os_1_1_queue_string.html", "class_os_1_1_queue_string" ]
     ] ],
-    [ "SystemResources.hpp", "os_2_system_resources_8hpp.html", "_os_2_system_resources_8hpp" ],
     [ "Task.cpp", "task_8cpp.html", null ],
     [ "Task.hpp", "task_8hpp.html", [
       [ "TaskHandle", "class_os_1_1_task_handle.html", null ],
@@ -94,9 +83,6 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
       [ "TaskRoutineWrapper", "class_os_1_1_task_1_1_task_routine_wrapper.html", "class_os_1_1_task_1_1_task_routine_wrapper" ],
       [ "TaskRegistry", "class_os_1_1_task_registry.html", "class_os_1_1_task_registry" ]
     ] ],
-    [ "TaskLock.hpp", "task_lock_8hpp.html", [
-      [ "TaskLock", "class_os_1_1_task_lock.html", "class_os_1_1_task_lock" ]
-    ] ],
     [ "TaskString.hpp", "task_string_8hpp.html", [
       [ "TaskString", "class_os_1_1_task_string.html", "class_os_1_1_task_string" ]
     ] ],
@@ -105,8 +91,5 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
       [ "ValidatedFile", "class_os_1_1_validated_file.html", "class_os_1_1_validated_file" ]
     ] ],
     [ "ValidateFile.hpp", "validate_file_8hpp.html", "_validate_file_8hpp" ],
-    [ "ValidateFileCommon.cpp", "validate_file_common_8cpp.html", "_validate_file_common_8cpp" ],
-    [ "WatchdogTimer.hpp", "watchdog_timer_8hpp.html", [
-      [ "WatchdogTimer", "class_os_1_1_watchdog_timer.html", "class_os_1_1_watchdog_timer" ]
-    ] ]
+    [ "ValidateFileCommon.cpp", "validate_file_common_8cpp.html", "_validate_file_common_8cpp" ]
 ];
