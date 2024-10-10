@@ -728,6 +728,7 @@ osets
 ostate
 osubgrouping
 OSX
+ote
 otherdictitems
 otheritems
 otherside
@@ -959,6 +960,7 @@ showinitializer
 sideeffect
 sighandler
 signedness
+Signedness
 SIMPLEQUEUEREGISTRY
 sinc
 Sinha
@@ -1024,8 +1026,6 @@ subseconds
 subtargets
 subtopology
 subtopologies
-Subtopology
-Subtopologies
 suppr
 suseconds
 SVCLOGFILE
@@ -1174,6 +1174,7 @@ upfiles
 upl
 usb
 usecond
+useconds
 usepackage
 usleep
 ustr
