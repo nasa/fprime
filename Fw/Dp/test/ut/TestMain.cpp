@@ -155,6 +155,8 @@ TEST(Header, BufferSet) {
     container.invalidateBuffer();
     // Check that the buffer is invalid
     ASSERT_EQ(container.getBuffer(), Fw::Buffer());
+    // Check that the data size is zero
+    ASSERT_EQ(container.getDataSize(), 0);
 }
 
 TEST(Header, BadPacketDescriptor) {

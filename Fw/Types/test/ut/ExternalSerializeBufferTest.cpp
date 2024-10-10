@@ -12,11 +12,13 @@ namespace ExternalSerializeBufferTest {
   U8 buffer[BUFFER_SIZE];
 
   void serializeOK(Fw::ExternalSerializeBuffer& esb) {
+    ASSERT_EQ(esb.getBuffLength(), 0);
     for (SizeType i = 0; i < BUFFER_SIZE; i++) {
       const U8 value = static_cast<U8>(i);
       const Fw::SerializeStatus status = esb.serialize(value);
       ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
+    ASSERT_EQ(esb.getBuffLength(), BUFFER_SIZE);
   }
 
   void serializeFail(Fw::ExternalSerializeBuffer& esb) {
@@ -25,12 +27,14 @@ namespace ExternalSerializeBufferTest {
   }
 
   void deserializeOK(Fw::ExternalSerializeBuffer& esb) {
+    ASSERT_EQ(esb.getBuffLeft(), BUFFER_SIZE);
     for (SizeType i = 0; i < BUFFER_SIZE; i++) {
       U8 value = 0;
       const Fw::SerializeStatus status = esb.deserialize(value);
       ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
       ASSERT_EQ(value, static_cast<U8>(i));
     }
+    ASSERT_EQ(esb.getBuffLeft(), 0);
   }
 
   void deserializeFail(Fw::ExternalSerializeBuffer& esb) {

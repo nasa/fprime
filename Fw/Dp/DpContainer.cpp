@@ -140,6 +140,7 @@ void DpContainer::setBuffer(const Buffer& buffer) {
               static_cast<FwAssertArgType>(minBufferSize));
     U8* const dataAddr = &buffAddr[DATA_OFFSET];
     // Set the buffer
+    // This action also clears the serialization state in the buffer
     this->m_dataBuffer.setExtBuffer(dataAddr, static_cast<Fw::Serializable::SizeType>(dataCapacity));
     // Reset the data size
     this->m_dataSize = 0;
