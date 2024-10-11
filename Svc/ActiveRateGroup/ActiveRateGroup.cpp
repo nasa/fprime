@@ -73,7 +73,7 @@ namespace Svc {
 
         // get rate group execution time
         U32 cycleTime;
-        Os::RawTime::Status status = endTime.getDiffUsec(cycleStart, cycleTime);
+        (void) endTime.getDiffUsec(cycleStart, cycleTime);
 
         // check to see if the time has exceeded the previous maximum
         if (cycleTime > this->m_maxTime) {

@@ -54,7 +54,7 @@ void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cyc
 
     // get rate group execution time
     U32 cycleTime;
-    Os::RawTime::Status status = endTime.getDiffUsec(cycleStart, cycleTime);
+    (void) endTime.getDiffUsec(cycleStart, cycleTime);
     // check to see if the time has exceeded the previous maximum
     if (cycleTime > this->m_maxTime) {
         this->m_maxTime = cycleTime;
