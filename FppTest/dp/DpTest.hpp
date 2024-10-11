@@ -15,7 +15,6 @@
 namespace FppTest {
 
 class DpTest : public DpTestComponentBase {
-
     // Friend class for testing
     friend class Tester;
 
@@ -138,6 +137,10 @@ class DpTest : public DpTestComponentBase {
     // ----------------------------------------------------------------------
     // Private helper functions
     // ----------------------------------------------------------------------
+
+    //! Check that a container is empty
+    void checkContainerEmpty(const DpContainer& container  //!< The container
+    ) const;
 
     //! Check a container for validity
     void checkContainer(const DpContainer& container,  //!< The container
