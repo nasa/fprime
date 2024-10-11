@@ -16,12 +16,13 @@ module Svc {
 
   @ Data structure representing a data product.
   struct DpRecord {
-    $id: U32
-    tSec: U32
-    tSub: U32
-    $priority: U32
-    $size: U64
-    $state: Fw.DpState
+    $id: U32 # The ID of the data product
+    tSec: U32 # Generation time in seconds
+    tSub: U32 # Generation time in subseconds
+    $priority: U32 # Priority of the data product
+    $size: U64 # Overall size of the data product
+    blocks: U32 # Number of blocks transmitted
+    $state: Fw.DpState # Transmission state of the data product
   }
 
 
@@ -71,13 +72,13 @@ module Svc {
     # Commands
     # ----------------------------------------------------------------------
 
-    @ Build catalog from data product directory
+    @ Build catalog from data product directory. Will block until complete
     async command BUILD_CATALOG \
       opcode 0
 
     @ Start transmitting catalog
     async command START_XMIT_CATALOG (
-                                    wait: Fw.Wait @< have START_XMIT command wait for catalog to complete transmitting
+                                    wait: Fw.Wait @< have START_XMIT command complete wait for catalog to complete transmitting
                                   ) \    
       opcode 1
 
@@ -284,6 +285,77 @@ module Svc {
       id 31 \
       format "Error getting file {} size. stat: {}" \
       throttle 10
+
+    event NoDpMemory \
+      severity warning high \
+      id 32 \
+      format "No memory for DP"
+
+    event NotInitialized \
+      severity warning high \
+      id 33 \
+      format "DpCatalog not initialized"
+
+    event XmitNotActive \
+      severity warning low \
+      id 34 \
+      format "DpCatalog transmit not active"
+
+    event StateFileOpenError(
+                            file: string size 80 @< The file
+                            stat: I32
+                          ) \
+      severity warning high \
+      id 35 \
+      format "Error opening state file {}, stat: {}"
+    
+    event StateFileReadError(
+                            file: string size 80 @< The file
+                            stat: I32
+                            offset: I32
+                          ) \
+      severity warning high \
+      id 36 \
+      format "Error reading state file {}, stat {}, offset: {}"
+
+    event StateFileTruncated(
+                            file: string size 80 @< The file
+                            offset: I32
+                            $size: I32
+                          ) \
+      severity warning high \
+      id 37 \
+      format "Truncated state file {} size. offset: {} size: {}"
+
+    event NoStateFileSpecified \
+      severity warning low \
+      id 38 \
+      format "No specified state file"
+
+    event StateFileWriteError(
+                            file: string size 80 @< The file
+                            stat: I32
+                          ) \
+      severity warning high \
+      id 39 \
+      format "Error writing state file {}, stat {}"
+
+    event NoStateFile(
+                            file: string size 80 @< The file
+                          ) \
+      severity warning low \
+      id 40 \
+      format "State file {} doesn't exist"
+
+    event StateFileXmitError(
+                            file: string size 80 @< The file
+                            stat: Svc.SendFileStatus
+                          ) \
+      severity warning high \
+      id 41 \
+      format "Error transmitting DP file {}, stat {}. Halting xmit."
+
+
 
     # ----------------------------------------------------------------------
     # Telemetry

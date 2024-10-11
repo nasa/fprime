@@ -31,9 +31,9 @@ namespace Ref {
         void schedIn_handler(
             NATIVE_INT_TYPE portNum, /*!< The port number*/
             U32 context /*!< The call order*/
-        );
+        ) final;
 
-        void SignalGen_Settings_cmdHandler(
+        void Settings_cmdHandler(
             FwOpcodeType opCode, /*!< The opcode*/
             U32 cmdSeq, /*!< The command sequence number*/
             U32 Frequency,
@@ -42,11 +42,12 @@ namespace Ref {
             Ref::SignalType SigType
         ) final;
 
-        void SignalGen_Toggle_cmdHandler(
+        void Toggle_cmdHandler(
             FwOpcodeType opCode, /*!< The opcode*/
             U32 cmdSeq /*!< The command sequence number*/
         ) final;
-        void SignalGen_Skip_cmdHandler(
+
+        void Skip_cmdHandler(
             FwOpcodeType opCode, /*!< The opcode*/
             U32 cmdSeq /*!< The command sequence number*/
         ) final;
@@ -54,11 +55,13 @@ namespace Ref {
         //! Handler implementation for command SignalGen_Dp
         //!
         //! Signal Generator Settings
-        void SignalGen_Dp_cmdHandler(
-            FwOpcodeType opCode, //!< The opcode
-            U32 cmdSeq, //!< The command sequence number
-            U32 records
-        ) final;
+        void Dp_cmdHandler(
+           FwOpcodeType opCode, //!< The opcode
+           U32 cmdSeq, //!< The command sequence number
+           Ref::SignalGen_DpReqType reqType,
+           U32 records,
+           U32 priority
+       ) final;
 
         // ----------------------------------------------------------------------
         // Handler implementations for data products
@@ -103,6 +106,11 @@ namespace Ref {
         U32 m_numDps; //!< number of DPs to store
         U32 m_currDp; //!< current DP number
         U32 m_dpBytes; //!< currently serialized records
+        FwDpPriorityType m_dpPriority; //!< stored priority for current DP
+
+        // for async DP
+        FwOpcodeType m_opCode;
+        U32 m_cmdSeq;
 
     };
 };

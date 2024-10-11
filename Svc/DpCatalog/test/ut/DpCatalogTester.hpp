@@ -52,6 +52,12 @@ namespace Svc {
         //! Initialization/teardown smoke test
         void doInit();
 
+        //! Test tree construction
+        void testTree(
+            DpCatalog::DpStateEntry* list, 
+            DpCatalog::DpStateEntry* output,
+            NATIVE_INT_TYPE numEntries);
+
         struct DpSet {
             FwDpIdType id;
             FwDpPriorityType prio;
@@ -65,6 +71,7 @@ namespace Svc {
         void readDps(
             Fw::FileNameString *dpDirs,
             FwSizeType numDirs,
+            Fw::FileNameString& stateFile,
             const DpSet* dpSet,
             FwSizeType numDps
         );
