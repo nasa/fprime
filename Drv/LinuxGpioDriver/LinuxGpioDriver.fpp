@@ -22,6 +22,11 @@ module Drv {
     event OpenChipError(chip: string, status: Os.FileStatus) severity warning high format "Failed to open chip {}: {}"
 
     event OpenPinError(chip: string, pin: U32, status: Os.FileStatus) severity warning high format "Failed to open pin {}.{}: {}"
+
+    event InterruptReadError(expected: U32, got: U32) severity warning high format "Interrupt data read expected {} byes and got {}"
+
+    event PollingError(errno: I32) severity warning high format "Interrupt polling returned errno: {}"
+
   }
 
 }

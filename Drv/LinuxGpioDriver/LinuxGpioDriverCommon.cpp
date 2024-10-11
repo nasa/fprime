@@ -23,7 +23,43 @@ namespace Drv {
 LinuxGpioDriver ::LinuxGpioDriver(
         const char *const compName
     ) : LinuxGpioDriverComponentBase(compName),
-      m_gpio(-1),
       m_fd(-1) {}
+
+Drv::GpioStatus LinuxGpioDriver ::start(const FwSizeType priority,
+                                        const FwSizeType stackSize,
+                                        const FwSizeType cpuAffinity,
+                                        const PlatformUIntType identifier) {
+    Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
+    if (this->m_configuration < GpioConfiguration::MAX_GPIO_CONFIGURATION && this->m_configuration >= GpioConfiguration::GPIO_INTERRUPT_FALLING_EDGE) {
+        status = Drv::GpioStatus::OP_OK;
+        {
+            Os::ScopeLock lock(m_lock);
+            this->m_running = false;
+        }
+        Fw::String name;
+        name.format("%s.interrupt", this->getObjName());
+        Os::Task::Arguments arguments(
+            name,
+            &this->interruptFunction,
+            this,
+            priority,
+            stackSize,
+            cpuAffinity,
+            identifier
+        );
+        this->m_poller.start(arguments);
+    }
+    return status;
+}
+
+void LinuxGpioDriver ::stop() {
+    Os::ScopeLock lock(m_lock);
+    this->m_running = false;
+}
+
+void LinuxGpioDriver ::join() {
+    this->m_poller.join();
+}
+
 
 } // end namespace Drv
