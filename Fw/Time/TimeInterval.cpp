@@ -120,20 +120,27 @@ namespace Fw {
 
     TimeInterval TimeInterval ::
       sub(
-        const TimeInterval& minuend, //!< TimeInterval minuend
-        const TimeInterval& subtrahend //!< TimeInterval subtrahend
+        const TimeInterval& t1, //!< TimeInterval t1
+        const TimeInterval& t2 //!< TimeInterval t2
     )
     {
-      // Assert minuend is greater than subtrahend
-      FW_ASSERT(minuend >= subtrahend);
-
-      U32 seconds = minuend.getSeconds() - subtrahend.getSeconds();
-      U32 uSeconds;
-      if (subtrahend.getUSeconds() > minuend.getUSeconds()) {
-          seconds--;
-          uSeconds = minuend.getUSeconds() + 1000000 - subtrahend.getUSeconds();
+      const TimeInterval* minuend;
+      const TimeInterval* subtrahend;
+      if (t1 > t2) {
+          minuend = &t1;
+          subtrahend = &t2;
       } else {
-          uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
+          minuend = &t2;
+          subtrahend = &t1;
+      }
+
+      U32 seconds = minuend->getSeconds() - subtrahend->getSeconds();
+      U32 uSeconds;
+      if (subtrahend->getUSeconds() > minuend->getUSeconds()) {
+          seconds--;
+          uSeconds = minuend->getUSeconds() + 1000000 - subtrahend->getUSeconds();
+      } else {
+          uSeconds = minuend->getUSeconds() - subtrahend->getUSeconds();
       }
       return TimeInterval(seconds, static_cast<U32>(uSeconds));
     }

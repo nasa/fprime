@@ -42,10 +42,9 @@ RawTime::Status RawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInter
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getTimeInterval(other, result);
 }
-\
+
 Fw::SerializeStatus RawTime::serialize(Fw::SerializeBufferBase& buffer) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
-    // TODO: ASSERT on buffer.getBuffCapacity() ??
     return this->m_delegate.serialize(buffer);
 }
 
@@ -65,10 +64,12 @@ RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
     U32 seconds = interval.getSeconds();
     U32 useconds = interval.getUSeconds();
     if (seconds > (std::numeric_limits<U32>::max() / 1000000)) {
+        result = std::numeric_limits<U32>::max();
         return Status::OP_OVERFLOW;
     }
     U32 secToUsec = seconds * 1000000;
     if (secToUsec > (std::numeric_limits<U32>::max() - useconds)) {
+        result = std::numeric_limits<U32>::max();
         return Status::OP_OVERFLOW;
     }
     // No overflow, we can safely add values to get total microseconds

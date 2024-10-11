@@ -15,6 +15,10 @@ TestRawTime::TestRawTime() {
     StaticData::data.lastCalled = StaticData::LastFn::CONSTRUCT_FN;
 }
 
+TestRawTime::TestRawTime(const TestRawTime& other) {
+    StaticData::data.lastCalled = StaticData::LastFn::COPY_CONSTRUCT_FN;
+}
+
 TestRawTime::~TestRawTime() {
     StaticData::data.lastCalled = StaticData::LastFn::DESTRUCT_FN;
 }

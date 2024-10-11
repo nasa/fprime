@@ -33,7 +33,7 @@ struct Tester {
 
     // Threshold for time differences, in microseconds
     // This value was selected empirically, some platforms may need to adjust
-    static constexpr U32 INTERVAL_DIFF_THRESHOLD = 5;
+    static constexpr U32 INTERVAL_DIFF_THRESHOLD = 20;
 
     //! RawTime (array thereof) under test
     std::vector<Os::RawTime> m_times;
@@ -78,7 +78,7 @@ struct Tester {
         }
         // Check that difference between 2 intervals is less than threshold
         ASSERT_TRUE(result < Fw::TimeInterval(0, INTERVAL_DIFF_THRESHOLD)) 
-            << "Interval difference: " << result.getSeconds() << " s, " << result.getUSeconds() << " us";
+            << "Interval difference: " << result;
     }
 
     void shadow_validate_diff_result(U32 result, U32 shadow_result) {

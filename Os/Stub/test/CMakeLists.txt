@@ -96,4 +96,4 @@ add_fprime_os_test(StubConditionVariableTest "${UT_SOURCE_FILES}" "Os_Mutex\;Os_
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ut/StubRawTimeTests.cpp"
 )
-add_fprime_os_test(StubRawTimeTest "${UT_SOURCE_FILES}" "Os_RawTime\;Os_RawTime_Test_Stub" Fw_Time Fw_Buffer)
+add_fprime_os_test(StubRawTimeTest "${UT_SOURCE_FILES}" "Os_RawTime\;Os_RawTime_Test_Stub" Fw_Time)

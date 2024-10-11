@@ -101,7 +101,6 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Os.fpp"
 )
 set(SOURCE_HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.hpp"
@@ -117,7 +116,7 @@ add_named_os_module("Mutex;Condition")
 add_named_os_module(Queue)
 add_named_os_module(Cpu)
 add_named_os_module(Memory)
-add_named_os_module(RawTime)
+add_named_os_module(RawTime Fw_Buffer)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES

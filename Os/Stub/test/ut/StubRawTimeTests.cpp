@@ -33,6 +33,13 @@ TEST_F(Interface, Construction) {
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::CONSTRUCT_FN);
 }
 
+// Ensure that Os::RawTime properly calls the implementation constructor
+TEST_F(Interface, CopyConstruction) {
+    Os::RawTime rawtime;
+    Os::RawTime rawtime_copy(rawtime);
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::COPY_CONSTRUCT_FN);
+}
+
 // Ensure that Os::RawTime properly calls the implementation destructor
 TEST_F(Interface, Destruction) {
     delete (new Os::RawTime);

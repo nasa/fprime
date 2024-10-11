@@ -47,9 +47,11 @@ PosixRawTime::Status PosixRawTime::getTimeInterval(const Os::RawTime& other, Fw:
 Fw::SerializeStatus PosixRawTime::serialize(Fw::SerializeBufferBase& buffer) const {
     static_assert(PosixRawTime::SERIALIZED_SIZE >= 2 * sizeof(U32),
                   "PosixRawTime implementation requires at least 2*sizeof(U32) serialization size");
-    buffer.serialize(static_cast<U32>(this->m_handle.m_timespec.tv_sec));
-    buffer.serialize(static_cast<U32>(this->m_handle.m_timespec.tv_nsec));
-    return Fw::SerializeStatus::FW_SERIALIZE_OK;
+    Fw::SerializeStatus status = buffer.serialize(static_cast<U32>(this->m_handle.m_timespec.tv_sec));
+    if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        return status;
+    }
+    return buffer.serialize(static_cast<U32>(this->m_handle.m_timespec.tv_nsec));
 }
 
 Fw::SerializeStatus PosixRawTime::deserialize(Fw::SerializeBufferBase& buffer) {
@@ -57,8 +59,14 @@ Fw::SerializeStatus PosixRawTime::deserialize(Fw::SerializeBufferBase& buffer) {
                   "PosixRawTime implementation requires at least 2*sizeof(U32) serialization size");
     U32 sec = 0;
     U32 nsec = 0;
-    buffer.deserialize(sec);
-    buffer.deserialize(nsec);
+    Fw::SerializeStatus status = buffer.deserialize(sec);
+    if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        return status;
+    }
+    status = buffer.deserialize(nsec);
+    if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        return status;
+    }
     this->m_handle.m_timespec = {sec, nsec};
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }

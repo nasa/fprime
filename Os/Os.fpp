@@ -1,3 +1,0 @@
-module Os {
-    type RawTime
-}

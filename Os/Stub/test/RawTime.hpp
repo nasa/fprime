@@ -25,6 +25,7 @@ struct StaticData {
         DESERIALIZE_FN,
         GET_HANDLE_FN,
         CONSTRUCT_FN,
+        COPY_CONSTRUCT_FN,
         DESTRUCT_FN
     };
     StaticData() = default;
@@ -49,6 +50,9 @@ class TestRawTime : public RawTimeInterface {
     //! \brief constructor
     //!
     TestRawTime();
+
+    //! \brief copy constructor
+    TestRawTime(const TestRawTime& other);
 
     //! \brief destructor
     //!

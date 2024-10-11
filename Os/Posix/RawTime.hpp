@@ -14,7 +14,7 @@ namespace Posix {
 namespace RawTime {
 
 struct PosixRawTimeHandle : public RawTimeHandle {
-    timespec m_timespec = timespec{0, 0};
+    timespec m_timespec = {0, 0};
 };
 
 //! \brief Posix implementation of Os::RawTime

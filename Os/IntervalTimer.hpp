@@ -61,7 +61,7 @@ class IntervalTimer {
     //!
     //! \param interval [out] A reference to a Fw::TimeInterval object where the calculated interval will be stored.
     //! \return bool: True if the interval was successfully calculated, false otherwise.
-    bool getTimeInterval(Fw::TimeInterval& interval) const;
+    Os::RawTime::Status getTimeInterval(Fw::TimeInterval& interval) const;
 
   PRIVATE:
     RawTime m_startTime;  //!< Stored start time

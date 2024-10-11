@@ -351,7 +351,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
             status = RecvStatus::RECV_ERROR;
             comp->recv_out(0, buff, status);
             // to avoid spinning, wait 50 ms
-            Os::Task::delay(Fw::TimeInterval(0, 50));
+            Os::Task::delay(Fw::TimeInterval(0, 50000));
             continue;
         }
 

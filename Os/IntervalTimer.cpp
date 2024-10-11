@@ -28,11 +28,7 @@ namespace Os {
         return result;
     }
 
-    bool IntervalTimer::getTimeInterval(Fw::TimeInterval& interval) const {
-        Os::RawTime::Status status = this->m_stopTime.getTimeInterval(this->m_startTime, interval);
-        if (status != Os::RawTime::Status::OP_OK) {
-            return false;
-        }
-        return true;
+    Os::RawTime::Status IntervalTimer::getTimeInterval(Fw::TimeInterval& interval) const {
+        return this->m_stopTime.getTimeInterval(this->m_startTime, interval);
     }
 }

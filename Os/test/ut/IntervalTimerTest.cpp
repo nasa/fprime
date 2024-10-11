@@ -35,16 +35,12 @@ void intervalTimerTest() {
     Fw::TimeInterval minInterval;
     Fw::TimeInterval maxInterval;
 
-    maxStop.getTimeInterval(maxStart, maxInterval);
-    minStop.getTimeInterval(minStart, minInterval);
-
-    ASSERT_TRUE(timer.getTimeInterval(testInterval));
+    ASSERT_EQ(maxStop.getTimeInterval(maxStart, maxInterval), Os::RawTime::Status::OP_OK);
+    ASSERT_EQ(minStop.getTimeInterval(minStart, minInterval), Os::RawTime::Status::OP_OK);
+    ASSERT_EQ(timer.getTimeInterval(testInterval), Os::RawTime::Status::OP_OK);
 
     // Compare intervals to make sure the IntervalTimer is returning within the bounds
-    ASSERT_GE(testInterval.getSeconds(), minInterval.getSeconds());
-    ASSERT_LE(testInterval.getSeconds(), maxInterval.getSeconds());
-
-    ASSERT_GE(testInterval.getUSeconds(), minInterval.getUSeconds());
-    ASSERT_LE(testInterval.getUSeconds(), maxInterval.getUSeconds());
-
+    // Note: this also tests the comparison operators of Fw::TimeInterval
+    ASSERT_TRUE(testInterval >= minInterval) << "Test interval: " << testInterval << " min interval: " << minInterval;
+    ASSERT_TRUE(testInterval <= maxInterval) << "Test interval: " << testInterval << " max interval: " << maxInterval;
 }

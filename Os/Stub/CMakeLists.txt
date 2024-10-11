@@ -14,7 +14,7 @@ add_fprime_supplied_os_module("Mutex;ConditionVariable" Stub)
 add_fprime_supplied_os_module(Cpu Stub)
 add_fprime_supplied_os_module(Memory Stub)
 add_fprime_supplied_os_module(Queue Stub)
-add_fprime_supplied_os_module(RawTime Stub Fw_Buffer)
+add_fprime_supplied_os_module(RawTime Stub)
 
 # Remainder of file is specific to UTs
 if (NOT BUILD_TESTING)
