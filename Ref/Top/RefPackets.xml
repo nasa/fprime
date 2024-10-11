@@ -72,12 +72,7 @@
         <channel name="systemResources.NON_VOLATILE_FREE"/>
     </packet>
 
-    <packet name="SystemRes2" id="6" level="2">
-        <channel name="systemResources.FRAMEWORK_VERSION"/>
-        <channel name="systemResources.PROJECT_VERSION"/>
-    </packet>
-
-    <packet name="SystemRes3" id="7" level="2">
+    <packet name="SystemRes3" id="6" level="2">
         <channel name="systemResources.CPU"/>
         <channel name="systemResources.CPU_00"/>
         <channel name="systemResources.CPU_01"/>

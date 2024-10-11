@@ -152,6 +152,7 @@ CMDPACKET
 CMDREG
 cmds
 CMDSEQ
+cmdsequencer
 cnt
 cntx
 cobj
@@ -200,6 +201,7 @@ CRCs
 crcstat
 CREATEDIRECTORY
 Crosscompiling
+crsmith
 crt
 CRTSCTS
 cryptsoft
@@ -550,6 +552,7 @@ lammertbies
 LASTLOG
 LBLOCK
 LCHILD
+leisher
 lemstarch
 lestarch
 levelname
@@ -685,6 +688,7 @@ notchars
 NOTYPE
 Nowicki
 nproc
+NPROCESSORS
 npx
 NSHUFF
 NSPACES
@@ -706,6 +710,7 @@ oldeol
 OLDINCLUDEDIR
 OMG
 onlinepubs
+ONLN
 OPCODEBASE
 opengroup
 openmct
@@ -758,6 +763,7 @@ pcmake
 pcomp
 pdflatex
 Peet
+penv
 PERLMOD
 PINGSEND
 pinit
@@ -794,6 +800,7 @@ prepeneding
 pri
 printables
 prioritization
+PRIORITYQUEUE
 prm
 PRMDB
 PRMDBIMPL
@@ -954,6 +961,7 @@ Shenker
 showinitializer
 sideeffect
 sighandler
+Signedness
 SIMPLEQUEUEREGISTRY
 sinc
 Sinha
@@ -998,6 +1006,7 @@ STDC
 stddef
 stdint
 stest
+Stl
 STREQ
 STREQUAL
 strerror
@@ -1094,6 +1103,7 @@ TIMERVAL
 timetag
 timeval
 timothycanham
+Tinternal
 tions
 tjh
 TKC
@@ -1216,4 +1226,5 @@ xsh
 xsltproc
 xxxx
 yacgen
+zimri
 zmq

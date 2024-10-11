@@ -45,14 +45,6 @@ namespace Ref {
         m_dpPriority(0)
     {}
 
-    void SignalGen ::
-        init(
-            const NATIVE_INT_TYPE queueDepth,
-            const NATIVE_INT_TYPE instance
-        )
-    {
-        SignalGenComponentBase::init(queueDepth, instance);
-    }
 
     SignalGen :: ~SignalGen() { }
 
@@ -262,6 +254,7 @@ namespace Ref {
             }
         } else if (Ref::SignalGen_DpReqType::ASYNC == reqType) {
             this->dpRequest_DataContainer(dpSize);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         } else {
             // should never get here
             FW_ASSERT(0,reqType.e);

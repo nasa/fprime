@@ -1,5 +1,5 @@
 
-%.bin: %.seq
+%.bin: %.seq ../../../../../Ref/build-artifacts/Linux/Ref/dict/RefTopologyDictionary.json
 	fprime-seqgen --dictionary ../../../../../Ref/build-artifacts/Linux/Ref/dict/RefTopologyDictionary.json $< $@
 
 all: $(patsubst %.seq, %.bin, $(wildcard *.seq))

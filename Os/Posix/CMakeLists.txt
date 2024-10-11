@@ -8,106 +8,89 @@
 restrict_platforms(Posix)
 add_custom_target("${FPRIME_CURRENT_MODULE}")
 
-#### Shared Section ####
+# -----------------------------------------
+## Shared Section
+# -----------------------------------------
+
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/error.cpp"
 )
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/error.hpp"
 )
+set(MOD_DEPS config)
 register_fprime_module(Os_Posix_Shared)
 
-#### Os/File/Posix Section ####
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
-)
-set(HEADER_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/File.hpp"
-)
-set(MOD_DEPS Os_Posix_Shared)
-register_fprime_module(Os_File_Posix)
-register_fprime_implementation(Os/File Os_File_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp")
+# Set up Posix implementations
+add_fprime_supplied_os_module("File;FileSystem;Directory" Posix Os_Posix_Shared)
+add_fprime_supplied_os_module(Console Posix)
+add_fprime_supplied_os_module(Task Posix Os_Posix_Shared Fw_Time)
+add_fprime_supplied_os_module("Mutex;ConditionVariable" Posix Os_Posix_Shared)
 
-#### Os/Console/Posix Section ####
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
-)
-set(HEADER_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/Console.hpp"
-)
-set(MOD_DEPS)
-register_fprime_module(Os_Console_Posix)
-register_fprime_implementation(Os/Console Os_Console_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultConsole.cpp")
-
-#### Os/Task/Posix Unit Tests ####
+# -----------------------------------------
+### Os/File/Posix Section
+# -----------------------------------------
 set(UT_SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixConsoleTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/FileRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixFileTests.cpp"
 )
-set(UT_MOD_DEPS
-        Os
-)
-choose_fprime_implementation(Os/Console Os_Console_Posix)
-register_fprime_ut(PosixConsoleTest)
+add_fprime_os_test(PosixFileTest "${UT_SOURCE_FILES}" "Os_File\;Os_File_Posix" Os_Test_File_SyntheticFileSystem)
 
-#### Os/File/Posix Unit Tests ####
+# -----------------------------------------
+### Os/Console/Posix Test Section
+# -----------------------------------------
 set(UT_SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/CommonTests.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/FileRules.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixFileTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixConsoleTests.cpp"
 )
-set(UT_MOD_DEPS
-        Os
-        STest
-        Os_Test_File_SyntheticFileSystem
-)
-choose_fprime_implementation(Os/File Os_File_Posix)
-register_fprime_ut(PosixFileTest)
+add_fprime_os_test(PosixConsoleTest "${UT_SOURCE_FILES}" "Os_Console\;Os_Console_Posix")
 
-#### Os/Task/Posix Section ####
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
-)
-set(HEADER_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/Task.hpp"
-)
-
-set(MOD_DEPS Os_Posix_Shared Fw/Time Os) # Os needs to be removed here?
-register_fprime_module(Os_Task_Posix)
-register_fprime_implementation(Os/Task Os_Task_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultTask.cpp")
-
-#### Os/Task/Posix Unit Tests ####
+# -----------------------------------------
+### Os/Task/Posix Test Section
+# -----------------------------------------
 set(UT_SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/CommonTests.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/TaskRules.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTaskTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/TaskRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTaskTests.cpp"
 )
-set(UT_MOD_DEPS
-        Os
-        STest
-)
-choose_fprime_implementation(Os/Task Os_Task_Posix)
-register_fprime_ut(PosixTaskTest)
+add_fprime_os_test(PosixTaskTest "${UT_SOURCE_FILES}" "Os_Task\;Os_Task_Posix")
 
-#### Os/Mutex/Posix Section ####
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
-)
-set(HEADER_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"
-)
-set(MOD_DEPS Os_Posix_Shared)
-register_fprime_module(Os_Mutex_Posix)
-register_fprime_implementation(Os/Mutex Os_Mutex_Posix "${CMAKE_CURRENT_LIST_DIR}/DefaultMutex.cpp")
-
-#### Os/Mutex/Posix Unit Tests ####
+# -----------------------------------------
+### Os/Mutex/Posix Test Section
+# -----------------------------------------
 set(UT_SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/CommonTests.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/MutexRules.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixMutexTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/mutex/MutexRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixMutexTests.cpp"
 )
-set(UT_MOD_DEPS
-        Os
-        STest
+add_fprime_os_test(PosixMutexTest "${UT_SOURCE_FILES}" "Os_Mutex\;Os_Mutex_Posix")
+
+# -----------------------------------------
+### Os/FileSystem/Posix Test Section
+# -----------------------------------------
+set(UT_SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/filesystem/FileSystemRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixFileSystemTests.cpp"
 )
-choose_fprime_implementation(Os/Mutex Os_Mutex_Posix)
-register_fprime_ut(PosixMutexTest)
+add_fprime_os_test(PosixFileSystemTest "${UT_SOURCE_FILES}" "Os_File\;Os_File_Posix")
+
+# -----------------------------------------
+### Os/Directory/Posix Test Section
+# -----------------------------------------
+set(UT_SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/directory/DirectoryRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixDirectoryTests.cpp"
+)
+add_fprime_os_test(PosixDirectoryTest "${UT_SOURCE_FILES}" "Os_File\;Os_File_Posix")
+
+# -----------------------------------------
+### Os/ConditionVariable/Posix Test Section
+# -----------------------------------------
+set(UT_SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/condition/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/condition/ConditionRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixConditionTests.cpp"
+)
+add_fprime_os_test(PosixConditionTests "${UT_SOURCE_FILES}" "Os_Mutex\;Os_Mutex_Posix")

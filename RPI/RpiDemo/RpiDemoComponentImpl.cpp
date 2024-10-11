@@ -38,15 +38,6 @@ namespace RPI {
 
   }
 
-  void RpiDemoComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    RpiDemoComponentBase::init(queueDepth, instance);
-  }
-
   RpiDemoComponentImpl ::
     ~RpiDemoComponentImpl()
   {

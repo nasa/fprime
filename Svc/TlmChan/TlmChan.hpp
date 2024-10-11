@@ -23,9 +23,6 @@ class TlmChan : public TlmChanComponentBase {
   public:
     TlmChan(const char* compName);
     virtual ~TlmChan();
-    void init(NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-              NATIVE_INT_TYPE instance    /*!< The instance number*/
-    );
 
   PROTECTED:
     // can be overridden for alternate algorithms

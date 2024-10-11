@@ -24,10 +24,6 @@ namespace Svc {
 Framer ::Framer(const char* const compName)
     : FramerComponentBase(compName), FramingProtocolInterface(), m_protocol(nullptr), m_frame_sent(false) {}
 
-void Framer ::init(const NATIVE_INT_TYPE instance) {
-    FramerComponentBase::init(instance);
-}
-
 Framer ::~Framer() {}
 
 void Framer ::setup(FramingProtocol& protocol) {

@@ -29,14 +29,6 @@ namespace Svc {
 
   }
 
-  void LinuxTimerComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    LinuxTimerComponentBase::init(instance);
-  }
-
   LinuxTimerComponentImpl ::
     ~LinuxTimerComponentImpl()
   {

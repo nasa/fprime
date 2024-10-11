@@ -29,12 +29,6 @@ class TlmPacketizer : public TlmPacketizerComponentBase {
     TlmPacketizer(const char* const compName /*!< The component name*/
     );
 
-    //! Initialize object TlmPacketizer
-    //!
-    void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth*/
-              const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-    );
-
     void setPacketList(
         const TlmPacketizerPacketList& packetList,   // channels to packetize
         const Svc::TlmPacketizerPacket& ignoreList,  // channels to ignore (i.e. no warning event if not packetized)

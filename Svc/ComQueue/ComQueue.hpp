@@ -99,12 +99,6 @@ class ComQueue : public ComQueueComponentBase {
     ComQueue(const char* const compName /*!< The component name */
     );
 
-    //! Initialize object ComQueue
-    //!
-    void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth */
-              const NATIVE_INT_TYPE instance = 0 /*!< The instance number */
-    );
-
     //! Destroy object ComQueue
     //!
     ~ComQueue();
@@ -152,12 +146,22 @@ class ComQueue : public ComQueueComponentBase {
     );
 
     // ----------------------------------------------------------------------
+    // Hook implementations for typed async input ports
+    // ----------------------------------------------------------------------
+
+    //! Queue overflow hook method that deallocates the fwBuffer
+    //!
+    void buffQueueIn_overflowHook(FwIndexType portNum, //!< The port number
+                                  Fw::Buffer& fwBuffer //!< The buffer
+    );
+
+    // ----------------------------------------------------------------------
     // Helper Functions
     // ----------------------------------------------------------------------
 
     //! Enqueues a message on the appropriate queue
     //!
-    void enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
+    bool enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
                  QueueType queueType,         //!< Type of the queue and message data
                  const U8* data,              //!< Pointer to the message data
                  const FwSizeType size        //!< Size of the message

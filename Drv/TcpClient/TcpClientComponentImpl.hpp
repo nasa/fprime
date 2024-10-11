@@ -14,13 +14,13 @@
 #define TcpClientComponentImpl_HPP
 
 #include <Drv/Ip/IpSocket.hpp>
-#include <Drv/Ip/SocketReadTask.hpp>
+#include <Drv/Ip/SocketComponentHelper.hpp>
 #include <Drv/Ip/TcpClientSocket.hpp>
 #include "Drv/TcpClient/TcpClientComponentAc.hpp"
 
 namespace Drv {
 
-class TcpClientComponentImpl : public TcpClientComponentBase, public SocketReadTask {
+class TcpClientComponentImpl : public TcpClientComponentBase, public SocketComponentHelper {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

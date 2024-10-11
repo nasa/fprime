@@ -15,7 +15,6 @@
 namespace FppTest {
 
 class DpTest : public DpTestComponentBase {
-
     // Friend class for testing
     friend class Tester;
 
@@ -64,11 +63,6 @@ class DpTest : public DpTestComponentBase {
            const U32ArrayRecordData& u32ArrayRecordData,    //!< The U32ArrayRecord data
            const DataArrayRecordData& dataArrayRecordData,  //!< The DataArrayRecord data
            const Fw::StringBase& stringRecordData           //!< The StringRecord data
-    );
-
-    //! Initialize object DpTest
-    void init(const NATIVE_INT_TYPE queueDepth,   //!< The queue depth
-              const NATIVE_INT_TYPE instance = 0  //!< The instance number
     );
 
     //! Destroy object DpTest
@@ -143,6 +137,10 @@ class DpTest : public DpTestComponentBase {
     // ----------------------------------------------------------------------
     // Private helper functions
     // ----------------------------------------------------------------------
+
+    //! Check that a container is empty
+    void checkContainerEmpty(const DpContainer& container  //!< The container
+    ) const;
 
     //! Check a container for validity
     void checkContainer(const DpContainer& container,  //!< The container

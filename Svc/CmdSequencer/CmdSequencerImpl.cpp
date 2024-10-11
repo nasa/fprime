@@ -44,11 +44,6 @@ namespace Svc {
 
     }
 
-    void CmdSequencerComponentImpl::init(const NATIVE_INT_TYPE queueDepth,
-            const NATIVE_INT_TYPE instance) {
-        CmdSequencerComponentBase::init(queueDepth, instance);
-    }
-
     void CmdSequencerComponentImpl::setTimeout(const NATIVE_UINT_TYPE timeout) {
         this->m_timeout = timeout;
     }
@@ -122,6 +117,9 @@ namespace Svc {
         // Check the step mode. If it is auto, start the sequence
         if (AUTO == this->m_stepMode) {
             this->m_runMode = RUNNING;
+            if(this->isConnected_seqStartOut_OutputPort(0)) {
+                this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+            }
             this->performCmd_Step();
         }
 
@@ -159,7 +157,7 @@ namespace Svc {
     //! Handler for input port seqRunIn
     void CmdSequencerComponentImpl::seqRunIn_handler(
            NATIVE_INT_TYPE portNum,
-           Fw::String &filename
+           const Fw::StringBase& filename
        ) {
 
         if (!this->requireRunMode(STOPPED)) {
@@ -190,6 +188,9 @@ namespace Svc {
         // Check the step mode. If it is auto, start the sequence
         if (AUTO == this->m_stepMode) {
             this->m_runMode = RUNNING;
+            if(this->isConnected_seqStartOut_OutputPort(0)) {
+                this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+            }
             this->performCmd_Step();
         }
 
@@ -359,6 +360,9 @@ namespace Svc {
         this->m_runMode = RUNNING;
         this->performCmd_Step();
         this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
+        if(this->isConnected_seqStartOut_OutputPort(0)) {
+            this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+        }
         this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
     }
 

@@ -269,13 +269,6 @@ namespace Svc {
           const char *const compName //!< The component name
       );
 
-      //! Initialize object FileDownlink
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          const NATIVE_INT_TYPE instance //!< The instance number
-      );
-
       //! Configure FileDownlink component
       //!
       void configure(

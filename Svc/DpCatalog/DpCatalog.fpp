@@ -22,7 +22,7 @@ module Svc {
     $priority: U32 # Priority of the data product
     $size: U64 # Overall size of the data product
     blocks: U32 # Number of blocks transmitted
-    state: Fw.DpState # Transmission state of the data product
+    $state: Fw.DpState # Transmission state of the data product
   }
 
 
@@ -72,13 +72,13 @@ module Svc {
     # Commands
     # ----------------------------------------------------------------------
 
-    @ Build catalog from data product directory
+    @ Build catalog from data product directory. Will block until complete
     async command BUILD_CATALOG \
       opcode 0
 
     @ Start transmitting catalog
     async command START_XMIT_CATALOG (
-                                    wait: Fw.Wait @< have START_XMIT command wait for catalog to complete transmitting
+                                    wait: Fw.Wait @< have START_XMIT command complete wait for catalog to complete transmitting
                                   ) \    
       opcode 1
 
@@ -346,6 +346,15 @@ module Svc {
       severity warning low \
       id 40 \
       format "State file {} doesn't exist"
+
+    event StateFileXmitError(
+                            file: string size 80 @< The file
+                            stat: Svc.SendFileStatus
+                          ) \
+      severity warning high \
+      id 41 \
+      format "Error transmitting DP file {}, stat {}. Halting xmit."
+
 
 
     # ----------------------------------------------------------------------

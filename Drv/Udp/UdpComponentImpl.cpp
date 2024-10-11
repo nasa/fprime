@@ -24,16 +24,22 @@ namespace Drv {
 
 UdpComponentImpl::UdpComponentImpl(const char* const compName)
     : UdpComponentBase(compName),
-      SocketReadTask() {}
+      SocketComponentHelper() {}
 
 SocketIpStatus UdpComponentImpl::configureSend(const char* hostname,
                                                  const U16 port,
                                                  const U32 send_timeout_seconds,
                                                  const U32 send_timeout_microseconds) {
+    if (not this->isStarted()) {
+        (void)this->startup();
+    }
     return m_socket.configureSend(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
 SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 port) {
+    if (not this->isStarted()) {
+        (void)this->startup();
+    }
     return m_socket.configureRecv(hostname, port);
 }
 
@@ -56,7 +62,16 @@ Fw::Buffer UdpComponentImpl::getBuffer() {
 }
 
 void UdpComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    Drv::RecvStatus recvStatus = (status == SOCK_SUCCESS) ? RecvStatus::RECV_OK : RecvStatus::RECV_ERROR;
+    Drv::RecvStatus recvStatus = RecvStatus::RECV_ERROR;
+    if (status == SOCK_SUCCESS) {
+        recvStatus = RecvStatus::RECV_OK;
+    }
+    else if (status == SOCK_NO_DATA_AVAILABLE) {
+        recvStatus = RecvStatus::RECV_NO_DATA;
+    }
+    else {
+        recvStatus = RecvStatus::RECV_ERROR;
+    }
     this->recv_out(0, buffer, recvStatus);
 }
 
@@ -71,7 +86,7 @@ void UdpComponentImpl::connected() {
 // ----------------------------------------------------------------------
 
 Drv::SendStatus UdpComponentImpl::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    Drv::SocketIpStatus status = m_socket.send(fwBuffer.getData(), fwBuffer.getSize());
+    Drv::SocketIpStatus status = send(fwBuffer.getData(), fwBuffer.getSize());
     // Always return the buffer
     deallocate_out(0, fwBuffer);
     if ((status == SOCK_DISCONNECTED) || (status == SOCK_INTERRUPTED_TRY_AGAIN)) {

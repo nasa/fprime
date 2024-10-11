@@ -43,6 +43,7 @@ void Os::Test::Task::Tester::Start::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
     std::shared_ptr<TestTaskInfo> new_task = std::make_shared<TestTaskInfo>();
+    new_task->m_state = Os::Task::State::STARTING;
     state.m_tasks.push_back(new_task);
 
 

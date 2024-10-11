@@ -14,7 +14,8 @@
 #define SystemResources_HPP
 
 #include "Svc/SystemResources/SystemResourcesComponentAc.hpp"
-#include "Os/SystemResources.hpp"
+#include "Os/Cpu.hpp"
+#include "Os/Memory.hpp"
 #include "Os/FileSystem.hpp"
 
 namespace Svc {
@@ -28,11 +29,6 @@ class SystemResources : public SystemResourcesComponentBase {
     //! Construct object SystemResources
     //!
     SystemResources(const char* const compName /*!< The component name*/
-    );
-
-    //! Initialize object SystemResources
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
     );
 
     //! Destroy object SystemResources
@@ -67,28 +63,22 @@ class SystemResources : public SystemResourcesComponentBase {
         SystemResourceEnabled enable /*!< whether or not system resource telemetry is enabled*/
     );
 
-    //! Implementation for VERSION command handler
-    //! Report version as EVR
-    void VERSION_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
-                            const U32 cmdSeq           /*!< The command sequence number*/
-    );
 
   private:
     void Cpu();
     void Mem();
     void PhysMem();
-    void Version();
-    F32 compCpuUtil(Os::SystemResources::CpuTicks current, Os::SystemResources::CpuTicks previous);
+    F32 compCpuUtil(Os::Cpu::Ticks current, Os::Cpu::Ticks previous);
 
 
     static const U32 CPU_COUNT = 16; /*!< Maximum number of CPUs to report as telemetry */
 
     cpuTlmFunc m_cpu_tlm_functions[CPU_COUNT];       /*!< Function pointer to specific CPU telemetry */
-    U32 m_cpu_count;                                     /*!< Number of CPUs used by the system */
-    Os::SystemResources::MemUtil m_mem;                  /*!< RAM memory information */
-    Os::SystemResources::CpuTicks m_cpu[CPU_COUNT];      /*!< CPU information for each CPU on the system */
-    Os::SystemResources::CpuTicks m_cpu_prev[CPU_COUNT]; /*!< Previous iteration CPU information */
-    bool m_enable;                                       /*!< Send telemetry when TRUE.  Don't send when FALSE */
+    FwSizeType m_cpu_count;                          /*!< Number of CPUs used by the system */
+    Os::Memory::Usage m_mem;                         /*!< RAM memory information */
+    Os::Cpu::Ticks m_cpu[CPU_COUNT];                 /*!< CPU information for each CPU on the system */
+    Os::Cpu::Ticks m_cpu_prev[CPU_COUNT];            /*!< Previous iteration CPU information */
+    bool m_enable;                                   /*!< Send telemetry when TRUE.  Don't send when FALSE */
 };
 
 }  // end namespace Svc

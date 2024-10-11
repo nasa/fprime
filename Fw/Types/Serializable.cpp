@@ -46,10 +46,8 @@ void SerializeBufferBase::copyFrom(const SerializeBufferBase& src) {
     FW_ASSERT(src.getBuffAddr());
     FW_ASSERT(this->getBuffAddr());
     // destination has to be same or bigger
-    FW_ASSERT(
-        src.getBuffLength() <= this->getBuffCapacity(),
-        static_cast<FwAssertArgType>(src.getBuffLength()),
-        static_cast<FwAssertArgType>(this->getBuffLength()));
+    FW_ASSERT(src.getBuffLength() <= this->getBuffCapacity(), static_cast<FwAssertArgType>(src.getBuffLength()),
+              static_cast<FwAssertArgType>(this->getBuffLength()));
     (void)memcpy(this->getBuffAddr(), src.getBuffAddr(), this->m_serLoc);
 }
 
@@ -676,6 +674,8 @@ SerializeStatus SerializeBufferBase::setBuffLen(Serializable::SizeType length) {
 }
 
 Serializable::SizeType SerializeBufferBase::getBuffLeft() const {
+    FW_ASSERT(this->m_serLoc >= this->m_deserLoc, static_cast<FwAssertArgType>(this->m_serLoc),
+              static_cast<FwAssertArgType>(this->m_deserLoc));
     return this->m_serLoc - this->m_deserLoc;
 }
 
@@ -765,11 +765,14 @@ ExternalSerializeBuffer::ExternalSerializeBuffer() {
 
 void ExternalSerializeBuffer::setExtBuffer(U8* buffPtr, Serializable::SizeType size) {
     FW_ASSERT(buffPtr != nullptr);
+    this->clear();
     this->m_buff = buffPtr;
     this->m_buffSize = size;
 }
 
 void ExternalSerializeBuffer::clear() {
+    this->resetSer();
+    this->resetDeser();
     this->m_buff = nullptr;
     this->m_buffSize = 0;
 }

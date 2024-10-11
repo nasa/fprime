@@ -382,22 +382,26 @@ namespace Svc {
         for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
             // read in each directory and keep track of total
             this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
-            U32 filesRead = 0;
+            FwSizeType filesRead = 0;
             U32 pendingFiles = 0;
             U64 pendingDpBytes = 0;
             U32 filesProcessed = 0;
 
-            Os::FileSystem::Status fsStat =
-                Os::FileSystem::readDirectory(
-                    this->m_directories[dir].toChar(),
-                    static_cast<U32>(this->m_numDpSlots - totalFiles),
-                    this->m_fileList,
-                    filesRead
-                );
-            if (fsStat != Os::FileSystem::OP_OK) {
+            Os::Directory dpDir;
+            Os::Directory::Status status = dpDir.open(this->m_directories[dir].toChar(), Os::Directory::OpenMode::READ);
+            if (status != Os::Directory::OP_OK) {
                 this->log_WARNING_HI_DirectoryOpenError(
                     this->m_directories[dir],
-                    fsStat
+                    status
+                );
+                return Fw::CmdResponse::EXECUTION_ERROR;
+            }
+            status = dpDir.readDirectory(this->m_fileList, (this->m_numDpSlots - totalFiles), filesRead);
+
+            if (status != Os::Directory::OP_OK) {
+                this->log_WARNING_HI_DirectoryOpenError(
+                    this->m_directories[dir],
+                    status
                 );
                 return Fw::CmdResponse::EXECUTION_ERROR;
             }
@@ -660,6 +664,9 @@ namespace Svc {
             // if no entry found, we are done
             this->m_xmitInProgress = false;
             this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
+            if (this->m_xmitCmdWait) {
+                this->cmdResponse_out(this->m_xmitOpCode,this->m_xmitCmdSeq,Fw::CmdResponse::OK);
+            }
             return;
         } else {
             // build file name based on the found entry
@@ -769,6 +776,13 @@ namespace Svc {
         FW_ASSERT(this->m_dpTree);
         FW_ASSERT(this->m_traverseStack);
 
+        // check file status
+        if (resp.getstatus() != Svc::SendFileStatus::STATUS_OK) {
+            this->log_WARNING_HI_StateFileXmitError(this->m_currXmitFileName,resp.getstatus());
+            this->m_xmitInProgress = false;
+            this->cmdResponse_out(this->m_xmitOpCode,this->m_xmitCmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
+        }
+
         this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
 
         // mark the entry as transmitted
@@ -802,7 +816,8 @@ namespace Svc {
         )
     {
         // invoke helper
-        this->cmdResponse_out(opCode, cmdSeq, this->doCatalogBuild());
+        this->cmdResponse_out(opCode, cmdSeq,this->doCatalogBuild());
+
     }
 
     void DpCatalog ::

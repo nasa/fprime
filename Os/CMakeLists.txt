@@ -5,128 +5,126 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+
+####
+# WARNING: not for use outside of fprime/Os
+#
+# Adds a named os module (e.g. common code for an OSAL implementation). Helper to allow multiple commons per file.
+#
+# NAMES: list of named files to add to this module.  The first will be treated as the name of the module.
+#        i.e. File;Directory;FileSystem will contain the file, directory, and filesystem files in a module called File.
+# ARGN: extra MOD_DEPS to add
+####
+function(add_named_os_module NAMES)
+    # Get first element of list
+    list(GET NAMES 0 FIRST_ITEM)
+    set(OS_MODULE_NAME "Os_${FIRST_ITEM}_Common")
+    # Clear variables
+    set(SOURCE_FILES)
+    set(SOURCE_HEADERS)
+    # Add files for each name supplied
+    foreach (NAME IN LISTS NAMES)
+        list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
+        list(APPEND SOURCE_HEADERS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
+    endforeach ()
+    # Set up module
+    set(MOD_DEPS Fw_Types ${ARGN})
+    require_fprime_implementation("Os_${FIRST_ITEM}")
+    register_fprime_module("${OS_MODULE_NAME}")
+    add_dependencies(Os "${OS_MODULE_NAME}")
+    target_link_libraries(Os PUBLIC "${OS_MODULE_NAME}")
+endfunction()
+
+####
+# WARNING: not for use outside of fprime/Os
+#
+# Adds a named os implementation supplied by fprime core. Helper to allow multiple implementations per file.
+#
+# NAMES: list of named files to add to this module.  The first will be treated as the name of the module.
+#        i.e. File;Directory;FileSystem will contain the file, directory, and filesystem files in a module called File.
+# SUFFIX: suffix to implementation (e.g. Posix)
+# ARGN: extra MOD_DEPS to add
+####
+function(add_fprime_supplied_os_module NAMES SUFFIX)
+    # Get first element of list
+    list(GET NAMES 0 FIRST_ITEM)
+    set(OS_MODULE_NAME "Os_${FIRST_ITEM}_${SUFFIX}")
+    # Clear variables
+    set(SOURCE_FILES)
+    set(SOURCE_HEADERS)
+    # Add files for each name supplied
+    foreach (NAME IN LISTS NAMES)
+        list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
+        list(APPEND SOURCE_HEADERS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
+    endforeach ()
+    # Set up module
+    set(MOD_DEPS "Os_${FIRST_ITEM}_Common" ${ARGN})
+    register_fprime_module("${OS_MODULE_NAME}")
+    register_fprime_implementation("Os_${FIRST_ITEM}" "${OS_MODULE_NAME}" "${CMAKE_CURRENT_LIST_DIR}/Default${FIRST_ITEM}.cpp")
+endfunction()
+
+####
+# WARNING: not for use outside of fprime/Os
+#
+# Adds a test for OSAL layer. Helper to allow multiple tests per file.
+#
+# NAME: Name of test
+# UT_SOURCE_FILES: list of source files
+# IMPLEMENTATION_PAIRS: a list of pairs of implementation choices.  e.g. "Os_File\;Os_File_Posix;Os_Task\;Os_Task_Stub"
+#                       pairs are represented with internal escaped list separators.
+# ARGN: extra MOD_DEPS to add
+####
+function(add_fprime_os_test NAME UT_SOURCE_FILES IMPLEMENTATION_PAIRS)
+    set(UT_MOD_DEPS Os STest ${ARGN})
+    foreach (PAIR IN LISTS IMPLEMENTATION_PAIRS)
+        choose_fprime_implementation(${PAIR})
+    endforeach ()
+    register_fprime_ut("${NAME}")
+endfunction()
+
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Models")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stub")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Generic")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Linux")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Darwin")
 
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
 )
+set(MOD_DEPS config)
 register_fprime_module(Os_Test_File_SyntheticFileSystem)
 
-
-# Basic module dependencies
-set(MOD_DEPS
-  ${CMAKE_THREAD_LIBS_INIT}
-  Fw/Cfg
-  Fw/Types
-  Fw/Logger
-  Utils/Hash
-)
 # Basic source files used in every OSAL layer.  Contains common code and helpers.
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
-#    "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/IPCQueueCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/SimpleQueueRegistry.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/MemCommon.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
+
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
-
-    # Refactored common files
-    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
 )
-# Check for default logger
-if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
-    list(APPEND SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
-    )
-endif()
-# Posix systems typically share these
-if (FPRIME_USE_POSIX)
-    list(APPEND SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/Console.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
-    )
-endif()
-# Darwin IPC queue implementation
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  list(APPEND SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/MacOs/IPCQueueStub.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/MacOs/SystemResources.cpp"
-  )
-# Linux IPC queues implementation
-elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  list(APPEND SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/Posix/IPCQueue.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Posix/LocklessQueue.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Linux/SystemResources.cpp"
-  )
-  # Shared libraries need an -rt dependency for mq libs
-  if (BUILD_SHARED_LIBS)
-      list(APPEND MOD_DEPS "-lrt")
-  endif()
-endif()
-
-
-# If baremetal scheduler is set, remove the previous task files and add in the Baremetal variant
-if (FPRIME_USE_BAREMETAL_SCHEDULER)
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Baremetal/TaskRunner/")
-    foreach (ITER_ITEM IN LISTS SOURCE_FILES)
-        if (ITER_ITEM MATCHES "Task\\.cpp$")
-            list(REMOVE_ITEM SOURCE_FILES "${ITER_ITEM}")
-        endif()
-    endforeach()
-    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/FileSystem.cpp")
-    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/IntervalTimer.cpp")
-    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Mutex.cpp")
-    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Queue.cpp")
-    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/SystemResources.cpp")
-endif()
+set(SOURCE_HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Os.hpp"
+)
+set(MOD_DEPS Fw_Types)
 register_fprime_module()
 
-require_fprime_implementation(Os/File)
-# require_fprime_implementation(Os/Task) # should be added in
-require_fprime_implementation(Os/Mutex) 
-
+add_named_os_module(Console Fw_Logger)
+add_named_os_module("File;FileSystem;Directory" Utils/Hash)
+add_named_os_module(Task ${CMAKE_THREAD_LIBS_INIT})
+add_named_os_module("Mutex;Condition")
+add_named_os_module(Queue)
+add_named_os_module(Cpu)
+add_named_os_module(Memory)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )
 register_fprime_ut()
-if (BUILD_TESTING)
-    foreach (TEST IN ITEMS StubFileTest PosixFileTest StubMutexTest PosixMutexTest) # add? : StubTaskTest PosixTaskTest
-       if (TARGET "${TEST}")
-           add_dependencies("Os_ut_exe" "${TEST}")
-       endif()
-    endforeach()
-endif()
-# Second UT Pthreads
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut/BufferQueueTest.cpp"
-)
-register_fprime_ut("Os_pthreads")
-
-# Third  UT Pthreads MAX Heap
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/test/ut/MaxHeapTest.cpp"
-)
-register_fprime_ut("Os_pthreads_max_heap")

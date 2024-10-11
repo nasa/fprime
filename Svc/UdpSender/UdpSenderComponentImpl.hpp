@@ -37,15 +37,6 @@ namespace Svc {
           const char *const compName /*!< The component name*/
       );
 
-      //! Initialize object UdpSender
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-          const NATIVE_INT_TYPE msgSize, /*!< The message size*/
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
-
-
       //! Destroy object UdpSender
       //!
       ~UdpSenderComponentImpl();

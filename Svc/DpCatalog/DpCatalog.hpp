@@ -250,7 +250,6 @@ namespace Svc {
         Fw::FileNameString m_currXmitFileName; //!< current file being transmitted
         bool m_xmitCmdWait; //!< true if waiting for transmission complete to complete xmit command
         U64 m_xmitBytes; //!< bytes transmitted for downlink session
-
         FwOpcodeType m_xmitOpCode; //!< stored xmit command opcode
         U32 m_xmitCmdSeq; //!< stored command sequence id
 
