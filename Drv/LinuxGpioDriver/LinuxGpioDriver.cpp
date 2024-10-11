@@ -302,7 +302,7 @@ void LinuxGpioDriver ::pollLoop() {
         }
         // An error of some kind occurred
         else if (status < 0) {
-            this->log_WARNING_HI_PollingError(errno);
+            this->log_WARNING_HI_PollingError(static_cast<I32>(errno));
         }
     }
 }
