@@ -100,6 +100,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
 )
 set(SOURCE_HEADERS

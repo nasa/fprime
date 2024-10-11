@@ -5,9 +5,6 @@
 
 module Os {
 
-    @ FPP RawTime type (abstract type defined in Os/RawTime.cpp)
-    type RawTime
-
     @ FPP shadow-enum representing Os::RawTime::Status
     enum RawTimeStatus {
         OP_OK,          @<  Operation was successful
