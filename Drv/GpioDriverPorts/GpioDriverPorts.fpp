@@ -1,7 +1,7 @@
 module Drv {
   enum GpioStatus {
     OP_OK @< Operation succeeded
-    NOT_OPEN @< Pin was never opened
+    NOT_OPENED @< Pin was never opened
     INVALID_MODE @< Operation not permitted with current configuration
     UNKNOWN_ERROR @< An unknown error occurred
   }

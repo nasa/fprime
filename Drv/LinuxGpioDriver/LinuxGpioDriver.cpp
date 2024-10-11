@@ -28,13 +28,11 @@ GPIO_V2_GET_LINE_IOCTL, struct gpio_v2_line_request *request
 
 #endif
 
-Os::File::Status errno_to_status(PlatformIntType errno_input) {
+Os::File::Status errno_to_file_status(PlatformIntType errno_input) {
     Os::File::Status status = Os::File::Status::OTHER_ERROR;
     switch (errno_input) {
         case EBADF:
             status = Os::File::Status::NOT_OPENED;
-            break;
-        case EFAULT:
             break;
         case  EINVAL:
             status = Os::File::Status::INVALID_ARGUMENT;
@@ -52,11 +50,37 @@ Os::File::Status errno_to_status(PlatformIntType errno_input) {
             status = Os::File::Status::INVALID_MODE;
             break;
         // Cascades intended
+        case EFAULT:
         case EWOULDBLOCK:
         case EBUSY:
         case EIO:
         default:
             status = Os::File::Status::OTHER_ERROR;
+            break;
+    }
+    return status;
+}
+
+Drv::GpioStatus errno_to_gpio_status(PlatformIntType errno_input) {
+    Drv::GpioStatus status = Drv::GpioStatus::OTHER_ERROR;
+    switch (errno_input) {
+        case EBADF:
+            status = Drv::GpioStatus::NOT_OPENED;
+            break;
+        case EFAULT:
+            break;
+        case  EINVAL:
+            status = Drv::GpioStatus::INVALID_ARGUMENT;
+            break;
+        case ENXIO:
+            status = Drv::GpioStatus::INVALID_MODE;
+            break;
+        // Cascades intended
+        case EWOULDBLOCK:
+        case EBUSY:
+        case EIO:
+        default:
+            status = Drv::GpioStatus::OTHER_ERROR;
             break;
     }
     return status;
@@ -106,7 +130,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device, U32 gpio, GpioConfig
     struct gpiochip_info chip_info;
     PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_CHIPINFO_IOCTL, &chip_info);
     if (return_value != 0) {
-        status = errno_to_status(errno);
+        status = errno_to_file_status(errno);
         this->log_WARNING_HI_OpenChipError(Fw::String(device), Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
         return status;
     }
@@ -127,36 +151,38 @@ Os::File::Status LinuxGpioDriver ::open(const char* device, U32 gpio, GpioConfig
     request.flags = configuration_to_flags(configuration);
     return_value = ioctl(chip_descriptor, GPIO_GET_LINEHANDLE_IOCTL, &request);
     if (return_value != 0) {
-        status = errno_to_status(errno);
+        status = errno_to_file_status(errno);
         this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio, Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
         return status;
     }
     this->m_chip = device;
     this->m_gpio = gpio;
     this->m_fd = request.fd;
+    this->m_configuration = configuration;
     return status;
 }
 
-void LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum, Fw::Logic &state) {
+Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum, Fw::Logic &state) {
+    Drv::GpioStatus status = Drv::GpioStatus::OP_OK;
     struct gpiohandle_data values;
     PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, values);
     if (return_value != 0) {
-        Os::File::Status status = errno_to_status(errno);
-        this->log_WARNING_HI_PinReadError(this->m_chip, this->m_gpio, Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
+        status = errno_to_gpio_status(errno);
     } else {
         state = values.values[0] ? Fw::Logic::HIGH : Fw::Logic::LOW;
     }
+    return status;
 }
 
-void LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNum, const Fw::Logic& state){
+Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNum, const Fw::Logic& state){
+    Drv::GpioStatus status = Drv::GpioStatus::OP_OK;
     struct gpiohandle_data values;
     values.values[0] = (state == Fw::Logic::HIGH) ? 1 : 0;
     PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, values);
     if (return_value != 0) {
-        Os::File::Status status = errno_to_status(errno);
-        this->log_WARNING_HI_PinWriteError(this->m_chip, this->m_gpio, Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
-
+        status = errno_to_gpio_status(errno);
     }
+    return status;
 }
 
 } // end namespace Drv

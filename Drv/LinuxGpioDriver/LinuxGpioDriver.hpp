@@ -43,10 +43,12 @@ namespace Drv {
       //!
       //! Configure the GPIO pin for use in this driver. Only one mode may be selected as a time.
       enum GpioConfiguration {
-          GPIO_INPUT, //!< Input GPIO pin for direct reading
           GPIO_OUTPUT, //!< Output GPIO pin for direct writing
-          GPIO_AS_IS, //!< Input GPIO pin for reading without altering the existing electrical configuration
-          //GPIO_INTERRUPT, //!< Input GPIO pin triggering interrupt
+          GPIO_INPUT, //!< Input GPIO pin for direct reading without altering the existing electrical configuration
+          GPIO_INPUT_PULL_HIGH, //!< Input GPIO pin for direct reading pulling unconnected values high
+          GPIO_INPUT_PULL_LOW, //!< Input GPIO pin for direct reading pulling unconnected values low
+          GPIO_INTERRUPT_RISING_EDGE, //!< Input GPIO pin triggers interrupt port on rising edge
+          GPIO_INTERRUPT_FALLING_EDGE, //!< Input GPIO pin triggers interrupt port on falling edge
       };
 
       //! open GPIO
@@ -71,6 +73,9 @@ namespace Drv {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const Fw::Logic& state
       );
+      //! Pin configuration
+      GpioConfiguration m_configuration;
+
       //! Keep the chip
       Fw::String m_chip;
 
