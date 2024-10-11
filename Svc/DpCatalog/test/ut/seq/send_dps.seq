@@ -2,11 +2,14 @@
 
 
 ; Have signal generator generate a DP
-R00:00:00 Ref.SG1.SignalGen_Settings, 1, 10, 1, TRIANGLE
-R00:00:02 Ref.SG1.SignalGen_Toggle
-R00:00:05 Ref.SG1.SignalGen_Dp, IMMEDIATE, 10
+R00:00:00 Ref.SG1.Settings, 1, 10, 1, TRIANGLE
+R00:00:02 Ref.SG1.Toggle
+R00:00:05 Ref.SG1.Dp, IMMEDIATE, 10, 2
+R00:00:20 Ref.SG1.Dp, IMMEDIATE, 15, 3
+R00:00:20 Ref.SG1.Dp, IMMEDIATE, 20, 4
+R00:00:30 Ref.SG1.Dp, IMMEDIATE, 25, 5
+R00:00:40 Ref.SG1.Dp, IMMEDIATE, 30, 6
 
-; DP will be generated after 10 seconds
 
 ; Build the catalog
 R00:00:20 Ref.dpCat.BUILD_CATALOG

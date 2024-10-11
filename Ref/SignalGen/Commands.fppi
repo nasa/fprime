@@ -1,5 +1,5 @@
 @ Signal Generator Settings
-async command SignalGen_Settings(
+async command Settings(
                                   Frequency: U32
                                   Amplitude: F32
                                   Phase: F32
@@ -8,11 +8,11 @@ async command SignalGen_Settings(
   opcode 0x00
 
 @ Toggle Signal Generator On/Off.
-async command SignalGen_Toggle \
+async command Toggle \
   opcode 1
 
 @ Skip next sample
-async command SignalGen_Skip \
+async command Skip \
   opcode 2
 
 enum DpReqType {
@@ -22,9 +22,10 @@ enum DpReqType {
 
 
 @ Signal Generator Settings
-async command SignalGen_Dp(
+async command Dp(
                    reqType: DpReqType
                    records: U32
+                   $priority: U32
                   ) \
   opcode 3
 
