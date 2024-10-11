@@ -61,5 +61,15 @@ void LinuxGpioDriver ::join() {
     this->m_poller.join();
 }
 
+void LinuxGpioDriver ::interruptFunction(void* self) {
+    FW_ASSERT(self != nullptr);
+    LinuxGpioDriver* component = reinterpret_cast<LinuxGpioDriver*>(self);
+    component->pollLoop();
+}
+
+bool LinuxGpioDriver ::getRunning() {
+    Os::ScopeLock lock(m_lock);
+    return this->m_running;
+}
 
 } // end namespace Drv

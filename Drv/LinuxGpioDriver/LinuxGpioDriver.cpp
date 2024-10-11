@@ -259,17 +259,6 @@ Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNu
     return status;
 }
 
-bool LinuxGpioDriver ::getRunning() {
-    Os::ScopeLock lock(m_lock);
-    return this->m_running;
-}
-
-void LinuxGpioDriver ::interruptFunction(void* self) {
-    FW_ASSERT(self != nullptr);
-    LinuxGpioDriver* component = reinterpret_cast<LinuxGpioDriver*>(self);
-    component->pollLoop();
-}
-
 void LinuxGpioDriver ::pollLoop() {
     static_assert(GPIO_POLL_TIMEOUT < std::numeric_limits<int>::max(), "Poll timeout would overflow");
     static_assert(sizeof(struct gpioevent_data) < std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
