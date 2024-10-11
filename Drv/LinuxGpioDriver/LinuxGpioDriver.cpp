@@ -188,7 +188,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
                                         const Fw::Logic& default_state) {
     Os::File::Status status = Os::File::OP_OK;
     Os::File chip_file;
-    FW_ASSERT(configuration < MAX_GPIO_CONFIGURATION and configuration > 0);
+    FW_ASSERT(configuration < MAX_GPIO_CONFIGURATION and configuration >= 0);
 
     // Open chip file and check for success
     status = chip_file.open(device, Os::File::Mode::OPEN_WRITE);
