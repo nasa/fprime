@@ -960,7 +960,6 @@ showinitializer
 sideeffect
 sighandler
 signedness
-Signedness
 SIMPLEQUEUEREGISTRY
 sinc
 Sinha

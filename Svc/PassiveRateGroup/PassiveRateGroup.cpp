@@ -54,6 +54,8 @@ void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cyc
 
     // get rate group execution time
     U32 cycleTime;
+    // Cast to void as the only possible error is overflow, which we can't handle other
+    // than capping cycleTime to max value of U32 (which is done in getDiffUsec anyways)
     (void) endTime.getDiffUsec(cycleStart, cycleTime);
     // check to see if the time has exceeded the previous maximum
     if (cycleTime > this->m_maxTime) {

@@ -71,8 +71,8 @@ namespace Fw {
             //! This operation is commutative, i.e. the result is the same regardless of the order of the arguments.
             //! \return TimeInterval result
             static TimeInterval sub(
-                const TimeInterval& t1, //!< Value being subtracted from
-                const TimeInterval& t2 //!< Value being subtracted
+                const TimeInterval& t1, //!< TimeInterval 1
+                const TimeInterval& t2 //!< TimeInterval 2
             );
 
 

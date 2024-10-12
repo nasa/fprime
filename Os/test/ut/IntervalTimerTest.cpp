@@ -8,7 +8,7 @@ extern "C" {
 }
 
 void intervalTimerTest() {
-    // Os::RawTime is already tested thorougly, here we only test the IntervalTimer
+    // Os::RawTime is already tested thoroughly, here we only test the IntervalTimer
 
     // We are using RawTimes to get upper and lower bounds for what the interval should be
     // This test expects functional RawTime (i.e. not Stubs)
