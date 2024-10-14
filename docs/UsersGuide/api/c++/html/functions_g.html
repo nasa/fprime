@@ -384,14 +384,14 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 <li>getBuffAddr()
 : <a class="el" href="class_drv_1_1_data_buffer.html#aaa65da22ae38e7a1dcb5934bf045a4d3">Drv::DataBuffer</a>
 , <a class="el" href="class_fw_1_1_active_component_exit_serializable_buffer.html#a2c4f6b5202b7059f9b1446de22de5666">Fw::ActiveComponentExitSerializableBuffer</a>
-, <a class="el" href="class_fw_1_1_cmd_arg_buffer.html#a1a9277d906bb54cba0d92eed51a19135">Fw::CmdArgBuffer</a>
+, <a class="el" href="class_fw_1_1_cmd_arg_buffer.html#aad50e0cd50b8746ba155271f4b117cc2">Fw::CmdArgBuffer</a>
 , <a class="el" href="class_fw_1_1_com_buffer.html#a338049fec8a61b96599456555a78c252">Fw::ComBuffer</a>
 , <a class="el" href="class_fw_1_1_external_serialize_buffer.html#ae4486c1f6a1007e1b4e2dc881485f3de">Fw::ExternalSerializeBuffer</a>
-, <a class="el" href="class_fw_1_1_log_buffer.html#aed468c7731040179dd7b5a2e3d670e2e">Fw::LogBuffer</a>
-, <a class="el" href="class_fw_1_1_param_buffer.html#abcb2714c3a2df7f338b71af18ca05767">Fw::ParamBuffer</a>
+, <a class="el" href="class_fw_1_1_log_buffer.html#a7539cb4c983ea59219902500a172c5ed">Fw::LogBuffer</a>
+, <a class="el" href="class_fw_1_1_param_buffer.html#a8d8a8b317cd914e0b07897f4a29151a8">Fw::ParamBuffer</a>
 , <a class="el" href="class_fw_1_1_serial_buffer.html#adf31a85e069f95836634b808bb8a2195">Fw::SerialBuffer</a>
-, <a class="el" href="class_fw_1_1_serialize_buffer_base.html#acd6ea18045472e9090ec8823185cb676">Fw::SerializeBufferBase</a>
-, <a class="el" href="class_fw_1_1_sm_signal_buffer.html#addb5ebae061caaeeb2da96ab81af2677">Fw::SmSignalBuffer</a>
+, <a class="el" href="class_fw_1_1_serialize_buffer_base.html#a0b5e0fdec08aa08e7eedd2e9bde10b7a">Fw::SerializeBufferBase</a>
+, <a class="el" href="class_fw_1_1_sm_signal_buffer.html#a64209f2bdb2a542f95457874e90e6779">Fw::SmSignalBuffer</a>
 , <a class="el" href="class_fw_1_1_tlm_buffer.html#a8d0c438dac6529c67ccf351e3a870ea3">Fw::TlmBuffer</a>
 , <a class="el" href="class_utils_1_1_hash_buffer.html#abd7ab7173451360e6d0a5a7cc1fb3ecf">Utils::HashBuffer</a>
 </li>
@@ -927,14 +927,14 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 <li>getNum_getVersion_InputPorts()
 : <a class="el" href="class_svc_1_1_version_component_base.html#a878d7d781ef7967d008a630ac74e889e">Svc::VersionComponentBase</a>
 </li>
+<li>getNum_gpioInterrupt_OutputPorts()
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#ace531ba0d71ce3560020c4cfa28be4bb">Drv::LinuxGpioDriverComponentBase</a>
+</li>
 <li>getNum_gpioRead_InputPorts()
 : <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#aa013f6fc733662efbdf57a7819a35a89">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>getNum_gpioWrite_InputPorts()
 : <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a20053b5f8d2fec176f294862a2511526">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>getNum_intOut_OutputPorts()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a6ade44455f5073eb8bee5a8121315a7e">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>getNum_LocalCmd_OutputPorts()
 : <a class="el" href="class_svc_1_1_cmd_splitter_component_base.html#a5f461638ebc3334a8a42f8f6ef08638e">Svc::CmdSplitterComponentBase</a>
@@ -1450,29 +1450,44 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 <li>getWorkingDirectory()
 : <a class="el" href="class_os_1_1_file_system.html#ab2eb5af8cf8098af786020b7646428a5">Os::FileSystem</a>
 </li>
-<li>GPIO_IN
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_impl.html#af005491f4a8ae2b95239006a490f0943a88550d90d3cfdca9e6d2cd2d881cd5ba">Drv::LinuxGpioDriverComponentImpl</a>
+<li>GPIO_INPUT
+: <a class="el" href="class_drv_1_1_linux_gpio_driver.html#aff31a247489add277bf4685e5697c2eda01965a61074e01a623e1a8c12aead28c">Drv::LinuxGpioDriver</a>
 </li>
-<li>GPIO_INT
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_impl.html#af005491f4a8ae2b95239006a490f0943a4a0125eedcdfa08bb2adfd5adc6a1fae">Drv::LinuxGpioDriverComponentImpl</a>
+<li>GPIO_INTERRUPT_BOTH_RISING_AND_FALLING_EDGES
+: <a class="el" href="class_drv_1_1_linux_gpio_driver.html#aff31a247489add277bf4685e5697c2eda460cfc302dac019335db1640f4beb440">Drv::LinuxGpioDriver</a>
 </li>
-<li>GPIO_OUT
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_impl.html#af005491f4a8ae2b95239006a490f0943ac960f47ab763b004824ed5b02f23da51">Drv::LinuxGpioDriverComponentImpl</a>
+<li>GPIO_INTERRUPT_FALLING_EDGE
+: <a class="el" href="class_drv_1_1_linux_gpio_driver.html#aff31a247489add277bf4685e5697c2eda3e15fb133aafdbf2799e8f73ade392c1">Drv::LinuxGpioDriver</a>
 </li>
-<li>GpioDirection
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_impl.html#af005491f4a8ae2b95239006a490f0943">Drv::LinuxGpioDriverComponentImpl</a>
+<li>GPIO_INTERRUPT_RISING_EDGE
+: <a class="el" href="class_drv_1_1_linux_gpio_driver.html#aff31a247489add277bf4685e5697c2edaaf164ed23c8f9c25dad017d8df300f03">Drv::LinuxGpioDriver</a>
+</li>
+<li>GPIO_OUTPUT
+: <a class="el" href="class_drv_1_1_linux_gpio_driver.html#aff31a247489add277bf4685e5697c2edacb4602b218b7c1283aecf6a618c44e5d">Drv::LinuxGpioDriver</a>
+</li>
+<li>GPIO_POLL_TIMEOUT
+: <a class="el" href="class_drv_1_1_linux_gpio_driver.html#a88e3cf88395df6bc3362bf0ee923e184">Drv::LinuxGpioDriver</a>
+</li>
+<li>GpioConfiguration
+: <a class="el" href="class_drv_1_1_linux_gpio_driver.html#aff31a247489add277bf4685e5697c2ed">Drv::LinuxGpioDriver</a>
+</li>
+<li>gpioInterrupt_out()
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#aed5f04894eefa35e9aeeea4e01fe813f">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>gpioRead_handler()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a06e13c08d5d7288f70608c1b34488b0a">Drv::LinuxGpioDriverComponentBase</a>
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#af909de21418aef2125930f3ae72180df">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>gpioRead_handlerBase()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#aaa32f90d0c8de330c0912358ff318c82">Drv::LinuxGpioDriverComponentBase</a>
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a49bc404cdfc3ad2996062bccf4a61d14">Drv::LinuxGpioDriverComponentBase</a>
+</li>
+<li>GpioStatus()
+: <a class="el" href="class_drv_1_1_gpio_status.html#a6a794cc50405303210dc4d1337e620f4">Drv::GpioStatus</a>
 </li>
 <li>gpioWrite_handler()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a3737e202ff43bfcd5bf68cddd87c9069">Drv::LinuxGpioDriverComponentBase</a>
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#af23f0718afbaa648f94bb16cdf61d5c5">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>gpioWrite_handlerBase()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a07c56de606a95a615ef36823769a5eea">Drv::LinuxGpioDriverComponentBase</a>
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a52ddac5f1c1d6af1dc68eb8eddf5a64a">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>GT
 : <a class="el" href="class_fw_1_1_time.html#a84869d06d1fdfb1050ff43da9c95abeca231ff8b370f0baed7d1feb2a5ecbad6e">Fw::Time</a>

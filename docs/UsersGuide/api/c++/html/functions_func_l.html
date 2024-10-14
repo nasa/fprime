@@ -93,11 +93,11 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 <li>LinuxCpu()
 : <a class="el" href="class_os_1_1_linux_1_1_cpu_1_1_linux_cpu.html#a86eeaa6d2acd3e5be7dbc92afb3e8fdd">Os::Linux::Cpu::LinuxCpu</a>
 </li>
+<li>LinuxGpioDriver()
+: <a class="el" href="class_drv_1_1_linux_gpio_driver.html#a37d5e70d1ba01eed168be73505b9d6a1">Drv::LinuxGpioDriver</a>
+</li>
 <li>LinuxGpioDriverComponentBase()
 : <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#af048701d1f3d64d49365b7c83228406e">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>LinuxGpioDriverComponentImpl()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a67ea492696ac53f47637a04015394d03">Drv::LinuxGpioDriverComponentImpl</a>
 </li>
 <li>LinuxI2cDriver()
 : <a class="el" href="class_drv_1_1_linux_i2c_driver.html#a28af29fb77761ec965260c7fc19cd411">Drv::LinuxI2cDriver</a>
@@ -163,7 +163,7 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 , <a class="el" href="class_svc_1_1_version_component_base.html#a6b91b4288830825c38b2f1538a30ffe5">Svc::VersionComponentBase</a>
 </li>
 <li>log()
-: <a class="el" href="class_fw_1_1_logger.html#abe2194f4b3c323ad66f43811fa04b108">Fw::Logger</a>
+: <a class="el" href="class_fw_1_1_logger.html#a96ceb48bf6492c3c160f1b303dbe4719">Fw::Logger</a>
 </li>
 <li>log_ACTIVITY_HI_AppendFileStarted()
 : <a class="el" href="class_svc_1_1_file_manager_component_base.html#adc68bed32f82d2b79fbf6f97b0cfba83">Svc::FileManagerComponentBase</a>
@@ -233,9 +233,6 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 </li>
 <li>log_ACTIVITY_HI_FileSizeSucceeded()
 : <a class="el" href="class_svc_1_1_file_manager_component_base.html#aee0d0e232ba802f11f00abbb113ac970">Svc::FileManagerComponentBase</a>
-</li>
-<li>log_ACTIVITY_HI_GP_PortOpened()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#af8f9755fbbcc64215a0a38e82ad604a0">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>log_ACTIVITY_HI_HLTH_CHECK_ENABLE()
 : <a class="el" href="class_svc_1_1_health_component_base.html#a8716c546cfb11fdf7a626a325557ef6d">Svc::HealthComponentBase</a>
@@ -389,6 +386,9 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 </li>
 <li>log_DIAGNOSTIC_OpCodeReregistered()
 : <a class="el" href="class_svc_1_1_command_dispatcher_component_base.html#a07a7623868ef0152368f42e115c3060f">Svc::CommandDispatcherComponentBase</a>
+</li>
+<li>log_DIAGNOSTIC_OpenChip()
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a420a32eaa3d78e30599ca6e4a9ef4bf1">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>log_DIAGNOSTIC_RateGroupStarted()
 : <a class="el" href="class_svc_1_1_active_rate_group_component_base.html#ac03bbfb02aca85d62fe712db21dbb7f4">Svc::ActiveRateGroupComponentBase</a>
@@ -640,35 +640,14 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 : <a class="el" href="class_svc_1_1_dp_writer_component_base.html#a887faab51c16eac3f695dd4b0534b31e">Svc::DpWriterComponentBase</a>
 , <a class="el" href="class_svc_1_1_file_uplink_component_base.html#a3b63b0493e3aece40b4b686d54110102">Svc::FileUplinkComponentBase</a>
 </li>
-<li>log_WARNING_HI_GP_ConfigError()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#adaad0ee9306fdf6b507dc02c9cc9d788">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>log_WARNING_HI_GP_IntStartError()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a29734b08b82f949ed89f496f23e5574b">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>log_WARNING_HI_GP_IntWaitError()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a75a200b7b148c1cf252bc139303ae61c">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>log_WARNING_HI_GP_OpenError()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a9a18f178aaffdf2129a9e613006179a2">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>log_WARNING_HI_GP_ReadError()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a6b67a0fef87b8c8bfd4faaa64d5336dd">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>log_WARNING_HI_GP_ReadError_ThrottleClear()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a8ae16b3e570e35300ad0c58a1b58dfc7">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>log_WARNING_HI_GP_WriteError()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#aa813b6ffb5b0043ffebdb1aa40d36ad7">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>log_WARNING_HI_GP_WriteError_ThrottleClear()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#ac576032c12606d752a97632f1504071c">Drv::LinuxGpioDriverComponentBase</a>
-</li>
 <li>log_WARNING_HI_HLTH_PING_INVALID_VALUES()
 : <a class="el" href="class_svc_1_1_health_component_base.html#ace48e9c733b9e03153b32fd67d40de29">Svc::HealthComponentBase</a>
 </li>
 <li>log_WARNING_HI_HLTH_PING_WARN()
 : <a class="el" href="class_svc_1_1_health_component_base.html#af86b2c7dffb152e0025ffb8cde6c46bb">Svc::HealthComponentBase</a>
+</li>
+<li>log_WARNING_HI_InterruptReadError()
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a7ccb9f6f1bcceb046b44ff3009b5ea21">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>log_WARNING_HI_InvalidBuffer()
 : <a class="el" href="class_svc_1_1_dp_writer_component_base.html#a7effee2548c5c43128562726571c0387">Svc::DpWriterComponentBase</a>
@@ -718,8 +697,14 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 <li>log_WARNING_HI_NoBuffsAvailable_ThrottleClear()
 : <a class="el" href="class_svc_1_1_buffer_manager_component_base.html#adba2be6b0be7d37ab2699c8e4895bbbc">Svc::BufferManagerComponentBase</a>
 </li>
+<li>log_WARNING_HI_OpenChipError()
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a639407cf09172a6fd9ce47e676861374">Drv::LinuxGpioDriverComponentBase</a>
+</li>
 <li>log_WARNING_HI_OpenError()
 : <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html#a1a96fd44d32eeba7c1250e046c2235ac">Drv::LinuxUartDriverComponentBase</a>
+</li>
+<li>log_WARNING_HI_OpenPinError()
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a51046b33c655e30c39b3bab2dcf4fa33">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>log_WARNING_HI_PacketOutOfBounds()
 : <a class="el" href="class_svc_1_1_file_uplink_component_base.html#a76ab76d4b4c10a0890f6ec06be53745d">Svc::FileUplinkComponentBase</a>
@@ -732,6 +717,9 @@ $(document).ready(function(){initNavTree('functions_func_l.html',''); initResiza
 </li>
 <li>log_WARNING_HI_PacketOutOfOrder_ThrottleClear()
 : <a class="el" href="class_svc_1_1_file_uplink_component_base.html#a5d17c7ee2240d9c130627aa648693549">Svc::FileUplinkComponentBase</a>
+</li>
+<li>log_WARNING_HI_PollingError()
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#abe2e2a42d8b53c34fec024feafee34aa">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>log_WARNING_HI_PrmFileReadError()
 : <a class="el" href="class_svc_1_1_prm_db_component_base.html#a20266914896814e28994fdc68b548855">Svc::PrmDbComponentBase</a>

@@ -100,185 +100,122 @@ $(document).ready(function(){initNavTree('_gpio_write_port_ac_8cpp_source.html',
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_drv.html">Drv</a> {</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  <span class="keyword">namespace </span>{</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="comment">// Port buffer class</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">class </span>GpioWritePortBuffer : <span class="keyword">public</span> <a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a> {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;      <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="comment">// Input Port Member functions</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="class_drv_1_1_input_gpio_write_port.html#ad6c8906ed00666b001982a290300eb6a">   17</a></span>&#160;  <a class="code" href="class_drv_1_1_input_gpio_write_port.html#ad6c8906ed00666b001982a290300eb6a">InputGpioWritePort ::</a></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#ad6c8906ed00666b001982a290300eb6a">    InputGpioWritePort</a>() :</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;      <a class="code" href="namespace_fw.html">Fw</a>::InputPortBase(),</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;      m_func(nullptr)</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  {</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <a class="code" href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">Fw::Serializable::SizeType</a> getBuffCapacity()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;          <span class="keywordflow">return</span> <a class="code" href="class_drv_1_1_input_gpio_write_port.html#a4c81e285f2c407bdce1f87e52b49b320ad3677ff3dd24a4ac6fc919178bb41676">InputGpioWritePort::SERIALIZED_SIZE</a>;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        }</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* getBuffAddr() {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;          <span class="keywordflow">return</span> m_buff;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        }</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  }</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">   25</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">InputGpioWritePort ::</a></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">    init</a>()</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="class_fw_1_1_input_port_base.html#a83f2228697eb0e0700a6a287b625578a">Fw::InputPortBase::init</a>();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  }</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* getBuffAddr()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;          <span class="keywordflow">return</span> m_buff;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        }</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <a class="code" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> m_buff[<a class="code" href="class_drv_1_1_input_gpio_write_port.html#a4c81e285f2c407bdce1f87e52b49b320ad3677ff3dd24a4ac6fc919178bb41676">InputGpioWritePort::SERIALIZED_SIZE</a>];</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    };</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="comment">// Input Port Member functions</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="class_drv_1_1_input_gpio_write_port.html#ad6c8906ed00666b001982a290300eb6a">   47</a></span>&#160;  <a class="code" href="class_drv_1_1_input_gpio_write_port.html#ad6c8906ed00666b001982a290300eb6a">InputGpioWritePort ::</a></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#ad6c8906ed00666b001982a290300eb6a">    InputGpioWritePort</a>() :</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <a class="code" href="namespace_fw.html">Fw</a>::InputPortBase(),</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      m_func(nullptr)</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  }</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">   31</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">InputGpioWritePort ::</a></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">    addCallComp</a>(</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <a class="code" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a>* callComp,</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        CompFuncPtr funcPtr</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    )</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(callComp != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(funcPtr != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">m_comp</a> = callComp;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    this-&gt;m_func = funcPtr;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    this-&gt;<a class="code" href="class_fw_1_1_port_base.html#af1781f18a2fd371fe586caa8c3d066dd">m_connObj</a> = callComp;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  }</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="class_drv_1_1_input_gpio_write_port.html#afcc9f8072b47382ad6001cbf3294241d">   45</a></span>&#160;  <a class="code" href="class_drv_1_1_gpio_status.html">Drv::GpioStatus</a> <a class="code" href="class_drv_1_1_input_gpio_write_port.html#afcc9f8072b47382ad6001cbf3294241d">InputGpioWritePort ::</a></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#afcc9f8072b47382ad6001cbf3294241d">    invoke</a>(<span class="keyword">const</span> <a class="code" href="class_fw_1_1_logic.html">Fw::Logic</a>&amp; state)</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    this-&gt;trace();</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">m_comp</a> != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_func != <span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">   55</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">InputGpioWritePort ::</a></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">    init</a>()</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="class_fw_1_1_input_port_base.html#a83f2228697eb0e0700a6a287b625578a">Fw::InputPortBase::init</a>();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  }</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">   61</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">InputGpioWritePort ::</a></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">    addCallComp</a>(</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <a class="code" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a>* callComp,</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        CompFuncPtr funcPtr</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    )</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(callComp != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(funcPtr != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_func(this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">m_comp</a>, this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#a812f868e83fe8544f528db72a59f17f4">m_portNum</a>, state);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#if FW_PORT_SERIALIZATION == 1</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> InputGpioWritePort ::</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    invokeSerial(<a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; _buffer)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="comment">// For ports with a return type, invokeSerial is not used</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    (void) _buffer;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(0);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  }</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">m_comp</a> = callComp;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    this-&gt;m_func = funcPtr;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    this-&gt;<a class="code" href="class_fw_1_1_port_base.html#af1781f18a2fd371fe586caa8c3d066dd">m_connObj</a> = callComp;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="class_drv_1_1_input_gpio_write_port.html#a978b615f1d3053bc82ac61351946a6db">   75</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_input_gpio_write_port.html#a978b615f1d3053bc82ac61351946a6db">InputGpioWritePort ::</a></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#a978b615f1d3053bc82ac61351946a6db">    invoke</a>(<span class="keyword">const</span> <a class="code" href="class_fw_1_1_logic.html">Fw::Logic</a>&amp; state)</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  {</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    this-&gt;trace();</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="comment">// Output Port Member functions</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="class_drv_1_1_output_gpio_write_port.html#a2a8cb4a7b6d4914ccbbdaac5e5593727">   76</a></span>&#160;  <a class="code" href="class_drv_1_1_output_gpio_write_port.html#a2a8cb4a7b6d4914ccbbdaac5e5593727">OutputGpioWritePort ::</a></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<a class="code" href="class_drv_1_1_output_gpio_write_port.html#a2a8cb4a7b6d4914ccbbdaac5e5593727">    OutputGpioWritePort</a>() :</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      <a class="code" href="namespace_fw.html">Fw</a>::OutputPortBase(),</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      m_port(nullptr)</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  {</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">m_comp</a> != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_func != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_func(this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">m_comp</a>, this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#a812f868e83fe8544f528db72a59f17f4">m_portNum</a>, state);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">#if FW_PORT_SERIALIZATION == 1</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="class_drv_1_1_output_gpio_write_port.html#a85d02c3af37496006ef24e7cb1146dd5">   84</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_output_gpio_write_port.html#a85d02c3af37496006ef24e7cb1146dd5">OutputGpioWritePort ::</a></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<a class="code" href="class_drv_1_1_output_gpio_write_port.html#a85d02c3af37496006ef24e7cb1146dd5">    init</a>()</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <a class="code" href="class_fw_1_1_output_port_base.html#ae76681aee5647259ea44a1a6d18c664e">Fw::OutputPortBase::init</a>();</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  }</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> InputGpioWritePort ::</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    invokeSerial(<a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; _buffer)</div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="class_drv_1_1_output_gpio_write_port.html#a45b37b2099903a1e2dc69ada6489d6d2">   90</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_output_gpio_write_port.html#a45b37b2099903a1e2dc69ada6489d6d2">OutputGpioWritePort ::</a></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<a class="code" href="class_drv_1_1_output_gpio_write_port.html#a45b37b2099903a1e2dc69ada6489d6d2">    addCallPort</a>(<a class="code" href="class_drv_1_1_input_gpio_write_port.html">InputGpioWritePort</a>* callPort)</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> _status;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(callPort != <span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    this-&gt;trace();</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">m_comp</a> != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_func != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <a class="code" href="class_fw_1_1_logic.html">Fw::Logic</a> state;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    _status = _buffer.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">deserialize</a>(state);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">if</span> (_status != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      <span class="keywordflow">return</span> _status;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    this-&gt;m_func(this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">m_comp</a>, this-&gt;<a class="code" href="class_fw_1_1_input_port_base.html#a812f868e83fe8544f528db72a59f17f4">m_portNum</a>, state);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    this-&gt;m_port = callPort;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    this-&gt;<a class="code" href="class_fw_1_1_port_base.html#af1781f18a2fd371fe586caa8c3d066dd">m_connObj</a> = callPort;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#if FW_PORT_SERIALIZATION == 1</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    this-&gt;m_serPort = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno"><a class="line" href="class_drv_1_1_output_gpio_write_port.html#aeca51938d2bddd51bfbec31fb4471d82">  103</a></span>&#160;  <a class="code" href="class_drv_1_1_gpio_status.html">Drv::GpioStatus</a> <a class="code" href="class_drv_1_1_output_gpio_write_port.html#aeca51938d2bddd51bfbec31fb4471d82">OutputGpioWritePort ::</a></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<a class="code" href="class_drv_1_1_output_gpio_write_port.html#aeca51938d2bddd51bfbec31fb4471d82">    invoke</a>(<span class="keyword">const</span> <a class="code" href="class_fw_1_1_logic.html">Fw::Logic</a>&amp; state)</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  {</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    this-&gt;trace();</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  }</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="comment">// Output Port Member functions</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="class_drv_1_1_output_gpio_write_port.html#a2a8cb4a7b6d4914ccbbdaac5e5593727">  119</a></span>&#160;  <a class="code" href="class_drv_1_1_output_gpio_write_port.html#a2a8cb4a7b6d4914ccbbdaac5e5593727">OutputGpioWritePort ::</a></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<a class="code" href="class_drv_1_1_output_gpio_write_port.html#a2a8cb4a7b6d4914ccbbdaac5e5593727">    OutputGpioWritePort</a>() :</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      <a class="code" href="namespace_fw.html">Fw</a>::OutputPortBase(),</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      m_port(nullptr)</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  }</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="class_drv_1_1_output_gpio_write_port.html#a85d02c3af37496006ef24e7cb1146dd5">  127</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_output_gpio_write_port.html#a85d02c3af37496006ef24e7cb1146dd5">OutputGpioWritePort ::</a></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<a class="code" href="class_drv_1_1_output_gpio_write_port.html#a85d02c3af37496006ef24e7cb1146dd5">    init</a>()</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  {</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <a class="code" href="class_fw_1_1_output_port_base.html#ae76681aee5647259ea44a1a6d18c664e">Fw::OutputPortBase::init</a>();</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  }</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="class_drv_1_1_output_gpio_write_port.html#a45b37b2099903a1e2dc69ada6489d6d2">  133</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_output_gpio_write_port.html#a45b37b2099903a1e2dc69ada6489d6d2">OutputGpioWritePort ::</a></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<a class="code" href="class_drv_1_1_output_gpio_write_port.html#a45b37b2099903a1e2dc69ada6489d6d2">    addCallPort</a>(<a class="code" href="class_drv_1_1_input_gpio_write_port.html">InputGpioWritePort</a>* callPort)</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  {</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(callPort != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    this-&gt;m_port = callPort;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    this-&gt;<a class="code" href="class_fw_1_1_port_base.html#af1781f18a2fd371fe586caa8c3d066dd">m_connObj</a> = callPort;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="preprocessor">#if FW_PORT_SERIALIZATION == 1</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    this-&gt;m_serPort = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  }</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="class_drv_1_1_output_gpio_write_port.html#a9d41c6a2fb32184db66cc25b2855bfc1">  146</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_output_gpio_write_port.html#a9d41c6a2fb32184db66cc25b2855bfc1">OutputGpioWritePort ::</a></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<a class="code" href="class_drv_1_1_output_gpio_write_port.html#a9d41c6a2fb32184db66cc25b2855bfc1">    invoke</a>(<span class="keyword">const</span> <a class="code" href="class_fw_1_1_logic.html">Fw::Logic</a>&amp; state)</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  {</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    this-&gt;trace();</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="preprocessor">#if FW_PORT_SERIALIZATION</span></div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>((this-&gt;m_port != <span class="keyword">nullptr</span>) || (this-&gt;m_serPort != <span class="keyword">nullptr</span>));</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordflow">if</span> (this-&gt;m_port != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      this-&gt;m_port-&gt;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#a978b615f1d3053bc82ac61351946a6db">invoke</a>(state);</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    }</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a> _status;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;      GpioWritePortBuffer _buffer;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;      _status = _buffer.serialize(state);</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(_status == <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>, <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(_status));</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;      _status = this-&gt;m_serPort-&gt;invokeSerial(_buffer);</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(_status == <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>, <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a><span class="keyword">&gt;</span>(_status));</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_port != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    this-&gt;m_port-&gt;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#a978b615f1d3053bc82ac61351946a6db">invoke</a>(state);</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  }</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;}</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_port != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordflow">return</span> this-&gt;m_port-&gt;<a class="code" href="class_drv_1_1_input_gpio_write_port.html#afcc9f8072b47382ad6001cbf3294241d">invoke</a>(state);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  }</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}</div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00014">Assert.hpp:14</a></div></div>
-<div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00030">BasicTypes.h:30</a></div></div>
 <div class="ttc" id="a_external_string_8hpp_html"><div class="ttname"><a href="external_string_8hpp.html">ExternalString.hpp</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_a088216dbd07b926d5234aeaf1a18cd7d"><div class="ttname"><a href="fp_config_8h.html#a088216dbd07b926d5234aeaf1a18cd7d">FwAssertArgType</a></div><div class="ttdeci">PlatformAssertArgType FwAssertArgType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00039">FpConfig.h:39</a></div></div>
 <div class="ttc" id="a_gpio_write_port_ac_8hpp_html"><div class="ttname"><a href="gpio_write_port_ac_8hpp.html">GpioWritePortAc.hpp</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_gpio_status_html"><div class="ttname"><a href="class_drv_1_1_gpio_status.html">Drv::GpioStatus</a></div><div class="ttdef"><b>Definition:</b> <a href="gpio_status_enum_ac_8hpp_source.html#l00016">GpioStatusEnumAc.hpp:18</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html">Drv::InputGpioWritePort</a></div><div class="ttdoc">Input GpioWrite port.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8hpp_source.html#l00024">GpioWritePortAc.hpp:26</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html_a22893fb0a46d3947cf907354a73e8c2e"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">Drv::InputGpioWritePort::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialization function.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00055">GpioWritePortAc.cpp:56</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html_a4c81e285f2c407bdce1f87e52b49b320ad3677ff3dd24a4ac6fc919178bb41676"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html#a4c81e285f2c407bdce1f87e52b49b320ad3677ff3dd24a4ac6fc919178bb41676">Drv::InputGpioWritePort::SERIALIZED_SIZE</a></div><div class="ttdeci">@ SERIALIZED_SIZE</div><div class="ttdoc">The size of the serial representations of the port arguments.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8hpp_source.html#l00038">GpioWritePortAc.hpp:36</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html_a978b615f1d3053bc82ac61351946a6db"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html#a978b615f1d3053bc82ac61351946a6db">Drv::InputGpioWritePort::invoke</a></div><div class="ttdeci">void invoke(const Fw::Logic &amp;state)</div><div class="ttdoc">Invoke a port interface.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00075">GpioWritePortAc.cpp:76</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html_ad6c8906ed00666b001982a290300eb6a"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html#ad6c8906ed00666b001982a290300eb6a">Drv::InputGpioWritePort::InputGpioWritePort</a></div><div class="ttdeci">InputGpioWritePort()</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00047">GpioWritePortAc.cpp:48</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html_ae717923356b90730a739c9b2990620b5"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">Drv::InputGpioWritePort::addCallComp</a></div><div class="ttdeci">void addCallComp(Fw::PassiveComponentBase *callComp, CompFuncPtr funcPtr)</div><div class="ttdoc">Register a component.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00061">GpioWritePortAc.cpp:62</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_output_gpio_write_port_html_a2a8cb4a7b6d4914ccbbdaac5e5593727"><div class="ttname"><a href="class_drv_1_1_output_gpio_write_port.html#a2a8cb4a7b6d4914ccbbdaac5e5593727">Drv::OutputGpioWritePort::OutputGpioWritePort</a></div><div class="ttdeci">OutputGpioWritePort()</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00119">GpioWritePortAc.cpp:120</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_output_gpio_write_port_html_a45b37b2099903a1e2dc69ada6489d6d2"><div class="ttname"><a href="class_drv_1_1_output_gpio_write_port.html#a45b37b2099903a1e2dc69ada6489d6d2">Drv::OutputGpioWritePort::addCallPort</a></div><div class="ttdeci">void addCallPort(InputGpioWritePort *callPort)</div><div class="ttdoc">Register an input port.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00133">GpioWritePortAc.cpp:134</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_output_gpio_write_port_html_a85d02c3af37496006ef24e7cb1146dd5"><div class="ttname"><a href="class_drv_1_1_output_gpio_write_port.html#a85d02c3af37496006ef24e7cb1146dd5">Drv::OutputGpioWritePort::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialization function.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00127">GpioWritePortAc.cpp:128</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_output_gpio_write_port_html_a9d41c6a2fb32184db66cc25b2855bfc1"><div class="ttname"><a href="class_drv_1_1_output_gpio_write_port.html#a9d41c6a2fb32184db66cc25b2855bfc1">Drv::OutputGpioWritePort::invoke</a></div><div class="ttdeci">void invoke(const Fw::Logic &amp;state)</div><div class="ttdoc">Invoke a port interface.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00146">GpioWritePortAc.cpp:147</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html_a22893fb0a46d3947cf907354a73e8c2e"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html#a22893fb0a46d3947cf907354a73e8c2e">Drv::InputGpioWritePort::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialization function.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00025">GpioWritePortAc.cpp:26</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html_ad6c8906ed00666b001982a290300eb6a"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html#ad6c8906ed00666b001982a290300eb6a">Drv::InputGpioWritePort::InputGpioWritePort</a></div><div class="ttdeci">InputGpioWritePort()</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00017">GpioWritePortAc.cpp:18</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html_ae717923356b90730a739c9b2990620b5"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html#ae717923356b90730a739c9b2990620b5">Drv::InputGpioWritePort::addCallComp</a></div><div class="ttdeci">void addCallComp(Fw::PassiveComponentBase *callComp, CompFuncPtr funcPtr)</div><div class="ttdoc">Register a component.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00031">GpioWritePortAc.cpp:32</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_input_gpio_write_port_html_afcc9f8072b47382ad6001cbf3294241d"><div class="ttname"><a href="class_drv_1_1_input_gpio_write_port.html#afcc9f8072b47382ad6001cbf3294241d">Drv::InputGpioWritePort::invoke</a></div><div class="ttdeci">Drv::GpioStatus invoke(const Fw::Logic &amp;state)</div><div class="ttdoc">Invoke a port interface.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00045">GpioWritePortAc.cpp:46</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_output_gpio_write_port_html_a2a8cb4a7b6d4914ccbbdaac5e5593727"><div class="ttname"><a href="class_drv_1_1_output_gpio_write_port.html#a2a8cb4a7b6d4914ccbbdaac5e5593727">Drv::OutputGpioWritePort::OutputGpioWritePort</a></div><div class="ttdeci">OutputGpioWritePort()</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00076">GpioWritePortAc.cpp:77</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_output_gpio_write_port_html_a45b37b2099903a1e2dc69ada6489d6d2"><div class="ttname"><a href="class_drv_1_1_output_gpio_write_port.html#a45b37b2099903a1e2dc69ada6489d6d2">Drv::OutputGpioWritePort::addCallPort</a></div><div class="ttdeci">void addCallPort(InputGpioWritePort *callPort)</div><div class="ttdoc">Register an input port.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00090">GpioWritePortAc.cpp:91</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_output_gpio_write_port_html_a85d02c3af37496006ef24e7cb1146dd5"><div class="ttname"><a href="class_drv_1_1_output_gpio_write_port.html#a85d02c3af37496006ef24e7cb1146dd5">Drv::OutputGpioWritePort::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialization function.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00084">GpioWritePortAc.cpp:85</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_output_gpio_write_port_html_aeca51938d2bddd51bfbec31fb4471d82"><div class="ttname"><a href="class_drv_1_1_output_gpio_write_port.html#aeca51938d2bddd51bfbec31fb4471d82">Drv::OutputGpioWritePort::invoke</a></div><div class="ttdeci">Drv::GpioStatus invoke(const Fw::Logic &amp;state)</div><div class="ttdoc">Invoke a port interface.</div><div class="ttdef"><b>Definition:</b> <a href="gpio_write_port_ac_8cpp_source.html#l00103">GpioWritePortAc.cpp:104</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_input_port_base_html_a812f868e83fe8544f528db72a59f17f4"><div class="ttname"><a href="class_fw_1_1_input_port_base.html#a812f868e83fe8544f528db72a59f17f4">Fw::InputPortBase::m_portNum</a></div><div class="ttdeci">NATIVE_INT_TYPE m_portNum</div><div class="ttdef"><b>Definition:</b> <a href="input_port_base_8hpp_source.html#l00027">InputPortBase.hpp:27</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_input_port_base_html_a83f2228697eb0e0700a6a287b625578a"><div class="ttname"><a href="class_fw_1_1_input_port_base.html#a83f2228697eb0e0700a6a287b625578a">Fw::InputPortBase::init</a></div><div class="ttdeci">virtual void init()</div><div class="ttdef"><b>Definition:</b> <a href="input_port_base_8cpp_source.html#l00018">InputPortBase.cpp:18</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_input_port_base_html_aec0bdf66c9b3290a42ea3a9998f246a3"><div class="ttname"><a href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">Fw::InputPortBase::m_comp</a></div><div class="ttdeci">PassiveComponentBase * m_comp</div><div class="ttdef"><b>Definition:</b> <a href="input_port_base_8hpp_source.html#l00026">InputPortBase.hpp:26</a></div></div>
@@ -286,9 +223,7 @@ $(document).ready(function(){initNavTree('_gpio_write_port_ac_8cpp_source.html',
 <div class="ttc" id="aclass_fw_1_1_output_port_base_html_ae76681aee5647259ea44a1a6d18c664e"><div class="ttname"><a href="class_fw_1_1_output_port_base.html#ae76681aee5647259ea44a1a6d18c664e">Fw::OutputPortBase::init</a></div><div class="ttdeci">virtual void init()</div><div class="ttdef"><b>Definition:</b> <a href="output_port_base_8cpp_source.html#l00021">OutputPortBase.cpp:21</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_passive_component_base_html"><div class="ttname"><a href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a></div><div class="ttdef"><b>Definition:</b> <a href="passive_component_base_8hpp_source.html#l00010">PassiveComponentBase.hpp:10</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_port_base_html_af1781f18a2fd371fe586caa8c3d066dd"><div class="ttname"><a href="class_fw_1_1_port_base.html#af1781f18a2fd371fe586caa8c3d066dd">Fw::PortBase::m_connObj</a></div><div class="ttdeci">Fw::ObjBase * m_connObj</div><div class="ttdef"><b>Definition:</b> <a href="port_base_8hpp_source.html#l00033">PortBase.hpp:33</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serializable_html_a03b442ef8e12a5c3ddadd764adbfd652"><div class="ttname"><a href="class_fw_1_1_serializable.html#a03b442ef8e12a5c3ddadd764adbfd652">Fw::Serializable::SizeType</a></div><div class="ttdeci">NATIVE_UINT_TYPE SizeType</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00028">Serializable.hpp:28</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a></div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00054">Serializable.hpp:54</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a99f6c704e514620bf8e26dc28a6f698a"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">Fw::SerializeBufferBase::deserialize</a></div><div class="ttdeci">SerializeStatus deserialize(U8 &amp;val)</div><div class="ttdoc">deserialize 8-bit unsigned int</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00300">Serializable.cpp:300</a></div></div>
 <div class="ttc" id="anamespace_drv_html"><div class="ttname"><a href="namespace_drv.html">Drv</a></div><div class="ttdef"><b>Definition:</b> <a href="block_driver_component_ac_8cpp_source.html#l00014">BlockDriverComponentAc.cpp:14</a></div></div>
 <div class="ttc" id="anamespace_fw_html"><div class="ttname"><a href="namespace_fw.html">Fw</a></div><div class="ttdef"><b>Definition:</b> <a href="fpp_constants_ac_8hpp_source.html#l00121">FppConstantsAc.hpp:121</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a></div><div class="ttdeci">SerializeStatus</div><div class="ttdoc">forward declaration for string</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00014">Serializable.hpp:14</a></div></div>

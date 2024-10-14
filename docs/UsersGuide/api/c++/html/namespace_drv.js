@@ -16,6 +16,7 @@ var namespace_drv =
     [ "OutputDataBufferPort", "class_drv_1_1_output_data_buffer_port.html", "class_drv_1_1_output_data_buffer_port" ],
     [ "InputGpioReadPort", "class_drv_1_1_input_gpio_read_port.html", "class_drv_1_1_input_gpio_read_port" ],
     [ "OutputGpioReadPort", "class_drv_1_1_output_gpio_read_port.html", "class_drv_1_1_output_gpio_read_port" ],
+    [ "GpioStatus", "class_drv_1_1_gpio_status.html", "class_drv_1_1_gpio_status" ],
     [ "InputGpioWritePort", "class_drv_1_1_input_gpio_write_port.html", "class_drv_1_1_input_gpio_write_port" ],
     [ "OutputGpioWritePort", "class_drv_1_1_output_gpio_write_port.html", "class_drv_1_1_output_gpio_write_port" ],
     [ "InputI2cPort", "class_drv_1_1_input_i2c_port.html", "class_drv_1_1_input_i2c_port" ],
@@ -41,7 +42,7 @@ var namespace_drv =
     [ "TcpServerSocket", "class_drv_1_1_tcp_server_socket.html", "class_drv_1_1_tcp_server_socket" ],
     [ "SocketState", "struct_drv_1_1_socket_state.html", "struct_drv_1_1_socket_state" ],
     [ "UdpSocket", "class_drv_1_1_udp_socket.html", "class_drv_1_1_udp_socket" ],
-    [ "LinuxGpioDriverComponentImpl", "class_drv_1_1_linux_gpio_driver_component_impl.html", "class_drv_1_1_linux_gpio_driver_component_impl" ],
+    [ "LinuxGpioDriver", "class_drv_1_1_linux_gpio_driver.html", "class_drv_1_1_linux_gpio_driver" ],
     [ "LinuxI2cDriver", "class_drv_1_1_linux_i2c_driver.html", "class_drv_1_1_linux_i2c_driver" ],
     [ "LinuxSpiDriverComponentImpl", "class_drv_1_1_linux_spi_driver_component_impl.html", "class_drv_1_1_linux_spi_driver_component_impl" ],
     [ "LinuxUartDriver", "class_drv_1_1_linux_uart_driver.html", "class_drv_1_1_linux_uart_driver" ],
@@ -50,7 +51,6 @@ var namespace_drv =
     [ "TcpServerComponentImpl", "class_drv_1_1_tcp_server_component_impl.html", "class_drv_1_1_tcp_server_component_impl" ],
     [ "UdpComponentImpl", "class_drv_1_1_udp_component_impl.html", "class_drv_1_1_udp_component_impl" ],
     [ "BlockDriver", "namespace_drv.html#acb1ac5b7f2edea7b0f28ada10572c06b", null ],
-    [ "LinuxGpioDriver", "namespace_drv.html#aefc6c37e8b4769c8b6dd1b4fd15fff67", null ],
     [ "LinuxSpiDriver", "namespace_drv.html#aa86eb5da99f6dc3f78c88e4af49b1ce2", null ],
     [ "TcpClient", "namespace_drv.html#a998506404c5fbafa50a8167b3a4772a7", null ],
     [ "TcpServer", "namespace_drv.html#a132e401ebdab0445f0fbcfe35613d48a", null ],
@@ -86,12 +86,8 @@ var namespace_drv =
       [ "SPI_MODE_CPOL_HIGH_CPHA_LOW", "namespace_drv.html#a92e6583aea010a65c34368a546ca7d91a382b9b8212cf1ad925a71929e89f1163", null ],
       [ "SPI_MODE_CPOL_HIGH_CPHA_HIGH", "namespace_drv.html#a92e6583aea010a65c34368a546ca7d91ad0cbf7423ddda42aee10d1c5e58433ac", null ]
     ] ],
-    [ "gpio_export", "namespace_drv.html#ac40776f28c0a05d7058f40b6db312adb", null ],
-    [ "gpio_fd_close", "namespace_drv.html#a7277b31c45e1f399f51453d65914068d", null ],
-    [ "gpio_fd_open", "namespace_drv.html#a3412eaa90cec470b295edd3778d39307", null ],
-    [ "gpio_get_value", "namespace_drv.html#aa9dddfe927481804eec170b4979c5e02", null ],
-    [ "gpio_set_dir", "namespace_drv.html#aa6819afcf4e5db07c71de7645031363c", null ],
-    [ "gpio_set_edge", "namespace_drv.html#a5de722570af394838127a2e6f3cc37dd", null ],
-    [ "gpio_set_value", "namespace_drv.html#ad534804a7c32c3e80135fc5fdab43c9c", null ],
-    [ "gpio_unexport", "namespace_drv.html#a74145075f5eb744c1478c7dc88f3c2a1", null ]
+    [ "configuration_to_event_flags", "namespace_drv.html#a45d3c1f225678df5b0ddf815cf14f4d7", null ],
+    [ "configuration_to_handler_flags", "namespace_drv.html#aba7fe1c44df1fb541f8e2aecdfa78866", null ],
+    [ "errno_to_file_status", "namespace_drv.html#affce6405facb0fdc8979d9bcc3210b1c", null ],
+    [ "errno_to_gpio_status", "namespace_drv.html#a61bb25037a4ad596892f32b8c110d58d", null ]
 ];

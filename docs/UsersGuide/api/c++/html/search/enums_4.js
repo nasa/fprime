@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['gpiodirection_8038',['GpioDirection',['../class_drv_1_1_linux_gpio_driver_component_impl.html#af005491f4a8ae2b95239006a490f0943',1,'Drv::LinuxGpioDriverComponentImpl']]]
+  ['gpioconfiguration_8009',['GpioConfiguration',['../class_drv_1_1_linux_gpio_driver.html#aff31a247489add277bf4685e5697c2ed',1,'Drv::LinuxGpioDriver']]]
 ];

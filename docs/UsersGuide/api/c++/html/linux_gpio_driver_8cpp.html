@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>F´ Flight Software - C/C++ Documentation: Drv/LinuxGpioDriver/LinuxGpioDriverComponentImplCommon.cpp File Reference</title>
+<title>F´ Flight Software - C/C++ Documentation: Drv/LinuxGpioDriver/LinuxGpioDriver.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -65,7 +65,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_common_8cpp.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('_linux_gpio_driver_8cpp.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -85,27 +85,47 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_comm
 
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">LinuxGpioDriverComponentImplCommon.cpp File Reference</div>  </div>
+<div class="title">LinuxGpioDriver.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="linux_gpio_driver_component_impl_8hpp_source.html">Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="linux_gpio_driver_8hpp_source.html">Drv/LinuxGpioDriver/LinuxGpioDriver.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="string_8hpp_source.html">Fw/Types/String.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="string_utils_8hpp_source.html">Fw/Types/StringUtils.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="posix_2_file_8hpp_source.html">Os/Posix/File.hpp</a>&gt;</code><br />
+<code>#include &lt;linux/gpio.h&gt;</code><br />
+<code>#include &lt;poll.h&gt;</code><br />
+<code>#include &lt;sys/ioctl.h&gt;</code><br />
+<code>#include &lt;unistd.h&gt;</code><br />
+<code>#include &lt;cerrno&gt;</code><br />
 </div>
-<p><a href="linux_gpio_driver_component_impl_common_8cpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="linux_gpio_driver_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespace_drv"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html">Drv</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:affce6405facb0fdc8979d9bcc3210b1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#affce6405facb0fdc8979d9bcc3210b1c">Drv::errno_to_file_status</a> (<a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> errno_input)</td></tr>
+<tr class="separator:affce6405facb0fdc8979d9bcc3210b1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61bb25037a4ad596892f32b8c110d58d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_drv_1_1_gpio_status.html">Drv::GpioStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#a61bb25037a4ad596892f32b8c110d58d">Drv::errno_to_gpio_status</a> (<a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> errno_input)</td></tr>
+<tr class="separator:a61bb25037a4ad596892f32b8c110d58d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba7fe1c44df1fb541f8e2aecdfa78866"><td class="memItemLeft" align="right" valign="top">U32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#aba7fe1c44df1fb541f8e2aecdfa78866">Drv::configuration_to_handler_flags</a> (<a class="el" href="class_drv_1_1_linux_gpio_driver.html#aff31a247489add277bf4685e5697c2ed">Drv::LinuxGpioDriver::GpioConfiguration</a> configuration)</td></tr>
+<tr class="separator:aba7fe1c44df1fb541f8e2aecdfa78866"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45d3c1f225678df5b0ddf815cf14f4d7"><td class="memItemLeft" align="right" valign="top">U32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#a45d3c1f225678df5b0ddf815cf14f4d7">Drv::configuration_to_event_flags</a> (<a class="el" href="class_drv_1_1_linux_gpio_driver.html#aff31a247489add277bf4685e5697c2ed">Drv::LinuxGpioDriver::GpioConfiguration</a> configuration)</td></tr>
+<tr class="separator:a45d3c1f225678df5b0ddf815cf14f4d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_d2b6462c6d5a51a32c660fca9dd2a1a2.html">Drv</a></li><li class="navelem"><a class="el" href="dir_26bcbc5c7a6b477836c1cfb2ac7a0928.html">LinuxGpioDriver</a></li><li class="navelem"><a class="el" href="linux_gpio_driver_component_impl_common_8cpp.html">LinuxGpioDriverComponentImplCommon.cpp</a></li>
+    <li class="navelem"><a class="el" href="dir_d2b6462c6d5a51a32c660fca9dd2a1a2.html">Drv</a></li><li class="navelem"><a class="el" href="dir_26bcbc5c7a6b477836c1cfb2ac7a0928.html">LinuxGpioDriver</a></li><li class="navelem"><a class="el" href="linux_gpio_driver_8cpp.html">LinuxGpioDriver.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

@@ -131,7 +131,7 @@ var hierarchy =
     [ "Fw::ObjBase", "class_fw_1_1_obj_base.html", [
       [ "Fw::PassiveComponentBase", "class_fw_1_1_passive_component_base.html", [
         [ "Drv::LinuxGpioDriverComponentBase", "class_drv_1_1_linux_gpio_driver_component_base.html", [
-          [ "Drv::LinuxGpioDriverComponentImpl", "class_drv_1_1_linux_gpio_driver_component_impl.html", null ]
+          [ "Drv::LinuxGpioDriver", "class_drv_1_1_linux_gpio_driver.html", null ]
         ] ],
         [ "Drv::LinuxI2cDriverComponentBase", "class_drv_1_1_linux_i2c_driver_component_base.html", [
           [ "Drv::LinuxI2cDriver", "class_drv_1_1_linux_i2c_driver.html", null ]
@@ -402,6 +402,7 @@ var hierarchy =
     [ "Svc::AMPCSSequence::SequenceHeader", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_sequence_header.html", null ],
     [ "Svc::AMPCSSequence::Record::TimeFlag::Serial", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time_flag_1_1_serial.html", null ],
     [ "Fw::Serializable", "class_fw_1_1_serializable.html", [
+      [ "Drv::GpioStatus", "class_drv_1_1_gpio_status.html", null ],
       [ "Drv::I2cStatus", "class_drv_1_1_i2c_status.html", null ],
       [ "Drv::PollStatus", "class_drv_1_1_poll_status.html", null ],
       [ "Drv::RecvStatus", "class_drv_1_1_recv_status.html", null ],

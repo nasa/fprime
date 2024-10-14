@@ -1,13 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"linux_uart_driver_8cpp.html#a88edd2aa4feabff4af21a997d5d8aa23":[30,0,7,7,0,0],
-"linux_uart_driver_8cpp_source.html":[30,0,7,7,0],
-"linux_uart_driver_8hpp.html":[30,0,7,7,1],
-"linux_uart_driver_8hpp_source.html":[30,0,7,7,1],
-"linux_uart_driver_component_ac_8cpp.html":[30,0,6,8,0],
-"linux_uart_driver_component_ac_8cpp_source.html":[30,0,6,8,0],
-"linux_uart_driver_component_ac_8hpp.html":[30,0,6,8,1],
-"linux_uart_driver_component_ac_8hpp_source.html":[30,0,6,8,1],
 "log_buffer_8cpp.html":[30,0,9,7,3],
 "log_buffer_8cpp_source.html":[30,0,9,7,3],
 "log_buffer_8hpp.html":[30,0,9,7,4],
@@ -249,5 +241,13 @@ var NAVTREEINDEX5 =
 "posix_2_task_8cpp.html#aea94d9f8f156ded4708221c69d5485fb":[30,0,11,4,21,5],
 "posix_2_task_8cpp_source.html":[30,0,11,4,21],
 "posix_2_task_8hpp.html":[30,0,11,4,22],
-"posix_2_task_8hpp_source.html":[30,0,11,4,22]
+"posix_2_task_8hpp_source.html":[30,0,11,4,22],
+"posix_time_8cpp.html":[30,0,14,34,1],
+"posix_time_8cpp_source.html":[30,0,14,34,1],
+"posix_time_8hpp.html":[30,0,14,34,2],
+"posix_time_8hpp_source.html":[30,0,14,34,2],
+"posix_time_component_ac_8cpp.html":[30,0,13,37,0],
+"posix_time_component_ac_8cpp_source.html":[30,0,13,37,0],
+"posix_time_component_ac_8hpp.html":[30,0,13,37,1],
+"posix_time_component_ac_8hpp_source.html":[30,0,13,37,1]
 };

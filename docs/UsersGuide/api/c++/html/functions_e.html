@@ -88,7 +88,8 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 
 <h3><a id="index_e"></a>- e -</h3><ul>
 <li>e
-: <a class="el" href="class_drv_1_1_i2c_status.html#a927da956767f3b709ae8a1b4bbe61f1d">Drv::I2cStatus</a>
+: <a class="el" href="class_drv_1_1_gpio_status.html#ae6f0d420dc2d6f82164608de76aa5974">Drv::GpioStatus</a>
+, <a class="el" href="class_drv_1_1_i2c_status.html#a927da956767f3b709ae8a1b4bbe61f1d">Drv::I2cStatus</a>
 , <a class="el" href="class_drv_1_1_poll_status.html#a32b43ee9ff63b279c8aee05c1060c784">Drv::PollStatus</a>
 , <a class="el" href="class_drv_1_1_recv_status.html#a63b677dd1d6fe8cb0dfb2cb927179338">Drv::RecvStatus</a>
 , <a class="el" href="class_drv_1_1_send_status.html#a416d7a9a485054a0bdd64973091df47a">Drv::SendStatus</a>
@@ -157,9 +158,6 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 <li>ENABLE_cmdHandlerBase()
 : <a class="el" href="class_svc_1_1_system_resources_component_base.html#a9d8ec7b26a7fc06a11854ace2e4c98f6">Svc::SystemResourcesComponentBase</a>
 , <a class="el" href="class_svc_1_1_version_component_base.html#a2d40fe8f29f470829f85fcfcb3c3cb8c">Svc::VersionComponentBase</a>
-</li>
-<li>Enabled()
-: <a class="el" href="class_fw_1_1_enabled.html#a8a29f11659d3e4d312f2691f5be78331">Fw::Enabled</a>
 </li>
 <li>ENABLED
 : <a class="el" href="class_fw_1_1_enabled.html#a3592eecc4ca708107f7124f359294cb2a38a8dee25d65981233da2c85a3fa1e97">Fw::Enabled</a>
@@ -572,33 +570,6 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 <li>EVENTID_FRAMEWORKVERSION
 : <a class="el" href="class_svc_1_1_version_component_base.html#a0008238814705b52009079a9657ba17ba88a5fef8a70737547807a24870a7145e">Svc::VersionComponentBase</a>
 </li>
-<li>EVENTID_GP_CONFIGERROR
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a0ddffd411d796a5351772b6edc981471a48635fce27b1f8f461ed32e5bc3e9e71">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>EVENTID_GP_INTSTARTERROR
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a0ddffd411d796a5351772b6edc981471a45a9e7bdec145bcf4337cf366fa4574e">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>EVENTID_GP_INTWAITERROR
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a0ddffd411d796a5351772b6edc981471a48ebe010e1d81becc9b4d373ff6347a0">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>EVENTID_GP_OPENERROR
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a0ddffd411d796a5351772b6edc981471a7603bb8a661e005da21c2b924e160d3e">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>EVENTID_GP_PORTOPENED
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a0ddffd411d796a5351772b6edc981471ab87b0abe84136db35949cde656ec3f45">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>EVENTID_GP_READERROR
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a0ddffd411d796a5351772b6edc981471abb91ae5e270145d47b2ef59664ec45f5">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>EVENTID_GP_READERROR_THROTTLE
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a4044d873b71090b70f5020a78bb133b3a54cbe51e91dcda9f2f7a657c1ae9aa5b">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>EVENTID_GP_WRITEERROR
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a0ddffd411d796a5351772b6edc981471a3d99fcc92e5e80eeddca2feaa7b3bd9c">Drv::LinuxGpioDriverComponentBase</a>
-</li>
-<li>EVENTID_GP_WRITEERROR_THROTTLE
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a4044d873b71090b70f5020a78bb133b3a7476fb0babedddfc2de68a40fb08e6b2">Drv::LinuxGpioDriverComponentBase</a>
-</li>
 <li>EVENTID_HLTH_CHECK_ENABLE
 : <a class="el" href="class_svc_1_1_health_component_base.html#abb4370e663c983274f357b137f212ab5a7fb0a335ac9bdcf6742dda2d147d6211">Svc::HealthComponentBase</a>
 </li>
@@ -634,6 +605,9 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 </li>
 <li>EVENTID_ID_FILTER_REMOVED
 : <a class="el" href="class_svc_1_1_active_logger_component_base.html#a3eadff25ba3d7a5dca7e4069e1d706e9a27bfa946d17431f74f4d0c5f4a58baf3">Svc::ActiveLoggerComponentBase</a>
+</li>
+<li>EVENTID_INTERRUPTREADERROR
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a4044d873b71090b70f5020a78bb133b3a0e4c975869951d936768823b8e44b647">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>EVENTID_INVALIDBUFFER
 : <a class="el" href="class_svc_1_1_dp_writer_component_base.html#ac5b81fa39f6cd2bede17788d5d1ba28da103a8951e4b7ec0c4c31c6c95bc93c08">Svc::DpWriterComponentBase</a>
@@ -725,8 +699,17 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 <li>EVENTID_OPCODEREREGISTERED
 : <a class="el" href="class_svc_1_1_command_dispatcher_component_base.html#aa8028dd29cfccd26c9363c7c4d7c1c6ead900b31cc4c782669ae91ab9fcf1f538">Svc::CommandDispatcherComponentBase</a>
 </li>
+<li>EVENTID_OPENCHIP
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a4044d873b71090b70f5020a78bb133b3a90ff554a35019441d8c85b8a4f72d1c3">Drv::LinuxGpioDriverComponentBase</a>
+</li>
+<li>EVENTID_OPENCHIPERROR
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a4044d873b71090b70f5020a78bb133b3aa24f113338bf276769df3d59b0e7379c">Drv::LinuxGpioDriverComponentBase</a>
+</li>
 <li>EVENTID_OPENERROR
 : <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html#a4a222bbb1a74638b996933917cee48f0a7001919519c34a2f1864fdbbaa643e26">Drv::LinuxUartDriverComponentBase</a>
+</li>
+<li>EVENTID_OPENPINERROR
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a4044d873b71090b70f5020a78bb133b3a10dcef437f9d4f193f414d515ff1a6eb">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>EVENTID_PACKETNOTFOUND
 : <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#a236eb2b13ebbbaa7ba69ac62a207efa0a7a6c0ba1ceac87178f3ca910673f31db">Svc::TlmPacketizerComponentBase</a>
@@ -745,6 +728,9 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 </li>
 <li>EVENTID_PACKETSENT
 : <a class="el" href="class_svc_1_1_tlm_packetizer_component_base.html#a236eb2b13ebbbaa7ba69ac62a207efa0a78fc9670ff71b24dda998f7f48b80862">Svc::TlmPacketizerComponentBase</a>
+</li>
+<li>EVENTID_POLLINGERROR
+: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_base.html#a4044d873b71090b70f5020a78bb133b3ac3d806e2d2874dc51b8f2966e2fd8b5c">Drv::LinuxGpioDriverComponentBase</a>
 </li>
 <li>EVENTID_PORTOPENED
 : <a class="el" href="class_drv_1_1_linux_uart_driver_component_base.html#a4a222bbb1a74638b996933917cee48f0a9214a4a998830bc8c65fb5e06fdb5c97">Drv::LinuxUartDriverComponentBase</a>
@@ -902,9 +888,6 @@ $(document).ready(function(){initNavTree('functions_e.html',''); initResizable()
 </li>
 <li>EXITED
 : <a class="el" href="class_os_1_1_task_interface.html#ab3dbca325ee42772311eb9a542144a45a1b35d2df650e5f288b53352155a8373a">Os::TaskInterface</a>
-</li>
-<li>exitThread()
-: <a class="el" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a23bf94cd4b673a1aaf5fca79ec236dce">Drv::LinuxGpioDriverComponentImpl</a>
 </li>
 <li>EXPECT_NO_PERMISSION
 : <a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#a135f408bae040a24ed94676b67fc85d9a7ca844fa0ac3282ca231ef4abb0af193">Os::Posix::Task::PosixTask</a>

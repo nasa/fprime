@@ -114,9 +114,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:a2c83eab5a1b55a14c73cc08c04b3d45c"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_drv_1_1_input_gpio_read_port.html#a2c83eab5a1b55a14c73cc08c04b3d45cac4b8c890ced273ac1610f85d4b9e8628">SERIALIZED_SIZE</a>
  }</td></tr>
 <tr class="separator:a2c83eab5a1b55a14c73cc08c04b3d45c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4bce8b60882a88f7245c9510af1b699"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_read_port.html#aa4bce8b60882a88f7245c9510af1b699">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td></tr>
-<tr class="memdesc:aa4bce8b60882a88f7245c9510af1b699"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_gpio_read_port.html#aa4bce8b60882a88f7245c9510af1b699">More...</a><br /></td></tr>
-<tr class="separator:aa4bce8b60882a88f7245c9510af1b699"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a020fd7f827570ef3a9617d758ec50dff"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="class_drv_1_1_gpio_status.html">Drv::GpioStatus</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_read_port.html#a020fd7f827570ef3a9617d758ec50dff">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td></tr>
+<tr class="memdesc:a020fd7f827570ef3a9617d758ec50dff"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_drv_1_1_input_gpio_read_port.html#a020fd7f827570ef3a9617d758ec50dff">More...</a><br /></td></tr>
+<tr class="separator:a020fd7f827570ef3a9617d758ec50dff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -126,12 +126,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6a4dba39acaf8f8b0545e6c2715301df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_read_port.html#a6a4dba39acaf8f8b0545e6c2715301df">init</a> ()</td></tr>
 <tr class="memdesc:a6a4dba39acaf8f8b0545e6c2715301df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_drv_1_1_input_gpio_read_port.html#a6a4dba39acaf8f8b0545e6c2715301df">More...</a><br /></td></tr>
 <tr class="separator:a6a4dba39acaf8f8b0545e6c2715301df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92b491722a8706bcb1f6ac2a25bebde6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_read_port.html#a92b491722a8706bcb1f6ac2a25bebde6">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_gpio_read_port.html#aa4bce8b60882a88f7245c9510af1b699">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:a92b491722a8706bcb1f6ac2a25bebde6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_read_port.html#a92b491722a8706bcb1f6ac2a25bebde6">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_drv_1_1_input_gpio_read_port.html#a020fd7f827570ef3a9617d758ec50dff">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:a92b491722a8706bcb1f6ac2a25bebde6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_drv_1_1_input_gpio_read_port.html#a92b491722a8706bcb1f6ac2a25bebde6">More...</a><br /></td></tr>
 <tr class="separator:a92b491722a8706bcb1f6ac2a25bebde6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a889eb6a03e7a4bf7bff396285a38f7b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_read_port.html#a889eb6a03e7a4bf7bff396285a38f7b8">invoke</a> (<a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td></tr>
-<tr class="memdesc:a889eb6a03e7a4bf7bff396285a38f7b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke a port interface.  <a href="class_drv_1_1_input_gpio_read_port.html#a889eb6a03e7a4bf7bff396285a38f7b8">More...</a><br /></td></tr>
-<tr class="separator:a889eb6a03e7a4bf7bff396285a38f7b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5227c10f982261f83f1cbc3505ed756f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_drv_1_1_gpio_status.html">Drv::GpioStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_input_gpio_read_port.html#a5227c10f982261f83f1cbc3505ed756f">invoke</a> (<a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td></tr>
+<tr class="memdesc:a5227c10f982261f83f1cbc3505ed756f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke a port interface.  <a href="class_drv_1_1_input_gpio_read_port.html#a5227c10f982261f83f1cbc3505ed756f">More...</a><br /></td></tr>
+<tr class="separator:a5227c10f982261f83f1cbc3505ed756f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_input_port_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_input_port_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_input_port_base.html">Fw::InputPortBase</a></td></tr>
 <tr class="memitem:aabcb9bbd8f56dea8d3a03e08f76d0041 inherit pub_methods_class_fw_1_1_input_port_base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_port_base.html#aabcb9bbd8f56dea8d3a03e08f76d0041">setPortNum</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
 <tr class="separator:aabcb9bbd8f56dea8d3a03e08f76d0041 inherit pub_methods_class_fw_1_1_input_port_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,14 +175,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="gpio_read_port_ac_8hpp_source.html#l00024">24</a> of file <a class="el" href="gpio_read_port_ac_8hpp_source.html">GpioReadPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="aa4bce8b60882a88f7245c9510af1b699"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4bce8b60882a88f7245c9510af1b699">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="a020fd7f827570ef3a9617d758ec50dff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a020fd7f827570ef3a9617d758ec50dff">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Drv::InputGpioReadPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td>
+          <td class="memname">typedef <a class="el" href="class_drv_1_1_gpio_status.html">Drv::GpioStatus</a>(* Drv::InputGpioReadPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;state)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -232,7 +232,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="gpio_read_port_ac_8cpp_source.html#l00047">47</a> of file <a class="el" href="gpio_read_port_ac_8cpp_source.html">GpioReadPortAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="gpio_read_port_ac_8cpp_source.html#l00017">17</a> of file <a class="el" href="gpio_read_port_ac_8cpp_source.html">GpioReadPortAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -252,7 +252,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_drv_1_1_input_gpio_read_port.html#aa4bce8b60882a88f7245c9510af1b699">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_drv_1_1_input_gpio_read_port.html#a020fd7f827570ef3a9617d758ec50dff">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>
@@ -272,7 +272,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="gpio_read_port_ac_8cpp_source.html#l00061">61</a> of file <a class="el" href="gpio_read_port_ac_8cpp_source.html">GpioReadPortAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="gpio_read_port_ac_8cpp_source.html#l00031">31</a> of file <a class="el" href="gpio_read_port_ac_8cpp_source.html">GpioReadPortAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -303,18 +303,18 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_fw_1_1_input_port_base.html#a83f2228697eb0e0700a6a287b625578a">Fw::InputPortBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="gpio_read_port_ac_8cpp_source.html#l00055">55</a> of file <a class="el" href="gpio_read_port_ac_8cpp_source.html">GpioReadPortAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="gpio_read_port_ac_8cpp_source.html#l00025">25</a> of file <a class="el" href="gpio_read_port_ac_8cpp_source.html">GpioReadPortAc.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a889eb6a03e7a4bf7bff396285a38f7b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a889eb6a03e7a4bf7bff396285a38f7b8">&#9670;&nbsp;</a></span>invoke()</h2>
+<a id="a5227c10f982261f83f1cbc3505ed756f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5227c10f982261f83f1cbc3505ed756f">&#9670;&nbsp;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Drv::InputGpioReadPort::invoke </td>
+          <td class="memname"><a class="el" href="class_drv_1_1_gpio_status.html">Drv::GpioStatus</a> Drv::InputGpioReadPort::invoke </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_fw_1_1_logic.html">Fw::Logic</a> &amp;&#160;</td>
           <td class="paramname"><em>state</em></td><td>)</td>
@@ -325,7 +325,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Invoke a port interface. </p>
 
-<p class="definition">Definition at line <a class="el" href="gpio_read_port_ac_8cpp_source.html#l00075">75</a> of file <a class="el" href="gpio_read_port_ac_8cpp_source.html">GpioReadPortAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="gpio_read_port_ac_8cpp_source.html#l00045">45</a> of file <a class="el" href="gpio_read_port_ac_8cpp_source.html">GpioReadPortAc.cpp</a>.</p>
 
 </div>
 </div>
