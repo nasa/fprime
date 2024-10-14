@@ -92,6 +92,7 @@ U32 configuration_to_handler_flags(Drv::LinuxGpioDriver::GpioConfiguration confi
         case LinuxGpioDriver::GPIO_INPUT:
         case LinuxGpioDriver::GPIO_INTERRUPT_RISING_EDGE:
         case LinuxGpioDriver::GPIO_INTERRUPT_FALLING_EDGE:
+        case LinuxGpioDriver::GPIO_INTERRUPT_BOTH_RISING_AND_FALLING_EDGES:
             flags = GPIOHANDLE_REQUEST_INPUT;
             break;
         default:
@@ -144,6 +145,7 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_de
     request.fd = -1;
     request.lines = 1;
     request.flags = configuration_to_handler_flags(configuration);
+
     errno = 0;
     PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_LINEHANDLE_IOCTL, &request);
     fd = request.fd;
@@ -203,13 +205,23 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
         this->log_WARNING_HI_OpenChipError(Fw::String(device), Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
         return status;
     }
-    this->log_DIAGNOSTIC_OpenChip(Fw::String(chip_info.name), Fw::String(chip_info.label), chip_info.lines);
     // Check if the GPIO line exists
     if (gpio >= chip_info.lines) {
-        this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio,
+        this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio, Fw::String("Does Not Exist"),
                                           Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
         return status;
     }
+    Fw::String pin_message("Unknown");
+    struct gpioline_info pin_info;
+    (void) ::memset(&pin_info, 0, sizeof pin_info);
+    pin_info.line_offset = gpio;
+    return_value = ioctl(chip_descriptor, GPIO_GET_LINEINFO_IOCTL, &pin_info);
+    if (return_value == 0) {
+        const bool has_consumer = pin_info.consumer[0] != '\0';
+        pin_message.format("%s%s%s", pin_info.name, has_consumer ? " with current consumer " : "",
+			   has_consumer ? pin_info.consumer : "");
+    }
+
     // Set up pin and set file descriptor for it
     PlatformIntType pin_fd = -1;
     switch (configuration) {
@@ -230,9 +242,11 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     }
     // Final status check
     if (status != Os::File::Status::OP_OK) {
-        this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio,
+        this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio, pin_message,
                                           Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
     } else {
+        this->log_DIAGNOSTIC_OpenChip(Fw::String(chip_info.name), Fw::String(chip_info.label),
+			              gpio, pin_message);
         this->m_fd = pin_fd;
         this->m_configuration = configuration;
     }
@@ -244,7 +258,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum
     if (this->m_configuration == GpioConfiguration::GPIO_INPUT) {
         struct gpiohandle_data values;
         (void) ::memset(&values, 0, sizeof values);
-        PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, values);
+        PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &values);
         if (return_value != 0) {
             status = errno_to_gpio_status(errno);
         } else {
@@ -261,7 +275,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNu
         struct gpiohandle_data values;
         (void) ::memset(&values, 0, sizeof values);
         values.values[0] = (state == Fw::Logic::HIGH) ? 1 : 0;
-        PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, values);
+        PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &values);
         if (return_value != 0) {
             status = errno_to_gpio_status(errno);
         } else {
@@ -277,7 +291,6 @@ void LinuxGpioDriver ::pollLoop() {
     static_assert(std::numeric_limits<ssize_t>::max() <= std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
     // Setup poll information
     pollfd file_descriptors[1];
-
     // Loop forever
     while (this->getRunning()) {
         // Setup polling

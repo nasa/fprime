@@ -27,11 +27,11 @@ Drv::GpioStatus LinuxGpioDriver ::start(const FwSizeType priority,
                                         const PlatformUIntType identifier) {
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration < GpioConfiguration::MAX_GPIO_CONFIGURATION &&
-        this->m_configuration >= GpioConfiguration::GPIO_INTERRUPT_FALLING_EDGE) {
+        this->m_configuration >= GpioConfiguration::GPIO_INTERRUPT_RISING_EDGE) {
         status = Drv::GpioStatus::OP_OK;
         {
             Os::ScopeLock lock(m_lock);
-            this->m_running = false;
+            this->m_running = true;
         }
         Fw::String name;
         name.format("%s.interrupt", this->getObjName());

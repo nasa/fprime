@@ -371,6 +371,7 @@ gpio
 gpiochip
 gpioevent
 gpiohandle
+gpioline
 Graphviz
 grayscales
 grnd
