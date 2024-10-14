@@ -27,9 +27,9 @@ struct StaticData {
 
     //! Last function called
     LastFn lastCalled = NONE_FN;
-    //Os::Task::Arguments arguments();
+
     Os::Task::SuspensionType suspensionType;
-    Fw::Time delay;
+    Fw::TimeInterval delay;
 
     Os::Task::Status delayStatus = Os::Task::Status::OP_OK;
     Os::Task::Status joinStatus = Os::Task::Status::OP_OK;

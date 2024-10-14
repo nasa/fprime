@@ -131,7 +131,7 @@ namespace Drv {
   void LinuxGpioDriverTester ::
     from_intOut_handler(
         const NATIVE_INT_TYPE portNum,
-        Svc::TimerVal &cycleStart
+        Os::RawTime &cycleStart
     )
   {
     timer.stop();

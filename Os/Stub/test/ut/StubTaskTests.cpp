@@ -116,7 +116,7 @@ TEST_F(Interface, GetHandle) {
 TEST_F(Interface, Delay) {
     Os::Task task;
     StaticData::data.delayStatus = Os::Task::Status::DELAY_ERROR;
-    ASSERT_EQ(Os::Task::delay(Fw::Time(0, 1)), StaticData::data.delayStatus);
+    ASSERT_EQ(Os::Task::delay(Fw::TimeInterval(0, 1)), StaticData::data.delayStatus);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::DELAY_FN);
 }
 

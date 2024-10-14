@@ -50,7 +50,7 @@ namespace Svc {
         // we can cause an overrun by calling the cycle port in the middle of the rate
         // group execution
         if (this->m_causeOverrun) {
-            TimerVal zero(0,0);
+            Os::RawTime zero;
             this->invoke_to_CycleIn(0,zero);
             this->m_causeOverrun = false;
         }
@@ -78,15 +78,15 @@ namespace Svc {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_RateGroupStarted_SIZE(1);
 
-        Svc::TimerVal timer;
-        timer.take();
+        Os::RawTime time;
+        time.now();
 
         // clear port call log
         this->clearPortCalls();
         // verify cycle start flag is NOT set
         ASSERT_FALSE(this->m_impl.m_cycleStarted);
-        // call active rate group with timer val
-        this->invoke_to_CycleIn(0,timer);
+        // call active rate group with time val
+        this->invoke_to_CycleIn(0,time);
         // verify cycle started flag is set
         ASSERT_TRUE(this->m_impl.m_cycleStarted);
         // call doDispatch() for ActiveRateGroup
@@ -123,7 +123,8 @@ namespace Svc {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_RateGroupStarted_SIZE(1);
 
-        Svc::TimerVal timer(1,2);
+        // NOTE: The value of the timestamp is not relevant to this test ?
+        Os::RawTime zero_time;
 
         // run some more cycles to verify that event is sent and telemetry is updated
         for (NATIVE_INT_TYPE cycle = 0; cycle < ACTIVE_RATE_GROUP_OVERRUN_THROTTLE; cycle++) {
@@ -142,7 +143,7 @@ namespace Svc {
             // set flag to cause overrun
             this->m_causeOverrun = true;
             // call active rate group with timer val
-            this->invoke_to_CycleIn(0,timer);
+            this->invoke_to_CycleIn(0,zero_time);
             // verify cycle started flag is set
             ASSERT_TRUE(this->m_impl.m_cycleStarted);
             // call doDispatch() for ActiveRateGroup
@@ -189,7 +190,7 @@ namespace Svc {
         // set flag to cause overrun
         this->m_causeOverrun = true;
         // call active rate group with timer val
-        this->invoke_to_CycleIn(0,timer);
+        this->invoke_to_CycleIn(0,zero_time);
         // verify cycle started flag is set from previous cycle slip
         ASSERT_TRUE(this->m_impl.m_cycleStarted);
         // call doDispatch() for ActiveRateGroup
@@ -233,7 +234,7 @@ namespace Svc {
         // set flag to prevent overrun
         this->m_causeOverrun = false;
         // call active rate group with timer val
-        this->invoke_to_CycleIn(0,timer);
+        this->invoke_to_CycleIn(0,zero_time);
         // verify cycle started flag is set from previous cycle slip
         ASSERT_TRUE(this->m_impl.m_cycleStarted);
         // call doDispatch() for ActiveRateGroup
@@ -271,7 +272,7 @@ namespace Svc {
         // set flag to cause overrun
         this->m_causeOverrun = true;
         // call active rate group with timer val
-        this->invoke_to_CycleIn(0,timer);
+        this->invoke_to_CycleIn(0,zero_time);
         // verify cycle started flag is set from port call
         ASSERT_TRUE(this->m_impl.m_cycleStarted);
         // call doDispatch() for ActiveRateGroup
