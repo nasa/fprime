@@ -55,7 +55,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNu
 void LinuxGpioDriver ::pollLoop() {
     // Loop forever
     while (this->getRunning()) {
-        Os::Task::delay(Fw::Time(GPIO_POLL_TIMEOUT / 1000, (GPIO_POLL_TIMEOUT % 1000) * 1000));
+        Os::Task::delay(Fw::TimeInterval(GPIO_POLL_TIMEOUT / 1000, (GPIO_POLL_TIMEOUT % 1000) * 1000));
     }
 }
 

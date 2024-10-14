@@ -294,7 +294,7 @@ void LinuxGpioDriver ::pollLoop() {
             FwSizeType read_bytes = ::read(this->m_fd, &event_data, sizeof event_data);
             if (read_bytes == sizeof event_data) {
                 // TODO: raw time from Thomas
-                Svc::TimerVal timestamp;
+                Os::RawTime timestamp;
                 timestamp.take();
                 this->gpioInterrupt_out(0, timestamp);
             }
