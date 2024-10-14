@@ -35,7 +35,9 @@ struct UsedTotal {
 
 }
 
-//! \brief Initialization function for the OSAL layer
+//! \brief Initialization of the OSAL layer
+//!
+//! - Initialize all singletons for the OSAL modules that use the singleton pattern
 void init();
 
 }  // namespace Os
