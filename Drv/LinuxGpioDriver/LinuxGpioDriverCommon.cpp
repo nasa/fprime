@@ -19,7 +19,7 @@ namespace Drv {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-LinuxGpioDriver ::LinuxGpioDriver(const char* const compName) : LinuxGpioDriverComponentBase(compName), m_fd(-1) {}
+LinuxGpioDriver ::LinuxGpioDriver(const char* const compName) : LinuxGpioDriverComponentBase(compName) {}
 
 Drv::GpioStatus LinuxGpioDriver ::start(const FwSizeType priority,
                                         const FwSizeType stackSize,
