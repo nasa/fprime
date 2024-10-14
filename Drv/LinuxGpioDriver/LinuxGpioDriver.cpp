@@ -277,6 +277,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNu
 void LinuxGpioDriver ::pollLoop() {
     static_assert(GPIO_POLL_TIMEOUT < std::numeric_limits<int>::max(), "Poll timeout would overflow");
     static_assert(sizeof(struct gpioevent_data) < std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
+    static_assert(std::numeric_limits<ssize_t>::max() <= std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
     // Setup poll information
     pollfd file_descriptors[1];
 
@@ -291,7 +292,7 @@ void LinuxGpioDriver ::pollLoop() {
         // Check for some file descriptor to be ready
         if (status > 0) {
             struct gpioevent_data event_data;
-            FwSizeType read_bytes = ::read(this->m_fd, &event_data, sizeof event_data);
+            FwSizeType read_bytes = static_cast<FwSizeType>(::read(this->m_fd, &event_data, sizeof event_data));
             if (read_bytes == sizeof event_data) {
                 Os::RawTime timestamp;
                 timestamp.now();
