@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#ifndef LinuxGpioDriver_HPP
-#define LinuxGpioDriver_HPP
+#ifndef DRV_LINUX_GPIO_DRIVER_HPP
+#define DRV_LINUX_GPIO_DRIVER_HPP
 
 #include <Os/File.hpp>
 #include <Os/Mutex.hpp>
@@ -137,4 +137,4 @@ class LinuxGpioDriver : public LinuxGpioDriverComponentBase {
 
 }  // end namespace Drv
 
-#endif
+#endif  // DRV_LINUX_GPIO_DRIVER_HPP
