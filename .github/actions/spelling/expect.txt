@@ -120,6 +120,7 @@ changeme
 CHANNELID
 CHANS
 Chieu
+CHIPINFO
 CHK
 CHNG
 CIRCULARSTATE
@@ -284,6 +285,7 @@ EVENTARRAY
 EVENTBOOL
 EVENTID
 eventname
+eventflags
 EVENTPRIMITIVE
 evr
 evt
@@ -366,6 +368,10 @@ Gorang
 GPGGA
 GPINT
 gpio
+gpiochip
+gpioevent
+gpiohandle
+gpioline
 Graphviz
 grayscales
 grnd
@@ -376,6 +382,7 @@ gtest
 gtimeout
 Guire
 handcoded
+handleflags
 hardtoaccess
 hashvalue
 hdr
@@ -491,7 +498,10 @@ libiconv
 LIBLOC
 lic
 lindent
+LINEEVENT
+LINEHANDLE
 linelength
+lineoffset
 lineroo
 listdir
 Listst
@@ -882,7 +892,6 @@ subhist
 subhistory
 subseconds
 subtargets
-subtopologies
 subtopology
 suppr
 suseconds
