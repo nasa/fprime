@@ -142,6 +142,7 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_de
     Os::File::Status status = Os::File::OP_OK;
     // Set up the GPIO request
     struct gpiohandle_request request;
+    ::memset(&request, 0, sizeof request);
     request.lineoffsets[0] = gpio;
     Fw::StringUtils::string_copy(request.consumer_label, this->getObjName(),
                                  static_cast<FwSizeType>(sizeof request.consumer_label));
@@ -166,6 +167,7 @@ Os::File::Status LinuxGpioDriver ::setupLineEvent(const PlatformIntType chip_des
     Os::File::Status status = Os::File::OP_OK;
     // Set up the GPIO request
     struct gpioevent_request event;
+    ::memset(&event, 0, sizeof event);
     event.lineoffset = gpio;
     Fw::StringUtils::string_copy(event.consumer_label, this->getObjName(),
                                  static_cast<FwSizeType>(sizeof event.consumer_label));
@@ -200,6 +202,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     PlatformIntType chip_descriptor =
         reinterpret_cast<Os::Posix::File::PosixFileHandle*>(chip_file.getHandle())->m_file_descriptor;
     struct gpiochip_info chip_info;
+    ::memset(&chip_info, 0, sizeof chip_info);
     PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_CHIPINFO_IOCTL, &chip_info);
     if (return_value != 0) {
         status = errno_to_file_status(errno);
@@ -246,6 +249,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration == GpioConfiguration::GPIO_INPUT) {
         struct gpiohandle_data values;
+        ::memset(&values, 0, sizeof values);
         PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, values);
         if (return_value != 0) {
             status = errno_to_gpio_status(errno);
@@ -260,7 +264,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNu
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration == GpioConfiguration::GPIO_OUTPUT) {
         struct gpiohandle_data values;
-
+        ::memset(&values, 0, sizeof values);
         values.values[0] = (state == Fw::Logic::HIGH) ? 1 : 0;
         PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, values);
         if (return_value != 0) {
