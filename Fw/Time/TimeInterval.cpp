@@ -124,23 +124,16 @@ namespace Fw {
         const TimeInterval& t2 //!< TimeInterval t2
     )
     {
-      const TimeInterval* minuend;
-      const TimeInterval* subtrahend;
-      if (t1 > t2) {
-          minuend = &t1;
-          subtrahend = &t2;
-      } else {
-          minuend = &t2;
-          subtrahend = &t1;
-      }
+      const TimeInterval& minuend = (t1 > t2) ? t1 : t2;
+      const TimeInterval& subtrahend = (t1 > t2) ? t2 : t1;
 
-      U32 seconds = minuend->getSeconds() - subtrahend->getSeconds();
+      U32 seconds = minuend.getSeconds() - subtrahend.getSeconds();
       U32 uSeconds;
-      if (subtrahend->getUSeconds() > minuend->getUSeconds()) {
+      if (subtrahend.getUSeconds() > minuend.getUSeconds()) {
           seconds--;
-          uSeconds = minuend->getUSeconds() + 1000000 - subtrahend->getUSeconds();
+          uSeconds = minuend.getUSeconds() + 1000000 - subtrahend.getUSeconds();
       } else {
-          uSeconds = minuend->getUSeconds() - subtrahend->getUSeconds();
+          uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
       }
       return TimeInterval(seconds, static_cast<U32>(uSeconds));
     }
