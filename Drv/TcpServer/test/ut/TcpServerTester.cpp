@@ -114,7 +114,7 @@ bool TcpServerTester::wait_on_change(bool open, U32 iterations) {
         if (open == this->component.isOpened()) {
             return true;
         }
-        Os::Task::delay(Fw::Time(0, 10000));
+        Os::Task::delay(Fw::TimeInterval(0, 10000));
     }
     return false;
 }
@@ -125,7 +125,7 @@ bool TcpServerTester::wait_on_started(bool open, U32 iterations) {
         if (open == this->component.isStarted()) {
             return true;
         }
-        Os::Task::delay(Fw::Time(0, 10000));
+        Os::Task::delay(Fw::TimeInterval(0, 10000));
     }
     return false;
 }

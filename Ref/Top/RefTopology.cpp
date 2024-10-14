@@ -173,7 +173,7 @@ void setupTopology(const TopologyState& state) {
 Os::Mutex cycleLock;
 volatile bool cycleFlag = true;
 
-void startSimulatedCycle(Fw::Time interval) {
+void startSimulatedCycle(Fw::TimeInterval interval) {
     cycleLock.lock();
     bool cycling = cycleFlag;
     cycleLock.unLock();

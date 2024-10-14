@@ -52,12 +52,12 @@ namespace Svc {
         this->log_DIAGNOSTIC_RateGroupStarted();
     }
 
-    void ActiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void ActiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
 
         // Make sure it's been configured
         FW_ASSERT(this->m_numContexts);
 
-        TimerVal end;
+        Os::RawTime endTime;
 
         this->m_cycleStarted = false;
 
@@ -68,15 +68,18 @@ namespace Svc {
             }
         }
 
-        // grab timer for end of cycle
-        end.take();
+        // grab timer for endTime of cycle
+        endTime.now();
 
         // get rate group execution time
-        U32 cycle_time = end.diffUSec(cycleStart);
+        U32 cycleTime;
+        // Cast to void as the only possible error is overflow, which we can't handle other
+        // than capping cycleTime to max value of U32 (which is done in getDiffUsec anyways)
+        (void) endTime.getDiffUsec(cycleStart, cycleTime);
 
         // check to see if the time has exceeded the previous maximum
-        if (cycle_time > this->m_maxTime) {
-            this->m_maxTime = cycle_time;
+        if (cycleTime > this->m_maxTime) {
+            this->m_maxTime = cycleTime;
         }
 
         // update cycle telemetry
@@ -103,7 +106,7 @@ namespace Svc {
 
     }
 
-    void ActiveRateGroup::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void ActiveRateGroup::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
         // set flag to indicate cycle has started. Check in thread for overflow.
         this->m_cycleStarted = true;
     }

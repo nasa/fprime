@@ -23,12 +23,13 @@ register_fprime_module(Os_Posix_Shared)
 
 # Set up Posix implementations
 add_fprime_supplied_os_module("File;FileSystem;Directory" Posix Os_Posix_Shared)
-add_fprime_supplied_os_module(Console Posix)
-add_fprime_supplied_os_module(Task Posix Os_Posix_Shared Fw_Time)
+add_fprime_supplied_os_module("Console" Posix)
+add_fprime_supplied_os_module("Task" Posix Os_Posix_Shared Fw_Time)
 add_fprime_supplied_os_module("Mutex;ConditionVariable" Posix Os_Posix_Shared)
+add_fprime_supplied_os_module("RawTime" Posix Os_Posix_Shared)
 
 # -----------------------------------------
-### Os/File/Posix Section
+### Os/File/Posix Test Section
 # -----------------------------------------
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/CommonTests.cpp"
@@ -94,3 +95,13 @@ set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixConditionTests.cpp"
 )
 add_fprime_os_test(PosixConditionTests "${UT_SOURCE_FILES}" "Os_Mutex\;Os_Mutex_Posix")
+
+# -----------------------------------------
+### Os/RawTime/Posix Test Section
+# -----------------------------------------
+set(UT_SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/rawtime/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/rawtime/RawTimeRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixRawTimeTests.cpp"
+)
+add_fprime_os_test(PosixRawTimeTest "${UT_SOURCE_FILES}" "Os_RawTime\;Os_RawTime_Posix")

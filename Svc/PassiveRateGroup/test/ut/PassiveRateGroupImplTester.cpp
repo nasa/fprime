@@ -55,15 +55,15 @@ void PassiveRateGroupTester::runNominal(NATIVE_INT_TYPE contexts[],
     // clear events
     this->clearTlm();
 
-    Svc::TimerVal timer;
-    timer.take();
+    Os::RawTime timestamp;
+    timestamp.now();
 
     // clear port call log
     this->clearPortCalls();
 
     REQUIREMENT("FPRIME-PRG-001");
-    // call active rate group with timer val
-    this->invoke_to_CycleIn(0, timer);
+    // call active rate group with timestamp val
+    this->invoke_to_CycleIn(0, timestamp);
 
 
     // check calls

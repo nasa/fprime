@@ -9,6 +9,7 @@
 #include <Os/Directory.hpp>
 #include <Os/Cpu.hpp>
 #include <Os/Memory.hpp>
+#include <Os/RawTime.hpp>
 
 
 TEST(Stub, File) {
@@ -49,6 +50,10 @@ TEST(Stub, Cpu) {
 
 TEST(Stub, Memory) {
     Os::Memory::getSingleton();
+}
+
+TEST(Stub, RawTime) {
+    Os::RawTime _;
 }
 
 int main(int argc, char** argv) {

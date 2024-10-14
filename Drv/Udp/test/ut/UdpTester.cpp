@@ -128,7 +128,7 @@ bool UdpTester::wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations)
         if (open == this->component.isOpened()) {
             return true;
         }
-        Os::Task::delay(Fw::Time(0, 10000));
+        Os::Task::delay(Fw::TimeInterval(0, 10000));
     }
     return false;
 }

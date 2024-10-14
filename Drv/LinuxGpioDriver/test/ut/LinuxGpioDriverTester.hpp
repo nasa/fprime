@@ -62,7 +62,7 @@ namespace Drv {
       //!
       void from_intOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Svc::TimerVal &cycleStart /*!< Cycle start timer value*/
+          Os::RawTime &cycleStart /*!< Cycle start timer value*/
       );
 
     private:

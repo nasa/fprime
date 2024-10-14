@@ -38,8 +38,8 @@ void PassiveRateGroup::configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE num
 }
 
 
-void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
-    TimerVal end;
+void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
+    Os::RawTime endTime;
     FW_ASSERT(this->m_numContexts);
 
     // invoke any members of the rate group
@@ -49,18 +49,20 @@ void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& c
         }
     }
 
-    // grab timer for end of cycle
-    end.take();
+    // grab timer for endTime of cycle
+    endTime.now();
 
     // get rate group execution time
-    U32 cycle_time = end.diffUSec(cycleStart);
-
+    U32 cycleTime;
+    // Cast to void as the only possible error is overflow, which we can't handle other
+    // than capping cycleTime to max value of U32 (which is done in getDiffUsec anyways)
+    (void) endTime.getDiffUsec(cycleStart, cycleTime);
     // check to see if the time has exceeded the previous maximum
-    if (cycle_time > this->m_maxTime) {
-        this->m_maxTime = cycle_time;
+    if (cycleTime > this->m_maxTime) {
+        this->m_maxTime = cycleTime;
     }
     this->tlmWrite_MaxCycleTime(this->m_maxTime);
-    this->tlmWrite_CycleTime(cycle_time);
+    this->tlmWrite_CycleTime(cycleTime);
     this->tlmWrite_CycleCount(++this->m_cycles);
 }
 

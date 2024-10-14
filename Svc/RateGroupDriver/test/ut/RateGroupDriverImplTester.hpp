@@ -24,7 +24,7 @@ namespace Svc {
 
         private:
 
-            void from_CycleOut_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart);
+            void from_CycleOut_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart);
 
             Svc::RateGroupDriver& m_impl;
 

@@ -383,12 +383,12 @@ namespace Drv {
         }
 
         // call interrupt ports
-        Svc::TimerVal timerVal;
-        timerVal.take();
+        Os::RawTime timestamp;
+        timestamp.now();
 
         for (NATIVE_INT_TYPE port = 0; port < compPtr->getNum_intOut_OutputPorts(); port++) {
             if (compPtr->isConnected_intOut_OutputPort(port)) {
-                compPtr->intOut_out(port,timerVal);
+                compPtr->intOut_out(port,timestamp);
             }
         }
 

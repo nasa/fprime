@@ -4,7 +4,14 @@ module Fw {
 
   @ Time port
   port Time(
-             ref $time: Fw.Time @< The U32 cmd argument
+             ref $time: Fw.Time @< Reference to Time object
+           )
+
+  type TimeInterval
+
+  @ Time interval port
+  port TimeInterval(
+      ref timeInterval: Fw.TimeInterval @< Reference to TimeInterval object
            )
 
 }
