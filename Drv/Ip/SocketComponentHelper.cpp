@@ -38,13 +38,18 @@ void SocketComponentHelper::start(const Fw::StringBase &name,
 }
 
 SocketIpStatus SocketComponentHelper::startup() {
+    this->m_lock.lock();
     this->m_started = true;
-    return this->getSocketHandler().startup();
+    SocketIpStatus status = this->getSocketHandler().startup();
+    this->m_lock.unlock();
+    return status;
 }
 
 bool SocketComponentHelper::isStarted() {
+    this->m_lock.lock();
     bool is_started = false;
     is_started = this->m_started;
+    this->m_lock.unlock();
     return is_started;
 }
 
@@ -160,6 +165,24 @@ void SocketComponentHelper::readTask(void* pointer) {
     FW_ASSERT(pointer);
     SocketIpStatus status = SOCK_SUCCESS;
     SocketComponentHelper* self = reinterpret_cast<SocketComponentHelper*>(pointer);
+    // Start-up loop, looking to ensure device started
+    do {
+        // Prevent transmission before connection, or after a disconnect
+        if ((not self->isStarted()) and (not self->m_stop)) {
+            status = self->startup();
+            if(status != SOCK_SUCCESS) {
+                Fw::Logger::log(
+                    "[WARNING] Failed to start port with status %d and errno %d\n",
+                    status,
+                    errno);
+                (void) Os::Task::delay(SOCKET_RETRY_INTERVAL);
+                continue;
+            }
+        }
+    } while (not self->m_stop &&
+     (status == SOCK_SUCCESS || status == SOCK_INTERRUPTED_TRY_AGAIN || self->m_reconnect));
+
+    // Open and send loop
     do {
         // Prevent transmission before connection, or after a disconnect
         if ((not self->isOpened()) and (not self->m_stop)) {
