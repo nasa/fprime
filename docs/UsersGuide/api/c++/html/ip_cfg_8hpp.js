@@ -9,5 +9,5 @@ var _ip_cfg_8hpp =
       [ "SOCKET_MAX_ITERATIONS", "ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74af88a2c7e963d596e700c3a0a933abd79", null ],
       [ "SOCKET_MAX_HOSTNAME_SIZE", "ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74a7aeda4b8b71dde2ec8930c45caa6da96", null ]
     ] ],
-    [ "SOCKET_RETRY_INTERVAL", "ip_cfg_8hpp.html#a8799feaa1732bdef89c1cbedf7c6480e", null ]
+    [ "SOCKET_RETRY_INTERVAL", "ip_cfg_8hpp.html#a65a79e70f062c4c03e93491d2fd81e9b", null ]
 ];

@@ -21,6 +21,7 @@ var dir_4df893a225f727201a6771996bba0a27 =
     [ "DefaultMemory.cpp", "stub_2_default_memory_8cpp.html", null ],
     [ "DefaultMutex.cpp", "stub_2_default_mutex_8cpp.html", null ],
     [ "DefaultQueue.cpp", "default_queue_8cpp.html", null ],
+    [ "DefaultRawTime.cpp", "stub_2_default_raw_time_8cpp.html", null ],
     [ "DefaultTask.cpp", "stub_2_default_task_8cpp.html", null ],
     [ "Directory.cpp", "stub_2_directory_8cpp.html", null ],
     [ "Directory.hpp", "stub_2_directory_8hpp.html", [
@@ -51,6 +52,11 @@ var dir_4df893a225f727201a6771996bba0a27 =
     [ "Queue.hpp", "os_2_stub_2_queue_8hpp.html", [
       [ "StubQueueHandle", "struct_os_1_1_stub_1_1_queue_1_1_stub_queue_handle.html", null ],
       [ "StubQueue", "class_os_1_1_stub_1_1_queue_1_1_stub_queue.html", "class_os_1_1_stub_1_1_queue_1_1_stub_queue" ]
+    ] ],
+    [ "RawTime.cpp", "stub_2_raw_time_8cpp.html", null ],
+    [ "RawTime.hpp", "stub_2_raw_time_8hpp.html", [
+      [ "StubRawTimeHandle", "struct_os_1_1_stub_1_1_raw_time_1_1_stub_raw_time_handle.html", null ],
+      [ "StubRawTime", "class_os_1_1_stub_1_1_raw_time_1_1_stub_raw_time.html", "class_os_1_1_stub_1_1_raw_time_1_1_stub_raw_time" ]
     ] ],
     [ "Task.cpp", "stub_2_task_8cpp.html", null ],
     [ "Task.hpp", "stub_2_task_8hpp.html", [

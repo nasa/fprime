@@ -6,7 +6,6 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "Models", "dir_0e548070549289538222d2105f4d6175.html", "dir_0e548070549289538222d2105f4d6175" ],
     [ "Posix", "dir_5d2d44be9d89e5af4b3ae87b5b477c1c.html", "dir_5d2d44be9d89e5af4b3ae87b5b477c1c" ],
     [ "Stub", "dir_4df893a225f727201a6771996bba0a27.html", "dir_4df893a225f727201a6771996bba0a27" ],
-    [ "X86", "dir_71e76e8b77715942fc3d0db018d76ead.html", "dir_71e76e8b77715942fc3d0db018d76ead" ],
     [ "Condition.cpp", "condition_8cpp.html", null ],
     [ "Condition.hpp", "condition_8hpp.html", [
       [ "ConditionVariableHandle", "class_os_1_1_condition_variable_handle.html", null ],
@@ -44,11 +43,10 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
       [ "FileSystemInterface", "class_os_1_1_file_system_interface.html", "class_os_1_1_file_system_interface" ],
       [ "FileSystem", "class_os_1_1_file_system.html", "class_os_1_1_file_system" ]
     ] ],
+    [ "IntervalTimer.cpp", "interval_timer_8cpp.html", null ],
     [ "IntervalTimer.hpp", "interval_timer_8hpp.html", [
-      [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ],
-      [ "RawTime", "struct_os_1_1_interval_timer_1_1_raw_time.html", "struct_os_1_1_interval_timer_1_1_raw_time" ]
+      [ "IntervalTimer", "class_os_1_1_interval_timer.html", "class_os_1_1_interval_timer" ]
     ] ],
-    [ "IntervalTimerCommon.cpp", "interval_timer_common_8cpp.html", null ],
     [ "Memory.cpp", "memory_8cpp.html", null ],
     [ "Memory.hpp", "memory_8hpp.html", [
       [ "MemoryHandle", "class_os_1_1_memory_handle.html", null ],
@@ -73,6 +71,12 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     ] ],
     [ "QueueString.hpp", "queue_string_8hpp.html", [
       [ "QueueString", "class_os_1_1_queue_string.html", "class_os_1_1_queue_string" ]
+    ] ],
+    [ "RawTime.cpp", "raw_time_8cpp.html", null ],
+    [ "RawTime.hpp", "raw_time_8hpp.html", [
+      [ "RawTimeHandle", "struct_os_1_1_raw_time_handle.html", null ],
+      [ "RawTimeInterface", "class_os_1_1_raw_time_interface.html", "class_os_1_1_raw_time_interface" ],
+      [ "RawTime", "class_os_1_1_raw_time.html", "class_os_1_1_raw_time" ]
     ] ],
     [ "Task.cpp", "task_8cpp.html", null ],
     [ "Task.hpp", "task_8hpp.html", [

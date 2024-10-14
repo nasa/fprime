@@ -92,6 +92,8 @@ var annotated_dup =
       [ "OutputPrmGetPort", "class_fw_1_1_output_prm_get_port.html", "class_fw_1_1_output_prm_get_port" ],
       [ "InputPrmSetPort", "class_fw_1_1_input_prm_set_port.html", "class_fw_1_1_input_prm_set_port" ],
       [ "OutputPrmSetPort", "class_fw_1_1_output_prm_set_port.html", "class_fw_1_1_output_prm_set_port" ],
+      [ "InputTimeIntervalPort", "class_fw_1_1_input_time_interval_port.html", "class_fw_1_1_input_time_interval_port" ],
+      [ "OutputTimeIntervalPort", "class_fw_1_1_output_time_interval_port.html", "class_fw_1_1_output_time_interval_port" ],
       [ "InputTimePort", "class_fw_1_1_input_time_port.html", "class_fw_1_1_input_time_port" ],
       [ "OutputTimePort", "class_fw_1_1_output_time_port.html", "class_fw_1_1_output_time_port" ],
       [ "InputTlmGetPort", "class_fw_1_1_input_tlm_get_port.html", "class_fw_1_1_input_tlm_get_port" ],
@@ -136,6 +138,7 @@ var annotated_dup =
       [ "SerializableFile", "class_fw_1_1_serializable_file.html", "class_fw_1_1_serializable_file" ],
       [ "SmSignalBuffer", "class_fw_1_1_sm_signal_buffer.html", "class_fw_1_1_sm_signal_buffer" ],
       [ "Time", "class_fw_1_1_time.html", "class_fw_1_1_time" ],
+      [ "TimeInterval", "class_fw_1_1_time_interval.html", "class_fw_1_1_time_interval" ],
       [ "TlmBuffer", "class_fw_1_1_tlm_buffer.html", "class_fw_1_1_tlm_buffer" ],
       [ "TlmPacket", "class_fw_1_1_tlm_packet.html", "class_fw_1_1_tlm_packet" ],
       [ "TlmString", "class_fw_1_1_tlm_string.html", "class_fw_1_1_tlm_string" ],
@@ -211,6 +214,10 @@ var annotated_dup =
           [ "PosixMutexHandle", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle.html", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle" ],
           [ "PosixMutex", "class_os_1_1_posix_1_1_mutex_1_1_posix_mutex.html", "class_os_1_1_posix_1_1_mutex_1_1_posix_mutex" ]
         ] ],
+        [ "RawTime", "namespace_os_1_1_posix_1_1_raw_time.html", [
+          [ "PosixRawTimeHandle", "struct_os_1_1_posix_1_1_raw_time_1_1_posix_raw_time_handle.html", "struct_os_1_1_posix_1_1_raw_time_1_1_posix_raw_time_handle" ],
+          [ "PosixRawTime", "class_os_1_1_posix_1_1_raw_time_1_1_posix_raw_time.html", "class_os_1_1_posix_1_1_raw_time_1_1_posix_raw_time" ]
+        ] ],
         [ "Task", "namespace_os_1_1_posix_1_1_task.html", [
           [ "PosixTaskHandle", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle.html", "struct_os_1_1_posix_1_1_task_1_1_posix_task_handle" ],
           [ "PosixTask", "class_os_1_1_posix_1_1_task_1_1_posix_task.html", "class_os_1_1_posix_1_1_task_1_1_posix_task" ]
@@ -251,6 +258,10 @@ var annotated_dup =
           [ "StubQueueHandle", "struct_os_1_1_stub_1_1_queue_1_1_stub_queue_handle.html", null ],
           [ "StubQueue", "class_os_1_1_stub_1_1_queue_1_1_stub_queue.html", "class_os_1_1_stub_1_1_queue_1_1_stub_queue" ]
         ] ],
+        [ "RawTime", "namespace_os_1_1_stub_1_1_raw_time.html", [
+          [ "StubRawTimeHandle", "struct_os_1_1_stub_1_1_raw_time_1_1_stub_raw_time_handle.html", null ],
+          [ "StubRawTime", "class_os_1_1_stub_1_1_raw_time_1_1_stub_raw_time.html", "class_os_1_1_stub_1_1_raw_time_1_1_stub_raw_time" ]
+        ] ],
         [ "Task", "namespace_os_1_1_stub_1_1_task.html", [
           [ "StubTaskHandle", "class_os_1_1_stub_1_1_task_1_1_stub_task_handle.html", null ],
           [ "StubTask", "class_os_1_1_stub_1_1_task_1_1_stub_task.html", "class_os_1_1_stub_1_1_task_1_1_stub_task" ]
@@ -263,6 +274,7 @@ var annotated_dup =
       [ "FileSystemStatus", "class_os_1_1_file_system_status.html", "class_os_1_1_file_system_status" ],
       [ "GenericStatus", "class_os_1_1_generic_status.html", "class_os_1_1_generic_status" ],
       [ "MutexStatus", "class_os_1_1_mutex_status.html", "class_os_1_1_mutex_status" ],
+      [ "RawTimeStatus", "class_os_1_1_raw_time_status.html", "class_os_1_1_raw_time_status" ],
       [ "TaskStatus", "class_os_1_1_task_status.html", "class_os_1_1_task_status" ],
       [ "ConditionVariableHandle", "class_os_1_1_condition_variable_handle.html", null ],
       [ "ConditionVariableInterface", "class_os_1_1_condition_variable_interface.html", "class_os_1_1_condition_variable_interface" ],
@@ -295,6 +307,9 @@ var annotated_dup =
       [ "Queue", "class_os_1_1_queue.html", "class_os_1_1_queue" ],
       [ "QueueRegistry", "class_os_1_1_queue_registry.html", "class_os_1_1_queue_registry" ],
       [ "QueueString", "class_os_1_1_queue_string.html", "class_os_1_1_queue_string" ],
+      [ "RawTimeHandle", "struct_os_1_1_raw_time_handle.html", null ],
+      [ "RawTimeInterface", "class_os_1_1_raw_time_interface.html", "class_os_1_1_raw_time_interface" ],
+      [ "RawTime", "class_os_1_1_raw_time.html", "class_os_1_1_raw_time" ],
       [ "TaskHandle", "class_os_1_1_task_handle.html", null ],
       [ "TaskInterface", "class_os_1_1_task_interface.html", "class_os_1_1_task_interface" ],
       [ "Task", "class_os_1_1_task.html", "class_os_1_1_task" ],
@@ -416,7 +431,6 @@ var annotated_dup =
       [ "ComQueue", "class_svc_1_1_com_queue.html", "class_svc_1_1_com_queue" ],
       [ "ComSplitter", "class_svc_1_1_com_splitter.html", "class_svc_1_1_com_splitter" ],
       [ "ComStub", "class_svc_1_1_com_stub.html", "class_svc_1_1_com_stub" ],
-      [ "TimerVal", "class_svc_1_1_timer_val.html", "class_svc_1_1_timer_val" ],
       [ "Deframer", "class_svc_1_1_deframer.html", "class_svc_1_1_deframer" ],
       [ "DpCatalog", "class_svc_1_1_dp_catalog.html", "class_svc_1_1_dp_catalog" ],
       [ "DpManager", "class_svc_1_1_dp_manager.html", "class_svc_1_1_dp_manager" ],
@@ -472,5 +486,6 @@ var annotated_dup =
     [ "PassiveRateGroupImpl", "class_passive_rate_group_impl.html", null ],
     [ "SHA256state_st", "struct_s_h_a256state__st.html", "struct_s_h_a256state__st" ],
     [ "SHA512state_st", "struct_s_h_a512state__st.html", "struct_s_h_a512state__st" ],
-    [ "SHAstate_st", "struct_s_h_astate__st.html", "struct_s_h_astate__st" ]
+    [ "SHAstate_st", "struct_s_h_astate__st.html", "struct_s_h_astate__st" ],
+    [ "TimeInterval", "class_time_interval.html", null ]
 ];

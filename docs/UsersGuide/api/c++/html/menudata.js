@@ -261,6 +261,7 @@ var menudata={children:[
 {text:"n",url:"globals_type.html#index_n"},
 {text:"p",url:"globals_type.html#index_p"},
 {text:"q",url:"globals_type.html#index_q"},
+{text:"r",url:"globals_type.html#index_r"},
 {text:"s",url:"globals_type.html#index_s"},
 {text:"t",url:"globals_type.html#index_t"},
 {text:"u",url:"globals_type.html#index_u"}]},
@@ -290,4 +291,5 @@ var menudata={children:[
 {text:"r",url:"globals_defs_r.html#index_r"},
 {text:"s",url:"globals_defs_s.html#index_s"},
 {text:"u",url:"globals_defs_u.html#index_u"},
-{text:"v",url:"globals_defs_v.html#index_v"}]}]}]}]}
+{text:"v",url:"globals_defs_v.html#index_v"}]}]}]},
+{text:"Examples",url:"examples.html"}]}

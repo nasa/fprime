@@ -40,6 +40,8 @@ var _fp_config_8h =
     [ "FW_QUEUE_NAME_BUFFER_SIZE", "fp_config_8h.html#ae94a17578e6762b48044dee2a5ed3c9b", null ],
     [ "FW_QUEUE_REGISTRATION", "fp_config_8h.html#a14c64c1ec36bcecdee876ef3c62f3395", null ],
     [ "FW_QUEUE_SIMPLE_QUEUE_ENTRIES", "fp_config_8h.html#a17fcf18884f8bb3b2e73c77a7bee0ca6", null ],
+    [ "FW_RAW_TIME_HANDLE_MAX_SIZE", "fp_config_8h.html#abb393385dcf6d4cfdfd43ec4e56905d0", null ],
+    [ "FW_RAW_TIME_SERIALIZATION_MAX_SIZE", "fp_config_8h.html#a1cc5b0a3d9aa0e65a1759b135d30e9a4", null ],
     [ "FW_SERIALIZABLE_TO_STRING", "fp_config_8h.html#a3fe3b0ed2dc804ccef3ce0e57754db79", null ],
     [ "FW_SERIALIZATION_TYPE_ID", "fp_config_8h.html#ad90628f46dbd92719d5a34c3377f2b64", null ],
     [ "FW_SERIALIZE_FALSE_VALUE", "fp_config_8h.html#a3d13d914eb30a89c47dd51d6df656d6f", null ],

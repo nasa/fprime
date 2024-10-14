@@ -133,6 +133,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_mutex_status.html">MutexStatus</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">FPP shadow-enum representing <a class="el" href="class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025">Os::Mutex::Status</a>.  <a href="class_os_1_1_mutex_status.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_raw_time_status.html">RawTimeStatus</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">FPP shadow-enum representing <a class="el" href="class_os_1_1_raw_time_interface.html#a43316df494e852f2d18f78d053d4360b">Os::RawTime::Status</a>.  <a href="class_os_1_1_raw_time_status.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_status.html">TaskStatus</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">FPP shadow-enum representing <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Os::Task::Status</a>.  <a href="class_os_1_1_task_status.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -215,6 +218,12 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_string.html">QueueString</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_os_1_1_raw_time_handle.html">RawTimeHandle</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_raw_time_interface.html">RawTimeInterface</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_raw_time.html">RawTime</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_handle.html">TaskHandle</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_os_1_1_task.html">Task</a> handle representation.  <a href="class_os_1_1_task_handle.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -251,20 +260,7 @@ Functions</h2></td></tr>
 <tr class="memitem:ae9637ba59aad4e05a029a538f1e50a2c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1">ValidateFile::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#ae9637ba59aad4e05a029a538f1e50a2c">translateStatus</a> (<a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">File::Status</a> status, <a class="el" href="namespace_os.html#ae930b408addcfa27b935d9bef5fd7b0f">StatusFileType</a> type)</td></tr>
 <tr class="separator:ae9637ba59aad4e05a029a538f1e50a2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="interval_timer_8hpp.html">IntervalTimer.hpp</a>:</p>
-<p>&#160;Interval timer provides timing over a set interval to the caller. It is one of the core <a class="el" href="namespace_os.html">Os</a> &#160;package supplied items.</p>
-<p><a class="el" href="interval_timer_common_8cpp.html">IntervalTimerCommon.cpp</a>:</p>
-<p>Contains the common functions for interval timer. This set of functions makes no assumption on the format of the RawTime objects and thus it operates through functions that abstract that implementation away, or it is working on the raw values, as raw values.</p>
-<p><em>Note:</em> If the RawTime object is using U32 upper to store seconds and U32 lower to store nano seconds, then <a class="el" href="x86_2_interval_timer_8cpp.html">X86/IntervalTimer.cpp</a> can be used, and the implementer need only fill in the getRawTime function for the specific OS.</p>
-<p><a class="el" href="posix_2_interval_timer_8cpp.html">Posix/IntervalTimer.cpp</a>:</p>
-<p>The <a class="el" href="namespace_os_1_1_posix.html">Posix</a> implementation of the interval timer shares the same raw setup as other X86 implementations. That is: the lower U32 of the RawTime is nano-seconds, and the upper U32 of RawTime object is seconds. Thus only the "getRawTime" function differs from the base X86 version of this file.</p>
-<p><a class="el" href="x86_2_interval_timer_8cpp.html">X86/IntervalTimer.cpp</a>:</p>
-<p>This file supports the core functions of the <a class="el" href="class_os_1_1_interval_timer.html">IntervalTimer</a> for X86 implementations that support the following specification for the "RawTime" object:</p>
-<p>RawTime.lower = nanoseconds of time RawTime.upper = seconds of time.</p>
-<p>Any implementation that fills "RawTime" via this specification can use these basic implementations.</p>
-<p>Note: this file is cloned from the original <a class="el" href="namespace_os_1_1_linux.html">Linux</a> implementation. </p>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="ae930b408addcfa27b935d9bef5fd7b0f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae930b408addcfa27b935d9bef5fd7b0f">&#9670;&nbsp;</a></span>StatusFileType</h2>
 

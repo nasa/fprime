@@ -496,39 +496,47 @@ $(document).ready(function(){initNavTree('_fp_config_8h_source.html',''); initRe
 <div class="line"><a name="l00416"></a><span class="lineno"><a class="line" href="fp_config_8h.html#afa4603989fc99ed58b915f90946b8bf9">  416</a></span>&#160;<span class="preprocessor">#define FW_FILESYSTEM_HANDLE_MAX_SIZE 16  </span></div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160; </div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="preprocessor">#ifndef FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE</span></div>
-<div class="line"><a name="l00420"></a><span class="lineno"><a class="line" href="fp_config_8h.html#ae9ca0dfd5d0bcc4e3dbc9e0d675bdb22">  420</a></span>&#160;<span class="preprocessor">#define FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE 56  </span></div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="preprocessor">#ifndef FW_RAW_TIME_HANDLE_MAX_SIZE</span></div>
+<div class="line"><a name="l00420"></a><span class="lineno"><a class="line" href="fp_config_8h.html#abb393385dcf6d4cfdfd43ec4e56905d0">  420</a></span>&#160;<span class="preprocessor">#define FW_RAW_TIME_HANDLE_MAX_SIZE 24  </span></div>
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160; </div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;<span class="preprocessor">#ifndef FW_CPU_HANDLE_MAX_SIZE</span></div>
-<div class="line"><a name="l00424"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a98978698185e7a058a2e0f1e796e20f5">  424</a></span>&#160;<span class="preprocessor">#define FW_CPU_HANDLE_MAX_SIZE 16  </span></div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;<span class="preprocessor">#ifndef FW_RAW_TIME_SERIALIZATION_MAX_SIZE</span></div>
+<div class="line"><a name="l00424"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a1cc5b0a3d9aa0e65a1759b135d30e9a4">  424</a></span>&#160;<span class="preprocessor">#define FW_RAW_TIME_SERIALIZATION_MAX_SIZE 8  </span></div>
 <div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160; </div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="preprocessor">#ifndef FW_MEMORY_HANDLE_MAX_SIZE</span></div>
-<div class="line"><a name="l00428"></a><span class="lineno"><a class="line" href="fp_config_8h.html#aabc4770fcb10d97b7366aae37ccdc9e1">  428</a></span>&#160;<span class="preprocessor">#define FW_MEMORY_HANDLE_MAX_SIZE 16  </span></div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="preprocessor">#ifndef FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE</span></div>
+<div class="line"><a name="l00428"></a><span class="lineno"><a class="line" href="fp_config_8h.html#ae9ca0dfd5d0bcc4e3dbc9e0d675bdb22">  428</a></span>&#160;<span class="preprocessor">#define FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE 56  </span></div>
 <div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160; </div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="preprocessor">#ifndef FW_HANDLE_ALIGNMENT</span></div>
-<div class="line"><a name="l00432"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a0991d35577aa21e5c3ba57bfaef9515a">  432</a></span>&#160;<span class="preprocessor">#define FW_HANDLE_ALIGNMENT 8  </span></div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="preprocessor">#ifndef FW_CPU_HANDLE_MAX_SIZE</span></div>
+<div class="line"><a name="l00432"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a98978698185e7a058a2e0f1e796e20f5">  432</a></span>&#160;<span class="preprocessor">#define FW_CPU_HANDLE_MAX_SIZE 16  </span></div>
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160; </div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="comment">// Note: One buffer of this size will be stack-allocated during certain OSAL operations e.g. when copying a file</span></div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;<span class="preprocessor">#ifndef FW_FILE_CHUNK_SIZE</span></div>
-<div class="line"><a name="l00437"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a51737d10b6b29ef0e0261037ac2da525">  437</a></span>&#160;<span class="preprocessor">#define FW_FILE_CHUNK_SIZE 512  </span></div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160; </div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;<span class="comment">// *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have</span></div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;<span class="comment">// the type definitions in Fw/Types/BasicTypes available.</span></div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="preprocessor">#ifndef FW_MEMORY_HANDLE_MAX_SIZE</span></div>
+<div class="line"><a name="l00436"></a><span class="lineno"><a class="line" href="fp_config_8h.html#aabc4770fcb10d97b7366aae37ccdc9e1">  436</a></span>&#160;<span class="preprocessor">#define FW_MEMORY_HANDLE_MAX_SIZE 16  </span></div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160; </div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;<span class="preprocessor">#ifndef FW_HANDLE_ALIGNMENT</span></div>
+<div class="line"><a name="l00440"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a0991d35577aa21e5c3ba57bfaef9515a">  440</a></span>&#160;<span class="preprocessor">#define FW_HANDLE_ALIGNMENT 8  </span></div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160; </div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment">// DO NOT TOUCH.  These types are specified for backwards naming compatibility.</span></div>
-<div class="line"><a name="l00444"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">  444</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="fp_config_8h.html#a699119a97bc67cac08bff6ad8caeb879">FwSizeStoreType</a> <a class="code" href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">FwBuffSizeType</a>;</div>
-<div class="line"><a name="l00445"></a><span class="lineno"><a class="line" href="fp_config_8h.html#aa202cfaac52b137bae623c7c8954dd25">  445</a></span>&#160;<span class="preprocessor">#define PRI_FwBuffSizeType PRI_FwSizeStoreType</span></div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160; </div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="preprocessor">#ifdef  __cplusplus</span></div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;}</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment">// Note: One buffer of this size will be stack-allocated during certain OSAL operations e.g. when copying a file</span></div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="preprocessor">#ifndef FW_FILE_CHUNK_SIZE</span></div>
+<div class="line"><a name="l00445"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a51737d10b6b29ef0e0261037ac2da525">  445</a></span>&#160;<span class="preprocessor">#define FW_FILE_CHUNK_SIZE 512  </span></div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160; </div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;<span class="comment">// *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have</span></div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;<span class="comment">// the type definitions in Fw/Types/BasicTypes available.</span></div>
 <div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160; </div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;<span class="comment">// DO NOT TOUCH.  These types are specified for backwards naming compatibility.</span></div>
+<div class="line"><a name="l00452"></a><span class="lineno"><a class="line" href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">  452</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="fp_config_8h.html#a699119a97bc67cac08bff6ad8caeb879">FwSizeStoreType</a> <a class="code" href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">FwBuffSizeType</a>;</div>
+<div class="line"><a name="l00453"></a><span class="lineno"><a class="line" href="fp_config_8h.html#aa202cfaac52b137bae623c7c8954dd25">  453</a></span>&#160;<span class="preprocessor">#define PRI_FwBuffSizeType PRI_FwSizeStoreType</span></div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160; </div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;<span class="preprocessor">#ifdef  __cplusplus</span></div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;}</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160; </div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="a_basic_types_8h_html"><div class="ttname"><a href="basic_types_8h.html">BasicTypes.h</a></div></div>
 <div class="ttc" id="a_basic_types_8h_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8h_source.html#l00030">BasicTypes.h:30</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_a2f8688930d2dbc9e45ddaca180a4ebe3"><div class="ttname"><a href="default_types_8hpp.html#a2f8688930d2dbc9e45ddaca180a4ebe3">PlatformIndexType</a></div><div class="ttdeci">PlatformIntType PlatformIndexType</div><div class="ttdef"><b>Definition:</b> <a href="default_types_8hpp_source.html#l00035">DefaultTypes.hpp:35</a></div></div>
@@ -551,7 +559,7 @@ $(document).ready(function(){initNavTree('_fp_config_8h_source.html',''); initRe
 <div class="ttc" id="a_fp_config_8h_html_a35ac17e31b824c0c8bacc06d6489b2f1"><div class="ttname"><a href="fp_config_8h.html#a35ac17e31b824c0c8bacc06d6489b2f1">FwSignedSizeType</a></div><div class="ttdeci">PlatformSignedSizeType FwSignedSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00030">FpConfig.h:30</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a3cf649086b37430f3aa561942a64f431"><div class="ttname"><a href="fp_config_8h.html#a3cf649086b37430f3aa561942a64f431">FwEventIdType</a></div><div class="ttdeci">U32 FwEventIdType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00103">FpConfig.h:103</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a49e403ea22d2480c5aa7e1aa228640ec"><div class="ttname"><a href="fp_config_8h.html#a49e403ea22d2480c5aa7e1aa228640ec">FwDpIdType</a></div><div class="ttdeci">U32 FwDpIdType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00115">FpConfig.h:115</a></div></div>
-<div class="ttc" id="a_fp_config_8h_html_a4c10b04ec1757ad10025f026f46094af"><div class="ttname"><a href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">FwBuffSizeType</a></div><div class="ttdeci">FwSizeStoreType FwBuffSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00444">FpConfig.h:444</a></div></div>
+<div class="ttc" id="a_fp_config_8h_html_a4c10b04ec1757ad10025f026f46094af"><div class="ttname"><a href="fp_config_8h.html#a4c10b04ec1757ad10025f026f46094af">FwBuffSizeType</a></div><div class="ttdeci">FwSizeStoreType FwBuffSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00452">FpConfig.h:452</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a650109ee80570ce79189348fd28dc556"><div class="ttname"><a href="fp_config_8h.html#a650109ee80570ce79189348fd28dc556">FwQueueSizeType</a></div><div class="ttdeci">FwIndexType FwQueueSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00130">FpConfig.h:130</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a699119a97bc67cac08bff6ad8caeb879"><div class="ttname"><a href="fp_config_8h.html#a699119a97bc67cac08bff6ad8caeb879">FwSizeStoreType</a></div><div class="ttdeci">U16 FwSizeStoreType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00059">FpConfig.h:59</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html_a6ee2232cd0b3ee9ef2a0523f7a6d7bbf"><div class="ttname"><a href="fp_config_8h.html#a6ee2232cd0b3ee9ef2a0523f7a6d7bbf">FwPacketDescriptorType</a></div><div class="ttdeci">U32 FwPacketDescriptorType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8h_source.html#l00087">FpConfig.h:87</a></div></div>

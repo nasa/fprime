@@ -104,6 +104,8 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespace_os_1_1_posix_1_1_mutex"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix_1_1_mutex.html">Mutex</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespace_os_1_1_posix_1_1_raw_time"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix_1_1_raw_time.html">RawTime</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespace_os_1_1_posix_1_1_task"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix_1_1_task.html">Task</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -115,6 +117,8 @@ Functions</h2></td></tr>
 <tr class="separator:a0c98f6d2b1894fbe1555bfffa6eff18b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00a07636737577ba4ac2c1540a6bac3d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Directory::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix.html#a00a07636737577ba4ac2c1540a6bac3d">errno_to_directory_status</a> (<a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> errno_input)</td></tr>
 <tr class="separator:a00a07636737577ba4ac2c1540a6bac3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af28057e9f8364fd4b63edb34587f6f4f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_raw_time_interface.html#a43316df494e852f2d18f78d053d4360b">RawTime::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix.html#af28057e9f8364fd4b63edb34587f6f4f">errno_to_rawtime_status</a> (<a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> errno_input)</td></tr>
+<tr class="separator:af28057e9f8364fd4b63edb34587f6f4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13b1156567dfc9daa32151ce6f02a562"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Task::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix.html#a13b1156567dfc9daa32151ce6f02a562">posix_status_to_task_status</a> (<a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> posix_status)</td></tr>
 <tr class="separator:a13b1156567dfc9daa32151ce6f02a562"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a757591d6b8ddc0f3366333d7d9ef92ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025">Mutex::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_posix.html#a757591d6b8ddc0f3366333d7d9ef92ff">posix_status_to_mutex_status</a> (<a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> posix_status)</td></tr>
@@ -142,7 +146,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> representation of the error </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_directory_interface.html#afba9d1501dce9ccdfa8e80672384a5fb">Os::Directory::Status</a> representation of the error </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="error_8cpp_source.html#l00106">106</a> of file <a class="el" href="error_8cpp_source.html">error.cpp</a>.</p>
 
@@ -196,9 +200,36 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">Os::File::Status</a> representation of the error </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_file_system_interface.html#a2dc5e556bc195320f2e7a9feeb9e4b4b">Os::FileSystem::Status</a> representation of the error </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="error_8cpp_source.html#l00051">51</a> of file <a class="el" href="error_8cpp_source.html">error.cpp</a>.</p>
+
+</div>
+</div>
+<a id="af28057e9f8364fd4b63edb34587f6f4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af28057e9f8364fd4b63edb34587f6f4f">&#9670;&nbsp;</a></span>errno_to_rawtime_status()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_os_1_1_raw_time_interface.html#a43316df494e852f2d18f78d053d4360b">Os::RawTime::Status</a> Os::Posix::errno_to_rawtime_status </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a>&#160;</td>
+          <td class="paramname"><em>errno_input</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Convert an errno representation of an error to the <a class="el" href="class_os_1_1_raw_time_interface.html#a43316df494e852f2d18f78d053d4360b">Os::RawTime::Status</a> representation. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">errno_input</td><td>errno representation of the error </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_raw_time_interface.html#a43316df494e852f2d18f78d053d4360b">Os::RawTime::Status</a> representation of the error </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="error_8cpp_source.html#l00131">131</a> of file <a class="el" href="error_8cpp_source.html">error.cpp</a>.</p>
 
 </div>
 </div>
@@ -225,7 +256,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025">Os::Mutex::Status</a> representation of the error </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="error_8cpp_source.html#l00153">153</a> of file <a class="el" href="error_8cpp_source.html">error.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="error_8cpp_source.html#l00169">169</a> of file <a class="el" href="error_8cpp_source.html">error.cpp</a>.</p>
 
 </div>
 </div>
@@ -252,7 +283,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Os::Task::Status</a> representation of the error </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="error_8cpp_source.html#l00131">131</a> of file <a class="el" href="error_8cpp_source.html">error.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="error_8cpp_source.html#l00147">147</a> of file <a class="el" href="error_8cpp_source.html">error.cpp</a>.</p>
 
 </div>
 </div>

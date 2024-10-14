@@ -116,9 +116,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6e137b57d8163fa33419ad4df4091190"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_output_cycle_port.html#a6e137b57d8163fa33419ad4df4091190">addCallPort</a> (<a class="el" href="class_svc_1_1_input_cycle_port.html">InputCyclePort</a> *callPort)</td></tr>
 <tr class="memdesc:a6e137b57d8163fa33419ad4df4091190"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an input port.  <a href="class_svc_1_1_output_cycle_port.html#a6e137b57d8163fa33419ad4df4091190">More...</a><br /></td></tr>
 <tr class="separator:a6e137b57d8163fa33419ad4df4091190"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1234f9e7edf8cfd7081d1bc00d3af39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_output_cycle_port.html#ae1234f9e7edf8cfd7081d1bc00d3af39">invoke</a> (<a class="el" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> &amp;cycleStart)</td></tr>
-<tr class="memdesc:ae1234f9e7edf8cfd7081d1bc00d3af39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke a port interface.  <a href="class_svc_1_1_output_cycle_port.html#ae1234f9e7edf8cfd7081d1bc00d3af39">More...</a><br /></td></tr>
-<tr class="separator:ae1234f9e7edf8cfd7081d1bc00d3af39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67340d5ab79d4def948774af173e0f0f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_output_cycle_port.html#a67340d5ab79d4def948774af173e0f0f">invoke</a> (<a class="el" href="class_os_1_1_raw_time.html">Os::RawTime</a> &amp;cycleStart)</td></tr>
+<tr class="memdesc:a67340d5ab79d4def948774af173e0f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke a port interface.  <a href="class_svc_1_1_output_cycle_port.html#a67340d5ab79d4def948774af173e0f0f">More...</a><br /></td></tr>
+<tr class="separator:a67340d5ab79d4def948774af173e0f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_port_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_port_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_port_base.html">Fw::PortBase</a></td></tr>
 <tr class="memitem:a4c3479fc0ba605dfe42c27bcc574a65b inherit pub_methods_class_fw_1_1_port_base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_port_base.html#a4c3479fc0ba605dfe42c27bcc574a65b">isConnected</a> ()</td></tr>
 <tr class="separator:a4c3479fc0ba605dfe42c27bcc574a65b inherit pub_methods_class_fw_1_1_port_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -235,8 +235,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ae1234f9e7edf8cfd7081d1bc00d3af39"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1234f9e7edf8cfd7081d1bc00d3af39">&#9670;&nbsp;</a></span>invoke()</h2>
+<a id="a67340d5ab79d4def948774af173e0f0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67340d5ab79d4def948774af173e0f0f">&#9670;&nbsp;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -244,7 +244,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::OutputCyclePort::invoke </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_raw_time.html">Os::RawTime</a> &amp;&#160;</td>
           <td class="paramname"><em>cycleStart</em></td><td>)</td>
           <td></td>
         </tr>
@@ -254,7 +254,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Invoke a port interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cycleStart</td><td>Cycle start timer value </td></tr>
+    <tr><td class="paramname">cycleStart</td><td>Cycle start timestamp </td></tr>
   </table>
   </dd>
 </dl>

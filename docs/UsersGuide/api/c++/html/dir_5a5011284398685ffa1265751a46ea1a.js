@@ -15,7 +15,6 @@ var dir_5a5011284398685ffa1265751a46ea1a =
     [ "ComQueue", "dir_030a83b156791018bec4789d212e5b02.html", "dir_030a83b156791018bec4789d212e5b02" ],
     [ "ComSplitter", "dir_8eb8812a177cc4e83d7d03c3c3297cc3.html", "dir_8eb8812a177cc4e83d7d03c3c3297cc3" ],
     [ "ComStub", "dir_f58bf93cc90ceb1ba30160466b7eed76.html", "dir_f58bf93cc90ceb1ba30160466b7eed76" ],
-    [ "Cycle", "dir_ba3a0a70d0b1d8e58390a1e7ab8dc15a.html", "dir_ba3a0a70d0b1d8e58390a1e7ab8dc15a" ],
     [ "Deframer", "dir_e2b8f136aa4f813f77c4a101b8abb988.html", "dir_e2b8f136aa4f813f77c4a101b8abb988" ],
     [ "DpCatalog", "dir_ffdbc8f6ef2857b2ef7a7dc1cea0e43f.html", "dir_ffdbc8f6ef2857b2ef7a7dc1cea0e43f" ],
     [ "DpManager", "dir_55343855ef728f53e203fa0e197a788e.html", "dir_55343855ef728f53e203fa0e197a788e" ],

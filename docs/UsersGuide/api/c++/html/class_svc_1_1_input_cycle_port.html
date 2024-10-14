@@ -108,12 +108,12 @@ Inheritance diagram for Svc::InputCyclePort:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a92d2f27538b989e6f6fe12e38e6da471"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_svc_1_1_input_cycle_port.html#a92d2f27538b989e6f6fe12e38e6da471ab02892ee6939859a59163429fc4a5657">SERIALIZED_SIZE</a>
+<tr class="memitem:a2cc4ef17658e09e1169561b1a1fc4192"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_svc_1_1_input_cycle_port.html#a2cc4ef17658e09e1169561b1a1fc4192ab02892ee6939859a59163429fc4a5657">SERIALIZED_SIZE</a>
  }</td></tr>
-<tr class="separator:a92d2f27538b989e6f6fe12e38e6da471"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4cf460fdee855f9d780e79554655a3b"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_cycle_port.html#af4cf460fdee855f9d780e79554655a3b">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> &amp;cycleStart)</td></tr>
-<tr class="memdesc:af4cf460fdee855f9d780e79554655a3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_cycle_port.html#af4cf460fdee855f9d780e79554655a3b">More...</a><br /></td></tr>
-<tr class="separator:af4cf460fdee855f9d780e79554655a3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a2cc4ef17658e09e1169561b1a1fc4192"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ce5bf3ddf6ce1d273b99962b4254498"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_cycle_port.html#a0ce5bf3ddf6ce1d273b99962b4254498">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_os_1_1_raw_time.html">Os::RawTime</a> &amp;cycleStart)</td></tr>
+<tr class="memdesc:a0ce5bf3ddf6ce1d273b99962b4254498"><td class="mdescLeft">&#160;</td><td class="mdescRight">The port callback function type.  <a href="class_svc_1_1_input_cycle_port.html#a0ce5bf3ddf6ce1d273b99962b4254498">More...</a><br /></td></tr>
+<tr class="separator:a0ce5bf3ddf6ce1d273b99962b4254498"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -123,12 +123,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1ed44f1ef9450d3f09fb3f9ca2ce366e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_cycle_port.html#a1ed44f1ef9450d3f09fb3f9ca2ce366e">init</a> ()</td></tr>
 <tr class="memdesc:a1ed44f1ef9450d3f09fb3f9ca2ce366e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <a href="class_svc_1_1_input_cycle_port.html#a1ed44f1ef9450d3f09fb3f9ca2ce366e">More...</a><br /></td></tr>
 <tr class="separator:a1ed44f1ef9450d3f09fb3f9ca2ce366e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a22cac2769b838b13547c6182c51252"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_cycle_port.html#a1a22cac2769b838b13547c6182c51252">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_cycle_port.html#af4cf460fdee855f9d780e79554655a3b">CompFuncPtr</a> funcPtr)</td></tr>
+<tr class="memitem:a1a22cac2769b838b13547c6182c51252"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_cycle_port.html#a1a22cac2769b838b13547c6182c51252">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_svc_1_1_input_cycle_port.html#a0ce5bf3ddf6ce1d273b99962b4254498">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:a1a22cac2769b838b13547c6182c51252"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a component.  <a href="class_svc_1_1_input_cycle_port.html#a1a22cac2769b838b13547c6182c51252">More...</a><br /></td></tr>
 <tr class="separator:a1a22cac2769b838b13547c6182c51252"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afffa50cbde31985eca05ad3542d3df93"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_cycle_port.html#afffa50cbde31985eca05ad3542d3df93">invoke</a> (<a class="el" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> &amp;cycleStart)</td></tr>
-<tr class="memdesc:afffa50cbde31985eca05ad3542d3df93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke a port interface.  <a href="class_svc_1_1_input_cycle_port.html#afffa50cbde31985eca05ad3542d3df93">More...</a><br /></td></tr>
-<tr class="separator:afffa50cbde31985eca05ad3542d3df93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82d342995aafc073a38135edd23175fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_input_cycle_port.html#a82d342995aafc073a38135edd23175fa">invoke</a> (<a class="el" href="class_os_1_1_raw_time.html">Os::RawTime</a> &amp;cycleStart)</td></tr>
+<tr class="memdesc:a82d342995aafc073a38135edd23175fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke a port interface.  <a href="class_svc_1_1_input_cycle_port.html#a82d342995aafc073a38135edd23175fa">More...</a><br /></td></tr>
+<tr class="separator:a82d342995aafc073a38135edd23175fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_input_port_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_input_port_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_input_port_base.html">Fw::InputPortBase</a></td></tr>
 <tr class="memitem:aabcb9bbd8f56dea8d3a03e08f76d0041 inherit pub_methods_class_fw_1_1_input_port_base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_port_base.html#aabcb9bbd8f56dea8d3a03e08f76d0041">setPortNum</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum)</td></tr>
 <tr class="separator:aabcb9bbd8f56dea8d3a03e08f76d0041 inherit pub_methods_class_fw_1_1_input_port_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,14 +172,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="cycle_port_ac_8hpp_source.html#l00025">25</a> of file <a class="el" href="cycle_port_ac_8hpp_source.html">CyclePortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="af4cf460fdee855f9d780e79554655a3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4cf460fdee855f9d780e79554655a3b">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
+<a id="a0ce5bf3ddf6ce1d273b99962b4254498"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ce5bf3ddf6ce1d273b99962b4254498">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Svc::InputCyclePort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> &amp;cycleStart)</td>
+          <td class="memname">typedef void(* Svc::InputCyclePort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="fp_config_8h.html#ae749c35cd3698820ac4e0182efa2ac4e">FwIndexType</a> portNum, <a class="el" href="class_os_1_1_raw_time.html">Os::RawTime</a> &amp;cycleStart)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -191,8 +191,8 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a92d2f27538b989e6f6fe12e38e6da471"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92d2f27538b989e6f6fe12e38e6da471">&#9670;&nbsp;</a></span>anonymous enum</h2>
+<a id="a2cc4ef17658e09e1169561b1a1fc4192"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cc4ef17658e09e1169561b1a1fc4192">&#9670;&nbsp;</a></span>anonymous enum</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -203,7 +203,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a92d2f27538b989e6f6fe12e38e6da471ab02892ee6939859a59163429fc4a5657"></a>SERIALIZED_SIZE&#160;</td><td class="fielddoc"><p>The size of the serial representations of the port arguments. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a2cc4ef17658e09e1169561b1a1fc4192ab02892ee6939859a59163429fc4a5657"></a>SERIALIZED_SIZE&#160;</td><td class="fielddoc"><p>The size of the serial representations of the port arguments. </p>
 </td></tr>
 </table>
 
@@ -249,7 +249,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_svc_1_1_input_cycle_port.html#af4cf460fdee855f9d780e79554655a3b">CompFuncPtr</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_svc_1_1_input_cycle_port.html#a0ce5bf3ddf6ce1d273b99962b4254498">CompFuncPtr</a>&#160;</td>
           <td class="paramname"><em>funcPtr</em>&#160;</td>
         </tr>
         <tr>
@@ -304,8 +304,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="afffa50cbde31985eca05ad3542d3df93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afffa50cbde31985eca05ad3542d3df93">&#9670;&nbsp;</a></span>invoke()</h2>
+<a id="a82d342995aafc073a38135edd23175fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82d342995aafc073a38135edd23175fa">&#9670;&nbsp;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -313,7 +313,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Svc::InputCyclePort::invoke </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="class_os_1_1_raw_time.html">Os::RawTime</a> &amp;&#160;</td>
           <td class="paramname"><em>cycleStart</em></td><td>)</td>
           <td></td>
         </tr>
@@ -323,7 +323,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Invoke a port interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cycleStart</td><td>Cycle start timer value </td></tr>
+    <tr><td class="paramname">cycleStart</td><td>Cycle start timestamp </td></tr>
   </table>
   </dd>
 </dl>

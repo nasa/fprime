@@ -114,7 +114,6 @@ var namespace_svc =
     [ "ComQueue", "class_svc_1_1_com_queue.html", "class_svc_1_1_com_queue" ],
     [ "ComSplitter", "class_svc_1_1_com_splitter.html", "class_svc_1_1_com_splitter" ],
     [ "ComStub", "class_svc_1_1_com_stub.html", "class_svc_1_1_com_stub" ],
-    [ "TimerVal", "class_svc_1_1_timer_val.html", "class_svc_1_1_timer_val" ],
     [ "Deframer", "class_svc_1_1_deframer.html", "class_svc_1_1_deframer" ],
     [ "DpCatalog", "class_svc_1_1_dp_catalog.html", "class_svc_1_1_dp_catalog" ],
     [ "DpManager", "class_svc_1_1_dp_manager.html", "class_svc_1_1_dp_manager" ],

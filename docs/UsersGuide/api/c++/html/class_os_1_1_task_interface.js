@@ -31,7 +31,7 @@ var class_os_1_1_task_interface =
     [ "TaskInterface", "class_os_1_1_task_interface.html#a9d28d2d2b5016574c61fdea6664eb7d0", null ],
     [ "~TaskInterface", "class_os_1_1_task_interface.html#ac009412e20cbeaaacb0a94f09e9b216a", null ],
     [ "TaskInterface", "class_os_1_1_task_interface.html#a30f23455db67c86fbcee5ab20a213451", null ],
-    [ "delay", "class_os_1_1_task_interface.html#af5f1ddc384b1985c550458f643d72316", null ],
+    [ "delay", "class_os_1_1_task_interface.html#a78e6ef47260a96ac5ff29f8fbf490426", null ],
     [ "getDelegate", "class_os_1_1_task_interface.html#aa95a4604d9b61868f3660f54568f9a14", null ],
     [ "getHandle", "class_os_1_1_task_interface.html#a12afb1c82d1a2131cea2df6d1e509466", null ],
     [ "isCooperative", "class_os_1_1_task_interface.html#adae636c8e6c92c0ecfe60f743b1e0452", null ],

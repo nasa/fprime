@@ -10,6 +10,7 @@ var _os_8hpp =
     [ "MemoryHandleStorage", "os_8hpp.html#adcb69d37fdd2a93ced37c3edef7face8", null ],
     [ "MutexHandleStorage", "os_8hpp.html#a80b88f4270f778fba6071a6ac7c386ee", null ],
     [ "QueueHandleStorage", "os_8hpp.html#ad4a1f7f50fa966a71d8aebadc5d75595", null ],
+    [ "RawTimeHandleStorage", "os_8hpp.html#a0bdf678eacdce8c0c88770ff485ae946", null ],
     [ "TaskHandleStorage", "os_8hpp.html#a1f0e30a3b205012baf80f22fc372473a", null ],
     [ "Status", "os_8hpp.html#a7658440e7ab158208b97e002dee0e879", [
       [ "OP_OK", "os_8hpp.html#a7658440e7ab158208b97e002dee0e879a5c7df591daa5bce645990e1e41ee3528", null ],

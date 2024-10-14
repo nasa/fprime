@@ -13,6 +13,7 @@ var dir_5d2d44be9d89e5af4b3ae87b5b477c1c =
     [ "DefaultConsole.cpp", "posix_2_default_console_8cpp.html", null ],
     [ "DefaultFile.cpp", "posix_2_default_file_8cpp.html", null ],
     [ "DefaultMutex.cpp", "posix_2_default_mutex_8cpp.html", null ],
+    [ "DefaultRawTime.cpp", "posix_2_default_raw_time_8cpp.html", null ],
     [ "DefaultTask.cpp", "posix_2_default_task_8cpp.html", null ],
     [ "Directory.cpp", "posix_2_directory_8cpp.html", null ],
     [ "Directory.hpp", "posix_2_directory_8hpp.html", [
@@ -31,11 +32,15 @@ var dir_5d2d44be9d89e5af4b3ae87b5b477c1c =
       [ "PosixFileSystemHandle", "struct_os_1_1_posix_1_1_file_system_1_1_posix_file_system_handle.html", null ],
       [ "PosixFileSystem", "class_os_1_1_posix_1_1_file_system_1_1_posix_file_system.html", "class_os_1_1_posix_1_1_file_system_1_1_posix_file_system" ]
     ] ],
-    [ "IntervalTimer.cpp", "posix_2_interval_timer_8cpp.html", null ],
     [ "Mutex.cpp", "posix_2_mutex_8cpp.html", null ],
     [ "Mutex.hpp", "posix_2_mutex_8hpp.html", [
       [ "PosixMutexHandle", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle.html", "struct_os_1_1_posix_1_1_mutex_1_1_posix_mutex_handle" ],
       [ "PosixMutex", "class_os_1_1_posix_1_1_mutex_1_1_posix_mutex.html", "class_os_1_1_posix_1_1_mutex_1_1_posix_mutex" ]
+    ] ],
+    [ "RawTime.cpp", "posix_2_raw_time_8cpp.html", null ],
+    [ "RawTime.hpp", "posix_2_raw_time_8hpp.html", [
+      [ "PosixRawTimeHandle", "struct_os_1_1_posix_1_1_raw_time_1_1_posix_raw_time_handle.html", "struct_os_1_1_posix_1_1_raw_time_1_1_posix_raw_time_handle" ],
+      [ "PosixRawTime", "class_os_1_1_posix_1_1_raw_time_1_1_posix_raw_time.html", "class_os_1_1_posix_1_1_raw_time_1_1_posix_raw_time" ]
     ] ],
     [ "Task.cpp", "posix_2_task_8cpp.html", "_posix_2_task_8cpp" ],
     [ "Task.hpp", "posix_2_task_8hpp.html", [
