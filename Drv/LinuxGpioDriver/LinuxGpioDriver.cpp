@@ -293,9 +293,8 @@ void LinuxGpioDriver ::pollLoop() {
             struct gpioevent_data event_data;
             FwSizeType read_bytes = ::read(this->m_fd, &event_data, sizeof event_data);
             if (read_bytes == sizeof event_data) {
-                // TODO: raw time from Thomas
                 Os::RawTime timestamp;
-                timestamp.take();
+                timestamp.now();
                 this->gpioInterrupt_out(0, timestamp);
             }
             // A read error occurred
