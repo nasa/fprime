@@ -37,28 +37,37 @@ void SocketComponentHelper::start(const Fw::StringBase &name,
 
 SocketIpStatus SocketComponentHelper::open() {
     SocketIpStatus status = SOCK_FAILED_TO_GET_SOCKET;
-
-    this->m_lock.lock();
-    if (not this->m_open) {
-        FW_ASSERT(this->m_descriptor.fd == -1 and not this->m_open); // Ensure we are not opening an opened socket
+    OpenState local_open = OpenState::OPEN;
+    // Scope to guard lock
+    {
+        Os::ScopeLock scopeLock(m_lock);
+        if (this->m_open == OpenState::NOT_OPEN) {
+            this->m_open = OpenState::OPENING;
+        }
+        local_open = this->m_open;
+    }
+    if (local_open == OpenState::OPENING) {
+        FW_ASSERT(this->m_descriptor.fd == -1);  // Ensure we are not opening an opened socket
         status = this->getSocketHandler().open(this->m_descriptor);
         // Call connected any time the open is successful
+        Os::ScopeLock scopeLock(m_lock);
         if (Drv::SOCK_SUCCESS == status) {
-            this->m_open = true;
-            this->m_lock.unlock();
-            this->connected();
-            return status;
+            this->m_open = OpenState::OPEN;
         } else {
+            this->m_open = OpenState::NOT_OPEN;
             this->m_descriptor.fd = -1;
         }
     }
-    this->m_lock.unlock();
+    // Notify connection on success
+    if (Drv::SOCK_SUCCESS == status) {
+        this->connected();
+    }
     return status;
 }
 
 bool SocketComponentHelper::isOpened() {
     Os::ScopeLock scopedLock(this->m_lock);
-    bool is_open = this->m_open;
+    bool is_open = this->m_open == OpenState::OPEN;
     return is_open;
 }
 
@@ -103,7 +112,7 @@ void SocketComponentHelper::close() {
     Os::ScopeLock scopedLock(this->m_lock);
     this->getSocketHandler().close(this->m_descriptor);
     this->m_descriptor.fd = -1;
-    this->m_open = false;
+    this->m_open = OpenState::NOT_OPEN;
 }
 
 Os::Task::Status SocketComponentHelper::join() {
@@ -111,9 +120,11 @@ Os::Task::Status SocketComponentHelper::join() {
 }
 
 void SocketComponentHelper::stop() {
-    this->m_lock.lock();
-    this->m_stop = true;
-    this->m_lock.unlock();
+    // Scope to protect lock
+    {
+        Os::ScopeLock scopeLock(m_lock);
+        this->m_stop = true;
+    }
     this->shutdown();  // Break out of any receives and fully shutdown
 }
 
@@ -158,7 +169,6 @@ void SocketComponentHelper::readLoop() {
             FW_ASSERT(data);
             U32 size = buffer.getSize();
             // recv blocks, so it may have been a while since its done an isOpened check
-            // TODO: what happens on timeout?
             status = this->recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN && (status != SOCK_NO_DATA_AVAILABLE))) {
                 Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n",

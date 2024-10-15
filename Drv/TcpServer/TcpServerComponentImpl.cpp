@@ -71,6 +71,11 @@ void TcpServerComponentImpl::connected() {
     }
 }
 
+bool TcpServerComponentImpl::isStarted() {
+    Os::ScopeLock scopedLock(this->m_lock);
+    return this->m_realDescriptor.serverFd != -1;
+}
+
 SocketIpStatus TcpServerComponentImpl::startup() {
     Os::ScopeLock scopedLock(this->m_lock);
     Drv::SocketIpStatus status = SOCK_SUCCESS;

@@ -19,7 +19,7 @@ TEST(Reconnect, MultiMessaging) {
     tester.test_multiple_messaging();
 }
 
-TEST(Reconnect, ReceiveThreadReconnect) {
+TEST(Reconnect, ReceiveThreadReconnectClientPort) {
     Drv::TcpServerTester tester;
     tester.test_advanced_reconnect();
 }

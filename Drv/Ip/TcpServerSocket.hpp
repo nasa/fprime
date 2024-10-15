@@ -55,7 +55,7 @@ class TcpServerSocket : public IpSocket {
      * Calls the close function on the server socket. No shutdown is performed on the server socket, as that is left to
      * the individual client sockets.
      *
-     * \param socketDescriptor:  descriptor to vlose
+     * \param socketDescriptor:  descriptor to close
      */
     void terminate(const ServerSocketDescriptor& socketDescriptor);
 

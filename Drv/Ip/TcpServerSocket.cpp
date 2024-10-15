@@ -86,6 +86,7 @@ SocketIpStatus TcpServerSocket::startup(ServerSocketDescriptor& socketDescriptor
     Fw::Logger::log("Listening for single client at %s:%hu\n", m_hostname, m_port);
     FW_ASSERT(serverFd != -1);
     socketDescriptor.serverFd = serverFd;
+    this->m_port = ntohs(address.sin_port);
     return SOCK_SUCCESS;
 }
 

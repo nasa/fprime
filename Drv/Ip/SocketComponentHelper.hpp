@@ -27,6 +27,11 @@ namespace Drv {
  */
 class SocketComponentHelper {
   public:
+    enum OpenState{
+        NOT_OPEN,
+        OPENING,
+        OPEN
+    };
     /**
      * \brief constructs the socket read task
      */
@@ -151,7 +156,7 @@ class SocketComponentHelper {
 
   PROTECTED:
     /**
-     * \breif receive off the TCP socket
+     * \brief receive off the TCP socket
      */
     virtual void readLoop();
     /**
@@ -208,7 +213,7 @@ class SocketComponentHelper {
     SocketDescriptor& m_descriptor;
     bool m_reconnect = false; //!< Force reconnection
     bool m_stop = true; //!< Stops the task when set to true
-    bool m_open = false; //!< Have we successfully opened
+    OpenState m_open = OpenState::NOT_OPEN; //!< Have we successfully opened
 };
 }
 #endif  // DRV_SocketComponentHelper_HPP

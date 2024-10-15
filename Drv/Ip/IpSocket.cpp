@@ -52,7 +52,7 @@ IpSocket::IpSocket() : m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0) 
 
 SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     FW_ASSERT(timeout_microseconds < 1000000, static_cast<FwAssertArgType>(timeout_microseconds));
-    FW_ASSERT(this->isValidPort(port));
+    FW_ASSERT(this->isValidPort(port), static_cast<FwAssertArgType>(port));
     FW_ASSERT(hostname != nullptr);
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
@@ -108,6 +108,7 @@ void IpSocket::close(const SocketDescriptor& socketDescriptor) {
 }
 
 void IpSocket::shutdown(const SocketDescriptor& socketDescriptor) {
+    errno = 0;
     PlatformIntType status = ::shutdown(socketDescriptor.fd, SHUT_RDWR);
     // If shutdown fails, go straight to the hard-shutdown
     if (status != 0) {
@@ -117,10 +118,11 @@ void IpSocket::shutdown(const SocketDescriptor& socketDescriptor) {
 
 SocketIpStatus IpSocket::open(SocketDescriptor& socketDescriptor) {
     SocketIpStatus status = SOCK_SUCCESS;
+    errno = 0;
     // Open a TCP socket for incoming commands, and outgoing data if not using UDP
     status = this->openProtocol(socketDescriptor);
     if (status != SOCK_SUCCESS) {
-        FW_ASSERT(socketDescriptor.fd == -1); // Ensure we properly kept closed on error
+        socketDescriptor.fd = -1;
         return status;
     }
     return status;
@@ -131,6 +133,7 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
     I32 sent  = 0;
     // Attempt to send out data and retry as necessary
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
+        errno = 0;
         // Send using my specific protocol
         sent = this->sendProtocol(socketDescriptor, data + total, size - total);
         // Error is EINTR or timeout just try again
@@ -159,9 +162,9 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
 
 SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
     I32 size = 0;
-
     // Try to read until we fail to receive data
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
+        errno = 0;
         // Attempt to recv out data
         size = this->recvProtocol(socketDescriptor, data, req_read);
 

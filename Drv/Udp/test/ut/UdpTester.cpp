@@ -28,7 +28,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     U8 buffer[sizeof(m_data_storage)] = {};
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
-    NATIVE_INT_TYPE udp2_fd = -1;
+    Drv::SocketDescriptor udp2_fd;
 
     U16 port1 = Drv::Test::get_free_port(true);
     ASSERT_NE(0, port1);
@@ -82,26 +82,18 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             << "UDP socket open error: " << strerror(errno) << std::endl
             << "Port1: " << port1 << std::endl
             << "Port2: " << port2 << std::endl;
-        
-        status2 = Drv::SOCK_NO_DATA_AVAILABLE;
 
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
             (this->component.isOpened())) {
             // Force the sockets not to hang, if at all possible
-            Drv::Test::force_recv_timeout(this->component.m_fd, this->component.getSocketHandler());
-            Drv::Test::force_recv_timeout(udp2_fd, udp2);
+            Drv::Test::force_recv_timeout(this->component.m_realDescriptor.fd, this->component.getSocketHandler());
+            Drv::Test::force_recv_timeout(udp2_fd.fd, udp2);
             m_data_buffer.setSize(sizeof(m_data_storage));
-            Drv::Test::fill_random_buffer(m_data_buffer);
+            size = Drv::Test::fill_random_buffer(m_data_buffer);
             Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
             EXPECT_EQ(status, SendStatus::SEND_OK);
-            U16 counter = 0;
-            while ((status2 == Drv::SOCK_NO_DATA_AVAILABLE) and counter < Drv::Test::MAX_ITER) {
-                status2 = udp2.recv(udp2_fd, buffer, size);
-                counter++;
-            }
-            EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
-            EXPECT_EQ(size, m_data_buffer.getSize());
+            Drv::Test::receive_all(udp2, udp2_fd, buffer, size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
             // If receive thread is live, try the other way
             if (recv_thread) {

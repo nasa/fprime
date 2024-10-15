@@ -63,6 +63,11 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
                              const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS);
 
     /**
+     * \brief is started
+     */
+     bool isStarted();
+
+    /**
      * \brief startup the server socket for communications
      *
      * Start up the server socket by listening on a port. Note: does not accept clients, this is done in open to

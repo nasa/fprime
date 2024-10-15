@@ -152,7 +152,7 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     }
 
     // When we are setting up for receiving as well, then we must bind to a port
-    if ((status = this->bind(socketDescriptor.fd)) != SOCK_SUCCESS) {
+    if ((status = this->bind(socketFd)) != SOCK_SUCCESS) {
         ::close(socketFd);
         return status; // Not closing FD as it is still a valid send FD
     }
