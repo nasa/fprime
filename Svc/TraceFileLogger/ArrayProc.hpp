@@ -3,8 +3,8 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 
-#ifndef SVCARRAYPROC_HPP_
-#define SVCARRAYPROC_HPP_
+#ifndef SVC_ARRAY_PROC_HPP_
+#define SVC_ARRAY_PROC_HPP_
 
 #include <Fw/Types/BasicTypes.hpp>
 
@@ -74,4 +74,4 @@ namespace Svc {
     };
 
 }
-#endif /* SVCARRAYPROC_HPP_ */
+#endif /* SVC_ARRAY_PROC_HPP_ */

@@ -186,17 +186,17 @@ namespace Svc {
                 return;
             }
             //Only log trace Ids that are not in the list 
-            if(this->filterTraceId.search_array(id,nullptr)) {
+            if(this->filterTraceId.search_array(id,nullptr) == true) {
                 return;
             }
            
            //Make a call to reset
            Fw::SerializeBufferBase& buf_ref = m_file_buffer.getSerializeRepr();
            buf_ref.resetSer();
-           buf_ref.serialize(id);
-           buf_ref.serialize(timeTag);
+           (void)buf_ref.serialize(id);
+           (void)buf_ref.serialize(timeTag);
            if(FW_TRACE_RECORD_MINIMAL == false) {
-            buf_ref.serialize(args);
+            (void)buf_ref.serialize(args);
             traceSize = m_file_buffer.getSize(); //Record max size of each trace record for circular file
            }
            else {

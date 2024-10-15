@@ -18,7 +18,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     ArrayProc::ArrayProc() :
-       m_maxIndex(10),m_currentIndex(0),m_storedArray(NULL) 
+       m_maxIndex(10),m_currentIndex(0),m_storedArray(nullptr) 
     {
     }
     ArrayProc::~ArrayProc()
@@ -63,7 +63,7 @@ namespace Svc {
     bool ArrayProc::search_array(U32 element, U8 *index) {
         for(U8 i = 0 ; i < m_currentIndex ; i++) {
             if(this->m_storedArray[i] == element) {
-                if (index != NULL) *index = i;
+                if (index != nullptr) *index = i;
                 return true;
             }
         }

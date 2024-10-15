@@ -3,8 +3,8 @@
 # ======================================================================
 # From Design review, it was requested that we add more trace types such as
 # interrupts, exceptions, context switch,queue add/remove, EVRs, 
-# semaphore takes(?), stack trace, DMAs
-# Also consider adding adding state machine transitions, timer acquisition 
+# semaphore takes(?), stack trace, DMA
+# Also consider adding state machine transitions, timer acquisition 
 # and release traces, and EVRS to the category of traces that are automated. 
 # Also consider what a potential IO trace could look like. A ring buffer for IO 
 # is always requested for 1553 and recently M-Bus on Psyche. Presumably a 
