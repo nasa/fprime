@@ -139,8 +139,8 @@ void configureTopology() {
     //tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
 
     //Configure Trace Logger filename and size to be used for storing trace data
-    traceLogger.configure("TraceFile.dat",2720000);
-    traceLogger.filterTraceType(0xF,Svc::TraceLogger_Enable::ENABLE);
+    trace.configure("TraceFile.dat",2720000);
+    trace.filterTraceType(0xF,Svc::TraceFileLogger_Enable::ENABLE);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref

@@ -1,7 +1,7 @@
 #include <Fw/Trace/TraceBuffer.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Log/TextLogString.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Fw {
 
