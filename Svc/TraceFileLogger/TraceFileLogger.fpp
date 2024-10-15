@@ -30,17 +30,17 @@ module Svc {
     async command DumpTraceDp\ 
         opcode 0x01
 
-    @Select which trace types to be logged
+    @Select which trace types to be enabled or disabled for logging
     async command FilterTraceType ( 
         bitmask: U16 @< TraceTypes to filter on
         $enable : Enable @< enable or disable filtering
         )\
         opcode 0x02
     
-    @ Enable or disable trace logging by id, can disable up to 10 IDs
-    async command DisableTraceId ( 
-        $traceId : U32 @< Trace ID to enable/disable
-        $enable : Enable 
+    @ Select which Trace Ids to be enabled or disabled for logging, can disable up to 10 IDs
+    async command FilterTraceId ( 
+        $traceId : U32 @< Trace ID 
+        $enable : Enable @< enable or disable trace ID 
         )\
         opcode 0x03
     # ----------------------------------------------------------------------

@@ -33,7 +33,7 @@ namespace Svc {
         //!  \brief Set pointer to the array 
         //!
         //!  \param array_ptr pointer to the array to be used 
-        //!  \param array_size array size 
+        //!  \param array_size Max array index
         //!  
         void set_array(U32 *array_ptr, U8 array_size); 
 
@@ -64,10 +64,10 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //Max size of the array
-        U8 m_maxSize;
+        U8 m_maxIndex;
 
-        //Current Array Size
-        U8 m_currentSize;
+        //Current Array Index
+        U8 m_currentIndex;
 
         //Array
         U32 *m_storedArray;

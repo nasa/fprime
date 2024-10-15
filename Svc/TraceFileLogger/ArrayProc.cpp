@@ -18,7 +18,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     ArrayProc::ArrayProc() :
-       m_maxSize(10),m_currentSize(0),m_storedArray(NULL) 
+       m_maxIndex(10),m_currentIndex(0),m_storedArray(NULL) 
     {
     }
     ArrayProc::~ArrayProc()
@@ -32,13 +32,13 @@ namespace Svc {
     void ArrayProc::set_array(U32 *array_ptr, U8 array_size)
     {
         m_storedArray = array_ptr;
-        m_maxSize = array_size;
+        m_maxIndex = array_size;
     }
     
     bool ArrayProc::add_element(U32 element) {
-        if (m_currentSize < m_maxSize) {
-            this->m_storedArray[m_currentSize] = element;
-            this->m_currentSize++;
+        if (m_currentIndex < m_maxIndex) {
+            this->m_storedArray[m_currentIndex] = element;
+            this->m_currentIndex++;
             return true;
         }
         return false;
@@ -52,16 +52,16 @@ namespace Svc {
             return false;
         }
         else {
-            for(U8 i = elementIndex; i < this->m_currentSize ; i++) {
+            for(U8 i = elementIndex; i < this->m_currentIndex ; i++) {
                 this->m_storedArray[i] = this->m_storedArray[i+1];
             }
-            this->m_currentSize--;
+            this->m_currentIndex--;
             return true;
         }
     }
 
     bool ArrayProc::search_array(U32 element, U8 *index) {
-        for(U8 i = 0 ; i < m_currentSize ; i++) {
+        for(U8 i = 0 ; i < m_currentIndex ; i++) {
             if(this->m_storedArray[i] == element) {
                 if (index != NULL) *index = i;
                 return true;

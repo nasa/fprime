@@ -58,7 +58,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //!
     //!  \param queueDepth the depth of the message queue for the component
     //!  \param instance: instance identifier. Default: 0.
-    void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance = 0);
+    void  init(FwSizeType queueDepth, FwEnumStoreType instance = 0);
     
     //!  \brief Set log file and max size
     //!
@@ -84,7 +84,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //!
     //!  \param traceType_bitmask provides bitmask for trace types to select.
     //!  \param enable to turn on/off filtering .
-    void filterTraceType(U16 traceType_bitmask,bool enable);
+    Fw::CmdResponse filterTraceType(U16 traceType_bitmask,bool enable);
 
     //!  \brief Process trace ID storage method
     //!
@@ -93,7 +93,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //!
     //!  \param traceId which trace id to enable / disable.
     //!  \param enable to turn on/off filtering .
-    void process_traceId_storage(U32 traceId, bool enable);
+    Fw::CmdResponse process_traceId_storage(U32 traceId, bool enable);
 
 
     //! Destroy TraceFileLogger object
@@ -146,7 +146,7 @@ class TraceFileLogger : public TraceFileLoggerComponentBase {
     //! Handler implementation for command DisableTraceId
     //!
     //! Enable or disable trace logging by id, can disable up to 10 IDs
-    void DisableTraceId_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+    void FilterTraceId_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                    U32 cmdSeq,           //!< The command sequence number
                                    U32 traceId,          //!< Trace ID to enable/disable
                                    Svc::TraceFileLogger_Enable enable) override;

@@ -19,7 +19,7 @@ class TraceFileLoggerTester : public TraceFileLoggerGTestBase {
     // ----------------------------------------------------------------------
 
     // Maximum size of histories storing events, telemetry, and port outputs
-    static const FwSizeType MAX_HISTORY_SIZE = 10;
+    static const FwSizeType MAX_HISTORY_SIZE = 20;
 
     // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
@@ -55,6 +55,7 @@ class TraceFileLoggerTester : public TraceFileLoggerGTestBase {
     void test_filter_trace_id();
     void test_filter_trace_type();
     void test_trace_enable();
+    void test_code_coverage();
 
   private:
     // ----------------------------------------------------------------------

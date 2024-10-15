@@ -32,6 +32,7 @@ namespace Svc {
     m_log_init(false),
     m_traceFilter(0)
     {
+       //Initialize data file
        this->m_enable_trace = (FW_TRACE_RECORD_TRACE == true) ? true : false;
        ::memset(m_file_data, 0, sizeof(m_file_data));
        
@@ -40,7 +41,7 @@ namespace Svc {
        this->m_file_buffer.setSize(FW_TRACE_MAX_SER_SIZE);
     
        //Set array to process trace id filtering
-       this->filterTraceId.set_array(traceId_array,sizeof(traceId_array));
+       this->filterTraceId.set_array(traceId_array,FILTER_TRACE_ID_SIZE);
     }
 
     TraceFileLogger::~TraceFileLogger() {
@@ -52,7 +53,7 @@ namespace Svc {
     }
 
     void TraceFileLogger :: 
-        init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
+        init(FwSizeType queueDepth, FwEnumStoreType instance)
     {
             TraceFileLoggerComponentBase::init(queueDepth,instance);
     }
@@ -70,8 +71,9 @@ namespace Svc {
 
             //If file name is too large then return failure
             FwSizeType fileNameSize = Fw::StringUtils::string_length(fileName, static_cast<FwSizeType>(Fw::String::STRING_SIZE));
-            if (fileNameSize == Fw::String::STRING_SIZE) {
+            if (fileNameSize >= Fw::String::STRING_SIZE) {
                 this->m_enable_trace = false;
+                return;
             }
             
             Os::File::Status stat = this->m_log_file.open(fileName, Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE);
@@ -90,17 +92,15 @@ namespace Svc {
     }
 
     void TraceFileLogger::configure(const char* file, const U32 maxSize) {
-        //printf("HERE1: Configure, set file name\n");
         FW_ASSERT(file != nullptr);
         this->set_log_file(file,maxSize);
     }
 
     // The filter method selects which trace types to be logged and which to ignore.
     // The bit mask is based on the enum list for trace type in TraceCfg.fpp
-    void TraceFileLogger::filterTraceType(U16 traceType_bitmask, bool enable){
+     Fw::CmdResponse TraceFileLogger::filterTraceType(U16 traceType_bitmask, bool enable){
         if(traceType_bitmask == 0){
-            //TODO: Figure out if this should be made an illegal entry or just ignore it?
-            //      
+            return Fw::CmdResponse::VALIDATION_ERROR;
         }
        
         if(enable == true) {
@@ -110,6 +110,7 @@ namespace Svc {
             U16 mask = 0xFFFF ^ traceType_bitmask;
             this->m_traceFilter &= mask;
         }
+        return Fw::CmdResponse::OK;
 
     }
 
@@ -125,7 +126,6 @@ namespace Svc {
             if (expected_byte_count > this->m_maxFileSize) {
                 //Rewrite file
                 //Current design supports writing to a circular file
-                //printf ("File will be overwritten. Seeking beginning of file\n");
                 (void)this->m_log_file.seek(0,Os::FileInterface::SeekType::ABSOLUTE);
                 this->m_byteCount = 0;
             }
@@ -133,7 +133,6 @@ namespace Svc {
             FwSignedSizeType writeSize = size;
             FwSignedSizeType fileSize;
             (void) this->m_log_file.position(fileSize);
-            //printf ("WRITING TO FILE HERE. File position is: %lld\n",fileSize);
             Os::File::Status stat = this->m_log_file.write(reinterpret_cast<const U8*>(data),writeSize,Os::File::WAIT);
             // Assert if file is not already open
             FW_ASSERT(stat != Os::File::NOT_OPENED);
@@ -143,17 +142,27 @@ namespace Svc {
         }
     }
 
-    void TraceFileLogger::process_traceId_storage(U32 traceId,bool enable) {
+    Fw::CmdResponse TraceFileLogger::process_traceId_storage(U32 traceId,bool enable) {
         
         //Add trace ID to the list (if it doesn't already exist) to stop logging it
+        bool IdProcessed = false;
         if (enable == false) { 
             if(this->filterTraceId.search_array(traceId, nullptr) == false) {
-                (void)this->filterTraceId.add_element(traceId);
+                IdProcessed = this->filterTraceId.add_element(traceId);
+            }
+            else {
+                IdProcessed = true; //adding a duplicate element is ignored
             }
         }
         else{
             //Remove trace ID from list (if its in the list) to start logging it
-            (void)this->filterTraceId.delete_element(traceId);
+            IdProcessed = this->filterTraceId.delete_element(traceId);
+        }
+        if(IdProcessed == false) {
+            return Fw::CmdResponse::VALIDATION_ERROR;
+        }
+        else {
+            return Fw::CmdResponse::OK;
         }
     }
 
@@ -192,29 +201,14 @@ namespace Svc {
            }
            else {
             traceSize = buf_ref.getBuffLength(); //Record only id & timetag
-            printf("File size %d",buf_ref.getBuffLength());
            }
-           //printf("Buffer size is :%d, Full buffer length: %d\n",m_file_buffer.getSize(),buf_ref.getBuffLength()); 
            //Note: Because its a circular file we're writing the full buffer capacity to the file
            //      instead of the actual buffer size (variable based on number of args). This will 
            //      ensure when the file is overwritten, we preserve old records
            this->write_log_file(m_file_buffer.getData(),traceSize);
            // If we choose not to use circular file write then use below instead. 
            //this->write_log_file(m_file_buffer.getData(),buf_ref.getBuffLength());
-           
-            /*
-            //convert trace data to string to make it readable
-            std::string args_text;
-            args.toString(args_text);
-            char textStr[FW_TRACE_BUFFER_MAX_SIZE];
-            U32 packet_size = static_cast<U32> (snprintf(textStr,
-                    FW_TRACE_BUFFER_MAX_SIZE,
-                    "ID: %" PRI_FwTraceIdType" TimeBase: %" PRI_FwTimeBaseStoreType "Time:%" PRId32 ",%" PRId32 "Args: %s\n",
-                    id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()),timeTag.getSeconds(),timeTag.getUSeconds(),args_text.c_str()));
-            printf("Trace buffer logger invoked HERE\n");
-            //textStr += args_text;
-            this->write_log_file(reinterpret_cast<U8*>(textStr),packet_size);
-            */
+            
     }
 
 
@@ -230,23 +224,22 @@ namespace Svc {
     }
 
     void TraceFileLogger ::DumpTraceDp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-        // TODO
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
     void TraceFileLogger ::FilterTraceType_cmdHandler(FwOpcodeType opCode,
                                           U32 cmdSeq,
                                           U16 bitmask,
                                           Svc::TraceFileLogger_Enable enable) {
-        this->filterTraceType(bitmask,enable); 
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        Fw::CmdResponse processStatus = this->filterTraceType(bitmask,enable); 
+        this->cmdResponse_out(opCode, cmdSeq, processStatus);
     }
 
-    void TraceFileLogger ::DisableTraceId_cmdHandler(FwOpcodeType opCode,
+    void TraceFileLogger ::FilterTraceId_cmdHandler(FwOpcodeType opCode,
                                                  U32 cmdSeq,
                                                  U32 traceId,
                                                  Svc::TraceFileLogger_Enable enable) {
         //Add/remove trace IDs from the array
-        this->process_traceId_storage(traceId,static_cast<bool>(enable)); 
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        Fw::CmdResponse processStatus = this->process_traceId_storage(traceId,static_cast<bool>(enable)); 
+        this->cmdResponse_out(opCode, cmdSeq, processStatus);
     }
 }  // namespace Svc

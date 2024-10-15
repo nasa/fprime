@@ -183,6 +183,12 @@ void TraceFileLoggerTester :: test_filter_trace_type() {
         ASSERT_TRUE(arg_check == buffer); //Buffer data matches
 
     }
+    
+    //Test command filter trace type with 0 bitmask
+    this->sendCmd_FilterTraceType(0,1,0x0,Svc::TraceFileLogger_Enable::DISABLE);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(2, 2, 1, Fw::CmdResponse::VALIDATION_ERROR);
 }
 
 void TraceFileLoggerTester :: test_filter_trace_id() {
@@ -205,27 +211,27 @@ void TraceFileLoggerTester :: test_filter_trace_id() {
     2. Verify they exist in log file
     3. Send command to disable a few trace ids; verify array
     4. Write to buffer logger and ensure they're filtered out
-    5. Write duplicate commands and check trace id array that ids are unique
+    5. Write duplicate commands and check trace id array contains unique ids
     6. Enable trace ids again, verify array
     7. Verify file that all of them exist. 
     */
 
     //Filter out trace ids 0xAA and 0xDD
-    this->sendCmd_DisableTraceId(0,1,0xAA,Svc::TraceFileLogger_Enable::DISABLE);
+    this->sendCmd_FilterTraceId(0,1,0xAA,Svc::TraceFileLogger_Enable::DISABLE);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
-    this->sendCmd_DisableTraceId(0,1,0xDD,Svc::TraceFileLogger_Enable::DISABLE);
+    this->sendCmd_FilterTraceId(0,1,0xDD,Svc::TraceFileLogger_Enable::DISABLE);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, 3, 1, Fw::CmdResponse::OK);
 
     //Verify Array
     ASSERT_EQ(this->component.traceId_array[0], 0xAA); 
     ASSERT_EQ(this->component.traceId_array[1], 0xDD);
     
     //Send command with duplicate traceID and ensure the array only contains unique trace IDs
-    this->sendCmd_DisableTraceId(0,1,0xDD,Svc::TraceFileLogger_Enable::DISABLE);
+    this->sendCmd_FilterTraceId(0,1,0xDD,Svc::TraceFileLogger_Enable::DISABLE);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(2, 3, 1, Fw::CmdResponse::OK);
 
     //Verify Array
     ASSERT_EQ(this->component.traceId_array[0], 0xAA); 
@@ -242,15 +248,15 @@ void TraceFileLoggerTester :: test_filter_trace_id() {
     this->component.doDispatch();
 
     //Filter out trace ids 0xAA and 0xDD
-    this->sendCmd_DisableTraceId(0,1,0xAA,Svc::TraceFileLogger_Enable::ENABLE);
+    this->sendCmd_FilterTraceId(0,1,0xAA,Svc::TraceFileLogger_Enable::ENABLE);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
-    this->sendCmd_DisableTraceId(0,1,0xDD,Svc::TraceFileLogger_Enable::ENABLE);
+    ASSERT_CMD_RESPONSE(3, 3, 1, Fw::CmdResponse::OK);
+    this->sendCmd_FilterTraceId(0,1,0xDD,Svc::TraceFileLogger_Enable::ENABLE);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
-    this->sendCmd_DisableTraceId(0,1,0xCC,Svc::TraceFileLogger_Enable::DISABLE);
+    ASSERT_CMD_RESPONSE(4, 3, 1, Fw::CmdResponse::OK);
+    this->sendCmd_FilterTraceId(0,1,0xCC,Svc::TraceFileLogger_Enable::DISABLE);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(5, 3, 1, Fw::CmdResponse::OK);
 
     //enable all trace type filters and ensure they're received
     this->invoke_to_TraceBufferLogger(0,0xAA,timeTag,Fw::TraceCfg::TraceType::MESSAGE_QUEUE,trace_buffer_args);
@@ -264,7 +270,6 @@ void TraceFileLoggerTester :: test_filter_trace_id() {
 
     this->read_file();
     U16 total_records = (this->file_size / FW_TRACE_MAX_SER_SIZE);
-    printf ("TOTAL RECORDS : %d \n", total_records);
 
     //Iterate through buffer and verify contents
     for(U16 i = 0 ; i < total_records ; i++ ) {
@@ -306,11 +311,21 @@ void TraceFileLoggerTester :: test_filter_trace_id() {
         ASSERT_EQ(arg_size,sizeof(buffer)); //size of the arguments
         ASSERT_TRUE(arg_check == buffer); //Buffer data matches
     }
-
+    
     //Cleanup
-    this->sendCmd_DisableTraceId(0,1,0xCC,Svc::TraceFileLogger_Enable::ENABLE);
+    this->sendCmd_FilterTraceId(0,1,0xCC,Svc::TraceFileLogger_Enable::ENABLE);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(6, 3, 1, Fw::CmdResponse::OK);
+
+    //Verify command error when the storage array is full
+    for(U8 i = 0; i <= this->component.filterTraceId.m_maxIndex; i++){
+        this->sendCmd_FilterTraceId(0,1,i+1,Svc::TraceFileLogger_Enable::DISABLE);
+        this->component.doDispatch();
+        if (i < this->component.filterTraceId.m_maxIndex)
+            ASSERT_CMD_RESPONSE(7+i, 3, 1, Fw::CmdResponse::OK);
+        else
+            ASSERT_CMD_RESPONSE(7+i, 3, 1, Fw::CmdResponse::VALIDATION_ERROR);
+    } 
 }
 
 void TraceFileLoggerTester :: test_trace_enable() {
@@ -334,7 +349,7 @@ void TraceFileLoggerTester :: test_trace_enable() {
     //Disable trace and verify nothing gets written to the file
     this->sendCmd_EnableTrace(0,1,Svc::TraceFileLogger_Enable::DISABLE);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, 0, 1, Fw::CmdResponse::OK);
 
     //Write to file logger
     this->invoke_to_TraceBufferLogger(0,0xAB,timeTag,Fw::TraceCfg::TraceType::MESSAGE_QUEUE,trace_buffer_args);
@@ -352,7 +367,7 @@ void TraceFileLoggerTester :: test_trace_enable() {
     //Enable trace and verify file logger writes to the file
     this->sendCmd_EnableTrace(0,1,Svc::TraceFileLogger_Enable::ENABLE);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, 3, 1, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, 0, 1, Fw::CmdResponse::OK);
 
     //Write to file logger
     this->invoke_to_TraceBufferLogger(0,0xFE,timeTag,Fw::TraceCfg::TraceType::MESSAGE_QUEUE,trace_buffer_args);
@@ -366,6 +381,33 @@ void TraceFileLoggerTester :: test_trace_enable() {
     
     this->read_file();
     ASSERT_EQ(this->file_size,(FW_TRACE_MAX_SER_SIZE*4));
+
+}
+//Test code coverage - Corner cases
+void TraceFileLoggerTester :: test_code_coverage() {
+    
+    //Test if file already open during init, it will open a clean file
+        //Run one of the previous tests that leaves a non-zero file size
+        this->test_trace_enable();
+        ASSERT_NE(this->file_size,0);
+        //Recall setting up log file
+        this->component.set_log_file("TraceFileTest.dat",TEST_TRACE_FILE_SIZE_MAX);
+        this->read_file();
+        ASSERT_EQ(this->file_size,0);
+
+    //Test if file open fails a warning EVR is generated
+        //set file mode to closed
+        printf("Is file closed : %d",this->component.m_mode);
+        this->component.m_enable_trace = true;
+        this->component.m_mode = TraceFileLogger::FileMode::CLOSED;
+        this->component.set_log_file("TraceFileTest.dat",TEST_TRACE_FILE_SIZE_MAX);
+        ASSERT_EVENTS_TraceFileOpenError(0,"TraceFileTest.dat");
+
+    //Test file name >= 256 characters creates error
+        this->component.m_enable_trace = true;
+        this->component.set_log_file("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",TEST_TRACE_FILE_SIZE_MAX);
+        ASSERT_EQ(this->component.m_enable_trace,false);
+
 
 }
 
@@ -384,14 +426,6 @@ void TraceFileLoggerTester :: read_file() {
     trace_file.read(reinterpret_cast<char *>(storage_buffer.data()),size);
 
     trace_file.close();
-
-   /* 
-    for(U8 byte : storage_buffer) {
-        //std::cout << byte << " ";
-        printf("0x%X ",(byte));
-
-    } 
-    */   
 }
 
 }  // namespace Svc
