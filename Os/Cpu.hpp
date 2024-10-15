@@ -79,7 +79,7 @@ class Cpu final : public CpuInterface {
     //-----------------------------------------------------------------------------
 
     //! \brief initialize the singleton
-    void init();
+    static void init();
 
     //! \brief return singleton
     static Cpu& getSingleton();

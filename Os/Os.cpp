@@ -13,10 +13,10 @@ namespace Os {
 
 void init() {
     // Initialize all OSAL singletons
-    (void)Os::Console::init();
-    (void)Os::FileSystem::init();
-    (void)Os::Cpu::init();
-    (void)Os::Memory::init();
+    Os::Console::init();
+    Os::FileSystem::init();
+    Os::Cpu::init();
+    Os::Memory::init();
 }
 
 }  // namespace Os
