@@ -80,9 +80,9 @@ U16 UdpSocket::getRecvPort() {
 }
 
 
-SocketIpStatus UdpSocket::bind(NATIVE_INT_TYPE fd) {
+SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
     struct sockaddr_in address;
-    FW_ASSERT(-1 != fd);
+    FW_ASSERT(fd != -1);
 
     // Set up the address port and name
     address.sin_family = AF_INET;
@@ -112,7 +112,7 @@ SocketIpStatus UdpSocket::bind(NATIVE_INT_TYPE fd) {
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
+SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     SocketIpStatus status = SOCK_SUCCESS;
     NATIVE_INT_TYPE socketFd = -1;
     struct sockaddr_in address;
@@ -152,7 +152,7 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     }
 
     // When we are setting up for receiving as well, then we must bind to a port
-    if ((status = this->bind(socketFd)) != SOCK_SUCCESS) {
+    if ((status = this->bind(socketDescriptor.fd)) != SOCK_SUCCESS) {
         ::close(socketFd);
         return status; // Not closing FD as it is still a valid send FD
     }
@@ -169,19 +169,19 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
                            port);
     }
     FW_ASSERT(status == SOCK_SUCCESS, status);
-    fd = socketFd;
+    socketDescriptor.fd = socketFd;
     return status;
 }
 
-I32 UdpSocket::sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
+I32 UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
     FW_ASSERT(this->m_state->m_addr_send.sin_family != 0); // Make sure the address was previously setup
-    return static_cast<I32>(::sendto(fd, data, size, SOCKET_IP_SEND_FLAGS,
+    return static_cast<I32>(::sendto(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS,
                     reinterpret_cast<struct sockaddr *>(&this->m_state->m_addr_send), sizeof(this->m_state->m_addr_send)));
 }
 
-I32 UdpSocket::recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) {
+I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) {
     FW_ASSERT(this->m_state->m_addr_recv.sin_family != 0); // Make sure the address was previously setup
-    return static_cast<I32>(::recvfrom(fd, data, size, SOCKET_IP_RECV_FLAGS, nullptr, nullptr));
+    return static_cast<I32>(::recvfrom(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS, nullptr, nullptr));
 }
 
 }  // namespace Drv

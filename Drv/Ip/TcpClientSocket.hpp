@@ -44,26 +44,26 @@ class TcpClientSocket : public IpSocket {
 
     /**
      * \brief Tcp specific implementation for opening a client socket.
-     * \param fd: (output) file descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
+     * \param socketDescriptor: (output) descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
      * \return status of open
      */
-    SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd) override;
+    SocketIpStatus openProtocol(SocketDescriptor& socketDescriptor) override;
     /**
      * \brief Protocol specific implementation of send.  Called directly with retry from send.
-     * \param fd: file descriptor to send to
+     * \param socketDescriptor: descriptor to send to
      * \param data: data to send
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    I32 sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) override;
+    I32 sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) override;
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
-     * \param fd: file descriptor to recv from
+     * \param socketDescriptor: descriptor to recv from
      * \param data: data pointer to fill
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    I32 recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) override;
+    I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) override;
 };
 }  // namespace Drv
 

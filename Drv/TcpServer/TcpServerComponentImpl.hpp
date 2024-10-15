@@ -63,6 +63,21 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
                              const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS);
 
     /**
+     * \brief startup the server socket for communications
+     *
+     * Start up the server socket by listening on a port. Note: does not accept clients, this is done in open to
+     * facilitate re-connection of clients.
+     */
+    SocketIpStatus startup();
+
+    /**
+     * \brief terminate the server socket
+     *
+     * Close the server socket. Should be done after all clients are shutdown and closed.
+     */
+    void terminate();
+
+    /**
      * \brief get the port being listened on
      *
      * Most useful when listen was configured to use port "0", this will return the port used for listening after a port
@@ -85,7 +100,7 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      *
      * \return IpSocket reference
      */
-    IpSocket& getSocketHandler();
+    IpSocket& getSocketHandler() override;
 
     /**
      * \brief returns a buffer to fill with data
@@ -95,7 +110,7 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      *
      * \return Fw::Buffer to fill with data
      */
-    Fw::Buffer getBuffer();
+    Fw::Buffer getBuffer() override;
 
     /**
      * \brief sends a buffer to be filled with data
@@ -105,13 +120,17 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      *
      * \return Fw::Buffer filled with data to send out
      */
-    void sendBuffer(Fw::Buffer buffer, SocketIpStatus status);
+    void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) override;
 
     /**
      * \brief called when the IPv4 system has been connected
     */
-    void connected();
+    void connected() override;
 
+    /**
+     * \brief read from the socket, overridden to start and terminate the server socket
+     */
+    void readLoop() override;
 
   PRIVATE:
 
@@ -134,9 +153,10 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      * \param fwBuffer: buffer containing data to be sent
      * \return SEND_OK on success, SEND_RETRY when critical data should be retried and SEND_ERROR upon error
      */
-    Drv::SendStatus send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
+    Drv::SendStatus send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) override;
 
     Drv::TcpServerSocket m_socket; //!< Socket implementation
+    Drv::ServerSocketDescriptor m_realDescriptor; //!< Server descriptor
 };
 
 }  // end namespace Drv
