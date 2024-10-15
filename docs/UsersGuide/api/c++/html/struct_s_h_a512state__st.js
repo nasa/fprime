@@ -7,5 +7,5 @@ var struct_s_h_a512state__st =
     [ "Nl", "struct_s_h_a512state__st.html#a8adc6d1037d156b3adcb14773fa8fe90", null ],
     [ "num", "struct_s_h_a512state__st.html#ae3ba23906ed2416ed3fae1765cf3c0f0", null ],
     [ "p", "struct_s_h_a512state__st.html#ac374088935867ed28c9210a4ce44e754", null ],
-    [ "u", "struct_s_h_a512state__st.html#abf49353ebfc368e9dd40c9eeec2e3ac2", null ]
+    [ "u", "struct_s_h_a512state__st.html#a4ab0bc751fbc42c9cab510d11a456e38", null ]
 ];

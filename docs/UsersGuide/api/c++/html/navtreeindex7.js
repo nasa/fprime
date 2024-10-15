@@ -1,5 +1,13 @@
 var NAVTREEINDEX7 =
 {
+"stub_2_default_cpu_8cpp.html":[30,0,11,5,7],
+"stub_2_default_cpu_8cpp_source.html":[30,0,11,5,7],
+"stub_2_default_file_8cpp.html":[30,0,11,5,8],
+"stub_2_default_file_8cpp_source.html":[30,0,11,5,8],
+"stub_2_default_memory_8cpp.html":[30,0,11,5,9],
+"stub_2_default_memory_8cpp_source.html":[30,0,11,5,9],
+"stub_2_default_mutex_8cpp.html":[30,0,11,5,10],
+"stub_2_default_mutex_8cpp_source.html":[30,0,11,5,10],
 "stub_2_default_raw_time_8cpp.html":[30,0,11,5,12],
 "stub_2_default_raw_time_8cpp_source.html":[30,0,11,5,12],
 "stub_2_default_task_8cpp.html":[30,0,11,5,13],
@@ -241,13 +249,5 @@ var NAVTREEINDEX7 =
 "svc_com_stub_component.html":[14,15],
 "svc_com_stub_component.html#autotoc_md734":[14,15,0],
 "svc_com_stub_component.html#autotoc_md735":[14,15,0,0],
-"svc_com_stub_component.html#autotoc_md736":[14,15,0,1],
-"svc_com_stub_component.html#autotoc_md737":[14,15,0,2],
-"svc_com_stub_component.html#autotoc_md738":[14,15,0,3],
-"svc_com_stub_component.html#autotoc_md739":[14,15,0,3,0],
-"svc_com_stub_component.html#autotoc_md740":[14,15,0,3,1],
-"svc_com_stub_component.html#autotoc_md741":[14,15,0,3,2],
-"svc_com_stub_component.html#autotoc_md742":[14,15,0,3,2,0],
-"svc_com_stub_component.html#autotoc_md743":[14,15,0,3,2,1],
-"svc_com_stub_component.html#autotoc_md744":[14,15,0,3,2,2]
+"svc_com_stub_component.html#autotoc_md736":[14,15,0,1]
 };

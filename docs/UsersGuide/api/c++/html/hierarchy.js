@@ -455,6 +455,8 @@ var hierarchy =
       [ "Os::FileSystemStatus", "class_os_1_1_file_system_status.html", null ],
       [ "Os::GenericStatus", "class_os_1_1_generic_status.html", null ],
       [ "Os::MutexStatus", "class_os_1_1_mutex_status.html", null ],
+      [ "Os::QueueBlockingType", "class_os_1_1_queue_blocking_type.html", null ],
+      [ "Os::QueueStatus", "class_os_1_1_queue_status.html", null ],
       [ "Os::RawTimeInterface", "class_os_1_1_raw_time_interface.html", [
         [ "Os::Posix::RawTime::PosixRawTime", "class_os_1_1_posix_1_1_raw_time_1_1_posix_raw_time.html", null ],
         [ "Os::RawTime", "class_os_1_1_raw_time.html", null ],

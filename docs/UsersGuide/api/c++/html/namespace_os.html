@@ -133,6 +133,12 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_mutex_status.html">MutexStatus</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">FPP shadow-enum representing <a class="el" href="class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025">Os::Mutex::Status</a>.  <a href="class_os_1_1_mutex_status.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_blocking_type.html">QueueBlockingType</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">FPP shadow-enum representing <a class="el" href="class_os_1_1_queue_interface.html#a3cee348ebfab3e9b57310f1c913166fe" title="message type">Os::Queue::BlockingType</a>.  <a href="class_os_1_1_queue_blocking_type.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_queue_status.html">QueueStatus</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">FPP shadow-enum representing <a class="el" href="class_os_1_1_queue_interface.html#a91316813bd24efbd08f841c5dbc3d3b1" title="status returned from the queue send function">Os::Queue::Status</a>.  <a href="class_os_1_1_queue_status.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_raw_time_status.html">RawTimeStatus</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">FPP shadow-enum representing <a class="el" href="class_os_1_1_raw_time_interface.html#a43316df494e852f2d18f78d053d4360b">Os::RawTime::Status</a>.  <a href="class_os_1_1_raw_time_status.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -249,7 +255,7 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:aa8c0e58da9bfe405b8fca753de3af82c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c">init</a> ()</td></tr>
-<tr class="memdesc:aa8c0e58da9bfe405b8fca753de3af82c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function for the OSAL layer.  <a href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c">More...</a><br /></td></tr>
+<tr class="memdesc:aa8c0e58da9bfe405b8fca753de3af82c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the OS Abstraction Layer (OSAL)  <a href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c">More...</a><br /></td></tr>
 <tr class="separator:aa8c0e58da9bfe405b8fca753de3af82c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa40afab1b180436effc480719027ab5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_file_interface.html#ab25fd826bc916398d70a8232f326b703">File::Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#aaa40afab1b180436effc480719027ab5">computeHash</a> (const char *fileName, <a class="el" href="class_utils_1_1_hash_buffer.html">Utils::HashBuffer</a> &amp;hashBuffer)</td></tr>
 <tr class="separator:aaa40afab1b180436effc480719027ab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -328,9 +334,12 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Initialization function for the OSAL layer. </p>
+<p>Initialize the OS Abstraction Layer (OSAL) </p>
+<ul>
+<li>Initialize all singletons for the OSAL modules that use the singleton pattern </li>
+</ul>
 
-<p class="definition">Definition at line <a class="el" href="os_8cpp_source.html#l00012">12</a> of file <a class="el" href="os_8cpp_source.html">Os.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="os_8cpp_source.html#l00014">14</a> of file <a class="el" href="os_8cpp_source.html">Os.cpp</a>.</p>
 
 </div>
 </div>

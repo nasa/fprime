@@ -124,9 +124,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0afdfc83f80ea05fe8ab8312fd7159f0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_cpu_interface.html">CpuInterface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_cpu.html#a0afdfc83f80ea05fe8ab8312fd7159f0">operator=</a> (const <a class="el" href="class_os_1_1_cpu_interface.html">CpuInterface</a> &amp;other) override=delete</td></tr>
 <tr class="memdesc:a0afdfc83f80ea05fe8ab8312fd7159f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignment operator is forbidden  <a href="class_os_1_1_cpu.html#a0afdfc83f80ea05fe8ab8312fd7159f0">More...</a><br /></td></tr>
 <tr class="separator:a0afdfc83f80ea05fe8ab8312fd7159f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d7c5168fb70a40500b59d876c8c6b8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_cpu.html#a0d7c5168fb70a40500b59d876c8c6b8e">init</a> ()</td></tr>
-<tr class="memdesc:a0d7c5168fb70a40500b59d876c8c6b8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">initialize the singleton  <a href="class_os_1_1_cpu.html#a0d7c5168fb70a40500b59d876c8c6b8e">More...</a><br /></td></tr>
-<tr class="separator:a0d7c5168fb70a40500b59d876c8c6b8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29f82feb1b9beea6f9a99ea98467d33b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_generic.html#a7658440e7ab158208b97e002dee0e879">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_cpu.html#a29f82feb1b9beea6f9a99ea98467d33b">_getCount</a> (<a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;cpu_count) override</td></tr>
 <tr class="memdesc:a29f82feb1b9beea6f9a99ea98467d33b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request the count of the CPUs detected by the system.  <a href="class_os_1_1_cpu.html#a29f82feb1b9beea6f9a99ea98467d33b">More...</a><br /></td></tr>
 <tr class="separator:a29f82feb1b9beea6f9a99ea98467d33b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,6 +146,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a0d7c5168fb70a40500b59d876c8c6b8e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_cpu.html#a0d7c5168fb70a40500b59d876c8c6b8e">init</a> ()</td></tr>
+<tr class="memdesc:a0d7c5168fb70a40500b59d876c8c6b8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">initialize the singleton  <a href="class_os_1_1_cpu.html#a0d7c5168fb70a40500b59d876c8c6b8e">More...</a><br /></td></tr>
+<tr class="separator:a0d7c5168fb70a40500b59d876c8c6b8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab127e9d7f55b898d3ccfd450854df5cd"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_cpu.html">Cpu</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_cpu.html#ab127e9d7f55b898d3ccfd450854df5cd">getSingleton</a> ()</td></tr>
 <tr class="memdesc:ab127e9d7f55b898d3ccfd450854df5cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">return singleton  <a href="class_os_1_1_cpu.html#ab127e9d7f55b898d3ccfd450854df5cd">More...</a><br /></td></tr>
 <tr class="separator:ab127e9d7f55b898d3ccfd450854df5cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -527,6 +527,9 @@ Additional Inherited Members</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void Os::Cpu::init </td>
@@ -535,6 +538,11 @@ Additional Inherited Members</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>initialize the singleton </p>

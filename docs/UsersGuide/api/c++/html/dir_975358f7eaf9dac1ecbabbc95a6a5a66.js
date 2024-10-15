@@ -28,6 +28,14 @@ var dir_975358f7eaf9dac1ecbabbc95a6a5a66 =
     [ "MutexStatusEnumAc.hpp", "mutex_status_enum_ac_8hpp.html", [
       [ "MutexStatus", "class_os_1_1_mutex_status.html", "class_os_1_1_mutex_status" ]
     ] ],
+    [ "QueueBlockingTypeEnumAc.cpp", "queue_blocking_type_enum_ac_8cpp.html", null ],
+    [ "QueueBlockingTypeEnumAc.hpp", "queue_blocking_type_enum_ac_8hpp.html", [
+      [ "QueueBlockingType", "class_os_1_1_queue_blocking_type.html", "class_os_1_1_queue_blocking_type" ]
+    ] ],
+    [ "QueueStatusEnumAc.cpp", "queue_status_enum_ac_8cpp.html", null ],
+    [ "QueueStatusEnumAc.hpp", "queue_status_enum_ac_8hpp.html", [
+      [ "QueueStatus", "class_os_1_1_queue_status.html", "class_os_1_1_queue_status" ]
+    ] ],
     [ "RawTimeStatusEnumAc.cpp", "raw_time_status_enum_ac_8cpp.html", null ],
     [ "RawTimeStatusEnumAc.hpp", "raw_time_status_enum_ac_8hpp.html", [
       [ "RawTimeStatus", "class_os_1_1_raw_time_status.html", "class_os_1_1_raw_time_status" ]

@@ -275,6 +275,8 @@ var annotated_dup =
       [ "FileSystemStatus", "class_os_1_1_file_system_status.html", "class_os_1_1_file_system_status" ],
       [ "GenericStatus", "class_os_1_1_generic_status.html", "class_os_1_1_generic_status" ],
       [ "MutexStatus", "class_os_1_1_mutex_status.html", "class_os_1_1_mutex_status" ],
+      [ "QueueBlockingType", "class_os_1_1_queue_blocking_type.html", "class_os_1_1_queue_blocking_type" ],
+      [ "QueueStatus", "class_os_1_1_queue_status.html", "class_os_1_1_queue_status" ],
       [ "RawTimeStatus", "class_os_1_1_raw_time_status.html", "class_os_1_1_raw_time_status" ],
       [ "TaskStatus", "class_os_1_1_task_status.html", "class_os_1_1_task_status" ],
       [ "ConditionVariableHandle", "class_os_1_1_condition_variable_handle.html", null ],
