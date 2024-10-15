@@ -44,7 +44,7 @@ Jinja2==3.1.4
 lxml==5.3.0
 Markdown==3.7
 markdown-it-py==3.0.0
-MarkupSafe==3.0.1
+MarkupSafe==2.1.5
 mdurl==0.1.2
 openpyxl==3.1.5
 packaging==24.1
