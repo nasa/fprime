@@ -105,15 +105,6 @@ namespace Os {
             // Implementation functions (static) to be supplied by the linker
             // =================
 
-            //! \brief delay the current task
-            //!
-            //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
-            //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
-            //!
-            //! \param interval: delay time
-            //! \return status of the delay
-            static Status delay(Fw::TimeInterval interval);
-
             //! \brief provide a pointer to a task delegate object
             //!
             //! This function must return a pointer to a `TaskInterface` object that contains the real implementation of the file
@@ -164,6 +155,15 @@ namespace Os {
             //! Resumes this task. Not started, running, and exited tasks take no action.
             //!
             virtual void resume() = 0;
+
+            //! \brief delay the currently scheduled task using the given architecture
+            //!
+            //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
+            //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
+            //!
+            //! \param interval: delay time
+            //! \return status of the delay
+            virtual Status _delay(Fw::TimeInterval interval) = 0;
 
             //! \brief determine if the task requires cooperative multitasking
             //!
@@ -317,6 +317,15 @@ namespace Os {
         //!
         void resume() override;
 
+        //! \brief delay the current task
+        //!
+        //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
+        //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
+        //!
+        //! \param interval: delay time
+        //! \return status of the delay
+        Status _delay(Fw::TimeInterval interval) override;
+
         //! \brief determine if the task is cooperative multitasking (implementation specific)
         //! \return true if cooperative, false otherwise
         bool isCooperative() override;
@@ -325,6 +334,9 @@ namespace Os {
         //! \return internal task handle representation
         TaskHandle* getHandle() override;
 
+        //! \brief initialize singleton
+        static void init();
+
         //! \brief get the current number of tasks
         //! \return current number of tasks
         static FwSizeType getNumTasks();
@@ -332,6 +344,19 @@ namespace Os {
         //! \brief register a task registry to track Threads
         //!
         static void registerTaskRegistry(TaskRegistry* registry);
+
+        //! \brief get a reference to singleton
+        //! \return reference to singleton
+        static Task& getSingleton();
+
+        //! \brief delay the current task
+        //!
+        //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
+        //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
+        //!
+        //! \param interval: delay time
+        //! \return status of the delay
+        static Status delay(Fw::TimeInterval interval);
 
       PRIVATE:
         static TaskRegistry* s_taskRegistry; //!< Pointer to registered task registry
