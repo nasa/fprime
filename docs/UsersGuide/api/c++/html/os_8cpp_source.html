@@ -98,30 +98,34 @@ $(document).ready(function(){initNavTree('_os_8cpp_source.html',''); initResizab
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="cpu_8hpp.html">Os/Cpu.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="file_system_8hpp.html">Os/FileSystem.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="memory_8hpp.html">Os/Memory.hpp</a>&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_os.html">Os</a> {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c">   14</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c">init</a>() {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">// Initialize all OSAL singletons</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <a class="code" href="class_os_1_1_console.html#a694a65450cf442b4928ee08276206ff3">Os::Console::init</a>();</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <a class="code" href="class_os_1_1_file_system.html#a03b64e31513d38ea39383fca790d3156">Os::FileSystem::init</a>();</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <a class="code" href="class_os_1_1_cpu.html#a0d7c5168fb70a40500b59d876c8c6b8e">Os::Cpu::init</a>();</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <a class="code" href="class_os_1_1_memory.html#ac677f8c6a9b70288e46fedac269ce7a2">Os::Memory::init</a>();</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;}</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;}  <span class="comment">// namespace Os</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="task_8hpp.html">Os/Task.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_os.html">Os</a> {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c">   15</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c">init</a>() {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="comment">// Initialize all OSAL singletons</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <a class="code" href="class_os_1_1_console.html#a694a65450cf442b4928ee08276206ff3">Os::Console::init</a>();</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <a class="code" href="class_os_1_1_file_system.html#a03b64e31513d38ea39383fca790d3156">Os::FileSystem::init</a>();</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <a class="code" href="class_os_1_1_cpu.html#a0d7c5168fb70a40500b59d876c8c6b8e">Os::Cpu::init</a>();</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <a class="code" href="class_os_1_1_memory.html#ac677f8c6a9b70288e46fedac269ce7a2">Os::Memory::init</a>();</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <a class="code" href="class_os_1_1_task.html#a63a774098e65493e11426ae3b2dc6bb0">Os::Task::init</a>();</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;}</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;}  <span class="comment">// namespace Os</span></div>
 <div class="ttc" id="a_console_8hpp_html"><div class="ttname"><a href="console_8hpp.html">Console.hpp</a></div></div>
 <div class="ttc" id="a_cpu_8hpp_html"><div class="ttname"><a href="cpu_8hpp.html">Cpu.hpp</a></div></div>
 <div class="ttc" id="a_file_system_8hpp_html"><div class="ttname"><a href="file_system_8hpp.html">FileSystem.hpp</a></div></div>
 <div class="ttc" id="a_fp_config_8h_html"><div class="ttname"><a href="fp_config_8h.html">FpConfig.h</a></div><div class="ttdoc">C-compatible configuration header for fprime configuration.</div></div>
 <div class="ttc" id="a_memory_8hpp_html"><div class="ttname"><a href="memory_8hpp.html">Memory.hpp</a></div></div>
 <div class="ttc" id="a_os_8hpp_html"><div class="ttname"><a href="os_8hpp.html">Os.hpp</a></div></div>
+<div class="ttc" id="a_task_8hpp_html"><div class="ttname"><a href="task_8hpp.html">Task.hpp</a></div></div>
 <div class="ttc" id="aclass_os_1_1_console_html_a694a65450cf442b4928ee08276206ff3"><div class="ttname"><a href="class_os_1_1_console.html#a694a65450cf442b4928ee08276206ff3">Os::Console::init</a></div><div class="ttdeci">static void init()</div><div class="ttdoc">initialize singleton</div><div class="ttdef"><b>Definition:</b> <a href="console_8cpp_source.html#l00053">Console.cpp:53</a></div></div>
 <div class="ttc" id="aclass_os_1_1_cpu_html_a0d7c5168fb70a40500b59d876c8c6b8e"><div class="ttname"><a href="class_os_1_1_cpu.html#a0d7c5168fb70a40500b59d876c8c6b8e">Os::Cpu::init</a></div><div class="ttdeci">static void init()</div><div class="ttdoc">initialize the singleton</div><div class="ttdef"><b>Definition:</b> <a href="cpu_8cpp_source.html#l00016">Cpu.cpp:16</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_system_html_a03b64e31513d38ea39383fca790d3156"><div class="ttname"><a href="class_os_1_1_file_system.html#a03b64e31513d38ea39383fca790d3156">Os::FileSystem::init</a></div><div class="ttdeci">static void init()</div><div class="ttdoc">initialize singleton</div><div class="ttdef"><b>Definition:</b> <a href="file_system_8cpp_source.html#l00062">FileSystem.cpp:62</a></div></div>
 <div class="ttc" id="aclass_os_1_1_memory_html_ac677f8c6a9b70288e46fedac269ce7a2"><div class="ttname"><a href="class_os_1_1_memory.html#ac677f8c6a9b70288e46fedac269ce7a2">Os::Memory::init</a></div><div class="ttdeci">static void init()</div><div class="ttdoc">initialize the singleton</div><div class="ttdef"><b>Definition:</b> <a href="memory_8cpp_source.html#l00016">Memory.cpp:16</a></div></div>
+<div class="ttc" id="aclass_os_1_1_task_html_a63a774098e65493e11426ae3b2dc6bb0"><div class="ttname"><a href="class_os_1_1_task.html#a63a774098e65493e11426ae3b2dc6bb0">Os::Task::init</a></div><div class="ttdeci">static void init()</div><div class="ttdoc">initialize singleton</div><div class="ttdef"><b>Definition:</b> <a href="task_8cpp_source.html#l00187">Task.cpp:187</a></div></div>
 <div class="ttc" id="anamespace_os_html"><div class="ttname"><a href="namespace_os.html">Os</a></div><div class="ttdef"><b>Definition:</b> <a href="directory_open_mode_enum_ac_8cpp_source.html#l00013">DirectoryOpenModeEnumAc.cpp:13</a></div></div>
-<div class="ttc" id="anamespace_os_html_aa8c0e58da9bfe405b8fca753de3af82c"><div class="ttname"><a href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c">Os::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialize the OS Abstraction Layer (OSAL)</div><div class="ttdef"><b>Definition:</b> <a href="os_8cpp_source.html#l00014">Os.cpp:14</a></div></div>
+<div class="ttc" id="anamespace_os_html_aa8c0e58da9bfe405b8fca753de3af82c"><div class="ttname"><a href="namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c">Os::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialize the OS Abstraction Layer (OSAL)</div><div class="ttdef"><b>Definition:</b> <a href="os_8cpp_source.html#l00015">Os.cpp:15</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

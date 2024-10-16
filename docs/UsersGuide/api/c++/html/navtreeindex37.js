@@ -1,5 +1,11 @@
 var NAVTREEINDEX37 =
 {
+"namespace_os_1_1_generic.html#a7658440e7ab158208b97e002dee0e879":[28,0,5,2,3],
+"namespace_os_1_1_generic.html#a7658440e7ab158208b97e002dee0e879a5c7df591daa5bce645990e1e41ee3528":[28,0,5,2,3,0],
+"namespace_os_1_1_generic.html#a7658440e7ab158208b97e002dee0e879a8da171662dc069a7a7330fbc2699f014":[28,0,5,2,3,1],
+"namespace_os_1_1_linux.html":[28,0,5,3],
+"namespace_os_1_1_linux_1_1_cpu.html":[28,0,5,3,0],
+"namespace_os_1_1_linux_1_1_cpu.html#a5cdf39e1ab3a54c2b42b20e1748eb06b":[28,0,5,3,0,4],
 "namespace_os_1_1_linux_1_1_cpu.html#ac2483abf7eb734e0eaca8163a976053c":[28,0,5,3,0,3],
 "namespace_os_1_1_linux_1_1_cpu.html#ac2483abf7eb734e0eaca8163a976053ca04cdb4c78e8ae7b5c6d1a9911f500729":[28,0,5,3,0,3,1],
 "namespace_os_1_1_linux_1_1_cpu.html#ac2483abf7eb734e0eaca8163a976053ca23798ae5f273f884834569b43762ec46":[28,0,5,3,0,3,0],
@@ -126,8 +132,8 @@ var NAVTREEINDEX37 =
 "namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54a923d3112910ec691929e92deb0da1a0f":[28,0,10,4,2],
 "namespace_utils.html#a85cb85382b6bbc7b26ea488e7377ec54afadefa0f09cc18ea54d6b1d44263cc9f":[28,0,10,4,4],
 "namespace_utils.html#aa770ad15435067b253e2d7325ca1c331":[28,0,10,8],
-"namespacemembers.html":[28,1,0,0],
 "namespacemembers.html":[28,1,0],
+"namespacemembers.html":[28,1,0,0],
 "namespacemembers_b.html":[28,1,0,1],
 "namespacemembers_c.html":[28,1,0,2],
 "namespacemembers_d.html":[28,1,0,3],
@@ -243,11 +249,5 @@ var NAVTREEINDEX37 =
 "struct_os_1_1_file_system_handle.html":[29,0,3,31],
 "struct_os_1_1_generic_1_1_priority_queue_handle.html":[29,0,3,1,0],
 "struct_os_1_1_generic_1_1_priority_queue_handle.html#a097661f4c73ea40a5d01aea742550ff4":[29,0,3,1,0,5],
-"struct_os_1_1_generic_1_1_priority_queue_handle.html#a0efd7721247572428567294e2d4939fd":[29,0,3,1,0,3],
-"struct_os_1_1_generic_1_1_priority_queue_handle.html#a0fe17bfb2c001a609b0c2175fa82ae3c":[29,0,3,1,0,14],
-"struct_os_1_1_generic_1_1_priority_queue_handle.html#a19035d243eceb1bd58e27076164661c7":[29,0,3,1,0,1],
-"struct_os_1_1_generic_1_1_priority_queue_handle.html#a30f027aefe6749ef0c29b2aef3e051f8":[29,0,3,1,0,2],
-"struct_os_1_1_generic_1_1_priority_queue_handle.html#a36d0d87544fb3d57c9bbc1aa65f61317":[29,0,3,1,0,13],
-"struct_os_1_1_generic_1_1_priority_queue_handle.html#a689d268b7067a8b382d76e5d3a04b84f":[29,0,3,1,0,12],
-"struct_os_1_1_generic_1_1_priority_queue_handle.html#a6d432ffbc88ebe1e09dd0892b6f4495e":[29,0,3,1,0,0]
+"struct_os_1_1_generic_1_1_priority_queue_handle.html#a0efd7721247572428567294e2d4939fd":[29,0,3,1,0,3]
 };

@@ -181,6 +181,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa7e0c15266df6ff99104a99eb660f6f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#aa7e0c15266df6ff99104a99eb660f6f0">resume</a> () override</td></tr>
 <tr class="memdesc:aa7e0c15266df6ff99104a99eb660f6f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">resume a suspended task  <a href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#aa7e0c15266df6ff99104a99eb660f6f0">More...</a><br /></td></tr>
 <tr class="separator:aa7e0c15266df6ff99104a99eb660f6f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d3fa75a5c90208715e2ff760eaa07f2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#a1d3fa75a5c90208715e2ff760eaa07f2">_delay</a> (<a class="el" href="class_fw_1_1_time_interval.html">Fw::TimeInterval</a> interval) override</td></tr>
+<tr class="memdesc:a1d3fa75a5c90208715e2ff760eaa07f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">delay the current task  <a href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#a1d3fa75a5c90208715e2ff760eaa07f2">More...</a><br /></td></tr>
+<tr class="separator:a1d3fa75a5c90208715e2ff760eaa07f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfc105b4194df7bb931afafe92b38e2e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_handle.html">TaskHandle</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#acfc105b4194df7bb931afafe92b38e2e">getHandle</a> () override</td></tr>
 <tr class="memdesc:acfc105b4194df7bb931afafe92b38e2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the underlying task handle (implementation specific)  <a href="class_os_1_1_posix_1_1_task_1_1_posix_task.html#acfc105b4194df7bb931afafe92b38e2e">More...</a><br /></td></tr>
 <tr class="separator:acfc105b4194df7bb931afafe92b38e2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,9 +207,6 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_class_os_1_1_task_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_os_1_1_task_interface')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_os_1_1_task_interface.html">Os::TaskInterface</a></td></tr>
-<tr class="memitem:a78e6ef47260a96ac5ff29f8fbf490426 inherit pub_static_methods_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#a78e6ef47260a96ac5ff29f8fbf490426">delay</a> (<a class="el" href="class_fw_1_1_time_interval.html">Fw::TimeInterval</a> interval)</td></tr>
-<tr class="memdesc:a78e6ef47260a96ac5ff29f8fbf490426 inherit pub_static_methods_class_os_1_1_task_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">delay the current task  <a href="class_os_1_1_task_interface.html#a78e6ef47260a96ac5ff29f8fbf490426">More...</a><br /></td></tr>
-<tr class="separator:a78e6ef47260a96ac5ff29f8fbf490426 inherit pub_static_methods_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa95a4604d9b61868f3660f54568f9a14 inherit pub_static_methods_class_os_1_1_task_interface"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_os_1_1_task_interface.html">TaskInterface</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task_interface.html#aa95a4604d9b61868f3660f54568f9a14">getDelegate</a> (<a class="el" href="os_8hpp.html#a1f0e30a3b205012baf80f22fc372473a">TaskHandleStorage</a> &amp;aligned_placement_new_memory)</td></tr>
 <tr class="memdesc:aa95a4604d9b61868f3660f54568f9a14 inherit pub_static_methods_class_os_1_1_task_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">provide a pointer to a task delegate object  <a href="class_os_1_1_task_interface.html#aa95a4604d9b61868f3660f54568f9a14">More...</a><br /></td></tr>
 <tr class="separator:aa95a4604d9b61868f3660f54568f9a14 inherit pub_static_methods_class_os_1_1_task_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -327,6 +327,46 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a1d3fa75a5c90208715e2ff760eaa07f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d3fa75a5c90208715e2ff760eaa07f2">&#9670;&nbsp;</a></span>_delay()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_os_1_1_task_interface.html#ad9d263c769aa2ac35bb8a38e9447fca1">Os::Task::Status</a> Os::Posix::Task::PosixTask::_delay </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_fw_1_1_time_interval.html">Fw::TimeInterval</a>&#160;</td>
+          <td class="paramname"><em>interval</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>delay the current task </p>
+<p>Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations the task will resume no earlier than expected but an exact wake-up time is not guaranteed.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interval</td><td>delay time </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>status of the delay </dd></dl>
+
+<p>Implements <a class="el" href="class_os_1_1_task_interface.html#aa49c545968cb923fb1292dcf167ed569">Os::TaskInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="posix_2_task_8cpp_source.html#l00214">214</a> of file <a class="el" href="posix_2_task_8cpp_source.html">Task.cpp</a>.</p>
+
+</div>
+</div>
 <a id="acfc105b4194df7bb931afafe92b38e2e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acfc105b4194df7bb931afafe92b38e2e">&#9670;&nbsp;</a></span>getHandle()</h2>
 

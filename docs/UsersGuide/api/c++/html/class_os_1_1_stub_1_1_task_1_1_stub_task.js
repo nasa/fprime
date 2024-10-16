@@ -2,6 +2,7 @@ var class_os_1_1_stub_1_1_task_1_1_stub_task =
 [
     [ "StubTask", "class_os_1_1_stub_1_1_task_1_1_stub_task.html#a6617cc070796d9b1c4408f690e0bfbe5", null ],
     [ "~StubTask", "class_os_1_1_stub_1_1_task_1_1_stub_task.html#aa9dc42cdd402e4c069bc10fe3343f670", null ],
+    [ "_delay", "class_os_1_1_stub_1_1_task_1_1_stub_task.html#a2d461df8998a9446b0923a1e7109df83", null ],
     [ "getHandle", "class_os_1_1_stub_1_1_task_1_1_stub_task.html#aa53239e76f63e072d88d4f184b39a50c", null ],
     [ "isCooperative", "class_os_1_1_stub_1_1_task_1_1_stub_task.html#a387bced69d22d54e5d7a5056559c0f11", null ],
     [ "join", "class_os_1_1_stub_1_1_task_1_1_stub_task.html#aa48bbed275045a3f5fdcfc6131605177", null ],
