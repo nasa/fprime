@@ -25,18 +25,6 @@ Args:
   ARGN: list of platforms that are supported
 
 
-## Macro `prevent_prescan`:
-
-Prevents a CMakeLists.txt file from being processed in the prescan phase of the project. Will generate fake targets
-for all those targets specified to ensure that dependencies may be attached to these targets in the larger system.
-
-Usage:
-   prevent_prescan(target1 target2 ...) # Generate fake targets and skip prescan
-
-Args:
-  ARGN: list of targets to synthesize
-
-
 ## Function `add_fprime_subdirectory`:
 
 Adds a subdirectory to the build system. This allows the system to find new available modules,
