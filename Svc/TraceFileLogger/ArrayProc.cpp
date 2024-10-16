@@ -63,7 +63,9 @@ namespace Svc {
     bool ArrayProc::search_array(U32 element, U8 *index) {
         for(U8 i = 0 ; i < m_currentIndex ; i++) {
             if(this->m_storedArray[i] == element) {
-                if (index != nullptr) *index = i;
+                if (index != nullptr) {
+                    *index = i;
+                }
                 return true;
             }
         }
