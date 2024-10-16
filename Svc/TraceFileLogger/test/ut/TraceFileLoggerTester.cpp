@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <array>
 namespace Svc {
 
 // ----------------------------------------------------------------------
