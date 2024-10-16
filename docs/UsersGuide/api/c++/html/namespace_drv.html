@@ -189,6 +189,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_data_buffer.html">DataBuffer</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html">IpSocket</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper base-class for setting up Berkeley sockets.  <a href="class_drv_1_1_ip_socket.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -258,6 +260,8 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734daf7ee8b5efcdf13641c0e24a150015e01">SOCK_NOT_STARTED</a> = -14
 , <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da786e0a354c1e34eda36406694c12afaf">SOCK_FAILED_TO_READ_BACK_PORT</a> = -15
 , <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734dadc3ec7a5f5a27134004ee35247613d3e">SOCK_NO_DATA_AVAILABLE</a> = -16
+, <br />
+&#160;&#160;<a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da2c8e5a70cf4b23e886fbbaa293895d3e">SOCK_ANOTHER_THREAD_OPENING</a> = -17
 <br />
  }</td></tr>
 <tr class="memdesc:a1c85f9fab0c8763f9fec49eee9fc734d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Status enumeration for socket return values.  <a href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">More...</a><br /></td></tr>
@@ -418,9 +422,11 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="a1c85f9fab0c8763f9fec49eee9fc734dadc3ec7a5f5a27134004ee35247613d3e"></a>SOCK_NO_DATA_AVAILABLE&#160;</td><td class="fielddoc"><p>No data available or read operation would block. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a1c85f9fab0c8763f9fec49eee9fc734da2c8e5a70cf4b23e886fbbaa293895d3e"></a>SOCK_ANOTHER_THREAD_OPENING&#160;</td><td class="fielddoc"><p>Another thread is opening. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00023">23</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00029">29</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>

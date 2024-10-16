@@ -517,6 +517,7 @@ var hierarchy =
       [ "Drv::TcpServerComponentImpl", "class_drv_1_1_tcp_server_component_impl.html", null ],
       [ "Drv::UdpComponentImpl", "class_drv_1_1_udp_component_impl.html", null ]
     ] ],
+    [ "Drv::SocketDescriptor", "struct_drv_1_1_socket_descriptor.html", null ],
     [ "Drv::SocketState", "struct_drv_1_1_socket_state.html", null ],
     [ "Fw::FilePacket::StartPacket", "struct_fw_1_1_file_packet_1_1_start_packet.html", null ],
     [ "Os::TaskHandle", "class_os_1_1_task_handle.html", [

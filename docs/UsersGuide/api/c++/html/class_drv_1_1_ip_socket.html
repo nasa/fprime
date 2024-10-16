@@ -120,42 +120,39 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a98a57bf24cdeb8673be4780a8be2db55"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a98a57bf24cdeb8673be4780a8be2db55">configure</a> (const char *hostname, const U16 port, const U32 send_timeout_seconds, const U32 send_timeout_microseconds)</td></tr>
 <tr class="memdesc:a98a57bf24cdeb8673be4780a8be2db55"><td class="mdescLeft">&#160;</td><td class="mdescRight">configure the ip socket with host and transmission timeouts  <a href="class_drv_1_1_ip_socket.html#a98a57bf24cdeb8673be4780a8be2db55">More...</a><br /></td></tr>
 <tr class="separator:a98a57bf24cdeb8673be4780a8be2db55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af267d5989af0035804eee9f2950d96ed"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#af267d5989af0035804eee9f2950d96ed">startup</a> ()</td></tr>
-<tr class="memdesc:af267d5989af0035804eee9f2950d96ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">startup the socket, a no-op on unless this is server  <a href="class_drv_1_1_ip_socket.html#af267d5989af0035804eee9f2950d96ed">More...</a><br /></td></tr>
-<tr class="separator:af267d5989af0035804eee9f2950d96ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39e4722ff5bd87f04de2bac361c19551"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a39e4722ff5bd87f04de2bac361c19551">open</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;fd)</td></tr>
-<tr class="memdesc:a39e4722ff5bd87f04de2bac361c19551"><td class="mdescLeft">&#160;</td><td class="mdescRight">open the IP socket for communications  <a href="class_drv_1_1_ip_socket.html#a39e4722ff5bd87f04de2bac361c19551">More...</a><br /></td></tr>
-<tr class="separator:a39e4722ff5bd87f04de2bac361c19551"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae27d533cc690cc99aeca64afc623f2ed"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ae27d533cc690cc99aeca64afc623f2ed">send</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> fd, const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)</td></tr>
-<tr class="memdesc:ae27d533cc690cc99aeca64afc623f2ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">send data out the IP socket from the given buffer  <a href="class_drv_1_1_ip_socket.html#ae27d533cc690cc99aeca64afc623f2ed">More...</a><br /></td></tr>
-<tr class="separator:ae27d533cc690cc99aeca64afc623f2ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10b3b4008068be4aefd17e626b45fe7a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a10b3b4008068be4aefd17e626b45fe7a">recv</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> fd, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, U32 &amp;size)</td></tr>
-<tr class="memdesc:a10b3b4008068be4aefd17e626b45fe7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive data from the IP socket from the given buffer  <a href="class_drv_1_1_ip_socket.html#a10b3b4008068be4aefd17e626b45fe7a">More...</a><br /></td></tr>
-<tr class="separator:a10b3b4008068be4aefd17e626b45fe7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e050e7126caa17afff98184d7de1a98"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a9e050e7126caa17afff98184d7de1a98">close</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> fd)</td></tr>
-<tr class="memdesc:a9e050e7126caa17afff98184d7de1a98"><td class="mdescLeft">&#160;</td><td class="mdescRight">closes the socket  <a href="class_drv_1_1_ip_socket.html#a9e050e7126caa17afff98184d7de1a98">More...</a><br /></td></tr>
-<tr class="separator:a9e050e7126caa17afff98184d7de1a98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a835eef5a0230fba6e72ca3cd4580ca81"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a835eef5a0230fba6e72ca3cd4580ca81">shutdown</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> fd)</td></tr>
-<tr class="memdesc:a835eef5a0230fba6e72ca3cd4580ca81"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown the socket  <a href="class_drv_1_1_ip_socket.html#a835eef5a0230fba6e72ca3cd4580ca81">More...</a><br /></td></tr>
-<tr class="separator:a835eef5a0230fba6e72ca3cd4580ca81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48e4cf9bc84cf5642f5c5ebb487addd4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a48e4cf9bc84cf5642f5c5ebb487addd4">open</a> (<a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;socketDescriptor)</td></tr>
+<tr class="memdesc:a48e4cf9bc84cf5642f5c5ebb487addd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">open the IP socket for communications  <a href="class_drv_1_1_ip_socket.html#a48e4cf9bc84cf5642f5c5ebb487addd4">More...</a><br /></td></tr>
+<tr class="separator:a48e4cf9bc84cf5642f5c5ebb487addd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7342becb104d111732a7b409de609c6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ae7342becb104d111732a7b409de609c6">send</a> (const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;socketDescriptor, const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)</td></tr>
+<tr class="memdesc:ae7342becb104d111732a7b409de609c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">send data out the IP socket from the given buffer  <a href="class_drv_1_1_ip_socket.html#ae7342becb104d111732a7b409de609c6">More...</a><br /></td></tr>
+<tr class="separator:ae7342becb104d111732a7b409de609c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb6aa8ed1562ff49aec8c9895b428c1e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#afb6aa8ed1562ff49aec8c9895b428c1e">recv</a> (const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;fd, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, U32 &amp;size)</td></tr>
+<tr class="memdesc:afb6aa8ed1562ff49aec8c9895b428c1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive data from the IP socket from the given buffer  <a href="class_drv_1_1_ip_socket.html#afb6aa8ed1562ff49aec8c9895b428c1e">More...</a><br /></td></tr>
+<tr class="separator:afb6aa8ed1562ff49aec8c9895b428c1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe34dc7fa9eac0ff2c6c366191310bdc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#afe34dc7fa9eac0ff2c6c366191310bdc">close</a> (const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;socketDescriptor)</td></tr>
+<tr class="memdesc:afe34dc7fa9eac0ff2c6c366191310bdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">closes the socket  <a href="class_drv_1_1_ip_socket.html#afe34dc7fa9eac0ff2c6c366191310bdc">More...</a><br /></td></tr>
+<tr class="separator:afe34dc7fa9eac0ff2c6c366191310bdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6aaea5f5eeb563e0757780bae049bd3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#af6aaea5f5eeb563e0757780bae049bd3">shutdown</a> (const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;socketDescriptor)</td></tr>
+<tr class="memdesc:af6aaea5f5eeb563e0757780bae049bd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown the socket  <a href="class_drv_1_1_ip_socket.html#af6aaea5f5eeb563e0757780bae049bd3">More...</a><br /></td></tr>
+<tr class="separator:af6aaea5f5eeb563e0757780bae049bd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:ab8c04eda20550ecf79bc50b5f3f9ea39"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39">isValidPort</a> (U16 port)</td></tr>
 <tr class="memdesc:ab8c04eda20550ecf79bc50b5f3f9ea39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given port is valid for the socket.  <a href="class_drv_1_1_ip_socket.html#ab8c04eda20550ecf79bc50b5f3f9ea39">More...</a><br /></td></tr>
 <tr class="separator:ab8c04eda20550ecf79bc50b5f3f9ea39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9129e203803f3a0229fdfd7cf832180"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">setupTimeouts</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> socketFd)</td></tr>
-<tr class="memdesc:ad9129e203803f3a0229fdfd7cf832180"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup the socket timeout properties of the opened outgoing socket  <a href="class_drv_1_1_ip_socket.html#ad9129e203803f3a0229fdfd7cf832180">More...</a><br /></td></tr>
-<tr class="separator:ad9129e203803f3a0229fdfd7cf832180"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6f952adfdc30acabeb055b16a01c46c"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ae6f952adfdc30acabeb055b16a01c46c">openProtocol</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;fd)=0</td></tr>
-<tr class="memdesc:ae6f952adfdc30acabeb055b16a01c46c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific open implementation, called from open.  <a href="class_drv_1_1_ip_socket.html#ae6f952adfdc30acabeb055b16a01c46c">More...</a><br /></td></tr>
-<tr class="separator:ae6f952adfdc30acabeb055b16a01c46c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0eb8b7a81c6b5f8d792883ac445413d9"><td class="memItemLeft" align="right" valign="top">virtual I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a0eb8b7a81c6b5f8d792883ac445413d9">sendProtocol</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> fd, const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)=0</td></tr>
-<tr class="memdesc:a0eb8b7a81c6b5f8d792883ac445413d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of send. Called directly with retry from send.  <a href="class_drv_1_1_ip_socket.html#a0eb8b7a81c6b5f8d792883ac445413d9">More...</a><br /></td></tr>
-<tr class="separator:a0eb8b7a81c6b5f8d792883ac445413d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7c28d2bf7c205f856a55595bb191d23"><td class="memItemLeft" align="right" valign="top">virtual I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#aa7c28d2bf7c205f856a55595bb191d23">recvProtocol</a> (<a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> fd, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)=0</td></tr>
-<tr class="memdesc:aa7c28d2bf7c205f856a55595bb191d23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of recv. Called directly with error handling from recv.  <a href="class_drv_1_1_ip_socket.html#aa7c28d2bf7c205f856a55595bb191d23">More...</a><br /></td></tr>
-<tr class="separator:aa7c28d2bf7c205f856a55595bb191d23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c4b1366e58d277a5d8ca465c35b2154"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a3c4b1366e58d277a5d8ca465c35b2154">setupTimeouts</a> (<a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a> socketFd)</td></tr>
+<tr class="memdesc:a3c4b1366e58d277a5d8ca465c35b2154"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup the socket timeout properties of the opened outgoing socket  <a href="class_drv_1_1_ip_socket.html#a3c4b1366e58d277a5d8ca465c35b2154">More...</a><br /></td></tr>
+<tr class="separator:a3c4b1366e58d277a5d8ca465c35b2154"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bc2d878259d53a2f28106f86d068d72"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a2bc2d878259d53a2f28106f86d068d72">openProtocol</a> (<a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;fd)=0</td></tr>
+<tr class="memdesc:a2bc2d878259d53a2f28106f86d068d72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific open implementation, called from open.  <a href="class_drv_1_1_ip_socket.html#a2bc2d878259d53a2f28106f86d068d72">More...</a><br /></td></tr>
+<tr class="separator:a2bc2d878259d53a2f28106f86d068d72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98d7d74a50692dafd80eac7b5476a284"><td class="memItemLeft" align="right" valign="top">virtual I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#a98d7d74a50692dafd80eac7b5476a284">sendProtocol</a> (const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;socketDescriptor, const <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)=0</td></tr>
+<tr class="memdesc:a98d7d74a50692dafd80eac7b5476a284"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of send. Called directly with retry from send.  <a href="class_drv_1_1_ip_socket.html#a98d7d74a50692dafd80eac7b5476a284">More...</a><br /></td></tr>
+<tr class="separator:a98d7d74a50692dafd80eac7b5476a284"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0d3e1de90d376afce0ae7f184e2778a"><td class="memItemLeft" align="right" valign="top">virtual I32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_ip_socket.html#ad0d3e1de90d376afce0ae7f184e2778a">recvProtocol</a> (const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;socketDescriptor, <a class="el" href="basic_types_8h.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> *const data, const U32 size)=0</td></tr>
+<tr class="memdesc:ad0d3e1de90d376afce0ae7f184e2778a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protocol specific implementation of recv. Called directly with error handling from recv.  <a href="class_drv_1_1_ip_socket.html#ad0d3e1de90d376afce0ae7f184e2778a">More...</a><br /></td></tr>
+<tr class="separator:ad0d3e1de90d376afce0ae7f184e2778a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
 Static Protected Member Functions</h2></td></tr>
@@ -180,7 +177,7 @@ Protected Attributes</h2></td></tr>
 <div class="textblock"><p>Helper base-class for setting up Berkeley sockets. </p>
 <p>Certain IP headers have conflicting definitions with the m_data member of various types in fprime. TcpHelper separates the ip setup from the incoming <a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> in the primary component class preventing this collision. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00048">48</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00055">55</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1c937ae98faa3a8d2ce5cff0fd16aaca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1c937ae98faa3a8d2ce5cff0fd16aaca">&#9670;&nbsp;</a></span>IpSocket()</h2>
@@ -224,7 +221,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00051">51</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00058">58</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -277,8 +274,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a9e050e7126caa17afff98184d7de1a98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e050e7126caa17afff98184d7de1a98">&#9670;&nbsp;</a></span>close()</h2>
+<a id="afe34dc7fa9eac0ff2c6c366191310bdc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe34dc7fa9eac0ff2c6c366191310bdc">&#9670;&nbsp;</a></span>close()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -286,18 +283,18 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">void Drv::IpSocket::close </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>fd</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;&#160;</td>
+          <td class="paramname"><em>socketDescriptor</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>closes the socket </p>
-<p>Closes the socket opened by the open call. In this case of the TcpServer, this does NOT close server's listening port (call <code>shutdown</code>) but will close the active client connection.</p>
+<p>Closes the socket opened by the open call. In this case of the TcpServer, this does NOT close server's listening port but will close the active client connection.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fd</td><td>file descriptor to close </td></tr>
+    <tr><td class="paramname">socketDescriptor</td><td>socket descriptor to close </td></tr>
   </table>
   </dd>
 </dl>
@@ -402,8 +399,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a39e4722ff5bd87f04de2bac361c19551"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39e4722ff5bd87f04de2bac361c19551">&#9670;&nbsp;</a></span>open()</h2>
+<a id="a48e4cf9bc84cf5642f5c5ebb487addd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48e4cf9bc84cf5642f5c5ebb487addd4">&#9670;&nbsp;</a></span>open()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -411,8 +408,8 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a> Drv::IpSocket::open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;&#160;</td>
-          <td class="paramname"><em>fd</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;&#160;</td>
+          <td class="paramname"><em>socketDescriptor</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -424,18 +421,18 @@ Protected Attributes</h2></td></tr>
 <p>Note: delegates to openProtocol for protocol specific implementation</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fd</td><td>file descriptor to open </td></tr>
+    <tr><td class="paramname">socketDescriptor</td><td>socket descriptor to update with opened port </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of open </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00120">120</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00119">119</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ae6f952adfdc30acabeb055b16a01c46c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae6f952adfdc30acabeb055b16a01c46c">&#9670;&nbsp;</a></span>openProtocol()</h2>
+<a id="a2bc2d878259d53a2f28106f86d068d72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bc2d878259d53a2f28106f86d068d72">&#9670;&nbsp;</a></span>openProtocol()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -446,7 +443,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">virtual <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a> Drv::IpSocket::openProtocol </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;&#160;</td>
           <td class="paramname"><em>fd</em></td><td>)</td>
           <td></td>
         </tr>
@@ -461,18 +458,18 @@ Protected Attributes</h2></td></tr>
 <p>Protocol specific open implementation, called from open. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fd</td><td>(output) file descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid </td></tr>
+    <tr><td class="paramname">socketDescriptor</td><td>(output) socket descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of open </dd></dl>
 
-<p>Implemented in <a class="el" href="class_drv_1_1_udp_socket.html#a65bb9391980f451c723eff1c4662eb38">Drv::UdpSocket</a>, <a class="el" href="class_drv_1_1_tcp_server_socket.html#a5ca78d2c1f67e12b2546151e18645571">Drv::TcpServerSocket</a>, and <a class="el" href="class_drv_1_1_tcp_client_socket.html#ac3e7fe8328f36f7c10ec7994ccd3940f">Drv::TcpClientSocket</a>.</p>
+<p>Implemented in <a class="el" href="class_drv_1_1_udp_socket.html#a63ac1b2e0dfda83f79bc39beaafcd2de">Drv::UdpSocket</a>, <a class="el" href="class_drv_1_1_tcp_server_socket.html#a69404250841ce3e4c5514579bd0de5c6">Drv::TcpServerSocket</a>, and <a class="el" href="class_drv_1_1_tcp_client_socket.html#ad8e2839e3468457d7b1dd6c2e396c540">Drv::TcpClientSocket</a>.</p>
 
 </div>
 </div>
-<a id="a10b3b4008068be4aefd17e626b45fe7a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10b3b4008068be4aefd17e626b45fe7a">&#9670;&nbsp;</a></span>recv()</h2>
+<a id="afb6aa8ed1562ff49aec8c9895b428c1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb6aa8ed1562ff49aec8c9895b428c1e">&#9670;&nbsp;</a></span>recv()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -480,7 +477,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a> Drv::IpSocket::recv </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;&#160;</td>
           <td class="paramname"><em>fd</em>, </td>
         </tr>
         <tr>
@@ -508,7 +505,7 @@ Protected Attributes</h2></td></tr>
 <p>Note: delegates to <code>recvProtocol</code> to send the data</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fd</td><td>file descriptor to recv from </td></tr>
+    <tr><td class="paramname">socketDescriptor</td><td>socket descriptor to recv from </td></tr>
     <tr><td class="paramname">data</td><td>pointer to data to fill with received data </td></tr>
     <tr><td class="paramname">size</td><td>maximum size of data buffer to fill </td></tr>
   </table>
@@ -516,12 +513,12 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00162">162</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00163">163</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
-<a id="aa7c28d2bf7c205f856a55595bb191d23"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7c28d2bf7c205f856a55595bb191d23">&#9670;&nbsp;</a></span>recvProtocol()</h2>
+<a id="ad0d3e1de90d376afce0ae7f184e2778a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0d3e1de90d376afce0ae7f184e2778a">&#9670;&nbsp;</a></span>recvProtocol()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -532,8 +529,8 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">virtual I32 Drv::IpSocket::recvProtocol </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>fd</em>, </td>
+          <td class="paramtype">const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;&#160;</td>
+          <td class="paramname"><em>socketDescriptor</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -563,7 +560,7 @@ Protected Attributes</h2></td></tr>
 <p>Protocol specific implementation of recv. Called directly with error handling from recv. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fd</td><td>file descriptor to recv from </td></tr>
+    <tr><td class="paramname">socket</td><td>socket descriptor to recv from </td></tr>
     <tr><td class="paramname">data</td><td>data pointer to fill </td></tr>
     <tr><td class="paramname">size</td><td>size of data buffer </td></tr>
   </table>
@@ -571,12 +568,12 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>: size of data received, or -1 on error. </dd></dl>
 
-<p>Implemented in <a class="el" href="class_drv_1_1_udp_socket.html#a22731110f8a182eb5e261a998cbb482c">Drv::UdpSocket</a>, <a class="el" href="class_drv_1_1_tcp_server_socket.html#a91cd80cf6887ce7b1e7f2da24cb6cae1">Drv::TcpServerSocket</a>, and <a class="el" href="class_drv_1_1_tcp_client_socket.html#a66487b19ccb4fd613eb5c5983e08d1b3">Drv::TcpClientSocket</a>.</p>
+<p>Implemented in <a class="el" href="class_drv_1_1_udp_socket.html#aaa91bdfd1afd662896d44c55d1d25f20">Drv::UdpSocket</a>, <a class="el" href="class_drv_1_1_tcp_server_socket.html#adc52ddb17560d1fe6150ed37e5041384">Drv::TcpServerSocket</a>, and <a class="el" href="class_drv_1_1_tcp_client_socket.html#a960dab67b07c48e7c9b6a13a81fb8247">Drv::TcpClientSocket</a>.</p>
 
 </div>
 </div>
-<a id="ae27d533cc690cc99aeca64afc623f2ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae27d533cc690cc99aeca64afc623f2ed">&#9670;&nbsp;</a></span>send()</h2>
+<a id="ae7342becb104d111732a7b409de609c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7342becb104d111732a7b409de609c6">&#9670;&nbsp;</a></span>send()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -584,8 +581,8 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a> Drv::IpSocket::send </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>fd</em>, </td>
+          <td class="paramtype">const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;&#160;</td>
+          <td class="paramname"><em>socketDescriptor</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -624,8 +621,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a0eb8b7a81c6b5f8d792883ac445413d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0eb8b7a81c6b5f8d792883ac445413d9">&#9670;&nbsp;</a></span>sendProtocol()</h2>
+<a id="a98d7d74a50692dafd80eac7b5476a284"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98d7d74a50692dafd80eac7b5476a284">&#9670;&nbsp;</a></span>sendProtocol()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -636,8 +633,8 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">virtual I32 Drv::IpSocket::sendProtocol </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>fd</em>, </td>
+          <td class="paramtype">const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;&#160;</td>
+          <td class="paramname"><em>socketDescriptor</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -667,7 +664,7 @@ Protected Attributes</h2></td></tr>
 <p>Protocol specific implementation of send. Called directly with retry from send. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fd</td><td>file descriptor to send to </td></tr>
+    <tr><td class="paramname">socketDescriptor</td><td>socket descriptor to send to </td></tr>
     <tr><td class="paramname">data</td><td>data to send </td></tr>
     <tr><td class="paramname">size</td><td>size of data to send </td></tr>
   </table>
@@ -675,12 +672,12 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>: size of data sent, or -1 on error. </dd></dl>
 
-<p>Implemented in <a class="el" href="class_drv_1_1_udp_socket.html#a2ddc101f61046360cbc19934c74726a0">Drv::UdpSocket</a>, <a class="el" href="class_drv_1_1_tcp_server_socket.html#aa8d9b7108257a3cdd27d5811b60c90f9">Drv::TcpServerSocket</a>, and <a class="el" href="class_drv_1_1_tcp_client_socket.html#a3425e078dd1db2af468a3b52e67c76d4">Drv::TcpClientSocket</a>.</p>
+<p>Implemented in <a class="el" href="class_drv_1_1_udp_socket.html#a063590ce077d5a44e9acdc7176c42195">Drv::UdpSocket</a>, <a class="el" href="class_drv_1_1_tcp_server_socket.html#ac1d2cf0ec783dd2f2525bb9042e0bdd3">Drv::TcpServerSocket</a>, and <a class="el" href="class_drv_1_1_tcp_client_socket.html#ad9cccd1ab94fddc667c1f2895cf52ab9">Drv::TcpClientSocket</a>.</p>
 
 </div>
 </div>
-<a id="ad9129e203803f3a0229fdfd7cf832180"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9129e203803f3a0229fdfd7cf832180">&#9670;&nbsp;</a></span>setupTimeouts()</h2>
+<a id="a3c4b1366e58d277a5d8ca465c35b2154"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c4b1366e58d277a5d8ca465c35b2154">&#9670;&nbsp;</a></span>setupTimeouts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -691,7 +688,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a> Drv::IpSocket::setupTimeouts </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a>&#160;</td>
           <td class="paramname"><em>socketFd</em></td><td>)</td>
           <td></td>
         </tr>
@@ -706,7 +703,7 @@ Protected Attributes</h2></td></tr>
 <p>setup the socket timeout properties of the opened outgoing socket </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">socketFd</td><td>file descriptor to setup </td></tr>
+    <tr><td class="paramname">socketDescriptor</td><td>socket descriptor to setup </td></tr>
   </table>
   </dd>
 </dl>
@@ -716,75 +713,33 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a835eef5a0230fba6e72ca3cd4580ca81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a835eef5a0230fba6e72ca3cd4580ca81">&#9670;&nbsp;</a></span>shutdown()</h2>
+<a id="af6aaea5f5eeb563e0757780bae049bd3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6aaea5f5eeb563e0757780bae049bd3">&#9670;&nbsp;</a></span>shutdown()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void Drv::IpSocket::shutdown </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="basic_types_8h.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>fd</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="struct_drv_1_1_socket_descriptor.html">SocketDescriptor</a> &amp;&#160;</td>
+          <td class="paramname"><em>socketDescriptor</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>shutdown the socket </p>
-<p>Closes the socket opened by the open call. In this case of the TcpServer, this does close server's listening port. This will shutdown all clients.</p>
+<p>Shuts down the socket opened by the open call. In this case of the TcpServer, this does shut down server's listening port, but rather shuts down the active client.</p>
+<p>A shut down begins the termination of communication. The underlying socket will coordinate a clean shutdown, and it is safe to close the socket once a recv with 0 size has returned or an appropriate timeout has been reached.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fd</td><td>file descriptor to shutdown </td></tr>
+    <tr><td class="paramname">socketDescriptor</td><td>socket descriptor to shutdown </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_drv_1_1_tcp_server_socket.html#a9dd4b8be20ea0c24d789f6d5f93aad73">Drv::TcpServerSocket</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00111">111</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
-
-</div>
-</div>
-<a id="af267d5989af0035804eee9f2950d96ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af267d5989af0035804eee9f2950d96ed">&#9670;&nbsp;</a></span>startup()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a> Drv::IpSocket::startup </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>startup the socket, a no-op on unless this is server </p>
-<p>This will start-up the socket. In the case of most sockets, this is a no-op. On server sockets this binds to the server address and progresses through the <code>listen</code> step such that on <code>open</code> new clients may be accepted.</p>
-<dl class="section return"><dt>Returns</dt><dd>status of startup </dd></dl>
-
-<p>Reimplemented in <a class="el" href="class_drv_1_1_tcp_server_socket.html#afecec02b937dab1023598aa8e49a204b">Drv::TcpServerSocket</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00115">115</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8cpp_source.html#l00110">110</a> of file <a class="el" href="ip_socket_8cpp_source.html">IpSocket.cpp</a>.</p>
 
 </div>
 </div>
@@ -811,7 +766,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Hostname to supply. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00210">210</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00211">211</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -837,7 +792,7 @@ Protected Attributes</h2></td></tr>
 
 <p>IP address port used. </p>
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00209">209</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00210">210</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -861,7 +816,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00208">208</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00209">209</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>
@@ -885,7 +840,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00207">207</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip_socket_8hpp_source.html#l00208">208</a> of file <a class="el" href="ip_socket_8hpp_source.html">IpSocket.hpp</a>.</p>
 
 </div>
 </div>

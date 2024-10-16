@@ -40,6 +40,7 @@ var annotated_dup =
       [ "UdpComponentBase", "class_drv_1_1_udp_component_base.html", "class_drv_1_1_udp_component_base" ],
       [ "BlockDriverImpl", "class_drv_1_1_block_driver_impl.html", "class_drv_1_1_block_driver_impl" ],
       [ "DataBuffer", "class_drv_1_1_data_buffer.html", "class_drv_1_1_data_buffer" ],
+      [ "SocketDescriptor", "struct_drv_1_1_socket_descriptor.html", "struct_drv_1_1_socket_descriptor" ],
       [ "IpSocket", "class_drv_1_1_ip_socket.html", "class_drv_1_1_ip_socket" ],
       [ "SocketComponentHelper", "class_drv_1_1_socket_component_helper.html", "class_drv_1_1_socket_component_helper" ],
       [ "TcpClientSocket", "class_drv_1_1_tcp_client_socket.html", "class_drv_1_1_tcp_client_socket" ],

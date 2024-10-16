@@ -3,7 +3,7 @@ var dir_de94936287469fda57c523adf8bd8f0e =
     [ "docs", "dir_462dc325605424211828c493b47ee4cf.html", null ],
     [ "IpSocket.cpp", "ip_socket_8cpp.html", null ],
     [ "IpSocket.hpp", "ip_socket_8hpp.html", "_ip_socket_8hpp" ],
-    [ "SocketComponentHelper.cpp", "socket_component_helper_8cpp.html", "_socket_component_helper_8cpp" ],
+    [ "SocketComponentHelper.cpp", "socket_component_helper_8cpp.html", null ],
     [ "SocketComponentHelper.hpp", "socket_component_helper_8hpp.html", [
       [ "SocketComponentHelper", "class_drv_1_1_socket_component_helper.html", "class_drv_1_1_socket_component_helper" ]
     ] ],

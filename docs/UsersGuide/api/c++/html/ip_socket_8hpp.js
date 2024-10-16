@@ -1,5 +1,6 @@
 var _ip_socket_8hpp =
 [
+    [ "SocketDescriptor", "struct_drv_1_1_socket_descriptor.html", "struct_drv_1_1_socket_descriptor" ],
     [ "IpSocket", "class_drv_1_1_ip_socket.html", "class_drv_1_1_ip_socket" ],
     [ "SocketIpStatus", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734d", [
       [ "SOCK_SUCCESS", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da19b1ee3b3f4f005197fa9940333f97d1", null ],
@@ -17,6 +18,7 @@ var _ip_socket_8hpp =
       [ "SOCK_SEND_ERROR", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734daa614f2b5448fd9505969e26b61dda751", null ],
       [ "SOCK_NOT_STARTED", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734daf7ee8b5efcdf13641c0e24a150015e01", null ],
       [ "SOCK_FAILED_TO_READ_BACK_PORT", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da786e0a354c1e34eda36406694c12afaf", null ],
-      [ "SOCK_NO_DATA_AVAILABLE", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734dadc3ec7a5f5a27134004ee35247613d3e", null ]
+      [ "SOCK_NO_DATA_AVAILABLE", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734dadc3ec7a5f5a27134004ee35247613d3e", null ],
+      [ "SOCK_ANOTHER_THREAD_OPENING", "ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da2c8e5a70cf4b23e886fbbaa293895d3e", null ]
     ] ]
 ];

@@ -36,6 +36,7 @@ var namespace_drv =
     [ "UdpComponentBase", "class_drv_1_1_udp_component_base.html", "class_drv_1_1_udp_component_base" ],
     [ "BlockDriverImpl", "class_drv_1_1_block_driver_impl.html", "class_drv_1_1_block_driver_impl" ],
     [ "DataBuffer", "class_drv_1_1_data_buffer.html", "class_drv_1_1_data_buffer" ],
+    [ "SocketDescriptor", "struct_drv_1_1_socket_descriptor.html", "struct_drv_1_1_socket_descriptor" ],
     [ "IpSocket", "class_drv_1_1_ip_socket.html", "class_drv_1_1_ip_socket" ],
     [ "SocketComponentHelper", "class_drv_1_1_socket_component_helper.html", "class_drv_1_1_socket_component_helper" ],
     [ "TcpClientSocket", "class_drv_1_1_tcp_client_socket.html", "class_drv_1_1_tcp_client_socket" ],
@@ -71,7 +72,8 @@ var namespace_drv =
       [ "SOCK_SEND_ERROR", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734daa614f2b5448fd9505969e26b61dda751", null ],
       [ "SOCK_NOT_STARTED", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734daf7ee8b5efcdf13641c0e24a150015e01", null ],
       [ "SOCK_FAILED_TO_READ_BACK_PORT", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da786e0a354c1e34eda36406694c12afaf", null ],
-      [ "SOCK_NO_DATA_AVAILABLE", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734dadc3ec7a5f5a27134004ee35247613d3e", null ]
+      [ "SOCK_NO_DATA_AVAILABLE", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734dadc3ec7a5f5a27134004ee35247613d3e", null ],
+      [ "SOCK_ANOTHER_THREAD_OPENING", "namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da2c8e5a70cf4b23e886fbbaa293895d3e", null ]
     ] ],
     [ "SpiFrequency", "namespace_drv.html#a61d09174558e3591ec1e787fc84c27ff", [
       [ "SPI_FREQUENCY_1MHZ", "namespace_drv.html#a61d09174558e3591ec1e787fc84c27ffa180638b083054d8cb5b53b96873470ad", null ],
