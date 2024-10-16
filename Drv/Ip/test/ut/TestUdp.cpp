@@ -15,8 +15,8 @@ void test_with_loop(U32 iterations, bool duplex) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    NATIVE_INT_TYPE udp1_fd = -1;
-    NATIVE_INT_TYPE udp2_fd = -1;
+    Drv::SocketDescriptor udp1_fd;
+    Drv::SocketDescriptor udp2_fd;
 
     U16 port1 = Drv::Test::get_free_port(true);
     ASSERT_NE(0, port1);
@@ -49,8 +49,8 @@ void test_with_loop(U32 iterations, bool duplex) {
         // If all the opens worked, then run this
         if (Drv::SOCK_SUCCESS == status1 && Drv::SOCK_SUCCESS == status2) {
             // Force the sockets not to hang, if at all possible
-            Drv::Test::force_recv_timeout(udp1_fd, udp1);
-            Drv::Test::force_recv_timeout(udp2_fd, udp2);
+            Drv::Test::force_recv_timeout(udp1_fd.fd, udp1);
+            Drv::Test::force_recv_timeout(udp2_fd.fd, udp2);
             Drv::Test::send_recv(udp1, udp2, udp1_fd, udp2_fd);
             // Allow duplex connections
             if (duplex) {

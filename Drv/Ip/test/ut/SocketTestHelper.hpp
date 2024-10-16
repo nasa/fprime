@@ -47,7 +47,7 @@ void validate_random_buffer(Fw::Buffer &buffer, U8 *data);
  * Fill random data into the buffer (using a random length).
  * @param buffer: buffer to fill.
  */
-void fill_random_buffer(Fw::Buffer &buffer);
+U32 fill_random_buffer(Fw::Buffer &buffer);
 
 /**
  * Send/receive pair.
@@ -56,7 +56,23 @@ void fill_random_buffer(Fw::Buffer &buffer);
  * @param sender_fd: file descriptor for sender
  * @param receiver_fd: file descriptor for receiver
  */
-void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver, NATIVE_INT_TYPE sender_fd, NATIVE_INT_TYPE receiver_fd);
+void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver, Drv::SocketDescriptor& sender_fd, Drv::SocketDescriptor& receiver_fd);
+
+/**
+ * Drain bytes from the socket until disconnect received.
+ * @warning: must have called shutdown on the remote before calling this
+ * @param drain_fd: file descriptor for draining
+ */
+void drain(Drv::IpSocket& receiver, Drv::SocketDescriptor& drain_fd);
+
+/**
+ * Receive all data, reassembling the frame
+ * @param receiver: receiver
+ * @param receiver_fd: receiver descriptor
+ * @param buffer: buffer
+ * @param size: size to receive
+ */
+void receive_all(Drv::IpSocket& receiver, Drv::SocketDescriptor& receiver_fd, U8* buffer, U32 size);
 
 /**
  * Wait on socket change.
