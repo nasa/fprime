@@ -31,6 +31,12 @@ bool StubTask::isCooperative() {
     return true;
 }
 
+Os::Task::Status StubTask::_delay(Fw::TimeInterval interval) {
+    FW_ASSERT(0);
+    return Os::Task::Status::UNKNOWN_ERROR;
+}
+
+
 }
 }
 }
