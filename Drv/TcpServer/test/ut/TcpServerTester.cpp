@@ -42,7 +42,6 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
     EXPECT_TRUE(component.isStarted());
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations && status1 == SOCK_SUCCESS; i++) {
-        printf("Looping\n");
         Drv::TcpClientSocket client;
         client.configure("127.0.0.1", this->component.getListenPort(), 0, 100);
         status2 = client.open(client_fd);
@@ -75,7 +74,6 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
             EXPECT_EQ(status, SendStatus::SEND_OK) <<
                 "On iteration: " << i << " and receive thread: " << recv_thread;
-            U16 counter = 0;
             Drv::Test::receive_all(client, client_fd, buffer, size);
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS) <<
                 "On iteration: " << i << " and receive thread: " << recv_thread << " and errno " << errno <<
@@ -108,7 +106,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::drain(this->component.m_socket, this->component.m_realDescriptor);
             this->component.close();
         }
-        // Server should have shutdown cleanly and waited for this to be shut down.  It is safet
+        // Server should have shutdown cleanly and waited for this to be shut down.  It is safe
         // to release the file descriptor.
         client.close(client_fd);
     }

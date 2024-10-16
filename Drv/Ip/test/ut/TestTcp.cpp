@@ -19,7 +19,7 @@ void test_with_loop(U32 iterations) {
 
     U16 port = 0; // Choose a port
     Drv::TcpServerSocket server;
-    Drv::ServerSocketDescriptor server_fd;
+    Drv::SocketDescriptor server_fd;
     Drv::SocketDescriptor client_fd;
     server.configure("127.0.0.1", port, 0, 100);
     EXPECT_EQ(server.startup(server_fd), Drv::SOCK_SUCCESS);
@@ -46,10 +46,11 @@ void test_with_loop(U32 iterations) {
             Drv::Test::send_recv(server, client, server_fd, client_fd);
             Drv::Test::send_recv(client, server, client_fd, server_fd);
         }
-        client.shutdown(client_fd);
+        server.shutdown(client_fd);
         // Drain the server before close
         Drv::Test::drain(server, server_fd);
         server.close(server_fd);
+        client.close(client_fd);
     }
     server.terminate(server_fd);
 }

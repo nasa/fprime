@@ -19,13 +19,6 @@
 namespace Drv {
 
 /**
- * A Socket descriptor that adds in a server file descriptor
- */
-struct ServerSocketDescriptor : public SocketDescriptor{
-    PlatformIntType serverFd = -1;
-};
-
-/**
  * \brief Helper for setting up Tcp using Berkeley sockets as a server
  *
  * Certain IP headers have conflicting definitions with the m_data member of various types in fprime. TcpServerSocket
@@ -47,7 +40,7 @@ class TcpServerSocket : public IpSocket {
      * \param socketDescriptor: server descriptor will be written here
      * \return status of the server socket setup.
      */
-    SocketIpStatus startup(ServerSocketDescriptor& socketDescriptor);
+    SocketIpStatus startup(SocketDescriptor& socketDescriptor);
 
     /**
      * \brief close the server socket created by the `startup` call
@@ -57,7 +50,7 @@ class TcpServerSocket : public IpSocket {
      *
      * \param socketDescriptor:  descriptor to close
      */
-    void terminate(const ServerSocketDescriptor& socketDescriptor);
+    void terminate(const SocketDescriptor& socketDescriptor);
 
     /**
      * \brief get the port being listened on

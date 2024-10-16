@@ -17,7 +17,7 @@
 
 namespace Drv {
 
-SocketComponentHelper::SocketComponentHelper(SocketDescriptor& descriptor) : m_descriptor(descriptor) {}
+SocketComponentHelper::SocketComponentHelper() {}
 
 SocketComponentHelper::~SocketComponentHelper() {}
 
@@ -36,32 +36,38 @@ void SocketComponentHelper::start(const Fw::StringBase &name,
 }
 
 SocketIpStatus SocketComponentHelper::open() {
-    SocketIpStatus status = SOCK_FAILED_TO_GET_SOCKET;
+    SocketIpStatus status = SOCK_ANOTHER_THREAD_OPENING;
     OpenState local_open = OpenState::OPEN;
     // Scope to guard lock
     {
         Os::ScopeLock scopeLock(m_lock);
         if (this->m_open == OpenState::NOT_OPEN) {
             this->m_open = OpenState::OPENING;
+            local_open = this->m_open;
+        } else {
+            local_open = OpenState::SKIP;
         }
-        local_open = this->m_open;
+
     }
     if (local_open == OpenState::OPENING) {
         FW_ASSERT(this->m_descriptor.fd == -1);  // Ensure we are not opening an opened socket
         status = this->getSocketHandler().open(this->m_descriptor);
-        // Call connected any time the open is successful
-        Os::ScopeLock scopeLock(m_lock);
+        // Lock scope
+        {
+            Os::ScopeLock scopeLock(m_lock);
+            if (Drv::SOCK_SUCCESS == status) {
+                this->m_open = OpenState::OPEN;
+            } else {
+                this->m_open = OpenState::NOT_OPEN;
+                this->m_descriptor.fd = -1;
+            }
+        }
+        // Notify connection on success outside locked scope
         if (Drv::SOCK_SUCCESS == status) {
-            this->m_open = OpenState::OPEN;
-        } else {
-            this->m_open = OpenState::NOT_OPEN;
-            this->m_descriptor.fd = -1;
+            this->connected();
         }
     }
-    // Notify connection on success
-    if (Drv::SOCK_SUCCESS == status) {
-        this->connected();
-    }
+
     return status;
 }
 
@@ -76,6 +82,9 @@ SocketIpStatus SocketComponentHelper::reconnect() {
     // Open a network connection if it has not already been open
     if (not this->isOpened()) {
         status = this->open();
+        if (status == SocketIpStatus::SOCK_ANOTHER_THREAD_OPENING) {
+            status = SocketIpStatus::SOCK_SUCCESS;
+        }
     }
     return status;
 }
@@ -83,20 +92,21 @@ SocketIpStatus SocketComponentHelper::reconnect() {
 SocketIpStatus SocketComponentHelper::send(const U8* const data, const U32 size) {
     SocketIpStatus status = SOCK_SUCCESS;
     this->m_lock.lock();
-    PlatformIntType fd = this->m_descriptor.fd;
+    SocketDescriptor descriptor = this->m_descriptor;
     this->m_lock.unlock();
     // Prevent transmission before connection, or after a disconnect
-    if (fd == -1) {
+    if (descriptor.fd == -1) {
         status = this->reconnect();
         // if reconnect wasn't successful, pass the that up to the caller
         if(status != SOCK_SUCCESS) {
             return status;
         }
+        // Refresh local copy after reconnect
         this->m_lock.lock();
-        fd = this->m_descriptor.fd;
+        descriptor = this->m_descriptor;
         this->m_lock.unlock();
     }
-    status = this->getSocketHandler().send(this->m_descriptor, data, size);
+    status = this->getSocketHandler().send(descriptor, data, size);
     if (status == SOCK_DISCONNECTED) {
         this->close();
     }
@@ -138,12 +148,12 @@ SocketIpStatus SocketComponentHelper::recv(U8* data, U32 &size) {
     SocketIpStatus status = SOCK_SUCCESS;
     // Check for previously disconnected socket
     this->m_lock.lock();
-    PlatformIntType fd = this->m_descriptor.fd;
+    SocketDescriptor descriptor = this->m_descriptor;
     this->m_lock.unlock();
-    if (fd == -1) {
+    if (descriptor.fd == -1) {
         return SOCK_DISCONNECTED;
     }
-    status = this->getSocketHandler().recv(this->m_descriptor, data, size);
+    status = this->getSocketHandler().recv(descriptor, data, size);
     if (status == SOCK_DISCONNECTED) {
         this->close();
     }
@@ -170,7 +180,7 @@ void SocketComponentHelper::readLoop() {
             U32 size = buffer.getSize();
             // recv blocks, so it may have been a while since its done an isOpened check
             status = this->recv(data, size);
-            if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN && (status != SOCK_NO_DATA_AVAILABLE))) {
+            if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) && (status != SOCK_NO_DATA_AVAILABLE)) {
                 Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n",
                                 status,
                                 errno);
@@ -185,7 +195,7 @@ void SocketComponentHelper::readLoop() {
     }
     // As long as not told to stop, and we are successful interrupted or ordered to retry, keep receiving
     while (this->running() &&
-           (status == SOCK_SUCCESS || status == SOCK_INTERRUPTED_TRY_AGAIN || this->m_reconnect));
+           (status == SOCK_SUCCESS || (status == SOCK_NO_DATA_AVAILABLE) || status == SOCK_INTERRUPTED_TRY_AGAIN || this->m_reconnect));
     // Close the socket
     this->close(); // Close the port entirely
 }

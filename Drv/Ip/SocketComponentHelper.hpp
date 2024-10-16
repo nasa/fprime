@@ -30,12 +30,13 @@ class SocketComponentHelper {
     enum OpenState{
         NOT_OPEN,
         OPENING,
-        OPEN
+        OPEN,
+        SKIP
     };
     /**
      * \brief constructs the socket read task
      */
-    SocketComponentHelper(SocketDescriptor& descriptor);
+    SocketComponentHelper();
 
     /**
      * \brief destructor of the socket read task
@@ -210,7 +211,7 @@ class SocketComponentHelper {
 
     Os::Task m_task;
     Os::Mutex m_lock;
-    SocketDescriptor& m_descriptor;
+    SocketDescriptor m_descriptor;
     bool m_reconnect = false; //!< Force reconnection
     bool m_stop = true; //!< Stops the task when set to true
     OpenState m_open = OpenState::NOT_OPEN; //!< Have we successfully opened

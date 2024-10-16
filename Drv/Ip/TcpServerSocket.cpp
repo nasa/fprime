@@ -13,7 +13,6 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <FpConfig.hpp>
-#include <cstdio>
 
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <socket.h>
@@ -46,7 +45,7 @@ U16 TcpServerSocket::getListenPort() {
     return port;
 }
 
-SocketIpStatus TcpServerSocket::startup(ServerSocketDescriptor& socketDescriptor) {
+SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
     PlatformIntType serverFd = -1;
     struct sockaddr_in address;
     // Acquire a socket, or return error
@@ -90,13 +89,13 @@ SocketIpStatus TcpServerSocket::startup(ServerSocketDescriptor& socketDescriptor
     return SOCK_SUCCESS;
 }
 
-void TcpServerSocket::terminate(const ServerSocketDescriptor& socketDescriptor) {
+void TcpServerSocket::terminate(const SocketDescriptor& socketDescriptor) {
     (void)::close(socketDescriptor.serverFd);
 }
 
 SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     PlatformIntType clientFd = -1;
-    PlatformIntType serverFd = static_cast<ServerSocketDescriptor&>(socketDescriptor).serverFd;
+    PlatformIntType serverFd = socketDescriptor.serverFd;
 
     // Check for not started yet, may be true in the case of start-up reconnect attempts
     if (serverFd == -1) {
