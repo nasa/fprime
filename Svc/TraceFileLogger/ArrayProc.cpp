@@ -31,6 +31,7 @@ namespace Svc {
 
     void ArrayProc::set_array(U32 *array_ptr, U8 array_size)
     {
+        FW_ASSERT(array_ptr != nullptr);
         m_storedArray = array_ptr;
         m_maxIndex = array_size;
     }

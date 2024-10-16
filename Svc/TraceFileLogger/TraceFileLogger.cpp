@@ -129,7 +129,6 @@ namespace Svc {
                 (void)this->m_log_file.seek(0,Os::FileInterface::SeekType::ABSOLUTE);
                 this->m_byteCount = 0;
             }
-            //else {
             FwSignedSizeType writeSize = size;
             FwSignedSizeType fileSize;
             (void) this->m_log_file.position(fileSize);
@@ -137,8 +136,6 @@ namespace Svc {
             // Assert if file is not already open
             FW_ASSERT(stat != Os::File::NOT_OPENED);
             this->m_byteCount += (size);
-
-            //}
         }
     }
 
@@ -204,7 +201,7 @@ namespace Svc {
            }
            //Note: Because its a circular file we're writing the full buffer capacity to the file
            //      instead of the actual buffer size (variable based on number of args). This will 
-           //      ensure when the file is overwritten, we preserve old records
+           //      ensure when the file is overwritten, we preserve older records
            this->write_log_file(m_file_buffer.getData(),traceSize);
            // If we choose not to use circular file write then use below instead. 
            //this->write_log_file(m_file_buffer.getData(),buf_ref.getBuffLength());
