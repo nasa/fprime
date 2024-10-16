@@ -33,7 +33,7 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
 
     Drv::TcpServerSocket server;
     server.configure("127.0.0.1", port, 0, 100);
-    Drv::ServerSocketDescriptor server_fd;
+    Drv::SocketDescriptor server_fd;
 
     serverStat = server.startup(server_fd);
     this->component.configure("127.0.0.1", server.getListenPort(), 0, 100);
@@ -69,7 +69,7 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
             (this->component.isOpened())) {
             // Force the sockets not to hang, if at all possible
-            Drv::Test::force_recv_timeout(this->component.m_realDescriptor.fd, this->component.getSocketHandler());
+            Drv::Test::force_recv_timeout(this->component.m_descriptor.fd, this->component.getSocketHandler());
             Drv::Test::force_recv_timeout(server_fd.serverFd, server);
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);

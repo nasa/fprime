@@ -23,8 +23,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 UdpComponentImpl::UdpComponentImpl(const char* const compName)
-    : UdpComponentBase(compName),
-      SocketComponentHelper(m_realDescriptor) {}
+    : UdpComponentBase(compName) {}
 
 SocketIpStatus UdpComponentImpl::configureSend(const char* hostname,
                                                  const U16 port,

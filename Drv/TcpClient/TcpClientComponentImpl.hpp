@@ -129,8 +129,6 @@ class TcpClientComponentImpl : public TcpClientComponentBase, public SocketCompo
 
     Drv::TcpClientSocket m_socket; //!< Socket implementation
 
-    Drv::SocketDescriptor m_realDescriptor;  //!< Descriptor
-
     // Member variable to store the buffer size
     FwSizeType m_allocation_size;
 };

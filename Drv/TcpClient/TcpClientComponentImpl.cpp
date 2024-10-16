@@ -23,8 +23,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 TcpClientComponentImpl::TcpClientComponentImpl(const char* const compName)
-    : TcpClientComponentBase(compName),
-      SocketComponentHelper(m_realDescriptor) {}
+    : TcpClientComponentBase(compName) {}
 
 SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
                                                  const U16 port,

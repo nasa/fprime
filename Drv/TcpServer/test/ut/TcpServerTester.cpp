@@ -67,7 +67,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
             (this->component.isOpened())) {
             // Force the sockets not to hang, if at all possible
-            Drv::Test::force_recv_timeout(this->component.m_realDescriptor.fd, this->component.getSocketHandler());
+            Drv::Test::force_recv_timeout(this->component.m_descriptor.fd, this->component.getSocketHandler());
             Drv::Test::force_recv_timeout(client_fd.fd, client);
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
@@ -76,8 +76,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
                 "On iteration: " << i << " and receive thread: " << recv_thread;
             Drv::Test::receive_all(client, client_fd, buffer, size);
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS) <<
-                "On iteration: " << i << " and receive thread: " << recv_thread << " and errno " << errno <<
-                " and counter " << counter;
+                "On iteration: " << i << " and receive thread: " << recv_thread << " and errno " << errno;
             EXPECT_EQ(size, m_data_buffer.getSize()) <<
                 "On iteration: " << i << " and receive thread: " << recv_thread;
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
@@ -103,7 +102,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
             // Server initiates shutdown. It thus must drain its data until it receives
             // a socket disconnection. Then it can safely close.
             this->component.shutdown();
-            Drv::Test::drain(this->component.m_socket, this->component.m_realDescriptor);
+            Drv::Test::drain(this->component.m_socket, this->component.m_descriptor);
             this->component.close();
         }
         // Server should have shutdown cleanly and waited for this to be shut down.  It is safe

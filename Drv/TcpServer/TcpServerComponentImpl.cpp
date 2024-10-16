@@ -22,8 +22,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 TcpServerComponentImpl::TcpServerComponentImpl(const char* const compName)
-    : TcpServerComponentBase(compName),
-      SocketComponentHelper(this->m_realDescriptor) {}
+    : TcpServerComponentBase(compName) {}
 
 SocketIpStatus TcpServerComponentImpl::configure(const char* hostname,
                                                  const U16 port,
@@ -73,23 +72,23 @@ void TcpServerComponentImpl::connected() {
 
 bool TcpServerComponentImpl::isStarted() {
     Os::ScopeLock scopedLock(this->m_lock);
-    return this->m_realDescriptor.serverFd != -1;
+    return this->m_descriptor.serverFd != -1;
 }
 
 SocketIpStatus TcpServerComponentImpl::startup() {
     Os::ScopeLock scopedLock(this->m_lock);
     Drv::SocketIpStatus status = SOCK_SUCCESS;
     // Prevent multiple startup attempts
-    if (this->m_realDescriptor.serverFd == -1) {
-        status = this->m_socket.startup(this->m_realDescriptor);
+    if (this->m_descriptor.serverFd == -1) {
+        status = this->m_socket.startup(this->m_descriptor);
     }
     return status;
 }
 
 void TcpServerComponentImpl::terminate() {
     Os::ScopeLock scopedLock(this->m_lock);
-    this->m_socket.terminate(this->m_realDescriptor);
-    this->m_realDescriptor.serverFd = -1;
+    this->m_socket.terminate(this->m_descriptor);
+    this->m_descriptor.serverFd = -1;
 }
 
 void TcpServerComponentImpl::readLoop() {

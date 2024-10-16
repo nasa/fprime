@@ -161,7 +161,6 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
     Drv::SendStatus send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) override;
 
     Drv::TcpServerSocket m_socket; //!< Socket implementation
-    Drv::ServerSocketDescriptor m_realDescriptor; //!< Server descriptor
 };
 
 }  // end namespace Drv

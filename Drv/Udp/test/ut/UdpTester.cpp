@@ -87,7 +87,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
             (this->component.isOpened())) {
             // Force the sockets not to hang, if at all possible
-            Drv::Test::force_recv_timeout(this->component.m_realDescriptor.fd, this->component.getSocketHandler());
+            Drv::Test::force_recv_timeout(this->component.m_descriptor.fd, this->component.getSocketHandler());
             Drv::Test::force_recv_timeout(udp2_fd.fd, udp2);
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
