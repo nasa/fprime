@@ -32,7 +32,7 @@ fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/di
 In another terminal SSH into the device and run the uploaded software:
 ```sh
 ssh <username>@<device-address>
-sudo deployment/bin/<name-of-deployment> -a 0.0.0.0 -p 50000
+deployment/bin/<name-of-deployment> -a 0.0.0.0 -p 50000
 ```
 > User should fill in the username and device address above and ensure the correct executable is supplied.
 
