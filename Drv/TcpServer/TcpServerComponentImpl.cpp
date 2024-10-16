@@ -13,6 +13,7 @@
 #include <Drv/TcpServer/TcpServerComponentImpl.hpp>
 #include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Logger/Logger.hpp"
 
 namespace Drv {
 
@@ -21,8 +22,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 TcpServerComponentImpl::TcpServerComponentImpl(const char* const compName)
-    : TcpServerComponentBase(compName),
-      SocketComponentHelper() {}
+    : TcpServerComponentBase(compName) {}
 
 SocketIpStatus TcpServerComponentImpl::configure(const char* hostname,
                                                  const U16 port,
@@ -67,6 +67,48 @@ void TcpServerComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status
 void TcpServerComponentImpl::connected() {
     if (isConnected_ready_OutputPort(0)) {
         this->ready_out(0);
+    }
+}
+
+bool TcpServerComponentImpl::isStarted() {
+    Os::ScopeLock scopedLock(this->m_lock);
+    return this->m_descriptor.serverFd != -1;
+}
+
+SocketIpStatus TcpServerComponentImpl::startup() {
+    Os::ScopeLock scopedLock(this->m_lock);
+    Drv::SocketIpStatus status = SOCK_SUCCESS;
+    // Prevent multiple startup attempts
+    if (this->m_descriptor.serverFd == -1) {
+        status = this->m_socket.startup(this->m_descriptor);
+    }
+    return status;
+}
+
+void TcpServerComponentImpl::terminate() {
+    Os::ScopeLock scopedLock(this->m_lock);
+    this->m_socket.terminate(this->m_descriptor);
+    this->m_descriptor.serverFd = -1;
+}
+
+void TcpServerComponentImpl::readLoop() {
+    Drv::SocketIpStatus status = Drv::SocketIpStatus::SOCK_NOT_STARTED;
+    // Keep trying to reconnect until the status is good, told to stop, or reconnection is turned off
+    do {
+         status = this->startup();
+         if (status != SOCK_SUCCESS) {
+             Fw::Logger::log("[WARNING] Failed to listen on port %hu with status %d\n", this->getListenPort(), status);
+             (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
+             continue;
+         }
+    }
+    while (this->running() && status != SOCK_SUCCESS && this->m_reconnect);
+    // If start up was successful then perform normal operations
+    if (this->running() && status == SOCK_SUCCESS) {
+        // Perform the nominal read loop
+        SocketComponentHelper::readLoop();
+        // Terminate the server
+        this->terminate();
     }
 }
 
