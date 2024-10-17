@@ -12,6 +12,9 @@
 
 #include <Utils/Hash/Hash.hpp>
 
+static_assert(sizeof(unsigned long) >= sizeof(U32), "CRC32 cannot fit in CRC32 library chosen types");
+
+
 namespace Utils {
 
     Hash ::

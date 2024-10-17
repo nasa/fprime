@@ -11,13 +11,15 @@ module RPI {
     instance cmdDisp
     instance cmdSeq
     instance comm
+    instance deframer
     instance downlink
     instance eventLogger
     instance fatalAdapter
     instance fatalHandler
     instance fileDownlink
     instance fileUplink
-    instance fileUplinkBufferManager
+    instance frameAccumulator
+    instance commsBufferManager
     instance gpio17Drv
     instance gpio23Drv
     instance gpio24Drv
@@ -31,11 +33,10 @@ module RPI {
     instance rateGroupDriverComp
     instance rpiDemo
     instance spiDrv
-    instance staticMemory
     instance textLogger
     instance uartDrv
-    instance uplink
     instance uartBufferManager
+    instance uplinkRouter
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -69,13 +70,6 @@ module RPI {
 
     connections FaultProtection {
       eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
-    }
-
-    connections FileUplinkBuffers {
-      fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
-      uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
-      uplink.bufferOut -> fileUplink.bufferSendIn
     }
 
     connections GPIO {
@@ -114,11 +108,14 @@ module RPI {
       rpiDemo.SpiReadWrite -> spiDrv.SpiReadWrite
     }
 
-    connections StaticMemory {
-      comm.allocate -> staticMemory.bufferAllocate[0]
-      comm.deallocate -> staticMemory.bufferDeallocate[1]
-      downlink.framedAllocate -> staticMemory.bufferAllocate[1]
-      uplink.framedDeallocate -> staticMemory.bufferDeallocate[0]
+    connections MemoryMgmt {
+      comm.allocate -> commsBufferManager.bufferGetCallee
+      comm.deallocate -> commsBufferManager.bufferSendIn
+      downlink.framedAllocate -> commsBufferManager.bufferGetCallee
+      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
+      frameAccumulator.frameAllocate -> commsBufferManager.bufferGetCallee
+      frameAccumulator.dataDeallocate -> commsBufferManager.bufferSendIn
+      uplinkRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
     }
 
     connections UART {
@@ -129,9 +126,15 @@ module RPI {
     }
 
     connections Uplink {
-      cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
-      comm.$recv -> uplink.framedIn
-      uplink.comOut -> cmdDisp.seqCmdBuff
+      comm.$recv -> frameAccumulator.dataIn
+
+      frameAccumulator.frameOut -> deframer.framedIn
+      deframer.deframedOut -> uplinkRouter.dataIn
+
+      uplinkRouter.commandOut -> cmdDisp.seqCmdBuff
+      uplinkRouter.fileOut -> fileUplink.bufferSendIn
+
+      cmdDisp.seqCmdStatus -> uplinkRouter.cmdResponseIn
     }
 
   }
