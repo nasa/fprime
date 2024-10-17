@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <Fw/Types/StringUtils.hpp>
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Trace/TraceEntity.hpp>
+#include <Fw/Trace/TraceEntry.hpp>
 
 namespace Svc {
 
@@ -179,7 +179,6 @@ namespace Svc {
             
             //Only log trace types that are enabled by either config or user
             if(!(this->m_traceFilter & bit_mask)) {
-                //TODO: Should we generate an event here, letting user know that this specific filter is disabled?
                 return;
             }
             //Only log trace Ids that are not in the list 
@@ -203,9 +202,6 @@ namespace Svc {
            //      instead of the actual buffer size (variable based on number of args). This will 
            //      ensure when the file is overwritten, we preserve older records
            this->write_log_file(m_file_buffer.getData(),traceSize);
-           // If we choose not to use circular file write then use below instead. 
-           //this->write_log_file(m_file_buffer.getData(),buf_ref.getBuffLength());
-            
     }
 
 

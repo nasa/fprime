@@ -105,11 +105,10 @@ module Ref {
 
   instance typeDemo: Ref.TypeDemo base id 0x1100
 
-  instance trace: Svc.TraceFileLogger base id 0x4E00 \ 
+  instance trace: Svc.TraceFileLogger base id 0x1200 \ 
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 96
-
 
   # ----------------------------------------------------------------------
   # Queued component instances
@@ -135,8 +134,8 @@ module Ref {
 
   instance sendBuffComp: Ref.SendBuff base id 0x2600 \
     queue size Default.QUEUE_SIZE
+ 
   
-
 
   # ----------------------------------------------------------------------
   # Passive component instances
@@ -172,5 +171,4 @@ module Ref {
   
   instance version: Svc.Version base id 0x4D00 
   
-
 }

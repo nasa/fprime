@@ -6,6 +6,7 @@
 namespace Fw {
 
     TraceBuffer::TraceBuffer(const U8 *args, NATIVE_UINT_TYPE size) {
+        FW_ASSERT(args != nullptr);
         SerializeStatus stat = SerializeBufferBase::setBuff(args,size);
         FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     }
@@ -50,11 +51,5 @@ namespace Fw {
 
         std::string str_format(reinterpret_cast<const char*>(this->m_bufferData),this->getBuffLength());
         text += str_format;
-        /*char temp_text[1];
-        for (NATIVE_UINT_TYPE i = 0; i < this->getBuffLength(); i++) {
-            //snprintf(temp_text,sizeof(temp_text),"%d",this->m_bufferData[i]);
-            temp_text[0] = static_cast<char>(this->m_bufferData[i]);
-            text[i] = temp_text[0];
-        }*/
     }
 }

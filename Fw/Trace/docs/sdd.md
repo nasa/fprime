@@ -12,7 +12,7 @@ Trace Requirements in FPrime:
 	- Event ID : A unique identifier recording a “Trace Event”
 	- Time Tag : Captures a high precision timestamp
 	- Client Data : A small sample of user arguments recorded into trace buffer
-3. Trace shall create trace points and log events in software automatically for thread switching(?) and  ...TBD, ask Tim
+3. Trace shall create trace points and log events in software automatically for thread switching and port calls (in and out), and message queue and dequeue. 
 4. Trace shall provide a port for other components or user defined points to log events during software execution.
 5. Trace shall record log events in an in-memory logger with data products to dump the buffers
 6. Trace shall store data on a per thread basis so there is only one write to the buffer, preventing a need for mutual exclusion.

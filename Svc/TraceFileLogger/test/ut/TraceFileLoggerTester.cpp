@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include "TraceFileLoggerTester.hpp"
-#include <Fw/Trace/TraceEntity.hpp>
+#include <Fw/Trace/TraceEntry.hpp>
 #include <Fw/Trace/TraceBuffer.hpp>
 #include <fstream>
 #include <iostream>
