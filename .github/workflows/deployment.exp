@@ -1,0 +1,9 @@
+set timeout 120
+spawn fprime-util new --deployment
+expect "Deployment name (MyDeployment):"
+send -- "MyDeployment\r"
+expect "Select communication driver type"
+send -- "2\r"
+expect "Add MyDeployment to fprime/CMakeLists.txt"
+send -- "yes\r"
+expect eof

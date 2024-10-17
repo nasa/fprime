@@ -1,0 +1,15 @@
+set timeout 120
+spawn fprime-util new --component
+expect "Component name (MyComponent):"
+send -- "MyComponent\r"
+expect "Select component kind"
+send -- "1\r"
+expect "Enable Commands?"
+send -- "1\r"
+expect "Enable Telemetry?"
+send -- "1\r"
+expect "Enable Parameters?"
+send -- "1\r"
+expect "Add MyComponent to"
+send -- "yes\r"
+expect eof

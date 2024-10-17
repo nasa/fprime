@@ -1,0 +1,44 @@
+name: validate_templates-actions
+run-name: ${{ github.actor }} running Validate Templates CI actions
+on: [push]
+
+
+jobs:
+
+  validate_templates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ${{ inputs.fprime_location }}
+
+      - name: "Test bootstrap"
+        run: |
+             pip install fprime-bootstrap
+             sudo apt-get install expect
+             mkdir test_dev
+             cd test_dev
+             expect ../.github/workflows/bootstrap.exp
+
+      - name: "Activate Venv and Generate"
+        run: |
+             cd test_dev/MyProject
+             . fprime-venv/bin/activate
+             fprime-util generate
+
+      - name: "Test Deployment and build"
+        run: |
+             cd test_dev/MyProject
+             . fprime-venv/bin/activate
+             expect ../../.github/workflows/deployment.exp
+             fprime-util build
+
+      - name: "Test Component and build"
+        run: |
+             cd test_dev/MyProject
+             . fprime-venv/bin/activate
+             expect ../../.github/workflows/component.exp
+             fprime-util build
