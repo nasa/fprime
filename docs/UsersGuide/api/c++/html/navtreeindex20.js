@@ -1,6 +1,5 @@
 var NAVTREEINDEX20 =
 {
-"class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025a0034492fb0f329d70e3d89983d42af74":[29,0,3,39,0,0],
 "class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025a8e83fadef2df64a77bec1878a22e0c37":[29,0,3,39,0,1],
 "class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025acdabc6b00432e5d9598fe1fab395a36f":[29,0,3,39,0,2],
 "class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025adcb0baa1b4951c4bf9422215db566ab5":[29,0,3,39,0,3],
@@ -249,5 +248,6 @@ var NAVTREEINDEX20 =
 "class_os_1_1_raw_time_status.html#a51abb218d4ae9f01fd06b5dd87434947":[29,0,3,14,2],
 "class_os_1_1_raw_time_status.html#a51abb218d4ae9f01fd06b5dd87434947a1d3935e380b38b084b7bfce488346ecd":[29,0,3,14,2,0],
 "class_os_1_1_raw_time_status.html#a51abb218d4ae9f01fd06b5dd87434947a54c7b2f97b2036eb0c8355525dc0d154":[29,0,3,14,2,2],
-"class_os_1_1_raw_time_status.html#a51abb218d4ae9f01fd06b5dd87434947aa5ac9a3d86f96ef316d6abd7d4a9707b":[29,0,3,14,2,1]
+"class_os_1_1_raw_time_status.html#a51abb218d4ae9f01fd06b5dd87434947aa5ac9a3d86f96ef316d6abd7d4a9707b":[29,0,3,14,2,1],
+"class_os_1_1_raw_time_status.html#a51abb218d4ae9f01fd06b5dd87434947ac0d460b42197c65cce38346de8dacfcb":[29,0,3,14,2,3]
 };

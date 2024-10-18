@@ -11,7 +11,6 @@ var _string_utils_8hpp =
     [ "string_copy", "string_utils_8hpp.html#a84e222d75f681cdc41eba1fca43b0369", null ],
     [ "string_length", "string_utils_8hpp.html#a5e5ebbd6f1c4f9a94675042cd1b8de76", null ],
     [ "string_to_number", "string_utils_8hpp.html#a6a819393472dca5bd6eaf57f3c3d7cb1", null ],
-    [ "string_to_number", "string_utils_8hpp.html#a71ac08464f2811b9b1e210e7fe2835be", null ],
     [ "string_to_number", "string_utils_8hpp.html#a4cfc0536c8f7ecc3184b83f08a44dffa", null ],
     [ "string_to_number", "string_utils_8hpp.html#a816806884e46c2138a6dabdcf00a58d5", null ],
     [ "substring_find", "string_utils_8hpp.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0", null ]

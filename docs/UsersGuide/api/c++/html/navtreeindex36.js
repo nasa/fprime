@@ -1,6 +1,5 @@
 var NAVTREEINDEX36 =
 {
-"md_docs_doc_index.html#autotoc_md207":[11,11,0,2],
 "md_docs_doc_index.html#autotoc_md208":[11,11,0,3],
 "md_docs_doc_index.html#autotoc_md209":[11,11,0,4],
 "md_docs_doc_index.html#autotoc_md210":[11,11,0,4,0],
@@ -216,7 +215,7 @@ var NAVTREEINDEX36 =
 "namespace_fw_1_1_dp_cfg.html#a9ea816f1c2196b8ded72c6b2a709b40b":[28,0,3,0,1],
 "namespace_fw_1_1_dp_cfg.html#a9ea816f1c2196b8ded72c6b2a709b40ba265dc0a37c075f1af68057c21e58a091":[28,0,3,0,1,0],
 "namespace_fw_1_1_string_utils.html":[28,0,3,1],
-"namespace_fw_1_1_string_utils.html#a4cfc0536c8f7ecc3184b83f08a44dffa":[28,0,3,1,5],
+"namespace_fw_1_1_string_utils.html#a4cfc0536c8f7ecc3184b83f08a44dffa":[28,0,3,1,4],
 "namespace_fw_1_1_string_utils.html#a5e5ebbd6f1c4f9a94675042cd1b8de76":[28,0,3,1,2],
 "namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93":[28,0,3,1,0],
 "namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93a4e57b22fb6e52ed4129d91b6abac8cd5":[28,0,3,1,0,3],
@@ -226,10 +225,9 @@ var NAVTREEINDEX36 =
 "namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93ab9a177442c5438a168b9f011d59fe7be":[28,0,3,1,0,5],
 "namespace_fw_1_1_string_utils.html#a5eae294d141e5bb6028271a51c324a93af2a018445190491755947dacb7e99060":[28,0,3,1,0,2],
 "namespace_fw_1_1_string_utils.html#a6a819393472dca5bd6eaf57f3c3d7cb1":[28,0,3,1,3],
-"namespace_fw_1_1_string_utils.html#a71ac08464f2811b9b1e210e7fe2835be":[28,0,3,1,4],
-"namespace_fw_1_1_string_utils.html#a816806884e46c2138a6dabdcf00a58d5":[28,0,3,1,6],
+"namespace_fw_1_1_string_utils.html#a816806884e46c2138a6dabdcf00a58d5":[28,0,3,1,5],
 "namespace_fw_1_1_string_utils.html#a84e222d75f681cdc41eba1fca43b0369":[28,0,3,1,1],
-"namespace_fw_1_1_string_utils.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0":[28,0,3,1,7],
+"namespace_fw_1_1_string_utils.html#abf12f8d48f9fc00e2ddeecdf0c3ce3b0":[28,0,3,1,6],
 "namespace_logger_rules.html":[28,0,4],
 "namespace_os.html":[28,0,5],
 "namespace_os.html#aa8c0e58da9bfe405b8fca753de3af82c":[28,0,5,60],
@@ -249,5 +247,7 @@ var NAVTREEINDEX36 =
 "namespace_os_1_1_delegate.html":[28,0,5,1],
 "namespace_os_1_1_delegate.html#a06b343274103dadcbff9cc88bc835291":[28,0,5,1,0],
 "namespace_os_1_1_delegate.html#adea32912a77960222f0497e9807fa7c4":[28,0,5,1,1],
-"namespace_os_1_1_generic.html":[28,0,5,2]
+"namespace_os_1_1_generic.html":[28,0,5,2],
+"namespace_os_1_1_generic.html#a7658440e7ab158208b97e002dee0e879":[28,0,5,2,3],
+"namespace_os_1_1_generic.html#a7658440e7ab158208b97e002dee0e879a5c7df591daa5bce645990e1e41ee3528":[28,0,5,2,3,0]
 };

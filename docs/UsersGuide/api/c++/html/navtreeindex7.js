@@ -1,6 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"stub_2_default_cpu_8cpp.html":[30,0,11,5,7],
 "stub_2_default_cpu_8cpp_source.html":[30,0,11,5,7],
 "stub_2_default_file_8cpp.html":[30,0,11,5,8],
 "stub_2_default_file_8cpp_source.html":[30,0,11,5,8],
@@ -249,5 +248,6 @@ var NAVTREEINDEX7 =
 "svc_com_stub_component.html":[14,15],
 "svc_com_stub_component.html#autotoc_md734":[14,15,0],
 "svc_com_stub_component.html#autotoc_md735":[14,15,0,0],
-"svc_com_stub_component.html#autotoc_md736":[14,15,0,1]
+"svc_com_stub_component.html#autotoc_md736":[14,15,0,1],
+"svc_com_stub_component.html#autotoc_md737":[14,15,0,2]
 };

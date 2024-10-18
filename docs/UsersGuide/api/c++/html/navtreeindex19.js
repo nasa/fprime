@@ -1,6 +1,5 @@
 var NAVTREEINDEX19 =
 {
-"class_os_1_1_file_interface.html#ad5c239e12384d3c03b41315526ae22b2a0feccb2144d6e28412acdfcc0110d447":[29,0,3,29,2,2],
 "class_os_1_1_file_interface.html#ad5c239e12384d3c03b41315526ae22b2a58c5d91db148333bc98305e156d06459":[29,0,3,29,2,1],
 "class_os_1_1_file_interface.html#ad5c239e12384d3c03b41315526ae22b2af825934c2dd02c81c2b7c10a9b29b0d3":[29,0,3,29,2,0],
 "class_os_1_1_file_interface.html#ada9c17ac87f4bf43ca2cd1d2817e2cee":[29,0,3,29,0],
@@ -249,5 +248,6 @@ var NAVTREEINDEX19 =
 "class_os_1_1_mutex_interface.html#a91e42f69c788362cb6362411e40bfb65":[29,0,3,39,3],
 "class_os_1_1_mutex_interface.html#a9d480d637f793c2a303f10b125e525e7":[29,0,3,39,7],
 "class_os_1_1_mutex_interface.html#ab11257bc1150ab40ba4c97c8a930325e":[29,0,3,39,2],
-"class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025":[29,0,3,39,0]
+"class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025":[29,0,3,39,0],
+"class_os_1_1_mutex_interface.html#ab3e2f417cdad6a036ef82e3f6e45a025a0034492fb0f329d70e3d89983d42af74":[29,0,3,39,0,0]
 };
