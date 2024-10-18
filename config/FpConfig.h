@@ -206,6 +206,17 @@ typedef FwIndexType FwQueueSizeType;
        //!< for multi-note systems)
 #endif
 
+//Trace configurations
+//Configure Trace to off, full and minimal
+#ifndef FW_TRACE_RECORD_TRACE 
+#define FW_TRACE_RECORD_TRACE 1 
+#endif
+
+#ifndef FW_TRACE_RECORD_MINIMAL 
+#define FW_TRACE_RECORD_MINIMAL 0 
+#endif
+
+
 // Component Facilities
 
 // Serialization
@@ -327,6 +338,11 @@ typedef FwIndexType FwQueueSizeType;
 // Specifies the maximum size of a string in a telemetry channel
 #ifndef FW_TLM_STRING_MAX_SIZE
 #define FW_TLM_STRING_MAX_SIZE 40  //!< Max size of channelized telemetry string type
+#endif
+
+// Specifies the size of the buffer that contains the serialized trace value.
+#ifndef FW_TRACE_BUFFER_MAX_SIZE
+#define FW_TRACE_BUFFER_MAX_SIZE 257
 #endif
 
 // Specifies the size of the buffer that contains the serialized parameter value.
