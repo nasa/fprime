@@ -195,7 +195,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
 StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size, F32& output, char** next);
-
+#if FW_HAS_F64
 /**
  * \brief converts a string to a F64
  *
@@ -209,7 +209,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
 StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size, F64& output, char** next);
-
+#endif
 
 
 
